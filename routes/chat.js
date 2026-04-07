@@ -36,6 +36,8 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
+const { initializeLessonPhase, PHASES } = require('../utils/lessonPhaseManager');
+const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
 const TutorPlan = require('../models/tutorPlan');
 const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
 
@@ -851,6 +853,21 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         if (topicOverride?.override) {
             systemPrompt += `\n\nSTUDENT OVERRIDE: ${topicOverride.reason}. Prioritize the student's request for this interaction.` +
                 (topicOverride.returnToPlan ? ' After addressing their request, you can naturally guide back to the plan.' : '');
+        }
+
+        // ── Phase State Initialization (Gradual Release in general chat) ──
+        // When the student has an active skill (badge context) but no phase
+        // state on the conversation yet, initialize one so the pipeline's
+        // decide stage can enforce concept checks and phase transitions.
+        if (masteryContext?.skillId && !activeConversation.phaseState) {
+            try {
+                const warmupData = selectWarmupSkill(masteryContext.skillId, user.toObject());
+                activeConversation.phaseState = initializeLessonPhase(masteryContext.skillId, warmupData);
+                activeConversation.markModified?.('phaseState');
+                console.log(`[Chat] Initialized lesson phase for ${masteryContext.skillId}: ${activeConversation.phaseState.currentPhase}`);
+            } catch (phaseErr) {
+                console.error('[Chat] Phase initialization failed (non-fatal):', phaseErr.message);
+            }
         }
 
         // Run the 6-stage pipeline with direct-LLM fallback

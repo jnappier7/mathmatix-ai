@@ -219,6 +219,12 @@ function detectMathProblem(message) {
         };
     }
 
+    // ── Expression substitution (plug-in) ──
+    // "evaluate 24t-12 at t=2", "plug x=1 into 3x^2-6x+2", "f(2) where f(x) = 24x-12"
+    // "what is 3x^2-6x+2 when x=1", "a(2) = 24(2)-12"
+    const substitutionResult = detectSubstitution(message);
+    if (substitutionResult) return substitutionResult;
+
     // ── Calculus: Derivatives ──
     // "derivative of x^3 - 3x + 2", "d/dx(x^2 + 5x)", "differentiate 3x^4 - 2x^2 + x"
     // "what is the derivative of x^3 - 3x + 2", "find d/dx of 5x^2 + 3x - 7"
@@ -540,6 +546,8 @@ function solveProblem(problem) {
                 return solveVolume(problem);
             case 'evaluation':
                 return solveEvaluation(problem);
+            case 'substitution':
+                return solveSubstitution(problem);
             case 'derivative':
                 return solveDerivative(problem);
             case 'limit':
@@ -2196,8 +2204,12 @@ function multiplyPolynomials(p1, p2) {
  *
  * Returns null if the string cannot be parsed as a polynomial in x.
  */
-function parsePolynomialTerms(str) {
+function parsePolynomialTerms(str, variable) {
     if (!str || typeof str !== 'string') return null;
+
+    // Default variable is 'x', but callers can pass 't', 'n', etc.
+    const v = variable || 'x';
+    const vEscaped = v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     // Normalize
     let s = str.trim()
@@ -2220,8 +2232,8 @@ function parsePolynomialTerms(str) {
     // Ensure leading sign
     if (s[0] !== '-' && s[0] !== '+') s = '+' + s;
 
-    // Match terms: sign, optional coefficient, optional x with optional ^exp
-    const termRegex = /([+-])(\d*\.?\d*)(x?)(?:\^(\d+))?/g;
+    // Match terms: sign, optional coefficient, optional variable with optional ^exp
+    const termRegex = new RegExp(`([+-])(\\d*\\.?\\d*)(${vEscaped}?)(?:\\^(\\d+))?`, 'g');
     const terms = [];
     let match;
     let totalLen = 0;
@@ -2231,12 +2243,12 @@ function parsePolynomialTerms(str) {
 
         const sign = match[1] === '-' ? -1 : 1;
         const coeffStr = match[2];
-        const hasX = match[3] === 'x';
+        const hasVar = match[3] === v;
         const expStr = match[4];
 
         let coeff, exp;
 
-        if (hasX) {
+        if (hasVar) {
             coeff = coeffStr === '' ? sign : sign * parseFloat(coeffStr);
             exp = expStr ? parseInt(expStr, 10) : 1;
         } else if (coeffStr !== '') {
@@ -2314,6 +2326,126 @@ function cleanTrailingText(expr) {
         .replace(/\.\s+[A-Z].*$/, '')  // "expr. Let's..." → "expr"
         .replace(/[?!.]+$/, '')         // trailing punctuation
         .trim();
+}
+
+/**
+ * Detect an expression substitution (plug-in) problem.
+ *
+ * Supported patterns:
+ * - "evaluate 24t-12 at t=2"
+ * - "plug x=1 into 3x^2-6x+2"
+ * - "what is 3x^2-6x+2 when x=1"
+ * - "f(2) where f(x) = 24x-12"
+ * - "find a(2) if a(t) = 24t-12"
+ * - "24(2)-12" (numeric substitution already shown)
+ *
+ * Returns a problem object { type: 'substitution', terms, variable, value } or null.
+ */
+function detectSubstitution(message) {
+    if (!message) return null;
+
+    // Strip LaTeX delimiters
+    let text = message
+        .replace(/\\\(([^)]*?)\\\)/g, '$1')
+        .replace(/\\\[([^\]]*?)\\\]/g, '$1')
+        .replace(/\$\$([^$]*?)\$\$/g, '$1')
+        .replace(/(?<![\\$])\$([^$\n]+?)\$/g, '$1');
+
+    // Pattern 1: "evaluate EXPR at VAR=VALUE" or "evaluate EXPR for VAR=VALUE"
+    const evalAtPattern = /(?:evaluate|compute|calculate|find)\s+(.+?)\s+(?:at|for|when|where)\s+([a-zA-Z])\s*=\s*(-?\d+\.?\d*)/i;
+    const evalAtMatch = text.match(evalAtPattern);
+    if (evalAtMatch) {
+        const terms = parsePolynomialTerms(evalAtMatch[1].trim(), evalAtMatch[2]);
+        if (terms) {
+            return { type: 'substitution', terms, variable: evalAtMatch[2], value: parseFloat(evalAtMatch[3]), raw: evalAtMatch[1].trim() };
+        }
+    }
+
+    // Pattern 2: "plug VAR=VALUE into EXPR"
+    const plugPattern = /plug(?:ging)?\s+([a-zA-Z])\s*=\s*(-?\d+\.?\d*)\s+into\s+(.+)/i;
+    const plugMatch = text.match(plugPattern);
+    if (plugMatch) {
+        const terms = parsePolynomialTerms(plugMatch[3].trim(), plugMatch[1]);
+        if (terms) {
+            return { type: 'substitution', terms, variable: plugMatch[1], value: parseFloat(plugMatch[2]), raw: plugMatch[3].trim() };
+        }
+    }
+
+    // Pattern 3: "what is EXPR when VAR=VALUE" or "EXPR when VAR=VALUE"
+    const whenPattern = /(?:what\s+(?:is|do\s+you\s+get)\s+)?(.+?)\s+when\s+([a-zA-Z])\s*=\s*(-?\d+\.?\d*)/i;
+    const whenMatch = text.match(whenPattern);
+    if (whenMatch) {
+        const terms = parsePolynomialTerms(whenMatch[1].trim(), whenMatch[2]);
+        if (terms) {
+            return { type: 'substitution', terms, variable: whenMatch[2], value: parseFloat(whenMatch[3]), raw: whenMatch[1].trim() };
+        }
+    }
+
+    // Pattern 4: "f(VALUE)" or "a(VALUE)" where f/a is a function name mentioned earlier
+    // This pattern is intentionally narrow — it only fires when accompanied by a definition.
+    // "f(2) where f(x) = EXPR" or "find f(2) if f(x) = EXPR"
+    const funcDefPattern = /(?:find\s+|what\s+is\s+)?([a-zA-Z])\s*\(\s*(-?\d+\.?\d*)\s*\)\s*(?:where|if|given|when)\s+\1\s*\(\s*([a-zA-Z])\s*\)\s*=\s*(.+)/i;
+    const funcDefMatch = text.match(funcDefPattern);
+    if (funcDefMatch) {
+        const terms = parsePolynomialTerms(funcDefMatch[4].trim(), funcDefMatch[3]);
+        if (terms) {
+            return { type: 'substitution', terms, variable: funcDefMatch[3], value: parseFloat(funcDefMatch[2]), raw: funcDefMatch[4].trim() };
+        }
+    }
+
+    // Pattern 5: "EXPR at VAR=VALUE" (shorter form, e.g. "24t-12 at t=2")
+    const shortAtPattern = /^(.+?)\s+at\s+([a-zA-Z])\s*=\s*(-?\d+\.?\d*)/i;
+    const shortAtMatch = text.match(shortAtPattern);
+    if (shortAtMatch) {
+        const terms = parsePolynomialTerms(shortAtMatch[1].trim(), shortAtMatch[2]);
+        if (terms) {
+            return { type: 'substitution', terms, variable: shortAtMatch[2], value: parseFloat(shortAtMatch[3]), raw: shortAtMatch[1].trim() };
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Solve an expression substitution (plug-in) problem.
+ *
+ * Evaluates a polynomial at a given value using evaluatePolynomialAt.
+ *
+ * @param {Object} problem - { type: 'substitution', terms, variable, value, raw }
+ * @returns {Object} Solution with answer and steps
+ */
+function solveSubstitution(problem) {
+    const { terms, variable, value, raw } = problem;
+    const steps = [];
+
+    steps.push(`Substitute ${variable} = ${value} into ${raw}`);
+
+    // Show each term's computation
+    const termResults = [];
+    for (const { coeff, exp } of terms) {
+        if (exp === 0) {
+            termResults.push(coeff);
+            steps.push(`Constant term: ${coeff}`);
+        } else {
+            const termValue = coeff * Math.pow(value, exp);
+            if (exp === 1) {
+                steps.push(`${coeff === 1 ? '' : coeff === -1 ? '-' : coeff}${variable} → ${coeff}(${value}) = ${termValue}`);
+            } else {
+                steps.push(`${coeff === 1 ? '' : coeff === -1 ? '-' : coeff}${variable}^${exp} → ${coeff}(${value})^${exp} = ${termValue}`);
+            }
+            termResults.push(termValue);
+        }
+    }
+
+    const result = evaluatePolynomialAt(terms, value);
+    const answer = formatNumber(result);
+    steps.push(`Result: ${answer}`);
+
+    return {
+        success: true,
+        answer,
+        steps,
+    };
 }
 
 /**
@@ -2765,6 +2897,9 @@ module.exports = {
     // Export polynomial helpers for testing
     parsePolynomial,
     arePolynomialsEqual,
+    // Export substitution solver for testing
+    detectSubstitution,
+    solveSubstitution,
     // Export calculus solvers for testing
     detectDerivative,
     solveDerivative,

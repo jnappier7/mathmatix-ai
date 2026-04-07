@@ -197,14 +197,49 @@ async function verify(responseText, context = {}) {
     }
   }
 
-  // ── 2c. False-rejection guard (CRITICAL — protects correct answers) ──
+  // ── 2c. False-confirmation guard (CRITICAL — prevents affirming wrong answers) ──
+  // When the pipeline has VERIFIED the student's answer is INCORRECT
+  // (action === GUIDE_INCORRECT or RETEACH_MISCONCEPTION) but the LLM's
+  // response affirms the answer ("That's correct!", "You got it!"), flag
+  // it for regeneration. This prevents the most damaging tutoring error:
+  // telling a student their wrong answer is right.
+  if (context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION) {
+    const falseConfirmationPattern = /^(that'?s\s+(?:right|correct|it)[.!]*|correct[.!]*|exactly[.!]*|great\s+(?:job|work)[.!]*|perfect[.!]*|well\s+done[.!]*|you\s+(?:got|nailed)\s+it[.!]*|right\s+on[.!]*|bingo[.!]*|excellent[.!]*|yes[,.]?\s*(?:that'?s|you(?:'re|\s+are))\s+(?:right|correct)|¡?(?:excelente|exacto|exactamente|muy\s+bien|perfecto|fantástico)[.!]*)/i;
+
+    if (falseConfirmationPattern.test(text.trim())) {
+      flags.push('false_confirmation_detected');
+      console.log(`[Verify] FALSE CONFIRMATION detected on verified-incorrect answer — regenerating`);
+
+      try {
+        const correctionPrompt = `The student's answer has been mathematically verified as INCORRECT by our answer engine. The correct answer is "${context.correctAnswer}". Your previous response incorrectly affirmed the student's wrong answer. Respond naturally — guide the student toward discovering the error WITHOUT revealing the correct answer. Do not use scripted language; be a natural, supportive tutor who knows this answer is wrong.`;
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this response knowing the student\'s answer is WRONG. Keep your personality and teaching style, just remove the false affirmation and guide them to find their mistake.' }],
+          { temperature: 0.55, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('false_confirmation_regenerated');
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] False-confirmation regeneration failed:', err.message);
+        flags.push('false_confirmation_regeneration_failed');
+      }
+    }
+  }
+
+  // ── 2d. False-rejection guard (CRITICAL — protects correct answers) ──
   // When the pipeline has VERIFIED the student's answer is correct
   // (action === CONFIRM_CORRECT) but the LLM's response implies the
-  // answer is wrong, flag it for regeneration. We don't script the
-  // response — we let the LLM speak naturally, just with correct info.
-  //
-  // Also guards CONTINUE_CONVERSATION when the LLM was asked to self-verify
-  // (unverifiable answers) — the LLM can still get these wrong.
+  // answer is wrong, flag it for regeneration.
   if (context.action === ACTIONS.CONFIRM_CORRECT) {
     // Detect rejection/doubt language at the start of a verified-correct response
     const falseRejectionOpener = /^(hmm[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)|not\s+quite|close[,!.]\s*but|almost[.!,]|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from|let'?s\s+check\s+that|are\s+you\s+sure|that'?s\s+not\s+(?:quite|exactly)|so\s+close|good\s+(?:try|attempt|thinking)[,.]?\s*but|nice\s+try[.!,]|let'?s\s+double[- ]check|(?:but\s+)?let'?s\s+(?:re)?check\s+the)/i;
@@ -237,6 +272,49 @@ async function verify(responseText, context = {}) {
       } catch (err) {
         console.error('[Verify] False-rejection regeneration failed:', err.message);
         flags.push('false_rejection_regeneration_failed');
+      }
+    }
+  }
+
+  // ── 2e. Math contradiction cross-check ──
+  // Catches a subtle but damaging pattern: the AI shows the correct computation
+  // (e.g., "24(2) - 12 = 36") but affirms the student's different answer
+  // (e.g., "That's correct!" when the student said "12").
+  // This happens when the verification directive tells the AI the answer is wrong,
+  // but the LLM's affirmation habit overrides the directive.
+  if (context.correctAnswer && context.diagnosisType === 'incorrect') {
+    const correctStr = String(context.correctAnswer).trim();
+    // Check if the AI's response contains the correct answer as a computed result
+    // AND also contains affirmation language
+    const responseContainsCorrectAnswer = new RegExp(`=\\s*${correctStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(text);
+    const hasAffirmation = /(?:that'?s\s+(?:right|correct)|correct[.!]|exactly[.!]|you\s+(?:got|nailed)\s+it|great\s+(?:job|work)|perfect[.!]|well\s+done|excellent|¡?(?:excelente|exacto|exactamente|perfecto))/i.test(text);
+
+    if (responseContainsCorrectAnswer && hasAffirmation) {
+      flags.push('math_contradiction_detected');
+      console.log(`[Verify] MATH CONTRADICTION: AI computed ${correctStr} but affirmed student's wrong answer — regenerating`);
+
+      try {
+        const correctionPrompt = `CRITICAL ERROR IN YOUR RESPONSE: You showed the correct computation (the answer is ${correctStr}) but simultaneously told the student their different answer was correct. This is contradictory and confusing. The student's answer is WRONG. Rewrite your response: acknowledge the student's effort, then guide them to see where their calculation went wrong. Do NOT reveal the answer directly — use Socratic questioning.`;
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this response to fix the contradiction. The student\'s answer is wrong. Guide them without revealing the answer.' }],
+          { temperature: 0.55, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('math_contradiction_regenerated');
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] Math contradiction regeneration failed:', err.message);
+        flags.push('math_contradiction_regeneration_failed');
       }
     }
   }

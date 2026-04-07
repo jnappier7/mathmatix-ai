@@ -296,6 +296,8 @@ async function runPipeline(message, ctx) {
     res: ctx.res || null,
     action: decision.action,
     messageType: observation.messageType,
+    correctAnswer: diagnosis.correctAnswer || null,
+    diagnosisType: diagnosis.type,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);

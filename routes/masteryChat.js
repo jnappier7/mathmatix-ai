@@ -18,7 +18,8 @@ const {
   transitionPhase,
   PHASES
 } = require('../utils/lessonPhaseManager');
-const { verify: pipelineVerify } = require('../utils/pipeline');
+const { verify: pipelineVerify, observe: pipelineObserve, diagnose: pipelineDiagnose } = require('../utils/pipeline');
+const { buildVerificationDirective } = require('../utils/pipeline/generate');
 const { emitGamificationEvent } = require('../utils/gamificationEvents');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
@@ -298,7 +299,7 @@ if (!message) return res.status(400).json({ message: "Message is required." });
         );
 
         // Combine base system prompt with phase-specific instructions
-        const fullSystemPrompt = systemPrompt + '\n\n' + phasePrompt;
+        let fullSystemPrompt = systemPrompt + '\n\n' + phasePrompt;
 
         // Prepare conversation history for AI
         const recentHistory = masteryConversation.messages.slice(-MAX_HISTORY_LENGTH_FOR_AI);
@@ -306,6 +307,49 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             role: msg.role === 'user' ? 'user' : 'assistant',
             content: msg.content
         }));
+
+        // ── ANSWER VERIFICATION (diagnose stage) ──
+        // Run the pipeline's observe + diagnose stages to verify student answers
+        // BEFORE the LLM generates a response. This prevents the AI from
+        // affirming wrong answers or rejecting correct ones.
+        let masteryDiagnosis = null;
+        try {
+            const recentAssistantMsgs = masteryConversation.messages
+                .filter(msg => msg.role === 'assistant')
+                .slice(-6)
+                .map(msg => ({ content: msg.content }));
+            const recentUserMsgs = masteryConversation.messages
+                .filter(msg => msg.role === 'user')
+                .slice(-6)
+                .map(msg => ({ content: msg.content }));
+
+            const observation = pipelineObserve(message, {
+                recentUserMessages: recentUserMsgs,
+                recentAssistantMessages: recentAssistantMsgs,
+                hasRecentUpload: false,
+            });
+
+            masteryDiagnosis = await pipelineDiagnose(observation, {
+                recentAssistantMessages: recentAssistantMsgs,
+                recentUserMessages: recentUserMsgs,
+                activeSkill: {
+                    skillId: activeBadge.skillId,
+                    displayName: activeBadge.badgeName || activeBadge.skillId,
+                    teachingGuidance: null,
+                },
+                user,
+            });
+
+            // Inject verification directive into system prompt (authoritative fact)
+            const verificationDirective = buildVerificationDirective(masteryDiagnosis);
+            if (verificationDirective) {
+                fullSystemPrompt += '\n\n' + verificationDirective;
+                console.log(`[MasteryChat] Diagnosis: ${masteryDiagnosis.type} (answer: ${masteryDiagnosis.answer}, correct: ${masteryDiagnosis.correctAnswer})`);
+            }
+        } catch (diagnoseErr) {
+            console.error('[MasteryChat] Diagnose stage failed (non-fatal):', diagnoseErr.message);
+            // Non-fatal — mastery chat continues without verification
+        }
 
         // Add system prompt to messages array (OpenAI format)
         const messagesForAI = [
@@ -372,6 +416,10 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                 await trackAnswerResults(fullResponse, user, phaseState);
 
                 // Run pipeline verify (anti-cheat + reading level + LaTeX + tag stripping)
+                // Pass diagnosis context so false-confirmation/rejection guards work
+                const verifyAction = masteryDiagnosis?.isCorrect === true ? 'CONFIRM_CORRECT'
+                    : masteryDiagnosis?.isCorrect === false ? 'GUIDE_INCORRECT'
+                    : null;
                 let cleanedResponse;
                 try {
                     const verified = await pipelineVerify(fullResponse, {
@@ -381,6 +429,9 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                         firstName: user.firstName,
                         isStreaming: true,
                         res,
+                        action: verifyAction,
+                        correctAnswer: masteryDiagnosis?.correctAnswer || null,
+                        diagnosisType: masteryDiagnosis?.type || null,
                     });
                     cleanedResponse = verified.text;
                     if (verified.flags.length > 0) {
@@ -504,6 +555,10 @@ if (!message) return res.status(400).json({ message: "Message is required." });
             await trackAnswerResults(aiResponse, user, phaseState);
 
             // Run pipeline verify (anti-cheat + reading level + LaTeX + tag stripping)
+            // Pass diagnosis context so false-confirmation/rejection guards work
+            const verifyActionNonStream = masteryDiagnosis?.isCorrect === true ? 'CONFIRM_CORRECT'
+                : masteryDiagnosis?.isCorrect === false ? 'GUIDE_INCORRECT'
+                : null;
             let cleanedResponse;
             try {
                 const verified = await pipelineVerify(aiResponse, {
@@ -512,6 +567,9 @@ if (!message) return res.status(400).json({ message: "Message is required." });
                     iepReadingLevel: user.iepPlan?.readingLevel || null,
                     firstName: user.firstName,
                     isStreaming: false,
+                    action: verifyActionNonStream,
+                    correctAnswer: masteryDiagnosis?.correctAnswer || null,
+                    diagnosisType: masteryDiagnosis?.type || null,
                 });
                 cleanedResponse = verified.text;
                 if (verified.flags.length > 0) {
