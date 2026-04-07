@@ -36,6 +36,7 @@
     sessionStart: null,    // session start time for timer
     timerInterval: null,   // session timer interval
     processing: false,     // guard against double processVoiceInput
+    boardSteps: [],        // cumulative math board — never loses steps
   };
 
   // --- DOM refs ---
@@ -230,6 +231,47 @@
   // VOICE INPUT — LISTENING
   // ═══════════════════════════════════════
 
+  /**
+   * Acquire a persistent mic stream (called once, reused across turns).
+   * Skips getUserMedia if we already have a live stream.
+   */
+  async function ensureMicStream() {
+    // Reuse existing live stream
+    if (state.mediaStream) {
+      const tracks = state.mediaStream.getAudioTracks();
+      if (tracks.length > 0 && tracks[0].readyState === 'live') {
+        return state.mediaStream;
+      }
+      // Stream died — clean up and re-acquire
+      state.mediaStream = null;
+    }
+
+    state.mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        channelCount: 1,
+        sampleRate: 16000
+      }
+    });
+
+    return state.mediaStream;
+  }
+
+  /**
+   * Ensure we have a usable AudioContext (created once, reused across turns).
+   */
+  async function ensureAudioContext() {
+    if (!state.audioContext || state.audioContext.state === 'closed') {
+      state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (state.audioContext.state === 'suspended') {
+      await state.audioContext.resume();
+    }
+    return state.audioContext;
+  }
+
   async function startListening() {
     if (state.mode === 'listening' || state.mode === 'thinking') return;
 
@@ -250,28 +292,13 @@
     }, 5000);
 
     try {
-      // Resume AudioContext
-      if (!state.audioContext || state.audioContext.state === 'closed') {
-        state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (state.audioContext.state === 'suspended') {
-        await state.audioContext.resume();
-      }
-
-      state.mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          channelCount: 1,
-          sampleRate: 16000
-        }
-      });
+      await ensureAudioContext();
+      const stream = await ensureMicStream();
 
       clearTimeout(startingTimeout);
       if (dom.micBtn) dom.micBtn.style.opacity = '';
 
-      state.mediaRecorder = new MediaRecorder(state.mediaStream, {
+      state.mediaRecorder = new MediaRecorder(stream, {
         mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
           ? 'audio/webm;codecs=opus'
           : 'audio/webm'
@@ -284,7 +311,7 @@
 
       state.mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
-        state.mediaStream?.getTracks().forEach(t => t.stop());
+        // DON'T kill the stream — keep it alive for the next turn
         if (blob.size > 1000) { // Minimum size to avoid empty recordings
           await processVoiceInput(blob);
         } else {
@@ -293,7 +320,7 @@
       };
 
       // Setup VAD (voice activity detection)
-      setupVAD(state.mediaStream);
+      setupVAD(stream);
 
       state.mediaRecorder.start();
       setMode('listening');
@@ -562,7 +589,7 @@
             await playResponse(phase.audioUrl, responseText);
           } else {
             if (state.handsFree && state.autoListen) {
-              setTimeout(() => startListening(), 400);
+              setTimeout(() => startListening(), 80);
             } else {
               setMode('idle');
             }
@@ -579,7 +606,7 @@
     // If stream ended without an audio phase, go back to idle/listening
     if (!gotAudio) {
       if (state.handsFree && state.autoListen) {
-        setTimeout(() => startListening(), 400);
+        setTimeout(() => startListening(), 80);
       } else {
         setMode('idle');
       }
@@ -604,7 +631,7 @@
       playResponse(data.audioUrl, data.response || '');
     } else {
       if (state.handsFree && state.autoListen) {
-        setTimeout(() => startListening(), 400);
+        setTimeout(() => startListening(), 80);
       } else {
         setMode('idle');
       }
@@ -709,7 +736,7 @@
         hideTranscript();
 
         if (startNext && state.handsFree && state.autoListen) {
-          setTimeout(() => startListening(), 400);
+          setTimeout(() => startListening(), 80);
         } else if (startNext) {
           setMode('idle');
         }
@@ -757,12 +784,9 @@
 
     stopSpeaking();
 
-    // Close existing AudioContext so startListening gets a fresh one
-    // (avoids conflicts with the playback MediaElementSource)
-    if (state.audioContext && state.audioContext.state !== 'closed') {
-      state.audioContext.close().catch(() => {});
-      state.audioContext = null;
-    }
+    // AudioContext and mic stream are kept alive — no need to tear down.
+    // ensureAudioContext() and ensureMicStream() in startListening() will
+    // reuse the existing instances, saving ~300-500ms per turn.
 
     startListening();
   }
@@ -782,28 +806,99 @@
   // MATH VISUALIZATION
   // ═══════════════════════════════════════
 
+  /**
+   * Merge incoming math steps into the cumulative board.
+   *
+   * The LLM is instructed to return ALL steps each turn (full board state),
+   * but sometimes it forgets earlier steps. This function protects against
+   * that by keeping a client-side accumulator:
+   *
+   * - If the LLM sent a superset of our board (starts with the same steps),
+   *   trust it as the new canonical board state.
+   * - If the LLM sent fewer steps than we have but they overlap at the start,
+   *   keep our extras and append any truly new steps from the LLM.
+   * - If the LLM sent completely new steps (no overlap), append them —
+   *   they're probably a new problem or a continuation.
+   *
+   * Deduplication is by normalized LaTeX content.
+   */
+  function mergeBoardSteps(incomingSteps) {
+    if (!incomingSteps || incomingSteps.length === 0) return state.boardSteps;
+
+    const normalize = (latex) => (latex || '').replace(/\s+/g, '').trim();
+    const boardLatex = state.boardSteps.map(s => normalize(s.latex));
+    const incomingLatex = incomingSteps.map(s => normalize(s.latex));
+
+    // Check: does incoming start with the same sequence as our board?
+    let overlapLen = 0;
+    for (let i = 0; i < Math.min(boardLatex.length, incomingLatex.length); i++) {
+      if (boardLatex[i] === incomingLatex[i]) {
+        overlapLen = i + 1;
+      } else {
+        break;
+      }
+    }
+
+    if (overlapLen > 0 && incomingSteps.length >= state.boardSteps.length) {
+      // LLM sent a superset or equal set — trust it as canonical
+      state.boardSteps = incomingSteps.slice();
+    } else if (overlapLen > 0) {
+      // LLM sent fewer steps but they overlap — keep our extras, append new
+      const newSteps = incomingSteps.slice(overlapLen).filter(
+        s => !boardLatex.includes(normalize(s.latex))
+      );
+      state.boardSteps = state.boardSteps.concat(newSteps);
+    } else {
+      // No overlap at start — check if incoming steps are already on our board
+      const genuinelyNew = incomingSteps.filter(
+        s => !boardLatex.includes(normalize(s.latex))
+      );
+      if (genuinelyNew.length === incomingSteps.length && incomingSteps.length >= 1) {
+        // Completely different steps — likely a new problem. Check if LLM
+        // sent a "Given" or first step, signaling a fresh board.
+        const firstLabel = (incomingSteps[0].label || '').toLowerCase();
+        if (firstLabel === 'given' || firstLabel === 'start' || firstLabel === 'problem') {
+          // New problem — replace the board
+          state.boardSteps = incomingSteps.slice();
+        } else {
+          // Continuation — append
+          state.boardSteps = state.boardSteps.concat(genuinelyNew);
+        }
+      } else {
+        // Partial overlap in the middle — append only new ones
+        state.boardSteps = state.boardSteps.concat(genuinelyNew);
+      }
+    }
+
+    return state.boardSteps;
+  }
+
   function renderMathSteps(steps) {
+    // Merge into cumulative board (never lose steps)
+    const board = mergeBoardSteps(steps);
+
     dom.canvasPlaceholder.classList.add('hidden');
 
-    // Clear previous steps immediately (no wait) — then render new ones
+    // Clear previous DOM elements
     const existing = dom.mathDisplay.querySelectorAll('.vt-math-step');
     if (existing.length > 0) {
       existing.forEach(el => {
         el.style.transition = 'opacity 0.15s';
         el.style.opacity = '0';
       });
-      // Remove after brief fade
       setTimeout(() => existing.forEach(el => el.remove()), 150);
     }
 
-    // Render new steps with minimal delay (150ms if clearing, 0 otherwise)
+    // Render full board with minimal delay
     const renderDelay = existing.length > 0 ? 160 : 0;
     setTimeout(() => {
-      steps.forEach((step, i) => {
+      board.forEach((step, i) => {
         const el = document.createElement('div');
         el.className = 'vt-math-step';
-        if (i === steps.length - 1) el.classList.add('highlighted');
-        el.style.animationDelay = `${i * 80}ms`; // Faster stagger
+        if (i === board.length - 1) el.classList.add('highlighted');
+        // Only animate new steps (skip stagger for already-seen ones)
+        const isNew = i >= board.length - steps.length;
+        el.style.animationDelay = isNew ? `${(i - (board.length - steps.length)) * 80}ms` : '0ms';
 
         let html = '';
         if (step.label) {
@@ -828,7 +923,7 @@
         dom.mathDisplay.appendChild(el);
       });
 
-      // Render KaTeX immediately — no requestAnimationFrame delay needed
+      // Render KaTeX
       dom.mathDisplay.querySelectorAll('.vt-katex-render').forEach((el) => {
         const latex = el.getAttribute('data-latex');
         try {
@@ -836,7 +931,6 @@
             window.katex.render(latex, el, { displayMode: true, throwOnError: false });
           }
         } catch (e) {
-          // Show the raw LaTeX as readable text rather than nothing
           el.textContent = latex;
           el.style.fontFamily = 'monospace';
           el.style.color = '#4a5568';
