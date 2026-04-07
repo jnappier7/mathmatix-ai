@@ -227,6 +227,7 @@
       }
 
       if (this.config.showInfoBar && this.config.interactive) this._buildInfoBar();
+      this._updateAriaDescription();
 
       this._resizeObserver = new ResizeObserver(() => this.render());
       this._resizeObserver.observe(this.container);
@@ -236,9 +237,13 @@
     _buildDOM() {
       this.wrapper = document.createElement('div');
       this.wrapper.className = 'mg-wrapper';
+      this.wrapper.setAttribute('role', 'region');
+      this.wrapper.setAttribute('aria-label', this.config.title || 'Interactive math graph');
 
       this.canvas = document.createElement('canvas');
       this.canvas.className = 'mg-canvas';
+      this.canvas.setAttribute('role', 'img');
+      this.canvas.setAttribute('aria-label', this._buildAriaDescription());
       this.wrapper.appendChild(this.canvas);
       this.ctx = this.canvas.getContext('2d');
 
@@ -254,6 +259,54 @@
 
       this.container.appendChild(this.wrapper);
       if (this.config.interactive) this._setupInteraction();
+    }
+
+    /**
+     * Build an accessible text description of the graph for screen readers.
+     * Called at DOM build time, then updated after key points are detected.
+     */
+    _buildAriaDescription() {
+      const parts = [];
+      const title = this.config.title;
+      if (title) parts.push(title);
+
+      // Describe each function
+      if (this.functions && this.functions.length > 0) {
+        for (const fn of this.functions) {
+          parts.push(`Function: ${fn.label || fn.expr}`);
+        }
+      }
+
+      // Describe key points if available
+      if (this.keyPoints && this.keyPoints.length > 0) {
+        const descriptions = this.keyPoints.map(kp => {
+          if (kp.type === 'x-intercept') return `x-intercept at (${kp.x.toFixed(1)}, 0)`;
+          if (kp.type === 'y-intercept') return `y-intercept at (0, ${kp.y.toFixed(1)})`;
+          if (kp.type === 'maximum') return `maximum at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+          if (kp.type === 'minimum') return `minimum at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+          if (kp.type === 'vertical-asymptote') return `vertical asymptote at x = ${kp.x.toFixed(1)}`;
+          if (kp.type === 'horizontal-asymptote') return `horizontal asymptote at y = ${kp.y.toFixed(1)}`;
+          if (kp.type === 'hole') return `hole at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+          return `${kp.type} at (${kp.x.toFixed(1)}, ${kp.y.toFixed(1)})`;
+        });
+        parts.push('Key features: ' + descriptions.join(', '));
+      }
+
+      // Domain
+      if (this.config.xMin != null && this.config.xMax != null) {
+        parts.push(`Domain shown: ${this.config.xMin} to ${this.config.xMax}`);
+      }
+
+      return parts.join('. ') || 'Mathematical graph';
+    }
+
+    /**
+     * Update ARIA label after key points have been detected (post-render).
+     */
+    _updateAriaDescription() {
+      if (this.canvas) {
+        this.canvas.setAttribute('aria-label', this._buildAriaDescription());
+      }
     }
 
     _buildInfoBar() {

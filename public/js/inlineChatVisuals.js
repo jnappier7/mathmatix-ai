@@ -270,17 +270,17 @@ class InlineChatVisuals {
         }).replace(/"/g, '&quot;');
 
         return `
-        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive graph: ${this.escapeHtml(title)}">
             <div class="icv-expand-hint">
                 <span class="icv-expand-icon">⤢</span>
                 <span>Tap to interact</span>
             </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-graph" id="${id}" data-config="${graphConfig}"></div>
-            <div class="icv-controls">
-                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
-                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
-                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
             </div>
         </div>
         `;
@@ -4199,17 +4199,17 @@ class InlineChatVisuals {
         }).replace(/"/g, '&quot;');
 
         return `
-        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive derivative graph: ${this.escapeHtml(title)}">
             <div class="icv-expand-hint">
                 <span class="icv-expand-icon">⤢</span>
                 <span>Tap to interact</span>
             </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-graph icv-multi-graph" id="${id}" data-config="${graphConfig}"></div>
-            <div class="icv-deriv-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;">Hover over the graph to see the tangent line and slope at any point</div>
-            <div class="icv-controls">
-                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
-                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
+            <div class="icv-deriv-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">Hover over the graph to see the tangent line and slope at any point</div>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
                 <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
             </div>
         </div>
@@ -4234,18 +4234,18 @@ class InlineChatVisuals {
         }).replace(/"/g, '&quot;');
 
         return `
-        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive rational function graph: ${this.escapeHtml(title)}">
             <div class="icv-expand-hint">
                 <span class="icv-expand-icon">⤢</span>
                 <span>Tap to interact</span>
             </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-graph icv-multi-graph" id="${id}" data-config="${graphConfig}"></div>
-            <div class="icv-rational-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;">Dashed lines show asymptotes • Open circles show holes • Hover to trace</div>
-            <div class="icv-controls">
-                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
-                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
-                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+            <div class="icv-rational-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">Dashed lines show asymptotes • Open circles show holes • Hover to trace</div>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
             </div>
         </div>
         `;
@@ -4269,18 +4269,18 @@ class InlineChatVisuals {
         }).replace(/"/g, '&quot;');
 
         return `
-        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')">
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive velocity graph: ${this.escapeHtml(title)}">
             <div class="icv-expand-hint">
                 <span class="icv-expand-icon">⤢</span>
                 <span>Tap to interact</span>
             </div>
             <div class="icv-title">${this.escapeHtml(title)}</div>
             <div class="icv-graph icv-multi-graph" id="${id}" data-config="${graphConfig}"></div>
-            <div class="icv-velocity-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;">s(t) = position • v(t) = s′(t) = velocity • a(t) = s″(t) = acceleration</div>
-            <div class="icv-controls">
-                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In">➕</button>
-                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out">➖</button>
-                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset">↺</button>
+            <div class="icv-velocity-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">s(t) = position • v(t) = s′(t) = velocity • a(t) = s″(t) = acceleration</div>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
             </div>
         </div>
         `;
