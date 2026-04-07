@@ -1707,3 +1707,30 @@
 [data-theme="dark"] .hint-button:hover:not(:disabled) {
   background: #3B0764;
 }
+
+/* ============================================================================
+   PARALLEL EXAMPLE BADGE — "similar problem, different numbers" indicator
+   ============================================================================ */
+.parallel-example-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 5px 12px;
+  background: #EBF8FF;
+  border: 1px solid #90CDF4;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  color: #2B6CB0;
+  font-weight: 500;
+}
+
+.parallel-icon {
+  font-size: 0.9rem;
+}
+
+[data-theme="dark"] .parallel-example-badge {
+  background: #1A365D;
+  border-color: #2B6CB0;
+  color: #90CDF4;
+}

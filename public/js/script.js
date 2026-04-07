@@ -2383,6 +2383,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.trackProblemAttempt(isCorrect);
             }
 
+            // Parallel worked example badge — show when AI is demonstrating with different numbers
+            if (data.isParallelExample) {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    const badge = document.createElement('div');
+                    badge.className = 'parallel-example-badge';
+                    badge.setAttribute('role', 'note');
+                    badge.innerHTML = '<span class="parallel-icon">\uD83D\uDD04</span> <span>Similar problem \u2014 different numbers, same method</span>';
+                    latestMessage.insertBefore(badge, latestMessage.firstChild);
+                }
+            }
+
             // Error annotation visual — show misconception label on incorrect answers
             if (data.errorAnnotation && data.problemResult === 'incorrect') {
                 const messageElements = document.querySelectorAll('.message.ai');

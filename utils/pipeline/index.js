@@ -647,6 +647,8 @@ async function runPipeline(message, ctx) {
     problemResult: persistResults.problemAnswered
       ? (persistResults.wasCorrect ? 'correct' : 'incorrect')
       : null,
+    // Parallel worked example flag — frontend can render a distinct "similar problem" label
+    isParallelExample: decision.action === ACTIONS.WORKED_EXAMPLE || decision.action === ACTIONS.EXIT_RAMP,
     // Error annotation: misconception label for frontend display (no answer revealed)
     errorAnnotation: (diagnosis.isCorrect === false && diagnosis.misconception) ? {
       name: diagnosis.misconception.name,
