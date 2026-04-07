@@ -657,6 +657,16 @@
     color: white;
 }
 
+.mp-action-icon.skill-map {
+    background: linear-gradient(135deg, #12B3B3, #0ea5a5);
+    color: white;
+}
+
+.mp-action-icon.badges {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white;
+}
+
 .mp-action-label {
     font-size: 0.82rem;
     font-weight: 600;

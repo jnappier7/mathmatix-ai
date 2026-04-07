@@ -2336,13 +2336,17 @@ router.get('/user-stats', isAuthenticated, async (req, res) => {
       });
     });
 
-    // Calculate total XP from engagement
-    const totalXP = (user.engagementMetrics?.totalXP || 0);
+    // Total XP from user profile (not engagementMetrics)
+    const totalXP = user.xp || 0;
+
+    // Current streak from daily quests
+    const currentStreak = user.dailyQuests?.currentStreak || 0;
 
     res.json({
       averageTheta: averageTheta,
       badgesEarned: badgesEarned,
-      totalXP: totalXP
+      totalXP: totalXP,
+      currentStreak: currentStreak
     });
 
   } catch (error) {

@@ -220,6 +220,16 @@
                 + '<div class="mp-action-card" id="mp-action-resources">'
                 + '  <div class="mp-action-icon resources"><i class="fas fa-book-open"></i></div>'
                 + '  <div class="mp-action-label">Resources</div>'
+                + '</div>'
+                // Skill Map
+                + '<div class="mp-action-card" id="mp-action-skill-map">'
+                + '  <div class="mp-action-icon skill-map"><i class="fas fa-project-diagram"></i></div>'
+                + '  <div class="mp-action-label">Skill Map</div>'
+                + '</div>'
+                // Badges
+                + '<div class="mp-action-card" id="mp-action-badges">'
+                + '  <div class="mp-action-icon badges"><i class="fas fa-medal"></i></div>'
+                + '  <div class="mp-action-label">Badges</div>'
                 + '</div>';
 
             wireAction('mp-action-voice', function () {
@@ -232,6 +242,12 @@
             wireAction('mp-action-resources', function () {
                 switchTab('chat');
                 setTimeout(function () { triggerClick('open-resources-modal-btn'); }, 200);
+            });
+            wireAction('mp-action-skill-map', function () {
+                window.location.href = '/skill-map.html';
+            });
+            wireAction('mp-action-badges', function () {
+                window.location.href = '/badge-map.html';
             });
         }
 
@@ -352,7 +368,6 @@
             + '<div class="mp-header">'
             + '  <h2 class="mp-header-title">Quests & Challenges</h2>'
             + '  <div class="mp-header-actions">'
-            + '    <button class="mp-header-btn" id="mp-quests-badges-btn" aria-label="Badge Map"><i class="fas fa-medal"></i></button>'
             + '  </div>'
             + '</div>'
             + '<div class="mp-content" id="mp-quests-content">'
@@ -373,10 +388,9 @@
 
         document.body.appendChild(panel);
 
-        // Badge Map button
-        document.getElementById('mp-quests-badges-btn').addEventListener('click', function () {
-            window.location.href = '/badge-map.html';
-        });
+        // Badge Map button (mastery mode shelved)
+        // var badgesBtn = document.getElementById('mp-quests-badges-btn');
+        // if (badgesBtn) badgesBtn.addEventListener('click', function () { window.location.href = '/badge-map.html'; });
 
         refreshQuestsPanel();
     }
@@ -507,15 +521,9 @@
                     + '</div>';
             }
 
-            badgeHtml += '<button class="mp-badge-map-btn" id="mp-quests-open-badges">'
-                + '  <i class="fas fa-map"></i> View Badge Map'
-                + '</button>';
+            // Badge Map button removed (mastery mode shelved)
 
             badgesEl.innerHTML = badgeHtml;
-
-            document.getElementById('mp-quests-open-badges').addEventListener('click', function () {
-                window.location.href = '/badge-map.html';
-            });
         }
     }
 
