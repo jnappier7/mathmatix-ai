@@ -1283,6 +1283,26 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(reactionContainer);
         }
 
+        // "Not what I meant" recovery button on AI messages
+        if (sender === 'ai') {
+            const recoveryBtn = document.createElement('button');
+            recoveryBtn.className = 'recovery-btn';
+            recoveryBtn.title = 'Not what I meant';
+            recoveryBtn.setAttribute('aria-label', 'Tell the tutor this is not what you meant');
+            recoveryBtn.innerHTML = '<i class="fas fa-undo-alt"></i>';
+            recoveryBtn.addEventListener('click', function() {
+                const input = document.getElementById('chat-input');
+                if (input) {
+                    input.value = "That's not what I meant. Can you re-read my message and try again?";
+                    const form = input.closest('form');
+                    if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+                }
+                this.disabled = true;
+                this.style.opacity = '0.3';
+            });
+            bubble.appendChild(recoveryBtn);
+        }
+
         // Add timestamp to message
         const timestamp = document.createElement('span');
         timestamp.className = 'message-timestamp';

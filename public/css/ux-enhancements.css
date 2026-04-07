@@ -1832,3 +1832,45 @@
   0%   { opacity: 0.8; transform: translateX(-50%) scaleY(1); }
   100% { opacity: 1; transform: translateX(-50%) scaleY(1.15) scaleX(0.9); }
 }
+
+/* ============================================================================
+   RECOVERY BUTTON — "Not what I meant" on AI messages
+   ============================================================================ */
+.recovery-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #A0AEC0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.message.ai:hover .recovery-btn,
+.message.ai:focus-within .recovery-btn {
+  opacity: 1;
+}
+
+.recovery-btn:hover {
+  background: #EDF2F7;
+  color: #4A5568;
+}
+
+.recovery-btn:disabled {
+  cursor: default;
+}
+
+[data-theme="dark"] .recovery-btn:hover {
+  background: #2D3748;
+  color: #A0AEC0;
+}
