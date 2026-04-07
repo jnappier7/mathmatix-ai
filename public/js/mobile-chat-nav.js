@@ -220,6 +220,16 @@
                 + '<div class="mp-action-card" id="mp-action-resources">'
                 + '  <div class="mp-action-icon resources"><i class="fas fa-book-open"></i></div>'
                 + '  <div class="mp-action-label">Resources</div>'
+                + '</div>'
+                // Skill Map
+                + '<div class="mp-action-card" id="mp-action-skill-map">'
+                + '  <div class="mp-action-icon skill-map"><i class="fas fa-project-diagram"></i></div>'
+                + '  <div class="mp-action-label">Skill Map</div>'
+                + '</div>'
+                // Badges
+                + '<div class="mp-action-card" id="mp-action-badges">'
+                + '  <div class="mp-action-icon badges"><i class="fas fa-medal"></i></div>'
+                + '  <div class="mp-action-label">Badges</div>'
                 + '</div>';
 
             wireAction('mp-action-voice', function () {
@@ -232,6 +242,12 @@
             wireAction('mp-action-resources', function () {
                 switchTab('chat');
                 setTimeout(function () { triggerClick('open-resources-modal-btn'); }, 200);
+            });
+            wireAction('mp-action-skill-map', function () {
+                window.location.href = '/skill-map.html';
+            });
+            wireAction('mp-action-badges', function () {
+                window.location.href = '/badge-map.html';
             });
         }
 
