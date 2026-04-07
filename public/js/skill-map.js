@@ -42,7 +42,6 @@ const state = {
 const graphContainer = document.getElementById('graph-container');
 const nodeDetail = document.getElementById('nodeDetail');
 const nodeDetailBackdrop = document.getElementById('nodeDetailBackdrop');
-const backBtn = document.getElementById('backBtn');
 const resetZoomBtn = document.getElementById('resetZoom');
 const toggleClustersBtn = document.getElementById('toggleClusters');
 const toggleLabelsBtn = document.getElementById('toggleLabels');
@@ -249,7 +248,17 @@ function calculateProgressZone(nodes) {
 // Load graph data from API
 async function loadGraphData() {
     try {
-        const response = await fetch('/api/mastery/skill-graph');
+        const response = await fetch('/api/mastery/skill-graph', { credentials: 'include' });
+
+        if (response.status === 401) {
+            window.location.href = '/login.html';
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error('Failed to load skill graph');
+        }
+
         const data = await response.json();
 
         if (!data.assessmentCompleted) {
@@ -258,6 +267,15 @@ async function loadGraphData() {
         }
 
         state.graphData = data;
+
+        if (!data.nodes || data.nodes.length === 0) {
+            document.getElementById('graph-container').innerHTML =
+                '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#b8b8d1;font-size:1.2rem;text-align:center;padding:2rem;">' +
+                '<div><p style="font-size:2rem;margin-bottom:1rem;">🌌</p>' +
+                '<p>No skills discovered yet.</p>' +
+                '<p style="font-size:0.95rem;margin-top:0.5rem;">Complete the screener to map your math journey!</p></div></div>';
+            return;
+        }
 
         // Calculate stats
         const masteredCount = data.nodes.filter(n => n.state === 'mastered').length;
@@ -332,7 +350,8 @@ function initializeGraph(data) {
         .append('svg')
         .attr('width', width)
         .attr('height', height)
-        .call(zoom);
+        .call(zoom)
+        .on('touchstart.noDefault', null); // Allow touch zoom/pan
 
     const g = svg.append('g');
 
@@ -877,10 +896,6 @@ async function startPractice() {
 
 // Event listeners
 function initializeEventListeners() {
-    backBtn.addEventListener('click', () => {
-        window.location.href = '/badge-map.html';
-    });
-
     resetZoomBtn.addEventListener('click', resetZoom);
     toggleClustersBtn.addEventListener('click', toggleClusters);
     toggleLabelsBtn.addEventListener('click', toggleLabels);

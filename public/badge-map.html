@@ -10,7 +10,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Badge Map - Mastery Mode | MATHMATIX AI</title>
+  <title>Badge Map | MATHMATIX AI</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/dailyQuests.css">
@@ -1061,7 +1061,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <p class="brand-tagline">Unlock the Pattern. Learn for Life.</p>
           </div>
           <div class="mode-indicator">
-            <i class="fas fa-trophy"></i> Mastery Mode
+            <i class="fas fa-medal"></i> Badge Map
           </div>
         </div>
 
@@ -1204,7 +1204,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     async function loadUserStats() {
       try {
         const response = await fetch('/api/mastery/user-stats', {
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
         });
 
         if (response.status === 401) {
@@ -1255,7 +1256,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // New unified pattern-based rendering
     async function loadMasteryMap() {
       try {
-        const response = await fetch('/api/mastery/mastery-map');
+        const response = await fetch('/api/mastery/mastery-map', { credentials: 'include' });
 
         if (response.status === 401) {
           console.warn('[Mastery Map] Session expired - redirecting to login');
@@ -1274,7 +1275,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         container.innerHTML = `
           <div style="text-align: center; padding: 60px;">
             <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
-            <p style="color: #666; font-size: 16px; font-weight: 600;">Complete the screener to unlock mastery mode!</p>
+            <p style="color: #666; font-size: 16px; font-weight: 600;">Complete the screener to unlock your badge map!</p>
             <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
               Take Screener <i class="fas fa-arrow-right"></i>
             </a>
@@ -1291,7 +1292,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           container.innerHTML = `
             <div style="text-align: center; padding: 60px;">
               <i class="fas fa-info-circle" style="font-size: 48px; color: #667eea; margin-bottom: 20px;"></i>
-              <p style="color: #666; font-size: 16px; font-weight: 600;">Complete the screener to unlock mastery mode!</p>
+              <p style="color: #666; font-size: 16px; font-weight: 600;">Complete the screener to unlock your badge map!</p>
               <a href="/screener.html" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-decoration: none; font-weight: 600;">
                 Take Screener <i class="fas fa-arrow-right"></i>
               </a>
@@ -1514,7 +1515,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // Load daily quests
     async function loadDailyQuests() {
       try {
-        const response = await fetch('/api/daily-quests');
+        const response = await fetch('/api/daily-quests', { credentials: 'include' });
         if (!response.ok) return;
 
         const data = await response.json();
@@ -1553,7 +1554,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // Load weekly challenges
     async function loadWeeklyChallenges() {
       try {
-        const response = await fetch('/api/weekly-challenges');
+        const response = await fetch('/api/weekly-challenges', { credentials: 'include' });
         if (!response.ok) return;
 
         const data = await response.json();

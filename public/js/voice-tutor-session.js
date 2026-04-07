@@ -14,7 +14,7 @@
     handsFree: true,
     autoListen: true,
     showVisuals: true,
-    silenceTimeout: (window._ageTierVoiceDefaults && window._ageTierVoiceDefaults.silenceTimeoutMs) || 1200,
+    silenceTimeout: (window._ageTierVoiceDefaults && window._ageTierVoiceDefaults.silenceTimeoutMs) || 1800,
     muted: false,
     tutorId: null,
     tutorName: '',
@@ -90,10 +90,11 @@
     startSessionTimer();
     addSystemMessage('Voice session started. Tap the mic or just say something.');
 
-    // Auto-start listening if hands-free (skip on mobile — requires user gesture)
+    // Auto-start listening if hands-free
+    // Delayed to let user settle in; skipped entirely on mobile (requires user gesture)
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
     if (state.handsFree && !isMobile) {
-      setTimeout(() => startListening(), 800);
+      setTimeout(() => startListening(), 1500);
     }
   }
 
@@ -154,8 +155,8 @@
     // Main mic button — handle both click and touchend for mobile responsiveness
     function handleMicTap(e) {
       if (e) e.preventDefault();
-      if (state.mode === 'starting' || state.mode === 'thinking') return;
-      if (state.mode === 'speaking') {
+      if (state.mode === 'starting') return;
+      if (state.mode === 'speaking' || state.mode === 'thinking') {
         interruptAndListen();
       } else if (state.mode === 'listening') {
         stopListening();
@@ -213,14 +214,14 @@
 
       if (e.code === 'Space') {
         e.preventDefault();
-        if (state.mode === 'starting' || state.mode === 'thinking') return;
-        if (state.mode === 'speaking') interruptAndListen();
+        if (state.mode === 'starting') return;
+        if (state.mode === 'speaking' || state.mode === 'thinking') interruptAndListen();
         else if (state.mode === 'listening') stopListening();
         else startListening();
       }
       if (e.code === 'Escape') {
         if (state.mode === 'listening') stopListening();
-        else if (state.mode === 'speaking') stopSpeaking();
+        else if (state.mode === 'speaking' || state.mode === 'thinking') stopSpeaking();
       }
     });
   }
@@ -369,14 +370,14 @@
 
     // --- VAD tuning ---
     const VAD_INTERVAL_MS = 50;        // Check every 50ms (setInterval, not rAF)
-    const SILENCE_FRAMES_REQUIRED = 3; // ~150ms of consecutive silence (reduced from 5 for faster detection)
-    const MIN_SPEECH_DURATION = 300;   // Ignore speech bursts shorter than this (reduced from 400)
-    const FIXED_THRESHOLD_DB = -38;    // Fixed fallback threshold
+    const SILENCE_FRAMES_REQUIRED = 8; // ~400ms of consecutive silence before starting countdown
+    const MIN_SPEECH_DURATION = 500;   // Ignore speech bursts shorter than 500ms
+    const FIXED_THRESHOLD_DB = -42;    // Fixed fallback threshold (more permissive)
 
-    // Adaptive noise floor: measure ambient level during first ~500ms
+    // Adaptive noise floor: measure ambient level during first ~750ms
     let noiseFloorDb = -50;
     let calibrationSamples = [];
-    const CALIBRATION_FRAMES = 10;     // 10 × 50ms = 500ms
+    const CALIBRATION_FRAMES = 15;     // 15 × 50ms = 750ms
     let calibrated = false;
 
     state.isSpeaking = false;
@@ -406,8 +407,9 @@
           // Use the median of calibration samples as noise floor
           calibrationSamples.sort((a, b) => a - b);
           const median = calibrationSamples[Math.floor(calibrationSamples.length / 2)];
-          // Set threshold 8dB above noise floor (but no lower than fixed threshold)
-          noiseFloorDb = Math.max(median + 8, FIXED_THRESHOLD_DB);
+          // Set threshold 6dB above noise floor (but no lower than fixed threshold)
+          // Lower margin = more sensitive to speech, less likely to cut off
+          noiseFloorDb = Math.max(median + 6, FIXED_THRESHOLD_DB);
           calibrated = true;
           calibrationSamples = null; // free memory
         }
@@ -1159,7 +1161,7 @@
           if (micIcon) micIcon.className = 'fas fa-stop';
           break;
         case 'thinking':
-          if (micIcon) micIcon.className = 'fas fa-microphone';
+          if (micIcon) micIcon.className = 'fas fa-hand';
           drawThinkingWaveform();
           break;
         case 'speaking':
@@ -1179,7 +1181,7 @@
     const statusTextMap = {
       idle: 'Tap to speak',
       listening: 'Listening...',
-      thinking: 'Thinking...',
+      thinking: 'Thinking — tap to interrupt',
       speaking: 'Speaking — tap to interrupt'
     };
 

@@ -689,25 +689,53 @@
     .map-controls {
         flex-direction: column;
         align-items: flex-start;
+        padding: 1rem;
+    }
+
+    .map-title h1 {
+        font-size: 1.3rem;
     }
 
     .map-stats {
         flex-wrap: wrap;
     }
 
+    .stat-pill {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .view-controls {
+        flex-wrap: wrap;
+    }
+
     .pattern-legend,
     .state-legend {
-        position: static;
-        margin: 1rem;
-        max-width: 100%;
+        display: none;
     }
 
     #graph-container {
-        height: 500px;
+        height: calc(100vh - 200px);
+        min-height: 400px;
     }
 
     .node-detail {
         width: 95vw;
+        right: 2.5vw;
+    }
+
+    .breadcrumb-trail {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .main-header {
+        padding: 10px 15px;
+    }
+
+    .header-actions .btn-secondary {
+        font-size: 0.85rem;
+        padding: 6px 12px;
     }
 }
 
