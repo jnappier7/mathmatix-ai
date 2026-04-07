@@ -2383,6 +2383,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.trackProblemAttempt(isCorrect);
             }
 
+            // Error annotation visual — show misconception label on incorrect answers
+            if (data.errorAnnotation && data.problemResult === 'incorrect') {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage) {
+                    const annotation = document.createElement('div');
+                    annotation.className = 'error-annotation';
+                    annotation.setAttribute('role', 'status');
+                    annotation.setAttribute('aria-label', `Misconception detected: ${data.errorAnnotation.name}`);
+
+                    const icon = document.createElement('span');
+                    icon.className = 'error-annotation-icon';
+                    icon.textContent = '\u26A0'; // warning triangle
+
+                    const label = document.createElement('span');
+                    label.className = 'error-annotation-label';
+                    label.textContent = data.errorAnnotation.name;
+
+                    annotation.appendChild(icon);
+                    annotation.appendChild(label);
+
+                    if (data.errorAnnotation.description) {
+                        const desc = document.createElement('span');
+                        desc.className = 'error-annotation-desc';
+                        desc.textContent = data.errorAnnotation.description;
+                        annotation.appendChild(desc);
+                    }
+
+                    latestMessage.appendChild(annotation);
+                }
+            }
+
             // XP Ladder display
             if (data.xpLadder) {
                 const xp = data.xpLadder;

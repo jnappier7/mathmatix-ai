@@ -647,6 +647,12 @@ async function runPipeline(message, ctx) {
     problemResult: persistResults.problemAnswered
       ? (persistResults.wasCorrect ? 'correct' : 'incorrect')
       : null,
+    // Error annotation: misconception label for frontend display (no answer revealed)
+    errorAnnotation: (diagnosis.isCorrect === false && diagnosis.misconception) ? {
+      name: diagnosis.misconception.name,
+      description: diagnosis.misconception.description || null,
+      source: diagnosis.misconception.source, // 'library' or 'ai_analysis'
+    } : null,
     leveledUp: persistResults.leveledUp,
     tutorsUnlocked: persistResults.tutorsUnlocked,
     iepGoalUpdates: persistResults.iepGoalUpdates,

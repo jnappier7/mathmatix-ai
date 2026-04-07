@@ -1085,6 +1085,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             iepFeatures,
             iepGoalUpdates: pipelineResult.iepGoalUpdates?.length > 0 ? pipelineResult.iepGoalUpdates : null,
             problemResult: pipelineResult.problemResult,
+            errorAnnotation: pipelineResult.errorAnnotation || null,
             sessionStats: pipelineResult.sessionStats,
             xpLadder: {
                 ...pipelineResult.xpBreakdown,

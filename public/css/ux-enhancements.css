@@ -1594,3 +1594,72 @@
   background: #F0F4F8;
   color: #0F1A24;
 }
+
+/* ============================================================================
+   ERROR ANNOTATION — misconception label on incorrect answers
+   ============================================================================ */
+.error-annotation {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #FFF5F5;
+  border: 1px solid #FEB2B2;
+  border-left: 4px solid #E53E3E;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  animation: annotationSlideIn 0.3s ease-out;
+}
+
+.error-annotation-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.error-annotation-label {
+  font-weight: 600;
+  color: #C53030;
+}
+
+.error-annotation-desc {
+  display: block;
+  color: #742A2A;
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+/* Stack label + description vertically when description exists */
+.error-annotation:has(.error-annotation-desc) {
+  flex-wrap: wrap;
+}
+
+.error-annotation:has(.error-annotation-desc) .error-annotation-label {
+  width: calc(100% - 28px);
+}
+
+.error-annotation:has(.error-annotation-desc) .error-annotation-desc {
+  width: 100%;
+  padding-left: 28px;
+}
+
+@keyframes annotationSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark mode */
+[data-theme="dark"] .error-annotation {
+  background: #2D1B1B;
+  border-color: #9B2C2C;
+}
+
+[data-theme="dark"] .error-annotation-label {
+  color: #FEB2B2;
+}
+
+[data-theme="dark"] .error-annotation-desc {
+  color: #FC8181;
+}
