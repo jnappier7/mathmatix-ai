@@ -155,8 +155,8 @@
     // Main mic button — handle both click and touchend for mobile responsiveness
     function handleMicTap(e) {
       if (e) e.preventDefault();
-      if (state.mode === 'starting' || state.mode === 'thinking') return;
-      if (state.mode === 'speaking') {
+      if (state.mode === 'starting') return;
+      if (state.mode === 'speaking' || state.mode === 'thinking') {
         interruptAndListen();
       } else if (state.mode === 'listening') {
         stopListening();
@@ -214,14 +214,14 @@
 
       if (e.code === 'Space') {
         e.preventDefault();
-        if (state.mode === 'starting' || state.mode === 'thinking') return;
-        if (state.mode === 'speaking') interruptAndListen();
+        if (state.mode === 'starting') return;
+        if (state.mode === 'speaking' || state.mode === 'thinking') interruptAndListen();
         else if (state.mode === 'listening') stopListening();
         else startListening();
       }
       if (e.code === 'Escape') {
         if (state.mode === 'listening') stopListening();
-        else if (state.mode === 'speaking') stopSpeaking();
+        else if (state.mode === 'speaking' || state.mode === 'thinking') stopSpeaking();
       }
     });
   }
@@ -1161,7 +1161,7 @@
           if (micIcon) micIcon.className = 'fas fa-stop';
           break;
         case 'thinking':
-          if (micIcon) micIcon.className = 'fas fa-microphone';
+          if (micIcon) micIcon.className = 'fas fa-hand';
           drawThinkingWaveform();
           break;
         case 'speaking':
@@ -1181,7 +1181,7 @@
     const statusTextMap = {
       idle: 'Tap to speak',
       listening: 'Listening...',
-      thinking: 'Thinking...',
+      thinking: 'Thinking — tap to interrupt',
       speaking: 'Speaking — tap to interrupt'
     };
 
