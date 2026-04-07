@@ -74,6 +74,7 @@ function selectStrategy(tutorPlan, courseSession, lastConversation) {
         unfinished: tutorPlan.lastSession.unfinishedBusiness,
         lastTopic: tutorPlan.lastSession.topic,
         lastSkill: tutorPlan.lastSession.skillId,
+        lastProblemState: lastConversation?.lastProblemState || null, // from conversation doc
       },
     });
   }
@@ -165,18 +166,26 @@ function buildOpener(strategy, ctx) {
 
   switch (strategy.type) {
     case STRATEGIES.CONTINUITY: {
-      const { unfinished, lastTopic } = strategy.data;
+      const { unfinished, lastTopic, lastProblemState } = strategy.data;
+      const directives = [
+        `SESSION OPENER: CONTINUITY. The student left off mid-session last time.`,
+        `Unfinished business: "${unfinished}"`,
+        `Greet the student warmly and acknowledge where they left off.`,
+        `Ask if they want to pick up where they stopped, or work on something else.`,
+        `Be specific about what was left undone — the student should know you remember.`,
+      ];
+      // If there's a saved problem state, tell the AI about it
+      if (lastProblemState && lastProblemState.problemText) {
+        directives.push(`The student was working on a problem (${lastProblemState.attemptCount} attempt${lastProblemState.attemptCount !== 1 ? 's' : ''}).`);
+        if (lastProblemState.misconception) {
+          directives.push(`Their last misconception was: "${lastProblemState.misconception}". Address this if they resume.`);
+        }
+      }
       return {
         greeting: null, // Let the AI generate this — just give it the directive
         suggestedTopic: lastTopic,
         suggestedMode: tutorPlan?.currentTarget?.instructionalMode || 'guide',
-        directives: [
-          `SESSION OPENER: CONTINUITY. The student left off mid-session last time.`,
-          `Unfinished business: "${unfinished}"`,
-          `Greet the student warmly and acknowledge where they left off.`,
-          `Ask if they want to pick up where they stopped, or work on something else.`,
-          `Be specific about what was left undone — the student should know you remember.`,
-        ],
+        directives,
         suggestionChips: [
           { text: 'Pick up where we left off', message: "Let's continue where we stopped!" },
           { text: 'Something else today', message: "I'd like to work on something different today" },

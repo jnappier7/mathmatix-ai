@@ -152,6 +152,25 @@ async function persist(params) {
     conversation.messages[conversation.messages.length - 1].scaffoldAdvanced = true;
   }
 
+  // ── 7b. Persist last problem state for session continuity ──
+  if (results.problemAnswered && !results.wasCorrect) {
+    // Student is still working on this problem — save state for resume
+    const existingState = conversation.lastProblemState || {};
+    conversation.lastProblemState = {
+      problemText: existingState.problemText || (diagnosis.problemInfo?.content
+        ? diagnosis.problemInfo.content.substring(0, 200) : null),
+      attemptCount: (existingState.attemptCount || 0) + 1,
+      lastAttempt: diagnosis.answer,
+      misconception: diagnosis.misconception?.name || null,
+      updatedAt: new Date(),
+    };
+    conversation.markModified?.('lastProblemState');
+  } else if (results.wasCorrect) {
+    // Problem solved — clear state
+    conversation.lastProblemState = null;
+    conversation.markModified?.('lastProblemState');
+  }
+
   conversation.lastActivity = new Date();
 
   // Persist session mood for dashboard visibility

@@ -1514,7 +1514,7 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
         })
         .sort({ lastActivity: -1 })
         .limit(1)
-        .select('summary currentTopic strugglingWith lastActivity problemsAttempted problemsCorrect')
+        .select('summary currentTopic strugglingWith lastActivity problemsAttempted problemsCorrect lastProblemState')
         .lean();
 
         if (!lastConversation) {
@@ -1531,7 +1531,8 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
             strugglingWith: lastConversation.strugglingWith,
             problemsAttempted: lastConversation.problemsAttempted || 0,
             problemsCorrect: lastConversation.problemsCorrect || 0,
-            hoursAgo: hoursAgo
+            hoursAgo: hoursAgo,
+            lastProblemState: lastConversation.lastProblemState || null,
         });
 
     } catch (error) {
@@ -1886,7 +1887,7 @@ async function handleGreetingRequest(req, res, userId) {
                         user,
                         courseSession: null,
                         tutorProfile: currentTutor,
-                        lastConversation: lastSessionContext ? { context: lastSessionContext, struggling: strugglingWith } : null,
+                        lastConversation: lastSessionContext ? { context: lastSessionContext, struggling: strugglingWith, lastProblemState: activeConversation.lastProblemState || null } : null,
                     });
                     console.log(`[Greeting] Session opener strategy: ${openerResult.strategy}`);
                 }
