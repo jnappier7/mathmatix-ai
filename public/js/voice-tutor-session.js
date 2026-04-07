@@ -230,6 +230,47 @@
   // VOICE INPUT — LISTENING
   // ═══════════════════════════════════════
 
+  /**
+   * Acquire a persistent mic stream (called once, reused across turns).
+   * Skips getUserMedia if we already have a live stream.
+   */
+  async function ensureMicStream() {
+    // Reuse existing live stream
+    if (state.mediaStream) {
+      const tracks = state.mediaStream.getAudioTracks();
+      if (tracks.length > 0 && tracks[0].readyState === 'live') {
+        return state.mediaStream;
+      }
+      // Stream died — clean up and re-acquire
+      state.mediaStream = null;
+    }
+
+    state.mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+        channelCount: 1,
+        sampleRate: 16000
+      }
+    });
+
+    return state.mediaStream;
+  }
+
+  /**
+   * Ensure we have a usable AudioContext (created once, reused across turns).
+   */
+  async function ensureAudioContext() {
+    if (!state.audioContext || state.audioContext.state === 'closed') {
+      state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (state.audioContext.state === 'suspended') {
+      await state.audioContext.resume();
+    }
+    return state.audioContext;
+  }
+
   async function startListening() {
     if (state.mode === 'listening' || state.mode === 'thinking') return;
 
@@ -250,28 +291,13 @@
     }, 5000);
 
     try {
-      // Resume AudioContext
-      if (!state.audioContext || state.audioContext.state === 'closed') {
-        state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (state.audioContext.state === 'suspended') {
-        await state.audioContext.resume();
-      }
-
-      state.mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          channelCount: 1,
-          sampleRate: 16000
-        }
-      });
+      await ensureAudioContext();
+      const stream = await ensureMicStream();
 
       clearTimeout(startingTimeout);
       if (dom.micBtn) dom.micBtn.style.opacity = '';
 
-      state.mediaRecorder = new MediaRecorder(state.mediaStream, {
+      state.mediaRecorder = new MediaRecorder(stream, {
         mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
           ? 'audio/webm;codecs=opus'
           : 'audio/webm'
@@ -284,7 +310,7 @@
 
       state.mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: 'audio/webm' });
-        state.mediaStream?.getTracks().forEach(t => t.stop());
+        // DON'T kill the stream — keep it alive for the next turn
         if (blob.size > 1000) { // Minimum size to avoid empty recordings
           await processVoiceInput(blob);
         } else {
@@ -293,7 +319,7 @@
       };
 
       // Setup VAD (voice activity detection)
-      setupVAD(state.mediaStream);
+      setupVAD(stream);
 
       state.mediaRecorder.start();
       setMode('listening');
@@ -562,7 +588,7 @@
             await playResponse(phase.audioUrl, responseText);
           } else {
             if (state.handsFree && state.autoListen) {
-              setTimeout(() => startListening(), 400);
+              setTimeout(() => startListening(), 80);
             } else {
               setMode('idle');
             }
@@ -579,7 +605,7 @@
     // If stream ended without an audio phase, go back to idle/listening
     if (!gotAudio) {
       if (state.handsFree && state.autoListen) {
-        setTimeout(() => startListening(), 400);
+        setTimeout(() => startListening(), 80);
       } else {
         setMode('idle');
       }
@@ -604,7 +630,7 @@
       playResponse(data.audioUrl, data.response || '');
     } else {
       if (state.handsFree && state.autoListen) {
-        setTimeout(() => startListening(), 400);
+        setTimeout(() => startListening(), 80);
       } else {
         setMode('idle');
       }
@@ -709,7 +735,7 @@
         hideTranscript();
 
         if (startNext && state.handsFree && state.autoListen) {
-          setTimeout(() => startListening(), 400);
+          setTimeout(() => startListening(), 80);
         } else if (startNext) {
           setMode('idle');
         }
@@ -757,12 +783,9 @@
 
     stopSpeaking();
 
-    // Close existing AudioContext so startListening gets a fresh one
-    // (avoids conflicts with the playback MediaElementSource)
-    if (state.audioContext && state.audioContext.state !== 'closed') {
-      state.audioContext.close().catch(() => {});
-      state.audioContext = null;
-    }
+    // AudioContext and mic stream are kept alive — no need to tear down.
+    // ensureAudioContext() and ensureMicStream() in startListening() will
+    // reuse the existing instances, saving ~300-500ms per turn.
 
     startListening();
   }
