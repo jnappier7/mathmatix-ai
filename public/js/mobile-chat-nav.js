@@ -352,7 +352,6 @@
             + '<div class="mp-header">'
             + '  <h2 class="mp-header-title">Quests & Challenges</h2>'
             + '  <div class="mp-header-actions">'
-            + '    <button class="mp-header-btn" id="mp-quests-badges-btn" aria-label="Badge Map"><i class="fas fa-medal"></i></button>'
             + '  </div>'
             + '</div>'
             + '<div class="mp-content" id="mp-quests-content">'
@@ -373,10 +372,9 @@
 
         document.body.appendChild(panel);
 
-        // Badge Map button
-        document.getElementById('mp-quests-badges-btn').addEventListener('click', function () {
-            window.location.href = '/badge-map.html';
-        });
+        // Badge Map button (mastery mode shelved)
+        // var badgesBtn = document.getElementById('mp-quests-badges-btn');
+        // if (badgesBtn) badgesBtn.addEventListener('click', function () { window.location.href = '/badge-map.html'; });
 
         refreshQuestsPanel();
     }
@@ -507,15 +505,9 @@
                     + '</div>';
             }
 
-            badgeHtml += '<button class="mp-badge-map-btn" id="mp-quests-open-badges">'
-                + '  <i class="fas fa-map"></i> View Badge Map'
-                + '</button>';
+            // Badge Map button removed (mastery mode shelved)
 
             badgesEl.innerHTML = badgeHtml;
-
-            document.getElementById('mp-quests-open-badges').addEventListener('click', function () {
-                window.location.href = '/badge-map.html';
-            });
         }
     }
 

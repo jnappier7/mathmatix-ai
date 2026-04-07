@@ -762,15 +762,7 @@ class Sidebar {
     }
 
     setupToolHandlers() {
-        // Mastery Mode
-        const masteryBtn = document.getElementById('sidebar-mastery-btn');
-        if (masteryBtn) {
-            masteryBtn.addEventListener('click', () => {
-                const mainMasteryBtn = document.getElementById('mastery-mode-btn');
-                if (mainMasteryBtn) mainMasteryBtn.click();
-            });
-        }
-
+        // Mastery Mode (shelved)
     }
 
     async loadProgress() {
