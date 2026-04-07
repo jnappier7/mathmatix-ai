@@ -3140,6 +3140,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!mkPanel || !mkField || !mkWrapper || !userInput) return;
         mathModeOn = true;
 
+        const isMobile = window.innerWidth <= 768;
+
         // Swap input: hide text input, show math field + wrapper
         userInput.style.display = 'none';
         mkWrapper.style.display = '';
@@ -3149,10 +3151,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Close old overlay palette if open
         if (typeof closeEquationPalette === 'function') closeEquationPalette();
 
-        // Blur native keyboard on mobile, then focus math field
-        if (window.innerWidth <= 768) {
+        // On mobile: suppress native keyboard by setting inputmode="none"
+        // before focusing, so only our custom math keyboard shows
+        if (isMobile) {
             document.activeElement?.blur();
-            setTimeout(() => mkField.focus(), 50);
+            mkField.setAttribute('inputmode', 'none');
+            // Prevent MathLive from showing its own virtual keyboard
+            mkField.mathVirtualKeyboardPolicy = 'manual';
+            setTimeout(() => {
+                mkField.focus({ preventScroll: true });
+            }, 80);
         } else {
             mkField.focus();
         }

@@ -90,8 +90,9 @@
     startSessionTimer();
     addSystemMessage('Voice session started. Tap the mic or just say something.');
 
-    // Auto-start listening if hands-free
-    if (state.handsFree) {
+    // Auto-start listening if hands-free (skip on mobile — requires user gesture)
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    if (state.handsFree && !isMobile) {
       setTimeout(() => startListening(), 800);
     }
   }
@@ -150,8 +151,9 @@
   // ═══════════════════════════════════════
 
   function setupEventListeners() {
-    // Main mic button
-    dom.micBtn.addEventListener('click', () => {
+    // Main mic button — handle both click and touchend for mobile responsiveness
+    function handleMicTap(e) {
+      if (e) e.preventDefault();
       if (state.mode === 'starting' || state.mode === 'thinking') return;
       if (state.mode === 'speaking') {
         interruptAndListen();
@@ -160,6 +162,17 @@
       } else {
         startListening();
       }
+    }
+
+    // Use touchend on mobile to bypass 300ms click delay; fall back to click
+    let touchHandled = false;
+    dom.micBtn.addEventListener('touchend', (e) => {
+      touchHandled = true;
+      handleMicTap(e);
+    }, { passive: false });
+    dom.micBtn.addEventListener('click', (e) => {
+      if (touchHandled) { touchHandled = false; return; }
+      handleMicTap(e);
     });
 
     // End session
@@ -222,6 +235,19 @@
     // Guard: set mode immediately to prevent double-click races
     state.mode = 'starting';
 
+    // Show immediate visual feedback so user knows the tap registered
+    if (dom.statusText) dom.statusText.textContent = 'Starting mic...';
+    if (dom.micBtn) dom.micBtn.style.opacity = '0.6';
+
+    // Safety: if 'starting' hangs for >5s (e.g. permission dialog dismissed), reset
+    const startingTimeout = setTimeout(() => {
+      if (state.mode === 'starting') {
+        console.warn('[VoiceTutor] startListening timed out in starting state');
+        setMode('idle');
+        showToast('Mic timed out. Tap to try again.');
+      }
+    }, 5000);
+
     try {
       // Resume AudioContext
       if (!state.audioContext || state.audioContext.state === 'closed') {
@@ -240,6 +266,9 @@
           sampleRate: 16000
         }
       });
+
+      clearTimeout(startingTimeout);
+      if (dom.micBtn) dom.micBtn.style.opacity = '';
 
       state.mediaRecorder = new MediaRecorder(state.mediaStream, {
         mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
@@ -275,6 +304,9 @@
       }, MAX_RECORDING_DURATION);
 
     } catch (err) {
+      clearTimeout(startingTimeout);
+      if (dom.micBtn) dom.micBtn.style.opacity = '';
+
       console.error('[VoiceTutor] Mic error:', err);
       let msg = 'Could not access microphone.';
       if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
@@ -293,6 +325,8 @@
         msg += ' Make sure no other app is using your microphone and try again.';
       }
       addSystemMessage(msg);
+      // Also show a toast so mobile users see the error (chat panel may be hidden)
+      showToast(msg);
       setMode('idle');
     }
   }
@@ -1244,6 +1278,27 @@
     el.textContent = text;
     dom.chatMessages.appendChild(el);
     dom.chatMessages.scrollTo({ top: dom.chatMessages.scrollHeight, behavior: 'smooth' });
+  }
+
+  /** Show a floating toast message visible on mobile even when chat panel is hidden */
+  function showToast(text, duration) {
+    duration = duration || 4000;
+    const existing = document.querySelector('.vt-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'vt-toast';
+    toast.textContent = text;
+    toast.setAttribute('role', 'alert');
+    document.body.appendChild(toast);
+
+    // Trigger enter animation
+    requestAnimationFrame(() => toast.classList.add('vt-toast-visible'));
+
+    setTimeout(() => {
+      toast.classList.remove('vt-toast-visible');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
   }
 
   function renderMathInText(text) {
