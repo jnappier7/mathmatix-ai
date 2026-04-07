@@ -2415,6 +2415,62 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Hint button — show on incorrect answers so student can request help
+            if (data.problemResult === 'incorrect') {
+                const messageElements = document.querySelectorAll('.message.ai');
+                const latestMessage = messageElements[messageElements.length - 1];
+                if (latestMessage && !latestMessage.querySelector('.hint-button-row')) {
+                    window._hintLevel = (window._hintLevel || 0);
+                    // Reset hint counter when student gets something correct
+                    const hintRow = document.createElement('div');
+                    hintRow.className = 'hint-button-row';
+
+                    const nextLevel = Math.min((window._hintLevel || 0) + 1, 3);
+                    const labels = { 1: 'Need a hint?', 2: 'More help (-10 XP)', 3: 'Show me with different numbers (-25 XP)' };
+                    const hintBtn = document.createElement('button');
+                    hintBtn.className = 'hint-button';
+                    hintBtn.textContent = labels[nextLevel];
+                    hintBtn.dataset.hintLevel = nextLevel;
+
+                    hintBtn.addEventListener('click', async function() {
+                        const level = parseInt(this.dataset.hintLevel, 10);
+                        this.disabled = true;
+                        this.textContent = 'Getting hint...';
+
+                        // Deduct XP for levels 2+
+                        if (level >= 2) {
+                            try {
+                                await fetch('/api/chat/deduct-hint-xp', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ hintLevel: level }),
+                                });
+                            } catch (e) { /* non-blocking */ }
+                        }
+
+                        window._hintLevel = level;
+                        const messages = {
+                            1: 'Can I get a hint?',
+                            2: 'I still need help. Can you break it down more?',
+                            3: 'Can you show me how to solve a similar problem with different numbers?',
+                        };
+                        // Send hint request through normal chat
+                        const input = document.getElementById('chat-input');
+                        if (input) {
+                            input.value = messages[level];
+                            const form = input.closest('form');
+                            if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+                        }
+                    });
+
+                    hintRow.appendChild(hintBtn);
+                    latestMessage.appendChild(hintRow);
+                }
+            } else if (data.problemResult === 'correct') {
+                // Reset hint counter on correct answers
+                window._hintLevel = 0;
+            }
+
             // XP Ladder display
             if (data.xpLadder) {
                 const xp = data.xpLadder;

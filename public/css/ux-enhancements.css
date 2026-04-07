@@ -1663,3 +1663,47 @@
 [data-theme="dark"] .error-annotation-desc {
   color: #FC8181;
 }
+
+/* ============================================================================
+   HINT BUTTON — XP-gated hint request
+   ============================================================================ */
+.hint-button-row {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.hint-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #5B21B6;
+  background: #EDE9FE;
+  border: 1px solid #C4B5FD;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.hint-button:hover:not(:disabled) {
+  background: #DDD6FE;
+  transform: translateY(-1px);
+}
+
+.hint-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .hint-button {
+  color: #C4B5FD;
+  background: #2E1065;
+  border-color: #5B21B6;
+}
+
+[data-theme="dark"] .hint-button:hover:not(:disabled) {
+  background: #3B0764;
+}
