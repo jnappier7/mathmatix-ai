@@ -1765,8 +1765,27 @@
 
 /* ============================================================================
    STREAK FIRE — NBA Jam "He's on fire!" send button
+   2 correct = heating up (warm glow), 3+ = on fire (growing flames)
    ============================================================================ */
+
+/* --- HEATING UP (2 correct) --- */
+#send-button.heating-up {
+  position: relative;
+  background: linear-gradient(180deg, #F6AD55 0%, #ED8936 100%) !important;
+  color: #FFF !important;
+  border-color: #DD6B20 !important;
+  box-shadow: 0 0 8px rgba(237, 137, 54, 0.5), 0 0 16px rgba(237, 137, 54, 0.2);
+  animation: warmGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes warmGlow {
+  from { box-shadow: 0 0 8px rgba(237, 137, 54, 0.5), 0 0 16px rgba(237, 137, 54, 0.2); }
+  to   { box-shadow: 0 0 14px rgba(237, 137, 54, 0.7), 0 0 24px rgba(237, 137, 54, 0.3); }
+}
+
+/* --- ON FIRE (3+ correct) --- */
 #send-button.on-fire {
+  --fire-scale: 1;
   position: relative;
   background: linear-gradient(180deg, #FF6B00 0%, #FF2D00 100%) !important;
   color: #FFF !important;
@@ -1780,7 +1799,7 @@
   position: absolute;
   top: -8px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(var(--fire-scale, 1));
   width: 20px;
   height: 20px;
   background: radial-gradient(ellipse at bottom, #FF6B00 0%, #FF2D00 40%, transparent 70%);
@@ -1794,7 +1813,7 @@
   position: absolute;
   top: -14px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scale(var(--fire-scale, 1));
   width: 12px;
   height: 14px;
   background: radial-gradient(ellipse at bottom, #FFD700 0%, #FF6B00 50%, transparent 80%);

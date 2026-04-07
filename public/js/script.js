@@ -1640,11 +1640,26 @@ document.addEventListener("DOMContentLoaded", () => {
     window.showSuggestions = showSuggestions;
     window.hideSuggestions = hideSuggestions;
 
-    // Helper function to start a streaming message (creates empty bubble)
+    // Helper function to start a streaming message (creates empty bubble with avatar)
     function startStreamingMessage() {
         if (!chatBox) return null;
 
         _streamRawText = ''; // Reset raw text accumulator
+
+        // Create message container with avatar (same structure as appendMessage)
+        const messageContainer = document.createElement("div");
+        messageContainer.className = "message-container ai";
+
+        // Add tutor avatar
+        if (currentUser && currentUser.selectedTutorId && typeof TUTOR_CONFIG !== 'undefined') {
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+            const tutor = TUTOR_CONFIG[currentUser.selectedTutorId] || TUTOR_CONFIG.default;
+            if (tutor && tutor.image) {
+                avatar.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name || 'Tutor'}" />`;
+            }
+            messageContainer.appendChild(avatar);
+        }
 
         const bubble = document.createElement("div");
         bubble.className = "message ai streaming";
@@ -1656,10 +1671,11 @@ document.addEventListener("DOMContentLoaded", () => {
         textNode.textContent = ''; // Start empty
         bubble.appendChild(textNode);
 
-        chatBox.appendChild(bubble);
+        messageContainer.appendChild(bubble);
+        chatBox.appendChild(messageContainer);
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        return { bubble, textNode };
+        return { bubble, textNode, messageContainer };
     }
 
     // Accumulate raw text for streaming — we keep the raw source
@@ -2505,28 +2521,47 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             // Streak momentum — NBA Jam "He's on fire!" send button
+            // 2 correct = "heating up" (glow), 3+ = "on fire!" (flames that grow)
             if (data.problemResult) {
                 const sendBtn = document.getElementById('send-button');
                 if (data.problemResult === 'correct') {
                     window._streakCount = (window._streakCount || 0) + 1;
-                    if (window._streakCount >= 2 && sendBtn) {
-                        sendBtn.classList.add('on-fire');
-                        sendBtn.dataset.streak = window._streakCount;
-                        // Update or create streak counter badge
-                        let badge = sendBtn.querySelector('.streak-badge');
-                        if (!badge) {
-                            badge = document.createElement('span');
-                            badge.className = 'streak-badge';
-                            sendBtn.appendChild(badge);
+                    if (sendBtn) {
+                        if (window._streakCount === 2) {
+                            // Heating up — warm glow, no flames yet
+                            sendBtn.classList.add('heating-up');
+                            sendBtn.classList.remove('on-fire');
+                            sendBtn.dataset.streak = window._streakCount;
+                            let badge = sendBtn.querySelector('.streak-badge');
+                            if (!badge) {
+                                badge = document.createElement('span');
+                                badge.className = 'streak-badge';
+                                sendBtn.appendChild(badge);
+                            }
+                            badge.textContent = window._streakCount;
+                        } else if (window._streakCount >= 3) {
+                            // ON FIRE! Flames that grow with streak
+                            sendBtn.classList.remove('heating-up');
+                            sendBtn.classList.add('on-fire');
+                            sendBtn.dataset.streak = window._streakCount;
+                            // Scale flames with streak (3=1x, 5=1.4x, 7=1.8x, capped at 2x)
+                            const fireScale = Math.min(2, 1 + (window._streakCount - 3) * 0.2);
+                            sendBtn.style.setProperty('--fire-scale', fireScale);
+                            let badge = sendBtn.querySelector('.streak-badge');
+                            if (!badge) {
+                                badge = document.createElement('span');
+                                badge.className = 'streak-badge';
+                                sendBtn.appendChild(badge);
+                            }
+                            badge.textContent = window._streakCount;
                         }
-                        badge.textContent = window._streakCount;
                     }
                 } else if (data.problemResult === 'incorrect') {
                     if (window._streakCount >= 2 && sendBtn) {
-                        sendBtn.classList.remove('on-fire');
+                        sendBtn.classList.remove('on-fire', 'heating-up');
+                        sendBtn.style.removeProperty('--fire-scale');
                         const badge = sendBtn.querySelector('.streak-badge');
                         if (badge) badge.remove();
-                        // Show streak-end toast
                         if (typeof showToast === 'function') {
                             showToast(`${window._streakCount} in a row \u2014 nice run!`, 3000);
                         }
