@@ -261,6 +261,13 @@ function detectMathProblem(message) {
         }
     }
 
+    // Pattern: Probability — "probability of drawing a heart", "P(red)", "chance of rolling a 6"
+    // Handles standard deck, dice, coins, and explicit "N out of M" / "N/M" setups.
+    const probMatch = detectProbability(message);
+    if (probMatch) {
+        return probMatch;
+    }
+
     // Pattern: Proportion / cross-multiplication — "solve x/4 = 3/8", "2/5 = x/15"
     // Also: "if 5 items cost $3.50, how much for 8 items" → too NLP-heavy, skip for now
     const proportionPattern1 = /(\d+\.?\d*|x)\s*\/\s*(\d+\.?\d*|x)\s*=\s*(\d+\.?\d*|x)\s*\/\s*(\d+\.?\d*|x)/i;
@@ -538,6 +545,8 @@ function solveProblem(problem) {
                 return solveAbsoluteValue(problem);
             case 'statistics':
                 return solveStatistics(problem);
+            case 'probability':
+                return solveProbability(problem);
             case 'proportion':
                 return solveProportion(problem);
             case 'circle':
@@ -1686,6 +1695,206 @@ function solveStatistics(problem) {
     }
 }
 
+// ── Probability detection and solving ──
+
+// Standard deck knowledge
+const DECK = {
+  total: 52,
+  suits: { heart: 13, hearts: 13, diamond: 13, diamonds: 13, club: 13, clubs: 13, spade: 13, spades: 13 },
+  colors: { red: 26, black: 26 },
+  ranks: {
+    ace: 4, aces: 4, king: 4, kings: 4, queen: 4, queens: 4, jack: 4, jacks: 4,
+    '2': 4, '3': 4, '4': 4, '5': 4, '6': 4, '7': 4, '8': 4, '9': 4, '10': 4,
+    two: 4, three: 4, four: 4, five: 4, six: 4, seven: 4, eight: 4, nine: 4, ten: 4,
+  },
+  categories: {
+    'face card': 12, 'face cards': 12,
+    'number card': 36, 'number cards': 36, 'numbered card': 36,
+    'even': 20, 'odd': 16, // 2,4,6,8,10 × 4 = 20; 3,5,7,9 × 4 = 16 (aces aren't "even" or "odd")
+  },
+};
+
+// Die knowledge
+const DIE = { total: 6 };
+const DIE_OUTCOMES = {
+  '1': 1, '2': 1, '3': 1, '4': 1, '5': 1, '6': 1,
+  one: 1, two: 1, three: 1, four: 1, five: 1, six: 1,
+  even: 3, odd: 3, // {2,4,6} and {1,3,5}
+  'prime': 3, // {2,3,5}
+  'greater than 4': 2, 'less than 3': 2, 'greater than 3': 3, 'less than 4': 3,
+  'greater than 2': 4, 'less than 5': 4, 'greater than 1': 5, 'less than 6': 5,
+  'at least 3': 4, 'at most 4': 4, 'at least 2': 5, 'at most 5': 5,
+};
+
+// Coin knowledge
+const COIN_OUTCOMES = { heads: 1, head: 1, tails: 1, tail: 1 };
+const COIN_TOTAL = 2;
+
+/**
+ * Detect probability problems from AI-posed questions.
+ * Handles: cards, dice, coins, marbles/balls with explicit counts,
+ * and generic "N out of M" / "N favorable out of M total" patterns.
+ */
+function detectProbability(message) {
+  const text = message.trim();
+  const lower = text.toLowerCase();
+
+  // ── P(X) notation: "P(heart)", "P(red)", "P(6)" ──
+  const pNotation = lower.match(/p\s*\(\s*([^)]+)\s*\)/i);
+
+  // ── Natural language: "probability of (drawing/getting/picking/rolling) a ___" ──
+  const nlProb = lower.match(
+    /(?:probability|chance|likelihood|odds)\s+(?:of\s+)?(?:drawing|getting|picking|choosing|selecting|pulling|rolling|flipping|landing\s+on)?\s*(?:a\s+)?(.+?)(?:\s+from\s+|\s+in\s+|\s+on\s+|\s+with\s+|\?|$)/i
+  );
+
+  // ── "What is P(X)?" fallback ──
+  const whatIsP = lower.match(/what\s+is\s+p\s*\(\s*([^)]+)\s*\)/i);
+
+  const outcome = (pNotation && pNotation[1]) || (whatIsP && whatIsP[1]) || (nlProb && nlProb[1]);
+  if (!outcome) return null;
+
+  const outcomeLower = outcome.trim().toLowerCase();
+
+  // ── Standard deck context ──
+  if (/\b(deck|card|cards|playing\s*card)\b/.test(lower)) {
+    // Try categories first (e.g. "face card" before "card" matches a suit)
+    for (const [name, count] of Object.entries(DECK.categories)) {
+      if (outcomeLower.includes(name)) {
+        return { type: 'probability', favorable: count, total: DECK.total, outcome: name, context: 'deck' };
+      }
+    }
+    // Try suits
+    for (const [name, count] of Object.entries(DECK.suits)) {
+      if (outcomeLower.includes(name)) {
+        return { type: 'probability', favorable: count, total: DECK.total, outcome: name, context: 'deck' };
+      }
+    }
+    // Try colors
+    for (const [name, count] of Object.entries(DECK.colors)) {
+      if (outcomeLower.includes(name)) {
+        return { type: 'probability', favorable: count, total: DECK.total, outcome: name, context: 'deck' };
+      }
+    }
+    // Try ranks
+    for (const [name, count] of Object.entries(DECK.ranks)) {
+      if (outcomeLower.includes(name)) {
+        return { type: 'probability', favorable: count, total: DECK.total, outcome: name, context: 'deck' };
+      }
+    }
+  }
+
+  // ── Die/dice context ──
+  if (/\b(die|dice|roll|rolling)\b/.test(lower)) {
+    // Normalize: strip articles and trailing "number" for matching
+    const dieOutcome = outcomeLower.replace(/^an?\s+/, '').replace(/\s+number$/, '').trim();
+    for (const [name, count] of Object.entries(DIE_OUTCOMES)) {
+      if (dieOutcome === name) {
+        return { type: 'probability', favorable: count, total: DIE.total, outcome: name, context: 'die' };
+      }
+    }
+    // Single digit on a die
+    const dieDigit = dieOutcome.match(/^(\d)$/);
+    if (dieDigit && parseInt(dieDigit[1]) >= 1 && parseInt(dieDigit[1]) <= 6) {
+      return { type: 'probability', favorable: 1, total: 6, outcome: dieDigit[1], context: 'die' };
+    }
+  }
+
+  // ── Coin context ──
+  if (/\b(coin|flip|flipping|toss|tossing)\b/.test(lower)) {
+    for (const [name, count] of Object.entries(COIN_OUTCOMES)) {
+      if (outcomeLower.includes(name)) {
+        return { type: 'probability', favorable: count, total: COIN_TOTAL, outcome: name, context: 'coin' };
+      }
+    }
+  }
+
+  // ── Explicit counts: "3 red marbles out of 10", "bag contains 4 red and 6 blue" ──
+  // Pattern: "N <color/type> out of M total"
+  const explicitOutOf = lower.match(
+    /(\d+)\s+(\w+)\s+(?:marble|ball|bead|candy|chip|token|block|cube|counter|item|card|sock|crayon|pen|pencil|button|coin)s?\s+(?:out\s+of|from|in)\s+(\d+)/i
+  );
+  if (explicitOutOf) {
+    return {
+      type: 'probability',
+      favorable: parseInt(explicitOutOf[1]),
+      total: parseInt(explicitOutOf[3]),
+      outcome: explicitOutOf[2],
+      context: 'custom',
+    };
+  }
+
+  // Pattern: "bag/jar/box contains N red and M blue" — total is N+M, favorable is N for first color
+  const containerPattern = lower.match(
+    /(?:bag|jar|box|basket|bucket|drawer|pile|collection|set)\s+(?:contains?|has|holds|with)\s+([\d\w\s,]+(?:and\s+\d+\s+\w+))/i
+  );
+  if (containerPattern) {
+    const itemPattern = /(\d+)\s+(\w+)/g;
+    const items = [];
+    let m;
+    while ((m = itemPattern.exec(containerPattern[1])) !== null) {
+      items.push({ count: parseInt(m[1]), name: m[2].toLowerCase() });
+    }
+    if (items.length >= 2) {
+      const totalItems = items.reduce((sum, item) => sum + item.count, 0);
+      // Find which item the question asks about
+      for (const item of items) {
+        if (outcomeLower.includes(item.name)) {
+          return { type: 'probability', favorable: item.count, total: totalItems, outcome: item.name, context: 'container' };
+        }
+      }
+      // Default to first item if outcome doesn't match any name
+      return { type: 'probability', favorable: items[0].count, total: totalItems, outcome: items[0].name, context: 'container' };
+    }
+  }
+
+  // ── Generic "N out of M" in the question itself ──
+  const genericOutOf = lower.match(/(\d+)\s+(?:out\s+of|\/)\s+(\d+)/);
+  if (genericOutOf) {
+    return { type: 'probability', favorable: parseInt(genericOutOf[1]), total: parseInt(genericOutOf[2]), outcome: outcomeLower, context: 'explicit' };
+  }
+
+  return null;
+}
+
+/**
+ * Solve a probability problem. Returns the answer as a simplified fraction.
+ */
+function solveProbability(problem) {
+  const { favorable, total, outcome, context } = problem;
+
+  if (total === 0) {
+    return { success: false, error: 'Total outcomes cannot be zero' };
+  }
+
+  if (favorable > total) {
+    return { success: false, error: `Favorable outcomes (${favorable}) exceed total (${total})` };
+  }
+
+  const g = gcd(favorable, total);
+  const simplNum = favorable / g;
+  const simplDen = total / g;
+
+  const answer = simplDen === 1 ? `${simplNum}` : `${simplNum}/${simplDen}`;
+
+  return {
+    success: true,
+    answer,
+    steps: [
+      `Favorable outcomes: ${favorable} (${outcome})`,
+      `Total outcomes: ${total}`,
+      `P(${outcome}) = ${favorable}/${total}${g > 1 ? ` = ${answer}` : ''}`,
+    ],
+  };
+}
+
+/** Greatest common divisor (Euclidean algorithm) */
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+  while (b) { [a, b] = [b, a % b]; }
+  return a;
+}
+
 /**
  * Solve a proportion a/b = c/d for the unknown x.
  * Cross-multiply: a*d = b*c, solve for x.
@@ -1921,6 +2130,19 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
         const correctVal = correctFrac.num / correctFrac.den;
         if (Math.abs(studentVal - correctVal) <= tolerance) {
             return { isCorrect: true, exact: studentFrac.num === correctFrac.num && studentFrac.den === correctFrac.den };
+        }
+    }
+
+    // Cross-comparison: decimal ↔ fraction (e.g. "0.25" vs "1/4")
+    if (!hasLetters) {
+        const fracSide = studentFrac || correctFrac;
+        const decimalSide = studentFrac ? correctStr : studentStr;
+        if (fracSide && !studentFrac !== !correctFrac) {
+            const fracVal = fracSide.num / fracSide.den;
+            const decVal = parseFloat(decimalSide);
+            if (!isNaN(decVal) && Math.abs(fracVal - decVal) <= tolerance) {
+                return { isCorrect: true, exact: false, equivalentForm: true };
+            }
         }
     }
 
@@ -2900,6 +3122,9 @@ module.exports = {
     // Export substitution solver for testing
     detectSubstitution,
     solveSubstitution,
+    // Export probability for testing
+    detectProbability,
+    solveProbability,
     // Export calculus solvers for testing
     detectDerivative,
     solveDerivative,
