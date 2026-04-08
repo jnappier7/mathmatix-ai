@@ -41,6 +41,56 @@ const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
 const TutorPlan = require('../models/tutorPlan');
 const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
 
+// File upload support (consolidated from chatWithFile.js)
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs').promises;
+const fsSync = require('fs');
+const sharp = require('sharp');
+const pdfOcr = require('../utils/pdfOcr');
+const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
+const { applyWorksheetGuard } = require('../utils/worksheetGuard');
+const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
+
+// Multer disk storage for file uploads (prevents server crashes vs memoryStorage)
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: '/tmp',
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        }
+    }),
+    limits: { fileSize: 10 * 1024 * 1024 } // 10MB per file
+});
+
+// Conditional multer middleware — only processes multipart/form-data requests.
+// Regular JSON chat passes through untouched.
+const conditionalUpload = (req, res, next) => {
+    if (req.is('multipart/form-data')) {
+        upload.any()(req, res, (err) => {
+            if (err) {
+                if (err.code === 'LIMIT_FILE_SIZE') {
+                    return res.status(413).json({ message: 'File too large (max 10MB per file).' });
+                }
+                return res.status(400).json({ message: `Upload error: ${err.message}` });
+            }
+            next();
+        });
+    } else {
+        next();
+    }
+};
+
+// Conditional upload validation — only runs when files are present
+const conditionalValidation = (req, res, next) => {
+    if (req.files && req.files.length > 0) {
+        validateUpload(req, res, next);
+    } else {
+        next();
+    }
+};
+
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY_LENGTH_FOR_AI = 100; // Increased from 40 — GPT-4o-mini has 128K context, 40 was causing context loss
@@ -307,12 +357,13 @@ function detectProblemContext(message) {
     return 'numeric'; // Default: most math interactions are numeric
 }
 
-router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
+router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, conditionalValidation, async (req, res) => {
     const { message, role, childId, responseTime, isGreeting } = req.body;
     const userId = req.user?._id;
 
-    // Allow empty message only for greeting requests
-    if (!isGreeting && !message) return res.status(400).json({ message: "Message is required." });
+    // Allow empty message for greeting requests and file uploads (student may upload without typing)
+    const hasFiles = req.files && req.files.length > 0;
+    if (!isGreeting && !hasFiles && !message) return res.status(400).json({ message: "Message is required." });
     if (message && message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
 
     // Log response time if provided (from ghost timer)
@@ -443,13 +494,87 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         }
 
         // CRITICAL FIX: Validate user message before saving
-        if (!message || typeof message !== 'string' || message.trim() === '') {
+        // File uploads may have no text message — use a default prompt
+        const effectiveMessage = (!message || typeof message !== 'string' || message.trim() === '')
+            ? (hasFiles ? 'Can you help me with this?' : null)
+            : message;
+        if (!effectiveMessage) {
             return res.status(400).json({ message: "Message content is required and cannot be empty." });
+        }
+
+        // ── FILE UPLOAD PROCESSING (consolidated from chatWithFile.js) ──
+        // When files are uploaded via multipart/form-data, process them here
+        // so all chat goes through one pipeline with one set of guards.
+        const uploadedFiles = req.files || [];
+        const hasUploadedFiles = uploadedFiles.length > 0;
+        let uploadImageContents = [];
+        let uploadPdfTexts = [];
+        let combinedMessage = effectiveMessage.trim();
+
+        if (hasUploadedFiles) {
+            console.log(`[Chat] Processing ${uploadedFiles.length} file(s) for user ${userId}`);
+
+            try {
+                const fileResults = await Promise.all(uploadedFiles.map(async (file) => {
+                    console.log(`[Chat] Processing file: ${file.originalname} (${file.mimetype})`);
+
+                    if (file.mimetype === 'application/pdf') {
+                        const fileBuffer = fsSync.readFileSync(file.path);
+                        const extractedText = await pdfOcr(fileBuffer, file.originalname);
+                        if (extractedText && extractedText.trim()) {
+                            console.log(`[Chat] Extracted ${extractedText.length} chars from PDF`);
+                            return { type: 'pdf', filename: file.originalname, text: extractedText };
+                        }
+                        return { type: 'pdf', filename: file.originalname, text: `[Could not extract text from ${file.originalname}]` };
+                    } else {
+                        let fileBuffer = fsSync.readFileSync(file.path);
+                        try {
+                            fileBuffer = await sharp(fileBuffer).rotate().withMetadata({}).toBuffer();
+                        } catch (stripErr) {
+                            console.warn('[Chat] EXIF strip failed:', stripErr.message);
+                        }
+                        const base64 = fileBuffer.toString('base64');
+                        return {
+                            type: 'image',
+                            content: { type: "image_url", image_url: { url: `data:${file.mimetype};base64,${base64}`, detail: "high" } }
+                        };
+                    }
+                }));
+
+                for (const result of fileResults) {
+                    if (result.type === 'pdf') {
+                        uploadPdfTexts.push({ filename: result.filename, text: result.text });
+                    } else {
+                        uploadImageContents.push(result.content);
+                    }
+                }
+            } catch (processingError) {
+                console.error(`[Chat] File processing error:`, processingError.message);
+                uploadedFiles.forEach(f => { if (f.path) try { fsSync.unlinkSync(f.path); } catch(e) {} });
+                return res.status(500).json({
+                    message: `Failed to process files: ${processingError.message}`,
+                    error: 'FILE_PROCESSING_ERROR'
+                });
+            }
+
+            // Append PDF text to the message
+            if (uploadPdfTexts.length > 0) {
+                const MAX_PDF_CHARS = 12000;
+                const pdfContent = uploadPdfTexts.map(({ filename, text }) => {
+                    if (text.length > MAX_PDF_CHARS) {
+                        return `[Content from ${filename} — showing first ${MAX_PDF_CHARS} of ${text.length} characters]\n${text.substring(0, MAX_PDF_CHARS)}\n\n[... content truncated. Ask the student which section or problem they need help with if the relevant content may be in the truncated portion.]`;
+                    }
+                    return `[Content from ${filename}]\n${text}`;
+                }).join('\n\n');
+                combinedMessage = `${combinedMessage}\n\n${pdfContent}`;
+            }
+
+            console.log(`[Chat] Prepared ${uploadImageContents.length} image(s), ${uploadPdfTexts.length} PDF(s)`);
         }
 
         activeConversation.messages.push({
             role: 'user',
-            content: message.trim(),
+            content: combinedMessage,
             timestamp: new Date(),
             responseTime: responseTime || null
         });
@@ -569,7 +694,15 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
 
         // Process uploads into context
         let uploadContext = null;
-        if (recentUploads && recentUploads.length > 0) {
+        if (hasUploadedFiles) {
+            // Files uploaded in THIS request — build context from them
+            const fileDescriptions = uploadedFiles.map(f => f.originalname).join(', ');
+            uploadContext = {
+                count: uploadedFiles.length,
+                summary: `Student uploaded ${uploadedFiles.length} file(s): ${fileDescriptions}. You CAN see this content — reference it directly.`
+            };
+            console.log(`📁 [Chat] Current upload: ${uploadedFiles.length} file(s) — ${fileDescriptions}`);
+        } else if (recentUploads && recentUploads.length > 0) {
             const uploadsSummary = recentUploads.map((upload, idx) => {
                 const daysAgo = Math.floor((Date.now() - new Date(upload.uploadedAt)) / (1000 * 60 * 60 * 24));
                 const timeStr = daysAgo === 0 ? 'today' : daysAgo === 1 ? 'yesterday' : `${daysAgo} days ago`;
@@ -773,13 +906,28 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             }
         }
 
-        // ── Inject worksheet guard into follow-up messages ──
-        // When a student uploaded a worksheet recently and continues chatting,
-        // the detailed anti-cheat instructions must be present in the message
-        // so the LLM sees them (they were only injected in chatWithFile.js).
-        if (hasRecentUpload && formattedMessagesForLLM.length > 0) {
+        // ── File upload: vision message formatting + worksheet guard ──
+        // When files are uploaded in THIS request, build multimodal content
+        // for the last user message so the LLM sees the images.
+        if (hasUploadedFiles && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
+                const guardedText = applyWorksheetGuard(typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage);
+                if (uploadImageContents.length > 0) {
+                    // Multimodal: text + images for vision API
+                    lastMsg.content = [
+                        { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
+                        ...uploadImageContents
+                    ];
+                } else {
+                    // PDF-only: just use the guarded text
+                    lastMsg.content = `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}`;
+                }
+            }
+        } else if ((hasRecentUpload || hasUploadedFiles) && formattedMessagesForLLM.length > 0) {
+            // Follow-up messages after a recent upload — inject worksheet guard
+            const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+            if (lastMsg?.role === 'user' && typeof lastMsg.content === 'string') {
                 lastMsg.content += `\n\n${WORKSHEET_GUARD_INSTRUCTION}`;
             }
         }
@@ -891,7 +1039,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 teachingGuidance: null, // Pulled from skill library by decide stage if needed
             } : null;
 
-            pipelineResult = await runPipeline(message, {
+            pipelineResult = await runPipeline(combinedMessage, {
                 user,
                 conversation: activeConversation,
                 systemPrompt,
@@ -899,7 +1047,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
                 activeSkill,
                 tutorPlan: preloadedTutorPlan, // Pre-loaded — avoids duplicate DB query
                 phaseState: activeConversation.phaseState || null,
-                hasRecentUpload,
+                hasRecentUpload: hasRecentUpload || hasUploadedFiles,
                 stream: useStreaming,
                 res: useStreaming ? res : null,
                 aiProcessingStartTime: aiStartTime,
@@ -986,6 +1134,56 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         smartAutoName(activeConversation._id).catch(err =>
             console.error('[Chat] Smart auto-name failed:', err)
         );
+
+        // Save uploaded files to student's resource library (fire-and-forget)
+        if (hasUploadedFiles) {
+            (async () => {
+                const uploadsDir = path.join(__dirname, '../uploads');
+                try { await fs.mkdir(uploadsDir, { recursive: true }); } catch(e) {}
+
+                for (const file of uploadedFiles) {
+                    try {
+                        const timestamp = Date.now();
+                        const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+                        const storedFilename = `${userId}_${timestamp}_${sanitizedName}`;
+                        const filePath = path.join(uploadsDir, storedFilename);
+
+                        const fileBuffer = await fs.readFile(file.path);
+                        await fs.writeFile(filePath, fileBuffer);
+
+                        const fileType = file.mimetype === 'application/pdf' ? 'pdf' : 'image';
+                        let extractedText = '';
+                        if (fileType === 'pdf') {
+                            const pdfMatch = uploadPdfTexts.find(p => p.filename === file.originalname);
+                            extractedText = pdfMatch?.text || '';
+                        }
+
+                        const studentUpload = new StudentUpload({
+                            userId: user._id,
+                            originalFilename: file.originalname,
+                            storedFilename,
+                            filePath,
+                            fileType,
+                            mimeType: file.mimetype,
+                            fileSize: file.size,
+                            extractedText: extractedText.substring(0, 10000),
+                            conversationId: activeConversation._id
+                        });
+                        await studentUpload.save();
+                        console.log(`[Chat] Saved upload: ${studentUpload._id} — ${file.originalname}`);
+                    } catch (saveError) {
+                        console.error(`[Chat] Error saving file ${file.originalname}:`, saveError.message);
+                    }
+                }
+
+                // Clean up temp files after saving
+                for (const file of uploadedFiles) {
+                    if (file.path) {
+                        try { fsSync.unlinkSync(file.path); } catch(e) {}
+                    }
+                }
+            })().catch(err => console.error('[Chat] Upload persistence error:', err.message));
+        }
 
         // Quest system update
         if (pipelineResult.problemResult) {
@@ -1143,6 +1341,14 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
     }
 
     } finally {
+        // Clean up temp files if not already handled (error path)
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                if (file.path) {
+                    try { fsSync.unlinkSync(file.path); } catch(e) {}
+                }
+            });
+        }
         // Always release the per-user lock so the next message can proceed
         releaseLock();
     }
