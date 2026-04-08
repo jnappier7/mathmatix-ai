@@ -283,47 +283,4 @@ router.get('/upload-retention/:studentId', isAuthenticated, async (req, res) => 
     }
 });
 
-/**
- * @route   PATCH /api/settings/user
- * @desc    Update user settings — Biology tutor prototype fields disabled
- * @access  Private (Authenticated users)
- */
-/*
-router.patch('/user', isAuthenticated, async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const allowedFields = ['textbookMode', 'activeChapterId', 'currentConceptIndex'];
-        const update = {};
-
-        for (const field of allowedFields) {
-            if (req.body[field] !== undefined) {
-                update[field] = req.body[field];
-            }
-        }
-
-        if (Object.keys(update).length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'No valid fields to update.'
-            });
-        }
-
-        await User.findByIdAndUpdate(userId, { $set: update });
-
-        res.json({
-            success: true,
-            message: 'Settings updated.',
-            updated: Object.keys(update)
-        });
-
-    } catch (err) {
-        logger.error('[Settings] Error updating user settings', { error: err.message });
-        res.status(500).json({
-            success: false,
-            message: 'Failed to update settings.'
-        });
-    }
-});
-*/
-
 module.exports = router;

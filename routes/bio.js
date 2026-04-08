@@ -1,14 +1,14 @@
 // routes/bio.js
 // Public (no-auth) endpoints for the Bio Tutor pages.
 // Chapters: upload, status, get, delete
-// Chat: streaming bio chat with RAG/textbook mode
+// Chat: streaming bio chat
 
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const ChapterContent = require('../models/chapterContent');
 const { callLLMStream, callLLM } = require('../utils/openaiClient');
-const { buildTextbookContext, generateBioSystemPrompt } = require('../utils/bioPromptCompact');
+const { generateBioSystemPrompt } = require('../utils/bioPromptCompact');
 
 // Multer config for chapter PDFs (memory storage, 50MB limit)
 const chapterUpload = multer({
@@ -170,48 +170,10 @@ router.post('/chat', async (req, res) => {
       return res.status(400).json({ message: 'Message too long (max 4000 chars)' });
     }
 
-    // Build system prompt with textbook context if a chapter is available
-    let systemPrompt;
-    try {
-      // Use specified chapter or find latest ready chapter
-      let chapter;
-      if (chapterId) {
-        chapter = await ChapterContent.getChapterForRAG(chapterId);
-      } else {
-        // Find latest ready chapter and load full RAG data
-        const latestReady = await getLatestReadyChapter();
-        if (latestReady) {
-          chapter = await ChapterContent.getChapterForRAG(latestReady._id);
-        }
-      }
-
-      if (chapter && chapter.processingStatus === 'ready') {
-        const textbookContext = await buildTextbookContext({
-          chapter,
-          studentMessage: message.trim(),
-          currentConceptIndex: 0,
-          tokenBudget: 1500
-        });
-
-        systemPrompt = generateBioSystemPrompt({
-          user: { firstName: 'Student', gradeLevel: 'High School' },
-          tutorName: 'Alex',
-          textbookMode: true,
-          textbookContext
-        });
-      }
-    } catch (ctxError) {
-      console.error('[Bio Chat] Textbook context failed, using default:', ctxError.message);
-    }
-
-    // Fallback to plain bio prompt without textbook context
-    if (!systemPrompt) {
-      systemPrompt = generateBioSystemPrompt({
-        user: { firstName: 'Student', gradeLevel: 'High School' },
-        tutorName: 'Alex',
-        textbookMode: false
-      });
-    }
+    const systemPrompt = generateBioSystemPrompt({
+      user: { firstName: 'Student', gradeLevel: 'High School' },
+      tutorName: 'Alex',
+    });
 
     // Build messages array
     const sanitizedHistory = Array.isArray(history)
