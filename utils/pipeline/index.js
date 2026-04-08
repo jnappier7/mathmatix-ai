@@ -110,7 +110,9 @@ async function runPipeline(message, ctx) {
   let tutorPlan = null;
   let skillResolution = null;
   try {
-    tutorPlan = await loadOrCreatePlan(ctx.user._id, { user: ctx.user });
+    // Accept a pre-loaded plan from the caller to avoid a duplicate DB query.
+    // chat.js already loads it for re-entry/override detection.
+    tutorPlan = ctx.tutorPlan || await loadOrCreatePlan(ctx.user._id, { user: ctx.user });
 
     const resolved = await resolveCurrentTarget(tutorPlan, {
       user: ctx.user,
@@ -622,8 +624,8 @@ async function runPipeline(message, ctx) {
 
   // ── Post-persist conversation save ──
   // phaseTracker, sessionScorecard, and sessionSummary are all set AFTER
-  // persist() already saved the conversation. One final save captures them all.
-  if (!ctx.skipPersist && ctx.conversation) {
+  // persist() already saved the conversation. Only save again if something changed.
+  if (!ctx.skipPersist && ctx.conversation?.isModified?.()) {
     try {
       await ctx.conversation.save();
     } catch (err) {

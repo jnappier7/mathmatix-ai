@@ -193,6 +193,9 @@ router.post('/', async (req, res) => {
             conversation,
             formattedMessages,
             resourceContext,
+            pathway,                // Pre-loaded — avoids duplicate file read
+            currentPathwayModule,   // Pre-loaded
+            moduleData,             // Pre-loaded
         });
 
         // Set up streaming if requested
