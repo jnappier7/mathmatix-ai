@@ -23,6 +23,8 @@ const MESSAGE_TYPES = {
   AFFIRMATIVE: 'affirmative',
   SKIP_REQUEST: 'skip_request',
   GENERAL_MATH: 'general_math',
+  PARROTING: 'parroting',
+  EVASIVE_AFFIRMATIVE: 'evasive_affirmative',
 };
 
 // ── Context signal categories ──
@@ -80,7 +82,7 @@ const PATTERNS = {
   greeting: /^(hi|hey|hello|yo|sup|what'?s\s*up|good\s*(morning|afternoon|evening))\b/i,
 
   // Affirmative / understanding
-  affirmative: /^(yes|yeah|yep|yup|ok|okay|sure|got\s*it|makes\s*sense|i\s*see|right|correct|mhm|uh\s*huh)\b/i,
+  affirmative: /^(yes|yeah|yep|yup|ok|okay|sure|got\s*it|makes\s*sense|i\s*see|i\s*understand|right|correct|mhm|uh\s*huh)\b/i,
 
   // Frustration signals
   frustration: /\b(hate|stupid|dumb|boring|sucks|this\s*is\s*(hard|impossible|confusing|annoying)|i\s*can'?t|ugh|i'?m\s*done)\b/i,
@@ -214,6 +216,78 @@ function detectProblemContext(message) {
 }
 
 /**
+ * Check if student is parroting (echoing back) the tutor's recent words.
+ * Compares the student's message against recent assistant messages using
+ * longest common substring ratio. A student who copies ≥60% of a tutor
+ * sentence is parroting.
+ *
+ * @returns {boolean}
+ */
+function detectParroting(studentMessage, recentAssistantMessages) {
+  if (!recentAssistantMessages || recentAssistantMessages.length === 0) return false;
+  if (studentMessage.length < 15) return false; // Too short to be meaningful parroting
+
+  const studentLower = studentMessage.toLowerCase().replace(/[^\w\s]/g, '');
+  const studentWords = studentLower.split(/\s+/).filter(w => w.length > 2);
+  if (studentWords.length < 4) return false; // Need substance to detect parroting
+
+  // Check against last 3 assistant messages
+  for (const msg of recentAssistantMessages.slice(-3)) {
+    const tutorText = (msg.content || '').toLowerCase().replace(/[^\w\s]/g, '');
+    // Split tutor text into sentences
+    const sentences = tutorText.split(/[.!?\n]+/).filter(s => s.trim().length > 10);
+
+    for (const sentence of sentences) {
+      const sentenceWords = sentence.trim().split(/\s+/).filter(w => w.length > 2);
+      if (sentenceWords.length < 4) continue;
+
+      // Count how many of the student's words appear in this tutor sentence, in order
+      let matchCount = 0;
+      let sentenceIdx = 0;
+      for (const word of studentWords) {
+        const found = sentenceWords.indexOf(word, sentenceIdx);
+        if (found !== -1) {
+          matchCount++;
+          sentenceIdx = found + 1;
+        }
+      }
+
+      const overlapRatio = matchCount / Math.max(studentWords.length, 1);
+      if (overlapRatio >= 0.6) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Check if the tutor asked for explanation/understanding and the student
+ * gave a bare affirmative without actually explaining.
+ *
+ * Detects: "Can you explain why?", "Tell me in your own words",
+ * "Why does that work?", "What's the reasoning?" followed by "yes"/"I understand".
+ *
+ * @returns {boolean}
+ */
+function detectEvasiveAffirmative(studentMessage, recentAssistantMessages) {
+  if (!recentAssistantMessages || recentAssistantMessages.length === 0) return false;
+
+  // Only triggers on short affirmative responses
+  const lower = studentMessage.toLowerCase().trim();
+  if (lower.split(/\s+/).length > 8) return false; // Long response = probably explaining
+  if (!PATTERNS.affirmative.test(lower)) return false;
+
+  // Check if the last assistant message asked for explanation
+  const lastAssistant = recentAssistantMessages[recentAssistantMessages.length - 1];
+  if (!lastAssistant?.content) return false;
+
+  const tutorLower = lastAssistant.content.toLowerCase();
+  const askedForExplanation =
+    /\b(explain|in\s+your\s+own\s+words|why\s+does|why\s+did|why\s+do|how\s+does|how\s+did|what'?s\s+the\s+reason|what\s+is\s+the\s+reason|can\s+you\s+tell\s+me\s+why|walk\s+me\s+through|describe\s+how|what\s+would\s+happen|prove\s+(?:it|that|this)|show\s+(?:me\s+)?your\s+(?:work|thinking|reasoning)|convince\s+me|teach\s+(?:it|this)\s+(?:back|to\s+me))\b/.test(tutorLower);
+
+  return askedForExplanation;
+}
+
+/**
  * Count IDK/give-up streaks in recent messages.
  */
 function detectStreaks(recentUserMessages) {
@@ -282,7 +356,16 @@ function observe(message, context = {}) {
   } else if (PATTERNS.greeting.test(lower) && text.split(' ').length <= 5) {
     messageType = MESSAGE_TYPES.GREETING;
   } else if (PATTERNS.affirmative.test(lower) && text.split(' ').length <= 5) {
-    messageType = MESSAGE_TYPES.AFFIRMATIVE;
+    // Check if this is a bare "yes" to an explanation request (evasion)
+    if (detectEvasiveAffirmative(text, context.recentAssistantMessages)) {
+      messageType = MESSAGE_TYPES.EVASIVE_AFFIRMATIVE;
+    } else {
+      messageType = MESSAGE_TYPES.AFFIRMATIVE;
+    }
+  } else if (detectParroting(text, context.recentAssistantMessages)) {
+    // Student echoed tutor's words — flag before treating as general math
+    messageType = MESSAGE_TYPES.PARROTING;
+    confidence = 0.85;
   } else {
     // No clear intent signal — now try answer extraction
     answer = extractAnswer(text);
@@ -321,6 +404,8 @@ module.exports = {
   detectContextSignals,
   detectProblemContext,
   detectStreaks,
+  detectParroting,
+  detectEvasiveAffirmative,
   MESSAGE_TYPES,
   CONTEXT_SIGNALS,
   PATTERNS,

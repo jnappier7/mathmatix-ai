@@ -134,6 +134,34 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── Parroting — student echoed tutor's words without understanding ──
+  if (msgType === MESSAGE_TYPES.PARROTING) {
+    decision.action = ACTIONS.CHECK_UNDERSTANDING;
+    decision.scaffoldLevel = 3;
+    decision.directives.push(
+      'PARROTING DETECTED: Student repeated your explanation back without demonstrating understanding.',
+      'Do NOT accept this as proof of learning. Do NOT say "great job."',
+      'Test with a TRANSFER question: same concept, different context.',
+      'Example: "You described it well — now try this slightly different one: [new problem]."',
+      'If they can solve the new problem, THEN they understand. If not, reteach.'
+    );
+    return decision;
+  }
+
+  // ── Evasive affirmative — bare "yes" to explanation request ──
+  if (msgType === MESSAGE_TYPES.EVASIVE_AFFIRMATIVE) {
+    decision.action = ACTIONS.CHECK_UNDERSTANDING;
+    decision.scaffoldLevel = 3;
+    decision.directives.push(
+      'EVASION DETECTED: You asked for an explanation and the student only said "yes" or "I understand."',
+      'Do NOT accept this. They need to SHOW understanding, not claim it.',
+      'Push gently but firmly: "Show me — walk me through [specific step]."',
+      'Or give them a problem to prove it: "Great — then solve this one: [related problem]."',
+      'Keep your tone warm and encouraging, not accusatory.'
+    );
+    return decision;
+  }
+
   // ── Give-up / IDK streaks — exit ramp logic ──
   if (msgType === MESSAGE_TYPES.GIVE_UP || streaks.giveUpCount >= 1) {
     decision.action = ACTIONS.EXIT_RAMP;
