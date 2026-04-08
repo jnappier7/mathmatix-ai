@@ -306,6 +306,45 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── Worksheet follow-up — strict anti-cheat ──
+  // When a student has uploaded a worksheet and asks for "the next problems",
+  // "do the rest", etc., enforce one-problem-at-a-time and refuse bulk solving.
+  if (observation.isWorksheetFollowUp) {
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'ANTI-CHEAT: The student is asking you to solve MULTIPLE worksheet problems. REFUSE.',
+      'ONE problem at a time — ask the student which SINGLE problem they want to work on next.',
+      'Do NOT solve, show steps for, or give answers to more than one problem.',
+      'Say something like: "Let\'s focus on one at a time! Which problem would you like to tackle next?"',
+      'If they already named a specific problem, guide them through ONLY that one — Socratically.',
+      'NEVER show the final answer. The student must do the thinking.'
+    );
+    return decision;
+  }
+
+  // ── Upload context — reinforce Socratic for worksheet problems ──
+  // Even for single-problem questions, when a worksheet is present, add extra guardrails.
+  if (context.hasRecentUpload && (msgType === MESSAGE_TYPES.QUESTION || msgType === MESSAGE_TYPES.GENERAL_MATH)) {
+    const modeDecision = applyInstructionalMode(decision, context);
+    if (modeDecision) {
+      modeDecision.directives.push(
+        'WORKSHEET CONTEXT: The student uploaded a worksheet. Do NOT give away answers.',
+        'Guide them through ONE problem at a time. The student does the work.'
+      );
+      return modeDecision;
+    }
+
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'The student asked about a problem from their uploaded worksheet.',
+      'Break it into the first step and ask THEM to attempt it. Be specific to the actual math.',
+      'NEVER show the full solution or final answer — guide them to discover it.',
+      'ONE problem at a time. If they ask about multiple, pick the first and ask them to focus on it.',
+      'Do NOT ask "what have you tried?" — start tutoring immediately with a guiding question.'
+    );
+    return decision;
+  }
+
   // ── Math questions — guide, don't solve ──
   if (msgType === MESSAGE_TYPES.QUESTION || msgType === MESSAGE_TYPES.GENERAL_MATH) {
     // Check if the tutor plan specifies an instructional mode for this skill.

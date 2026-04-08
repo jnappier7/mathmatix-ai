@@ -282,6 +282,15 @@ function observe(message, context = {}) {
     confidence = 0.5; // Low confidence — could be anything
   }
 
+  // Detect worksheet follow-up: student has a recent upload and is asking
+  // for multiple problems or the "next" problem without attempting work.
+  const hasRecentUpload = context.hasRecentUpload || false;
+  const isWorksheetFollowUp = hasRecentUpload && (
+    /\b(next\s*(couple|few|problem|one|question)|do\s*the\s*(others|rest)|what\s*about\s*(the\s*)?(next|rest|other)|let'?s\s*do\s*(the\s*)?(next|another|more)|can\s*you\s*(do|solve|help\s*with)\s*(the\s*)?(next|rest|other|all))\b/i.test(lower) ||
+    /\b(problems?\s*\d+\s*(through|to|-)\s*\d+|#\d+\s*(through|to|-)\s*#?\d+)\b/i.test(lower) ||
+    /\b(answers?\s*(for|to)\s*(the\s*)?(rest|all|every))\b/i.test(lower)
+  );
+
   return {
     messageType,
     confidence,
@@ -294,6 +303,8 @@ function observe(message, context = {}) {
       recentWrongCount,
     },
     problemContext: detectProblemContext(text),
+    isWorksheetFollowUp,  // true if student is asking for multiple worksheet problems
+    hasRecentUpload,      // forwarded for decide stage
     raw: text,
   };
 }

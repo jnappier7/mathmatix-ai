@@ -232,6 +232,7 @@ async function runPipeline(message, ctx) {
     evidence,
     tutorPlan: tutorPlan || null,
     modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
+    hasRecentUpload: ctx.hasRecentUpload || false,
   });
 
   // Inject mode transition directives into the decision
