@@ -120,6 +120,27 @@ describe('Pipeline: Observe Stage', () => {
       expect(result.answer).toBeNull();
     });
 
+    test('intent signals take priority over accidental answer patterns', () => {
+      // These all contain patterns that could match answer extraction
+      // but have clear intent signals that should win.
+      expect(observe("I don't get it").messageType).toBe(MESSAGE_TYPES.HELP_REQUEST);
+      expect(observe("What do you get when you divide?").messageType).toBe(MESSAGE_TYPES.QUESTION);
+      expect(observe("I'm stuck on this").messageType).toBe(MESSAGE_TYPES.HELP_REQUEST);
+      expect(observe('how do I solve this?').messageType).toBe(MESSAGE_TYPES.HELP_REQUEST);
+      expect(observe('this is impossible').messageType).toBe(MESSAGE_TYPES.FRUSTRATION);
+      // "explain" matches question, not answer extraction
+      expect(observe('explain how you get the derivative').messageType).toBe(MESSAGE_TYPES.QUESTION);
+    });
+
+    test('legitimate answers still classify correctly', () => {
+      // After restructuring, real answers must still be detected
+      expect(observe('7').messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+      expect(observe('3x^2').messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+      expect(observe('-5').messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+      expect(observe('x = 5').messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+      expect(observe('2/3').messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+    });
+
     test('give-up takes priority over IDK', () => {
       // "just tell me" should be give_up even though it could match help_request
       expect(observe('just tell me').messageType).toBe(MESSAGE_TYPES.GIVE_UP);

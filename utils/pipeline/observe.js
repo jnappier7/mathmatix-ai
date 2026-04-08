@@ -56,7 +56,10 @@ const PATTERNS = {
 
   // "Intermediate" patterns (lower priority): "you get x+2", "gives 3x"
   // These may be intermediate steps, not the final answer.
-  embeddedAnswerIntermediate: /(?:(?:you\s+)?(?:get|gives)\s+)(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)/gi,
+  // Requires the captured expression to end at a word boundary, comma,
+  // period, or end-of-string — prevents capturing partial words like
+  // "get it" → "i" or "gives us" → "u".
+  embeddedAnswerIntermediate: /(?:(?:you\s+)?(?:get|gives)\s+)(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)(?=[\s,.:;!?)}\]]|$)/gi,
 
   // Reasoning phrases that indicate the student is showing their work
   reasoningIndicators: /\b(because|since|after\s+(?:i\s+)?(?:factor|simplif|cancel|distribut|combin|reduc)|(?:i\s+)?(?:factor|simplif|cancel)(?:ed|ing)?|if\s+(?:you|i)\s+(?:factor|simplif|cancel)|by\s+(?:factoring|simplifying|canceling)|using\s+the\s+(?:power|chain|quotient|product)\s+rule|(?:which|that|so)\s+(?:means|gives|leaves|simplifies?\s+to))\b/i,
@@ -234,12 +237,6 @@ function observe(message, context = {}) {
   const text = message.trim();
   const lower = text.toLowerCase();
 
-  // Extract answer attempt first (high priority)
-  const answer = extractAnswer(text);
-
-  // Detect if student showed their reasoning (factored, simplified, explained why)
-  const demonstratedReasoning = answer?.hasExplanation ? hasReasoningIndicators(text) : false;
-
   // Detect context signals
   const contextSignals = detectContextSignals(text);
 
@@ -250,37 +247,55 @@ function observe(message, context = {}) {
   const recentWrongCount = (context.recentAssistantMessages || [])
     .filter(msg => msg.problemResult === 'incorrect').length;
 
-  // Classify the message type (priority order matters)
+  // ── Classify: check high-confidence intent signals FIRST ──
+  //
+  // Intent detection (explicit keywords like "help", "skip", "how do I")
+  // is more reliable than answer extraction (regex on math expressions).
+  // We check intent before attempting answer extraction to prevent false
+  // positives like:
+  //   "I don't get it"                    → was captured as answer "i"
+  //   "Can you give me a harder problem?" → was captured as answer "m"
+  //   "What do you get when you divide?"  → was captured as answer "w"
+  //
+  // Answer extraction only runs when no intent signal matches.
   let messageType;
   let confidence = 1.0;
+  let answer = null;
 
   if (PATTERNS.giveUp.test(lower)) {
     messageType = MESSAGE_TYPES.GIVE_UP;
   } else if (PATTERNS.idk.test(lower) && text.length < 50) {
     messageType = MESSAGE_TYPES.IDK;
-  } else if (answer) {
-    messageType = MESSAGE_TYPES.ANSWER_ATTEMPT;
-  } else if (PATTERNS.checkMyWork.test(lower) && context.hasRecentUpload) {
-    messageType = MESSAGE_TYPES.CHECK_MY_WORK;
   } else if (PATTERNS.skipRequest.test(lower) && text.length < 80) {
     messageType = MESSAGE_TYPES.SKIP_REQUEST;
-  } else if (PATTERNS.offTask.test(lower)) {
-    messageType = MESSAGE_TYPES.OFF_TASK;
-  } else if (PATTERNS.greeting.test(lower) && text.split(' ').length <= 5) {
-    messageType = MESSAGE_TYPES.GREETING;
-  } else if (PATTERNS.affirmative.test(lower) && text.split(' ').length <= 5) {
-    messageType = MESSAGE_TYPES.AFFIRMATIVE;
   } else if (PATTERNS.frustration.test(lower)) {
     messageType = MESSAGE_TYPES.FRUSTRATION;
     confidence = 0.8;
   } else if (PATTERNS.helpRequest.test(lower)) {
     messageType = MESSAGE_TYPES.HELP_REQUEST;
+  } else if (PATTERNS.offTask.test(lower)) {
+    messageType = MESSAGE_TYPES.OFF_TASK;
   } else if (PATTERNS.question.test(lower)) {
     messageType = MESSAGE_TYPES.QUESTION;
+  } else if (PATTERNS.checkMyWork.test(lower) && context.hasRecentUpload) {
+    messageType = MESSAGE_TYPES.CHECK_MY_WORK;
+  } else if (PATTERNS.greeting.test(lower) && text.split(' ').length <= 5) {
+    messageType = MESSAGE_TYPES.GREETING;
+  } else if (PATTERNS.affirmative.test(lower) && text.split(' ').length <= 5) {
+    messageType = MESSAGE_TYPES.AFFIRMATIVE;
   } else {
-    messageType = MESSAGE_TYPES.GENERAL_MATH;
-    confidence = 0.5; // Low confidence — could be anything
+    // No clear intent signal — now try answer extraction
+    answer = extractAnswer(text);
+    if (answer) {
+      messageType = MESSAGE_TYPES.ANSWER_ATTEMPT;
+    } else {
+      messageType = MESSAGE_TYPES.GENERAL_MATH;
+      confidence = 0.5;
+    }
   }
+
+  // Detect if student showed their reasoning (factored, simplified, explained why)
+  const demonstratedReasoning = answer?.hasExplanation ? hasReasoningIndicators(text) : false;
 
   return {
     messageType,
