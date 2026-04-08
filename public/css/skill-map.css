@@ -249,13 +249,13 @@ html, body {
     pointer-events: none;
 }
 
-.bg-star.twinkle-slow  { animation: twinkle 6s ease-in-out infinite; }
-.bg-star.twinkle-med   { animation: twinkle 4s ease-in-out infinite; }
-.bg-star.twinkle-fast  { animation: twinkle 2.5s ease-in-out infinite; }
+.bg-star.twinkle-slow  { animation: twinkle 6s ease-in-out infinite; animation-delay: var(--twinkle-delay, 0s); }
+.bg-star.twinkle-med   { animation: twinkle 4s ease-in-out infinite; animation-delay: var(--twinkle-delay, 0s); }
+.bg-star.twinkle-fast  { animation: twinkle 2.5s ease-in-out infinite; animation-delay: var(--twinkle-delay, 0s); }
 
 @keyframes twinkle {
-    0%, 100% { opacity: var(--star-base-opacity, 0.3); }
-    50%      { opacity: calc(var(--star-base-opacity, 0.3) * 0.3); }
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.25; }
 }
 
 /* ================================================================

@@ -298,24 +298,29 @@ function drawStarfield(layer, W, H, nodes) {
     const areaW = xMax - xMin;
     const areaH = yMax - yMin;
 
-    const starCount = Math.floor(areaW * areaH / 2000); // density
+    const starCount = Math.min(Math.floor(areaW * areaH / 2500), 1500); // capped at 1500
     const rng = mulberry32(42); // seeded RNG for consistency
 
     for (let i = 0; i < starCount; i++) {
         const x = xMin + rng() * areaW;
         const y = yMin + rng() * areaH;
-        const r = rng() < 0.92 ? 0.5 + rng() * 0.8 : 1.2 + rng() * 1.5; // mostly tiny, few larger
+        const r = rng() < 0.92 ? 0.5 + rng() * 0.8 : 1.2 + rng() * 1.5;
         const baseOp = 0.08 + rng() * 0.3;
 
         const twinkleClass = rng() < 0.06 ? 'twinkle-fast' :
                              rng() < 0.15 ? 'twinkle-med' :
                              rng() < 0.3  ? 'twinkle-slow' : '';
 
-        layer.append('circle')
+        const star = layer.append('circle')
             .attr('class', 'bg-star' + (twinkleClass ? ' ' + twinkleClass : ''))
             .attr('cx', x).attr('cy', y).attr('r', r)
             .style('opacity', 0)
             .style('--star-base-opacity', baseOp);
+
+        // Random twinkle phase offset so stars don't pulse in sync
+        if (twinkleClass) {
+            star.style('--twinkle-delay', -(rng() * 6).toFixed(1) + 's');
+        }
     }
 }
 
@@ -457,8 +462,8 @@ function drawEdges(layer, simLinks, data) {
 function curvedEdge(s, t) {
     const dx = t.x - s.x, dy = t.y - s.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 1) return 'M' + s.x + ',' + s.y + ' L' + t.x + ',' + t.y;
     const curve = Math.min(dist * 0.15, 35);
-    // Perpendicular offset for curvature
     const nx = -dy / dist * curve;
     const ny = dx / dist * curve;
     const mx = (s.x + t.x) / 2 + nx;
@@ -563,11 +568,19 @@ function shapePath(tier, r) {
 
 function cinematicEntrance(data) {
     // Phase 1: Stars fade in (0–800ms, staggered)
-    state.g.selectAll('.bg-star')
-        .transition()
-        .duration(800)
-        .delay(() => Math.random() * 600)
-        .style('opacity', function () { return d3.select(this).style('--star-base-opacity') || 0.2; });
+    // Transition to a data attribute, then remove inline opacity so CSS animation takes over
+    state.g.selectAll('.bg-star').each(function () {
+        const star = d3.select(this);
+        const baseOp = parseFloat(star.style('--star-base-opacity')) || 0.2;
+        star.transition()
+            .duration(800)
+            .delay(Math.random() * 600)
+            .style('opacity', baseOp)
+            .on('end', function () {
+                // Remove inline opacity so CSS @keyframes twinkle can take over
+                d3.select(this).style('opacity', null).attr('opacity', baseOp);
+            });
+    });
 
     // Phase 2: Nebulas bloom (400–1200ms)
     state.g.selectAll('.nebula-hull')
@@ -591,15 +604,17 @@ function cinematicEntrance(data) {
         .delay((d, i) => 800 + i * 8)
         .style('opacity', 1);
 
-    // Edge paths: stroke-dash animation
-    state.edgeGroups.select('.edge-path').each(function () {
-        const len = this.getTotalLength ? this.getTotalLength() : 200;
-        d3.select(this)
+    // Edge paths: stroke-dash animation (staggered by group index)
+    state.edgeGroups.each(function (d, idx) {
+        const pathEl = d3.select(this).select('.edge-path').node();
+        if (!pathEl) return;
+        const len = pathEl.getTotalLength ? pathEl.getTotalLength() : 200;
+        d3.select(pathEl)
             .attr('stroke-dasharray', len)
             .attr('stroke-dashoffset', len)
             .transition()
             .duration(700)
-            .delay((d, i) => 900 + i * 8)
+            .delay(900 + idx * 8)
             .ease(d3.easeLinear)
             .attr('stroke-dashoffset', 0);
     });
