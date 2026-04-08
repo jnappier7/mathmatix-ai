@@ -979,7 +979,15 @@ const TOPIC_VISUALS = [
     },
     {
         name: 'Quadratic / Parabola',
-        detect: /\b(quadratic|parabola|vertex\s*form|standard\s*form.*ax|completing\s*the\s*square|a\s*x\s*²|ax\^2)\b/i,
+        detect: null,
+        detectFn(studentMsg, aiResponse) {
+            const combined = (studentMsg + ' ' + aiResponse).toLowerCase();
+            // Don't inject parabola slider for factoring/FOIL contexts — irrelevant visual
+            if (/\b(factor(ing|ed|s)?|foil|trinomial|prime\s*(polynomial|trinomial)?|gcf|greatest\s*common)\b/i.test(combined)) {
+                return false;
+            }
+            return /\b(quadratic|parabola|vertex\s*form|standard\s*form.*ax|completing\s*the\s*square|a\s*x\s*²|ax\^2)\b/i.test(combined);
+        },
         build() {
             return `\n\nTry dragging the sliders to see how each coefficient changes the parabola. What happens when you make \\( a \\) negative?\n\n[SLIDER_GRAPH:fn=a*x^2+b*x+c,params="a:1:-3:3,b:0:-5:5,c:0:-5:5",title="Explore: y = ax² + bx + c"]`;
         }

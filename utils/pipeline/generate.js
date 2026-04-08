@@ -321,21 +321,37 @@ function assemblePrompt(decision, promptContext) {
     fullSystemPrompt += '\n\n' + promptContext.moodDirective;
   }
 
-  // Clone messages to avoid mutation
-  const messages = conversationMessages.map(m => ({ ...m }));
+  // Clone messages to avoid mutation (deep-clone content arrays for vision messages)
+  const messages = conversationMessages.map(m => {
+    const cloned = { ...m };
+    if (Array.isArray(cloned.content)) {
+      cloned.content = cloned.content.map(c => ({ ...c }));
+    }
+    return cloned;
+  });
 
   // Inject verification context into last user message
   if (messages.length > 0) {
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.role === 'user') {
       const verificationCtx = buildVerificationContext(decision.diagnosis);
-      if (verificationCtx) {
-        lastMsg.content += '\n\n' + verificationCtx;
-      }
-
       const streakWarning = buildStreakWarning(decision.observation.streaks);
-      if (streakWarning) {
-        lastMsg.content += '\n\n' + streakWarning;
+      const suffix = [verificationCtx, streakWarning].filter(Boolean).join('\n\n');
+
+      if (suffix) {
+        if (Array.isArray(lastMsg.content)) {
+          // Multimodal (vision) message — append to the first text block
+          const textBlock = lastMsg.content.find(c => c.type === 'text');
+          if (textBlock) {
+            textBlock.text += '\n\n' + suffix;
+          } else {
+            lastMsg.content.push({ type: 'text', text: suffix });
+          }
+        } else if (lastMsg.content) {
+          lastMsg.content += '\n\n' + suffix;
+        } else {
+          lastMsg.content = suffix;
+        }
       }
     }
   }
