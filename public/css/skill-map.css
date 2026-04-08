@@ -174,18 +174,21 @@ html, body {
 .edge-line {
     stroke-width: 1;
     fill: none;
-    opacity: 0.35;
-    transition: opacity 0.3s, stroke-width 0.3s;
+    opacity: 0.3;
+    transition: opacity 0.3s, stroke-width 0.3s, stroke 0.3s;
 }
 
-.edge-line:hover {
-    opacity: 0.8;
-    stroke-width: 2;
+.edge-line.edge-active {
+    opacity: 1;
+    stroke-width: 2.5;
+    stroke: #fff !important;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
 }
 
 .edge-label {
-    font-size: 9px;
-    fill: rgba(255, 255, 255, 0.25);
+    font-size: 8px;
+    font-style: italic;
+    fill: rgba(255, 255, 255, 0.22);
     pointer-events: none;
     letter-spacing: 0.5px;
 }
@@ -193,6 +196,11 @@ html, body {
 /* Edge arrowhead */
 .edge-arrow {
     fill: rgba(255, 255, 255, 0.25);
+}
+
+/* Edge group transition for highlight/unhighlight */
+.edge-group {
+    transition: opacity 0.2s;
 }
 
 /* --- Nodes --- */
