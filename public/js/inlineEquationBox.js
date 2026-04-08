@@ -65,18 +65,26 @@
 
     if (!inputEl) return;
 
-    // Listen for equation box button click
+    // Listen for equation box button click (both mobile and desktop)
     const eqBtn = document.getElementById('insert-equation-btn');
     if (eqBtn) {
       eqBtn.addEventListener('click', (e) => {
-        // Only use inline equation box on mobile
-        if (window.innerWidth <= 768) {
-          e.stopImmediatePropagation();
-          e.preventDefault();
-          insertEquationBoxAtCursor();
-        }
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        insertEquationBoxAtCursor();
       }, true);
     }
+
+    // Keyboard shortcut: Alt+= to insert equation box (like MS Word)
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key === '=') {
+        e.preventDefault();
+        // Only trigger if the main input is focused or we're in the chat area
+        if (inputEl.contains(document.activeElement) || document.activeElement === inputEl) {
+          insertEquationBoxAtCursor();
+        }
+      }
+    });
 
     // Listen for auto-trigger characters in the main input
     inputEl.addEventListener('keydown', handleInputKeydown);

@@ -4,6 +4,166 @@
    Learn, Chat, Quests, Profile
    ============================================ */
 
+/* === Inline Equation Box (MS Word-style) — all viewports === */
+
+.inline-eq-box {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    position: relative;
+    margin: 0 2px;
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    cursor: pointer;
+    max-width: 100%;
+}
+
+/* Active state: editing */
+.inline-eq-box.active {
+    border: 2px solid var(--clr-primary-teal, #12B3B3);
+    background: rgba(18, 179, 179, 0.04);
+    box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.12);
+    padding: 2px 6px;
+}
+
+/* Sealed state: rendered, click/tap to edit */
+.inline-eq-box.sealed {
+    border: 1.5px solid var(--clr-border-light, #e2e8f0);
+    background: rgba(18, 179, 179, 0.03);
+    padding: 2px 8px;
+}
+
+.inline-eq-box.sealed:hover {
+    border-color: var(--clr-primary-teal, #12B3B3);
+    background: rgba(18, 179, 179, 0.06);
+}
+
+.inline-eq-box.sealed:active {
+    border-color: var(--clr-primary-teal, #12B3B3);
+    background: rgba(18, 179, 179, 0.08);
+}
+
+/* The MathLive field inside the box */
+.inline-eq-field {
+    font-size: 1.1rem;
+    min-width: 40px;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 2px 0;
+}
+
+.inline-eq-field:focus-within {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Dark mode */
+[data-theme="dark"] .inline-eq-box.active {
+    background: rgba(18, 179, 179, 0.08);
+    border-color: #2dd4bf;
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+}
+
+[data-theme="dark"] .inline-eq-box.sealed {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .inline-eq-box.sealed:hover {
+    border-color: #2dd4bf;
+    background: rgba(45, 212, 191, 0.08);
+}
+
+[data-theme="dark"] .inline-eq-box.sealed:active {
+    border-color: #2dd4bf;
+    background: rgba(45, 212, 191, 0.1);
+}
+
+/* First-time tooltip */
+.inline-eq-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a2e;
+    color: #f0f0f5;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    white-space: normal;
+    width: max-content;
+    max-width: 320px;
+    z-index: 1000;
+    pointer-events: auto;
+    animation: eqTooltipFadeIn 0.3s ease;
+}
+
+.inline-eq-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1a1a2e;
+}
+
+.inline-eq-tooltip code {
+    background: rgba(18, 179, 179, 0.25);
+    color: #2dd4bf;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.inline-eq-tooltip strong {
+    color: #fff;
+}
+
+@keyframes eqTooltipFadeIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+[data-theme="dark"] .inline-eq-tooltip {
+    background: #2a2a3e;
+}
+
+[data-theme="dark"] .inline-eq-tooltip::after {
+    border-top-color: #2a2a3e;
+}
+
+/* Desktop: subtle hover hint on sealed equations */
+@media (min-width: 769px) {
+    .inline-eq-box.sealed {
+        cursor: pointer;
+    }
+    .inline-eq-box.sealed::after {
+        content: 'click to edit';
+        position: absolute;
+        bottom: calc(100% + 4px);
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.65rem;
+        color: #8896a6;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+    }
+    .inline-eq-box.sealed:hover::after {
+        opacity: 1;
+    }
+}
+
+/* === End Inline Equation Box === */
+
 /* --- BOTTOM NAV OVERRIDE (4 tabs) --- */
 @media (max-width: 768px) {
     /* 4-tab nav layout */
@@ -1499,131 +1659,6 @@
 
     [data-theme="dark"] body.has-chat-nav .chat-disclaimer {
         color: #7a8a9a;
-    }
-
-    /* --- Inline Equation Box (MS Word-style) --- */
-
-    .inline-eq-box {
-        display: inline-flex;
-        align-items: center;
-        vertical-align: middle;
-        position: relative;
-        margin: 0 2px;
-        border-radius: 8px;
-        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-        cursor: pointer;
-        max-width: 100%;
-    }
-
-    /* Active state: editing */
-    .inline-eq-box.active {
-        border: 2px solid var(--clr-primary-teal, #12B3B3);
-        background: rgba(18, 179, 179, 0.04);
-        box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.12);
-        padding: 2px 4px;
-    }
-
-    /* Sealed state: rendered, tap to edit */
-    .inline-eq-box.sealed {
-        border: 1.5px solid var(--clr-border-light, #e2e8f0);
-        background: rgba(18, 179, 179, 0.03);
-        padding: 2px 6px;
-    }
-
-    .inline-eq-box.sealed:active {
-        border-color: var(--clr-primary-teal, #12B3B3);
-        background: rgba(18, 179, 179, 0.08);
-    }
-
-    /* The MathLive field inside the box */
-    .inline-eq-field {
-        font-size: 1.05rem;
-        min-width: 40px;
-        border: none !important;
-        outline: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        padding: 2px 0;
-    }
-
-    /* Override MathLive's default focused styles */
-    .inline-eq-field:focus-within {
-        outline: none !important;
-        box-shadow: none !important;
-        border: none !important;
-    }
-
-    /* Dark mode */
-    [data-theme="dark"] .inline-eq-box.active {
-        background: rgba(18, 179, 179, 0.08);
-        border-color: #2dd4bf;
-        box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
-    }
-
-    [data-theme="dark"] .inline-eq-box.sealed {
-        border-color: rgba(255, 255, 255, 0.12);
-        background: rgba(255, 255, 255, 0.04);
-    }
-
-    [data-theme="dark"] .inline-eq-box.sealed:active {
-        border-color: #2dd4bf;
-        background: rgba(45, 212, 191, 0.1);
-    }
-
-    /* First-time tooltip */
-    .inline-eq-tooltip {
-        position: absolute;
-        bottom: calc(100% + 8px);
-        left: 50%;
-        transform: translateX(-50%);
-        background: #1a1a2e;
-        color: #f0f0f5;
-        font-size: 0.75rem;
-        line-height: 1.4;
-        padding: 10px 14px;
-        border-radius: 10px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-        white-space: normal;
-        width: max-content;
-        max-width: 280px;
-        z-index: 1000;
-        animation: eqTooltipFadeIn 0.3s ease;
-    }
-
-    .inline-eq-tooltip::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 6px solid transparent;
-        border-top-color: #1a1a2e;
-    }
-
-    .inline-eq-tooltip code {
-        background: rgba(18, 179, 179, 0.25);
-        color: #2dd4bf;
-        padding: 1px 5px;
-        border-radius: 4px;
-        font-size: 0.78rem;
-        font-weight: 600;
-    }
-
-    .inline-eq-tooltip strong {
-        color: #fff;
-    }
-
-    @keyframes eqTooltipFadeIn {
-        from { opacity: 0; transform: translateX(-50%) translateY(4px); }
-        to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-
-    [data-theme="dark"] .inline-eq-tooltip {
-        background: #2a2a3e;
-    }
-
-    [data-theme="dark"] .inline-eq-tooltip::after {
-        border-top-color: #2a2a3e;
     }
 
     /* --- Equation Palette Bottom Sheet --- */

@@ -3369,17 +3369,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function activateMathMode() {
-        if (!mkPanel || !userInput) return;
+        if (!userInput) return;
         const isMobile = window.innerWidth <= 768;
 
-        // On mobile: use inline equation box (MS Word-style)
-        if (isMobile && window.InlineEquationBox) {
+        // Both mobile and desktop: use inline equation box (MS Word-style)
+        if (window.InlineEquationBox) {
             window.InlineEquationBox.insertEquationBoxAtCursor();
             mathModeOn = true;
-
-            // Show the math keyboard panel for symbol input
-            if (mkPanel) mkPanel.style.display = '';
-            if (mkHelperText) mkHelperText.style.display = '';
 
             // Close old overlay palette if open
             if (typeof closeEquationPalette === 'function') closeEquationPalette();
@@ -3387,13 +3383,17 @@ document.addEventListener("DOMContentLoaded", () => {
             // Highlight the √x tool button
             if (openEquationBtn) openEquationBtn.classList.add('mk-active');
 
-            // Default to math tab
-            switchMkTab('math');
+            // On mobile: also show the math keyboard panel for symbol input
+            if (isMobile && mkPanel) {
+                mkPanel.style.display = '';
+                if (mkHelperText) mkHelperText.style.display = '';
+                switchMkTab('math');
+            }
             return;
         }
 
-        // Desktop: legacy behavior (swap input for math-field)
-        if (!mkField || !mkWrapper) return;
+        // Fallback: legacy behavior (swap input for math-field)
+        if (!mkPanel || !mkField || !mkWrapper) return;
         mathModeOn = true;
 
         userInput.style.display = 'none';
@@ -3411,20 +3411,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function deactivateMathMode() {
-        const isMobile = window.innerWidth <= 768;
-
-        // On mobile: seal the inline equation box, hide keyboard
-        if (isMobile && window.InlineEquationBox) {
+        // Inline equation box: seal and clean up (both mobile and desktop)
+        if (window.InlineEquationBox) {
             window.InlineEquationBox.sealAll();
             mathModeOn = false;
-            if (mkPanel) mkPanel.style.display = 'none';
-            if (mkHelperText) mkHelperText.style.display = 'none';
+            // On mobile: hide the math keyboard panel
+            if (window.innerWidth <= 768) {
+                if (mkPanel) mkPanel.style.display = 'none';
+                if (mkHelperText) mkHelperText.style.display = 'none';
+            }
             userInput.focus();
             if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
             return;
         }
 
-        // Desktop: legacy behavior
+        // Fallback: legacy behavior
         if (!mkPanel || !mkField || !mkWrapper || !userInput) return;
 
         const latex = mkField.value?.trim();
@@ -3471,16 +3472,14 @@ document.addEventListener("DOMContentLoaded", () => {
         mkDoneBtn.addEventListener('click', () => deactivateMathMode());
     }
 
-    // √x tool button: toggle math mode
+    // √x tool button: insert inline equation box (mobile + desktop)
     if (openEquationBtn) {
         openEquationBtn.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
+            if (window.InlineEquationBox) {
                 e.stopImmediatePropagation();
-                if (mathModeOn && !window.InlineEquationBox?.isActive()) {
-                    deactivateMathMode();
-                } else {
-                    activateMathMode();
-                }
+                e.preventDefault();
+                // Always insert a new equation box — don't toggle off
+                activateMathMode();
             }
         }, true);
     }
