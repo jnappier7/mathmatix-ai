@@ -1,16 +1,19 @@
 /**
- * INLINE EQUATION BOX — MS Word-style math input for mobile
+ * INLINE EQUATION BOX — MS Word-style math input (mobile + desktop)
  *
  * Core UX:
  * - Student types in a contenteditable div (normal text)
- * - Tapping f(x) or typing a trigger inserts an inline equation box at cursor
- * - Inside the box: type linear math ("1/2", "x^2", "\sqrt(x)")
- * - Space bar auto-builds: "1/2" + space → rendered fraction
+ * - Click √x button or press Alt+= to insert an inline equation box
+ * - Inside the box: MathLive auto-builds fractions (/), superscripts (^),
+ *   subscripts (_) as you type — no space bar needed for those
+ * - Space bar handles autocorrect (\alpha → α) and sqrt(x) → radical
  * - Tab navigates between placeholders (numerator → denominator)
- * - Tap outside (or right-arrow past end) exits back to text
- * - Tap an existing equation box to re-enter and edit
+ * - Click/tap outside (or arrow-right past end) exits back to text
+ * - Click/tap a sealed equation box to re-enter and edit
  *
  * Inspired by Microsoft Word's UnicodeMath / equation editor UX.
+ * MathLive provides the core auto-building; this module handles the
+ * inline embedding, lifecycle (active/sealed), and text integration.
  *
  * @module inlineEquationBox
  */
@@ -19,15 +22,6 @@
   'use strict';
 
   // ─── CONFIGURATION ──────────────────────────────────────────────────
-  const TRIGGERS = {
-    // Characters that auto-open an equation box when typed at the start
-    // or after whitespace in the main input
-    autoOpen: /(?:^|[\s])([=])$/,
-    // Characters inside the equation box that trigger auto-build on space
-    fractionSlash: '/',
-    superscript: '^',
-    subscript: '_',
-  };
 
   // UnicodeMath autocorrect map: type \name + space → symbol
   const AUTOCORRECT = {
@@ -85,9 +79,6 @@
         }
       }
     });
-
-    // Listen for auto-trigger characters in the main input
-    inputEl.addEventListener('keydown', handleInputKeydown);
 
     // Click handler for re-entering existing equation boxes
     inputEl.addEventListener('click', handleEquationBoxClick);
@@ -217,21 +208,25 @@
 
       // Right arrow at end of equation → exit to text
       if (e.key === 'ArrowRight') {
-        const pos = mathField.position;
-        const lastPos = mathField.lastPosition;
-        if (pos >= lastPos) {
-          e.preventDefault();
-          exitEquationBox(wrapper, 'right');
-        }
+        try {
+          const pos = mathField.position;
+          const lastPos = mathField.model?.lastOffset ?? 0;
+          if (pos >= lastPos) {
+            e.preventDefault();
+            exitEquationBox(wrapper, 'right');
+          }
+        } catch (err) { /* MathLive API mismatch — ignore */ }
       }
 
       // Left arrow at start of equation → exit to text (left side)
       if (e.key === 'ArrowLeft') {
-        const pos = mathField.position;
-        if (pos <= 0) {
-          e.preventDefault();
-          exitEquationBox(wrapper, 'left');
-        }
+        try {
+          const pos = mathField.position;
+          if (pos <= 0) {
+            e.preventDefault();
+            exitEquationBox(wrapper, 'left');
+          }
+        } catch (err) { /* MathLive API mismatch — ignore */ }
       }
 
       // Backspace on empty equation → delete the box
@@ -277,31 +272,32 @@
 
   /**
    * Handle space bar as auto-build trigger (like MS Word).
-   * Processes the current linear input and converts to structured math.
+   *
+   * NOTE: MathLive already auto-builds fractions (/), superscripts (^),
+   * and subscripts (_) as you type. We only handle things MathLive doesn't:
+   * - Autocorrect codes: \alpha → α, \theta → θ, etc.
+   * - \frac → fraction template with placeholders
+   * - sqrt(expr) → radical structure
+   *
    * @returns {boolean} true if the space was consumed by an auto-build
    */
   function handleSpaceBuild(mathField) {
     const value = mathField.value || '';
 
-    // Check for autocorrect codes like \alpha, \sqrt, etc.
+    // Check for autocorrect codes like \alpha, \theta, etc.
+    // MathLive may handle some of these, but our map ensures coverage
     const autocorrectMatch = value.match(/\\[a-zA-Z]+$/);
     if (autocorrectMatch) {
       const code = autocorrectMatch[0];
       if (AUTOCORRECT[code]) {
-        // Replace the code with the symbol
         const before = value.slice(0, -code.length);
         mathField.value = before + AUTOCORRECT[code];
-        mathField.position = mathField.lastPosition;
+        // Move cursor to end
+        try { mathField.position = mathField.model?.lastOffset ?? 0; } catch (e) {}
         return true;
       }
 
-      // Handle \sqrt(expr) → square root structure
-      if (code === '\\sqrt') {
-        // Don't consume yet — let them type the argument
-        return false;
-      }
-
-      // Handle \frac → insert fraction template
+      // Handle \frac → insert fraction template with placeholders
       if (code === '\\frac') {
         const before = value.slice(0, -code.length);
         mathField.value = before;
@@ -310,45 +306,8 @@
       }
     }
 
-    // Auto-build: fraction (a/b → stacked fraction)
-    // Rule: / captures one atomic unit on each side
-    // Parenthesized groups count as one unit: (a+b)/(c+d)
-    const fractionPattern = /(?:\(([^()]+)\)|([a-zA-Z0-9]+))\s*\/\s*(?:\(([^()]+)\)|([a-zA-Z0-9]+))$/;
-    const fracMatch = value.match(fractionPattern);
-    if (fracMatch) {
-      const numerator = fracMatch[1] || fracMatch[2];
-      const denominator = fracMatch[3] || fracMatch[4];
-      const before = value.slice(0, fracMatch.index);
-      mathField.value = before;
-      mathField.executeCommand(['insert', `\\frac{${numerator}}{${denominator}}`]);
-      return true;
-    }
-
-    // Auto-build: superscript (x^2 → x²)
-    const supPattern = /(?:\(([^()]+)\)|([a-zA-Z0-9]+))\^(?:\{([^{}]+)\}|([a-zA-Z0-9]+))$/;
-    const supMatch = value.match(supPattern);
-    if (supMatch) {
-      const base = supMatch[1] || supMatch[2];
-      const exp = supMatch[3] || supMatch[4];
-      const before = value.slice(0, supMatch.index);
-      mathField.value = before;
-      mathField.executeCommand(['insert', `${base}^{${exp}}`]);
-      return true;
-    }
-
-    // Auto-build: subscript (a_n → a with subscript n)
-    const subPattern = /(?:\(([^()]+)\)|([a-zA-Z0-9]+))_(?:\{([^{}]+)\}|([a-zA-Z0-9]+))$/;
-    const subMatch = value.match(subPattern);
-    if (subMatch) {
-      const base = subMatch[1] || subMatch[2];
-      const sub = subMatch[3] || subMatch[4];
-      const before = value.slice(0, subMatch.index);
-      mathField.value = before;
-      mathField.executeCommand(['insert', `${base}_{${sub}}`]);
-      return true;
-    }
-
-    // Auto-build: sqrt(expr) → radical
+    // Auto-build: sqrt(expr) or √(expr) → radical
+    // MathLive doesn't auto-build from text "sqrt(x+1)" — we handle this
     const sqrtPattern = /(?:sqrt|√)\(([^()]+)\)$/;
     const sqrtMatch = value.match(sqrtPattern);
     if (sqrtMatch) {
@@ -405,7 +364,7 @@
       setTimeout(() => {
         mathField.focus();
         // Place cursor at end
-        mathField.position = mathField.lastPosition;
+        try { mathField.position = mathField.model?.lastOffset ?? 0; } catch (e) {}
         suppressNativeKeyboard(mathField);
       }, 50);
     }
@@ -484,18 +443,6 @@
   }
 
   // ─── INPUT HANDLERS ─────────────────────────────────────────────────
-
-  /**
-   * Handle keydown in the main contenteditable input.
-   * Detect characters that should auto-open an equation box.
-   */
-  function handleInputKeydown(e) {
-    // Only on mobile
-    if (window.innerWidth > 768) return;
-
-    // Don't intercept if already inside an equation box
-    if (activeEquationBox && activeEquationBox.contains(document.activeElement)) return;
-  }
 
   /**
    * Handle clicks on sealed equation boxes to re-open them.

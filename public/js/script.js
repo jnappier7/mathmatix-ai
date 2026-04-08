@@ -1759,24 +1759,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
         while (node = walker.nextNode()) {
             if (node.nodeType === Node.TEXT_NODE) {
-                // Skip text nodes that are inside math-container elements
-                // (KaTeX creates spans when rendering, but we want the LaTeX source instead)
+                // Skip text nodes inside math containers or inline equation boxes
                 let parent = node.parentElement;
-                let insideMathContainer = false;
+                let insideMathElement = false;
                 while (parent && parent !== element) {
-                    if (parent.classList && (parent.classList.contains('math-container') || parent.classList.contains('math-block-container'))) {
-                        insideMathContainer = true;
+                    if (parent.classList && (
+                        parent.classList.contains('math-container') ||
+                        parent.classList.contains('math-block-container') ||
+                        parent.classList.contains('inline-eq-box')
+                    )) {
+                        insideMathElement = true;
                         break;
                     }
                     parent = parent.parentElement;
                 }
 
-                if (!insideMathContainer) {
-                    result += node.textContent;
+                if (!insideMathElement) {
+                    // Clean up zero-width spaces left by equation box navigation
+                    result += node.textContent.replace(/\u200B/g, '');
                 }
             } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Inline equation box: extract LaTeX from data-latex or live math-field
+                if (node.classList.contains('inline-eq-box')) {
+                    let latex = node.getAttribute('data-latex');
+                    // If box is still active (not yet sealed), grab value from math-field
+                    if (!latex) {
+                        const mf = node.querySelector('math-field');
+                        if (mf) latex = (mf.value || '').trim();
+                    }
+                    if (latex) {
+                        result += `\\(${latex}\\)`;
+                    }
                 // Multi-line math block: each .math-block-line becomes its own line
-                if (node.classList.contains('math-block-container')) {
+                } else if (node.classList.contains('math-block-container')) {
                     const lines = node.querySelectorAll('.math-block-line');
                     lines.forEach((line, i) => {
                         const latex = line.getAttribute('data-latex');
@@ -1785,8 +1800,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             result += `\\(${latex}\\)`;
                         }
                     });
-                    // Skip the entire subtree (walker won't descend into already-handled children,
-                    // but child text nodes might still appear — handled by insideMathContainer check)
                 } else if (node.classList.contains('math-container') && !node.classList.contains('math-block-line')) {
                     const latex = node.getAttribute('data-latex');
                     if (latex) {
@@ -1803,6 +1816,11 @@ document.addEventListener("DOMContentLoaded", () => {
      * Send a message - uses the message queue to handle back-to-back messages gracefully
      */
     function sendMessage() {
+        // Seal any active inline equation boxes so their data-latex is set
+        if (window.InlineEquationBox) {
+            window.InlineEquationBox.sealAll();
+        }
+
         // If math keyboard is active, grab its content first
         const mkFieldEl = document.getElementById('math-keyboard-field');
         const mkWrapperEl = document.getElementById('math-input-wrapper');
