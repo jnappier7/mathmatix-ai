@@ -1,869 +1,630 @@
 /**
- * SKILL MAP - Visual Knowledge Graph / Constellation System
- * D3.js force-directed graph with 3-zoom levels
+ * SKILL MAP — The Mathematical Universe
+ *
+ * Vertical tier-based constellation layout with always-visible
+ * labeled connections and Prezi-style flyTo navigation.
  */
 
-// Pattern Configuration (enable/disable for phased rollout)
-const PATTERN_CONFIG = {
-    equivalence: { enabled: true, priority: 1, name: 'Equivalence' },
-    scaling: { enabled: true, priority: 2, name: 'Scaling' },
-    change: { enabled: true, priority: 3, name: 'Change' },
-    structure: { enabled: true, priority: 4, name: 'Structure' },
-    space: { enabled: true, priority: 5, name: 'Space' },
-    comparison: { enabled: true, priority: 6, name: 'Comparison' },
-    uncertainty: { enabled: true, priority: 7, name: 'Uncertainty' },
-    accumulation: { enabled: true, priority: 8, name: 'Accumulation' }
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
+// Math symbols mapped per pattern — used as node glyphs
+const PATTERN_SYMBOLS = {
+    equivalence:  { symbol: '=',  unicode: '\u003D' },
+    scaling:      { symbol: '\u00D7', unicode: '\u00D7' },
+    change:       { symbol: '\u0394', unicode: '\u0394' },
+    structure:    { symbol: '\u03B1', unicode: '\u03B1' },
+    space:        { symbol: '\u25B3', unicode: '\u25B3' },
+    comparison:   { symbol: '\u2264', unicode: '\u2264' },
+    uncertainty:  { symbol: '\u03C3', unicode: '\u03C3' },
+    accumulation: { symbol: '\u03A3', unicode: '\u03A3' }
 };
 
-// Zoom level thresholds
-const ZOOM_LEVELS = {
-    WORLD: { min: 0, max: 1.0, name: 'world' },
-    REGION: { min: 1.0, max: 2.5, name: 'region' },
-    NODE: { min: 2.5, max: 4.0, name: 'node' }
+// Tier names — bottom to top
+const TIER_NAMES = ['Concrete', 'Symbolic', 'Structural', 'Formal'];
+
+// Node shapes per tier: circle, diamond, star-4, star-6
+const TIER_SHAPES = {
+    1: 'circle',
+    2: 'diamond',
+    3: 'star4',
+    4: 'star6'
 };
 
-// State
+// Edge relationship labels
+const EDGE_LABELS = {
+    prerequisite: 'prerequisite',
+    enables: 'enables'
+};
+
+// ============================================================================
+// STATE
+// ============================================================================
+
 const state = {
     graphData: null,
     simulation: null,
-    showClusters: true,
-    showLabels: true,
+    svg: null,
+    g: null,
+    zoom: null,
     selectedNode: null,
-    currentZoom: 1.0,
-    zoomLevel: 'world',
-    focusedPattern: null,
-    focusedNode: null,
-    clusterCenters: {}, // Store precomputed cluster centers
-    frontierNodes: [], // Hot next recommendations (1-3 max)
-    progressZone: null // Center of student's current progress
+    frontierNodes: [],
+    currentZoom: 1.0
 };
 
-// DOM Elements
+// DOM refs
 const graphContainer = document.getElementById('graph-container');
 const nodeDetail = document.getElementById('nodeDetail');
-const nodeDetailBackdrop = document.getElementById('nodeDetailBackdrop');
-const resetZoomBtn = document.getElementById('resetZoom');
-const toggleClustersBtn = document.getElementById('toggleClusters');
-const toggleLabelsBtn = document.getElementById('toggleLabels');
-const showHelpBtn = document.getElementById('showHelp');
 const closeDetailBtn = document.getElementById('closeDetail');
 const practiceBtn = document.getElementById('practiceBtn');
+const resetZoomBtn = document.getElementById('resetZoom');
+const showHelpBtn = document.getElementById('showHelp');
 
-// Breadcrumb elements
-const crumbWorld = document.getElementById('crumbWorld');
-const crumbPattern = document.getElementById('crumbPattern');
-const crumbNode = document.getElementById('crumbNode');
-const separatorPattern = document.getElementById('separatorPattern');
-const separatorNode = document.getElementById('separatorNode');
-const patternIcon = document.getElementById('patternIcon');
-const patternName = document.getElementById('patternName');
-const nodeName = document.getElementById('nodeName');
+// ============================================================================
+// INIT
+// ============================================================================
 
-// Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     await loadGraphData();
-    initializeEventListeners();
-    showWelcomeHint();
+    initEventListeners();
 });
 
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
-/**
- * Get current zoom level name based on zoom scale
- */
-function getZoomLevelName(zoom) {
-    if (zoom < ZOOM_LEVELS.REGION.min) return 'world';
-    if (zoom < ZOOM_LEVELS.NODE.min) return 'region';
-    return 'node';
-}
-
-/**
- * Check if pattern is enabled
- */
-function isPatternEnabled(patternId) {
-    return PATTERN_CONFIG[patternId]?.enabled || false;
-}
-
-/**
- * Check if edge should be visible at current zoom level
- */
-function shouldShowEdge(edge, currentZoom, focusedPattern, focusedNode) {
-    const zoomLevel = getZoomLevelName(currentZoom);
-
-    // World view: hide all edges
-    if (zoomLevel === 'world') return false;
-
-    // Region view: show edges within focused pattern only
-    if (zoomLevel === 'region') {
-        if (!focusedPattern) return true; // Show all if no focus
-        return edge.source.pattern === focusedPattern &&
-               edge.target.pattern === focusedPattern;
-    }
-
-    // Node view: show edges connected to focused node only
-    if (zoomLevel === 'node' && focusedNode) {
-        return edge.source.id === focusedNode.id ||
-               edge.target.id === focusedNode.id;
-    }
-
-    return true;
-}
-
-/**
- * Calculate stable cluster centers in a circular arrangement
- */
-function calculateClusterCenters(clusters, width, height) {
-    const centers = {};
-    const radius = Math.min(width, height) * 0.35; // 35% of viewport
-    const centerX = width / 2;
-    const centerY = height / 2;
-
-    clusters.forEach((cluster, index) => {
-        // Arrange clusters in a circle
-        const angle = (index / clusters.length) * 2 * Math.PI - Math.PI / 2; // Start at top
-        centers[cluster.id] = {
-            x: centerX + radius * Math.cos(angle),
-            y: centerY + radius * Math.sin(angle),
-            color: cluster.color,
-            icon: cluster.icon,
-            name: cluster.name
-        };
-    });
-
-    return centers;
-}
-
-/**
- * Initialize node positions based on cluster centers and tier
- */
-function initializeNodePositions(nodes, clusterCenters) {
-    // Group nodes by pattern and tier
-    const nodesByPatternTier = {};
-
-    nodes.forEach(node => {
-        const key = `${node.pattern}-${node.tier}`;
-        if (!nodesByPatternTier[key]) {
-            nodesByPatternTier[key] = [];
-        }
-        nodesByPatternTier[key].push(node);
-    });
-
-    // Position nodes in a stable pattern within each cluster
-    Object.keys(nodesByPatternTier).forEach(key => {
-        const [pattern, tier] = key.split('-');
-        const patternNodes = nodesByPatternTier[key];
-        const clusterCenter = clusterCenters[pattern];
-
-        if (!clusterCenter) return;
-
-        // Arrange nodes in concentric rings by tier
-        const tierRadius = (parseInt(tier) - 1) * 60 + 40; // Inner tiers closer to center
-        const nodesInTier = patternNodes.length;
-
-        patternNodes.forEach((node, index) => {
-            const angle = (index / nodesInTier) * 2 * Math.PI;
-            node.x = clusterCenter.x + tierRadius * Math.cos(angle);
-            node.y = clusterCenter.y + tierRadius * Math.sin(angle);
-        });
-    });
-}
-
-/**
- * Custom D3 force to pull nodes toward their cluster centers
- */
-function forceCluster() {
-    let nodes;
-    let strength = 0.1;
-    let centersFunc = d => ({ x: 0, y: 0 });
-
-    function force(alpha) {
-        if (!nodes) return;
-
-        const k = alpha * strength;
-        nodes.forEach(node => {
-            const center = centersFunc(node);
-            if (!center) return;
-
-            node.vx += (center.x - node.x) * k;
-            node.vy += (center.y - node.y) * k;
-        });
-    }
-
-    force.initialize = function(_) {
-        nodes = _;
-    };
-
-    force.centers = function(_) {
-        return arguments.length ? (centersFunc = typeof _ === 'function' ? _ : () => _, force) : centersFunc;
-    };
-
-    force.strength = function(_) {
-        return arguments.length ? (strength = +_, force) : strength;
-    };
-
-    return force;
-}
-
-/**
- * Detect frontier nodes - the hot 1-3 recommendations
- * These are ready nodes that unlock the most future skills
- */
-function detectFrontierNodes(nodes, edges) {
-    const readyNodes = nodes.filter(n => n.state === 'ready' && isPatternEnabled(n.pattern));
-
-    if (readyNodes.length === 0) return [];
-
-    // Score each ready node by how many skills it unlocks
-    const scoredNodes = readyNodes.map(node => {
-        const unlocksCount = edges.filter(e => e.source.id === node.id).length;
-        return { node, unlocksCount };
-    });
-
-    // Sort by unlocks (descending), take top 3
-    scoredNodes.sort((a, b) => b.unlocksCount - a.unlocksCount);
-
-    return scoredNodes.slice(0, 3).map(s => s.node);
-}
-
-/**
- * Calculate the center of student's progress zone
- * This is the average position of mastered + ready nodes
- */
-function calculateProgressZone(nodes) {
-    const progressNodes = nodes.filter(n =>
-        (n.state === 'mastered' || n.state === 'ready') &&
-        isPatternEnabled(n.pattern)
-    );
-
-    if (progressNodes.length === 0) return null;
-
-    const centerX = d3.mean(progressNodes, d => d.x);
-    const centerY = d3.mean(progressNodes, d => d.y);
-
-    return { x: centerX, y: centerY };
-}
-
-// Load graph data from API
 async function loadGraphData() {
     try {
-        const response = await fetch('/api/mastery/skill-graph', { credentials: 'include' });
+        const res = await fetch('/api/mastery/skill-graph', { credentials: 'include' });
 
-        if (response.status === 401) {
-            window.location.href = '/login.html';
-            return;
-        }
+        if (res.status === 401) { window.location.href = '/login.html'; return; }
+        if (!res.ok) throw new Error('Failed to load skill graph');
 
-        if (!response.ok) {
-            throw new Error('Failed to load skill graph');
-        }
+        const data = await res.json();
 
-        const data = await response.json();
+        if (!data.assessmentCompleted) { window.location.href = '/screener.html'; return; }
 
-        if (!data.assessmentCompleted) {
-            window.location.href = '/screener.html';
+        if (!data.nodes || data.nodes.length === 0) {
+            graphContainer.innerHTML =
+                '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ccd6e0;font-size:1.1rem;text-align:center;padding:2rem;">' +
+                '<div><p style="font-size:2rem;margin-bottom:1rem;">&#x2728;</p>' +
+                '<p>No skills discovered yet.</p>' +
+                '<p style="font-size:0.9rem;margin-top:0.5rem;opacity:0.5;">Complete the screener to map your math journey.</p></div></div>';
             return;
         }
 
         state.graphData = data;
 
-        if (!data.nodes || data.nodes.length === 0) {
-            document.getElementById('graph-container').innerHTML =
-                '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#b8b8d1;font-size:1.2rem;text-align:center;padding:2rem;">' +
-                '<div><p style="font-size:2rem;margin-bottom:1rem;">🌌</p>' +
-                '<p>No skills discovered yet.</p>' +
-                '<p style="font-size:0.95rem;margin-top:0.5rem;">Complete the screener to map your math journey!</p></div></div>';
-            return;
-        }
+        // Update stats
+        const mastered = data.nodes.filter(n => n.state === 'mastered').length;
+        document.getElementById('masteredCount').textContent = mastered;
+        document.getElementById('totalSkills').textContent = data.nodes.length;
 
-        // Calculate stats
-        const masteredCount = data.nodes.filter(n => n.state === 'mastered').length;
-        const readyCount = data.nodes.filter(n => n.state === 'ready').length;
-        const totalSkills = data.nodes.length;
+        // Detect frontier nodes
+        state.frontierNodes = detectFrontier(data.nodes, data.edges);
 
-        // Update stats with motivational language
-        document.getElementById('masteredCount').textContent = masteredCount;
-        document.getElementById('frontierCount').textContent = readyCount;
-        document.getElementById('totalSkills').textContent = totalSkills;
+        // Build the graph
+        buildGraph(data);
 
-        // Populate pattern legend
-        populatePatternLegend(data.clusters);
-
-        // Initialize D3 graph
-        initializeGraph(data);
-
-    } catch (error) {
-        console.error('Error loading skill graph:', error);
-        alert('Failed to load skill map. Please try again.');
+    } catch (err) {
+        console.error('Error loading skill graph:', err);
+        graphContainer.innerHTML =
+            '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#ccd6e0;">' +
+            '<p>Failed to load skill map. Please refresh.</p></div>';
     }
 }
 
-// Populate the pattern legend
-function populatePatternLegend(clusters) {
-    const patternList = document.getElementById('patternList');
-    patternList.innerHTML = '';
+// ============================================================================
+// FRONTIER DETECTION
+// ============================================================================
 
-    clusters.forEach(cluster => {
-        const item = document.createElement('div');
-        item.className = 'pattern-item';
-        item.innerHTML = `
-            <span class="pattern-icon">${cluster.icon}</span>
-            <div class="pattern-color" style="background: ${cluster.color}"></div>
-            <span class="pattern-name">${cluster.name}</span>
-        `;
-        item.addEventListener('click', () => focusOnPattern(cluster.id));
-        patternList.appendChild(item);
+function detectFrontier(nodes, edges) {
+    const ready = nodes.filter(n => n.state === 'ready');
+    if (ready.length === 0) return [];
+
+    const scored = ready.map(node => ({
+        node,
+        unlocks: edges.filter(e =>
+            (typeof e.source === 'object' ? e.source.id : e.source) === node.id
+        ).length
+    }));
+
+    scored.sort((a, b) => b.unlocks - a.unlocks);
+    return scored.slice(0, 3).map(s => s.node);
+}
+
+// ============================================================================
+// GRAPH BUILDER
+// ============================================================================
+
+function buildGraph(data) {
+    const W = graphContainer.clientWidth;
+    const H = graphContainer.clientHeight;
+
+    // --- Layout parameters ---
+    const MARGIN_LEFT = 80;
+    const MARGIN_RIGHT = 80;
+    const MARGIN_TOP = 80;
+    const MARGIN_BOTTOM = 80;
+    const graphW = W - MARGIN_LEFT - MARGIN_RIGHT;
+    const graphH = H - MARGIN_TOP - MARGIN_BOTTOM;
+
+    // Tier Y positions: tier 1 (Concrete) at bottom, tier 4 (Formal) at top
+    const tierY = {};
+    for (let t = 1; t <= 4; t++) {
+        tierY[t] = MARGIN_TOP + graphH - ((t - 1) / 3) * graphH;
+    }
+
+    // Pattern X positions: spread patterns across width
+    const patterns = data.clusters.map(c => c.id);
+    const patternX = {};
+    patterns.forEach((p, i) => {
+        patternX[p] = MARGIN_LEFT + (i / (patterns.length - 1 || 1)) * graphW;
+    });
+
+    // --- Assign deterministic positions ---
+    // Group by pattern + tier and spread within each cell
+    const groups = {};
+    data.nodes.forEach(node => {
+        const key = `${node.pattern}-${node.tier}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(node);
+    });
+
+    Object.keys(groups).forEach(key => {
+        const [pattern, tierStr] = key.split('-');
+        const tier = parseInt(tierStr);
+        const nodesInGroup = groups[key];
+        const cx = patternX[pattern];
+        const cy = tierY[tier];
+        const spread = Math.min(60, graphW / patterns.length * 0.3);
+
+        nodesInGroup.forEach((node, i) => {
+            const count = nodesInGroup.length;
+            const offset = count === 1 ? 0 : (i - (count - 1) / 2) * (spread / Math.max(count - 1, 1)) * 2;
+            // Add slight vertical jitter based on index to avoid perfect lines
+            const jitterY = (i % 3 - 1) * 15;
+            node.x = cx + offset;
+            node.y = cy + jitterY;
+            node.fx = node.x; // Fix positions — no force jitter
+            node.fy = node.y;
+        });
+    });
+
+    // --- Create SVG ---
+    state.zoom = d3.zoom()
+        .scaleExtent([0.3, 5.0])
+        .on('zoom', (event) => {
+            state.g.attr('transform', event.transform);
+            state.currentZoom = event.transform.k;
+        });
+
+    state.svg = d3.select('#graph-container')
+        .append('svg')
+        .attr('width', W)
+        .attr('height', H)
+        .call(state.zoom);
+
+    state.g = state.svg.append('g');
+
+    // --- Layers (back to front) ---
+    const tierLayer = state.g.append('g').attr('class', 'tier-layer');
+    const hullLayer = state.g.append('g').attr('class', 'hull-layer');
+    const edgeLayer = state.g.append('g').attr('class', 'edge-layer');
+    const nodeLayer = state.g.append('g').attr('class', 'node-layer');
+    const labelLayer = state.g.append('g').attr('class', 'label-layer');
+
+    // --- Draw tier lines & labels ---
+    for (let t = 1; t <= 4; t++) {
+        const y = tierY[t];
+
+        tierLayer.append('line')
+            .attr('class', 'tier-line')
+            .attr('x1', MARGIN_LEFT - 40)
+            .attr('x2', W - MARGIN_RIGHT + 40)
+            .attr('y1', y)
+            .attr('y2', y);
+
+        tierLayer.append('text')
+            .attr('class', 'tier-label')
+            .attr('x', 16)
+            .attr('y', y + 4)
+            .attr('text-anchor', 'start')
+            .text(TIER_NAMES[t - 1]);
+    }
+
+    // --- Draw region hulls (nebula backgrounds) ---
+    drawRegionHulls(hullLayer, data);
+
+    // --- Draw region labels ---
+    data.clusters.forEach(cluster => {
+        const clusterNodes = data.nodes.filter(n => n.pattern === cluster.id);
+        if (clusterNodes.length === 0) return;
+
+        const cx = d3.mean(clusterNodes, n => n.x);
+        const cy = d3.min(clusterNodes, n => n.y) - 30;
+
+        labelLayer.append('text')
+            .attr('class', 'region-label')
+            .attr('x', cx)
+            .attr('y', cy)
+            .attr('text-anchor', 'middle')
+            .attr('fill', cluster.color)
+            .style('opacity', 0.35)
+            .text(cluster.name.toUpperCase());
+    });
+
+    // --- Draw edges (always visible, labeled) ---
+    drawEdges(edgeLayer, data);
+
+    // --- Draw nodes ---
+    drawNodes(nodeLayer, data);
+
+    // --- Initial view: fit everything ---
+    fitView(800);
+}
+
+// ============================================================================
+// DRAWING FUNCTIONS
+// ============================================================================
+
+/**
+ * Draw region hulls — soft nebula blobs behind each pattern cluster
+ */
+function drawRegionHulls(layer, data) {
+    const grouped = d3.group(data.nodes, d => d.pattern);
+
+    grouped.forEach((nodes, patternId) => {
+        if (nodes.length < 3) return;
+
+        const cluster = data.clusters.find(c => c.id === patternId);
+        if (!cluster) return;
+
+        const points = nodes.map(n => [n.x, n.y]);
+        const hull = d3.polygonHull(points);
+        if (!hull) return;
+
+        // Expand hull slightly for visual padding
+        const cx = d3.mean(hull, p => p[0]);
+        const cy = d3.mean(hull, p => p[1]);
+        const expanded = hull.map(p => [
+            cx + (p[0] - cx) * 1.4,
+            cy + (p[1] - cy) * 1.4
+        ]);
+
+        layer.append('path')
+            .attr('class', 'region-hull')
+            .attr('d', 'M' + expanded.join('L') + 'Z')
+            .attr('fill', cluster.color)
+            .attr('stroke', cluster.color);
     });
 }
 
-// Initialize D3 force-directed graph
-function initializeGraph(data) {
-    const width = graphContainer.clientWidth;
-    const height = graphContainer.clientHeight;
+/**
+ * Draw edges — always visible, with arrow and relationship label
+ */
+function drawEdges(layer, data) {
+    // Defs for arrowheads per pattern color
+    const defs = state.svg.select('defs').empty()
+        ? state.svg.append('defs')
+        : state.svg.select('defs');
 
-    // Calculate stable cluster centers
-    state.clusterCenters = calculateClusterCenters(data.clusters, width, height);
-
-    // Initialize node positions deterministically
-    initializeNodePositions(data.nodes, state.clusterCenters);
-
-    // Create SVG with zoom behavior
-    const zoom = d3.zoom()
-        .scaleExtent([0.5, 4.0])
-        .on('zoom', (event) => {
-            g.attr('transform', event.transform);
-
-            // Track zoom level
-            state.currentZoom = event.transform.k;
-            const newZoomLevel = getZoomLevelName(state.currentZoom);
-
-            if (newZoomLevel !== state.zoomLevel) {
-                state.zoomLevel = newZoomLevel;
-                console.log(`[Zoom] Transitioned to ${newZoomLevel} view (${state.currentZoom.toFixed(2)}x)`);
-                updateEdgeVisibility();
-                updateClusterLabels(); // Update cluster labels on zoom change
-            }
-        });
-
-    const svg = d3.select('#graph-container')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .call(zoom)
-        .on('touchstart.noDefault', null); // Allow touch zoom/pan
-
-    const g = svg.append('g');
-
-    // Create cluster hulls group (drawn first, behind nodes)
-    const hullsGroup = g.append('g').attr('class', 'hulls');
-
-    // Create cluster labels group
-    const labelsGroup = g.append('g').attr('class', 'cluster-labels');
-
-    // Create links group
-    const linksGroup = g.append('g').attr('class', 'links');
-
-    // Create nodes group
-    const nodesGroup = g.append('g').attr('class', 'nodes');
-
-    // Define arrow marker for links
-    const defs = svg.append('defs');
-
+    // Default arrowhead
     defs.append('marker')
-        .attr('id', 'arrowhead')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 20)
+        .attr('id', 'arrow-default')
+        .attr('viewBox', '0 -4 8 8')
+        .attr('refX', 8)
         .attr('refY', 0)
         .attr('markerWidth', 6)
         .attr('markerHeight', 6)
         .attr('orient', 'auto')
         .append('path')
-        .attr('d', 'M0,-5L10,0L0,5')
-        .attr('fill', 'rgba(255, 255, 255, 0.4)');
+        .attr('d', 'M0,-3L8,0L0,3')
+        .attr('class', 'edge-arrow');
 
-    // Define gradient for edges (fades from source to target)
-    const edgeGradient = defs.append('linearGradient')
-        .attr('id', 'edge-gradient')
-        .attr('gradientUnits', 'userSpaceOnUse');
+    data.edges.forEach(edge => {
+        const source = typeof edge.source === 'object' ? edge.source : data.nodes.find(n => n.id === edge.source);
+        const target = typeof edge.target === 'object' ? edge.target : data.nodes.find(n => n.id === edge.target);
+        if (!source || !target) return;
 
-    edgeGradient.append('stop')
-        .attr('offset', '0%')
-        .attr('stop-color', 'rgba(255, 255, 255, 0.3)')
-        .attr('stop-opacity', 1);
+        // Determine edge color from source cluster
+        const cluster = data.clusters.find(c => c.id === source.pattern);
+        const color = cluster ? cluster.color : 'rgba(255,255,255,0.2)';
 
-    edgeGradient.append('stop')
-        .attr('offset', '100%')
-        .attr('stop-color', 'rgba(0, 212, 255, 0.5)')
-        .attr('stop-opacity', 1);
+        // Draw line
+        const edgeGroup = layer.append('g');
 
-    // Create force simulation with weak forces (positions already initialized)
-    state.simulation = d3.forceSimulation(data.nodes)
-        .force('link', d3.forceLink(data.edges)
-            .id(d => d.id)
-            .distance(60)
-            .strength(0.3) // Weak link force
-        )
-        .force('charge', d3.forceManyBody()
-            .strength(-150) // Weaker repulsion
-        )
-        .force('collision', d3.forceCollide().radius(25))
-        // Add cluster forces to keep nodes near their pattern centers
-        .force('cluster', forceCluster()
-            .centers(d => state.clusterCenters[d.pattern])
-            .strength(0.4)
-        )
-        .alphaDecay(0.05) // Faster stabilization
-        .velocityDecay(0.4); // More damping
+        edgeGroup.append('line')
+            .attr('class', 'edge-line')
+            .attr('x1', source.x)
+            .attr('y1', source.y)
+            .attr('x2', target.x)
+            .attr('y2', target.y)
+            .attr('stroke', color)
+            .attr('marker-end', 'url(#arrow-default)');
 
-    // Draw links with gradient
-    const link = linksGroup.selectAll('.link')
-        .data(data.edges)
-        .join('line')
-        .attr('class', 'link')
-        .attr('stroke', 'url(#edge-gradient)')
-        .attr('marker-end', 'url(#arrowhead)');
+        // Edge label at midpoint
+        if (edge.type) {
+            const mx = (source.x + target.x) / 2;
+            const my = (source.y + target.y) / 2;
 
-    // Draw nodes
-    const node = nodesGroup.selectAll('.node')
+            // Compute angle for label rotation
+            const dx = target.x - source.x;
+            const dy = target.y - source.y;
+            let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+            // Keep labels readable (not upside down)
+            if (angle > 90 || angle < -90) angle += 180;
+
+            edgeGroup.append('text')
+                .attr('class', 'edge-label')
+                .attr('x', mx)
+                .attr('y', my - 4)
+                .attr('text-anchor', 'middle')
+                .attr('transform', `rotate(${angle}, ${mx}, ${my})`)
+                .text(edge.type);
+        }
+    });
+}
+
+/**
+ * Generate SVG path for node shape based on tier
+ */
+function nodeShapePath(tier, r) {
+    switch (TIER_SHAPES[tier]) {
+        case 'diamond': {
+            const s = r * 1.2;
+            return `M0,${-s} L${s},0 L0,${s} L${-s},0 Z`;
+        }
+        case 'star4': {
+            const outer = r * 1.3;
+            const inner = r * 0.55;
+            let d = '';
+            for (let i = 0; i < 8; i++) {
+                const rad = (i * Math.PI) / 4 - Math.PI / 2;
+                const dist = i % 2 === 0 ? outer : inner;
+                d += (i === 0 ? 'M' : 'L') + (Math.cos(rad) * dist) + ',' + (Math.sin(rad) * dist);
+            }
+            return d + 'Z';
+        }
+        case 'star6': {
+            const outer6 = r * 1.4;
+            const inner6 = r * 0.6;
+            let d6 = '';
+            for (let i = 0; i < 12; i++) {
+                const rad = (i * Math.PI) / 6 - Math.PI / 2;
+                const dist = i % 2 === 0 ? outer6 : inner6;
+                d6 += (i === 0 ? 'M' : 'L') + (Math.cos(rad) * dist) + ',' + (Math.sin(rad) * dist);
+            }
+            return d6 + 'Z';
+        }
+        default: // circle — use a circle element instead
+            return null;
+    }
+}
+
+/**
+ * Draw nodes — shape per tier, math symbol inside, label below
+ */
+function drawNodes(layer, data) {
+    const isFrontier = (node) => state.frontierNodes.some(fn => fn.id === node.id);
+
+    const nodeGroups = layer.selectAll('.skill-node')
         .data(data.nodes)
         .join('g')
         .attr('class', d => {
-            const classes = ['node', d.state];
-            // Mark nodes from disabled patterns
-            if (!isPatternEnabled(d.pattern)) {
-                classes.push('pattern-disabled');
-            }
-            return classes.join(' ');
+            let cls = 'skill-node ' + d.state;
+            if (isFrontier(d)) cls += ' frontier';
+            return cls;
         })
-        .call(d3.drag()
-            .on('start', dragstarted)
-            .on('drag', dragged)
-            .on('end', dragended)
-        )
+        .attr('transform', d => `translate(${d.x},${d.y})`)
+        .style('cursor', d => d.state === 'locked' ? 'default' : 'pointer')
         .on('click', (event, d) => {
             event.stopPropagation();
-
-            // Check if pattern is enabled
-            if (!isPatternEnabled(d.pattern)) {
-                showDisabledPatternMessage(d.patternName);
-                return;
-            }
-
+            if (d.state === 'locked') return;
             showNodeDetail(d);
         })
-        .on('mouseover', (event, d) => {
-            if (isPatternEnabled(d.pattern)) {
-                highlightConnections(d, link);
-            }
+        .on('mouseover', function (event, d) {
+            if (d.state === 'locked') return;
+            highlightConnected(d);
         })
-        .on('mouseout', () => unhighlightConnections(link));
-
-    // Add circles to nodes
-    node.append('circle')
-        .attr('r', d => {
-            // Size based on tier and state
-            let baseRadius = 8;
-
-            // Tier scaling (higher tiers slightly larger)
-            baseRadius += (d.tier - 1) * 1.5;
-
-            // State scaling (mastered and ready nodes slightly larger)
-            if (d.state === 'mastered') baseRadius += 2;
-            else if (d.state === 'ready') baseRadius += 1.5;
-
-            return Math.max(8, Math.min(baseRadius, 16)); // Clamp between 8-16
-        })
-        .attr('fill', d => d.color)
-        .attr('stroke', d => d.color);
-
-    // Add labels to nodes
-    const labels = node.append('text')
-        .attr('dy', 25)
-        .text(d => {
-            // Abbreviate long labels
-            const label = d.label;
-            return label.length > 15 ? label.substring(0, 13) + '...' : label;
-        })
-        .style('display', state.showLabels ? 'block' : 'none');
-
-    // Track tick count for performance optimization
-    let tickCount = 0;
-    const MAX_TICKS = 300; // Stop after stabilization
-
-    // Update positions on each tick
-    state.simulation.on('tick', () => {
-        tickCount++;
-
-        // Update links and gradient positions
-        link
-            .attr('x1', d => d.source.x)
-            .attr('y1', d => d.source.y)
-            .attr('x2', d => d.target.x)
-            .attr('y2', d => d.target.y)
-            .each(function(d) {
-                // Update gradient coordinates for this edge
-                const gradient = d3.select(this).attr('stroke');
-                if (gradient && gradient.includes('edge-gradient')) {
-                    d3.select('#edge-gradient')
-                        .attr('x1', d.source.x)
-                        .attr('y1', d.source.y)
-                        .attr('x2', d.target.x)
-                        .attr('y2', d.target.y);
-                }
-            });
-
-        // Update nodes
-        node.attr('transform', d => `translate(${d.x},${d.y})`);
-
-        // Update cluster hulls
-        if (state.showClusters) {
-            updateClusterHulls(hullsGroup, data);
-        }
-
-        // Stop simulation after stabilization to save CPU
-        if (tickCount >= MAX_TICKS) {
-            state.simulation.stop();
-            console.log('[Performance] Simulation stopped after stabilization');
-        }
-    });
-
-    // Store references for later use
-    state.svg = svg;
-    state.g = g;
-    state.node = node;
-    state.link = link;
-    state.labels = labels;
-    state.hullsGroup = hullsGroup;
-    state.labelsGroup = labelsGroup;
-
-    // Detect frontier nodes and progress zone
-    state.frontierNodes = detectFrontierNodes(data.nodes, data.edges);
-    state.progressZone = calculateProgressZone(data.nodes);
-
-    // Apply frontier highlighting
-    applyFrontierHighlighting();
-
-    // Initialize cluster labels
-    renderClusterLabels(labelsGroup, data);
-
-    // Initialize breadcrumbs to world view
-    updateBreadcrumbs();
-
-    // Auto-focus on student's progress zone after a brief delay
-    setTimeout(() => {
-        autoFocusOnProgress();
-    }, 1000);
-}
-
-// Update cluster hulls (convex hulls around pattern groups)
-function updateClusterHulls(hullsGroup, data) {
-    const clusters = d3.group(data.nodes, d => d.pattern);
-
-    const hulls = hullsGroup.selectAll('.cluster-hull')
-        .data(Array.from(clusters.entries()), d => d[0]);
-
-    hulls.enter()
-        .append('path')
-        .attr('class', d => {
-            const classes = ['cluster-hull'];
-            if (!isPatternEnabled(d[0])) {
-                classes.push('pattern-disabled');
-            }
-            return classes.join(' ');
-        })
-        .merge(hulls)
-        .attr('d', d => {
-            const points = d[1].map(node => [node.x, node.y]);
-            return points.length > 2 ? 'M' + d3.polygonHull(points).join('L') + 'Z' : '';
-        })
-        .attr('fill', d => {
-            const cluster = data.clusters.find(c => c.id === d[0]);
-            return cluster ? cluster.color : '#666';
-        })
-        .attr('stroke', d => {
-            const cluster = data.clusters.find(c => c.id === d[0]);
-            return cluster ? cluster.color : '#666';
+        .on('mouseout', function () {
+            unhighlightAll();
         });
 
-    hulls.exit().remove();
-}
+    // Draw shape
+    nodeGroups.each(function (d) {
+        const g = d3.select(this);
+        const r = getNodeRadius(d);
+        const shapePath = nodeShapePath(d.tier, r);
 
-// Render cluster labels with mastery percentages
-function renderClusterLabels(labelsGroup, data) {
-    Object.keys(state.clusterCenters).forEach(patternId => {
-        const center = state.clusterCenters[patternId];
-        const patternNodes = data.nodes.filter(n => n.pattern === patternId);
-
-        // Calculate mastery percentage
-        const masteredNodes = patternNodes.filter(n => n.state === 'mastered').length;
-        const masteryPercent = patternNodes.length > 0
-            ? Math.round((masteredNodes / patternNodes.length) * 100)
-            : 0;
-
-        // Create label group
-        const labelGroup = labelsGroup.append('g')
-            .attr('class', `cluster-label cluster-label-${patternId}`)
-            .attr('transform', `translate(${center.x}, ${center.y})`)
-            .style('cursor', 'pointer')
-            .on('click', () => {
-                if (isPatternEnabled(patternId)) {
-                    focusOnPattern(patternId);
-                } else {
-                    showDisabledPatternMessage(center.name);
-                }
-            });
-
-        // Add pattern icon
-        labelGroup.append('text')
-            .attr('class', 'cluster-icon')
-            .attr('y', -20)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '2.5rem')
-            .style('opacity', 0.9)
-            .style('pointer-events', 'none')
-            .text(center.icon);
-
-        // Add pattern name
-        labelGroup.append('text')
-            .attr('class', 'cluster-name')
-            .attr('y', 15)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '1.2rem')
-            .style('font-weight', 'bold')
-            .style('fill', 'white')
-            .style('text-shadow', '2px 2px 4px rgba(0,0,0,0.8)')
-            .style('pointer-events', 'none')
-            .text(center.name);
-
-        // Add mastery percentage
-        labelGroup.append('text')
-            .attr('class', 'cluster-mastery')
-            .attr('y', 35)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '0.9rem')
-            .style('fill', masteryPercent > 0 ? '#00ff87' : '#888')
-            .style('text-shadow', '1px 1px 2px rgba(0,0,0,0.8)')
-            .style('pointer-events', 'none')
-            .text(`${masteryPercent}% mastered`);
+        if (shapePath) {
+            g.append('path')
+                .attr('class', 'node-shape')
+                .attr('d', shapePath)
+                .attr('fill', d.color)
+                .attr('stroke', d.color);
+        } else {
+            g.append('circle')
+                .attr('class', 'node-shape')
+                .attr('r', r)
+                .attr('fill', d.color)
+                .attr('stroke', d.color);
+        }
     });
 
-    // Set initial visibility based on zoom
-    updateClusterLabels();
+    // Math symbol inside node
+    nodeGroups.append('text')
+        .attr('class', 'node-symbol')
+        .attr('y', 1)
+        .text(d => {
+            const sym = PATTERN_SYMBOLS[d.pattern];
+            return sym ? sym.symbol : '';
+        });
+
+    // Skill label below
+    nodeGroups.append('text')
+        .attr('class', 'node-label')
+        .attr('y', d => getNodeRadius(d) + 14)
+        .text(d => d.label);
+
+    state.nodeGroups = nodeGroups;
 }
 
-// Update cluster label visibility based on zoom level
-function updateClusterLabels() {
-    if (!state.labelsGroup) return;
-
-    const zoomLevel = state.zoomLevel;
-    const isWorldView = zoomLevel === 'world';
-
-    // Show cluster labels only at world view with smooth fade
-    state.labelsGroup.selectAll('.cluster-label')
-        .classed('visible', isWorldView)
-        .style('pointer-events', isWorldView ? 'auto' : 'none')
-        .transition()
-        .duration(400)
-        .style('opacity', isWorldView ? 1 : 0);
+function getNodeRadius(d) {
+    let r = 10;
+    if (d.tier >= 3) r = 12;
+    if (d.tier === 4) r = 14;
+    if (d.state === 'mastered') r += 2;
+    return r;
 }
 
-/**
- * Apply frontier highlighting to the 1-3 hot next nodes
- */
-function applyFrontierHighlighting() {
-    if (!state.node || !state.frontierNodes) return;
+// ============================================================================
+// INTERACTION
+// ============================================================================
 
-    // Add 'frontier-hot' class to recommended nodes
-    state.node.classed('frontier-hot', d =>
-        state.frontierNodes.some(fn => fn.id === d.id)
-    );
+function highlightConnected(node) {
+    if (!state.graphData) return;
 
-    // Add 'frontier-dimmed' class to other ready nodes
-    state.node.classed('frontier-dimmed', d =>
-        d.state === 'ready' &&
-        !state.frontierNodes.some(fn => fn.id === d.id)
-    );
+    const connectedIds = new Set([node.id]);
+    state.graphData.edges.forEach(e => {
+        const sid = typeof e.source === 'object' ? e.source.id : e.source;
+        const tid = typeof e.target === 'object' ? e.target.id : e.target;
+        if (sid === node.id) connectedIds.add(tid);
+        if (tid === node.id) connectedIds.add(sid);
+    });
 
-    console.log(`[Frontier] Highlighted ${state.frontierNodes.length} hot nodes`);
+    // Dim unrelated nodes
+    state.g.selectAll('.skill-node')
+        .style('opacity', d => connectedIds.has(d.id) ? 1 : 0.15);
+
+    // Highlight connected edges
+    state.g.selectAll('.edge-line')
+        .style('opacity', function () {
+            const line = d3.select(this);
+            const parent = d3.select(this.parentNode);
+            const lineData = parent.datum && parent.datum();
+            // Use DOM position to find matching edges
+            return null; // handled below
+        });
+
+    // Brighten connected edges, dim others
+    state.g.selectAll('.edge-layer g').each(function () {
+        const lineEl = d3.select(this).select('.edge-line');
+        const x1 = +lineEl.attr('x1');
+        const y1 = +lineEl.attr('y1');
+
+        // Check if this edge connects to the hovered node
+        const isConnected = state.graphData.edges.some(e => {
+            const s = typeof e.source === 'object' ? e.source : state.graphData.nodes.find(n => n.id === e.source);
+            const t = typeof e.target === 'object' ? e.target : state.graphData.nodes.find(n => n.id === e.target);
+            if (!s || !t) return false;
+            const matches = (s.id === node.id || t.id === node.id);
+            if (!matches) return false;
+            return Math.abs(s.x - x1) < 1 && Math.abs(s.y - y1) < 1;
+        });
+
+        d3.select(this).style('opacity', isConnected ? 1 : 0.06);
+    });
 }
 
-/**
- * Auto-focus camera on student's progress zone
- */
-function autoFocusOnProgress() {
-    if (!state.progressZone) {
-        console.log('[Auto-focus] No progress zone found, staying at world view');
-        return;
-    }
-
-    // Zoom to progress zone (between world and region)
-    flyTo(state.progressZone.x, state.progressZone.y, 1.2, 1500);
-
-    console.log('[Auto-focus] Zoomed to progress zone');
+function unhighlightAll() {
+    state.g.selectAll('.skill-node').style('opacity', null);
+    state.g.selectAll('.edge-layer g').style('opacity', null);
 }
 
-// Highlight connections on hover
-function highlightConnections(node, link) {
-    // Dim all links
-    link.style('opacity', 0.1);
-
-    // Highlight connected links
-    link.filter(d => d.source.id === node.id || d.target.id === node.id)
-        .style('opacity', 1)
-        .classed('active', true);
-}
-
-// Remove highlight
-function unhighlightConnections(link) {
-    link.style('opacity', 1)
-        .classed('active', false);
-}
-
-// Show node detail panel
 function showNodeDetail(node) {
     state.selectedNode = node;
-    state.focusedNode = node;
     nodeDetail.classList.remove('hidden');
 
-    // Show backdrop with slight delay for smooth transition
-    setTimeout(() => {
-        nodeDetailBackdrop.classList.add('show');
-    }, 10);
-
-    // Populate details
     document.getElementById('detailTitle').textContent = node.label;
-    document.getElementById('detailPattern').textContent = `${node.patternName}`;
-    document.getElementById('detailTier').textContent = `${node.tier} - ${node.tierName}`;
+    document.getElementById('detailPattern').textContent = node.patternName;
+    document.getElementById('detailTier').textContent = `${node.tier} \u2014 ${node.tierName}`;
     document.getElementById('detailMilestone').textContent = node.milestoneName;
 
-    const statusBadge = document.getElementById('detailStatus');
-    statusBadge.textContent = node.status.replace('-', ' ').toUpperCase();
-    statusBadge.className = `status-badge ${node.state}`;
+    const badge = document.getElementById('detailStatus');
+    badge.textContent = (node.state || '').toUpperCase();
+    badge.className = 'status-badge ' + node.state;
 
     const progress = Math.round(node.progress || 0);
-    document.getElementById('detailProgressBar').style.width = `${progress}%`;
-    document.getElementById('detailProgressText').textContent = `${progress}%`;
+    document.getElementById('detailProgressBar').style.width = progress + '%';
+    document.getElementById('detailProgressText').textContent = progress + '%';
 
-    // Enable practice button for ready/developing nodes
     practiceBtn.disabled = (node.state === 'locked');
 
-    // Zoom to node view
-    flyTo(node.x, node.y, 3.0);
-
-    // Update breadcrumbs
-    updateBreadcrumbs();
+    // Fly to node
+    flyTo(node.x, node.y, 2.5);
 }
 
-// Hide node detail panel
 function hideNodeDetail() {
     nodeDetail.classList.add('hidden');
-    nodeDetailBackdrop.classList.remove('show');
     state.selectedNode = null;
 }
 
-// Focus camera on a specific pattern cluster
-function focusOnPattern(patternId) {
-    if (!state.graphData) return;
+// ============================================================================
+// CAMERA / NAVIGATION
+// ============================================================================
 
-    // Check if pattern is enabled
-    if (!isPatternEnabled(patternId)) {
-        const patternName = PATTERN_CONFIG[patternId]?.name || patternId;
-        showDisabledPatternMessage(patternName);
-        return;
-    }
-
-    const patternNodes = state.graphData.nodes.filter(n => n.pattern === patternId);
-
-    if (patternNodes.length === 0) return;
-
-    // Calculate center of pattern nodes
-    const centerX = d3.mean(patternNodes, d => d.x);
-    const centerY = d3.mean(patternNodes, d => d.y);
-
-    // Update focused pattern state
-    state.focusedPattern = patternId;
-    state.focusedNode = null;
-
-    // Fly to region view (zoom 1.5x)
-    flyTo(centerX, centerY, 1.5);
-
-    // Update breadcrumbs
-    updateBreadcrumbs();
-
-    console.log(`[Focus] Zoomed to ${patternId} pattern`);
-}
-
-// Reset zoom to fit all nodes
-function resetZoom() {
+function flyTo(x, y, scale, duration = 600) {
     if (!state.svg) return;
+    const W = graphContainer.clientWidth;
+    const H = graphContainer.clientHeight;
 
-    // Clear focus state
-    state.focusedPattern = null;
-    state.focusedNode = null;
+    const tx = W / 2 - x * scale;
+    const ty = H / 2 - y * scale;
 
     state.svg.transition()
-        .duration(750)
+        .duration(duration)
+        .ease(d3.easeCubicInOut)
         .call(
-            d3.zoom().transform,
-            d3.zoomIdentity
+            state.zoom.transform,
+            d3.zoomIdentity.translate(tx, ty).scale(scale)
         );
-
-    // Update breadcrumbs
-    updateBreadcrumbs();
 }
 
-// Toggle cluster hulls
-function toggleClusters() {
-    state.showClusters = !state.showClusters;
-    toggleClustersBtn.classList.toggle('active');
+function fitView(duration = 0) {
+    if (!state.graphData || !state.svg) return;
 
-    if (state.hullsGroup) {
-        state.hullsGroup.style('display', state.showClusters ? 'block' : 'none');
-    }
+    const nodes = state.graphData.nodes;
+    const W = graphContainer.clientWidth;
+    const H = graphContainer.clientHeight;
+    const pad = 60;
+
+    const xMin = d3.min(nodes, n => n.x) - pad;
+    const xMax = d3.max(nodes, n => n.x) + pad;
+    const yMin = d3.min(nodes, n => n.y) - pad;
+    const yMax = d3.max(nodes, n => n.y) + pad;
+
+    const dataW = xMax - xMin;
+    const dataH = yMax - yMin;
+    const scale = Math.min(W / dataW, H / dataH, 2);
+    const cx = (xMin + xMax) / 2;
+    const cy = (yMin + yMax) / 2;
+
+    const tx = W / 2 - cx * scale;
+    const ty = H / 2 - cy * scale;
+
+    const t = duration > 0
+        ? state.svg.transition().duration(duration).ease(d3.easeCubicInOut)
+        : state.svg;
+
+    t.call(state.zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
 }
 
-// Toggle node labels
-function toggleLabels() {
-    state.showLabels = !state.showLabels;
-    toggleLabelsBtn.classList.toggle('active');
-
-    if (state.labels) {
-        state.labels.style('display', state.showLabels ? 'block' : 'none');
-    }
+function resetView() {
+    hideNodeDetail();
+    fitView(600);
 }
 
-// D3 drag functions
-function dragstarted(event, d) {
-    if (!event.active) state.simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-}
+// ============================================================================
+// PRACTICE (start session)
+// ============================================================================
 
-function dragged(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
-}
-
-function dragended(event, d) {
-    if (!event.active) state.simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-}
-
-// Start practice session for selected node
 async function startPractice() {
     if (!state.selectedNode) return;
-
     const node = state.selectedNode;
 
-    // Disable button during request
     practiceBtn.disabled = true;
     practiceBtn.textContent = 'Loading...';
 
     try {
-        // Call API to set up active badge for this skill
-        const response = await csrfFetch('/api/mastery/start-skill-practice', {
+        const res = await csrfFetch('/api/mastery/start-skill-practice', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -875,366 +636,89 @@ async function startPractice() {
             })
         });
 
-        const data = await response.json();
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to start practice');
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Failed to start practice');
-        }
-
-        // Redirect to mastery chat (tutoring session)
         window.location.href = data.redirect || '/mastery-chat.html';
-
-    } catch (error) {
-        console.error('Error starting practice:', error);
-        alert(`Failed to start practice: ${error.message}`);
-
-        // Re-enable button
+    } catch (err) {
+        console.error('Error starting practice:', err);
+        alert('Failed to start practice: ' + err.message);
         practiceBtn.disabled = false;
         practiceBtn.textContent = 'Start Practice';
     }
 }
 
-// Event listeners
-function initializeEventListeners() {
-    resetZoomBtn.addEventListener('click', resetZoom);
-    toggleClustersBtn.addEventListener('click', toggleClusters);
-    toggleLabelsBtn.addEventListener('click', toggleLabels);
-    showHelpBtn.addEventListener('click', showKeyboardHelp);
+// ============================================================================
+// EVENT LISTENERS
+// ============================================================================
+
+function initEventListeners() {
     closeDetailBtn.addEventListener('click', hideNodeDetail);
     practiceBtn.addEventListener('click', startPractice);
+    resetZoomBtn.addEventListener('click', resetView);
+    showHelpBtn.addEventListener('click', showHelp);
 
-    // Breadcrumb navigation
-    crumbWorld.addEventListener('click', zoomToWorld);
-    crumbPattern.addEventListener('click', zoomToPatternFromBreadcrumb);
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', handleKeyboardShortcuts);
-
-    // Close detail panel when clicking backdrop
-    nodeDetailBackdrop.addEventListener('click', hideNodeDetail);
-
-    // Close detail panel when clicking outside
+    // Close detail on click outside
     document.addEventListener('click', (e) => {
         if (!nodeDetail.classList.contains('hidden') &&
             !nodeDetail.contains(e.target) &&
-            !e.target.closest('.node')) {
+            !e.target.closest('.skill-node')) {
             hideNodeDetail();
         }
     });
-}
 
-/**
- * Handle keyboard shortcuts for navigation
- */
-function handleKeyboardShortcuts(event) {
-    // Don't interfere with input fields
-    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
-        return;
-    }
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-    switch(event.key) {
-        case 'Escape':
-            // ESC: Zoom out one level
-            if (state.focusedNode) {
-                // From node view → region view
+        switch (e.key) {
+            case 'Escape':
                 hideNodeDetail();
-                zoomToPatternFromBreadcrumb();
-            } else if (state.focusedPattern) {
-                // From region view → world view
-                zoomToWorld();
-            } else {
-                // Already at world view, close any open panels
-                hideNodeDetail();
-            }
-            break;
+                break;
+            case 'r':
+            case 'R':
+                if (!e.ctrlKey && !e.metaKey) resetView();
+                break;
+            case '?':
+                showHelp();
+                break;
+        }
+    });
 
-        case 'r':
-        case 'R':
-            // R: Reset to world view
-            if (!event.ctrlKey && !event.metaKey) {
-                resetZoom();
-            }
-            break;
-
-        case 'c':
-        case 'C':
-            // C: Toggle clusters
-            if (!event.ctrlKey && !event.metaKey) {
-                toggleClusters();
-            }
-            break;
-
-        case 'l':
-        case 'L':
-            // L: Toggle labels
-            if (!event.ctrlKey && !event.metaKey) {
-                toggleLabels();
-            }
-            break;
-
-        case '?':
-            // ?: Show keyboard shortcuts help
-            showKeyboardHelp();
-            break;
-    }
+    // Resize handler
+    window.addEventListener('resize', debounce(() => {
+        if (state.svg) {
+            state.svg.attr('width', graphContainer.clientWidth)
+                     .attr('height', graphContainer.clientHeight);
+        }
+    }, 250));
 }
 
-/**
- * Show welcome hint on first visit
- */
-function showWelcomeHint() {
-    // Check if user has seen the hint before
-    let hasSeenHint; try { hasSeenHint = localStorage.getItem('skillMapHintSeen'); } catch (e) { hasSeenHint = true; }
+function showHelp() {
+    const existing = document.getElementById('helpOverlay');
+    if (existing) { existing.remove(); return; }
 
-    if (!hasSeenHint) {
-        // Wait for auto-focus to complete, then show hint
-        setTimeout(() => {
-            const masteredCount = state.graphData?.nodes.filter(n => n.state === 'mastered').length || 0;
-            const frontierCount = state.frontierNodes?.length || 0;
-
-            let message = '';
-            if (masteredCount > 0) {
-                message = `You've built ${masteredCount} skill${masteredCount > 1 ? 's' : ''}. Let's keep going.`;
-            } else {
-                message = 'Your math journey starts here. Click an orange node to begin.';
-            }
-
-            const hint = document.createElement('div');
-            hint.className = 'welcome-hint';
-            hint.innerHTML = `
-                <div class="hint-icon">🌟</div>
-                <div class="hint-content">
-                    <strong>${message}</strong>
-                    ${frontierCount > 0 ? `<p class="hint-sub">The ${frontierCount} orange node${frontierCount > 1 ? 's' : ''} are your best next step${frontierCount > 1 ? 's' : ''}.</p>` : ''}
-                </div>
-            `;
-            document.body.appendChild(hint);
-
-            // Fade in
-            setTimeout(() => hint.classList.add('show'), 10);
-
-            // Fade out after 6 seconds
-            setTimeout(() => {
-                hint.classList.remove('show');
-                setTimeout(() => hint.remove(), 500);
-            }, 6000);
-
-            // Mark as seen
-            try { localStorage.setItem('skillMapHintSeen', 'true'); } catch (e) { /* blocked */ }
-        }, 3000); // Show after auto-focus completes (1s delay + 1.5s animation + 0.5s buffer)
-    }
-}
-
-/**
- * Show keyboard shortcuts overlay
- */
-function showKeyboardHelp() {
-    const helpHtml = `
-        <div class="keyboard-help-overlay" id="keyboardHelp">
-            <div class="keyboard-help-modal">
-                <div class="help-header">
-                    <h3>⌨️ Keyboard Shortcuts</h3>
-                    <button class="close-btn" onclick="document.getElementById('keyboardHelp').remove()">×</button>
-                </div>
-                <div class="help-content">
-                    <div class="shortcut-group">
-                        <h4>Navigation</h4>
-                        <div class="shortcut-item">
-                            <kbd>ESC</kbd>
-                            <span>Zoom out one level</span>
-                        </div>
-                        <div class="shortcut-item">
-                            <kbd>R</kbd>
-                            <span>Reset to world view</span>
-                        </div>
-                    </div>
-                    <div class="shortcut-group">
-                        <h4>View Options</h4>
-                        <div class="shortcut-item">
-                            <kbd>C</kbd>
-                            <span>Toggle cluster regions</span>
-                        </div>
-                        <div class="shortcut-item">
-                            <kbd>L</kbd>
-                            <span>Toggle node labels</span>
-                        </div>
-                    </div>
-                    <div class="shortcut-group">
-                        <h4>Help</h4>
-                        <div class="shortcut-item">
-                            <kbd>?</kbd>
-                            <span>Show this help</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    const el = document.createElement('div');
+    el.id = 'helpOverlay';
+    el.className = 'help-overlay';
+    el.innerHTML = `
+        <div class="help-modal">
+            <h3>Keyboard Shortcuts</h3>
+            <div class="help-row"><kbd>Esc</kbd><span>Close panel / deselect</span></div>
+            <div class="help-row"><kbd>R</kbd><span>Reset view</span></div>
+            <div class="help-row"><kbd>?</kbd><span>Toggle this help</span></div>
+            <div class="help-row"><kbd>Scroll</kbd><span>Zoom in/out</span></div>
+            <div class="help-row"><kbd>Drag</kbd><span>Pan the map</span></div>
         </div>
     `;
-
-    // Remove existing help if present
-    const existing = document.getElementById('keyboardHelp');
-    if (existing) existing.remove();
-
-    // Add new help overlay
-    document.body.insertAdjacentHTML('beforeend', helpHtml);
-
-    // Close on ESC or click outside
-    const overlay = document.getElementById('keyboardHelp');
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) overlay.remove();
-    });
-    document.addEventListener('keydown', function escHandler(e) {
-        if (e.key === 'Escape') {
-            overlay.remove();
-            document.removeEventListener('keydown', escHandler);
-        }
+    document.body.appendChild(el);
+    el.addEventListener('click', (e) => { if (e.target === el) el.remove(); });
+    document.addEventListener('keydown', function handler(e) {
+        if (e.key === 'Escape') { el.remove(); document.removeEventListener('keydown', handler); }
     });
 }
 
-// ============================================================================
-// CONSTELLATION SYSTEM FUNCTIONS
-// ============================================================================
-
-/**
- * Update edge visibility based on current zoom level
- */
-function updateEdgeVisibility() {
-    if (!state.link) return;
-
-    state.link.style('opacity', d => {
-        const shouldShow = shouldShowEdge(d, state.currentZoom, state.focusedPattern, state.focusedNode);
-        return shouldShow ? 1 : 0;
-    });
-}
-
-/**
- * Show message when clicking disabled pattern
- */
-function showDisabledPatternMessage(patternName) {
-    // Create temporary toast notification
-    const toast = document.createElement('div');
-    toast.className = 'disabled-pattern-toast';
-    toast.innerHTML = `
-        <div class="toast-icon">🔒</div>
-        <div class="toast-content">
-            <strong>${patternName} Pattern</strong>
-            <p>Coming Soon! Focus on Equivalence first.</p>
-        </div>
-    `;
-    document.body.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => toast.classList.add('show'), 10);
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-/**
- * Smooth camera transition (Prezi-style flyTo)
- */
-function flyTo(targetX, targetY, targetZoom, durationMs = 750) {
-    if (!state.svg) return;
-
-    const width = graphContainer.clientWidth;
-    const height = graphContainer.clientHeight;
-
-    // Calculate transform
-    const x = width / 2 - targetX * targetZoom;
-    const y = height / 2 - targetY * targetZoom;
-
-    // Clamp zoom
-    const clampedZoom = Math.max(0.5, Math.min(4.0, targetZoom));
-
-    // Smooth transition
-    state.svg.transition()
-        .duration(durationMs)
-        .ease(d3.easeCubicInOut)
-        .call(
-            d3.zoom().transform,
-            d3.zoomIdentity.translate(x, y).scale(clampedZoom)
-        );
-
-    console.log(`[FlyTo] Moving to (${targetX.toFixed(0)}, ${targetY.toFixed(0)}) at ${clampedZoom.toFixed(2)}x zoom`);
-}
-
-// ============================================================================
-// BREADCRUMB NAVIGATION
-// ============================================================================
-
-/**
- * Update breadcrumb trail based on current focus state
- */
-function updateBreadcrumbs() {
-    // World crumb is always visible
-    crumbWorld.classList.remove('active');
-
-    if (!state.focusedPattern && !state.focusedNode) {
-        // World view - only world crumb active
-        crumbWorld.classList.add('active');
-        separatorPattern.style.display = 'none';
-        crumbPattern.style.display = 'none';
-        separatorNode.style.display = 'none';
-        crumbNode.style.display = 'none';
-    } else if (state.focusedPattern && !state.focusedNode) {
-        // Region view - world + pattern crumbs
-        separatorPattern.style.display = 'inline';
-        crumbPattern.style.display = 'inline-flex';
-        crumbPattern.classList.add('active');
-
-        const cluster = state.graphData.clusters.find(c => c.id === state.focusedPattern);
-        if (cluster) {
-            patternIcon.textContent = cluster.icon;
-            patternName.textContent = cluster.name;
-        }
-
-        separatorNode.style.display = 'none';
-        crumbNode.style.display = 'none';
-    } else if (state.focusedNode) {
-        // Node view - world + pattern + node crumbs
-        separatorPattern.style.display = 'inline';
-        crumbPattern.style.display = 'inline-flex';
-        crumbPattern.classList.remove('active');
-
-        const cluster = state.graphData.clusters.find(c => c.id === state.focusedNode.pattern);
-        if (cluster) {
-            patternIcon.textContent = cluster.icon;
-            patternName.textContent = cluster.name;
-        }
-
-        separatorNode.style.display = 'inline';
-        crumbNode.style.display = 'inline-flex';
-        crumbNode.classList.add('active');
-        nodeName.textContent = state.focusedNode.label;
-    }
-}
-
-/**
- * Zoom to world view
- */
-function zoomToWorld() {
-    state.focusedPattern = null;
-    state.focusedNode = null;
-
-    resetZoom();
-    updateBreadcrumbs();
-
-    console.log('[Breadcrumb] Zoomed to world view');
-}
-
-/**
- * Zoom to pattern region view
- */
-function zoomToPatternFromBreadcrumb() {
-    if (!state.focusedPattern && !state.focusedNode) return;
-
-    const patternId = state.focusedNode ? state.focusedNode.pattern : state.focusedPattern;
-    state.focusedNode = null;
-
-    focusOnPattern(patternId);
-
-    console.log('[Breadcrumb] Zoomed to pattern view');
+function debounce(fn, ms) {
+    let timer;
+    return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
 }
