@@ -766,12 +766,14 @@ function recordUnderstandingSignal(phaseState, understandingLevel) {
 
 module.exports = {
   PHASES,
-  ASSESSMENT_SIGNALS,
   initializeLessonPhase,
+  transitionPhase,
+  getPhasePrompt,
+  // ── DEPRECATED — kept for backwards compat with legacy endpoints ──
+  // Phase decisions are now made by phaseEvidenceEvaluator.evaluatePhaseAdvancement()
+  ASSESSMENT_SIGNALS,
   recordAssessment,
   recordUnderstandingSignal,
   calculateConfidence,
   evaluatePhaseTransition,
-  transitionPhase,
-  getPhasePrompt
 };

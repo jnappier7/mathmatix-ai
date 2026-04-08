@@ -437,9 +437,16 @@ async function verify(responseText, context = {}) {
 
   // ── 4. Visual teaching enforcement ──
   if (context.userMessage) {
+    // Always run: handles explicit student requests ("show me", "graph this")
+    // and normalizes malformed LLM-generated visual commands
     text = enforceVisualTeaching(context.userMessage, text, '', context.isVisualLearner || false);
-    // Auto-inject visualizations for recognized math topics (ChatGPT-style)
-    text = autoVisualizeByTopic(context.userMessage, text, context.isVisualLearner || false);
+    // Topic-based auto-injection: only for visual learners as a safety net.
+    // For all students, the LLM is already prompted with VISUAL_TOOLS_SECTION
+    // and decides itself when a graph is appropriate — regex topic matching
+    // can't distinguish "teaching derivatives" from "mentioning derivatives."
+    if (context.isVisualLearner) {
+      text = autoVisualizeByTopic(context.userMessage, text, true);
+    }
   }
 
   // ── 5. Parse visual commands ──

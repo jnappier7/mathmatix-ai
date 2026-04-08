@@ -1,5 +1,13 @@
 // routes/masteryChat.js
-// Dedicated endpoint for mastery mode chat sessions
+// ⚠️  DEPRECATED — Mastery mode is now handled by /api/chat with { mastery: true }.
+// The frontend (mastery-chat.html) now calls /api/chat directly, and the pipeline's
+// decide stage + persist stage handle phase transitions, answer verification,
+// badge tracking, and skill unlocking.
+//
+// This file is kept temporarily for backwards compatibility while any cached
+// clients update. It will be removed in a future release.
+//
+// Dedicated endpoint for mastery mode chat sessions (LEGACY)
 
 const express = require('express');
 const router = express.Router();
@@ -19,7 +27,9 @@ const {
   PHASES
 } = require('../utils/lessonPhaseManager');
 const { verify: pipelineVerify, observe: pipelineObserve, diagnose: pipelineDiagnose } = require('../utils/pipeline');
-const { buildVerificationDirective } = require('../utils/pipeline/generate');
+const { assemblePrompt } = require('../utils/pipeline/generate');
+const { decide } = require('../utils/pipeline/decide');
+const { computeSessionMood, buildMoodDirective } = require('../utils/pipeline/sessionMood');
 const { emitGamificationEvent } = require('../utils/gamificationEvents');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)

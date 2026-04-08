@@ -46,11 +46,14 @@ function crossPatternLabel(source, target, type) {
 const state = {
     graphData: null, svg: null, g: null, zoom: null,
     edgeGroups: null, nodeGroups: null, selectedNode: null,
-    frontierIds: new Set(), currentZoom: 1.0
+    frontierIds: new Set(), currentZoom: 1.0,
+    highlightedNodeId: null
 };
 
 const $ = id => document.getElementById(id);
 const graphContainer = $('graph-container');
+const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+const isMobile = window.innerWidth <= 640;
 
 // ============================================================================
 // INIT
@@ -243,10 +246,10 @@ function buildSVGFilters(defs) {
     gd.append('feMergeNode').attr('in', 'b1');
     gd.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    // Nebula blur filter
+    // Nebula blur filter (reduced on mobile for GPU perf)
     const nebulaBlur = defs.append('filter').attr('id', 'nebula-blur')
         .attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
-    nebulaBlur.append('feGaussianBlur').attr('stdDeviation', '35');
+    nebulaBlur.append('feGaussianBlur').attr('stdDeviation', isMobile ? '15' : '35');
 }
 
 function buildEdgeGradients(defs, simLinks, data) {
@@ -298,7 +301,8 @@ function drawStarfield(layer, W, H, nodes) {
     const areaW = xMax - xMin;
     const areaH = yMax - yMin;
 
-    const starCount = Math.min(Math.floor(areaW * areaH / 2500), 1500); // capped at 1500
+    const maxStars = isMobile ? 400 : 1500;
+    const starCount = Math.min(Math.floor(areaW * areaH / 2500), maxStars);
     const rng = mulberry32(42); // seeded RNG for consistency
 
     for (let i = 0; i < starCount; i++) {
@@ -486,9 +490,26 @@ function drawNodes(layer, data) {
         })
         .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
         .style('opacity', 0) // hidden for entrance
-        .on('click', (ev, d) => { ev.stopPropagation(); if (d.state !== 'locked') showNodeDetail(d); })
-        .on('mouseover', (ev, d) => { if (d.state !== 'locked') highlightConnected(d); })
-        .on('mouseout', unhighlightAll);
+        .on('click', (ev, d) => {
+            ev.stopPropagation();
+            if (d.state === 'locked') return;
+            // On touch: first tap highlights, second tap opens detail
+            if (isTouchDevice && state.highlightedNodeId !== d.id) {
+                state.highlightedNodeId = d.id;
+                highlightConnected(d);
+                return;
+            }
+            showNodeDetail(d);
+        })
+        .on('mouseover', (ev, d) => { if (!isTouchDevice && d.state !== 'locked') highlightConnected(d); })
+        .on('mouseout', () => { if (!isTouchDevice) unhighlightAll(); });
+
+    // Invisible larger tap target for touch devices
+    if (isTouchDevice) {
+        state.nodeGroups.append('circle')
+            .attr('class', 'node-tap-target')
+            .attr('r', 28); // 44px diameter minimum touch target
+    }
 
     // Shape with glow filter
     state.nodeGroups.each(function (d) {
@@ -760,8 +781,16 @@ function initEventListeners() {
 
     document.addEventListener('click', e => {
         const detail = $('nodeDetail');
+        const clickedNode = e.target.closest('.skill-node');
+
+        // Clear touch highlight when tapping background
+        if (!clickedNode && state.highlightedNodeId) {
+            state.highlightedNodeId = null;
+            unhighlightAll();
+        }
+
         if (!detail.classList.contains('hidden') &&
-            !detail.contains(e.target) && !e.target.closest('.skill-node'))
+            !detail.contains(e.target) && !clickedNode)
             hideNodeDetail();
     });
 

@@ -4311,6 +4311,7 @@ class InlineChatVisuals {
 
             if (config.type === 'derivative') {
                 // Plot f(x) and numerically compute f'(x)
+                // Defer animation so BOTH curves are present before the first frame
                 const graph = new MathGraph(container, {
                     fn: fn,
                     xMin, xMax,
@@ -4318,11 +4319,10 @@ class InlineChatVisuals {
                     interactive: true,
                     showTangent: true,
                     showKeyPoints: true,
+                    animate: false, // add derivative first, then animate together
                 });
                 // Add numerical derivative as second function
                 const fEval = window.MathEval.parse(fn);
-                const derivStr = `__deriv_${id}`;
-                // Create a derivative evaluator using central differences
                 const h = 1e-6;
                 const derivEval = (x) => (fEval(x + h) - fEval(x - h)) / (2 * h);
                 graph.functions.push({
@@ -4332,12 +4332,14 @@ class InlineChatVisuals {
                 graph.functions[0].label = `f(x) = ${fn}`;
                 graph._autoFitY();
                 graph._detectKeyPoints();
-                graph.render();
                 if (graph.config.showInfoBar) graph._buildInfoBar();
+                // Now animate both curves together
+                graph._startAnimation();
                 container._mathGraph = graph;
 
             } else if (config.type === 'velocity') {
                 // Plot s(t), v(t) = s'(t), a(t) = s''(t)
+                // Defer animation so ALL curves are present before the first frame
                 const graph = new MathGraph(container, {
                     fn: fn,
                     xMin, xMax,
@@ -4345,6 +4347,7 @@ class InlineChatVisuals {
                     interactive: true,
                     showTangent: true,
                     showKeyPoints: true,
+                    animate: false, // add all curves first, then animate together
                 });
                 const sEval = window.MathEval.parse(fn);
                 const h = 1e-6;
@@ -4355,8 +4358,9 @@ class InlineChatVisuals {
                 graph.functions.push({ fn: "a(t)", evaluator: aEval, color: '#00b894', label: "a(t) = s″(t)" });
                 graph._autoFitY();
                 graph._detectKeyPoints();
-                graph.render();
                 if (graph.config.showInfoBar) graph._buildInfoBar();
+                // Now animate all curves together
+                graph._startAnimation();
                 container._mathGraph = graph;
 
             } else if (config.type === 'rational') {

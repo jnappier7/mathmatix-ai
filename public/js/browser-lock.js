@@ -6,14 +6,20 @@
 (function () {
   'use strict';
 
+  const BASE_POLL_INTERVAL = 30000; // Check lock status every 30 seconds
+  const MAX_POLL_INTERVAL = 300000; // Cap backoff at 5 minutes
+  const HEARTBEAT_INTERVAL = 15000; // Heartbeat every 15 seconds when locked
+
   let lockState = {
     locked: false,
     sessionId: null,
     settings: {},
     heartbeatTimer: null,
+    pollTimer: null,
     overlay: null,
     violationCount: 0,
-    tabSwitchStart: null
+    tabSwitchStart: null,
+    consecutivePollFailures: 0
   };
 
   // ─── INITIALIZATION ─────────────────────────────────────────────────────────
@@ -21,8 +27,12 @@
   async function checkLockStatus() {
     try {
       const res = await fetch('/api/browser-lock/check', { credentials: 'include' });
-      if (!res.ok) return;
+      if (!res.ok) {
+        if (res.status === 429) lockState.consecutivePollFailures++;
+        return;
+      }
 
+      lockState.consecutivePollFailures = 0;
       const data = await res.json();
       if (data.locked) {
         activateLock(data);
@@ -30,6 +40,7 @@
         deactivateLock();
       }
     } catch (e) {
+      lockState.consecutivePollFailures++;
       console.warn('[BrowserLock] Failed to check status:', e.message);
     }
   }
@@ -220,11 +231,11 @@
     // Send immediately
     sendHeartbeat('active');
 
-    // Then every 5 seconds
+    // Then on interval
     lockState.heartbeatTimer = setInterval(() => {
       const status = document.hidden ? 'tab-away' : 'active';
       sendHeartbeat(status);
-    }, 5000);
+    }, HEARTBEAT_INTERVAL);
   }
 
   async function sendHeartbeat(status) {
@@ -393,14 +404,27 @@
 
   // ─── POLL FOR LOCK STATUS CHANGES ──────────────────────────────────────────
 
-  // Check every 10 seconds if lock status has changed
-  setInterval(checkLockStatus, 10000);
+  function schedulePoll() {
+    if (lockState.pollTimer) clearTimeout(lockState.pollTimer);
+    const interval = Math.min(
+      BASE_POLL_INTERVAL * Math.pow(2, lockState.consecutivePollFailures),
+      MAX_POLL_INTERVAL
+    );
+    lockState.pollTimer = setTimeout(async () => {
+      await checkLockStatus();
+      schedulePoll();
+    }, interval);
+  }
 
-  // Initial check on page load
+  // Initial check on page load, then start polling
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkLockStatus);
+    document.addEventListener('DOMContentLoaded', () => {
+      checkLockStatus();
+      schedulePoll();
+    });
   } else {
     checkLockStatus();
+    schedulePoll();
   }
 
   // Expose for debugging

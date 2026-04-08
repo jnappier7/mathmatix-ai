@@ -6,6 +6,7 @@
 // ============================================
 
 const { hasVisualCommands } = require('./visualTeachingParser');
+const { normalizeMathUnicode } = require('./mathUnicodeNormalizer');
 const {
     detectCheatAttempt,
     determineVisualMode,
@@ -467,14 +468,17 @@ function extractFractionMultiplication(studentMsg, aiResponse) {
 
 function extractEquation(studentMsg, aiResponse) {
     // Pattern: Simple linear equations like "2x + 3 = 7", "5x - 2 = 13"
+    // Normalize Unicode minus signs and superscripts first
+    const normStudent = normalizeMathChars(studentMsg);
+    const normAI = normalizeMathChars(aiResponse);
     const pattern = /(-?\d*x?\s*[+\-]\s*\d+\s*=\s*-?\d+)/i;
 
-    let match = studentMsg.match(pattern);
+    let match = normStudent.match(pattern);
     if (match) {
         return match[1].trim();
     }
 
-    match = aiResponse.match(pattern);
+    match = normAI.match(pattern);
     if (match) {
         return match[1].trim();
     }
@@ -530,34 +534,26 @@ function extractTriangleAngles(studentMsg, aiResponse) {
 function extractAlgebraExpression(studentMsg, aiResponse) {
     // Look for algebraic expressions in various formats
     // Examples: x^2-5x+6, x²+5x+6, 2x+3, (x+2)(x+3)
+    // Normalize Unicode first so all patterns can use ASCII caret/minus
+    const text = normalizeMathChars(studentMsg + ' ' + aiResponse);
 
     const patterns = [
-        // Quadratic expressions: x^2-5x+6, x²-5x+6
-        /([x]\^?²?\s*[+\-]\s*\d+[x]\s*[+\-]\s*\d+)/i,
+        // Quadratic expressions: x^2-5x+6
+        /([x]\^?\d*\s*[+\-]\s*\d+[x]\s*[+\-]\s*\d+)/i,
         // Quadratic with caret: x^2-5x+6
         /([x]\^\d+\s*[+\-]\s*\d+[x]\s*[+\-]\s*\d+)/i,
-        // Simple quadratic: x^2+6 or x²+6
-        /([x]\^?²?\s*[+\-]\s*\d+)/i,
+        // Simple quadratic: x^2+6
+        /([x]\^\d+\s*[+\-]\s*\d+)/i,
         // Linear expressions: 2x+3
         /(\d+[x]\s*[+\-]\s*\d+)/i,
         // Just x with coefficient: 2x, 3x
         /(\d*[x])/i
     ];
 
-    const text = studentMsg + ' ' + aiResponse;
-
     for (const pattern of patterns) {
         const match = text.match(pattern);
         if (match) {
-            let expr = match[1].trim();
-
-            // Clean up the expression
-            // Replace superscript 2 with ^2
-            expr = expr.replace(/²/g, '^2');
-            // Remove spaces
-            expr = expr.replace(/\s+/g, '');
-            // Ensure proper format for algebra tiles
-
+            let expr = match[1].trim().replace(/\s+/g, '');
             console.log('[VisualEnforcer] Extracted expression:', expr);
             return expr;
         }
@@ -569,7 +565,7 @@ function extractAlgebraExpression(studentMsg, aiResponse) {
     if (quotedMatch) {
         const quoted = quotedMatch[1] || quotedMatch[2];
         if (/[x]/.test(quoted) && /[+\-]/.test(quoted)) {
-            const cleaned = quoted.replace(/²/g, '^2').replace(/\s+/g, '');
+            const cleaned = quoted.replace(/\s+/g, '');
             console.log('[VisualEnforcer] Extracted quoted expression:', cleaned);
             return cleaned;
         }
@@ -630,32 +626,18 @@ function isGraphingRequest(message) {
 }
 
 /**
- * Normalize Unicode math characters to ASCII equivalents
+ * Normalize Unicode math characters to ASCII equivalents.
+ * Delegates to shared utility — kept as a local alias for backward compat.
  */
 function normalizeMathChars(str) {
-    return str
-        .replace(/²/g, '^2')
-        .replace(/³/g, '^3')
-        .replace(/⁴/g, '^4')
-        .replace(/⁵/g, '^5')
-        .replace(/⁻/g, '-')
-        .replace(/×/g, '*')
-        .replace(/÷/g, '/')
-        .replace(/−/g, '-')
-        .replace(/π/g, 'pi')
-        // Convert LaTeX \frac{A}{B} → (A)/(B) so extraction patterns can match
-        .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '($1)/($2)')
-        // Strip remaining LaTeX delimiters and commands that don't affect the expression
-        .replace(/\\\(|\\\)|\\\[|\\\]/g, '')
-        .replace(/\\left|\\right/g, '')
-        .replace(/\\cdot/g, '*');
+    return normalizeMathUnicode(str);
 }
 
 /**
- * Math expression character class: x, digits, operators, parens, dots, spaces, Unicode superscripts
- * Used to build extraction regexes
+ * Math expression character class: x, digits, operators, parens, dots, spaces.
+ * Unicode superscripts no longer needed here since we normalize first.
  */
-const MATH_CHARS = '[x\\d\\(\\)\\^\\*\\/\\+\\-\\.\\s²³⁴⁵⁻]';
+const MATH_CHARS = '[x\\d\\(\\)\\^\\*\\/\\+\\-\\.\\s]';
 
 /**
  * Extract function from message for graphing
@@ -743,8 +725,10 @@ function isFractionVisualizationRequest(message) {
  * Extract fraction from message
  */
 function extractFractionFromMessage(message) {
+    // Normalize Unicode fractions (½→(1/2), etc.) and operators first
+    const msg = normalizeMathChars(message);
     const pattern = /(\d+)\s*\/\s*(\d+)/;
-    const match = message.match(pattern);
+    const match = msg.match(pattern);
     if (match) {
         return { num: parseInt(match[1]), denom: parseInt(match[2]) };
     }
@@ -768,7 +752,8 @@ function isNumberLineRequest(message) {
  * Extract point from message for number line
  */
 function extractPointFromMessage(message) {
-    const match = message.match(/(?:point|number|mark)\s*(-?\d+)/i);
+    const msg = normalizeMathChars(message);
+    const match = msg.match(/(?:point|number|mark)\s*(-?\d+)/i);
     return match ? parseInt(match[1]) : null;
 }
 
@@ -877,26 +862,28 @@ function isIntegerCounterRequest(message) {
  * e.g., "-2 + 7" → { positive: 7, negative: 2, label: "−2 + 7" }
  */
 function extractCountersFromMessage(message) {
+    // Normalize Unicode minus signs so patterns can use ASCII -
+    const msg = normalizeMathChars(message);
     // Pattern: N + (-M) or N + -M
-    let match = message.match(/(\d+)\s*\+\s*\(?-(\d+)\)?/);
+    let match = msg.match(/(\d+)\s*\+\s*\(?-(\d+)\)?/);
     if (match) {
         return { positive: parseInt(match[1]), negative: parseInt(match[2]), label: `${match[1]} + (−${match[2]})` };
     }
 
     // Pattern: (-M) + N or -M + N
-    match = message.match(/\(?-(\d+)\)?\s*\+\s*(\d+)/);
+    match = msg.match(/\(?-(\d+)\)?\s*\+\s*(\d+)/);
     if (match) {
         return { positive: parseInt(match[2]), negative: parseInt(match[1]), label: `−${match[1]} + ${match[2]}` };
     }
 
     // Pattern: N - M (interpret as N + (-M) for counters)
-    match = message.match(/(\d+)\s*-\s*(\d+)/);
+    match = msg.match(/(\d+)\s*-\s*(\d+)/);
     if (match) {
         return { positive: parseInt(match[1]), negative: parseInt(match[2]), label: `${match[1]} − ${match[2]}` };
     }
 
     // Zero pairs question - show equal amounts
-    if (/zero.?pair/i.test(message)) {
+    if (/zero.?pair/i.test(msg)) {
         return { positive: 4, negative: 4, label: 'Zero pairs: +4 and −4 cancel out!' };
     }
 
@@ -1039,8 +1026,10 @@ const TOPIC_VISUALS = [
         name: 'Inequality',
         detect: /\b(inequalit\w*|solve.*[<>]|graph.*(greater|less\s+than|[<>]))/i,
         build(studentMsg) {
+            // Normalize Unicode ≤/≥ and minus before extraction
+            const msg = normalizeMathChars(studentMsg);
             // Try to extract inequality expression
-            const ineqMatch = studentMsg.match(/([x])\s*([<>]=?)\s*(-?\d+)/);
+            const ineqMatch = msg.match(/([x])\s*([<>]=?)\s*(-?\d+)/);
             if (ineqMatch) {
                 return `\n\nThe shaded region shows all the values that make the inequality true. Notice whether the circle is open (not included) or filled (included).\n\n[INEQUALITY:expression=${ineqMatch[1]}${ineqMatch[2]}${ineqMatch[3]},variable=x]`;
             }
@@ -1049,16 +1038,29 @@ const TOPIC_VISUALS = [
     },
     {
         name: 'Derivative / Rate of change',
-        detect: /\b(derivative|differentiat\w*|power\s+rule|tangent\s+line|instantaneous\s+rate|d\s*\/\s*dx|f\s*'\s*\()/i,
+        detect: null,
+        // Only inject a graph when the conversation is actually WORKING ON a derivative,
+        // not just mentioning the word "derivative" in a topic list or transition message.
+        detectFn(studentMsg, aiResponse) {
+            const combined = (studentMsg + ' ' + aiResponse).toLowerCase();
+            // Must have a derivative keyword
+            if (!/\b(derivative|differentiat\w*|power\s+rule|tangent\s+line|instantaneous\s+rate|d\s*\/\s*dx|f\s*'\s*\()/i.test(combined)) {
+                return false;
+            }
+            // Require evidence we're computing/teaching a specific derivative:
+            // - a function definition like f(x) = ... or y = x^2 ...
+            // - "derivative of <expr>" or "differentiate <expr>"
+            // - actual derivative notation d/dx or f'(x) = ...
+            // - power rule being applied (shows working, not just named)
+            const hasFunction = /(?:f\s*\(\s*x\s*\)\s*=|y\s*=\s*\w*x)\s*[\w\^*+\-/().]/i.test(combined);
+            const hasDerivativeOf = /\b(?:derivative\s+of|differentiat\w+)\s+\S/i.test(combined);
+            const hasNotation = /(?:d\s*\/\s*dx\s*[\[(]|f\s*'\s*\(\s*x\s*\)\s*=)/i.test(combined);
+            const hasPowerRuleWork = /\b\d+\s*x\s*\^?\s*\d*/i.test(aiResponse) && /power\s+rule/i.test(combined);
+            return hasFunction || hasDerivativeOf || hasNotation || hasPowerRuleWork;
+        },
         build(studentMsg, aiResponse) {
             const combined = studentMsg + ' ' + aiResponse;
-            // Normalize Unicode superscripts and minus signs before extraction
-            const normalized = combined
-                .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
-                .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
-                .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
-                .replace(/⁹/g, '^9')
-                .replace(/−/g, '-').replace(/×/g, '*');
+            const normalized = normalizeMathChars(combined);
             // Try to extract the function from context
             // After "derivative of" or "differentiate", optionally skip "f(x) =" prefix
             const fnMatch = normalized.match(/(?:f\s*\(\s*x\s*\)\s*=\s*|(?:derivative\s+of|differentiat\w+)\s+(?:f\s*\(\s*x\s*\)\s*=\s*)?)([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
@@ -1074,13 +1076,7 @@ const TOPIC_VISUALS = [
         detect: /\b(velocity\s+and\s+acceleration|position\s+function|s\s*\(\s*t\s*\)\s*=|v\s*\(\s*t\s*\)|acceleration\s+function|kinematics|motion\s+along)/i,
         build(studentMsg, aiResponse) {
             const combined = studentMsg + ' ' + aiResponse;
-            // Normalize Unicode superscripts and minus signs before extraction
-            const normalized = combined
-                .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
-                .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
-                .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
-                .replace(/⁹/g, '^9')
-                .replace(/−/g, '-').replace(/×/g, '*');
+            const normalized = normalizeMathChars(combined);
             // Try to extract position function
             const fnMatch = normalized.match(/s\s*\(\s*t\s*\)\s*=\s*([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
             let fn = fnMatch ? fnMatch[1].trim().replace(/\s+/g, '').replace(/t/g, 'x') : '4*x^3-6*x^2+2*x';
@@ -1094,8 +1090,9 @@ const TOPIC_VISUALS = [
         detect: /\b(rational\s+function|vertical\s+asymptote|horizontal\s+asymptote|asymptote|removable\s+discontinuit|hole\s+in.*graph|end\s+behavior.*rational)/i,
         build(studentMsg, aiResponse) {
             const combined = studentMsg + ' ' + aiResponse;
+            const normalized = normalizeMathChars(combined);
             // Try to extract the rational function
-            const fnMatch = combined.match(/(?:(?:graph|function|equation)\s+(?:is|of)\s+|y\s*=\s*|f\s*\(\s*x\s*\)\s*=\s*)(\([^)]+\)\s*\/\s*\([^)]+\))/i);
+            const fnMatch = normalized.match(/(?:(?:graph|function|equation)\s+(?:is|of)\s+|y\s*=\s*|f\s*\(\s*x\s*\)\s*=\s*)(\([^)]+\)\s*\/\s*\([^)]+\))/i);
             let fn = fnMatch ? fnMatch[1].trim().replace(/\s+/g, '') : '(x^2-4)/(x-2)';
             if (fn.length < 3 || !/\//.test(fn)) fn = '(x^2-4)/(x-2)';
             return `\n\nExplore the rational function below. Dashed vertical lines are vertical asymptotes (where the function is undefined), dashed horizontal lines are horizontal asymptotes (end behavior), and open circles mark holes (removable discontinuities). Hover to trace values.\n\n[RATIONAL_GRAPH:fn=${fn},xMin=-8,xMax=8,title="Rational Function Analysis"]`;

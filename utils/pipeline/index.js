@@ -35,7 +35,7 @@ const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDiff
 // Backbone: Tutor Plan + Skill Familiarity
 const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase } = require('../tutorPlanManager');
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
-const { evaluatePhaseAdvancement, reassessFamiliarity, createPhaseTracker, updatePhaseTracker } = require('../phaseEvidenceEvaluator');
+const { reassessFamiliarity } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
@@ -375,43 +375,22 @@ async function runPipeline(message, ctx) {
         let advanceToPhase = null;
         let familiarityChange = null;
 
-        // ── 1. Evidence-based phase advancement ──
-        // Instead of advancing on a single correct answer, evaluate accumulated evidence
-        if (tutorPlan.currentTarget?.instructionPhase && tutorPlan.currentTarget?.instructionalMode === 'instruct') {
-          const phaseTracker = ctx.conversation?.phaseTracker || createPhaseTracker(
-            tutorPlan.currentTarget.instructionPhase,
-            targetSkillId
-          );
+        // ── 1. Phase advancement — driven by phaseState (unified tracker) ──
+        // The decide stage already evaluated and updated phaseState via
+        // evaluatePhaseAdvancement(). Read the result from phaseState to
+        // sync tutor plan instruction phases.
+        const phaseState = ctx.phaseState || ctx.conversation?.phaseState;
+        if (phaseState && tutorPlan.currentTarget?.instructionPhase) {
+          const currentPhase = phaseState.currentPhase || phaseState.phase;
+          const planPhase = tutorPlan.currentTarget.instructionPhase;
 
-          const phaseEval = evaluatePhaseAdvancement(
-            { phase: phaseTracker.phase, turnsInPhase: phaseTracker.turnsInPhase, evidenceLog: phaseTracker.evidenceLog },
-            { diagnosis, observation, decision, sessionMood },
-            { tutorPlan, evidence }
-          );
-
-          updatePhaseTracker(phaseTracker, phaseEval, { diagnosis, observation, decision });
-
-          // Store tracker on conversation for cross-turn accumulation
-          if (ctx.conversation) {
-            ctx.conversation.phaseTracker = phaseTracker;
-            ctx.conversation.markModified?.('phaseTracker');
-          }
-
-          if (phaseEval.shouldAdvance) {
+          // If phaseState advanced past the plan's tracked phase, sync the plan
+          if (currentPhase && currentPhase !== planPhase) {
             shouldAdvance = true;
-            advanceToPhase = phaseEval.nextPhase;
-            console.log(`[Pipeline] Phase advance: ${phaseTracker.phase} → ${phaseEval.nextPhase} (${phaseEval.reasoning})`);
+            advanceToPhase = currentPhase;
+            console.log(`[Pipeline] Syncing plan phase: ${planPhase} → ${currentPhase}`);
             notes.push({
-              content: `Phase advanced: ${phaseEval.reasoning}`,
-              category: 'general',
-              skillId: targetSkillId,
-            });
-          } else if (phaseEval.shouldRegress) {
-            shouldAdvance = true; // We use the same mechanism for regression
-            advanceToPhase = phaseEval.nextPhase;
-            console.log(`[Pipeline] Phase regression: → ${phaseEval.nextPhase} (${phaseEval.reasoning})`);
-            notes.push({
-              content: `Phase regressed: ${phaseEval.reasoning}`,
+              content: `Phase synced to ${currentPhase}`,
               category: 'general',
               skillId: targetSkillId,
             });

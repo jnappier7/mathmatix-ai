@@ -274,7 +274,23 @@ function configureMiddleware(app) {
     next();
   });
 
-  app.use('/api/', apiLimiter);
+  // Exempt lightweight polling/heartbeat endpoints from the global rate limiter.
+  // These are all authenticated and called on fixed intervals by the client;
+  // counting them against the general budget starves real user requests.
+  const rateLimitExemptPaths = new Set([
+    '/session/heartbeat',
+    '/browser-lock/check',
+    '/browser-lock/heartbeat',
+    '/impersonation/status',
+    '/announcements/student/unread-count',
+    '/chat/track-time',
+  ]);
+  app.use('/api/', (req, res, next) => {
+    if (rateLimitExemptPaths.has(req.path)) {
+      return next();
+    }
+    return apiLimiter(req, res, next);
+  });
 
   // CSRF Protection
   app.use(csrfProtection);

@@ -12,12 +12,14 @@ const { selectWarmupSkill, checkPrerequisiteReadiness } = require('../utils/prer
 const logger = require('../utils/logger').child({ route: 'guidedLesson' });
 const {
   initializeLessonPhase,
-  recordAssessment,
-  evaluatePhaseTransition,
   transitionPhase,
   getPhasePrompt,
   PHASES
 } = require('../utils/lessonPhaseManager');
+const {
+  evaluatePhaseAdvancement,
+  updatePhaseTracker,
+} = require('../utils/phaseEvidenceEvaluator');
 
 // Define a reasonable character limit for user input in lesson context
 const MAX_LESSON_INPUT_LENGTH = 1500; // Slightly more generous as it's guided, but still limited
@@ -80,27 +82,17 @@ router.post('/generate-interactive-lesson', async (req, res) => {
                 (currentPhaseState.phaseHistory.reduce((sum, p) => sum + (p.messageCount || 2), 0));
 
             // Simple auto-transition logic based on conversation depth
-            const transitionDecision = evaluatePhaseTransition(currentPhaseState);
+            const phaseEval = evaluatePhaseAdvancement(
+                { phase: currentPhaseState.currentPhase, turnsInPhase: currentPhaseState.turnsInPhase || messagesSincePhaseStart, evidenceLog: currentPhaseState.evidenceLog || [] },
+                {}, // No per-turn evidence in this legacy path
+                {}
+            );
+            updatePhaseTracker(currentPhaseState, phaseEval, {});
 
-            // Override: force transition based on message count if not enough data
-            if (currentPhaseState.assessmentData[currentPhaseState.currentPhase].attempts === 0) {
-                if (currentPhaseState.currentPhase === PHASES.WARMUP && messagesSincePhaseStart >= 2) {
-                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.I_DO, 'Auto-transition: warmup complete');
-                } else if (currentPhaseState.currentPhase === PHASES.I_DO && messagesSincePhaseStart >= 2) {
-                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.WE_DO, 'Auto-transition: modeling complete');
-                } else if (currentPhaseState.currentPhase === PHASES.WE_DO && messagesSincePhaseStart >= 4) {
-                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.CHECK_IN, 'Auto-transition: ready for check-in');
-                } else if (currentPhaseState.currentPhase === PHASES.CHECK_IN && messagesSincePhaseStart >= 1) {
-                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.YOU_DO, 'Auto-transition: moving to independent practice');
-                } else if (currentPhaseState.currentPhase === PHASES.YOU_DO && messagesSincePhaseStart >= 5) {
-                    currentPhaseState = transitionPhase(currentPhaseState, PHASES.MASTERY_CHECK, 'Auto-transition: checking for mastery');
-                }
-            } else if (transitionDecision.shouldTransition) {
-                currentPhaseState = transitionPhase(
-                    currentPhaseState,
-                    transitionDecision.nextPhase,
-                    transitionDecision.rationale
-                );
+            if (phaseEval.shouldAdvance && phaseEval.nextPhase) {
+                currentPhaseState = transitionPhase(currentPhaseState, phaseEval.nextPhase, phaseEval.reasoning);
+            } else if (phaseEval.shouldRegress && phaseEval.nextPhase) {
+                currentPhaseState = transitionPhase(currentPhaseState, phaseEval.nextPhase, phaseEval.reasoning);
             }
         }
 
@@ -213,20 +205,27 @@ router.post('/record-assessment', async (req, res) => {
             return res.status(400).json({ error: 'Phase state required' });
         }
 
-        // Record the assessment
-        const updatedPhaseState = recordAssessment(phaseState, responseType, verbalSignal);
+        // Record assessment via evidence evaluator
+        const isCorrect = responseType === 'CORRECT_FAST' || responseType === 'CORRECT_SLOW';
+        const phaseEval = evaluatePhaseAdvancement(
+            { phase: phaseState.currentPhase, turnsInPhase: phaseState.turnsInPhase || 0, evidenceLog: phaseState.evidenceLog || [] },
+            { diagnosis: { isCorrect } },
+            {}
+        );
+        updatePhaseTracker(phaseState, phaseEval, { diagnosis: { isCorrect } });
 
-        // Check if transition needed
-        const transitionDecision = evaluatePhaseTransition(updatedPhaseState);
-
-        if (transitionDecision.shouldTransition) {
-            transitionPhase(updatedPhaseState, transitionDecision.nextPhase, transitionDecision.rationale);
+        if ((phaseEval.shouldAdvance || phaseEval.shouldRegress) && phaseEval.nextPhase) {
+            transitionPhase(phaseState, phaseEval.nextPhase, phaseEval.reasoning);
         }
 
         res.json({
             success: true,
-            phaseState: updatedPhaseState,
-            transitionDecision
+            phaseState,
+            transitionDecision: {
+                shouldTransition: phaseEval.shouldAdvance || phaseEval.shouldRegress,
+                nextPhase: phaseEval.nextPhase,
+                rationale: phaseEval.reasoning,
+            },
         });
 
     } catch (error) {
