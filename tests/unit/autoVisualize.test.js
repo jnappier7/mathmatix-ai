@@ -196,4 +196,23 @@ describe('autoVisualizeByTopic', () => {
         // Should NOT also have FUNCTION_GRAPH from trig topic
         expect(result).not.toContain('[FUNCTION_GRAPH:');
     });
+
+    // ── Unicode superscript handling ──
+    it('should extract function with Unicode superscripts for derivative graph', () => {
+        const result = autoVisualizeByTopic(
+            '2x',
+            'The derivative of x² is indeed 2x.'
+        );
+        expect(result).toContain('[DERIVATIVE_GRAPH:');
+        expect(result).toContain('fn=x^2');
+    });
+
+    it('should extract polynomial with Unicode superscripts for derivative graph', () => {
+        const result = autoVisualizeByTopic(
+            'what is the derivative?',
+            'Let\'s find the derivative of f(x) = 3x³−5x²+2x−7.'
+        );
+        expect(result).toContain('[DERIVATIVE_GRAPH:');
+        expect(result).toContain('fn=3x^3-5x^2+2x-7');
+    });
 });

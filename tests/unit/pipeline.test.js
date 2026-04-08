@@ -108,6 +108,16 @@ describe('Pipeline: Observe Stage', () => {
     test('classifies skip requests', () => {
       expect(observe('skip').messageType).toBe(MESSAGE_TYPES.SKIP_REQUEST);
       expect(observe('next one').messageType).toBe(MESSAGE_TYPES.SKIP_REQUEST);
+      expect(observe('harder problem').messageType).toBe(MESSAGE_TYPES.SKIP_REQUEST);
+      expect(observe('another question').messageType).toBe(MESSAGE_TYPES.SKIP_REQUEST);
+      expect(observe('harder one').messageType).toBe(MESSAGE_TYPES.SKIP_REQUEST);
+    });
+
+    test('does not classify "give me" requests as answer attempts', () => {
+      // "Can you give me a harder problem?" was falsely matched as answer "m"
+      const result = observe('Can you give me a harder problem?');
+      expect(result.messageType).not.toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+      expect(result.answer).toBeNull();
     });
 
     test('give-up takes priority over IDK', () => {

@@ -1044,8 +1044,16 @@ const TOPIC_VISUALS = [
         detect: /\b(derivative|differentiat\w*|power\s+rule|tangent\s+line|instantaneous\s+rate|d\s*\/\s*dx|f\s*'\s*\()/i,
         build(studentMsg, aiResponse) {
             const combined = studentMsg + ' ' + aiResponse;
+            // Normalize Unicode superscripts and minus signs before extraction
+            const normalized = combined
+                .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
+                .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
+                .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
+                .replace(/⁹/g, '^9')
+                .replace(/−/g, '-').replace(/×/g, '*');
             // Try to extract the function from context
-            const fnMatch = combined.match(/(?:f\s*\(\s*x\s*\)\s*=\s*|derivative\s+of\s+|differentiat\w+\s+)([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
+            // After "derivative of" or "differentiate", optionally skip "f(x) =" prefix
+            const fnMatch = normalized.match(/(?:f\s*\(\s*x\s*\)\s*=\s*|(?:derivative\s+of|differentiat\w+)\s+(?:f\s*\(\s*x\s*\)\s*=\s*)?)([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
             let fn = fnMatch ? fnMatch[1].trim().replace(/\s+/g, '') : 'x^3-3*x^2+2*x';
             // Clean up common artifacts
             fn = fn.replace(/[,.:;!?]+$/, '').replace(/\bthe\b/g, '');
@@ -1058,8 +1066,15 @@ const TOPIC_VISUALS = [
         detect: /\b(velocity\s+and\s+acceleration|position\s+function|s\s*\(\s*t\s*\)\s*=|v\s*\(\s*t\s*\)|acceleration\s+function|kinematics|motion\s+along)/i,
         build(studentMsg, aiResponse) {
             const combined = studentMsg + ' ' + aiResponse;
+            // Normalize Unicode superscripts and minus signs before extraction
+            const normalized = combined
+                .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
+                .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
+                .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
+                .replace(/⁹/g, '^9')
+                .replace(/−/g, '-').replace(/×/g, '*');
             // Try to extract position function
-            const fnMatch = combined.match(/s\s*\(\s*t\s*\)\s*=\s*([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
+            const fnMatch = normalized.match(/s\s*\(\s*t\s*\)\s*=\s*([\w\^*+\-/().]+(?:\s*[\w\^*+\-/().]+)*)/i);
             let fn = fnMatch ? fnMatch[1].trim().replace(/\s+/g, '').replace(/t/g, 'x') : '4*x^3-6*x^2+2*x';
             fn = fn.replace(/[,.:;!?]+$/, '');
             if (fn.length < 2) fn = '4*x^3-6*x^2+2*x';

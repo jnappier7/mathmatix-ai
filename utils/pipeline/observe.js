@@ -56,7 +56,7 @@ const PATTERNS = {
 
   // "Intermediate" patterns (lower priority): "you get x+2", "gives 3x"
   // These may be intermediate steps, not the final answer.
-  embeddedAnswerIntermediate: /(?:(?:you\s+)?(?:get|gives?)\s+)(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)/gi,
+  embeddedAnswerIntermediate: /(?:(?:you\s+)?(?:get|gives)\s+)(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)/gi,
 
   // Reasoning phrases that indicate the student is showing their work
   reasoningIndicators: /\b(because|since|after\s+(?:i\s+)?(?:factor|simplif|cancel|distribut|combin|reduc)|(?:i\s+)?(?:factor|simplif|cancel)(?:ed|ing)?|if\s+(?:you|i)\s+(?:factor|simplif|cancel)|by\s+(?:factoring|simplifying|canceling)|using\s+the\s+(?:power|chain|quotient|product)\s+rule|(?:which|that|so)\s+(?:means|gives|leaves|simplifies?\s+to))\b/i,
@@ -65,7 +65,7 @@ const PATTERNS = {
   idk: /\b(idk|i\s*don'?t\s*know|no\s*idea|no\s*clue|dunno|i\s*have\s*no\s*idea|beats\s*me)\b/i,
   giveUp: /\b(just\s*tell\s*me|give\s*me\s*the\s*answer|tell\s*me\s*the\s*answer|what'?s\s*the\s*answer|i\s*give\s*up|show\s*me\s*the\s*answer|can\s*you\s*just\s*solve\s*it)\b/i,
   helpRequest: /\b(help|hint|stuck|confused|don'?t\s*(understand|get\s*it)|what\s*do\s*i\s*do|how\s*do\s*i|can\s*you\s*(explain|show|help))\b/i,
-  skipRequest: /\b(skip|next\s*one|move\s*on|different\s*problem|new\s*problem|next\s*question|what'?s\s*next|whats\s*next|now\s*what|what\s*now|ready\s*for\s*(the\s*)?next|let'?s\s*(keep|move)\s*(going|on)|what\s*do\s*we\s*do\s*next)\b/i,
+  skipRequest: /\b(skip|next\s*one|move\s*on|different\s*problem|new\s*problem|harder\s*(problem|question|one)|another\s*(problem|question|one)|next\s*question|what'?s\s*next|whats\s*next|now\s*what|what\s*now|ready\s*for\s*(the\s*)?next|let'?s\s*(keep|move)\s*(going|on)|what\s*do\s*we\s*do\s*next)\b/i,
 
   // Check my work
   checkMyWork: /\b(check|verify|grade|review|is\s*this\s*right|is\s*this\s*correct|did\s*i\s*(get|do)\s*(it|this)\s*right|am\s*i\s*right|how'?d\s*i\s*do)\b/i,
