@@ -587,12 +587,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <!-- Helper text shown when math mode is active -->
       <div id="mk-helper-text" class="mk-helper-text" style="display:none;">
-        Type your equation below, then tap <strong>Done</strong> or <strong>Send</strong>
+        Type math naturally &mdash; <strong>space</strong> builds it. <code>1/2</code> &rarr; fraction, <code>x^2</code> &rarr; power. Tap outside when done.
       </div>
     </div>
 
     <!-- Math Keyboard Panel (replaces native keyboard on mobile) -->
     <div id="math-keyboard-panel" class="math-keyboard-panel" style="display:none;">
+      <!-- Contextual shortcut strip — adapts to current skill -->
+      <div id="mk-shortcut-strip" class="mk-shortcut-strip">
+        <button class="mk-shortcut" data-insert="\frac{#0}{#1}" title="Fraction"><span class="mk-shortcut-sym">⅟</span></button>
+        <button class="mk-shortcut" data-insert="#0^{#1}" title="Power"><span class="mk-shortcut-sym">x<sup>n</sup></span></button>
+        <button class="mk-shortcut" data-insert="\sqrt{#0}" title="Square root"><span class="mk-shortcut-sym">&radic;</span></button>
+        <button class="mk-shortcut" data-insert="\pi" title="Pi"><span class="mk-shortcut-sym">&pi;</span></button>
+        <button class="mk-shortcut" data-insert="\pm" title="Plus-minus"><span class="mk-shortcut-sym">&plusmn;</span></button>
+        <button class="mk-shortcut" data-insert="(" title="Open paren"><span class="mk-shortcut-sym">(</span></button>
+        <button class="mk-shortcut" data-insert=")" title="Close paren"><span class="mk-shortcut-sym">)</span></button>
+        <button class="mk-shortcut" data-insert="\leq" title="Less or equal"><span class="mk-shortcut-sym">&le;</span></button>
+        <button class="mk-shortcut" data-insert="\geq" title="Greater or equal"><span class="mk-shortcut-sym">&ge;</span></button>
+        <button class="mk-shortcut" data-insert="\theta" title="Theta"><span class="mk-shortcut-sym">&theta;</span></button>
+        <button class="mk-shortcut" data-insert="\infty" title="Infinity"><span class="mk-shortcut-sym">&infin;</span></button>
+      </div>
       <div class="mk-tabs">
         <button class="mk-tab" data-tab="abc" title="Switch to text keyboard">
           <span class="mk-tab-icon"><i class="fas fa-keyboard"></i></span>
@@ -1862,6 +1876,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/mobile-drawer.js"></script>
   <script src="/js/mobile-more-tools.js"></script>
   <script src="/js/mobile-chat-nav.js"></script>
+  <script src="/js/inlineEquationBox.js"></script>
   <script src="/js/auto-expand-textarea.js"></script>
   <script src="/js/chat-pinch-zoom.js"></script>
   <script src="/js/file-upload.js"></script>

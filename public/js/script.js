@@ -3349,49 +3349,84 @@ document.addEventListener("DOMContentLoaded", () => {
     const mkPages      = mkPanel ? mkPanel.querySelectorAll('.mk-page') : [];
     let   mathModeOn   = false;
 
-    function activateMathMode() {
-        if (!mkPanel || !mkField || !mkWrapper || !userInput) return;
-        mathModeOn = true;
+    // ─── Inline Equation Box Integration (MS Word-style) ─────────────
+    // On mobile, we use inline equation boxes inside the contenteditable
+    // instead of swapping the entire input for a math-field.
+    if (window.InlineEquationBox && userInput) {
+        window.InlineEquationBox.init(userInput, sendMessage);
+    }
 
+    /**
+     * Get the currently active math-field — either from an inline equation
+     * box (preferred on mobile) or the legacy math keyboard field.
+     */
+    function getCurrentMathField() {
+        if (window.InlineEquationBox) {
+            const inlineField = window.InlineEquationBox.getActiveMathField();
+            if (inlineField) return inlineField;
+        }
+        return mkField;
+    }
+
+    function activateMathMode() {
+        if (!mkPanel || !userInput) return;
         const isMobile = window.innerWidth <= 768;
 
-        // Swap input: hide text input, show math field + wrapper
+        // On mobile: use inline equation box (MS Word-style)
+        if (isMobile && window.InlineEquationBox) {
+            window.InlineEquationBox.insertEquationBoxAtCursor();
+            mathModeOn = true;
+
+            // Show the math keyboard panel for symbol input
+            if (mkPanel) mkPanel.style.display = '';
+            if (mkHelperText) mkHelperText.style.display = '';
+
+            // Close old overlay palette if open
+            if (typeof closeEquationPalette === 'function') closeEquationPalette();
+
+            // Highlight the √x tool button
+            if (openEquationBtn) openEquationBtn.classList.add('mk-active');
+
+            // Default to math tab
+            switchMkTab('math');
+            return;
+        }
+
+        // Desktop: legacy behavior (swap input for math-field)
+        if (!mkField || !mkWrapper) return;
+        mathModeOn = true;
+
         userInput.style.display = 'none';
         mkWrapper.style.display = '';
         mkPanel.style.display = '';
         if (mkHelperText) mkHelperText.style.display = '';
 
-        // Close old overlay palette if open
         if (typeof closeEquationPalette === 'function') closeEquationPalette();
 
-        // On mobile: suppress native keyboard by setting inputmode="none"
-        // before focusing, so only our custom math keyboard shows
-        if (isMobile) {
-            document.activeElement?.blur();
-            mkField.setAttribute('inputmode', 'none');
-            // Prevent MathLive from showing its own virtual keyboard
-            mkField.mathVirtualKeyboardPolicy = 'manual';
-            setTimeout(() => {
-                mkField.focus({ preventScroll: true });
-            }, 80);
-        } else {
-            mkField.focus();
-        }
+        mkField.focus();
 
-        // Highlight the √x tool button
         if (openEquationBtn) openEquationBtn.classList.add('mk-active');
-
-        // Default to math tab
         switchMkTab('math');
-
-        // Show first-time tooltip if never seen before
         showMathKeyboardTooltip();
     }
 
     function deactivateMathMode() {
+        const isMobile = window.innerWidth <= 768;
+
+        // On mobile: seal the inline equation box, hide keyboard
+        if (isMobile && window.InlineEquationBox) {
+            window.InlineEquationBox.sealAll();
+            mathModeOn = false;
+            if (mkPanel) mkPanel.style.display = 'none';
+            if (mkHelperText) mkHelperText.style.display = 'none';
+            userInput.focus();
+            if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
+            return;
+        }
+
+        // Desktop: legacy behavior
         if (!mkPanel || !mkField || !mkWrapper || !userInput) return;
 
-        // If math field has content, insert it into chat input before closing
         const latex = mkField.value?.trim();
         if (latex) {
             const mathContainer = document.createElement('span');
@@ -3418,11 +3453,11 @@ document.addEventListener("DOMContentLoaded", () => {
         mkPages.forEach(p => p.style.display = p.dataset.page === tabName ? '' : 'none');
 
         if (tabName === 'abc') {
-            // Switch back to regular text input
             deactivateMathMode();
         } else {
-            // Keep focus on math field when switching between 123 and math tabs
-            if (mkField) mkField.focus();
+            // Focus the active math field (inline box or legacy)
+            const field = getCurrentMathField();
+            if (field) field.focus();
         }
     }
 
@@ -3431,38 +3466,62 @@ document.addEventListener("DOMContentLoaded", () => {
         tab.addEventListener('click', () => switchMkTab(tab.dataset.tab));
     });
 
-    // Done button: insert equation and return to text mode
+    // Done button: seal equation and return to text mode
     if (mkDoneBtn) {
         mkDoneBtn.addEventListener('click', () => deactivateMathMode());
     }
 
     // √x tool button: toggle math mode
     if (openEquationBtn) {
-        // On mobile, use the new math keyboard instead of the old palette
         openEquationBtn.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
-                e.stopImmediatePropagation(); // prevent old palette toggle
-                if (mathModeOn) deactivateMathMode();
-                else activateMathMode();
+                e.stopImmediatePropagation();
+                if (mathModeOn && !window.InlineEquationBox?.isActive()) {
+                    deactivateMathMode();
+                } else {
+                    activateMathMode();
+                }
             }
-        }, true); // capture phase to run before old handler
+        }, true);
     }
 
-    // Key presses on the math keyboard
+    // Key presses on the math keyboard — target the active math field
     if (mkPanel) {
         mkPanel.addEventListener('click', (e) => {
             const key = e.target.closest('.mk-key');
-            if (!key || !mkField) return;
+            if (!key) return;
+
+            // Target the inline equation box math-field if active, else legacy
+            const targetField = getCurrentMathField();
+            if (!targetField) return;
 
             const insertLatex = key.dataset.insert;
             const command = key.dataset.command;
 
             if (command) {
-                mkField.executeCommand(command);
+                targetField.executeCommand(command);
             } else if (insertLatex) {
-                mkField.executeCommand(['insert', insertLatex]);
+                targetField.executeCommand(['insert', insertLatex]);
             }
-            mkField.focus();
+            targetField.focus();
+        });
+    }
+
+    // Shortcut strip: quick-insert symbols into active math field
+    const mkShortcutStrip = document.getElementById('mk-shortcut-strip');
+    if (mkShortcutStrip) {
+        mkShortcutStrip.addEventListener('click', (e) => {
+            const btn = e.target.closest('.mk-shortcut');
+            if (!btn) return;
+
+            const targetField = getCurrentMathField();
+            if (!targetField) return;
+
+            const insertLatex = btn.dataset.insert;
+            if (insertLatex) {
+                targetField.executeCommand(['insert', insertLatex]);
+            }
+            targetField.focus();
         });
     }
 
