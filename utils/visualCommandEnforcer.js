@@ -1030,7 +1030,26 @@ const TOPIC_VISUALS = [
     },
     {
         name: 'Derivative / Rate of change',
-        detect: /\b(derivative|differentiat\w*|power\s+rule|tangent\s+line|instantaneous\s+rate|d\s*\/\s*dx|f\s*'\s*\()/i,
+        detect: null,
+        // Only inject a graph when the conversation is actually WORKING ON a derivative,
+        // not just mentioning the word "derivative" in a topic list or transition message.
+        detectFn(studentMsg, aiResponse) {
+            const combined = (studentMsg + ' ' + aiResponse).toLowerCase();
+            // Must have a derivative keyword
+            if (!/\b(derivative|differentiat\w*|power\s+rule|tangent\s+line|instantaneous\s+rate|d\s*\/\s*dx|f\s*'\s*\()/i.test(combined)) {
+                return false;
+            }
+            // Require evidence we're computing/teaching a specific derivative:
+            // - a function definition like f(x) = ... or y = x^2 ...
+            // - "derivative of <expr>" or "differentiate <expr>"
+            // - actual derivative notation d/dx or f'(x) = ...
+            // - power rule being applied (shows working, not just named)
+            const hasFunction = /(?:f\s*\(\s*x\s*\)\s*=|y\s*=\s*\w*x)\s*[\w\^*+\-/().]/i.test(combined);
+            const hasDerivativeOf = /\b(?:derivative\s+of|differentiat\w+)\s+\S/i.test(combined);
+            const hasNotation = /(?:d\s*\/\s*dx\s*[\[(]|f\s*'\s*\(\s*x\s*\)\s*=)/i.test(combined);
+            const hasPowerRuleWork = /\b\d+\s*x\s*\^?\s*\d*/i.test(aiResponse) && /power\s+rule/i.test(combined);
+            return hasFunction || hasDerivativeOf || hasNotation || hasPowerRuleWork;
+        },
         build(studentMsg, aiResponse) {
             const combined = studentMsg + ' ' + aiResponse;
             const normalized = normalizeMathChars(combined);
