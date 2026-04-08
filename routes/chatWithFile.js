@@ -10,15 +10,16 @@ const { promptInjectionFilter } = require('../middleware/promptInjection');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const StudentUpload = require('../models/studentUpload');
+const TutorPlan = require('../models/tutorPlan');
 const { generateSystemPrompt } = require('../utils/prompt');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
-const { openai, retryWithExponentialBackoff } = require('../utils/openaiClient');
+const { callLLM } = require('../utils/llmGateway');
 const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
-const { verify: pipelineVerify } = require('../utils/pipeline');
+const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
 
 // CTO REVIEW FIX: Use diskStorage instead of memoryStorage to prevent server crashes
@@ -120,7 +121,7 @@ router.post('/',
 
         console.log(`[chatWithFile] Prepared ${imageContents.length} image(s) for vision API, ${pdfTexts.length} PDF(s) processed`);
 
-        // --- Step 2: Run Chat Logic with Vision API ---
+        // --- Step 2: Build pipeline context and run through unified pipeline ---
         const user = await User.findById(userId);
         let activeConversation = await Conversation.findById(user.activeConversationId);
         if (!activeConversation || !activeConversation.isActive) {
@@ -161,92 +162,116 @@ router.post('/',
 
         const systemPrompt = generateSystemPrompt(user.toObject(), tutor, null, 'student', null, uploadContext);
 
-        // Build messages for AI with vision content
-        const recentMessages = activeConversation.messages.slice(-40).map(m => ({ role: m.role, content: m.content }));
+        // Build formatted messages for the pipeline.
+        // History uses text-only messages. The LAST user message is replaced with
+        // the vision-formatted version so the LLM sees the uploaded images.
+        const recentMessages = activeConversation.messages.slice(-40)
+            .filter(msg => ['user', 'assistant'].includes(msg.role) && msg.content && msg.content.trim().length > 0)
+            .map(m => ({ role: m.role, content: m.content }));
 
-        // Create user message with text (including PDF content) and images (Vision API format)
+        // Replace the last user message with vision-formatted version (text + images)
         // UPLOAD_CONTEXT_REMINDER is injected RIGHT NEXT to the image so the AI
         // literally cannot miss the instruction to reference what it sees.
         // Uses guardedText so the AI sees the worksheet detection instruction.
-        const visionUserMessage = {
-            role: 'user',
-            content: [
-                { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
-                ...imageContents
-            ]
-        };
+        if (recentMessages.length > 0 && recentMessages[recentMessages.length - 1].role === 'user') {
+            if (imageContents.length > 0) {
+                // Multimodal: text + images for vision API
+                recentMessages[recentMessages.length - 1] = {
+                    role: 'user',
+                    content: [
+                        { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
+                        ...imageContents
+                    ]
+                };
+            } else {
+                // PDF-only: just use the guarded text (no images to attach)
+                recentMessages[recentMessages.length - 1] = {
+                    role: 'user',
+                    content: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}`
+                };
+            }
+        }
 
-        const messagesForAI = [
-            { role: 'system', content: systemPrompt },
-            ...recentMessages.slice(0, -1), // All messages except the last (we'll replace it with vision version)
-            visionUserMessage
-        ];
+        const aiStartTime = Date.now();
 
-        // Call OpenAI vision API
-        let aiResponseText;
-        const aiStartTime = Date.now(); // Track AI processing time (server-side, for fair billing)
-
-        console.log(`[chatWithFile] Calling OpenAI vision API (${PRIMARY_CHAT_MODEL})...`);
-
-        const completion = await retryWithExponentialBackoff(() =>
-            openai.chat.completions.create({
-                model: PRIMARY_CHAT_MODEL,
-                messages: messagesForAI,
-                temperature: 0.7,
-                max_completion_tokens: 1500
-            })
-        );
-
-        aiResponseText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
-        console.log('[chatWithFile] Received response from OpenAI');
-
-        // Run pipeline verify stage (anti-cheat + reading level + LaTeX normalization + tag extraction)
+        // Pre-load TutorPlan (avoids duplicate DB query inside pipeline)
+        let preloadedTutorPlan = null;
         try {
-            const verified = await pipelineVerify(aiResponseText, {
-                userId: userId?.toString(),
-                userMessage: combinedText,
-                iepReadingLevel: user.iepPlan?.readingLevel || null,
-                firstName: user.firstName,
-                isStreaming: false,
+            preloadedTutorPlan = await TutorPlan.findOne({ userId: user._id });
+        } catch (err) {
+            console.error('[chatWithFile] TutorPlan load error (non-fatal):', err.message);
+        }
+
+        // --- Run through the FULL tutoring pipeline ---
+        // This ensures file uploads get the same Socratic enforcement, anti-cheat,
+        // instructional mode detection, and learning engine updates as regular chat.
+        let pipelineResult;
+        try {
+            pipelineResult = await runPipeline(combinedText, {
+                user,
+                conversation: activeConversation,
+                systemPrompt,
+                formattedMessages: recentMessages,
+                activeSkill: null,
+                tutorPlan: preloadedTutorPlan,
+                phaseState: activeConversation.phaseState || null,
+                hasRecentUpload: true,
+                stream: false,
+                res: null,
+                aiProcessingStartTime: aiStartTime,
             });
-            aiResponseText = verified.text;
-            if (verified.flags.length > 0) {
-                console.log(`[chatWithFile] Verify: ${verified.flags.join(', ')}`);
+        } catch (pipelineError) {
+            // Pipeline failed — fall back to direct LLM call so student always gets a response
+            console.error('[chatWithFile] Pipeline FALLBACK triggered:', pipelineError.message);
+
+            const fallbackMessages = [
+                { role: 'system', content: systemPrompt },
+                ...recentMessages,
+            ];
+
+            let fallbackText;
+            try {
+                const completion = await callLLM(PRIMARY_CHAT_MODEL, fallbackMessages, {
+                    temperature: 0.55,
+                    max_tokens: 1500,
+                });
+                fallbackText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+            } catch (llmError) {
+                console.error('[chatWithFile] Fallback LLM call also failed:', llmError.message);
+                fallbackText = "I'm having trouble right now. Could you try again?";
             }
-        } catch (verifyErr) {
-            // Fallback to just answer-key filter if verify fails
-            console.error('[chatWithFile] Verify failed, falling back to answer-key filter:', verifyErr.message);
-            const answerKeyCheck = filterAnswerKeyResponse(aiResponseText, userId);
-            if (answerKeyCheck.wasFiltered) {
-                aiResponseText = answerKeyCheck.text;
+
+            // Run verify stage on fallback response
+            try {
+                const verified = await pipelineVerify(fallbackText, {
+                    userId: userId?.toString(),
+                    userMessage: combinedText,
+                    iepReadingLevel: user.iepPlan?.readingLevel || null,
+                    firstName: user.firstName,
+                    isStreaming: false,
+                });
+                fallbackText = verified.text;
+            } catch (verifyErr) {
+                const answerKeyCheck = filterAnswerKeyResponse(fallbackText, userId);
+                if (answerKeyCheck.wasFiltered) fallbackText = answerKeyCheck.text;
             }
+
+            // Build a minimal pipelineResult for the fallback path
+            activeConversation.messages.push({ role: 'assistant', content: fallbackText.trim() });
+            await activeConversation.save();
+
+            pipelineResult = {
+                text: fallbackText,
+                xpBreakdown: { tier1: BRAND_CONFIG.baseXpPerTurn, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: BRAND_CONFIG.baseXpPerTurn },
+                leveledUp: false,
+                tutorsUnlocked: [],
+                avatarBuilderUnlocked: false,
+            };
         }
 
-        // Track AI processing time server-side (only counts AI generation, not reading/thinking/idle)
-        const aiProcessingSeconds = Math.ceil((Date.now() - aiStartTime) / 1000);
-        User.findByIdAndUpdate(userId, {
-            $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds }
-        }).catch(err => console.error('[chatWithFile] AI time tracking error:', err));
+        let aiResponseText = pipelineResult.text;
 
-        // --- Step 3: Handle Post-Processing (XP, Unlocks, etc.) ---
-        // (This logic is copied and adapted from your chat.js)
-        const xpAwardMatch = aiResponseText.match(/<AWARD_XP:(\d+),([^>]+)>/);
-        let bonusXpAwarded = 0, bonusXpReason = '';
-        if (xpAwardMatch) {
-            bonusXpAwarded = parseInt(xpAwardMatch[1], 10);
-            bonusXpReason = xpAwardMatch[2] || 'AI Bonus Award';
-            aiResponseText = aiResponseText.replace(xpAwardMatch[0], '').trim();
-        }
-
-        // Validate AI response before saving
-        if (!aiResponseText || typeof aiResponseText !== 'string' || aiResponseText.trim() === '') {
-            aiResponseText = "I'm having trouble generating a response right now. Could you please try again?";
-        }
-        activeConversation.messages.push({ role: 'assistant', content: aiResponseText.trim() });
-
-        await activeConversation.save();
-
-        // --- Step 4: Save uploaded files to student's resource library ---
+        // --- Step 3: Save uploaded files to student's resource library ---
         const savedUploads = [];
         const uploadsDir = path.join(__dirname, '../uploads');
 
@@ -307,42 +332,6 @@ router.post('/',
             }
         }
 
-        let xpAward = BRAND_CONFIG.baseXpPerTurn + bonusXpAwarded;
-        user.xp = (user.xp || 0) + xpAward;
-
-        let specialXpAwardedMessage = bonusXpAwarded > 0 ? `${bonusXpAwarded} XP (${bonusXpReason})` : `${xpAward} XP`;
-        while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
-            user.level += 1;
-            specialXpAwardedMessage = `LEVEL_UP! New level: ${user.level}`;
-        }
-
-        const tutorsJustUnlocked = getTutorsToUnlock(user.level, user.unlockedItems || []);
-		if (tutorsJustUnlocked.length > 0) {
-			// Ensure unlockedItems is initialized before pushing
-			if (!user.unlockedItems) {
-				user.unlockedItems = [];
-			}
-			user.unlockedItems.push(...tutorsJustUnlocked);
-			user.markModified('unlockedItems');
-		}
-        await user.save();
-
-        // Recalculate level from XP if they're out of sync (safety net)
-        const correctLevel = (() => {
-            let lvl = 1;
-            while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel(lvl + 1)) {
-                lvl++;
-            }
-            return lvl;
-        })();
-        if (user.level !== correctLevel) {
-            console.warn(`⚠️ [XP] Level/XP mismatch for user ${user._id}: level=${user.level}, xp=${user.xp}, correctLevel=${correctLevel}. Auto-correcting.`);
-            user.level = correctLevel;
-            await user.save();
-        }
-
-        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
-
         // Clean up all temp files after successful processing
         files.forEach(file => {
             if (file.path) {
@@ -355,15 +344,25 @@ router.post('/',
             }
         });
 
+        // XP and leveling are handled by the pipeline's persist stage.
+        // The user document was modified in-place by the pipeline.
+        const xpForCurrentLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+
         res.json({
             text: aiResponseText,
             userXp: Math.max(0, user.xp - xpForCurrentLevelStart),
             userLevel: user.level,
             xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
-            specialXpAwarded: specialXpAwardedMessage,
+            specialXpAwarded: pipelineResult.xpBreakdown
+                ? `${pipelineResult.xpBreakdown.total} XP`
+                : `${BRAND_CONFIG.baseXpPerTurn} XP`,
             voiceId: tutor.voiceId,
-            newlyUnlockedTutors: tutorsJustUnlocked,
-            drawingSequence: null // Add drawing logic here if needed for file uploads
+            newlyUnlockedTutors: pipelineResult.tutorsUnlocked || [],
+            avatarBuilderUnlocked: pipelineResult.avatarBuilderUnlocked || false,
+            drawingSequence: pipelineResult.drawingSequence || null,
+            visualCommands: pipelineResult.visualCommands || null,
+            problemResult: pipelineResult.problemResult || null,
+            suggestions: pipelineResult.suggestions || null,
         });
 
     } catch (error) {
@@ -398,4 +397,4 @@ router.post('/',
     }
 });
 
-module.exports = router;// JavaScript Document
+module.exports = router;
