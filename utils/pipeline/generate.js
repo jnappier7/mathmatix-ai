@@ -347,8 +347,10 @@ function assemblePrompt(decision, promptContext) {
           } else {
             lastMsg.content.push({ type: 'text', text: suffix });
           }
-        } else {
+        } else if (lastMsg.content) {
           lastMsg.content += '\n\n' + suffix;
+        } else {
+          lastMsg.content = suffix;
         }
       }
     }

@@ -14,7 +14,6 @@ const TutorPlan = require('../models/tutorPlan');
 const { generateSystemPrompt } = require('../utils/prompt');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
-const { getTutorsToUnlock } = require('../utils/unlockTutors');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { callLLM } = require('../utils/llmGateway');
@@ -262,10 +261,15 @@ router.post('/',
 
             pipelineResult = {
                 text: fallbackText,
-                xpBreakdown: { tier1: BRAND_CONFIG.baseXpPerTurn, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: BRAND_CONFIG.baseXpPerTurn },
+                xpBreakdown: { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 },
                 leveledUp: false,
                 tutorsUnlocked: [],
                 avatarBuilderUnlocked: false,
+                visualCommands: null,
+                drawingSequence: null,
+                problemResult: null,
+                suggestions: null,
+                _pipeline: { fallback: true, error: pipelineError.message },
             };
         }
 
