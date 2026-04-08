@@ -31,7 +31,7 @@ const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseConte
 const contextCache = require('../utils/contextCache');
 const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
 const { processMathMessage, verifyAnswer } = require('../utils/mathSolver');
-const { filterAnswerKeyResponse } = require('../utils/worksheetGuard');
+const { filterAnswerKeyResponse, WORKSHEET_GUARD_INSTRUCTION } = require('../utils/worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
@@ -770,6 +770,17 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
                 lastMsg.content += `\n\n[STEP ${courseScaffoldCtx.stepIdx + 1}/${courseScaffoldCtx.totalSteps}: "${courseScaffoldCtx.stepTitle}" — emit <SCAFFOLD_ADVANCE> when complete, before discussing the next topic.]`;
+            }
+        }
+
+        // ── Inject worksheet guard into follow-up messages ──
+        // When a student uploaded a worksheet recently and continues chatting,
+        // the detailed anti-cheat instructions must be present in the message
+        // so the LLM sees them (they were only injected in chatWithFile.js).
+        if (hasRecentUpload && formattedMessagesForLLM.length > 0) {
+            const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+            if (lastMsg?.role === 'user') {
+                lastMsg.content += `\n\n${WORKSHEET_GUARD_INSTRUCTION}`;
             }
         }
 

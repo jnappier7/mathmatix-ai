@@ -262,7 +262,10 @@ async function runPipeline(message, ctx) {
   // Socratic suppression is now handled structurally via buildSlimRules and
   // buildStaticRules options — NOT via string surgery on the assembled prompt.
   // This flag flows through to assemblePrompt → buildSlimRules.
-  const suppressSocratic = tutorPlan ? shouldSuppressSocratic(tutorPlan) : false;
+  // NEVER suppress Socratic when a worksheet is present — anti-cheat takes priority.
+  const suppressSocratic = ctx.hasRecentUpload
+    ? false
+    : (tutorPlan ? shouldSuppressSocratic(tutorPlan) : false);
 
   if (tutorPlan) {
     const planLayer = buildPlanLayer(tutorPlan, {
@@ -301,6 +304,8 @@ async function runPipeline(message, ctx) {
     messageType: observation.messageType,
     correctAnswer: diagnosis.correctAnswer || null,
     diagnosisType: diagnosis.type,
+    hasRecentUpload: ctx.hasRecentUpload || false,
+    isWorksheetFollowUp: observation.isWorksheetFollowUp || false,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);

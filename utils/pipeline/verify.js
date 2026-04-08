@@ -10,7 +10,7 @@
  * @module pipeline/verify
  */
 
-const { filterAnswerKeyResponse } = require('../worksheetGuard');
+const { filterAnswerKeyResponse, detectAnswerKeyResponse } = require('../worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../readability');
 const { enforceVisualTeaching, autoVisualizeByTopic } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
@@ -170,6 +170,66 @@ async function verify(responseText, context = {}) {
       try {
         context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
       } catch (e) { /* client disconnected */ }
+    }
+  }
+
+  // ── 2a. Upload-context answer giveaway detection ──
+  // When a student has uploaded a worksheet, apply STRICTER answer detection.
+  // Standard filter needs 3+ problems; during uploads, catch even 2 problems.
+  // Also detect single-problem complete solutions (the AI solving the student's problem).
+  if ((context.hasRecentUpload || context.isWorksheetFollowUp) && !answerKeyCheck.wasFiltered) {
+    // Lower threshold: catch 2+ numbered solutions
+    const strictCheck = detectAnswerKeyResponse(text, { minProblems: 2 });
+    if (strictCheck.isAnswerKey) {
+      console.warn(`[Verify] UPLOAD CONTEXT: Answer giveaway detected (${strictCheck.problemCount} problems). Blocking.`);
+      text = "I can see the problems on your worksheet! Which one do you want to tackle first? Pick one and let's work through it together.";
+      flags.push('upload_answer_giveaway_blocked');
+
+      if (context.isStreaming && context.res) {
+        try {
+          context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+        } catch (e) { /* client disconnected */ }
+      }
+    } else {
+      // Detect single complete solution: AI shows step-by-step and reveals the final answer.
+      // Pattern: response contains "= [answer]" or "the answer is" with completed work.
+      const completeSolutionSignals = [
+        /(?:the\s+)?(?:answer|solution)\s+is\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
+        /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:factored\s+form|factors?|answer|solution|result|sum|difference|product|quotient)\s+(?:is|=|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
+        /(?:=\s*\\[(\[])\s*\(.*?\)\s*\(.*?\)\s*(?:\\[\])])/,  // = (x+a)(x+b) factored form
+        /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
+      ];
+      const hasCompleteSolution = completeSolutionSignals.some(p => p.test(text));
+      // Also check: does the response NOT contain a question mark? (Socratic should ask questions)
+      const hasQuestion = /\?\s*$|\?\s*\n/m.test(text);
+
+      if (hasCompleteSolution && !hasQuestion) {
+        console.warn(`[Verify] UPLOAD CONTEXT: Complete solution without Socratic question detected. Regenerating.`);
+        try {
+          const socraticRedirect = await callLLM(PRIMARY_CHAT_MODEL,
+            [{ role: 'system', content: 'You are a math tutor. The student uploaded a worksheet. You MUST guide them with Socratic questions — NEVER give away answers. Your previous response gave a complete solution, which violates tutoring rules. Rewrite it: acknowledge the problem, break it into the FIRST step only, and ask the STUDENT to attempt that step. Do NOT show any subsequent steps or the final answer. End with a guiding question.' },
+             { role: 'assistant', content: text },
+             { role: 'user', content: 'Rewrite this response to be Socratic. Only show the first step, ask the student to try it. Never reveal the answer.' }],
+            { temperature: 0.55, max_tokens: 800 }
+          );
+          const redirectedText = socraticRedirect.choices[0]?.message?.content?.trim();
+          if (redirectedText && redirectedText.length > 10) {
+            text = redirectedText;
+            flags.push('upload_solution_redirected');
+
+            if (context.isStreaming && context.res) {
+              try {
+                context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+              } catch (e) { /* client disconnected */ }
+            }
+          }
+        } catch (err) {
+          console.error('[Verify] Upload solution redirect failed:', err.message);
+          // Fallback: just add a question to the end
+          text += "\n\nWhat do you think the first step should be?";
+          flags.push('upload_solution_redirect_fallback');
+        }
+      }
     }
   }
 
