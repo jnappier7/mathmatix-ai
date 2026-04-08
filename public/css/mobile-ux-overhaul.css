@@ -21,7 +21,7 @@
   }
 
   [data-theme="dark"] .mobile-stats-bar {
-    background: var(--clr-bg-dark, #1a1d2e);
+    background: #0D151D;
     border-bottom-color: rgba(255, 255, 255, 0.06);
   }
 

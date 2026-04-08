@@ -847,7 +847,7 @@ a {
 
 /* Dark mode menu sheet */
 [data-theme="dark"] .mobile-menu-sheet {
-    background: var(--clr-bg-dark, #1a1d2e);
+    background: #141E29;
     box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
 }
 
