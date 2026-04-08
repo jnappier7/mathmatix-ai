@@ -13,14 +13,14 @@
 
 const {
   PHASES,
-  initializeLessonPhase,
-  recordAssessment,
-  recordUnderstandingSignal,
-  evaluatePhaseTransition,
   transitionPhase,
   getPhasePrompt,
-  ASSESSMENT_SIGNALS,
 } = require('../lessonPhaseManager');
+const {
+  evaluatePhaseAdvancement,
+  updatePhaseTracker,
+  extractSignals,
+} = require('../phaseEvidenceEvaluator');
 
 const { MESSAGE_TYPES } = require('./observe');
 
@@ -195,14 +195,18 @@ function decideCore(observation, diagnosis, context) {
         );
       }
 
-      // Update phase state if in structured lesson
+      // Update phase state via evidence-based evaluator
       if (phaseState) {
-        recordAssessment(phaseState, 'CORRECT_FAST');
-        const transition = evaluatePhaseTransition(phaseState);
-        if (transition.shouldTransition) {
-          transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+        const phaseEval = evaluatePhaseAdvancement(
+          { phase: phaseState.currentPhase, turnsInPhase: phaseState.turnsInPhase || 0, evidenceLog: phaseState.evidenceLog || [] },
+          { diagnosis, observation, decision, sessionMood: context.sessionMood },
+          { tutorPlan: context.tutorPlan, evidence: context.evidence }
+        );
+        updatePhaseTracker(phaseState, phaseEval, { diagnosis, observation, decision });
+        if (phaseEval.shouldAdvance && phaseEval.nextPhase) {
+          transitionPhase(phaseState, phaseEval.nextPhase, phaseEval.reasoning);
           decision.phase = phaseState.currentPhase;
-          decision.directives.push(`Phase transition: ${transition.rationale}`);
+          decision.directives.push(`Phase transition: ${phaseEval.reasoning}`);
         }
       }
     } else if (diagnosis.isCorrect === false) {
@@ -229,16 +233,18 @@ function decideCore(observation, diagnosis, context) {
         );
       }
 
-      // Update phase state
+      // Update phase state via evidence-based evaluator
       if (phaseState) {
-        const signal = diagnosis.misconception?.severity === 'high'
-          ? 'INCORRECT_FAR' : 'INCORRECT_CLOSE';
-        recordAssessment(phaseState, signal);
-        const transition = evaluatePhaseTransition(phaseState);
-        if (transition.shouldTransition) {
-          transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+        const phaseEval = evaluatePhaseAdvancement(
+          { phase: phaseState.currentPhase, turnsInPhase: phaseState.turnsInPhase || 0, evidenceLog: phaseState.evidenceLog || [] },
+          { diagnosis, observation, decision, sessionMood: context.sessionMood },
+          { tutorPlan: context.tutorPlan, evidence: context.evidence }
+        );
+        updatePhaseTracker(phaseState, phaseEval, { diagnosis, observation, decision });
+        if (phaseEval.shouldRegress && phaseEval.nextPhase) {
+          transitionPhase(phaseState, phaseEval.nextPhase, phaseEval.reasoning);
           decision.phase = phaseState.currentPhase;
-          decision.directives.push(`Phase regression: ${transition.rationale}`);
+          decision.directives.push(`Phase regression: ${phaseEval.reasoning}`);
         }
       }
     } else {
@@ -262,7 +268,9 @@ function decideCore(observation, diagnosis, context) {
     decision.directives.push('Provide a hint, not the answer. Ask a guiding sub-question.');
 
     if (phaseState) {
-      recordAssessment(phaseState, 'INCORRECT_CLOSE', 'UNCERTAIN');
+      // Record help request as evidence (not a full phase evaluation — just log the signal)
+      if (!phaseState.evidenceLog) phaseState.evidenceLog = [];
+      phaseState.evidenceLog.push('asked_question');
     }
     return decision;
   }

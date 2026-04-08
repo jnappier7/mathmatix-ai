@@ -36,7 +36,8 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
-const { initializeLessonPhase, evaluatePhaseTransition, transitionPhase, PHASES } = require('../utils/lessonPhaseManager');
+const { initializeLessonPhase, transitionPhase, PHASES } = require('../utils/lessonPhaseManager');
+const { evaluatePhaseAdvancement, updatePhaseTracker } = require('../utils/phaseEvidenceEvaluator');
 const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
 const TutorPlan = require('../models/tutorPlan');
 const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
@@ -909,11 +910,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             phaseState.studentChoice = (wantsTest && !wantsLesson) ? 'test' : 'lesson';
             console.log(`[INTRO] Student chose: ${phaseState.studentChoice === 'test' ? 'Direct mastery test' : 'Structured lesson'}`);
 
-            const transition = evaluatePhaseTransition(phaseState);
-            if (transition.shouldTransition) {
-                transitionPhase(phaseState, transition.nextPhase, transition.rationale);
-                console.log(`[Phase Transition] ${PHASES.INTRO} → ${transition.nextPhase}`);
-            }
+            // INTRO is special: student choice determines next phase directly
+            const nextPhase = phaseState.studentChoice === 'test' ? PHASES.MASTERY_CHECK : PHASES.WARMUP;
+            transitionPhase(phaseState, nextPhase, `Student chose: ${phaseState.studentChoice}`);
+            console.log(`[Phase Transition] ${PHASES.INTRO} → ${nextPhase}`);
             activeConversation.markModified?.('phaseState');
         }
 
