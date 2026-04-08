@@ -13,14 +13,14 @@
 
 const {
   PHASES,
-  initializeLessonPhase,
-  recordAssessment,
-  recordUnderstandingSignal,
-  evaluatePhaseTransition,
   transitionPhase,
   getPhasePrompt,
-  ASSESSMENT_SIGNALS,
 } = require('../lessonPhaseManager');
+const {
+  evaluatePhaseAdvancement,
+  updatePhaseTracker,
+  extractSignals,
+} = require('../phaseEvidenceEvaluator');
 
 const { MESSAGE_TYPES } = require('./observe');
 
@@ -134,6 +134,34 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── Parroting — student echoed tutor's words without understanding ──
+  if (msgType === MESSAGE_TYPES.PARROTING) {
+    decision.action = ACTIONS.CHECK_UNDERSTANDING;
+    decision.scaffoldLevel = 3;
+    decision.directives.push(
+      'PARROTING DETECTED: Student repeated your explanation back without demonstrating understanding.',
+      'Do NOT accept this as proof of learning. Do NOT say "great job."',
+      'Test with a TRANSFER question: same concept, different context.',
+      'Example: "You described it well — now try this slightly different one: [new problem]."',
+      'If they can solve the new problem, THEN they understand. If not, reteach.'
+    );
+    return decision;
+  }
+
+  // ── Evasive affirmative — bare "yes" to explanation request ──
+  if (msgType === MESSAGE_TYPES.EVASIVE_AFFIRMATIVE) {
+    decision.action = ACTIONS.CHECK_UNDERSTANDING;
+    decision.scaffoldLevel = 3;
+    decision.directives.push(
+      'EVASION DETECTED: You asked for an explanation and the student only said "yes" or "I understand."',
+      'Do NOT accept this. They need to SHOW understanding, not claim it.',
+      'Push gently but firmly: "Show me — walk me through [specific step]."',
+      'Or give them a problem to prove it: "Great — then solve this one: [related problem]."',
+      'Keep your tone warm and encouraging, not accusatory.'
+    );
+    return decision;
+  }
+
   // ── Give-up / IDK streaks — exit ramp logic ──
   if (msgType === MESSAGE_TYPES.GIVE_UP || streaks.giveUpCount >= 1) {
     decision.action = ACTIONS.EXIT_RAMP;
@@ -195,14 +223,18 @@ function decideCore(observation, diagnosis, context) {
         );
       }
 
-      // Update phase state if in structured lesson
+      // Update phase state via evidence-based evaluator
       if (phaseState) {
-        recordAssessment(phaseState, 'CORRECT_FAST');
-        const transition = evaluatePhaseTransition(phaseState);
-        if (transition.shouldTransition) {
-          transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+        const phaseEval = evaluatePhaseAdvancement(
+          { phase: phaseState.currentPhase, turnsInPhase: phaseState.turnsInPhase || 0, evidenceLog: phaseState.evidenceLog || [] },
+          { diagnosis, observation, decision, sessionMood: context.sessionMood },
+          { tutorPlan: context.tutorPlan, evidence: context.evidence }
+        );
+        updatePhaseTracker(phaseState, phaseEval, { diagnosis, observation, decision });
+        if (phaseEval.shouldAdvance && phaseEval.nextPhase) {
+          transitionPhase(phaseState, phaseEval.nextPhase, phaseEval.reasoning);
           decision.phase = phaseState.currentPhase;
-          decision.directives.push(`Phase transition: ${transition.rationale}`);
+          decision.directives.push(`Phase transition: ${phaseEval.reasoning}`);
         }
       }
     } else if (diagnosis.isCorrect === false) {
@@ -229,16 +261,18 @@ function decideCore(observation, diagnosis, context) {
         );
       }
 
-      // Update phase state
+      // Update phase state via evidence-based evaluator
       if (phaseState) {
-        const signal = diagnosis.misconception?.severity === 'high'
-          ? 'INCORRECT_FAR' : 'INCORRECT_CLOSE';
-        recordAssessment(phaseState, signal);
-        const transition = evaluatePhaseTransition(phaseState);
-        if (transition.shouldTransition) {
-          transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+        const phaseEval = evaluatePhaseAdvancement(
+          { phase: phaseState.currentPhase, turnsInPhase: phaseState.turnsInPhase || 0, evidenceLog: phaseState.evidenceLog || [] },
+          { diagnosis, observation, decision, sessionMood: context.sessionMood },
+          { tutorPlan: context.tutorPlan, evidence: context.evidence }
+        );
+        updatePhaseTracker(phaseState, phaseEval, { diagnosis, observation, decision });
+        if (phaseEval.shouldRegress && phaseEval.nextPhase) {
+          transitionPhase(phaseState, phaseEval.nextPhase, phaseEval.reasoning);
           decision.phase = phaseState.currentPhase;
-          decision.directives.push(`Phase regression: ${transition.rationale}`);
+          decision.directives.push(`Phase regression: ${phaseEval.reasoning}`);
         }
       }
     } else {
@@ -262,7 +296,9 @@ function decideCore(observation, diagnosis, context) {
     decision.directives.push('Provide a hint, not the answer. Ask a guiding sub-question.');
 
     if (phaseState) {
-      recordAssessment(phaseState, 'INCORRECT_CLOSE', 'UNCERTAIN');
+      // Record help request as evidence (not a full phase evaluation — just log the signal)
+      if (!phaseState.evidenceLog) phaseState.evidenceLog = [];
+      phaseState.evidenceLog.push('asked_question');
     }
     return decision;
   }

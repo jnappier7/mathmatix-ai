@@ -1,35 +1,46 @@
 /**
  * PHASE EVIDENCE EVALUATOR — Data-driven instruction phase advancement
  *
- * A human tutor doesn't advance from "I Do" to "We Do" because the student
- * got one answer right. They advance because they see a PATTERN of evidence:
- * - Student can explain the concept back (not just mimic)
- * - Student catches errors in examples (showing real understanding)
- * - Student asks good questions (engaged, not lost)
- * - Student's confidence is genuine (not just saying "I get it")
+ * The SOLE decision maker for all phase transitions. Uses accumulated
+ * evidence from the pipeline (diagnosis, observation, BKT, FSRS,
+ * consistency, session mood, cognitive load) to decide when to advance,
+ * stay, or regress.
  *
- * This module evaluates accumulated evidence across a phase to determine
- * when the student is genuinely ready to advance — and when they need
- * to regress. It also handles real-time familiarity re-assessment:
- * if a student was classified as "never-seen" but demonstrates prior
- * knowledge, we upgrade immediately.
+ * Phase sequence follows concept-first gradual release:
+ *   INTRO → WARMUP → CONCEPT_INTRO → I_DO → CONCEPT_CHECK
+ *        → WE_DO → CHECK_IN → YOU_DO → MASTERY_CHECK
+ *
+ * lessonPhaseManager remains the state container (init, prompts,
+ * transition execution). This module is the brain.
  *
  * @module utils/phaseEvidenceEvaluator
  */
 
-const { INSTRUCTIONAL_MODES } = require('./pipeline/decide');
+// ── Concept-first phase sequence (gradual release) ──
+const PHASE_SEQUENCE = [
+  'intro', 'warmup', 'concept-intro', 'i-do', 'concept-check',
+  'we-do', 'check-in', 'you-do', 'mastery',
+];
 
 // ── Evidence thresholds per phase ──
 // Each phase requires different types and amounts of evidence to advance.
+// Learning engine data (BKT, FSRS, consistency) modifies these via fast-track.
 const PHASE_ADVANCEMENT_CRITERIA = {
-  'vocabulary': {
-    // Student can use terms correctly in context
-    minTurns: 2,
-    minCorrect: 0, // Vocab phase doesn't have "correct answers" per se
-    signals: ['used_term_correctly', 'asked_clarifying_question', 'acknowledged_understanding'],
+  'intro': {
+    // Student makes their choice — handled externally by chat.js
+    minTurns: 1,
+    minCorrect: 0,
+    signals: ['acknowledged_understanding'],
+    requiredSignals: 0,
+    fastTrack: null, // INTRO choice is explicit, not evidence-based
+  },
+  'warmup': {
+    // Quick prerequisite review — advance when student shows basic competence
+    minTurns: 1,
+    minCorrect: 0,
+    signals: ['correct_answer', 'used_term_correctly', 'acknowledged_understanding'],
     requiredSignals: 1,
-    // Advance faster if student already knows the terms
-    fastTrack: { condition: 'demonstrated_prior_vocab', advanceTo: 'concept-intro' },
+    fastTrack: { condition: 'bkt_high_prior', advanceTo: 'concept-intro' },
   },
   'concept-intro': {
     // Student grasps the big idea
@@ -47,6 +58,14 @@ const PHASE_ADVANCEMENT_CRITERIA = {
     requiredSignals: 1,
     fastTrack: { condition: 'predicted_steps_correctly', advanceTo: 'you-do' },
   },
+  'concept-check': {
+    // Verify the student understands WHY, not just HOW
+    minTurns: 1,
+    minCorrect: 0,
+    signals: ['demonstrated_reasoning', 'explained_concept_back'],
+    requiredSignals: 1,
+    fastTrack: null, // Must demonstrate understanding — no shortcut
+  },
   'we-do': {
     // Student can do it with decreasing support
     minTurns: 3,
@@ -55,21 +74,29 @@ const PHASE_ADVANCEMENT_CRITERIA = {
     requiredSignals: 2,
     fastTrack: { condition: 'multiple_correct_no_scaffold', advanceTo: 'you-do' },
   },
+  'check-in': {
+    // Emotional confidence check — always advance
+    minTurns: 1,
+    minCorrect: 0,
+    signals: ['acknowledged_understanding'],
+    requiredSignals: 0,
+    fastTrack: null,
+  },
   'you-do': {
-    // Student can do it independently and transfer
+    // Student can do it independently
     minTurns: 3,
     minCorrect: 2,
     signals: ['correct_independently', 'correct_novel_context', 'explained_why', 'taught_back'],
     requiredSignals: 2,
-    fastTrack: { condition: 'three_consecutive_correct', advanceTo: 'mastery-check' },
+    fastTrack: { condition: 'consistency_high', advanceTo: 'mastery' },
   },
-  'mastery-check': {
+  'mastery': {
     // Student demonstrates real mastery
     minTurns: 1,
     minCorrect: 1,
-    signals: ['correct_transfer', 'correct_teach_back', 'correct_application'],
+    signals: ['correct_independently', 'correct_novel_context'],
     requiredSignals: 1,
-    fastTrack: null, // No fast track — mastery is mastery
+    fastTrack: null, // Mastery is mastery
   },
 };
 
@@ -111,6 +138,15 @@ function evaluatePhaseAdvancement(currentPhase, newEvidence, context = {}) {
 
   if (!criteria) {
     return { shouldAdvance: false, shouldRegress: false, nextPhase: null, confidence: 0, reasoning: 'Unknown phase' };
+  }
+
+  // Phases that always advance after first interaction
+  if (phase === 'intro' || phase === 'check-in') {
+    const next = getNextPhase(phase);
+    return {
+      shouldAdvance: true, shouldRegress: false, nextPhase: next,
+      confidence: 1.0, reasoning: `${phase} complete — advancing to ${next}`,
+    };
   }
 
   // Add new evidence to the running log
@@ -256,15 +292,29 @@ function extractSignals(newEvidence, context) {
 
 /**
  * Check if fast-track conditions are met.
+ * Uses both evidence signals AND learning engine data (BKT, FSRS, consistency).
  */
 function checkFastTrack(fastTrack, evidenceLog, newEvidence, context) {
   const { condition, advanceTo } = fastTrack;
+  const { evidence } = context;
+
+  // Learning engine shortcuts
+  const bkt = evidence?.knowledge?.bktState;
+  const consistency = evidence?.performance;
 
   switch (condition) {
-    case 'demonstrated_prior_vocab':
-      // Student used correct terms without being taught them
-      if (evidenceLog.filter(s => s === EVIDENCE_SIGNALS.USED_VOCABULARY).length >= 2) {
-        return { triggered: true, advanceTo, confidence: 0.8, reason: 'Student already knows the vocabulary' };
+    case 'bkt_high_prior':
+      // BKT says student already knows this skill — skip warmup
+      if (bkt && bkt.pLearned > 0.7) {
+        return { triggered: true, advanceTo, confidence: 0.85, reason: `BKT P(learned)=${bkt.pLearned.toFixed(2)} — student has prior knowledge` };
+      }
+      // FSRS says skill was recently practiced with high stability
+      if (evidence?.memory?.retrievability > 0.8) {
+        return { triggered: true, advanceTo, confidence: 0.8, reason: 'FSRS high retrievability — recently practiced' };
+      }
+      // Also fast-track on evidence: correct answer in warmup
+      if (evidenceLog.includes(EVIDENCE_SIGNALS.CORRECT_ANSWER)) {
+        return { triggered: true, advanceTo, confidence: 0.75, reason: 'Correct in warmup — prerequisite solid' };
       }
       break;
 
@@ -274,6 +324,10 @@ function checkFastTrack(fastTrack, evidenceLog, newEvidence, context) {
           evidenceLog.includes(EVIDENCE_SIGNALS.ASKED_QUESTION)) {
         return { triggered: true, advanceTo, confidence: 0.85, reason: 'Student shows deep understanding of concept' };
       }
+      // BKT says they already know this — skip to practice
+      if (bkt && bkt.pLearned > 0.85 && bkt.consecutiveCorrect >= 2) {
+        return { triggered: true, advanceTo, confidence: 0.9, reason: 'BKT confirms prior mastery — skip to practice' };
+      }
       break;
 
     case 'predicted_steps_correctly':
@@ -281,29 +335,34 @@ function checkFastTrack(fastTrack, evidenceLog, newEvidence, context) {
       if (evidenceLog.filter(s => s === EVIDENCE_SIGNALS.PREDICTED_STEP).length >= 2) {
         return { triggered: true, advanceTo, confidence: 0.8, reason: 'Student predicted model steps — ready for practice' };
       }
-      // Also fast-track if they just solved it correctly during I-Do
+      // Solved it correctly during I-Do
       if (evidenceLog.includes(EVIDENCE_SIGNALS.INDEPENDENT_CORRECT)) {
         return { triggered: true, advanceTo, confidence: 0.9, reason: 'Student solved it independently during modeling' };
       }
       break;
 
     case 'multiple_correct_no_scaffold':
-      // Student got 2+ correct without help during We Do
+      // 2+ correct without help during We Do
       if (evidenceLog.filter(s => s === EVIDENCE_SIGNALS.INDEPENDENT_CORRECT).length >= 2) {
         return { triggered: true, advanceTo, confidence: 0.85, reason: 'Student solving independently — ready for You Do' };
       }
       break;
 
-    case 'three_consecutive_correct':
-      // 3 consecutive correct in You Do
+    case 'consistency_high': {
+      // Consistency scorer says student is solid
+      if (consistency?.smartScore >= 80 && consistency?.longestCorrectStreak >= 3) {
+        return { triggered: true, advanceTo, confidence: 0.9, reason: `SmartScore ${consistency.smartScore} with ${consistency.longestCorrectStreak}-streak — ready for mastery` };
+      }
+      // Fallback: 3 consecutive correct in evidence
       const last3 = evidenceLog.slice(-3);
       if (last3.length >= 3 && last3.every(s =>
         s === EVIDENCE_SIGNALS.CORRECT_ANSWER ||
         s === EVIDENCE_SIGNALS.INDEPENDENT_CORRECT
       )) {
-        return { triggered: true, advanceTo, confidence: 0.9, reason: 'Three consecutive correct — ready for mastery check' };
+        return { triggered: true, advanceTo, confidence: 0.85, reason: 'Three consecutive correct — ready for mastery check' };
       }
       break;
+    }
   }
 
   return { triggered: false };
@@ -311,9 +370,11 @@ function checkFastTrack(fastTrack, evidenceLog, newEvidence, context) {
 
 /**
  * Check if the student needs to regress to an earlier phase.
+ * Uses evidence signals, cognitive load, session mood, and consistency.
  */
 function checkRegression(currentPhase, evidenceLog, newEvidence, context) {
   const recentSignals = evidenceLog.slice(-5);
+  const { evidence, sessionMood } = context;
 
   // Count recent incorrect answers
   const recentWrong = recentSignals.filter(s =>
@@ -327,73 +388,78 @@ function checkRegression(currentPhase, evidenceLog, newEvidence, context) {
     s === EVIDENCE_SIGNALS.SCAFFOLDED_CORRECT
   ).length;
 
+  // Productive struggle exception: consistency scorer says struggle is healthy
+  // Don't regress if the student is in the challenge zone and making progress
+  if (evidence?.performance?.productiveStruggleDetected) {
+    return { shouldRegress: false };
+  }
+
   // Phase-specific regression rules
   switch (currentPhase) {
     case 'you-do':
-      // If student is struggling in independent practice, drop to guided
       if (recentWrong >= 3 && recentCorrect <= 1) {
-        return {
-          shouldRegress: true,
-          regressTo: 'we-do',
-          confidence: 0.8,
-          reason: `${recentWrong} wrong in independent practice — need more guided work`,
-        };
+        return { shouldRegress: true, regressTo: 'we-do', confidence: 0.8,
+          reason: `${recentWrong} wrong in independent practice — need more guided work` };
       }
       break;
 
     case 'we-do':
-      // If student is lost even with scaffolding, go back to modeling
       if (recentWrong >= 3 && recentCorrect === 0) {
-        return {
-          shouldRegress: true,
-          regressTo: 'i-do',
-          confidence: 0.75,
-          reason: 'Struggling even with scaffolding — need to re-model',
-        };
+        return { shouldRegress: true, regressTo: 'i-do', confidence: 0.75,
+          reason: 'Struggling even with scaffolding — need to re-model' };
+      }
+      // Correct answers but no reasoning → understanding gap
+      if (recentCorrect >= 2 && !evidenceLog.slice(-5).includes(EVIDENCE_SIGNALS.DEMONSTRATED_REASONING)) {
+        return { shouldRegress: true, regressTo: 'concept-check', confidence: 0.65,
+          reason: 'Procedural success but no reasoning demonstrated — revisit concepts' };
       }
       break;
 
-    case 'mastery-check':
-      // Failed mastery check — back to practice
+    case 'concept-check':
+      if (recentWrong >= 2 && recentCorrect === 0) {
+        return { shouldRegress: true, regressTo: 'concept-intro', confidence: 0.75,
+          reason: 'Cannot explain reasoning — need to re-introduce concept' };
+      }
+      break;
+
+    case 'mastery':
       if (recentWrong >= 1 && recentCorrect === 0) {
-        return {
-          shouldRegress: true,
-          regressTo: 'we-do',
-          confidence: 0.7,
-          reason: 'Failed mastery check — more practice needed',
-        };
+        return { shouldRegress: true, regressTo: 'you-do', confidence: 0.7,
+          reason: 'Failed mastery check — more independent practice needed' };
       }
       break;
   }
 
-  // General: cognitive overload signal from evidence accumulator
-  if (context.evidence?.cognitiveLoad?.isOverloaded) {
+  // Cognitive overload — from evidence accumulator
+  if (evidence?.cognitiveLoad?.isOverloaded) {
     const regressMap = {
       'you-do': 'we-do',
       'we-do': 'i-do',
-      'mastery-check': 'we-do',
+      'mastery': 'we-do',
+      'concept-check': 'concept-intro',
     };
     if (regressMap[currentPhase]) {
-      return {
-        shouldRegress: true,
-        regressTo: regressMap[currentPhase],
-        confidence: 0.85,
-        reason: 'Cognitive overload detected — reducing complexity',
-      };
+      return { shouldRegress: true, regressTo: regressMap[currentPhase], confidence: 0.85,
+        reason: 'Cognitive overload detected — reducing complexity' };
     }
+  }
+
+  // Session fatigue — don't advance, consider regression for hard phases
+  if (sessionMood?.fatigueSignal > 0.7 && (currentPhase === 'you-do' || currentPhase === 'mastery')) {
+    return { shouldRegress: true, regressTo: 'check-in', confidence: 0.7,
+      reason: 'Fatigue detected — emotional check-in before continuing' };
   }
 
   return { shouldRegress: false };
 }
 
 /**
- * Get the next phase in the instructional sequence.
+ * Get the next phase in the concept-first instructional sequence.
  */
 function getNextPhase(currentPhase) {
-  const sequence = ['prerequisite-review', 'vocabulary', 'concept-intro', 'i-do', 'we-do', 'you-do', 'mastery-check'];
-  const idx = sequence.indexOf(currentPhase);
-  if (idx >= 0 && idx < sequence.length - 1) return sequence[idx + 1];
-  return null; // Already at mastery-check or unknown
+  const idx = PHASE_SEQUENCE.indexOf(currentPhase);
+  if (idx >= 0 && idx < PHASE_SEQUENCE.length - 1) return PHASE_SEQUENCE[idx + 1];
+  return null; // Already at mastery or unknown
 }
 
 /**
@@ -525,6 +591,14 @@ function createPhaseTracker(phase, skillId) {
  * @returns {Object} Updated tracker
  */
 function updatePhaseTracker(tracker, evaluation, newEvidence) {
+  // Initialize fields if missing (backwards compat with phaseState objects)
+  if (tracker.turnsInPhase == null) tracker.turnsInPhase = 0;
+  if (tracker.turnsInMode == null) tracker.turnsInMode = 0;
+  if (!tracker.evidenceLog) tracker.evidenceLog = [];
+  if (!tracker.phaseHistory) tracker.phaseHistory = [];
+  if (tracker.advancementCount == null) tracker.advancementCount = 0;
+  if (tracker.regressionCount == null) tracker.regressionCount = 0;
+
   tracker.turnsInPhase += 1;
   tracker.turnsInMode += 1;
 
@@ -537,26 +611,22 @@ function updatePhaseTracker(tracker, evaluation, newEvidence) {
     tracker.evidenceLog = tracker.evidenceLog.slice(-20);
   }
 
-  if (evaluation.shouldAdvance && evaluation.nextPhase) {
+  // Phase change (advance or regress) — update both `phase` and `currentPhase`
+  // so the tracker works whether it started as a phaseTracker or phaseState.
+  const phaseChanged = (evaluation.shouldAdvance || evaluation.shouldRegress) && evaluation.nextPhase;
+  if (phaseChanged) {
     tracker.phase = evaluation.nextPhase;
+    tracker.currentPhase = evaluation.nextPhase;
     tracker.turnsInPhase = 0;
-    tracker.advancementCount += 1;
-    tracker.phaseHistory.push({
-      phase: evaluation.nextPhase,
-      startedAt: new Date(),
-      reason: evaluation.reasoning,
-    });
-  }
 
-  if (evaluation.shouldRegress && evaluation.nextPhase) {
-    tracker.phase = evaluation.nextPhase;
-    tracker.turnsInPhase = 0;
-    tracker.regressionCount += 1;
+    if (evaluation.shouldAdvance) tracker.advancementCount += 1;
+    if (evaluation.shouldRegress) tracker.regressionCount += 1;
+
     tracker.phaseHistory.push({
       phase: evaluation.nextPhase,
       startedAt: new Date(),
       reason: evaluation.reasoning,
-      isRegression: true,
+      isRegression: evaluation.shouldRegress || false,
     });
   }
 
@@ -570,6 +640,7 @@ module.exports = {
   updatePhaseTracker,
   extractSignals,
   getNextPhase,
+  PHASE_SEQUENCE,
   PHASE_ADVANCEMENT_CRITERIA,
   EVIDENCE_SIGNALS,
 };

@@ -237,9 +237,14 @@ async function persist(params) {
   results.tutorsUnlocked = xpResult.tutorsUnlocked;
   results.avatarBuilderUnlocked = xpResult.avatarBuilderUnlocked;
 
-  // Badge progress
+  // Badge progress + mastery completion check
   if (user.masteryProgress?.activeBadge && results.problemAnswered) {
-    updateBadgeProgress(user, results.wasCorrect);
+    const masteryResult = updateBadgeProgress(user, results.wasCorrect);
+    if (masteryResult.completed) {
+      results.masteryCompleted = true;
+      results.masterySuccess = masteryResult.success;
+      results.badgeAwarded = masteryResult.badgeAwarded;
+    }
   }
 
   // ── 8b. Gamification events (daily quests, weekly challenges) ──
@@ -498,24 +503,58 @@ function processIepGoalUpdate(user, goalIdentifier, progressChange) {
 
 /**
  * Update badge progress when a problem is answered.
+ * Returns mastery completion info so chat.js can send celebration data.
+ *
+ * @returns {{ completed: boolean, success: boolean, badgeAwarded: Object|null }}
  */
 function updateBadgeProgress(user, wasCorrect) {
   const badge = user.masteryProgress.activeBadge;
   badge.problemsCompleted = (badge.problemsCompleted || 0) + 1;
   if (wasCorrect) badge.problemsCorrect = (badge.problemsCorrect || 0) + 1;
 
+  user.markModified('masteryProgress');
+
   // Check for badge completion
   const accuracy = badge.problemsCorrect / badge.problemsCompleted;
-  if (badge.problemsCompleted >= badge.requiredProblems && accuracy >= badge.requiredAccuracy) {
-    if (!user.badges) user.badges = [];
-    const alreadyEarned = user.badges.find(b => b.badgeId === badge.badgeId);
-    if (!alreadyEarned) {
-      user.badges.push({ badgeId: badge.badgeId, earnedDate: new Date(), score: Math.round(accuracy * 100) });
-      user.xp = (user.xp || 0) + 500; // Badge XP bonus
-    }
+  if (badge.problemsCompleted < badge.requiredProblems || accuracy < badge.requiredAccuracy) {
+    return { completed: false, success: false, badgeAwarded: null };
   }
 
-  user.markModified('masteryProgress');
+  // Badge earned — award it
+  if (!user.badges) user.badges = [];
+  const alreadyEarned = user.badges.find(b => b.badgeId === badge.badgeId);
+  if (alreadyEarned) {
+    return { completed: true, success: true, badgeAwarded: null };
+  }
+
+  user.badges.push({ badgeId: badge.badgeId, earnedDate: new Date(), score: Math.round(accuracy * 100) });
+  user.xp = (user.xp || 0) + 500; // Badge XP bonus
+  user.markModified('badges');
+
+  // Unlock skill on skill map
+  const skillId = badge.skillId;
+  if (!user.skillMastery) user.skillMastery = new Map();
+  if (!user.skillMastery.get(skillId) || user.skillMastery.get(skillId).status !== 'mastered') {
+    user.skillMastery.set(skillId, {
+      status: 'mastered',
+      masteredDate: new Date(),
+      accuracy,
+      attempts: badge.problemsCompleted,
+    });
+    user.markModified('skillMastery');
+  }
+
+  return {
+    completed: true,
+    success: true,
+    badgeAwarded: {
+      badgeId: badge.badgeId,
+      badgeName: badge.badgeName,
+      tier: badge.tier,
+      xpBonus: 500,
+      totalBadges: user.badges.length,
+    },
+  };
 }
 
 module.exports = {
