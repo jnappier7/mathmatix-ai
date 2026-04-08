@@ -147,6 +147,22 @@ function decideCore(observation, diagnosis, context) {
   }
 
   if (msgType === MESSAGE_TYPES.IDK) {
+    // When a student says IDK to a worksheet problem but has never been
+    // taught the skill, scaffolding down doesn't help — they need the
+    // CONCEPT taught first. Switch to teaching via parallel example.
+    if (context.hasRecentUpload && context.tutorPlan?.currentTarget?.instructionalMode === INSTRUCTIONAL_MODES.INSTRUCT) {
+      decision.action = ACTIONS.DIRECT_INSTRUCTION;
+      decision.directives.push(
+        'The student has NEVER been taught this skill and is stuck on a worksheet problem.',
+        'Do NOT try to scaffold the worksheet problem — they have no framework for it yet.',
+        'TEACH the underlying concept/skill using a PARALLEL problem (same skill, different numbers).',
+        'Walk through the parallel example step-by-step with think-aloud.',
+        'Then say: "Now try applying that to your problem" and guide them Socratically on THEIR worksheet problem.',
+        'NEVER solve the worksheet problem directly. The parallel example is for learning; their problem is for practice.'
+      );
+      return decision;
+    }
+
     // Progressive IDK handling
     if (streaks.idkCount >= 3) {
       decision.action = ACTIONS.EXIT_RAMP;
