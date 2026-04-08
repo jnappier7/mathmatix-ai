@@ -379,6 +379,29 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── 2f. Canned phrase scrub ──
+  // The system prompt bans these, but GPT-4o-mini slips them in regularly.
+  // Strip the worst offenders instead of regenerating (cheaper, faster).
+  const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
+  const CANNED_TRANSITIONS = /\b((?:now,?\s+)?let'?s\s+(?:break\s+this\s+down|tackle\s+this|work\s+through\s+this|dive\s+(?:right\s+)?in(?:to)?)|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)/gi;
+
+  if (CANNED_OPENERS.test(text.trim())) {
+    text = text.trim().replace(CANNED_OPENERS, '').trim();
+    // Capitalize the new first character
+    if (text.length > 0) {
+      text = text.charAt(0).toUpperCase() + text.slice(1);
+    }
+    flags.push('canned_opener_stripped');
+  }
+
+  const transitionCount = (text.match(CANNED_TRANSITIONS) || []).length;
+  if (transitionCount > 0) {
+    text = text.replace(CANNED_TRANSITIONS, '');
+    // Clean up double spaces left behind
+    text = text.replace(/  +/g, ' ').replace(/\n +/g, '\n').trim();
+    flags.push('canned_transitions_stripped');
+  }
+
   // ── 3. IEP reading level enforcement ──
   if (context.iepReadingLevel) {
     const readCheck = checkReadingLevel(text, context.iepReadingLevel);

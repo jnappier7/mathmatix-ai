@@ -329,9 +329,9 @@ function decideCore(observation, diagnosis, context) {
     decision.action = ACTIONS.CONTINUE_CONVERSATION;
     decision.directives.push(
       'ANTI-CHEAT: The student is asking you to solve MULTIPLE worksheet problems. REFUSE.',
-      'ONE problem at a time — ask the student which SINGLE problem they want to work on next.',
+      'ONE problem at a time — redirect them to pick a single problem.',
       'Do NOT solve, show steps for, or give answers to more than one problem.',
-      'Say something like: "Let\'s focus on one at a time! Which problem would you like to tackle next?"',
+      'Do NOT use scripted phrases like "Let\'s focus on one at a time!" — just redirect naturally in your own voice.',
       'If they already named a specific problem, guide them through ONLY that one — Socratically.',
       'NEVER show the final answer. The student must do the thinking.'
     );
