@@ -822,11 +822,6 @@ const userSchema = new Schema({
   /* Preferences */
   preferences: { type: userPreferencesSchema, default: () => ({}) },
 
-  /* Textbook Mode (Biology / subject-specific textbook tutoring) */
-  textbookMode: { type: Boolean, default: false },                    // Toggle: Tutor ↔ Textbook mode
-  activeChapterId: { type: Schema.Types.ObjectId, ref: 'ChapterContent', default: null },  // Currently active chapter for textbook mode
-  currentConceptIndex: { type: Number, default: 0 },                  // Which concept card the student is on within the active chapter
-
   /* Tour & Survey Tracking */
   tourCompleted: { type: Boolean, default: false },
   tourCompletedAt: { type: Date },

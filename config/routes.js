@@ -447,7 +447,7 @@ function registerUserRoutes(app) {
       const allowedUpdates = [
         'firstName', 'lastName', 'gradeLevel', 'mathCourse',
         'tonePreference', 'learningStyle', 'interests', 'needsProfileCompletion',
-        'selectedTutorId', 'selectedAvatarId', 'reportFrequency', 'goalViewPreference', 'textbookMode',
+        'selectedTutorId', 'selectedAvatarId', 'reportFrequency', 'goalViewPreference',
         'parentTone', 'parentLanguage', 'preferredLanguage', 'preferences',
       ];
 

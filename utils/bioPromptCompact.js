@@ -1,9 +1,6 @@
 // utils/bioPromptCompact.js
 //
 // Biology-specific compact prompt system — parallel to promptCompact.js
-// Includes TEXTBOOK_MODE_RULES and buildTextbookContext() for tiered context injection
-
-const { retrieveChunksWithBudget } = require('./ragRetrieval');
 
 // ============================================================================
 // STATIC RULES — Biology tutor (cacheable prefix, identical for all students)
@@ -85,123 +82,18 @@ Detect and respond to emotional signals before doing biology. A frustrated stude
 `;
 
 // ============================================================================
-// TEXTBOOK MODE RULES — Injected when textbook mode is active
-// ============================================================================
-
-const TEXTBOOK_MODE_RULES = `
---- TEXTBOOK MODE (ACTIVE) ---
-You are in Textbook Mode. The teacher has loaded the textbook chapters for this course.
-
-CRITICAL RULE: THE TEXTBOOK IS THE BRAIN. YOU ARE THE VOICE.
-- You are NOT the source of biology knowledge. The textbook content below IS.
-- ONLY teach what is in the chapter content provided. Do NOT supplement with your own biology knowledge.
-- If a student asks about something not covered in the loaded chapter, say: "That's a great question, but it's not in this chapter. Let's stay focused on what we're learning here — or ask your teacher about it!"
-- If the textbook says it, teach it. If the textbook doesn't say it, don't teach it.
-- Your job is to be the VOICE — to make the textbook content conversational, interactive, engaging, and deeply understood. You are the world's best study partner who makes the book come alive.
-
-APPROACH:
-- Break the chapter content down one concept at a time. Translate textbook language into conversation.
-- Don't read the book TO them — read it WITH them. "So the chapter is saying [concept]. Here's what that really means..."
-- Use analogies and real-world connections to make the textbook concepts STICK — but the concept itself must come from the chapter.
-- After explaining a concept FROM THE CHAPTER, immediately check for real understanding:
-  - "Why do you think that happens?" (not "What is the definition of...")
-  - "If I changed this one thing, what would happen?"
-  - "Can you explain that back to me in your own words?"
-  - "How does this connect to [previous concept from the chapter or earlier chapters]?"
-- Build connections between concepts within and across chapters. Biology is a web, not a list.
-- When a student can only recite a textbook definition but can't explain WHY or apply it, dig deeper. "You're quoting the book — but what does that actually MEAN?"
-- Vocabulary: introduce key terms as the chapter introduces them. Help students understand the concept behind the word, not just the word itself.
-- Keep your tutor personality. Stay warm, conversational, interactive. You're a study partner reading the chapter together, not a lecturer.
-- ONE concept at a time. Don't rush through a chapter. Depth over breadth.
-- When the student demonstrates real understanding of a concept, move to the next concept in the chapter.
-- Reference the chapter directly: "The chapter says [X] — let's unpack what that means..."
-- Still refuse to just give test answers. "Textbook mode" doesn't mean "answer key mode."
-`;
-
-// ============================================================================
-// CONTEXT BUILDING FUNCTIONS
+// PROMPT GENERATION
 // ============================================================================
 
 /**
- * Build the tiered textbook context for injection into the system prompt.
- * Uses: chapter outline + current concept card + RAG-retrieved passages
- * Target: ~500-1,500 tokens total
- *
- * @param {Object} options
- * @param {Object} options.chapter - Full chapter document (with chunks/embeddings)
- * @param {string} options.studentMessage - The student's current message (for RAG query)
- * @param {number} [options.currentConceptIndex=0] - Which concept card the student is on
- * @param {number} [options.tokenBudget=1500] - Max tokens for RAG passages
- * @returns {Promise<string>} Formatted context string for prompt injection
- */
-async function buildTextbookContext({ chapter, studentMessage, currentConceptIndex = 0, tokenBudget = 1500 }) {
-  if (!chapter) return '';
-
-  const parts = [];
-
-  // Tier 1: Chapter outline (~100-200 tokens) — always included
-  if (chapter.outline && chapter.outline.length > 0) {
-    const outlineStr = chapter.outline
-      .sort((a, b) => a.orderIndex - b.orderIndex)
-      .map(s => `  ${s.sectionNumber || ''} ${s.sectionTitle}`)
-      .join('\n');
-    parts.push(`CHAPTER ${chapter.chapterNumber}: "${chapter.chapterTitle}"\nOUTLINE:\n${outlineStr}`);
-  } else {
-    parts.push(`CHAPTER ${chapter.chapterNumber}: "${chapter.chapterTitle}"`);
-  }
-
-  // Tier 2: Current concept card (~100-200 tokens)
-  if (chapter.conceptCards && chapter.conceptCards.length > 0) {
-    const sortedCards = [...chapter.conceptCards].sort((a, b) => a.orderIndex - b.orderIndex);
-    const currentCard = sortedCards[currentConceptIndex] || sortedCards[0];
-
-    let cardStr = `\nCURRENT CONCEPT: "${currentCard.title}"\n${currentCard.summary}`;
-    if (currentCard.keyTerms && currentCard.keyTerms.length > 0) {
-      cardStr += `\nKey Terms: ${currentCard.keyTerms.join(', ')}`;
-    }
-    parts.push(cardStr);
-
-    // Show progress through concepts
-    parts.push(`\n[Concept ${currentConceptIndex + 1} of ${sortedCards.length}]`);
-  }
-
-  // Tier 3: RAG-retrieved passages (~300-1,000 tokens)
-  if (chapter.chunks && chapter.chunks.length > 0 && studentMessage) {
-    try {
-      const relevantChunks = await retrieveChunksWithBudget(chapter, studentMessage, tokenBudget);
-
-      if (relevantChunks.length > 0) {
-        const passages = relevantChunks
-          .map((chunk, i) => `[Passage ${i + 1}]: ${chunk.text}`)
-          .join('\n\n');
-        parts.push(`\nRELEVANT TEXTBOOK PASSAGES:\n${passages}`);
-      }
-    } catch (error) {
-      // RAG failure is non-fatal — proceed with outline + concept card only
-      console.error(`[bioPromptCompact] RAG retrieval failed: ${error.message}`);
-    }
-  }
-
-  return parts.join('\n');
-}
-
-/**
- * Generate the full biology system prompt (with or without textbook mode)
+ * Generate the full biology system prompt
  * @param {Object} options
  * @param {Object} options.user - User profile
  * @param {string} options.tutorName - Current tutor name
- * @param {boolean} options.textbookMode - Whether textbook mode is active
- * @param {string} [options.textbookContext] - Pre-built textbook context string
  * @returns {string} Complete system prompt
  */
-function generateBioSystemPrompt({ user, tutorName, textbookMode = false, textbookContext = '' }) {
+function generateBioSystemPrompt({ user, tutorName }) {
   let prompt = BIO_STATIC_RULES;
-
-  // Add textbook mode rules and context if active
-  if (textbookMode && textbookContext) {
-    prompt += '\n' + TEXTBOOK_MODE_RULES;
-    prompt += '\n\nCHAPTER CONTEXT:\n' + textbookContext;
-  }
 
   // Dynamic student context
   prompt += `\n\n--- STUDENT CONTEXT ---\n`;
@@ -222,7 +114,5 @@ function generateBioSystemPrompt({ user, tutorName, textbookMode = false, textbo
 
 module.exports = {
   BIO_STATIC_RULES,
-  TEXTBOOK_MODE_RULES,
-  buildTextbookContext,
   generateBioSystemPrompt
 };
