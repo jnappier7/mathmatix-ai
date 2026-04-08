@@ -11,7 +11,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skill Map | MATHMATIX AI</title>
-    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/css/skill-map.css">
     <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -21,166 +20,63 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-    <a href="#main-content" class="skip-to-content">Skip to main content</a>
-    <!-- HEADER - MATHMATIX BRANDED -->
-    <header class="main-header">
-        <div class="main-header-content">
-            <div class="brand-section">
-                <div class="logo-container">
-                    <a href="/chat.html">
-                        <img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI Logo" class="main-logo" />
-                    </a>
-                </div>
-                <div class="brand-text">
-                    <div class="brand-name">MATHMATIX AI</div>
-                    <div class="brand-tagline">Personalized AI Math Tutoring</div>
-                </div>
-                <div class="mode-indicator">
-                    🗺️ Skill Map
-                </div>
-            </div>
+    <a href="#graph-container" class="skip-to-content">Skip to main content</a>
 
-            <div class="header-actions">
-                <div class="user-display">
-                    <span id="userName">Student</span>
-                    <span class="level-badge">Level <span id="userLevel">1</span></span>
-                </div>
-                <a href="/chat.html" class="btn-secondary">← Back to Chat</a>
-                <button onclick="logout()" class="btn-secondary">Logout</button>
+    <!-- Full-viewport map canvas -->
+    <div id="graph-container"></div>
+
+    <!-- Floating info box (top-left) — minimal stats -->
+    <div id="infoBox" class="info-box">
+        <div class="info-content">
+            <div class="info-title">THE MATHEMATICAL UNIVERSE</div>
+            <div class="info-subtitle">A Skill Map of Patterns & Connections</div>
+            <div class="info-stats">
+                <span class="info-stat"><strong id="masteredCount">0</strong> mastered</span>
+                <span class="info-stat-sep">/</span>
+                <span class="info-stat"><strong id="totalSkills">0</strong> skills</span>
             </div>
         </div>
-    </header>
+    </div>
 
-    <main id="main-content" class="skill-map-container">
-        <!-- Top Bar with Controls -->
-        <div class="map-controls">
-            <div class="map-title">
-                <h1>🌌 Your Math Journey</h1>
-                <p class="subtitle">Explore the 8 patterns of mathematics. Click any region to dive deeper!</p>
-            </div>
+    <!-- Floating nav (top-right) -->
+    <div class="nav-float">
+        <a href="/chat.html" class="nav-btn" title="Back to Chat">&larr; Chat</a>
+        <button id="resetZoom" class="nav-btn" title="Reset View (R)">Reset</button>
+        <button id="showHelp" class="nav-btn" title="Keyboard Shortcuts (?)">?</button>
+    </div>
 
-            <div class="map-stats">
-                <div class="stat-pill stat-highlight">
-                    <span class="stat-icon">✨</span>
-                    <span class="stat-value" id="masteredCount">0</span>
-                    <span class="stat-label">You Already Know</span>
+    <!-- Node detail panel — slides in from right on click -->
+    <div id="nodeDetail" class="node-detail hidden">
+        <button id="closeDetail" class="detail-close">&times;</button>
+        <div class="detail-body">
+            <h2 id="detailTitle"></h2>
+            <div class="detail-meta">
+                <div class="detail-row">
+                    <span class="detail-label">Pattern</span>
+                    <span id="detailPattern" class="detail-value"></span>
                 </div>
-                <div class="stat-pill stat-hot">
-                    <span class="stat-icon">🔥</span>
-                    <span class="stat-value" id="frontierCount">0</span>
-                    <span class="stat-label">Next Up</span>
+                <div class="detail-row">
+                    <span class="detail-label">Tier</span>
+                    <span id="detailTier" class="detail-value"></span>
                 </div>
-                <div class="stat-pill stat-subtle">
-                    <span class="stat-icon">📊</span>
-                    <span class="stat-value" id="totalSkills">0</span>
-                    <span class="stat-label">Total</span>
+                <div class="detail-row">
+                    <span class="detail-label">Milestone</span>
+                    <span id="detailMilestone" class="detail-value"></span>
                 </div>
             </div>
-
-            <div class="view-controls">
-                <button id="resetZoom" class="control-btn">🔍 Reset View</button>
-                <button id="toggleClusters" class="control-btn active">🎨 Show Regions</button>
-                <button id="toggleLabels" class="control-btn active">📝 Labels</button>
-                <button id="showHelp" class="control-btn" title="Keyboard Shortcuts (?)">⌨️ Help</button>
+            <div class="detail-status-section">
+                <span id="detailStatus" class="status-badge"></span>
+                <div class="progress-track">
+                    <div id="detailProgressBar" class="progress-fill"></div>
+                </div>
+                <span id="detailProgressText" class="progress-text">0%</span>
             </div>
+            <button id="practiceBtn" class="practice-btn">Start Practice</button>
         </div>
-
-        <!-- Breadcrumb Navigation -->
-        <div class="breadcrumb-trail">
-            <span class="crumb" id="crumbWorld" data-level="world">
-                <span class="crumb-icon">🗺️</span>
-                <span class="crumb-text">All Patterns</span>
-            </span>
-            <span class="separator" id="separatorPattern" style="display: none;">›</span>
-            <span class="crumb" id="crumbPattern" data-level="pattern" style="display: none;">
-                <span class="crumb-icon" id="patternIcon"></span>
-                <span class="crumb-text" id="patternName"></span>
-            </span>
-            <span class="separator" id="separatorNode" style="display: none;">›</span>
-            <span class="crumb" id="crumbNode" data-level="node" style="display: none;">
-                <span class="crumb-text" id="nodeName"></span>
-            </span>
-        </div>
-
-        <!-- Main Graph Canvas -->
-        <div id="graph-container"></div>
-
-        <!-- Backdrop for node detail panel -->
-        <div id="nodeDetailBackdrop" class="node-detail-backdrop"></div>
-
-        <!-- Pattern Legend (8 Clusters) -->
-        <div class="pattern-legend">
-            <div class="legend-title">Math Patterns</div>
-            <div id="patternList"></div>
-        </div>
-
-        <!-- Node Detail Panel (shown on hover/click) -->
-        <div id="nodeDetail" class="node-detail hidden">
-            <div class="detail-header">
-                <h3 id="detailTitle"></h3>
-                <button id="closeDetail" class="close-btn">×</button>
-            </div>
-            <div class="detail-content">
-                <div class="detail-pattern">
-                    <span class="detail-label">Pattern:</span>
-                    <span id="detailPattern"></span>
-                </div>
-                <div class="detail-tier">
-                    <span class="detail-label">Tier:</span>
-                    <span id="detailTier"></span>
-                </div>
-                <div class="detail-milestone">
-                    <span class="detail-label">Milestone:</span>
-                    <span id="detailMilestone"></span>
-                </div>
-                <div class="detail-status">
-                    <span class="detail-label">Status:</span>
-                    <span id="detailStatus" class="status-badge"></span>
-                </div>
-                <div class="detail-progress">
-                    <div class="progress-bar-container">
-                        <div id="detailProgressBar" class="progress-bar"></div>
-                    </div>
-                    <span id="detailProgressText">0%</span>
-                </div>
-                <div class="detail-actions">
-                    <button id="practiceBtn" class="btn-primary">Start Practice</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Legend for Node States -->
-        <div class="state-legend">
-            <div class="legend-title">Skill Status</div>
-            <div class="legend-items">
-                <div class="legend-item">
-                    <div class="legend-node mastered"></div>
-                    <span>Mastered</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-node developing"></div>
-                    <span>Developing</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-node ready"></div>
-                    <span>Ready to Practice</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-node locked"></div>
-                    <span>Locked</span>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="main-footer">
-        © 2026 MATHMATIX AI. All rights reserved.
-        <a href="/privacy-policy.html">Privacy Policy</a> |
-        <a href="/terms.html">Terms of Use</a>
-    </footer>
+    </div>
 
     <script src="js/storage-utils.js"></script>
+    <script src="js/csrf.js"></script>
     <script src="js/logout.js"></script>
     <script src="js/skill-map.js"></script>
 </body>
