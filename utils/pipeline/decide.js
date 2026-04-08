@@ -175,6 +175,22 @@ function decideCore(observation, diagnosis, context) {
   }
 
   if (msgType === MESSAGE_TYPES.IDK) {
+    // When a student says IDK to a worksheet problem but has never been
+    // taught the skill, scaffolding down doesn't help — they need the
+    // CONCEPT taught first. Switch to teaching via parallel example.
+    if (context.hasRecentUpload && context.tutorPlan?.currentTarget?.instructionalMode === INSTRUCTIONAL_MODES.INSTRUCT) {
+      decision.action = ACTIONS.DIRECT_INSTRUCTION;
+      decision.directives.push(
+        'The student has NEVER been taught this skill and is stuck on a worksheet problem.',
+        'Do NOT try to scaffold the worksheet problem — they have no framework for it yet.',
+        'TEACH the underlying concept/skill using a PARALLEL problem (same skill, different numbers).',
+        'Walk through the parallel example step-by-step with think-aloud.',
+        'Then say: "Now try applying that to your problem" and guide them Socratically on THEIR worksheet problem.',
+        'NEVER solve the worksheet problem directly. The parallel example is for learning; their problem is for practice.'
+      );
+      return decision;
+    }
+
     // Progressive IDK handling
     if (streaks.idkCount >= 3) {
       decision.action = ACTIONS.EXIT_RAMP;
@@ -338,6 +354,45 @@ function decideCore(observation, diagnosis, context) {
       'Build on the current conversation thread — do NOT repeat or re-ask what was already covered.',
       'If the student just confirmed understanding, move forward to the next step or problem.',
       'Maintain conversational continuity with what was just discussed.'
+    );
+    return decision;
+  }
+
+  // ── Worksheet follow-up — strict anti-cheat ──
+  // When a student has uploaded a worksheet and asks for "the next problems",
+  // "do the rest", etc., enforce one-problem-at-a-time and refuse bulk solving.
+  if (observation.isWorksheetFollowUp) {
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'ANTI-CHEAT: The student is asking you to solve MULTIPLE worksheet problems. REFUSE.',
+      'ONE problem at a time — redirect them to pick a single problem.',
+      'Do NOT solve, show steps for, or give answers to more than one problem.',
+      'Do NOT use scripted phrases like "Let\'s focus on one at a time!" — just redirect naturally in your own voice.',
+      'If they already named a specific problem, guide them through ONLY that one — Socratically.',
+      'NEVER show the final answer. The student must do the thinking.'
+    );
+    return decision;
+  }
+
+  // ── Upload context — reinforce Socratic for worksheet problems ──
+  // Even for single-problem questions, when a worksheet is present, add extra guardrails.
+  if (context.hasRecentUpload && (msgType === MESSAGE_TYPES.QUESTION || msgType === MESSAGE_TYPES.GENERAL_MATH)) {
+    const modeDecision = applyInstructionalMode(decision, context);
+    if (modeDecision) {
+      modeDecision.directives.push(
+        'WORKSHEET CONTEXT: The student uploaded a worksheet. Do NOT give away answers.',
+        'Guide them through ONE problem at a time. The student does the work.'
+      );
+      return modeDecision;
+    }
+
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'The student asked about a problem from their uploaded worksheet.',
+      'Break it into the first step and ask THEM to attempt it. Be specific to the actual math.',
+      'NEVER show the full solution or final answer — guide them to discover it.',
+      'ONE problem at a time. If they ask about multiple, pick the first and ask them to focus on it.',
+      'Do NOT ask "what have you tried?" — start tutoring immediately with a guiding question.'
     );
     return decision;
   }

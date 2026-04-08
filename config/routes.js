@@ -184,7 +184,8 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
-  app.use('/api/chat-with-file', isAuthenticated, largeJsonParser, aiEndpointLimiter, usageGate, chatWithFileRoutes);
+  // DEPRECATED: file uploads now go through /api/chat. This redirect preserves backwards compatibility.
+  app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes);
   app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, welcomeRoutes);
   app.use('/api/rapport', isAuthenticated, aiEndpointLimiter, rapportBuildingRoutes);
   app.use('/api/memory', isAuthenticated, memoryRouter);

@@ -232,6 +232,7 @@ async function runPipeline(message, ctx) {
     evidence,
     tutorPlan: tutorPlan || null,
     modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
+    hasRecentUpload: ctx.hasRecentUpload || false,
   });
 
   // Inject mode transition directives into the decision
@@ -261,7 +262,14 @@ async function runPipeline(message, ctx) {
   // Socratic suppression is now handled structurally via buildSlimRules and
   // buildStaticRules options — NOT via string surgery on the assembled prompt.
   // This flag flows through to assemblePrompt → buildSlimRules.
-  const suppressSocratic = tutorPlan ? shouldSuppressSocratic(tutorPlan) : false;
+  // Teaching mode (suppressSocratic) is allowed for LLM-generated problems
+  // (the AI teaching concepts), but NOT when the student is asking about their
+  // uploaded worksheet. Worksheet problems require Socratic enforcement.
+  const isReferencingWorksheet = observation.isWorksheetFollowUp ||
+    observation.messageType === 'check_my_work';
+  const suppressSocratic = isReferencingWorksheet
+    ? false
+    : (tutorPlan ? shouldSuppressSocratic(tutorPlan) : false);
 
   if (tutorPlan) {
     const planLayer = buildPlanLayer(tutorPlan, {
@@ -300,6 +308,8 @@ async function runPipeline(message, ctx) {
     messageType: observation.messageType,
     correctAnswer: diagnosis.correctAnswer || null,
     diagnosisType: diagnosis.type,
+    hasRecentUpload: ctx.hasRecentUpload || false,
+    isWorksheetFollowUp: observation.isWorksheetFollowUp || false,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);

@@ -2063,9 +2063,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Multi-file upload support
+            // All chat goes through /api/chat — files, courses, and regular chat
             if (queuedFiles.length > 0) {
-                console.log(`[Frontend] Sending ${queuedFiles.length} file(s) to /api/chat-with-file`);
+                console.log(`[Frontend] Sending ${queuedFiles.length} file(s) to /api/chat`);
 
                 const formData = new FormData();
 
@@ -2081,24 +2081,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     formData.append('responseTime', responseTime);
                 }
 
-                response = await csrfFetch("/api/chat-with-file", {
+                response = await csrfFetch("/api/chat", {
                     method: "POST",
                     body: formData,
                     credentials: 'include'
                 });
             } else {
-                // Regular chat (no files)
+                // Regular chat (no files) — same endpoint for courses and main chat
                 const payload = { message: messageText };
 
                 if (responseTime !== null) {
                     payload.responseTime = responseTime;
                 }
 
-                // Route to dedicated course chat when in an active course session
-                const isInCourse = window.courseManager && window.courseManager.activeCourseSessionId;
-                const chatEndpoint = isInCourse ? '/api/course-chat' : '/api/chat';
-
-                response = await csrfFetch(`${chatEndpoint}?stream=true`, {
+                response = await csrfFetch('/api/chat?stream=true', {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
