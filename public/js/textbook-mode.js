@@ -19,11 +19,11 @@
   // ── Initialize state from user profile ──
   async function initTextbookMode() {
     try {
-      const res = await fetch('/api/user/profile', { credentials: 'same-origin' });
+      const res = await fetch('/user', { credentials: 'same-origin' });
       if (!res.ok) return;
       const data = await res.json();
 
-      textbookModeEnabled = data.textbookMode || false;
+      textbookModeEnabled = (data.user && data.user.textbookMode) || false;
       toggle.checked = textbookModeEnabled;
       updateUI();
 
@@ -41,10 +41,10 @@
 
     // Check if student is enrolled in a course (has a teacher)
     try {
-      const profileRes = await fetch('/api/user/profile', { credentials: 'same-origin' });
+      const profileRes = await fetch('/user', { credentials: 'same-origin' });
       const profileData = await profileRes.json();
 
-      if (newState && !profileData.teacherId) {
+      if (newState && !(profileData.user && profileData.user.teacherId)) {
         // Not enrolled — revert toggle and show prompt
         toggle.checked = false;
         showEnrollPrompt();
@@ -52,7 +52,7 @@
       }
 
       // Persist the setting
-      const res = await fetch('/api/settings/user', {
+      const res = await fetch('/api/user/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
