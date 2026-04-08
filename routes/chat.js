@@ -36,7 +36,7 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
-const { initializeLessonPhase, PHASES } = require('../utils/lessonPhaseManager');
+const { initializeLessonPhase, evaluatePhaseTransition, transitionPhase, PHASES } = require('../utils/lessonPhaseManager');
 const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
 const TutorPlan = require('../models/tutorPlan');
 const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
@@ -308,7 +308,7 @@ function detectProblemContext(message) {
 }
 
 router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
-    const { message, role, childId, responseTime, isGreeting } = req.body;
+    const { message, role, childId, responseTime, isGreeting, mastery } = req.body;
     const userId = req.user?._id;
 
     // Allow empty message only for greeting requests
@@ -398,48 +398,63 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found." });
 
+        // ── Conversation loading ──
+        // Mastery mode (badge-earning) uses a separate conversation so regular
+        // chat history stays clean. The `mastery` flag comes from the frontend.
+        const isMasteryMode = mastery && !!user.masteryProgress?.activeBadge;
         let activeConversation;
-        if (user.activeConversationId) {
-            activeConversation = await Conversation.findById(user.activeConversationId);
-        }
-        // Create new conversation if: no conversation, inactive, OR it's a mastery conversation
-        // This prevents mastery messages from appearing in regular chat
-        if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
-            // IMPROVED: End the old session properly before creating a new one
-            // This handles the case where student closed tab without logging out
-            if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
-                try {
-                    const { generateSessionSummary: generateAISummary, detectTopic } = require('../utils/activitySummarizer');
 
-                    // Generate summary for the old session
-                    activeConversation.currentTopic = activeConversation.currentTopic || detectTopic(activeConversation.messages);
-                    const studentName = `${user.firstName} ${user.lastName}`;
-
-                    try {
-                        const aiSummary = await generateAISummary(activeConversation, studentName);
-                        activeConversation.summary = aiSummary;
-                    } catch (summaryError) {
-                        // Fallback summary
-                        activeConversation.summary = `${studentName} worked on ${activeConversation.currentTopic || 'mathematics'} for ${activeConversation.activeMinutes || 0} minutes.`;
-                    }
-
-                    activeConversation.isActive = false;
-                    await activeConversation.save();
-                    console.log(`📝 [Session] Auto-ended previous session ${activeConversation._id} for user ${user._id}`);
-                } catch (endError) {
-                    console.error('[Session] Error auto-ending previous session:', endError);
-                    // Still mark as inactive even if summary fails
-                    activeConversation.isActive = false;
-                    activeConversation.summary = `Session ended - ${activeConversation.activeMinutes || 0} minutes`;
-                    await activeConversation.save();
-                }
+        if (isMasteryMode) {
+            // Load existing mastery conversation
+            if (user.activeMasteryConversationId) {
+                activeConversation = await Conversation.findById(user.activeMasteryConversationId);
             }
-
-            // Course conversations are handled entirely by /api/course-chat.
-            // Main chat always gets a fresh conversation.
-            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
-            user.activeConversationId = activeConversation._id;
-            await user.save();
+            if (!activeConversation || !activeConversation.isActive || !activeConversation.isMastery) {
+                const activeBadge = user.masteryProgress.activeBadge;
+                activeConversation = new Conversation({
+                    userId: user._id,
+                    messages: [],
+                    isMastery: true,
+                    masteryBadgeId: activeBadge.badgeId,
+                    masterySkillId: activeBadge.skillId,
+                    conversationName: `${activeBadge.badgeName} - ${activeBadge.tier}`,
+                });
+                user.activeMasteryConversationId = activeConversation._id;
+                await user.save();
+            }
+        } else {
+            // Regular chat mode
+            if (user.activeConversationId) {
+                activeConversation = await Conversation.findById(user.activeConversationId);
+            }
+            // Create new conversation if: no conversation, inactive, OR it's a mastery conversation
+            if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
+                // IMPROVED: End the old session properly before creating a new one
+                if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
+                    try {
+                        const { generateSessionSummary: generateAISummary, detectTopic } = require('../utils/activitySummarizer');
+                        activeConversation.currentTopic = activeConversation.currentTopic || detectTopic(activeConversation.messages);
+                        const studentName = `${user.firstName} ${user.lastName}`;
+                        try {
+                            const aiSummary = await generateAISummary(activeConversation, studentName);
+                            activeConversation.summary = aiSummary;
+                        } catch (summaryError) {
+                            activeConversation.summary = `${studentName} worked on ${activeConversation.currentTopic || 'mathematics'} for ${activeConversation.activeMinutes || 0} minutes.`;
+                        }
+                        activeConversation.isActive = false;
+                        await activeConversation.save();
+                        console.log(`[Session] Auto-ended previous session ${activeConversation._id} for user ${user._id}`);
+                    } catch (endError) {
+                        console.error('[Session] Error auto-ending previous session:', endError);
+                        activeConversation.isActive = false;
+                        activeConversation.summary = `Session ended - ${activeConversation.activeMinutes || 0} minutes`;
+                        await activeConversation.save();
+                    }
+                }
+                activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+                user.activeConversationId = activeConversation._id;
+                await user.save();
+            }
         }
 
         // CRITICAL FIX: Validate user message before saving
@@ -870,6 +885,38 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             }
         }
 
+        // ── INTRO Phase Choice Detection (Mastery Mode) ──
+        // In INTRO phase, detect whether the student wants to test out or
+        // get a full lesson before the pipeline runs.
+        const phaseState = activeConversation.phaseState || null;
+        if (isMasteryMode && phaseState?.currentPhase === PHASES.INTRO) {
+            const messageLower = message.toLowerCase();
+            const wantsTest =
+                messageLower.includes('test') ||
+                messageLower.includes('ready') ||
+                messageLower.includes('skip') ||
+                messageLower.includes('know this') ||
+                messageLower.includes('prove') ||
+                /\b2\b/.test(messageLower);
+            const wantsLesson =
+                messageLower.includes('teach') ||
+                messageLower.includes('step') ||
+                messageLower.includes('help') ||
+                messageLower.includes('show') ||
+                messageLower.includes('guide') ||
+                /\b1\b/.test(messageLower);
+
+            phaseState.studentChoice = (wantsTest && !wantsLesson) ? 'test' : 'lesson';
+            console.log(`[INTRO] Student chose: ${phaseState.studentChoice === 'test' ? 'Direct mastery test' : 'Structured lesson'}`);
+
+            const transition = evaluatePhaseTransition(phaseState);
+            if (transition.shouldTransition) {
+                transitionPhase(phaseState, transition.nextPhase, transition.rationale);
+                console.log(`[Phase Transition] ${PHASES.INTRO} → ${transition.nextPhase}`);
+            }
+            activeConversation.markModified?.('phaseState');
+        }
+
         // Run the 6-stage pipeline with direct-LLM fallback
         let pipelineResult;
         try {
@@ -1100,6 +1147,11 @@ router.post('/', isAuthenticated, promptInjectionFilter, async (req, res) => {
             gamification: pipelineResult.gamification || null,
             nextActions: pipelineResult.nextActions || [],
             reviewSummary: pipelineResult.reviewSummary || null,
+            // Mastery mode: badge celebration data
+            currentPhase: activeConversation.phaseState?.currentPhase || null,
+            masteryCompleted: pipelineResult.masteryCompleted || false,
+            masterySuccess: pipelineResult.masterySuccess || false,
+            badgeAwarded: pipelineResult.badgeAwarded || null,
             _pipeline: pipelineResult._pipeline,
         };
 
