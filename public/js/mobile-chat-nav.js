@@ -719,9 +719,12 @@
         }
     }
 
-    // Keep theme in sync
+    // Keep theme in sync across all panels
     document.addEventListener('themechange', function () {
         if (panelsBuilt['profile']) refreshProfilePanel();
+        // Update Learn panel theme button icon
+        var learnIcon = document.querySelector('#mp-learn-theme-btn i');
+        if (learnIcon) learnIcon.className = 'fas ' + (isDark() ? 'fa-sun' : 'fa-moon');
     });
 
     // ESC closes panels and goes back to chat
