@@ -43,6 +43,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/mathGraph.css" />
   <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
   <link rel="stylesheet" href="/css/mobile-redesign.css" />
+  <link rel="stylesheet" href="/css/mathmatix-keyboard.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -576,6 +577,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="imessage-input-row">
         <div id="user-input" contenteditable="true" data-placeholder="Ask a math question..." data-i18n-placeholder="chat.askQuestion" role="textbox" aria-multiline="true"></div>
+        <!-- MathLive compose field for mobile custom keyboard (hidden on desktop) -->
+        <math-field id="mx-compose-field" virtual-keyboard-mode="off" math-virtual-keyboard-policy="manual" smart-mode inputmode="none" style="display:none;"></math-field>
         <!-- Math-field input (hidden until math mode activated) -->
         <div id="math-input-wrapper" class="math-input-wrapper" style="display:none;">
           <math-field id="math-keyboard-field" class="math-keyboard-field" virtual-keyboard-mode="off" math-virtual-keyboard-policy="manual"></math-field>
@@ -686,6 +689,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
     </div>
+
+    <!-- Custom Keyboard Mount Point (mobile only) -->
+    <div id="mx-keyboard-container"></div>
 
     <input type="file" name="file" id="file-input" style="display:none;" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/svg+xml,application/pdf" multiple/>
     <p class="chat-disclaimer"><i class="fas fa-info-circle"></i> AI can make mistakes. Always check your work.</p>
@@ -1877,6 +1883,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/mobile-more-tools.js"></script>
   <script src="/js/mobile-chat-nav.js"></script>
   <script src="/js/inlineEquationBox.js"></script>
+  <script src="/js/mathmatixKeyboard.js"></script>
   <script src="/js/auto-expand-textarea.js"></script>
   <script src="/js/chat-pinch-zoom.js"></script>
   <script src="/js/file-upload.js"></script>
