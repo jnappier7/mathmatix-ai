@@ -126,6 +126,26 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
       }
     }
 
+    // Calculate accuracy from conversation stats
+    const totalProblems = conversationStats.length > 0 ? conversationStats[0].totalProblems : 0;
+    const totalCorrect = conversationStats.length > 0 ? conversationStats[0].totalCorrect : 0;
+    const accuracy = totalProblems > 0 ? Math.round((totalCorrect / totalProblems) * 100) : 0;
+
+    // Calculate mastery breakdown from skillMastery
+    let masteredCount = 0;
+    let practicingCount = 0;
+    let learningCount = 0;
+    if (student.skillMastery && student.skillMastery.size > 0) {
+      for (const [, m] of student.skillMastery) {
+        if (m.status === 'mastered') masteredCount++;
+        else if (m.status === 'practicing' || m.status === 'fragile') practicingCount++;
+        else learningCount++;
+      }
+    }
+
+    // Current streak from daily quests
+    const currentStreak = student.dailyQuests?.currentStreak || 0;
+
     // Calculate weekly stats
     const studentData = {
       studentName: `${student.firstName} ${student.lastName}`,
@@ -133,7 +153,11 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
       currentLevel: student.level || 1,
       xpEarned: student.xp || 0,
       activeMinutes: student.totalActiveTutoringMinutes || 0,
-      masteryGained: masteryGained,
+      accuracy: accuracy,
+      mastery: masteredCount + practicingCount + learningCount > 0
+        ? { mastered: masteredCount, practicing: practicingCount, learning: learningCount }
+        : null,
+      currentStreak: currentStreak,
       strugglingSkills: strugglingSkills,
       achievements: achievements
     };

@@ -80,19 +80,27 @@ router.post('/end', async (req, res) => {
         // Clear the session cookie
         res.clearCookie('connect.sid');
 
-        // Destroy the session in MongoDB
-        await new Promise((resolve, reject) => {
-          req.session.destroy((err) => {
-            if (err) {
-              logger.error('Failed to destroy session on end', { error: err, userId });
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
+        // Send response BEFORE destroying session to prevent connect-mongo
+        // "Unable to find the session to touch" error. When express-session
+        // finalizes the response, it tries to touch() the session TTL - but
+        // if we already destroyed it, connect-mongo throws. Sending the
+        // response first lets the touch happen while the session still exists,
+        // then we destroy it.
+        res.json({
+          success: true,
+          summary
         });
 
-        logger.info('Express session destroyed on session end', { userId, reason });
+        // Destroy the session in MongoDB after response is sent
+        req.session.destroy((err) => {
+          if (err) {
+            logger.error('Failed to destroy session on end', { error: err, userId });
+          } else {
+            logger.info('Express session destroyed on session end', { userId, reason });
+          }
+        });
+
+        return; // Already sent response
       } catch (destroyError) {
         logger.error('Error destroying express session', { error: destroyError, userId });
         // Still return success for the session summary even if destroy fails

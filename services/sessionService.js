@@ -361,15 +361,17 @@ async function endSession(userId, sessionId, reason, sessionData = {}) {
  */
 async function recordHeartbeat(userId, sessionId, metrics = {}) {
   try {
-    // Update last activity time
-    const user = await User.findById(userId);
+    // Use atomic update to avoid VersionError race condition when concurrent
+    // requests (e.g. chat + heartbeat) modify the same user document
+    const result = await User.findByIdAndUpdate(
+      userId,
+      { $set: { lastActivityTime: new Date() } },
+      { new: true, projection: { _id: 1 } }
+    );
 
-    if (!user) {
+    if (!result) {
       return { error: 'User not found' };
     }
-
-    user.lastActivityTime = new Date();
-    await user.save();
 
     // Calculate time until timeout
     const timeUntilTimeout = SESSION_CONFIG.IDLE_TIMEOUT;

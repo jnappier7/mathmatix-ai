@@ -2308,8 +2308,12 @@ router.get('/user-stats', isAuthenticated, async (req, res) => {
     }
 
     // Calculate average theta
-    const skillMastery = user.skillMastery || {};
-    const thetas = Object.values(skillMastery)
+    // skillMastery is a Mongoose Map - use Array.from to extract values
+    const skillMastery = user.skillMastery || new Map();
+    const skillValues = skillMastery instanceof Map
+      ? Array.from(skillMastery.values())
+      : Object.values(skillMastery);
+    const thetas = skillValues
       .map(skill => skill.theta)
       .filter(theta => theta !== undefined && theta !== null);
 
