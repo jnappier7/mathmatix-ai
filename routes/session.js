@@ -80,25 +80,31 @@ router.post('/end', async (req, res) => {
         // Clear the session cookie
         res.clearCookie('connect.sid');
 
-        // Send response BEFORE destroying session to prevent connect-mongo
-        // "Unable to find the session to touch" error. When express-session
-        // finalizes the response, it tries to touch() the session TTL - but
-        // if we already destroyed it, connect-mongo throws. Sending the
-        // response first lets the touch happen while the session still exists,
-        // then we destroy it.
+        // Capture the session reference, then null out req.session BEFORE
+        // sending the response. This prevents express-session's res.end()
+        // handler from calling store.touch() on a session that may have
+        // already been destroyed by a concurrent request (e.g. browser_close
+        // + auto_logout firing simultaneously). Without this, the second
+        // request's touch() throws "Unable to find the session to touch".
+        const sessionToDestroy = req.session;
+        req.session = null;
+
         res.json({
           success: true,
           summary
         });
 
         // Destroy the session in MongoDB after response is sent
-        req.session.destroy((err) => {
-          if (err) {
-            logger.error('Failed to destroy session on end', { error: err, userId });
-          } else {
-            logger.info('Express session destroyed on session end', { userId, reason });
-          }
-        });
+        if (sessionToDestroy) {
+          sessionToDestroy.destroy((err) => {
+            if (err) {
+              // Session may already be destroyed by a concurrent request — not an error
+              logger.warn('Session destroy returned error (may already be destroyed)', { userId, reason });
+            } else {
+              logger.info('Express session destroyed on session end', { userId, reason });
+            }
+          });
+        }
 
         return; // Already sent response
       } catch (destroyError) {

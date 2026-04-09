@@ -2,6 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
+const log = require('../utils/logger');
+const logger = log.child({ service: 'chat-service' });
 const { isAuthenticated } = require('../middleware/auth');
 const { promptInjectionFilter } = require('../middleware/promptInjection');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
@@ -336,10 +338,10 @@ async function updateQuestProgress(userId, wasCorrect, topic) {
         await user.save();
 
         if (questsCompleted.length > 0 || challengesCompleted.length > 0) {
-            console.log(`[Quest] User ${user.firstName} completed: Daily=[${questsCompleted.join(', ')}], Weekly=[${challengesCompleted.join(', ')}]`);
+            logger.info('Quest progress updated', { userId: user._id, dailyCompleted: questsCompleted, weeklyCompleted: challengesCompleted });
         }
     } catch (error) {
-        console.error('[Quest] Error updating progress:', error.message);
+        logger.error('Quest progress update failed', { error: error.message });
     }
 }
 
@@ -369,7 +371,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
     // Log response time if provided (from ghost timer)
     if (responseTime) {
-        console.log(`[Fluency] User ${userId} responded in ${responseTime.toFixed(1)}s`);
+        const parsedResponseTime = Number(responseTime);
+        if (!isNaN(parsedResponseTime)) {
+            logger.info('Fluency response recorded', { userId, responseTime: parsedResponseTime });
+        }
     }
 
     // Handle parent chat separately
@@ -401,7 +406,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
     const containsInappropriate = inappropriatePatterns.some(pattern => pattern.test(messageClean));
 
     if (containsInappropriate) {
-        console.warn(`⚠️ SAFETY FILTER TRIGGERED - User ${userId} - Message: ${message.substring(0, 50)}...`);
+        logger.warn('Safety filter triggered', { userId, messagePreview: message.substring(0, 50) });
         return res.json({
             text: "I'm here to help you learn math in a safe, respectful way. That topic isn't appropriate for our tutoring session. Let's focus on math! What math topic would you like to work on?",
             userXp: 0,
@@ -426,7 +431,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
     const isPlacementRequest = placementKeywords.some(pattern => pattern.test(messageClean));
 
     if (isPlacementRequest) {
-        console.log(`📋 PLACEMENT REQUEST DETECTED (declined) - User ${userId} - Message: "${message.substring(0, 100)}..."`);
+        logger.info('Placement request detected (declined)', { userId, messagePreview: message.substring(0, 100) });
         const user = await User.findById(userId);
 
         if (user && user.assessmentCompleted) {
@@ -495,9 +500,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                         }
                         activeConversation.isActive = false;
                         await activeConversation.save();
-                        console.log(`[Session] Auto-ended previous session ${activeConversation._id} for user ${user._id}`);
+                        logger.info('Auto-ended previous session', { conversationId: activeConversation._id, userId: user._id });
                     } catch (endError) {
-                        console.error('[Session] Error auto-ending previous session:', endError);
+                        logger.error('Error auto-ending previous session', endError);
                         activeConversation.isActive = false;
                         activeConversation.summary = `Session ended - ${activeConversation.activeMinutes || 0} minutes`;
                         await activeConversation.save();
@@ -528,17 +533,17 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         let combinedMessage = effectiveMessage.trim();
 
         if (hasUploadedFiles) {
-            console.log(`[Chat] Processing ${uploadedFiles.length} file(s) for user ${userId}`);
+            logger.info('Processing uploaded files', { userId, fileCount: uploadedFiles.length });
 
             try {
                 const fileResults = await Promise.all(uploadedFiles.map(async (file) => {
-                    console.log(`[Chat] Processing file: ${file.originalname} (${file.mimetype})`);
+                    logger.debug('Processing file', { filename: file.originalname, mimetype: file.mimetype });
 
                     if (file.mimetype === 'application/pdf') {
                         const fileBuffer = fsSync.readFileSync(file.path);
                         const extractedText = await pdfOcr(fileBuffer, file.originalname);
                         if (extractedText && extractedText.trim()) {
-                            console.log(`[Chat] Extracted ${extractedText.length} chars from PDF`);
+                            logger.debug('PDF text extracted', { filename: file.originalname, charCount: extractedText.length });
                             return { type: 'pdf', filename: file.originalname, text: extractedText };
                         }
                         return { type: 'pdf', filename: file.originalname, text: `[Could not extract text from ${file.originalname}]` };
@@ -547,7 +552,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                         try {
                             fileBuffer = await sharp(fileBuffer).rotate().withMetadata({}).toBuffer();
                         } catch (stripErr) {
-                            console.warn('[Chat] EXIF strip failed:', stripErr.message);
+                            logger.warn('EXIF strip failed', { error: stripErr.message });
                         }
                         const base64 = fileBuffer.toString('base64');
                         return {
@@ -565,7 +570,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     }
                 }
             } catch (processingError) {
-                console.error(`[Chat] File processing error:`, processingError.message);
+                logger.error('File processing error', { error: processingError.message });
                 uploadedFiles.forEach(f => { if (f.path) try { fsSync.unlinkSync(f.path); } catch(e) {} });
                 return res.status(500).json({
                     message: `Failed to process files: ${processingError.message}`,
@@ -585,7 +590,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 combinedMessage = `${combinedMessage}\n\n${pdfContent}`;
             }
 
-            console.log(`[Chat] Prepared ${uploadImageContents.length} image(s), ${uploadPdfTexts.length} PDF(s)`);
+            logger.info('Files prepared for AI', { imageCount: uploadImageContents.length, pdfCount: uploadPdfTexts.length });
         }
 
         activeConversation.messages.push({
@@ -615,7 +620,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                         return curriculum.getAIContext();
                     }
                     return null;
-                }).catch(err => { console.error('Error fetching curriculum:', err.message); return null; })
+                }).catch(err => { logger.error('Error fetching curriculum', { error: err.message }); return null; })
             );
         } else {
             contextPromises.push(Promise.resolve(null));
@@ -627,7 +632,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 contextCache.getOrFetch('teacherSettings', user.teacherId.toString(), async () => {
                     const teacher = await User.findById(user.teacherId).select('classAISettings').lean();
                     return teacher?.classAISettings || null;
-                }).catch(err => { console.error('Error fetching teacher settings:', err.message); return null; })
+                }).catch(err => { logger.error('Error fetching teacher settings', { error: err.message }); return null; })
             );
         } else {
             contextPromises.push(Promise.resolve(null));
@@ -637,10 +642,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         if (user.teacherId) {
             contextPromises.push(
                 detectAndFetchResource(user.teacherId, message)
-                    .catch(err => { console.error('[Chat] Resource detection error:', err.message); return null; })
+                    .catch(err => { logger.error('Resource detection error', { error: err.message }); return null; })
             );
         } else {
-            console.log(`[Chat] No teacherId on user ${user._id} — skipping resource detection`);
+            logger.debug('No teacherId — skipping resource detection', { userId: user._id });
             contextPromises.push(Promise.resolve(null));
         }
 
@@ -651,7 +656,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 .limit(5)
                 .select('originalFilename extractedText uploadedAt fileType')
                 .lean()
-                .catch(err => { console.error('Error fetching uploads:', err.message); return []; })
+                .catch(err => { logger.error('Error fetching uploads', { error: err.message }); return []; })
         );
 
         // 5. Recent grading/analysis results (Show Your Work)
@@ -661,13 +666,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 .limit(3)
                 .select('problemCount correctCount problems overallFeedback whatWentWell practiceRecommendations createdAt')
                 .lean()
-                .catch(err => { console.error('Error fetching grading results:', err.message); return []; })
+                .catch(err => { logger.error('Error fetching grading results', { error: err.message }); return []; })
         );
 
         // 6. Error pattern tracking (aggregated across recent Show Your Work sessions)
         contextPromises.push(
             GradingResult.getErrorPatterns(user._id, 14)
-                .catch(err => { console.error('Error fetching error patterns:', err.message); return null; })
+                .catch(err => { logger.error('Error fetching error patterns', { error: err.message }); return null; })
         );
 
         // 7. Math verification (runs in parallel with everything else)
@@ -678,18 +683,18 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
-            console.log(`🎛️ [AI Settings] Loaded teacher settings for ${user.firstName}: calculator=${teacherAISettings.calculatorAccess || 'default'}, scaffolding=${teacherAISettings.scaffoldingLevel || 3}/5`);
+            logger.debug('Teacher AI settings loaded', { userId: user._id, calculator: teacherAISettings.calculatorAccess || 'default', scaffolding: teacherAISettings.scaffoldingLevel || 3 });
         }
 
         // Log resource context resolution
         if (resourceContext) {
             const contentLen = resourceContext.content?.length || 0;
-            console.log(`📚 [Chat] Resource resolved: "${resourceContext.displayName}" — content=${contentLen} chars, notFound=${!!resourceContext.notFound}`);
+            logger.debug('Resource context resolved', { displayName: resourceContext.displayName, contentLength: contentLen, notFound: !!resourceContext.notFound });
             if (contentLen === 0) {
-                console.warn(`[Chat] ⚠️ Resource context has no content — AI will not have resource material to work from`);
+                logger.warn('Resource context has no content', { displayName: resourceContext.displayName });
             }
         } else {
-            console.log(`[Chat] No resource context resolved for message: "${message?.substring(0, 60)}..."`);
+            logger.debug('No resource context resolved', { messagePreview: message?.substring(0, 60) });
         }
 
         // FALLBACK: If no uploaded resource was found but the message mentions a resource
@@ -704,7 +709,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     content: null,
                     notFound: true
                 };
-                console.log(`📋 [Chat] Resource mentioned but not in DB: "${resourceContext.displayName}" — injecting stub context (no content)`);
+                logger.debug('Resource mentioned but not in DB — injecting stub', { displayName: resourceContext.displayName });
             }
         }
 
@@ -717,7 +722,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 count: uploadedFiles.length,
                 summary: `Student uploaded ${uploadedFiles.length} file(s): ${fileDescriptions}. You CAN see this content — reference it directly.`
             };
-            console.log(`📁 [Chat] Current upload: ${uploadedFiles.length} file(s) — ${fileDescriptions}`);
+            logger.debug('Current upload context', { fileCount: uploadedFiles.length, files: fileDescriptions });
         } else if (recentUploads && recentUploads.length > 0) {
             const uploadsSummary = recentUploads.map((upload, idx) => {
                 const daysAgo = Math.floor((Date.now() - new Date(upload.uploadedAt)) / (1000 * 60 * 60 * 24));
@@ -728,16 +733,16 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             }).join('\n');
 
             uploadContext = { count: recentUploads.length, summary: uploadsSummary };
-            console.log(`📁 Injected ${recentUploads.length} recent uploads into AI context`);
+            logger.debug('Injected recent uploads into AI context', { count: recentUploads.length });
         }
 
         // Log parallel fetch performance
         const contextFetchTime = Date.now() - contextStartTime;
-        console.log(`⚡ [Performance] Parallel context fetch completed in ${contextFetchTime}ms`);
+        logger.debug('Parallel context fetch completed', { durationMs: contextFetchTime });
 
         // Log math detection result
         if (mathResult.hasMath) {
-            console.log(`🧮 [Math Solver] Detected ${mathResult.problem.type} problem, answer: ${mathResult.solution?.answer || 'N/A'}`);
+            logger.debug('Math problem detected', { type: mathResult.problem.type, hasAnswer: !!mathResult.solution?.answer });
         }
 
         // Build conversation history with summarization for long conversations
@@ -803,7 +808,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 }
             }
 
-            console.log(`✅ [Math Verification] Injected verified answer: ${mathResult.solution.answer} (${mathResult.problem.type})`);
+            logger.debug('Math verification injected', { type: mathResult.problem.type });
         }
 
         // PIPELINE: Answer pre-check, check-my-work detection, and IDK/streak
@@ -861,11 +866,11 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             essentialQuestions: courseCtx.currentModule?.essentialQuestions || [],
                             aiInstructionModel: courseCtx.pathway.aiInstructionModel || null
                         };
-                        console.log(`📚 [Course] Loaded context for ${courseSession.courseName} — module: ${courseSession.currentModuleId}`);
+                        logger.debug('Course context loaded', { courseName: courseSession.courseName, moduleId: courseSession.currentModuleId });
                     }
                 }
             } catch (courseErr) {
-                console.warn('[Chat] Could not load course session context:', courseErr.message);
+                logger.warn('Could not load course session context', { error: courseErr.message });
             }
         }
 
@@ -968,7 +973,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
         // Set up streaming if requested
         if (useStreaming) {
-            console.log('📡 Streaming mode activated');
+            logger.debug('Streaming mode activated', { userId });
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
@@ -1000,7 +1005,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                                 conversation: activeConversation,
                             });
                             reentryDirective = reentry.directives.join('\n');
-                            console.log(`[Chat] Re-entry detected (${Math.round(gapMs / 60000)}min gap)`);
+                            logger.info('Re-entry detected', { userId: user._id, gapMinutes: Math.round(gapMs / 60000) });
                         }
                     }
                 }
@@ -1010,7 +1015,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     const overrideResult = shouldOverrideTopic(message, preloadedTutorPlan);
                     if (overrideResult.override) {
                         topicOverride = overrideResult;
-                        console.log(`[Chat] Topic override: ${overrideResult.reason}`);
+                        logger.info('Topic override applied', { userId: user._id, reason: overrideResult.reason });
                     }
                 }
             }
@@ -1040,9 +1045,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 const warmupData = selectWarmupSkill(masteryContext.skillId, user.toObject());
                 activeConversation.phaseState = initializeLessonPhase(masteryContext.skillId, warmupData);
                 activeConversation.markModified?.('phaseState');
-                console.log(`[Chat] Initialized lesson phase for ${masteryContext.skillId}: ${activeConversation.phaseState.currentPhase}`);
+                logger.info('Lesson phase initialized', { skillId: masteryContext.skillId, phase: activeConversation.phaseState.currentPhase });
             } catch (phaseErr) {
-                console.error('[Chat] Phase initialization failed (non-fatal):', phaseErr.message);
+                logger.warn('Phase initialization failed (non-fatal)', { error: phaseErr.message });
             }
         }
 
@@ -1068,12 +1073,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 /\b1\b/.test(messageLower);
 
             phaseState.studentChoice = (wantsTest && !wantsLesson) ? 'test' : 'lesson';
-            console.log(`[INTRO] Student chose: ${phaseState.studentChoice === 'test' ? 'Direct mastery test' : 'Structured lesson'}`);
+            logger.info('Student intro choice', { choice: phaseState.studentChoice });
 
             // INTRO is special: student choice determines next phase directly
             const nextPhase = phaseState.studentChoice === 'test' ? PHASES.MASTERY_CHECK : PHASES.WARMUP;
             transitionPhase(phaseState, nextPhase, `Student chose: ${phaseState.studentChoice}`);
-            console.log(`[Phase Transition] ${PHASES.INTRO} → ${nextPhase}`);
+            logger.info('Phase transition', { from: PHASES.INTRO, to: nextPhase });
             activeConversation.markModified?.('phaseState');
         }
 
@@ -1102,7 +1107,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             });
         } catch (pipelineError) {
             // Pipeline failed — fall back to direct LLM call so student always gets a response
-            console.error('[Pipeline] FALLBACK triggered:', pipelineError.message);
+            logger.error('Pipeline fallback triggered', { error: pipelineError.message });
 
             const fallbackMessages = [
                 { role: 'system', content: systemPrompt },
@@ -1118,7 +1123,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 fallbackText = completion.choices[0]?.message?.content?.trim()
                     || "I'm sorry, I had a hiccup! Could you say that again?";
             } catch (llmError) {
-                console.error('[Pipeline] Fallback LLM also failed:', llmError.message);
+                logger.error('Pipeline fallback LLM also failed', { error: llmError.message });
                 fallbackText = "I'm having trouble thinking right now. Could you try sending that again in a moment?";
             }
 
@@ -1133,10 +1138,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 });
                 fallbackText = fallbackVerified.text;
                 if (fallbackVerified.flags.length > 0) {
-                    console.log(`[Pipeline] Fallback verify: ${fallbackVerified.flags.join(', ')}`);
+                    logger.info('Pipeline fallback verify flags', { flags: fallbackVerified.flags });
                 }
             } catch (verifyErr) {
-                console.error('[Pipeline] Fallback verify failed (using unverified):', verifyErr.message);
+                logger.error('Pipeline fallback verify failed (using unverified)', { error: verifyErr.message });
             }
 
             // Minimal conversation save so the message isn't lost
@@ -1146,7 +1151,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 activeConversation.lastActivity = new Date();
                 await activeConversation.save();
             } catch (saveErr) {
-                console.error('[Pipeline] Fallback conversation save failed:', saveErr.message);
+                logger.error('Pipeline fallback conversation save failed', { error: saveErr.message });
             }
 
             pipelineResult = {
@@ -1180,7 +1185,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         // Smart auto-naming (update session name if still generic)
         const { smartAutoName } = require('../services/chatService');
         smartAutoName(activeConversation._id).catch(err =>
-            console.error('[Chat] Smart auto-name failed:', err)
+            logger.error('Smart auto-name failed', err)
         );
 
         // Save uploaded files to student's resource library (fire-and-forget)
@@ -1218,9 +1223,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             conversationId: activeConversation._id
                         });
                         await studentUpload.save();
-                        console.log(`[Chat] Saved upload: ${studentUpload._id} — ${file.originalname}`);
+                        logger.info('Upload saved', { uploadId: studentUpload._id, filename: file.originalname });
                     } catch (saveError) {
-                        console.error(`[Chat] Error saving file ${file.originalname}:`, saveError.message);
+                        logger.error('Error saving uploaded file', { filename: file.originalname, error: saveError.message });
                     }
                 }
 
@@ -1230,13 +1235,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                         try { fsSync.unlinkSync(file.path); } catch(e) {}
                     }
                 }
-            })().catch(err => console.error('[Chat] Upload persistence error:', err.message));
+            })().catch(err => logger.error('Upload persistence error', { error: err.message }));
         }
 
         // Quest system update
         if (pipelineResult.problemResult) {
             updateQuestProgress(user._id, pipelineResult.problemResult === 'correct', activeConversation.currentTopic).catch(err => {
-                console.error('[Quest] Failed to update quest progress:', err.message);
+                logger.error('Failed to update quest progress', { error: err.message });
             });
         }
 
@@ -1304,7 +1309,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     }
                 }
             } catch (courseErr) {
-                console.error('[Course] Scaffold progression error:', courseErr.message);
+                logger.error('Course scaffold progression error', { error: courseErr.message });
             }
         }
 
@@ -1371,7 +1376,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
                     res.end();
                 } catch (writeErr) {
-                    console.error('[Stream] Failed to send completion event:', writeErr.message);
+                    logger.error('Failed to send stream completion event', { error: writeErr.message });
                 }
             }
         } else {
@@ -1379,14 +1384,14 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         }
 
     } catch (error) {
-        console.error("ERROR: Chat route failed:", error);
+        logger.error('Chat route failed', error);
         // Prevent "headers already sent" crash during streaming mode
         if (res.headersSent) {
             try {
                 res.write(`data: ${JSON.stringify({ type: 'error', message: 'Something went wrong. Please try again.' })}\n\n`);
                 res.end();
             } catch (writeErr) {
-                console.error("ERROR: Failed to send error event on stream:", writeErr.message);
+                logger.error('Failed to send error event on stream', { error: writeErr.message });
             }
         } else {
             res.status(500).json({ message: "An internal server error occurred." });
@@ -1438,7 +1443,7 @@ async function handleParentChat(req, res, parentId, childId, message) {
                     curriculumContext = curriculum.getAIContext();
                 }
             } catch (error) {
-                console.error('Error fetching curriculum context:', error);
+                logger.error('Error fetching curriculum context', error);
             }
         }
 
@@ -1503,7 +1508,7 @@ async function handleParentChat(req, res, parentId, childId, message) {
         });
 
     } catch (error) {
-        console.error("ERROR: Parent chat failed:", error);
+        logger.error('Parent chat failed', error);
         res.status(500).json({ message: "An internal server error occurred." });
     }
 }
@@ -1661,7 +1666,7 @@ router.post('/deduct-hint-xp', isAuthenticated, async (req, res) => {
 
         return res.json({ success: true, deducted: cost, remainingXp: user.xp });
     } catch (err) {
-        console.error('[Hint] XP deduction error:', err.message);
+        logger.error('Hint XP deduction error', { error: err.message });
         return res.status(500).json({ error: 'Failed to deduct XP' });
     }
 });
@@ -1700,7 +1705,7 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         // Build atomic update for user
         let userUpdate;
         if (needsWeeklyReset) {
-            console.log(`[Track-Time] Weekly reset for user ${userId}: ${user.weeklyActiveTutoringMinutes || 0} active min, ${Math.floor((user.weeklyAISeconds || 0) / 60)} AI min -> 0`);
+            logger.info('Weekly time tracking reset', { userId, weeklyActiveMin: user.weeklyActiveTutoringMinutes || 0, weeklyAIMin: Math.floor((user.weeklyAISeconds || 0) / 60) });
             const newTotalSeconds = baseTotalSeconds + activeSeconds;
             userUpdate = {
                 $set: {
@@ -1760,7 +1765,7 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         });
 
     } catch (error) {
-        console.error("ERROR: Track time failed:", error);
+        logger.error('Track time failed', error);
         res.status(500).json({ message: "Failed to track time" });
     }
 });
@@ -1807,7 +1812,7 @@ router.get('/last-session', isAuthenticated, async (req, res) => {
         });
 
     } catch (error) {
-        console.error("ERROR: Fetch last session failed:", error);
+        logger.error('Fetch last session failed', error);
         res.status(500).json({ message: "Failed to fetch last session" });
     }
 });
@@ -1892,7 +1897,7 @@ router.get('/resume-context', isAuthenticated, async (req, res) => {
         });
 
     } catch (error) {
-        console.error("ERROR: Fetch resume context failed:", error);
+        logger.error('Fetch resume context failed', error);
         res.status(500).json({ message: "Failed to fetch resume context" });
     }
 });
@@ -2069,7 +2074,7 @@ async function handleGreetingRequest(req, res, userId) {
 
         const ghostMessage = ghostMessageParts.join('. ') + '.';
 
-        console.log(`[Greeting] Ghost message for ${user.firstName}: "${ghostMessage.substring(0, 100)}..."`);
+        logger.debug('Greeting ghost message built', { userId, messagePreview: ghostMessage.substring(0, 100) });
 
         // Build messages for AI - the ghost message is the "user" message
         // but we add a system instruction to respond as if initiating
@@ -2104,7 +2109,7 @@ async function handleGreetingRequest(req, res, userId) {
                     }
                 }
             } catch (courseErr) {
-                console.warn('[Greeting] Could not load course context:', courseErr.message);
+                logger.warn('Could not load greeting course context', { error: courseErr.message });
             }
         }
 
@@ -2130,7 +2135,7 @@ async function handleGreetingRequest(req, res, userId) {
                 currentModule: courseContext.currentModule
             });
             maxTokens = 800; // Course greetings include teaching content
-            console.log(`[Greeting] Course mode: ${courseContext.courseSession.courseName}, module: ${courseContext.courseSession.currentModuleId}`);
+            logger.debug('Greeting course mode', { courseName: courseContext.courseSession.courseName, moduleId: courseContext.courseSession.currentModuleId });
         } else {
             // GENERAL TUTORING MODE: Build greeting with full student context
 
@@ -2160,10 +2165,10 @@ async function handleGreetingRequest(req, res, userId) {
                         tutorProfile: currentTutor,
                         lastConversation: lastSessionContext ? { context: lastSessionContext, struggling: strugglingWith, lastProblemState: activeConversation.lastProblemState || null } : null,
                     });
-                    console.log(`[Greeting] Session opener strategy: ${openerResult.strategy}`);
+                    logger.debug('Session opener strategy', { strategy: openerResult.strategy });
                 }
             } catch (openerErr) {
-                console.warn('[Greeting] Session opener error (falling back to default):', openerErr.message);
+                logger.warn('Session opener error (falling back to default)', { error: openerErr.message });
             }
 
             // Check if we should offer Starting Point in this greeting (only once, ever)
@@ -2249,7 +2254,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 const greetingAiSeconds = Math.ceil((Date.now() - greetingAiStart) / 1000);
                 User.findByIdAndUpdate(userId, {
                     $inc: { weeklyAISeconds: greetingAiSeconds, totalAISeconds: greetingAiSeconds }
-                }).catch(err => console.error('[Greeting] AI time tracking error:', err));
+                }).catch(err => logger.error('Greeting AI time tracking error', err));
 
                 // IEP reading level enforcement (post-stream)
                 let greetingText = fullResponse.trim();
@@ -2257,9 +2262,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 if (greetingIepLevel) {
                     const readCheck = checkReadingLevel(greetingText, greetingIepLevel);
                     if (!readCheck.passes) {
-                        console.log(
-                            `[Greeting] Reading level violation: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
-                        );
+                        logger.info('Greeting reading level violation', { responseGrade: readCheck.responseGrade, targetGrade: readCheck.targetGrade });
                         try {
                             const simplifyPrompt = buildSimplificationPrompt(greetingText, readCheck.targetGrade, user.firstName || 'the student');
                             const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], {
@@ -2269,10 +2272,10 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                             if (simplifiedText && simplifiedText.length > 20) {
                                 greetingText = simplifiedText;
                                 res.write(`data: ${JSON.stringify({ type: 'replacement', content: greetingText })}\n\n`);
-                                console.log(`[Greeting] Response simplified to target Grade ${readCheck.targetGrade}`);
+                                logger.info('Greeting response simplified', { targetGrade: readCheck.targetGrade });
                             }
                         } catch (err) {
-                            console.error('[Greeting] Simplification failed:', err.message);
+                            logger.error('Greeting simplification failed', { error: err.message });
                         }
                     }
                 }
@@ -2292,7 +2295,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                         startingPointOffered: true,
                         startingPointOfferedAt: new Date()
                     });
-                    console.log(`[Greeting] Marked Starting Point as offered for user ${userId}`);
+                    logger.info('Starting Point marked as offered', { userId });
                 }
 
                 // Send completion with metadata
@@ -2308,7 +2311,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                 res.end();
 
             } catch (streamError) {
-                console.error('[Greeting] Stream error:', streamError);
+                logger.error('Greeting stream error', streamError);
                 res.write(`data: ${JSON.stringify({ error: 'Stream failed' })}\n\n`);
                 res.end();
             }
@@ -2323,9 +2326,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             if (nsGreetingIepLevel) {
                 const readCheck = checkReadingLevel(greetingText, nsGreetingIepLevel);
                 if (!readCheck.passes) {
-                    console.log(
-                        `[Greeting] Reading level violation: response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
-                    );
+                    logger.info('Greeting reading level violation', { responseGrade: readCheck.responseGrade, targetGrade: readCheck.targetGrade });
                     try {
                         const simplifyPrompt = buildSimplificationPrompt(greetingText, readCheck.targetGrade, user.firstName || 'the student');
                         const simplified = await callLLM(PRIMARY_CHAT_MODEL, [{ role: 'system', content: simplifyPrompt }], {
@@ -2334,10 +2335,10 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                         const simplifiedText = simplified.choices[0]?.message?.content?.trim();
                         if (simplifiedText && simplifiedText.length > 20) {
                             greetingText = simplifiedText;
-                            console.log(`[Greeting] Response simplified to target Grade ${readCheck.targetGrade}`);
+                            logger.info('Greeting response simplified', { targetGrade: readCheck.targetGrade });
                         }
                     } catch (err) {
-                        console.error('[Greeting] Simplification failed:', err.message);
+                        logger.error('Greeting simplification failed', { error: err.message });
                     }
                 }
             }
@@ -2346,7 +2347,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
             const greetingAiSeconds = Math.ceil((Date.now() - greetingAiStart) / 1000);
             User.findByIdAndUpdate(userId, {
                 $inc: { weeklyAISeconds: greetingAiSeconds, totalAISeconds: greetingAiSeconds }
-            }).catch(err => console.error('[Greeting] AI time tracking error:', err));
+            }).catch(err => logger.error('Greeting AI time tracking error', err));
 
             // Save greeting to conversation
             activeConversation.messages.push({
@@ -2363,7 +2364,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
                     startingPointOffered: true,
                     startingPointOfferedAt: new Date()
                 });
-                console.log(`[Greeting] Marked Starting Point as offered for user ${userId}`);
+                logger.info('Starting Point marked as offered', { userId });
             }
 
             const greetingResponse = {
@@ -2381,7 +2382,7 @@ Keep it casual and low-pressure. Don't make it sound like a test they need to ta
         }
 
     } catch (error) {
-        console.error('[Greeting] Error:', error);
+        logger.error('Greeting handler error', error);
 
         // Fallback greeting
         const fallbackGreetings = [
