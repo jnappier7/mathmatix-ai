@@ -232,17 +232,57 @@
   line-height: 1.2;
 }
 
+/* EQ page — subtle teal-tinted background to set it apart */
+.mx-kb-page[data-page="eq"] {
+  position: relative;
+  background: linear-gradient(180deg, rgba(18, 179, 179, 0.06) 0%, rgba(18, 179, 179, 0.02) 100%);
+  border-radius: 8px 8px 0 0;
+  margin: 0 -3px;
+  padding: 6px 3px 0;
+}
+
+[data-theme="dark"] .mx-kb-page[data-page="eq"] {
+  background: linear-gradient(180deg, rgba(45, 212, 191, 0.08) 0%, rgba(45, 212, 191, 0.02) 100%);
+}
+
+/* M∆ watermark — subtle brand mark in the EQ page corner */
+.mx-kb-page[data-page="eq"]::after {
+  content: 'M\0394';
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: rgba(18, 179, 179, 0.2);
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+[data-theme="dark"] .mx-kb-page[data-page="eq"]::after {
+  color: rgba(45, 212, 191, 0.2);
+}
+
+/* EQ keys get a subtle teal bottom-edge to feel "math-powered" */
+.mx-kb-page[data-page="eq"] .mx-key-eq {
+  box-shadow: 0 1px 0 rgba(18, 179, 179, 0.35);
+}
+
+[data-theme="dark"] .mx-kb-page[data-page="eq"] .mx-key-eq {
+  box-shadow: 0 1px 0 rgba(45, 212, 191, 0.3);
+}
+
 .mx-key-eq .mx-key-hint {
   display: block;
   font-size: 9px;
-  color: #888;
-  font-weight: 400;
+  color: rgba(18, 179, 179, 0.7);
+  font-weight: 500;
   letter-spacing: 0.3px;
   margin-top: 1px;
 }
 
 [data-theme="dark"] .mx-key-eq .mx-key-hint {
-  color: #aaa;
+  color: rgba(45, 212, 191, 0.7);
 }
 
 .mx-key-wide {
