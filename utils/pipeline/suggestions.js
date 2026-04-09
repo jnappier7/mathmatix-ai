@@ -28,7 +28,7 @@ const ACTION_SUGGESTIONS = {
     { text: 'Different topic', message: 'Can we work on a different topic?' },
   ],
   [ACTIONS.GUIDE_INCORRECT]: [
-    { text: 'Walk me through it', message: 'Can you walk me through the solution step by step?' },
+    { text: 'Help me start', message: 'Can you help me figure out the first step?' },
     { text: 'Where did I go wrong?', message: 'Where did I go wrong in my thinking?' },
     { text: 'Try again', message: 'Let me try that problem again' },
     { text: 'Easier version', message: 'Can you give me an easier version of that problem?' },
@@ -41,7 +41,7 @@ const ACTION_SUGGESTIONS = {
   ],
   [ACTIONS.HINT]: [
     { text: 'Another hint', message: 'Can you give me one more hint?' },
-    { text: 'Show the steps', message: 'Can you show me the full steps?' },
+    { text: 'What do I do next?', message: 'What should I do next?' },
     { text: 'I think I see it', message: 'I think I see it now, let me try' },
     { text: 'Skip this one', message: 'Can we skip this and try a different one?' },
   ],
