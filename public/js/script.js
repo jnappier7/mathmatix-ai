@@ -1839,7 +1839,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 mxField.value = '';
                 if (window.MathmatixKeyboard) window.MathmatixKeyboard.hide();
-                document.body.classList.remove('mx-keyboard-active');
                 queueMessage(msgText, [], null);
                 return;
             }
@@ -3421,13 +3420,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 !e.target.closest('#mx-compose-field') &&
                 !e.target.closest('.imessage-compose-bar')) {
                 window.MathmatixKeyboard.hide();
-                document.body.classList.remove('mx-keyboard-active');
             }
-        });
-
-        // Show keyboard on compose field focus
-        mxComposeField.addEventListener('focus', () => {
-            document.body.classList.add('mx-keyboard-active');
         });
     }
 

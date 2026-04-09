@@ -257,12 +257,38 @@
 
 /* --- Mobile Compose Bar Adjustments (when keyboard is visible) --- */
 
-/* When custom keyboard is showing, push compose bar up */
+/*
+ * The keyboard is position:fixed at the bottom. The compose bar is a flex
+ * child above it. When the keyboard slides up we:
+ *   1. Add bottom-padding to the layout wrapper so the compose bar
+ *      sits above the keyboard (not behind it).
+ *   2. Hide the fixed bottom nav bar so it doesn't overlap the keyboard.
+ *   3. Scroll chat up so the latest messages stay visible.
+ *
+ * --mx-kb-height is set dynamically by JS after the keyboard renders.
+ * Fallback: 216px (4 rows × 42px + gaps + padding).
+ */
+
+body.mx-keyboard-active #app-layout-wrapper {
+  padding-bottom: var(--mx-kb-height, 216px) !important;
+}
+
+/* Hide the fixed bottom nav when keyboard is showing */
+body.mx-keyboard-active .mobile-chat-nav {
+  display: none !important;
+}
+
+/* Tighten compose bar padding when keyboard is up */
 body.mx-keyboard-active .imessage-compose-bar {
   padding-bottom: 4px;
 }
 
-/* Math field as primary input on mobile */
+/* Chat messages — extra bottom padding so content isn't hidden */
+body.mx-keyboard-active #chat-messages-container {
+  padding-bottom: 60px;
+}
+
+/* --- Math Field as Primary Input on Mobile --- */
 #mx-compose-field {
   flex: 1;
   min-height: 40px;
@@ -294,14 +320,14 @@ body.mx-keyboard-active .imessage-compose-bar {
   box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.2);
 }
 
-/* Hide MathLive's built-in keyboard toolbar */
+/* Hide MathLive's built-in virtual keyboard toggle button */
 #mx-compose-field::part(virtual-keyboard-toggle) {
   display: none !important;
 }
 
-/* Hide chat messages scroll padding when keyboard is up */
-body.mx-keyboard-active #chat-messages-container {
-  padding-bottom: 320px;
+/* Suppress any MathLive-triggered virtual keyboard panel globally */
+body.mx-keyboard-active .ML__keyboard {
+  display: none !important;
 }
 
 /* Only show custom keyboard elements on mobile */

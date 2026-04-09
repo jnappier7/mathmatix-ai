@@ -123,26 +123,78 @@
     keyboardEl = buildKeyboard();
     opts.container.appendChild(keyboardEl);
 
-    // Suppress native keyboard on the math field
-    mathField.setAttribute('inputmode', 'none');
-    mathField.mathVirtualKeyboardPolicy = 'manual';
+    // ─── NATIVE KEYBOARD SUPPRESSION (multiple layers) ──────────────
+    suppressNativeKeyboard();
+
+    // Re-suppress on every focus (browsers can reset inputmode)
+    mathField.addEventListener('focus', () => {
+      suppressNativeKeyboard();
+      show();
+    });
+
+    // MathLive may try to show its virtual keyboard — intercept
     if (window.mathVirtualKeyboard) {
-      window.mathVirtualKeyboard.visible = false;
+      try {
+        Object.defineProperty(window.mathVirtualKeyboard, 'visible', {
+          get: () => false,
+          set: () => {},       // silently swallow
+          configurable: true,
+        });
+      } catch (_) { /* non-critical */ }
     }
 
-    // Show keyboard when math field is focused
-    mathField.addEventListener('focus', () => {
-      show();
-      // Re-suppress native keyboard
-      mathField.setAttribute('inputmode', 'none');
-      if (window.mathVirtualKeyboard) {
-        window.mathVirtualKeyboard.visible = false;
+    // Re-suppress after orientation change or app-switch-back
+    window.addEventListener('orientationchange', () => {
+      setTimeout(suppressNativeKeyboard, 300);
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && isVisible()) {
+        suppressNativeKeyboard();
       }
+    });
+
+    // ─── KEYBOARD HEIGHT → CSS VARIABLE ─────────────────────────────
+    // After first render, measure height and expose as CSS custom property
+    // so the layout wrapper can reserve the exact space.
+    requestAnimationFrame(() => {
+      updateKeyboardHeightVar();
     });
 
     // Show ABC page by default
     switchPage('abc');
     initialized = true;
+  }
+
+  /** Apply every suppression trick we have. Called on init, focus, resume. */
+  function suppressNativeKeyboard() {
+    if (!mathField) return;
+
+    // HTML attribute — tells the browser "no virtual keyboard"
+    mathField.setAttribute('inputmode', 'none');
+
+    // MathLive-specific policy
+    mathField.mathVirtualKeyboardPolicy = 'manual';
+
+    // If MathLive exposed a global virtual keyboard, hide it
+    if (window.mathVirtualKeyboard) {
+      try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
+    }
+
+    // Readonly trick: briefly set readonly to dismiss any lingering keyboard,
+    // then clear it so MathLive can still receive programmatic input.
+    // (MathLive math-fields don't use the HTML readonly attribute for their
+    //  internal editing, so this only affects the browser's native focus path.)
+    mathField.setAttribute('readonly', 'readonly');
+    setTimeout(() => mathField.removeAttribute('readonly'), 20);
+  }
+
+  /** Measure keyboard and set --mx-kb-height on <body> */
+  function updateKeyboardHeightVar() {
+    if (!keyboardEl) return;
+    const h = keyboardEl.offsetHeight;
+    if (h > 0) {
+      document.body.style.setProperty('--mx-kb-height', h + 'px');
+    }
   }
 
   // ─── KEYBOARD CONSTRUCTION ──────────────────────────────────────────
@@ -417,15 +469,23 @@
   // ─── SHOW / HIDE ───────────────────────────────────────────────────
 
   function show() {
-    if (keyboardEl) {
-      keyboardEl.classList.add('mx-keyboard-visible');
+    if (!keyboardEl) return;
+    keyboardEl.classList.add('mx-keyboard-visible');
+    document.body.classList.add('mx-keyboard-active');
+    suppressNativeKeyboard();
+    // After slide-in animation, re-measure height (may differ by page)
+    setTimeout(updateKeyboardHeightVar, 280);
+    // Scroll chat to bottom so the latest message is visible
+    const chat = document.getElementById('chat-messages-container');
+    if (chat) {
+      requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
     }
   }
 
   function hide() {
-    if (keyboardEl) {
-      keyboardEl.classList.remove('mx-keyboard-visible');
-    }
+    if (!keyboardEl) return;
+    keyboardEl.classList.remove('mx-keyboard-visible');
+    document.body.classList.remove('mx-keyboard-active');
   }
 
   function isVisible() {
