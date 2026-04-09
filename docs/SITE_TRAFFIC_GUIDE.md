@@ -7,7 +7,7 @@ Mathmatix AI uses two analytics systems working together:
 | System | ID | Purpose |
 |--------|------|---------|
 | Google Tag Manager (GTM) | `GTM-WDF79L47` | Container that manages all tracking tags |
-| Google Analytics 4 (GA4) | `G-EMX730XF5H` | Collects page views, events, and user behavior |
+| Google Analytics 4 (GA4) | `G-EMX73QXF5H` | Collects page views, events, and user behavior |
 
 ## How It Works
 
@@ -18,7 +18,7 @@ Mathmatix AI uses two analytics systems working together:
 
 ### Google Analytics 4 (GA4) — Direct Integration
 - Loaded via `/public/js/analytics.js`
-- Measurement ID is set on each HTML page via `data-ga="G-EMX730XF5H"` attribute
+- Measurement ID is set on each HTML page via `data-ga="G-EMX73QXF5H"` attribute
 - Automatically tracks: page views, scrolls, outbound clicks, site search, video engagement, file downloads
 
 ### Custom Events Tracked (in `analytics.js`)
