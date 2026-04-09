@@ -995,4 +995,44 @@ describe('Pipeline: normalizeLatex', () => {
       expect(result).toContain('\\times');
     });
   });
+
+  describe('strips LaTeX delimiters from English prose', () => {
+    test('removes \\( \\) around English text like "the coefficient of x"', () => {
+      const result = normalizeLatex('add up to 5 \\(the coefficient of x\\)');
+      expect(result).not.toContain('\\(the coefficient');
+      expect(result).toContain('the coefficient of x');
+    });
+
+    test('removes \\( \\) around "the constant term"', () => {
+      const result = normalizeLatex('multiply to 6 \\(the constant term\\)');
+      expect(result).not.toContain('\\(the constant');
+      expect(result).toContain('the constant term');
+    });
+
+    test('keeps valid inline math like \\( x + 3 \\)', () => {
+      const result = normalizeLatex('Solve \\(x + 3 = 7\\)');
+      expect(result).toContain('\\(x + 3 = 7\\)');
+    });
+
+    test('keeps LaTeX commands like \\( \\frac{1}{2} \\)', () => {
+      const result = normalizeLatex('The answer is \\(\\frac{1}{2}\\)');
+      expect(result).toContain('\\(\\frac{1}{2}\\)');
+    });
+
+    test('keeps \\( x^2 \\) (no English words)', () => {
+      const result = normalizeLatex('Factor \\(x^2 + 5x + 6\\)');
+      expect(result).toContain('\\(x^2 + 5x + 6\\)');
+    });
+
+    test('removes \\[ \\] around English prose in display math', () => {
+      const result = normalizeLatex('\\[the value of x\\]');
+      expect(result).not.toContain('\\[the value');
+      expect(result).toContain('the value of x');
+    });
+
+    test('keeps \\( \\text{...} \\) with LaTeX commands', () => {
+      const result = normalizeLatex('\\(\\text{coefficient} = 5\\)');
+      expect(result).toContain('\\(\\text{coefficient} = 5\\)');
+    });
+  });
 });

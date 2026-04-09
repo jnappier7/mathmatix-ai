@@ -685,6 +685,28 @@ function normalizeLatex(text) {
     result = result.replace(`@@VISUAL_CMD_${index}@@`, block);
   });
 
+  // ── 5. Strip LaTeX delimiters wrapping English prose ──
+  // AI sometimes puts natural language inside \( \), e.g.:
+  //   \(the coefficient of x\)  →  renders broken red text in KaTeX
+  // Detect common English words inside delimiters and remove them.
+  // Words like "the", "coefficient", "of" are never valid LaTeX.
+  const ENGLISH_WORD = /\b(the|and|for|but|not|this|that|with|from|have|what|when|where|which|their|there|each|some|like|also|just|only|about|because|between|coefficient|constant|variable|number|value|equation|expression|term|multiply|divide|subtract|result|answer|solution|difference|product|quotient|means|called|gives|becomes|since|both|into|same|side|step|next|then|first|second|third|positive|negative)\b/i;
+  result = result.replace(/\\\(([\s\S]*?)\\\)/g, (match, inner) => {
+    // Keep blocks with LaTeX commands — those are intentional math
+    if (/\\[a-zA-Z]/.test(inner)) return match;
+    if (ENGLISH_WORD.test(inner)) {
+      return inner.trim();
+    }
+    return match;
+  });
+  result = result.replace(/\\\[([\s\S]*?)\\\]/g, (match, inner) => {
+    if (/\\[a-zA-Z]/.test(inner)) return match;
+    if (ENGLISH_WORD.test(inner)) {
+      return inner.trim();
+    }
+    return match;
+  });
+
   return result;
 }
 
