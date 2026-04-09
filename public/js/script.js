@@ -1821,6 +1821,29 @@ document.addEventListener("DOMContentLoaded", () => {
             window.InlineEquationBox.sealAll();
         }
 
+        // If custom mobile keyboard is active, grab from its math-field
+        const mxField = document.getElementById('mx-compose-field');
+        if (mxField && mxField.style.display !== 'none' && window.innerWidth <= 768) {
+            let mxLatex = (mxField.value || '').trim();
+            if (mxLatex) {
+                // Smart-mode: MathLive wraps plain text in \text{}.
+                // Extract plain text portions and keep math portions wrapped.
+                let msgText = mxLatex;
+                // If the entire value is just \text{...}, send as plain text
+                const textOnly = mxLatex.match(/^\\text\{(.+)\}$/);
+                if (textOnly) {
+                    msgText = textOnly[1];
+                } else {
+                    // Contains math — wrap for rendering
+                    msgText = '\\(' + mxLatex + '\\)';
+                }
+                mxField.value = '';
+                if (window.MathmatixKeyboard) window.MathmatixKeyboard.hide();
+                queueMessage(msgText, [], null);
+                return;
+            }
+        }
+
         // If math keyboard is active, grab its content first
         const mkFieldEl = document.getElementById('math-keyboard-field');
         const mkWrapperEl = document.getElementById('math-input-wrapper');
@@ -3368,6 +3391,33 @@ document.addEventListener("DOMContentLoaded", () => {
     // instead of swapping the entire input for a math-field.
     if (window.InlineEquationBox && userInput) {
         window.InlineEquationBox.init(userInput, sendMessage);
+    }
+
+    // ─── Mathmatix Custom Keyboard (mobile only) ─────────────────────
+    // On mobile, replace the contenteditable with a MathLive math-field
+    // and show our custom iOS-style keyboard (ABC / 123 / EQ pages).
+    const mxComposeField = document.getElementById('mx-compose-field');
+    const mxKeyboardContainer = document.getElementById('mx-keyboard-container');
+    if (window.MathmatixKeyboard && mxComposeField && mxKeyboardContainer && window.innerWidth <= 768) {
+        // Show the MathLive field, hide the contenteditable on mobile
+        mxComposeField.style.display = '';
+        userInput.style.display = 'none';
+
+        window.MathmatixKeyboard.init({
+            mathField: mxComposeField,
+            textInput: userInput,
+            container: mxKeyboardContainer,
+            onSend: sendMessage,
+        });
+
+        // Tap anywhere outside keyboard & compose to hide it
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.mx-keyboard') &&
+                !e.target.closest('#mx-compose-field') &&
+                !e.target.closest('.imessage-compose-bar')) {
+                window.MathmatixKeyboard.hide();
+            }
+        });
     }
 
     /**
