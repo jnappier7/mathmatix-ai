@@ -58,7 +58,7 @@ const voiceRoutes = require('../routes/voice');
 const voiceTestRoutes = require('../routes/voice-test');
 const voiceTutorRoutes = require('../routes/voiceTutor');
 const uploadRoutes = require('../routes/upload');
-const chatWithFileRoutes = require('../routes/chatWithFile');
+// chatWithFile: REMOVED — file uploads consolidated into /api/chat
 const welcomeRoutes = require('../routes/welcome');
 const rapportBuildingRoutes = require('../routes/rapportBuilding');
 const { router: memoryRouter } = require('../routes/memory');
@@ -71,7 +71,7 @@ const screenerRoutes = require('../routes/screener');
 const checkpointRoutes = require('../routes/checkpoint');
 const growthCheckRoutes = require('../routes/growthCheck');
 const masteryRoutes = require('../routes/mastery');
-const masteryChatRoutes = require('../routes/masteryChat');
+// masteryChat: REMOVED — mastery mode consolidated into /api/chat with { mastery: true }
 const reviewRoutes = require('../routes/review');
 const teacherResourceRoutes = require('../routes/teacherResources');
 const settingsRoutes = require('../routes/settings');
@@ -184,8 +184,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
-  // DEPRECATED: file uploads now go through /api/chat. This redirect preserves backwards compatibility.
-  app.use('/api/chat-with-file', isAuthenticated, aiEndpointLimiter, usageGate, chatWithFileRoutes);
+  // chatWithFile route REMOVED — file uploads consolidated into /api/chat
   app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, welcomeRoutes);
   app.use('/api/rapport', isAuthenticated, aiEndpointLimiter, rapportBuildingRoutes);
   app.use('/api/memory', isAuthenticated, memoryRouter);
@@ -210,7 +209,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/checkpoint', isAuthenticated, checkpointRoutes);
   app.use('/api/growth-check', isAuthenticated, growthCheckRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
-  app.use('/api/mastery/chat', isAuthenticated, aiEndpointLimiter, usageGate, masteryChatRoutes);
+  // masteryChat route REMOVED — mastery mode consolidated into /api/chat
   app.use('/api/review', isAuthenticated, reviewRoutes);
   app.use('/api/settings', isAuthenticated, settingsRoutes);
   app.use('/api/email', isAuthenticated, emailRoutes);
