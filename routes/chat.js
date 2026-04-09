@@ -922,6 +922,14 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             }
         }
 
+        // Determine if student has recent uploads (used below for worksheet guard
+        // injection AND passed to the pipeline's observe stage).
+        const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
+            recentUploads.some(u => {
+                const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
+                return daysAgo <= 1;
+            });
+
         // ── File upload: vision message formatting + worksheet guard ──
         // When files are uploaded in THIS request, build multimodal content
         // for the last user message so the LLM sees the images.
@@ -968,13 +976,6 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             res.flushHeaders();
             req.on('close', () => { clientDisconnected = true; });
         }
-
-        // Determine if student has recent uploads (for observe stage)
-        const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
-            recentUploads.some(u => {
-                const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
-                return daysAgo <= 1;
-            });
 
         // ── Re-entry detection & topic override ──
         // Load TutorPlan once — reused by the pipeline via ctx.tutorPlan to

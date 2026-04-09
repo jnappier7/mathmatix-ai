@@ -352,19 +352,37 @@ async function runPipeline(message, ctx) {
       }
     }
 
-    persistResults = await persist({
-      user: ctx.user,
-      conversation: ctx.conversation,
-      extracted: verified.extracted,
-      diagnosis,
-      observation,
-      decision,
-      responseText: verified.text,
-      originalMessage: message,
-      aiProcessingSeconds,
-      sessionMood,
-      evidence,
-    });
+    try {
+      persistResults = await persist({
+        user: ctx.user,
+        conversation: ctx.conversation,
+        extracted: verified.extracted,
+        diagnosis,
+        observation,
+        decision,
+        responseText: verified.text,
+        originalMessage: message,
+        aiProcessingSeconds,
+        sessionMood,
+        evidence,
+      });
+    } catch (persistErr) {
+      console.error('[Pipeline] Persist stage failed (non-fatal):', persistErr.message);
+      // Return safe defaults so the student still gets their response
+      persistResults = {
+        xpBreakdown: { tier1: 0, tier2: 0, tier2Type: null, tier3: 0, tier3Behavior: null, total: 0 },
+        problemAnswered: false,
+        wasCorrect: false,
+        wasSkipped: false,
+        leveledUp: false,
+        tutorsUnlocked: [],
+        avatarBuilderUnlocked: false,
+        iepGoalUpdates: [],
+        courseProgressUpdate: null,
+        aiTimeUsed: 0,
+        freeWeeklySecondsRemaining: null,
+      };
+    }
 
     // ── Update Tutor Plan after interaction (evidence-driven) ──
     if (tutorPlan) {
