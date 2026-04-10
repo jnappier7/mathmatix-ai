@@ -123,19 +123,51 @@
     opts.container.appendChild(keyboardEl);
 
     // ─── NATIVE KEYBOARD SUPPRESSION ────────────────────────────────
-    // Set inputmode=none on the contenteditable to prevent the native
-    // keyboard from appearing. On focus, re-apply and show our keyboard.
     suppressNativeKeyboard();
 
+    // Show keyboard when contenteditable gets focus
     textInput.addEventListener('focus', () => {
       suppressNativeKeyboard();
       show();
     });
 
-    // When the contenteditable is tapped, ensure cursor is placed
+    // Also show keyboard when contenteditable is tapped (even if already focused)
     textInput.addEventListener('touchstart', () => {
       suppressNativeKeyboard();
+      show();
     });
+
+    // Show keyboard when ANY math-field inside the contenteditable gets focus
+    // (inline equation boxes create math-fields that steal focus from textInput)
+    textInput.addEventListener('focusin', (e) => {
+      if (e.target.tagName === 'MATH-FIELD' || e.target.closest('math-field')) {
+        suppressNativeKeyboard();
+        // Also suppress on the math-field itself
+        const mf = e.target.tagName === 'MATH-FIELD' ? e.target : e.target.closest('math-field');
+        if (mf) {
+          mf.setAttribute('inputmode', 'none');
+          mf.mathVirtualKeyboardPolicy = 'manual';
+          try {
+            const shadow = mf.shadowRoot;
+            if (shadow) {
+              const ta = shadow.querySelector('textarea');
+              if (ta) ta.setAttribute('inputmode', 'none');
+            }
+          } catch (_) {}
+        }
+        show();
+      }
+    });
+
+    // Show keyboard when the entire compose bar is tapped
+    const composeBar = textInput.closest('.imessage-compose-bar') || textInput.closest('.imessage-input-row');
+    if (composeBar) {
+      composeBar.addEventListener('touchstart', (e) => {
+        // Don't intercept button taps (send, mic, etc.)
+        if (e.target.closest('button') && !e.target.closest('#user-input')) return;
+        show();
+      });
+    }
 
     // Re-suppress after orientation change or app-switch-back
     window.addEventListener('orientationchange', () => {
@@ -154,6 +186,8 @@
 
     switchPage('abc');
     initialized = true;
+
+    console.log('[MathmatixKeyboard] Initialized on mobile');
   }
 
   /** Suppress native keyboard on the contenteditable */
@@ -589,7 +623,10 @@
   // ─── SHOW / HIDE ───────────────────────────────────────────────────
 
   function show() {
-    if (!keyboardEl) return;
+    if (!keyboardEl) {
+      console.warn('[MathmatixKeyboard] show() called but keyboardEl is null');
+      return;
+    }
     const wasVisible = keyboardEl.classList.contains('mx-keyboard-visible');
     keyboardEl.classList.add('mx-keyboard-visible');
     document.body.classList.add('mx-keyboard-active');

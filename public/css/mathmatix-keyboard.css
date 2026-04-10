@@ -352,7 +352,13 @@ body.mx-keyboard-mode .inline-eq-field {
   caret-color: var(--clr-primary-teal, #12B3B3);
 }
 
+/* Hide MathLive's virtual keyboard toggle icon everywhere on mobile */
+body.mx-keyboard-mode math-field::part(virtual-keyboard-toggle) {
+  display: none !important;
+}
+
 /* Suppress any MathLive-triggered virtual keyboard panel globally */
+body.mx-keyboard-mode .ML__keyboard,
 body.mx-keyboard-active .ML__keyboard {
   display: none !important;
 }
