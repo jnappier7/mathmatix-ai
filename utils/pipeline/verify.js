@@ -605,6 +605,11 @@ function normalizeLatex(text) {
   );
   result = result.replace(cmdPattern, '\\$1');
 
+  // ── 0a. Fix parentheses used as brace groups in LaTeX commands ──
+  // AI writes \frac{a}(b) instead of \frac{a}{b}, or \sqrt(x) instead of \sqrt{x}
+  result = result.replace(/\\frac\{([^{}]*)\}\(([^()]*)\)/g, '\\frac{$1}{$2}');
+  result = result.replace(/\\sqrt\(([^()]*)\)/g, '\\sqrt{$1}');
+
   // ── 0b. Restore display math delimiters: bare [expr] → \[expr\] ──
   // Match [expr] where expr contains LaTeX commands (now backslash-restored)
   // and is NOT a markdown link [text](url) or array index.
@@ -628,6 +633,65 @@ function normalizeLatex(text) {
     }
     return match;
   });
+
+  // ── 2a. Fix mismatched/unclosed \( delimiters ──
+  // AI sometimes writes \( math ) instead of \( math \), or leaves \( unclosed
+  // before trailing English text (e.g., "\( \frac{\pi}{6} radians)").
+  // Scan for each \( and check whether it has a proper \) nearby.
+  {
+    let _pos = 0;
+    while (_pos < result.length - 2) {
+      const _open = result.indexOf('\\(', _pos);
+      if (_open === -1) break;
+
+      // Search ahead (up to 500 chars) for proper \) and bare )
+      const _window = result.substring(_open + 2, Math.min(_open + 502, result.length));
+      const _properIdx = _window.indexOf('\\)');
+
+      if (_properIdx !== -1) {
+        // Already properly closed — skip past it
+        _pos = _open + 2 + _properIdx + 2;
+        continue;
+      }
+
+      // No \) found — content between \( and end-of-line (or 500 chars)
+      const _nlIdx = _window.indexOf('\n');
+      const _lineRest = _nlIdx !== -1 ? _window.substring(0, _nlIdx) : _window;
+
+      // Only attempt repair if content has LaTeX commands or math syntax
+      if (!/\\[a-zA-Z]/.test(_lineRest) && !/[{}^_]/.test(_lineRest)) {
+        _pos = _open + 2;
+        continue;
+      }
+
+      // Strategy A: close before trailing English word(s) that follow LaTeX
+      // e.g., "\( \frac{\pi}{6} radians)" → "\( \frac{\pi}{6} \) radians)"
+      const _transMatch = _lineRest.match(
+        /^(.*?(?:\}|[0-9]))\s+([a-zA-Z]{2,})/
+      );
+      if (_transMatch) {
+        const _insertAt = _open + 2 + _transMatch[1].length;
+        result = result.substring(0, _insertAt) + '\\)' + result.substring(_insertAt);
+        _pos = _insertAt + 2;
+        continue;
+      }
+
+      // Strategy B: convert the last bare ) on this line to \)
+      // e.g., "\( x^2 + 1 )" → "\( x^2 + 1 \)"
+      const _lastParen = _lineRest.lastIndexOf(')');
+      if (_lastParen !== -1) {
+        const _inner = _lineRest.substring(0, _lastParen);
+        if (/\\[a-zA-Z]/.test(_inner) || /[{}^_]/.test(_inner)) {
+          const _absIdx = _open + 2 + _lastParen;
+          result = result.substring(0, _absIdx) + '\\)' + result.substring(_absIdx + 1);
+          _pos = _absIdx + 2;
+          continue;
+        }
+      }
+
+      _pos = _open + 2;
+    }
+  }
 
   // ── 2b. Protect existing delimited math from step 3 ──
   // Without this, step 3 converts inner (expr) inside \(...\) to \(expr\),

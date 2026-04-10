@@ -359,7 +359,7 @@ function assemblePrompt(decision, promptContext) {
   return {
     messages: [{ role: 'system', content: fullSystemPrompt }, ...messages],
     model: PRIMARY_CHAT_MODEL,
-    options: { temperature: 0.55, max_tokens: 2000 },
+    options: { temperature: 0.55, max_tokens: 1200 },
   };
 }
 
