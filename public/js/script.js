@@ -3379,6 +3379,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // ABC/123 type directly into the contenteditable #user-input.
     // EQ inserts inline equation boxes (MathLive) at cursor.
     const mxKeyboardContainer = document.getElementById('mx-keyboard-container');
+    console.log('[MathmatixKeyboard Setup]', {
+        hasMK: !!window.MathmatixKeyboard,
+        hasContainer: !!mxKeyboardContainer,
+        innerWidth: window.innerWidth,
+        willInit: !!(window.MathmatixKeyboard && mxKeyboardContainer && window.innerWidth <= 768)
+    });
     if (window.MathmatixKeyboard && mxKeyboardContainer && window.innerWidth <= 768) {
         window.MathmatixKeyboard.init({
             textInput: userInput,
