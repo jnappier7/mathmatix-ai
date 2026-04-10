@@ -530,7 +530,8 @@ function applyInstructionalMode(decision, context) {
           decision.directives.push(
             `INSTRUCTION MODE: I DO (Teacher Models) for ${targetName}.`,
             'Work through 1-2 examples step-by-step WITH THINK-ALOUD reasoning.',
-            'The student WATCHES. They are not expected to solve anything.',
+            'CRITICAL: If the student sent a SPECIFIC PROBLEM to solve (e.g. "simplify √48", "solve 2x+3=7"), do NOT solve THEIR problem. Instead, model with a PARALLEL PROBLEM — same skill, different numbers (e.g. if they asked √48, model with √12 or √75). After modeling the parallel problem, have THEM apply the same approach to their original problem. Their problem is their practice — you must not steal it.',
+            'If the student is asking a general concept question (not a specific problem), you may demonstrate with any example.',
             'CONCEPTUAL MODELING — NOT procedural demonstration:',
             '  - For EVERY step, explain WHY you are doing it, not just WHAT you are doing.',
             '  - WRONG: "Now we multiply both sides by 3." (procedural — student learns to mimic)',
