@@ -11,15 +11,15 @@
   left: 0;
   right: 0;
   z-index: 9999;
-  background: #d1d5db;
-  padding: 6px 3px;
-  padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
+  background: #d1d4d9;
+  padding: 8px 4px 4px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom, 0px));
   transform: translateY(100%);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
   touch-action: manipulation;
   -webkit-user-select: none;
   user-select: none;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .mx-keyboard-visible {
@@ -27,20 +27,21 @@
 }
 
 [data-theme="dark"] .mx-keyboard {
-  background: #2c2c2e;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
+  background: #1b1b1d;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* --- Rows --- */
 .mx-kb-row {
   display: flex;
   justify-content: center;
-  gap: 5px;
-  margin-bottom: 6px;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 0 3px;
 }
 
 .mx-kb-row-bottom {
-  margin-bottom: 0;
+  margin-bottom: 2px;
 }
 
 /* --- Base Key --- */
@@ -51,61 +52,71 @@
   border: none;
   border-radius: 5px;
   background: #fff;
-  color: #1c1c1e;
-  font-size: 22px;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  color: #000;
+  font-size: 23px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
   font-weight: 400;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(0, 0, 0, 0.06);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.08s;
-  padding: 0 2px;
+  transition: none;
+  padding: 0;
   position: relative;
 }
 
-/* Standard letter keys — even width */
+/* --- Key sizing per page --- */
+
+/* ABC row 1: 10 keys */
 .mx-kb-page[data-page="abc"] .mx-kb-row:first-child .mx-key {
-  width: calc((100% - 9 * 5px) / 10);
-  flex: 0 0 calc((100% - 9 * 5px) / 10);
+  flex: 1 1 0;
+  min-width: 0;
 }
 
+/* ABC row 2: 9 keys, slightly inset */
+.mx-kb-page[data-page="abc"] .mx-kb-row:nth-child(2) {
+  padding: 0 18px;
+}
 .mx-kb-page[data-page="abc"] .mx-kb-row:nth-child(2) .mx-key {
-  width: calc((100% - 8 * 5px - 16px) / 9);
-  flex: 0 0 calc((100% - 8 * 5px - 16px) / 9);
+  flex: 1 1 0;
+  min-width: 0;
 }
 
-/* 123 page keys */
+/* ABC row 3: shift + 7 letters + delete */
+.mx-kb-page[data-page="abc"] .mx-kb-row:nth-child(3) {
+  padding: 0 3px;
+}
+
+/* 123/symbols rows: 10 keys each */
 .mx-kb-page[data-page="123"] .mx-kb-row:first-child .mx-key,
-.mx-kb-page[data-page="symbols"] .mx-kb-row:first-child .mx-key {
-  width: calc((100% - 9 * 5px) / 10);
-  flex: 0 0 calc((100% - 9 * 5px) / 10);
-}
-
 .mx-kb-page[data-page="123"] .mx-kb-row:nth-child(2) .mx-key,
+.mx-kb-page[data-page="symbols"] .mx-kb-row:first-child .mx-key,
 .mx-kb-page[data-page="symbols"] .mx-kb-row:nth-child(2) .mx-key {
-  width: calc((100% - 9 * 5px) / 10);
-  flex: 0 0 calc((100% - 9 * 5px) / 10);
+  flex: 1 1 0;
+  min-width: 0;
 }
 
+/* Bottom row: mode keys + space + punctuation + enter */
+.mx-kb-row-bottom .mx-key {
+  height: 42px;
+}
+
+/* --- Dark mode keys --- */
 [data-theme="dark"] .mx-key {
-  background: #636366;
+  background: #4a4a4e;
   color: #fff;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
 }
 
-/* Key press feedback */
-.mx-key-pressed,
-.mx-key:active {
-  background: #bbb !important;
-  transform: scale(0.95);
+/* --- Key press feedback --- */
+.mx-key-pressed {
+  background: #b8bcc2 !important;
 }
 
-[data-theme="dark"] .mx-key-pressed,
-[data-theme="dark"] .mx-key:active {
-  background: #48484a !important;
+[data-theme="dark"] .mx-key-pressed {
+  background: #5e5e62 !important;
 }
 
 /* --- Special Keys --- */
@@ -114,38 +125,39 @@
 .mx-key-space {
   flex: 1 1 auto !important;
   width: auto !important;
-  min-width: 140px;
+  min-width: 120px;
   font-size: 15px;
   letter-spacing: 0.5px;
 }
 
 /* Shift */
 .mx-key-shift {
-  min-width: 42px;
-  width: 42px;
-  flex: 0 0 42px !important;
-  background: #a8abb0;
+  min-width: 44px;
+  width: 44px;
+  flex: 0 0 44px !important;
+  background: #adb0b6;
   font-size: 16px;
 }
 
 [data-theme="dark"] .mx-key-shift {
-  background: #48484a;
+  background: #363638;
+  color: #fff;
 }
 
 .mx-key-shift-active {
   background: #fff !important;
-  color: #1c1c1e !important;
+  color: #000 !important;
 }
 
 [data-theme="dark"] .mx-key-shift-active {
   background: #fff !important;
-  color: #1c1c1e !important;
+  color: #000 !important;
 }
 
 .mx-key-caps-lock {
   background: #fff !important;
   color: #12B3B3 !important;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 2px #12B3B3 !important;
+  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.3), inset 0 0 0 2px #12B3B3 !important;
 }
 
 [data-theme="dark"] .mx-key-caps-lock {
@@ -155,45 +167,53 @@
 
 /* Delete */
 .mx-key-delete {
-  min-width: 42px;
-  width: 42px;
-  flex: 0 0 42px !important;
-  background: #a8abb0;
-  font-size: 16px;
+  min-width: 44px;
+  width: 44px;
+  flex: 0 0 44px !important;
+  background: #adb0b6;
+  font-size: 18px;
 }
 
 [data-theme="dark"] .mx-key-delete {
-  background: #48484a;
+  background: #363638;
+  color: #fff;
 }
 
 /* Enter / Send */
 .mx-key-enter {
-  min-width: 42px;
-  width: 42px;
-  flex: 0 0 42px !important;
+  min-width: 44px;
+  width: 44px;
+  flex: 0 0 44px !important;
   background: #12B3B3;
   color: #fff;
-  font-size: 16px;
+  font-size: 18px;
+  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.3), 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 
-.mx-key-enter:active,
+[data-theme="dark"] .mx-key-enter {
+  background: #12B3B3;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.4);
+}
+
 .mx-key-enter.mx-key-pressed {
   background: #0E9494 !important;
 }
 
 /* Mode switch keys (ABC, 123, EQ) */
 .mx-key-mode {
-  min-width: 42px;
+  min-width: 44px;
   flex: 0 0 auto !important;
-  padding: 0 10px;
-  background: #a8abb0;
+  padding: 0 12px;
+  background: #adb0b6;
   font-size: 15px;
   font-weight: 500;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 [data-theme="dark"] .mx-key-mode {
-  background: #48484a;
+  background: #363638;
+  color: #fff;
 }
 
 .mx-key-active {
@@ -203,19 +223,20 @@
 }
 
 [data-theme="dark"] .mx-key-active {
-  background: #636366 !important;
+  background: #4a4a4e !important;
   color: #2dd4bf !important;
 }
 
 /* EQ switch — teal accent */
 .mx-key-eq-switch {
-  background: rgba(18, 179, 179, 0.2);
+  background: rgba(18, 179, 179, 0.15);
   color: #12B3B3;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 [data-theme="dark"] .mx-key-eq-switch {
-  background: rgba(45, 212, 191, 0.2);
+  background: rgba(45, 212, 191, 0.15);
   color: #2dd4bf;
 }
 
@@ -232,104 +253,101 @@
   line-height: 1.2;
 }
 
-/* EQ page — subtle teal-tinted background to set it apart */
+/* EQ page — subtle teal-tinted background */
 .mx-kb-page[data-page="eq"] {
   position: relative;
-  background: linear-gradient(180deg, rgba(18, 179, 179, 0.06) 0%, rgba(18, 179, 179, 0.02) 100%);
-  border-radius: 8px 8px 0 0;
-  margin: 0 -3px;
-  padding: 6px 3px 0;
+  background: linear-gradient(180deg, rgba(18, 179, 179, 0.05) 0%, transparent 100%);
+  border-radius: 10px 10px 0 0;
+  margin: 0 -4px;
+  padding: 8px 4px 0;
 }
 
 [data-theme="dark"] .mx-kb-page[data-page="eq"] {
-  background: linear-gradient(180deg, rgba(45, 212, 191, 0.08) 0%, rgba(45, 212, 191, 0.02) 100%);
+  background: linear-gradient(180deg, rgba(45, 212, 191, 0.06) 0%, transparent 100%);
 }
 
-/* M∆ watermark — subtle brand mark in the EQ page corner */
+/* M∆ watermark */
 .mx-kb-page[data-page="eq"]::after {
   content: 'M\0394';
   position: absolute;
-  top: 4px;
-  right: 8px;
+  top: 6px;
+  right: 10px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: rgba(18, 179, 179, 0.2);
+  color: rgba(18, 179, 179, 0.18);
   pointer-events: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
 }
 
 [data-theme="dark"] .mx-kb-page[data-page="eq"]::after {
-  color: rgba(45, 212, 191, 0.2);
+  color: rgba(45, 212, 191, 0.18);
 }
 
-/* EQ keys get a subtle teal bottom-edge to feel "math-powered" */
+/* EQ keys — teal bottom edge */
 .mx-kb-page[data-page="eq"] .mx-key-eq {
-  box-shadow: 0 1px 0 rgba(18, 179, 179, 0.35);
+  box-shadow: 0 1px 2px rgba(18, 179, 179, 0.25);
 }
 
 [data-theme="dark"] .mx-kb-page[data-page="eq"] .mx-key-eq {
-  box-shadow: 0 1px 0 rgba(45, 212, 191, 0.3);
+  box-shadow: 0 1px 0 rgba(45, 212, 191, 0.25);
 }
 
 .mx-key-eq .mx-key-hint {
   display: block;
   font-size: 9px;
-  color: rgba(18, 179, 179, 0.7);
+  color: rgba(18, 179, 179, 0.75);
   font-weight: 500;
   letter-spacing: 0.3px;
   margin-top: 1px;
 }
 
 [data-theme="dark"] .mx-key-eq .mx-key-hint {
-  color: rgba(45, 212, 191, 0.7);
+  color: rgba(45, 212, 191, 0.65);
 }
 
 .mx-key-wide {
   flex: 1.5 1 0 !important;
 }
 
-/* Fraction symbol styling */
+/* Fraction symbol */
 .k-frac {
   font-size: 20px;
   line-height: 1;
 }
 
-/* --- Mobile Compose Bar Adjustments (when keyboard is visible) --- */
 
-/*
- * The keyboard is position:fixed at the bottom. The compose bar is a flex
- * child above it. When the keyboard slides up we:
- *   1. Add bottom-padding to the layout wrapper so the compose bar
- *      sits above the keyboard (not behind it).
- *   2. Hide the fixed bottom nav bar so it doesn't overlap the keyboard.
- *   3. Scroll chat up so the latest messages stay visible.
- *
- * --mx-kb-height is set dynamically by JS after the keyboard renders.
- * Fallback: 216px (4 rows × 42px + gaps + padding).
- */
+/* ═══════════════════════════════════════════════
+   LAYOUT ADJUSTMENTS (when keyboard is visible)
+   ═══════════════════════════════════════════════ */
 
 body.mx-keyboard-active #app-layout-wrapper {
   padding-bottom: var(--mx-kb-height, 216px) !important;
 }
 
-/* Hide the fixed bottom nav when keyboard is showing */
 body.mx-keyboard-active .mobile-chat-nav {
   display: none !important;
 }
 
-/* Tighten compose bar padding when keyboard is up */
 body.mx-keyboard-active .imessage-compose-bar {
   padding-bottom: 4px;
+  box-shadow: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* Chat messages — extra bottom padding so content isn't hidden */
+[data-theme="dark"] body.mx-keyboard-active .imessage-compose-bar {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
 body.mx-keyboard-active #chat-messages-container {
   padding-bottom: 60px;
 }
 
-/* --- Inline Equation Box inside Compose Input --- */
-/* Make equation boxes fit cleanly within the rounded compose input */
+
+/* ═══════════════════════════════════════════════
+   INLINE EQUATION BOX (inside compose input)
+   ═══════════════════════════════════════════════ */
+
 body.mx-keyboard-mode #user-input .inline-eq-box {
   max-width: calc(100% - 8px);
   vertical-align: baseline;
@@ -340,17 +358,20 @@ body.mx-keyboard-mode #user-input .inline-eq-box.active {
   border-width: 1.5px;
 }
 
-/* The MathLive field inside should not overflow */
 body.mx-keyboard-mode #user-input .inline-eq-field {
   font-size: 1rem;
   min-width: 32px;
   max-width: 100%;
 }
 
-/* Suppress native keyboard on inline equation math-fields too */
 body.mx-keyboard-mode .inline-eq-field {
   caret-color: var(--clr-primary-teal, #12B3B3);
 }
+
+
+/* ═══════════════════════════════════════════════
+   MATHLIVE SUPPRESSION
+   ═══════════════════════════════════════════════ */
 
 /* Hide MathLive's virtual keyboard toggle icon everywhere on mobile */
 body.mx-keyboard-mode math-field::part(virtual-keyboard-toggle) {
@@ -363,6 +384,11 @@ body.mx-keyboard-active .ML__keyboard {
   display: none !important;
 }
 
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE & LEGACY SUPPRESSION
+   ═══════════════════════════════════════════════ */
+
 /* Only show custom keyboard on mobile */
 @media (min-width: 769px) {
   .mx-keyboard {
@@ -370,10 +396,7 @@ body.mx-keyboard-active .ML__keyboard {
   }
 }
 
-/*
- * When the custom keyboard is active on mobile, hide the legacy
- * math keyboard panel (it's replaced by the EQ page).
- */
+/* Hide legacy math keyboard panel when custom keyboard is active */
 body.mx-keyboard-mode #math-input-wrapper {
   display: none !important;
 }
