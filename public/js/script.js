@@ -1821,29 +1821,6 @@ document.addEventListener("DOMContentLoaded", () => {
             window.InlineEquationBox.sealAll();
         }
 
-        // If custom mobile keyboard is active, grab from its math-field
-        const mxField = document.getElementById('mx-compose-field');
-        if (mxField && mxField.style.display !== 'none' && window.innerWidth <= 768) {
-            let mxLatex = (mxField.value || '').trim();
-            if (mxLatex) {
-                // Smart-mode: MathLive wraps plain text in \text{}.
-                // Extract plain text portions and keep math portions wrapped.
-                let msgText = mxLatex;
-                // If the entire value is just \text{...}, send as plain text
-                const textOnly = mxLatex.match(/^\\text\{(.+)\}$/);
-                if (textOnly) {
-                    msgText = textOnly[1];
-                } else {
-                    // Contains math — wrap for rendering
-                    msgText = '\\(' + mxLatex + '\\)';
-                }
-                mxField.value = '';
-                if (window.MathmatixKeyboard) window.MathmatixKeyboard.hide();
-                queueMessage(msgText, [], null);
-                return;
-            }
-        }
-
         // If math keyboard is active, grab its content first
         const mkFieldEl = document.getElementById('math-keyboard-field');
         const mkWrapperEl = document.getElementById('math-input-wrapper');
@@ -1870,10 +1847,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (mkPanelEl) mkPanelEl.style.display = 'none';
             if (mkWrapperEl) mkWrapperEl.style.display = 'none';
             if (mkHelperEl) mkHelperEl.style.display = 'none';
-            // Only re-show contenteditable if custom keyboard is NOT active
-            if (!document.body.classList.contains('mx-keyboard-mode')) {
-                userInput.style.display = '';
-            }
+            userInput.style.display = '';
             if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
             mathModeOn = false;
         }
@@ -3401,17 +3375,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ─── Mathmatix Custom Keyboard (mobile only) ─────────────────────
-    // On mobile, replace the contenteditable with a MathLive math-field
-    // and show our custom iOS-style keyboard (ABC / 123 / EQ pages).
-    const mxComposeField = document.getElementById('mx-compose-field');
+    // On mobile, show our custom iOS-style keyboard (ABC / 123 / EQ).
+    // ABC/123 type directly into the contenteditable #user-input.
+    // EQ inserts inline equation boxes (MathLive) at cursor.
     const mxKeyboardContainer = document.getElementById('mx-keyboard-container');
-    if (window.MathmatixKeyboard && mxComposeField && mxKeyboardContainer && window.innerWidth <= 768) {
-        // Immediately mark that the custom keyboard owns input on this device.
-        // CSS uses this class to force-hide #user-input with !important.
-        document.body.classList.add('mx-keyboard-mode');
-
+    if (window.MathmatixKeyboard && mxKeyboardContainer && window.innerWidth <= 768) {
         window.MathmatixKeyboard.init({
-            mathField: mxComposeField,
             textInput: userInput,
             container: mxKeyboardContainer,
             onSend: sendMessage,
@@ -3420,20 +3389,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Tap anywhere outside keyboard & compose to hide it
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.mx-keyboard') &&
-                !e.target.closest('#mx-compose-field') &&
-                !e.target.closest('.imessage-compose-bar')) {
+                !e.target.closest('#user-input') &&
+                !e.target.closest('.imessage-compose-bar') &&
+                !e.target.closest('.inline-eq-box')) {
                 window.MathmatixKeyboard.hide();
             }
         });
-
-        // Safety net: if any script re-shows #user-input via inline style,
-        // force it back to hidden immediately.
-        const inputObserver = new MutationObserver(() => {
-            if (userInput.style.display !== 'none') {
-                userInput.style.display = 'none';
-            }
-        });
-        inputObserver.observe(userInput, { attributes: true, attributeFilter: ['style'] });
     }
 
     /**
@@ -3524,11 +3485,8 @@ document.addEventListener("DOMContentLoaded", () => {
         mkWrapper.style.display = 'none';
         mkPanel.style.display = 'none';
         if (mkHelperText) mkHelperText.style.display = 'none';
-        // Only re-show contenteditable if custom keyboard is NOT active
-        if (!document.body.classList.contains('mx-keyboard-mode')) {
-            userInput.style.display = '';
-            userInput.focus();
-        }
+        userInput.style.display = '';
+        userInput.focus();
         if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
     }
 
