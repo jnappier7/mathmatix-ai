@@ -377,3 +377,34 @@ body.mx-keyboard-active .ML__keyboard {
     display: none !important;
   }
 }
+
+/*
+ * When the custom keyboard is active on mobile, the old contenteditable
+ * and the legacy math keyboard panel must be completely hidden.
+ * Use !important to win over any inline style.display='' set by other scripts.
+ */
+body.mx-keyboard-mode #user-input {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+body.mx-keyboard-mode #math-input-wrapper {
+  display: none !important;
+}
+
+body.mx-keyboard-mode #math-keyboard-panel {
+  display: none !important;
+}
+
+body.mx-keyboard-mode #mk-helper-text {
+  display: none !important;
+}
+
+body.mx-keyboard-mode #mk-shortcut-strip {
+  display: none !important;
+}
+
+/* Ensure the MathLive compose field is visible when in keyboard mode */
+body.mx-keyboard-mode #mx-compose-field {
+  display: block !important;
+}

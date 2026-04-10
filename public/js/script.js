@@ -1870,7 +1870,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (mkPanelEl) mkPanelEl.style.display = 'none';
             if (mkWrapperEl) mkWrapperEl.style.display = 'none';
             if (mkHelperEl) mkHelperEl.style.display = 'none';
-            userInput.style.display = '';
+            // Only re-show contenteditable if custom keyboard is NOT active
+            if (!document.body.classList.contains('mx-keyboard-mode')) {
+                userInput.style.display = '';
+            }
             if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
             mathModeOn = false;
         }
@@ -3403,9 +3406,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const mxComposeField = document.getElementById('mx-compose-field');
     const mxKeyboardContainer = document.getElementById('mx-keyboard-container');
     if (window.MathmatixKeyboard && mxComposeField && mxKeyboardContainer && window.innerWidth <= 768) {
-        // Show the MathLive field, hide the contenteditable on mobile
-        mxComposeField.style.display = '';
-        userInput.style.display = 'none';
+        // Immediately mark that the custom keyboard owns input on this device.
+        // CSS uses this class to force-hide #user-input with !important.
+        document.body.classList.add('mx-keyboard-mode');
 
         window.MathmatixKeyboard.init({
             mathField: mxComposeField,
@@ -3422,6 +3425,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.MathmatixKeyboard.hide();
             }
         });
+
+        // Safety net: if any script re-shows #user-input via inline style,
+        // force it back to hidden immediately.
+        const inputObserver = new MutationObserver(() => {
+            if (userInput.style.display !== 'none') {
+                userInput.style.display = 'none';
+            }
+        });
+        inputObserver.observe(userInput, { attributes: true, attributeFilter: ['style'] });
     }
 
     /**
@@ -3512,8 +3524,11 @@ document.addEventListener("DOMContentLoaded", () => {
         mkWrapper.style.display = 'none';
         mkPanel.style.display = 'none';
         if (mkHelperText) mkHelperText.style.display = 'none';
-        userInput.style.display = '';
-        userInput.focus();
+        // Only re-show contenteditable if custom keyboard is NOT active
+        if (!document.body.classList.contains('mx-keyboard-mode')) {
+            userInput.style.display = '';
+            userInput.focus();
+        }
         if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
     }
 

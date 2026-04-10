@@ -119,14 +119,34 @@
 
     if (!mathField) return;
 
+    // ─── PERSISTENT MODE CLASS ──────────────────────────────────────
+    // This class stays on for the entire session. CSS uses it to
+    // force-hide the old contenteditable (#user-input) with !important,
+    // so no other script can accidentally re-show it.
+    document.body.classList.add('mx-keyboard-mode');
+
     // Build the keyboard DOM
     keyboardEl = buildKeyboard();
     opts.container.appendChild(keyboardEl);
 
+    // ─── REDIRECT FOCUS FROM OLD INPUT ──────────────────────────────
+    // Many scripts call userInput.focus(). Intercept and redirect to
+    // our math-field so the old contenteditable never gets focused.
+    if (textInput) {
+      textInput.addEventListener('focus', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        mathField.focus();
+      }, true);
+      // Also make it inert so it truly cannot receive focus
+      textInput.setAttribute('tabindex', '-1');
+      textInput.setAttribute('contenteditable', 'false');
+    }
+
     // ─── NATIVE KEYBOARD SUPPRESSION (multiple layers) ──────────────
     suppressNativeKeyboard();
 
-    // Re-suppress on every focus (browsers can reset inputmode)
+    // Re-suppress on every focus
     mathField.addEventListener('focus', () => {
       suppressNativeKeyboard();
       show();
@@ -154,8 +174,6 @@
     });
 
     // ─── KEYBOARD HEIGHT → CSS VARIABLE ─────────────────────────────
-    // After first render, measure height and expose as CSS custom property
-    // so the layout wrapper can reserve the exact space.
     requestAnimationFrame(() => {
       updateKeyboardHeightVar();
     });
@@ -165,25 +183,47 @@
     initialized = true;
   }
 
-  /** Apply every suppression trick we have. Called on init, focus, resume. */
+  /**
+   * Apply every suppression trick we have. Called on init, focus, resume.
+   *
+   * iOS Safari ignores `inputmode="none"` on the outer <math-field>
+   * custom element because MathLive creates its own <textarea> inside
+   * a shadow DOM for actual text entry. We must find that inner
+   * textarea and suppress it directly.
+   */
   function suppressNativeKeyboard() {
     if (!mathField) return;
 
-    // HTML attribute — tells the browser "no virtual keyboard"
+    // 1. Outer element attributes
     mathField.setAttribute('inputmode', 'none');
-
-    // MathLive-specific policy
     mathField.mathVirtualKeyboardPolicy = 'manual';
 
-    // If MathLive exposed a global virtual keyboard, hide it
+    // 2. Kill MathLive's global virtual keyboard
     if (window.mathVirtualKeyboard) {
       try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
     }
 
-    // Readonly trick: briefly set readonly to dismiss any lingering keyboard,
-    // then clear it so MathLive can still receive programmatic input.
-    // (MathLive math-fields don't use the HTML readonly attribute for their
-    //  internal editing, so this only affects the browser's native focus path.)
+    // 3. Dive into MathLive's shadow DOM and suppress the internal textarea.
+    //    This is the key fix for iOS Safari.
+    try {
+      const shadow = mathField.shadowRoot;
+      if (shadow) {
+        const innerTextarea = shadow.querySelector('textarea');
+        if (innerTextarea) {
+          innerTextarea.setAttribute('inputmode', 'none');
+          innerTextarea.setAttribute('readonly', 'readonly');
+          // Remove readonly after a tick so programmatic input still works
+          // but the native keyboard never gets a chance to appear
+          setTimeout(() => {
+            innerTextarea.removeAttribute('readonly');
+            // Re-apply inputmode in case the browser cleared it
+            innerTextarea.setAttribute('inputmode', 'none');
+          }, 50);
+        }
+      }
+    } catch (_) { /* Shadow DOM access may fail in some browsers */ }
+
+    // 4. Outer readonly trick as a fallback
     mathField.setAttribute('readonly', 'readonly');
     setTimeout(() => mathField.removeAttribute('readonly'), 20);
   }
