@@ -490,8 +490,17 @@
       mathField.setAttribute('inputmode', 'none');
       mathField.mathVirtualKeyboardPolicy = 'manual';
       if (window.mathVirtualKeyboard) {
-        window.mathVirtualKeyboard.visible = false;
+        try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
       }
+      // Also suppress the internal textarea in MathLive's shadow DOM
+      // (Chrome/Safari may ignore inputmode on the outer custom element)
+      try {
+        const shadow = mathField.shadowRoot;
+        if (shadow) {
+          const ta = shadow.querySelector('textarea');
+          if (ta) ta.setAttribute('inputmode', 'none');
+        }
+      } catch (_) {}
     }
   }
 
