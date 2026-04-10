@@ -212,10 +212,20 @@
   function deleteBackward() {
     ensureFocus();
 
-    // If there's an active inline equation box, delete from it instead
+    // If there's an active inline equation box, delete from it
     const activeEqField = getActiveEquationMathField();
     if (activeEqField) {
-      activeEqField.executeCommand('deleteBackward');
+      const val = (activeEqField.value || '').trim();
+      if (val === '') {
+        // Equation box is empty — remove the entire box
+        const box = activeEqField.closest('.inline-eq-box');
+        if (box) {
+          box.remove();
+          ensureFocus();
+        }
+      } else {
+        activeEqField.executeCommand('deleteBackward');
+      }
       return;
     }
 
@@ -468,7 +478,7 @@
         case 'delete':
           deleteBackward();
           break;
-        case 'space':
+        case 'space': {
           // If inside an inline equation box, insert space there
           const eqField = getActiveEquationMathField();
           if (eqField) {
@@ -477,6 +487,7 @@
             insertChar(' ');
           }
           break;
+        }
         case 'enter':
           if (sendCallback) sendCallback();
           break;
@@ -579,14 +590,17 @@
 
   function show() {
     if (!keyboardEl) return;
+    const wasVisible = keyboardEl.classList.contains('mx-keyboard-visible');
     keyboardEl.classList.add('mx-keyboard-visible');
     document.body.classList.add('mx-keyboard-active');
     suppressNativeKeyboard();
-    setTimeout(updateKeyboardHeightVar, 280);
-    // Scroll chat to bottom
-    const chat = document.getElementById('chat-messages-container');
-    if (chat) {
-      requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
+    if (!wasVisible) {
+      // Only measure and scroll on first show, not every focus
+      setTimeout(updateKeyboardHeightVar, 280);
+      const chat = document.getElementById('chat-messages-container');
+      if (chat) {
+        requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
+      }
     }
   }
 

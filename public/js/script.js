@@ -3516,10 +3516,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // √x tool button: insert inline equation box (mobile + desktop)
     if (openEquationBtn) {
         openEquationBtn.addEventListener('click', (e) => {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+
+            // On mobile with custom keyboard: switch to EQ page and
+            // insert an equation box so the student can start typing math
+            if (window.MathmatixKeyboard && window.MathmatixKeyboard.isVisible()) {
+                window.MathmatixKeyboard.switchPage('eq');
+                if (window.InlineEquationBox) {
+                    window.InlineEquationBox.insertEquationBoxAtCursor();
+                }
+                return;
+            }
+
+            // Desktop / fallback: use inline equation box
             if (window.InlineEquationBox) {
-                e.stopImmediatePropagation();
-                e.preventDefault();
-                // Always insert a new equation box — don't toggle off
                 activateMathMode();
             }
         }, true);
