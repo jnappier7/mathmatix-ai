@@ -1035,4 +1035,51 @@ describe('Pipeline: normalizeLatex', () => {
       expect(result).toContain('\\(\\text{coefficient} = 5\\)');
     });
   });
+
+  describe('fixes parentheses used as brace groups', () => {
+    test('converts \\frac{a}(b) to \\frac{a}{b}', () => {
+      const result = normalizeLatex('\\frac{\\pi}(6)');
+      expect(result).toContain('\\frac{\\pi}{6}');
+      expect(result).not.toContain('(6)');
+    });
+
+    test('converts \\sqrt(x) to \\sqrt{x}', () => {
+      const result = normalizeLatex('\\sqrt(x+1)');
+      expect(result).toContain('\\sqrt{x+1}');
+      expect(result).not.toContain('(x+1)');
+    });
+
+    test('handles nested frac with paren brace groups', () => {
+      const result = normalizeLatex('\\frac{3}(2)');
+      expect(result).toContain('\\frac{3}{2}');
+    });
+  });
+
+  describe('fixes mismatched/unclosed \\( delimiters', () => {
+    test('closes \\( before trailing English word', () => {
+      const result = normalizeLatex('30° or \\( \\frac{\\pi}{6} radians):');
+      expect(result).toContain('\\frac{\\pi}{6}');
+      expect(result).toContain('\\)');
+      // The math block should be closed: \( \frac{\pi}{6}\) followed by radians
+      expect(result).toMatch(/\\frac\{\\pi\}\{6\}\\?\)\s*radians/);
+    });
+
+    test('converts bare ) to \\) when content has LaTeX', () => {
+      const result = normalizeLatex('\\( \\frac{1}{2} )');
+      expect(result).toContain('\\(');
+      expect(result).toContain('\\)');
+    });
+
+    test('does not modify already-correct \\( ... \\)', () => {
+      const result = normalizeLatex('\\( x^2 + 1 \\)');
+      expect(result).toContain('\\( x^2 + 1 \\)');
+    });
+
+    test('handles multiple unclosed delimiters in sequence', () => {
+      const input = 'cos(\\( \\frac{\\pi}{6} ) = \\frac{\\sqrt{3}}{2}';
+      const result = normalizeLatex(input);
+      // Should have at least one proper \\) close
+      expect(result).toContain('\\)');
+    });
+  });
 });
