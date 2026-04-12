@@ -492,6 +492,14 @@
     // Auto-capitalize at start
     checkAutoCapitalize();
 
+    // Warm up AudioContext on first user touch so haptic clicks
+    // aren't silent on the very first tap (iOS requires user gesture
+    // to start AudioContext — do it early so it's ready by first key press)
+    document.addEventListener('touchstart', function warmUp() {
+      getAudioCtx();
+      document.removeEventListener('touchstart', warmUp, true);
+    }, { once: true, capture: true, passive: true });
+
     console.log('[MathmatixKeyboard] Initialized on mobile');
   }
 
@@ -667,6 +675,7 @@
     kb.addEventListener('touchstart', onTouchStart, { passive: false });
     kb.addEventListener('touchmove', onTouchMove, { passive: false });
     kb.addEventListener('touchend', onTouchEnd, { passive: false });
+    kb.addEventListener('touchcancel', onTouchCancel, { passive: false });
     kb.addEventListener('mousedown', handleKeyMouse);
 
     return kb;
@@ -1072,6 +1081,8 @@
     if (keyEl.dataset.insert && ALTERNATES[keyEl.dataset.insert.toLowerCase()]) {
       cancelLongPress();
       longPressTimer = setTimeout(() => {
+        // Release the key's pressed state before showing popup
+        keyEl.classList.remove('mx-key-pressed');
         removeKeyBubble();
         showLongPressPopup(keyEl);
       }, LONG_PRESS_DELAY);
@@ -1218,6 +1229,24 @@
     lastSwipeKey = null;
   }
 
+  /** Clean up all state on touch cancel (app-switch, notification, gesture interrupt) */
+  function onTouchCancel() {
+    if (swipeStartKey) {
+      swipeStartKey.classList.remove('mx-key-pressed');
+    }
+    removeKeyBubble();
+    cancelDeleteRepeat();
+    cancelLongPress();
+    dismissLongPressPopup();
+    clearSwipeHighlights();
+    clearSwipeTrail();
+    swiping = false;
+    swipePath = [];
+    swipePoints = [];
+    swipeStartKey = null;
+    lastSwipeKey = null;
+  }
+
   function handleKeyMouse(e) {
     const key = e.target.closest('.mx-key');
     if (!key) return;
@@ -1308,12 +1337,21 @@
       }
     }
 
-    // Gradient trail: bright at tip, fading behind
+    // Gradient trail: bright at fingertip (end), fading behind (start)
+    // Use gradientUnits=userSpaceOnUse with actual start/end coords so
+    // the gradient always points from trail start → fingertip regardless
+    // of swipe direction.
     const trailId = 'mx-trail-grad';
+    const sx = x(sample[0]);
+    const sy = y(sample[0]);
+    const ex = x(sample[sample.length - 1]);
+    const ey = y(sample[sample.length - 1]);
+
     swipeTrailEl.innerHTML =
-      '<defs><linearGradient id="' + trailId + '" x1="0%" y1="0%" x2="100%" y2="0%">' +
+      '<defs><linearGradient id="' + trailId + '" gradientUnits="userSpaceOnUse"' +
+      ' x1="' + sx + '" y1="' + sy + '" x2="' + ex + '" y2="' + ey + '">' +
       '<stop offset="0%" stop-color="rgba(18,179,179,0.05)"/>' +
-      '<stop offset="70%" stop-color="rgba(18,179,179,0.35)"/>' +
+      '<stop offset="60%" stop-color="rgba(18,179,179,0.3)"/>' +
       '<stop offset="100%" stop-color="rgba(18,179,179,0.6)"/>' +
       '</linearGradient></defs>' +
       '<path d="' + d + '" stroke="url(#' + trailId + ')" />';
