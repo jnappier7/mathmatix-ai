@@ -34,6 +34,42 @@
   let swipeTrailEl = null;        // SVG element for swipe trail
   let suggestionBarEl = null;     // Suggestion bar element
 
+  // ─── ADAPTIVE STATE ─────────────────────────────────────────────────
+  let lastKeyTime = 0;           // Timestamp of last key press (for double-space)
+  let lastKeyAction = '';        // Last key action (for double-space detection)
+  let deleteRepeatTimer = null;  // Timer for hold-to-repeat delete
+  let deleteRepeatDelay = 400;   // Initial delay before repeat starts (ms)
+  let deleteRepeatRate = 80;     // Current repeat interval (ms), accelerates
+  let longPressTimer = null;     // Timer for long-press alternate chars
+  let longPressEl = null;        // Currently showing long-press popup
+  let undoStack = [];            // Stack of recently inserted words for undo
+  let predictionBarEl = null;    // Always-visible prediction bar
+  let prevPage = null;           // Previous page (for transition animation)
+  let touchStartXSpace = 0;     // For spacebar swipe-left-to-undo
+
+  // ─── ALTERNATE CHARACTERS (long-press) ──────────────────────────────
+  const ALTERNATES = {
+    'a': ['à','á','â','ä','æ','ã','å','ā'],
+    'c': ['ç','ć','č'],
+    'e': ['è','é','ê','ë','ē','ė','ę'],
+    'i': ['î','ï','í','ī','į','ì'],
+    'n': ['ñ','ń'],
+    'o': ['ô','ö','ò','ó','œ','ø','ō','õ'],
+    's': ['ß','ś','š'],
+    'u': ['û','ü','ù','ú','ū'],
+    'y': ['ÿ'],
+    'z': ['ž','ź','ż'],
+    '0': ['°'],
+    '-': ['–','—','•'],
+    '/': ['\\'],
+    '$': ['€','£','¥','₹','¢'],
+    '!': ['¡'],
+    '?': ['¿'],
+    '.': ['…'],
+    "'": ['\u2018','\u2019','"'],
+    '"': ['\u201C','\u201D','\u00AB','\u00BB'],
+  };
+
   // ─── KEYBOARD LAYOUTS ───────────────────────────────────────────────
 
   const LAYOUTS = {
@@ -453,6 +489,9 @@
     switchPage('abc');
     initialized = true;
 
+    // Auto-capitalize at start
+    checkAutoCapitalize();
+
     console.log('[MathmatixKeyboard] Initialized on mobile');
   }
 
@@ -741,32 +780,114 @@
 
   // ─── KEY HANDLING ───────────────────────────────────────────────────
 
-  /** Trigger haptic feedback (short vibration pulse) */
-  function haptic(ms) {
-    if (navigator.vibrate) navigator.vibrate(ms || 8);
+  // ─── SMART HAPTICS ──────────────────────────────────────────────────
+  // Different intensities for different key types — mimics iOS Taptic Engine
+  const HAPTIC = {
+    letter: 6,      // Light tap for letters
+    space: 10,      // Medium for space
+    enter: 15,      // Firm for send
+    delete: 10,     // Medium for delete
+    shift: 8,       // Light-medium for shift
+    mode: 8,        // Light-medium for page switch
+    swipeTick: 4,   // Very light for swipe key-cross
+    suggest: 10,    // Medium for selecting suggestion
+    longPress: 12,  // Medium for long-press popup
+    undo: [12, 30, 12], // Pattern for undo feedback
+  };
+
+  function haptic(level) {
+    if (!navigator.vibrate) return;
+    if (Array.isArray(level)) {
+      navigator.vibrate(level);
+    } else {
+      navigator.vibrate(level || 6);
+    }
   }
 
-  // ─── iOS-STYLE KEY PREVIEW BUBBLE ──────────────────────────────────
+  /** Get haptic intensity for a key element */
+  function hapticForKey(key) {
+    if (key.dataset.action) {
+      switch (key.dataset.action) {
+        case 'space': return HAPTIC.space;
+        case 'enter': return HAPTIC.enter;
+        case 'delete': return HAPTIC.delete;
+        case 'shift': return HAPTIC.shift;
+        default: return HAPTIC.mode;
+      }
+    }
+    return HAPTIC.letter;
+  }
+
+  // ─── AUTO-CAPITALIZE ──────────────────────────────────────────────
+  /** Check if we should auto-shift (start of input, after sentence end) */
+  function shouldAutoCapitalize() {
+    if (capsLock) return false;
+    if (!textInput) return false;
+
+    const text = textInput.textContent || '';
+    if (text.length === 0) return true; // Start of input
+
+    // Check last non-space character
+    const trimmed = text.trimEnd();
+    if (trimmed.length === 0) return true;
+    const lastChar = trimmed[trimmed.length - 1];
+    return (lastChar === '.' || lastChar === '!' || lastChar === '?');
+  }
+
+  /** Apply auto-capitalize if conditions are met */
+  function checkAutoCapitalize() {
+    if (currentPage !== 'abc') return;
+    if (capsLock) return;
+    const should = shouldAutoCapitalize();
+    if (should && !shifted) {
+      shifted = true;
+      updateShiftDisplay();
+    }
+  }
+
+  // ─── iOS-STYLE KEY PREVIEW BUBBLE (with callout stem) ───────────────
   let activeBubble = null;
 
   function showKeyBubble(key) {
     removeKeyBubble();
     // Only show bubble for character keys (not action/mode keys)
     if (key.dataset.action || key.classList.contains('mx-key-mode') ||
-        key.classList.contains('mx-key-eq-switch') || key.classList.contains('mx-key-space')) return;
+        key.classList.contains('mx-key-eq-switch') || key.classList.contains('mx-key-space') ||
+        key.classList.contains('mx-key-eq')) return;
 
     const rect = key.getBoundingClientRect();
     const kbRect = keyboardEl.getBoundingClientRect();
 
     const bubble = document.createElement('div');
     bubble.className = 'mx-key-bubble';
-    bubble.textContent = key.textContent;
 
-    // Position above the key
-    bubble.style.left = (rect.left - kbRect.left + rect.width / 2) + 'px';
+    // Letter label
+    const label = document.createElement('span');
+    label.className = 'mx-key-bubble-label';
+    label.textContent = key.textContent;
+    bubble.appendChild(label);
+
+    // Callout stem pointing down to the key
+    const stem = document.createElement('div');
+    stem.className = 'mx-key-bubble-stem';
+    bubble.appendChild(stem);
+
+    // Position centered above the key
+    const leftPos = rect.left - kbRect.left + rect.width / 2;
+    bubble.style.left = leftPos + 'px';
     bubble.style.top = (rect.top - kbRect.top) + 'px';
 
+    // Clamp so bubble doesn't overflow keyboard edges
     keyboardEl.appendChild(bubble);
+    requestAnimationFrame(() => {
+      const bRect = bubble.getBoundingClientRect();
+      if (bRect.left < kbRect.left + 4) {
+        bubble.style.left = (4 + bRect.width / 2) + 'px';
+      } else if (bRect.right > kbRect.right - 4) {
+        bubble.style.left = (kbRect.width - 4 - bRect.width / 2) + 'px';
+      }
+    });
+
     activeBubble = bubble;
   }
 
@@ -780,13 +901,102 @@
   // ─── SWIPE-AWARE TOUCH HANDLERS ────────────────────────────────────
 
   const SWIPE_MOVE_THRESHOLD = 15; // Pixels of movement before swipe activates
+  const LONG_PRESS_DELAY = 400;    // ms before long-press popup shows
+
+  function cancelDeleteRepeat() {
+    if (deleteRepeatTimer) { clearTimeout(deleteRepeatTimer); deleteRepeatTimer = null; }
+    deleteRepeatDelay = 400;
+    deleteRepeatRate = 80;
+  }
+
+  function startDeleteRepeat() {
+    cancelDeleteRepeat();
+    deleteRepeatTimer = setTimeout(function repeatDelete() {
+      deleteBackward();
+      haptic(HAPTIC.delete);
+      // Accelerate: reduce interval down to 30ms minimum
+      deleteRepeatRate = Math.max(30, deleteRepeatRate - 8);
+      deleteRepeatTimer = setTimeout(repeatDelete, deleteRepeatRate);
+    }, deleteRepeatDelay);
+  }
+
+  function cancelLongPress() {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  }
+
+  function dismissLongPressPopup() {
+    if (longPressEl) {
+      longPressEl.remove();
+      longPressEl = null;
+    }
+  }
+
+  function showLongPressPopup(key) {
+    dismissLongPressPopup();
+    const base = (key.dataset.insert || key.dataset.key || '').toLowerCase();
+    const alts = ALTERNATES[base];
+    if (!alts || alts.length === 0) return;
+
+    haptic(HAPTIC.longPress);
+
+    const popup = document.createElement('div');
+    popup.className = 'mx-longpress-popup';
+
+    alts.forEach(alt => {
+      const btn = document.createElement('button');
+      btn.className = 'mx-longpress-option';
+      btn.textContent = alt;
+      btn.dataset.insert = alt;
+      popup.appendChild(btn);
+    });
+
+    // Position above the key
+    const rect = key.getBoundingClientRect();
+    const kbRect = keyboardEl.getBoundingClientRect();
+    popup.style.left = (rect.left - kbRect.left + rect.width / 2) + 'px';
+    popup.style.top = (rect.top - kbRect.top - 4) + 'px';
+
+    keyboardEl.appendChild(popup);
+    longPressEl = popup;
+
+    // Clamp to keyboard edges
+    requestAnimationFrame(() => {
+      const pRect = popup.getBoundingClientRect();
+      if (pRect.left < kbRect.left + 4) {
+        popup.style.left = (4 + pRect.width / 2) + 'px';
+      } else if (pRect.right > kbRect.right - 4) {
+        popup.style.left = (kbRect.width - 4 - pRect.width / 2) + 'px';
+      }
+    });
+  }
 
   function onTouchStart(e) {
     const touch = e.touches[0];
     const key = document.elementFromPoint(touch.clientX, touch.clientY);
     const keyEl = key ? key.closest('.mx-key') : null;
+
+    // Dismiss long-press popup on any new touch
+    if (longPressEl) {
+      // Check if they tapped an alternate character
+      const opt = key ? key.closest('.mx-longpress-option') : null;
+      if (opt && opt.dataset.insert) {
+        e.preventDefault();
+        haptic(HAPTIC.letter);
+        const char = opt.dataset.insert;
+        const eqField = getActiveEquationMathField();
+        if (eqField) { eqField.executeCommand(['typedText', char]); }
+        else { insertChar(char); }
+        dismissLongPressPopup();
+        return;
+      }
+      dismissLongPressPopup();
+    }
+
     if (!keyEl) return;
     e.preventDefault();
+
+    // Hide suggestion bar on new typing
+    hideSuggestionBar();
 
     swipeStartTime = Date.now();
     swipeStartKey = keyEl;
@@ -797,16 +1007,32 @@
 
     // Record start position
     swipePoints.push({ x: touch.clientX, y: touch.clientY });
+    touchStartXSpace = touch.clientX;
 
-    // Immediate visual + haptic feedback
-    haptic(8);
+    // Context-aware haptic + visual feedback
+    haptic(hapticForKey(keyEl));
     keyEl.classList.add('mx-key-pressed');
     showKeyBubble(keyEl);
 
+    // ── Delete hold-to-repeat ──
+    if (keyEl.dataset.action === 'delete') {
+      deleteBackward(); // immediate first delete
+      startDeleteRepeat();
+    }
+
+    // ── Long-press for alternates ──
+    if (keyEl.dataset.insert && ALTERNATES[keyEl.dataset.insert.toLowerCase()]) {
+      cancelLongPress();
+      longPressTimer = setTimeout(() => {
+        removeKeyBubble();
+        showLongPressPopup(keyEl);
+      }, LONG_PRESS_DELAY);
+    }
+
     // Only track letters on ABC page for swipe
     if (currentPage === 'abc' && keyEl.dataset.insert) {
-      const letter = (shifted || capsLock) ? keyEl.dataset.insert.toUpperCase() : keyEl.dataset.insert;
-      swipePath.push(letter.toLowerCase());
+      const letter = keyEl.dataset.insert.toLowerCase();
+      swipePath.push(letter);
       lastSwipeKey = keyEl;
     }
   }
@@ -818,12 +1044,27 @@
 
     swipePoints.push({ x: touch.clientX, y: touch.clientY });
 
+    // Cancel long-press on any movement
+    cancelLongPress();
+
+    // ── Long-press popup: track finger over options ──
+    if (longPressEl) {
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const opts = longPressEl.querySelectorAll('.mx-longpress-option');
+      opts.forEach(o => o.classList.remove('mx-longpress-hover'));
+      if (el && el.closest('.mx-longpress-option')) {
+        el.closest('.mx-longpress-option').classList.add('mx-longpress-hover');
+      }
+      return; // Don't start swipe while in long-press mode
+    }
+
     // Check if we've moved enough to be swiping (only on ABC page)
-    if (!swiping && currentPage === 'abc') {
+    if (!swiping && currentPage === 'abc' && swipeStartKey.dataset.insert) {
       const dx = touch.clientX - swipePoints[0].x;
       const dy = touch.clientY - swipePoints[0].y;
       if (Math.sqrt(dx * dx + dy * dy) > SWIPE_MOVE_THRESHOLD) {
         swiping = true;
+        cancelDeleteRepeat();
         swipeStartKey.classList.remove('mx-key-pressed');
         removeKeyBubble();
         clearSwipeHighlights();
@@ -840,7 +1081,7 @@
 
     if (keyEl && keyEl !== lastSwipeKey && keyEl.dataset.insert) {
       // Haptic tick as finger enters new key
-      haptic(5);
+      haptic(HAPTIC.swipeTick);
 
       // Highlight the new key
       if (lastSwipeKey) lastSwipeKey.classList.remove('mx-swipe-hover');
@@ -860,6 +1101,24 @@
     e.preventDefault();
 
     removeKeyBubble();
+    cancelDeleteRepeat();
+    cancelLongPress();
+
+    // ── Long-press popup: select hovered option ──
+    if (longPressEl) {
+      const hovered = longPressEl.querySelector('.mx-longpress-hover');
+      if (hovered && hovered.dataset.insert) {
+        haptic(HAPTIC.letter);
+        const char = hovered.dataset.insert;
+        const eqField = getActiveEquationMathField();
+        if (eqField) { eqField.executeCommand(['typedText', char]); }
+        else { insertChar(char); }
+      }
+      dismissLongPressPopup();
+      swipeStartKey.classList.remove('mx-key-pressed');
+      swipeStartKey = null;
+      return;
+    }
 
     if (swiping && swipePath.length >= 2) {
       // ── Swipe complete: match word ──
@@ -868,7 +1127,7 @@
 
       const candidates = matchSwipeCandidates(swipePath, 3);
       if (candidates.length > 0) {
-        showSuggestionBar(candidates);
+        showSuggestionBar(candidates, true);
       } else {
         // Fallback: insert the raw path deduplicated
         const raw = [swipePath[0]];
@@ -882,8 +1141,25 @@
       clearSwipeTrail();
       const key = swipeStartKey;
       key.classList.remove('mx-key-pressed');
-      setTimeout(() => key.classList.remove('mx-key-pressed'), 80);
-      processKey(key);
+
+      // Skip delete — already handled on touchstart
+      if (key.dataset.action !== 'delete') {
+
+        // ── Spacebar left-swipe → undo last word ──
+        if (key.dataset.action === 'space' && e.changedTouches && e.changedTouches[0]) {
+          const endX = e.changedTouches[0].clientX;
+          const deltaX = endX - touchStartXSpace;
+          if (deltaX < -50 && undoStack.length > 0) {
+            haptic(HAPTIC.undo);
+            undoLastWord();
+            swiping = false; swipePath = []; swipePoints = [];
+            swipeStartKey = null; lastSwipeKey = null;
+            return;
+          }
+        }
+
+        processKey(key);
+      }
     }
 
     // Reset state
@@ -899,7 +1175,20 @@
     if (!key) return;
     e.preventDefault();
 
-    haptic(8);
+    // Dismiss long-press popup
+    if (longPressEl) {
+      const opt = e.target.closest('.mx-longpress-option');
+      if (opt && opt.dataset.insert) {
+        haptic(HAPTIC.letter);
+        const char = opt.dataset.insert;
+        insertChar(char);
+        dismissLongPressPopup();
+        return;
+      }
+      dismissLongPressPopup();
+    }
+
+    haptic(hapticForKey(key));
     key.classList.add('mx-key-pressed');
     showKeyBubble(key);
     setTimeout(() => {
@@ -908,6 +1197,20 @@
     }, 120);
 
     processKey(key);
+  }
+
+  // ─── UNDO LAST WORD ────────────────────────────────────────────────
+
+  function undoLastWord() {
+    if (undoStack.length === 0) return;
+    const lastWord = undoStack.pop();
+    ensureFocus();
+    // Delete the word + trailing space we inserted
+    const len = lastWord.length + 1; // +1 for the space
+    for (let i = 0; i < len; i++) {
+      document.execCommand('delete', false);
+    }
+    updatePredictions();
   }
 
   // ─── SWIPE VISUALS ─────────────────────────────────────────────────
@@ -920,46 +1223,99 @@
   function drawSwipeTrail() {
     if (!swipeTrailEl || swipePoints.length < 2) return;
     const kbRect = keyboardEl.getBoundingClientRect();
+    const pts = swipePoints;
+    const len = pts.length;
 
-    // Build SVG path
-    let d = '';
-    for (let i = 0; i < swipePoints.length; i++) {
-      const x = swipePoints[i].x - kbRect.left;
-      const y = swipePoints[i].y - kbRect.top;
-      d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+    // Build smooth quadratic bezier path through points
+    const x = i => (pts[i].x - kbRect.left).toFixed(1);
+    const y = i => (pts[i].y - kbRect.top).toFixed(1);
+
+    // Downsample for performance: keep every 3rd point + last
+    const sample = [0];
+    for (let i = 3; i < len - 1; i += 3) sample.push(i);
+    if (sample[sample.length - 1] !== len - 1) sample.push(len - 1);
+
+    if (sample.length < 2) {
+      swipeTrailEl.innerHTML = '';
+      swipeTrailEl.style.display = 'none';
+      return;
     }
 
-    swipeTrailEl.innerHTML = '<path d="' + d + '" />';
+    let d = 'M' + x(sample[0]) + ',' + y(sample[0]);
+    for (let i = 1; i < sample.length; i++) {
+      const prev = sample[i - 1];
+      const cur = sample[i];
+      // Quadratic bezier: control point = prev, end = midpoint (smooth)
+      if (i < sample.length - 1) {
+        const next = sample[i + 1];
+        const mx = ((pts[cur].x + pts[next].x) / 2 - kbRect.left).toFixed(1);
+        const my = ((pts[cur].y + pts[next].y) / 2 - kbRect.top).toFixed(1);
+        d += ' Q' + x(cur) + ',' + y(cur) + ' ' + mx + ',' + my;
+      } else {
+        d += ' L' + x(cur) + ',' + y(cur);
+      }
+    }
+
+    // Gradient trail: bright at tip, fading behind
+    const trailId = 'mx-trail-grad';
+    swipeTrailEl.innerHTML =
+      '<defs><linearGradient id="' + trailId + '" x1="0%" y1="0%" x2="100%" y2="0%">' +
+      '<stop offset="0%" stop-color="rgba(18,179,179,0.05)"/>' +
+      '<stop offset="70%" stop-color="rgba(18,179,179,0.35)"/>' +
+      '<stop offset="100%" stop-color="rgba(18,179,179,0.6)"/>' +
+      '</linearGradient></defs>' +
+      '<path d="' + d + '" stroke="url(#' + trailId + ')" />';
     swipeTrailEl.style.display = '';
   }
 
   function clearSwipeTrail() {
     if (!swipeTrailEl) return;
-    swipeTrailEl.innerHTML = '';
-    swipeTrailEl.style.display = 'none';
+    // Fade out animation
+    const path = swipeTrailEl.querySelector('path');
+    if (path) {
+      path.style.transition = 'opacity 0.2s ease-out';
+      path.style.opacity = '0';
+      setTimeout(() => {
+        swipeTrailEl.innerHTML = '';
+        swipeTrailEl.style.display = 'none';
+      }, 200);
+    } else {
+      swipeTrailEl.innerHTML = '';
+      swipeTrailEl.style.display = 'none';
+    }
   }
 
   // ─── SUGGESTION BAR ────────────────────────────────────────────────
 
-  function showSuggestionBar(words) {
+  function showSuggestionBar(words, isSwipe) {
     if (!suggestionBarEl) return;
     suggestionBarEl.innerHTML = '';
+    suggestionBarEl.classList.toggle('mx-swipe-bar-swipe', !!isSwipe);
+
     words.forEach((word, i) => {
       const btn = document.createElement('button');
-      btn.className = 'mx-swipe-suggestion' + (i === 0 ? ' mx-swipe-suggestion-primary' : '');
-      btn.textContent = word;
+      btn.className = 'mx-swipe-suggestion' + (i === 0 && isSwipe ? ' mx-swipe-suggestion-primary' : '');
+      btn.textContent = (shifted || capsLock) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+      btn.setAttribute('tabindex', '-1');
       btn.addEventListener('touchstart', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        haptic(8);
-        insertSwipeWord(word);
+        haptic(HAPTIC.suggest);
+        if (isSwipe) {
+          insertSwipeWord(word);
+        } else {
+          insertPrediction(word);
+        }
         hideSuggestionBar();
+        updatePredictions();
       }, { passive: false });
       btn.addEventListener('mousedown', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        insertSwipeWord(word);
+        if (isSwipe) { insertSwipeWord(word); }
+        else { insertPrediction(word); }
         hideSuggestionBar();
+        updatePredictions();
       });
       suggestionBarEl.appendChild(btn);
 
@@ -972,14 +1328,17 @@
     });
     suggestionBarEl.style.display = '';
 
-    // Auto-insert primary after timeout
+    // Auto-insert primary after timeout (swipe only)
     clearTimeout(suggestionBarEl._timer);
-    suggestionBarEl._timer = setTimeout(() => {
-      if (suggestionBarEl.style.display !== 'none' && words[0]) {
-        insertSwipeWord(words[0]);
-        hideSuggestionBar();
-      }
-    }, 4000);
+    if (isSwipe) {
+      suggestionBarEl._timer = setTimeout(() => {
+        if (suggestionBarEl.style.display !== 'none' && words[0]) {
+          insertSwipeWord(words[0]);
+          hideSuggestionBar();
+          updatePredictions();
+        }
+      }, 3500);
+    }
   }
 
   function hideSuggestionBar() {
@@ -994,10 +1353,71 @@
     let text = (shifted || capsLock) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
     ensureFocus();
     document.execCommand('insertText', false, text + ' ');
-    // Auto-unshift
+    undoStack.push(text);
+    if (undoStack.length > 20) undoStack.shift();
+    // Auto-unshift / check for re-capitalize
     if (shifted && !capsLock) {
       shifted = false;
       updateShiftDisplay();
+    }
+    checkAutoCapitalize();
+  }
+
+  /** Insert a predicted word, completing the partial word being typed */
+  function insertPrediction(word) {
+    if (!word) return;
+    ensureFocus();
+    // Delete the partial word typed so far, then insert the full word
+    const partial = getCurrentPartialWord();
+    for (let i = 0; i < partial.length; i++) {
+      document.execCommand('delete', false);
+    }
+    let text = (shifted || capsLock) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+    document.execCommand('insertText', false, text + ' ');
+    undoStack.push(text);
+    if (undoStack.length > 20) undoStack.shift();
+    if (shifted && !capsLock) { shifted = false; updateShiftDisplay(); }
+    checkAutoCapitalize();
+  }
+
+  /** Get the current partially-typed word (from cursor back to last space) */
+  function getCurrentPartialWord() {
+    if (!textInput) return '';
+    const text = textInput.textContent || '';
+    // Find the word being typed (from end, or from cursor position)
+    const match = text.match(/(\S+)$/);
+    return match ? match[1] : '';
+  }
+
+  /** Update the prediction bar with autocomplete suggestions based on typed text */
+  function updatePredictions() {
+    if (currentPage !== 'abc' && currentPage !== '123') {
+      hideSuggestionBar();
+      return;
+    }
+    const partial = getCurrentPartialWord().toLowerCase();
+    if (partial.length < 2) {
+      hideSuggestionBar();
+      return;
+    }
+
+    // Find words starting with the partial text
+    const results = [];
+    const allLengths = Object.keys(SWIPE_WORDS).map(Number).sort((a, b) => a - b);
+    for (let li = 0; li < allLengths.length && results.length < 3; li++) {
+      const bucket = SWIPE_WORDS[allLengths[li]];
+      if (!bucket || allLengths[li] < partial.length) continue;
+      for (let w = 0; w < bucket.length && results.length < 3; w++) {
+        if (bucket[w].startsWith(partial) && bucket[w] !== partial) {
+          results.push(bucket[w]);
+        }
+      }
+    }
+
+    if (results.length > 0) {
+      showSuggestionBar(results, false);
+    } else {
+      hideSuggestionBar();
     }
   }
 
@@ -1007,12 +1427,14 @@
     const action = key.dataset.action;
     const latex = key.dataset.latex;
     const insert = key.dataset.insert;
+    const now = Date.now();
 
     // ─── ACTION KEYS ────────────────────────────────────────────────
     if (action) {
       switch (action) {
         case 'abc':
           switchPage('abc');
+          checkAutoCapitalize();
           break;
         case '123':
           switchPage('123');
@@ -1027,9 +1449,27 @@
           toggleShift();
           break;
         case 'delete':
+          // Already handled in onTouchStart (hold-to-repeat)
+          // This path is only for mouse clicks
           deleteBackward();
+          checkAutoCapitalize();
+          updatePredictions();
           break;
         case 'space': {
+          // ── Double-space → period + space (iOS behavior) ──
+          if (lastKeyAction === 'space' && (now - lastKeyTime) < 400) {
+            // Delete the previous space, insert ". "
+            ensureFocus();
+            document.execCommand('delete', false);
+            insertChar('.');
+            insertChar(' ');
+            lastKeyAction = 'period-space';
+            lastKeyTime = now;
+            checkAutoCapitalize();
+            hideSuggestionBar();
+            break;
+          }
+
           // If inside an inline equation box, insert space there
           const eqField = getActiveEquationMathField();
           if (eqField) {
@@ -1037,6 +1477,9 @@
           } else {
             insertChar(' ');
           }
+          lastKeyAction = 'space';
+          lastKeyTime = now;
+          hideSuggestionBar();
           break;
         }
         case 'enter':
@@ -1057,6 +1500,8 @@
         // No active equation box — create one with this LaTeX
         insertEquationWithLatex(latex);
       }
+      lastKeyAction = 'latex';
+      lastKeyTime = now;
       return;
     }
 
@@ -1076,30 +1521,60 @@
         insertChar(char);
       }
 
+      lastKeyAction = 'char';
+      lastKeyTime = now;
+
       // Auto-unshift after one character (unless caps lock)
       if (shifted && !capsLock) {
         shifted = false;
         updateShiftDisplay();
       }
+
+      // Update predictive text bar
+      updatePredictions();
     }
   }
 
   // ─── PAGE SWITCHING ─────────────────────────────────────────────────
 
   function switchPage(pageName) {
+    const oldPage = currentPage;
     currentPage = pageName;
     if (!keyboardEl) return;
+    if (oldPage === pageName) return;
 
-    keyboardEl.querySelectorAll('.mx-kb-page').forEach(p => {
-      p.style.display = p.dataset.page === pageName ? '' : 'none';
+    // ── Crossfade transition ──
+    const pages = keyboardEl.querySelectorAll('.mx-kb-page');
+    pages.forEach(p => {
+      if (p.dataset.page === pageName) {
+        p.style.display = '';
+        p.classList.add('mx-page-enter');
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => p.classList.remove('mx-page-enter'));
+        });
+      } else if (p.dataset.page === oldPage) {
+        // Animate out
+        p.classList.add('mx-page-exit');
+        setTimeout(() => {
+          p.style.display = 'none';
+          p.classList.remove('mx-page-exit');
+        }, 150);
+      } else {
+        p.style.display = 'none';
+      }
     });
 
     keyboardEl.querySelectorAll('.mx-key-mode, .mx-key-eq-switch').forEach(k => {
       k.classList.toggle('mx-key-active', k.dataset.action === pageName);
     });
 
+    // Hide predictions when leaving ABC page
+    if (pageName !== 'abc') {
+      hideSuggestionBar();
+    }
+
     // Re-measure height (EQ page may be taller)
-    setTimeout(updateKeyboardHeightVar, 50);
+    setTimeout(updateKeyboardHeightVar, 180);
   }
 
   // ─── SHIFT ──────────────────────────────────────────────────────────
