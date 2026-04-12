@@ -87,6 +87,12 @@ function assembleEvidence(params = {}) {
     // ── Emotional/Engagement State (from SessionMood) ──
     engagement: assembleEngagementEvidence(sessionMood, observation),
 
+    // ── Approach Effectiveness (tracks what's working and what's not) ──
+    approachEffectiveness: assembleApproachEffectiveness(conversationData),
+
+    // ── Learning Style Signals (from student profile + session behavior) ──
+    learningStyle: assembleLearningStyleSignals(studentProfile, conversationData),
+
     // ── Composite Signals (cross-cutting) ──
     composite: null, // Filled below
   };
@@ -315,6 +321,104 @@ function assembleEngagementEvidence(sessionMood, observation) {
   };
 }
 
+/**
+ * Approach effectiveness — tracks which teaching approaches are working
+ * and which are failing for this student in this session.
+ *
+ * Detects when the same approach has been tried multiple times without success,
+ * signaling that a representation switch is needed.
+ */
+function assembleApproachEffectiveness(conversationData) {
+  const { results = [], recentApproaches = [] } = conversationData;
+
+  if (results.length < 2) {
+    return {
+      available: false,
+      consecutiveFailures: 0,
+      needsSwitch: false,
+      failedApproachCount: 0,
+      successfulApproachTypes: [],
+    };
+  }
+
+  // Count consecutive failures (wrong answers in a row)
+  let consecutiveFailures = 0;
+  for (let i = results.length - 1; i >= 0; i--) {
+    if (!results[i]) consecutiveFailures++;
+    else break;
+  }
+
+  // Detect if we've been repeating the same approach type without success
+  // recentApproaches is populated by the persist stage with approach tags
+  const failedApproaches = new Set();
+  const successfulApproaches = new Set();
+
+  for (let i = 0; i < results.length && i < recentApproaches.length; i++) {
+    const approach = recentApproaches[i] || 'verbal';
+    if (results[i]) successfulApproaches.add(approach);
+    else failedApproaches.add(approach);
+  }
+
+  // Approaches that failed but never succeeded = definitely not working
+  const purelyFailed = [...failedApproaches].filter(a => !successfulApproaches.has(a));
+
+  return {
+    available: true,
+    consecutiveFailures,
+    needsSwitch: consecutiveFailures >= 2 || purelyFailed.length >= 2,
+    failedApproachCount: purelyFailed.length,
+    failedApproaches: purelyFailed,
+    successfulApproachTypes: [...successfulApproaches],
+  };
+}
+
+/**
+ * Learning style signals — combines stored preferences with session behavior.
+ *
+ * Detects which representations resonate with this student based on:
+ * 1. Stored learningStyle preference from profile
+ * 2. Session behavior (which approaches led to correct answers)
+ * 3. Student engagement signals after different representations
+ */
+function assembleLearningStyleSignals(studentProfile, conversationData) {
+  const storedStyle = studentProfile.learningStyle || null;
+  const interests = studentProfile.interests || [];
+  const { results = [], recentApproaches = [] } = conversationData;
+
+  // Infer effective style from session data
+  const styleSuccessRates = {};
+  for (let i = 0; i < results.length && i < recentApproaches.length; i++) {
+    const approach = recentApproaches[i] || 'verbal';
+    if (!styleSuccessRates[approach]) {
+      styleSuccessRates[approach] = { correct: 0, total: 0 };
+    }
+    styleSuccessRates[approach].total++;
+    if (results[i]) styleSuccessRates[approach].correct++;
+  }
+
+  // Find the most effective approach this session
+  let bestApproach = null;
+  let bestRate = 0;
+  for (const [approach, stats] of Object.entries(styleSuccessRates)) {
+    if (stats.total >= 2) {
+      const rate = stats.correct / stats.total;
+      if (rate > bestRate) {
+        bestRate = rate;
+        bestApproach = approach;
+      }
+    }
+  }
+
+  return {
+    stored: storedStyle,
+    interests,
+    sessionBestApproach: bestApproach,
+    sessionBestRate: bestRate,
+    styleSuccessRates,
+    hasInterests: interests.length > 0,
+  };
+}
+
 // ============================================================================
 // COMPOSITE SIGNALS
 // ============================================================================
@@ -397,6 +501,36 @@ function generateCompositeSignals(evidence) {
   if (evidence.performance.available && evidence.performance.pattern === 'stuck') {
     signals.shouldSwitchApproach = true;
     signals.reasoning.push('Student is stuck — same approach not working');
+  }
+
+  // ── Approach effectiveness signals ──
+  if (evidence.approachEffectiveness?.available && evidence.approachEffectiveness.needsSwitch) {
+    signals.shouldSwitchApproach = true;
+    if (evidence.approachEffectiveness.consecutiveFailures >= 3) {
+      signals.reasoning.push(
+        `${evidence.approachEffectiveness.consecutiveFailures} consecutive failures — approach is not working`
+      );
+    }
+    if (evidence.approachEffectiveness.failedApproaches?.length > 0) {
+      signals.reasoning.push(
+        `Failed approaches: ${evidence.approachEffectiveness.failedApproaches.join(', ')}`
+      );
+    }
+    // Suggest what HAS worked
+    if (evidence.approachEffectiveness.successfulApproachTypes?.length > 0) {
+      signals.suggestedApproach = evidence.approachEffectiveness.successfulApproachTypes[0];
+      signals.reasoning.push(
+        `Successful approach this session: ${evidence.approachEffectiveness.successfulApproachTypes.join(', ')}`
+      );
+    }
+  }
+
+  // ── Learning style preference signals ──
+  if (evidence.learningStyle?.sessionBestApproach) {
+    signals.preferredApproach = evidence.learningStyle.sessionBestApproach;
+    signals.reasoning.push(
+      `Student responds best to ${evidence.learningStyle.sessionBestApproach} approach (${Math.round(evidence.learningStyle.sessionBestRate * 100)}% success)`
+    );
   }
 
   // ── Break suggestion signals ──

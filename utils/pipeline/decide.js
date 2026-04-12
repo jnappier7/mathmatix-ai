@@ -126,11 +126,37 @@ function decideCore(observation, diagnosis, context) {
   if (msgType === MESSAGE_TYPES.FRUSTRATION) {
     decision.action = ACTIONS.ACKNOWLEDGE_FRUSTRATION;
     decision.scaffoldLevel = 5; // Maximum support
-    decision.directives.push(
-      'Acknowledge the frustration briefly and genuinely.',
-      'Then offer a concrete next step (easier problem, different approach, or break).',
-      'Do NOT be condescending or use banned phrases.'
-    );
+
+    // ── Frustration Recovery Protocol (adaptive based on severity) ──
+    const frustrationDepth = (streaks.recentWrongCount || 0) + (streaks.idkCount || 0);
+
+    if (frustrationDepth >= 5) {
+      // SEVERE: student is in a frustration spiral — reset completely
+      decision.directives.push(
+        'FRUSTRATION RECOVERY — SEVERE. Student has hit a wall (5+ wrong/IDK).',
+        'Step 1: Validate the emotion genuinely. "Yeah, this is legitimately hard. I get it."',
+        'Step 2: Offer CHOICE — "Want to try a completely different approach, switch to something easier, or take a quick break?"',
+        'Step 3: If they continue, give them a QUICK WIN — a problem you KNOW they can solve to rebuild momentum.',
+        'Do NOT push the current problem. Do NOT re-explain the same way. Their working memory is flooded.',
+        'Keep your response to 1-2 sentences. Less is more right now.'
+      );
+    } else if (frustrationDepth >= 3) {
+      // MODERATE: struggling but still engaged
+      decision.directives.push(
+        'FRUSTRATION RECOVERY — MODERATE. Student is struggling but still here.',
+        'Acknowledge briefly: "This one is tricky — let me try a different angle."',
+        'SWITCH REPRESENTATION: If you were using algebra, try a visual. If verbal, try concrete numbers. If abstract, try a real-world story.',
+        'Lower the barrier: break the problem into the smallest possible piece.',
+        'Then check: "Does THAT part make more sense?"'
+      );
+    } else {
+      // MILD: just venting
+      decision.directives.push(
+        'Acknowledge the frustration briefly and genuinely.',
+        'Then offer a concrete next step (easier problem, different approach, or break).',
+        'Do NOT be condescending or use banned phrases.'
+      );
+    }
     return decision;
   }
 
@@ -262,12 +288,49 @@ function decideCore(observation, diagnosis, context) {
           `Reteaching strategy: ${diagnosis.misconception.fix}`,
           'Do NOT reveal the answer. Address the root cause.'
         );
+
+        // ── Representation switching for recurring misconceptions ──
+        if (streaks.recentWrongCount >= 2) {
+          decision.directives.push(
+            'REPRESENTATION SWITCH REQUIRED: The student has gotten 2+ wrong with this approach.',
+            'You MUST try a DIFFERENT representation than what you used before:',
+            '  • If you explained with SYMBOLS/ALGEBRA → switch to a VISUAL (diagram, number line, tiles)',
+            '  • If you used VERBAL explanation → switch to CONCRETE NUMBERS (plug in values, test cases)',
+            '  • If you used ABSTRACT rules → switch to a REAL-WORLD STORY or ANALOGY',
+            '  • If you used a VISUAL → switch to HANDS-ON (counters, tiles, area models)',
+            'The same explanation said louder is NOT a different approach. CHANGE the lens.'
+          );
+        }
+      } else if (streaks.recentWrongCount >= 4) {
+        // ── Deep struggle: combine worked example with approach switch ──
+        decision.action = ACTIONS.WORKED_EXAMPLE;
+        decision.scaffoldLevel = 5;
+        decision.directives.push(
+          'DEEP STRUGGLE: 4+ wrong answers. The current approach is not working.',
+          'Show a worked example using a PARALLEL problem AND a DIFFERENT representation than what you tried before.',
+          'If previous attempts were algebraic, model with a visual or real-world context.',
+          'Think aloud with REASONING at each step: "I notice... so I will... because..."',
+          'After the example, check: "Does that approach make more sense?" before having them retry.',
+          'If the student seems overwhelmed, offer to try an easier version of the same skill.'
+        );
       } else if (streaks.recentWrongCount >= 3) {
         decision.action = ACTIONS.WORKED_EXAMPLE;
         decision.scaffoldLevel = 5;
         decision.directives.push(
           'Multiple wrong answers. Show a worked example with a PARALLEL problem.',
-          'Then have them try their original problem again.'
+          'Then have them try their original problem again.',
+          'IMPORTANT: If previous explanations were verbal/symbolic, try a visual or concrete approach this time.'
+        );
+      } else if (streaks.recentWrongCount >= 2) {
+        // ── Second wrong: guide differently than the first time ──
+        decision.action = ACTIONS.GUIDE_INCORRECT;
+        decision.scaffoldLevel = 4;
+        decision.directives.push(
+          'Guide with a question that exposes WHY the answer is wrong.',
+          'ADAPTATION: This is the 2nd wrong answer. Your previous guidance didn\'t land.',
+          'Try a DIFFERENT angle: if you asked a conceptual question last time, try a concrete number check this time.',
+          'Example: "Let\'s test your answer — if x = [their answer], does the equation balance?"',
+          'Let THEM see the contradiction. Do not hand them the correction.'
         );
       } else {
         decision.action = ACTIONS.GUIDE_INCORRECT;
@@ -825,6 +888,53 @@ function applyEvidenceModifiers(decision, evidence) {
       'TEACHABLE MOMENT: Student is showing metacognition.',
       'Deepen understanding: ask "Why does this work?" or "What would happen if...?"',
       'Keep it brief — build on their insight, don\'t lecture.'
+    );
+  }
+
+  // ── Approach effectiveness tracking ──
+  // If we've been using the same approach and it's not working, force a switch
+  if (composite.shouldSwitchApproach && decision.action !== ACTIONS.ACKNOWLEDGE_FRUSTRATION) {
+    decision.directives.push(
+      'APPROACH SWITCH REQUIRED: Data indicates the current teaching approach is not working.',
+      'You MUST change your representation or method. Options:',
+      '  • Algebraic/symbolic → Visual (diagram, graph, number line, tiles)',
+      '  • Verbal explanation → Concrete numbers (plug in values, test cases)',
+      '  • Abstract rules → Real-world story or physical analogy',
+      '  • Teacher-led → Student-led (have them teach it back or find the error)',
+      'If you have already tried 2+ representations, go CONCRETE: use manipulatives (counters, tiles, fraction bars).',
+      'NEVER repeat the same explanation with different words. That is not switching — that is repeating.'
+    );
+  }
+
+  // ── Consistency-informed adaptation ──
+  // When performance is inconsistent, the student may have partial understanding
+  if (evidence.performance.available && evidence.performance.pattern === 'inconsistent') {
+    decision.directives.push(
+      'INCONSISTENT PERFORMANCE: Student alternates between correct and incorrect.',
+      'This usually means partial conceptual understanding — they "get it" sometimes but don\'t fully own the concept.',
+      'Deploy a TRANSFER check: same concept, different context. If they fail, the gap is conceptual, not procedural.',
+      'Avoid drilling the same problem type — vary the representation to find where understanding breaks down.'
+    );
+  }
+
+  // ── Near-mastery acceleration ──
+  // Student is close — push them across the line efficiently
+  if (evidence.knowledge.available && evidence.knowledge.pLearned > 0.85 &&
+      evidence.engagement.available && evidence.engagement.inFlow) {
+    decision.directives.push(
+      'MASTERY ACCELERATION: Student is near-mastery AND in flow state.',
+      'Keep problems coming quickly. Brief confirmations. Match their energy.',
+      'This is the sprint to the finish — do not slow them down with unnecessary checks.'
+    );
+  }
+
+  // ── Memory-informed review injection ──
+  if (evidence.memory.available && evidence.memory.retrievability < 0.4 &&
+      decision.action === ACTIONS.PRESENT_PROBLEM) {
+    decision.directives.push(
+      `MEMORY ALERT: Retrievability for this skill is low (${(evidence.memory.retrievability * 100).toFixed(0)}%).`,
+      'Start with a quick review warm-up before presenting new problems.',
+      'Frame it naturally: "Let\'s do a quick refresher before we dive in."'
     );
   }
 
