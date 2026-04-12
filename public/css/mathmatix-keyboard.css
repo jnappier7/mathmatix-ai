@@ -110,13 +110,20 @@
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
 }
 
-/* --- Key press feedback --- */
+/* --- Key press feedback (pop animation) --- */
 .mx-key-pressed {
   background: #b8bcc2 !important;
+  animation: mx-key-pop 0.12s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
 }
 
 [data-theme="dark"] .mx-key-pressed {
   background: #5e5e62 !important;
+}
+
+@keyframes mx-key-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.12); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+  100% { transform: scale(1); }
 }
 
 /* --- Special Keys --- */
@@ -314,6 +321,155 @@
 .k-frac {
   font-size: 20px;
   line-height: 1;
+}
+
+
+/* ═══════════════════════════════════════════════
+   iOS KEY PREVIEW BUBBLE
+   ═══════════════════════════════════════════════ */
+
+.mx-key-bubble {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  margin-top: -8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: #fff;
+  color: #000;
+  font-size: 28px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  pointer-events: none;
+  animation: mx-bubble-in 0.08s ease-out forwards;
+}
+
+[data-theme="dark"] .mx-key-bubble {
+  background: #5a5a5e;
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes mx-bubble-in {
+  0%   { opacity: 0; transform: translate(-50%, -100%) scale(0.5); }
+  100% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+}
+
+
+/* ═══════════════════════════════════════════════
+   SWIPE-TO-TYPE TRAIL
+   ═══════════════════════════════════════════════ */
+
+.mx-swipe-trail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  overflow: visible;
+}
+
+.mx-swipe-trail path {
+  fill: none;
+  stroke: rgba(18, 179, 179, 0.45);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 3px rgba(18, 179, 179, 0.3));
+}
+
+[data-theme="dark"] .mx-swipe-trail path {
+  stroke: rgba(45, 212, 191, 0.5);
+  filter: drop-shadow(0 0 4px rgba(45, 212, 191, 0.35));
+}
+
+/* Swipe hover on keys (finger passing over) */
+.mx-swipe-hover {
+  background: rgba(18, 179, 179, 0.25) !important;
+  box-shadow: 0 0 0 1.5px rgba(18, 179, 179, 0.5), 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  transition: background 0.08s ease-out, box-shadow 0.08s ease-out;
+}
+
+[data-theme="dark"] .mx-swipe-hover {
+  background: rgba(45, 212, 191, 0.2) !important;
+  box-shadow: 0 0 0 1.5px rgba(45, 212, 191, 0.5), 0 1px 0 rgba(0, 0, 0, 0.4) !important;
+}
+
+
+/* ═══════════════════════════════════════════════
+   SWIPE SUGGESTION BAR
+   ═══════════════════════════════════════════════ */
+
+.mx-swipe-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  height: 40px;
+  margin: 0 -4px;
+  padding: 0 4px;
+  background: #ecedf0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  animation: mx-bar-in 0.15s ease-out;
+}
+
+[data-theme="dark"] .mx-swipe-bar {
+  background: #2c2c2e;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+@keyframes mx-bar-in {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.mx-swipe-suggestion {
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: #000;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0 8px;
+}
+
+[data-theme="dark"] .mx-swipe-suggestion {
+  color: #fff;
+}
+
+.mx-swipe-suggestion-primary {
+  font-weight: 600;
+}
+
+.mx-swipe-suggestion:active {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+}
+
+[data-theme="dark"] .mx-swipe-suggestion:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mx-swipe-divider {
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .mx-swipe-divider {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 
