@@ -780,31 +780,77 @@
 
   // ─── KEY HANDLING ───────────────────────────────────────────────────
 
-  // ─── SMART HAPTICS ──────────────────────────────────────────────────
-  // Different intensities for different key types — mimics iOS Taptic Engine
+  // ─── CROSS-PLATFORM HAPTIC ENGINE ──────────────────────────────────
+  // navigator.vibrate() DOES NOT EXIST on iOS Safari. We use AudioContext
+  // to generate ultra-short click tones (like iOS keyboard clicks) that
+  // work on ALL platforms. Android also gets vibration as a bonus.
+
   const HAPTIC = {
-    letter: 6,      // Light tap for letters
-    space: 10,      // Medium for space
-    enter: 15,      // Firm for send
-    delete: 10,     // Medium for delete
-    shift: 8,       // Light-medium for shift
-    mode: 8,        // Light-medium for page switch
-    swipeTick: 4,   // Very light for swipe key-cross
-    suggest: 10,    // Medium for selecting suggestion
-    longPress: 12,  // Medium for long-press popup
-    undo: [12, 30, 12], // Pattern for undo feedback
+    letter:    { freq: 1400, dur: 0.008, gain: 0.035, vib: 6 },
+    space:     { freq: 1100, dur: 0.012, gain: 0.04,  vib: 10 },
+    enter:     { freq: 900,  dur: 0.018, gain: 0.05,  vib: 15 },
+    delete:    { freq: 1200, dur: 0.012, gain: 0.04,  vib: 10 },
+    shift:     { freq: 1300, dur: 0.010, gain: 0.03,  vib: 8 },
+    mode:      { freq: 1300, dur: 0.010, gain: 0.03,  vib: 8 },
+    swipeTick: { freq: 1600, dur: 0.005, gain: 0.02,  vib: 4 },
+    suggest:   { freq: 1100, dur: 0.012, gain: 0.04,  vib: 10 },
+    longPress: { freq: 800,  dur: 0.020, gain: 0.045, vib: 12 },
+    undo:      { freq: 600,  dur: 0.030, gain: 0.05,  vib: 15 },
   };
 
-  function haptic(level) {
-    if (!navigator.vibrate) return;
-    if (Array.isArray(level)) {
-      navigator.vibrate(level);
-    } else {
-      navigator.vibrate(level || 6);
+  let _audioCtx = null;
+
+  /** Lazily create AudioContext (must happen after user gesture) */
+  function getAudioCtx() {
+    if (!_audioCtx) {
+      try {
+        _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (_) { /* graceful no-op */ }
     }
+    // Resume if suspended (autoplay policy)
+    if (_audioCtx && _audioCtx.state === 'suspended') {
+      _audioCtx.resume().catch(function() {});
+    }
+    return _audioCtx;
   }
 
-  /** Get haptic intensity for a key element */
+  /**
+   * Cross-platform haptic feedback.
+   * @param {string|object} level - HAPTIC key name or config object
+   */
+  function haptic(level) {
+    var cfg = (typeof level === 'string') ? HAPTIC[level] : level;
+    if (!cfg) cfg = HAPTIC.letter;
+
+    // 1) Android vibration (bonus layer on top of audio)
+    if (navigator.vibrate) {
+      navigator.vibrate(cfg.vib || 6);
+    }
+
+    // 2) AudioContext click sound (works on ALL platforms including iOS)
+    var ctx = getAudioCtx();
+    if (!ctx) return;
+
+    try {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = cfg.freq || 1400;
+      gain.gain.value = cfg.gain || 0.035;
+
+      // Quick envelope: attack → decay
+      var now = ctx.currentTime;
+      gain.gain.setValueAtTime(cfg.gain || 0.035, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + (cfg.dur || 0.01));
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + (cfg.dur || 0.01) + 0.005);
+    } catch (_) { /* graceful no-op */ }
+  }
+
+  /** Get haptic config for a key element */
   function hapticForKey(key) {
     if (key.dataset.action) {
       switch (key.dataset.action) {
@@ -995,8 +1041,10 @@
     if (!keyEl) return;
     e.preventDefault();
 
-    // Hide suggestion bar on new typing
-    hideSuggestionBar();
+    // Hide swipe suggestion bar on new typing (but not prediction bar — it updates itself)
+    if (suggestionBarEl && suggestionBarEl.classList.contains('mx-swipe-bar-swipe')) {
+      hideSuggestionBar();
+    }
 
     swipeStartTime = Date.now();
     swipeStartKey = keyEl;
@@ -1210,7 +1258,11 @@
     for (let i = 0; i < len; i++) {
       document.execCommand('delete', false);
     }
+    // Reset double-space state to avoid stale triggers
+    lastKeyAction = '';
+    lastKeyTime = 0;
     updatePredictions();
+    checkAutoCapitalize();
   }
 
   // ─── SWIPE VISUALS ─────────────────────────────────────────────────
@@ -1383,8 +1435,17 @@
   /** Get the current partially-typed word (from cursor back to last space) */
   function getCurrentPartialWord() {
     if (!textInput) return '';
+    // Skip if inside an equation box (predictions don't apply to LaTeX)
+    if (getActiveEquationMathField()) return '';
+    // Get text from the last text node before cursor (avoids equation box content)
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0 && sel.anchorNode && sel.anchorNode.nodeType === Node.TEXT_NODE) {
+      const textBefore = sel.anchorNode.textContent.substring(0, sel.anchorOffset);
+      const match = textBefore.match(/(\S+)$/);
+      return match ? match[1] : '';
+    }
+    // Fallback: use full textContent
     const text = textInput.textContent || '';
-    // Find the word being typed (from end, or from cursor position)
     const match = text.match(/(\S+)$/);
     return match ? match[1] : '';
   }
@@ -1549,9 +1610,7 @@
       if (p.dataset.page === pageName) {
         p.style.display = '';
         p.classList.add('mx-page-enter');
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => p.classList.remove('mx-page-enter'));
-        });
+        setTimeout(() => p.classList.remove('mx-page-enter'), 160);
       } else if (p.dataset.page === oldPage) {
         // Animate out
         p.classList.add('mx-page-exit');
