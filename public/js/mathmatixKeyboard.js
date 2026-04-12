@@ -24,6 +24,16 @@
   let sendCallback = null;    // Function to call on send
   let initialized = false;
 
+  // ─── SWIPE STATE ────────────────────────────────────────────────────
+  let swiping = false;            // True while a swipe gesture is active
+  let swipePath = [];             // Array of key letters touched during swipe
+  let swipePoints = [];           // Array of {x, y} touch coordinates for trail
+  let swipeStartTime = 0;        // Timestamp when touch started
+  let swipeStartKey = null;       // First key element touched
+  let lastSwipeKey = null;        // Last key element highlighted
+  let swipeTrailEl = null;        // SVG element for swipe trail
+  let suggestionBarEl = null;     // Suggestion bar element
+
   // ─── KEYBOARD LAYOUTS ───────────────────────────────────────────────
 
   const LAYOUTS = {
@@ -96,6 +106,262 @@
       ]
     }
   };
+
+  // ─── SWIPE DICTIONARY ────────────────────────────────────────────────
+  // Compact word list for swipe matching: common English + math terms.
+  // Words are grouped by length for faster lookup.
+  const SWIPE_WORDS = (function () {
+    const raw = (
+      'a,i,am,an,as,at,be,by,do,go,he,if,in,is,it,me,my,no,of,on,or,so,to,up,us,we,' +
+      'abs,add,all,and,any,are,ask,bad,big,bit,box,but,buy,can,cos,cut,day,did,end,far,' +
+      'few,for,get,got,had,has,her,him,his,hot,how,its,job,just,key,let,log,lot,man,may,' +
+      'met,mix,new,nor,not,now,odd,off,old,one,our,out,own,per,put,ran,run,sat,saw,say,' +
+      'set,she,sin,sit,six,sum,tan,ten,the,too,top,try,two,use,via,was,way,who,why,win,' +
+      'yes,yet,you,zero,' +
+      'able,also,area,axis,back,base,been,best,body,book,both,call,came,case,come,data,' +
+      'days,deal,diff,does,done,down,draw,each,easy,else,even,ever,exam,fact,feel,find,' +
+      'five,form,four,free,from,full,gave,give,goes,gone,good,grew,grow,half,hand,hard,' +
+      'have,head,help,here,high,hold,home,hope,idea,into,just,keen,keep,kind,knew,know,' +
+      'last,late,lead,left,less,life,like,line,list,live,long,look,lose,loss,lots,love,' +
+      'made,main,make,many,math,mean,mind,mode,more,most,move,much,must,name,near,need,' +
+      'next,nine,none,note,odds,once,only,open,over,page,part,past,path,pick,plan,play,' +
+      'plot,plus,post,pull,push,quiz,rate,read,real,rest,rich,rise,role,root,rule,runs,' +
+      'safe,said,same,save,seen,self,send,show,shut,side,sign,size,slim,slow,some,soon,' +
+      'sort,sqrt,step,stop,such,sure,take,talk,tell,term,test,text,than,that,them,then,' +
+      'they,this,thus,time,told,took,true,turn,type,unit,upon,used,user,vary,very,view,' +
+      'want,ways,week,well,went,were,what,when,whom,wide,will,wish,with,word,work,year,' +
+      'above,about,added,after,again,along,angle,apply,asked,basic,began,being,below,' +
+      'black,board,bonus,bound,break,bring,built,carry,cause,chain,check,class,clean,' +
+      'clear,close,comes,could,count,cover,cross,curve,deals,depth,doing,doubt,draft,' +
+      'drawn,drive,early,eight,enter,equal,error,essay,euler,every,exact,extra,facts,' +
+      'false,field,final,first,fixed,float,focus,force,found,front,fully,given,going,' +
+      'grade,graph,great,green,group,guess,hence,holds,ideas,image,index,input,inner,' +
+      'issue,known,large,later,layer,learn,least,leave,level,light,limit,lines,local,' +
+      'logic,looks,lower,major,makes,match,maybe,means,media,might,minus,model,money,' +
+      'month,moved,names,never,newer,notes,often,omega,order,other,outer,paint,parts,' +
+      'phase,phone,piece,place,plain,plane,plays,point,power,press,price,prime,print,' +
+      'proof,prove,query,queue,quick,quite,raise,range,ratio,reach,reads,ready,refer,' +
+      'reply,right,round,route,rules,saved,scale,score,sense,serve,seven,shall,shape,' +
+      'share,shift,short,sigma,since,sixth,slash,sleep,slide,slope,small,solve,sorry,' +
+      'space,speed,spend,split,stack,staff,stage,start,state,steps,still,store,study,' +
+      'stuff,style,super,sweet,table,taken,tasks,terms,thank,their,theme,there,these,' +
+      'theta,thing,think,third,those,three,throw,times,title,today,token,total,touch,' +
+      'trace,track,train,treat,trend,tried,truly,truth,twice,under,union,unity,until,' +
+      'upper,usage,using,usual,valid,value,watch,wheel,where,which,while,white,whole,' +
+      'width,world,worst,worth,would,write,wrong,wrote,years,young,' +
+      'across,action,adding,almost,always,amount,answer,assign,begins,bigger,binary,' +
+      'called,cancel,cannot,center,change,choose,circle,column,coming,common,cosine,' +
+      'create,decide,define,degree,delete,derive,design,detail,divide,domain,double,' +
+      'during,easily,effect,eighth,eleven,ending,enough,entire,equals,escape,events,' +
+      'except,expand,expect,factor,figure,finite,follow,format,formed,fourth,giving,' +
+      'global,gotten,growth,handle,having,height,higher,indeed,inside,itself,lambda,' +
+      'larger,latest,launch,layout,length,letter,likely,limits,linear,little,looked,' +
+      'making,manage,manual,margin,marked,master,matter,matrix,median,medium,memory,' +
+      'method,middle,minute,mobile,modern,moment,mostly,moving,needed,normal,notice,' +
+      'number,obtain,online,option,origin,output,people,period,placed,please,points,' +
+      'powers,proper,radius,raised,random,rather,reason,record,reduce,region,relate,' +
+      'remove,render,repeat,report,result,return,review,rotate,saying,scalar,second,' +
+      'select,series,server,should,signed,simple,single,skills,solved,source,square,' +
+      'starts,stated,string,strong,submit,subset,switch,symbol,system,taking,target,' +
+      'thanks,thirty,though,toward,travel,triple,turned,twelve,unique,update,useful,' +
+      'values,vector,verify,versus,weight,within,' +
+      'algebra,already,angular,average,balance,because,becomes,believe,between,biggest,' +
+      'boolean,capable,capture,central,certain,chapter,classic,clearly,combine,command,' +
+      'compare,complex,compute,concept,confirm,connect,contain,convert,correct,counter,' +
+      'current,decimal,default,defined,denoted,density,derived,display,divided,drawing,' +
+      'element,entered,entropy,epsilon,equally,exactly,examine,example,exclude,express,' +
+      'extends,extract,extreme,failure,finally,formula,forward,fourier,further,general,' +
+      'getting,graphic,greatly,growing,happens,heading,helpful,history,however,hundred,' +
+      'imagine,implies,improve,include,indexed,initial,integer,inverse,isolate,keeping,' +
+      'largest,leading,learned,leaving,lessons,limited,looking,mapping,maximum,meaning,' +
+      'measure,million,minimum,missing,mixture,modular,monitor,monthly,natural,neither,' +
+      'nothing,noticed,obvious,offered,operate,options,ordered,origins,outside,overall,' +
+      'partial,pattern,percent,perform,perhaps,placing,polygon,popular,portion,predict,' +
+      'present,primary,problem,process,produce,product,program,project,provide,purpose,' +
+      'quickly,radical,reading,rebuild,receive,reflect,regular,related,release,remains,' +
+      'removal,removed,replace,require,resolve,results,returns,reverse,revised,running,' +
+      'satisfy,section,segment,similar,smaller,solving,special,squared,started,subject,' +
+      'suggest,support,surface,symbols,tangent,teacher,testing,theorem,through,tonight,' +
+      'towards,turning,twelfth,upgrade,upsilon,variable,version,viewing,virtual,visible,' +
+      'without,working,written,' +
+      'absolute,abstract,accuracy,actually,addition,advanced,although,analysis,anything,' +
+      'approach,applying,assigned,assuming,attempts,automate,balanced,behavior,building,' +
+      'business,calculus,category,centered,changing,chapters,circular,combined,commonly,' +
+      'compared,complete,computed,conclude,consider,constant,contains,continue,contrast,' +
+      'converge,counting,coverage,creating,critical,crossing,database,decrease,defaults,' +
+      'defining,definite,delivery,denominator,depending,describe,designed,detailed,diagonal,' +
+      'directly,discrete,distance,distinct,division,document,elements,emission,entirely,' +
+      'equality,equation,estimate,evaluate,eventual,evidence,examples,exercise,expected,' +
+      'explicit,exponent,extended,exterior,extremes,factored,features,feedback,finally,' +
+      'finished,floating,followed,fraction,function,generate,geometry,gradient,graphing,' +
+      'greatest,handling,homework,identify,imagined,improper,increase,indicate,infinite,' +
+      'inflated,informed,initially,inserted,instance,integral,intended,interest,interior,' +
+      'interval,isolated,iterated,keyboard,language,learning,limiting,location,matching,' +
+      'material,maximize,measured,minimize,modified,multiply,negative,normally,notation,' +
+      'obtained,occurred,operates,opposite,ordering,organize,original,outlined,overview,' +
+      'parabola,parallel,patterns,performs,periodic,permuted,physical,planning,platform,' +
+      'plotting,pointing,position,positive,possible,practice,presence,previous,probably,' +
+      'problems,produced,products,programs,progress,properly,property,provided,purposes,' +
+      'quadrant,quantity,question,rational,received,recorded,reducing,referred,reflects,' +
+      'relation,relative,released,remember,removing,rendered,repeated,replaced,required,' +
+      'research,resolved,response,restated,restrict,reversed,rotation,rounding,sampling,' +
+      'selected,sentence,separate,sequence,services,settings,shortest,simplify,simulate,' +
+      'singular,smallest,software,solution,specific,standard,starting,straight,strategy,' +
+      'stronger,students,subtract,succeeds,suggests,suitable,supposed,surprise,tangible,' +
+      'teaching,terminal,thinking,thousand,together,tracking,transfer,triangle,uncommon,' +
+      'undefined,uniquely,universe,unknowns,unlikely,updating,validate,variable,vertical,' +
+      'whenever,yourself,' +
+      'algorithm,alongside,alternate,amplitude,asymptote,basically,beginning,breakdown,' +
+      'calculate,certainly,challenge,clipboard,collected,combining,comparing,computing,' +
+      'condition,connected,considers,construct,contained,continued,converted,correctly,' +
+      'currently,decreases,depending,described,determine,developed,different,dimension,' +
+      'direction,discussed,efficient,elaborate,encounter,estimated,evaluates,evolution,' +
+      'examining,exception,excluding,exercises,expansion,expensive,expressed,extending,' +
+      'extension,extremely,factoring,formatted,frequency,functions,generated,geometric,' +
+      'graphical,guarantee,happening,histogram,homeplace,hopefully,identical,imaginary,' +
+      'important,improving,including,increased,indicates,induction,initially,inputting,' +
+      'inserting,intention,intercept,intuition,inversely,iteration,knowledge,logarithm,' +
+      'magnitude,manhattan,mechanism,mentioned,midpoints,negatives,normalize,numerical,' +
+      'occurring,operating,operation,organized,otherwise,parabolic,parameter,partially,' +
+      'partition,piecewise,placement,possesses,potential,precisely,presented,preserved,' +
+      'principal,principle,processor,producing,projected,published,quadratic,questions,' +
+      'reasoning,recognize,recommend,reference,reflected,regarding,remainder,rendering,' +
+      'repeating,replacing,represent,requested,resulting,satisfies,searching,selecting,' +
+      'selection,separated,sequences,similarly,situation,solutions,sometimes,somewhere,' +
+      'specified,statement,structure,submitted,substance,succeeded,suggested,supported,' +
+      'symmetric,technique,temporary,therefore,transform,transpose,typically,undefined,' +
+      'underline,universal,utilizing,validated,variables,variation,wondering,' +
+      'absolutely,arithmetic,assumption,boundaries,calculator,cancelling,classifying,' +
+      'collecting,comparison,completing,conclusion,conditions,connecting,consistent,' +
+      'constraint,continuous,convention,coordinate,correcting,decreasing,definition,' +
+      'definitely,derivative,describing,determined,difference,difficulty,dimensions,' +
+      'discussing,distribute,eigenvalue,elementary,equivalent,eventually,everything,' +
+      'explicitly,expression,generating,horizontal,hypothesis,illustrate,impossible,' +
+      'increasing,inequality,initialize,instructed,integrable,interested,introduced,' +
+      'logarithms,meaningful,measurable,multiplied,nonnegative,occurrence,operations,' +
+      'organizing,orthogonal,percentage,performing,perpendicular,polynomial,population,' +
+      'practicing,predicting,previously,procedures,processing,properties,proportion,' +
+      'reasonable,recognized,references,reflecting,remarkably,repeatedly,represents,' +
+      'simplified,simplifies,situations,statistics,structured,subscripts,substitute,' +
+      'subtracted,successful,tangential,technology,themselves,throughout,triangular,' +
+      'understand,university,vertically,whichever,worksheets'
+    );
+    const map = {};
+    raw.split(',').forEach(w => {
+      const len = w.length;
+      if (!map[len]) map[len] = [];
+      map[len].push(w);
+    });
+    return map;
+  })();
+
+  /**
+   * Match a swipe path (array of letters) to the best dictionary word.
+   * Strategy: for each word length bucket, score words by how well
+   * the swipe path matches the letter sequence in order.
+   */
+  function matchSwipeWord(path) {
+    if (!path || path.length < 2) return null;
+
+    // Deduplicate consecutive letters
+    const deduped = [path[0]];
+    for (let i = 1; i < path.length; i++) {
+      if (path[i] !== path[i - 1]) deduped.push(path[i]);
+    }
+    const pathStr = deduped.join('').toLowerCase();
+    const first = pathStr[0];
+    const last = pathStr[pathStr.length - 1];
+
+    let bestWord = null;
+    let bestScore = -Infinity;
+
+    // Check words from length 2 up to pathStr length + 2
+    const minLen = 2;
+    const maxLen = Math.min(pathStr.length + 3, 12);
+
+    for (let len = minLen; len <= maxLen; len++) {
+      const bucket = SWIPE_WORDS[len];
+      if (!bucket) continue;
+
+      for (let w = 0; w < bucket.length; w++) {
+        const word = bucket[w];
+
+        // Quick filter: first and last letter must match
+        if (word[0] !== first || word[word.length - 1] !== last) continue;
+
+        // Score: check how many letters of the word appear in order in the path
+        let pi = 0;
+        let matched = 0;
+        for (let wi = 0; wi < word.length; wi++) {
+          while (pi < pathStr.length && pathStr[pi] !== word[wi]) pi++;
+          if (pi < pathStr.length) {
+            matched++;
+            pi++;
+          } else {
+            break;
+          }
+        }
+
+        if (matched < word.length) continue; // not all letters found in order
+
+        // Score based on: length match, common word bias
+        let score = matched * 10;
+        // Prefer words whose length is close to the deduped path length
+        score -= Math.abs(word.length - pathStr.length) * 3;
+        // Slight bias toward longer words (more meaningful)
+        score += word.length;
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestWord = word;
+        }
+      }
+    }
+
+    return bestWord;
+  }
+
+  /** Find up to N candidate words for a swipe path */
+  function matchSwipeCandidates(path, maxResults) {
+    if (!path || path.length < 2) return [];
+    maxResults = maxResults || 3;
+
+    const deduped = [path[0]];
+    for (let i = 1; i < path.length; i++) {
+      if (path[i] !== path[i - 1]) deduped.push(path[i]);
+    }
+    const pathStr = deduped.join('').toLowerCase();
+    const first = pathStr[0];
+    const last = pathStr[pathStr.length - 1];
+
+    const scored = [];
+    const minLen = 2;
+    const maxLen = Math.min(pathStr.length + 3, 12);
+
+    for (let len = minLen; len <= maxLen; len++) {
+      const bucket = SWIPE_WORDS[len];
+      if (!bucket) continue;
+
+      for (let w = 0; w < bucket.length; w++) {
+        const word = bucket[w];
+        if (word[0] !== first || word[word.length - 1] !== last) continue;
+
+        let pi = 0;
+        let matched = 0;
+        for (let wi = 0; wi < word.length; wi++) {
+          while (pi < pathStr.length && pathStr[pi] !== word[wi]) pi++;
+          if (pi < pathStr.length) { matched++; pi++; } else break;
+        }
+        if (matched < word.length) continue;
+
+        let score = matched * 10 - Math.abs(word.length - pathStr.length) * 3 + word.length;
+        scored.push({ word, score });
+      }
+    }
+
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, maxResults).map(s => s.word);
+  }
 
   // ─── INITIALIZATION ─────────────────────────────────────────────────
 
@@ -342,13 +608,26 @@
     kb.id = 'mx-keyboard';
     kb.className = 'mx-keyboard';
 
+    // Suggestion bar (above keys, for swipe candidates)
+    suggestionBarEl = document.createElement('div');
+    suggestionBarEl.className = 'mx-swipe-bar';
+    suggestionBarEl.style.display = 'none';
+    kb.appendChild(suggestionBarEl);
+
     kb.appendChild(buildPage('abc'));
     kb.appendChild(buildPage('123'));
     kb.appendChild(buildPage('symbols'));
     kb.appendChild(buildPage('eq'));
 
-    // Event delegation for all key presses
-    kb.addEventListener('touchstart', handleKeyTouch, { passive: false });
+    // Swipe trail SVG overlay
+    swipeTrailEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    swipeTrailEl.classList.add('mx-swipe-trail');
+    kb.appendChild(swipeTrailEl);
+
+    // Event delegation — touch events for tap and swipe
+    kb.addEventListener('touchstart', onTouchStart, { passive: false });
+    kb.addEventListener('touchmove', onTouchMove, { passive: false });
+    kb.addEventListener('touchend', onTouchEnd, { passive: false });
     kb.addEventListener('mousedown', handleKeyMouse);
 
     return kb;
@@ -462,15 +741,157 @@
 
   // ─── KEY HANDLING ───────────────────────────────────────────────────
 
-  function handleKeyTouch(e) {
-    const key = e.target.closest('.mx-key');
-    if (!key) return;
-    e.preventDefault(); // Prevent native keyboard + focus steal
+  /** Trigger haptic feedback (short vibration pulse) */
+  function haptic(ms) {
+    if (navigator.vibrate) navigator.vibrate(ms || 8);
+  }
 
-    key.classList.add('mx-key-pressed');
-    setTimeout(() => key.classList.remove('mx-key-pressed'), 120);
+  // ─── iOS-STYLE KEY PREVIEW BUBBLE ──────────────────────────────────
+  let activeBubble = null;
 
-    processKey(key);
+  function showKeyBubble(key) {
+    removeKeyBubble();
+    // Only show bubble for character keys (not action/mode keys)
+    if (key.dataset.action || key.classList.contains('mx-key-mode') ||
+        key.classList.contains('mx-key-eq-switch') || key.classList.contains('mx-key-space')) return;
+
+    const rect = key.getBoundingClientRect();
+    const kbRect = keyboardEl.getBoundingClientRect();
+
+    const bubble = document.createElement('div');
+    bubble.className = 'mx-key-bubble';
+    bubble.textContent = key.textContent;
+
+    // Position above the key
+    bubble.style.left = (rect.left - kbRect.left + rect.width / 2) + 'px';
+    bubble.style.top = (rect.top - kbRect.top) + 'px';
+
+    keyboardEl.appendChild(bubble);
+    activeBubble = bubble;
+  }
+
+  function removeKeyBubble() {
+    if (activeBubble) {
+      activeBubble.remove();
+      activeBubble = null;
+    }
+  }
+
+  // ─── SWIPE-AWARE TOUCH HANDLERS ────────────────────────────────────
+
+  const SWIPE_MOVE_THRESHOLD = 15; // Pixels of movement before swipe activates
+
+  function onTouchStart(e) {
+    const touch = e.touches[0];
+    const key = document.elementFromPoint(touch.clientX, touch.clientY);
+    const keyEl = key ? key.closest('.mx-key') : null;
+    if (!keyEl) return;
+    e.preventDefault();
+
+    swipeStartTime = Date.now();
+    swipeStartKey = keyEl;
+    swiping = false;
+    swipePath = [];
+    swipePoints = [];
+    lastSwipeKey = null;
+
+    // Record start position
+    swipePoints.push({ x: touch.clientX, y: touch.clientY });
+
+    // Immediate visual + haptic feedback
+    haptic(8);
+    keyEl.classList.add('mx-key-pressed');
+    showKeyBubble(keyEl);
+
+    // Only track letters on ABC page for swipe
+    if (currentPage === 'abc' && keyEl.dataset.insert) {
+      const letter = (shifted || capsLock) ? keyEl.dataset.insert.toUpperCase() : keyEl.dataset.insert;
+      swipePath.push(letter.toLowerCase());
+      lastSwipeKey = keyEl;
+    }
+  }
+
+  function onTouchMove(e) {
+    if (!swipeStartKey) return;
+    const touch = e.touches[0];
+    e.preventDefault();
+
+    swipePoints.push({ x: touch.clientX, y: touch.clientY });
+
+    // Check if we've moved enough to be swiping (only on ABC page)
+    if (!swiping && currentPage === 'abc') {
+      const dx = touch.clientX - swipePoints[0].x;
+      const dy = touch.clientY - swipePoints[0].y;
+      if (Math.sqrt(dx * dx + dy * dy) > SWIPE_MOVE_THRESHOLD) {
+        swiping = true;
+        swipeStartKey.classList.remove('mx-key-pressed');
+        removeKeyBubble();
+        clearSwipeHighlights();
+        if (lastSwipeKey) lastSwipeKey.classList.add('mx-swipe-hover');
+        drawSwipeTrail();
+      }
+    }
+
+    if (!swiping) return;
+
+    // Detect which key the finger is over
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const keyEl = el ? el.closest('.mx-key') : null;
+
+    if (keyEl && keyEl !== lastSwipeKey && keyEl.dataset.insert) {
+      // Haptic tick as finger enters new key
+      haptic(5);
+
+      // Highlight the new key
+      if (lastSwipeKey) lastSwipeKey.classList.remove('mx-swipe-hover');
+      keyEl.classList.add('mx-swipe-hover');
+      lastSwipeKey = keyEl;
+
+      const letter = keyEl.dataset.insert.toLowerCase();
+      swipePath.push(letter);
+    }
+
+    // Update trail
+    drawSwipeTrail();
+  }
+
+  function onTouchEnd(e) {
+    if (!swipeStartKey) return;
+    e.preventDefault();
+
+    removeKeyBubble();
+
+    if (swiping && swipePath.length >= 2) {
+      // ── Swipe complete: match word ──
+      clearSwipeHighlights();
+      clearSwipeTrail();
+
+      const candidates = matchSwipeCandidates(swipePath, 3);
+      if (candidates.length > 0) {
+        showSuggestionBar(candidates);
+      } else {
+        // Fallback: insert the raw path deduplicated
+        const raw = [swipePath[0]];
+        for (let i = 1; i < swipePath.length; i++) {
+          if (swipePath[i] !== swipePath[i - 1]) raw.push(swipePath[i]);
+        }
+        insertSwipeWord(raw.join(''));
+      }
+    } else {
+      // ── Normal tap ──
+      clearSwipeTrail();
+      const key = swipeStartKey;
+      key.classList.remove('mx-key-pressed');
+      setTimeout(() => key.classList.remove('mx-key-pressed'), 80);
+      processKey(key);
+    }
+
+    // Reset state
+    swiping = false;
+    swipePath = [];
+    swipePoints = [];
+    swipeStartKey = null;
+    lastSwipeKey = null;
   }
 
   function handleKeyMouse(e) {
@@ -478,10 +899,106 @@
     if (!key) return;
     e.preventDefault();
 
+    haptic(8);
     key.classList.add('mx-key-pressed');
-    setTimeout(() => key.classList.remove('mx-key-pressed'), 120);
+    showKeyBubble(key);
+    setTimeout(() => {
+      key.classList.remove('mx-key-pressed');
+      removeKeyBubble();
+    }, 120);
 
     processKey(key);
+  }
+
+  // ─── SWIPE VISUALS ─────────────────────────────────────────────────
+
+  function clearSwipeHighlights() {
+    if (!keyboardEl) return;
+    keyboardEl.querySelectorAll('.mx-swipe-hover').forEach(k => k.classList.remove('mx-swipe-hover'));
+  }
+
+  function drawSwipeTrail() {
+    if (!swipeTrailEl || swipePoints.length < 2) return;
+    const kbRect = keyboardEl.getBoundingClientRect();
+
+    // Build SVG path
+    let d = '';
+    for (let i = 0; i < swipePoints.length; i++) {
+      const x = swipePoints[i].x - kbRect.left;
+      const y = swipePoints[i].y - kbRect.top;
+      d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+    }
+
+    swipeTrailEl.innerHTML = '<path d="' + d + '" />';
+    swipeTrailEl.style.display = '';
+  }
+
+  function clearSwipeTrail() {
+    if (!swipeTrailEl) return;
+    swipeTrailEl.innerHTML = '';
+    swipeTrailEl.style.display = 'none';
+  }
+
+  // ─── SUGGESTION BAR ────────────────────────────────────────────────
+
+  function showSuggestionBar(words) {
+    if (!suggestionBarEl) return;
+    suggestionBarEl.innerHTML = '';
+    words.forEach((word, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'mx-swipe-suggestion' + (i === 0 ? ' mx-swipe-suggestion-primary' : '');
+      btn.textContent = word;
+      btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        haptic(8);
+        insertSwipeWord(word);
+        hideSuggestionBar();
+      }, { passive: false });
+      btn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        insertSwipeWord(word);
+        hideSuggestionBar();
+      });
+      suggestionBarEl.appendChild(btn);
+
+      // Add divider between suggestions
+      if (i < words.length - 1) {
+        const div = document.createElement('span');
+        div.className = 'mx-swipe-divider';
+        suggestionBarEl.appendChild(div);
+      }
+    });
+    suggestionBarEl.style.display = '';
+
+    // Auto-insert primary after timeout
+    clearTimeout(suggestionBarEl._timer);
+    suggestionBarEl._timer = setTimeout(() => {
+      if (suggestionBarEl.style.display !== 'none' && words[0]) {
+        insertSwipeWord(words[0]);
+        hideSuggestionBar();
+      }
+    }, 4000);
+  }
+
+  function hideSuggestionBar() {
+    if (!suggestionBarEl) return;
+    clearTimeout(suggestionBarEl._timer);
+    suggestionBarEl.innerHTML = '';
+    suggestionBarEl.style.display = 'none';
+  }
+
+  function insertSwipeWord(word) {
+    if (!word) return;
+    let text = (shifted || capsLock) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+    ensureFocus();
+    document.execCommand('insertText', false, text + ' ');
+    // Auto-unshift
+    if (shifted && !capsLock) {
+      shifted = false;
+      updateShiftDisplay();
+    }
   }
 
   function processKey(key) {
