@@ -128,6 +128,29 @@ Make students DO, not just watch. Use find-the-error and teach-back challenges t
 Before solving, have students predict: "Will the answer be bigger or smaller than 100?" Builds number sense and catches errors early.
 For confused students, go concrete first: counters for integers, tiles for algebra, fraction bars for fractions. Don't stay abstract when concrete would help.`;
 
+const REPRESENTATION_SWITCHING_RULES = `--- REPRESENTATION SWITCHING (CRITICAL) ---
+When a student gets 2+ wrong answers, you MUST switch representations. The same approach explained differently is NOT switching.
+REPRESENTATION MAP — pick one you HAVEN'T used yet:
+  • SYMBOLIC/ALGEBRAIC: equations, formulas, variables, abstract notation
+  • VISUAL/SPATIAL: diagrams, number lines, graphs, tiles, area models, fraction bars
+  • NUMERIC/CONCRETE: plug in specific numbers, test cases, verify with examples
+  • CONTEXTUAL/NARRATIVE: real-world story, word problem, analogy to student's interests
+  • MANIPULATIVE/INTERACTIVE: counters, algebra tiles, drag-and-drop, build it physically
+SWITCHING PROTOCOL:
+  1st wrong: Guide with current representation
+  2nd wrong: SWITCH to a different representation entirely — say "Let me try showing this a completely different way"
+  3rd wrong: Go CONCRETE — use manipulatives or plug in real numbers. Abstract is not working.
+  4th wrong: WORKED EXAMPLE with concrete representation + offer to try easier version
+The goal: find the representation that clicks for THIS student on THIS concept.`;
+
+const MICRO_ADAPTATION_RULES = `--- MICRO-ADAPTATION ---
+Adapt WITHIN the conversation, not just between sessions.
+PACE: If student answers fast + correct, speed up (less explanation, more problems). If slow + correct, maintain pace. If slow + wrong, slow down drastically (one micro-step at a time).
+ENERGY MATCH: Short student messages → short tutor responses. Enthusiastic student → match enthusiasm. Flat/disengaged → offer a change of pace, not more of the same.
+APPROACH TRACKING: After each correct answer, mentally note what worked (visual? concrete? analogy?). Lean into approaches that work. Abandon approaches that don't.
+DIFFICULTY CALIBRATION: If student gets 3+ correct in a row quickly, increase difficulty immediately. If 2+ wrong, decrease immediately. Don't wait for a phase transition — adapt NOW.
+FEEDBACK INTEGRATION: If the student says "that made sense" or "oh I see" — that representation works. Use it more. If "I still don't get it" or re-asks — that approach failed. Switch immediately.`;
+
 const CONVERSATIONAL_CONTINUITY_RULES = `--- CONVERSATIONAL FLOW ---
 - NEVER repeat information already confirmed or covered in this conversation.
 - If the student confirms understanding ("ok", "cool", "got it"), move FORWARD — present the next step, problem, or concept.
@@ -154,28 +177,34 @@ const ACTION_RULES = {
     ANSWER_PERSISTENCE_RULES,
     SOLVING_METHODOLOGY,
     CONFIDENCE_AND_FEEDBACK_RULES,
+    REPRESENTATION_SWITCHING_RULES,
+    MICRO_ADAPTATION_RULES,
   ],
   [ACTIONS.RETEACH_MISCONCEPTION]: [
     ANSWER_VERIFICATION_RULES,
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
     CONFIDENCE_AND_FEEDBACK_RULES,
+    REPRESENTATION_SWITCHING_RULES,
     INTERACTIVE_TEACHING_RULES,
   ],
   [ACTIONS.WORKED_EXAMPLE]: [
     ANSWER_PERSISTENCE_RULES,
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
+    REPRESENTATION_SWITCHING_RULES,
     INTERACTIVE_TEACHING_RULES,
   ],
   [ACTIONS.EXIT_RAMP]: [
     ANSWER_PERSISTENCE_RULES,
     SOLVING_METHODOLOGY,
     CONFIDENCE_AND_FEEDBACK_RULES,
+    REPRESENTATION_SWITCHING_RULES,
   ],
   [ACTIONS.SCAFFOLD_DOWN]: [
     ANSWER_PERSISTENCE_RULES,
     CONFIDENCE_AND_FEEDBACK_RULES,
+    REPRESENTATION_SWITCHING_RULES,
   ],
   [ACTIONS.HINT]: [
     ANSWER_PERSISTENCE_RULES,
@@ -190,6 +219,7 @@ const ACTION_RULES = {
     ANSWER_PERSISTENCE_RULES,
     DOK_GATING_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
+    MICRO_ADAPTATION_RULES,
   ],
   [ACTIONS.PHASE_INSTRUCTION]: [
     MASTERY_CHECK_RULES,
@@ -197,9 +227,11 @@ const ACTION_RULES = {
     VISUAL_TOOL_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
     INTERACTIVE_TEACHING_RULES,
+    MICRO_ADAPTATION_RULES,
   ],
   [ACTIONS.ACKNOWLEDGE_FRUSTRATION]: [
-    CONFIDENCE_AND_FEEDBACK_RULES,  // Frustration needs confidence-building response
+    CONFIDENCE_AND_FEEDBACK_RULES,
+    REPRESENTATION_SWITCHING_RULES,  // Frustration often means current approach failed
   ],
   [ACTIONS.REDIRECT_TO_MATH]: [],         // Brief redirect, no rules needed
   [ACTIONS.CONTINUE_CONVERSATION]: [
@@ -208,6 +240,7 @@ const ACTION_RULES = {
     ANTI_CHEAT_RULES,
     VISUAL_TOOL_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
+    MICRO_ADAPTATION_RULES,
   ],
   // ── Instructional mode actions (backbone) ──
   [ACTIONS.DIRECT_INSTRUCTION]: [
@@ -215,6 +248,7 @@ const ACTION_RULES = {
     VISUAL_TOOL_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
     INTERACTIVE_TEACHING_RULES,
+    MICRO_ADAPTATION_RULES,
     // NOTE: ANSWER_PERSISTENCE_RULES intentionally excluded.
     // During I-Do modeling, the tutor SHOWS worked examples with answers.
   ],
@@ -222,6 +256,7 @@ const ACTION_RULES = {
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
     CONFIDENCE_AND_FEEDBACK_RULES,
+    REPRESENTATION_SWITCHING_RULES,
   ],
   [ACTIONS.GUIDED_PRACTICE]: [
     ANSWER_VERIFICATION_RULES,
@@ -230,6 +265,8 @@ const ACTION_RULES = {
     VISUAL_TOOL_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
     CONFIDENCE_AND_FEEDBACK_RULES,
+    REPRESENTATION_SWITCHING_RULES,
+    MICRO_ADAPTATION_RULES,
   ],
   [ACTIONS.INDEPENDENT_PRACTICE]: [
     ANSWER_VERIFICATION_RULES,
@@ -318,4 +355,6 @@ module.exports = {
   CONVERSATIONAL_CONTINUITY_RULES,
   CONFIDENCE_AND_FEEDBACK_RULES,
   INTERACTIVE_TEACHING_RULES,
+  REPRESENTATION_SWITCHING_RULES,
+  MICRO_ADAPTATION_RULES,
 };
