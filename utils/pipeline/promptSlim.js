@@ -116,6 +116,18 @@ const SOLVING_METHODOLOGY = `--- MR. NAPIER'S METHODOLOGY ---
 6. Verbalize Terms: "3x" = "3 x's".
 7. Answer vs Solution: "Quick Check with Substitution."`;
 
+const CONFIDENCE_AND_FEEDBACK_RULES = `--- CONFIDENCE & FEEDBACK ---
+Normalize mistakes: "That's exactly the kind of mistake that helps us learn." Never imply "you should know this."
+Celebrate process over answers: "I love how you broke that into pieces." Show progress by referencing earlier struggles they've overcome.
+After frustration: validate → offer choice → lower stakes → quick win → return with confidence. Never push through frustration unacknowledged.
+Check if your teaching is landing: after 2+ wrong answers, ask "Should I try explaining this a different way?" Read implicit signals — one-word answers or re-asked questions mean your approach isn't working. Switch representations (verbal → visual → concrete → contextual).
+When a student gives feedback ("I like examples" / "that was confusing"), act on it immediately.`;
+
+const INTERACTIVE_TEACHING_RULES = `--- INTERACTIVE TEACHING ---
+Make students DO, not just watch. Use find-the-error and teach-back challenges to verify deep understanding.
+Before solving, have students predict: "Will the answer be bigger or smaller than 100?" Builds number sense and catches errors early.
+For confused students, go concrete first: counters for integers, tiles for algebra, fraction bars for fractions. Don't stay abstract when concrete would help.`;
+
 const CONVERSATIONAL_CONTINUITY_RULES = `--- CONVERSATIONAL FLOW ---
 - NEVER repeat information already confirmed or covered in this conversation.
 - If the student confirms understanding ("ok", "cool", "got it"), move FORWARD — present the next step, problem, or concept.
@@ -141,23 +153,29 @@ const ACTION_RULES = {
     ANSWER_VERIFICATION_RULES,
     ANSWER_PERSISTENCE_RULES,
     SOLVING_METHODOLOGY,
+    CONFIDENCE_AND_FEEDBACK_RULES,
   ],
   [ACTIONS.RETEACH_MISCONCEPTION]: [
     ANSWER_VERIFICATION_RULES,
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
+    CONFIDENCE_AND_FEEDBACK_RULES,
+    INTERACTIVE_TEACHING_RULES,
   ],
   [ACTIONS.WORKED_EXAMPLE]: [
     ANSWER_PERSISTENCE_RULES,
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
+    INTERACTIVE_TEACHING_RULES,
   ],
   [ACTIONS.EXIT_RAMP]: [
     ANSWER_PERSISTENCE_RULES,
     SOLVING_METHODOLOGY,
+    CONFIDENCE_AND_FEEDBACK_RULES,
   ],
   [ACTIONS.SCAFFOLD_DOWN]: [
     ANSWER_PERSISTENCE_RULES,
+    CONFIDENCE_AND_FEEDBACK_RULES,
   ],
   [ACTIONS.HINT]: [
     ANSWER_PERSISTENCE_RULES,
@@ -166,6 +184,7 @@ const ACTION_RULES = {
   [ACTIONS.CHECK_UNDERSTANDING]: [
     MASTERY_CHECK_RULES,
     DOK_GATING_RULES,
+    INTERACTIVE_TEACHING_RULES,
   ],
   [ACTIONS.PRESENT_PROBLEM]: [
     ANSWER_PERSISTENCE_RULES,
@@ -177,8 +196,11 @@ const ACTION_RULES = {
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
+    INTERACTIVE_TEACHING_RULES,
   ],
-  [ACTIONS.ACKNOWLEDGE_FRUSTRATION]: [],  // Just empathy, no rules needed
+  [ACTIONS.ACKNOWLEDGE_FRUSTRATION]: [
+    CONFIDENCE_AND_FEEDBACK_RULES,  // Frustration needs confidence-building response
+  ],
   [ACTIONS.REDIRECT_TO_MATH]: [],         // Brief redirect, no rules needed
   [ACTIONS.CONTINUE_CONVERSATION]: [
     ANSWER_VERIFICATION_RULES,
@@ -192,12 +214,14 @@ const ACTION_RULES = {
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
+    INTERACTIVE_TEACHING_RULES,
     // NOTE: ANSWER_PERSISTENCE_RULES intentionally excluded.
     // During I-Do modeling, the tutor SHOWS worked examples with answers.
   ],
   [ACTIONS.PREREQUISITE_BRIDGE]: [
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
+    CONFIDENCE_AND_FEEDBACK_RULES,
   ],
   [ACTIONS.GUIDED_PRACTICE]: [
     ANSWER_VERIFICATION_RULES,
@@ -205,6 +229,7 @@ const ACTION_RULES = {
     SOLVING_METHODOLOGY,
     VISUAL_TOOL_RULES,
     CONVERSATIONAL_CONTINUITY_RULES,
+    CONFIDENCE_AND_FEEDBACK_RULES,
   ],
   [ACTIONS.INDEPENDENT_PRACTICE]: [
     ANSWER_VERIFICATION_RULES,
@@ -291,4 +316,6 @@ module.exports = {
   DOK_GATING_RULES,
   SOLVING_METHODOLOGY,
   CONVERSATIONAL_CONTINUITY_RULES,
+  CONFIDENCE_AND_FEEDBACK_RULES,
+  INTERACTIVE_TEACHING_RULES,
 };
