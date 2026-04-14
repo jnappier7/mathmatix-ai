@@ -305,4 +305,78 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
     }
 });
 
+/**
+ * Record that a student submitted paper work during the paper-practice phase.
+ * Called by the frontend after Show Your Work upload completes during a guided lesson.
+ * Advances the phase past the paper gate.
+ *
+ * POST /api/guidedLesson/paper-submitted
+ */
+router.post('/paper-submitted', async (req, res) => {
+    try {
+        const { phaseState, gradingResultId } = req.body;
+
+        if (!phaseState) {
+            return res.status(400).json({ error: 'Phase state required' });
+        }
+
+        if (phaseState.currentPhase !== 'paper-practice') {
+            return res.json({
+                success: true,
+                phaseState,
+                message: 'Not in paper practice phase — no action taken'
+            });
+        }
+
+        // Mark paper as submitted in the assessment data
+        if (phaseState.assessmentData && phaseState.assessmentData['paper-practice']) {
+            phaseState.assessmentData['paper-practice'].paperSubmitted = true;
+            phaseState.assessmentData['paper-practice'].gradingResultId = gradingResultId || null;
+            phaseState.assessmentData['paper-practice'].submittedAt = new Date();
+        }
+
+        // Record evidence signal for paper upload
+        const phaseEval = evaluatePhaseAdvancement(
+            {
+                phase: phaseState.currentPhase,
+                turnsInPhase: phaseState.turnsInPhase || 0,
+                evidenceLog: [...(phaseState.evidenceLog || []), 'paper_work_uploaded']
+            },
+            {},
+            {}
+        );
+        updatePhaseTracker(phaseState, phaseEval, {});
+
+        // Advance past paper practice to check-in
+        if (phaseEval.shouldAdvance && phaseEval.nextPhase) {
+            transitionPhase(phaseState, phaseEval.nextPhase, phaseEval.reasoning);
+        } else {
+            // Force advance — paper was submitted, that's the gate
+            transitionPhase(phaseState, 'check-in', 'Paper work uploaded and analyzed — moving to confidence check');
+        }
+
+        // Track unplugged work for badges (increment counter on user)
+        if (req.user?._id) {
+            const User = require('../models/user');
+            await User.findByIdAndUpdate(req.user._id, {
+                $inc: { 'paperPractice.totalSubmissions': 1 },
+                $set: { 'paperPractice.lastSubmittedAt': new Date() }
+            });
+        }
+
+        logger.info(`[GuidedLesson] Paper work submitted during lesson, advancing past paper-practice phase`);
+
+        res.json({
+            success: true,
+            phaseState,
+            currentPhase: phaseState.currentPhase,
+            message: 'Paper work received! Moving on to the next phase.'
+        });
+
+    } catch (error) {
+        logger.error('Error recording paper submission:', error);
+        res.status(500).json({ error: 'Failed to record paper submission' });
+    }
+});
+
 module.exports = router;

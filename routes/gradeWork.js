@@ -11,6 +11,7 @@ const { gradeWithVision } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuard');
 const pdfOcr = require('../utils/pdfOcr');
+const { checkUnpluggedBadges } = require('../utils/unpluggedBadges');
 
 // Disk storage to avoid memory bloat on large uploads
 const upload = multer({
@@ -417,6 +418,51 @@ router.post('/',
 
         console.log(`[gradeWork] Saved analysis ${result._id} (attempt #${attemptNumber})`);
 
+        // Track paper practice submission for Unplugged badges
+        let newUnpluggedBadges = [];
+        try {
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            const streakData = user.paperPractice || {};
+            const lastStreakDate = streakData.streakLastUpdatedDate || null;
+            const updates = {
+                $inc: { 'paperPractice.totalSubmissions': 1 },
+                $set: { 'paperPractice.lastSubmittedAt': new Date() }
+            };
+
+            if (lastStreakDate !== today) {
+                // New day — check if streak continues or resets
+                const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                if (lastStreakDate === yesterday) {
+                    // Consecutive day — extend streak
+                    updates.$inc['paperPractice.currentStreak'] = 1;
+                } else if (lastStreakDate !== today) {
+                    // Streak broken — reset to 1
+                    updates.$set['paperPractice.currentStreak'] = 1;
+                }
+                updates.$set['paperPractice.streakLastUpdatedDate'] = today;
+
+                // Update bestStreak if current is higher (done after save)
+                const newStreak = (lastStreakDate === yesterday)
+                    ? (streakData.currentStreak || 0) + 1
+                    : 1;
+                if (newStreak > (streakData.bestStreak || 0)) {
+                    updates.$set['paperPractice.bestStreak'] = newStreak;
+                }
+            }
+
+            await User.findByIdAndUpdate(user._id, updates);
+            console.log(`[gradeWork] Paper practice tracked for user ${user.firstName}`);
+
+            // Check for newly earned unplugged badges
+            const freshUser = await User.findById(user._id);
+            newUnpluggedBadges = await checkUnpluggedBadges(freshUser);
+            if (newUnpluggedBadges.length > 0) {
+                console.log(`[gradeWork] 🏅 Unplugged badges earned: ${newUnpluggedBadges.map(b => b.badgeName).join(', ')}`);
+            }
+        } catch (trackErr) {
+            console.warn('[gradeWork] Paper practice tracking failed (non-fatal):', trackErr.message);
+        }
+
         // Clean up temp file
         if (file.path) fs.unlinkSync(file.path);
 
@@ -433,6 +479,7 @@ router.post('/',
             whatWentWell: parsed.whatWentWell || '',
             practiceRecommendations: parsed.practiceRecommendations || [],
             xpEarned,
+            unpluggedBadgesEarned: newUnpluggedBadges.length > 0 ? newUnpluggedBadges : undefined,
             message: improvement && improvement.improved
                 ? `Nice improvement! ${improvement.previousCorrect}/${improvement.previousTotal} → ${correctCount}/${parsed.problems.length}`
                 : 'Work analyzed successfully'

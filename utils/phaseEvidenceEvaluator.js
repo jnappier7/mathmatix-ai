@@ -19,7 +19,7 @@
 // ── Concept-first phase sequence (gradual release) ──
 const PHASE_SEQUENCE = [
   'intro', 'warmup', 'concept-intro', 'i-do', 'concept-check',
-  'we-do', 'check-in', 'you-do', 'mastery',
+  'we-do', 'paper-practice', 'check-in', 'you-do', 'mastery',
 ];
 
 // ── Evidence thresholds per phase ──
@@ -74,6 +74,14 @@ const PHASE_ADVANCEMENT_CRITERIA = {
     requiredSignals: 2,
     fastTrack: { condition: 'multiple_correct_no_scaffold', advanceTo: 'you-do' },
   },
+  'paper-practice': {
+    // Student must upload paper work — gated by paperSubmitted flag
+    minTurns: 1,
+    minCorrect: 0,
+    signals: ['paper_work_uploaded', 'acknowledged_understanding'],
+    requiredSignals: 1,
+    fastTrack: null, // No shortcut — paper work is the point
+  },
   'check-in': {
     // Emotional confidence check — always advance
     minTurns: 1,
@@ -122,6 +130,9 @@ const EVIDENCE_SIGNALS = {
   TRANSFER_CORRECT: 'correct_novel_context',            // Correct in new context
   SELF_CORRECTION: 'caught_own_error',                  // Student caught their own mistake
   TEACH_BACK: 'taught_back',                            // Student explained it to tutor
+
+  // Paper practice
+  PAPER_WORK_UPLOADED: 'paper_work_uploaded',           // Student uploaded handwritten work photo
 };
 
 /**
@@ -434,6 +445,7 @@ function checkRegression(currentPhase, evidenceLog, newEvidence, context) {
   if (evidence?.cognitiveLoad?.isOverloaded) {
     const regressMap = {
       'you-do': 'we-do',
+      'paper-practice': 'we-do',
       'we-do': 'i-do',
       'mastery': 'we-do',
       'concept-check': 'concept-intro',

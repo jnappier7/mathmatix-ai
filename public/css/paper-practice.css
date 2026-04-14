@@ -1,0 +1,161 @@
+/* ==========================================================
+   Paper Practice Phase — Guided Lesson pencil & paper UI
+   ========================================================== */
+
+/* Banner container */
+.paper-practice-banner {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  margin: 1rem 0;
+  border: 2px dashed var(--clr-primary, #4a6cf7);
+  border-radius: 12px;
+  background: var(--clr-surface, #f8f9ff);
+}
+
+.paper-practice-banner h3 {
+  margin: 0.5rem 0;
+  font-size: 1.25rem;
+  color: var(--clr-text, #1a1a2e);
+}
+
+.paper-practice-banner p {
+  margin: 0.5rem 0;
+  color: var(--clr-text-secondary, #555);
+  font-size: 0.95rem;
+}
+
+.paper-practice-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+/* Action buttons */
+.paper-practice-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 1.25rem 0 0.75rem;
+  flex-wrap: wrap;
+}
+
+.paper-upload-btn,
+.paper-camera-btn {
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.paper-upload-btn:hover,
+.paper-camera-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.paper-practice-hint {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--clr-text-muted, #888);
+}
+
+/* Pulse animation for the camera button during paper phase */
+.paper-practice-pulse {
+  animation: paper-pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(74, 108, 247, 0.6);
+}
+
+@keyframes paper-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(74, 108, 247, 0.6); }
+  70%  { box-shadow: 0 0 0 12px rgba(74, 108, 247, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 108, 247, 0); }
+}
+
+/* Loading spinner */
+.paper-practice-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--clr-border, #ddd);
+  border-top-color: var(--clr-primary, #4a6cf7);
+  border-radius: 50%;
+  animation: paper-spin 0.8s linear infinite;
+  margin: 1rem auto;
+}
+
+@keyframes paper-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Feedback display */
+.paper-feedback-well {
+  background: var(--clr-success-bg, #e8f5e9);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.paper-feedback-problems {
+  text-align: left;
+  margin: 0.75rem 0;
+}
+
+.paper-feedback-problem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin: 0.25rem 0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.paper-feedback-problem.correct {
+  background: var(--clr-success-bg, #e8f5e9);
+}
+
+.paper-feedback-problem.incorrect {
+  background: var(--clr-warning-bg, #fff3e0);
+}
+
+.problem-icon {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+
+.problem-num {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.paper-overall-feedback {
+  margin-top: 0.75rem;
+  font-weight: 500;
+}
+
+.paper-practice-continuing {
+  margin-top: 1rem;
+  font-style: italic;
+  color: var(--clr-text-muted, #888);
+  font-size: 0.85rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .paper-practice-banner {
+    padding: 1.25rem 1rem;
+  }
+
+  .paper-practice-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .paper-upload-btn,
+  .paper-camera-btn {
+    width: 100%;
+  }
+}
