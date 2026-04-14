@@ -233,6 +233,14 @@ class SessionManager {
       }
     } catch (error) {
       console.error('[SessionManager] Heartbeat error:', error);
+      // Network errors (ERR_CONNECTION_CLOSED, Failed to fetch) should also
+      // trigger backoff so we don't hammer a recovering server every 30s
+      this.consecutiveFailures++;
+      this.currentHeartbeatInterval = Math.min(
+        this.HEARTBEAT_INTERVAL * Math.pow(2, this.consecutiveFailures),
+        this.MAX_BACKOFF
+      );
+      console.warn(`[SessionManager] Network error, backing off to ${Math.round(this.currentHeartbeatInterval / 1000)}s`);
     }
   }
 
