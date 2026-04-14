@@ -481,7 +481,11 @@ function detectMathProblem(message) {
     }
 
     // Last resort: scan for any embedded arithmetic with symbolic operators (e.g. "So 3 × 12 is what?")
-    const embeddedArithmeticPattern = /(\d+\.?\d*)\s*([×÷+\-*/])\s*(\d+\.?\d*)/;
+    // Lookbehind: reject when the left operand follows ^ or a letter (it's an exponent
+    // or part of an algebraic term like "x^2 + 8" → "2 + 8" is NOT standalone arithmetic).
+    // Lookahead: reject when the right operand is immediately followed by a letter or ^
+    // (it's a coefficient like "8x", not a standalone number).
+    const embeddedArithmeticPattern = /(?<![a-zA-Z\^])(\d+\.?\d*)\s*([×÷+\-*/])\s*(\d+\.?\d*)(?![a-zA-Z\^])/;
     const embeddedMatch = message.match(embeddedArithmeticPattern);
     if (embeddedMatch) {
         return {
