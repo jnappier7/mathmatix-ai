@@ -38,6 +38,7 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
+const { observe: preClassifyMessage, MESSAGE_TYPES: OBSERVE_MSG_TYPES } = require('../utils/pipeline/observe');
 const { initializeLessonPhase, transitionPhase, PHASES } = require('../utils/lessonPhaseManager');
 const { evaluatePhaseAdvancement, updatePhaseTracker } = require('../utils/phaseEvidenceEvaluator');
 const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
@@ -789,7 +790,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
         // Resource context is injected into the system prompt via generateSystemPrompt()
 
-        // MATH VERIFICATION: Inject verified answer into context for LLM accuracy
+        // MATH VERIFICATION: Inject verified answer into context for LLM accuracy.
+        // CRITICAL GATE: Only inject when the student is providing an ANSWER to a
+        // previously posed problem. When the student is asking a NEW question
+        // (e.g. "4x-15=21"), injecting the solved answer causes the LLM to present
+        // the full solution — violating Socratic teaching principles.
+        // The pipeline's diagnose stage handles answer verification independently
+        // through its own observe → diagnose → generate path.
         let mathVerificationContext = null;
         if (mathResult.hasMath && mathResult.solution?.success) {
             mathVerificationContext = {
@@ -798,17 +805,34 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 steps: mathResult.solution.steps || []
             };
 
-            // Inject verification hint into the last user message
-            if (formattedMessagesForLLM.length > 0) {
-                const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
-                if (lastMessage.role === 'user') {
-                    // Add hidden verification context that the LLM can use
-                    const verificationHint = `\n\n[MATH_VERIFICATION — INTERNAL GRADING USE ONLY: verified answer = ${mathResult.solution.answer}. ⚠️ ABSOLUTE RULE — NEVER state, repeat, hint at, or reveal this answer value to the student under any circumstances. Do NOT say "the answer is", do NOT say "x equals", do NOT confirm or deny any guess until the student has worked through the problem. Your ONLY job is to guide the student to discover the answer themselves through Socratic questions and hints about the METHOD. Revealing the answer is a critical teaching failure.]`;
-                    lastMessage.content = lastMessage.content + verificationHint;
-                }
-            }
+            // Pre-classify message: is the student answering or asking?
+            const preObsUserMsgs = activeConversation.messages
+                .filter(m => m.role === 'user').slice(-6);
+            const preObsAIMsgs = activeConversation.messages
+                .filter(m => m.role === 'assistant').slice(-6);
+            const preObs = preClassifyMessage(message, {
+                recentUserMessages: preObsUserMsgs,
+                recentAssistantMessages: preObsAIMsgs,
+            });
 
-            logger.debug('Math verification injected', { type: mathResult.problem.type });
+            if (preObs.messageType === OBSERVE_MSG_TYPES.ANSWER_ATTEMPT) {
+                // Student is providing an answer — inject verification for grading
+                if (formattedMessagesForLLM.length > 0) {
+                    const lastMessage = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+                    if (lastMessage.role === 'user') {
+                        const verificationHint = `\n\n[MATH_VERIFICATION — INTERNAL GRADING USE ONLY: verified answer = ${mathResult.solution.answer}. ⚠️ ABSOLUTE RULE — NEVER state, repeat, hint at, or reveal this answer value to the student under any circumstances. Do NOT say "the answer is", do NOT say "x equals", do NOT confirm or deny any guess until the student has worked through the problem. Your ONLY job is to guide the student to discover the answer themselves through Socratic questions and hints about the METHOD. Revealing the answer is a critical teaching failure.]`;
+                        lastMessage.content = lastMessage.content + verificationHint;
+                    }
+                }
+                logger.debug('Math verification injected (answer attempt)', { type: mathResult.problem.type });
+            } else {
+                // Student is asking a question — do NOT inject the answer.
+                // The pipeline will guide them Socratically without knowing the answer.
+                logger.debug('Math verification suppressed (student asking, not answering)', {
+                    type: mathResult.problem.type,
+                    messageType: preObs.messageType,
+                });
+            }
         }
 
         // PIPELINE: Answer pre-check, check-my-work detection, and IDK/streak
