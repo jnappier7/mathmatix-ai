@@ -191,7 +191,43 @@ function detectMathProblem(message) {
         return { type: 'logarithm', base: Math.E, argument: parseFloat(lnMatch[1]) };
     }
 
-    // Pattern: Exponential equations — "2^x = 8", "3^x = 81"
+    // Pattern: Exponential equations — multiple forms
+    // ORDER MATTERS: most specific patterns first to prevent partial matches.
+    // Sum → Coefficient → Shifted → Simple
+
+    // Sum of same-base exponentials (MUST be first — contains multiple terms)
+    // "3(3^x + 3^(x+1)) = 108", "3^x + 3^(x+1) = 36", "3^(x+1) + 3^x = 36"
+    const expEqSumResult = detectExponentialSum(message);
+    if (expEqSumResult) return expEqSumResult;
+
+    // Coefficient form: "2 * 3^x = 54", "2(5^x) = 250", "4 · 3^x = 108"
+    const expEqCoeffPattern = /(\d+\.?\d*)\s*[*·(]\s*(\d+\.?\d*)\s*\^\s*x\s*\)?\s*=\s*(\d+\.?\d*)/i;
+    const expEqCoeffMatch = message.match(expEqCoeffPattern);
+    if (expEqCoeffMatch) {
+        return {
+            type: 'exponential_equation',
+            subtype: 'coefficient',
+            coefficient: parseFloat(expEqCoeffMatch[1]),
+            base: parseFloat(expEqCoeffMatch[2]),
+            result: parseFloat(expEqCoeffMatch[3]),
+        };
+    }
+
+    // Shifted exponent: "3^(x+1) = 81", "2^(x-2) = 16", "5^(x + 3) = 625"
+    const expEqShiftedPattern = /(\d+\.?\d*)\s*\^\s*\(\s*x\s*([+-])\s*(\d+\.?\d*)\s*\)\s*=\s*(\d+\.?\d*)/i;
+    const expEqShiftedMatch = message.match(expEqShiftedPattern);
+    if (expEqShiftedMatch) {
+        const shift = expEqShiftedMatch[2] === '+' ? parseFloat(expEqShiftedMatch[3]) : -parseFloat(expEqShiftedMatch[3]);
+        return {
+            type: 'exponential_equation',
+            subtype: 'shifted',
+            base: parseFloat(expEqShiftedMatch[1]),
+            shift,
+            result: parseFloat(expEqShiftedMatch[4]),
+        };
+    }
+
+    // Simple: "2^x = 8", "3^x = 81" (most general — checked last)
     const expEqSimplePattern = /(\d+\.?\d*)\s*\^\s*x\s*=\s*(\d+\.?\d*)/i;
     const expEqSimpleMatch = message.match(expEqSimplePattern);
     if (expEqSimpleMatch) {
@@ -1469,12 +1505,23 @@ function solveLogarithm(problem) {
 }
 
 /**
- * Solve a simple exponential equation: b^x = c
- * Uses logarithms: x = log(c) / log(b)
+ * Solve exponential equations in various forms.
+ *
+ * Subtypes:
+ *   (none)          b^x = c                         → x = log(c)/log(b)
+ *   coefficient     a * b^x = c                     → b^x = c/a, then log
+ *   shifted         b^(x+k) = c                     → x+k = log(c)/log(b), x = result - k
+ *   sum_same_base   a(b^x + b^(x+k)) = c            → factor out b^x, reduce to b^x = d
  */
 function solveExponentialEquation(problem) {
-    const { base, result } = problem;
+    const { base, result, subtype } = problem;
 
+    // Route to subtype solvers
+    if (subtype === 'coefficient') return solveExpCoefficient(problem);
+    if (subtype === 'shifted') return solveExpShifted(problem);
+    if (subtype === 'sum_same_base') return solveExpSumSameBase(problem);
+
+    // Simple form: b^x = c
     if (base <= 0 || base === 1 || result <= 0) {
         return { success: true, answer: 'No solution', steps: ['Invalid base or result for exponential equation'] };
     }
@@ -1493,6 +1540,138 @@ function solveExponentialEquation(problem) {
             `x = ${answer}`,
         ],
     };
+}
+
+/** Coefficient form: a * b^x = c → b^x = c/a → log */
+function solveExpCoefficient(problem) {
+    const { coefficient, base, result } = problem;
+
+    if (base <= 0 || base === 1 || coefficient === 0) {
+        return { success: true, answer: 'No solution', steps: ['Invalid base or coefficient'] };
+    }
+
+    const reduced = result / coefficient;
+    if (reduced <= 0) {
+        return { success: true, answer: 'No solution', steps: [`${coefficient} · ${base}^x = ${result}`, `${base}^x = ${reduced}`, 'No solution (negative or zero result)'] };
+    }
+
+    const x = Math.log(reduced) / Math.log(base);
+    const rounded = Math.round(x);
+    const isInteger = Math.abs(x - rounded) < 0.0001;
+    const answer = isInteger ? formatNumber(rounded) : formatNumber(x);
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `${coefficient} · ${base}^x = ${result}`,
+            `${base}^x = ${result} / ${coefficient}`,
+            `${base}^x = ${reduced}`,
+            `x = log(${reduced}) / log(${base})`,
+            `x = ${answer}`,
+        ],
+    };
+}
+
+/** Shifted exponent: b^(x+k) = c → x+k = log(c)/log(b) → x = ... - k */
+function solveExpShifted(problem) {
+    const { base, shift, result } = problem;
+
+    if (base <= 0 || base === 1 || result <= 0) {
+        return { success: true, answer: 'No solution', steps: ['Invalid base or result'] };
+    }
+
+    const exponent = Math.log(result) / Math.log(base);
+    const x = exponent - shift;
+    const rounded = Math.round(x);
+    const isInteger = Math.abs(x - rounded) < 0.0001;
+    const answer = isInteger ? formatNumber(rounded) : formatNumber(x);
+
+    const shiftStr = shift >= 0 ? `x + ${shift}` : `x - ${Math.abs(shift)}`;
+
+    return {
+        success: true,
+        answer,
+        steps: [
+            `${base}^(${shiftStr}) = ${result}`,
+            `${shiftStr} = log(${result}) / log(${base})`,
+            `${shiftStr} = ${formatNumber(exponent)}`,
+            `x = ${answer}`,
+        ],
+    };
+}
+
+/**
+ * Sum of same-base exponentials: a(b^x + b^(x+k)) = c
+ * Strategy: factor out b^x → a · b^x · (1 + b^k) = c → b^x = c / (a · (1 + b^k))
+ */
+function solveExpSumSameBase(problem) {
+    const { outerCoefficient, base, terms, result } = problem;
+
+    if (base <= 0 || base === 1) {
+        return { success: true, answer: 'No solution', steps: ['Invalid base'] };
+    }
+
+    // Compute the combined factor when factoring out b^x from each term.
+    // Each term contributes: coefficient * base^shift
+    // Example: 3(3^x + 3^(x+1)) = 108
+    //   term1: coeff=1, shift=0 → 1 * 3^0 = 1
+    //   term2: coeff=1, shift=1 → 1 * 3^1 = 3
+    //   Combined factor = 1 + 3 = 4
+    //   outerCoefficient = 3
+    //   So: 3 * b^x * 4 = 108 → b^x = 108 / 12 = 9
+    let combinedFactor = 0;
+    const factorParts = [];
+    for (const term of terms) {
+        const termFactor = term.coefficient * Math.pow(base, term.shift);
+        combinedFactor += termFactor;
+        if (term.shift === 0) {
+            factorParts.push(term.coefficient === 1 ? '1' : `${term.coefficient}`);
+        } else {
+            const baseToShift = Math.pow(base, term.shift);
+            const isInt = Math.abs(baseToShift - Math.round(baseToShift)) < 0.0001;
+            factorParts.push(term.coefficient === 1
+                ? `${base}^${term.shift}`
+                : `${term.coefficient} · ${base}^${term.shift}`);
+        }
+    }
+
+    const totalDivisor = outerCoefficient * combinedFactor;
+    if (totalDivisor === 0) {
+        return { success: true, answer: 'No solution', steps: ['Combined factor is zero'] };
+    }
+
+    const reduced = result / totalDivisor;
+    if (reduced <= 0) {
+        return { success: true, answer: 'No solution', steps: ['Reduced to negative/zero — no solution'] };
+    }
+
+    const x = Math.log(reduced) / Math.log(base);
+    const rounded = Math.round(x);
+    const isInteger = Math.abs(x - rounded) < 0.0001;
+    const answer = isInteger ? formatNumber(rounded) : formatNumber(x);
+
+    // Build descriptive steps
+    const steps = [];
+    // Show original equation
+    const termsStr = terms.map(t => {
+        if (t.shift === 0) return `${base}^x`;
+        const shiftStr = t.shift > 0 ? `x+${t.shift}` : `x-${Math.abs(t.shift)}`;
+        return `${base}^(${shiftStr})`;
+    }).join(terms[1]?.coefficient >= 0 ? ' + ' : ' - ');
+    steps.push(outerCoefficient !== 1
+        ? `${outerCoefficient}(${termsStr}) = ${result}`
+        : `${termsStr} = ${result}`);
+    // Factor out b^x
+    steps.push(`Factor out ${base}^x: ${outerCoefficient !== 1 ? outerCoefficient + ' · ' : ''}${base}^x · (${factorParts.join(' + ')}) = ${result}`);
+    const combinedFactorRounded = Math.round(combinedFactor * 10000) / 10000;
+    steps.push(`${outerCoefficient !== 1 ? outerCoefficient + ' · ' : ''}${base}^x · ${combinedFactorRounded} = ${result}`);
+    steps.push(`${base}^x = ${result} / ${totalDivisor}`);
+    steps.push(`${base}^x = ${reduced}`);
+    steps.push(`x = log(${reduced}) / log(${base})`);
+    steps.push(`x = ${answer}`);
+
+    return { success: true, answer, steps };
 }
 
 /**
@@ -2548,6 +2727,103 @@ function cleanTrailingText(expr) {
         .replace(/\.\s+[A-Z].*$/, '')  // "expr. Let's..." → "expr"
         .replace(/[?!.]+$/, '')         // trailing punctuation
         .trim();
+}
+
+/**
+ * Detect sum-of-same-base exponential equations.
+ *
+ * Supported patterns:
+ * - "3^x + 3^(x+1) = 36"         → b^x + b^(x+k) = c
+ * - "3(3^x + 3^(x+1)) = 108"     → a(b^x + b^(x+k)) = c
+ * - "2 * 5^x + 5^(x+2) = 135"    → a * b^x + b^(x+k) = c (a on first term)
+ * - "3^(x+1) + 3^x = 36"         → reversed order
+ *
+ * Returns a problem object or null.
+ */
+function detectExponentialSum(message) {
+    if (!message) return null;
+
+    // Normalize: remove "solve", "find x", etc.
+    let text = message.replace(/^(?:solve|find\s+x\s*(?:for|:)?|evaluate)\s*/i, '').trim();
+
+    // Pattern 1: a(b^x + b^(x+k)) = c  — outer coefficient with parentheses
+    // e.g. "3(3^x + 3^(x+1)) = 108"
+    const outerCoeffPattern = /(\d+\.?\d*)\s*\(\s*(\d+\.?\d*)\s*\^\s*x\s*([+-])\s*(\d+\.?\d*)\s*\^\s*\(\s*x\s*([+-])\s*(\d+\.?\d*)\s*\)\s*\)\s*=\s*(\d+\.?\d*)/i;
+    const outerCoeffMatch = text.match(outerCoeffPattern);
+    if (outerCoeffMatch) {
+        const outerCoeff = parseFloat(outerCoeffMatch[1]);
+        const base = parseFloat(outerCoeffMatch[2]);
+        const secondBase = parseFloat(outerCoeffMatch[4]);
+        // Both bases must match for same-base factoring
+        if (base === secondBase) {
+            const sign = outerCoeffMatch[3]; // sign between terms
+            const shiftSign = outerCoeffMatch[5] === '+' ? 1 : -1;
+            const shift = parseFloat(outerCoeffMatch[6]) * shiftSign;
+            return {
+                type: 'exponential_equation',
+                subtype: 'sum_same_base',
+                outerCoefficient: outerCoeff,
+                base,
+                terms: [
+                    { coefficient: 1, shift: 0 },       // b^x
+                    { coefficient: sign === '+' ? 1 : -1, shift }, // b^(x+k)
+                ],
+                result: parseFloat(outerCoeffMatch[7]),
+            };
+        }
+    }
+
+    // Pattern 2: b^x + b^(x+k) = c  — no outer coefficient
+    // e.g. "3^x + 3^(x+1) = 36"
+    const sumPattern = /(\d+\.?\d*)\s*\^\s*x\s*([+-])\s*(\d+\.?\d*)\s*\^\s*\(\s*x\s*([+-])\s*(\d+\.?\d*)\s*\)\s*=\s*(\d+\.?\d*)/i;
+    const sumMatch = text.match(sumPattern);
+    if (sumMatch) {
+        const base = parseFloat(sumMatch[1]);
+        const secondBase = parseFloat(sumMatch[3]);
+        if (base === secondBase) {
+            const sign = sumMatch[2] === '+' ? 1 : -1;
+            const shiftSign = sumMatch[4] === '+' ? 1 : -1;
+            const shift = parseFloat(sumMatch[5]) * shiftSign;
+            return {
+                type: 'exponential_equation',
+                subtype: 'sum_same_base',
+                outerCoefficient: 1,
+                base,
+                terms: [
+                    { coefficient: 1, shift: 0 },
+                    { coefficient: sign, shift },
+                ],
+                result: parseFloat(sumMatch[6]),
+            };
+        }
+    }
+
+    // Pattern 3: reversed order — b^(x+k) + b^x = c
+    // e.g. "3^(x+1) + 3^x = 36"
+    const sumReversedPattern = /(\d+\.?\d*)\s*\^\s*\(\s*x\s*([+-])\s*(\d+\.?\d*)\s*\)\s*([+-])\s*(\d+\.?\d*)\s*\^\s*x\s*=\s*(\d+\.?\d*)/i;
+    const sumReversedMatch = text.match(sumReversedPattern);
+    if (sumReversedMatch) {
+        const base = parseFloat(sumReversedMatch[1]);
+        const secondBase = parseFloat(sumReversedMatch[5]);
+        if (base === secondBase) {
+            const shiftSign = sumReversedMatch[2] === '+' ? 1 : -1;
+            const shift = parseFloat(sumReversedMatch[3]) * shiftSign;
+            const sign = sumReversedMatch[4] === '+' ? 1 : -1;
+            return {
+                type: 'exponential_equation',
+                subtype: 'sum_same_base',
+                outerCoefficient: 1,
+                base,
+                terms: [
+                    { coefficient: 1, shift },       // b^(x+k) listed first
+                    { coefficient: sign, shift: 0 },  // b^x
+                ],
+                result: parseFloat(sumReversedMatch[6]),
+            };
+        }
+    }
+
+    return null;
 }
 
 /**

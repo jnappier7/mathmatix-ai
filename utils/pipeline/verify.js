@@ -233,6 +233,53 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── 2a-bis. Answer giveaway guard for student-posed problems ──
+  // When a student asks a math question (not answering a posed problem) and
+  // the AI dumps a full solution instead of guiding Socratically, catch it.
+  // This is defense-in-depth — the primary gate is in chat.js which suppresses
+  // answer injection for non-answer messages. This catches LLM over-helpfulness.
+  if (context.action === ACTIONS.CONTINUE_CONVERSATION &&
+      (context.messageType === MESSAGE_TYPES.GENERAL_MATH || context.messageType === MESSAGE_TYPES.QUESTION) &&
+      context.diagnosisType === 'no_answer' &&
+      !context.hasRecentUpload && !context.isWorksheetFollowUp) {
+    const solutionGiveawaySignals = [
+      /(?:the\s+)?(?:answer|solution)\s+is\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
+      /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:answer|solution|result)\s+(?:is|=|are)\s*/i,
+      /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
+      /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m,  // "x = 9" as a conclusion
+    ];
+    const hasCompleteSolution = solutionGiveawaySignals.some(p => p.test(text));
+    const hasSocraticQuestion = /\?\s*$|\?\s*\n/m.test(text);
+
+    if (hasCompleteSolution && !hasSocraticQuestion) {
+      console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem. Redirecting to Socratic.`);
+      try {
+        const socraticRedirect = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: 'You are a Socratic math tutor. Your previous response solved the student\'s problem and gave the answer — this violates the #1 tutoring rule. Rewrite the response: acknowledge the problem, identify the FIRST step the student needs to take, and ask THEM to attempt that step. Do NOT show subsequent steps or the final answer. End with a guiding question. Keep it concise (2-4 sentences max).' },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this to be Socratic. Only guide the first step, ask the student to try it. Never reveal the answer.' }],
+          { temperature: 0.55, max_tokens: 800 }
+        );
+        const redirectedText = socraticRedirect.choices[0]?.message?.content?.trim();
+        if (redirectedText && redirectedText.length > 10) {
+          text = redirectedText;
+          flags.push('answer_giveaway_redirected');
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] Answer giveaway redirect failed:', err.message);
+        // Fallback: append a Socratic question to soften the damage
+        text += '\n\nWhat do you think the first step should be?';
+        flags.push('answer_giveaway_redirect_fallback');
+      }
+    }
+  }
+
   // ── 2b. False-affirmation guard ──
   // When the student didn't answer (IDK, give-up, etc.), the AI must NOT
   // say "That's right!", "Correct!", etc. — it confuses students into
