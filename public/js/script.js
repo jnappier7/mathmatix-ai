@@ -3370,10 +3370,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.InlineEquationBox.init(userInput, sendMessage);
     }
 
-    // ─── Mathmatix Custom Keyboard (mobile only) ─────────────────────
-    // On mobile, show our custom iOS-style keyboard (ABC / 123 / EQ).
-    // ABC/123 type directly into the contenteditable #user-input.
-    // EQ inserts inline equation boxes (MathLive) at cursor.
+    // ─── Mathmatix Equation Panel (mobile only) ─────────────────────
+    // On mobile, the native keyboard handles regular text (ABC / 123).
+    // This module adds an EQ panel for math constructions (fractions,
+    // roots, Greek letters, trig, etc.) that slides up on demand.
     const mxKeyboardContainer = document.getElementById('mx-keyboard-container');
     console.log('[MathmatixKeyboard Setup]', {
         hasMK: !!window.MathmatixKeyboard,
@@ -3426,8 +3426,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Highlight the √x tool button
             if (openEquationBtn) openEquationBtn.classList.add('mk-active');
 
-            // On mobile: also show the math keyboard panel for symbol input
-            if (isMobile && mkPanel) {
+            // On mobile: show the EQ panel for math symbol input
+            if (isMobile && window.MathmatixKeyboard) {
+                window.MathmatixKeyboard.showEqPanel();
+            } else if (isMobile && mkPanel) {
                 mkPanel.style.display = '';
                 if (mkHelperText) mkHelperText.style.display = '';
                 switchMkTab('math');
@@ -3458,10 +3460,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (window.InlineEquationBox) {
             window.InlineEquationBox.sealAll();
             mathModeOn = false;
-            // On mobile: hide the math keyboard panel
+            // On mobile: hide the EQ panel
             if (window.innerWidth <= 768) {
-                if (mkPanel) mkPanel.style.display = 'none';
-                if (mkHelperText) mkHelperText.style.display = 'none';
+                if (window.MathmatixKeyboard) {
+                    window.MathmatixKeyboard.hideEqPanel();
+                } else {
+                    if (mkPanel) mkPanel.style.display = 'none';
+                    if (mkHelperText) mkHelperText.style.display = 'none';
+                }
             }
             userInput.focus();
             if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
@@ -3521,10 +3527,9 @@ document.addEventListener("DOMContentLoaded", () => {
             e.stopImmediatePropagation();
             e.preventDefault();
 
-            // On mobile with custom keyboard: switch to EQ page and
-            // insert an equation box so the student can start typing math
-            if (window.MathmatixKeyboard && window.MathmatixKeyboard.isVisible()) {
-                window.MathmatixKeyboard.switchPage('eq');
+            // On mobile with EQ panel already showing: just insert
+            // another equation box so the student can continue typing math
+            if (window.MathmatixKeyboard && window.MathmatixKeyboard.isEqPanelVisible()) {
                 if (window.InlineEquationBox) {
                     window.InlineEquationBox.insertEquationBoxAtCursor();
                 }
