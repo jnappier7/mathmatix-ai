@@ -554,3 +554,142 @@ describe('Tutor Validation: Unicode Superscript Normalization', () => {
     expect(result.hasMath).toBe(true);
   });
 });
+
+// ============================================================================
+// ANSWER LEAK REGRESSION TESTS
+//
+// BUG: When a student sent a math equation to solve (e.g. "4x-15=21"),
+// the MATH_VERIFICATION injection in chat.js gave the LLM the solved answer.
+// The LLM then presented the full step-by-step solution, violating the #1
+// Socratic teaching rule. The tutor should NEVER give answers to student-posed
+// problems — it should guide them through the first step with a question.
+//
+// ROOT CAUSE: chat.js injected [MATH_VERIFICATION: answer = X] for ALL
+// detected math problems, including new questions (not just answer attempts).
+// FIX: Gate injection behind observe pre-classification (ANSWER_ATTEMPT only).
+// ============================================================================
+
+describe('Tutor Validation: Answer Leak Prevention', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // CRITICAL: Student sends a math equation to solve.
+  // Pipeline must classify as GENERAL_MATH (not ANSWER_ATTEMPT) and
+  // decide CONTINUE_CONVERSATION with Socratic directives.
+  // ────────────────────────────────────────────────────────────────────────
+
+  test('ANSWER LEAK BUG: "4x-15=21" must NOT be classified as answer attempt', async () => {
+    const { observation, diagnosis, decision } = await runDeterministicStages(
+      '4x-15=21',
+      [] // no prior tutor messages — student is posing a new problem
+    );
+
+    // Must be classified as a question, NOT an answer
+    expect(observation.messageType).toBe('general_math');
+    expect(observation.answer).toBeNull();
+
+    // Diagnosis must be no_answer (nothing to verify)
+    expect(diagnosis.type).toBe('no_answer');
+    expect(diagnosis.isCorrect).toBeNull();
+
+    // Decision must guide Socratically, NEVER solve
+    expect(decision.action).toBe('continue_conversation');
+    expect(decision.directives.some(d => /NEVER show the full solution/i.test(d))).toBe(true);
+  });
+
+  test('ANSWER LEAK BUG: "3^(x+1) = 81" must NOT be classified as answer attempt', async () => {
+    const { observation, diagnosis, decision } = await runDeterministicStages(
+      '3^(x+1) = 81',
+      []
+    );
+
+    expect(observation.messageType).toBe('general_math');
+    expect(observation.answer).toBeNull();
+    expect(diagnosis.type).toBe('no_answer');
+    expect(decision.action).toBe('continue_conversation');
+  });
+
+  test('ANSWER LEAK BUG: "3(3^x + 3^(x+1)) = 108" must NOT be classified as answer attempt', async () => {
+    const { observation, diagnosis, decision } = await runDeterministicStages(
+      '3(3^x + 3^(x+1)) = 108',
+      []
+    );
+
+    expect(observation.messageType).toBe('general_math');
+    expect(observation.answer).toBeNull();
+    expect(diagnosis.type).toBe('no_answer');
+    expect(decision.action).toBe('continue_conversation');
+  });
+
+  test('ANSWER LEAK BUG: "solve 2x + 5 = 13" must NOT be classified as answer attempt', async () => {
+    const { observation, decision } = await runDeterministicStages(
+      'solve 2x + 5 = 13',
+      []
+    );
+
+    // "solve" starts the message → classified as QUESTION
+    expect(observation.messageType).toBe('question');
+    expect(observation.answer).toBeNull();
+    expect(decision.action).toBe('continue_conversation');
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // CONTRAST: Student answers a previously posed problem.
+  // Pipeline must classify as ANSWER_ATTEMPT and verify correctly.
+  // ────────────────────────────────────────────────────────────────────────
+
+  test('CONTRAST: student answering "x = 3" to a posed problem IS an answer attempt', async () => {
+    const { observation, diagnosis, decision } = await runDeterministicStages(
+      'x = 3',
+      ['Great! Now try solving 3^(x+1) = 81. What do you think x is?']
+    );
+
+    expect(observation.messageType).toBe('answer_attempt');
+    expect(observation.answer).not.toBeNull();
+    expect(observation.answer.value).toBe('3');
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('CONTRAST: student answering bare "9" IS an answer attempt (not a question)', async () => {
+    // The key test: bare "9" must be classified as an answer attempt so that
+    // the MATH_VERIFICATION gate in chat.js allows injection (not suppresses it).
+    // This ensures the gate distinguishes answers from questions.
+    const { observation } = await runDeterministicStages(
+      '9',
+      ['What value of x makes 4x - 15 = 21 true? Think about what operation undoes subtraction.']
+    );
+
+    expect(observation.messageType).toBe('answer_attempt');
+    expect(observation.answer).not.toBeNull();
+    expect(observation.answer.value).toBe('9');
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // Pre-classification gate: observe must suppress MATH_VERIFICATION for questions
+  // ────────────────────────────────────────────────────────────────────────
+
+  test('pre-classification correctly distinguishes question from answer for MATH_VERIFICATION gate', () => {
+    // These are student-posed problems — MUST NOT trigger MATH_VERIFICATION
+    const questions = [
+      '4x-15=21',
+      '2^x = 8',
+      '3(3^x + 3^(x+1)) = 108',
+      'x^2 + 5x + 6 = 0',
+    ];
+    for (const q of questions) {
+      const obs = observe(q, { recentUserMessages: [], recentAssistantMessages: [] });
+      expect(obs.messageType).not.toBe('answer_attempt');
+    }
+
+    // These are student answers — MUST trigger MATH_VERIFICATION
+    const answers = ['9', 'x = 3', '3x^2-3', 'I think the answer is 4'];
+    for (const a of answers) {
+      const obs = observe(a, { recentUserMessages: [], recentAssistantMessages: [] });
+      expect(obs.messageType).toBe('answer_attempt');
+    }
+  });
+});
+
