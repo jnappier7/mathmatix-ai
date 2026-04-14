@@ -1,14 +1,19 @@
 /**
- * MATHMATIX CUSTOM KEYBOARD
+ * MATHMATIX EQUATION PANEL
  *
- * Full custom keyboard for mobile that replaces the native keyboard.
- * Three pages — just like iOS:
- *   ABC → letters (QWERTY)  → types into the contenteditable
- *   123 → numbers, operators → types into the contenteditable
- *   EQ  → math constructions → inserts inline equation boxes (MathLive)
+ * Lightweight math-input panel for mobile devices. The native keyboard
+ * handles ALL regular text input (ABC, 123) — giving the student haptic
+ * feedback, swipe-to-type, autocorrect, and double-space-to-period for free.
  *
- * The student always sees what they're typing in the same full-width
- * "Ask a math question..." input. No mode switch, no separate field.
+ * This module provides ONLY the equation panel (EQ) that slides up when
+ * the student needs to insert fractions, roots, Greek letters, trig
+ * functions, integrals, etc.
+ *
+ * Flow:
+ *   1. Student types normally with the native keyboard.
+ *   2. Student taps √x → equation box appears + EQ panel slides up.
+ *   3. Student taps math keys on the EQ panel.
+ *   4. Student taps ABC → EQ panel hides, native keyboard returns.
  *
  * @module mathmatixKeyboard
  */
@@ -17,547 +22,390 @@
 
   // ─── STATE ──────────────────────────────────────────────────────────
   let textInput = null;       // The contenteditable #user-input
-  let keyboardEl = null;      // The keyboard container DOM element
-  let currentPage = 'abc';    // 'abc' | '123' | 'eq' | 'symbols'
-  let shifted = false;        // Shift state for ABC page
-  let capsLock = false;       // Caps lock state
+  let eqPanelEl = null;       // The EQ panel container DOM element
   let sendCallback = null;    // Function to call on send
   let initialized = false;
 
-  // ─── SWIPE STATE ────────────────────────────────────────────────────
-  let swiping = false;            // True while a swipe gesture is active
-  let swipePath = [];             // Array of key letters touched during swipe
-  let swipePoints = [];           // Array of {x, y} touch coordinates for trail
-  let swipeStartTime = 0;        // Timestamp when touch started
-  let swipeStartKey = null;       // First key element touched
-  let lastSwipeKey = null;        // Last key element highlighted
-  let swipeTrailEl = null;        // SVG element for swipe trail
-  let suggestionBarEl = null;     // Suggestion bar element
+  // ─── DELETE REPEAT STATE ────────────────────────────────────────────
+  let deleteRepeatTimer = null;
+  let deleteRepeatDelay = 400;   // Initial delay before repeat (ms)
+  let deleteRepeatRate = 80;     // Repeat interval, accelerates (ms)
+  let activeKey = null;          // Currently pressed key element
 
-  // ─── ADAPTIVE STATE ─────────────────────────────────────────────────
-  let lastKeyTime = 0;           // Timestamp of last key press (for double-space)
-  let lastKeyAction = '';        // Last key action (for double-space detection)
-  let deleteRepeatTimer = null;  // Timer for hold-to-repeat delete
-  let deleteRepeatDelay = 400;   // Initial delay before repeat starts (ms)
-  let deleteRepeatRate = 80;     // Current repeat interval (ms), accelerates
-  let longPressTimer = null;     // Timer for long-press alternate chars
-  let longPressEl = null;        // Currently showing long-press popup
-  let undoStack = [];            // Stack of recently inserted words for undo
-  let predictionBarEl = null;    // Always-visible prediction bar
-  let prevPage = null;           // Previous page (for transition animation)
-  let touchStartXSpace = 0;     // For spacebar swipe-left-to-undo
-
-  // ─── ALTERNATE CHARACTERS (long-press) ──────────────────────────────
-  const ALTERNATES = {
-    'a': ['à','á','â','ä','æ','ã','å','ā'],
-    'c': ['ç','ć','č'],
-    'e': ['è','é','ê','ë','ē','ė','ę'],
-    'i': ['î','ï','í','ī','į','ì'],
-    'n': ['ñ','ń'],
-    'o': ['ô','ö','ò','ó','œ','ø','ō','õ'],
-    's': ['ß','ś','š'],
-    'u': ['û','ü','ù','ú','ū'],
-    'y': ['ÿ'],
-    'z': ['ž','ź','ż'],
-    '0': ['°'],
-    '-': ['–','—','•'],
-    '/': ['\\'],
-    '$': ['€','£','¥','₹','¢'],
-    '!': ['¡'],
-    '?': ['¿'],
-    '.': ['…'],
-    "'": ['\u2018','\u2019','"'],
-    '"': ['\u201C','\u201D','\u00AB','\u00BB'],
+  // ─── EQ LAYOUT ─────────────────────────────────────────────────────
+  const EQ_LAYOUT = {
+    rows: [
+      [
+        { label: '<span class="k-frac">⁄</span>', latex: '\\frac{#0}{#1}', hint: 'Frac' },
+        { label: 'x<sup>n</sup>', latex: '#0^{#1}', hint: 'Pow' },
+        { label: 'x<sub>n</sub>', latex: '#0_{#1}', hint: 'Sub' },
+        { label: '√', latex: '\\sqrt{#0}', hint: 'Root' },
+        { label: '<sup>n</sup>√', latex: '\\sqrt[#1]{#0}', hint: 'nRoot' },
+        { label: '|x|', latex: '|#0|', hint: 'Abs' },
+        { label: 'log', latex: '\\log_{#0}', hint: 'Log' },
+        { label: 'ln', latex: '\\ln(', hint: 'Ln' },
+      ],
+      [
+        { label: 'π', latex: '\\pi' },
+        { label: 'θ', latex: '\\theta' },
+        { label: '∞', latex: '\\infty' },
+        { label: '±', latex: '\\pm' },
+        { label: '≤', latex: '\\leq' },
+        { label: '≥', latex: '\\geq' },
+        { label: '≠', latex: '\\neq' },
+        { label: '≈', latex: '\\approx' },
+        { label: '°', latex: '\\degree' },
+        { label: '⌫', action: 'delete' },
+      ],
+      [
+        { label: 'α', latex: '\\alpha' },
+        { label: 'β', latex: '\\beta' },
+        { label: 'Δ', latex: '\\Delta' },
+        { label: 'λ', latex: '\\lambda' },
+        { label: 'σ', latex: '\\sigma' },
+        { label: 'Σ', latex: '\\sum_{#0}^{#1}' },
+        { label: '∫', latex: '\\int_{#0}^{#1}' },
+        { label: 'lim', latex: '\\lim_{#0 \\to #1}', wide: true },
+      ],
+      [
+        { label: 'sin', latex: '\\sin(', wide: true },
+        { label: 'cos', latex: '\\cos(', wide: true },
+        { label: 'tan', latex: '\\tan(', wide: true },
+        { label: 'ABC', action: 'dismiss' },
+        { label: '↵', action: 'enter', wide: true },
+      ]
+    ]
   };
 
-  // ─── KEYBOARD LAYOUTS ───────────────────────────────────────────────
+  // ─── INITIALIZATION ──────────────────────────────────────────────────
 
-  const LAYOUTS = {
-    abc: {
-      rows: [
-        ['q','w','e','r','t','y','u','i','o','p'],
-        ['a','s','d','f','g','h','j','k','l'],
-        ['⇧','z','x','c','v','b','n','m','⌫'],
-        ['123','EQ','space','.',',','↵']
-      ]
-    },
-    '123': {
-      rows: [
-        ['1','2','3','4','5','6','7','8','9','0'],
-        ['-','/',':',';','(',')','$','&','@','"'],
-        ['#+=' , '.', ',', '?', '!', "'", '⌫'],
-        ['ABC','EQ','space','.',',','↵']
-      ]
-    },
-    symbols: {
-      rows: [
-        ['[',']','{','}','#','%','^','*','+','='],
-        ['_','\\','|','~','<','>','€','£','¥','•'],
-        ['123','.',',','?','!','"','⌫'],
-        ['ABC','EQ','space','.',',','↵']
-      ]
-    },
-    eq: {
-      rows: [
-        [
-          { label: '<span class="k-frac">⁄</span>', latex: '\\frac{#0}{#1}', hint: 'Frac', wide: false },
-          { label: 'x<sup>n</sup>', latex: '#0^{#1}', hint: 'Pow' },
-          { label: 'x<sub>n</sub>', latex: '#0_{#1}', hint: 'Sub' },
-          { label: '√', latex: '\\sqrt{#0}', hint: 'Root' },
-          { label: '<sup>n</sup>√', latex: '\\sqrt[#1]{#0}', hint: 'nRoot' },
-          { label: '|x|', latex: '|#0|', hint: 'Abs' },
-          { label: 'log', latex: '\\log_{#0}', hint: 'Log' },
-          { label: 'ln', latex: '\\ln(', hint: 'Ln' },
-        ],
-        [
-          { label: 'π', latex: '\\pi' },
-          { label: 'θ', latex: '\\theta' },
-          { label: '∞', latex: '\\infty' },
-          { label: '±', latex: '\\pm' },
-          { label: '≤', latex: '\\leq' },
-          { label: '≥', latex: '\\geq' },
-          { label: '≠', latex: '\\neq' },
-          { label: '≈', latex: '\\approx' },
-          { label: '°', latex: '\\degree' },
-          { label: '⌫', action: 'delete' },
-        ],
-        [
-          { label: 'α', latex: '\\alpha' },
-          { label: 'β', latex: '\\beta' },
-          { label: 'Δ', latex: '\\Delta' },
-          { label: 'λ', latex: '\\lambda' },
-          { label: 'σ', latex: '\\sigma' },
-          { label: 'Σ', latex: '\\sum_{#0}^{#1}' },
-          { label: '∫', latex: '\\int_{#0}^{#1}' },
-          { label: 'lim', latex: '\\lim_{#0 \\to #1}', wide: true },
-        ],
-        [
-          { label: 'sin', latex: '\\sin(', wide: true },
-          { label: 'cos', latex: '\\cos(', wide: true },
-          { label: 'tan', latex: '\\tan(', wide: true },
-          { label: 'ABC', action: 'abc' },
-          { label: '123', action: '123' },
-          { label: '↵', action: 'enter', wide: true },
-        ]
-      ]
-    }
-  };
-
-  // ─── SWIPE DICTIONARY ────────────────────────────────────────────────
-  // Compact word list for swipe matching: common English + math terms.
-  // Words are grouped by length for faster lookup.
-  const SWIPE_WORDS = (function () {
-    const raw = (
-      'a,i,am,an,as,at,be,by,do,go,he,if,in,is,it,me,my,no,of,on,or,so,to,up,us,we,' +
-      'abs,add,all,and,any,are,ask,bad,big,bit,box,but,buy,can,cos,cut,day,did,end,far,' +
-      'few,for,get,got,had,has,her,him,his,hot,how,its,job,just,key,let,log,lot,man,may,' +
-      'met,mix,new,nor,not,now,odd,off,old,one,our,out,own,per,put,ran,run,sat,saw,say,' +
-      'set,she,sin,sit,six,sum,tan,ten,the,too,top,try,two,use,via,was,way,who,why,win,' +
-      'yes,yet,you,zero,' +
-      'able,also,area,axis,back,base,been,best,body,book,both,call,came,case,come,data,' +
-      'days,deal,diff,does,done,down,draw,each,easy,else,even,ever,exam,fact,feel,find,' +
-      'five,form,four,free,from,full,gave,give,goes,gone,good,grew,grow,half,hand,hard,' +
-      'have,head,help,here,high,hold,home,hope,idea,into,just,keen,keep,kind,knew,know,' +
-      'last,late,lead,left,less,life,like,line,list,live,long,look,lose,loss,lots,love,' +
-      'made,main,make,many,math,mean,mind,mode,more,most,move,much,must,name,near,need,' +
-      'next,nine,none,note,odds,once,only,open,over,page,part,past,path,pick,plan,play,' +
-      'plot,plus,post,pull,push,quiz,rate,read,real,rest,rich,rise,role,root,rule,runs,' +
-      'safe,said,same,save,seen,self,send,show,shut,side,sign,size,slim,slow,some,soon,' +
-      'sort,sqrt,step,stop,such,sure,take,talk,tell,term,test,text,than,that,them,then,' +
-      'they,this,thus,time,told,took,true,turn,type,unit,upon,used,user,vary,very,view,' +
-      'want,ways,week,well,went,were,what,when,whom,wide,will,wish,with,word,work,year,' +
-      'above,about,added,after,again,along,angle,apply,asked,basic,began,being,below,' +
-      'black,board,bonus,bound,break,bring,built,carry,cause,chain,check,class,clean,' +
-      'clear,close,comes,could,count,cover,cross,curve,deals,depth,doing,doubt,draft,' +
-      'drawn,drive,early,eight,enter,equal,error,essay,euler,every,exact,extra,facts,' +
-      'false,field,final,first,fixed,float,focus,force,found,front,fully,given,going,' +
-      'grade,graph,great,green,group,guess,hence,holds,ideas,image,index,input,inner,' +
-      'issue,known,large,later,layer,learn,least,leave,level,light,limit,lines,local,' +
-      'logic,looks,lower,major,makes,match,maybe,means,media,might,minus,model,money,' +
-      'month,moved,names,never,newer,notes,often,omega,order,other,outer,paint,parts,' +
-      'phase,phone,piece,place,plain,plane,plays,point,power,press,price,prime,print,' +
-      'proof,prove,query,queue,quick,quite,raise,range,ratio,reach,reads,ready,refer,' +
-      'reply,right,round,route,rules,saved,scale,score,sense,serve,seven,shall,shape,' +
-      'share,shift,short,sigma,since,sixth,slash,sleep,slide,slope,small,solve,sorry,' +
-      'space,speed,spend,split,stack,staff,stage,start,state,steps,still,store,study,' +
-      'stuff,style,super,sweet,table,taken,tasks,terms,thank,their,theme,there,these,' +
-      'theta,thing,think,third,those,three,throw,times,title,today,token,total,touch,' +
-      'trace,track,train,treat,trend,tried,truly,truth,twice,under,union,unity,until,' +
-      'upper,usage,using,usual,valid,value,watch,wheel,where,which,while,white,whole,' +
-      'width,world,worst,worth,would,write,wrong,wrote,years,young,' +
-      'across,action,adding,almost,always,amount,answer,assign,begins,bigger,binary,' +
-      'called,cancel,cannot,center,change,choose,circle,column,coming,common,cosine,' +
-      'create,decide,define,degree,delete,derive,design,detail,divide,domain,double,' +
-      'during,easily,effect,eighth,eleven,ending,enough,entire,equals,escape,events,' +
-      'except,expand,expect,factor,figure,finite,follow,format,formed,fourth,giving,' +
-      'global,gotten,growth,handle,having,height,higher,indeed,inside,itself,lambda,' +
-      'larger,latest,launch,layout,length,letter,likely,limits,linear,little,looked,' +
-      'making,manage,manual,margin,marked,master,matter,matrix,median,medium,memory,' +
-      'method,middle,minute,mobile,modern,moment,mostly,moving,needed,normal,notice,' +
-      'number,obtain,online,option,origin,output,people,period,placed,please,points,' +
-      'powers,proper,radius,raised,random,rather,reason,record,reduce,region,relate,' +
-      'remove,render,repeat,report,result,return,review,rotate,saying,scalar,second,' +
-      'select,series,server,should,signed,simple,single,skills,solved,source,square,' +
-      'starts,stated,string,strong,submit,subset,switch,symbol,system,taking,target,' +
-      'thanks,thirty,though,toward,travel,triple,turned,twelve,unique,update,useful,' +
-      'values,vector,verify,versus,weight,within,' +
-      'algebra,already,angular,average,balance,because,becomes,believe,between,biggest,' +
-      'boolean,capable,capture,central,certain,chapter,classic,clearly,combine,command,' +
-      'compare,complex,compute,concept,confirm,connect,contain,convert,correct,counter,' +
-      'current,decimal,default,defined,denoted,density,derived,display,divided,drawing,' +
-      'element,entered,entropy,epsilon,equally,exactly,examine,example,exclude,express,' +
-      'extends,extract,extreme,failure,finally,formula,forward,fourier,further,general,' +
-      'getting,graphic,greatly,growing,happens,heading,helpful,history,however,hundred,' +
-      'imagine,implies,improve,include,indexed,initial,integer,inverse,isolate,keeping,' +
-      'largest,leading,learned,leaving,lessons,limited,looking,mapping,maximum,meaning,' +
-      'measure,million,minimum,missing,mixture,modular,monitor,monthly,natural,neither,' +
-      'nothing,noticed,obvious,offered,operate,options,ordered,origins,outside,overall,' +
-      'partial,pattern,percent,perform,perhaps,placing,polygon,popular,portion,predict,' +
-      'present,primary,problem,process,produce,product,program,project,provide,purpose,' +
-      'quickly,radical,reading,rebuild,receive,reflect,regular,related,release,remains,' +
-      'removal,removed,replace,require,resolve,results,returns,reverse,revised,running,' +
-      'satisfy,section,segment,similar,smaller,solving,special,squared,started,subject,' +
-      'suggest,support,surface,symbols,tangent,teacher,testing,theorem,through,tonight,' +
-      'towards,turning,twelfth,upgrade,upsilon,variable,version,viewing,virtual,visible,' +
-      'without,working,written,' +
-      'absolute,abstract,accuracy,actually,addition,advanced,although,analysis,anything,' +
-      'approach,applying,assigned,assuming,attempts,automate,balanced,behavior,building,' +
-      'business,calculus,category,centered,changing,chapters,circular,combined,commonly,' +
-      'compared,complete,computed,conclude,consider,constant,contains,continue,contrast,' +
-      'converge,counting,coverage,creating,critical,crossing,database,decrease,defaults,' +
-      'defining,definite,delivery,denominator,depending,describe,designed,detailed,diagonal,' +
-      'directly,discrete,distance,distinct,division,document,elements,emission,entirely,' +
-      'equality,equation,estimate,evaluate,eventual,evidence,examples,exercise,expected,' +
-      'explicit,exponent,extended,exterior,extremes,factored,features,feedback,finally,' +
-      'finished,floating,followed,fraction,function,generate,geometry,gradient,graphing,' +
-      'greatest,handling,homework,identify,imagined,improper,increase,indicate,infinite,' +
-      'inflated,informed,initially,inserted,instance,integral,intended,interest,interior,' +
-      'interval,isolated,iterated,keyboard,language,learning,limiting,location,matching,' +
-      'material,maximize,measured,minimize,modified,multiply,negative,normally,notation,' +
-      'obtained,occurred,operates,opposite,ordering,organize,original,outlined,overview,' +
-      'parabola,parallel,patterns,performs,periodic,permuted,physical,planning,platform,' +
-      'plotting,pointing,position,positive,possible,practice,presence,previous,probably,' +
-      'problems,produced,products,programs,progress,properly,property,provided,purposes,' +
-      'quadrant,quantity,question,rational,received,recorded,reducing,referred,reflects,' +
-      'relation,relative,released,remember,removing,rendered,repeated,replaced,required,' +
-      'research,resolved,response,restated,restrict,reversed,rotation,rounding,sampling,' +
-      'selected,sentence,separate,sequence,services,settings,shortest,simplify,simulate,' +
-      'singular,smallest,software,solution,specific,standard,starting,straight,strategy,' +
-      'stronger,students,subtract,succeeds,suggests,suitable,supposed,surprise,tangible,' +
-      'teaching,terminal,thinking,thousand,together,tracking,transfer,triangle,uncommon,' +
-      'undefined,uniquely,universe,unknowns,unlikely,updating,validate,variable,vertical,' +
-      'whenever,yourself,' +
-      'algorithm,alongside,alternate,amplitude,asymptote,basically,beginning,breakdown,' +
-      'calculate,certainly,challenge,clipboard,collected,combining,comparing,computing,' +
-      'condition,connected,considers,construct,contained,continued,converted,correctly,' +
-      'currently,decreases,depending,described,determine,developed,different,dimension,' +
-      'direction,discussed,efficient,elaborate,encounter,estimated,evaluates,evolution,' +
-      'examining,exception,excluding,exercises,expansion,expensive,expressed,extending,' +
-      'extension,extremely,factoring,formatted,frequency,functions,generated,geometric,' +
-      'graphical,guarantee,happening,histogram,homeplace,hopefully,identical,imaginary,' +
-      'important,improving,including,increased,indicates,induction,initially,inputting,' +
-      'inserting,intention,intercept,intuition,inversely,iteration,knowledge,logarithm,' +
-      'magnitude,manhattan,mechanism,mentioned,midpoints,negatives,normalize,numerical,' +
-      'occurring,operating,operation,organized,otherwise,parabolic,parameter,partially,' +
-      'partition,piecewise,placement,possesses,potential,precisely,presented,preserved,' +
-      'principal,principle,processor,producing,projected,published,quadratic,questions,' +
-      'reasoning,recognize,recommend,reference,reflected,regarding,remainder,rendering,' +
-      'repeating,replacing,represent,requested,resulting,satisfies,searching,selecting,' +
-      'selection,separated,sequences,similarly,situation,solutions,sometimes,somewhere,' +
-      'specified,statement,structure,submitted,substance,succeeded,suggested,supported,' +
-      'symmetric,technique,temporary,therefore,transform,transpose,typically,undefined,' +
-      'underline,universal,utilizing,validated,variables,variation,wondering,' +
-      'absolutely,arithmetic,assumption,boundaries,calculator,cancelling,classifying,' +
-      'collecting,comparison,completing,conclusion,conditions,connecting,consistent,' +
-      'constraint,continuous,convention,coordinate,correcting,decreasing,definition,' +
-      'definitely,derivative,describing,determined,difference,difficulty,dimensions,' +
-      'discussing,distribute,eigenvalue,elementary,equivalent,eventually,everything,' +
-      'explicitly,expression,generating,horizontal,hypothesis,illustrate,impossible,' +
-      'increasing,inequality,initialize,instructed,integrable,interested,introduced,' +
-      'logarithms,meaningful,measurable,multiplied,nonnegative,occurrence,operations,' +
-      'organizing,orthogonal,percentage,performing,perpendicular,polynomial,population,' +
-      'practicing,predicting,previously,procedures,processing,properties,proportion,' +
-      'reasonable,recognized,references,reflecting,remarkably,repeatedly,represents,' +
-      'simplified,simplifies,situations,statistics,structured,subscripts,substitute,' +
-      'subtracted,successful,tangential,technology,themselves,throughout,triangular,' +
-      'understand,university,vertically,whichever,worksheets'
-    );
-    const map = {};
-    raw.split(',').forEach(w => {
-      const len = w.length;
-      if (!map[len]) map[len] = [];
-      map[len].push(w);
-    });
-    return map;
-  })();
-
-  /**
-   * Match a swipe path (array of letters) to the best dictionary word.
-   * Strategy: for each word length bucket, score words by how well
-   * the swipe path matches the letter sequence in order.
-   */
-  function matchSwipeWord(path) {
-    if (!path || path.length < 2) return null;
-
-    // Deduplicate consecutive letters
-    const deduped = [path[0]];
-    for (let i = 1; i < path.length; i++) {
-      if (path[i] !== path[i - 1]) deduped.push(path[i]);
-    }
-    const pathStr = deduped.join('').toLowerCase();
-    const first = pathStr[0];
-    const last = pathStr[pathStr.length - 1];
-
-    let bestWord = null;
-    let bestScore = -Infinity;
-
-    // Check words from length 2 up to pathStr length + 2
-    const minLen = 2;
-    const maxLen = Math.min(pathStr.length + 3, 12);
-
-    for (let len = minLen; len <= maxLen; len++) {
-      const bucket = SWIPE_WORDS[len];
-      if (!bucket) continue;
-
-      for (let w = 0; w < bucket.length; w++) {
-        const word = bucket[w];
-
-        // Quick filter: first and last letter must match
-        if (word[0] !== first || word[word.length - 1] !== last) continue;
-
-        // Score: check how many letters of the word appear in order in the path
-        let pi = 0;
-        let matched = 0;
-        for (let wi = 0; wi < word.length; wi++) {
-          while (pi < pathStr.length && pathStr[pi] !== word[wi]) pi++;
-          if (pi < pathStr.length) {
-            matched++;
-            pi++;
-          } else {
-            break;
-          }
-        }
-
-        if (matched < word.length) continue; // not all letters found in order
-
-        // Score based on: length match, common word bias
-        let score = matched * 10;
-        // Prefer words whose length is close to the deduped path length
-        score -= Math.abs(word.length - pathStr.length) * 3;
-        // Slight bias toward longer words (more meaningful)
-        score += word.length;
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestWord = word;
-        }
-      }
-    }
-
-    return bestWord;
-  }
-
-  /** Find up to N candidate words for a swipe path */
-  function matchSwipeCandidates(path, maxResults) {
-    if (!path || path.length < 2) return [];
-    maxResults = maxResults || 3;
-
-    const deduped = [path[0]];
-    for (let i = 1; i < path.length; i++) {
-      if (path[i] !== path[i - 1]) deduped.push(path[i]);
-    }
-    const pathStr = deduped.join('').toLowerCase();
-    const first = pathStr[0];
-    const last = pathStr[pathStr.length - 1];
-
-    const scored = [];
-    const minLen = 2;
-    const maxLen = Math.min(pathStr.length + 3, 12);
-
-    for (let len = minLen; len <= maxLen; len++) {
-      const bucket = SWIPE_WORDS[len];
-      if (!bucket) continue;
-
-      for (let w = 0; w < bucket.length; w++) {
-        const word = bucket[w];
-        if (word[0] !== first || word[word.length - 1] !== last) continue;
-
-        let pi = 0;
-        let matched = 0;
-        for (let wi = 0; wi < word.length; wi++) {
-          while (pi < pathStr.length && pathStr[pi] !== word[wi]) pi++;
-          if (pi < pathStr.length) { matched++; pi++; } else break;
-        }
-        if (matched < word.length) continue;
-
-        let score = matched * 10 - Math.abs(word.length - pathStr.length) * 3 + word.length;
-        scored.push({ word, score });
-      }
-    }
-
-    scored.sort((a, b) => b.score - a.score);
-    return scored.slice(0, maxResults).map(s => s.word);
-  }
-
-  // ─── INITIALIZATION ─────────────────────────────────────────────────
-
-  /**
-   * Initialize the custom keyboard.
-   * @param {Object} opts
-   * @param {HTMLElement} opts.textInput - The contenteditable #user-input
-   * @param {HTMLElement} opts.container - Where to mount the keyboard
-   * @param {Function} opts.onSend - Callback when enter/send pressed
-   */
   function init(opts) {
     if (initialized) return;
-    if (window.innerWidth > 768) return;
-
     textInput = opts.textInput;
     sendCallback = opts.onSend;
+    if (!textInput || !opts.container) return;
 
-    if (!textInput) return;
-
-    // ─── PERSISTENT MODE CLASS ──────────────────────────────────────
+    // Mark body for CSS hooks (MathLive suppression, eq box styling)
     document.body.classList.add('mx-keyboard-mode');
 
-    // Build the keyboard DOM
-    keyboardEl = buildKeyboard();
-    opts.container.appendChild(keyboardEl);
+    // Build the EQ panel DOM
+    eqPanelEl = buildEqPanel();
+    opts.container.appendChild(eqPanelEl);
 
-    // ─── NATIVE KEYBOARD SUPPRESSION ────────────────────────────────
-    suppressNativeKeyboard();
-
-    // Show keyboard when contenteditable gets focus
-    textInput.addEventListener('focus', () => {
-      suppressNativeKeyboard();
-      show();
-    });
-
-    // Also show keyboard when contenteditable is tapped (even if already focused)
-    textInput.addEventListener('touchstart', () => {
-      suppressNativeKeyboard();
-      show();
-    });
-
-    // Show keyboard when ANY math-field inside the contenteditable gets focus
-    // (inline equation boxes create math-fields that steal focus from textInput)
-    textInput.addEventListener('focusin', (e) => {
-      if (e.target.tagName === 'MATH-FIELD' || e.target.closest('math-field')) {
-        suppressNativeKeyboard();
-        // Also suppress on the math-field itself
-        const mf = e.target.tagName === 'MATH-FIELD' ? e.target : e.target.closest('math-field');
-        if (mf) {
-          mf.setAttribute('inputmode', 'none');
-          mf.mathVirtualKeyboardPolicy = 'manual';
-          try {
-            const shadow = mf.shadowRoot;
-            if (shadow) {
-              const ta = shadow.querySelector('textarea');
-              if (ta) ta.setAttribute('inputmode', 'none');
-            }
-          } catch (_) {}
-        }
-        show();
-      }
-    });
-
-    // Show keyboard when the entire compose bar is tapped
-    const composeBar = textInput.closest('.imessage-compose-bar') || textInput.closest('.imessage-input-row');
-    if (composeBar) {
-      composeBar.addEventListener('touchstart', (e) => {
-        // Don't intercept button taps (send, mic, etc.)
-        if (e.target.closest('button') && !e.target.closest('#user-input')) return;
-        show();
-      });
-    }
-
-    // Re-suppress after orientation change or app-switch-back
-    window.addEventListener('orientationchange', () => {
-      setTimeout(suppressNativeKeyboard, 300);
-    });
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && isVisible()) {
-        suppressNativeKeyboard();
-      }
-    });
-
-    // ─── KEYBOARD HEIGHT → CSS VARIABLE ─────────────────────────────
-    requestAnimationFrame(() => {
-      updateKeyboardHeightVar();
-    });
-
-    switchPage('abc');
-    initialized = true;
-
-    // Auto-capitalize at start
-    checkAutoCapitalize();
-
-    console.log('[MathmatixKeyboard] Initialized on mobile');
-  }
-
-  /** Suppress native keyboard on the contenteditable */
-  function suppressNativeKeyboard() {
-    if (!textInput) return;
-    textInput.setAttribute('inputmode', 'none');
-    // Prevent any MathLive virtual keyboard from popping up
+    // Suppress MathLive's own virtual keyboard globally
     if (window.mathVirtualKeyboard) {
       try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
     }
+
+    // Suppress native keyboard on math-fields that gain focus while EQ panel is open
+    textInput.addEventListener('focusin', function (e) {
+      if (!isEqPanelVisible()) return;
+      if (e.target.tagName === 'MATH-FIELD' || e.target.closest('math-field')) {
+        const mf = e.target.tagName === 'MATH-FIELD' ? e.target : e.target.closest('math-field');
+        if (mf) suppressMathField(mf);
+      }
+    });
+
+    // Height measurement
+    requestAnimationFrame(updatePanelHeightVar);
+
+    initialized = true;
+    console.log('[MathmatixKeyboard] Initialized — hybrid mode (native KB + EQ panel)');
   }
 
-  /** Measure keyboard and set --mx-kb-height on <body> */
-  function updateKeyboardHeightVar() {
-    if (!keyboardEl) return;
-    const h = keyboardEl.offsetHeight;
-    if (h > 0) {
-      document.body.style.setProperty('--mx-kb-height', h + 'px');
+  // ─── BUILD EQ PANEL ──────────────────────────────────────────────────
+
+  function buildEqPanel() {
+    const panel = document.createElement('div');
+    panel.id = 'mx-keyboard';
+    panel.className = 'mx-keyboard';
+
+    const page = document.createElement('div');
+    page.className = 'mx-kb-page';
+    page.dataset.page = 'eq';
+    page.style.display = '';
+
+    EQ_LAYOUT.rows.forEach(function (row, rowIdx) {
+      const rowEl = document.createElement('div');
+      rowEl.className = 'mx-kb-row';
+      if (rowIdx === EQ_LAYOUT.rows.length - 1) {
+        rowEl.classList.add('mx-kb-row-bottom');
+      }
+      row.forEach(function (keyDef) {
+        rowEl.appendChild(buildKey(keyDef));
+      });
+      page.appendChild(rowEl);
+    });
+
+    panel.appendChild(page);
+
+    // Touch event delegation
+    panel.addEventListener('touchstart', onTouchStart, { passive: false });
+    panel.addEventListener('touchend', onTouchEnd, { passive: false });
+    panel.addEventListener('touchcancel', onTouchCancel, { passive: false });
+    panel.addEventListener('mousedown', onMouseDown);
+
+    return panel;
+  }
+
+  function buildKey(keyDef) {
+    var btn = document.createElement('button');
+    btn.className = 'mx-key mx-key-eq';
+    btn.setAttribute('tabindex', '-1');
+
+    btn.innerHTML = keyDef.label;
+    if (keyDef.hint) {
+      btn.innerHTML += '<span class="mx-key-hint">' + keyDef.hint + '</span>';
+    }
+    if (keyDef.latex) btn.dataset.latex = keyDef.latex;
+    if (keyDef.action) btn.dataset.action = keyDef.action;
+    if (keyDef.wide) btn.classList.add('mx-key-wide');
+
+    // Extra classes for action keys
+    if (keyDef.action === 'delete') {
+      btn.classList.add('mx-key-delete');
+      btn.innerHTML = '<i class="fas fa-delete-left"></i>';
+    }
+    if (keyDef.action === 'enter') {
+      btn.classList.add('mx-key-enter');
+      btn.innerHTML = '<i class="fas fa-arrow-turn-down fa-flip-horizontal"></i>';
+    }
+    if (keyDef.action === 'dismiss') {
+      btn.classList.add('mx-key-mode');
+    }
+
+    return btn;
+  }
+
+  // ─── SHOW / HIDE ─────────────────────────────────────────────────────
+
+  function showEqPanel() {
+    if (!eqPanelEl) return;
+    if (eqPanelEl.classList.contains('mx-keyboard-visible')) return;
+
+    // Suppress native keyboard on textInput and any active math-fields
+    suppressNativeKeyboard();
+
+    eqPanelEl.classList.add('mx-keyboard-visible');
+    document.body.classList.add('mx-keyboard-active');
+
+    setTimeout(updatePanelHeightVar, 280);
+
+    // Scroll chat to bottom
+    var chat = document.getElementById('chat-messages-container');
+    if (chat) {
+      requestAnimationFrame(function () { chat.scrollTop = chat.scrollHeight; });
     }
   }
 
-  // ─── CONTENTEDITABLE TEXT INSERTION ──────────────────────────────────
+  function hideEqPanel() {
+    if (!eqPanelEl) return;
+    eqPanelEl.classList.remove('mx-keyboard-visible');
+    document.body.classList.remove('mx-keyboard-active');
+    cancelDeleteRepeat();
 
-  /** Ensure the contenteditable has focus and cursor is at end if needed */
+    // Restore native keyboard ability
+    restoreNativeKeyboard();
+  }
+
+  function isEqPanelVisible() {
+    return !!(eqPanelEl && eqPanelEl.classList.contains('mx-keyboard-visible'));
+  }
+
+  // ─── NATIVE KEYBOARD MANAGEMENT ─────────────────────────────────────
+
+  function suppressNativeKeyboard() {
+    if (!textInput) return;
+    textInput.setAttribute('inputmode', 'none');
+
+    // Also suppress on any active math-fields inside the input
+    var mf = getActiveEquationMathField();
+    if (mf) suppressMathField(mf);
+  }
+
+  function suppressMathField(mf) {
+    mf.setAttribute('inputmode', 'none');
+    mf.mathVirtualKeyboardPolicy = 'manual';
+    try {
+      var ta = mf.shadowRoot && mf.shadowRoot.querySelector('textarea');
+      if (ta) ta.setAttribute('inputmode', 'none');
+    } catch (_) {}
+  }
+
+  function restoreNativeKeyboard() {
+    if (!textInput) return;
+    textInput.removeAttribute('inputmode');
+
+    // Restore all math-fields
+    textInput.querySelectorAll('math-field').forEach(function (mf) {
+      mf.removeAttribute('inputmode');
+      try {
+        var ta = mf.shadowRoot && mf.shadowRoot.querySelector('textarea');
+        if (ta) ta.removeAttribute('inputmode');
+      } catch (_) {}
+    });
+  }
+
+  // ─── TOUCH HANDLERS (simple taps — no swipe, no bubbles) ───────────
+
+  function onTouchStart(e) {
+    var touch = e.touches[0];
+    var el = document.elementFromPoint(touch.clientX, touch.clientY);
+    var keyEl = el ? el.closest('.mx-key') : null;
+    if (!keyEl) return;
+    e.preventDefault();
+
+    activeKey = keyEl;
+    keyEl.classList.add('mx-key-pressed');
+
+    // Immediate delete + hold-to-repeat
+    if (keyEl.dataset.action === 'delete') {
+      deleteBackward();
+      startDeleteRepeat();
+    }
+  }
+
+  function onTouchEnd(e) {
+    if (!activeKey) return;
+    e.preventDefault();
+    cancelDeleteRepeat();
+
+    var key = activeKey;
+    key.classList.remove('mx-key-pressed');
+    activeKey = null;
+
+    // Skip delete — already handled on touchstart
+    if (key.dataset.action === 'delete') return;
+
+    processKey(key);
+  }
+
+  function onTouchCancel() {
+    if (activeKey) {
+      activeKey.classList.remove('mx-key-pressed');
+    }
+    activeKey = null;
+    cancelDeleteRepeat();
+  }
+
+  function onMouseDown(e) {
+    var key = e.target.closest('.mx-key');
+    if (!key) return;
+    e.preventDefault();
+
+    key.classList.add('mx-key-pressed');
+    setTimeout(function () { key.classList.remove('mx-key-pressed'); }, 120);
+
+    processKey(key);
+  }
+
+  // ─── KEY PROCESSING ──────────────────────────────────────────────────
+
+  function processKey(key) {
+    var action = key.dataset.action;
+    var latex = key.dataset.latex;
+
+    if (action) {
+      switch (action) {
+        case 'dismiss':
+          hideEqPanel();
+          // Re-focus to bring back native keyboard after a brief delay
+          // (allows the EQ panel slide-out animation to start)
+          setTimeout(function () {
+            if (textInput) textInput.focus();
+          }, 80);
+          break;
+        case 'delete':
+          deleteBackward();
+          break;
+        case 'enter':
+          if (sendCallback) sendCallback();
+          break;
+      }
+      return;
+    }
+
+    if (latex) {
+      var activeField = getActiveEquationMathField();
+      if (activeField) {
+        activeField.executeCommand(['insert', latex]);
+        activeField.focus();
+        // Keep native keyboard suppressed while EQ panel is open
+        suppressMathField(activeField);
+      } else {
+        // No active equation box — create one with this LaTeX
+        insertEquationWithLatex(latex);
+      }
+    }
+  }
+
+  // ─── DELETE ──────────────────────────────────────────────────────────
+
+  function cancelDeleteRepeat() {
+    if (deleteRepeatTimer) {
+      clearTimeout(deleteRepeatTimer);
+      deleteRepeatTimer = null;
+    }
+    deleteRepeatDelay = 400;
+    deleteRepeatRate = 80;
+  }
+
+  function startDeleteRepeat() {
+    cancelDeleteRepeat();
+    deleteRepeatTimer = setTimeout(function repeatDelete() {
+      deleteBackward();
+      // Accelerate: reduce interval down to 30ms minimum
+      deleteRepeatRate = Math.max(30, deleteRepeatRate - 8);
+      deleteRepeatTimer = setTimeout(repeatDelete, deleteRepeatRate);
+    }, deleteRepeatDelay);
+  }
+
+  // ─── TEXT MANIPULATION ───────────────────────────────────────────────
+
   function ensureFocus() {
     if (!textInput) return;
+
+    // Prefer the active equation field if one exists
+    var eqField = getActiveEquationMathField();
+    if (eqField) {
+      eqField.focus();
+      return;
+    }
+
+    // Focus textInput (safe when EQ panel is open because inputmode='none'
+    // prevents the native keyboard from appearing)
     if (document.activeElement !== textInput) {
       textInput.focus();
     }
-    // If there's no selection inside textInput, place cursor at end
-    const sel = window.getSelection();
+
+    var sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || !textInput.contains(sel.anchorNode)) {
       placeCursorAtEnd();
     }
   }
 
-  /** Place cursor at end of contenteditable */
   function placeCursorAtEnd() {
-    const range = document.createRange();
+    var range = document.createRange();
     range.selectNodeContents(textInput);
     range.collapse(false);
-    const sel = window.getSelection();
+    var sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
   }
 
-  /** Insert a character at the current cursor position in contenteditable */
   function insertChar(char) {
     ensureFocus();
-    // execCommand('insertText') is the most reliable way to insert
-    // into contenteditable, respecting cursor position and undo stack.
     document.execCommand('insertText', false, char);
   }
 
-  /** Delete one character backward in contenteditable */
   function deleteBackward() {
-    ensureFocus();
-
     // If there's an active inline equation box, delete from it
-    const activeEqField = getActiveEquationMathField();
+    var activeEqField = getActiveEquationMathField();
     if (activeEqField) {
-      const val = (activeEqField.value || '').trim();
+      var val = (activeEqField.value || '').trim();
       if (val === '') {
         // Equation box is empty — remove the entire box
-        const box = activeEqField.closest('.inline-eq-box');
+        var box = activeEqField.closest('.inline-eq-box');
         if (box) {
           box.remove();
           ensureFocus();
@@ -568,42 +416,40 @@
       return;
     }
 
-    const sel = window.getSelection();
+    // Regular text deletion
+    ensureFocus();
+    var sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return;
-
-    const range = sel.getRangeAt(0);
+    var range = sel.getRangeAt(0);
 
     if (!range.collapsed) {
-      // Selection exists — delete it
       document.execCommand('delete', false);
       return;
     }
 
     // Check if cursor is right after an inline equation box
-    const node = range.startContainer;
-    const offset = range.startOffset;
+    var node = range.startContainer;
+    var offset = range.startOffset;
 
     if (node.nodeType === Node.ELEMENT_NODE && offset > 0) {
-      const prev = node.childNodes[offset - 1];
+      var prev = node.childNodes[offset - 1];
       if (prev && prev.classList && prev.classList.contains('inline-eq-box')) {
         prev.remove();
         return;
       }
     } else if (node.nodeType === Node.TEXT_NODE && offset === 0) {
-      const prev = node.previousSibling;
-      if (prev && prev.classList && prev.classList.contains('inline-eq-box')) {
-        prev.remove();
+      var prevSib = node.previousSibling;
+      if (prevSib && prevSib.classList && prevSib.classList.contains('inline-eq-box')) {
+        prevSib.remove();
         return;
       }
     }
 
-    // Normal backspace
     document.execCommand('delete', false);
   }
 
-  // ─── EQUATION BOX HELPERS ───────────────────────────────────────────
+  // ─── EQUATION HELPERS ────────────────────────────────────────────────
 
-  /** Get the currently active inline equation box's math-field (if any) */
   function getActiveEquationMathField() {
     if (window.InlineEquationBox) {
       return window.InlineEquationBox.getActiveMathField();
@@ -611,1046 +457,55 @@
     return null;
   }
 
-  /**
-   * Insert an inline equation box at cursor, optionally pre-filled
-   * with LaTeX. Uses the InlineEquationBox module.
-   */
   function insertEquationWithLatex(latex) {
     if (!window.InlineEquationBox) return;
 
-    // Insert a fresh equation box at cursor
+    // Ensure cursor is in textInput before inserting
+    ensureFocus();
     window.InlineEquationBox.insertEquationBoxAtCursor();
 
-    // If we have LaTeX to pre-fill, wait for the math-field to initialize
-    // then insert the LaTeX
     if (latex) {
-      setTimeout(() => {
-        const mf = window.InlineEquationBox.getActiveMathField();
+      setTimeout(function () {
+        var mf = window.InlineEquationBox.getActiveMathField();
         if (mf) {
           mf.executeCommand(['insert', latex]);
           mf.focus();
-          // Suppress native keyboard on this math-field too
-          mf.setAttribute('inputmode', 'none');
-          if (mf.shadowRoot) {
-            const ta = mf.shadowRoot.querySelector('textarea');
-            if (ta) ta.setAttribute('inputmode', 'none');
+          // Keep native keyboard suppressed while EQ panel is open
+          if (isEqPanelVisible()) {
+            suppressMathField(mf);
           }
         }
       }, 80);
     }
   }
 
-  // ─── KEYBOARD CONSTRUCTION ──────────────────────────────────────────
+  // ─── HEIGHT MANAGEMENT ────────────────────────────────────────────────
 
-  function buildKeyboard() {
-    const kb = document.createElement('div');
-    kb.id = 'mx-keyboard';
-    kb.className = 'mx-keyboard';
-
-    // Suggestion bar (above keys, for swipe candidates)
-    suggestionBarEl = document.createElement('div');
-    suggestionBarEl.className = 'mx-swipe-bar';
-    suggestionBarEl.style.display = 'none';
-    kb.appendChild(suggestionBarEl);
-
-    kb.appendChild(buildPage('abc'));
-    kb.appendChild(buildPage('123'));
-    kb.appendChild(buildPage('symbols'));
-    kb.appendChild(buildPage('eq'));
-
-    // Swipe trail SVG overlay
-    swipeTrailEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    swipeTrailEl.classList.add('mx-swipe-trail');
-    kb.appendChild(swipeTrailEl);
-
-    // Event delegation — touch events for tap and swipe
-    kb.addEventListener('touchstart', onTouchStart, { passive: false });
-    kb.addEventListener('touchmove', onTouchMove, { passive: false });
-    kb.addEventListener('touchend', onTouchEnd, { passive: false });
-    kb.addEventListener('mousedown', handleKeyMouse);
-
-    return kb;
-  }
-
-  function buildPage(pageName) {
-    const page = document.createElement('div');
-    page.className = 'mx-kb-page';
-    page.dataset.page = pageName;
-    page.style.display = 'none';
-
-    const layout = LAYOUTS[pageName];
-
-    layout.rows.forEach((row, rowIdx) => {
-      const rowEl = document.createElement('div');
-      rowEl.className = 'mx-kb-row';
-
-      if (rowIdx === layout.rows.length - 1) {
-        rowEl.classList.add('mx-kb-row-bottom');
-      }
-
-      row.forEach(keyDef => {
-        const key = buildKey(keyDef, pageName);
-        rowEl.appendChild(key);
-      });
-
-      page.appendChild(rowEl);
-    });
-
-    return page;
-  }
-
-  function buildKey(keyDef, pageName) {
-    const btn = document.createElement('button');
-    btn.className = 'mx-key';
-    // Prevent button from stealing focus from contenteditable
-    btn.setAttribute('tabindex', '-1');
-
-    // EQ page has object definitions
-    if (typeof keyDef === 'object') {
-      btn.innerHTML = keyDef.label;
-      if (keyDef.hint) {
-        btn.innerHTML += `<span class="mx-key-hint">${keyDef.hint}</span>`;
-      }
-      if (keyDef.latex) {
-        btn.dataset.latex = keyDef.latex;
-      }
-      if (keyDef.action) {
-        btn.dataset.action = keyDef.action;
-      }
-      if (keyDef.wide) {
-        btn.classList.add('mx-key-wide');
-      }
-      btn.classList.add('mx-key-eq');
-      return btn;
-    }
-
-    // String definitions (ABC, 123 pages)
-    const label = keyDef;
-    btn.dataset.key = label;
-
-    switch (label) {
-      case 'space':
-        btn.textContent = '';
-        btn.classList.add('mx-key-space');
-        btn.dataset.action = 'space';
-        break;
-      case '⇧':
-        btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
-        btn.classList.add('mx-key-shift');
-        btn.dataset.action = 'shift';
-        break;
-      case '⌫':
-        btn.innerHTML = '<i class="fas fa-delete-left"></i>';
-        btn.classList.add('mx-key-delete');
-        btn.dataset.action = 'delete';
-        break;
-      case '↵':
-        btn.innerHTML = '<i class="fas fa-arrow-turn-down fa-flip-horizontal"></i>';
-        btn.classList.add('mx-key-enter');
-        btn.dataset.action = 'enter';
-        break;
-      case 'ABC':
-        btn.textContent = 'ABC';
-        btn.classList.add('mx-key-mode');
-        btn.dataset.action = 'abc';
-        break;
-      case '123':
-        btn.textContent = '123';
-        btn.classList.add('mx-key-mode');
-        btn.dataset.action = '123';
-        break;
-      case 'EQ':
-        btn.textContent = 'EQ';
-        btn.classList.add('mx-key-mode', 'mx-key-eq-switch');
-        btn.dataset.action = 'eq';
-        break;
-      case '#+=':
-        btn.textContent = '#+=';
-        btn.classList.add('mx-key-mode');
-        btn.dataset.action = 'symbols';
-        break;
-      default:
-        btn.textContent = label;
-        btn.dataset.insert = label;
-        break;
-    }
-
-    return btn;
-  }
-
-  // ─── KEY HANDLING ───────────────────────────────────────────────────
-
-  // ─── SMART HAPTICS ──────────────────────────────────────────────────
-  // Different intensities for different key types — mimics iOS Taptic Engine
-  const HAPTIC = {
-    letter: 6,      // Light tap for letters
-    space: 10,      // Medium for space
-    enter: 15,      // Firm for send
-    delete: 10,     // Medium for delete
-    shift: 8,       // Light-medium for shift
-    mode: 8,        // Light-medium for page switch
-    swipeTick: 4,   // Very light for swipe key-cross
-    suggest: 10,    // Medium for selecting suggestion
-    longPress: 12,  // Medium for long-press popup
-    undo: [12, 30, 12], // Pattern for undo feedback
-  };
-
-  function haptic(level) {
-    if (!navigator.vibrate) return;
-    if (Array.isArray(level)) {
-      navigator.vibrate(level);
-    } else {
-      navigator.vibrate(level || 6);
+  function updatePanelHeightVar() {
+    if (!eqPanelEl) return;
+    var h = eqPanelEl.offsetHeight;
+    if (h > 0) {
+      document.body.style.setProperty('--mx-kb-height', h + 'px');
     }
   }
 
-  /** Get haptic intensity for a key element */
-  function hapticForKey(key) {
-    if (key.dataset.action) {
-      switch (key.dataset.action) {
-        case 'space': return HAPTIC.space;
-        case 'enter': return HAPTIC.enter;
-        case 'delete': return HAPTIC.delete;
-        case 'shift': return HAPTIC.shift;
-        default: return HAPTIC.mode;
-      }
-    }
-    return HAPTIC.letter;
-  }
-
-  // ─── AUTO-CAPITALIZE ──────────────────────────────────────────────
-  /** Check if we should auto-shift (start of input, after sentence end) */
-  function shouldAutoCapitalize() {
-    if (capsLock) return false;
-    if (!textInput) return false;
-
-    const text = textInput.textContent || '';
-    if (text.length === 0) return true; // Start of input
-
-    // Check last non-space character
-    const trimmed = text.trimEnd();
-    if (trimmed.length === 0) return true;
-    const lastChar = trimmed[trimmed.length - 1];
-    return (lastChar === '.' || lastChar === '!' || lastChar === '?');
-  }
-
-  /** Apply auto-capitalize if conditions are met */
-  function checkAutoCapitalize() {
-    if (currentPage !== 'abc') return;
-    if (capsLock) return;
-    const should = shouldAutoCapitalize();
-    if (should && !shifted) {
-      shifted = true;
-      updateShiftDisplay();
-    }
-  }
-
-  // ─── iOS-STYLE KEY PREVIEW BUBBLE (with callout stem) ───────────────
-  let activeBubble = null;
-
-  function showKeyBubble(key) {
-    removeKeyBubble();
-    // Only show bubble for character keys (not action/mode keys)
-    if (key.dataset.action || key.classList.contains('mx-key-mode') ||
-        key.classList.contains('mx-key-eq-switch') || key.classList.contains('mx-key-space') ||
-        key.classList.contains('mx-key-eq')) return;
-
-    const rect = key.getBoundingClientRect();
-    const kbRect = keyboardEl.getBoundingClientRect();
-
-    const bubble = document.createElement('div');
-    bubble.className = 'mx-key-bubble';
-
-    // Letter label
-    const label = document.createElement('span');
-    label.className = 'mx-key-bubble-label';
-    label.textContent = key.textContent;
-    bubble.appendChild(label);
-
-    // Callout stem pointing down to the key
-    const stem = document.createElement('div');
-    stem.className = 'mx-key-bubble-stem';
-    bubble.appendChild(stem);
-
-    // Position centered above the key
-    const leftPos = rect.left - kbRect.left + rect.width / 2;
-    bubble.style.left = leftPos + 'px';
-    bubble.style.top = (rect.top - kbRect.top) + 'px';
-
-    // Clamp so bubble doesn't overflow keyboard edges
-    keyboardEl.appendChild(bubble);
-    requestAnimationFrame(() => {
-      const bRect = bubble.getBoundingClientRect();
-      if (bRect.left < kbRect.left + 4) {
-        bubble.style.left = (4 + bRect.width / 2) + 'px';
-      } else if (bRect.right > kbRect.right - 4) {
-        bubble.style.left = (kbRect.width - 4 - bRect.width / 2) + 'px';
-      }
-    });
-
-    activeBubble = bubble;
-  }
-
-  function removeKeyBubble() {
-    if (activeBubble) {
-      activeBubble.remove();
-      activeBubble = null;
-    }
-  }
-
-  // ─── SWIPE-AWARE TOUCH HANDLERS ────────────────────────────────────
-
-  const SWIPE_MOVE_THRESHOLD = 15; // Pixels of movement before swipe activates
-  const LONG_PRESS_DELAY = 400;    // ms before long-press popup shows
-
-  function cancelDeleteRepeat() {
-    if (deleteRepeatTimer) { clearTimeout(deleteRepeatTimer); deleteRepeatTimer = null; }
-    deleteRepeatDelay = 400;
-    deleteRepeatRate = 80;
-  }
-
-  function startDeleteRepeat() {
-    cancelDeleteRepeat();
-    deleteRepeatTimer = setTimeout(function repeatDelete() {
-      deleteBackward();
-      haptic(HAPTIC.delete);
-      // Accelerate: reduce interval down to 30ms minimum
-      deleteRepeatRate = Math.max(30, deleteRepeatRate - 8);
-      deleteRepeatTimer = setTimeout(repeatDelete, deleteRepeatRate);
-    }, deleteRepeatDelay);
-  }
-
-  function cancelLongPress() {
-    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
-  }
-
-  function dismissLongPressPopup() {
-    if (longPressEl) {
-      longPressEl.remove();
-      longPressEl = null;
-    }
-  }
-
-  function showLongPressPopup(key) {
-    dismissLongPressPopup();
-    const base = (key.dataset.insert || key.dataset.key || '').toLowerCase();
-    const alts = ALTERNATES[base];
-    if (!alts || alts.length === 0) return;
-
-    haptic(HAPTIC.longPress);
-
-    const popup = document.createElement('div');
-    popup.className = 'mx-longpress-popup';
-
-    alts.forEach(alt => {
-      const btn = document.createElement('button');
-      btn.className = 'mx-longpress-option';
-      btn.textContent = alt;
-      btn.dataset.insert = alt;
-      popup.appendChild(btn);
-    });
-
-    // Position above the key
-    const rect = key.getBoundingClientRect();
-    const kbRect = keyboardEl.getBoundingClientRect();
-    popup.style.left = (rect.left - kbRect.left + rect.width / 2) + 'px';
-    popup.style.top = (rect.top - kbRect.top - 4) + 'px';
-
-    keyboardEl.appendChild(popup);
-    longPressEl = popup;
-
-    // Clamp to keyboard edges
-    requestAnimationFrame(() => {
-      const pRect = popup.getBoundingClientRect();
-      if (pRect.left < kbRect.left + 4) {
-        popup.style.left = (4 + pRect.width / 2) + 'px';
-      } else if (pRect.right > kbRect.right - 4) {
-        popup.style.left = (kbRect.width - 4 - pRect.width / 2) + 'px';
-      }
-    });
-  }
-
-  function onTouchStart(e) {
-    const touch = e.touches[0];
-    const key = document.elementFromPoint(touch.clientX, touch.clientY);
-    const keyEl = key ? key.closest('.mx-key') : null;
-
-    // Dismiss long-press popup on any new touch
-    if (longPressEl) {
-      // Check if they tapped an alternate character
-      const opt = key ? key.closest('.mx-longpress-option') : null;
-      if (opt && opt.dataset.insert) {
-        e.preventDefault();
-        haptic(HAPTIC.letter);
-        const char = opt.dataset.insert;
-        const eqField = getActiveEquationMathField();
-        if (eqField) { eqField.executeCommand(['typedText', char]); }
-        else { insertChar(char); }
-        dismissLongPressPopup();
-        return;
-      }
-      dismissLongPressPopup();
-    }
-
-    if (!keyEl) return;
-    e.preventDefault();
-
-    // Hide suggestion bar on new typing
-    hideSuggestionBar();
-
-    swipeStartTime = Date.now();
-    swipeStartKey = keyEl;
-    swiping = false;
-    swipePath = [];
-    swipePoints = [];
-    lastSwipeKey = null;
-
-    // Record start position
-    swipePoints.push({ x: touch.clientX, y: touch.clientY });
-    touchStartXSpace = touch.clientX;
-
-    // Context-aware haptic + visual feedback
-    haptic(hapticForKey(keyEl));
-    keyEl.classList.add('mx-key-pressed');
-    showKeyBubble(keyEl);
-
-    // ── Delete hold-to-repeat ──
-    if (keyEl.dataset.action === 'delete') {
-      deleteBackward(); // immediate first delete
-      startDeleteRepeat();
-    }
-
-    // ── Long-press for alternates ──
-    if (keyEl.dataset.insert && ALTERNATES[keyEl.dataset.insert.toLowerCase()]) {
-      cancelLongPress();
-      longPressTimer = setTimeout(() => {
-        removeKeyBubble();
-        showLongPressPopup(keyEl);
-      }, LONG_PRESS_DELAY);
-    }
-
-    // Only track letters on ABC page for swipe
-    if (currentPage === 'abc' && keyEl.dataset.insert) {
-      const letter = keyEl.dataset.insert.toLowerCase();
-      swipePath.push(letter);
-      lastSwipeKey = keyEl;
-    }
-  }
-
-  function onTouchMove(e) {
-    if (!swipeStartKey) return;
-    const touch = e.touches[0];
-    e.preventDefault();
-
-    swipePoints.push({ x: touch.clientX, y: touch.clientY });
-
-    // Cancel long-press on any movement
-    cancelLongPress();
-
-    // ── Long-press popup: track finger over options ──
-    if (longPressEl) {
-      const el = document.elementFromPoint(touch.clientX, touch.clientY);
-      const opts = longPressEl.querySelectorAll('.mx-longpress-option');
-      opts.forEach(o => o.classList.remove('mx-longpress-hover'));
-      if (el && el.closest('.mx-longpress-option')) {
-        el.closest('.mx-longpress-option').classList.add('mx-longpress-hover');
-      }
-      return; // Don't start swipe while in long-press mode
-    }
-
-    // Check if we've moved enough to be swiping (only on ABC page)
-    if (!swiping && currentPage === 'abc' && swipeStartKey.dataset.insert) {
-      const dx = touch.clientX - swipePoints[0].x;
-      const dy = touch.clientY - swipePoints[0].y;
-      if (Math.sqrt(dx * dx + dy * dy) > SWIPE_MOVE_THRESHOLD) {
-        swiping = true;
-        cancelDeleteRepeat();
-        swipeStartKey.classList.remove('mx-key-pressed');
-        removeKeyBubble();
-        clearSwipeHighlights();
-        if (lastSwipeKey) lastSwipeKey.classList.add('mx-swipe-hover');
-        drawSwipeTrail();
-      }
-    }
-
-    if (!swiping) return;
-
-    // Detect which key the finger is over
-    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-    const keyEl = el ? el.closest('.mx-key') : null;
-
-    if (keyEl && keyEl !== lastSwipeKey && keyEl.dataset.insert) {
-      // Haptic tick as finger enters new key
-      haptic(HAPTIC.swipeTick);
-
-      // Highlight the new key
-      if (lastSwipeKey) lastSwipeKey.classList.remove('mx-swipe-hover');
-      keyEl.classList.add('mx-swipe-hover');
-      lastSwipeKey = keyEl;
-
-      const letter = keyEl.dataset.insert.toLowerCase();
-      swipePath.push(letter);
-    }
-
-    // Update trail
-    drawSwipeTrail();
-  }
-
-  function onTouchEnd(e) {
-    if (!swipeStartKey) return;
-    e.preventDefault();
-
-    removeKeyBubble();
-    cancelDeleteRepeat();
-    cancelLongPress();
-
-    // ── Long-press popup: select hovered option ──
-    if (longPressEl) {
-      const hovered = longPressEl.querySelector('.mx-longpress-hover');
-      if (hovered && hovered.dataset.insert) {
-        haptic(HAPTIC.letter);
-        const char = hovered.dataset.insert;
-        const eqField = getActiveEquationMathField();
-        if (eqField) { eqField.executeCommand(['typedText', char]); }
-        else { insertChar(char); }
-      }
-      dismissLongPressPopup();
-      swipeStartKey.classList.remove('mx-key-pressed');
-      swipeStartKey = null;
-      return;
-    }
-
-    if (swiping && swipePath.length >= 2) {
-      // ── Swipe complete: match word ──
-      clearSwipeHighlights();
-      clearSwipeTrail();
-
-      const candidates = matchSwipeCandidates(swipePath, 3);
-      if (candidates.length > 0) {
-        showSuggestionBar(candidates, true);
-      } else {
-        // Fallback: insert the raw path deduplicated
-        const raw = [swipePath[0]];
-        for (let i = 1; i < swipePath.length; i++) {
-          if (swipePath[i] !== swipePath[i - 1]) raw.push(swipePath[i]);
-        }
-        insertSwipeWord(raw.join(''));
-      }
-    } else {
-      // ── Normal tap ──
-      clearSwipeTrail();
-      const key = swipeStartKey;
-      key.classList.remove('mx-key-pressed');
-
-      // Skip delete — already handled on touchstart
-      if (key.dataset.action !== 'delete') {
-
-        // ── Spacebar left-swipe → undo last word ──
-        if (key.dataset.action === 'space' && e.changedTouches && e.changedTouches[0]) {
-          const endX = e.changedTouches[0].clientX;
-          const deltaX = endX - touchStartXSpace;
-          if (deltaX < -50 && undoStack.length > 0) {
-            haptic(HAPTIC.undo);
-            undoLastWord();
-            swiping = false; swipePath = []; swipePoints = [];
-            swipeStartKey = null; lastSwipeKey = null;
-            return;
-          }
-        }
-
-        processKey(key);
-      }
-    }
-
-    // Reset state
-    swiping = false;
-    swipePath = [];
-    swipePoints = [];
-    swipeStartKey = null;
-    lastSwipeKey = null;
-  }
-
-  function handleKeyMouse(e) {
-    const key = e.target.closest('.mx-key');
-    if (!key) return;
-    e.preventDefault();
-
-    // Dismiss long-press popup
-    if (longPressEl) {
-      const opt = e.target.closest('.mx-longpress-option');
-      if (opt && opt.dataset.insert) {
-        haptic(HAPTIC.letter);
-        const char = opt.dataset.insert;
-        insertChar(char);
-        dismissLongPressPopup();
-        return;
-      }
-      dismissLongPressPopup();
-    }
-
-    haptic(hapticForKey(key));
-    key.classList.add('mx-key-pressed');
-    showKeyBubble(key);
-    setTimeout(() => {
-      key.classList.remove('mx-key-pressed');
-      removeKeyBubble();
-    }, 120);
-
-    processKey(key);
-  }
-
-  // ─── UNDO LAST WORD ────────────────────────────────────────────────
-
-  function undoLastWord() {
-    if (undoStack.length === 0) return;
-    const lastWord = undoStack.pop();
-    ensureFocus();
-    // Delete the word + trailing space we inserted
-    const len = lastWord.length + 1; // +1 for the space
-    for (let i = 0; i < len; i++) {
-      document.execCommand('delete', false);
-    }
-    updatePredictions();
-  }
-
-  // ─── SWIPE VISUALS ─────────────────────────────────────────────────
-
-  function clearSwipeHighlights() {
-    if (!keyboardEl) return;
-    keyboardEl.querySelectorAll('.mx-swipe-hover').forEach(k => k.classList.remove('mx-swipe-hover'));
-  }
-
-  function drawSwipeTrail() {
-    if (!swipeTrailEl || swipePoints.length < 2) return;
-    const kbRect = keyboardEl.getBoundingClientRect();
-    const pts = swipePoints;
-    const len = pts.length;
-
-    // Build smooth quadratic bezier path through points
-    const x = i => (pts[i].x - kbRect.left).toFixed(1);
-    const y = i => (pts[i].y - kbRect.top).toFixed(1);
-
-    // Downsample for performance: keep every 3rd point + last
-    const sample = [0];
-    for (let i = 3; i < len - 1; i += 3) sample.push(i);
-    if (sample[sample.length - 1] !== len - 1) sample.push(len - 1);
-
-    if (sample.length < 2) {
-      swipeTrailEl.innerHTML = '';
-      swipeTrailEl.style.display = 'none';
-      return;
-    }
-
-    let d = 'M' + x(sample[0]) + ',' + y(sample[0]);
-    for (let i = 1; i < sample.length; i++) {
-      const prev = sample[i - 1];
-      const cur = sample[i];
-      // Quadratic bezier: control point = prev, end = midpoint (smooth)
-      if (i < sample.length - 1) {
-        const next = sample[i + 1];
-        const mx = ((pts[cur].x + pts[next].x) / 2 - kbRect.left).toFixed(1);
-        const my = ((pts[cur].y + pts[next].y) / 2 - kbRect.top).toFixed(1);
-        d += ' Q' + x(cur) + ',' + y(cur) + ' ' + mx + ',' + my;
-      } else {
-        d += ' L' + x(cur) + ',' + y(cur);
-      }
-    }
-
-    // Gradient trail: bright at tip, fading behind
-    const trailId = 'mx-trail-grad';
-    swipeTrailEl.innerHTML =
-      '<defs><linearGradient id="' + trailId + '" x1="0%" y1="0%" x2="100%" y2="0%">' +
-      '<stop offset="0%" stop-color="rgba(18,179,179,0.05)"/>' +
-      '<stop offset="70%" stop-color="rgba(18,179,179,0.35)"/>' +
-      '<stop offset="100%" stop-color="rgba(18,179,179,0.6)"/>' +
-      '</linearGradient></defs>' +
-      '<path d="' + d + '" stroke="url(#' + trailId + ')" />';
-    swipeTrailEl.style.display = '';
-  }
-
-  function clearSwipeTrail() {
-    if (!swipeTrailEl) return;
-    // Fade out animation
-    const path = swipeTrailEl.querySelector('path');
-    if (path) {
-      path.style.transition = 'opacity 0.2s ease-out';
-      path.style.opacity = '0';
-      setTimeout(() => {
-        swipeTrailEl.innerHTML = '';
-        swipeTrailEl.style.display = 'none';
-      }, 200);
-    } else {
-      swipeTrailEl.innerHTML = '';
-      swipeTrailEl.style.display = 'none';
-    }
-  }
-
-  // ─── SUGGESTION BAR ────────────────────────────────────────────────
-
-  function showSuggestionBar(words, isSwipe) {
-    if (!suggestionBarEl) return;
-    suggestionBarEl.innerHTML = '';
-    suggestionBarEl.classList.toggle('mx-swipe-bar-swipe', !!isSwipe);
-
-    words.forEach((word, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'mx-swipe-suggestion' + (i === 0 && isSwipe ? ' mx-swipe-suggestion-primary' : '');
-      btn.textContent = (shifted || capsLock) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
-      btn.setAttribute('tabindex', '-1');
-      btn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        haptic(HAPTIC.suggest);
-        if (isSwipe) {
-          insertSwipeWord(word);
-        } else {
-          insertPrediction(word);
-        }
-        hideSuggestionBar();
-        updatePredictions();
-      }, { passive: false });
-      btn.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (isSwipe) { insertSwipeWord(word); }
-        else { insertPrediction(word); }
-        hideSuggestionBar();
-        updatePredictions();
-      });
-      suggestionBarEl.appendChild(btn);
-
-      // Add divider between suggestions
-      if (i < words.length - 1) {
-        const div = document.createElement('span');
-        div.className = 'mx-swipe-divider';
-        suggestionBarEl.appendChild(div);
-      }
-    });
-    suggestionBarEl.style.display = '';
-
-    // Auto-insert primary after timeout (swipe only)
-    clearTimeout(suggestionBarEl._timer);
-    if (isSwipe) {
-      suggestionBarEl._timer = setTimeout(() => {
-        if (suggestionBarEl.style.display !== 'none' && words[0]) {
-          insertSwipeWord(words[0]);
-          hideSuggestionBar();
-          updatePredictions();
-        }
-      }, 3500);
-    }
-  }
-
-  function hideSuggestionBar() {
-    if (!suggestionBarEl) return;
-    clearTimeout(suggestionBarEl._timer);
-    suggestionBarEl.innerHTML = '';
-    suggestionBarEl.style.display = 'none';
-  }
-
-  function insertSwipeWord(word) {
-    if (!word) return;
-    let text = (shifted || capsLock) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
-    ensureFocus();
-    document.execCommand('insertText', false, text + ' ');
-    undoStack.push(text);
-    if (undoStack.length > 20) undoStack.shift();
-    // Auto-unshift / check for re-capitalize
-    if (shifted && !capsLock) {
-      shifted = false;
-      updateShiftDisplay();
-    }
-    checkAutoCapitalize();
-  }
-
-  /** Insert a predicted word, completing the partial word being typed */
-  function insertPrediction(word) {
-    if (!word) return;
-    ensureFocus();
-    // Delete the partial word typed so far, then insert the full word
-    const partial = getCurrentPartialWord();
-    for (let i = 0; i < partial.length; i++) {
-      document.execCommand('delete', false);
-    }
-    let text = (shifted || capsLock) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
-    document.execCommand('insertText', false, text + ' ');
-    undoStack.push(text);
-    if (undoStack.length > 20) undoStack.shift();
-    if (shifted && !capsLock) { shifted = false; updateShiftDisplay(); }
-    checkAutoCapitalize();
-  }
-
-  /** Get the current partially-typed word (from cursor back to last space) */
-  function getCurrentPartialWord() {
-    if (!textInput) return '';
-    const text = textInput.textContent || '';
-    // Find the word being typed (from end, or from cursor position)
-    const match = text.match(/(\S+)$/);
-    return match ? match[1] : '';
-  }
-
-  /** Update the prediction bar with autocomplete suggestions based on typed text */
-  function updatePredictions() {
-    if (currentPage !== 'abc' && currentPage !== '123') {
-      hideSuggestionBar();
-      return;
-    }
-    const partial = getCurrentPartialWord().toLowerCase();
-    if (partial.length < 2) {
-      hideSuggestionBar();
-      return;
-    }
-
-    // Find words starting with the partial text
-    const results = [];
-    const allLengths = Object.keys(SWIPE_WORDS).map(Number).sort((a, b) => a - b);
-    for (let li = 0; li < allLengths.length && results.length < 3; li++) {
-      const bucket = SWIPE_WORDS[allLengths[li]];
-      if (!bucket || allLengths[li] < partial.length) continue;
-      for (let w = 0; w < bucket.length && results.length < 3; w++) {
-        if (bucket[w].startsWith(partial) && bucket[w] !== partial) {
-          results.push(bucket[w]);
-        }
-      }
-    }
-
-    if (results.length > 0) {
-      showSuggestionBar(results, false);
-    } else {
-      hideSuggestionBar();
-    }
-  }
-
-  function processKey(key) {
-    if (!textInput) return;
-
-    const action = key.dataset.action;
-    const latex = key.dataset.latex;
-    const insert = key.dataset.insert;
-    const now = Date.now();
-
-    // ─── ACTION KEYS ────────────────────────────────────────────────
-    if (action) {
-      switch (action) {
-        case 'abc':
-          switchPage('abc');
-          checkAutoCapitalize();
-          break;
-        case '123':
-          switchPage('123');
-          break;
-        case 'eq':
-          switchPage('eq');
-          break;
-        case 'symbols':
-          switchPage('symbols');
-          break;
-        case 'shift':
-          toggleShift();
-          break;
-        case 'delete':
-          // Already handled in onTouchStart (hold-to-repeat)
-          // This path is only for mouse clicks
-          deleteBackward();
-          checkAutoCapitalize();
-          updatePredictions();
-          break;
-        case 'space': {
-          // ── Double-space → period + space (iOS behavior) ──
-          if (lastKeyAction === 'space' && (now - lastKeyTime) < 400) {
-            // Delete the previous space, insert ". "
-            ensureFocus();
-            document.execCommand('delete', false);
-            insertChar('.');
-            insertChar(' ');
-            lastKeyAction = 'period-space';
-            lastKeyTime = now;
-            checkAutoCapitalize();
-            hideSuggestionBar();
-            break;
-          }
-
-          // If inside an inline equation box, insert space there
-          const eqField = getActiveEquationMathField();
-          if (eqField) {
-            eqField.executeCommand(['insert', ' ']);
-          } else {
-            insertChar(' ');
-          }
-          lastKeyAction = 'space';
-          lastKeyTime = now;
-          hideSuggestionBar();
-          break;
-        }
-        case 'enter':
-          if (sendCallback) sendCallback();
-          break;
-      }
-      return;
-    }
-
-    // ─── LATEX INSERTION (EQ page) ──────────────────────────────────
-    if (latex) {
-      // Check if there's an active inline equation box — insert there
-      const activeField = getActiveEquationMathField();
-      if (activeField) {
-        activeField.executeCommand(['insert', latex]);
-        activeField.focus();
-      } else {
-        // No active equation box — create one with this LaTeX
-        insertEquationWithLatex(latex);
-      }
-      lastKeyAction = 'latex';
-      lastKeyTime = now;
-      return;
-    }
-
-    // ─── CHARACTER INSERTION (ABC / 123 pages) ──────────────────────
-    if (insert) {
-      let char = insert;
-      if (shifted || capsLock) {
-        char = char.toUpperCase();
-      }
-
-      // If inside an active equation box, type there
-      const eqField = getActiveEquationMathField();
-      if (eqField) {
-        eqField.executeCommand(['typedText', char]);
-      } else {
-        // Type into the contenteditable
-        insertChar(char);
-      }
-
-      lastKeyAction = 'char';
-      lastKeyTime = now;
-
-      // Auto-unshift after one character (unless caps lock)
-      if (shifted && !capsLock) {
-        shifted = false;
-        updateShiftDisplay();
-      }
-
-      // Update predictive text bar
-      updatePredictions();
-    }
-  }
-
-  // ─── PAGE SWITCHING ─────────────────────────────────────────────────
-
-  function switchPage(pageName) {
-    const oldPage = currentPage;
-    currentPage = pageName;
-    if (!keyboardEl) return;
-    if (oldPage === pageName) return;
-
-    // ── Crossfade transition ──
-    const pages = keyboardEl.querySelectorAll('.mx-kb-page');
-    pages.forEach(p => {
-      if (p.dataset.page === pageName) {
-        p.style.display = '';
-        p.classList.add('mx-page-enter');
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => p.classList.remove('mx-page-enter'));
-        });
-      } else if (p.dataset.page === oldPage) {
-        // Animate out
-        p.classList.add('mx-page-exit');
-        setTimeout(() => {
-          p.style.display = 'none';
-          p.classList.remove('mx-page-exit');
-        }, 150);
-      } else {
-        p.style.display = 'none';
-      }
-    });
-
-    keyboardEl.querySelectorAll('.mx-key-mode, .mx-key-eq-switch').forEach(k => {
-      k.classList.toggle('mx-key-active', k.dataset.action === pageName);
-    });
-
-    // Hide predictions when leaving ABC page
-    if (pageName !== 'abc') {
-      hideSuggestionBar();
-    }
-
-    // Re-measure height (EQ page may be taller)
-    setTimeout(updateKeyboardHeightVar, 180);
-  }
-
-  // ─── SHIFT ──────────────────────────────────────────────────────────
-
-  function toggleShift() {
-    if (!shifted) {
-      shifted = true;
-      capsLock = false;
-    } else if (shifted && !capsLock) {
-      capsLock = true;
-    } else {
-      shifted = false;
-      capsLock = false;
-    }
-    updateShiftDisplay();
-  }
-
-  function updateShiftDisplay() {
-    if (!keyboardEl) return;
-
-    const shiftKeys = keyboardEl.querySelectorAll('[data-action="shift"]');
-    shiftKeys.forEach(k => {
-      k.classList.toggle('mx-key-shift-active', shifted);
-      k.classList.toggle('mx-key-caps-lock', capsLock);
-    });
-
-    const abcPage = keyboardEl.querySelector('[data-page="abc"]');
-    if (abcPage) {
-      abcPage.querySelectorAll('[data-insert]').forEach(k => {
-        const base = k.dataset.insert;
-        if (base.length === 1 && base.match(/[a-z]/)) {
-          k.textContent = (shifted || capsLock) ? base.toUpperCase() : base;
-        }
-      });
-    }
-  }
-
-  // ─── SHOW / HIDE ───────────────────────────────────────────────────
-
-  function show() {
-    if (!keyboardEl) {
-      console.warn('[MathmatixKeyboard] show() called but keyboardEl is null');
-      return;
-    }
-    const wasVisible = keyboardEl.classList.contains('mx-keyboard-visible');
-    keyboardEl.classList.add('mx-keyboard-visible');
-    document.body.classList.add('mx-keyboard-active');
-    suppressNativeKeyboard();
-    if (!wasVisible) {
-      // Only measure and scroll on first show, not every focus
-      setTimeout(updateKeyboardHeightVar, 280);
-      const chat = document.getElementById('chat-messages-container');
-      if (chat) {
-        requestAnimationFrame(() => { chat.scrollTop = chat.scrollHeight; });
-      }
-    }
-  }
-
-  function hide() {
-    if (!keyboardEl) return;
-    keyboardEl.classList.remove('mx-keyboard-visible');
-    document.body.classList.remove('mx-keyboard-active');
-  }
-
-  function isVisible() {
-    return keyboardEl && keyboardEl.classList.contains('mx-keyboard-visible');
-  }
-
-  // ─── PUBLIC API ─────────────────────────────────────────────────────
+  // ─── PUBLIC API ──────────────────────────────────────────────────────
+  // Backward-compatible with the old full-keyboard API so script.js
+  // callers (show, hide, isVisible, switchPage) continue to work.
 
   window.MathmatixKeyboard = {
-    init,
-    show,
-    hide,
-    isVisible,
-    switchPage,
-    getInput: () => textInput,
+    init: init,
+    show: showEqPanel,
+    hide: hideEqPanel,
+    showEqPanel: showEqPanel,
+    hideEqPanel: hideEqPanel,
+    isVisible: isEqPanelVisible,
+    isEqPanelVisible: isEqPanelVisible,
+    switchPage: function (page) {
+      if (page === 'eq') showEqPanel();
+      else hideEqPanel();
+    },
+    getInput: function () { return textInput; },
   };
+
 })();

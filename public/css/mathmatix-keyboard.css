@@ -1,10 +1,11 @@
 /* ============================================
-   MATHMATIX CUSTOM KEYBOARD
-   iOS-style full keyboard replacement for mobile.
-   Three pages: ABC, 123, EQ
+   MATHMATIX EQUATION PANEL
+   Math-input panel for mobile.  The native keyboard handles
+   ABC / 123 input; this panel provides equation constructions
+   (fractions, roots, Greek letters, trig, integrals …).
    ============================================ */
 
-/* --- Keyboard Container --- */
+/* --- Panel Container --- */
 .mx-keyboard {
   position: fixed;
   bottom: 0;
@@ -67,187 +68,23 @@
   position: relative;
 }
 
-/* --- Key sizing per page --- */
-
-/* ABC row 1: 10 keys */
-.mx-kb-page[data-page="abc"] .mx-kb-row:first-child .mx-key {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-/* ABC row 2: 9 keys, slightly inset */
-.mx-kb-page[data-page="abc"] .mx-kb-row:nth-child(2) {
-  padding: 0 18px;
-}
-.mx-kb-page[data-page="abc"] .mx-kb-row:nth-child(2) .mx-key {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-/* ABC row 3: shift + 7 letters + delete */
-.mx-kb-page[data-page="abc"] .mx-kb-row:nth-child(3) {
-  padding: 0 3px;
-}
-
-/* 123/symbols rows: 10 keys each */
-.mx-kb-page[data-page="123"] .mx-kb-row:first-child .mx-key,
-.mx-kb-page[data-page="123"] .mx-kb-row:nth-child(2) .mx-key,
-.mx-kb-page[data-page="symbols"] .mx-kb-row:first-child .mx-key,
-.mx-kb-page[data-page="symbols"] .mx-kb-row:nth-child(2) .mx-key {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-/* Bottom row: mode keys + space + punctuation + enter */
-.mx-kb-row-bottom .mx-key {
-  height: 42px;
-}
-
-/* --- Dark mode keys --- */
 [data-theme="dark"] .mx-key {
   background: #4a4a4e;
   color: #fff;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
 }
 
-/* --- Key press feedback (pop animation) --- */
+/* --- Key press feedback --- */
 .mx-key-pressed {
   background: #b8bcc2 !important;
-  animation: mx-key-pop 0.12s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
+  transform: scale(1.06);
 }
 
 [data-theme="dark"] .mx-key-pressed {
   background: #5e5e62 !important;
 }
 
-@keyframes mx-key-pop {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.12); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
-  100% { transform: scale(1); }
-}
-
-/* --- Special Keys --- */
-
-/* Space bar */
-.mx-key-space {
-  flex: 1 1 auto !important;
-  width: auto !important;
-  min-width: 120px;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-}
-
-/* Shift */
-.mx-key-shift {
-  min-width: 44px;
-  width: 44px;
-  flex: 0 0 44px !important;
-  background: #adb0b6;
-  font-size: 16px;
-}
-
-[data-theme="dark"] .mx-key-shift {
-  background: #363638;
-  color: #fff;
-}
-
-.mx-key-shift-active {
-  background: #fff !important;
-  color: #000 !important;
-}
-
-[data-theme="dark"] .mx-key-shift-active {
-  background: #fff !important;
-  color: #000 !important;
-}
-
-.mx-key-caps-lock {
-  background: #fff !important;
-  color: #12B3B3 !important;
-  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.3), inset 0 0 0 2px #12B3B3 !important;
-}
-
-[data-theme="dark"] .mx-key-caps-lock {
-  background: #fff !important;
-  color: #12B3B3 !important;
-}
-
-/* Delete */
-.mx-key-delete {
-  min-width: 44px;
-  width: 44px;
-  flex: 0 0 44px !important;
-  background: #adb0b6;
-  font-size: 18px;
-}
-
-[data-theme="dark"] .mx-key-delete {
-  background: #363638;
-  color: #fff;
-}
-
-/* Enter / Send */
-.mx-key-enter {
-  min-width: 44px;
-  width: 44px;
-  flex: 0 0 44px !important;
-  background: #12B3B3;
-  color: #fff;
-  font-size: 18px;
-  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.3), 0 1px 0 rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="dark"] .mx-key-enter {
-  background: #12B3B3;
-  color: #fff;
-  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.4);
-}
-
-.mx-key-enter.mx-key-pressed {
-  background: #0E9494 !important;
-}
-
-/* Mode switch keys (ABC, 123, EQ) */
-.mx-key-mode {
-  min-width: 44px;
-  flex: 0 0 auto !important;
-  padding: 0 12px;
-  background: #adb0b6;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 0.2px;
-}
-
-[data-theme="dark"] .mx-key-mode {
-  background: #363638;
-  color: #fff;
-}
-
-.mx-key-active {
-  background: #fff !important;
-  color: #12B3B3 !important;
-  font-weight: 600;
-}
-
-[data-theme="dark"] .mx-key-active {
-  background: #4a4a4e !important;
-  color: #2dd4bf !important;
-}
-
-/* EQ switch — teal accent */
-.mx-key-eq-switch {
-  background: rgba(18, 179, 179, 0.15);
-  color: #12B3B3;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-[data-theme="dark"] .mx-key-eq-switch {
-  background: rgba(45, 212, 191, 0.15);
-  color: #2dd4bf;
-}
-
-/* --- EQ Page Keys --- */
+/* --- EQ Keys --- */
 .mx-key-eq {
   font-size: 16px;
   flex: 1 1 0 !important;
@@ -260,7 +97,30 @@
   line-height: 1.2;
 }
 
-/* EQ page — subtle teal-tinted background */
+.mx-key-eq .mx-key-hint {
+  display: block;
+  font-size: 9px;
+  color: rgba(18, 179, 179, 0.75);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+[data-theme="dark"] .mx-key-eq .mx-key-hint {
+  color: rgba(45, 212, 191, 0.65);
+}
+
+.mx-key-wide {
+  flex: 1.5 1 0 !important;
+}
+
+/* Fraction symbol */
+.k-frac {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* --- EQ page — teal-tinted background --- */
 .mx-kb-page[data-page="eq"] {
   position: relative;
   background: linear-gradient(180deg, rgba(18, 179, 179, 0.05) 0%, transparent 100%);
@@ -300,306 +160,61 @@
   box-shadow: 0 1px 0 rgba(45, 212, 191, 0.25);
 }
 
-.mx-key-eq .mx-key-hint {
-  display: block;
-  font-size: 9px;
-  color: rgba(18, 179, 179, 0.75);
+
+/* --- Special Keys --- */
+
+/* Delete */
+.mx-key-delete {
+  min-width: 44px;
+  flex: 0 0 44px !important;
+  background: #adb0b6;
+  font-size: 18px;
+}
+
+[data-theme="dark"] .mx-key-delete {
+  background: #363638;
+  color: #fff;
+}
+
+/* Enter / Send */
+.mx-key-enter {
+  min-width: 44px;
+  flex: 0 0 44px !important;
+  background: #12B3B3;
+  color: #fff;
+  font-size: 18px;
+  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.3), 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .mx-key-enter {
+  background: #12B3B3;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(18, 179, 179, 0.4);
+}
+
+.mx-key-enter.mx-key-pressed {
+  background: #0E9494 !important;
+}
+
+/* Mode switch key (ABC / dismiss) */
+.mx-key-mode {
+  min-width: 44px;
+  flex: 0 0 auto !important;
+  padding: 0 12px;
+  background: #adb0b6;
+  font-size: 15px;
   font-weight: 500;
-  letter-spacing: 0.3px;
-  margin-top: 1px;
+  letter-spacing: 0.2px;
 }
 
-[data-theme="dark"] .mx-key-eq .mx-key-hint {
-  color: rgba(45, 212, 191, 0.65);
-}
-
-.mx-key-wide {
-  flex: 1.5 1 0 !important;
-}
-
-/* Fraction symbol */
-.k-frac {
-  font-size: 20px;
-  line-height: 1;
-}
-
-
-/* ═══════════════════════════════════════════════
-   iOS KEY PREVIEW BUBBLE (with callout stem)
-   ═══════════════════════════════════════════════ */
-
-.mx-key-bubble {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  margin-top: -6px;
-  z-index: 100;
-  pointer-events: none;
-  animation: mx-bubble-in 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.mx-key-bubble-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 9px;
-  background: #fff;
-  color: #000;
-  font-size: 30px;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-  font-weight: 400;
-  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
-}
-
-.mx-key-bubble-stem {
-  width: 16px;
-  height: 8px;
-  background: #fff;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  margin-top: -1px;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.06));
-}
-
-[data-theme="dark"] .mx-key-bubble-label {
-  background: #5a5a5e;
-  color: #fff;
-  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="dark"] .mx-key-bubble-stem {
-  background: #5a5a5e;
-}
-
-@keyframes mx-bubble-in {
-  0%   { opacity: 0; transform: translate(-50%, -100%) scale(0.3); }
-  60%  { transform: translate(-50%, -100%) scale(1.05); }
-  100% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
-}
-
-
-/* ═══════════════════════════════════════════════
-   LONG-PRESS ALTERNATE CHARACTERS POPUP
-   ═══════════════════════════════════════════════ */
-
-.mx-longpress-popup {
-  position: absolute;
-  transform: translate(-50%, -100%);
-  z-index: 120;
-  display: flex;
-  gap: 2px;
-  padding: 4px;
-  border-radius: 10px;
-  background: #e8e8ea;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
-  animation: mx-longpress-in 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-[data-theme="dark"] .mx-longpress-popup {
-  background: #3a3a3c;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.1);
-}
-
-@keyframes mx-longpress-in {
-  0%   { opacity: 0; transform: translate(-50%, -100%) scale(0.6); }
-  100% { opacity: 1; transform: translate(-50%, -100%) scale(1); }
-}
-
-.mx-longpress-option {
-  width: 40px;
-  height: 44px;
-  border: none;
-  border-radius: 7px;
-  background: #fff;
-  color: #000;
-  font-size: 22px;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  -webkit-tap-highlight-color: transparent;
-}
-
-[data-theme="dark"] .mx-longpress-option {
-  background: #4a4a4e;
-  color: #fff;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
-}
-
-.mx-longpress-hover,
-.mx-longpress-option:active {
-  background: #12B3B3 !important;
-  color: #fff !important;
-  box-shadow: 0 2px 8px rgba(18, 179, 179, 0.4) !important;
-  transform: scale(1.08);
-  transition: all 0.08s ease-out;
-}
-
-
-/* ═══════════════════════════════════════════════
-   PAGE TRANSITION ANIMATIONS
-   ═══════════════════════════════════════════════ */
-
-.mx-page-enter {
-  animation: mx-page-fade-in 0.15s ease-out;
-}
-
-.mx-page-exit {
-  animation: mx-page-fade-out 0.15s ease-out forwards;
-}
-
-@keyframes mx-page-fade-in {
-  0%   { opacity: 0; transform: translateY(6px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes mx-page-fade-out {
-  0%   { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-4px); }
-}
-
-
-/* ═══════════════════════════════════════════════
-   SWIPE-TO-TYPE TRAIL
-   ═══════════════════════════════════════════════ */
-
-.mx-swipe-trail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 50;
-  overflow: visible;
-}
-
-.mx-swipe-trail path {
-  fill: none;
-  stroke: rgba(18, 179, 179, 0.5);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 4px rgba(18, 179, 179, 0.35));
-  transition: opacity 0.2s ease-out;
-}
-
-[data-theme="dark"] .mx-swipe-trail path {
-  stroke: rgba(45, 212, 191, 0.55);
-  filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.4));
-}
-
-/* Swipe hover on keys (finger passing over) */
-.mx-swipe-hover {
-  background: rgba(18, 179, 179, 0.25) !important;
-  box-shadow: 0 0 0 1.5px rgba(18, 179, 179, 0.5), 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-  transition: background 0.08s ease-out, box-shadow 0.08s ease-out;
-}
-
-[data-theme="dark"] .mx-swipe-hover {
-  background: rgba(45, 212, 191, 0.2) !important;
-  box-shadow: 0 0 0 1.5px rgba(45, 212, 191, 0.5), 0 1px 0 rgba(0, 0, 0, 0.4) !important;
-}
-
-
-/* ═══════════════════════════════════════════════
-   SWIPE SUGGESTION BAR
-   ═══════════════════════════════════════════════ */
-
-/* Shared bar (used for both swipe results & predictive text) */
-.mx-swipe-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  height: 44px;
-  margin: 0 -4px;
-  padding: 0 6px;
-  background: #ecedf0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  animation: mx-bar-in 0.12s ease-out;
-}
-
-/* Swipe mode: slightly different background to signal context */
-.mx-swipe-bar-swipe {
-  background: linear-gradient(180deg, rgba(18, 179, 179, 0.06) 0%, #ecedf0 100%);
-}
-
-[data-theme="dark"] .mx-swipe-bar {
-  background: #2c2c2e;
-  border-bottom-color: rgba(255, 255, 255, 0.06);
-}
-
-[data-theme="dark"] .mx-swipe-bar-swipe {
-  background: linear-gradient(180deg, rgba(45, 212, 191, 0.08) 0%, #2c2c2e 100%);
-}
-
-@keyframes mx-bar-in {
-  0%   { opacity: 0; transform: translateY(-3px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.mx-swipe-suggestion {
-  flex: 1;
-  height: 34px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: #000;
-  font-size: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-  font-weight: 400;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  padding: 0 10px;
-  margin: 0 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.08s ease-out;
-}
-
-[data-theme="dark"] .mx-swipe-suggestion {
+[data-theme="dark"] .mx-key-mode {
+  background: #363638;
   color: #fff;
 }
 
-.mx-swipe-suggestion-primary {
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="dark"] .mx-swipe-suggestion-primary {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.mx-swipe-suggestion:active {
-  background: rgba(18, 179, 179, 0.15);
-}
-
-[data-theme="dark"] .mx-swipe-suggestion:active {
-  background: rgba(45, 212, 191, 0.15);
-}
-
-.mx-swipe-divider {
-  width: 1px;
-  height: 18px;
-  background: rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
-}
-
-[data-theme="dark"] .mx-swipe-divider {
-  background: rgba(255, 255, 255, 0.1);
-}
-
 
 /* ═══════════════════════════════════════════════
-   LAYOUT ADJUSTMENTS (when keyboard is visible)
+   LAYOUT ADJUSTMENTS (when EQ panel is visible)
    ═══════════════════════════════════════════════ */
 
 body.mx-keyboard-active #app-layout-wrapper {
@@ -654,12 +269,12 @@ body.mx-keyboard-mode .inline-eq-field {
    MATHLIVE SUPPRESSION
    ═══════════════════════════════════════════════ */
 
-/* Hide MathLive's virtual keyboard toggle icon everywhere on mobile */
+/* Hide MathLive's virtual keyboard toggle icon on mobile */
 body.mx-keyboard-mode math-field::part(virtual-keyboard-toggle) {
   display: none !important;
 }
 
-/* Suppress any MathLive-triggered virtual keyboard panel globally */
+/* Suppress any MathLive-triggered virtual keyboard panel */
 body.mx-keyboard-mode .ML__keyboard,
 body.mx-keyboard-active .ML__keyboard {
   display: none !important;
@@ -670,14 +285,14 @@ body.mx-keyboard-active .ML__keyboard {
    RESPONSIVE & LEGACY SUPPRESSION
    ═══════════════════════════════════════════════ */
 
-/* Only show custom keyboard on mobile */
+/* Only show EQ panel on mobile */
 @media (min-width: 769px) {
   .mx-keyboard {
     display: none !important;
   }
 }
 
-/* Hide legacy math keyboard panel when custom keyboard is active */
+/* Hide legacy math keyboard panel when EQ panel module is loaded */
 body.mx-keyboard-mode #math-input-wrapper {
   display: none !important;
 }
