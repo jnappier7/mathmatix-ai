@@ -1,0 +1,75 @@
+/* ==========================================================
+   Practice Pack — Printable worksheet generation UI
+   ========================================================== */
+
+.practice-pack-card {
+  background: var(--clr-surface, #f8f9ff);
+  border: 1px solid var(--clr-border, #e0e0e0);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  max-width: 400px;
+}
+
+.practice-pack-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.practice-pack-card h3 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.practice-pack-card p {
+  font-size: 0.9rem;
+  color: var(--clr-text-secondary, #666);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.practice-pack-controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.practice-pack-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--clr-border, #ddd);
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+.practice-pack-status {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  min-height: 1.25rem;
+}
+
+.practice-pack-status.loading {
+  color: var(--clr-primary, #4a6cf7);
+}
+
+.practice-pack-status.success {
+  color: var(--clr-success, #2e7d32);
+}
+
+.practice-pack-status.error {
+  color: var(--clr-error, #d32f2f);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .practice-pack-controls {
+    flex-direction: column;
+  }
+
+  .practice-pack-select,
+  .practice-pack-controls .btn {
+    width: 100%;
+  }
+}

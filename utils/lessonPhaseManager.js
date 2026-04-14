@@ -18,6 +18,7 @@ const PHASES = {
   I_DO: 'i-do',                   // Teacher models with 2-3 examples
   CONCEPT_CHECK: 'concept-check', // 🆕 Verify understanding before practice
   WE_DO: 'we-do',                 // Guided practice with scaffolding
+  PAPER_PRACTICE: 'paper-practice', // 📝 Paper & pencil phase — work on paper, photograph, upload
   CHECK_IN: 'check-in',           // Emotional confidence assessment
   YOU_DO: 'you-do',               // Independent practice
   MASTERY_CHECK: 'mastery'        // Final assessment for badge eligibility
@@ -58,6 +59,7 @@ function initializeLessonPhase(skillId, warmupData) {
       'i-do': { attempts: 0, correct: 0, signals: [], understandingSignals: [] },
       'concept-check': { attempts: 0, correct: 0, signals: [], understandingSignals: [] }, // 🆕
       'we-do': { attempts: 0, correct: 0, signals: [], understandingSignals: [] },
+      'paper-practice': { attempts: 0, correct: 0, signals: [], understandingSignals: [], paperSubmitted: false }, // 📝
       'you-do': { attempts: 0, correct: 0, signals: [], understandingSignals: [] }
     },
     transitionLog: [],
@@ -141,6 +143,7 @@ function evaluatePhaseTransition(phaseState) {
     'i-do': 1,          // Just needs to observe modeling (now 2-3 examples)
     'concept-check': 1, // 🆕 Verify understanding with WHY questions
     'we-do': 3,         // Practice with guidance
+    'paper-practice': 1, // 📝 Must upload paper work (1 interaction = photo submitted)
     'you-do': 5         // Independent mastery
   };
 
@@ -257,12 +260,12 @@ function evaluatePhaseTransition(phaseState) {
         s => s === 'DEEP_UNDERSTANDING' || s === 'CAN_EXPLAIN'
       );
 
-      // Strong performance + understanding - ready for independence
+      // Strong performance + understanding - paper practice before independence
       if (confidence >= 0.7 && accuracy >= 0.7 && hasDeepUnderstanding) {
         return {
           shouldTransition: true,
-          nextPhase: PHASES.CHECK_IN,
-          rationale: 'Strong guided practice with understanding - checking student confidence'
+          nextPhase: PHASES.PAPER_PRACTICE,
+          rationale: 'Strong guided practice with understanding - time to prove it on paper'
         };
       }
 
@@ -289,6 +292,23 @@ function evaluatePhaseTransition(phaseState) {
         shouldTransition: false,
         nextPhase: PHASES.WE_DO,
         rationale: 'Continue guided practice to build confidence and understanding'
+      };
+
+    case PHASES.PAPER_PRACTICE:
+      // Paper phase gate: student must upload photo of handwritten work
+      const paperAssessment = phaseState.assessmentData['paper-practice'];
+      if (paperAssessment && paperAssessment.paperSubmitted) {
+        return {
+          shouldTransition: true,
+          nextPhase: PHASES.CHECK_IN,
+          rationale: 'Paper work submitted and reviewed - checking confidence before independence'
+        };
+      }
+      // Stay in paper practice until work is uploaded
+      return {
+        shouldTransition: false,
+        nextPhase: PHASES.PAPER_PRACTICE,
+        rationale: 'Waiting for student to complete and upload paper work'
       };
 
     case PHASES.CHECK_IN:
@@ -633,6 +653,58 @@ Use recordUnderstandingSignal() to track:
 🚨 **"Next" or "skip" during guided practice = NOT ready to advance.**
 If the student wants to move on, require them to complete at least one problem with you first.
 If they say "Idk" to your guiding questions, scaffold down — don't answer for them.
+`;
+
+    case PHASES.PAPER_PRACTICE:
+      return baseInstructions + `
+## Internal Phase: PAPER PRACTICE (Pencil & Paper Work) 📝
+
+**Your Task:**
+1. Transition from guided digital practice to PAPER-BASED work
+2. Present 2-3 problems for the student to solve ON PAPER with pencil
+3. Instruct the student to:
+   - Get out paper and pencil (or use scratch paper)
+   - Write out their full work — every step, not just answers
+   - Take a photo of their work when done
+   - Upload it using the camera button that will appear
+4. WAIT for the paper upload — do NOT accept typed answers for these problems
+5. After they upload, the system will analyze their handwritten work automatically
+
+**Example Opening:**
+"You've been doing great with the guided practice! Now I want to see you do it on your own — with pencil and paper.
+
+📝 **Paper Practice Time!**
+
+Here are 2 problems to work out on paper. Show ALL your steps — I want to see your thinking, not just the answer:
+
+1. [Problem appropriate to ${skillName}]
+2. [Problem appropriate to ${skillName}]
+
+When you're done, tap the 📷 camera button below to take a photo of your work. I'll review it and give you feedback!"
+
+**WHY PAPER MATTERS:**
+- Writing math by hand activates different neural pathways than typing
+- Showing steps reveals understanding (or misconceptions) that typed answers hide
+- Builds the habit of organized mathematical communication
+- Prepares students for tests, which are still mostly paper-based
+
+**CRITICAL RULES:**
+- Do NOT let students type their answers — redirect them to paper
+- If they try to type: "I know it might be faster to type, but I really want to see your handwritten work! The way you organize your steps on paper tells me a lot about how you're thinking. Grab some paper and show me what you've got!"
+- If they say they don't have paper: "No worries! You can use any scrap paper, a notebook, even the back of an old assignment. A napkin works in a pinch! 😄"
+- Problems should match difficulty from the WE DO phase (don't jump harder)
+- Keep it to 2-3 problems — this is about quality of work shown, not quantity
+
+**What You're Assessing (after they upload):**
+- Can they set up problems correctly without scaffolding?
+- Are their steps organized and logical?
+- Do they show their reasoning or just jump to answers?
+- Common error patterns visible in handwriting (sign errors, skipped steps)
+
+**SYSTEM NOTE:** When the student uploads their paper work photo, the grading
+system will automatically analyze it. The phase will advance once the upload
+is received and processed. Include this marker when presenting paper problems:
+<PAPER_PRACTICE_ACTIVE />
 `;
 
     case PHASES.CHECK_IN:

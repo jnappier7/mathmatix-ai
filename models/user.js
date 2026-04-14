@@ -883,6 +883,15 @@ const userSchema = new Schema({
   /* Upload Retention Settings */
   retainUploadsIndefinitely: { type: Boolean, default: false }, // If true, student's uploads won't auto-delete (parent/teacher/admin can set)
 
+  /* Paper Practice Tracking (Unplugged / pencil-and-paper work) */
+  paperPractice: {
+    totalSubmissions: { type: Number, default: 0 },      // Total paper work uploads (Show Your Work + lesson paper phases)
+    currentStreak: { type: Number, default: 0 },          // Consecutive days with paper work
+    bestStreak: { type: Number, default: 0 },             // All-time best daily streak
+    lastSubmittedAt: { type: Date, default: null },       // Most recent paper submission
+    streakLastUpdatedDate: { type: String, default: null } // YYYY-MM-DD of last streak update (prevents double-counting same day)
+  },
+
   /* Tokens / Unlockables */
   tokens: { type: Number, default: 0, min: 0 },
 

@@ -16,6 +16,7 @@ const { prepareBadgeLaunch } = require('../utils/badgeLaunchService'); // TEACHI
 const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = require('../utils/badgePhaseController'); // TEACHING ENHANCEMENT
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
+const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 // ============================================================================
 // MASTERY BADGES
 // ============================================================================
@@ -2513,6 +2514,40 @@ router.get('/skill-graph', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error loading skill graph:', error);
     res.status(500).json({ error: 'Failed to load skill graph' });
+  }
+});
+
+// ============================================================================
+// UNPLUGGED BADGES — Paper & Pencil Achievement Progress
+// ============================================================================
+
+/**
+ * Get unplugged (paper practice) badge progress
+ * GET /api/mastery/unplugged-badges
+ */
+router.get('/unplugged-badges', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const progress = getUnpluggedBadgeProgress(user);
+    const paperPractice = user.paperPractice || {};
+
+    res.json({
+      success: true,
+      badges: progress,
+      stats: {
+        totalSubmissions: paperPractice.totalSubmissions || 0,
+        currentStreak: paperPractice.currentStreak || 0,
+        bestStreak: paperPractice.bestStreak || 0,
+        lastSubmittedAt: paperPractice.lastSubmittedAt || null,
+      }
+    });
+  } catch (error) {
+    console.error('[Unplugged Badges] Error:', error);
+    res.status(500).json({ error: 'Failed to load unplugged badge progress' });
   }
 });
 

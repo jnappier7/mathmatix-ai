@@ -252,7 +252,12 @@ export async function handleGuidedAnswer(userInput, currentUserData) {
                 console.log(`📚 Lesson Phase: ${data.currentPhase || 'unknown'}`);
             }
 
-            if (data.lessonState === 'start_assessment' || data.lessonState === 'scaffold_complete') {
+            // Check if we're entering paper practice phase
+            if (data.currentPhase === 'paper-practice' ||
+                (data.aiMessage && data.aiMessage.includes('<PAPER_PRACTICE_ACTIVE />'))) {
+                sessionState = 'paper-practice';
+                showPaperPracticeUI();
+            } else if (data.lessonState === 'start_assessment' || data.lessonState === 'scaffold_complete') {
                 currentScaffoldStepIndex++;
                 await processNextScaffoldStep();
             } else {
@@ -335,6 +340,231 @@ function showCompletionBadge() {
     currentModuleData = null; // Clear the module data
     const header = document.querySelector('#lessons-pane #lesson-header');
     if (header) header.style.display = 'none';
+}
+
+// --- Paper Practice Phase UI ---
+
+/**
+ * Show the paper practice upload prompt in the lesson area.
+ * Activates the camera/upload flow for handwritten work during guided lessons.
+ */
+function showPaperPracticeUI() {
+    // Show a prominent paper practice banner in the lesson content area
+    const lessonContentPlaceholder = document.getElementById('lesson-content-placeholder');
+    if (lessonContentPlaceholder) {
+        lessonContentPlaceholder.innerHTML = `
+            <div class="paper-practice-banner" id="paper-practice-banner">
+                <div class="paper-practice-icon">📝</div>
+                <h3>Paper Practice Time!</h3>
+                <p>Work out the problems above on paper, then upload a photo of your work.</p>
+                <div class="paper-practice-actions">
+                    <button class="btn btn-primary paper-upload-btn" id="paper-practice-upload-btn">
+                        📷 Upload Photo of Work
+                    </button>
+                    <button class="btn btn-secondary paper-camera-btn" id="paper-practice-camera-btn">
+                        📱 Take Photo
+                    </button>
+                </div>
+                <p class="paper-practice-hint">Show all your steps — I want to see your thinking, not just the answer!</p>
+            </div>
+        `;
+
+        // Wire up the upload button
+        document.getElementById('paper-practice-upload-btn')?.addEventListener('click', () => {
+            triggerPaperUpload('file');
+        });
+        document.getElementById('paper-practice-camera-btn')?.addEventListener('click', () => {
+            triggerPaperUpload('camera');
+        });
+    }
+
+    // Also pulse the existing camera button if Show Your Work modal exists
+    const cameraButton = document.getElementById('camera-button');
+    if (cameraButton) {
+        cameraButton.classList.add('paper-practice-pulse');
+    }
+}
+
+/**
+ * Trigger file/camera upload for paper practice.
+ * Creates a temporary file input or uses the Show Your Work camera input.
+ */
+function triggerPaperUpload(mode) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    if (mode === 'camera') {
+        input.capture = 'environment';
+    }
+    input.style.display = 'none';
+    document.body.appendChild(input);
+
+    input.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Show loading state
+        const banner = document.getElementById('paper-practice-banner');
+        if (banner) {
+            banner.innerHTML = `
+                <div class="paper-practice-icon">⏳</div>
+                <h3>Analyzing your work...</h3>
+                <p>I'm looking at your handwritten steps. This may take a moment.</p>
+                <div class="paper-practice-spinner"></div>
+            `;
+        }
+
+        try {
+            // Submit to grade-work API (same as Show Your Work)
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            const gradeResponse = await fetch('/api/grade-work', {
+                method: 'POST',
+                headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : {},
+                body: formData
+            });
+
+            const gradeResult = await gradeResponse.json();
+
+            if (gradeResult.success && !gradeResult.noWorkDetected) {
+                // Paper work analyzed successfully — display feedback
+                displayPaperFeedback(gradeResult);
+
+                // Notify the lesson system that paper was submitted
+                await notifyPaperSubmitted(gradeResult.id);
+
+                // Award XP notification
+                if (gradeResult.xpEarned && window.awardXP) {
+                    window.awardXP(gradeResult.xpEarned);
+                }
+            } else if (gradeResult.noWorkDetected) {
+                // No work detected — ask them to try again
+                if (banner) {
+                    banner.innerHTML = `
+                        <div class="paper-practice-icon">🤔</div>
+                        <h3>I couldn't see your work</h3>
+                        <p>${gradeResult.overallFeedback || "It looks like the paper might be blank. Try working through the problems first, then take another photo!"}</p>
+                        <div class="paper-practice-actions">
+                            <button class="btn btn-primary paper-upload-btn" onclick="document.getElementById('paper-practice-upload-btn')?.click()">
+                                📷 Try Again
+                            </button>
+                        </div>
+                    `;
+                }
+                showPaperPracticeUI(); // Re-show upload buttons
+            } else {
+                throw new Error(gradeResult.message || 'Analysis failed');
+            }
+        } catch (error) {
+            console.error('[PaperPractice] Upload failed:', error);
+            if (banner) {
+                banner.innerHTML = `
+                    <div class="paper-practice-icon">😕</div>
+                    <h3>Something went wrong</h3>
+                    <p>I couldn't analyze your work. Let's try again!</p>
+                    <div class="paper-practice-actions">
+                        <button class="btn btn-primary" id="paper-practice-retry-btn">📷 Try Again</button>
+                    </div>
+                `;
+                document.getElementById('paper-practice-retry-btn')?.addEventListener('click', () => showPaperPracticeUI());
+            }
+        }
+
+        // Clean up
+        document.body.removeChild(input);
+    });
+
+    input.click();
+}
+
+/**
+ * Display the AI grading feedback for paper work within the lesson flow.
+ */
+function displayPaperFeedback(gradeResult) {
+    const banner = document.getElementById('paper-practice-banner');
+    if (!banner) return;
+
+    const { problems = [], overallFeedback, whatWentWell, correctCount, problemCount } = gradeResult;
+
+    let html = `
+        <div class="paper-practice-icon">✅</div>
+        <h3>Paper Work Reviewed!</h3>
+    `;
+
+    if (whatWentWell) {
+        html += `<p class="paper-feedback-well"><strong>What went well:</strong> ${whatWentWell}</p>`;
+    }
+
+    if (problems.length > 0) {
+        html += `<div class="paper-feedback-problems">`;
+        for (const p of problems) {
+            const icon = p.isCorrect === true ? '✅' : p.isCorrect === false ? '🔄' : '❓';
+            html += `<div class="paper-feedback-problem ${p.isCorrect ? 'correct' : 'incorrect'}">
+                <span class="problem-icon">${icon}</span>
+                <span class="problem-num">Problem ${p.problemNumber}:</span>
+                <span class="problem-fb">${p.feedback || ''}</span>
+            </div>`;
+        }
+        html += `</div>`;
+    }
+
+    if (overallFeedback) {
+        html += `<p class="paper-overall-feedback">${overallFeedback}</p>`;
+    }
+
+    html += `<p class="paper-practice-continuing">Moving on to the next phase...</p>`;
+    banner.innerHTML = html;
+
+    // Render any LaTeX in the feedback
+    if (window.renderMathInElement) {
+        window.renderMathInElement(banner);
+    }
+}
+
+/**
+ * Notify the guided lesson backend that paper work was submitted.
+ * This advances the phase past the paper-practice gate.
+ */
+async function notifyPaperSubmitted(gradingResultId) {
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        const response = await fetch('/api/guidedLesson/paper-submitted', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {})
+            },
+            body: JSON.stringify({
+                phaseState: lessonPhaseState,
+                gradingResultId
+            })
+        });
+
+        const data = await response.json();
+        if (data.phaseState) {
+            lessonPhaseState = data.phaseState;
+            console.log(`📚 Paper submitted — advanced to phase: ${data.currentPhase}`);
+        }
+
+        // Remove the pulse animation from camera button
+        document.getElementById('camera-button')?.classList.remove('paper-practice-pulse');
+
+        // Resume the lesson flow after a brief pause
+        sessionState = 'in-lesson-dialogue';
+        setTimeout(() => {
+            // Continue the lesson conversation
+            const continueMsg = "I've uploaded my paper work!";
+            lessonHistory.push({ role: 'user', content: continueMsg });
+            handleGuidedAnswer(continueMsg, window.currentUser);
+        }, 2000);
+
+    } catch (error) {
+        console.error('[PaperPractice] Failed to notify backend:', error);
+        // Non-fatal — the paper was still graded, just the phase transition may need manual trigger
+        sessionState = 'in-lesson-dialogue';
+    }
 }
 
 // Expose functions globally for script.js to call

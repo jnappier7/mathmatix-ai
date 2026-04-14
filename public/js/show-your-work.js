@@ -232,6 +232,11 @@ class ShowYourWorkManager {
             this.lastResultId = result.id || null; // Track for next re-attempt
             this.displayResults(result);
 
+            // Show unplugged badge celebration if any were earned
+            if (result.unpluggedBadgesEarned && result.unpluggedBadgesEarned.length > 0) {
+                this.showUnpluggedBadgeCelebration(result.unpluggedBadgesEarned);
+            }
+
         } catch (error) {
             console.error('Analysis error:', error);
             this.showToast(error.message || 'Something went wrong. Please try again.', 'error', 7000);
@@ -876,6 +881,83 @@ class ShowYourWorkManager {
 
         document.body.appendChild(toast);
         if (duration > 0) setTimeout(dismiss, duration);
+    }
+
+    // ----------------------------------------------------------------
+    // UNPLUGGED BADGE CELEBRATION
+    // ----------------------------------------------------------------
+
+    showUnpluggedBadgeCelebration(badges) {
+        if (!badges || badges.length === 0) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'unplugged-badge-overlay';
+        overlay.innerHTML = `
+            <div class="unplugged-badge-modal">
+                <div class="unplugged-badge-icon">🏅</div>
+                <h2>Unplugged Badge${badges.length > 1 ? 's' : ''} Earned!</h2>
+                <div class="unplugged-badge-list">
+                    ${badges.map(b => `
+                        <div class="unplugged-badge-item">
+                            <span class="unplugged-badge-name">${b.badgeName}</span>
+                            <span class="unplugged-badge-desc">${b.description || ''}</span>
+                            <span class="unplugged-badge-xp">+${b.xpReward} XP</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <p class="unplugged-badge-message">Paper work pays off! Keep showing your steps.</p>
+                <button class="btn btn-primary unplugged-badge-dismiss">Awesome!</button>
+            </div>
+        `;
+
+        // Add styles if not already present
+        if (!document.getElementById('unplugged-badge-styles')) {
+            const style = document.createElement('style');
+            style.id = 'unplugged-badge-styles';
+            style.textContent = `
+                .unplugged-badge-overlay {
+                    position: fixed; inset: 0; z-index: 10000;
+                    background: rgba(0, 0, 0, 0.6);
+                    display: flex; align-items: center; justify-content: center;
+                    animation: ubFadeIn 0.3s ease-out;
+                }
+                .unplugged-badge-modal {
+                    background: #fff; border-radius: 16px; padding: 2rem;
+                    text-align: center; max-width: 360px; width: 90%;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                    animation: ubSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+                .unplugged-badge-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+                .unplugged-badge-modal h2 { margin: 0.5rem 0; font-size: 1.4rem; }
+                .unplugged-badge-list { margin: 1rem 0; }
+                .unplugged-badge-item {
+                    display: flex; flex-direction: column; padding: 0.75rem;
+                    margin: 0.5rem 0; border-radius: 8px;
+                    background: linear-gradient(135deg, #f0f4ff, #e8f5e9);
+                }
+                .unplugged-badge-name { font-weight: 700; font-size: 1.1rem; }
+                .unplugged-badge-desc { font-size: 0.85rem; color: #666; margin: 0.25rem 0; }
+                .unplugged-badge-xp { font-weight: 600; color: #4a6cf7; }
+                .unplugged-badge-message { font-style: italic; color: #666; margin: 0.75rem 0; font-size: 0.9rem; }
+                .unplugged-badge-dismiss { margin-top: 0.5rem; min-width: 120px; }
+                @keyframes ubFadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes ubSlideUp { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+            `;
+            document.head.appendChild(style);
+        }
+
+        overlay.querySelector('.unplugged-badge-dismiss').addEventListener('click', () => {
+            overlay.style.animation = 'ubFadeIn 0.2s ease-in reverse forwards';
+            setTimeout(() => overlay.remove(), 200);
+        });
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.style.animation = 'ubFadeIn 0.2s ease-in reverse forwards';
+                setTimeout(() => overlay.remove(), 200);
+            }
+        });
+
+        document.body.appendChild(overlay);
     }
 }
 
