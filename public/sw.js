@@ -1,5 +1,5 @@
 // Service Worker for MATHMATIX AI PWA
-const CACHE_VERSION = 'mathmatix-v1';
+const CACHE_VERSION = 'mathmatix-v2';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
@@ -65,8 +65,27 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets (CSS, JS, images, fonts): cache-first
-  if (/\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot|mp3|wav)$/i.test(url.pathname)) {
+  // JS/CSS: stale-while-revalidate (serve cached, update in background)
+  // This ensures code changes propagate on the next page load instead of
+  // being stuck behind a stale cache-first strategy indefinitely.
+  if (/\.(css|js)$/i.test(url.pathname)) {
+    event.respondWith(
+      caches.match(request).then((cached) => {
+        const networkFetch = fetch(request).then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(STATIC_CACHE).then((cache) => cache.put(request, clone));
+          }
+          return response;
+        });
+        return cached || networkFetch;
+      })
+    );
+    return;
+  }
+
+  // Other static assets (images, fonts, audio): cache-first
+  if (/\.(png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot|mp3|wav)$/i.test(url.pathname)) {
     event.respondWith(
       caches.match(request).then((cached) => {
         if (cached) return cached;
