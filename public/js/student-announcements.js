@@ -266,6 +266,9 @@
             }
         } catch (error) {
             console.error('[StudentAnnouncements] Error loading unread count:', error);
+            // Network errors (ERR_CONNECTION_CLOSED, Failed to fetch) should
+            // trigger backoff so we don't hammer a recovering server
+            consecutiveFailures++;
         }
     }
 

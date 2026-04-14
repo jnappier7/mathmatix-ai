@@ -21,9 +21,8 @@ router.post('/heartbeat', isAuthenticated, async (req, res) => {
   try {
     const userId = req.user._id.toString();
     const sessionId = req.sessionID;
-    const { metrics } = req.body;
 
-    const result = await recordHeartbeat(userId, sessionId, metrics);
+    const result = await recordHeartbeat(userId, sessionId);
 
     // Run cleanup in background (throttled to once per 5 min)
     // This ensures stale sessions from other users get cleaned up
