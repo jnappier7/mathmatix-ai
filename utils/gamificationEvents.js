@@ -102,18 +102,8 @@ function updateDailyQuests(user, eventType, data) {
     };
   }
 
-  // Check if quests need refresh (new day)
-  if (shouldRefreshDailyQuests(user.dailyQuests.lastRefreshDate)) {
-    // Don't generate quests here — let the GET endpoint handle that.
-    // Just skip updating stale quests.
-    return result;
-  }
-
-  if (!user.dailyQuests.quests || user.dailyQuests.quests.length === 0) {
-    return result;
-  }
-
-  // Update streak on any activity
+  // Always update streak on any activity — even if quests need refresh.
+  // Streak tracking is independent of quest generation.
   const now = new Date();
   const lastPractice = user.dailyQuests.lastPracticeDate
     ? new Date(user.dailyQuests.lastPracticeDate)
@@ -146,6 +136,17 @@ function updateDailyQuests(user, eventType, data) {
 
   if ((user.dailyQuests.currentStreak || 0) > (user.dailyQuests.longestStreak || 0)) {
     user.dailyQuests.longestStreak = user.dailyQuests.currentStreak;
+  }
+
+  // Check if quests need refresh (new day)
+  if (shouldRefreshDailyQuests(user.dailyQuests.lastRefreshDate)) {
+    // Don't generate quests here — let the GET endpoint handle that.
+    // Just skip updating stale quests (streak was already updated above).
+    return result;
+  }
+
+  if (!user.dailyQuests.quests || user.dailyQuests.quests.length === 0) {
+    return result;
   }
 
   if (!user.dailyQuests.todayProgress) {
