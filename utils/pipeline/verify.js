@@ -249,9 +249,10 @@ async function verify(responseText, context = {}) {
       /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m,  // "x = 9" as a conclusion
     ];
     const hasCompleteSolution = solutionGiveawaySignals.some(p => p.test(text));
-    const hasSocraticQuestion = /\?\s*$|\?\s*\n/m.test(text);
 
-    if (hasCompleteSolution && !hasSocraticQuestion) {
+    // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
+    // The guard fires whenever the AI reveals a complete solution to a student-posed problem.
+    if (hasCompleteSolution) {
       console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem. Redirecting to Socratic.`);
       try {
         const socraticRedirect = await callLLM(PRIMARY_CHAT_MODEL,

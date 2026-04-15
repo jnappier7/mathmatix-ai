@@ -59,15 +59,10 @@
 
     if (!inputEl) return;
 
-    // Listen for equation box button click (both mobile and desktop)
-    const eqBtn = document.getElementById('insert-equation-btn');
-    if (eqBtn) {
-      eqBtn.addEventListener('click', (e) => {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        insertEquationBoxAtCursor();
-      }, true);
-    }
+    // NOTE: The √x button click is handled by script.js activateMathMode(),
+    // which calls insertEquationBoxAtCursor() AND shows the EQ panel on mobile.
+    // A duplicate handler here with stopImmediatePropagation() would steal
+    // the click and prevent the EQ panel from appearing.
 
     // Keyboard shortcut: Alt+= to insert equation box (like MS Word)
     document.addEventListener('keydown', (e) => {

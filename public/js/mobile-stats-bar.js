@@ -60,17 +60,17 @@
     }
   }
 
-  // --- Hide hero actions after first message sent ---
+  // --- Compact hero actions after first message (but keep them visible) ---
   function watchForFirstMessage() {
     var chatBox = document.getElementById('chat-messages-container');
     var heroActions = document.getElementById('hero-actions');
     if (!chatBox || !heroActions) return;
 
     var observer = new MutationObserver(function () {
-      // If chat has messages beyond the resume card, hide hero buttons
+      // If chat has messages, compact the hero buttons but keep them accessible
       var messages = chatBox.querySelectorAll('.message-container, .message');
       if (messages.length > 0) {
-        heroActions.classList.add('hero-hidden');
+        heroActions.classList.add('hero-compact');
       }
     });
 
