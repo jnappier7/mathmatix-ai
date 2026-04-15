@@ -618,7 +618,7 @@ describe('Pipeline: Prompt Slimming', () => {
     const rules = buildSlimRules(ACTIONS.REDIRECT_TO_MATH);
     expect(rules).toContain('SECURITY');
     expect(rules).toContain('RESPONSE STYLE');
-    expect(rules).toContain('BANNED');
+    expect(rules).toContain('BE HUMAN');
   });
 
   test('confirm_correct includes answer verification but not anti-cheat', () => {
