@@ -693,3 +693,75 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
   });
 });
 
+// ============================================================================
+// FUNCTION-DEFINITION DERIVATIVE DETECTION
+// ============================================================================
+
+describe('Tutor Validation: Function-Definition Derivative Detection', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // ────────────────────────────────────────────────────────────────────────
+  // BUG REPORT SCENARIO 5:
+  // Tutor asks: "g(x)=2x³+4x−7. What do you get for the derivative g'(x)?"
+  // Student answers: "6x^2+4"
+  // EXPECTED: Confirm correct (derivative of 2x³+4x-7 = 6x²+4)
+  // PREVIOUS BUG: System matched an older message ("derivative of x²"),
+  //   computed expected answer as "2x", and flagged "6x^2+4" as wrong.
+  // ────────────────────────────────────────────────────────────────────────
+
+  test('BUG 5: g(x)=2x^3+4x-7 derivative "6x^2+4" must be confirmed correct', async () => {
+    const { diagnosis, decision } = await runDeterministicStages(
+      '6x^2+4',
+      ['Absolutely, go for it! Give this function a shot: g(x)=2x^3+4x-7. What do you get for the derivative g\'(x)? Take your time, and let me know what you come up with!']
+    );
+
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(diagnosis.correctAnswer).toBe('6x^2+4');
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('function definition with Unicode superscripts and derivative mention', async () => {
+    const { diagnosis, decision } = await runDeterministicStages(
+      '6x^2+4',
+      ['Give this function a shot: g(x)=2x³+4x−7. What do you get for the derivative g′(x)?']
+    );
+
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('"derivative of f(x) = EXPR" phrasing is detected correctly', async () => {
+    const { diagnosis, decision } = await runDeterministicStages(
+      '20x^3+6x-7',
+      ['Find the derivative of f(x) = 5x^4 + 3x^2 - 7x + 1']
+    );
+
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('"Let\'s try f(x) = EXPR. Find the derivative." phrasing', async () => {
+    const { diagnosis, decision } = await runDeterministicStages(
+      '10x-3',
+      ['Let\'s try f(x) = 5x^2 - 3x + 8. Find the derivative.']
+    );
+
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('does not match function definition without derivative mention', async () => {
+    // "g(x) = 2x + 3" without "derivative" should NOT be treated as a derivative problem
+    const { diagnosis } = await runDeterministicStages(
+      '7',
+      ['Let\'s evaluate g(x) = 2x + 3 when x = 2']
+    );
+
+    // Should not be detected as a derivative (answer would be 2 if derivative, 7 if evaluation)
+    // The key assertion: the system should NOT think the correct answer is "2"
+    expect(diagnosis.correctAnswer).not.toBe('2');
+  });
+});
+
