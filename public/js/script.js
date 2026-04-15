@@ -2534,6 +2534,68 @@ document.addEventListener("DOMContentLoaded", () => {
                 window._hintLevel = 0;
             }
 
+            // "Practice on paper?" suggestion after 2+ consecutive incorrect answers
+            if (data.problemResult === 'incorrect') {
+                window._consecutiveIncorrect = (window._consecutiveIncorrect || 0) + 1;
+                if (window._consecutiveIncorrect >= 2 && !window._paperSuggestionShown) {
+                    window._paperSuggestionShown = true;
+                    const messageElements = document.querySelectorAll('.message.ai');
+                    const latestMessage = messageElements[messageElements.length - 1];
+                    if (latestMessage) {
+                        const paperPrompt = document.createElement('div');
+                        paperPrompt.className = 'paper-practice-suggestion';
+                        paperPrompt.innerHTML = `
+                            <span class="pps-icon">📝</span>
+                            <span class="pps-text">Sometimes writing it out helps! Want to <strong>practice on paper</strong>?</span>
+                            <button class="pps-btn pps-btn-yes">Print Practice Pack</button>
+                            <button class="pps-btn pps-btn-dismiss">Not now</button>
+                        `;
+                        latestMessage.appendChild(paperPrompt);
+
+                        paperPrompt.querySelector('.pps-btn-yes')?.addEventListener('click', () => {
+                            paperPrompt.remove();
+                            // Navigate to dashboard or trigger download directly
+                            const currentSkillId = data.currentSkillId || null;
+                            const params = new URLSearchParams({ count: 5 });
+                            if (currentSkillId) params.set('skillId', currentSkillId);
+                            fetch(`/api/practice-pack/generate?${params}`, { credentials: 'include' })
+                                .then(resp => {
+                                    if (!resp.ok) throw new Error('Failed to generate');
+                                    return resp.blob();
+                                })
+                                .then(blob => {
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `practice-pack-${Date.now()}.pdf`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                    URL.revokeObjectURL(url);
+                                    if (typeof showToast === 'function') showToast('Practice Pack downloading! Print it and work the problems on paper.', 5000);
+                                })
+                                .catch(() => {
+                                    if (typeof showToast === 'function') showToast('Could not generate pack. Try from the dashboard.', 3000);
+                                });
+                        });
+
+                        paperPrompt.querySelector('.pps-btn-dismiss')?.addEventListener('click', () => {
+                            paperPrompt.remove();
+                        });
+                    }
+                }
+            } else if (data.problemResult === 'correct') {
+                window._consecutiveIncorrect = 0;
+                // Reset paper suggestion after 5 correct so it can appear again next struggle
+                if ((window._consecutiveIncorrect || 0) === 0 && window._paperSuggestionShown) {
+                    window._paperSuggestionCorrectCount = (window._paperSuggestionCorrectCount || 0) + 1;
+                    if (window._paperSuggestionCorrectCount >= 5) {
+                        window._paperSuggestionShown = false;
+                        window._paperSuggestionCorrectCount = 0;
+                    }
+                }
+            }
+
             // Streak momentum — "You're on fire!" send button
             // 2 correct = "heating up" (glow), 3+ = "on fire!" (flames that grow)
             if (data.problemResult) {

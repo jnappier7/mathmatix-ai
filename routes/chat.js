@@ -1372,6 +1372,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             iepFeatures,
             iepGoalUpdates: pipelineResult.iepGoalUpdates?.length > 0 ? pipelineResult.iepGoalUpdates : null,
             problemResult: pipelineResult.problemResult,
+            currentSkillId: pipelineResult.activeSkillId || masteryContext?.skillId || null,
             errorAnnotation: pipelineResult.errorAnnotation || null,
             isParallelExample: pipelineResult.isParallelExample || false,
             sessionStats: pipelineResult.sessionStats,

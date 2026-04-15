@@ -28,6 +28,14 @@ try {
   logger.warn('[PracticePack] Puppeteer not available — PDF generation disabled');
 }
 
+// QR code generation
+let QRCode;
+try {
+  QRCode = require('qrcode');
+} catch (e) {
+  logger.warn('[PracticePack] qrcode package not available — QR codes disabled');
+}
+
 const MAX_PROBLEMS = 15;
 const DEFAULT_PROBLEM_COUNT = 8;
 
@@ -140,47 +148,99 @@ function thetaToGradeBand(theta) {
 // HTML TEMPLATE — Generates clean, printable worksheet HTML
 // ============================================================================
 
-function generateWorksheetHTML(user, problems, options = {}) {
-  const { title, showAnswerKey = false } = options;
+/**
+ * Generate a QR code data URI. Falls back to a text URL if qrcode is unavailable.
+ */
+async function generateQRDataURI(url) {
+  if (!QRCode) return null;
+  try {
+    return await QRCode.toDataURL(url, {
+      width: 100,
+      margin: 1,
+      color: { dark: '#1a1a2e', light: '#ffffff' }
+    });
+  } catch (e) {
+    logger.warn('[PracticePack] QR generation failed:', e.message);
+    return null;
+  }
+}
+
+/**
+ * Render difficulty as filled/empty dots (1-5 scale).
+ */
+function difficultyDots(level) {
+  const clamped = Math.max(1, Math.min(5, Math.round(level || 1)));
+  let html = '<span class="difficulty-dots" title="Difficulty ' + clamped + '/5">';
+  for (let i = 1; i <= 5; i++) {
+    html += i <= clamped
+      ? '<span class="dot filled"></span>'
+      : '<span class="dot empty"></span>';
+  }
+  html += '</span>';
+  return html;
+}
+
+/**
+ * Build the full worksheet HTML with grid-paper work areas, QR code,
+ * difficulty indicators, KaTeX auto-render, and optional answer key.
+ */
+async function generateWorksheetHTML(user, problems, options = {}) {
+  const { title, showAnswerKey = false, packId } = options;
   const studentName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Student';
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
   const worksheetTitle = title || 'Practice Pack';
 
-  // Group problems by skill for nice organization
+  // Generate QR code that links to the upload flow
+  const uploadUrl = `https://mathmatix.ai/chat${packId ? '?pack=' + packId : ''}`;
+  const qrDataURI = await generateQRDataURI(uploadUrl);
+
+  // Group problems by skill for organization
   const skillGroups = {};
+  const skillNames = {};
   for (const p of problems) {
     const key = p.skillId || 'general';
     if (!skillGroups[key]) skillGroups[key] = [];
     skillGroups[key].push(p);
+    if (p.skillId && !skillNames[key]) {
+      skillNames[key] = p.skillName || p.skillId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
   }
 
+  // Build problems HTML
   let problemsHTML = '';
+  let answerKeyHTML = '';
   let problemNum = 1;
 
   for (const [skillId, probs] of Object.entries(skillGroups)) {
+    // Skill section header
+    const skillLabel = skillNames[skillId] || '';
+    if (Object.keys(skillGroups).length > 1 && skillLabel) {
+      problemsHTML += `<div class="skill-section-header">${skillLabel}</div>`;
+    }
+
     for (const p of probs) {
       const hasSVG = p.svg ? `<div class="problem-svg">${p.svg}</div>` : '';
       const hasOptions = (p.answerType === 'multiple-choice' && p.options?.length > 0)
         ? `<div class="problem-options">${p.options.map(o =>
-            `<span class="option-item">${o.label}. ${o.text}</span>`
+            `<span class="option-item"><span class="option-letter">${o.label}</span> ${o.text}</span>`
           ).join('')}</div>`
         : '';
 
+      const dots = difficultyDots(p.difficulty);
+
       problemsHTML += `
         <div class="problem">
-          <div class="problem-number">${problemNum}.</div>
+          <div class="problem-sidebar">
+            <div class="problem-number">${problemNum}</div>
+            ${dots}
+          </div>
           <div class="problem-content">
             <div class="problem-prompt">${p.prompt}</div>
             ${hasSVG}
             ${hasOptions}
-            <div class="answer-space">
-              <div class="work-area-label">Show your work:</div>
-              <div class="work-lines">
-                <div class="work-line"></div>
-                <div class="work-line"></div>
-                <div class="work-line"></div>
-                <div class="work-line"></div>
+            <div class="work-area">
+              <div class="grid-paper">
+                <div class="grid-bg"></div>
               </div>
               <div class="answer-line">
                 <span class="answer-label">Answer:</span>
@@ -190,12 +250,40 @@ function generateWorksheetHTML(user, problems, options = {}) {
           </div>
         </div>
       `;
+
+      // Build answer key entry
+      const answerValue = p.answer?.value ?? p.answer ?? '—';
+      answerKeyHTML += `
+        <div class="answer-key-item">
+          <span class="ak-num">${problemNum}.</span>
+          <span class="ak-answer">${answerValue}</span>
+        </div>
+      `;
+
       problemNum++;
     }
   }
 
-  // QR code placeholder (scan to get help from AI tutor)
-  const qrNote = `Scan to get help: mathmatix.ai/chat`;
+  // QR section for footer
+  const qrHTML = qrDataURI
+    ? `<div class="footer-qr">
+        <img src="${qrDataURI}" alt="QR code to upload work" class="qr-code" />
+        <div class="qr-label">Scan to upload<br/>your work</div>
+      </div>`
+    : `<div class="footer-qr"><div class="qr-label">Upload at mathmatix.ai</div></div>`;
+
+  // Answer key page (printed on a separate page)
+  const answerKeyPage = showAnswerKey ? `
+    <div class="page-break"></div>
+    <div class="answer-key-page">
+      <div class="ak-header">
+        <h2>Answer Key — ${worksheetTitle}</h2>
+        <div class="ak-meta">${studentName} &bull; ${date} &bull; ${problems.length} problems</div>
+      </div>
+      <div class="ak-grid">${answerKeyHTML}</div>
+      <div class="ak-note">Answers shown are primary accepted values. Equivalent forms are also accepted during AI grading.</div>
+    </div>
+  ` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -203,139 +291,179 @@ function generateWorksheetHTML(user, problems, options = {}) {
   <meta charset="UTF-8">
   <title>${worksheetTitle} — ${studentName}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\\\(',right:'\\\\)',display:false},{left:'\\\\[',right:'\\\\]',display:true}]});"></script>
   <style>
-    @page {
-      size: letter;
-      margin: 0.75in;
-    }
+    @page { size: letter; margin: 0.6in 0.7in; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 14px;
+      font-size: 13.5px;
       color: #1a1a2e;
       line-height: 1.5;
     }
 
+    /* ---- Header ---- */
     .header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      border-bottom: 2px solid #333;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
+      border-bottom: 3px solid #1a1a2e;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
     }
-    .header-left h1 {
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-    .header-left .subtitle {
-      font-size: 12px;
-      color: #666;
-    }
-    .header-right {
-      text-align: right;
-      font-size: 12px;
-      color: #555;
-    }
+    .header-left h1 { font-size: 22px; margin-bottom: 2px; letter-spacing: -0.3px; }
+    .header-left .subtitle { font-size: 11px; color: #888; }
+    .header-right { text-align: right; font-size: 11.5px; color: #555; line-height: 1.6; }
+
+    /* ---- Student Info ---- */
     .student-info {
       display: flex;
       gap: 24px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
       font-size: 13px;
     }
-    .student-info .field {
-      border-bottom: 1px solid #999;
-      min-width: 150px;
-      padding-bottom: 2px;
-    }
-    .student-info .field-label {
-      font-weight: 600;
-      margin-right: 4px;
+    .student-info .field { border-bottom: 1px solid #999; min-width: 140px; padding-bottom: 2px; }
+    .student-info .field-label { font-weight: 600; margin-right: 4px; }
+
+    /* ---- Skill Section Headers ---- */
+    .skill-section-header {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #4a6cf7;
+      border-bottom: 1px solid #e0e0f0;
+      padding-bottom: 3px;
+      margin: 18px 0 10px;
     }
 
+    /* ---- Problems ---- */
     .problem {
       display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 6px;
       page-break-inside: avoid;
     }
-    .problem-number {
-      font-weight: 700;
-      font-size: 15px;
-      min-width: 28px;
-      color: #333;
-    }
-    .problem-content {
-      flex: 1;
-    }
-    .problem-prompt {
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-    .problem-svg {
-      margin: 8px 0;
-      text-align: center;
-    }
-    .problem-svg svg {
-      max-width: 300px;
-      max-height: 200px;
-    }
-    .problem-options {
+    .problem-sidebar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin: 8px 0;
+      flex-direction: column;
+      align-items: center;
+      min-width: 36px;
+      padding-top: 2px;
     }
-    .option-item {
-      font-size: 13px;
-      min-width: 120px;
-    }
-
-    .answer-space {
-      margin-top: 8px;
-    }
-    .work-area-label {
-      font-size: 11px;
-      color: #888;
+    .problem-number {
+      font-weight: 800;
+      font-size: 16px;
+      color: #1a1a2e;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 4px;
     }
-    .work-lines {
+
+    /* Difficulty dots */
+    .difficulty-dots { display: flex; gap: 2px; }
+    .difficulty-dots .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .difficulty-dots .dot.filled { background: #1a1a2e; }
+    .difficulty-dots .dot.empty { background: #d0d0d0; }
+
+    .problem-content { flex: 1; }
+    .problem-prompt { font-size: 14px; margin-bottom: 6px; line-height: 1.55; }
+    .problem-svg { margin: 6px 0; text-align: center; }
+    .problem-svg svg { max-width: 280px; max-height: 180px; }
+    .problem-options { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 6px 0 8px; }
+    .option-item { font-size: 13px; display: flex; align-items: baseline; gap: 4px; }
+    .option-letter {
+      font-weight: 700;
+      background: #f0f0f0;
+      border-radius: 3px;
+      padding: 0 5px;
+      font-size: 12px;
+    }
+
+    /* ---- Grid Paper Work Area ---- */
+    .work-area { margin-top: 6px; margin-bottom: 10px; }
+    .grid-paper {
+      width: 100%;
+      height: 110px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
       margin-bottom: 8px;
     }
-    .work-line {
-      border-bottom: 1px solid #ddd;
-      height: 24px;
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(180,200,230,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(180,200,230,0.25) 1px, transparent 1px);
+      background-size: 18px 18px;
     }
     .answer-line {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-top: 4px;
     }
-    .answer-label {
-      font-weight: 600;
-      font-size: 13px;
-    }
+    .answer-label { font-weight: 700; font-size: 13px; }
     .answer-blank {
-      border-bottom: 2px solid #333;
+      border-bottom: 2.5px solid #1a1a2e;
       flex: 1;
-      max-width: 200px;
-      height: 20px;
+      max-width: 220px;
+      height: 22px;
     }
 
+    /* ---- Footer ---- */
     .footer {
-      margin-top: 30px;
-      padding-top: 12px;
-      border-top: 1px solid #ccc;
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 2px solid #1a1a2e;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 11px;
-      color: #888;
+      color: #666;
     }
-    .footer-instructions {
-      max-width: 70%;
+    .footer-instructions { max-width: 60%; line-height: 1.5; }
+    .footer-instructions strong { color: #1a1a2e; }
+    .footer-qr { display: flex; align-items: center; gap: 8px; }
+    .qr-code { width: 72px; height: 72px; }
+    .qr-label { font-size: 10px; color: #888; text-align: center; line-height: 1.4; }
+
+    /* ---- Answer Key Page ---- */
+    .page-break { page-break-before: always; }
+    .answer-key-page { padding-top: 10px; }
+    .ak-header { border-bottom: 2px solid #1a1a2e; padding-bottom: 8px; margin-bottom: 16px; }
+    .ak-header h2 { font-size: 18px; }
+    .ak-meta { font-size: 12px; color: #666; margin-top: 2px; }
+    .ak-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px 16px;
     }
+    .answer-key-item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 6px 8px;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      background: #fafafa;
+    }
+    .ak-num { font-weight: 700; color: #333; min-width: 24px; }
+    .ak-answer { font-family: 'Courier New', monospace; font-size: 13px; color: #2e7d32; font-weight: 600; }
+    .ak-note { margin-top: 20px; font-size: 11px; color: #999; font-style: italic; }
 
     @media print {
       body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -366,11 +494,13 @@ function generateWorksheetHTML(user, problems, options = {}) {
 
   <div class="footer">
     <div class="footer-instructions">
-      When you're done, take a photo of your work and upload it at <strong>mathmatix.ai</strong> using the
-      camera button. Your AI tutor will review your work and give you personalized feedback!
+      <strong>Done?</strong> Take a photo of your work and upload it at <strong>mathmatix.ai</strong>
+      (or scan the QR code). Your AI tutor will check each step and give personalized feedback!
     </div>
-    <div>${qrNote}</div>
+    ${qrHTML}
   </div>
+
+  ${answerKeyPage}
 </body>
 </html>`;
 }
@@ -436,6 +566,7 @@ router.get('/generate', isAuthenticated, async (req, res) => {
     const count = Math.min(parseInt(req.query.count) || DEFAULT_PROBLEM_COUNT, MAX_PROBLEMS);
     const skillId = req.query.skillId || null;
     const title = req.query.title || 'Practice Pack';
+    const showAnswerKey = req.query.answerKey === 'true';
 
     const problems = await selectProblemsForPack(user, { count, skillId });
 
@@ -445,8 +576,8 @@ router.get('/generate', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Generate HTML
-    const html = generateWorksheetHTML(user, problems, { title });
+    // Generate HTML (now async for QR code generation)
+    const html = await generateWorksheetHTML(user, problems, { title, showAnswerKey });
 
     // Render to PDF via Puppeteer
     browser = await puppeteer.launch({
@@ -542,6 +673,203 @@ router.post('/class-generate', isAuthenticated, async (req, res) => {
   } catch (error) {
     logger.error('[PracticePack] Class generation error:', error);
     res.status(500).json({ error: 'Failed to generate class practice packs' });
+  }
+});
+
+/**
+ * Get available skills for the skill selector dropdown.
+ * Returns skills the student is currently working on, plus popular skills for their level.
+ * GET /api/practice-pack/skills
+ */
+router.get('/skills', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const skillMastery = user.skillMastery || new Map();
+    const studentSkills = [];
+
+    for (const [sid, data] of skillMastery) {
+      if (data.status === 'learning' || data.status === 'introduced' || data.status === 'mastered') {
+        studentSkills.push({
+          skillId: sid,
+          displayName: data.displayName || sid.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          status: data.status,
+          masteryScore: data.masteryScore || 0
+        });
+      }
+    }
+
+    // Sort: learning first, then by mastery score ascending (weakest first)
+    studentSkills.sort((a, b) => {
+      const order = { learning: 0, introduced: 1, mastered: 2 };
+      if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+      return a.masteryScore - b.masteryScore;
+    });
+
+    res.json({ success: true, skills: studentSkills.slice(0, 20) });
+  } catch (error) {
+    logger.error('[PracticePack] Skills list error:', error);
+    res.status(500).json({ error: 'Failed to load skills' });
+  }
+});
+
+/**
+ * Parent endpoint: Generate a practice pack PDF for a linked child.
+ * GET /api/practice-pack/generate-for-child?childId=...&count=...&skillId=...&answerKey=true
+ */
+router.get('/generate-for-child', isAuthenticated, async (req, res) => {
+  if (!puppeteer) {
+    return res.status(503).json({ error: 'PDF generation is not available on this server' });
+  }
+
+  let browser;
+  try {
+    const parent = await User.findById(req.user._id);
+    if (!parent || parent.role !== 'parent') {
+      return res.status(403).json({ error: 'Parent access required' });
+    }
+
+    const { childId } = req.query;
+    if (!childId) return res.status(400).json({ error: 'childId is required' });
+
+    // Verify parent-child link (parentIds is an array)
+    const child = await User.findById(childId);
+    const isLinked = child && (child.parentIds || []).some(pid => String(pid) === String(parent._id));
+    if (!isLinked) {
+      return res.status(403).json({ error: 'You can only generate packs for your linked children' });
+    }
+
+    const count = Math.min(parseInt(req.query.count) || DEFAULT_PROBLEM_COUNT, MAX_PROBLEMS);
+    const skillId = req.query.skillId || null;
+    const showAnswerKey = req.query.answerKey === 'true';
+    const title = req.query.title || 'Practice Pack';
+
+    const problems = await selectProblemsForPack(child, { count, skillId });
+
+    if (problems.length === 0) {
+      return res.status(404).json({
+        error: 'No problems available for this student\'s level yet.'
+      });
+    }
+
+    const html = await generateWorksheetHTML(child, problems, { title, showAnswerKey });
+
+    browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'Letter',
+      margin: { top: '0.5in', bottom: '0.5in', left: '0.75in', right: '0.75in' },
+      printBackground: true,
+    });
+
+    await browser.close();
+    browser = null;
+
+    const fileName = `practice-pack-${child.firstName || 'student'}-${Date.now()}.pdf`;
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Length', pdfBuffer.length);
+    res.send(pdfBuffer);
+
+    logger.info(`[PracticePack] Parent ${parent.firstName} generated pack for child ${child.firstName}`);
+
+  } catch (error) {
+    if (browser) {
+      try { await browser.close(); } catch (_) { /* ignore */ }
+    }
+    logger.error('[PracticePack] Parent generation error:', error);
+    res.status(500).json({ error: 'Failed to generate practice pack' });
+  }
+});
+
+/**
+ * Teacher endpoint: Generate a PDF practice pack with answer key for a class.
+ * GET /api/practice-pack/class-generate-pdf?skillId=...&tier=below|onLevel|above&answerKey=true
+ */
+router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
+  if (!puppeteer) {
+    return res.status(503).json({ error: 'PDF generation is not available on this server' });
+  }
+
+  let browser;
+  try {
+    const teacher = await User.findById(req.user._id);
+    if (!teacher || teacher.role !== 'teacher') {
+      return res.status(403).json({ error: 'Teacher access required' });
+    }
+
+    const { skillId, tier = 'onLevel' } = req.query;
+    if (!skillId) return res.status(400).json({ error: 'skillId is required' });
+
+    const showAnswerKey = req.query.answerKey === 'true';
+    const count = Math.min(parseInt(req.query.count) || DEFAULT_PROBLEM_COUNT, MAX_PROBLEMS);
+
+    // Get students for this teacher in the specified tier
+    const students = await User.find({ teacherId: teacher._id, role: 'student' })
+      .select('firstName lastName learningProfile.abilityEstimate.theta skillMastery');
+
+    const tierRanges = { below: [-Infinity, -0.5], onLevel: [-0.5, 0.5], above: [0.5, Infinity] };
+    const [lo, hi] = tierRanges[tier] || tierRanges.onLevel;
+    const tierStudents = students.filter(s => {
+      const t = s.learningProfile?.abilityEstimate?.theta || 0;
+      return t >= lo && t < hi;
+    });
+
+    // Use median student for problem selection
+    const representative = tierStudents.length > 0
+      ? tierStudents[Math.floor(tierStudents.length / 2)]
+      : teacher; // fallback
+
+    const problems = await selectProblemsForPack(representative, { count, skillId });
+
+    if (problems.length === 0) {
+      return res.status(404).json({ error: 'No problems available for this skill and tier.' });
+    }
+
+    // Look up skill display name
+    const skill = await Skill.findOne({ skillId });
+    const skillLabel = skill?.displayName || skillId.replace(/-/g, ' ');
+    const tierLabel = { below: 'Approaching', onLevel: 'On Level', above: 'Advanced' }[tier] || tier;
+    const title = `${skillLabel} — ${tierLabel}`;
+
+    const html = await generateWorksheetHTML(representative, problems, { title, showAnswerKey });
+
+    browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'Letter',
+      margin: { top: '0.5in', bottom: '0.5in', left: '0.75in', right: '0.75in' },
+      printBackground: true,
+    });
+
+    await browser.close();
+    browser = null;
+
+    const fileName = `class-pack-${skillId}-${tier}-${Date.now()}.pdf`;
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Length', pdfBuffer.length);
+    res.send(pdfBuffer);
+
+    logger.info(`[PracticePack] Teacher ${teacher.firstName} generated class pack: ${skillId} (${tier})`);
+
+  } catch (error) {
+    if (browser) {
+      try { await browser.close(); } catch (_) { /* ignore */ }
+    }
+    logger.error('[PracticePack] Class PDF generation error:', error);
+    res.status(500).json({ error: 'Failed to generate class practice pack' });
   }
 });
 
