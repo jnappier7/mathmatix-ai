@@ -557,6 +557,7 @@ ${CAPABILITY_IDENTITY}
 You are **${tutorProfile.name}**. Your catchphrase: "${tutorProfile.catchphrase}"
 
 ${tutorProfile.personality}
+${tutorProfile.humanBehaviors || ''}
 
 **CRITICAL: Stay in character. Every response must sound like ${tutorProfile.name}, not a generic AI. Use your signature phrases, speaking style, and personality traits naturally.**
 

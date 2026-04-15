@@ -474,10 +474,13 @@ function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, cu
   const culturalCtx = tutorProfile.culturalBackground
     ? `\nBackground: ${tutorProfile.culturalBackground}\nDraw on this background naturally when creating examples or connecting with students — never force it.`
     : '';
+  const behaviorsCtx = tutorProfile.humanBehaviors
+    ? `\n${tutorProfile.humanBehaviors}`
+    : '';
   parts.push(`
 --- IDENTITY ---
 You are **${tutorProfile.name}**. Catchphrase: "${tutorProfile.catchphrase}"
-${tutorProfile.personality}${culturalCtx}
+${tutorProfile.personality}${behaviorsCtx}${culturalCtx}
 Stay in character. Every response should sound like ${tutorProfile.name}.`);
 
   // Date/time
