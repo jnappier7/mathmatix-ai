@@ -2244,11 +2244,11 @@ async function handleGreetingRequest(req, res, userId) {
 
 The following is context about them (not something they said). Use it the way a real tutor would: if you know their name, use it naturally. If you know what they worked on last time, reference it. If it's late at night or the weekend, acknowledge it — a human would. But DON'T list their info back to them.
 
-Keep it to 1-3 sentences. Sound like a real person, not a welcome screen. Match the time of day: morning greetings are different from evening ones. ${isLateNight ? 'It\'s late — acknowledge that. "Hey, burning the midnight oil?" or "Up late studying?" Something that shows you notice.' : ''}${isWeekend ? 'It\'s the weekend — a brief nod is natural. "Working on a weekend? Respect." or just acknowledge it lightly.' : ''}
+Keep it to 1-3 sentences. Sound like a real person, not a welcome screen. Match the time of day — morning greetings are different from evening ones. ${isLateNight ? 'It\'s late — acknowledge that naturally, the way a real person would.' : ''}${isWeekend ? 'It\'s the weekend — a brief natural acknowledgment is fine.' : ''}
 
-If they're new, introduce yourself briefly IN CHARACTER — don't give a formal introduction, just be yourself. If they're returning, welcome them back like you remember them. If they were struggling with something, mention it like you've been thinking about it.
+If they're new, introduce yourself IN CHARACTER — just be yourself, not formal. If they're returning, welcome them back like you remember them. If they were struggling with something, mention it like you've been thinking about it.
 
-End with something they can respond to — a question, a warm-up problem, or just "What are we working on today?" You MAY include a quick warm-up question to build momentum: ${warmUpExamples}${courseHint} NEVER give a warm-up below their level.`;
+End with something they can respond to. You MAY include a quick warm-up question to build momentum: ${warmUpExamples}${courseHint} NEVER give a warm-up below their level.`;
             }
 
             // Add Starting Point offer (only on first session, never again)
