@@ -13,7 +13,14 @@ const messageSchema = new Schema({
     reaction: { type: String, default: null }, // Emoji reaction (e.g., '❤️', '👍', '💯')
     // Course scaffold tracking — persisted so progress survives across requests
     problemResult: { type: String, default: null }, // 'correct' | 'incorrect' | 'skipped' (set on AI messages)
-    scaffoldAdvanced: { type: Boolean, default: false } // true on the user msg where an advance was granted
+    scaffoldAdvanced: { type: Boolean, default: false }, // true on the user msg where an advance was granted
+    // Structured problem metadata — set on AI messages that contain a math problem.
+    // Computed once at persist time so the diagnose stage can read it directly
+    // instead of re-parsing the AI's natural language text with fragile regex.
+    problemInfo: {
+        type: { type: String },       // e.g. 'derivative', 'arithmetic', 'linear_equation'
+        correctAnswer: { type: String },
+    },
 }, { _id: false });
 
 const conversationSchema = new Schema({

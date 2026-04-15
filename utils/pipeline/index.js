@@ -82,6 +82,7 @@ async function runPipeline(message, ctx) {
     recentAssistantMessages: recentAssistantMessages.map(msg => ({
       content: msg.content,
       problemResult: msg.problemResult,
+      problemInfo: msg.problemInfo || null,
     })),
     recentUserMessages: recentUserMessages.map(msg => ({ content: msg.content })),
     activeSkill: ctx.activeSkill || null,

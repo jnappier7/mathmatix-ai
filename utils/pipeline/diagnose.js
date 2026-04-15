@@ -56,20 +56,37 @@ async function diagnose(observation, context = {}) {
   const recentAI = context.recentAssistantMessages || [];
 
   // ── Step 1: Find the problem that was posed ──
-  // Walk backwards through recent AI messages to find a math problem.
-  // Strip LaTeX delimiters first — stored messages wrap numbers in \(...\)
-  // which breaks regex-based math detection (e.g. "add \(141\) and \(94\)"
-  // won't match the nlAddPattern expecting "add 141 and 94").
+  // Prefer stored problemInfo metadata (set at persist time) over re-parsing.
+  // This avoids fragile regex matching against the AI's natural language text —
+  // the LLM can phrase problems in infinite ways that regex can't anticipate.
+  // Fall back to re-parsing only for legacy messages that lack stored metadata.
   let problemInfo = null;
   for (let i = recentAI.length - 1; i >= 0; i--) {
-    const plainContent = stripLatexDelimiters(recentAI[i].content);
+    const msg = recentAI[i];
+
+    // Fast path: read pre-computed metadata stored at persist time
+    if (msg.problemInfo && msg.problemInfo.correctAnswer != null) {
+      problemInfo = {
+        problemType: msg.problemInfo.type,
+        correctAnswer: msg.problemInfo.correctAnswer,
+        steps: [],
+        content: msg.content,
+      };
+      break;
+    }
+
+    // Slow path: re-parse for legacy messages without stored metadata.
+    // Strip LaTeX delimiters first — stored messages wrap numbers in \(...\)
+    // which breaks regex-based math detection (e.g. "add \(141\) and \(94\)"
+    // won't match the nlAddPattern expecting "add 141 and 94").
+    const plainContent = stripLatexDelimiters(msg.content);
     const result = processMathMessage(plainContent);
     if (result.hasMath && result.solution?.success) {
       problemInfo = {
         problemType: result.problem.type,
         correctAnswer: result.solution.answer,
         steps: result.solution.steps || [],
-        content: recentAI[i].content,
+        content: msg.content,
       };
       break;
     }

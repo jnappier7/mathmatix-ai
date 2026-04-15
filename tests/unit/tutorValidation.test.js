@@ -156,13 +156,21 @@ function buildCtx(user, conversation, extras = {}) {
 /**
  * Run observe + diagnose + decide (the deterministic stages)
  * without calling the LLM. This tests the exact pipeline decisions.
+ *
+ * tutorMessages can be:
+ *   - Array of strings (legacy shorthand — no stored problemInfo)
+ *   - Array of objects { content, problemInfo? } (simulates stored metadata)
  */
 async function runDeterministicStages(studentMessage, tutorMessages) {
-  const recentAssistantMessages = tutorMessages.map(content => ({
-    content,
-    role: 'assistant',
-    problemResult: null,
-  }));
+  const recentAssistantMessages = tutorMessages.map(msg => {
+    const isObj = typeof msg === 'object' && msg !== null;
+    return {
+      content: isObj ? msg.content : msg,
+      role: 'assistant',
+      problemResult: null,
+      problemInfo: isObj ? (msg.problemInfo || null) : null,
+    };
+  });
 
   const observation = observe(studentMessage, {
     recentUserMessages: [],
@@ -174,6 +182,7 @@ async function runDeterministicStages(studentMessage, tutorMessages) {
     recentAssistantMessages: recentAssistantMessages.map(msg => ({
       content: msg.content,
       problemResult: msg.problemResult,
+      problemInfo: msg.problemInfo,
     })),
     recentUserMessages: [],
     activeSkill: null,
@@ -762,6 +771,84 @@ describe('Tutor Validation: Function-Definition Derivative Detection', () => {
     // Should not be detected as a derivative (answer would be 2 if derivative, 7 if evaluation)
     // The key assertion: the system should NOT think the correct answer is "2"
     expect(diagnosis.correctAnswer).not.toBe('2');
+  });
+});
+
+// ============================================================================
+// STORED PROBLEM METADATA (PRIMARY FIX)
+// ============================================================================
+
+describe('Tutor Validation: Stored problemInfo Metadata', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // The architectural fix: when an AI message has stored problemInfo metadata,
+  // the diagnose stage reads it directly instead of re-parsing natural language.
+  // This eliminates the entire class of "regex couldn't parse the phrasing" bugs.
+
+  test('stored problemInfo is used over regex re-parsing', async () => {
+    // Simulate a message with phrasing that NO regex could match,
+    // but with stored metadata from when the message was persisted.
+    const { diagnosis, decision } = await runDeterministicStages(
+      '6x^2+4',
+      [{
+        content: 'Here is your challenge! Can you tell me what g\'(x) equals when g(x) is defined as 2x³ + 4x − 7? Go for it!',
+        problemInfo: { type: 'derivative', correctAnswer: '6x^2+4' },
+      }]
+    );
+
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(diagnosis.correctAnswer).toBe('6x^2+4');
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('stored problemInfo prevents matching wrong older message', async () => {
+    // The original bug: two messages — old one matches regex, recent one doesn't.
+    // With stored metadata on the recent one, the old one is never consulted.
+    const { diagnosis, decision } = await runDeterministicStages(
+      '6x^2+4',
+      [
+        // Old message that regex WOULD match (derivative of x^2 → answer "2x")
+        'The derivative of x^2 is 2x. Great work on that warm-up!',
+        // Recent message with stored metadata — regex can't parse this phrasing
+        {
+          content: 'Now try this one — if g(x) equals 2x³ + 4x − 7, what is g\'(x)?',
+          problemInfo: { type: 'derivative', correctAnswer: '6x^2+4' },
+        },
+      ]
+    );
+
+    // Must use stored metadata (6x^2+4), NOT the older regex match (2x)
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(diagnosis.correctAnswer).toBe('6x^2+4');
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('falls back to regex parsing for legacy messages without metadata', async () => {
+    // Legacy messages don't have stored problemInfo — regex parsing still works
+    const { diagnosis, decision } = await runDeterministicStages(
+      '3x^2-3',
+      ['How about we tackle the derivative of x^3 - 3x + 2? What do you think?']
+    );
+
+    expect(diagnosis.isCorrect).toBe(true);
+    expect(diagnosis.correctAnswer).toBe('3x^2-3');
+    expect(decision.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('stored metadata works for non-derivative problems too', async () => {
+    const { diagnosis, decision } = await runDeterministicStages(
+      '5',
+      [{
+        content: 'What is the limit of (x²-25)/(x-5) as x approaches 5?',
+        problemInfo: { type: 'limit', correctAnswer: '10' },
+      }]
+    );
+
+    expect(diagnosis.isCorrect).toBe(false);
+    expect(diagnosis.correctAnswer).toBe('10');
+    expect(decision.action).not.toBe(ACTIONS.CONFIRM_CORRECT);
   });
 });
 
