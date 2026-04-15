@@ -2052,6 +2052,8 @@ async function handleGreetingRequest(req, res, userId) {
         }
 
         // Build the context-rich ghost message (student "introducing" themselves)
+        // This is framed as context the tutor already KNOWS — like walking into
+        // a tutoring room and seeing a student they recognize.
         let ghostMessageParts = [];
 
         // Basic intro
@@ -2067,8 +2069,14 @@ async function handleGreetingRequest(req, res, userId) {
             ghostMessageParts.push(`taking ${user.mathCourse}`);
         }
 
-        // Time context
-        ghostMessageParts.push(`It's ${dayNames[dayOfWeek]} ${timeOfDay}${isLateNight ? ' (late)' : ''}${isWeekend ? ' (weekend)' : ''}`);
+        // Time context — framed naturally so the tutor can react like a person
+        if (isLateNight) {
+            ghostMessageParts.push(`It's ${dayNames[dayOfWeek]} night, pretty late`);
+        } else if (isWeekend) {
+            ghostMessageParts.push(`It's ${dayNames[dayOfWeek]} ${timeOfDay} — my weekend`);
+        } else {
+            ghostMessageParts.push(`It's ${dayNames[dayOfWeek]} ${timeOfDay}`);
+        }
 
         // User state context
         if (!user.learningProfile?.rapportBuildingComplete) {
@@ -2082,12 +2090,20 @@ async function handleGreetingRequest(req, res, userId) {
             ghostMessageParts.push("I haven't taken a placement test yet");
         }
 
-        // Session context
+        // Session history context — framed as shared memory
         if (lastSessionContext) {
             ghostMessageParts.push(lastSessionContext);
         }
         if (strugglingWith) {
             ghostMessageParts.push(`I've been having trouble with ${strugglingWith}`);
+        }
+
+        // Session count — helps the tutor calibrate familiarity
+        const totalSessions = user.learningProfile?.stats?.totalSessions || 0;
+        if (totalSessions > 10) {
+            ghostMessageParts.push(`I've had ${totalSessions} sessions so far`);
+        } else if (totalSessions > 1) {
+            ghostMessageParts.push(`This is about my ${totalSessions + 1}th session`);
         }
 
         // Learning preferences from profile
@@ -2219,23 +2235,27 @@ async function handleGreetingRequest(req, res, userId) {
             if (openerResult && openerResult.directives?.length > 0) {
                 // Use intelligent session opener directives from TutorPlan
                 greetingInstruction = openerResult.directives.join('\n') +
-                    `\n\nKeep it to 1-2 sentences. Be casual like texting. Don't repeat back their info.` +
+                    `\n\nKeep it to 1-3 sentences. Talk like a real person — the way you'd greet a student who just walked into your room. Don't repeat back their info.` +
                     `\nYou MAY optionally include a quick warm-up question: ${warmUpExamples}${courseHint}` +
                     `\nNEVER give a warm-up below the student's level.`;
             } else {
                 // Fallback: default greeting instruction (no TutorPlan yet)
-                greetingInstruction = `The student just opened the chat. They haven't typed anything yet - YOU are initiating the conversation. The following is context about them (not something they said). Greet them naturally and briefly based on this context. Don't repeat back their info - just use it to personalize. Keep it to 1-2 sentences. Be casual like texting. If they're new, introduce yourself briefly. If returning, welcome back. If they have incomplete work, mention it casually.
+                greetingInstruction = `The student just opened the chat. They haven't typed anything yet — YOU are starting the conversation, like a tutor greeting a student who just sat down.
 
-IMPORTANT: Always end your greeting by asking the student a question or giving them something to respond to — for example, ask what they'd like to work on, reference something from last session, or ask how their day is going. You MAY optionally include a quick warm-up question to build momentum, but only if it feels natural — don't force it. If you do include a warm-up, make sure it matches their grade level and course. For example: ${warmUpExamples}${courseHint} NEVER give a warm-up question that is far below the student's grade level or course — that feels insulting and wastes their time.`;
+The following is context about them (not something they said). Use it the way a real tutor would: if you know their name, use it naturally. If you know what they worked on last time, reference it. If it's late at night or the weekend, acknowledge it — a human would. But DON'T list their info back to them.
+
+Keep it to 1-3 sentences. Sound like a real person, not a welcome screen. Match the time of day — morning greetings are different from evening ones. ${isLateNight ? 'It\'s late — acknowledge that naturally, the way a real person would.' : ''}${isWeekend ? 'It\'s the weekend — a brief natural acknowledgment is fine.' : ''}
+
+If they're new, introduce yourself IN CHARACTER — just be yourself, not formal. If they're returning, welcome them back like you remember them. If they were struggling with something, mention it like you've been thinking about it.
+
+End with something they can respond to. You MAY include a quick warm-up question to build momentum: ${warmUpExamples}${courseHint} NEVER give a warm-up below their level.`;
             }
 
             // Add Starting Point offer (only on first session, never again)
             if (shouldOfferStartingPoint) {
                 greetingInstruction += `
 
-IMPORTANT: This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar. Say something like: "Oh, and when you're ready, hit that glowing Starting Point button on the left — it's a quick quiz to figure out where you're at so I can help you better. It's not a test you can fail, it just helps me know what to focus on. No rush though!"
-
-Keep it casual and low-pressure. Don't make it sound like a test they need to take right now. Just let them know it's there when they're ready. Emphasize it's NOT a pass/fail test — just a way to personalize their experience.`;
+This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar — but do it in YOUR voice, not as a product announcement. The idea is: "There's a quick thing in the sidebar that helps me figure out where you're at — it's not a test, just helps me know what to focus on. No rush." Keep it one sentence, super low-pressure. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
             }
         }
 

@@ -168,17 +168,16 @@ function buildOpener(strategy, ctx) {
     case STRATEGIES.CONTINUITY: {
       const { unfinished, lastTopic, lastProblemState } = strategy.data;
       const directives = [
-        `SESSION OPENER: CONTINUITY. The student left off mid-session last time.`,
-        `Unfinished business: "${unfinished}"`,
-        `Greet the student warmly and acknowledge where they left off.`,
-        `Ask if they want to pick up where they stopped, or work on something else.`,
-        `Be specific about what was left undone — the student should know you remember.`,
+        `The student left off mid-session last time. You remember where you were — act like it.`,
+        `What was unfinished: "${unfinished}"`,
+        `Greet them like you'd greet a student who walked back into your room after lunch — casual, warm, and aware. Reference the specific unfinished work so they know you remember. Not a formal recap.`,
+        `If they want to do something else, roll with it. No guilt about the unfinished stuff.`,
       ];
       // If there's a saved problem state, tell the AI about it
       if (lastProblemState && lastProblemState.problemText) {
-        directives.push(`The student was working on a problem (${lastProblemState.attemptCount} attempt${lastProblemState.attemptCount !== 1 ? 's' : ''}).`);
+        directives.push(`They were working on a problem last time (${lastProblemState.attemptCount} attempt${lastProblemState.attemptCount !== 1 ? 's' : ''}).`);
         if (lastProblemState.misconception) {
-          directives.push(`Their last misconception was: "${lastProblemState.misconception}". Address this if they resume.`);
+          directives.push(`Their sticking point was: "${lastProblemState.misconception}". If they resume, you've had time to think of a better way to explain it — use it.`);
         }
       }
       return {
@@ -187,10 +186,10 @@ function buildOpener(strategy, ctx) {
         suggestedMode: tutorPlan?.currentTarget?.instructionalMode || 'guide',
         directives,
         suggestionChips: [
-          { text: 'Pick up where we left off', message: "Let's continue where we stopped!" },
-          { text: 'Something else today', message: "I'd like to work on something different today" },
-          { text: 'Homework help', message: 'I need help with my homework' },
-          { text: 'Just practice', message: 'Can we just practice some problems?' },
+          { text: 'Yeah, let\'s keep going', message: "Yeah let's keep going where we left off" },
+          { text: 'Can we do something else?', message: "Can we do something different today?" },
+          { text: 'I have homework', message: 'I have homework I need help with' },
+          { text: 'Just wanna practice', message: 'Can I just practice some problems?' },
         ],
       };
     }
@@ -203,21 +202,20 @@ function buildOpener(strategy, ctx) {
         suggestedTopic: courseName,
         suggestedMode: targetSkill?.instructionalMode || 'instruct',
         directives: [
-          `SESSION OPENER: COURSE PROGRESSION. Student is enrolled in ${courseName} (${progress}% complete).`,
+          `Student is working through ${courseName} — they're ${progress}% of the way through.`,
           targetSkill?.skillId
-            ? `Current target: ${targetSkill.displayName || targetSkill.skillId} (mode: ${targetSkill.instructionalMode})`
-            : 'Ready for the next lesson.',
-          `Greet the student and set up today's work.`,
+            ? `Today's target: ${targetSkill.displayName || targetSkill.skillId}. ${targetSkill.instructionalMode === 'instruct' ? 'This is new for them.' : 'They\'ve seen this before — build on it.'}`
+            : 'They\'re ready for the next thing.',
           targetSkill?.instructionalMode === 'instruct'
-            ? `This is a NEW skill for the student. Start with an engaging hook, then begin the instructional sequence.`
-            : `Build on what they already know. Reference their previous work.`,
-          `Keep the opener natural and brief — get into the work quickly.`,
+            ? `Since this is new, start with something that makes them curious — a surprising fact, a "what if" question, a real-world hook. Don't just announce the topic.`
+            : `Reference what they already know. "Remember when we did [X]? This is the next step."`,
+          `Keep the greeting short — a quick hello and get into the work. Students come here to learn, not to chat.`,
         ],
         suggestionChips: [
-          { text: "Let's go!", message: "I'm ready to learn!" },
-          { text: 'Review first', message: 'Can we review what we learned last time?' },
-          { text: 'Homework first', message: 'I have homework to do first' },
-          { text: 'Something else', message: "I'd like to work on something else today" },
+          { text: "Let's go!", message: "I'm ready, let's go!" },
+          { text: 'Wait, review first', message: 'Can we review what we did last time first?' },
+          { text: 'I have homework', message: 'Actually I have homework to do first' },
+          { text: 'Something else today', message: "Can we do something else today?" },
         ],
       };
     }
@@ -230,17 +228,16 @@ function buildOpener(strategy, ctx) {
         suggestedTopic: gap.displayName || gap.skillId,
         suggestedMode: 'instruct',
         directives: [
-          `SESSION OPENER: PREREQUISITE REMEDIATION.`,
-          `Before the student can tackle ${targetSkill?.displayName || 'the target skill'}, they need to strengthen: ${gap.displayName || gap.skillId}.`,
-          `Frame this positively: "Before we get to the new stuff, I want to make sure your foundation is solid."`,
-          `Do NOT say "you have a gap" or "you don't know this." Frame as building a bridge.`,
-          `Keep the prerequisite work focused and connect it to where you're headed.`,
+          `Before jumping into ${targetSkill?.displayName || 'the new stuff'}, the student needs a stronger foundation in: ${gap.displayName || gap.skillId}.`,
+          `Frame this positively — not as a gap or deficiency, but as making sure the foundation is strong before building on it. Connect it to where they're headed.`,
+          `If they say they already know it, great — quiz them. If they nail it, skip ahead immediately. Don't waste their time proving what they know.`,
+          `Connect the prerequisite to where you're headed so it doesn't feel random.`,
         ],
         suggestionChips: [
-          { text: 'Sounds good', message: "Sounds good, let's do it!" },
-          { text: 'I know this already', message: 'I actually think I know this — can you quiz me?' },
-          { text: 'Just a quick review', message: 'Can we do a quick review and move on?' },
-          { text: 'Skip to new stuff', message: "I'd rather jump into the new topic" },
+          { text: 'OK sure', message: "OK sounds good, let's do it!" },
+          { text: 'I already know this', message: 'I think I already know this, can you quiz me?' },
+          { text: 'Quick review is fine', message: 'Just a quick review and then the new stuff?' },
+          { text: 'Can we skip ahead?', message: "Can we just go to the new topic?" },
         ],
       };
     }
@@ -252,18 +249,16 @@ function buildOpener(strategy, ctx) {
         suggestedTopic: lastTopic,
         suggestedMode: 'instruct', // Re-teach with a different approach
         directives: [
-          `SESSION OPENER: STRUGGLE PIVOT. Last session was difficult.`,
-          lastTopic ? `Last topic: ${lastTopic}` : '',
-          `Acknowledge that last time was tough without dwelling on it.`,
-          `Offer a fresh approach: "I've been thinking about a different way to explain this."`,
-          `The student should feel like TODAY will be different — not a repeat of yesterday's frustration.`,
-          `If the student wants to try something else entirely, follow their lead.`,
-        ].filter(Boolean),
+          `Last session was a tough one.${lastTopic ? ` They were working on ${lastTopic}.` : ''}`,
+          `Acknowledge it briefly and honestly — don't pretend it didn't happen, but don't dwell on it either.`,
+          `Then pivot with genuine energy — the student needs to feel like YOU prepared, like you went home and thought about how to help them. Because that's what a real tutor does.`,
+          `If they'd rather do something else entirely, follow their lead without any pushback. They need to feel in control after feeling stuck.`,
+        ],
         suggestionChips: [
-          { text: 'Try a different approach', message: "Let's try it a different way!" },
-          { text: 'Start fresh', message: "Can we start from the beginning on this?" },
-          { text: 'Something else', message: "I'd rather work on something different today" },
-          { text: 'I practiced on my own', message: "I actually practiced this on my own and I think I get it now" },
+          { text: 'OK try a new way', message: "OK yeah, try explaining it differently" },
+          { text: 'Start over on this', message: "Can we start from the beginning?" },
+          { text: 'Something else please', message: "Can we work on something different today?" },
+          { text: 'I practiced — test me', message: "I actually practiced on my own, can you test me?" },
         ],
       };
     }
@@ -275,17 +270,16 @@ function buildOpener(strategy, ctx) {
         suggestedTopic: lastTopic,
         suggestedMode: 'strengthen',
         directives: [
-          `SESSION OPENER: BREAKTHROUGH FOLLOW-UP. Student had a breakthrough last session!`,
-          lastTopic ? `Topic: ${lastTopic}` : '',
-          `Acknowledge the breakthrough naturally: "You were on fire last time."`,
-          `Build momentum: push them a little harder today.`,
-          `They're feeling good — capitalize on that confidence.`,
+          `The student had a breakthrough last session!${lastTopic ? ` They were working on ${lastTopic}.` : ''}`,
+          `Reference it naturally — "You were really getting it last time" or "You had a great session yesterday." Don't over-celebrate or make it formal. Just let them know you noticed.`,
+          `They're riding a confidence wave — use it. Push a little harder today. Give them problems that make them stretch. A student who just had a breakthrough WANTS to be challenged.`,
+          `If they want to try something new instead, that's fine too — the confidence transfers.`,
         ].filter(Boolean),
         suggestionChips: [
-          { text: 'Keep going!', message: "I'm ready to keep building on what we learned!" },
-          { text: 'Harder problems', message: 'Give me something challenging!' },
-          { text: 'New topic', message: "I'm ready for something new" },
-          { text: 'Test me', message: 'Quiz me to see if I really remember it' },
+          { text: 'Yeah, keep going!', message: "Yeah let's keep going!" },
+          { text: 'Give me a hard one', message: 'Give me something harder!' },
+          { text: 'Try something new', message: "I wanna try something new" },
+          { text: 'Quiz me', message: 'Quiz me on it!' },
         ],
       };
     }
@@ -298,16 +292,16 @@ function buildOpener(strategy, ctx) {
         suggestedTopic: skillName,
         suggestedMode: 'guide',
         directives: [
-          `SESSION OPENER: REVIEW DUE. Spaced repetition says it's time to review: ${skillName}.`,
-          `Frame as a quick warm-up, not a test: "Let's start with a quick warm-up on something you've learned."`,
-          `If the student remembers it well, move on quickly.`,
-          `If they've forgotten, that's expected — use it as a teaching moment about how memory works.`,
+          `It's been a few days since the student worked on ${skillName} — time for a quick check-in.`,
+          `Frame it casually, like a warm-up — not a test, not a review, just a quick check-in.`,
+          `If they nail it, move on immediately. Don't belabor the review.`,
+          `If they've forgotten some of it, normalize it — forgetting is part of how learning works. Then help them rebuild it quickly.`,
         ],
         suggestionChips: [
-          { text: 'Quick review', message: "Sure, let's do a quick review!" },
-          { text: 'I remember this', message: 'I remember this — just quiz me!' },
-          { text: 'Skip to new stuff', message: "I'd rather work on something new" },
-          { text: 'Homework first', message: 'I have homework to do first' },
+          { text: 'Sure, warm me up', message: "Sure, let's do a quick warm-up!" },
+          { text: 'I remember, quiz me', message: 'I remember this — just quiz me!' },
+          { text: 'New stuff instead', message: "Can we do new stuff instead?" },
+          { text: 'I have homework', message: 'I have homework to do first' },
         ],
       };
     }
@@ -319,15 +313,15 @@ function buildOpener(strategy, ctx) {
         suggestedTopic: null,
         suggestedMode: null,
         directives: [
-          `SESSION OPENER: MILESTONE. Student recently achieved: ${breakthroughs.slice(0, 2).join(', ')}`,
-          `Briefly acknowledge the achievement. Don't over-celebrate — just note it naturally.`,
-          `Then transition to today's work.`,
+          `The student recently hit a milestone: ${breakthroughs.slice(0, 2).join(', ')}`,
+          `Mention it naturally — a quick, genuine nod, not a ceremony. One sentence, then move on.`,
+          `Don't make it the whole conversation. Acknowledge it in one sentence and transition to today's work.`,
         ],
         suggestionChips: [
           { text: "What's next?", message: "What should I work on today?" },
-          { text: 'Keep practicing', message: 'I want to keep practicing what I learned' },
-          { text: 'Something new', message: "I'm ready for something new!" },
-          { text: 'Homework help', message: 'I need help with my homework' },
+          { text: 'More practice', message: 'I want to keep practicing' },
+          { text: 'Teach me something new', message: "Teach me something new!" },
+          { text: 'I have homework', message: 'I need help with my homework' },
         ],
       };
     }
@@ -340,18 +334,18 @@ function buildOpener(strategy, ctx) {
         suggestedTopic: targetSkill?.displayName || null,
         suggestedMode: targetSkill?.instructionalMode || null,
         directives: [
-          `SESSION OPENER: FRESH START. No strong contextual signal — let the student lead.`,
-          `Greet warmly but briefly. Ask what they'd like to work on.`,
+          `No specific context from last time — let the student set the direction.`,
+          `Greet them like a tutor who's genuinely glad to see them. Keep it brief and real. Ask what they want to work on.`,
           targetSkill?.skillId
-            ? `If they don't have a preference, suggest: "${targetSkill.displayName || targetSkill.skillId}" from their plan.`
+            ? `If they don't have a preference, you can suggest ${targetSkill.displayName || targetSkill.skillId} from their learning plan — casually, as an option.`
             : '',
-          `Keep it casual — this is the start of a conversation, not a lecture.`,
+          `This is the start of a conversation. Be warm, be brief, let them talk.`,
         ].filter(Boolean),
         suggestionChips: [
           { text: 'Help with homework', message: 'I need help with my homework' },
-          { text: 'Practice problems', message: 'I want to practice math problems' },
-          { text: 'Learn something new', message: 'Can you teach me something new?' },
-          { text: 'Continue course', message: "Let's continue my course" },
+          { text: 'Practice problems', message: 'Can I practice some problems?' },
+          { text: 'Teach me something new', message: 'Teach me something new!' },
+          { text: 'Continue my course', message: "Let's keep going with my course" },
         ],
       };
     }
@@ -370,15 +364,14 @@ function generateReentryPrompt(context) {
 
   return {
     directives: [
-      `RE-ENTRY: Student returned after being away. Welcome them back briefly.`,
-      lastTopic ? `You were working on: ${lastTopic}. Ask if they want to continue.` : '',
-      `Do NOT repeat the full lesson. Just orient them: "Welcome back! We were working on X."`,
-      `If they seem to have forgotten, do a quick recap (1-2 sentences), then continue.`,
+      `The student stepped away and just came back. Welcome them back naturally. Keep it light.`,
+      lastTopic ? `You were working on ${lastTopic}. Mention it casually and ask if they want to pick back up. Don't lecture them about where they were.` : '',
+      `If they seem fuzzy on what you were doing, give a one-sentence recap and jump back in. Don't re-teach — just orient.`,
     ].filter(Boolean),
     suggestionChips: [
-      { text: 'Continue', message: "Let's keep going!" },
-      { text: 'Quick recap', message: 'Can you remind me where we left off?' },
-      { text: 'Something else', message: "I'd like to switch to something else" },
+      { text: 'Yeah, keep going', message: "Yeah let's keep going!" },
+      { text: 'Where were we?', message: 'Wait, where did we leave off?' },
+      { text: 'Something else', message: "Actually can we do something else?" },
     ],
   };
 }
