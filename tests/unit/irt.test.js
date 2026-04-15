@@ -436,18 +436,28 @@ describe('IRT Core Functions', () => {
 describe('IRT Integration', () => {
   test('full adaptive test simulation', () => {
     // Simulate a student with true ability = 1.0
+    // Use a seeded PRNG so the test is deterministic (not flaky)
     const trueTheta = 1.0;
     const responses = [];
     let currentTheta = 0;
+
+    // Mulberry32 seeded PRNG for reproducible "random" responses
+    let seed = 42;
+    function seededRandom() {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
 
     // Simulate 15 questions
     for (let i = 0; i < 15; i++) {
       // Select problem at current estimate
       const problemDifficulty = currentTheta;
 
-      // Simulate response based on true ability
+      // Simulate response based on true ability using seeded PRNG
       const pCorrect = probabilityCorrect(trueTheta, problemDifficulty);
-      const correct = Math.random() < pCorrect;
+      const correct = seededRandom() < pCorrect;
 
       responses.push({
         difficulty: problemDifficulty,
