@@ -2977,10 +2977,13 @@ function detectDerivative(message) {
 
     // Pattern 1: "derivative of EXPR" or "the derivative of EXPR"
     // Also handles "can you tell me the derivative of...", "what is the derivative of..."
+    // Also handles "derivative of f(x) = EXPR" by stripping the function-definition prefix.
     const derivOfPattern = /(?:(?:can\s+you\s+(?:tell\s+me|find|compute)\s+)?(?:find|what(?:'s|\s+is)|compute|calculate|take)\s+)?(?:the\s+)?derivative\s+of\s+(.+)/i;
     const derivOfMatch = text.match(derivOfPattern);
     if (derivOfMatch) {
-        const cleaned = cleanTrailingText(derivOfMatch[1]);
+        let cleaned = cleanTrailingText(derivOfMatch[1]);
+        // Strip function-definition prefix: "f(x) = 2x^3+4x-7" → "2x^3+4x-7"
+        cleaned = cleaned.replace(/^[a-zA-Z]\w*\s*\(\s*x\s*\)\s*=\s*/, '');
         const terms = parsePolynomialTerms(cleaned);
         if (terms) {
             return { type: 'derivative', terms, raw: cleaned };
@@ -3006,6 +3009,22 @@ function detectDerivative(message) {
         const terms = parsePolynomialTerms(cleaned);
         if (terms) {
             return { type: 'derivative', terms, raw: cleaned };
+        }
+    }
+
+    // Pattern 4: Function definition + derivative mention in same message
+    // Handles tutor phrasings like:
+    //   "g(x) = 2x^3 + 4x - 7. What do you get for the derivative g'(x)?"
+    //   "Let's try f(x) = 5x^2 + 3x - 1. Find the derivative."
+    //   "Consider h(x) = x^4 - 2x^3 + x. What's the derivative?"
+    if (/\bderivative|differentiat/i.test(text)) {
+        const funcDefMatch = text.match(/[a-zA-Z]\w*\s*\(\s*x\s*\)\s*=\s*(.+)/i);
+        if (funcDefMatch) {
+            const cleaned = cleanTrailingText(funcDefMatch[1]);
+            const terms = parsePolynomialTerms(cleaned);
+            if (terms) {
+                return { type: 'derivative', terms, raw: cleaned };
+            }
         }
     }
 
