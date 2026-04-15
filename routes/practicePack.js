@@ -733,9 +733,10 @@ router.get('/generate-for-child', isAuthenticated, async (req, res) => {
     const { childId } = req.query;
     if (!childId) return res.status(400).json({ error: 'childId is required' });
 
-    // Verify parent-child link
+    // Verify parent-child link (parentIds is an array)
     const child = await User.findById(childId);
-    if (!child || String(child.parentId) !== String(parent._id)) {
+    const isLinked = child && (child.parentIds || []).some(pid => String(pid) === String(parent._id));
+    if (!isLinked) {
       return res.status(403).json({ error: 'You can only generate packs for your linked children' });
     }
 
