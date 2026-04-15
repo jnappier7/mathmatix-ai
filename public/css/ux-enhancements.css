@@ -1709,6 +1709,86 @@
 }
 
 /* ============================================================================
+   PAPER PRACTICE SUGGESTION — "Practice on paper?" prompt in chat
+   ============================================================================ */
+.paper-practice-suggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #EBF5FB, #FEF9E7);
+  border: 1px solid #AED6F1;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  animation: annotationSlideIn 0.3s ease-out;
+}
+
+.pps-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.pps-text {
+  flex: 1;
+  min-width: 150px;
+  color: #1B4F72;
+  line-height: 1.4;
+}
+
+.pps-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.pps-btn:hover {
+  transform: translateY(-1px);
+}
+
+.pps-btn-yes {
+  background: #2E86C1;
+  color: #fff;
+}
+
+.pps-btn-yes:hover {
+  background: #2471A3;
+}
+
+.pps-btn-dismiss {
+  background: transparent;
+  color: #85929E;
+  border: 1px solid #D5DBDB;
+}
+
+.pps-btn-dismiss:hover {
+  background: #F2F3F4;
+}
+
+[data-theme="dark"] .paper-practice-suggestion {
+  background: linear-gradient(135deg, #1B2631, #1C2833);
+  border-color: #2E4053;
+}
+
+[data-theme="dark"] .pps-text {
+  color: #AED6F1;
+}
+
+[data-theme="dark"] .pps-btn-dismiss {
+  color: #ABB2B9;
+  border-color: #4D5656;
+}
+
+[data-theme="dark"] .pps-btn-dismiss:hover {
+  background: #2C3E50;
+}
+
+/* ============================================================================
    PARALLEL EXAMPLE BADGE — "similar problem, different numbers" indicator
    ============================================================================ */
 .parallel-example-badge {

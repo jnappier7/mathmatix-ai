@@ -30,18 +30,52 @@
 
 .practice-pack-controls {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  justify-content: center;
+  align-items: stretch;
+}
+
+.practice-pack-row {
+  display: flex;
+  gap: 0.5rem;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .practice-pack-select {
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   border: 1px solid var(--clr-border, #ddd);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   background: #fff;
+  width: 100%;
+}
+
+.practice-pack-count-select {
+  flex: 1;
+  min-width: 0;
+}
+
+.practice-pack-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--clr-text-secondary, #666);
+  white-space: nowrap;
+  cursor: pointer;
+  padding: 0.45rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--clr-border, #ddd);
+  background: #fff;
+}
+
+.practice-pack-checkbox-label input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.practice-pack-controls .btn {
+  margin-top: 0.25rem;
 }
 
 .practice-pack-status {
@@ -62,14 +96,83 @@
   color: var(--clr-error, #d32f2f);
 }
 
+/* ---- Parent Dashboard Practice Pack ---- */
+.parent-practice-pack {
+  background: var(--clr-surface, #f8f9ff);
+  border: 1px solid var(--clr-border, #e0e0e0);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.parent-practice-pack summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+}
+
+.parent-practice-pack summary::-webkit-details-marker { display: none; }
+
+.parent-practice-pack summary::before {
+  content: '📝';
+  font-size: 1.2rem;
+}
+
+.parent-practice-pack[open] summary {
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--clr-border, #e0e0e0);
+  padding-bottom: 0.5rem;
+}
+
+.parent-pp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.parent-pp-controls select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--clr-border, #ddd);
+  font-size: 0.85rem;
+  background: #fff;
+}
+
+.parent-pp-controls .btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+
+.parent-pp-status {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  min-height: 1rem;
+}
+
 /* Mobile */
 @media (max-width: 480px) {
-  .practice-pack-controls {
+  .practice-pack-row {
     flex-direction: column;
   }
 
   .practice-pack-select,
-  .practice-pack-controls .btn {
+  .practice-pack-controls .btn,
+  .practice-pack-checkbox-label {
+    width: 100%;
+  }
+
+  .parent-pp-controls {
+    flex-direction: column;
+  }
+
+  .parent-pp-controls select,
+  .parent-pp-controls .btn-sm {
     width: 100%;
   }
 }

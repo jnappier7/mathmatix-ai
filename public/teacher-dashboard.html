@@ -4953,6 +4953,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               <i class="fas fa-chalkboard" aria-hidden="true"></i>
               <span>My Classes</span>
             </button>
+            <button class="quick-action-btn" id="qa-practice-packs" title="Generate differentiated printable worksheets for your class" aria-label="Practice Packs">
+              <i class="fas fa-print" aria-hidden="true"></i>
+              <span>Practice Packs</span>
+            </button>
           </div>
           <button class="quick-action-btn" id="qa-refresh" title="Refresh all data" aria-label="Refresh Data" style="width:100%;margin-top:8px;flex-direction:row;justify-content:center;">
             <i class="fas fa-sync-alt" aria-hidden="true"></i>
@@ -5463,6 +5467,164 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/logout.js"></script>
   <script src="/js/role-switcher.js"></script>
   <script src="/js/storage-utils.js"></script>
+  <!-- Practice Pack Modal for Teachers -->
+  <div id="practice-pack-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content" style="max-width:520px;">
+      <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #e9ecef;">
+        <h3 style="margin:0;font-size:1.1rem;"><i class="fas fa-print"></i> Class Practice Packs</h3>
+        <button id="close-practice-pack-modal" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;">&times;</button>
+      </div>
+      <div style="padding:20px;">
+        <p style="font-size:0.9em;color:#666;margin-bottom:16px;">Generate differentiated printable worksheets. Students are auto-grouped by level into 3 tiers.</p>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label style="font-size:0.85em;font-weight:600;display:block;margin-bottom:4px;">Skill / Topic</label>
+            <input type="text" id="pp-skill-input" placeholder="e.g. fractions, linear-equations" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9em;" />
+          </div>
+          <div style="display:flex;gap:12px;">
+            <div style="flex:1;">
+              <label style="font-size:0.85em;font-weight:600;display:block;margin-bottom:4px;">Problems</label>
+              <select id="pp-modal-count" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:0.9em;">
+                <option value="5">5 problems</option>
+                <option value="8" selected>8 problems</option>
+                <option value="12">12 problems</option>
+                <option value="15">15 problems</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <label style="font-size:0.85em;font-weight:600;display:block;margin-bottom:4px;">Tier</label>
+              <select id="pp-modal-tier" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:0.9em;">
+                <option value="below">Approaching</option>
+                <option value="onLevel" selected>On Level</option>
+                <option value="above">Advanced</option>
+              </select>
+            </div>
+          </div>
+          <label style="font-size:0.85em;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="pp-modal-answer-key" checked />
+            Include answer key (separate page)
+          </label>
+        </div>
+
+        <div id="pp-modal-status" style="font-size:0.85em;margin-top:12px;min-height:1.2em;"></div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <button id="pp-modal-generate" class="btn" style="flex:1;background:#27ae60;color:white;padding:10px;border-radius:8px;font-weight:600;border:none;cursor:pointer;">
+            <i class="fas fa-download"></i> Download PDF
+          </button>
+          <button id="pp-modal-generate-all" class="btn" style="flex:1;background:#3498db;color:white;padding:10px;border-radius:8px;font-weight:600;border:none;cursor:pointer;">
+            <i class="fas fa-layer-group"></i> All 3 Tiers
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Teacher Practice Pack Modal Logic
+  (function() {
+    const modal = document.getElementById('practice-pack-modal');
+    const closeBtn = document.getElementById('close-practice-pack-modal');
+    const openBtn = document.getElementById('qa-practice-packs');
+    const generateBtn = document.getElementById('pp-modal-generate');
+    const generateAllBtn = document.getElementById('pp-modal-generate-all');
+    const statusEl = document.getElementById('pp-modal-status');
+
+    if (openBtn && modal) {
+      openBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
+    }
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+    }
+    if (modal) {
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    }
+
+    async function downloadTierPDF(skillId, tier, count, answerKey, btnEl) {
+      const params = new URLSearchParams({ skillId, tier, count });
+      if (answerKey) params.set('answerKey', 'true');
+
+      const resp = await fetch(`/api/practice-pack/class-generate-pdf?${params}`, { credentials: 'include' });
+      if (!resp.ok) { const err = await resp.json().catch(() => ({})); throw new Error(err.error || 'Generation failed'); }
+
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `class-pack-${skillId}-${tier}-${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function getModalValues() {
+      const skillId = document.getElementById('pp-skill-input')?.value?.trim();
+      const count = document.getElementById('pp-modal-count')?.value || '8';
+      const tier = document.getElementById('pp-modal-tier')?.value || 'onLevel';
+      const answerKey = document.getElementById('pp-modal-answer-key')?.checked;
+      return { skillId, count, tier, answerKey };
+    }
+
+    if (generateBtn) {
+      generateBtn.addEventListener('click', async () => {
+        const { skillId, count, tier, answerKey } = getModalValues();
+        if (!skillId) { statusEl.textContent = 'Please enter a skill ID.'; statusEl.style.color = '#d32f2f'; return; }
+
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
+        statusEl.textContent = 'Building worksheet...';
+        statusEl.style.color = '#4a6cf7';
+
+        try {
+          await downloadTierPDF(skillId, tier, count, answerKey, generateBtn);
+          statusEl.textContent = 'PDF downloaded!';
+          statusEl.style.color = '#2e7d32';
+        } catch (err) {
+          console.error('[PracticePack] Teacher generation failed:', err);
+          statusEl.textContent = err.message;
+          statusEl.style.color = '#d32f2f';
+        } finally {
+          generateBtn.disabled = false;
+          generateBtn.innerHTML = '<i class="fas fa-download"></i> Download PDF';
+        }
+      });
+    }
+
+    if (generateAllBtn) {
+      generateAllBtn.addEventListener('click', async () => {
+        const { skillId, count, answerKey } = getModalValues();
+        if (!skillId) { statusEl.textContent = 'Please enter a skill ID.'; statusEl.style.color = '#d32f2f'; return; }
+
+        generateAllBtn.disabled = true;
+        generateAllBtn.textContent = 'Generating 3 tiers...';
+        statusEl.style.color = '#4a6cf7';
+
+        const tiers = ['below', 'onLevel', 'above'];
+        let completed = 0;
+
+        try {
+          for (const tier of tiers) {
+            statusEl.textContent = `Generating ${tier === 'below' ? 'Approaching' : tier === 'onLevel' ? 'On Level' : 'Advanced'} tier (${completed + 1}/3)...`;
+            await downloadTierPDF(skillId, tier, count, answerKey, generateAllBtn);
+            completed++;
+          }
+          statusEl.textContent = 'All 3 PDFs downloaded!';
+          statusEl.style.color = '#2e7d32';
+        } catch (err) {
+          console.error('[PracticePack] Teacher generation failed:', err);
+          statusEl.textContent = `${completed}/3 downloaded. Error: ${err.message}`;
+          statusEl.style.color = '#d32f2f';
+        } finally {
+          generateAllBtn.disabled = false;
+          generateAllBtn.innerHTML = '<i class="fas fa-layer-group"></i> All 3 Tiers';
+        }
+      });
+    }
+  })();
+  </script>
+
   <script src="/js/auto-logout.js"></script>
   <script src="/js/teacher-live-feed.js"></script>
   <script src="/js/teacher-live-monitor.js"></script>

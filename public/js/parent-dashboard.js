@@ -772,6 +772,26 @@ document.addEventListener("DOMContentLoaded", async () => {
               </div>
             </div>
 
+            <!-- Practice Pack for this child -->
+            <details class="parent-practice-pack" id="practice-pack-${progress._id}">
+              <summary>Print Practice Pack for ${progress.firstName || 'Child'}</summary>
+              <div class="parent-pp-controls">
+                <select class="pp-count-select" data-child-id="${progress._id}">
+                  <option value="5">5 problems</option>
+                  <option value="8" selected>8 problems</option>
+                  <option value="12">12 problems</option>
+                </select>
+                <label style="font-size:0.85em;display:flex;align-items:center;gap:4px;cursor:pointer;">
+                  <input type="checkbox" class="pp-answer-key-cb" data-child-id="${progress._id}" />
+                  Answer key
+                </label>
+                <button class="btn btn-sm btn-primary pp-generate-btn" data-child-id="${progress._id}" data-child-name="${progress.firstName || 'Student'}">
+                  🖨️ Print
+                </button>
+              </div>
+              <div class="parent-pp-status" id="pp-status-${progress._id}"></div>
+            </details>
+
             ${accommodationsHTML}
             ${goalsHTML}
 
@@ -783,6 +803,47 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
         childrenListContainer.appendChild(card);
+
+        // Wire up Practice Pack generate button for this child
+        const ppBtn = card.querySelector('.pp-generate-btn');
+        if (ppBtn) {
+            ppBtn.addEventListener('click', async (e) => {
+                const childId = e.currentTarget.dataset.childId;
+                const childName = e.currentTarget.dataset.childName;
+                const countSelect = card.querySelector('.pp-count-select');
+                const answerKeyCb = card.querySelector('.pp-answer-key-cb');
+                const statusEl = document.getElementById(`pp-status-${childId}`);
+                const count = parseInt(countSelect?.value) || 8;
+                const answerKey = answerKeyCb?.checked || false;
+
+                e.currentTarget.disabled = true;
+                e.currentTarget.textContent = 'Generating...';
+                if (statusEl) { statusEl.textContent = 'Creating personalized worksheet...'; statusEl.style.color = '#4a6cf7'; }
+
+                try {
+                    const params = new URLSearchParams({ childId, count });
+                    if (answerKey) params.set('answerKey', 'true');
+                    const resp = await fetch(`/api/practice-pack/generate-for-child?${params}`, { credentials: 'include' });
+                    if (!resp.ok) { const err = await resp.json().catch(() => ({})); throw new Error(err.error || 'Generation failed'); }
+                    const blob = await resp.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `practice-pack-${childName}-${Date.now()}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    if (statusEl) { statusEl.textContent = 'PDF downloaded! Print it for ' + childName + '.'; statusEl.style.color = '#2e7d32'; }
+                } catch (err) {
+                    console.error('[PracticePack] Parent generation failed:', err);
+                    if (statusEl) { statusEl.textContent = err.message || 'Something went wrong.'; statusEl.style.color = '#d32f2f'; }
+                } finally {
+                    e.currentTarget.disabled = false;
+                    e.currentTarget.textContent = '🖨️ Print';
+                }
+            });
+        }
 
         // Fetch and render learning analytics for this child
         if (window.AnalyticsCharts) {
