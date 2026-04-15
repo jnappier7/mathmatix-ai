@@ -201,8 +201,20 @@ async function generateWorksheetHTML(user, problems, options = {}) {
     const key = p.skillId || 'general';
     if (!skillGroups[key]) skillGroups[key] = [];
     skillGroups[key].push(p);
-    if (p.skillId && !skillNames[key]) {
-      skillNames[key] = p.skillName || p.skillId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  // Look up display names for skills used in this pack
+  const skillIds = Object.keys(skillGroups).filter(k => k !== 'general');
+  if (skillIds.length > 0) {
+    const skills = await Skill.find({ skillId: { $in: skillIds } }).select('skillId displayName').lean();
+    for (const s of skills) {
+      skillNames[s.skillId] = s.displayName;
+    }
+  }
+  // Fallback: title-case the skillId for any that weren't found
+  for (const sid of skillIds) {
+    if (!skillNames[sid]) {
+      skillNames[sid] = sid.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
   }
 
