@@ -299,6 +299,27 @@ html, body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Problem divider — separates multiple problems on the board */
+.vt-step-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+  padding: 0 8px;
+}
+.vt-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(18, 179, 179, 0.25), transparent);
+}
+.vt-divider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(18, 179, 179, 0.4);
+  box-shadow: 0 0 6px rgba(18, 179, 179, 0.3);
+}
+
 /* Graph canvas */
 .vt-graph-canvas {
   width: 100%;

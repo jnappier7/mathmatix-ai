@@ -819,63 +819,78 @@
   /**
    * Merge incoming math steps into the cumulative board.
    *
-   * The LLM is instructed to return ALL steps each turn (full board state),
-   * but sometimes it forgets earlier steps. This function protects against
-   * that by keeping a client-side accumulator:
+   * The board is a PERSISTENT WHITEBOARD — it NEVER erases previous work.
+   * When a new problem arrives, a visual divider is inserted and the new
+   * steps are appended. All equations, slopes, steps from the entire
+   * session remain visible so the student can scroll back.
    *
-   * - If the LLM sent a superset of our board (starts with the same steps),
-   *   trust it as the new canonical board state.
-   * - If the LLM sent fewer steps than we have but they overlap at the start,
-   *   keep our extras and append any truly new steps from the LLM.
-   * - If the LLM sent completely new steps (no overlap), append them —
-   *   they're probably a new problem or a continuation.
-   *
-   * Deduplication is by normalized LaTeX content.
+   * The LLM sends the full step list for the CURRENT problem each turn.
+   * This function finds what's new and appends it to the cumulative board.
    */
   function mergeBoardSteps(incomingSteps) {
     if (!incomingSteps || incomingSteps.length === 0) return state.boardSteps;
 
     const normalize = (latex) => (latex || '').replace(/\s+/g, '').trim();
-    const boardLatex = state.boardSteps.map(s => normalize(s.latex));
+
+    // Get only the real (non-divider) steps on the board
+    const realBoardSteps = state.boardSteps.filter(s => !s._divider);
+    const boardLatex = realBoardSteps.map(s => normalize(s.latex));
     const incomingLatex = incomingSteps.map(s => normalize(s.latex));
 
-    // Check: does incoming start with the same sequence as our board?
-    let overlapLen = 0;
-    for (let i = 0; i < Math.min(boardLatex.length, incomingLatex.length); i++) {
-      if (boardLatex[i] === incomingLatex[i]) {
-        overlapLen = i + 1;
-      } else {
-        break;
+    // Find how many incoming steps match the TAIL of our board (current problem overlap)
+    // The LLM sends the full current problem each turn, so overlapping steps
+    // will appear at the end of our board.
+    let tailOverlap = 0;
+    if (realBoardSteps.length > 0 && incomingSteps.length > 0) {
+      // Walk backwards from the end of the board to find where the incoming
+      // sequence starts matching
+      for (let startIdx = Math.max(0, realBoardSteps.length - incomingSteps.length);
+           startIdx < realBoardSteps.length; startIdx++) {
+        let match = true;
+        const remaining = realBoardSteps.length - startIdx;
+        const toCheck = Math.min(remaining, incomingSteps.length);
+        for (let j = 0; j < toCheck; j++) {
+          if (boardLatex[startIdx + j] !== incomingLatex[j]) {
+            match = false;
+            break;
+          }
+        }
+        if (match && toCheck > 0) {
+          tailOverlap = toCheck;
+          break;
+        }
       }
     }
 
-    if (overlapLen > 0 && incomingSteps.length >= state.boardSteps.length) {
-      // LLM sent a superset or equal set — trust it as canonical
-      state.boardSteps = incomingSteps.slice();
-    } else if (overlapLen > 0) {
-      // LLM sent fewer steps but they overlap — keep our extras, append new
-      const newSteps = incomingSteps.slice(overlapLen).filter(
+    if (tailOverlap > 0) {
+      // The LLM resent existing steps plus potentially new ones.
+      // Append only the genuinely new steps after the overlap.
+      const newSteps = incomingSteps.slice(tailOverlap).filter(
         s => !boardLatex.includes(normalize(s.latex))
       );
-      state.boardSteps = state.boardSteps.concat(newSteps);
+      if (newSteps.length > 0) {
+        state.boardSteps = state.boardSteps.concat(newSteps);
+      }
     } else {
-      // No overlap at start — check if incoming steps are already on our board
+      // No tail overlap — these steps don't continue the current board tail.
+      // Filter out any steps already on the board (dedup).
       const genuinelyNew = incomingSteps.filter(
         s => !boardLatex.includes(normalize(s.latex))
       );
-      if (genuinelyNew.length === incomingSteps.length && incomingSteps.length >= 1) {
-        // Completely different steps — likely a new problem. Check if LLM
-        // sent a "Given" or first step, signaling a fresh board.
-        const firstLabel = (incomingSteps[0].label || '').toLowerCase();
-        if (firstLabel === 'given' || firstLabel === 'start' || firstLabel === 'problem') {
-          // New problem — replace the board
-          state.boardSteps = incomingSteps.slice();
-        } else {
-          // Continuation — append
-          state.boardSteps = state.boardSteps.concat(genuinelyNew);
+
+      if (genuinelyNew.length > 0) {
+        // If the board already has content and this looks like a new problem,
+        // insert a visual divider so the student sees a clear separation.
+        if (realBoardSteps.length > 0) {
+          const firstLabel = (genuinelyNew[0].label || '').toLowerCase();
+          const isNewProblem = firstLabel === 'given' || firstLabel === 'start'
+            || firstLabel === 'problem' || firstLabel.startsWith('problem');
+          // Also treat it as new work if there's zero overlap at all
+          const noOverlapAtAll = genuinelyNew.length === incomingSteps.length;
+          if (isNewProblem || noOverlapAtAll) {
+            state.boardSteps.push({ _divider: true, label: genuinelyNew[0].label || 'New Problem' });
+          }
         }
-      } else {
-        // Partial overlap in the middle — append only new ones
         state.boardSteps = state.boardSteps.concat(genuinelyNew);
       }
     }
@@ -902,13 +917,30 @@
     // Render full board with minimal delay
     const renderDelay = existing.length > 0 ? 160 : 0;
     setTimeout(() => {
+      // Count real (non-divider) steps for "new" animation detection
+      const realSteps = board.filter(s => !s._divider);
+      const realIncoming = steps.filter(s => !s._divider);
+      const newStartIdx = realSteps.length - realIncoming.length;
+      let realIdx = 0;
+
       board.forEach((step, i) => {
+        // Render dividers as visual separators between problems
+        if (step._divider) {
+          const divEl = document.createElement('div');
+          divEl.className = 'vt-step-divider';
+          divEl.innerHTML = `<span class="vt-divider-line"></span><span class="vt-divider-dot"></span><span class="vt-divider-line"></span>`;
+          dom.mathDisplay.appendChild(divEl);
+          return;
+        }
+
         const el = document.createElement('div');
         el.className = 'vt-math-step';
-        if (i === board.length - 1) el.classList.add('highlighted');
-        // Only animate new steps (skip stagger for already-seen ones)
-        const isNew = i >= board.length - steps.length;
-        el.style.animationDelay = isNew ? `${(i - (board.length - steps.length)) * 80}ms` : '0ms';
+        // Highlight the most recent real step
+        if (realIdx === realSteps.length - 1) el.classList.add('highlighted');
+        // Only animate new steps
+        const isNew = realIdx >= newStartIdx;
+        el.style.animationDelay = isNew ? `${(realIdx - newStartIdx) * 80}ms` : '0ms';
+        realIdx++;
 
         let html = '';
         if (step.label) {

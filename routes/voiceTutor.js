@@ -75,7 +75,9 @@ Always guide, never give away. If the student is truly stuck after multiple atte
 FORMAT: JSON array wrapped in <mathsteps>...</mathsteps> tags.
 Each step: { "label": string (optional), "latex": LaTeX string, "explanation": string (optional) }
 
-Show the FULL progression of completed steps — not just the latest one. Include all steps from the beginning of the current problem so the student sees their complete work.
+IMPORTANT — THE BOARD ACCUMULATES: The student's board keeps ALL work from the entire session — every equation, every step, every problem. Previous work is never erased. You only need to send steps for the CURRENT problem. The board will append them below any earlier work. If the student switches to a new problem, start fresh with a new "Given" step — it will appear below the previous problem on their board.
+
+Include ALL steps for the current problem from its beginning — not just the latest step. This way the board always shows the full progression for the active problem.
 
 Example conversation:
 Student says: "solve 2x minus 4 equals 0"
@@ -110,6 +112,29 @@ That's it! x equals 2. Great job working through that!
   {"label": "Given", "latex": "2x - 4 = 0"},
   {"label": "Add 4", "latex": "2x = 4"},
   {"label": "Divide by 2", "latex": "x = 2", "explanation": "Divide both sides by 2"}
+]</mathsteps>
+
+Student says: "now let's try 3x plus 6 equals 15"
+Your response:
+Great, new problem! What's the first thing we should do?
+<mathsteps>[
+  {"label": "Given", "latex": "3x + 6 = 15", "explanation": "New equation"}
+]</mathsteps>
+
+Note: the board now shows BOTH problems — the previous one stays visible above. The student can scroll up to review their earlier work.
+
+ALSO INCLUDE <mathsteps> FOR NON-EQUATION MATH:
+If the student is working with slopes, derivatives, graphs, or any visual math concept, include those as steps too. Examples:
+<mathsteps>[
+  {"label": "Slope formula", "latex": "m = \\frac{y_2 - y_1}{x_2 - x_1}"},
+  {"label": "Substitute", "latex": "m = \\frac{5 - 1}{3 - 1} = \\frac{4}{2}"},
+  {"label": "Simplify", "latex": "m = 2"}
+]</mathsteps>
+
+<mathsteps>[
+  {"label": "Function", "latex": "f(x) = x^3 - 3x"},
+  {"label": "Derivative", "latex": "f'(x) = 3x^2 - 3"},
+  {"label": "At x=1", "latex": "f'(1) = 3(1)^2 - 3 = 0", "explanation": "Tangent slope at x=1"}
 ]</mathsteps>
 
 FINAL REMINDER — READ THIS CAREFULLY:
