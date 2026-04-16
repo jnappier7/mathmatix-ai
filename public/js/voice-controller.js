@@ -339,6 +339,27 @@ class VoiceController {
     }
 
     /**
+     * Detect the best supported audio MIME type for MediaRecorder.
+     * Safari/iOS does not support audio/webm — falls back to mp4 or default.
+     */
+    getSupportedMimeType() {
+        const types = [
+            'audio/webm;codecs=opus',
+            'audio/webm',
+            'audio/mp4;codecs=opus',
+            'audio/mp4',
+            'audio/ogg;codecs=opus',
+            'audio/ogg',
+        ];
+        for (const type of types) {
+            if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(type)) {
+                return type;
+            }
+        }
+        return ''; // Let browser choose default
+    }
+
+    /**
      * Check if user is currently typing in an input field
      * Prevents spacebar from activating voice when typing
      * @param {HTMLElement} target - The event target element
@@ -417,10 +438,9 @@ class VoiceController {
             this.isListening = true;
             this.updateUI('listening');
 
-            // Setup MediaRecorder
-            this.mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'audio/webm;codecs=opus'
-            });
+            // Setup MediaRecorder with best supported MIME type
+            const mimeType = this.getSupportedMimeType();
+            this.mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
 
             const audioChunks = [];
 
@@ -432,8 +452,9 @@ class VoiceController {
 
             this.mediaRecorder.onstop = async () => {
                 console.log('🛑 [Voice] Recording stopped, audio chunks:', audioChunks.length);
-                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                console.log('📦 [Voice] Audio blob size:', audioBlob.size, 'bytes');
+                const recordedType = this.mediaRecorder.mimeType || 'audio/webm';
+                const audioBlob = new Blob(audioChunks, { type: recordedType });
+                console.log('📦 [Voice] Audio blob size:', audioBlob.size, 'bytes, type:', recordedType);
                 await this.sendAudioToBackend(audioBlob);
 
                 // Stop all tracks
@@ -575,6 +596,7 @@ class VoiceController {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         audio: base64Audio,
+                        mimeType: audioBlob.type || 'audio/webm',
                         boardContext: this.getBoardContext()
                     })
                 });
@@ -582,9 +604,8 @@ class VoiceController {
                 console.log('📥 [Voice] Response received, status:', response.status);
 
                 if (!response.ok) {
-                    const errorData = await response.json();
+                    const errorData = await response.json().catch(() => ({}));
                     // COMPLIANCE: Under-13 users blocked from third-party voice chat.
-                    // Show a clear message and stop the voice session.
                     if (response.status === 403 && errorData.useWebSpeech) {
                         console.warn('🔇 [Voice] Under-13 user blocked from voice chat. Stopping.');
                         this.updateUI('idle');
@@ -594,53 +615,18 @@ class VoiceController {
                         }
                         return;
                     }
-                    console.error('❌ [Voice] Server error:', errorData);
-                    console.error('❌ [Voice] Error message:', errorData.message);
-                    console.error('❌ [Voice] Error details:', errorData.details);
                     throw new Error(errorData.message || errorData.error || 'Server error');
                 }
 
-                const data = await response.json();
-                console.log('📝 [Voice] Response data:', data);
-
-                if (data.transcription) {
-                    console.log('📝 Transcription:', data.transcription);
-
-                    // Display user's message in chat
-                    if (window.appendMessage) {
-                        window.appendMessage(data.transcription, 'user');
-                    }
+                // Handle NDJSON streaming response
+                const contentType = response.headers.get('content-type') || '';
+                if (contentType.includes('application/x-ndjson')) {
+                    await this.processStreamedResponse(response);
+                } else {
+                    // Legacy JSON fallback
+                    const data = await response.json();
+                    await this.handleLegacyResponse(data);
                 }
-
-                if (data.response) {
-                    // Process voice commands if present
-                    if (data.boardActions && this.config.enableBoardCommands) {
-                        await this.executeBoardActions(data.boardActions);
-                    }
-
-                    // Display AI response in chat
-                    if (window.appendMessage) {
-                        window.appendMessage(data.response, 'ai', null, data.isMasteryQuiz);
-                    }
-
-                    // Speak AI response (TTS audio with tutor voice)
-                    if (data.audioUrl) {
-                        await this.playAIResponse(data.audioUrl);
-                    }
-                }
-
-                // Apply board context for spatial anchoring
-                if (data.boardContext && window.chatBoardController) {
-                    const messageElements = document.querySelectorAll('.message.ai');
-                    const latestMessage = messageElements[messageElements.length - 1];
-                    if (latestMessage) {
-                        window.chatBoardController.enhanceChatMessage(
-                            latestMessage, 'ai', data.boardContext
-                        );
-                    }
-                }
-
-                this.updateUI('idle');
 
             };
 
@@ -723,6 +709,106 @@ class VoiceController {
             this.currentAudio = null;
             this.updateUI('error');
         }
+    }
+
+    /**
+     * Process NDJSON streamed response — shows transcription and text immediately,
+     * plays audio only when ready. Much lower perceived latency.
+     */
+    async processStreamedResponse(response) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let responseText = '';
+        let boardContextData = null;
+        let gotAudio = false;
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+
+            let newlineIdx;
+            while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
+                const line = buffer.slice(0, newlineIdx).trim();
+                buffer = buffer.slice(newlineIdx + 1);
+                if (!line) continue;
+
+                let phase;
+                try { phase = JSON.parse(line); } catch (e) { continue; }
+
+                if (phase.phase === 'transcription' && phase.transcription) {
+                    if (window.appendMessage) {
+                        window.appendMessage(phase.transcription, 'user');
+                    }
+
+                } else if (phase.phase === 'response') {
+                    responseText = phase.response || '';
+                    boardContextData = phase.boardContext || null;
+
+                    if (phase.boardActions && this.config.enableBoardCommands) {
+                        this.executeBoardActions(phase.boardActions);
+                    }
+
+                    if (responseText && window.appendMessage) {
+                        window.appendMessage(responseText, 'ai');
+                    }
+
+                    // Apply board context
+                    if (boardContextData && window.chatBoardController) {
+                        const messageElements = document.querySelectorAll('.message.ai');
+                        const latestMessage = messageElements[messageElements.length - 1];
+                        if (latestMessage) {
+                            window.chatBoardController.enhanceChatMessage(latestMessage, 'ai', boardContextData);
+                        }
+                    }
+
+                } else if (phase.phase === 'audio') {
+                    gotAudio = true;
+                    if (phase.audioUrl) {
+                        await this.playAIResponse(phase.audioUrl);
+                    } else {
+                        this.updateUI('idle');
+                    }
+
+                } else if (phase.phase === 'error') {
+                    throw new Error(phase.message || 'Voice processing failed');
+                }
+            }
+        }
+
+        if (!gotAudio) {
+            this.updateUI('idle');
+        }
+    }
+
+    /**
+     * Handle legacy (non-streaming) JSON response — backwards compatibility
+     */
+    async handleLegacyResponse(data) {
+        if (data.transcription && window.appendMessage) {
+            window.appendMessage(data.transcription, 'user');
+        }
+        if (data.response) {
+            if (data.boardActions && this.config.enableBoardCommands) {
+                await this.executeBoardActions(data.boardActions);
+            }
+            if (window.appendMessage) {
+                window.appendMessage(data.response, 'ai', null, data.isMasteryQuiz);
+            }
+            if (data.audioUrl) {
+                await this.playAIResponse(data.audioUrl);
+            }
+        }
+        if (data.boardContext && window.chatBoardController) {
+            const messageElements = document.querySelectorAll('.message.ai');
+            const latestMessage = messageElements[messageElements.length - 1];
+            if (latestMessage) {
+                window.chatBoardController.enhanceChatMessage(latestMessage, 'ai', data.boardContext);
+            }
+        }
+        this.updateUI('idle');
     }
 
     // Stop AI speaking (for interruption)

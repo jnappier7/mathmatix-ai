@@ -18,6 +18,19 @@ const crypto = require('crypto');
 
 const VOICE_MODEL = 'gpt-4o-mini';
 
+// Map client MIME types to file extensions for Whisper API
+const MIME_TO_EXT = {
+  'audio/webm;codecs=opus': '.webm',
+  'audio/webm': '.webm',
+  'audio/mp4;codecs=opus': '.mp4',
+  'audio/mp4': '.mp4',
+  'audio/ogg;codecs=opus': '.ogg',
+  'audio/ogg': '.ogg',
+  'audio/wav': '.wav',
+  'audio/mpeg': '.mp3',
+  'audio/x-m4a': '.m4a',
+};
+
 // Voice-specific system instructions appended to the base tutor prompt
 const VOICE_TUTOR_INSTRUCTIONS = `
 
@@ -256,7 +269,7 @@ function isUnder13(user) {
 // Phase 3: { phase: "audio", audioUrl }                  — audio plays when ready
 // ═══════════════════════════════════════
 router.post('/process', isAuthenticated, async (req, res) => {
-  const { audio } = req.body;
+  const { audio, mimeType } = req.body;
   const userId = req.user._id;
 
   if (!audio) {
@@ -302,7 +315,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
     // ── Step 1: Transcribe with Whisper (parallel: fetch user data) ──
     const tempDir = path.join(__dirname, '../temp');
     if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
-    const tempPath = path.join(tempDir, `vt_${userId}_${Date.now()}.webm`);
+    const audioExt = MIME_TO_EXT[mimeType] || '.webm';
+    const tempPath = path.join(tempDir, `vt_${userId}_${Date.now()}${audioExt}`);
     fs.writeFileSync(tempPath, audioBuffer);
 
     const langMap = {
@@ -335,8 +349,19 @@ router.post('/process', isAuthenticated, async (req, res) => {
     // ── Step 2: Generate AI response ──
     const aiResponse = await generateResponse(userId, userMessage, user);
 
-    const mathSteps = extractMathSteps(aiResponse);
+    let mathSteps = extractMathSteps(aiResponse);
     const cleanResponse = stripMathSteps(aiResponse);
+
+    // If LLM didn't include <mathsteps> but math was previously discussed,
+    // recover the last known steps from conversation history so the board
+    // doesn't go blank. The LLM is instructed to always include them but
+    // sometimes forgets on encouragement-only responses.
+    if (mathSteps.length === 0) {
+      const lastSteps = await getLastMathSteps(userId);
+      if (lastSteps.length > 0) {
+        mathSteps = lastSteps;
+      }
+    }
 
     // ── Send text + math immediately ──
     sendPhase({ phase: 'response', response: cleanResponse, mathSteps });
@@ -385,8 +410,14 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
 
   try {
     const aiResponse = await generateResponse(userId, text.trim());
-    const mathSteps = extractMathSteps(aiResponse);
+    let mathSteps = extractMathSteps(aiResponse);
     const cleanResponse = stripMathSteps(aiResponse);
+
+    // Recover last math steps if LLM omitted them
+    if (mathSteps.length === 0) {
+      const lastSteps = await getLastMathSteps(userId);
+      if (lastSteps.length > 0) mathSteps = lastSteps;
+    }
 
     let audioUrl = null;
     if (ttsProvider.isConfigured()) {
@@ -515,6 +546,33 @@ async function generateTTS(userId, responseText, preloadedUser) {
   } catch (e) { /* cleanup is best-effort */ }
 
   return `/audio/voice/${filename}`;
+}
+
+/**
+ * Recover the last math steps from conversation history.
+ * Scans recent assistant messages for <mathsteps> blocks.
+ */
+async function getLastMathSteps(userId) {
+  try {
+    const conversation = await Conversation.findOne({ userId })
+      .sort({ updatedAt: -1 })
+      .select({ messages: { $slice: -12 } })
+      .lean();
+    if (!conversation?.messages) return [];
+
+    // Walk backwards through assistant messages to find the most recent mathsteps
+    const assistantMsgs = conversation.messages
+      .filter(m => m.role === 'assistant' && m.content)
+      .reverse();
+
+    for (const msg of assistantMsgs) {
+      const steps = extractMathSteps(msg.content);
+      if (steps.length > 0) return steps;
+    }
+  } catch (e) {
+    console.warn('[VoiceTutor] Failed to recover last math steps:', e.message);
+  }
+  return [];
 }
 
 async function saveToHistory(userId, userMessage, aiResponse) {

@@ -298,11 +298,8 @@
       clearTimeout(startingTimeout);
       if (dom.micBtn) dom.micBtn.style.opacity = '';
 
-      state.mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-          ? 'audio/webm;codecs=opus'
-          : 'audio/webm'
-      });
+      const mimeType = getSupportedMimeType();
+      state.mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
 
       const chunks = [];
       state.mediaRecorder.ondataavailable = (e) => {
@@ -310,7 +307,8 @@
       };
 
       state.mediaRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const recordedType = state.mediaRecorder.mimeType || 'audio/webm';
+        const blob = new Blob(chunks, { type: recordedType });
         // DON'T kill the stream — keep it alive for the next turn
         if (blob.size > 1000) { // Minimum size to avoid empty recordings
           await processVoiceInput(blob);
@@ -512,7 +510,7 @@
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ audio: base64 })
+        body: JSON.stringify({ audio: base64, mimeType: audioBlob.type || 'audio/webm' })
       });
 
       if (!res.ok) {
@@ -577,10 +575,18 @@
 
           // Render math immediately — don't wait for audio
           if (state.showVisuals) {
-            const steps = (phase.mathSteps && phase.mathSteps.length > 0)
-              ? phase.mathSteps
-              : extractEquationsFromText(responseText);
-            if (steps.length > 0) renderMathSteps(steps);
+            if (phase.mathSteps && phase.mathSteps.length > 0) {
+              // Server sent explicit math steps — always render
+              renderMathSteps(phase.mathSteps);
+            } else {
+              // Try client-side extraction as fallback
+              const extracted = extractEquationsFromText(responseText);
+              if (extracted.length > 0) {
+                renderMathSteps(extracted);
+              }
+              // If no steps found and board already has content, keep it
+              // (don't blank the board on encouragement-only responses)
+            }
           }
 
         } else if (phase.phase === 'audio') {
@@ -621,10 +627,12 @@
     if (data.response) addMessage(data.response, 'ai');
 
     if (state.showVisuals) {
-      const steps = (data.mathSteps && data.mathSteps.length > 0)
-        ? data.mathSteps
-        : extractEquationsFromText(data.response || '');
-      if (steps.length > 0) renderMathSteps(steps);
+      if (data.mathSteps && data.mathSteps.length > 0) {
+        renderMathSteps(data.mathSteps);
+      } else {
+        const extracted = extractEquationsFromText(data.response || '');
+        if (extracted.length > 0) renderMathSteps(extracted);
+      }
     }
 
     if (data.audioUrl && !state.muted) {
@@ -661,10 +669,12 @@
 
       if (data.response) addMessage(data.response, 'ai');
       if (state.showVisuals) {
-        const steps = (data.mathSteps && data.mathSteps.length > 0)
-          ? data.mathSteps
-          : extractEquationsFromText(data.response || '');
-        if (steps.length > 0) renderMathSteps(steps);
+        if (data.mathSteps && data.mathSteps.length > 0) {
+          renderMathSteps(data.mathSteps);
+        } else {
+          const extracted = extractEquationsFromText(data.response || '');
+          if (extracted.length > 0) renderMathSteps(extracted);
+        }
       }
 
       if (data.audioUrl && !state.muted) {
@@ -1505,6 +1515,27 @@
   // ═══════════════════════════════════════
   // UTILITIES
   // ═══════════════════════════════════════
+
+  /**
+   * Detect the best supported audio MIME type for MediaRecorder.
+   * Safari/iOS doesn't support audio/webm — falls back to mp4 or default.
+   */
+  function getSupportedMimeType() {
+    const types = [
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/mp4;codecs=opus',
+      'audio/mp4',
+      'audio/ogg;codecs=opus',
+      'audio/ogg',
+    ];
+    for (const type of types) {
+      if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(type)) {
+        return type;
+      }
+    }
+    return ''; // Let browser choose default
+  }
 
   function blobToBase64(blob) {
     return new Promise((resolve, reject) => {

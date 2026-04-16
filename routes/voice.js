@@ -13,6 +13,19 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const { cleanTextForTTS } = require('../utils/mathTTS');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for voice responses
+
+// Map client MIME types to file extensions for Whisper API
+const MIME_TO_EXT = {
+    'audio/webm;codecs=opus': '.webm',
+    'audio/webm': '.webm',
+    'audio/mp4;codecs=opus': '.mp4',
+    'audio/mp4': '.mp4',
+    'audio/ogg;codecs=opus': '.ogg',
+    'audio/ogg': '.ogg',
+    'audio/wav': '.wav',
+    'audio/mpeg': '.mp3',
+    'audio/x-m4a': '.m4a',
+};
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -43,7 +56,7 @@ function isUnder13(user) {
  * 4. Returns transcription, response, audio URL, and board actions
  */
 router.post('/process', isAuthenticated, async (req, res) => {
-    const { audio, boardContext } = req.body;
+    const { audio, mimeType, boardContext } = req.body;
     const userId = req.user._id;
 
     logger.info('[Voice] Received request from user:', userId);
@@ -82,106 +95,98 @@ router.post('/process', isAuthenticated, async (req, res) => {
         });
     }
 
+    // ── Switch to NDJSON streaming for lower perceived latency ──
+    res.setHeader('Content-Type', 'application/x-ndjson');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+
+    function sendPhase(data) {
+        res.write(JSON.stringify(data) + '\n');
+        if (res.flush) res.flush();
+    }
+
     try {
         const startTime = Date.now();
 
         // ============================================
-        // STEP 1: SPEECH-TO-TEXT (Whisper)
+        // STEP 1: SPEECH-TO-TEXT (Whisper) — parallelized with user data
         // ============================================
 
         logger.info('[Voice] Processing audio from user:', userId);
-        const step1Start = Date.now();
 
         // Decode base64 audio
         let audioBuffer;
         try {
             audioBuffer = Buffer.from(audio, 'base64');
-            logger.info('[Voice] Audio decoded, size:', audioBuffer.length, 'bytes');
         } catch (error) {
-            logger.error('[Voice] Failed to decode base64 audio:', error.message);
-            throw new Error('Invalid audio format');
+            sendPhase({ phase: 'error', message: 'Invalid audio format' });
+            return res.end();
         }
 
         // Create temporary file for Whisper API
         const tempDir = path.join(__dirname, '../temp');
         if (!fs.existsSync(tempDir)) {
-            logger.info('[Voice] Creating temp directory:', tempDir);
             fs.mkdirSync(tempDir, { recursive: true });
         }
 
-        const tempAudioPath = path.join(tempDir, `voice_${userId}_${Date.now()}.webm`);
+        const audioExt = MIME_TO_EXT[mimeType] || '.webm';
+        const tempAudioPath = path.join(tempDir, `voice_${userId}_${Date.now()}${audioExt}`);
         fs.writeFileSync(tempAudioPath, audioBuffer);
-        logger.info('[Voice] Saved temp audio file:', tempAudioPath);
 
-        logger.info('[Voice] Calling Whisper API for transcription...');
-
-        // Map preferredLanguage to Whisper ISO-639-1 codes for non-English transcription
-        const userLangPref = await User.findById(userId).select('preferredLanguage').lean();
         const langMap = {
             'English': 'en', 'Spanish': 'es', 'Russian': 'ru', 'Chinese': 'zh',
             'Vietnamese': 'vi', 'Arabic': 'ar', 'Somali': 'so', 'French': 'fr', 'German': 'de'
         };
-        const whisperLang = langMap[userLangPref?.preferredLanguage] || 'en';
 
-        let transcription;
-        try {
-            transcription = await openai.audio.transcriptions.create({
+        // ── Run Whisper + full user data + conversation history in parallel ──
+        const [transcription, user, conversation] = await Promise.all([
+            openai.audio.transcriptions.create({
                 file: fs.createReadStream(tempAudioPath),
                 model: 'whisper-1',
-                language: whisperLang,
-            });
-        } catch (error) {
-            logger.error('[Voice] Whisper API error:', error.message);
-            logger.error('Error details:', error.response?.data || error);
-            // Clean up temp file before throwing
-            if (fs.existsSync(tempAudioPath)) {
-                fs.unlinkSync(tempAudioPath);
-            }
-            throw new Error(`Whisper transcription failed: ${error.message}`);
-        }
+                language: langMap[req.user.preferredLanguage] || 'en',
+            }).finally(() => {
+                if (fs.existsSync(tempAudioPath)) fs.unlinkSync(tempAudioPath);
+            }),
+            User.findById(userId).lean(),
+            Conversation.findOne({ userId })
+                .sort({ updatedAt: -1 })
+                .select({ messages: { $slice: -10 } })
+                .lean()
+        ]);
 
+        const step1Time = Date.now() - startTime;
         const userMessage = transcription.text;
-        const step1Time = Date.now() - step1Start;
         logger.info(`[Voice] Transcription (${step1Time}ms):`, userMessage);
 
-        // Clean up temp file
-        if (fs.existsSync(tempAudioPath)) {
-            fs.unlinkSync(tempAudioPath);
-            logger.info('[Voice] Cleaned up temp audio file');
+        if (!userMessage || userMessage.trim().length === 0) {
+            sendPhase({ phase: 'transcription', transcription: '' });
+            sendPhase({ phase: 'response', response: "I didn't catch that. Could you try again?", boardActions: [] });
+            return res.end();
         }
 
-        if (!userMessage || userMessage.trim().length === 0) {
-            return res.json({
-                transcription: '',
-                response: "I didn't catch that. Could you try again?",
-                audioUrl: null,
-                boardActions: []
-            });
+        if (!user) {
+            sendPhase({ phase: 'error', message: 'User not found' });
+            return res.end();
         }
+
+        // ── Send transcription immediately ──
+        sendPhase({ phase: 'transcription', transcription: userMessage });
 
         // ============================================
         // STEP 2: AI RESPONSE GENERATION
         // ============================================
-
-        // Fetch user data and conversation history
-        const user = await User.findById(userId)
-            .lean();
-
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
 
         // Load tutor configuration
         const TUTOR_CONFIG = require('../utils/tutorConfig');
         const selectedTutorId = user.selectedTutorId || 'default';
         const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
 
-        // Fetch conversation history
-        const conversation = await Conversation.findOne({ userId })
-            .sort({ updatedAt: -1 })
-            .lean();
-
-        const conversationHistory = conversation?.messages || [];
+        const conversationHistory = (conversation?.messages || [])
+            .filter(msg => msg.content && msg.content.trim().length > 0)
+            .map(msg => ({
+                role: msg.role === 'user' ? 'user' : 'assistant',
+                content: msg.content
+            }));
 
         // Add board context to system prompt if available
         let boardContextPrompt = '';
@@ -197,11 +202,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
             boardContextPrompt = `\n\n**WHITEBOARD CONTEXT:** Board is currently empty. You can write equations and draw on the board using voice commands.\n`;
         }
 
-        // Generate system prompt with correct parameters
         const systemPrompt = await generateSystemPrompt(user, tutorProfile);
-        const enhancedSystemPrompt = systemPrompt + boardContextPrompt;
 
-        // Add voice-specific instructions
         const voiceInstructions = `\n\n**VOICE MODE ACTIVE:**
 - Keep responses conversational and brief (1-3 sentences for chat)
 - Use the whiteboard for complex explanations
@@ -215,46 +217,29 @@ router.post('/process', isAuthenticated, async (req, res) => {
 - Reference board objects using [BOARD_REF:objectId]
 `;
 
-        // Build messages array for AI
         const messages = [
-            { role: 'system', content: enhancedSystemPrompt + voiceInstructions },
-            ...conversationHistory.slice(-10)
-                .filter(msg => msg.content && msg.content.trim().length > 0) // Filter out null/empty messages
-                .map(msg => ({
-                    role: msg.role === 'user' ? 'user' : 'assistant',
-                    content: msg.content
-                })),
+            { role: 'system', content: systemPrompt + boardContextPrompt + voiceInstructions },
+            ...conversationHistory,
             { role: 'user', content: userMessage }
         ];
 
         const step2Start = Date.now();
-        logger.info('[Voice] Generating AI response...');
-        logger.info(`[Voice] Message count: ${messages.length} (system + ${messages.length - 2} history + user)`);
-
-        // Validate all messages have content
-        const invalidMessages = messages.filter(m => !m.content || m.content.trim().length === 0);
-        if (invalidMessages.length > 0) {
-            logger.error('[Voice] Found messages with null/empty content:', invalidMessages);
-            throw new Error('Invalid message format: some messages have null or empty content');
-        }
 
         const completion = await callLLM(PRIMARY_CHAT_MODEL, messages, {
-            temperature: 0.7,
-            max_tokens: 1000 // Shorter for voice responses
+            temperature: 0.5,
+            max_tokens: 500
         });
 
         let aiResponseText = completion.choices[0].message.content.trim();
         const step2Time = Date.now() - step2Start;
-
-        logger.info(`[Voice] AI response (${step2Time}ms):`, aiResponseText);
+        logger.info(`[Voice] AI response (${step2Time}ms)`);
 
         // ============================================
-        // STEP 3: PARSE BOARD ACTIONS
+        // STEP 3: PARSE BOARD ACTIONS + SEND RESPONSE
         // ============================================
 
         const boardActions = parseBoardActionsFromResponse(aiResponseText);
 
-        // Remove board action syntax from spoken response
         aiResponseText = aiResponseText
             .replace(/\[WRITE:[^\]]+\]/g, '')
             .replace(/\[CIRCLE:[^\]]+\]/g, '')
@@ -263,132 +248,82 @@ router.post('/process', isAuthenticated, async (req, res) => {
             .replace(/\[CLEAR\]/g, '')
             .trim();
 
-        // Process board-first chat philosophy
         const boardParsed = processAIResponse(aiResponseText);
         aiResponseText = boardParsed.text;
         const boardContextData = boardParsed.boardContext;
 
-        // Clean text for TTS (remove markdown and LaTeX)
-        const ttsText = cleanTextForTTS(aiResponseText);
-
-        // ============================================
-        // STEP 4: TEXT-TO-SPEECH (via ttsProvider — Cartesia)
-        // ============================================
-
-        const step3Start = Date.now();
-        logger.info(`[Voice] Generating speech with ${ttsProvider.getProviderName()}...`);
-
-        // Get tutor's voice ID for the active provider
-        const tutorVoiceId = ttsProvider.getVoiceId(tutorProfile);
-        logger.info(`[Voice] Using tutor: ${tutorProfile.name} (${selectedTutorId})`);
-        logger.info(`[Voice] Using ${ttsProvider.getProviderName()} voice ID: ${tutorVoiceId}`);
-        logger.info(`[Voice] TTS text length: ${ttsText.length} chars`);
-
-        if (!tutorVoiceId) {
-            throw new Error(`No ${ttsProvider.getProviderName()} voice ID configured for tutor: ${selectedTutorId}`);
-        }
-
-        // Generate TTS audio via the active provider
-        let audioData;
-        try {
-            audioData = await ttsProvider.generateAudio(ttsText, tutorVoiceId);
-        } catch (error) {
-            logger.error(`[Voice] ${ttsProvider.getProviderName()} TTS error:`, error.message);
-            logger.error('Error response:', error.response?.data);
-            logger.error('Error status:', error.response?.status);
-            throw new Error(`TTS generation failed: ${error.message}`);
-        }
-
-        const step3Time = Date.now() - step3Start;
-        logger.info(`[Voice] TTS audio received (${step3Time}ms), size:`, audioData.length, 'bytes');
-
-        // Save audio file
-        const audioDir = path.join(__dirname, '../public/audio/voice');
-        if (!fs.existsSync(audioDir)) {
-            logger.info('[Voice] Creating audio directory:', audioDir);
-            fs.mkdirSync(audioDir, { recursive: true });
-        }
-
-        const ext = ttsProvider.getFileExtension();
-        const audioFilename = `voice_${userId}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}${ext}`;
-        const audioPath = path.join(audioDir, audioFilename);
-        fs.writeFileSync(audioPath, audioData);
-
-        const audioUrl = `/audio/voice/${audioFilename}`;
-
-        logger.info('[Voice] Speech generated and saved:', audioUrl);
-
-        // ============================================
-        // STEP 5: SAVE TO CONVERSATION HISTORY
-        // ============================================
-
-        // Save messages to conversation history
-        // Note: findOneAndUpdate bypasses Mongoose middleware, so validate content here
-        const messagesToPush = [];
-        if (userMessage && typeof userMessage === 'string' && userMessage.trim() !== '') {
-            messagesToPush.push({
-                role: 'user',
-                content: userMessage.trim(),
-                timestamp: new Date()
-            });
-        }
-        if (aiResponseText && typeof aiResponseText === 'string' && aiResponseText.trim() !== '') {
-            messagesToPush.push({
-                role: 'assistant',
-                content: aiResponseText.trim(),
-                timestamp: new Date()
-            });
-        }
-
-        if (messagesToPush.length > 0) {
-            await Conversation.findOneAndUpdate(
-                { userId },
-                {
-                    $push: { messages: { $each: messagesToPush } },
-                    $set: { updatedAt: new Date() }
-                },
-                { upsert: true }
-            );
-        }
-
-        // ============================================
-        // STEP 6: RETURN RESPONSE
-        // ============================================
-
-        const totalTime = Date.now() - startTime;
-        logger.info(`[Voice] Total processing time: ${totalTime}ms (Whisper: ${step1Time}ms, AI: ${step2Time}ms, TTS: ${step3Time}ms, Other: ${totalTime - step1Time - step2Time - step3Time}ms)`);
-
-        res.json({
-            transcription: userMessage,
+        // ── Send text + board immediately — don't wait for TTS ──
+        sendPhase({
+            phase: 'response',
             response: aiResponseText,
-            audioUrl: audioUrl,
             boardActions: boardActions,
             boardContext: boardContextData
         });
 
-        // Clean up old audio files (keep last 100)
-        cleanupOldAudioFiles(audioDir, 100);
+        // ============================================
+        // STEP 4: TTS + history save in parallel
+        // ============================================
+
+        const ttsText = cleanTextForTTS(aiResponseText);
+        const tutorVoiceId = ttsProvider.getVoiceId(tutorProfile);
+
+        const [audioUrl] = await Promise.all([
+            // TTS generation
+            (async () => {
+                if (!tutorVoiceId || !ttsText) return null;
+                try {
+                    const audioData = await ttsProvider.generateAudio(ttsText, tutorVoiceId);
+                    const audioDir = path.join(__dirname, '../public/audio/voice');
+                    if (!fs.existsSync(audioDir)) fs.mkdirSync(audioDir, { recursive: true });
+                    const ext = ttsProvider.getFileExtension();
+                    const audioFilename = `voice_${userId}_${Date.now()}_${crypto.randomBytes(4).toString('hex')}${ext}`;
+                    const audioPath = path.join(audioDir, audioFilename);
+                    fs.writeFileSync(audioPath, audioData);
+                    // Cleanup old files (fire and forget)
+                    cleanupOldAudioFiles(audioDir, 100);
+                    return `/audio/voice/${audioFilename}`;
+                } catch (err) {
+                    logger.warn('[Voice] TTS failed:', err.message);
+                    return null;
+                }
+            })(),
+            // Save to conversation history
+            (async () => {
+                const messagesToPush = [];
+                if (userMessage) messagesToPush.push({ role: 'user', content: userMessage.trim(), timestamp: new Date() });
+                if (aiResponseText) messagesToPush.push({ role: 'assistant', content: aiResponseText.trim(), timestamp: new Date() });
+                if (messagesToPush.length > 0) {
+                    await Conversation.findOneAndUpdate(
+                        { userId },
+                        { $push: { messages: { $each: messagesToPush } }, $set: { updatedAt: new Date() } },
+                        { upsert: true }
+                    );
+                }
+            })()
+        ]);
+
+        const totalTime = Date.now() - startTime;
+        logger.info(`[Voice] Total: ${totalTime}ms (Whisper: ${step1Time}ms, AI: ${step2Time}ms, TTS+Save: ${totalTime - step1Time - step2Time}ms)`);
+
+        // ── Send audio URL ──
+        sendPhase({ phase: 'audio', audioUrl });
+        res.end();
 
     } catch (error) {
         logger.error('[Voice] FATAL ERROR processing voice:', error);
         logger.error('Error stack:', error.stack);
 
-        // Provide specific error message
-        let userMessage = 'Failed to process voice input';
+        let message = 'Failed to process voice input';
         if (error.message.includes('Whisper')) {
-            userMessage = 'Speech recognition failed. Please try speaking again.';
+            message = 'Speech recognition failed. Please try speaking again.';
         } else if (error.message.includes('TTS') || error.message.includes('Cartesia')) {
-            userMessage = 'Voice synthesis failed. Please try again.';
+            message = 'Voice synthesis failed. Please try again.';
         } else if (error.message.includes('API key')) {
-            userMessage = 'Voice feature is not configured. Please contact support.';
+            message = 'Voice feature is not configured. Please contact support.';
         }
 
-        res.status(500).json({
-            error: 'Failed to process voice input',
-            message: userMessage,
-            details: error.message,
-            timestamp: new Date().toISOString()
-        });
+        sendPhase({ phase: 'error', message });
+        res.end();
     }
 });
 
