@@ -480,8 +480,29 @@ async function generateResponse(userId, userMessage, preloadedUser) {
     if (lastSteps.length > 0) mathSteps = lastSteps;
   }
 
-  // If no spoken text was extracted, use the raw content
-  if (!spoken) spoken = rawContent;
+  // If no spoken text was extracted, try to salvage from raw content
+  if (!spoken) {
+    // If rawContent is valid JSON (our structured format), don't read JSON aloud
+    try {
+      const obj = JSON.parse(rawContent);
+      // Pull any string value that looks like speech
+      spoken = obj.spoken || obj.text || obj.response || obj.message || '';
+      if (!spoken) {
+        // Last resort: find the first non-empty string value
+        for (const val of Object.values(obj)) {
+          if (typeof val === 'string' && val.trim().length > 10) {
+            spoken = val.trim();
+            break;
+          }
+        }
+      }
+    } catch (_) {
+      // Not JSON — use raw text directly (old tag-based format)
+      spoken = rawContent;
+    }
+    // If still empty, give a safe generic response rather than silence
+    if (!spoken) spoken = "Let me think about that. Could you tell me more?";
+  }
 
   // IEP reading level enforcement (operates on spoken text only)
   const iepReadingLevel = user.iepPlan?.readingLevel || null;
@@ -619,6 +640,17 @@ async function getLastMathSteps(userId) {
       .reverse();
 
     for (const msg of assistantMsgs) {
+      // Try JSON format first (new structured responses)
+      try {
+        const parsed = JSON.parse(msg.content);
+        const steps = parsed.mathSteps || parsed.math_steps || parsed.steps;
+        if (Array.isArray(steps) && steps.length > 0) {
+          const valid = steps.filter(s => s && s.latex);
+          if (valid.length > 0) return valid;
+        }
+      } catch (_) {
+        // Not JSON — try legacy tag extraction
+      }
       const steps = extractMathSteps(msg.content);
       if (steps.length > 0) return steps;
     }

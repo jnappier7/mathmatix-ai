@@ -904,8 +904,8 @@
 
     dom.canvasPlaceholder.classList.add('hidden');
 
-    // Clear previous DOM elements
-    const existing = dom.mathDisplay.querySelectorAll('.vt-math-step');
+    // Clear previous DOM elements (steps AND dividers)
+    const existing = dom.mathDisplay.querySelectorAll('.vt-math-step, .vt-step-divider');
     if (existing.length > 0) {
       existing.forEach(el => {
         el.style.transition = 'opacity 0.15s';
