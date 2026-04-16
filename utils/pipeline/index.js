@@ -22,6 +22,7 @@ const { decide, ACTIONS } = require('./decide');
 const { generate, assemblePrompt } = require('./generate');
 const { verify } = require('./verify');
 const { persist } = require('./persist');
+const { llmVerifyAnswer, pickProblemContext } = require('./llmVerifier');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
@@ -77,6 +78,37 @@ async function runPipeline(message, ctx) {
 
   console.log(`[Pipeline] Observe: ${observation.messageType} (confidence: ${observation.confidence})`);
 
+  // ── Parallel: LLM answer verification ──
+  // Fire a small, focused verification call alongside the main pipeline
+  // whenever the student is attempting an answer. The deterministic solver
+  // in diagnose covers ~30% of math topics — for everything else (calculus,
+  // trig identities, proofs, word problems) this fills the gap with a fresh
+  // LLM verdict the pipeline can trust. Returns in ~200ms, well before
+  // generate finishes, so the latency cost is zero.
+  let llmVerificationPromise = null;
+  if (observation.messageType === MESSAGE_TYPES.ANSWER_ATTEMPT && observation.answer?.value) {
+    const problemText = pickProblemContext(
+      recentAssistantMessages.map(msg => ({ content: msg.content }))
+    );
+    if (problemText) {
+      llmVerificationPromise = llmVerifyAnswer(problemText, observation.answer.value)
+        .then(verdict => {
+          if (verdict.isCorrect !== null) {
+            console.log(`[Pipeline] LLMVerify: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+          } else if (verdict.error) {
+            console.log(`[Pipeline] LLMVerify: unverifiable (${verdict.error})`);
+          } else {
+            console.log(`[Pipeline] LLMVerify: low-confidence (${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+          }
+          return verdict;
+        })
+        .catch(err => {
+          console.error('[Pipeline] LLMVerify promise rejected:', err.message);
+          return { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
+        });
+    }
+  }
+
   // ── Stage 2: DIAGNOSE ──
   const diagnosis = await diagnose(observation, {
     recentAssistantMessages: recentAssistantMessages.map(msg => ({
@@ -87,6 +119,7 @@ async function runPipeline(message, ctx) {
     recentUserMessages: recentUserMessages.map(msg => ({ content: msg.content })),
     activeSkill: ctx.activeSkill || null,
     user: ctx.user,
+    llmVerificationPromise,
   });
 
   if (diagnosis.type !== 'no_answer') {
@@ -296,6 +329,18 @@ async function runPipeline(message, ctx) {
     rawResponseText = await generate(assembled);
   }
 
+  // ── Await the parallel LLM verification (already resolved by this point) ──
+  // Used by verify.js to catch false rejections / false confirmations the
+  // deterministic solver couldn't gate on.
+  let llmVerdict = null;
+  if (llmVerificationPromise) {
+    try {
+      llmVerdict = await llmVerificationPromise;
+    } catch (err) {
+      console.error('[Pipeline] LLMVerify await error:', err.message);
+    }
+  }
+
   // ── Stage 5: VERIFY ──
   const verified = await verify(rawResponseText, {
     userId: ctx.user._id?.toString(),
@@ -311,6 +356,8 @@ async function runPipeline(message, ctx) {
     diagnosisType: diagnosis.type,
     hasRecentUpload: ctx.hasRecentUpload || false,
     isWorksheetFollowUp: observation.isWorksheetFollowUp || false,
+    studentAnswer: observation.answer?.value || null,
+    llmVerdict,
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);

@@ -296,6 +296,128 @@ describe('Pipeline: Diagnose Stage', () => {
       expect(result.isCorrect).toBeNull();
     });
   });
+
+  describe('diagnose LLM verification fallback', () => {
+    test('uses LLM verdict when solver cannot parse the problem', async () => {
+      const observation = {
+        answer: { value: 'QED', raw: 'QED' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'conceptual',
+      };
+      const context = {
+        // Proof question — no numeric problem the deterministic solver can parse.
+        recentAssistantMessages: [{
+          content: 'Show that the sum of the angles in any triangle is the same.',
+        }],
+        recentUserMessages: [],
+        llmVerificationPromise: Promise.resolve({
+          isCorrect: true,
+          confidence: 0.95,
+          modelAnswer: 'valid proof',
+          rationale: 'proof reasoning is sound',
+          error: null,
+        }),
+      };
+      const result = await diagnose(observation, context);
+      expect(result.isCorrect).toBe(true);
+      expect(result.type).toBe('correct');
+      expect(result.verificationSource).toBe('llm');
+      expect(result.correctAnswer).toBe('valid proof');
+    });
+
+    test('uses LLM verdict to mark incorrect answers on solver-opaque problems', async () => {
+      const observation = {
+        answer: { value: 'something else', raw: 'something else' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'conceptual',
+      };
+      const context = {
+        recentAssistantMessages: [{
+          content: 'Which trig identity relates sine and cosine for any angle?',
+        }],
+        recentUserMessages: [],
+        llmVerificationPromise: Promise.resolve({
+          isCorrect: false,
+          confidence: 0.9,
+          modelAnswer: 'Pythagorean identity',
+          rationale: 'student response does not name the identity',
+          error: null,
+        }),
+      };
+      const result = await diagnose(observation, context);
+      expect(result.isCorrect).toBe(false);
+      expect(result.type).toBe('incorrect');
+      expect(result.verificationSource).toBe('llm');
+    });
+
+    test('trusts solver over LLM when solver has a confident verdict', async () => {
+      const observation = {
+        answer: { value: '15', raw: '15' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{ content: 'What is 7 plus 8?' }],
+        recentUserMessages: [],
+        // LLM disagrees with solver (shouldn't be used)
+        llmVerificationPromise: Promise.resolve({
+          isCorrect: false,
+          confidence: 0.95,
+          modelAnswer: '15',
+          rationale: 'n/a',
+          error: null,
+        }),
+      };
+      const result = await diagnose(observation, context);
+      expect(result.isCorrect).toBe(true);
+      expect(result.verificationSource).toBe('solver');
+    });
+
+    test('low-confidence LLM verdict leaves diagnosis unverifiable', async () => {
+      const observation = {
+        answer: { value: '42', raw: '42' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{
+          content: 'Prove that sin^2(x) + cos^2(x) = 1.',
+        }],
+        recentUserMessages: [],
+        llmVerificationPromise: Promise.resolve({
+          isCorrect: null, // already gated below threshold in the verifier
+          confidence: 0.3,
+          modelAnswer: 'proof',
+          rationale: 'low confidence',
+          error: null,
+        }),
+      };
+      const result = await diagnose(observation, context);
+      expect(result.type).toBe('unverifiable');
+      expect(result.isCorrect).toBeNull();
+      expect(result.verificationSource).toBeNull();
+    });
+
+    test('survives when the LLM verification promise rejects', async () => {
+      const observation = {
+        answer: { value: '5', raw: '5' },
+        messageType: 'answer_attempt',
+        streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0 },
+        problemContext: 'numeric',
+      };
+      const context = {
+        recentAssistantMessages: [{ content: 'Give me a derivative.' }],
+        recentUserMessages: [],
+        llmVerificationPromise: Promise.reject(new Error('timeout')),
+      };
+      const result = await diagnose(observation, context);
+      expect(result.type).toBe('unverifiable');
+    });
+  });
 });
 
 // ============================================================================

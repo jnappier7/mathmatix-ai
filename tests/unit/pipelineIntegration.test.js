@@ -124,10 +124,33 @@ function mockConversation(messages = [], overrides = {}) {
   };
 }
 
-function mockLLMResponse(text) {
-  callLLM.mockResolvedValueOnce({
-    choices: [{ message: { content: text } }],
+// ── LLM call routing ──
+// The pipeline now fires a parallel LLM verifier (two calls) alongside the
+// main generate call whenever the student attempts an answer. Route those
+// calls to safe unverifiable defaults so the test's `text` still reaches
+// the main generate step in the order tests expect.
+const __mainTextQueue = [];
+const __installMockRouter = () => {
+  callLLM.mockImplementation((_model, messages) => {
+    const sys = messages.find(m => m.role === 'system')?.content || '';
+    if (sys.includes('math answer engine')) {
+      return Promise.resolve({
+        choices: [{ message: { content: '{"answer":"unknown","form":"unknown"}' } }],
+      });
+    }
+    if (sys.includes('math equivalence judge')) {
+      // Low confidence → pipeline treats verdict as unverifiable, no effect.
+      return Promise.resolve({
+        choices: [{ message: { content: '{"matches":false,"confidence":0.3,"rationale":"mocked"}' } }],
+      });
+    }
+    const next = __mainTextQueue.length > 0 ? __mainTextQueue.shift() : '';
+    return Promise.resolve({ choices: [{ message: { content: next } }] });
   });
+};
+
+function mockLLMResponse(text) {
+  __mainTextQueue.push(text);
 }
 
 function buildCtx(user, conversation, extras = {}) {
@@ -153,6 +176,8 @@ function buildCtx(user, conversation, extras = {}) {
 describe('Pipeline Integration: runPipeline', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   test('PATH 1: correct answer → confirm + tier2 XP', async () => {
