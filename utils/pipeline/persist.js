@@ -17,6 +17,7 @@
 const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
+const { processMathMessage } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { emitGamificationEvent } = require('../gamificationEvents');
 const { getNextActions } = require('../nextActionSuggestions');
@@ -134,6 +135,22 @@ async function persist(params) {
 
   // ── 7. Conversation update ──
   conversation.messages.push({ role: 'assistant', content: responseText.trim() });
+
+  // Detect and store structured problem metadata on the AI message.
+  // This lets the diagnose stage read it directly on the next turn instead of
+  // re-parsing the AI's natural language text with fragile regex patterns.
+  try {
+    const mathResult = processMathMessage(responseText);
+    if (mathResult.hasMath && mathResult.solution?.success) {
+      const lastIdx = conversation.messages.length - 1;
+      conversation.messages[lastIdx].problemInfo = {
+        type: mathResult.problem.type,
+        correctAnswer: String(mathResult.solution.answer),
+      };
+    }
+  } catch (_) {
+    // Non-fatal — worst case we fall back to re-parsing in diagnose
+  }
 
   if (results.problemAnswered) {
     conversation.problemsAttempted = (conversation.problemsAttempted || 0) + 1;
