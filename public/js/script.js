@@ -3595,23 +3595,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // √x tool button: insert inline equation box (mobile + desktop)
-    // Prevent mousedown/touchstart from stealing focus & cursor position
-    // from #user-input — this is critical on mobile where the selection
-    // is lost when focus moves to the button element.
+    // Save the cursor position before focus moves to the button element,
+    // then restore it in the click handler before inserting the equation box.
     if (openEquationBtn) {
         let savedRange = null;
 
-        const saveSelection = (e) => {
-            e.preventDefault(); // keep focus in #user-input
+        // Desktop: preventDefault on mousedown keeps focus in #user-input
+        // without blocking the subsequent click event.
+        openEquationBtn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
             const sel = window.getSelection();
             if (sel && sel.rangeCount > 0 && userInput &&
                 userInput.contains(sel.anchorNode)) {
                 savedRange = sel.getRangeAt(0).cloneRange();
             }
-        };
+        });
 
-        openEquationBtn.addEventListener('mousedown', saveSelection);
-        openEquationBtn.addEventListener('touchstart', saveSelection, { passive: false });
+        // Mobile: DO NOT preventDefault on touchstart — that kills the
+        // entire touch→click chain and the click handler never fires.
+        // Just snapshot the selection; the click handler restores it.
+        openEquationBtn.addEventListener('touchstart', () => {
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0 && userInput &&
+                userInput.contains(sel.anchorNode)) {
+                savedRange = sel.getRangeAt(0).cloneRange();
+            }
+        }, { passive: true });
 
         openEquationBtn.addEventListener('click', (e) => {
             e.stopImmediatePropagation();
