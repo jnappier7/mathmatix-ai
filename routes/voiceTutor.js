@@ -18,6 +18,19 @@ const crypto = require('crypto');
 
 const VOICE_MODEL = 'gpt-4o-mini';
 
+// Map client MIME types to file extensions for Whisper API
+const MIME_TO_EXT = {
+  'audio/webm;codecs=opus': '.webm',
+  'audio/webm': '.webm',
+  'audio/mp4;codecs=opus': '.mp4',
+  'audio/mp4': '.mp4',
+  'audio/ogg;codecs=opus': '.ogg',
+  'audio/ogg': '.ogg',
+  'audio/wav': '.wav',
+  'audio/mpeg': '.mp3',
+  'audio/x-m4a': '.m4a',
+};
+
 // Voice-specific system instructions appended to the base tutor prompt
 const VOICE_TUTOR_INSTRUCTIONS = `
 
@@ -62,7 +75,9 @@ Always guide, never give away. If the student is truly stuck after multiple atte
 FORMAT: JSON array wrapped in <mathsteps>...</mathsteps> tags.
 Each step: { "label": string (optional), "latex": LaTeX string, "explanation": string (optional) }
 
-Show the FULL progression of completed steps — not just the latest one. Include all steps from the beginning of the current problem so the student sees their complete work.
+IMPORTANT — THE BOARD ACCUMULATES: The student's board keeps ALL work from the entire session — every equation, every step, every problem. Previous work is never erased. You only need to send steps for the CURRENT problem. The board will append them below any earlier work. If the student switches to a new problem, start fresh with a new "Given" step — it will appear below the previous problem on their board.
+
+Include ALL steps for the current problem from its beginning — not just the latest step. This way the board always shows the full progression for the active problem.
 
 Example conversation:
 Student says: "solve 2x minus 4 equals 0"
@@ -97,6 +112,29 @@ That's it! x equals 2. Great job working through that!
   {"label": "Given", "latex": "2x - 4 = 0"},
   {"label": "Add 4", "latex": "2x = 4"},
   {"label": "Divide by 2", "latex": "x = 2", "explanation": "Divide both sides by 2"}
+]</mathsteps>
+
+Student says: "now let's try 3x plus 6 equals 15"
+Your response:
+Great, new problem! What's the first thing we should do?
+<mathsteps>[
+  {"label": "Given", "latex": "3x + 6 = 15", "explanation": "New equation"}
+]</mathsteps>
+
+Note: the board now shows BOTH problems — the previous one stays visible above. The student can scroll up to review their earlier work.
+
+ALSO INCLUDE <mathsteps> FOR NON-EQUATION MATH:
+If the student is working with slopes, derivatives, graphs, or any visual math concept, include those as steps too. Examples:
+<mathsteps>[
+  {"label": "Slope formula", "latex": "m = \\frac{y_2 - y_1}{x_2 - x_1}"},
+  {"label": "Substitute", "latex": "m = \\frac{5 - 1}{3 - 1} = \\frac{4}{2}"},
+  {"label": "Simplify", "latex": "m = 2"}
+]</mathsteps>
+
+<mathsteps>[
+  {"label": "Function", "latex": "f(x) = x^3 - 3x"},
+  {"label": "Derivative", "latex": "f'(x) = 3x^2 - 3"},
+  {"label": "At x=1", "latex": "f'(1) = 3(1)^2 - 3 = 0", "explanation": "Tangent slope at x=1"}
 ]</mathsteps>
 
 FINAL REMINDER — READ THIS CAREFULLY:
@@ -256,7 +294,7 @@ function isUnder13(user) {
 // Phase 3: { phase: "audio", audioUrl }                  — audio plays when ready
 // ═══════════════════════════════════════
 router.post('/process', isAuthenticated, async (req, res) => {
-  const { audio } = req.body;
+  const { audio, mimeType } = req.body;
   const userId = req.user._id;
 
   if (!audio) {
@@ -302,7 +340,8 @@ router.post('/process', isAuthenticated, async (req, res) => {
     // ── Step 1: Transcribe with Whisper (parallel: fetch user data) ──
     const tempDir = path.join(__dirname, '../temp');
     if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
-    const tempPath = path.join(tempDir, `vt_${userId}_${Date.now()}.webm`);
+    const audioExt = MIME_TO_EXT[mimeType] || '.webm';
+    const tempPath = path.join(tempDir, `vt_${userId}_${Date.now()}${audioExt}`);
     fs.writeFileSync(tempPath, audioBuffer);
 
     const langMap = {
@@ -335,8 +374,19 @@ router.post('/process', isAuthenticated, async (req, res) => {
     // ── Step 2: Generate AI response ──
     const aiResponse = await generateResponse(userId, userMessage, user);
 
-    const mathSteps = extractMathSteps(aiResponse);
+    let mathSteps = extractMathSteps(aiResponse);
     const cleanResponse = stripMathSteps(aiResponse);
+
+    // If LLM didn't include <mathsteps> but math was previously discussed,
+    // recover the last known steps from conversation history so the board
+    // doesn't go blank. The LLM is instructed to always include them but
+    // sometimes forgets on encouragement-only responses.
+    if (mathSteps.length === 0) {
+      const lastSteps = await getLastMathSteps(userId);
+      if (lastSteps.length > 0) {
+        mathSteps = lastSteps;
+      }
+    }
 
     // ── Send text + math immediately ──
     sendPhase({ phase: 'response', response: cleanResponse, mathSteps });
@@ -385,8 +435,14 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
 
   try {
     const aiResponse = await generateResponse(userId, text.trim());
-    const mathSteps = extractMathSteps(aiResponse);
+    let mathSteps = extractMathSteps(aiResponse);
     const cleanResponse = stripMathSteps(aiResponse);
+
+    // Recover last math steps if LLM omitted them
+    if (mathSteps.length === 0) {
+      const lastSteps = await getLastMathSteps(userId);
+      if (lastSteps.length > 0) mathSteps = lastSteps;
+    }
 
     let audioUrl = null;
     if (ttsProvider.isConfigured()) {
@@ -515,6 +571,33 @@ async function generateTTS(userId, responseText, preloadedUser) {
   } catch (e) { /* cleanup is best-effort */ }
 
   return `/audio/voice/${filename}`;
+}
+
+/**
+ * Recover the last math steps from conversation history.
+ * Scans recent assistant messages for <mathsteps> blocks.
+ */
+async function getLastMathSteps(userId) {
+  try {
+    const conversation = await Conversation.findOne({ userId })
+      .sort({ updatedAt: -1 })
+      .select({ messages: { $slice: -12 } })
+      .lean();
+    if (!conversation?.messages) return [];
+
+    // Walk backwards through assistant messages to find the most recent mathsteps
+    const assistantMsgs = conversation.messages
+      .filter(m => m.role === 'assistant' && m.content)
+      .reverse();
+
+    for (const msg of assistantMsgs) {
+      const steps = extractMathSteps(msg.content);
+      if (steps.length > 0) return steps;
+    }
+  } catch (e) {
+    console.warn('[VoiceTutor] Failed to recover last math steps:', e.message);
+  }
+  return [];
 }
 
 async function saveToHistory(userId, userMessage, aiResponse) {
