@@ -190,6 +190,22 @@ function cleanTextForTTS(text) {
   // Remove any remaining LaTeX commands
   cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
 
+  // ── Bare math cleanup: catch undelimited notation the LLM may produce ──
+  // Caret exponents: x^2 → "x squared", y^3 → "y cubed", n^{k+1} → "n to the k+1 power"
+  cleaned = cleaned.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
+  cleaned = cleaned.replace(/\^2(?=\b|[^0-9]|$)/g, ' squared');
+  cleaned = cleaned.replace(/\^3(?=\b|[^0-9]|$)/g, ' cubed');
+  cleaned = cleaned.replace(/\^(\d+)/g, (_, n) => ` to the ${speakOrdinal(parseInt(n, 10))} power`);
+  cleaned = cleaned.replace(/\^([a-zA-Z])/g, ' to the $1 power');
+  // Subscripts: x_1 → "x sub 1"
+  cleaned = cleaned.replace(/_\{([^}]+)\}/g, ' sub $1');
+  cleaned = cleaned.replace(/_(\d)/g, ' sub $1');
+  // Remove leftover curly braces
+  cleaned = cleaned.replace(/[{}]/g, '');
+
+  // Strip emoji — TTS engines read them as names ("party popper", "sparkles", etc.)
+  cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, '');
+
   // Clean up extra whitespace
   cleaned = cleaned.replace(/\s+/g, ' ').trim();
 

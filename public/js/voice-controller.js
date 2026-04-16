@@ -278,6 +278,35 @@ class VoiceController {
                 border-radius: 2px;
                 transition: height 0.1s ease;
             }
+
+            /* ── Mobile: move orb above input area + bottom nav ── */
+            @media (max-width: 768px) {
+                #voice-chat-container {
+                    bottom: calc(170px + env(safe-area-inset-bottom, 0px)) !important;
+                    right: 16px !important;
+                    gap: 6px !important;
+                }
+
+                .voice-orb {
+                    width: 56px !important;
+                    height: 56px !important;
+                    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+                }
+
+                .voice-orb .orb-inner i {
+                    font-size: 22px !important;
+                }
+
+                .voice-status {
+                    display: none !important;
+                }
+
+                #voice-waveform {
+                    bottom: 80px !important;
+                    right: 16px !important;
+                    width: 160px;
+                }
+            }
         `;
         document.head.appendChild(style);
     }

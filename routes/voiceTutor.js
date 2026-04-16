@@ -165,6 +165,17 @@ function cleanForTTS(text) {
   cleaned = cleaned.replace(/\$([^$]+)\$/g, (_, latex) => convertLatexToSpeech(latex));
   // Remove any remaining backslashes (LaTeX commands)
   cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
+  // Bare math: catch undelimited notation (x^2, y^3, etc.)
+  cleaned = cleaned.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
+  cleaned = cleaned.replace(/\^2(?=\b|[^0-9]|$)/g, ' squared');
+  cleaned = cleaned.replace(/\^3(?=\b|[^0-9]|$)/g, ' cubed');
+  cleaned = cleaned.replace(/\^(\d+)/g, (_, n) => ` to the ${n}th power`);
+  cleaned = cleaned.replace(/\^([a-zA-Z])/g, ' to the $1 power');
+  cleaned = cleaned.replace(/_\{([^}]+)\}/g, ' sub $1');
+  cleaned = cleaned.replace(/_(\d)/g, ' sub $1');
+  cleaned = cleaned.replace(/[{}]/g, '');
+  // Strip emoji
+  cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, '');
   // Clean up whitespace
   cleaned = cleaned.replace(/\s+/g, ' ').trim();
   return cleaned;
