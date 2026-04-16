@@ -111,7 +111,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <canvas id="confetti-canvas"></canvas>
   <header class="landing-header">
     <!-- Mobile Drawer Toggle Buttons -->
-    <button id="left-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Leaderboard" aria-label="Open leaderboard">
+    <!-- Leaderboard drawer (hidden — not production ready) -->
+    <button id="left-drawer-toggle" class="drawer-toggle-btn desktop-hide" title="Leaderboard" aria-label="Open leaderboard" style="display: none;">
       <i class="fas fa-bars"></i>
     </button>
 
@@ -276,8 +277,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <!-- My Courses -->
-    <div class="sidebar-section" id="sidebar-courses-section">
+    <!-- My Courses (hidden — not production ready) -->
+    <div class="sidebar-section" id="sidebar-courses-section" style="display: none;">
       <button class="courses-toggle" id="courses-toggle-btn">
         <span><i class="fas fa-graduation-cap" style="margin-right: 6px; font-size: 13px; color: #764ba2;"></i><span data-i18n="chat.myCourses">My Courses</span></span>
         <i class="fas fa-chevron-down"></i>
@@ -313,6 +314,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <i class="fas fa-project-diagram"></i>
           <span>Skill Map</span>
         </a>
+        <button id="sidebar-practice-pack-btn" class="sidebar-tool-btn" onclick="window.open('/api/practice-pack/generate?count=8', '_blank')">
+          <i class="fas fa-print"></i>
+          <span>Practice Pack</span>
+        </button>
         <a href="/voice-tutor.html" id="sidebar-voice-tutor-btn" class="sidebar-tool-btn special" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px; position: relative;">
           <i class="fas fa-headset"></i>
           <span>Voice Tutor</span>
@@ -568,10 +573,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button id="mic-button" title="Voice Input" aria-label="Voice input" class="imessage-tool-btn">
           <i class="fas fa-microphone"></i>
         </button>
-        <button id="calculator-toolbar-btn" title="Calculator" aria-label="Calculator" class="imessage-tool-btn">
+        <!-- Calculator and Break hidden — not production ready -->
+        <button id="calculator-toolbar-btn" title="Calculator" aria-label="Calculator" class="imessage-tool-btn" style="display: none;">
           <i class="fas fa-calculator"></i>
         </button>
-        <button id="break-toolbar-btn" title="Take a Break" aria-label="Take a break" class="imessage-tool-btn imessage-tool-btn-right">
+        <button id="break-toolbar-btn" title="Take a Break" aria-label="Take a break" class="imessage-tool-btn imessage-tool-btn-right" style="display: none;">
           <i class="fas fa-pause-circle"></i>
         </button>
       </div>

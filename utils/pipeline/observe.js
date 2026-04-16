@@ -68,7 +68,7 @@ const PATTERNS = {
 
   // Help/IDK
   idk: /\b(idk|i\s*don'?t\s*know|no\s*idea|no\s*clue|dunno|i\s*have\s*no\s*idea|beats\s*me)\b/i,
-  giveUp: /\b(just\s*tell\s*me|give\s*me\s*the\s*answer|tell\s*me\s*the\s*answer|what'?s\s*the\s*answer|i\s*give\s*up|show\s*me\s*the\s*answer|can\s*you\s*just\s*solve\s*it|^solve(\s*it)?$|^just\s*solve(\s*it)?$|^do\s*it(\s*for\s*me)?$|^just\s*do\s*it$|^solve\s*this$|^figure\s*it\s*out$)\b/i,
+  giveUp: /\b(just\s*tell\s*me|give\s*me\s*the\s*answer|tell\s*me\s*the\s*answer|what(?:'?s|\s+is)\s*the\s*answer|i\s*give\s*up|show\s*me\s*the\s*answer|show\s*(?:me\s*)?the\s*steps|can\s*you\s*just\s*solve\s*it|^solve(\s*it)?$|^just\s*solve(\s*it)?$|^do\s*it(\s*for\s*me)?$|^just\s*do\s*it$|^solve\s*this$|^figure\s*it\s*out$)\b/i,
   helpRequest: /\b(help|hint|stuck|confused|don'?t\s*(understand|get\s*it)|what\s*do\s*i\s*do|how\s*do\s*i|can\s*you\s*(explain|show|help))\b/i,
   skipRequest: /\b(skip|next\s*one|move\s*on|different\s*problem|new\s*problem|harder\s*(problem|question|one)|another\s*(problem|question|one)|next\s*question|what'?s\s*next|whats\s*next|now\s*what|what\s*now|ready\s*for\s*(the\s*)?next|let'?s\s*(keep|move)\s*(going|on)|what\s*do\s*we\s*do\s*next)\b/i,
 

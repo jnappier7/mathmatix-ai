@@ -202,7 +202,7 @@
         var actionsEl = document.getElementById('mp-learn-actions');
         if (actionsEl) {
             actionsEl.innerHTML = ''
-                // Voice Tutor — Featured
+                // Voice Tutor — Featured (keep — high leverage, fixing next)
                 + '<div class="mp-action-card mp-action-featured" id="mp-action-voice">'
                 + '  <div class="mp-action-icon voice"><i class="fas fa-headset"></i></div>'
                 + '  <div class="mp-action-featured-info">'
@@ -210,84 +210,22 @@
                 + '    <div class="mp-action-featured-desc">Talk with your AI math tutor in real-time</div>'
                 + '  </div>'
                 + '  <i class="fas fa-chevron-right mp-action-featured-arrow"></i>'
-                + '</div>'
-                // Browse Courses
-                + '<div class="mp-action-card" id="mp-action-courses">'
-                + '  <div class="mp-action-icon courses"><i class="fas fa-graduation-cap"></i></div>'
-                + '  <div class="mp-action-label">Browse Courses</div>'
-                + '</div>'
-                // Resources
-                + '<div class="mp-action-card" id="mp-action-resources">'
-                + '  <div class="mp-action-icon resources"><i class="fas fa-book-open"></i></div>'
-                + '  <div class="mp-action-label">Resources</div>'
-                + '</div>'
-                // Skill Map
-                + '<div class="mp-action-card" id="mp-action-skill-map">'
-                + '  <div class="mp-action-icon skill-map"><i class="fas fa-project-diagram"></i></div>'
-                + '  <div class="mp-action-label">Skill Map</div>'
-                + '</div>'
-                // Badges
-                + '<div class="mp-action-card" id="mp-action-badges">'
-                + '  <div class="mp-action-icon badges"><i class="fas fa-medal"></i></div>'
-                + '  <div class="mp-action-label">Badges</div>'
                 + '</div>';
 
             wireAction('mp-action-voice', function () {
                 window.location.href = '/voice-tutor.html';
             });
-            wireAction('mp-action-courses', function () {
-                switchTab('chat');
-                setTimeout(function () { triggerClick('browse-courses-btn'); }, 200);
-            });
-            wireAction('mp-action-resources', function () {
-                switchTab('chat');
-                setTimeout(function () { triggerClick('open-resources-modal-btn'); }, 200);
-            });
-            wireAction('mp-action-skill-map', function () {
-                window.location.href = '/skill-map.html';
-            });
-            wireAction('mp-action-badges', function () {
-                window.location.href = '/badge-map.html';
-            });
         }
 
         // More actions grid
+        // More actions hidden — not production ready
         var moreEl = document.getElementById('mp-learn-more');
         if (moreEl) {
-            moreEl.innerHTML = ''
-                // Math Showdown
-                + '<div class="mp-action-card" id="mp-action-showdown">'
-                + '  <div class="mp-action-icon showdown"><i class="fas fa-bolt"></i></div>'
-                + '  <div class="mp-action-label">Math Showdown</div>'
-                + '</div>'
-                // Starting Point (Screener)
-                + '<div class="mp-action-card" id="mp-action-screener">'
-                + '  <div class="mp-action-icon screener"><i class="fas fa-crosshairs"></i></div>'
-                + '  <div class="mp-action-label">Starting Point</div>'
-                + '</div>'
-                // Send Feedback
-                + '<div class="mp-action-card" id="mp-action-feedback">'
-                + '  <div class="mp-action-icon feedback"><i class="fas fa-comment-dots"></i></div>'
-                + '  <div class="mp-action-label">Send Feedback</div>'
-                + '</div>';
-
-            wireAction('mp-action-showdown', function () {
-                window.location.href = '/math-showdown.html';
-            });
-            wireAction('mp-action-screener', function () {
-                switchTab('chat');
-                setTimeout(function () {
-                    var screenerBtn = document.getElementById('sidebar-starting-point-btn');
-                    if (screenerBtn) screenerBtn.click();
-                }, 200);
-            });
-            wireAction('mp-action-feedback', function () {
-                switchTab('chat');
-                setTimeout(function () { triggerClick('open-feedback-modal-btn'); }, 200);
-            });
+            moreEl.style.display = 'none';
         }
 
-        refreshLearnPanel();
+        // Course-related refresh hidden — not production ready
+        // refreshLearnPanel();
     }
 
     function refreshLearnPanel() {
@@ -459,9 +397,10 @@
             }
         }
 
-        // Weekly Challenges
+        // Weekly Challenges — hidden, not production ready
         var weeklyEl = document.getElementById('mp-quests-weekly');
-        if (weeklyEl) {
+        if (weeklyEl) weeklyEl.style.display = 'none';
+        if (false) {
             var challengeSource = document.getElementById('drawer-weekly-challenges-container') ||
                                   document.getElementById('weekly-challenges-container');
             var challengeItems = challengeSource ? challengeSource.querySelectorAll('.challenge-item, .weekly-challenge-item') : [];
