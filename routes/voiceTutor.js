@@ -165,7 +165,13 @@ function cleanForTTS(text) {
   cleaned = cleaned.replace(/\$([^$]+)\$/g, (_, latex) => convertLatexToSpeech(latex));
   // Remove any remaining backslashes (LaTeX commands)
   cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
-  // Bare math: catch undelimited notation (x^2, y^3, etc.)
+  // Bare math: catch undelimited notation (x^2, f(x), etc.)
+  // Function notation: f(x) → "f of x", f'(x) → "f prime of x"
+  cleaned = cleaned.replace(/\b([a-zA-Z])'\(([^)]+)\)/g, '$1 prime of $2');
+  cleaned = cleaned.replace(/\b([a-zA-Z])\(([^)]{1,20})\)/g, '$1 of $2');
+  // Equals sign: "x = 5" → "x equals 5"
+  cleaned = cleaned.replace(/(\w)\s*=\s*(\w)/g, '$1 equals $2');
+  // Caret exponents
   cleaned = cleaned.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
   cleaned = cleaned.replace(/\^2(?=\b|[^0-9]|$)/g, ' squared');
   cleaned = cleaned.replace(/\^3(?=\b|[^0-9]|$)/g, ' cubed');

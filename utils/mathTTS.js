@@ -191,6 +191,11 @@ function cleanTextForTTS(text) {
   cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
 
   // ── Bare math cleanup: catch undelimited notation the LLM may produce ──
+  // Function notation: f(x) → "f of x", g(2) → "g of 2", f'(x) → "f prime of x"
+  cleaned = cleaned.replace(/\b([a-zA-Z])'\(([^)]+)\)/g, '$1 prime of $2');
+  cleaned = cleaned.replace(/\b([a-zA-Z])\(([^)]{1,20})\)/g, '$1 of $2');
+  // Equals sign in math context: "x = 5" → "x equals 5"
+  cleaned = cleaned.replace(/(\w)\s*=\s*(\w)/g, '$1 equals $2');
   // Caret exponents: x^2 → "x squared", y^3 → "y cubed", n^{k+1} → "n to the k+1 power"
   cleaned = cleaned.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
   cleaned = cleaned.replace(/\^2(?=\b|[^0-9]|$)/g, ' squared');
