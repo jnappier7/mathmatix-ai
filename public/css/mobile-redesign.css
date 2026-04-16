@@ -162,6 +162,57 @@
     }
 }
 
+/* Mobile: larger tap targets and visual hint for sealed equations */
+@media (max-width: 768px) {
+    .inline-eq-box {
+        min-height: 36px;
+    }
+    .inline-eq-box.active {
+        min-height: 44px;
+        padding: 4px 8px;
+    }
+    .inline-eq-box.sealed {
+        min-height: 36px;
+        padding: 4px 10px;
+    }
+    /* Tap-to-edit hint — persistent on mobile (no hover) */
+    .inline-eq-box.sealed::after {
+        content: 'tap to edit';
+        position: absolute;
+        top: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.6rem;
+        color: var(--clr-primary-teal, #12B3B3);
+        white-space: nowrap;
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    .inline-eq-field {
+        min-width: 48px;
+        font-size: 1rem;
+    }
+}
+
+/* === Inline Equation Box — MathLive Suppression (all viewports) === */
+
+/* When inline equation boxes are present, suppress MathLive's own
+   virtual keyboard and toggle icon — we handle input ourselves
+   (EQ panel on mobile, direct typing on desktop). */
+.inline-eq-field::part(virtual-keyboard-toggle) {
+    display: none !important;
+}
+
+/* Hide MathLive's virtual keyboard panel globally when inline eq boxes exist.
+   On mobile, the EQ panel replaces it; on desktop, physical keyboard is used. */
+.ML__keyboard {
+    display: none !important;
+}
+
+.ML__keyboard-backdrop {
+    display: none !important;
+}
+
 /* === End Inline Equation Box === */
 
 /* --- BOTTOM NAV OVERRIDE (4 tabs) --- */

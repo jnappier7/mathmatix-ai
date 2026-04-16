@@ -226,10 +226,31 @@
   function suppressMathField(mf) {
     mf.setAttribute('inputmode', 'none');
     mf.mathVirtualKeyboardPolicy = 'manual';
-    try {
-      var ta = mf.shadowRoot && mf.shadowRoot.querySelector('textarea');
-      if (ta) ta.setAttribute('inputmode', 'none');
-    } catch (_) {}
+
+    // Patch shadow DOM textarea — retry if MathLive hasn't created it yet
+    var patchDone = false;
+    function patchTA() {
+      try {
+        var ta = mf.shadowRoot && mf.shadowRoot.querySelector('textarea');
+        if (ta) {
+          ta.setAttribute('inputmode', 'none');
+          ta.setAttribute('readonly', '');
+          patchDone = true;
+        }
+      } catch (_) {}
+      return patchDone;
+    }
+
+    if (!patchTA()) {
+      // Retry with increasing delays
+      var retries = 0;
+      function retryPatch() {
+        if (patchTA() || retries >= 5) return;
+        retries++;
+        setTimeout(retryPatch, retries * 50);
+      }
+      setTimeout(retryPatch, 30);
+    }
   }
 
   function restoreNativeKeyboard() {

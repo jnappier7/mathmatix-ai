@@ -3188,8 +3188,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Toggle inline palette
-    if (openEquationBtn && inlineEquationPalette) {
+    // Toggle inline palette (legacy — only when InlineEquationBox is NOT loaded)
+    if (openEquationBtn && inlineEquationPalette && !window.InlineEquationBox) {
         openEquationBtn.addEventListener('click', () => {
             const isVisible = inlineEquationPalette.style.display === 'block';
             if (isVisible) closeEquationPalette();
@@ -3435,6 +3435,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // instead of swapping the entire input for a math-field.
     if (window.InlineEquationBox && userInput) {
         window.InlineEquationBox.init(userInput, sendMessage);
+
+        // Hide the legacy equation modal — it conflicts with inline equation boxes
+        if (equationModal) {
+            equationModal.style.display = 'none';
+            equationModal.setAttribute('aria-hidden', 'true');
+        }
     }
 
     // ─── Mathmatix Equation Panel (mobile only) ─────────────────────
@@ -3589,10 +3595,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // √x tool button: insert inline equation box (mobile + desktop)
+    // Prevent mousedown/touchstart from stealing focus & cursor position
+    // from #user-input — this is critical on mobile where the selection
+    // is lost when focus moves to the button element.
     if (openEquationBtn) {
+        let savedRange = null;
+
+        const saveSelection = (e) => {
+            e.preventDefault(); // keep focus in #user-input
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0 && userInput &&
+                userInput.contains(sel.anchorNode)) {
+                savedRange = sel.getRangeAt(0).cloneRange();
+            }
+        };
+
+        openEquationBtn.addEventListener('mousedown', saveSelection);
+        openEquationBtn.addEventListener('touchstart', saveSelection, { passive: false });
+
         openEquationBtn.addEventListener('click', (e) => {
             e.stopImmediatePropagation();
             e.preventDefault();
+
+            // Restore the saved selection before inserting
+            if (savedRange && userInput) {
+                userInput.focus();
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedRange);
+                savedRange = null;
+            }
 
             // On mobile with EQ panel already showing: just insert
             // another equation box so the student can continue typing math
