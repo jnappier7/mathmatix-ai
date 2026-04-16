@@ -75,8 +75,19 @@
       }
     });
 
-    // Click handler for re-entering existing equation boxes
+    // Click/touch handler for re-entering existing equation boxes.
+    // On mobile, touchend is more reliable than click for inline taps.
     inputEl.addEventListener('click', handleEquationBoxClick);
+    inputEl.addEventListener('touchend', (e) => {
+      const touch = e.changedTouches && e.changedTouches[0];
+      if (!touch) return;
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const box = target && target.closest('.inline-eq-box.sealed');
+      if (box && inputEl.contains(box)) {
+        e.preventDefault();
+        reopenEquationBox(box);
+      }
+    });
 
     // Prevent contenteditable from eating equation box elements
     inputEl.addEventListener('beforeinput', handleBeforeInput);
@@ -487,15 +498,49 @@
       if (window.mathVirtualKeyboard) {
         try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
       }
-      // Also suppress the internal textarea in MathLive's shadow DOM
-      // (Chrome/Safari may ignore inputmode on the outer custom element)
-      try {
-        const shadow = mathField.shadowRoot;
-        if (shadow) {
+
+      // Patch the internal textarea in MathLive's shadow DOM.
+      // Chrome/Safari may ignore inputmode on the outer custom element,
+      // so we must also set it on the hidden <textarea> inside the shadow root.
+      // MathLive may not have created it yet, so retry a few times and
+      // fall back to a MutationObserver if needed.
+      const patchShadowTextarea = () => {
+        try {
+          const shadow = mathField.shadowRoot;
+          if (!shadow) return false;
           const ta = shadow.querySelector('textarea');
-          if (ta) ta.setAttribute('inputmode', 'none');
-        }
-      } catch (_) {}
+          if (ta) {
+            ta.setAttribute('inputmode', 'none');
+            ta.setAttribute('readonly', '');
+            return true;
+          }
+        } catch (_) {}
+        return false;
+      };
+
+      if (!patchShadowTextarea()) {
+        // Retry with increasing delays — MathLive may still be initializing
+        let retries = 0;
+        const retryPatch = () => {
+          if (patchShadowTextarea() || retries >= 5) return;
+          retries++;
+          setTimeout(retryPatch, retries * 50);
+        };
+        setTimeout(retryPatch, 30);
+
+        // Last resort: watch for DOM changes in the shadow root
+        try {
+          const shadow = mathField.shadowRoot;
+          if (shadow) {
+            const observer = new MutationObserver(() => {
+              if (patchShadowTextarea()) observer.disconnect();
+            });
+            observer.observe(shadow, { childList: true, subtree: true });
+            // Auto-disconnect after 2s to avoid leaks
+            setTimeout(() => observer.disconnect(), 2000);
+          }
+        } catch (_) {}
+      }
     }
   }
 
