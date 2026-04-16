@@ -799,8 +799,102 @@ class VisualTeachingHandler {
     }
 
     showBaseTenBlocks(number) {
-        console.log(`🔢 Showing base-10 blocks for: ${number}`);
-        // Implementation for base-10 blocks visualization
+        console.log(`Showing base-10 blocks for: ${number}`);
+
+        const messages = document.querySelectorAll('.message.ai');
+        if (messages.length === 0) return;
+
+        const lastMessage = messages[messages.length - 1];
+        const viz = this.createBaseTenBlocksHTML(number);
+        lastMessage.appendChild(viz);
+    }
+
+    createBaseTenBlocksHTML(number) {
+        const n = Math.abs(Math.floor(number)) || 0;
+        const hundreds = Math.floor(n / 100);
+        const tens = Math.floor((n % 100) / 10);
+        const ones = n % 10;
+
+        const container = document.createElement('div');
+        container.className = 'base-ten-visual';
+        container.style.cssText = `
+            margin-top: 15px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        `;
+
+        // Hundreds (10x10 grids)
+        for (let i = 0; i < hundreds; i++) {
+            const block = document.createElement('div');
+            block.style.cssText = `
+                width: 50px; height: 50px;
+                background: #667eea;
+                border: 2px solid #4c63d2;
+                border-radius: 4px;
+                display: grid;
+                grid-template-columns: repeat(10, 1fr);
+                grid-template-rows: repeat(10, 1fr);
+                gap: 0.5px;
+            `;
+            for (let c = 0; c < 100; c++) {
+                const cell = document.createElement('div');
+                cell.style.cssText = 'background: rgba(255,255,255,0.3); border-radius: 0.5px;';
+                block.appendChild(cell);
+            }
+            block.title = '100';
+            container.appendChild(block);
+        }
+
+        // Tens (rods)
+        for (let i = 0; i < tens; i++) {
+            const rod = document.createElement('div');
+            rod.style.cssText = `
+                width: 10px; height: 50px;
+                background: #f59e0b;
+                border: 1.5px solid #d97706;
+                border-radius: 3px;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5px;
+            `;
+            for (let c = 0; c < 10; c++) {
+                const cell = document.createElement('div');
+                cell.style.cssText = 'flex: 1; background: rgba(255,255,255,0.3); border-radius: 0.5px;';
+                rod.appendChild(cell);
+            }
+            rod.title = '10';
+            container.appendChild(rod);
+        }
+
+        // Ones (unit cubes)
+        for (let i = 0; i < ones; i++) {
+            const unit = document.createElement('div');
+            unit.style.cssText = `
+                width: 10px; height: 10px;
+                background: #10b981;
+                border: 1.5px solid #059669;
+                border-radius: 2px;
+                align-self: flex-end;
+            `;
+            unit.title = '1';
+            container.appendChild(unit);
+        }
+
+        const label = document.createElement('div');
+        label.style.cssText = 'width: 100%; text-align: center; margin-top: 8px; font-weight: 600; font-size: 0.95rem; color: #374151;';
+        const parts = [];
+        if (hundreds) parts.push(`${hundreds} hundred${hundreds > 1 ? 's' : ''}`);
+        if (tens) parts.push(`${tens} ten${tens > 1 ? 's' : ''}`);
+        if (ones) parts.push(`${ones} one${ones > 1 ? 's' : ''}`);
+        label.textContent = `${n} = ${parts.join(' + ')}`;
+        container.appendChild(label);
+
+        return container;
     }
 
     showCounters(positive, negative, label) {

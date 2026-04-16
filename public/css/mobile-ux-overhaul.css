@@ -150,20 +150,24 @@
     color: #fff;
   }
 
-  /* Hide hero actions once user has started chatting (first message sent) */
-  .hero-actions.hero-hidden {
-    display: none;
+  /* Compact hero actions once chatting (smaller buttons, still accessible) */
+  .hero-actions.hero-compact {
+    gap: 6px;
+  }
+  .hero-actions.hero-compact .hero-action-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  .hero-actions.hero-compact .hero-action-btn i {
+    font-size: 0.9rem;
   }
 }
 
-/* --- DECLUTTER TOOLBAR: Hide calculator & break on mobile --- */
-/* Calculator: kids have their phone calculator. Break: not a primary action. */
+/* --- DECLUTTER TOOLBAR: Hide calculator on mobile --- */
 
 @media (max-width: 768px) {
-  /* Calculator: kids have their phone. Attach/camera: replaced by hero button above. */
-  #calculator-toolbar-btn,
-  #attach-button,
-  #camera-button {
+  /* Calculator: kids have their phone calculator */
+  #calculator-toolbar-btn {
     display: none !important;
   }
 }

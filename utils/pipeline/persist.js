@@ -266,6 +266,12 @@ async function persist(params) {
       emitGamificationEvent(user, 'newSkillStarted', { skillId: extracted.skillStarted });
       emitGamificationEvent(user, 'skillPracticed', { skillId: extracted.skillStarted });
     }
+
+    // Mark nested objects as modified so Mongoose persists the changes.
+    // emitGamificationEvent mutates user.dailyQuests and user.weeklyChallenges
+    // in place, but Mongoose won't detect nested changes without this.
+    user.markModified('dailyQuests');
+    user.markModified('weeklyChallenges');
   }
 
   // ── 8c. Next Action suggestions ──

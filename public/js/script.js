@@ -1229,8 +1229,13 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 try {
                     if (window.MathGraph) {
+                        // Normalize function string (e.g. "tangent" → "tan(x)")
+                        let fn = graphData.function;
+                        if (window.inlineChatVisuals && typeof window.inlineChatVisuals.normalizeFunctionString === 'function') {
+                            fn = window.inlineChatVisuals.normalizeFunctionString(fn);
+                        }
                         new MathGraph(graphContainer, {
-                            fn: graphData.function,
+                            fn: fn,
                             xMin: graphData.xMin ?? -10,
                             xMax: graphData.xMax ?? 10,
                             yMin: graphData.yMin ?? null,
@@ -2255,7 +2260,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let aiText = data.text || '';
             const wasStreamed = contentType.includes('text/event-stream');
             let graphData = null;
-            const graphRegex = /\[GRAPH:({.*})\]/;
+            const graphRegex = /\[GRAPH:(\{[^}]*\})\]/;
             const graphMatch = aiText.match(graphRegex);
             if (graphMatch) {
                 try {

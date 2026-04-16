@@ -1015,25 +1015,40 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         try {
             preloadedTutorPlan = await TutorPlan.findOne({ userId: user._id });
 
-            if (preloadedTutorPlan) {
-                // Re-entry: welcome back after idle gap (>10 min)
-                const msgs = activeConversation.messages || [];
-                if (msgs.length >= 2) {
-                    const lastMsg = msgs[msgs.length - 1];
-                    const prevMsg = msgs[msgs.length - 2];
-                    if (lastMsg.role === 'user' && prevMsg.role === 'assistant' && prevMsg.timestamp) {
-                        const gapMs = Date.now() - new Date(prevMsg.timestamp).getTime();
-                        if (gapMs > 10 * 60 * 1000) {
-                            const reentry = generateReentryPrompt({
-                                tutorPlan: preloadedTutorPlan,
-                                conversation: activeConversation,
-                            });
-                            reentryDirective = reentry.directives.join('\n');
-                            logger.info('Re-entry detected', { userId: user._id, gapMinutes: Math.round(gapMs / 60000) });
+            // Re-entry: welcome back after idle gap (>10 min)
+            // Detect gap from the LAST message regardless of role — conversations
+            // typically end with the AI's response, not the user's.
+            const msgs = activeConversation.messages || [];
+            if (msgs.length >= 1) {
+                const lastMsg = msgs[msgs.length - 1];
+                const lastTimestamp = lastMsg.timestamp || lastMsg.createdAt;
+                if (lastTimestamp) {
+                    const gapMs = Date.now() - new Date(lastTimestamp).getTime();
+                    if (gapMs > 10 * 60 * 1000) {
+                        try {
+                            if (preloadedTutorPlan) {
+                                const reentry = generateReentryPrompt({
+                                    tutorPlan: preloadedTutorPlan,
+                                    conversation: activeConversation,
+                                });
+                                reentryDirective = reentry.directives.join('\n');
+                            }
+                        } catch (reentryErr) {
+                            // generateReentryPrompt failed — use fallback below
                         }
+                        // Fallback when tutorPlan is missing or generateReentryPrompt failed
+                        if (!reentryDirective) {
+                            const lastTopic = activeConversation.currentTopic || activeConversation.conversationName;
+                            reentryDirective = lastTopic && lastTopic !== 'Math Session'
+                                ? `RETURNING STUDENT: They've been away for ${Math.round(gapMs / 60000)} minutes. Last session topic: "${lastTopic}". Greet them warmly, briefly reference what you worked on before, and ask if they want to continue that topic or start something new. Do NOT jump straight into the old problem.`
+                                : `RETURNING STUDENT: They've been away for ${Math.round(gapMs / 60000)} minutes. Greet them warmly and ask what they'd like to work on today. Do NOT assume they want to continue the previous conversation.`;
+                        }
+                        logger.info('Re-entry detected', { userId: user._id, gapMinutes: Math.round(gapMs / 60000) });
                     }
                 }
+            }
 
+            if (preloadedTutorPlan) {
                 // Topic override: homework/specific requests win over plan
                 if (preloadedTutorPlan.currentTarget?.skillId) {
                     const overrideResult = shouldOverrideTopic(message, preloadedTutorPlan);
