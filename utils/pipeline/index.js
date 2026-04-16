@@ -289,15 +289,19 @@ async function runPipeline(message, ctx) {
     suppressSocratic,
   });
 
-  let rawResponseText;
+  let generatedResult;
   if (ctx.stream && ctx.res) {
-    rawResponseText = await generate(assembled, { stream: true, res: ctx.res });
+    generatedResult = await generate(assembled, { stream: true, res: ctx.res });
   } else {
-    rawResponseText = await generate(assembled);
+    generatedResult = await generate(assembled);
   }
+
+  const rawResponseText = generatedResult.text;
+  const resolvedTools = generatedResult.resolvedTools || null;
 
   // ── Stage 5: VERIFY ──
   const verified = await verify(rawResponseText, {
+    resolvedTools,
     userId: ctx.user._id?.toString(),
     userMessage: message,
     iepReadingLevel: ctx.user.iepPlan?.readingLevel || null,
