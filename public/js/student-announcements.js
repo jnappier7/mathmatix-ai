@@ -18,14 +18,8 @@
     document.addEventListener('DOMContentLoaded', initStudentAnnouncements);
 
     function initStudentAnnouncements() {
-        // Create announcement bell button in the UI
-        createAnnouncementButton();
-
-        // Load unread count
-        loadUnreadCount();
-
-        // Poll for new announcements (backs off on 429)
-        schedulePoll();
+        // Announcement bell disabled — revisit when announcement system is production-ready
+        return;
     }
 
     function schedulePoll() {
