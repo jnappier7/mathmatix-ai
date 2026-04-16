@@ -38,107 +38,67 @@ const VOICE_TUTOR_INSTRUCTIONS = `
 
 You are in an immersive, real-time voice conversation with a student. This is a hands-free, spoken math tutoring session.
 
-CRITICAL RULES FOR VOICE MODE:
-1. BREVITY IS ESSENTIAL — keep spoken text to 1-2 sentences MAX. This is a real-time voice conversation, not a lecture. If you write more than 2 sentences of spoken text, the student will zone out waiting for you to finish. One thought, one question, move on.
-2. Ask ONE follow-up question per turn — don't explain AND ask AND elaborate
+YOU MUST RESPOND WITH A JSON OBJECT in this exact format:
+{
+  "spoken": "Your spoken response here (1-2 sentences, plain English, no LaTeX)",
+  "mathSteps": [ ... array of step objects ... ]
+}
+
+CRITICAL RULES FOR THE "spoken" FIELD:
+1. BREVITY IS ESSENTIAL — 1-2 sentences MAX. One thought, one question, move on.
+2. Ask ONE follow-up question per turn
 3. Be warm and natural — like a real tutor sitting next to the student
-4. NEVER use LaTeX delimiters ($, $$, \(, \[) in your spoken text — use plain English only. The math board handles visual math. Say "x squared plus 3x" not "$x^2 + 3x$"
-5. NEVER use markdown formatting (**, *, #) in spoken text
+4. NEVER use LaTeX delimiters ($, $$, \\(, \\[) — use plain English. Say "x squared plus 3x" not "$x^2 + 3x$"
+5. NEVER use markdown formatting (**, *, #)
 
-MATH STEPS — ABSOLUTELY MANDATORY, NEVER SKIP:
-You MUST include a <mathsteps> block in EVERY response. The student's visual math board ONLY updates when you include <mathsteps>. If you omit it, the board goes BLANK and the student loses all visual context. This is the #1 most important rule.
+CRITICAL RULES FOR THE "mathSteps" FIELD:
+The student's math board ONLY updates from this field. If you omit it or leave it empty when math has been discussed, the board goes blank and the student loses all visual context.
 
-WHEN TO INCLUDE <mathsteps>:
-- ANY time math has been discussed in the conversation (even if this specific reply is encouragement like "Great job!" — still include the current board state)
-- When confirming a correct step — include ALL previous steps PLUS the new one
-- When the student is wrong — repeat the SAME steps as last time (board stays unchanged)
-- When asking "what's next?" — include all steps completed so far
+Always include "mathSteps" as an array. Each element: { "label": "string", "latex": "LaTeX string", "explanation": "string (optional)" }
 
-WHEN YOU MAY SKIP <mathsteps>:
-- ONLY if the entire conversation so far has been pure small talk with absolutely zero math (e.g., "Hi, how are you?")
+WHEN TO INCLUDE STEPS (non-empty array):
+- ANY time math has been discussed (even if this reply is just encouragement)
+- When confirming a correct step — all previous steps PLUS the new one
+- When student is wrong — repeat the SAME steps (board stays unchanged)
+- When asking "what's next?" — all steps completed so far
+
+WHEN THE ARRAY MAY BE EMPTY []:
+- ONLY if the entire conversation has been pure small talk with zero math
 
 PEDAGOGICAL RULE — NEVER SPOIL:
-The math board is a WHITEBOARD that tracks ONLY what the student has derived or confirmed. Do NOT show steps the student hasn't worked through yet. The board should reflect the student's progress, not the answer.
+The math board tracks ONLY what the student has derived or confirmed. Do NOT show steps the student hasn't worked through yet.
 
-- When the student states a problem → show ONLY the "Given" equation
-- When the student correctly identifies a step → add that step to the board
-- When you ASK "what should we do next?" → show only the steps completed SO FAR (do not show the next step)
-- When the student gives a WRONG answer → do NOT add it to the board. Gently guide them, keeping the board at the last correct step.
-- When you CONFIRM the student's correct answer → add that step
+- Student states a problem → only the "Given" equation
+- Student correctly identifies a step → add that step
+- You ask "what's next?" → only steps completed so far (NOT the next step)
+- Student gives WRONG answer → do NOT add it. Gently guide, keep board at last correct step.
+- Student says "just show me" or "give me the answer" → NEVER comply. Use parallel problems, smaller hints, or scaffolding instead.
 
-If the student asks you to "just show me", "solve it for me", or "give me the answer", NEVER comply. You are a tutor, not a calculator. Instead, use one of these strategies:
-- **Parallel problem**: Pose a simpler version of the same type. "OK let's try an easier one first — if 3x = 9, how would you find x?" Once they solve the parallel, circle back: "Now apply that same idea to our problem."
-- **Smaller hint**: Break it down. "Look at what's multiplying x. What's the opposite of that operation?"
-- **Scaffold**: Partially set up the step. "We need to get x alone. We have 2 times x. So we should _____ both sides by _____."
-Always guide, never give away. If the student is truly stuck after multiple attempts, use parallel problems to build up the skill before returning to the original.
+THE BOARD ACCUMULATES: The student's board keeps ALL work from the entire session. You only need to send steps for the CURRENT problem. Previous work stays on the board automatically. Start new problems with a fresh "Given" step.
 
-FORMAT: JSON array wrapped in <mathsteps>...</mathsteps> tags.
-Each step: { "label": string (optional), "latex": LaTeX string, "explanation": string (optional) }
+ALSO INCLUDE STEPS FOR NON-EQUATION MATH: slopes, derivatives, tangent lines, graphs — anything visual.
 
-IMPORTANT — THE BOARD ACCUMULATES: The student's board keeps ALL work from the entire session — every equation, every step, every problem. Previous work is never erased. You only need to send steps for the CURRENT problem. The board will append them below any earlier work. If the student switches to a new problem, start fresh with a new "Given" step — it will appear below the previous problem on their board.
+Example responses:
 
-Include ALL steps for the current problem from its beginning — not just the latest step. This way the board always shows the full progression for the active problem.
-
-Example conversation:
 Student says: "solve 2x minus 4 equals 0"
-Your response:
-Sure, let's work through this together! So we have 2x minus 4 equals 0. What should we do first to isolate x?
-<mathsteps>[
-  {"label": "Given", "latex": "2x - 4 = 0", "explanation": "Our starting equation"}
-]</mathsteps>
+{"spoken": "Sure, let's work through this together! So we have 2x minus 4 equals 0. What should we do first to isolate x?", "mathSteps": [{"label": "Given", "latex": "2x - 4 = 0", "explanation": "Our starting equation"}]}
 
 Student says: "add 4 to both sides"
-Your response:
-Exactly right! So now we have 2x equals 4. What's the next step to find x?
-<mathsteps>[
-  {"label": "Given", "latex": "2x - 4 = 0"},
-  {"label": "Add 4", "latex": "2x = 4", "explanation": "Add 4 to both sides"}
-]</mathsteps>
+{"spoken": "Exactly right! So now we have 2x equals 4. What's the next step to find x?", "mathSteps": [{"label": "Given", "latex": "2x - 4 = 0"}, {"label": "Add 4", "latex": "2x = 4", "explanation": "Add 4 to both sides"}]}
 
 Student says: "multiply by 2" (WRONG — should divide)
-Your response:
-Hmm, not quite. We have 2 times x. To get x by itself, what's the opposite of multiplying by 2?
-<mathsteps>[
-  {"label": "Given", "latex": "2x - 4 = 0"},
-  {"label": "Add 4", "latex": "2x = 4"}
-]</mathsteps>
+{"spoken": "Hmm, not quite. We have 2 times x. To get x by itself, what's the opposite of multiplying by 2?", "mathSteps": [{"label": "Given", "latex": "2x - 4 = 0"}, {"label": "Add 4", "latex": "2x = 4"}]}
 
-Notice: the board did NOT change because the student was wrong. No new step was added.
+Student says: "divide by 2"
+{"spoken": "That's it! x equals 2. Great job!", "mathSteps": [{"label": "Given", "latex": "2x - 4 = 0"}, {"label": "Add 4", "latex": "2x = 4"}, {"label": "Divide by 2", "latex": "x = 2", "explanation": "Divide both sides by 2"}]}
 
-Student says: "oh divide by 2"
-Your response:
-That's it! x equals 2. Great job working through that!
-<mathsteps>[
-  {"label": "Given", "latex": "2x - 4 = 0"},
-  {"label": "Add 4", "latex": "2x = 4"},
-  {"label": "Divide by 2", "latex": "x = 2", "explanation": "Divide both sides by 2"}
-]</mathsteps>
+Student says: "now what about the slope between (1,3) and (4,9)"
+{"spoken": "Good one! What's the formula for slope between two points?", "mathSteps": [{"label": "Points", "latex": "(1, 3) \\\\text{ and } (4, 9)"}, {"label": "Slope formula", "latex": "m = \\\\frac{y_2 - y_1}{x_2 - x_1}"}]}
 
-Student says: "now let's try 3x plus 6 equals 15"
-Your response:
-Great, new problem! What's the first thing we should do?
-<mathsteps>[
-  {"label": "Given", "latex": "3x + 6 = 15", "explanation": "New equation"}
-]</mathsteps>
+Student says: "Great job!" (no math in this turn, but math was discussed earlier)
+{"spoken": "Thanks! Want to try another problem?", "mathSteps": [{"label": "Given", "latex": "2x - 4 = 0"}, {"label": "Add 4", "latex": "2x = 4"}, {"label": "Divide by 2", "latex": "x = 2"}]}
 
-Note: the board now shows BOTH problems — the previous one stays visible above. The student can scroll up to review their earlier work.
-
-ALSO INCLUDE <mathsteps> FOR NON-EQUATION MATH:
-If the student is working with slopes, derivatives, graphs, or any visual math concept, include those as steps too. Examples:
-<mathsteps>[
-  {"label": "Slope formula", "latex": "m = \\frac{y_2 - y_1}{x_2 - x_1}"},
-  {"label": "Substitute", "latex": "m = \\frac{5 - 1}{3 - 1} = \\frac{4}{2}"},
-  {"label": "Simplify", "latex": "m = 2"}
-]</mathsteps>
-
-<mathsteps>[
-  {"label": "Function", "latex": "f(x) = x^3 - 3x"},
-  {"label": "Derivative", "latex": "f'(x) = 3x^2 - 3"},
-  {"label": "At x=1", "latex": "f'(1) = 3(1)^2 - 3 = 0", "explanation": "Tangent slope at x=1"}
-]</mathsteps>
-
-FINAL REMINDER — READ THIS CAREFULLY:
-The math board is the student's primary visual aid. EVERY response MUST include <mathsteps> if ANY math has been discussed at ANY point in the conversation. When in doubt, INCLUDE IT. Repeating the same steps is fine — omitting them blanks the board and confuses the student. This is non-negotiable.
+REMEMBER: Always respond with valid JSON. The "mathSteps" array must be present in every response.
 `;
 
 /**
@@ -371,33 +331,19 @@ router.post('/process', isAuthenticated, async (req, res) => {
     // ── Send transcription immediately ──
     sendPhase({ phase: 'transcription', transcription: userMessage });
 
-    // ── Step 2: Generate AI response ──
-    const aiResponse = await generateResponse(userId, userMessage, user);
-
-    let mathSteps = extractMathSteps(aiResponse);
-    const cleanResponse = stripMathSteps(aiResponse);
-
-    // If LLM didn't include <mathsteps> but math was previously discussed,
-    // recover the last known steps from conversation history so the board
-    // doesn't go blank. The LLM is instructed to always include them but
-    // sometimes forgets on encouragement-only responses.
-    if (mathSteps.length === 0) {
-      const lastSteps = await getLastMathSteps(userId);
-      if (lastSteps.length > 0) {
-        mathSteps = lastSteps;
-      }
-    }
+    // ── Step 2: Generate AI response (structured JSON — no tag dependency) ──
+    const { spoken, mathSteps, raw: aiRaw } = await generateResponse(userId, userMessage, user);
 
     // ── Send text + math immediately ──
-    sendPhase({ phase: 'response', response: cleanResponse, mathSteps });
+    sendPhase({ phase: 'response', response: spoken, mathSteps });
 
     // ── Step 3: TTS + history save in parallel ──
     const [audioUrl] = await Promise.all([
-      generateTTS(userId, cleanResponse, user).catch(err => {
+      generateTTS(userId, spoken, user).catch(err => {
         console.warn('[VoiceTutor] TTS failed:', err.message);
         return null;
       }),
-      saveToHistory(userId, userMessage, aiResponse)
+      saveToHistory(userId, userMessage, aiRaw)
     ]);
 
     // ── Send audio URL ──
@@ -434,30 +380,21 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
   }
 
   try {
-    const aiResponse = await generateResponse(userId, text.trim());
-    let mathSteps = extractMathSteps(aiResponse);
-    const cleanResponse = stripMathSteps(aiResponse);
-
-    // Recover last math steps if LLM omitted them
-    if (mathSteps.length === 0) {
-      const lastSteps = await getLastMathSteps(userId);
-      if (lastSteps.length > 0) mathSteps = lastSteps;
-    }
+    const { spoken, mathSteps, raw: aiRaw } = await generateResponse(userId, text.trim());
 
     let audioUrl = null;
     if (ttsProvider.isConfigured()) {
       try {
-        audioUrl = await generateTTS(userId, cleanResponse);
+        audioUrl = await generateTTS(userId, spoken);
       } catch (e) {
         console.warn('[VoiceTutor] TTS failed, continuing without audio:', e.message);
       }
     }
 
-    // Save full response (with mathsteps) so the AI can track board state
-    await saveToHistory(userId, text.trim(), aiResponse);
+    await saveToHistory(userId, text.trim(), aiRaw);
 
     res.json({
-      response: cleanResponse,
+      response: spoken,
       audioUrl,
       mathSteps
     });
@@ -472,6 +409,10 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
 // SHARED HELPERS
 // ═══════════════════════════════════════
 
+/**
+ * Generate a voice tutor response using structured JSON output.
+ * Returns { spoken, mathSteps, raw } — no dependency on LLM tags.
+ */
 async function generateResponse(userId, userMessage, preloadedUser) {
   const user = preloadedUser || await User.findById(userId).lean();
   if (!user) throw new Error('User not found');
@@ -481,7 +422,6 @@ async function generateResponse(userId, userMessage, preloadedUser) {
   const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
 
   // Get conversation history (last 12 messages for voice context)
-  // Use projection to only fetch the messages we need, not the entire conversation
   const conversation = await Conversation.findOne({ userId })
     .sort({ updatedAt: -1 })
     .select({ messages: { $slice: -12 } })
@@ -503,29 +443,85 @@ async function generateResponse(userId, userMessage, preloadedUser) {
 
   const completion = await callLLM(VOICE_MODEL, messages, {
     temperature: 0.45,
-    max_tokens: 600
+    max_tokens: 600,
+    response_format: { type: 'json_object' }
   });
 
-  let responseText = completion.choices[0].message.content.trim();
+  const rawContent = completion.choices[0].message.content.trim();
+  let spoken = '';
+  let mathSteps = [];
 
-  // IEP reading level enforcement
+  // ── Primary path: parse structured JSON ──
+  try {
+    const parsed = JSON.parse(rawContent);
+    spoken = (parsed.spoken || parsed.text || parsed.response || '').trim();
+    if (Array.isArray(parsed.mathSteps)) {
+      mathSteps = parsed.mathSteps.filter(s => s && s.latex);
+    } else if (Array.isArray(parsed.math_steps)) {
+      mathSteps = parsed.math_steps.filter(s => s && s.latex);
+    } else if (Array.isArray(parsed.steps)) {
+      mathSteps = parsed.steps.filter(s => s && s.latex);
+    }
+  } catch (e) {
+    console.warn('[VoiceTutor] JSON parse failed, falling back to tag extraction:', e.message);
+    // ── Fallback: old tag-based extraction ──
+    mathSteps = extractMathSteps(rawContent);
+    spoken = stripMathSteps(rawContent);
+  }
+
+  // ── Fallback: extract from spoken text if no steps found ──
+  if (mathSteps.length === 0 && spoken) {
+    mathSteps = extractMathFromSpokenText(spoken);
+  }
+
+  // ── Final fallback: recover from conversation history ──
+  if (mathSteps.length === 0) {
+    const lastSteps = await getLastMathSteps(userId);
+    if (lastSteps.length > 0) mathSteps = lastSteps;
+  }
+
+  // If no spoken text was extracted, try to salvage from raw content
+  if (!spoken) {
+    // If rawContent is valid JSON (our structured format), don't read JSON aloud
+    try {
+      const obj = JSON.parse(rawContent);
+      // Pull any string value that looks like speech
+      spoken = obj.spoken || obj.text || obj.response || obj.message || '';
+      if (!spoken) {
+        // Last resort: find the first non-empty string value
+        for (const val of Object.values(obj)) {
+          if (typeof val === 'string' && val.trim().length > 10) {
+            spoken = val.trim();
+            break;
+          }
+        }
+      }
+    } catch (_) {
+      // Not JSON — use raw text directly (old tag-based format)
+      spoken = rawContent;
+    }
+    // If still empty, give a safe generic response rather than silence
+    if (!spoken) spoken = "Let me think about that. Could you tell me more?";
+  }
+
+  // IEP reading level enforcement (operates on spoken text only)
   const iepReadingLevel = user.iepPlan?.readingLevel || null;
   if (iepReadingLevel) {
-    const readCheck = checkReadingLevel(responseText, iepReadingLevel);
+    const readCheck = checkReadingLevel(spoken, iepReadingLevel);
     if (!readCheck.passes) {
       console.log(
         `[VoiceTutor] Reading level violation for ${user.firstName}: ` +
         `response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
       );
       try {
-        const simplifyPrompt = buildSimplificationPrompt(responseText, readCheck.targetGrade, user.firstName || 'the student');
+        const simplifyPrompt = buildSimplificationPrompt(spoken, readCheck.targetGrade, user.firstName || 'the student');
         const simplified = await callLLM(VOICE_MODEL, [{ role: 'system', content: simplifyPrompt }], {
           temperature: 0.3,
           max_tokens: 600
         });
         const simplifiedText = simplified.choices[0]?.message?.content?.trim();
         if (simplifiedText && simplifiedText.length > 20) {
-          responseText = simplifiedText;
+          spoken = simplifiedText;
           console.log(`[VoiceTutor] Response simplified to target Grade ${readCheck.targetGrade}`);
         }
       } catch (err) {
@@ -534,7 +530,7 @@ async function generateResponse(userId, userMessage, preloadedUser) {
     }
   }
 
-  return responseText;
+  return { spoken, mathSteps, raw: rawContent };
 }
 
 async function generateTTS(userId, responseText, preloadedUser) {
@@ -574,6 +570,59 @@ async function generateTTS(userId, responseText, preloadedUser) {
 }
 
 /**
+ * Extract math from natural-language spoken text (no tags or LaTeX needed).
+ * Converts "2x minus 4 equals 0" → { latex: "2x - 4 = 0" }
+ */
+function extractMathFromSpokenText(text) {
+  const steps = [];
+  const seen = new Set();
+
+  function addStep(latex, label) {
+    const key = latex.replace(/\s+/g, '').trim();
+    if (key.length > 2 && !seen.has(key)) {
+      seen.add(key);
+      steps.push(label ? { label, latex: latex.trim() } : { latex: latex.trim() });
+    }
+  }
+
+  // Convert spoken math words to symbols
+  let converted = text
+    .replace(/\bequals?\b/gi, '=')
+    .replace(/\bis equal to\b/gi, '=')
+    .replace(/\bplus\b/gi, '+')
+    .replace(/\bminus\b/gi, '-')
+    .replace(/\btimes\b/gi, '\\cdot')
+    .replace(/\bmultiplied by\b/gi, '\\cdot')
+    .replace(/\bdivided by\b/gi, '/')
+    .replace(/\bover\b/gi, '/')
+    .replace(/\bsquared\b/gi, '^2')
+    .replace(/\bcubed\b/gi, '^3')
+    .replace(/\bto the (\w+) power\b/gi, (_, p) => `^{${p}}`)
+    .replace(/\bsquare root of\b/gi, '\\sqrt{')
+    .replace(/\bslope\b/gi, 'm');
+
+  // Look for equations: anything with = sign and at least one variable or number
+  const eqRegex = /\b([\d]*\s*[a-zA-Z][\w\s\^{}\\]*(?:\s*[+\-/\\·]\s*[\d]*\s*[a-zA-Z\d][\w\s\^{}\\]*)*\s*=\s*[\d\w\s+\-*/\\^{}.()]+)/g;
+  let m;
+  while ((m = eqRegex.exec(converted)) !== null) {
+    let eq = m[1].trim()
+      .replace(/\s+/g, ' ')
+      .replace(/(\d)\s+([a-zA-Z])/g, '$1$2'); // "2 x" → "2x"
+    if (/=/.test(eq) && eq.length < 120) {
+      addStep(eq);
+    }
+  }
+
+  // Also look for coordinate pairs: "(1, 3) and (4, 9)"
+  const coordRegex = /\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)\s*(?:and|,)\s*\((-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\)/g;
+  while ((m = coordRegex.exec(text)) !== null) {
+    addStep(`(${m[1]}, ${m[2]}) \\text{ and } (${m[3]}, ${m[4]})`, 'Points');
+  }
+
+  return steps;
+}
+
+/**
  * Recover the last math steps from conversation history.
  * Scans recent assistant messages for <mathsteps> blocks.
  */
@@ -591,6 +640,17 @@ async function getLastMathSteps(userId) {
       .reverse();
 
     for (const msg of assistantMsgs) {
+      // Try JSON format first (new structured responses)
+      try {
+        const parsed = JSON.parse(msg.content);
+        const steps = parsed.mathSteps || parsed.math_steps || parsed.steps;
+        if (Array.isArray(steps) && steps.length > 0) {
+          const valid = steps.filter(s => s && s.latex);
+          if (valid.length > 0) return valid;
+        }
+      } catch (_) {
+        // Not JSON — try legacy tag extraction
+      }
       const steps = extractMathSteps(msg.content);
       if (steps.length > 0) return steps;
     }
