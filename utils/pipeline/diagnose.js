@@ -55,6 +55,35 @@ async function diagnose(observation, context = {}) {
   const studentAnswer = observation.answer.value;
   const recentAI = context.recentAssistantMessages || [];
 
+  // ── Step 0: Self-contained arithmetic check ──
+  // When the student states a complete arithmetic fact like "13-8 is 5",
+  // verify the arithmetic itself FIRST. If the student's own arithmetic
+  // is correct, trust it — don't let the math solver's interpretation
+  // of the posed problem override an objectively true calculation.
+  // This prevents false negatives like "13-8 is 5" being flagged wrong
+  // because the solver evaluated "x-8" as -8 (missing substitution context).
+  const rawText = observation.raw || '';
+  const arithmeticMatch = rawText.match(
+    /(-?\d+\.?\d*)\s*([+\-*/×÷])\s*(-?\d+\.?\d*)\s+(?:is|=|equals)\s+(-?\d+\.?\d*)/i
+  );
+  let studentArithmeticIsCorrect = false;
+  if (arithmeticMatch) {
+    const [, a, op, b, result] = arithmeticMatch;
+    const numA = parseFloat(a);
+    const numB = parseFloat(b);
+    const numResult = parseFloat(result);
+    let expected;
+    switch (op) {
+      case '+': expected = numA + numB; break;
+      case '-': expected = numA - numB; break;
+      case '*': case '×': expected = numA * numB; break;
+      case '/': case '÷': expected = numB !== 0 ? numA / numB : NaN; break;
+    }
+    if (expected !== undefined && Math.abs(expected - numResult) < 0.001) {
+      studentArithmeticIsCorrect = true;
+    }
+  }
+
   // ── Step 1: Find the problem that was posed ──
   // Prefer stored problemInfo metadata (set at persist time) over re-parsing.
   // This avoids fragile regex matching against the AI's natural language text —
@@ -100,6 +129,16 @@ async function diagnose(observation, context = {}) {
     const verification = verifyAnswer(studentAnswer, problemInfo.correctAnswer);
     isCorrect = verification.isCorrect;
     correctAnswer = problemInfo.correctAnswer;
+  }
+
+  // Override: if the student's own arithmetic is provably correct but the
+  // solver-based verification says wrong, trust the student's math.
+  // The solver likely misinterpreted the posed problem (e.g. "x-8" without
+  // substitution context).
+  if (isCorrect === false && studentArithmeticIsCorrect) {
+    console.log(`[Diagnose] Arithmetic override: student's "${rawText}" is mathematically correct — overriding solver mismatch`);
+    isCorrect = true;
+    correctAnswer = studentAnswer;
   }
 
   // ── Step 3: If incorrect, detect misconception ──

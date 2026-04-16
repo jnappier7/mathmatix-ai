@@ -944,10 +944,20 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         // System prompt fades in long conversations. Appending a brief
         // reminder to the last user message keeps the scaffold tag
         // instruction in the AI's attention window.
+        // BUT: if the student is clearly asking about something different
+        // (homework, a specific problem they brought), relax the lock
+        // so the tutor addresses their actual question.
         if (courseScaffoldCtx?.stepTitle && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
-                lastMsg.content += `\n\n[STEP ${courseScaffoldCtx.stepIdx + 1}/${courseScaffoldCtx.totalSteps}: "${courseScaffoldCtx.stepTitle}" — emit <SCAFFOLD_ADVANCE> when complete, before discussing the next topic.]`;
+                const msgLower = (typeof lastMsg.content === 'string' ? lastMsg.content : message).toLowerCase();
+                const isStudentBringingOwnProblem = hasUploadedFiles || hasRecentUpload ||
+                    /\b(help me with|my (homework|problem|question|worksheet|assignment)|can you solve|I have a|the problem (is|says|asks))\b/i.test(msgLower);
+                if (isStudentBringingOwnProblem) {
+                    lastMsg.content += `\n\n[The student is asking about their own problem, NOT the course module. PAUSE the course lesson and help with their specific question first. You can return to the lesson afterward.]`;
+                } else {
+                    lastMsg.content += `\n\n[STEP ${courseScaffoldCtx.stepIdx + 1}/${courseScaffoldCtx.totalSteps}: "${courseScaffoldCtx.stepTitle}" — emit <SCAFFOLD_ADVANCE> when complete, before discussing the next topic.]`;
+                }
             }
         }
 
