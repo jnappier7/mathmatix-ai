@@ -80,6 +80,7 @@ async function callLLM(model, messages, options = {}) {
                 ...temperatureParam,
                 ...tokenParam,
                 stream: options.stream || false,
+                ...(options.response_format ? { response_format: options.response_format } : {}),
             })
         );
         return completion;
