@@ -2657,13 +2657,15 @@ function closeAlgebraTiles() {
   }
 }
 
-// Auto-initialize on DOM ready and hook up button
+// Expose functions to window but DON'T auto-create the workspace on load.
+// The workspace is heavy (full modal + canvas + SVG) — only build it when
+// actually needed (first open). This prevents unstyled content flash and
+// avoids the modal taking over the page if CSS hasn't loaded yet.
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize algebra tiles
-  initAlgebraTiles();
-
-  // Expose to window so AI visual teaching handler can access it
-  window.algebraTiles = algebraTiles;
+  // Expose lazy-init functions to window
+  window.openAlgebraTiles = openAlgebraTiles;
+  window.closeAlgebraTiles = closeAlgebraTiles;
+  window.initAlgebraTiles = initAlgebraTiles;
 
   // Hook up button in chat page
   const algebraTilesBtn = document.getElementById('algebra-tiles-btn');
