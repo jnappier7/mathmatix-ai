@@ -124,11 +124,13 @@ async function diagnose(observation, context = {}) {
   // ── Step 2: Verify the answer ──
   let isCorrect = null;
   let correctAnswer = null;
+  let verificationSource = null;
 
   if (problemInfo) {
     const verification = verifyAnswer(studentAnswer, problemInfo.correctAnswer);
     isCorrect = verification.isCorrect;
     correctAnswer = problemInfo.correctAnswer;
+    verificationSource = 'solver';
   }
 
   // Override: if the student's own arithmetic is provably correct but the
@@ -139,6 +141,29 @@ async function diagnose(observation, context = {}) {
     console.log(`[Diagnose] Arithmetic override: student's "${rawText}" is mathematically correct — overriding solver mismatch`);
     isCorrect = true;
     correctAnswer = studentAnswer;
+    verificationSource = 'arithmetic_override';
+  }
+
+  // ── Step 2b: LLM verification fallback ──
+  // The deterministic solver handles arithmetic and basic algebra, but fails on
+  // derivatives, factored polynomials, trig identities, proofs, and word
+  // problems. When the solver couldn't parse the posed problem (no problemInfo)
+  // OR couldn't verify it (isCorrect stayed null), fall back to the parallel
+  // LLM verdict fired at the start of the pipeline. Only trust high-confidence
+  // verdicts — low-confidence stays unverifiable and the existing "compute
+  // the answer yourself before responding" directives handle it.
+  if (isCorrect === null && context.llmVerificationPromise) {
+    try {
+      const verdict = await context.llmVerificationPromise;
+      if (verdict && verdict.isCorrect !== null) {
+        isCorrect = verdict.isCorrect;
+        correctAnswer = verdict.modelAnswer || correctAnswer;
+        verificationSource = 'llm';
+        console.log(`[Diagnose] LLM fallback: ${isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+      }
+    } catch (err) {
+      console.error('[Diagnose] LLM verification await failed:', err.message);
+    }
   }
 
   // ── Step 3: If incorrect, detect misconception ──
@@ -215,6 +240,7 @@ async function diagnose(observation, context = {}) {
     evidence,
     demonstratedReasoning,  // true = student gave correct answer + valid reasoning
     hasExplanation,         // true = answer was embedded in explanatory text
+    verificationSource,     // 'solver' | 'arithmetic_override' | 'llm' | null
     problemInfo: problemInfo ? {
       type: problemInfo.problemType,
       correctAnswer: problemInfo.correctAnswer,

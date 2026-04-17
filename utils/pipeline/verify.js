@@ -305,6 +305,16 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── Shared patterns for correctness-verdict guards ──
+  // The regex literals are used in BOTH the action-based gates (2c/2d) and
+  // the LLM-verdict cross-checks (2c-llm / 2d-llm) below.
+  const falseConfirmationPattern = /^(that'?s\s+(?:right|correct|it)[.!]*|correct[.!]*|exactly[.!]*|great\s+(?:job|work)[.!]*|perfect[.!]*|well\s+done[.!]*|you\s+(?:got|nailed)\s+it[.!]*|right\s+on[.!]*|bingo[.!]*|excellent[.!]*|yes[,.]?\s*(?:that'?s|you(?:'re|\s+are))\s+(?:right|correct)|¡?(?:excelente|exacto|exactamente|muy\s+bien|perfecto|fantástico)[.!]*)/i;
+  const falseRejectionOpener = /^(hmm[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)|not\s+quite|close[,!.]\s*but|almost[.!,]|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from|let'?s\s+check\s+that|are\s+you\s+sure|that'?s\s+not\s+(?:quite|exactly)|so\s+close|good\s+(?:try|attempt|thinking)[,.]?\s*but|nice\s+try[.!,]|let'?s\s+double[- ]check|(?:but\s+)?let'?s\s+(?:re)?check\s+the)/i;
+
+  // Track whether a verdict-based regeneration already ran so we don't
+  // double-regenerate on the same turn.
+  let regeneratedThisPass = false;
+
   // ── 2c. False-confirmation guard (CRITICAL — prevents affirming wrong answers) ──
   // When the pipeline has VERIFIED the student's answer is INCORRECT
   // (action === GUIDE_INCORRECT or RETEACH_MISCONCEPTION) but the LLM's
@@ -312,8 +322,6 @@ async function verify(responseText, context = {}) {
   // it for regeneration. This prevents the most damaging tutoring error:
   // telling a student their wrong answer is right.
   if (context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION) {
-    const falseConfirmationPattern = /^(that'?s\s+(?:right|correct|it)[.!]*|correct[.!]*|exactly[.!]*|great\s+(?:job|work)[.!]*|perfect[.!]*|well\s+done[.!]*|you\s+(?:got|nailed)\s+it[.!]*|right\s+on[.!]*|bingo[.!]*|excellent[.!]*|yes[,.]?\s*(?:that'?s|you(?:'re|\s+are))\s+(?:right|correct)|¡?(?:excelente|exacto|exactamente|muy\s+bien|perfecto|fantástico)[.!]*)/i;
-
     if (falseConfirmationPattern.test(text.trim())) {
       flags.push('false_confirmation_detected');
       console.log(`[Verify] FALSE CONFIRMATION detected on verified-incorrect answer — regenerating`);
@@ -330,6 +338,7 @@ async function verify(responseText, context = {}) {
         if (regeneratedText && regeneratedText.length > 10) {
           text = regeneratedText;
           flags.push('false_confirmation_regenerated');
+          regeneratedThisPass = true;
 
           if (context.isStreaming && context.res) {
             try {
@@ -348,10 +357,7 @@ async function verify(responseText, context = {}) {
   // When the pipeline has VERIFIED the student's answer is correct
   // (action === CONFIRM_CORRECT) but the LLM's response implies the
   // answer is wrong, flag it for regeneration.
-  if (context.action === ACTIONS.CONFIRM_CORRECT) {
-    // Detect rejection/doubt language at the start of a verified-correct response
-    const falseRejectionOpener = /^(hmm[,.]?\s*|let'?s\s+think\s+(about|through)\s+(?:this|that|the\s+problem)|not\s+quite|close[,!.]\s*but|almost[.!,]|i\s+see\s+where\s+you(?:'re|\s+are)\s+coming\s+from|let'?s\s+check\s+that|are\s+you\s+sure|that'?s\s+not\s+(?:quite|exactly)|so\s+close|good\s+(?:try|attempt|thinking)[,.]?\s*but|nice\s+try[.!,]|let'?s\s+double[- ]check|(?:but\s+)?let'?s\s+(?:re)?check\s+the)/i;
-
+  if (!regeneratedThisPass && context.action === ACTIONS.CONFIRM_CORRECT) {
     if (falseRejectionOpener.test(text.trim())) {
       flags.push('false_rejection_detected');
       console.log(`[Verify] FALSE REJECTION detected on verified-correct answer — regenerating`);
@@ -370,6 +376,7 @@ async function verify(responseText, context = {}) {
         if (regeneratedText && regeneratedText.length > 10) {
           text = regeneratedText;
           flags.push('false_rejection_regenerated');
+          regeneratedThisPass = true;
 
           if (context.isStreaming && context.res) {
             try {
@@ -380,6 +387,88 @@ async function verify(responseText, context = {}) {
       } catch (err) {
         console.error('[Verify] False-rejection regeneration failed:', err.message);
         flags.push('false_rejection_regeneration_failed');
+      }
+    }
+  }
+
+  // ── 2c-llm / 2d-llm. LLM-verdict cross-check guards ──
+  // When the deterministic solver couldn't verify the answer (so action never
+  // became CONFIRM_CORRECT / GUIDE_INCORRECT), the parallel LLM verification
+  // still fires as a cross-check. This catches the cases the action-based
+  // gates above miss: derivatives, factored polynomials, trig identities,
+  // word problems — anything the solver returns 'unverifiable' on.
+  // Only acts on high-confidence verdicts (the verifier already gates on
+  // its own CONFIDENCE_THRESHOLD), and only regenerates once per turn.
+  if (!regeneratedThisPass && context.llmVerdict && context.llmVerdict.isCorrect !== null) {
+    // Don't double-act if the action-based guard already gated on the same
+    // info (i.e. action already reflected the LLM verdict via diagnose's
+    // fallback path).
+    const alreadyGatedCorrect = context.action === ACTIONS.CONFIRM_CORRECT;
+    const alreadyGatedIncorrect = context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION;
+
+    // LLM says WRONG, response is affirming → regenerate as correction.
+    if (context.llmVerdict.isCorrect === false
+        && !alreadyGatedIncorrect
+        && falseConfirmationPattern.test(text.trim())) {
+      flags.push('llm_false_confirmation_detected');
+      console.log(`[Verify] LLM-verdict FALSE CONFIRMATION (student: "${context.studentAnswer}", correct: "${context.llmVerdict.modelAnswer}") — regenerating`);
+
+      try {
+        const correctionPrompt = `The student's answer has been verified as INCORRECT by an independent math verifier. The correct answer is "${context.llmVerdict.modelAnswer}". Your previous response incorrectly affirmed the student's wrong answer. Respond naturally — guide the student toward discovering the error WITHOUT revealing the correct answer. Do not use scripted language; be a natural, supportive tutor who knows this answer is wrong.`;
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this response knowing the student\'s answer is WRONG. Keep your personality and teaching style, just remove the false affirmation and guide them to find their mistake.' }],
+          { temperature: 0.55, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('llm_false_confirmation_regenerated');
+          regeneratedThisPass = true;
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] LLM false-confirmation regeneration failed:', err.message);
+        flags.push('llm_false_confirmation_regeneration_failed');
+      }
+    }
+
+    // LLM says RIGHT, response is rejecting → regenerate as confirmation.
+    else if (context.llmVerdict.isCorrect === true
+             && !alreadyGatedCorrect
+             && falseRejectionOpener.test(text.trim())) {
+      flags.push('llm_false_rejection_detected');
+      console.log(`[Verify] LLM-verdict FALSE REJECTION (student: "${context.studentAnswer}" confirmed correct) — regenerating`);
+
+      try {
+        const correctionPrompt = `The student's answer has been verified as CORRECT by an independent math verifier. Your previous response incorrectly implied it was wrong. Respond naturally to the student — confirm their answer is correct and continue the lesson. Do not use scripted language; just be a natural, encouraging tutor who knows this answer is right.`;
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this response knowing the student IS correct. Keep your personality and teaching style, just fix the incorrect rejection.' }],
+          { temperature: 0.55, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('llm_false_rejection_regenerated');
+          regeneratedThisPass = true;
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] LLM false-rejection regeneration failed:', err.message);
+        flags.push('llm_false_rejection_regeneration_failed');
       }
     }
   }

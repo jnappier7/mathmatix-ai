@@ -131,10 +131,32 @@ function mockConversation(messages = [], overrides = {}) {
   };
 }
 
-function mockLLMResponse(text) {
-  callLLM.mockResolvedValueOnce({
-    choices: [{ message: { content: text } }],
+// ── LLM call routing ──
+// The pipeline fires a parallel LLM verifier (two calls) alongside the main
+// generate call whenever the student attempts an answer. Route those calls
+// to safe unverifiable defaults so the test's `text` still reaches the main
+// generate step in queue order.
+const __mainTextQueue = [];
+const __installMockRouter = () => {
+  callLLM.mockImplementation((_model, messages) => {
+    const sys = messages.find(m => m.role === 'system')?.content || '';
+    if (sys.includes('math answer engine')) {
+      return Promise.resolve({
+        choices: [{ message: { content: '{"answer":"unknown","form":"unknown"}' } }],
+      });
+    }
+    if (sys.includes('math equivalence judge')) {
+      return Promise.resolve({
+        choices: [{ message: { content: '{"matches":false,"confidence":0.3,"rationale":"mocked"}' } }],
+      });
+    }
+    const next = __mainTextQueue.length > 0 ? __mainTextQueue.shift() : '';
+    return Promise.resolve({ choices: [{ message: { content: next } }] });
   });
+};
+
+function mockLLMResponse(text) {
+  __mainTextQueue.push(text);
 }
 
 function buildCtx(user, conversation, extras = {}) {
@@ -204,6 +226,8 @@ async function runDeterministicStages(studentMessage, tutorMessages) {
 describe('Tutor Validation: Transcript Regression', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   // ────────────────────────────────────────────────────────────────────────
@@ -302,6 +326,8 @@ describe('Tutor Validation: Transcript Regression', () => {
 describe('Tutor Validation: Correct Answer Must Always Be Confirmed', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   test('bare numeric answer to limit problem', async () => {
@@ -373,6 +399,8 @@ describe('Tutor Validation: Correct Answer Must Always Be Confirmed', () => {
 describe('Tutor Validation: Incorrect Answers Must Not Be Confirmed', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   test('wrong numeric answer to limit', async () => {
@@ -415,6 +443,8 @@ describe('Tutor Validation: Incorrect Answers Must Not Be Confirmed', () => {
 describe('Tutor Validation: False Rejection Guard (Full Pipeline)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   test('LLM hedging on verified-correct answer triggers regeneration', async () => {
@@ -581,6 +611,8 @@ describe('Tutor Validation: Unicode Superscript Normalization', () => {
 describe('Tutor Validation: Answer Leak Prevention', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   // ────────────────────────────────────────────────────────────────────────
@@ -709,6 +741,8 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
 describe('Tutor Validation: Function-Definition Derivative Detection', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   // ────────────────────────────────────────────────────────────────────────
@@ -781,6 +815,8 @@ describe('Tutor Validation: Function-Definition Derivative Detection', () => {
 describe('Tutor Validation: Stored problemInfo Metadata', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
   });
 
   // The architectural fix: when an AI message has stored problemInfo metadata,
