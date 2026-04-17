@@ -2240,6 +2240,18 @@ document.addEventListener("DOMContentLoaded", () => {
                                             wrapper.className = 'icv-tool-output';
                                             wrapper.innerHTML = toolHtml;
                                             streamRef.textNode.appendChild(wrapper);
+                                            // Canvas renderers (graphs, number lines, etc.) require an
+                                            // explicit init pass after the HTML hits the DOM, matching
+                                            // the post-processMessage path at line ~2350.
+                                            if (typeof window.inlineChatVisuals.initializeVisuals === 'function') {
+                                                setTimeout(() => {
+                                                    try {
+                                                        window.inlineChatVisuals.initializeVisuals(wrapper);
+                                                    } catch (initErr) {
+                                                        console.error('[Stream] tool_use initializeVisuals failed:', initErr);
+                                                    }
+                                                }, 50);
+                                            }
                                         }
                                     } catch (toolErr) {
                                         console.error('[Stream] tool_use render failed:', toolErr);
