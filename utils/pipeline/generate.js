@@ -14,8 +14,12 @@ const { callLLM, callLLMStream } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCompact');
 const { buildSlimRules } = require('./promptSlim');
+const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTools');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
+
+/** Visual tool calling is opt-in until the frontend/backend are both deployed. */
+const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
 
 /**
  * Build the action-specific instruction for the LLM.
@@ -356,10 +360,26 @@ function assemblePrompt(decision, promptContext) {
     }
   }
 
+  const options = { temperature: 0.55, max_tokens: 1200 };
+  if (VISUAL_TOOLS_ENABLED) {
+    options.tools = VISUAL_TOOLS;
+    options.tool_choice = 'auto';
+    options.parallel_tool_calls = true;
+    // Nudge the model to prefer structured tool calls over text tags when
+    // emitting visuals. The legacy VISUAL_TOOLS_SECTION still runs and is
+    // kept for the one-release backwards-compatibility window.
+    fullSystemPrompt +=
+      '\n\n--- STRUCTURED VISUAL TOOLS ---\n' +
+      describeTools() +
+      '\nPrefer these tool calls over emitting bracket tags for visuals. ' +
+      'The student-facing rendering is identical, but tool calls are ' +
+      'validated and reliable — tags can be malformed.';
+  }
+
   return {
     messages: [{ role: 'system', content: fullSystemPrompt }, ...messages],
     model: PRIMARY_CHAT_MODEL,
-    options: { temperature: 0.55, max_tokens: 1200 },
+    options,
   };
 }
 
@@ -380,7 +400,64 @@ async function generate(assembled, options = {}) {
   }
 
   const completion = await callLLM(model, messages, llmOptions);
-  return completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+  const message = completion.choices[0]?.message || {};
+
+  // Tool-calling path: append dummy tool results and re-prompt for narration.
+  if (Array.isArray(message.tool_calls) && message.tool_calls.length > 0) {
+    const resolved = resolveToolCalls(message.tool_calls);
+    const narrationText = await generateToolNarration(
+      model,
+      messages,
+      message,
+      llmOptions
+    );
+    return {
+      text: narrationText || '',
+      toolCalls: message.tool_calls,
+      resolvedTools: resolved,
+    };
+  }
+
+  const text = message.content?.trim() || "I'm not sure how to respond.";
+  return { text, toolCalls: [], resolvedTools: null };
+}
+
+/**
+ * After the model emits tool_calls (and OpenAI halts generation), append
+ * stub tool results and re-prompt for the narrative text that goes with
+ * the visuals. This is the canonical OpenAI tool loop.
+ */
+async function generateToolNarration(model, priorMessages, assistantMessage, llmOptions) {
+  const toolResults = assistantMessage.tool_calls.map((call) => ({
+    role: 'tool',
+    tool_call_id: call.id,
+    content: JSON.stringify({ status: 'rendered' }),
+  }));
+
+  const nextMessages = [
+    ...priorMessages,
+    {
+      role: 'assistant',
+      content: assistantMessage.content || null,
+      tool_calls: assistantMessage.tool_calls,
+    },
+    ...toolResults,
+  ];
+
+  // Re-prompt WITHOUT tools to force text output (no tool-calling recursion).
+  const narrationOptions = { ...llmOptions };
+  delete narrationOptions.tools;
+  delete narrationOptions.tool_choice;
+  delete narrationOptions.parallel_tool_calls;
+
+  try {
+    const completion = await callLLM(model, nextMessages, narrationOptions);
+    const content = completion.choices[0]?.message?.content?.trim();
+    return content || "";
+  } catch (err) {
+    console.error('[Generate] Tool narration call failed:', err.message);
+    return "";
+  }
 }
 
 /**
@@ -390,6 +467,10 @@ async function generateStreaming(model, messages, llmOptions, res) {
   const { callLLMStream } = require('../llmGateway');
 
   let fullResponse = '';
+  // Index → { id, name, arguments: string } — accumulated from delta.tool_calls
+  const toolCallAccumulator = new Map();
+  let finishReason = null;
+
   try {
     const stream = await callLLMStream(model, messages, llmOptions);
     let clientDisconnected = false;
@@ -399,15 +480,74 @@ async function generateStreaming(model, messages, llmOptions, res) {
     for await (const chunk of stream) {
       if (clientDisconnected) break;
 
-      const content = chunk.choices[0]?.delta?.content || '';
+      const delta = chunk.choices[0]?.delta || {};
+      const reason = chunk.choices[0]?.finish_reason;
+      if (reason) finishReason = reason;
 
-      if (content) {
-        fullResponse += content;
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content })}\n\n`);
+      if (delta.content) {
+        fullResponse += delta.content;
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: delta.content })}\n\n`);
+      }
+
+      if (Array.isArray(delta.tool_calls)) {
+        for (const tc of delta.tool_calls) {
+          const idx = tc.index;
+          if (idx == null) continue;
+          const existing = toolCallAccumulator.get(idx) || {
+            id: null,
+            type: 'function',
+            function: { name: '', arguments: '' },
+          };
+          if (tc.id) existing.id = tc.id;
+          if (tc.function?.name) existing.function.name = tc.function.name;
+          if (tc.function?.arguments) {
+            existing.function.arguments += tc.function.arguments;
+          }
+          toolCallAccumulator.set(idx, existing);
+        }
       }
     }
 
-    return fullResponse.trim() || "I'm not sure how to respond.";
+    // If the model emitted tool_calls, resolve them and emit SSE events,
+    // then re-prompt for the narrative text.
+    if (finishReason === 'tool_calls' && toolCallAccumulator.size > 0) {
+      const toolCalls = Array.from(toolCallAccumulator.values());
+      const resolved = resolveToolCalls(toolCalls);
+
+      for (const call of toolCalls) {
+        let parsedInput = {};
+        try {
+          parsedInput = call.function.arguments ? JSON.parse(call.function.arguments) : {};
+        } catch {}
+        if (!clientDisconnected) {
+          res.write(`data: ${JSON.stringify({
+            type: 'tool_use',
+            name: call.function.name,
+            input: parsedInput,
+          })}\n\n`);
+        }
+      }
+
+      const narration = await generateToolNarration(
+        model,
+        messages,
+        { content: fullResponse || null, tool_calls: toolCalls },
+        llmOptions
+      );
+
+      if (narration && !clientDisconnected) {
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: narration })}\n\n`);
+      }
+
+      return {
+        text: (fullResponse + (narration ? (fullResponse ? '\n\n' : '') + narration : '')).trim() || '',
+        toolCalls,
+        resolvedTools: resolved,
+      };
+    }
+
+    const finalText = fullResponse.trim() || "I'm not sure how to respond.";
+    return { text: finalText, toolCalls: [], resolvedTools: null };
   } catch (streamError) {
     console.error('[Generate] Streaming failed, falling back:', streamError.message);
 
@@ -423,7 +563,7 @@ async function generateStreaming(model, messages, llmOptions, res) {
     } else {
       res.write(`data: ${JSON.stringify({ type: 'chunk', content: text })}\n\n`);
     }
-    return text;
+    return { text, toolCalls: [], resolvedTools: null };
   }
 }
 

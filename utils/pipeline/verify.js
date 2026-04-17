@@ -572,6 +572,37 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── 3b. Merge LLM tool_calls (structured visual tools) ──
+  // When ENABLE_VISUAL_TOOLS is on, the LLM may emit tool_calls alongside
+  // text. Resolve each into (a) a legacy bracket tag we append to the text
+  // so the frontend's inline regex renderer picks it up, and (b) a sidecar
+  // visualCommand for the whiteboard/manipulatives channels.
+  const toolVisualCommands = {
+    whiteboard: [],
+    algebraTiles: [],
+    images: [],
+    manipulatives: [],
+  };
+  if (context.resolvedTools) {
+    if (Array.isArray(context.resolvedTools.tags) && context.resolvedTools.tags.length > 0) {
+      const tagBlock = context.resolvedTools.tags.join('\n');
+      text = text ? `${text}\n\n${tagBlock}` : tagBlock;
+    }
+    if (context.resolvedTools.visualCommands) {
+      for (const channel of Object.keys(toolVisualCommands)) {
+        if (Array.isArray(context.resolvedTools.visualCommands[channel])) {
+          toolVisualCommands[channel].push(
+            ...context.resolvedTools.visualCommands[channel]
+          );
+        }
+      }
+    }
+    if (context.resolvedTools.unknown && context.resolvedTools.unknown.length > 0) {
+      console.warn(`[Verify] Unknown visual tool calls: ${context.resolvedTools.unknown.join(', ')}`);
+      flags.push('unknown_visual_tool');
+    }
+  }
+
   // ── 4. Visual teaching enforcement ──
   if (context.userMessage) {
     // Always run: handles explicit student requests ("show me", "graph this")
@@ -589,6 +620,15 @@ async function verify(responseText, context = {}) {
   // ── 5. Parse visual commands ──
   const visualResult = parseVisualTeaching(text);
   text = visualResult.cleanedText;
+
+  // Merge tool-derived sidecar visualCommands into the parsed result.
+  // Tool calls take precedence (already structured and validated); legacy
+  // tags still contribute for backwards compatibility.
+  for (const channel of Object.keys(toolVisualCommands)) {
+    if (toolVisualCommands[channel].length > 0 && visualResult.visualCommands?.[channel]) {
+      visualResult.visualCommands[channel].push(...toolVisualCommands[channel]);
+    }
+  }
 
   // ── 6. Parse board references ──
   const boardParsed = processAIResponse(text);

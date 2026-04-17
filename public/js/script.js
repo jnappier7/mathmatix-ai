@@ -2226,6 +2226,25 @@ document.addEventListener("DOMContentLoaded", () => {
                                 if (streamRef && streamRef.textNode) {
                                     streamRef.textNode.innerHTML = renderMarkdownMath(event.content);
                                 }
+                            } else if (event.type === 'tool_use' && event.name) {
+                                // Structured visual tool call — render inline immediately.
+                                if (!streamRef) {
+                                    showThinkingIndicator(false);
+                                    streamRef = startStreamingMessage();
+                                }
+                                if (window.inlineChatVisuals && typeof window.inlineChatVisuals.renderFromToolCall === 'function') {
+                                    try {
+                                        const toolHtml = window.inlineChatVisuals.renderFromToolCall(event.name, event.input || {});
+                                        if (toolHtml && streamRef && streamRef.textNode) {
+                                            const wrapper = document.createElement('div');
+                                            wrapper.className = 'icv-tool-output';
+                                            wrapper.innerHTML = toolHtml;
+                                            streamRef.textNode.appendChild(wrapper);
+                                        }
+                                    } catch (toolErr) {
+                                        console.error('[Stream] tool_use render failed:', toolErr);
+                                    }
+                                }
                             } else if (event.type === 'complete' && event.data) {
                                 completeData = event.data;
                             } else if (event.type === 'error') {

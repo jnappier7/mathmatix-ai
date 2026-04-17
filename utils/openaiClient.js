@@ -73,12 +73,22 @@ async function callLLM(model, messages, options = {}) {
             {} :
             { temperature: options.temperature || 0.7 };
 
+        const toolParams = {};
+        if (Array.isArray(options.tools) && options.tools.length > 0) {
+            toolParams.tools = options.tools;
+            if (options.tool_choice) toolParams.tool_choice = options.tool_choice;
+            if (typeof options.parallel_tool_calls === 'boolean') {
+                toolParams.parallel_tool_calls = options.parallel_tool_calls;
+            }
+        }
+
         const completion = await retryWithExponentialBackoff(() =>
             openai.chat.completions.create({
                 model: model,
                 messages: messages,
                 ...temperatureParam,
                 ...tokenParam,
+                ...toolParams,
                 stream: options.stream || false,
                 ...(options.response_format ? { response_format: options.response_format } : {}),
             })
@@ -113,11 +123,21 @@ async function callLLMStream(model, messages, options = {}) {
             {} :
             { temperature: options.temperature || 0.7 };
 
+        const toolParams = {};
+        if (Array.isArray(options.tools) && options.tools.length > 0) {
+            toolParams.tools = options.tools;
+            if (options.tool_choice) toolParams.tool_choice = options.tool_choice;
+            if (typeof options.parallel_tool_calls === 'boolean') {
+                toolParams.parallel_tool_calls = options.parallel_tool_calls;
+            }
+        }
+
         const stream = await openai.chat.completions.create({
             model: model,
             messages: messages,
             ...temperatureParam,
             ...tokenParam,
+            ...toolParams,
             stream: true,
         });
         return stream;

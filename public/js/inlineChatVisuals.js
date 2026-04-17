@@ -189,6 +189,124 @@ class InlineChatVisuals {
     }
 
     /**
+     * Render HTML directly from a structured tool call (new path).
+     *
+     * The backend may emit `tool_use` SSE events with a validated {name, input}
+     * payload. This method maps the tool name to the existing handler and
+     * returns rendered HTML — bypassing regex parsing entirely.
+     *
+     * @param {string} name - Tool name, e.g. "render_function_graph".
+     * @param {Object} input - Validated argument object from the LLM.
+     * @returns {string} HTML for the visual, or an error placeholder.
+     */
+    renderFromToolCall(name, input) {
+        const safeInput = input || {};
+        try {
+            const paramStr = this._toolInputToParamStr(name, safeInput);
+            switch (name) {
+                case 'render_function_graph': return this.createFunctionGraph(paramStr);
+                case 'render_number_line':    return this.createNumberLine(paramStr);
+                case 'render_fraction':       return this.createFraction(paramStr);
+                case 'render_algebra_tiles':  return this.createAlgebraTilesInline(paramStr);
+                case 'render_fraction_bars':  return this.createFraction(paramStr);
+                case 'render_base_ten_blocks': return this._renderBaseTenPlaceholder(safeInput);
+                case 'render_counters':       return this.createCounters(paramStr);
+                case 'render_unit_circle':    return this.createUnitCircle(paramStr);
+                case 'render_points_plot':    return this.createPointsPlot(paramStr);
+                case 'search_educational_image':
+                    return this._renderImageSearchPlaceholder(safeInput);
+                default:
+                    console.warn(`[InlineChatVisuals] Unknown tool: ${name}`);
+                    return '';
+            }
+        } catch (err) {
+            console.error(`[InlineChatVisuals] renderFromToolCall failed for ${name}:`, err);
+            return `<div class="icv-error">⚠️ Could not render visual</div>`;
+        }
+    }
+
+    /**
+     * Build a legacy "key=value,key=value" paramStr from a structured tool
+     * input, so existing regex-era handlers can consume it unchanged.
+     */
+    _toolInputToParamStr(name, input) {
+        const parts = [];
+        const push = (k, v) => {
+            if (v === undefined || v === null) return;
+            if (typeof v === 'string' && /[,\s]/.test(v)) {
+                parts.push(`${k}="${v}"`);
+            } else {
+                parts.push(`${k}=${v}`);
+            }
+        };
+
+        switch (name) {
+            case 'render_function_graph':
+                push('fn', input.function);
+                push('xMin', input.xMin);
+                push('xMax', input.xMax);
+                push('yMin', input.yMin);
+                push('yMax', input.yMax);
+                if (input.title) push('title', input.title);
+                break;
+            case 'render_number_line':
+                push('min', input.min);
+                push('max', input.max);
+                if (Array.isArray(input.points) && input.points.length > 0) {
+                    parts.push(`points=[${input.points.join(',')}]`);
+                }
+                if (input.label) push('label', input.label);
+                break;
+            case 'render_fraction':
+                push('numerator', input.numerator);
+                push('denominator', input.denominator);
+                push('type', input.shape || 'circle');
+                break;
+            case 'render_fraction_bars':
+                push('numerator', input.numerator);
+                push('denominator', input.denominator);
+                push('type', 'bar');
+                break;
+            case 'render_algebra_tiles':
+                return input.expression || '';
+            case 'render_counters':
+                push('positive', input.positive);
+                push('negative', input.negative);
+                break;
+            case 'render_unit_circle':
+                if (typeof input.angle === 'number') push('angle', input.angle);
+                break;
+            case 'render_points_plot': {
+                const rendered = (input.points || [])
+                    .map((p) => `(${p[0]},${p[1]})`).join(',');
+                return `points=${rendered}`;
+            }
+            default:
+                break;
+        }
+        return parts.join(',');
+    }
+
+    /**
+     * Base-ten blocks have no inline canvas renderer today — fall back to
+     * a caption so the student sees a cue while the manipulatives board
+     * (driven by the sidecar visualCommands) opens in parallel.
+     */
+    _renderBaseTenPlaceholder(input) {
+        const n = parseInt(input.number, 10) || 0;
+        return `<div class="icv-container icv-placeholder" role="region" aria-label="Base-10 blocks for ${n}">
+            <div class="icv-title">Base-10 blocks: ${n}</div>
+        </div>`;
+    }
+
+    _renderImageSearchPlaceholder(input) {
+        const q = this.escapeHtml(input.query || '');
+        return `<div class="icv-container icv-placeholder" role="region" aria-label="Image search: ${q}">
+            <div class="icv-title">Searching for: ${q}</div>
+        </div>`;
+    }
+
+    /**
      * Parse parameters from command string
      * Supports: key=value, key="value with spaces", arrays [1,2,3]
      * Special handling for 'params' key whose value contains commas (e.g., params=a:1:-3:3,b:0:-5:5)
