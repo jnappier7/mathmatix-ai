@@ -23,13 +23,29 @@ const MIME_TO_EXT = {
   'audio/webm;codecs=opus': '.webm',
   'audio/webm': '.webm',
   'audio/mp4;codecs=opus': '.mp4',
+  'audio/mp4;codecs=aac': '.mp4',
   'audio/mp4': '.mp4',
   'audio/ogg;codecs=opus': '.ogg',
   'audio/ogg': '.ogg',
   'audio/wav': '.wav',
   'audio/mpeg': '.mp3',
   'audio/x-m4a': '.m4a',
+  'audio/aac': '.aac',
+  'audio/3gpp': '.3gp',
+  'audio/3gpp2': '.3gp',
+  'audio/x-caf': '.caf',
 };
+
+/**
+ * Resolve audio file extension from MIME type.
+ * Tries exact match first, then strips codec params for a base-type match.
+ */
+function resolveAudioExt(mimeType) {
+  if (!mimeType) return '.webm';
+  if (MIME_TO_EXT[mimeType]) return MIME_TO_EXT[mimeType];
+  const baseType = mimeType.split(';')[0].trim();
+  return MIME_TO_EXT[baseType] || '.webm';
+}
 
 // Voice-specific system instructions appended to the base tutor prompt
 const VOICE_TUTOR_INSTRUCTIONS = `
@@ -317,9 +333,10 @@ router.post('/process', isAuthenticated, async (req, res) => {
     // ── Step 1: Transcribe with Whisper (parallel: fetch user data) ──
     const tempDir = path.join(__dirname, '../temp');
     if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
-    const audioExt = MIME_TO_EXT[mimeType] || '.webm';
+    const audioExt = resolveAudioExt(mimeType);
     const tempPath = path.join(tempDir, `vt_${userId}_${Date.now()}${audioExt}`);
     fs.writeFileSync(tempPath, audioBuffer);
+    console.log(`[VoiceTutor] Audio: ${audioBuffer.length} bytes, MIME: ${mimeType}, ext: ${audioExt}`);
 
     const langMap = {
       'English': 'en', 'Spanish': 'es', 'Russian': 'ru', 'Chinese': 'zh',
@@ -340,8 +357,10 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
     const userMessage = transcription.text;
     if (!userMessage || userMessage.trim().length === 0) {
+      console.log(`[VoiceTutor] Empty transcription for user ${userId} (${audioBuffer.length} bytes, ${mimeType})`);
       sendPhase({ phase: 'transcription', transcription: '' });
       sendPhase({ phase: 'response', response: "I didn't catch that. Could you try again?", mathSteps: [] });
+      sendPhase({ phase: 'audio', audioUrl: null });
       return res.end();
     }
 

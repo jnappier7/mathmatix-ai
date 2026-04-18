@@ -531,6 +531,7 @@
     } catch (err) {
       console.error('[VoiceTutor] Processing error:', err);
       addSystemMessage('Something went wrong. Try again.');
+      showToast('Voice processing failed. Try again or type your question.', 5000);
       setMode('idle');
     } finally {
       state.processing = false;
@@ -544,78 +545,116 @@
    * Phase "audio"         → play TTS audio
    */
   async function processStreamedResponse(res) {
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
     let responseText = '';
     let gotAudio = false;
+    let gotTranscription = false;
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+    function handlePhase(phase) {
+      if (phase.phase === 'transcription' && phase.transcription) {
+        gotTranscription = true;
+        addMessage(phase.transcription, 'user');
 
-      buffer += decoder.decode(value, { stream: true });
+      } else if (phase.phase === 'response') {
+        responseText = phase.response || '';
+        if (responseText) addMessage(responseText, 'ai');
 
-      // Process complete lines
-      let newlineIdx;
-      while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
-        const line = buffer.slice(0, newlineIdx).trim();
-        buffer = buffer.slice(newlineIdx + 1);
-        if (!line) continue;
-
-        let phase;
-        try { phase = JSON.parse(line); } catch (e) { continue; }
-
-        if (phase.phase === 'transcription' && phase.transcription) {
-          addMessage(phase.transcription, 'user');
-
-        } else if (phase.phase === 'response') {
-          responseText = phase.response || '';
-          if (responseText) addMessage(responseText, 'ai');
-
-          // Render math immediately — don't wait for audio
-          if (state.showVisuals) {
-            if (phase.mathSteps && phase.mathSteps.length > 0) {
-              // Server sent explicit math steps — always render
-              renderMathSteps(phase.mathSteps);
-            } else {
-              // Try client-side extraction as fallback
-              const extracted = extractEquationsFromText(responseText);
-              if (extracted.length > 0) {
-                renderMathSteps(extracted);
-              }
-              // If no steps found and board already has content, keep it
-              // (don't blank the board on encouragement-only responses)
-            }
-          }
-
-        } else if (phase.phase === 'audio') {
-          gotAudio = true;
-          if (phase.audioUrl && !state.muted) {
-            await playResponse(phase.audioUrl, responseText);
+        if (state.showVisuals) {
+          if (phase.mathSteps && phase.mathSteps.length > 0) {
+            renderMathSteps(phase.mathSteps);
           } else {
-            if (state.handsFree && state.autoListen) {
-              setTimeout(() => startListening(), 80);
-            } else {
-              setMode('idle');
+            const extracted = extractEquationsFromText(responseText);
+            if (extracted.length > 0) {
+              renderMathSteps(extracted);
             }
           }
+        }
 
-        } else if (phase.phase === 'error') {
-          addSystemMessage(phase.message || 'Something went wrong.');
-          setMode('idle');
-          return;
+      } else if (phase.phase === 'audio') {
+        gotAudio = true;
+        return phase;
+
+      } else if (phase.phase === 'error') {
+        addSystemMessage(phase.message || 'Something went wrong.');
+        showToast(phase.message || 'Something went wrong.');
+        setMode('idle');
+        return 'error';
+      }
+      return null;
+    }
+
+    // Use ReadableStream if available, otherwise fall back to text parsing
+    // (some mobile browsers don't support res.body.getReader on streamed responses)
+    if (res.body && typeof res.body.getReader === 'function') {
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        let newlineIdx;
+        while ((newlineIdx = buffer.indexOf('\n')) !== -1) {
+          const line = buffer.slice(0, newlineIdx).trim();
+          buffer = buffer.slice(newlineIdx + 1);
+          if (!line) continue;
+
+          let parsed;
+          try { parsed = JSON.parse(line); } catch (e) { continue; }
+
+          const result = handlePhase(parsed);
+          if (result === 'error') return;
+          if (result && result.phase === 'audio') {
+            if (result.audioUrl && !state.muted) {
+              await playResponse(result.audioUrl, responseText);
+            } else {
+              resumeOrIdle(gotTranscription);
+            }
+          }
+        }
+      }
+    } else {
+      // Fallback: read entire response as text and split by newlines
+      const text = await res.text();
+      const lines = text.split('\n').filter(l => l.trim());
+      for (const line of lines) {
+        let parsed;
+        try { parsed = JSON.parse(line.trim()); } catch (e) { continue; }
+
+        const result = handlePhase(parsed);
+        if (result === 'error') return;
+        if (result && result.phase === 'audio') {
+          if (result.audioUrl && !state.muted) {
+            await playResponse(result.audioUrl, responseText);
+          } else {
+            resumeOrIdle(gotTranscription);
+          }
         }
       }
     }
 
-    // If stream ended without an audio phase, go back to idle/listening
+    // If stream ended without an audio phase
     if (!gotAudio) {
-      if (state.handsFree && state.autoListen) {
-        setTimeout(() => startListening(), 80);
-      } else {
-        setMode('idle');
-      }
+      resumeOrIdle(gotTranscription);
+    }
+
+    // If speech wasn't transcribed, show visible feedback
+    if (!gotTranscription) {
+      showToast("I didn't catch that. Try speaking closer to your mic.", 4000);
+    }
+  }
+
+  /**
+   * After a turn completes, either resume listening (if we got a real response)
+   * or go to idle (if the turn was empty/failed — so user can see feedback).
+   */
+  function resumeOrIdle(hadContent) {
+    if (hadContent && state.handsFree && state.autoListen) {
+      setTimeout(() => startListening(), 80);
+    } else {
+      setMode('idle');
     }
   }
 
@@ -623,6 +662,7 @@
    * Handle legacy (non-streaming) JSON response — backwards compatibility
    */
   function handleLegacyResponse(data) {
+    const hadTranscription = !!data.transcription;
     if (data.transcription) addMessage(data.transcription, 'user');
     if (data.response) addMessage(data.response, 'ai');
 
@@ -638,11 +678,11 @@
     if (data.audioUrl && !state.muted) {
       playResponse(data.audioUrl, data.response || '');
     } else {
-      if (state.handsFree && state.autoListen) {
-        setTimeout(() => startListening(), 80);
-      } else {
-        setMode('idle');
-      }
+      resumeOrIdle(hadTranscription);
+    }
+
+    if (!hadTranscription) {
+      showToast("I didn't catch that. Try speaking closer to your mic.", 4000);
     }
   }
 
