@@ -2182,6 +2182,7 @@ async function handleGreetingRequest(req, res, userId) {
         let systemPrompt;
         let greetingInstruction;
         let maxTokens = 150;
+        let openerResult = null;
 
         if (isCourseGreeting && courseContext) {
             // COURSE MODE: Use dedicated course prompt
@@ -2220,7 +2221,6 @@ async function handleGreetingRequest(req, res, userId) {
             systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, greetingMasteryContext, [], null, null);
 
             // ── Intelligent session opener via TutorPlan ──
-            let openerResult = null;
             try {
                 const tutorPlan = await TutorPlan.findOne({ userId: user._id });
                 if (tutorPlan) {

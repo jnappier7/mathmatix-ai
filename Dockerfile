@@ -3,11 +3,14 @@
 # 1. Start with a lean Node.js image
 FROM node:20-slim
 
-# 2. Install Python3 and required dependencies for diagram generation
+# 2. Install Python3, Chromium (for Puppeteer PDF rendering), and required dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-dev \
+    chromium \
+    chromium-common \
+    fonts-liberation \
     && rm -rf /var/lib/apt/lists/*
 
 # 3. Install Python dependencies for diagram generation
@@ -18,8 +21,9 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 # 4. Set up the working directory
 WORKDIR /usr/src/app
 
-# 5. Skip Puppeteer's bundled Chrome download (use system Chrome at runtime)
+# 5. Skip Puppeteer's bundled Chrome download — use the system Chromium installed above
 ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # 6. Copy package files and install npm dependencies deterministically
 COPY package*.json ./
