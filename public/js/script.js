@@ -1240,6 +1240,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             xMax: graphData.xMax ?? 10,
                             yMin: graphData.yMin ?? null,
                             yMax: graphData.yMax ?? null,
+                            title: graphData.title || '',
                             interactive: true
                         });
                     } else {
