@@ -291,6 +291,64 @@ function filterAnswerKeyResponse(responseText, userId) {
     return { text: responseText, wasFiltered: false, detection };
 }
 
+/**
+ * Detect a single-problem "full worked solution" — the pattern where the AI
+ * walks through every step, summarizes all key points, and then asks the
+ * student to do the trivially-remaining work ("now plot the points I just
+ * computed"). This slips past `detectAnswerKeyResponse` because only ONE
+ * problem number is present, and it slips past simple "answer is X" phrase
+ * detectors because it ends with a scaffolding-shaped question.
+ *
+ * Shared by the verify pipeline (routes/chat.js) and the /api/upload route,
+ * so both file-entry surfaces enforce the same bar.
+ *
+ * @param {string} text - AI response text
+ * @returns {{ isWorkedSolution: boolean, signalCount: number, breakdown: Object }}
+ */
+function detectWorkedSolution(text) {
+    if (!text || typeof text !== 'string') {
+        return { isWorkedSolution: false, signalCount: 0, breakdown: {} };
+    }
+
+    const phrasePatterns = [
+        /(?:the\s+)?(?:answer|solution)\s+is\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
+        /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:factored\s+form|factors?|answer|solution|result|sum|difference|product|quotient|vertex|y-?intercept|x-?intercept|axis\s+of\s+symmetry|root|zero|maximum|minimum|slope|derivative|domain|range|equation)\s+(?:is|=|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
+        /(?:=\s*\\[(\[])\s*\(.*?\)\s*\(.*?\)\s*(?:\\[\])])/,
+        /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
+    ];
+    const hasCompleteSolution = phrasePatterns.some(p => p.test(text));
+
+    const stepHeaderMatches = text.match(/(?:^|\n)\s*\*{0,2}\s*step\s*\d+\b/gim) || [];
+    const summaryBlock = /\bsummary\s+of\s+key\s+points?\b|\bsummary\s*[:：]/i.test(text);
+    const labeledKeyPoints = text.match(
+        /(?:^|\n)\s*[-*•]?\s*\*{0,2}\s*(vertex|axis\s+of\s+symmetry|y[-\s]?intercept|x[-\s]?intercepts?|roots?|zeros?|maximum|minimum|domain|range|slope|midpoint|discriminant|focus|directrix|period|amplitude|asymptote|another\s+point)\s*\*{0,2}\s*[:：]/gim
+    ) || [];
+    const conclusionLines = text.match(
+        /\b(?:so|thus|therefore|hence)\s*,?\s*(?:the\s+)?(?:vertex|axis\s+of\s+symmetry|y[-\s]?intercept|x[-\s]?intercept|root|zero|maximum|minimum|slope|another\s+point)\b[^.\n]{0,60}(?:is|=|at)\s/gim
+    ) || [];
+
+    let signalCount = 0;
+    if (stepHeaderMatches.length >= 3) signalCount += 2;
+    else if (stepHeaderMatches.length >= 2) signalCount += 1;
+    if (summaryBlock) signalCount += 1;
+    if (labeledKeyPoints.length >= 2) signalCount += 2;
+    else if (labeledKeyPoints.length >= 1) signalCount += 1;
+    if (conclusionLines.length >= 2) signalCount += 1;
+    if (hasCompleteSolution) signalCount += 1;
+
+    return {
+        isWorkedSolution: signalCount >= 3,
+        signalCount,
+        breakdown: {
+            hasCompleteSolution,
+            steps: stepHeaderMatches.length,
+            summaryBlock,
+            keyPoints: labeledKeyPoints.length,
+            conclusions: conclusionLines.length,
+        },
+    };
+}
+
 module.exports = {
     WORKSHEET_GUARD_INSTRUCTION,
     applyWorksheetGuard,
@@ -299,5 +357,6 @@ module.exports = {
     stripCorrectAnswers,
     detectAnswerKeyResponse,
     filterAnswerKeyResponse,
+    detectWorkedSolution,
     ANSWER_KEY_REDIRECT_FALLBACK
 };

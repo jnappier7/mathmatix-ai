@@ -11,7 +11,7 @@ const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unifi
 const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
 const TUTOR_CONFIG = require('../utils/tutorConfig');
-const { applyWorksheetGuard, filterAnswerKeyResponse } = require('../utils/worksheetGuard');
+const { applyWorksheetGuard, filterAnswerKeyResponse, detectWorkedSolution } = require('../utils/worksheetGuard');
 const { validateUpload } = require('../middleware/uploadSecurity');
 
 const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for analyzing student work
@@ -150,10 +150,25 @@ router.post("/", upload.single("file"), validateUpload, async (req, res) => {
 
         let reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
 
-        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth)
+        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth).
+        // Layer 1: multi-problem answer key (3+ sequential problem numbers).
         const answerKeyCheck = filterAnswerKeyResponse(reply, req.user._id);
         if (answerKeyCheck.wasFiltered) {
             reply = answerKeyCheck.text;
+        } else {
+            // Layer 2: single-problem worked solution. This path is an upload
+            // (worksheet context by definition), so any "Step 1 … Step 2 …
+            // Summary: Vertex/Axis/Intercept …" response is handing the
+            // student the answer. /api/upload runs outside the /api/chat
+            // verify pipeline, so we enforce the same bar inline.
+            const worked = detectWorkedSolution(reply);
+            if (worked.isWorkedSolution) {
+                console.warn(
+                    `🚨 [UPLOAD WORKED-SOLUTION] User ${req.user._id} — ` +
+                    `signals=${worked.signalCount} ${JSON.stringify(worked.breakdown)}. Response blocked.`
+                );
+                reply = "I can see what's on your worksheet! Which problem do you want to tackle first? Pick one and tell me what you've tried — I'll help you work through it step by step.";
+            }
         }
 
         // Clean up temp file after successful processing
