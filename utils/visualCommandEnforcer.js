@@ -696,8 +696,11 @@ function extractFunctionFromMessage(studentMsg, aiResponse) {
  */
 function looksLikeMathExpression(str) {
     if (!str || str.length === 0) return false;
-    // Must contain x or be a known function
-    if (!/x/i.test(str) && !/^[\d\+\-\*\/\^\(\)\.]+$/.test(str)) return false;
+    // A graphable function of x must actually contain x (or a named function
+    // like sin(x)). Accepting pure-numeric captures lets problem numbers from
+    // worksheet OCR (e.g. "Graph 1, 7, 8, 3" → "1783") slip through as a fn.
+    const hasNamedFunction = /\b(sin|cos|tan|log|ln|exp|sqrt|abs|asin|acos|atan|sinh|cosh|tanh)\s*\(/i.test(str);
+    if (!/x/i.test(str) && !hasNamedFunction) return false;
     // Reject if it contains sequences of 3+ consecutive letters that aren't known math functions
     const knownFunctions = /^(sin|cos|tan|log|ln|exp|sqrt|abs|pow|asin|acos|atan|sinh|cosh|tanh|pi|x)+$/i;
     const letterSequences = str.match(/[a-zA-Z]{2,}/g) || [];

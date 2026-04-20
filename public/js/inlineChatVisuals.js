@@ -374,17 +374,31 @@ class InlineChatVisuals {
         const params = this.parseParams(paramStr);
         const id = this.getUniqueId('graph');
 
-        const fn = params.fn || params.function || 'x^2';
+        const rawFn = params.fn || params.function || 'x^2';
+        // Normalize up front so a garbage fn (e.g. a problem number scraped
+        // from OCR like "1783") collapses to the x^2 fallback here — that way
+        // the caption reflects what actually gets plotted.
+        const fn = this.normalizeFunctionString(rawFn);
         const xMin = params.xMin ?? params.xmin ?? -10;
         const xMax = params.xMax ?? params.xmax ?? 10;
         const yMin = params.yMin ?? params.ymin ?? null;
         const yMax = params.yMax ?? params.ymax ?? null;
-        const title = params.title || `Graph of y = ${fn}`;
+        // Regenerate the default title from the normalized fn. Also distrust
+        // an AI-supplied title if it doesn't reference the fn AND doesn't
+        // contain 'x' — that's how "Graph of 1783" slips in.
+        const defaultTitle = `Graph of y = ${fn}`;
+        let title = params.title;
+        if (!title) {
+            title = defaultTitle;
+        } else if (!/[a-zA-Z=]/.test(title)) {
+            // Pure numeric/symbol title — almost certainly garbage (e.g. "1783").
+            title = defaultTitle;
+        }
         const color = params.color || '#667eea';
 
         // Store graph config for later rendering
         const graphConfig = JSON.stringify({
-            fn, xMin, xMax, yMin, yMax, color
+            fn, xMin, xMax, yMin, yMax, color, title
         }).replace(/"/g, '&quot;');
 
         return `
@@ -466,17 +480,27 @@ class InlineChatVisuals {
             }
         }
 
+        // A usable graph must be a function of x — reject pure-numeric
+        // strings (e.g. "1783" scraped from a problem number) that would
+        // otherwise render a flat constant line with no meaning.
+        const trimmed = fn.trim();
+        const hasVariable = /x/i.test(trimmed) || /\b(sin|cos|tan|log|ln|exp|sqrt|abs|asin|acos|atan|sinh|cosh|tanh)\s*\(/i.test(trimmed);
+        if (!hasVariable) {
+            console.warn(`[InlineChatVisuals] Function "${fn}" has no variable, defaulting to x^2`);
+            return 'x^2';
+        }
+
         // Check if it looks like a valid math expression
         // Valid expressions contain: x, numbers, operators (+,-,*,/,^), parentheses, or known functions
         const validMathPattern = /^[\d\sx\+\-\*\/\^\(\)\.\,]+$|^(sin|cos|tan|log|ln|exp|sqrt|abs|pow)\s*\(/i;
 
         // Also check that any letter sequences are known math functions, not natural language
         const knownMathTokens = /^(sin|cos|tan|log|ln|exp|sqrt|abs|pow|asin|acos|atan|sinh|cosh|tanh|pi|x)$/i;
-        const letterSequences = fn.trim().match(/[a-zA-Z]{2,}/g) || [];
+        const letterSequences = trimmed.match(/[a-zA-Z]{2,}/g) || [];
         const allLettersAreMath = letterSequences.every(seq => knownMathTokens.test(seq));
 
         const looksLikeMath = allLettersAreMath && (
-            validMathPattern.test(fn.trim()) ||
+            validMathPattern.test(trimmed) ||
             (/[x\d]/.test(fn) && /[\+\-\*\/\^]/.test(fn))
         );
 
@@ -539,6 +563,7 @@ class InlineChatVisuals {
                 yMin: config.yMin ?? null,
                 yMax: config.yMax ?? null,
                 color: config.color || '#667eea',
+                title: config.title || '',
                 interactive: true
             });
 
