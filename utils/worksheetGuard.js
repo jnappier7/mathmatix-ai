@@ -319,7 +319,8 @@ function detectWorkedSolution(text) {
     const hasCompleteSolution = phrasePatterns.some(p => p.test(text));
 
     const stepHeaderMatches = text.match(/(?:^|\n)\s*\*{0,2}\s*step\s*\d+\b/gim) || [];
-    const summaryBlock = /\bsummary\s+of\s+key\s+points?\b|\bsummary\s*[:：]/i.test(text);
+    // "Summary of Key Points", "Summary:", or bare "Summary" as its own line/header
+    const summaryBlock = /\bsummary\s+of\s+key\s+points?\b|\bsummary\s*[:：]|(?:^|\n)\s*\*{0,2}\s*summary\s*\*{0,2}\s*$/im.test(text);
     const labeledKeyPoints = text.match(
         /(?:^|\n)\s*[-*•]?\s*\*{0,2}\s*(vertex|axis\s+of\s+symmetry|y[-\s]?intercept|x[-\s]?intercepts?|roots?|zeros?|maximum|minimum|domain|range|slope|midpoint|discriminant|focus|directrix|period|amplitude|asymptote|another\s+point)\s*\*{0,2}\s*[:：]/gim
     ) || [];
