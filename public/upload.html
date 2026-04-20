@@ -78,10 +78,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         const data = await res.json();
-        output.textContent = '';  // clear previous
-
-        output.textContent += 'Extracted Text:\n' + (data.extracted?.toString() || 'No text found.');
-        output.textContent += '\n\nAI Response:\n' + (data.text || 'No feedback returned.');
+        const extracted = data.extractedText || data.extracted || '';
+        output.textContent = extracted
+          ? `Extracted Text:\n${extracted}\n\nHead back to chat when you're ready to work through it together.`
+          : "Couldn't read anything from that file — try a sharper photo or a clearer PDF.";
       } catch (err) {
         console.error("Upload fetch error:", err);
         output.style.color = '#e74c3c';

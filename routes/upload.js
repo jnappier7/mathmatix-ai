@@ -1,20 +1,28 @@
-// routes/upload.js - CORRECTED
+// routes/upload.js
+//
+// OCR-only file upload endpoint.
+//
+// This route extracts text from an uploaded image or PDF and returns it.
+// It does NOT call the LLM — all tutoring flows through /api/chat, which
+// runs the full verify pipeline (worksheet guard, answer-key filter,
+// worked-solution detector, LaTeX normalization, visual command
+// enforcement, streaming replacements, etc.). Keeping this endpoint
+// OCR-only eliminates the parallel entry point that previously bypassed
+// those guards.
+//
+// Consumers just display the extracted text (preview pane, debug page);
+// when the student actually wants help, the chat client sends the file
+// through /api/chat.
 const express = require("express");
 const multer = require("multer");
 const fs = require("fs").promises;
 const path = require("path");
 const sharp = require("sharp");
 const router = express.Router();
-const { generateSystemPrompt } = require("../utils/prompt");
 const User = require("../models/user");
-const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
 const ocr = require("../utils/ocr");
 const pdfOcr = require("../utils/pdfOcr");
-const TUTOR_CONFIG = require('../utils/tutorConfig');
-const { applyWorksheetGuard, filterAnswerKeyResponse, detectWorkedSolution } = require('../utils/worksheetGuard');
 const { validateUpload } = require('../middleware/uploadSecurity');
-
-const PRIMARY_UPLOAD_AI_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for analyzing student work
 
 // Allowed MIME types for upload file filter (defense-in-depth alongside validateUpload middleware)
 const ALLOWED_MIMETYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
@@ -42,7 +50,6 @@ router.post("/", upload.single("file"), validateUpload, async (req, res) => {
     try {
         const file = req.file;
 
-        // Debug logging
         console.log('[Upload API] Request received:', {
             hasFile: !!file,
             hasUser: !!req.user,
@@ -58,58 +65,45 @@ router.post("/", upload.single("file"), validateUpload, async (req, res) => {
             return res.status(400).json({ error: "No file uploaded." });
         }
 
-        // Get userId from authenticated session (req.user is set by isAuthenticated middleware)
         if (!req.user || !req.user._id) {
-            // Clean up temp file
             if (file.path) await fs.unlink(file.path).catch(() => {});
             return res.status(401).json({ error: 'Authentication required.' });
         }
 
-        // Fetch the user profile for personalized prompt generation
+        // Verify the user exists — keeps the auth contract identical to before.
         const user = await User.findById(req.user._id).lean();
         if (!user) {
-            // Clean up temp file
             if (file.path) await fs.unlink(file.path).catch(() => {});
-            return res.status(404).json({ error: "User profile not found for prompt generation." });
+            return res.status(404).json({ error: "User profile not found." });
         }
 
-        console.log('[Upload API] Processing file from disk:', file.path);
+        console.log('[Upload API] OCR file from disk:', file.path);
 
-        // Perform OCR - use appropriate processor based on file type
         let extracted;
         try {
-            // Read file from disk into buffer for OCR processing
             let fileBuffer = await fs.readFile(file.path);
 
-            // COMPLIANCE: Strip EXIF metadata from images before sending to AI providers.
-            // Phone cameras embed GPS coordinates, device info, and timestamps in EXIF data.
-            // This prevents student location data from leaving our server.
+            // COMPLIANCE: Strip EXIF metadata (GPS, device info, timestamps)
+            // from images before sending them to the OCR provider.
             if (file.mimetype !== 'application/pdf') {
                 try {
                     fileBuffer = await sharp(fileBuffer)
                         .rotate()          // Auto-rotate based on EXIF orientation before stripping
                         .withMetadata({})  // Strip all EXIF/IPTC/XMP metadata
                         .toBuffer();
-                    console.log('[Upload API] EXIF metadata stripped from image');
                 } catch (stripError) {
-                    // If sharp fails (corrupt image), continue with original buffer
                     console.warn('[Upload API] EXIF strip failed, continuing with original:', stripError.message);
                 }
             }
 
             if (file.mimetype === 'application/pdf') {
-                // Use Mathpix /v3/pdf endpoint for PDFs
-                console.log('[Upload API] Processing PDF with Mathpix...');
                 extracted = await pdfOcr(fileBuffer, file.originalname);
             } else {
-                // Use Mathpix /v3/text endpoint for images
-                console.log('[Upload API] Processing image with Mathpix...');
                 const base64Image = `data:${file.mimetype};base64,${fileBuffer.toString("base64")}`;
                 extracted = await ocr(base64Image);
             }
         } catch (ocrError) {
             console.error('[Upload API] OCR processing error:', ocrError.message);
-            // Clean up temp file
             if (file.path) await fs.unlink(file.path).catch(() => {});
             return res.status(500).json({
                 error: `Failed to process file: ${ocrError.message}`,
@@ -117,77 +111,24 @@ router.post("/", upload.single("file"), validateUpload, async (req, res) => {
             });
         }
 
-        if (!extracted || extracted.trim() === '') {
-            console.warn('[Upload API] No text extracted from file');
-            // Clean up temp file
-            if (file.path) await fs.unlink(file.path).catch(() => {});
-            return res.status(200).json({
-                text: "I couldn't read any text from that file. Could you try a clearer picture or type out the problem?",
-                extractedText: ""
-            });
-        }
-
-        console.log('[Upload API] Successfully extracted text, length:', extracted.length);
-
-        // Get tutor configuration
-        const tutor = TUTOR_CONFIG[user.selectedTutorId] || TUTOR_CONFIG.default;
-
-        // Generate the personalized system prompt
-        const systemPrompt = generateSystemPrompt(user, tutor, null, 'student');
-
-        // ANTI-CHEAT: Append worksheet detection guard (centralized in utils/worksheetGuard.js)
-        const uploadUserMessage = applyWorksheetGuard(
-            `Here's the math text from an uploaded image/PDF: """${extracted}"""`
-        );
-
-        const messages = [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: uploadUserMessage }
-        ];
-
-        // Use the centralized LLM call function
-        const completion = await callLLM(PRIMARY_UPLOAD_AI_MODEL, messages, { max_tokens: 1500 });
-
-        let reply = completion.choices[0]?.message?.content?.trim() || "No feedback generated.";
-
-        // ANTI-CHEAT: Server-side answer-key detection (defense-in-depth).
-        // Layer 1: multi-problem answer key (3+ sequential problem numbers).
-        const answerKeyCheck = filterAnswerKeyResponse(reply, req.user._id);
-        if (answerKeyCheck.wasFiltered) {
-            reply = answerKeyCheck.text;
-        } else {
-            // Layer 2: single-problem worked solution. This path is an upload
-            // (worksheet context by definition), so any "Step 1 … Step 2 …
-            // Summary: Vertex/Axis/Intercept …" response is handing the
-            // student the answer. /api/upload runs outside the /api/chat
-            // verify pipeline, so we enforce the same bar inline.
-            const worked = detectWorkedSolution(reply);
-            if (worked.isWorkedSolution) {
-                console.warn(
-                    `🚨 [UPLOAD WORKED-SOLUTION] User ${req.user._id} — ` +
-                    `signals=${worked.signalCount} ${JSON.stringify(worked.breakdown)}. Response blocked.`
-                );
-                reply = "I can see what's on your worksheet! Which problem do you want to tackle first? Pick one and tell me what you've tried — I'll help you work through it step by step.";
-            }
-        }
-
-        // Clean up temp file after successful processing
         if (file.path) {
             await fs.unlink(file.path).catch(() => {});
-            console.log('[Upload API] Cleaned up temp file:', file.path);
         }
 
-        return res.json({ text: reply, extractedText: extracted });
+        if (!extracted || extracted.trim() === '') {
+            return res.status(200).json({ extractedText: "" });
+        }
+
+        console.log('[Upload API] Extracted text, length:', extracted.length);
+        return res.json({ extractedText: extracted });
 
     } catch (err) {
         console.error("ERROR in /api/upload:", err);
-        // Clean up temp file on error
         if (req.file && req.file.path) {
             await fs.unlink(req.file.path).catch(cleanupErr => {
                 console.error('Failed to cleanup temp file:', cleanupErr);
             });
         }
-        // Provide a more generic error to the client for security
         res.status(500).json({ error: "An unexpected error occurred on the server." });
     }
 });
