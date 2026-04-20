@@ -10,7 +10,7 @@
  * @module pipeline/verify
  */
 
-const { filterAnswerKeyResponse, detectAnswerKeyResponse } = require('../worksheetGuard');
+const { filterAnswerKeyResponse, detectAnswerKeyResponse, detectWorkedSolution } = require('../worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../readability');
 const { enforceVisualTeaching, autoVisualizeByTopic } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
@@ -191,42 +191,11 @@ async function verify(responseText, context = {}) {
         } catch (e) { /* client disconnected */ }
       }
     } else {
-      // Detect single complete solution: AI shows step-by-step and reveals the final answer.
-      // Pattern: response contains "= [answer]" or "the answer is" with completed work.
-      const completeSolutionSignals = [
-        /(?:the\s+)?(?:answer|solution)\s+is\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
-        /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:factored\s+form|factors?|answer|solution|result|sum|difference|product|quotient|vertex|y-?intercept|x-?intercept|axis\s+of\s+symmetry|root|zero|maximum|minimum|slope|derivative|domain|range|equation)\s+(?:is|=|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
-        /(?:=\s*\\[(\[])\s*\(.*?\)\s*\(.*?\)\s*(?:\\[\])])/,  // = (x+a)(x+b) factored form
-        /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
-      ];
-      const hasCompleteSolution = completeSolutionSignals.some(p => p.test(text));
-
-      // ── Full worked-solution heuristic (fires even WITH trailing question) ──
-      // Catches the "Step 1 … Step 2 … Step 3 … Summary of Key Points … now you
-      // try plotting these!" pattern — a complete solve dressed up with a
-      // trailing question. Count independent signals; 3+ means the student
-      // received every computation they needed.
-      const stepHeaderMatches = text.match(/(?:^|\n)\s*\*{0,2}\s*step\s*\d+\b/gim) || [];
-      const summaryBlock = /\bsummary\s+of\s+key\s+points?\b|\bsummary\s*[:：]/i.test(text);
-      // Labeled key-point lines like "- Vertex: (1, 5)" or "**Axis of Symmetry**: x = 1"
-      const labeledKeyPoints = text.match(
-        /(?:^|\n)\s*[-*•]?\s*\*{0,2}\s*(vertex|axis\s+of\s+symmetry|y[-\s]?intercept|x[-\s]?intercepts?|roots?|zeros?|maximum|minimum|domain|range|slope|midpoint|discriminant|focus|directrix|period|amplitude|asymptote|another\s+point)\s*\*{0,2}\s*[:：]/gim
-      ) || [];
-      // "So, <math-term> is/= <value>" — repeated conclusions within one turn
-      const conclusionLines = text.match(
-        /\b(?:so|thus|therefore|hence)\s*,?\s*(?:the\s+)?(?:vertex|axis\s+of\s+symmetry|y[-\s]?intercept|x[-\s]?intercept|root|zero|maximum|minimum|slope|another\s+point)\b[^.\n]{0,60}(?:is|=|at)\s/gim
-      ) || [];
-
-      let solutionSignalCount = 0;
-      if (stepHeaderMatches.length >= 3) solutionSignalCount += 2; // 3+ numbered steps = strong
-      else if (stepHeaderMatches.length >= 2) solutionSignalCount += 1;
-      if (summaryBlock) solutionSignalCount += 1;
-      if (labeledKeyPoints.length >= 2) solutionSignalCount += 2;
-      else if (labeledKeyPoints.length >= 1) solutionSignalCount += 1;
-      if (conclusionLines.length >= 2) solutionSignalCount += 1;
-      if (hasCompleteSolution) solutionSignalCount += 1;
-
-      const hasFullWorkedSolution = solutionSignalCount >= 3;
+      // Detect single complete solution — shared helper so /api/upload and
+      // /api/chat enforce the same bar.
+      const worked = detectWorkedSolution(text);
+      const hasCompleteSolution = worked.breakdown.hasCompleteSolution;
+      const hasFullWorkedSolution = worked.isWorkedSolution;
 
       // Also check: does the response NOT contain a question mark? (Socratic should ask questions)
       const hasQuestion = /\?\s*$|\?\s*\n/m.test(text);
@@ -236,7 +205,7 @@ async function verify(responseText, context = {}) {
       //   (b) full worked solution with multiple signals — even if it ends with a
       //       "now you try" question, the work has already been handed over.
       if ((hasCompleteSolution && !hasQuestion) || hasFullWorkedSolution) {
-        console.warn(`[Verify] UPLOAD CONTEXT: Complete solution detected (signals=${solutionSignalCount}, steps=${stepHeaderMatches.length}, keyPoints=${labeledKeyPoints.length}, conclusions=${conclusionLines.length}, summary=${summaryBlock}). Regenerating.`);
+        console.warn(`[Verify] UPLOAD CONTEXT: Complete solution detected (signals=${worked.signalCount}, breakdown=${JSON.stringify(worked.breakdown)}). Regenerating.`);
         try {
           const socraticRedirect = await callLLM(PRIMARY_CHAT_MODEL,
             [{ role: 'system', content: 'You are a math tutor. The student uploaded a worksheet. You MUST guide them with Socratic questions — NEVER give away answers. Your previous response gave a complete solution, which violates tutoring rules. Rewrite it: acknowledge the problem, break it into the FIRST step only, and ask the STUDENT to attempt that step. Do NOT show any subsequent steps or the final answer. End with a guiding question.' },
