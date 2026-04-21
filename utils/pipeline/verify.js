@@ -10,7 +10,7 @@
  * @module pipeline/verify
  */
 
-const { filterAnswerKeyResponse, detectAnswerKeyResponse, detectWorkedSolution } = require('../worksheetGuard');
+const { filterAnswerKeyResponse, detectAnswerKeyResponse, detectWorkedSolution, detectAnswerAnnouncement } = require('../worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../readability');
 const { enforceVisualTeaching, autoVisualizeByTopic } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
@@ -243,13 +243,14 @@ async function verify(responseText, context = {}) {
       (context.messageType === MESSAGE_TYPES.GENERAL_MATH || context.messageType === MESSAGE_TYPES.QUESTION) &&
       context.diagnosisType === 'no_answer' &&
       !context.hasRecentUpload && !context.isWorksheetFollowUp) {
-    const solutionGiveawaySignals = [
-      /(?:the\s+)?(?:answer|solution)\s+is\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
-      /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:answer|solution|result)\s+(?:is|=|are)\s*/i,
-      /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
-      /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m,  // "x = 9" as a conclusion
-    ];
-    const hasCompleteSolution = solutionGiveawaySignals.some(p => p.test(text));
+    // Shared detector handles multi-root announcements ("x=7 or x=-7"),
+    // pluralized conclusions ("so the solutions are..."), transitional
+    // reveals ("this gives us x="), and the original explicit-answer set.
+    const announcement = detectAnswerAnnouncement(text);
+    // Legacy trailing-assignment check — a line ending in "x = 9" on its own
+    // is still a conclusion even when no announcement phrase precedes it.
+    const trailingAssignment = /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
+    const hasCompleteSolution = announcement.detected || trailingAssignment.test(text);
 
     // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
     // The guard fires whenever the AI reveals a complete solution to a student-posed problem.

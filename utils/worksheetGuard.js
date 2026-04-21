@@ -292,6 +292,61 @@ function filterAnswerKeyResponse(responseText, userId) {
 }
 
 /**
+ * Detect an explicit answer announcement — the tutor has named the
+ * final value(s) for the student's variable, so the student has nothing
+ * left to figure out. This catches patterns that slip past the "multiple
+ * numbered problems" detector because the tutor solved ONE problem all
+ * the way through.
+ *
+ * Hard-signal patterns:
+ *   - Multi-root announcement:  "x = 7 or x = -7", "x = (3+√29)/2 and x = (3-√29)/2"
+ *   - Pluralized conclusion:    "So, the solutions are ...", "the answers are ..."
+ *   - Transitional reveal:      "this gives us x = ...", "so we have x = ..."
+ *   - Explicit answer phrase:   "the answer is X", "final answer: X"
+ *
+ * Applied to AI output only (never student input). Any single match
+ * indicates the tutor has handed over the final value.
+ *
+ * @param {string} text - AI response text
+ * @returns {{ detected: boolean, pattern: string|null }}
+ */
+function detectAnswerAnnouncement(text) {
+    if (!text || typeof text !== 'string') {
+        return { detected: false, pattern: null };
+    }
+
+    // "x = A or x = B" / "x = A and x = B" — paired-root reveal (quadratics, absolute value, etc.)
+    // Backreference forces same variable on both sides; 1-60 chars of value between.
+    const multiRoot = /\b([a-z])\s*=\s*[^,.\n;!?]{1,60}?\s+(?:and|or)\s+\1\s*=\s*[^,.\n;!?]{1,60}/i;
+    if (multiRoot.test(text)) return { detected: true, pattern: 'multi-root-announcement' };
+
+    // "So, the solutions are ...", "therefore the answers are ..." — pluralized conclusion
+    // Accepts "answers?/solutions?/results?/roots?/zeros?" to close the plural-s gap.
+    const pluralConclusion = /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:answers?|solutions?|results?|roots?|zeros?)\s+(?:is|are|=)\s*[:=]?/i;
+    if (pluralConclusion.test(text)) return { detected: true, pattern: 'plural-conclusion' };
+
+    // "this gives us x = ...", "so we have x = ...", "so we get x = ...", "so it becomes x = ..."
+    // Transitional bridge into a variable assignment — the tutor is revealing the value.
+    const transitionalReveal = /(?:this\s+gives\s+(?:us\s+)?|so\s+we\s+(?:get|have|end\s+up\s+with)\s+|so\s+it\s+becomes\s+)[^,.\n]{0,30}\b[a-z]\s*=/i;
+    if (transitionalReveal.test(text)) return { detected: true, pattern: 'transitional-reveal' };
+
+    // Original patterns, pluralized and kept.
+    const explicitAnswer = [
+        /(?:the\s+)?(?:answers?|solutions?)\s+(?:is|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
+        /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:factored\s+form|factors?|answers?|solutions?|results?|sum|difference|product|quotient|vertex|y-?intercept|x-?intercept|axis\s+of\s+symmetry|roots?|zeros?|maximum|minimum|slope|derivative|domain|range|equation)\s+(?:is|=|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
+        /(?:=\s*\\[(\[])\s*\(.*?\)\s*\(.*?\)\s*(?:\\[\])])/,
+        /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
+    ];
+    for (let i = 0; i < explicitAnswer.length; i++) {
+        if (explicitAnswer[i].test(text)) {
+            return { detected: true, pattern: `explicit-answer-${i}` };
+        }
+    }
+
+    return { detected: false, pattern: null };
+}
+
+/**
  * Detect a single-problem "full worked solution" — the pattern where the AI
  * walks through every step, summarizes all key points, and then asks the
  * student to do the trivially-remaining work ("now plot the points I just
@@ -310,22 +365,27 @@ function detectWorkedSolution(text) {
         return { isWorkedSolution: false, signalCount: 0, breakdown: {} };
     }
 
-    const phrasePatterns = [
-        /(?:the\s+)?(?:answer|solution)\s+is\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
-        /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:factored\s+form|factors?|answer|solution|result|sum|difference|product|quotient|vertex|y-?intercept|x-?intercept|axis\s+of\s+symmetry|root|zero|maximum|minimum|slope|derivative|domain|range|equation)\s+(?:is|=|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
-        /(?:=\s*\\[(\[])\s*\(.*?\)\s*\(.*?\)\s*(?:\\[\])])/,
-        /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
-    ];
-    const hasCompleteSolution = phrasePatterns.some(p => p.test(text));
+    const announcement = detectAnswerAnnouncement(text);
+    const hasCompleteSolution = announcement.detected;
 
     const stepHeaderMatches = text.match(/(?:^|\n)\s*\*{0,2}\s*step\s*\d+\b/gim) || [];
-    const summaryBlock = /\bsummary\s+of\s+key\s+points?\b|\bsummary\s*[:：]/i.test(text);
+    // "Summary of Key Points", "Summary:", or bare "Summary" as its own line/header
+    const summaryBlock = /\bsummary\s+of\s+key\s+points?\b|\bsummary\s*[:：]|(?:^|\n)\s*\*{0,2}\s*summary\s*\*{0,2}\s*$/im.test(text);
     const labeledKeyPoints = text.match(
         /(?:^|\n)\s*[-*•]?\s*\*{0,2}\s*(vertex|axis\s+of\s+symmetry|y[-\s]?intercept|x[-\s]?intercepts?|roots?|zeros?|maximum|minimum|domain|range|slope|midpoint|discriminant|focus|directrix|period|amplitude|asymptote|another\s+point)\s*\*{0,2}\s*[:：]/gim
     ) || [];
     const conclusionLines = text.match(
         /\b(?:so|thus|therefore|hence)\s*,?\s*(?:the\s+)?(?:vertex|axis\s+of\s+symmetry|y[-\s]?intercept|x[-\s]?intercept|root|zero|maximum|minimum|slope|another\s+point)\b[^.\n]{0,60}(?:is|=|at)\s/gim
     ) || [];
+
+    // Multi-root and pluralized-conclusion announcements are smoking guns —
+    // the tutor has explicitly handed over the final value(s). A single match
+    // is enough; do not require corroborating step-headers or summaries.
+    const isHardAnnouncement = announcement.detected && (
+        announcement.pattern === 'multi-root-announcement' ||
+        announcement.pattern === 'plural-conclusion' ||
+        announcement.pattern === 'transitional-reveal'
+    );
 
     let signalCount = 0;
     if (stepHeaderMatches.length >= 3) signalCount += 2;
@@ -335,12 +395,15 @@ function detectWorkedSolution(text) {
     else if (labeledKeyPoints.length >= 1) signalCount += 1;
     if (conclusionLines.length >= 2) signalCount += 1;
     if (hasCompleteSolution) signalCount += 1;
+    if (isHardAnnouncement) signalCount += 3;
 
     return {
         isWorkedSolution: signalCount >= 3,
         signalCount,
         breakdown: {
             hasCompleteSolution,
+            announcementPattern: announcement.pattern,
+            hardAnnouncement: isHardAnnouncement,
             steps: stepHeaderMatches.length,
             summaryBlock,
             keyPoints: labeledKeyPoints.length,
@@ -357,6 +420,7 @@ module.exports = {
     stripCorrectAnswers,
     detectAnswerKeyResponse,
     filterAnswerKeyResponse,
+    detectAnswerAnnouncement,
     detectWorkedSolution,
     ANSWER_KEY_REDIRECT_FALLBACK
 };
