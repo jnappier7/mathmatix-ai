@@ -42,6 +42,8 @@ const ACTIONS = {
   CHECK_UNDERSTANDING: 'check_understanding',
   PRESENT_PROBLEM: 'present_problem',
   PHASE_INSTRUCTION: 'phase_instruction',
+  // Deterministic: bare problem drop — never reaches the LLM.
+  ELICIT_FIRST: 'elicit_first',
 
   // ── Instructional mode actions (backbone) ──
   // These are chosen when the tutor plan specifies a mode for the current skill.
@@ -115,6 +117,34 @@ function decideCore(observation, diagnosis, context) {
     observation,
     directives: [], // Additional instructions for the generate stage
   };
+
+  // ── Bare problem drop — deterministic elicit-first gate ──
+  //
+  // Student handed over a new math problem (e.g. "4x-5=22", "x²=49") with
+  // no attempt, no stuck-point, no reasoning. This is the single highest-
+  // risk moment for answer leaks — GPT's helpfulness training wins the
+  // fight against every prompt directive. So we take the LLM out of the
+  // loop entirely: return a deterministic response asking for the student's
+  // work or offering a parallel example.
+  //
+  // Gate conditions:
+  //   - observation flagged isBareProblemDrop (structural signals)
+  //   - no recent upload (worksheet flow has its own guards)
+  //   - no active mastery/lesson phase (those are structured contexts with
+  //     their own appropriate pedagogical path, e.g. I-DO phase teaches)
+  //
+  // When this fires, the LLM does not generate the turn — the deterministic
+  // template in decision.deterministicResponse is returned verbatim.
+  if (observation.isBareProblemDrop
+      && !context.hasRecentUpload
+      && !phaseState?.currentPhase) {
+    decision.action = ACTIONS.ELICIT_FIRST;
+    decision.deterministicResponse = buildElicitFirstResponse(observation.raw, context);
+    decision.directives.push(
+      'BARE PROBLEM DROP: student handed over a new problem with no attempt or question. This turn is deterministic — no LLM generation, no leak surface.'
+    );
+    return decision;
+  }
 
   // ── Off-task / frustration — handle immediately ──
   if (msgType === MESSAGE_TYPES.OFF_TASK) {
@@ -462,10 +492,26 @@ function decideCore(observation, diagnosis, context) {
 
   // ── Math questions — guide, don't solve ──
   if (msgType === MESSAGE_TYPES.QUESTION || msgType === MESSAGE_TYPES.GENERAL_MATH) {
-    // Check if the tutor plan specifies an instructional mode for this skill.
-    // If so, the mode determines HOW we respond — not just "guide with Socratic."
-    const modeDecision = applyInstructionalMode(decision, context);
-    if (modeDecision) return modeDecision;
+    // ── Tutor-plan alignment gate ──
+    //
+    // applyInstructionalMode() honors the plan's currentTarget — e.g. if
+    // the plan says skill=simple-probability, mode=INSTRUCT, it routes to
+    // DIRECT_INSTRUCTION with "TEACH, don't ask questions" directives.
+    //
+    // But if the student's actual message is off-plan (homework help,
+    // course topic, exploratory tangent, prerequisite gap surfacing), the
+    // plan's instructional mode is for the WRONG skill. Applying it causes
+    // the tutor to lecture on the plan skill using the student's off-plan
+    // problem as the example — a full answer dump with perfect "authority."
+    //
+    // Block the plan-mode path when the mode-transition detector reports
+    // the student is off-plan with reasonable confidence. Fall through to
+    // the Socratic default — which will guide the student's actual question
+    // one step at a time.
+    if (isStudentOnPlanTopic(context.modeTransition)) {
+      const modeDecision = applyInstructionalMode(decision, context);
+      if (modeDecision) return modeDecision;
+    }
 
     decision.action = ACTIONS.CONTINUE_CONVERSATION;
     decision.directives.push(
@@ -499,6 +545,59 @@ function decideCore(observation, diagnosis, context) {
     'Do NOT repeat information already confirmed or covered.'
   );
   return decision;
+}
+
+/**
+ * Build the deterministic response for a bare problem drop.
+ *
+ * This text is returned to the student VERBATIM — it never passes through
+ * an LLM, so it cannot leak an answer regardless of model behavior. Voice
+ * is kept neutral-warm; tutor-specific personality layering happens in
+ * follow-up turns once the student engages.
+ *
+ * @param {string} problem - The student's raw message (treated as the problem)
+ * @param {Object} context - Pipeline context (for user firstName, if available)
+ * @returns {string}
+ */
+function buildElicitFirstResponse(problem, context) {
+  const cleaned = (problem || '').trim().replace(/\s+/g, ' ').slice(0, 100);
+  const firstName = context?.user?.firstName;
+  const opener = firstName ? `Got it, ${firstName}` : 'Got it';
+  const problemEcho = cleaned ? ` — ${cleaned}.` : '.';
+  return (
+    `${opener}${problemEcho}\n\n` +
+    `Before I help, show me what you've tried so far — even if it's a guess — or tell me which step is tripping you up.\n\n` +
+    `If you're truly starting from zero, say **"show me an example"** and I'll walk through a similar problem, then you try yours.`
+  );
+}
+
+// Transitions that indicate the student's message is off the plan target.
+// When any of these fire at >=0.6 confidence, the decision engine must not
+// apply the plan's instructional mode — the mode is for the wrong skill.
+const OFF_PLAN_TRANSITION_TYPES = new Set([
+  'exploratory_tangent',
+  'homework_detected',
+  'prerequisite_surface',
+  'course_topic_overlap',
+]);
+
+/**
+ * Decide whether the student's current message is on-plan (matches the
+ * tutor plan's current target skill) and therefore safe to apply the plan's
+ * instructional mode. Off-plan messages must fall through to the Socratic
+ * default regardless of plan state.
+ *
+ * @param {Object|null} modeTransition - Output from modeTransitionDetector
+ * @returns {boolean}
+ */
+function isStudentOnPlanTopic(modeTransition) {
+  if (!modeTransition) return true;
+  if (!modeTransition.shouldTransition) return true;
+  if (OFF_PLAN_TRANSITION_TYPES.has(modeTransition.transitionType) &&
+      (modeTransition.confidence || 0) >= 0.6) {
+    return false;
+  }
+  return true;
 }
 
 /**

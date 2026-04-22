@@ -251,7 +251,7 @@ async function runPipeline(message, ctx) {
         sessionMood,
       });
       if (modeTransition?.shouldTransition) {
-        console.log(`[Pipeline] Mode transition: ${modeTransition.type} (${modeTransition.reason}) confidence=${modeTransition.confidence}`);
+        console.log(`[Pipeline] Mode transition: ${modeTransition.transitionType} (${modeTransition.reason}) confidence=${modeTransition.confidence}`);
       }
     } catch (err) {
       console.error('[Pipeline] Mode transition detection error (non-fatal):', err.message);
@@ -267,6 +267,7 @@ async function runPipeline(message, ctx) {
     tutorPlan: tutorPlan || null,
     modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
     hasRecentUpload: ctx.hasRecentUpload || false,
+    user: ctx.user || null,
   });
 
   // Inject mode transition directives into the decision
@@ -454,13 +455,24 @@ async function runPipeline(message, ctx) {
         // The decide stage already evaluated and updated phaseState via
         // evaluatePhaseAdvancement(). Read the result from phaseState to
         // sync tutor plan instruction phases.
+        //
+        // CAUTION: lessonPhaseManager and TutorPlan use different phase
+        // enums. phaseState carries values like 'intro' / 'warmup' that are
+        // not valid TutorPlan.currentTarget.instructionPhase values. Sync
+        // only when the phaseState value is a valid target-phase enum, so
+        // Mongoose validation doesn't silently abort the save.
+        const VALID_INSTRUCTION_PHASES = [
+          'prerequisite-review', 'vocabulary', 'concept-intro',
+          'i-do', 'we-do', 'you-do', 'mastery-check',
+        ];
         const phaseState = ctx.phaseState || ctx.conversation?.phaseState;
         if (phaseState && tutorPlan.currentTarget?.instructionPhase) {
           const currentPhase = phaseState.currentPhase || phaseState.phase;
           const planPhase = tutorPlan.currentTarget.instructionPhase;
 
-          // If phaseState advanced past the plan's tracked phase, sync the plan
-          if (currentPhase && currentPhase !== planPhase) {
+          if (currentPhase
+              && currentPhase !== planPhase
+              && VALID_INSTRUCTION_PHASES.includes(currentPhase)) {
             shouldAdvance = true;
             advanceToPhase = currentPhase;
             console.log(`[Pipeline] Syncing plan phase: ${planPhase} → ${currentPhase}`);

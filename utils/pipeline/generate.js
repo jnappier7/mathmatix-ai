@@ -278,6 +278,21 @@ function buildStreakWarning(streaks) {
  * @returns {Object} { messages, model, options }
  */
 function assemblePrompt(decision, promptContext) {
+  // ── Deterministic short-circuit ──
+  // When decide() attached a canned response (e.g. ELICIT_FIRST for a bare
+  // problem drop), the LLM is bypassed entirely. No system prompt, no
+  // message assembly, no sampling — the response is the template verbatim.
+  // This is the structural guarantee against answer leaks on unsolicited
+  // problem drops: there is no LLM to cheat.
+  if (decision.deterministicResponse) {
+    return {
+      deterministicResponse: decision.deterministicResponse,
+      messages: [],
+      model: PRIMARY_CHAT_MODEL,
+      options: {},
+    };
+  }
+
   const { systemPrompt, messages: conversationMessages } = promptContext;
 
   // Start with the base system prompt.
@@ -393,6 +408,19 @@ function assemblePrompt(decision, promptContext) {
  * @returns {Promise<string>} The AI response text
  */
 async function generate(assembled, options = {}) {
+  // Deterministic path: decide() attached a canned response. Return it
+  // without touching the LLM. For streaming callers, write the text as a
+  // single SSE chunk so the client-side rendering path is unchanged.
+  if (assembled.deterministicResponse) {
+    const text = assembled.deterministicResponse;
+    if (options.stream && options.res) {
+      try {
+        options.res.write(`data: ${JSON.stringify({ type: 'chunk', content: text })}\n\n`);
+      } catch (e) { /* client disconnected */ }
+    }
+    return { text, toolCalls: [], resolvedTools: null };
+  }
+
   const { messages, model, options: llmOptions } = assembled;
 
   if (options.stream && options.res) {
