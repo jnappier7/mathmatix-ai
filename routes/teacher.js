@@ -151,30 +151,36 @@ router.get('/students/:studentId/iep/goal-history', isTeacher, async (req, res) 
 });
 
 // Get a specific assigned student's conversation history (Teacher only)
-router.get('/students/:studentId/conversations', isTeacher, async (req, res) => {
-  const { studentId } = req.params;
-  const teacherId = req.user._id;
+router.get(
+  '/students/:studentId/conversations',
+  isTeacher,
+  logRecordAccess('conversation_history', 'teaching_instruction'),
+  async (req, res) => {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
 
-  try {
-    // First, confirm the teacher is actually assigned this student
-    const student = await User.findOne({ _id: studentId, teacherId: teacherId });
-    if (!student) {
+    try {
+      // Authorization must cover both direct teacherId assignment AND enrollment-code
+      // assignment. The narrower User.findOne({teacherId}) check previously used here
+      // denied legitimate access to code-enrolled students and diverged from the
+      // convention used by /iep and other teacher routes.
+      const authorizedStudentIds = await getStudentIdsForTeacher(teacherId);
+      if (!authorizedStudentIds.includes(String(studentId))) {
         return res.status(403).json({ message: "You are not authorized to view this student's history." });
+      }
+
+      const conversations = await Conversation.find({ userId: studentId })
+        .sort({ startDate: -1 })
+        .select('summary activeMinutes startDate conversationName topic topicEmoji conversationType lastActivity')
+        .lean();
+
+      res.json(conversations || []);
+    } catch (err) {
+      console.error('Error fetching student conversations for teacher:', err);
+      res.status(500).json({ message: 'Server error fetching conversation data.' });
     }
-
-    // --- MODIFICATION START ---
-    // Fetch all conversations for this student from the Conversation collection
-    const conversations = await Conversation.find({ userId: studentId })
-        .sort({ startDate: -1 }) // Sort by most recent first
-        .select('summary activeMinutes startDate'); // Fixed: removed non-existent 'date' field, added startDate
-    // --- MODIFICATION END ---
-
-    res.json(conversations || []);
-  } catch (err) {
-    console.error('Error fetching student conversations for teacher:', err);
-    res.status(500).json({ message: 'Server error fetching conversation data.' });
   }
-});
+);
 
 // ============================================
 // LIVE ACTIVITY FEED ENDPOINTS

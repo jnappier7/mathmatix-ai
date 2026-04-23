@@ -13,6 +13,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
+const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const ScreenerSession = require('../models/screenerSession');
 const Waitlist = require('../models/waitlist');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
@@ -1256,21 +1257,37 @@ router.put('/students/:studentId/iep', isAdmin, async (req, res) => {
  * @route   GET /api/admin/students/:studentId/conversations
  * @desc    Get a student's conversation history.
  * @access  Private (Admin)
+ *
+ * Verifies the target userId belongs to a student before returning transcripts.
+ * Without this gate, an admin could fetch conversations for any user — including
+ * other admins, teachers, and parents — which is out of scope for this endpoint.
+ * Cross-school admin scoping is a separate pending policy decision.
  */
-router.get('/students/:studentId/conversations', isAdmin, async (req, res) => {
-  try {
-    const conversations = await Conversation.find({ userId: req.params.studentId })
+router.get(
+  '/students/:studentId/conversations',
+  isAdmin,
+  logRecordAccess('conversation_history', 'administrative_oversight'),
+  async (req, res) => {
+    try {
+      const { studentId } = req.params;
+
+      const student = await User.findOne({ _id: studentId, role: 'student' }, '_id').lean();
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found.' });
+      }
+
+      const conversations = await Conversation.find({ userId: studentId })
         .sort({ startDate: -1 })
-        .select('summary activeMinutes startDate') // Fixed: removed non-existent 'date' field
+        .select('summary activeMinutes startDate conversationName topic topicEmoji conversationType lastActivity')
         .lean();
-    
-    // Returning an empty array is a successful response, not an error.
-    res.json(conversations);
-  } catch (err) {
-    console.error('Error fetching student conversations for admin:', err);
-    res.status(500).json({ message: 'Server error fetching conversation data.' });
+
+      res.json(conversations);
+    } catch (err) {
+      console.error('Error fetching student conversations for admin:', err);
+      res.status(500).json({ message: 'Server error fetching conversation data.' });
+    }
   }
-});
+);
 
 // -----------------------------------------------------------------------------
 // --- Bulk & System Routes ---
