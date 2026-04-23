@@ -1029,18 +1029,28 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) throw new Error('Failed to load conversations');
             const conversations = await response.json();
 
-            if (conversations.length === 0) {
-                conversationsDiv.innerHTML = '<p style="color: #95a5a6; font-style: italic; font-size: 0.85em;">No sessions recorded yet.</p>';
-            } else {
-                conversationsDiv.innerHTML = conversations.slice(0, 3).map(conv => `
-                    <div class="profile-conv-item">
+            // Each conversation card is now a trigger for the transcript viewer
+            // (public/js/teacher-transcripts.js). The data-* attributes are what
+            // the viewer's delegated click handler looks for.
+            const convCardHtml = (conv) => `
+                    <div class="profile-conv-item"
+                         data-student-id="${studentId}"
+                         data-conversation-id="${conv._id}"
+                         role="button"
+                         tabindex="0"
+                         title="View full transcript">
                         <div class="profile-conv-date">
                             <i class="fas fa-calendar"></i> ${new Date(conv.date || conv.startDate).toLocaleDateString()}
                             ${conv.activeMinutes ? ` &middot; <i class="fas fa-clock"></i> ${conv.activeMinutes} min` : ''}
                         </div>
                         <div class="profile-conv-summary">${conv.summary || 'No summary available'}</div>
                     </div>
-                `).join('');
+                `;
+
+            if (conversations.length === 0) {
+                conversationsDiv.innerHTML = '<p style="color: #95a5a6; font-style: italic; font-size: 0.85em;">No sessions recorded yet.</p>';
+            } else {
+                conversationsDiv.innerHTML = conversations.slice(0, 3).map(convCardHtml).join('');
             }
 
             // Also populate the full sessions tab
@@ -1048,15 +1058,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (conversations.length === 0) {
                 fullHistoryDiv.innerHTML = '<p style="color: #95a5a6; font-style: italic; padding: 20px; text-align: center;">No session history found.</p>';
             } else {
-                fullHistoryDiv.innerHTML = conversations.map(conv => `
-                    <div class="profile-conv-item">
-                        <div class="profile-conv-date">
-                            <i class="fas fa-calendar"></i> ${new Date(conv.date || conv.startDate).toLocaleDateString()}
-                            ${conv.activeMinutes ? ` &middot; <i class="fas fa-clock"></i> ${conv.activeMinutes} min` : ''}
-                        </div>
-                        <div class="profile-conv-summary">${conv.summary || 'No summary available'}</div>
-                    </div>
-                `).join('');
+                fullHistoryDiv.innerHTML = conversations.map(convCardHtml).join('');
             }
         } catch (error) {
             console.error('Error loading conversations:', error);
@@ -1353,9 +1355,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 conversationsListDiv.innerHTML = "<p>No conversation history found for this student.</p>";
                 return;
             }
-            // The rendering logic remains valid as it consumes the data structure provided by the repaired API
+            // Each card opens the transcript viewer via teacher-transcripts.js.
             conversationsListDiv.innerHTML = conversations.map(convo => `
-                <div class="conversation-card">
+                <div class="conversation-card profile-conv-item"
+                     data-student-id="${studentId}"
+                     data-conversation-id="${convo._id}"
+                     role="button"
+                     tabindex="0"
+                     title="View full transcript">
                     <h4>Session on <span class="session-date">${new Date(convo.date || convo.startDate).toLocaleDateString()}</span></h4>
                     <p>${convo.summary || 'No summary available.'}</p>
                 </div>

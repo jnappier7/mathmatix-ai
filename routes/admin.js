@@ -13,6 +13,8 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
+const { logRecordAccess } = require('../middleware/ferpaAccessLog');
+const { checkConsent } = require('../utils/consentManager');
 const ScreenerSession = require('../models/screenerSession');
 const Waitlist = require('../models/waitlist');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
@@ -1256,21 +1258,112 @@ router.put('/students/:studentId/iep', isAdmin, async (req, res) => {
  * @route   GET /api/admin/students/:studentId/conversations
  * @desc    Get a student's conversation history.
  * @access  Private (Admin)
+ *
+ * Verifies the target userId belongs to a student before returning transcripts.
+ * Without this gate, an admin could fetch conversations for any user — including
+ * other admins, teachers, and parents — which is out of scope for this endpoint.
+ * Cross-school admin scoping is a separate pending policy decision.
  */
-router.get('/students/:studentId/conversations', isAdmin, async (req, res) => {
-  try {
-    const conversations = await Conversation.find({ userId: req.params.studentId })
+router.get(
+  '/students/:studentId/conversations',
+  isAdmin,
+  logRecordAccess('conversation_history', 'administrative_oversight'),
+  async (req, res) => {
+    try {
+      const { studentId } = req.params;
+
+      const student = await User.findOne(
+        { _id: studentId, role: 'student' },
+        '_id privacyConsent hasParentalConsent'
+      ).lean();
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found.' });
+      }
+
+      // Consent gate: block on revoked/expired. Same rule used on the teacher
+      // side — admin access is covered by whichever consent pathway is active
+      // (parent, school DPA, or self-13+), but revoked consent bars both.
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
+      }
+
+      const conversations = await Conversation.find({ userId: studentId })
         .sort({ startDate: -1 })
-        .select('summary activeMinutes startDate') // Fixed: removed non-existent 'date' field
+        .select('summary activeMinutes startDate conversationName topic topicEmoji conversationType lastActivity')
         .lean();
-    
-    // Returning an empty array is a successful response, not an error.
-    res.json(conversations);
-  } catch (err) {
-    console.error('Error fetching student conversations for admin:', err);
-    res.status(500).json({ message: 'Server error fetching conversation data.' });
+
+      res.json(conversations);
+    } catch (err) {
+      console.error('Error fetching student conversations for admin:', err);
+      res.status(500).json({ message: 'Server error fetching conversation data.' });
+    }
   }
-});
+);
+
+/**
+ * @route   GET /api/admin/students/:studentId/conversations/:conversationId
+ * @desc    Get the full transcript for a single conversation.
+ * @access  Private (Admin)
+ */
+router.get(
+  '/students/:studentId/conversations/:conversationId',
+  isAdmin,
+  logRecordAccess('conversation_transcript', 'administrative_oversight'),
+  async (req, res) => {
+    try {
+      const { studentId, conversationId } = req.params;
+
+      const student = await User.findOne(
+        { _id: studentId, role: 'student' },
+        '_id firstName lastName username privacyConsent hasParentalConsent'
+      ).lean();
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found.' });
+      }
+
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
+      }
+
+      const conversation = await Conversation.findOne({
+        _id: conversationId,
+        userId: studentId,
+      })
+        .select(
+          'messages startDate lastActivity activeMinutes conversationName customName topic topicEmoji conversationType summary liveSummary sessionMood reasoningTrace'
+        )
+        .lean();
+
+      if (!conversation) {
+        return res.status(404).json({ message: 'Conversation not found.' });
+      }
+
+      res.json({
+        student: {
+          _id: student._id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          username: student.username,
+        },
+        conversation: {
+          ...conversation,
+          reasoningTrace: Array.isArray(conversation.reasoningTrace) ? conversation.reasoningTrace : [],
+        },
+      });
+    } catch (err) {
+      console.error('Error fetching conversation transcript for admin:', err);
+      res.status(500).json({ message: 'Server error fetching conversation transcript.' });
+    }
+  }
+);
 
 // -----------------------------------------------------------------------------
 // --- Bulk & System Routes ---

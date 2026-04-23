@@ -16,6 +16,7 @@ const Skill = require('../models/skill');
 const { callLLMStream } = require('../utils/openaiClient');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
+const { checkConsent } = require('../utils/consentManager');
 
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
@@ -151,30 +152,115 @@ router.get('/students/:studentId/iep/goal-history', isTeacher, async (req, res) 
 });
 
 // Get a specific assigned student's conversation history (Teacher only)
-router.get('/students/:studentId/conversations', isTeacher, async (req, res) => {
-  const { studentId } = req.params;
-  const teacherId = req.user._id;
+router.get(
+  '/students/:studentId/conversations',
+  isTeacher,
+  logRecordAccess('conversation_history', 'teaching_instruction'),
+  async (req, res) => {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
 
-  try {
-    // First, confirm the teacher is actually assigned this student
-    const student = await User.findOne({ _id: studentId, teacherId: teacherId });
-    if (!student) {
+    try {
+      // Authorization must cover both direct teacherId assignment AND enrollment-code
+      // assignment. The narrower User.findOne({teacherId}) check previously used here
+      // denied legitimate access to code-enrolled students and diverged from the
+      // convention used by /iep and other teacher routes.
+      const authorizedStudentIds = await getStudentIdsForTeacher(teacherId);
+      if (!authorizedStudentIds.includes(String(studentId))) {
         return res.status(403).json({ message: "You are not authorized to view this student's history." });
+      }
+
+      // Consent gate: block on revoked/expired. Pending-with-legacy is allowed
+      // per existing convention across other teacher read paths.
+      const student = await User.findById(studentId, 'privacyConsent hasParentalConsent').lean();
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
+      }
+
+      const conversations = await Conversation.find({ userId: studentId })
+        .sort({ startDate: -1 })
+        .select('summary activeMinutes startDate conversationName topic topicEmoji conversationType lastActivity')
+        .lean();
+
+      res.json(conversations || []);
+    } catch (err) {
+      console.error('Error fetching student conversations for teacher:', err);
+      res.status(500).json({ message: 'Server error fetching conversation data.' });
     }
-
-    // --- MODIFICATION START ---
-    // Fetch all conversations for this student from the Conversation collection
-    const conversations = await Conversation.find({ userId: studentId })
-        .sort({ startDate: -1 }) // Sort by most recent first
-        .select('summary activeMinutes startDate'); // Fixed: removed non-existent 'date' field, added startDate
-    // --- MODIFICATION END ---
-
-    res.json(conversations || []);
-  } catch (err) {
-    console.error('Error fetching student conversations for teacher:', err);
-    res.status(500).json({ message: 'Server error fetching conversation data.' });
   }
-});
+);
+
+// Get the full transcript (messages + metadata) for a single conversation.
+// Separate endpoint from the history list so the default student-profile view
+// stays cheap; the viewer only pulls the heavy messages array on demand.
+router.get(
+  '/students/:studentId/conversations/:conversationId',
+  isTeacher,
+  logRecordAccess('conversation_transcript', 'teaching_instruction'),
+  async (req, res) => {
+    const { studentId, conversationId } = req.params;
+    const teacherId = req.user._id;
+
+    try {
+      const authorizedStudentIds = await getStudentIdsForTeacher(teacherId);
+      if (!authorizedStudentIds.includes(String(studentId))) {
+        return res.status(403).json({ message: "You are not authorized to view this student's history." });
+      }
+
+      const student = await User.findById(
+        studentId,
+        'firstName lastName username privacyConsent hasParentalConsent'
+      ).lean();
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found.' });
+      }
+
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
+      }
+
+      const conversation = await Conversation.findOne({
+        _id: conversationId,
+        userId: studentId,
+      })
+        .select(
+          'messages startDate lastActivity activeMinutes conversationName customName topic topicEmoji conversationType summary liveSummary sessionMood reasoningTrace'
+        )
+        .lean();
+
+      if (!conversation) {
+        return res.status(404).json({ message: 'Conversation not found.' });
+      }
+
+      res.json({
+        student: {
+          _id: student._id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          username: student.username,
+        },
+        conversation: {
+          ...conversation,
+          // reasoningTrace is not in the schema yet; normalize to [] so the
+          // viewer can bind safely. Pipeline will populate this per spec §6
+          // once the permission architecture lands.
+          reasoningTrace: Array.isArray(conversation.reasoningTrace) ? conversation.reasoningTrace : [],
+        },
+      });
+    } catch (err) {
+      console.error('Error fetching conversation transcript for teacher:', err);
+      res.status(500).json({ message: 'Server error fetching conversation transcript.' });
+    }
+  }
+);
 
 // ============================================
 // LIVE ACTIVITY FEED ENDPOINTS
