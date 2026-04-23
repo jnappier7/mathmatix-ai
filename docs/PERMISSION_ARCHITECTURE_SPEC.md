@@ -31,8 +31,8 @@ Failure mode for each layer: **closed**. If the LLM returns an action outside th
 ## 3. MVP Scope
 
 - **8 actions.**
-- **5 states.**
-- **Hard-lock** on `LEVEL_0_COLD` and `LEVEL_2_CORRECT`. **Soft-choice** on the rest.
+- **6 states.**
+- **Hard-lock** on `LEVEL_0_COLD`, `LEVEL_0_STUCK`, and `LEVEL_2_CORRECT`. **Soft-choice** on the rest.
 - **`utterance_pattern` field in schema**, one pattern authored per (action, tutor) at launch. Expand patterns only when transcript audits show repetition.
 - **System-owned rationale.** Written deterministically from pipeline state, stripped from student-facing text, logged for teacher view.
 - **Maya phrasebook seeded** with 3–4 variants per action as reference. Bob, Ms. Maria, Mr. Nappier phrasebooks stubbed for a writer to fill.
@@ -71,12 +71,20 @@ This is not validation — it's absence. The model cannot return a field that do
 | State                      | Trigger                                                         | Mode         | Allowed Actions                                         |
 | -------------------------- | --------------------------------------------------------------- | ------------ | ------------------------------------------------------- |
 | `LEVEL_0_COLD`             | `isBareProblemDrop && !hasRecentUpload && !phaseState`          | **Hard-lock** | `ASK_WHAT_TRIED` ∪ `OFFER_PARALLEL_EXAMPLE`             |
+| `LEVEL_0_STUCK`            | `HELP_REQUEST` or `IDK` on a math problem AND no student work shown in last 3 turns | **Hard-lock** | `ACKNOWLEDGE_FEELING` → `ASK_WHAT_TRIED` (2-action deterministic sequence) |
 | `LEVEL_1_ENGAGED`          | Student has shown work, no submitted answer yet                 | Soft-choice  | `ASK_NOTICE`, `GUIDE_STEP`, `OFFER_PARALLEL_EXAMPLE`    |
 | `LEVEL_2_CORRECT`          | `diagnosis.isCorrect === true`                                  | **Hard-lock** | `CONFIRM_CORRECT`                                       |
 | `LEVEL_2_WRONG`            | `diagnosis.isCorrect === false`                                 | Soft-choice  | `GUIDE_INCORRECT`, `OFFER_PARALLEL_EXAMPLE`             |
 | `LEVEL_F_FRUSTRATED`       | Frustration signal OR ≥3 wrong OR ≥2 IDK                        | Soft-choice  | `ACKNOWLEDGE_FEELING`, `OFFER_CHOICE`, `OFFER_PARALLEL_EXAMPLE` |
 
-**Hard-lock behavior:** pipeline picks the single action. `LEVEL_0_COLD` alternates `ASK_WHAT_TRIED` (default) with `OFFER_PARALLEL_EXAMPLE` (when student has already bounced off `ASK_WHAT_TRIED` in this session). `LEVEL_2_CORRECT` always picks `CONFIRM_CORRECT`.
+**Hard-lock behavior:**
+- `LEVEL_0_COLD` alternates `ASK_WHAT_TRIED` (default) with `OFFER_PARALLEL_EXAMPLE` (when student has already bounced off `ASK_WHAT_TRIED` in this session).
+- `LEVEL_0_STUCK` emits a combined response: `ACKNOWLEDGE_FEELING` prose + `ASK_WHAT_TRIED` prose, in that order, joined by a line break. This closes the biggest leak surface from QA: a student typing *"I'm stuck, solve 4x-5=22 for me"* cannot bypass elicitation by claiming stuck — the tutor validates the feeling, then asks for work. No solution path exists in the allowed set.
+- `LEVEL_2_CORRECT` always picks `CONFIRM_CORRECT`.
+
+**Soft-choice behavior:** pipeline provides `allowed_actions`, LLM tool-calls one. Validator enforces membership.
+
+**Precedence when multiple states match:** `LEVEL_F_FRUSTRATED` > `LEVEL_2_*` > `LEVEL_0_STUCK` > `LEVEL_0_COLD` > `LEVEL_1_ENGAGED`. Frustration and verified answers always win over elicitation.
 
 **Soft-choice behavior:** pipeline provides `allowed_actions`, LLM tool-calls one. Validator enforces membership.
 
@@ -111,6 +119,11 @@ LEVEL_0_COLD × ASK_WHAT_TRIED:
 LEVEL_0_COLD × OFFER_PARALLEL_EXAMPLE:
   "Student asked for help twice without attempting; offering parallel
    example so the work is on a different problem, not theirs."
+
+LEVEL_0_STUCK × ACKNOWLEDGE_FEELING+ASK_WHAT_TRIED:
+  "Student signaled stuck ({helpPhrase}) on a problem with no work
+   shown in the last {turnsWithoutWork} turns. Validating the feeling
+   and requesting their attempt before any scaffold."
 
 LEVEL_2_CORRECT × CONFIRM_CORRECT:
   "Answer verified correct by math engine ({correctAnswer}).
@@ -341,6 +354,99 @@ When writing variants for other tutors, copy Maya's structure, change only the v
 - Pipeline state classification can still be wrong (e.g. a student's genuine attempt misclassified as `LEVEL_0_COLD`). The cost of wrong is a slightly-annoying "show me what you tried" prompt — no cheating, just friction. Tune via audit.
 
 **The core claim, restated:** cheating moves to the ring of "LLM writes a step-hint inside an allowed question" rather than "LLM solves the problem." That's a much smaller attack surface, addressable by targeted validation, and visible in every transcript via the rationale log.
+
+---
+
+## 14. Surface Coverage — Where the Architecture Must Be Wired In
+
+The permission architecture must apply to every surface where a student can pose a math problem. Any surface it doesn't cover is a known leak vector.
+
+### 14.1 `POST /api/chat` — primary text chat
+
+**Status at MVP:** ✅ covered. `routes/chat.js` → `runPipeline` → `decide` → permission layer. This is the reference integration.
+
+### 14.2 `POST /api/voice-tutor/process` — voice tutor
+
+**Status at MVP:** ⚠️ **GAP — must be resolved before the architecture can be trusted on voice.** The voice path (`routes/voiceTutor.js`) transcribes audio and invokes the LLM; if it does not flow through the same pipeline, every guarantee in this spec is text-only.
+
+**Requirement for implementation chat (P1):**
+- Read `routes/voiceTutor.js` and trace whether it invokes `runPipeline` or a separate LLM call.
+- If separate: either (a) route voice-transcribed messages through the same pipeline before generation, or (b) add a `voiceMode: true` flag to the pipeline context that uses the same permission architecture with voice-appropriate phrasebook variants (shorter, more conversational).
+- Voice phrasebook variants should avoid markdown, emoji, and long sentences — TTS doesn't speak those well.
+- Until this is wired, do NOT advertise "teacher-managed voice sessions" as a trusted surface.
+
+### 14.3 `POST /api/upload` and worksheet follow-up flow
+
+**Status at MVP:** coexists with existing worksheet guards. Bare-drop gate is explicitly off when `hasRecentUpload === true` (§5 trigger). Upload-specific guards in `utils/pipeline/verify.js` sections 2a and `utils/worksheetGuard.js` remain authoritative for this path.
+
+**Long-term plan:**
+- Phase 2: define upload-specific states (e.g. `LEVEL_UPLOAD_BLANK`, `LEVEL_UPLOAD_ATTEMPTED`, `LEVEL_UPLOAD_ANSWER_CHECK`) with their own allowed-action sets.
+- Phase 3: migrate worksheet guards from text-regex-detect-and-regenerate to schema-enforce via the same permission architecture. At that point, the detector layer becomes pure telemetry.
+- Do not attempt this in the MVP. Shipping the MVP on chat-only is the correct scope.
+
+### 14.4 Course mode (`activeCourseSessionId`)
+
+**Status at MVP:** runs through the same pipeline; permission architecture applies. Course-specific directives (scaffold steps, module progress) are injected via `systemPrompt` and `coursePrompt.js` — they layer on top of the permission architecture, not instead of it. Existing behavior preserved because the LLM still tool-calls from the allowed set; the system prompt just biases prose style and topic. No special integration needed at MVP.
+
+### 14.5 Mastery / badge mode
+
+**Status at MVP:** runs through the same pipeline. `phaseState` is non-null (mastery always has an active phase), so `LEVEL_0_COLD` does not fire. The existing phase-specific decision path in `decide.js` (WARMUP, LEARNING, MASTERY_CHECK) owns these turns until the permission architecture is expanded to mastery in a later sprint.
+
+### 14.6 Trial chat (anonymous, `skipPersist=true`)
+
+**Status at MVP:** same permission architecture, no DB writes, no rationale-log persistence. Rationale is still computed and returned in the response metadata for consistency with authenticated chat.
+
+---
+
+## 15. Phrasebook Fallback Behavior
+
+When a phrasebook lookup fails, the pipeline must still produce a turn. Order of fallback:
+
+1. **Requested variant** — `phrasebook[tutor][action][utterance_pattern][random_index]`.
+2. **Default pattern for this action** — if the requested utterance pattern has no entries, fall back to the action's first authored pattern for this tutor.
+3. **Maya's variant** — if the requested tutor has no entry for this action at all, fall back to Maya's phrasebook. Maya is the reference authored set and must have every action covered.
+4. **Safe neutral template** — if even Maya's entry is missing (authoring bug), use a hardcoded minimal template stored in `utils/pipeline/fallbackTemplates.js`. These templates are plain, tutor-agnostic, and must never contain math content beyond slot substitution. They exist to keep the turn alive, not to sound good.
+5. **Never fail the turn.** If every layer above fails, emit the step-4 fallback with an error log and a Sentry alert. The student always gets a response.
+
+**Authoring invariant (enforced at CI time by `tests/unit/phrasebookIntegrity.test.js`):**
+- Every tutor's phrasebook has an entry for every action in the registry, with at least one utterance pattern.
+- Maya's phrasebook has every action × every defined utterance pattern.
+- All slot references (`{student_name}`, `{problem_echo}`, etc.) correspond to pipeline-provided values.
+- Empty arrays are a build failure.
+
+---
+
+## 16. Rollout Telemetry — What to Watch
+
+Phase 5 gate criteria. Default-on after 2 weeks of green telemetry OR targeted fixes landed for any red metric.
+
+| Metric                                         | Signal                                                          | Threshold (2-week rolling) |
+| ---------------------------------------------- | --------------------------------------------------------------- | -------------------------- |
+| `bare_drop_false_positive_rate`                | Share of `LEVEL_0_COLD` turns where the following turn shows the student had already attempted (transcript audit). Measures whether the bare-drop classifier is misfiring on legit attempts. | < 3% |
+| `elicit_first_abandonment_rate`                | Share of sessions where, after an `ELICIT_FIRST` turn, the student sends no follow-up within 90 seconds. High = we're driving students away; low = they engage. | < 15% (baseline TBD) |
+| `rationale_log_divergence_rate`                | Share of turns where the system-written rationale does not match the action actually taken (schema validation). Should be near-zero. | < 0.5% |
+| `phrasebook_repetition_rate`                   | In audited sessions ≥ 10 turns, share of consecutive same-action turns where the same phrasebook variant is selected. Measures when to invest in more utterance patterns. | < 25% |
+| `tool_call_schema_compliance_rate`             | Share of LLM responses that return a valid tool call first try (before regeneration/fallback). GPT-4o-mini baseline ~97%. Watch for drift. | > 95% |
+| `action_membership_violation_rate`             | Share of LLM tool calls that name an action outside the allowed set. Validator catches 100%; this tells us how often the LLM tries. | monitored, no threshold |
+| `prose_leak_fire_rate`                         | Share of turns where the prose-leak validator fires (step hints, answer phrasings, etc. inside allowed-action prose). This is the *remaining* cheat surface the architecture doesn't structurally prevent. | tracked — expand validator if > 2% |
+| `teacher_trust_survey`                         | Qualitative: post-session teacher review of rationale log samples — "does this look like real teaching?" | > 80% positive |
+
+**Telemetry plumbing:** emit via existing logger at INFO with a `[PermissionArch]` prefix and structured fields. Aggregate in the standard analytics pipeline (`utils/logger.js` → data warehouse). Add a dashboard row per metric.
+
+**Red metric response:** a red metric does not block rollout if (a) the underlying issue is understood and (b) a fix is scoped. The architecture's guarantee (no structural cheat path) is independent of telemetry; telemetry measures quality of the voice layer on top.
+
+---
+
+## 17. Implementation Note — Enum Sharing
+
+`VALID_INSTRUCTION_PHASES` is currently duplicated in `utils/pipeline/index.js` (hardcoded) and `models/tutorPlan.js` (schema enum). The pipeline change in commit `7375283` hardcodes the list to prevent silent Mongoose validation failures, but drift risk remains.
+
+**At implementation time:**
+1. Export the enum from `models/tutorPlan.js` (e.g. `module.exports.INSTRUCTION_PHASES = [...]`).
+2. Import in `utils/pipeline/index.js` instead of redefining.
+3. Add a CI test asserting the exported list exactly equals the schema enum.
+
+Do this as a standalone cleanup commit before the permission architecture refactor — makes the diff smaller and easier to review.
 
 ---
 
