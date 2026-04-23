@@ -14,6 +14,7 @@ const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
+const { checkConsent } = require('../utils/consentManager');
 const ScreenerSession = require('../models/screenerSession');
 const Waitlist = require('../models/waitlist');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
@@ -1271,9 +1272,23 @@ router.get(
     try {
       const { studentId } = req.params;
 
-      const student = await User.findOne({ _id: studentId, role: 'student' }, '_id').lean();
+      const student = await User.findOne(
+        { _id: studentId, role: 'student' },
+        '_id privacyConsent hasParentalConsent'
+      ).lean();
       if (!student) {
         return res.status(404).json({ message: 'Student not found.' });
+      }
+
+      // Consent gate: block on revoked/expired. Same rule used on the teacher
+      // side — admin access is covered by whichever consent pathway is active
+      // (parent, school DPA, or self-13+), but revoked consent bars both.
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
       }
 
       const conversations = await Conversation.find({ userId: studentId })

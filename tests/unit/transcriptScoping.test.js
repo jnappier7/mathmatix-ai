@@ -82,6 +82,10 @@ jest.mock('../../services/userService', () => ({
   getStudentIdsForTeacher: jest.fn(),
 }));
 
+// Consent utility: use real implementation. checkConsent is pure — it reads
+// privacyConsent/hasParentalConsent off the passed user object and returns
+// { hasConsent, pathway, status, details }. No mocking needed.
+
 // Middleware: pass-through mocks. The routes mount isTeacher / isAdmin at the
 // handler level; we inject the authenticated user via a test middleware below.
 jest.mock('../../middleware/auth', () => ({
@@ -180,6 +184,13 @@ describe('Teacher transcript roster scoping', () => {
     // enrollment-code assignment. The previous implementation only matched
     // direct teacherId and denied code-enrolled students.
     getStudentIdsForTeacher.mockResolvedValue([STUDENT_ID]);
+    User.findById.mockReturnValueOnce({
+      lean: jest.fn().mockResolvedValue({
+        _id: STUDENT_ID,
+        hasParentalConsent: true,
+        privacyConsent: { status: 'active', consentPathway: 'school_dpa' },
+      }),
+    });
     const fakeConversations = [
       { _id: 'c1', summary: 'Worked on linear equations', activeMinutes: 12, startDate: new Date('2026-04-20') },
     ];
@@ -192,6 +203,24 @@ describe('Teacher transcript roster scoping', () => {
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body).toHaveLength(1);
     expect(Conversation.find).toHaveBeenCalledWith({ userId: STUDENT_ID });
+  });
+
+  test('blocks access when the student has revoked consent', async () => {
+    getStudentIdsForTeacher.mockResolvedValue([STUDENT_ID]);
+    User.findById.mockReturnValueOnce({
+      lean: jest.fn().mockResolvedValue({
+        _id: STUDENT_ID,
+        hasParentalConsent: false,
+        privacyConsent: { status: 'revoked', consentPathway: 'individual_parent' },
+      }),
+    });
+
+    const app = makeTeacherApp({ _id: TEACHER_ID, role: 'teacher' });
+    const res = await request(app).get(`/api/teacher/students/${STUDENT_ID}/conversations`);
+
+    expect(res.status).toBe(403);
+    expect(res.body.consentStatus.status).toBe('revoked');
+    expect(Conversation.find).not.toHaveBeenCalled();
   });
 });
 
@@ -214,13 +243,20 @@ describe('Admin transcript endpoint student-only gate', () => {
     const res = await request(app).get(`/api/admin/students/${TEACHER_ID}/conversations`);
 
     expect(res.status).toBe(404);
-    expect(User.findOne).toHaveBeenCalledWith({ _id: TEACHER_ID, role: 'student' }, '_id');
+    expect(User.findOne).toHaveBeenCalledWith(
+      { _id: TEACHER_ID, role: 'student' },
+      '_id privacyConsent hasParentalConsent'
+    );
     expect(Conversation.find).not.toHaveBeenCalled();
   });
 
-  test('returns transcripts when target IS a student', async () => {
+  test('returns transcripts when target IS a student with active consent', async () => {
     User.findOne.mockReturnValueOnce({
-      lean: jest.fn().mockResolvedValue({ _id: STUDENT_ID }),
+      lean: jest.fn().mockResolvedValue({
+        _id: STUDENT_ID,
+        hasParentalConsent: true,
+        privacyConsent: { status: 'active', consentPathway: 'school_dpa' },
+      }),
     });
     const fakeConversations = [
       { _id: 'c2', summary: 'Factoring practice', activeMinutes: 8, startDate: new Date('2026-04-21') },
@@ -233,5 +269,22 @@ describe('Admin transcript endpoint student-only gate', () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveLength(1);
     expect(Conversation.find).toHaveBeenCalledWith({ userId: STUDENT_ID });
+  });
+
+  test('blocks access when the student has revoked consent', async () => {
+    User.findOne.mockReturnValueOnce({
+      lean: jest.fn().mockResolvedValue({
+        _id: STUDENT_ID,
+        hasParentalConsent: false,
+        privacyConsent: { status: 'revoked', consentPathway: 'school_dpa' },
+      }),
+    });
+
+    const app = makeAdminApp({ _id: ADMIN_ID, role: 'admin' });
+    const res = await request(app).get(`/api/admin/students/${STUDENT_ID}/conversations`);
+
+    expect(res.status).toBe(403);
+    expect(res.body.consentStatus.status).toBe('revoked');
+    expect(Conversation.find).not.toHaveBeenCalled();
   });
 });

@@ -16,6 +16,7 @@ const Skill = require('../models/skill');
 const { callLLMStream } = require('../utils/openaiClient');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
+const { checkConsent } = require('../utils/consentManager');
 
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
@@ -167,6 +168,17 @@ router.get(
       const authorizedStudentIds = await getStudentIdsForTeacher(teacherId);
       if (!authorizedStudentIds.includes(String(studentId))) {
         return res.status(403).json({ message: "You are not authorized to view this student's history." });
+      }
+
+      // Consent gate: block on revoked/expired. Pending-with-legacy is allowed
+      // per existing convention across other teacher read paths.
+      const student = await User.findById(studentId, 'privacyConsent hasParentalConsent').lean();
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
       }
 
       const conversations = await Conversation.find({ userId: studentId })
