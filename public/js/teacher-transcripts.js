@@ -20,6 +20,13 @@
     lastTrigger: null,
     showReasoning: false,
     escHandler: null,
+    // Flagging context. currentConversationId / currentStudentId are set per
+    // open() so the delegated flag handler has what it needs. flaggedTurns
+    // tracks turns the reviewer has already flagged in this session so the
+    // button reflects state after a successful POST.
+    currentConversationId: null,
+    currentStudentId: null,
+    flaggedTurns: new Set(),
   };
 
   function h(tag, attrs, children) {
@@ -105,8 +112,67 @@
       renderBodyFromCache();
     });
 
+    // Flag clicks (delegated inside the modal body)
+    content.querySelector('#transcript-viewer-body').addEventListener('click', (e) => {
+      const btn = e.target.closest('.transcript-flag-btn');
+      if (!btn || btn.disabled) return;
+      e.preventDefault();
+      handleFlagClick(btn);
+    });
+
     STATE.modal = modal;
     return modal;
+  }
+
+  async function handleFlagClick(btn) {
+    const turnIndex = Number(btn.dataset.turnIndex);
+    if (!Number.isFinite(turnIndex) || turnIndex < 0) return;
+    if (!STATE.currentConversationId) return;
+
+    const reason = window.prompt(
+      "Flag this tutor turn. What looks off? (This gets routed to admin review.)",
+      ''
+    );
+    // prompt() returns null if the reviewer cancelled. Empty string is fine —
+    // a no-reason flag is still signal.
+    if (reason === null) return;
+
+    btn.disabled = true;
+    btn.classList.add('is-submitting');
+    const label = btn.querySelector('.transcript-flag-label');
+    if (label) label.textContent = 'Flagging…';
+
+    try {
+      const res = await fetch('/api/transcript-flags', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversationId: STATE.currentConversationId,
+          turnIndex,
+          reason: (reason || '').trim(),
+        }),
+      });
+      if (!res.ok) {
+        let body = null;
+        try { body = await res.json(); } catch { /* ignore */ }
+        throw new Error(body?.message || `Flag failed (${res.status})`);
+      }
+      STATE.flaggedTurns.add(turnIndex);
+      btn.classList.remove('is-submitting');
+      btn.classList.add('is-flagged');
+      btn.title = 'You already flagged this turn';
+      btn.setAttribute('aria-label', 'Turn flagged');
+      const icon = btn.querySelector('i');
+      if (icon) icon.className = 'fas fa-flag-checkered';
+      if (label) label.textContent = 'Flagged';
+    } catch (err) {
+      console.error('[TranscriptViewer] flag failed', err);
+      btn.disabled = false;
+      btn.classList.remove('is-submitting');
+      if (label) label.textContent = 'Flag';
+      window.alert(err.message || 'Could not flag this turn.');
+    }
   }
 
   function closeModal() {
@@ -233,6 +299,24 @@
     if (msg.timestamp) {
       metaRow.appendChild(h('span', { title: new Date(msg.timestamp).toISOString() }, formatTimestamp(msg.timestamp)));
     }
+    // Flag affordance — tutor turns only. The backend enforces that too, but
+    // hiding the button on student turns matches the product intent: the
+    // reviewer is auditing what the tutor said, not the student.
+    if (role === 'tutor') {
+      const already = STATE.flaggedTurns.has(idx);
+      const flagBtn = h('button', {
+        type: 'button',
+        className: `transcript-flag-btn${already ? ' is-flagged' : ''}`,
+        'data-turn-index': String(idx),
+        'aria-label': already ? 'Turn flagged' : 'Flag this moment',
+        title: already ? 'You already flagged this turn' : 'Flag this moment',
+        disabled: already,
+      }, [
+        h('i', { className: `fas ${already ? 'fa-flag-checkered' : 'fa-flag'}` }),
+        h('span', { className: 'transcript-flag-label' }, already ? 'Flagged' : 'Flag'),
+      ]);
+      metaRow.appendChild(flagBtn);
+    }
     if (metaRow.childNodes.length > 0) bubble.appendChild(metaRow);
     return bubble;
   }
@@ -352,6 +436,9 @@
 
     // Reset per-open state
     STATE.showReasoning = false;
+    STATE.currentConversationId = conversationId;
+    STATE.currentStudentId = studentId;
+    STATE.flaggedTurns = new Set();
     const toggle = STATE.modal.querySelector('#transcript-reasoning-toggle');
     if (toggle) toggle.checked = false;
 
