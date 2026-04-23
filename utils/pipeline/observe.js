@@ -297,6 +297,83 @@ function detectStreaks(recentUserMessages) {
 }
 
 /**
+ * Detect a "bare problem drop" — the student handed over a new math problem
+ * (equation, expression, worked-problem prompt) without an attempt, without
+ * a specific stuck point, and without reasoning language.
+ *
+ * Examples that match:
+ *   "x^2=49"
+ *   "4x-5=22"
+ *   "what about 2/3 + 1/4"
+ *   "solve 3x+5=14"
+ *
+ * Examples that do NOT match:
+ *   "I got x=7 but the show-my-work said wrong" (attempt present)
+ *   "I'm stuck on step 2 of 4x-5=22"             (stuck indicator)
+ *   "after I factor, what do I do next?"          (reasoning indicator)
+ *   "the square root of 49 is 7"                  (statement, not a new problem)
+ *
+ * When this fires, the pipeline must respond deterministically — ask what
+ * the student tried or offer a parallel example. Never solve.
+ *
+ * @returns {boolean}
+ */
+function detectBareProblemDrop(text, messageType, hasAnswer) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.trim();
+  if (t.length === 0 || t.length > 140) return false;
+
+  // Message types that encode student intent already — don't override.
+  const NON_DROP_TYPES = new Set([
+    MESSAGE_TYPES.ANSWER_ATTEMPT,
+    MESSAGE_TYPES.IDK,
+    MESSAGE_TYPES.GIVE_UP,
+    MESSAGE_TYPES.HELP_REQUEST,
+    MESSAGE_TYPES.CHECK_MY_WORK,
+    MESSAGE_TYPES.AFFIRMATIVE,
+    MESSAGE_TYPES.GREETING,
+    MESSAGE_TYPES.FRUSTRATION,
+    MESSAGE_TYPES.OFF_TASK,
+    MESSAGE_TYPES.SKIP_REQUEST,
+    MESSAGE_TYPES.EVASIVE_AFFIRMATIVE,
+    MESSAGE_TYPES.PARROTING,
+  ]);
+  if (NON_DROP_TYPES.has(messageType)) return false;
+  if (hasAnswer) return false;
+
+  // Must contain recognizable math-problem signals.
+  const hasEquation = /=/.test(t);
+  const hasLatexMath = /\\frac|\\sqrt|\\int|\\sum|\^\{|_\{/.test(t);
+  // Coefficient+variable terms like "2x", "3y²", or variable+operator sequences.
+  const hasVariableTerms =
+    /\b\d*[a-z](?:\^\d+|²|³|⁴)?[\s]*[+\-*/=]/i.test(t) ||
+    /[+\-*/=]\s*\d*[a-z]/i.test(t);
+  const hasUnicodeMath = /[²³⁴√∫Σπ]/.test(t);
+  const hasSolveVerb = /^(solve|factor|simplify|evaluate|compute|graph|find)\s+/i.test(t);
+
+  const hasMathSignals = hasEquation || hasLatexMath || hasVariableTerms || hasUnicodeMath || hasSolveVerb;
+  if (!hasMathSignals) return false;
+
+  // Attempt / reasoning / stuck indicators disqualify — the student has engaged.
+  const hasReasoning =
+    /\b(because|since|after\s+(?:i|you)|i\s+(?:got|think|tried|factored|simplified|cancel(?:led)?|distribut(?:ed)?|combined|plugged)|my\s+(?:answer|work|guess)|here'?s\s+(?:what|how|my)|so\s+(?:i|we)\s+got|i\s+ended\s+up\s+with)\b/i.test(t);
+
+  const hasStuckIndicator =
+    /\b(stuck|confused|don'?t\s+(?:get|understand|know)|not\s+sure|where\s+did\s+i|what'?s\s+wrong|why\s+(?:is|does|did)|how\s+come)\b/i.test(t);
+
+  // A trailing question mark implies the student is asking something specific,
+  // not just dropping a problem. (But "solve this?" is still a drop — so we
+  // only treat it as non-drop if the text has question-word content too.)
+  const hasSpecificQuestion =
+    /\?\s*$/.test(t) &&
+    /\b(why|how\s+(?:come|do|does|did|should)|what'?s\s+(?:wrong|the\s+(?:next|first)\s+step))\b/i.test(t);
+
+  if (hasReasoning || hasStuckIndicator || hasSpecificQuestion) return false;
+
+  return true;
+}
+
+/**
  * Main observe function.
  * Classifies the message and extracts all deterministic signals.
  *
@@ -389,6 +466,12 @@ function observe(message, context = {}) {
     /\b(answers?\s*(for|to)\s*(the\s*)?(rest|all|every))\b/i.test(lower)
   );
 
+  // Detect a bare problem drop — student handed over a new problem with no
+  // attempt and no specific question. This is the #1 leak vector: LLM
+  // defaults to helpfulness and solves it. The pipeline must respond
+  // deterministically when this fires (see decide.js ELICIT_FIRST action).
+  const isBareProblemDrop = detectBareProblemDrop(text, messageType, !!answer);
+
   return {
     messageType,
     confidence,
@@ -402,6 +485,7 @@ function observe(message, context = {}) {
     },
     problemContext: detectProblemContext(text),
     isWorksheetFollowUp,  // true if student is asking for multiple worksheet problems
+    isBareProblemDrop,    // true if student handed over a new problem with no attempt
     hasRecentUpload,      // forwarded for decide stage
     raw: text,
   };
@@ -417,6 +501,7 @@ module.exports = {
   detectStreaks,
   detectParroting,
   detectEvasiveAffirmative,
+  detectBareProblemDrop,
   MESSAGE_TYPES,
   CONTEXT_SIGNALS,
   PATTERNS,

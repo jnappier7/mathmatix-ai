@@ -621,13 +621,21 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
   // decide CONTINUE_CONVERSATION with Socratic directives.
   // ────────────────────────────────────────────────────────────────────────
 
-  test('ANSWER LEAK BUG: "4x-15=21" must NOT be classified as answer attempt', async () => {
+  // ────────────────────────────────────────────────────────────────────────
+  // These bare-equation drops are now caught earlier by the ELICIT_FIRST
+  // gate (decide.js) — the pipeline returns a deterministic response that
+  // never reaches the LLM, so there is no leak surface. The old behavior
+  // (continue_conversation + Socratic directives) was a prompt-level
+  // mitigation; the new behavior is a structural guarantee.
+  // ────────────────────────────────────────────────────────────────────────
+
+  test('ANSWER LEAK BUG: "4x-15=21" routes to ELICIT_FIRST with deterministic response', async () => {
     const { observation, diagnosis, decision } = await runDeterministicStages(
       '4x-15=21',
       [] // no prior tutor messages — student is posing a new problem
     );
 
-    // Must be classified as a question, NOT an answer
+    // Must NOT be classified as an answer attempt
     expect(observation.messageType).toBe('general_math');
     expect(observation.answer).toBeNull();
 
@@ -635,12 +643,15 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     expect(diagnosis.type).toBe('no_answer');
     expect(diagnosis.isCorrect).toBeNull();
 
-    // Decision must guide Socratically, NEVER solve
-    expect(decision.action).toBe('continue_conversation');
-    expect(decision.directives.some(d => /NEVER show the full solution/i.test(d))).toBe(true);
+    // Structural guarantee: bare drop → deterministic template, no LLM call.
+    expect(observation.isBareProblemDrop).toBe(true);
+    expect(decision.action).toBe('elicit_first');
+    expect(typeof decision.deterministicResponse).toBe('string');
+    // The template must not reveal a solved answer.
+    expect(decision.deterministicResponse).not.toMatch(/x\s*=\s*-?\d/);
   });
 
-  test('ANSWER LEAK BUG: "3^(x+1) = 81" must NOT be classified as answer attempt', async () => {
+  test('ANSWER LEAK BUG: "3^(x+1) = 81" routes to ELICIT_FIRST', async () => {
     const { observation, diagnosis, decision } = await runDeterministicStages(
       '3^(x+1) = 81',
       []
@@ -649,10 +660,11 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     expect(observation.messageType).toBe('general_math');
     expect(observation.answer).toBeNull();
     expect(diagnosis.type).toBe('no_answer');
-    expect(decision.action).toBe('continue_conversation');
+    expect(observation.isBareProblemDrop).toBe(true);
+    expect(decision.action).toBe('elicit_first');
   });
 
-  test('ANSWER LEAK BUG: "3(3^x + 3^(x+1)) = 108" must NOT be classified as answer attempt', async () => {
+  test('ANSWER LEAK BUG: "3(3^x + 3^(x+1)) = 108" routes to ELICIT_FIRST', async () => {
     const { observation, diagnosis, decision } = await runDeterministicStages(
       '3(3^x + 3^(x+1)) = 108',
       []
@@ -661,10 +673,11 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     expect(observation.messageType).toBe('general_math');
     expect(observation.answer).toBeNull();
     expect(diagnosis.type).toBe('no_answer');
-    expect(decision.action).toBe('continue_conversation');
+    expect(observation.isBareProblemDrop).toBe(true);
+    expect(decision.action).toBe('elicit_first');
   });
 
-  test('ANSWER LEAK BUG: "solve 2x + 5 = 13" must NOT be classified as answer attempt', async () => {
+  test('ANSWER LEAK BUG: "solve 2x + 5 = 13" routes to ELICIT_FIRST', async () => {
     const { observation, decision } = await runDeterministicStages(
       'solve 2x + 5 = 13',
       []
@@ -673,7 +686,8 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     // "solve" starts the message → classified as QUESTION
     expect(observation.messageType).toBe('question');
     expect(observation.answer).toBeNull();
-    expect(decision.action).toBe('continue_conversation');
+    expect(observation.isBareProblemDrop).toBe(true);
+    expect(decision.action).toBe('elicit_first');
   });
 
   // ────────────────────────────────────────────────────────────────────────
