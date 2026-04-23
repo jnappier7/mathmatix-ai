@@ -1304,6 +1304,67 @@ router.get(
   }
 );
 
+/**
+ * @route   GET /api/admin/students/:studentId/conversations/:conversationId
+ * @desc    Get the full transcript for a single conversation.
+ * @access  Private (Admin)
+ */
+router.get(
+  '/students/:studentId/conversations/:conversationId',
+  isAdmin,
+  logRecordAccess('conversation_transcript', 'administrative_oversight'),
+  async (req, res) => {
+    try {
+      const { studentId, conversationId } = req.params;
+
+      const student = await User.findOne(
+        { _id: studentId, role: 'student' },
+        '_id firstName lastName username privacyConsent hasParentalConsent'
+      ).lean();
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found.' });
+      }
+
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
+      }
+
+      const conversation = await Conversation.findOne({
+        _id: conversationId,
+        userId: studentId,
+      })
+        .select(
+          'messages startDate lastActivity activeMinutes conversationName customName topic topicEmoji conversationType summary liveSummary sessionMood reasoningTrace'
+        )
+        .lean();
+
+      if (!conversation) {
+        return res.status(404).json({ message: 'Conversation not found.' });
+      }
+
+      res.json({
+        student: {
+          _id: student._id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          username: student.username,
+        },
+        conversation: {
+          ...conversation,
+          reasoningTrace: Array.isArray(conversation.reasoningTrace) ? conversation.reasoningTrace : [],
+        },
+      });
+    } catch (err) {
+      console.error('Error fetching conversation transcript for admin:', err);
+      res.status(500).json({ message: 'Server error fetching conversation transcript.' });
+    }
+  }
+);
+
 // -----------------------------------------------------------------------------
 // --- Bulk & System Routes ---
 // -----------------------------------------------------------------------------

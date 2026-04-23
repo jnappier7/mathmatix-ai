@@ -1,0 +1,290 @@
+/* public/css/transcript-viewer.css
+   Transcript viewer modal: Messages-app-style timeline that teachers can use
+   to audit a tutor session turn-by-turn. Styled to match the existing teacher
+   dashboard tokens (green primary, soft shadows, 8–12px radii). */
+
+.transcript-viewer-modal .modal-content {
+  max-width: 960px;
+  width: calc(100vw - 40px);
+  max-height: 90vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.transcript-viewer-header {
+  padding: 20px 48px 16px 24px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f0fdf4 100%);
+}
+
+.transcript-viewer-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.25em;
+  color: #16a085;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transcript-viewer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 0.85em;
+  color: #5B6876;
+}
+
+.transcript-viewer-meta span i {
+  margin-right: 4px;
+  color: #27ae60;
+}
+
+.transcript-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  border-bottom: 1px solid #f1f1f1;
+  background: #fafbfc;
+  font-size: 0.85em;
+  color: #5B6876;
+}
+
+.transcript-viewer-toolbar .transcript-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.transcript-viewer-toolbar .transcript-toggle:hover {
+  background: #eef7f1;
+}
+
+.transcript-viewer-toolbar input[type="checkbox"] {
+  accent-color: #27ae60;
+  cursor: pointer;
+}
+
+.transcript-viewer-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 20px 24px 24px 24px;
+  background: #f8f9fa;
+}
+
+.transcript-empty {
+  text-align: center;
+  color: #95a5a6;
+  font-style: italic;
+  padding: 40px 20px;
+}
+
+.transcript-loading {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 40px 20px;
+}
+
+.transcript-loading i {
+  margin-right: 6px;
+}
+
+.transcript-error {
+  text-align: center;
+  color: #c0392b;
+  padding: 20px;
+  background: #fdecea;
+  border-radius: 8px;
+}
+
+/* Timeline layout
+   Each turn is a row with a bubble column and a reasoning column. The
+   reasoning column renders only when the toggle is on and only for tutor
+   turns; student turns never have reasoning. */
+
+.transcript-turn {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.transcript-turn.with-reasoning {
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 12px;
+}
+
+.transcript-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.45;
+  font-size: 0.95em;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.transcript-bubble.student {
+  background: #27ae60;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.transcript-bubble.tutor {
+  background: #ffffff;
+  color: #2c3e50;
+  margin-right: auto;
+  border: 1px solid #e9ecef;
+  border-bottom-left-radius: 4px;
+}
+
+.transcript-bubble.system {
+  background: #fff7e6;
+  color: #8a6d3b;
+  border: 1px solid #ffe5b4;
+  margin: 0 auto;
+  max-width: 90%;
+  font-style: italic;
+  font-size: 0.85em;
+  text-align: center;
+}
+
+.transcript-bubble-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 0.72em;
+  opacity: 0.8;
+}
+
+.transcript-bubble.student .transcript-bubble-meta {
+  color: rgba(255, 255, 255, 0.9);
+  justify-content: flex-end;
+}
+
+.transcript-bubble.tutor .transcript-bubble-meta {
+  color: #7f8c8d;
+}
+
+.transcript-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92em;
+}
+
+.transcript-chip.correct {
+  background: rgba(22, 200, 109, 0.15);
+  color: #16a085;
+}
+
+.transcript-chip.incorrect {
+  background: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.transcript-chip.skipped {
+  background: rgba(149, 165, 166, 0.2);
+  color: #5B6876;
+}
+
+.transcript-chip.reaction {
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+}
+
+.transcript-bubble.student .transcript-chip {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+/* Reasoning column: the visible seam between tutor voice and pipeline
+   intent. Designed to be readable at a glance, not verbose. Shows a
+   placeholder when no reasoning data has been written yet (pre-permission-
+   architecture rollout); shows structured fields once the pipeline populates
+   conversation.reasoningTrace[] per spec §6. */
+
+.transcript-reasoning {
+  background: #ffffff;
+  border: 1px dashed #c9d2d8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.8em;
+  color: #5B6876;
+  align-self: start;
+}
+
+.transcript-reasoning-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #16a085;
+  margin-bottom: 6px;
+  font-size: 0.95em;
+}
+
+.transcript-reasoning-row {
+  display: flex;
+  gap: 6px;
+  padding: 3px 0;
+}
+
+.transcript-reasoning-row strong {
+  color: #2c3e50;
+  min-width: 64px;
+  font-weight: 600;
+}
+
+.transcript-reasoning-placeholder {
+  color: #95a5a6;
+  font-style: italic;
+}
+
+/* Conversation cards in the existing student detail modal: make them feel
+   clickable now that they open the transcript viewer. */
+
+.profile-conv-item[data-conversation-id] {
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.profile-conv-item[data-conversation-id]:hover {
+  background: #eef7f1;
+  transform: translateX(2px);
+}
+
+.profile-conv-item[data-conversation-id]:focus-visible {
+  outline: 2px solid #27ae60;
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .transcript-turn.with-reasoning {
+    grid-template-columns: 1fr;
+  }
+  .transcript-reasoning {
+    margin-left: 0;
+  }
+  .transcript-viewer-modal .modal-content {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+}

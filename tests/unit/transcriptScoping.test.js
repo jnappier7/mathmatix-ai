@@ -224,6 +224,169 @@ describe('Teacher transcript roster scoping', () => {
   });
 });
 
+describe('Teacher transcript detail endpoint', () => {
+  const TEACHER_ID = '650000000000000000000001';
+  const STUDENT_ID = '650000000000000000000002';
+  const CONVO_ID = '650000000000000000000010';
+  const OTHER_STUDENT_ID = '650000000000000000000099';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function mockActiveStudent() {
+    User.findById.mockReturnValueOnce({
+      lean: jest.fn().mockResolvedValue({
+        _id: STUDENT_ID,
+        firstName: 'Ada',
+        lastName: 'Lovelace',
+        username: 'ada',
+        hasParentalConsent: true,
+        privacyConsent: { status: 'active', consentPathway: 'school_dpa' },
+      }),
+    });
+  }
+
+  test('denies when the student is not on the teacher roster', async () => {
+    getStudentIdsForTeacher.mockResolvedValue([]);
+
+    const app = makeTeacherApp({ _id: TEACHER_ID, role: 'teacher' });
+    const res = await request(app).get(
+      `/api/teacher/students/${OTHER_STUDENT_ID}/conversations/${CONVO_ID}`
+    );
+
+    expect(res.status).toBe(403);
+    expect(Conversation.findOne).not.toHaveBeenCalled();
+  });
+
+  test('returns transcript payload with messages and reasoningTrace normalized', async () => {
+    getStudentIdsForTeacher.mockResolvedValue([STUDENT_ID]);
+    mockActiveStudent();
+
+    const fakeConvo = {
+      _id: CONVO_ID,
+      startDate: new Date('2026-04-20T10:00:00Z'),
+      lastActivity: new Date('2026-04-20T10:15:00Z'),
+      activeMinutes: 15,
+      conversationName: 'Linear equations',
+      topic: 'Linear Equations',
+      topicEmoji: '📐',
+      conversationType: 'general',
+      messages: [
+        { role: 'user', content: 'help me with 4x-5=22', timestamp: new Date('2026-04-20T10:00:05Z') },
+        { role: 'assistant', content: 'show me what you tried', timestamp: new Date('2026-04-20T10:00:09Z') },
+      ],
+      // reasoningTrace intentionally missing — the endpoint must normalize to [].
+    };
+    Conversation.findOne.mockReturnValueOnce({
+      select: jest.fn().mockReturnThis(),
+      lean: jest.fn().mockResolvedValue(fakeConvo),
+    });
+
+    const app = makeTeacherApp({ _id: TEACHER_ID, role: 'teacher' });
+    const res = await request(app).get(
+      `/api/teacher/students/${STUDENT_ID}/conversations/${CONVO_ID}`
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.student).toEqual(
+      expect.objectContaining({ firstName: 'Ada', lastName: 'Lovelace' })
+    );
+    expect(res.body.conversation.messages).toHaveLength(2);
+    expect(res.body.conversation.reasoningTrace).toEqual([]);
+    expect(Conversation.findOne).toHaveBeenCalledWith({ _id: CONVO_ID, userId: STUDENT_ID });
+  });
+
+  test('returns 404 when conversation does not belong to the student', async () => {
+    getStudentIdsForTeacher.mockResolvedValue([STUDENT_ID]);
+    mockActiveStudent();
+    Conversation.findOne.mockReturnValueOnce({
+      select: jest.fn().mockReturnThis(),
+      lean: jest.fn().mockResolvedValue(null),
+    });
+
+    const app = makeTeacherApp({ _id: TEACHER_ID, role: 'teacher' });
+    const res = await request(app).get(
+      `/api/teacher/students/${STUDENT_ID}/conversations/${CONVO_ID}`
+    );
+
+    expect(res.status).toBe(404);
+  });
+
+  test('blocks transcript fetch when consent is revoked', async () => {
+    getStudentIdsForTeacher.mockResolvedValue([STUDENT_ID]);
+    User.findById.mockReturnValueOnce({
+      lean: jest.fn().mockResolvedValue({
+        _id: STUDENT_ID,
+        hasParentalConsent: false,
+        privacyConsent: { status: 'revoked', consentPathway: 'individual_parent' },
+      }),
+    });
+
+    const app = makeTeacherApp({ _id: TEACHER_ID, role: 'teacher' });
+    const res = await request(app).get(
+      `/api/teacher/students/${STUDENT_ID}/conversations/${CONVO_ID}`
+    );
+
+    expect(res.status).toBe(403);
+    expect(Conversation.findOne).not.toHaveBeenCalled();
+  });
+});
+
+describe('Admin transcript detail endpoint', () => {
+  const ADMIN_ID = '650000000000000000000100';
+  const STUDENT_ID = '650000000000000000000002';
+  const CONVO_ID = '650000000000000000000010';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('rejects when target is not a student', async () => {
+    User.findOne.mockReturnValueOnce({
+      lean: jest.fn().mockResolvedValue(null),
+    });
+
+    const app = makeAdminApp({ _id: ADMIN_ID, role: 'admin' });
+    const res = await request(app).get(
+      `/api/admin/students/${STUDENT_ID}/conversations/${CONVO_ID}`
+    );
+
+    expect(res.status).toBe(404);
+    expect(Conversation.findOne).not.toHaveBeenCalled();
+  });
+
+  test('returns transcript for a student with active consent', async () => {
+    User.findOne.mockReturnValueOnce({
+      lean: jest.fn().mockResolvedValue({
+        _id: STUDENT_ID,
+        firstName: 'Ada',
+        lastName: 'Lovelace',
+        username: 'ada',
+        hasParentalConsent: true,
+        privacyConsent: { status: 'active', consentPathway: 'school_dpa' },
+      }),
+    });
+    Conversation.findOne.mockReturnValueOnce({
+      select: jest.fn().mockReturnThis(),
+      lean: jest.fn().mockResolvedValue({
+        _id: CONVO_ID,
+        messages: [{ role: 'user', content: 'hi', timestamp: new Date() }],
+        reasoningTrace: [{ turn: 0, state: 'LEVEL_0_COLD', action: 'ASK_WHAT_TRIED' }],
+      }),
+    });
+
+    const app = makeAdminApp({ _id: ADMIN_ID, role: 'admin' });
+    const res = await request(app).get(
+      `/api/admin/students/${STUDENT_ID}/conversations/${CONVO_ID}`
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.conversation.reasoningTrace).toHaveLength(1);
+    expect(res.body.conversation.messages).toHaveLength(1);
+  });
+});
+
 describe('Admin transcript endpoint student-only gate', () => {
   const ADMIN_ID = '650000000000000000000100';
   const STUDENT_ID = '650000000000000000000002';

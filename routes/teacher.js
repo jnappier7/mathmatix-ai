@@ -194,6 +194,74 @@ router.get(
   }
 );
 
+// Get the full transcript (messages + metadata) for a single conversation.
+// Separate endpoint from the history list so the default student-profile view
+// stays cheap; the viewer only pulls the heavy messages array on demand.
+router.get(
+  '/students/:studentId/conversations/:conversationId',
+  isTeacher,
+  logRecordAccess('conversation_transcript', 'teaching_instruction'),
+  async (req, res) => {
+    const { studentId, conversationId } = req.params;
+    const teacherId = req.user._id;
+
+    try {
+      const authorizedStudentIds = await getStudentIdsForTeacher(teacherId);
+      if (!authorizedStudentIds.includes(String(studentId))) {
+        return res.status(403).json({ message: "You are not authorized to view this student's history." });
+      }
+
+      const student = await User.findById(
+        studentId,
+        'firstName lastName username privacyConsent hasParentalConsent'
+      ).lean();
+      if (!student) {
+        return res.status(404).json({ message: 'Student not found.' });
+      }
+
+      const consent = checkConsent(student);
+      if (!consent.hasConsent && consent.status !== 'pending') {
+        return res.status(403).json({
+          message: 'Consent required to view transcripts.',
+          consentStatus: { status: consent.status, pathway: consent.pathway }
+        });
+      }
+
+      const conversation = await Conversation.findOne({
+        _id: conversationId,
+        userId: studentId,
+      })
+        .select(
+          'messages startDate lastActivity activeMinutes conversationName customName topic topicEmoji conversationType summary liveSummary sessionMood reasoningTrace'
+        )
+        .lean();
+
+      if (!conversation) {
+        return res.status(404).json({ message: 'Conversation not found.' });
+      }
+
+      res.json({
+        student: {
+          _id: student._id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          username: student.username,
+        },
+        conversation: {
+          ...conversation,
+          // reasoningTrace is not in the schema yet; normalize to [] so the
+          // viewer can bind safely. Pipeline will populate this per spec §6
+          // once the permission architecture lands.
+          reasoningTrace: Array.isArray(conversation.reasoningTrace) ? conversation.reasoningTrace : [],
+        },
+      });
+    } catch (err) {
+      console.error('Error fetching conversation transcript for teacher:', err);
+      res.status(500).json({ message: 'Server error fetching conversation transcript.' });
+    }
+  }
+);
+
 // ============================================
 // LIVE ACTIVITY FEED ENDPOINTS
 // ============================================
