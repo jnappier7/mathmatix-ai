@@ -2246,20 +2246,22 @@ async function handleGreetingRequest(req, res, userId) {
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
 
-            // Build grade-appropriate warm-up examples
+            // Build grade-appropriate warm-up examples. These are inspiration
+            // for the LLM, not a fixed list — it should vary each session and
+            // feel free to invent its own at the right level.
             const gradeStr = user.gradeLevel ? String(user.gradeLevel).toLowerCase().replace(/[^0-9k]/g, '') : '';
             const gradeNum = gradeStr === 'k' ? 0 : parseInt(gradeStr) || 6;
             let warmUpExamples;
             if (gradeNum <= 3) {
-                warmUpExamples = '"Quick warm-up: what\'s 3 × 7?" or "Let\'s start easy: what\'s 15 + 28?"';
+                warmUpExamples = '"Quick warm-up: what\'s 3 × 7?", "What\'s 15 + 28?", "Share 12 cookies with 3 friends — how many each?", "What comes next: 5, 10, 15, __?", or "What\'s half of 20?"';
             } else if (gradeNum <= 5) {
-                warmUpExamples = '"Quick warm-up: what\'s 3/4 + 1/4?" or "What\'s 12 × 15?"';
+                warmUpExamples = '"Quick warm-up: what\'s 3/4 + 1/4?", "What\'s 12 × 15?", "Round 4,782 to the nearest hundred.", "Write 0.6 as a fraction.", or "Perimeter of a 5-by-3 rectangle?"';
             } else if (gradeNum <= 7) {
-                warmUpExamples = '"Quick warm-up: what\'s 20% of 80?" or "Simplify: 3x + 5x"';
+                warmUpExamples = '"Quick warm-up: what\'s 20% of 80?", "Simplify: 3x + 5x.", "What\'s -8 + 3?", "Ratio of 2 cups sugar to 3 cups flour in simplest form?", or "Solve: x/4 = 7."';
             } else if (gradeNum <= 9) {
-                warmUpExamples = '"Quick warm-up: solve for x: 2x + 3 = 11" or "What\'s the slope of y = 3x - 5?"';
+                warmUpExamples = '"Quick warm-up: solve 2x + 3 = 11.", "What\'s the slope of y = 3x - 5?", "Hypotenuse of a 3-4-? right triangle?", "Solve the system: y = x + 1, y = 2x.", or "Factor: x² + 5x + 6."';
             } else {
-                warmUpExamples = '"Quick warm-up: what\'s the derivative of x²?" or "Factor: x² - 9"';
+                warmUpExamples = '"Quick warm-up: what\'s the derivative of x²?", "Factor: x² - 9.", "Evaluate log₂(8).", "What\'s sin(π/2)?", or "Limit of (x² - 1)/(x - 1) as x → 1?"';
             }
             const courseHint = user.mathCourse ? ` The student is taking ${user.mathCourse} — make sure the warm-up is relevant to that level, not below it.` : '';
 
@@ -2267,7 +2269,7 @@ async function handleGreetingRequest(req, res, userId) {
                 // Use intelligent session opener directives from TutorPlan
                 greetingInstruction = openerResult.directives.join('\n') +
                     `\n\nKeep it to 1-3 sentences. Talk like a real person — the way you'd greet a student who just walked into your room. Don't repeat back their info.` +
-                    `\nYou MAY optionally include a quick warm-up question: ${warmUpExamples}${courseHint}` +
+                    `\nYou MAY optionally include a quick warm-up question. Vary it every session — invent your own or riff on ideas like: ${warmUpExamples}. Don't reach for the same warm-up twice in a row.${courseHint}` +
                     `\nNEVER give a warm-up below the student's level.`;
             } else {
                 // Fallback: default greeting instruction (no TutorPlan yet)
@@ -2279,7 +2281,7 @@ Keep it to 1-3 sentences. Sound like a real person, not a welcome screen. Match 
 
 If they're new, introduce yourself IN CHARACTER — just be yourself, not formal. If they're returning, welcome them back like you remember them. If they were struggling with something, mention it like you've been thinking about it.
 
-End with something they can respond to. You MAY include a quick warm-up question to build momentum: ${warmUpExamples}${courseHint} NEVER give a warm-up below their level.`;
+End with something they can respond to. You MAY include a quick warm-up question to build momentum. Vary it every session — invent your own or riff on ideas like: ${warmUpExamples}. Don't reach for the same warm-up twice in a row.${courseHint} NEVER give a warm-up below their level.`;
             }
 
             // Add Starting Point offer (only on first session, never again)
