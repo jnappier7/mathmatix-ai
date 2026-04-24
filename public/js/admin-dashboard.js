@@ -19,6 +19,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!user || user.role !== 'admin') {
             throw new Error("Access Denied");
         }
+        // Expose on window so shared viewers (e.g. teacher-transcripts.js) can
+        // route admin requests to the /api/admin/* endpoint.
+        window.currentUser = user;
     } catch (err) {
         // If the user is not an admin, redirect them to the login page.
         window.location.href = '/login.html';
@@ -390,10 +393,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (convoRes.ok) {
                 const conversations = await convoRes.json();
+                // Each li is a trigger for the transcript viewer
+                // (public/js/teacher-transcripts.js). The profile-conv-item
+                // class picks up the existing hover/focus styling from
+                // transcript-viewer.css so admins see the same affordance.
                 conversationSummariesList.innerHTML = conversations.length > 0
                     ? conversations
                         .sort((a, b) => new Date(b.date || b.startDate) - new Date(a.date || a.startDate))
-                        .map(s => `<li><strong>${formatDate(s.date || s.startDate)}:</strong> ${s.summary || ''}</li>`)
+                        .map(s => `<li class="profile-conv-item"
+                                       data-student-id="${studentId}"
+                                       data-conversation-id="${s._id}"
+                                       role="button"
+                                       tabindex="0"
+                                       title="View full transcript"><strong>${formatDate(s.date || s.startDate)}:</strong> ${s.summary || ''}</li>`)
                         .join('')
                     : '<li>No conversation history found.</li>';
             } else {

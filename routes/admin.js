@@ -15,6 +15,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { checkConsent } = require('../utils/consentManager');
+const { requireActiveConsent } = require('../middleware/consentGate');
 const ScreenerSession = require('../models/screenerSession');
 const Waitlist = require('../models/waitlist');
 const adminImportRoutes = require('./adminImport'); // CSV import for item bank
@@ -87,7 +88,7 @@ router.get('/users', isAdmin, async (req, res) => {
  * @desc    Get a student's growth check history (admin can view any student)
  * @access  Private (Admin)
  */
-router.get('/students/:studentId/growth-history', isAdmin, async (req, res) => {
+router.get('/students/:studentId/growth-history', isAdmin, requireActiveConsent(), async (req, res) => {
   try {
     const { studentId } = req.params;
     const student = await User.findById(studentId).lean();
@@ -1209,7 +1210,7 @@ router.patch('/students/:studentId/profile', isAdmin, async (req, res) => {
  * @desc    Get a student's IEP plan.
  * @access  Private (Admin)
  */
-router.get('/students/:studentId/iep', isAdmin, async (req, res) => {
+router.get('/students/:studentId/iep', isAdmin, requireActiveConsent(), async (req, res) => {
   try {
     const student = await User.findById(req.params.studentId, 'iepPlan').lean();
     if (!student) {
@@ -2063,7 +2064,7 @@ router.get('/survey-stats', isAdmin, async (req, res) => {
 // =====================================================
 // LEARNING CURVE: View any student's skill progression
 // =====================================================
-router.get('/students/:studentId/learning-curve', isAdmin, async (req, res) => {
+router.get('/students/:studentId/learning-curve', isAdmin, requireActiveConsent(), async (req, res) => {
   try {
     const student = await User.findById(req.params.studentId).lean();
     if (!student) return res.status(404).json({ message: 'Student not found.' });
@@ -2120,7 +2121,7 @@ router.get('/students/:studentId/learning-curve', isAdmin, async (req, res) => {
 // =====================================================
 // PLACEMENT RESULTS: View any student's screener/placement details
 // =====================================================
-router.get('/students/:studentId/placement-results', isAdmin, async (req, res) => {
+router.get('/students/:studentId/placement-results', isAdmin, requireActiveConsent(), async (req, res) => {
   try {
     const student = await User.findById(req.params.studentId).lean();
     if (!student) return res.status(404).json({ message: 'Student not found.' });
