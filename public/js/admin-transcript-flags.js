@@ -200,6 +200,67 @@
     }
   }
 
+  function actionButton({ label, icon, color, onClick, title }) {
+    const btn = h('button', {
+      type: 'button',
+      title: title || label,
+      'aria-label': title || label,
+      style: `padding:4px 8px; border-radius:6px; border:1px solid ${color}; background:#fff; color:${color}; cursor:pointer; font-size:0.85em; display:inline-flex; align-items:center; gap:4px;`,
+    }, [h('i', { className: `fas ${icon}` }), h('span', null, label)]);
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // don't trigger the row click
+      onClick(btn);
+    });
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); });
+    return btn;
+  }
+
+  async function updateFlagStatus(flagId, newStatus, rowEl) {
+    const allButtons = rowEl.querySelectorAll('button');
+    allButtons.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
+    try {
+      const res = await fetch(`/api/transcript-flags/${encodeURIComponent(flagId)}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!res.ok) {
+        let body = null;
+        try { body = await res.json(); } catch { /* ignore */ }
+        throw new Error(body?.message || `Status update failed (${res.status})`);
+      }
+      // If the active filter no longer matches, fade+remove the row. Otherwise
+      // update the status badge inline.
+      const activeStatus = STATE.modal.querySelector('#admin-flags-status').value;
+      if (activeStatus !== 'all' && activeStatus !== newStatus) {
+        rowEl.style.transition = 'opacity 0.25s ease';
+        rowEl.style.opacity = '0';
+        setTimeout(() => {
+          rowEl.remove();
+          // If no rows left, re-render empty state + refresh the badge count.
+          const tbody = STATE.modal.querySelector('#admin-flags-body tbody');
+          if (tbody && tbody.children.length === 0) loadFlags();
+          else pollOpenCount();
+        }, 260);
+      } else {
+        const badge = rowEl.querySelector('.admin-flag-status-badge');
+        if (badge) badge.textContent = newStatus;
+        pollOpenCount();
+      }
+    } catch (err) {
+      console.error('[AdminFlags] status update failed', err);
+      window.alert(err.message || 'Could not update this flag.');
+      allButtons.forEach(b => { b.disabled = false; b.style.opacity = ''; });
+    }
+  }
+
+  function statusBadgeColor(status) {
+    if (status === 'reviewed') return '#16a085';
+    if (status === 'dismissed') return '#7f8c8d';
+    return '#e74c3c';
+  }
+
   function renderFlags(flags) {
     if (!flags.length) {
       setBody(h('div', { style: 'padding:40px 20px; text-align:center; color:#95a5a6; font-style:italic;' }, 'No flags in this view.'));
@@ -214,7 +275,8 @@
         h('th', { style: 'text-align:left; padding:10px 12px; border-bottom:1px solid #e9ecef;' }, 'Turn excerpt'),
         h('th', { style: 'text-align:left; padding:10px 12px; border-bottom:1px solid #e9ecef;' }, 'Reason'),
         h('th', { style: 'text-align:left; padding:10px 12px; border-bottom:1px solid #e9ecef;' }, 'Flagged by'),
-        h('th', { style: 'text-align:left; padding:10px 12px; border-bottom:1px solid #e9ecef;' }, ''),
+        h('th', { style: 'text-align:left; padding:10px 12px; border-bottom:1px solid #e9ecef;' }, 'Status'),
+        h('th', { style: 'text-align:left; padding:10px 12px; border-bottom:1px solid #e9ecef;' }, 'Actions'),
       ])
     ));
     const tbody = h('tbody');
@@ -224,13 +286,20 @@
         tabindex: '0',
         'data-student-id': (f.studentId && f.studentId._id) || f.studentId || '',
         'data-conversation-id': f.conversationId || '',
+        'data-turn-index': String(f.turnIndex != null ? f.turnIndex : ''),
+        'data-flag-id': f._id || '',
         title: 'Open transcript',
       });
       row.addEventListener('mouseenter', () => { row.style.background = '#f5faf7'; });
       row.addEventListener('mouseleave', () => { row.style.background = ''; });
       const open = () => {
         if (window.TranscriptViewer && typeof window.TranscriptViewer.open === 'function') {
-          window.TranscriptViewer.open(row.dataset.studentId, row.dataset.conversationId, { role: 'admin', triggerEl: row });
+          const turnIdx = Number(row.dataset.turnIndex);
+          window.TranscriptViewer.open(row.dataset.studentId, row.dataset.conversationId, {
+            role: 'admin',
+            triggerEl: row,
+            scrollToTurnIndex: Number.isFinite(turnIdx) ? turnIdx : undefined,
+          });
         }
       };
       row.addEventListener('click', open);
@@ -246,10 +315,38 @@
       row.appendChild(h('td', { style: 'padding:10px 12px; border-bottom:1px solid #f1f1f1; color:#5B6876;' },
         `${nameOf(f.flaggedBy)} (${f.flaggedByRole || '?'})`));
       row.appendChild(h('td', { style: 'padding:10px 12px; border-bottom:1px solid #f1f1f1;' }, [
-        h('span', { style: 'color:#16a085; font-size:0.85em;' }, [
-          h('i', { className: 'fas fa-external-link-alt' }),
-        ]),
+        h('span', {
+          className: 'admin-flag-status-badge',
+          style: `display:inline-block; padding:2px 8px; border-radius:999px; font-size:0.8em; font-weight:600; color:#fff; background:${statusBadgeColor(f.status)};`,
+        }, f.status || 'open'),
       ]));
+
+      // Actions per status. 'open' can be reviewed or dismissed; the resolved
+      // states can be reopened. Keeps the triage surface reversible.
+      const actions = h('td', { style: 'padding:10px 12px; border-bottom:1px solid #f1f1f1; white-space:nowrap;' });
+      const addAction = (cfg) => actions.appendChild(actionButton(cfg));
+      const currentStatus = f.status || 'open';
+      if (currentStatus === 'open') {
+        addAction({
+          label: 'Reviewed', icon: 'fa-check', color: '#16a085',
+          title: 'Mark this flag as reviewed',
+          onClick: () => updateFlagStatus(f._id, 'reviewed', row),
+        });
+        addAction({
+          label: 'Dismiss', icon: 'fa-xmark', color: '#7f8c8d',
+          title: 'Dismiss this flag without action',
+          onClick: () => updateFlagStatus(f._id, 'dismissed', row),
+        });
+      } else {
+        addAction({
+          label: 'Reopen', icon: 'fa-rotate-left', color: '#e74c3c',
+          title: 'Move this flag back to open',
+          onClick: () => updateFlagStatus(f._id, 'open', row),
+        });
+      }
+      // Inline gap between buttons.
+      actions.querySelectorAll('button').forEach((b, i) => { if (i > 0) b.style.marginLeft = '6px'; });
+      row.appendChild(actions);
       tbody.appendChild(row);
     });
     table.appendChild(tbody);

@@ -17,6 +17,7 @@ jest.mock('../../models/transcriptFlag', () => ({
     create: jest.fn(),
     find: jest.fn(),
     findOne: jest.fn(),
+    findByIdAndUpdate: jest.fn(),
 }));
 
 jest.mock('../../services/userService', () => ({
@@ -259,5 +260,57 @@ describe('GET /api/transcript-flags', () => {
         await request(app).get('/api/transcript-flags?status=all');
 
         expect(TranscriptFlag.find).toHaveBeenCalledWith({});
+    });
+});
+
+describe('PATCH /api/transcript-flags/:id', () => {
+    const FLAG_ID = '650000000000000000000abc';
+
+    beforeEach(() => jest.clearAllMocks());
+
+    test('denies teachers', async () => {
+        const app = makeApp({ _id: TEACHER_ID, role: 'teacher' });
+        const res = await request(app)
+            .patch(`/api/transcript-flags/${FLAG_ID}`)
+            .send({ status: 'reviewed' });
+        expect(res.status).toBe(403);
+        expect(TranscriptFlag.findByIdAndUpdate).not.toHaveBeenCalled();
+    });
+
+    test('rejects invalid status values', async () => {
+        const app = makeApp({ _id: ADMIN_ID, role: 'admin' });
+        const res = await request(app)
+            .patch(`/api/transcript-flags/${FLAG_ID}`)
+            .send({ status: 'nope' });
+        expect(res.status).toBe(400);
+        expect(TranscriptFlag.findByIdAndUpdate).not.toHaveBeenCalled();
+    });
+
+    test('admin can mark a flag reviewed', async () => {
+        TranscriptFlag.findByIdAndUpdate.mockReturnValueOnce({
+            lean: jest.fn().mockResolvedValue({ _id: FLAG_ID, status: 'reviewed' }),
+        });
+        const app = makeApp({ _id: ADMIN_ID, role: 'admin' });
+        const res = await request(app)
+            .patch(`/api/transcript-flags/${FLAG_ID}`)
+            .send({ status: 'reviewed' });
+        expect(res.status).toBe(200);
+        expect(res.body.flag.status).toBe('reviewed');
+        expect(TranscriptFlag.findByIdAndUpdate).toHaveBeenCalledWith(
+            FLAG_ID,
+            { $set: { status: 'reviewed' } },
+            { new: true, runValidators: true }
+        );
+    });
+
+    test('returns 404 when flag is missing', async () => {
+        TranscriptFlag.findByIdAndUpdate.mockReturnValueOnce({
+            lean: jest.fn().mockResolvedValue(null),
+        });
+        const app = makeApp({ _id: ADMIN_ID, role: 'admin' });
+        const res = await request(app)
+            .patch(`/api/transcript-flags/${FLAG_ID}`)
+            .send({ status: 'dismissed' });
+        expect(res.status).toBe(404);
     });
 });

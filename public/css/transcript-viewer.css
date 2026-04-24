@@ -263,6 +263,20 @@
   font-size: 0.92em;
 }
 
+/* Brief highlight when the viewer is opened with scrollToTurnIndex (e.g.
+   admin clicked a flag row). The bubble pulses once so the reviewer's eye
+   lands on the flagged turn. */
+@keyframes transcript-turn-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.55); }
+  60%  { box-shadow: 0 0 0 8px rgba(231, 76, 60, 0.00); }
+  100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.00); }
+}
+
+.transcript-turn-highlight .transcript-bubble {
+  animation: transcript-turn-pulse 1.6s ease-out 2;
+  border-color: rgba(231, 76, 60, 0.55);
+}
+
 /* Reasoning column: the visible seam between tutor voice and pipeline
    intent. Designed to be readable at a glance, not verbose. Shows a
    placeholder when no reasoning data has been written yet (pre-permission-

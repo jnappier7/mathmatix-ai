@@ -154,4 +154,39 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Admin-only triage action. Transitions a flag between 'open' / 'reviewed' /
+// 'dismissed'. Deliberately tight: only the status changes, nothing else.
+// Reopening a dismissed/reviewed flag is allowed so admins can walk back a
+// decision without re-flagging.
+const VALID_STATUSES = ['open', 'reviewed', 'dismissed'];
+router.patch('/:id', async (req, res) => {
+    if (roleOf(req.user) !== 'admin') {
+        return res.status(403).json({ message: 'Admin only.' });
+    }
+
+    const { status } = req.body || {};
+    if (!VALID_STATUSES.includes(status)) {
+        return res.status(400).json({
+            message: `status must be one of: ${VALID_STATUSES.join(', ')}.`,
+        });
+    }
+
+    try {
+        const updated = await TranscriptFlag.findByIdAndUpdate(
+            req.params.id,
+            { $set: { status } },
+            { new: true, runValidators: true }
+        ).lean();
+
+        if (!updated) {
+            return res.status(404).json({ message: 'Flag not found.' });
+        }
+
+        return res.json({ flag: updated });
+    } catch (err) {
+        console.error('Error updating transcript flag:', err);
+        return res.status(500).json({ message: 'Server error updating transcript flag.' });
+    }
+});
+
 module.exports = router;

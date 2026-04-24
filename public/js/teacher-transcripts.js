@@ -391,6 +391,7 @@
       const turnRow = h('div', {
         className: `transcript-turn${showReasoningForTurn ? ' with-reasoning' : ''}`,
         role: 'listitem',
+        'data-turn-index': String(idx),
       });
       turnRow.appendChild(renderBubble(msg, idx));
       if (showReasoningForTurn) {
@@ -401,6 +402,22 @@
     });
 
     setBody(container);
+
+    // If the caller asked us to focus a specific turn (e.g. admin opened this
+    // transcript from a flag), scroll it into view and briefly highlight so
+    // the reviewer's eye lands on the right place.
+    if (STATE.pendingScrollTurnIndex != null) {
+      const idx = STATE.pendingScrollTurnIndex;
+      STATE.pendingScrollTurnIndex = null;
+      // Defer to the next frame so the body has laid out before we scroll.
+      requestAnimationFrame(() => {
+        const target = container.querySelector(`.transcript-turn[data-turn-index="${idx}"]`);
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.add('transcript-turn-highlight');
+        setTimeout(() => target.classList.remove('transcript-turn-highlight'), 2200);
+      });
+    }
   }
 
   async function fetchTranscript(studentId, conversationId, { role } = {}) {
@@ -439,6 +456,10 @@
     STATE.currentConversationId = conversationId;
     STATE.currentStudentId = studentId;
     STATE.flaggedTurns = new Set();
+    STATE.pendingScrollTurnIndex =
+      typeof opts.scrollToTurnIndex === 'number' && opts.scrollToTurnIndex >= 0
+        ? opts.scrollToTurnIndex
+        : null;
     const toggle = STATE.modal.querySelector('#transcript-reasoning-toggle');
     if (toggle) toggle.checked = false;
 
