@@ -1988,13 +1988,19 @@ async function handleGreetingRequest(req, res, userId) {
             await user.save();
         }
 
-        // If we reused an existing conversation that already has an AI greeting,
-        // return that greeting instead of generating (and saving) a duplicate.
+        // Replay the just-sent greeting on a quick page refresh so the same
+        // greeting isn't generated and saved twice. Only replay when the last
+        // message is still the greeting (no user reply yet) and was created
+        // within the replay window — otherwise generate a fresh greeting so
+        // returning students don't see the same warm-up every time.
+        const GREETING_REPLAY_MS = 2 * 60 * 1000;
         if (activeConversation.messages && activeConversation.messages.length > 0) {
-            const lastAiMsg = [...activeConversation.messages]
-                .reverse()
-                .find(m => m.role === 'assistant');
-            if (lastAiMsg) {
+            const lastMsg = activeConversation.messages[activeConversation.messages.length - 1];
+            const lastMsgAge = lastMsg && lastMsg.timestamp
+                ? Date.now() - new Date(lastMsg.timestamp).getTime()
+                : Infinity;
+            if (lastMsg && lastMsg.role === 'assistant' && lastMsgAge < GREETING_REPLAY_MS) {
+                const lastAiMsg = lastMsg;
                 const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
                 const currentTutor = TUTOR_CONFIG[selectedTutorKey];
 
