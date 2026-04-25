@@ -2937,7 +2937,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- Event Listeners ---
-    if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+    // Delegated so the click survives iOS focus-swallowing and any stale sendBtn cache.
+    document.addEventListener("mousedown", (e) => {
+        if (e.target.closest("#send-button")) e.preventDefault();
+    });
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest("#send-button");
+        if (btn && !btn.disabled) sendMessage();
+    });
     if (userInput) {
         userInput.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
         // Hide suggestions when user starts typing
