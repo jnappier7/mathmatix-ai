@@ -6,6 +6,7 @@ const logger = require('../utils/logger').child({ service: 'session-service' });
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const CourseSession = require('../models/courseSession');
+const Notification = require('../models/notification');
 const {
   generateSessionSummary: generateAISummary,
   detectTopic,
@@ -145,8 +146,8 @@ async function notifyDashboards(summary) {
           type: 'session_summary',
           recipientId: parentId,
           recipientRole: 'parent',
-          data: summary,
-          timestamp: new Date()
+          subjectUserId: summary.userId,
+          data: summary
         });
       }
     }
@@ -157,24 +158,33 @@ async function notifyDashboards(summary) {
         type: 'session_summary',
         recipientId: user.teacherId,
         recipientRole: 'teacher',
-        data: summary,
-        timestamp: new Date()
+        subjectUserId: summary.userId,
+        data: summary
       });
     }
 
-    // Notify admin (store in admin dashboard feed)
+    // Notify admin (role-wide broadcast — no recipientId)
     notifications.push({
       type: 'session_summary',
       recipientRole: 'admin',
-      data: summary,
-      timestamp: new Date()
+      subjectUserId: summary.userId,
+      data: summary
     });
 
-    // TODO: Store notifications in database
-    // This would require a Notification model
-    // For now, just log them
+    if (notifications.length > 0) {
+      try {
+        await Notification.insertMany(notifications, { ordered: false });
+      } catch (insertErr) {
+        // Don't let notification failures break session-end. Log and continue.
+        logger.error('Failed to persist dashboard notifications', {
+          userId: summary.userId,
+          count: notifications.length,
+          error: insertErr.message
+        });
+      }
+    }
 
-    logger.info('Dashboard notifications queued', {
+    logger.info('Dashboard notifications persisted', {
       userId: summary.userId,
       notificationCount: notifications.length
     });

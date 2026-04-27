@@ -469,8 +469,11 @@ const learningProfileSchema = new Schema({
       // Velocity: skills mastered per week
       skillsPerWeek: { type: Number, default: 0 },
 
-      // Theta (ability level) change
-      thetaChange: { type: Number },  // Change from previous quarter
+      // Theta snapshot at checkpoint (used to compute thetaChange next quarter)
+      theta: { type: Number },
+
+      // Theta (ability level) change vs. previous quarter
+      thetaChange: { type: Number },
 
       // Course progression
       coursesInProgress: [String],  // Courses student is working on

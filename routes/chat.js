@@ -1398,7 +1398,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             iepGoalUpdates: pipelineResult.iepGoalUpdates?.length > 0 ? pipelineResult.iepGoalUpdates : null,
             problemResult: pipelineResult.problemResult,
             currentSkillId: pipelineResult.activeSkillId || masteryContext?.skillId || null,
-            errorAnnotation: pipelineResult.errorAnnotation || null,
+            // errorAnnotation removed from student response — the misconception
+            // detector is too inconsistent to surface a clinical label to
+            // students. Diagnosis still runs server-side for tutor strategy
+            // and teacher-facing analytics.
             isParallelExample: pipelineResult.isParallelExample || false,
             sessionStats: pipelineResult.sessionStats,
             xpLadder: {

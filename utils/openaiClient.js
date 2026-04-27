@@ -183,10 +183,74 @@ async function generateEmbedding(text) {
     }
 }
 
+/**
+ * Moderate text content using OpenAI's omni-moderation-latest model.
+ * Returns { flagged, categories, scores }. Throws on API errors so the caller
+ * can decide whether to fail-open or fail-closed based on policy.
+ *
+ * @param {string} text
+ * @returns {Promise<{flagged: boolean, categories: object, scores: object}>}
+ */
+async function moderateText(text) {
+    if (!text || typeof text !== 'string' || text.trim().length === 0) {
+        return { flagged: false, categories: {}, scores: {} };
+    }
+
+    const response = await retryWithExponentialBackoff(() =>
+        openai.moderations.create({
+            model: 'omni-moderation-latest',
+            input: text.substring(0, 8000)
+        })
+    );
+
+    const r = response.results?.[0] || {};
+    return {
+        flagged: !!r.flagged,
+        categories: r.categories || {},
+        scores: r.category_scores || {}
+    };
+}
+
+/**
+ * Moderate an image using OpenAI's omni-moderation-latest model.
+ * Accepts a Buffer (preferred) or a URL string. Buffers are sent as
+ * base64 data URIs.
+ *
+ * @param {Buffer|string} image - Image buffer, or http(s) URL
+ * @param {string} [mimetype='image/png'] - MIME type for buffer inputs
+ * @returns {Promise<{flagged: boolean, categories: object, scores: object}>}
+ */
+async function moderateImage(image, mimetype = 'image/png') {
+    let imageUrl;
+    if (Buffer.isBuffer(image)) {
+        imageUrl = `data:${mimetype};base64,${image.toString('base64')}`;
+    } else if (typeof image === 'string') {
+        imageUrl = image;
+    } else {
+        throw new Error('moderateImage: image must be a Buffer or URL string');
+    }
+
+    const response = await retryWithExponentialBackoff(() =>
+        openai.moderations.create({
+            model: 'omni-moderation-latest',
+            input: [{ type: 'image_url', image_url: { url: imageUrl } }]
+        })
+    );
+
+    const r = response.results?.[0] || {};
+    return {
+        flagged: !!r.flagged,
+        categories: r.categories || {},
+        scores: r.category_scores || {}
+    };
+}
+
 module.exports = {
     openai,
     retryWithExponentialBackoff,
     callLLM,
     callLLMStream,
-    generateEmbedding
+    generateEmbedding,
+    moderateText,
+    moderateImage
 };

@@ -52,13 +52,50 @@ const DEFAULT_PROBLEM_COUNT = 8;
  *   3. Mix in 1-2 prerequisite review problems for confidence
  *   4. Avoid recently seen problems
  */
+/**
+ * Get the student's best-available theta. Canonical source is user.currentTheta
+ * (set by the IRT screener / growth checks). Falls back to a stale path some
+ * legacy code wrote to, then to 0.
+ */
+function resolveTheta(user) {
+  if (typeof user?.currentTheta === 'number') return user.currentTheta;
+  const legacy = user?.learningProfile?.abilityEstimate?.theta;
+  if (typeof legacy === 'number') return legacy;
+  return 0;
+}
+
+/**
+ * Map a string grade level ("7th Grade", "Algebra 1", "K", "College") to the
+ * Problem.gradeBand enum. Used when a student has no theta yet.
+ */
+function gradeLevelToBand(gradeLevel) {
+  if (!gradeLevel) return null;
+  const g = String(gradeLevel).toLowerCase();
+
+  // Course names first — "Calculus 3" contains a digit but isn't grade 3.
+  if (/calc(ulus)?\s*(3|iii)|multivariable/.test(g)) return 'Calc 3';
+  if (/pre-?calc/.test(g)) return '8-12'; // pre-calc is a high-school course
+  if (/calc(ulus)?/.test(g)) return 'Calculus';
+  if (/(algebra|geometry|trig|stat)/.test(g)) return '8-12';
+
+  if (/(^k\b|kinder|prek|pre-k)/.test(g)) return 'K-5';
+  const yearMatch = g.match(/(\d+)/);
+  if (yearMatch) {
+    const n = parseInt(yearMatch[1], 10);
+    if (n <= 5) return 'K-5';
+    if (n <= 8) return '5-8';
+    return '8-12';
+  }
+  return null;
+}
+
 async function selectProblemsForPack(user, options = {}) {
   const { count = DEFAULT_PROBLEM_COUNT, skillId = null } = options;
   const problems = [];
   const excludeIds = [];
 
   // Get student's theta and skill mastery
-  const theta = user.learningProfile?.abilityEstimate?.theta || 0;
+  const theta = resolveTheta(user);
   const targetDifficulty = Problem.thetaToDifficulty(theta);
 
   // Determine which skills to pull from
@@ -84,21 +121,14 @@ async function selectProblemsForPack(user, options = {}) {
     // Prioritize learning skills, fill with review
     targetSkills = [...learningSkills.slice(0, 4), ...reviewSkills.slice(0, 2)];
 
-    // Fallback: if no skill data, use general problems at their level
+    // Fallback: if no skill data, use general problems at their level.
+    // Use the student's stated grade level when theta is the default (0) —
+    // a brand-new K-2 student should not get 5-8 grade-band problems.
     if (targetSkills.length === 0) {
-      const gradeBand = thetaToGradeBand(theta);
-      const generalProblems = await Problem.find({
-        isActive: true,
-        gradeBand,
-        difficulty: {
-          $gte: Math.max(1, targetDifficulty - 1),
-          $lte: Math.min(5, targetDifficulty + 1)
-        }
-      }).limit(count * 2);
-
-      // Shuffle and take what we need
-      const shuffled = generalProblems.sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, count);
+      const usingDefaultTheta = theta === 0 && typeof user?.currentTheta !== 'number';
+      const gradeBand = (usingDefaultTheta && gradeLevelToBand(user.gradeLevel)) || thetaToGradeBand(theta);
+      const fallback = await selectFallbackProblems({ count, gradeBand, targetDifficulty });
+      return fallback;
     }
   }
 
@@ -111,7 +141,9 @@ async function selectProblemsForPack(user, options = {}) {
     const remaining = count - problems.length;
     const needed = Math.min(problemsPerSkill, remaining);
 
-    const skillProblems = await Problem.find({
+    // Try difficulty-banded first, then any difficulty for the skill — better
+    // to give problems slightly off-level than to return an empty pack.
+    let skillProblems = await Problem.find({
       skillId: sid,
       isActive: true,
       problemId: { $nin: excludeIds },
@@ -119,7 +151,15 @@ async function selectProblemsForPack(user, options = {}) {
         $gte: Math.max(1, targetDifficulty - 1),
         $lte: Math.min(5, targetDifficulty + 1)
       }
-    }).limit(needed * 3); // Over-fetch for shuffling
+    }).limit(needed * 3);
+
+    if (skillProblems.length === 0) {
+      skillProblems = await Problem.find({
+        skillId: sid,
+        isActive: true,
+        problemId: { $nin: excludeIds }
+      }).limit(needed * 3);
+    }
 
     const shuffled = skillProblems.sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, needed);
@@ -130,7 +170,46 @@ async function selectProblemsForPack(user, options = {}) {
     }
   }
 
+  // If skill-based selection still returned nothing usable, fall back to
+  // grade-band general problems so the user always gets *some* worksheet.
+  if (problems.length === 0) {
+    const gradeBand = gradeLevelToBand(user.gradeLevel) || thetaToGradeBand(theta);
+    return await selectFallbackProblems({ count, gradeBand, targetDifficulty });
+  }
+
   return problems;
+}
+
+/**
+ * Last-resort problem selection. Tries progressively looser filters so we
+ * never return an empty pack when problems exist somewhere in the DB.
+ *   1. gradeBand + narrow difficulty
+ *   2. gradeBand only (any difficulty)
+ *   3. any active problem
+ */
+async function selectFallbackProblems({ count, gradeBand, targetDifficulty }) {
+  const queries = [];
+  if (gradeBand) {
+    queries.push({
+      isActive: true,
+      gradeBand,
+      difficulty: {
+        $gte: Math.max(1, targetDifficulty - 1),
+        $lte: Math.min(5, targetDifficulty + 1)
+      }
+    });
+    queries.push({ isActive: true, gradeBand });
+  }
+  queries.push({ isActive: true });
+
+  for (const filter of queries) {
+    const docs = await Problem.find(filter).limit(count * 4);
+    if (docs.length > 0) {
+      const shuffled = docs.sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, count);
+    }
+  }
+  return [];
 }
 
 /**
@@ -644,7 +723,7 @@ router.post('/class-generate', isAuthenticated, async (req, res) => {
 
     // Get all students for this teacher
     const students = await User.find({ teacherId: teacher._id, role: 'student' })
-      .select('firstName lastName learningProfile.abilityEstimate.theta skillMastery');
+      .select('firstName lastName currentTheta gradeLevel learningProfile skillMastery');
 
     if (students.length === 0) {
       return res.status(404).json({ error: 'No students found for your class' });
@@ -653,7 +732,7 @@ router.post('/class-generate', isAuthenticated, async (req, res) => {
     // Group students into 3 difficulty tiers based on theta
     const tiers = { below: [], onLevel: [], above: [] };
     for (const s of students) {
-      const theta = s.learningProfile?.abilityEstimate?.theta || 0;
+      const theta = resolveTheta(s);
       if (theta < -0.5) tiers.below.push(s);
       else if (theta > 0.5) tiers.above.push(s);
       else tiers.onLevel.push(s);
@@ -824,12 +903,12 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
 
     // Get students for this teacher in the specified tier
     const students = await User.find({ teacherId: teacher._id, role: 'student' })
-      .select('firstName lastName learningProfile.abilityEstimate.theta skillMastery');
+      .select('firstName lastName currentTheta gradeLevel learningProfile skillMastery');
 
     const tierRanges = { below: [-Infinity, -0.5], onLevel: [-0.5, 0.5], above: [0.5, Infinity] };
     const [lo, hi] = tierRanges[tier] || tierRanges.onLevel;
     const tierStudents = students.filter(s => {
-      const t = s.learningProfile?.abilityEstimate?.theta || 0;
+      const t = resolveTheta(s);
       return t >= lo && t < hi;
     });
 
@@ -884,5 +963,14 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Failed to generate class practice pack' });
   }
 });
+
+// Expose pure helpers on the router so they're reachable from unit tests
+// without a fragile separate util module. Express routers are plain
+// functions, so attaching named properties is safe.
+router.__helpers = {
+  resolveTheta,
+  gradeLevelToBand,
+  thetaToGradeBand
+};
 
 module.exports = router;

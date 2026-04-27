@@ -111,6 +111,7 @@ const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
+const notificationsRoutes = require('../routes/notifications');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
@@ -238,6 +239,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/practice-pack', isAuthenticated, practicePackRoutes);
   app.use('/api/impersonation', isAuthenticated, impersonationRoutes);
   app.use('/api/transcript-flags', isAuthenticated, transcriptFlagsRoutes);
+  app.use('/api/notifications', isAuthenticated, notificationsRoutes);
   app.use('/api/role-switch', isAuthenticated, roleSwitchRoutes);
 
   // --- Inline Routes (User Profile & Settings) ---
