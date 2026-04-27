@@ -3225,20 +3225,63 @@ document.addEventListener("DOMContentLoaded", () => {
                 paletteOriginalParent.appendChild(inlineEquationPalette);
             }
         }
-    }
-
-    // Toggle inline palette (legacy — only when InlineEquationBox is NOT loaded)
-    if (openEquationBtn && inlineEquationPalette && !window.InlineEquationBox) {
-        openEquationBtn.addEventListener('click', () => {
-            const isVisible = inlineEquationPalette.style.display === 'block';
-            if (isVisible) closeEquationPalette();
-            else openEquationPalette();
-        });
+        // Clear active highlight on the √x button
+        if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
     }
 
     // Close inline palette
     if (closeInlinePaletteBtn) {
         closeInlinePaletteBtn.addEventListener('click', closeEquationPalette);
+    }
+
+    // ─── Tab switching for the equation palette ──────────────────────
+    const eqTabs = inlineEquationPalette ? inlineEquationPalette.querySelectorAll('.eq-tab') : [];
+    const eqPages = inlineEquationPalette ? inlineEquationPalette.querySelectorAll('.eq-tab-page') : [];
+    eqTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.eqTab;
+            eqTabs.forEach(t => t.classList.toggle('eq-tab-active', t === tab));
+            eqPages.forEach(p => {
+                const active = p.dataset.eqPage === target;
+                p.classList.toggle('eq-tab-page-active', active);
+                p.style.display = active ? '' : 'none';
+            });
+        });
+    });
+
+    // ─── Pop-out toggle: dock ↔ floating ─────────────────────────────
+    const popoutBtn = document.getElementById('popout-inline-palette');
+    if (popoutBtn && inlineEquationPalette) {
+        popoutBtn.addEventListener('click', () => {
+            const isFloating = inlineEquationPalette.classList.contains('eq-floating');
+            if (isFloating) {
+                // Re-dock: clear inline positioning so CSS takes over
+                inlineEquationPalette.classList.remove('eq-floating');
+                inlineEquationPalette.classList.add('eq-docked');
+                inlineEquationPalette.style.left = '';
+                inlineEquationPalette.style.top = '';
+                inlineEquationPalette.style.width = '';
+                inlineEquationPalette.style.height = '';
+                inlineEquationPalette.style.transform = '';
+                popoutBtn.title = 'Pop out (drag & resize)';
+                popoutBtn.querySelector('i').className = 'fas fa-up-right-from-square';
+                // Move palette back into input-container if it was reparented
+                if (paletteOriginalParent && inlineEquationPalette.parentElement !== paletteOriginalParent) {
+                    if (paletteOriginalNextSibling && paletteOriginalNextSibling.parentElement === paletteOriginalParent) {
+                        paletteOriginalParent.insertBefore(inlineEquationPalette, paletteOriginalNextSibling);
+                    } else {
+                        paletteOriginalParent.appendChild(inlineEquationPalette);
+                    }
+                }
+            } else {
+                inlineEquationPalette.classList.remove('eq-docked');
+                inlineEquationPalette.classList.add('eq-floating');
+                popoutBtn.title = 'Dock to bottom';
+                popoutBtn.querySelector('i').className = 'fas fa-down-left-and-up-right-to-center';
+            }
+            const field = getActiveMathField();
+            if (field) setTimeout(() => field.focus(), 50);
+        });
     }
 
     // Mobile: swipe-down to dismiss bottom sheet
@@ -3330,25 +3373,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Make inline equation palette draggable
+    // Drag the palette only when in floating (popped-out) mode.
     if (inlineEquationPalette) {
-        const paletteHeader = document.querySelector('.equation-palette-header');
+        const paletteHeader = inlineEquationPalette.querySelector('.equation-palette-header');
         let isDraggingPalette = false;
         let paletteOffsetX = 0;
         let paletteOffsetY = 0;
 
         if (paletteHeader) {
             paletteHeader.addEventListener('mousedown', (e) => {
-                // Don't drag if clicking on close button
-                if (e.target.closest('.palette-close-btn')) return;
+                // Only drag in floating mode
+                if (!inlineEquationPalette.classList.contains('eq-floating')) return;
+                // Don't drag if clicking on a header button
+                if (e.target.closest('.palette-close-btn') ||
+                    e.target.closest('.palette-action-btn')) return;
 
                 isDraggingPalette = true;
                 const rect = inlineEquationPalette.getBoundingClientRect();
                 paletteOffsetX = e.clientX - rect.left;
                 paletteOffsetY = e.clientY - rect.top;
                 paletteHeader.style.cursor = 'grabbing';
-
-                // Disable transform to allow free positioning
                 inlineEquationPalette.style.transform = 'none';
             });
 
@@ -3359,7 +3403,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 let newX = e.clientX - paletteOffsetX;
                 let newY = e.clientY - paletteOffsetY;
 
-                // Keep within viewport bounds
                 const maxX = window.innerWidth - inlineEquationPalette.offsetWidth;
                 const maxY = window.innerHeight - inlineEquationPalette.offsetHeight;
 
@@ -3373,7 +3416,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.addEventListener('mouseup', () => {
                 if (isDraggingPalette) {
                     isDraggingPalette = false;
-                    paletteHeader.style.cursor = 'move';
+                    if (inlineEquationPalette.classList.contains('eq-floating')) {
+                        paletteHeader.style.cursor = 'move';
+                    } else {
+                        paletteHeader.style.cursor = 'default';
+                    }
                 }
             });
         }
@@ -3674,16 +3721,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 savedRange = null;
             }
 
+            const isMobile = window.innerWidth <= 768;
+
             // On mobile with EQ panel already showing: just insert
             // another equation box so the student can continue typing math
-            if (window.MathmatixKeyboard && window.MathmatixKeyboard.isEqPanelVisible()) {
+            if (isMobile && window.MathmatixKeyboard && window.MathmatixKeyboard.isEqPanelVisible()) {
                 if (window.InlineEquationBox) {
                     window.InlineEquationBox.insertEquationBoxAtCursor();
                 }
                 return;
             }
 
-            // Desktop / fallback: use inline equation box
+            // Desktop: open the docked MS Word-style equation palette so
+            // the chat history above stays visible while the student writes.
+            if (!isMobile && inlineEquationPalette) {
+                const isOpen = inlineEquationPalette.style.display === 'block';
+                if (isOpen) {
+                    closeEquationPalette();
+                } else {
+                    openEquationPalette();
+                }
+                openEquationBtn.classList.toggle('mk-active', !isOpen);
+                return;
+            }
+
+            // Mobile fallback: inline equation box
             if (window.InlineEquationBox) {
                 activateMathMode();
             }
