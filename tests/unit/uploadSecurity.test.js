@@ -18,9 +18,20 @@ jest.mock('../../models/user', () => ({
   findById: jest.fn()
 }));
 
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  existsSync: jest.fn(),
+  unlinkSync: jest.fn()
+}));
+
+const fs = require('fs');
 const StudentUpload = require('../../models/studentUpload');
 const User = require('../../models/user');
-const { validateUpload, verifyUploadAccess } = require('../../middleware/uploadSecurity');
+const {
+  validateUpload,
+  verifyUploadAccess,
+  cleanupOldUploads
+} = require('../../middleware/uploadSecurity');
 
 function makeRes() {
   return {
@@ -199,5 +210,78 @@ describe('verifyUploadAccess', () => {
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(next).not.toHaveBeenCalled();
+  });
+});
+
+describe('cleanupOldUploads', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('deletes old uploads whose user has no retention preference', async () => {
+    const upload = {
+      _id: { toString: () => 'up-1' },
+      userId: 'u1',
+      storedFilename: 'old.png',
+      filePath: '/uploads/old.png'
+    };
+    StudentUpload.find.mockResolvedValue([upload]);
+    User.findById.mockResolvedValue({ retainUploadsIndefinitely: false });
+    StudentUpload.deleteOne.mockResolvedValue({ deletedCount: 1 });
+    fs.existsSync.mockReturnValue(true);
+
+    await cleanupOldUploads();
+
+    expect(fs.unlinkSync).toHaveBeenCalledWith('/uploads/old.png');
+    expect(StudentUpload.deleteOne).toHaveBeenCalledWith({ _id: upload._id });
+  });
+
+  test('deletes uploads belonging to deleted users', async () => {
+    const upload = {
+      _id: { toString: () => 'up-2' },
+      userId: 'gone',
+      storedFilename: 'orphan.png'
+    };
+    StudentUpload.find.mockResolvedValue([upload]);
+    User.findById.mockResolvedValue(null); // user removed
+    StudentUpload.deleteOne.mockResolvedValue({ deletedCount: 1 });
+    fs.existsSync.mockReturnValue(false); // file already gone
+
+    await cleanupOldUploads();
+
+    expect(fs.unlinkSync).not.toHaveBeenCalled(); // file already absent
+    expect(StudentUpload.deleteOne).toHaveBeenCalledWith({ _id: upload._id });
+  });
+
+  test('skips uploads when retainUploadsIndefinitely is true', async () => {
+    const upload = { _id: { toString: () => 'up-3' }, userId: 'u1', storedFilename: 'keep.png' };
+    StudentUpload.find.mockResolvedValue([upload]);
+    User.findById.mockResolvedValue({ retainUploadsIndefinitely: true });
+
+    await cleanupOldUploads();
+
+    expect(StudentUpload.deleteOne).not.toHaveBeenCalled();
+    expect(fs.unlinkSync).not.toHaveBeenCalled();
+  });
+
+  test('continues processing other uploads when one delete fails', async () => {
+    const a = { _id: { toString: () => 'a' }, userId: 'u1', storedFilename: 'a.png' };
+    const b = { _id: { toString: () => 'b' }, userId: 'u1', storedFilename: 'b.png' };
+    StudentUpload.find.mockResolvedValue([a, b]);
+    User.findById.mockResolvedValue({ retainUploadsIndefinitely: false });
+    fs.existsSync.mockReturnValue(true);
+    fs.unlinkSync
+      .mockImplementationOnce(() => { throw new Error('disk'); })
+      .mockImplementationOnce(() => undefined);
+    StudentUpload.deleteOne.mockResolvedValue({ deletedCount: 1 });
+
+    await cleanupOldUploads();
+    // second upload still processed
+    expect(StudentUpload.deleteOne).toHaveBeenCalledWith({ _id: b._id });
+  });
+
+  test('handles top-level errors without throwing', async () => {
+    StudentUpload.find.mockRejectedValue(new Error('db'));
+    await expect(cleanupOldUploads()).resolves.toBeUndefined();
   });
 });
