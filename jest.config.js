@@ -15,6 +15,9 @@ module.exports = {
     'middleware/**/*.js',
     'utils/**/*.js',
     'models/**/*.js',
+    'services/**/*.js',
+    'auth/**/*.js',
+    'config/**/*.js',
     '!**/node_modules/**',
     '!**/tests/**',
     '!**/scripts/**'
@@ -23,10 +26,10 @@ module.exports = {
   // Coverage thresholds — ratchet up as coverage improves (never lower these)
   coverageThreshold: {
     global: {
-      statements: 16,
-      branches: 14,
-      functions: 14,
-      lines: 15
+      statements: 18,
+      branches: 16,
+      functions: 16,
+      lines: 18
     }
   },
 
