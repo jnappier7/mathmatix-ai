@@ -39,6 +39,7 @@ const {
 const { errorMetricsHandler } = require('../middleware/errorTracking');
 const { usageGate, premiumFeatureGate } = require('../middleware/usageGate');
 const { uploadRateLimiter, scheduleCleanup } = require('../middleware/uploadSecurity');
+const { scheduleDemoCleanup } = require('../utils/demoClone');
 
 // Route imports
 const loginRoutes = require('../routes/login');
@@ -299,6 +300,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     retention: '30 days',
     service: 'upload-security',
   });
+
+  // Demo clone cleanup scheduler — sweeps expired per-session demo clones
+  // even when no one is logging in. (Without this, expired clones leak.)
+  scheduleDemoCleanup();
 }
 
 // --- OAuth callback handlers ---

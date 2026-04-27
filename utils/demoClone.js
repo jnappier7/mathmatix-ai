@@ -338,7 +338,7 @@ async function cleanupExpiredClones() {
 
   const sessionIds = [...new Set(expiredUsers.map(u => u.cloneSessionId).filter(Boolean))];
 
-  if (sessionIds.length === 0) return;
+  if (sessionIds.length === 0) return 0;
 
   // Find all expired user IDs for related cleanup
   const expiredUserIds = expiredUsers.map(u => u._id);
@@ -350,6 +350,56 @@ async function cleanupExpiredClones() {
   ]);
 
   logger.info(`[DemoClone] Cleaned up ${sessionIds.length} expired clone sessions`);
+  return sessionIds.length;
+}
+
+/**
+ * Schedule periodic expired-clone cleanup.
+ *
+ * Background: cleanup currently runs only on logout and (opportunistically)
+ * on the next demo login. If traffic dies down, expired clones can sit in
+ * the DB indefinitely. This scheduler runs the sweep on a fixed interval
+ * regardless of traffic, plus once at startup to catch anything left
+ * orphaned by a crash or restart.
+ *
+ * @param {Object} options
+ * @param {number} [options.intervalMs] - How often to sweep (default 30 min)
+ * @param {number} [options.startupDelayMs] - Initial sweep delay (default 60s)
+ * @returns {{ stop: Function }} Handle for stopping the scheduler (tests).
+ */
+function scheduleDemoCleanup(options = {}) {
+  const intervalMs = options.intervalMs || 30 * 60 * 1000; // 30 min
+  const startupDelayMs = options.startupDelayMs || 60 * 1000; // 1 min after boot
+
+  const safeRun = async () => {
+    try {
+      const removed = await cleanupExpiredClones();
+      if (removed > 0) {
+        logger.info(`[DemoClone] Scheduled sweep removed ${removed} expired sessions`);
+      }
+    } catch (err) {
+      logger.error('[DemoClone] Scheduled cleanup error:', err);
+    }
+  };
+
+  const startupTimer = setTimeout(safeRun, startupDelayMs);
+  const intervalTimer = setInterval(safeRun, intervalMs);
+
+  // Don't keep the event loop alive just for this sweep — process should
+  // be free to exit on SIGTERM without waiting for the next tick.
+  if (startupTimer.unref) startupTimer.unref();
+  if (intervalTimer.unref) intervalTimer.unref();
+
+  logger.info('[DemoClone] Periodic cleanup scheduler started', {
+    intervalMinutes: Math.round(intervalMs / 60000),
+  });
+
+  return {
+    stop: () => {
+      clearTimeout(startupTimer);
+      clearInterval(intervalTimer);
+    }
+  };
 }
 
 module.exports = {
@@ -357,4 +407,5 @@ module.exports = {
   cleanupDemoClone,
   resetDemoClone,
   cleanupExpiredClones,
+  scheduleDemoCleanup,
 };
