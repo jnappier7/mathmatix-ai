@@ -3183,22 +3183,32 @@ document.addEventListener("DOMContentLoaded", () => {
     function openEquationPalette() {
         if (!inlineEquationPalette) return;
 
-        // On mobile, move palette to body so it escapes #input-container's
-        // stacking context (z-index:100) — otherwise the backdrop (z-index:1000
-        // on body) covers the palette and intercepts all taps.
-        if (isMobileView()) {
+        const isFullscreen = inlineEquationPalette.classList.contains('eq-fullscreen');
+
+        // Fullscreen (mobile) and legacy mobile bottom-sheet: reparent to
+        // body so we escape any clipping ancestors. Fullscreen draws on
+        // top of everything by itself, so no backdrop is needed.
+        if (isFullscreen) {
             if (inlineEquationPalette.parentElement !== document.body) {
                 document.body.appendChild(inlineEquationPalette);
             }
-
+            if (window.mathVirtualKeyboard) {
+                window.mathVirtualKeyboard.visible = false;
+            }
+            inlineEquationPalette.querySelectorAll('math-field').forEach(mf => {
+                mf.setAttribute('virtual-keyboard-mode', 'off');
+            });
+        } else if (isMobileView()) {
+            // Legacy mobile bottom-sheet path (kept as fallback).
+            if (inlineEquationPalette.parentElement !== document.body) {
+                document.body.appendChild(inlineEquationPalette);
+            }
             if (!eqBackdrop) {
                 eqBackdrop = document.createElement('div');
                 eqBackdrop.className = 'equation-palette-backdrop';
                 eqBackdrop.addEventListener('click', closeEquationPalette);
             }
             document.body.appendChild(eqBackdrop);
-
-            // Disable MathLive virtual keyboard on mobile
             if (window.mathVirtualKeyboard) {
                 window.mathVirtualKeyboard.visible = false;
             }
@@ -3217,6 +3227,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (eqBackdrop && eqBackdrop.parentNode) {
             eqBackdrop.parentNode.removeChild(eqBackdrop);
         }
+        // Tear down fullscreen state on close
+        if (inlineEquationPalette && inlineEquationPalette.classList.contains('eq-fullscreen')) {
+            inlineEquationPalette.classList.remove('eq-fullscreen');
+            inlineEquationPalette.classList.add('eq-docked');
+            document.body.classList.remove('eq-fullscreen-active');
+            const ctxStrip = document.getElementById('eq-context-strip');
+            if (ctxStrip) ctxStrip.classList.remove('expanded');
+        }
         // Restore palette to its original position in the DOM
         if (inlineEquationPalette && paletteOriginalParent && inlineEquationPalette.parentElement === document.body) {
             if (paletteOriginalNextSibling) {
@@ -3225,20 +3243,94 @@ document.addEventListener("DOMContentLoaded", () => {
                 paletteOriginalParent.appendChild(inlineEquationPalette);
             }
         }
+        // Clear active highlight on the √x button
+        if (openEquationBtn) openEquationBtn.classList.remove('mk-active');
     }
 
-    // Toggle inline palette (legacy — only when InlineEquationBox is NOT loaded)
-    if (openEquationBtn && inlineEquationPalette && !window.InlineEquationBox) {
-        openEquationBtn.addEventListener('click', () => {
-            const isVisible = inlineEquationPalette.style.display === 'block';
-            if (isVisible) closeEquationPalette();
-            else openEquationPalette();
+    // Populate the mobile fullscreen context strip with the most recent
+    // tutor message so the student can refer back to the problem.
+    function populateEqContextStrip() {
+        const strip = document.getElementById('eq-context-strip');
+        const text = document.getElementById('eq-context-text');
+        if (!strip || !text) return;
+        const aiMessages = document.querySelectorAll('#chat-messages-container .message-container.ai .message-text');
+        if (aiMessages.length === 0) {
+            text.textContent = 'No tutor message yet — ask a question first.';
+            return;
+        }
+        const last = aiMessages[aiMessages.length - 1];
+        // Pull plain text; collapse whitespace
+        text.textContent = (last.textContent || '').replace(/\s+/g, ' ').trim();
+        strip.classList.remove('expanded');
+    }
+
+    // Toggle the context strip expanded view (peek vs full)
+    const eqContextExpandBtn = document.getElementById('eq-context-expand');
+    const eqContextStripEl = document.getElementById('eq-context-strip');
+    if (eqContextExpandBtn && eqContextStripEl) {
+        eqContextExpandBtn.addEventListener('click', () => {
+            eqContextStripEl.classList.toggle('expanded');
+        });
+        // Tap anywhere on the strip to expand/collapse
+        eqContextStripEl.addEventListener('click', (e) => {
+            if (e.target.closest('.eq-context-expand')) return;
+            eqContextStripEl.classList.toggle('expanded');
         });
     }
 
     // Close inline palette
     if (closeInlinePaletteBtn) {
         closeInlinePaletteBtn.addEventListener('click', closeEquationPalette);
+    }
+
+    // ─── Tab switching for the equation palette ──────────────────────
+    const eqTabs = inlineEquationPalette ? inlineEquationPalette.querySelectorAll('.eq-tab') : [];
+    const eqPages = inlineEquationPalette ? inlineEquationPalette.querySelectorAll('.eq-tab-page') : [];
+    eqTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.eqTab;
+            eqTabs.forEach(t => t.classList.toggle('eq-tab-active', t === tab));
+            eqPages.forEach(p => {
+                const active = p.dataset.eqPage === target;
+                p.classList.toggle('eq-tab-page-active', active);
+                p.style.display = active ? '' : 'none';
+            });
+        });
+    });
+
+    // ─── Pop-out toggle: dock ↔ floating ─────────────────────────────
+    const popoutBtn = document.getElementById('popout-inline-palette');
+    if (popoutBtn && inlineEquationPalette) {
+        popoutBtn.addEventListener('click', () => {
+            const isFloating = inlineEquationPalette.classList.contains('eq-floating');
+            if (isFloating) {
+                // Re-dock: clear inline positioning so CSS takes over
+                inlineEquationPalette.classList.remove('eq-floating');
+                inlineEquationPalette.classList.add('eq-docked');
+                inlineEquationPalette.style.left = '';
+                inlineEquationPalette.style.top = '';
+                inlineEquationPalette.style.width = '';
+                inlineEquationPalette.style.height = '';
+                inlineEquationPalette.style.transform = '';
+                popoutBtn.title = 'Pop out (drag & resize)';
+                popoutBtn.querySelector('i').className = 'fas fa-up-right-from-square';
+                // Move palette back into input-container if it was reparented
+                if (paletteOriginalParent && inlineEquationPalette.parentElement !== paletteOriginalParent) {
+                    if (paletteOriginalNextSibling && paletteOriginalNextSibling.parentElement === paletteOriginalParent) {
+                        paletteOriginalParent.insertBefore(inlineEquationPalette, paletteOriginalNextSibling);
+                    } else {
+                        paletteOriginalParent.appendChild(inlineEquationPalette);
+                    }
+                }
+            } else {
+                inlineEquationPalette.classList.remove('eq-docked');
+                inlineEquationPalette.classList.add('eq-floating');
+                popoutBtn.title = 'Dock to bottom';
+                popoutBtn.querySelector('i').className = 'fas fa-down-left-and-up-right-to-center';
+            }
+            const field = getActiveMathField();
+            if (field) setTimeout(() => field.focus(), 50);
+        });
     }
 
     // Mobile: swipe-down to dismiss bottom sheet
@@ -3280,14 +3372,41 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { passive: true });
     }
 
+    // ─── Visual feedback helpers ─────────────────────────────────────
+    // Compensates for the lack of haptics on iOS Safari. Three signals
+    // fire on every key press: button :active scale, ripple from tap
+    // point, and a glow pulse on the math-field after insertion.
+    function spawnEqRipple(button, evt) {
+        if (!button) return;
+        const ripple = document.createElement('span');
+        ripple.className = 'eq-ripple';
+        const rect = button.getBoundingClientRect();
+        const cx = (evt && evt.clientX) ? (evt.clientX - rect.left) : rect.width / 2;
+        const cy = (evt && evt.clientY) ? (evt.clientY - rect.top)  : rect.height / 2;
+        ripple.style.left = cx + 'px';
+        ripple.style.top  = cy + 'px';
+        button.appendChild(ripple);
+        setTimeout(() => { if (ripple.parentNode) ripple.parentNode.removeChild(ripple); }, 450);
+    }
+    function pulseMathField(field) {
+        if (!field) return;
+        field.classList.remove('eq-pulse');
+        // Force reflow so the animation can replay on rapid taps
+        void field.offsetWidth;
+        field.classList.add('eq-pulse');
+        setTimeout(() => field.classList.remove('eq-pulse'), 480);
+    }
+
     // Handle symbol button clicks (both .symbol-btn and .script-btn)
     document.querySelectorAll('.symbol-btn, .script-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            spawnEqRipple(btn, e);
             const latex = btn.getAttribute('data-latex');
             const activeField = getActiveMathField();
             if (activeField && latex) {
                 activeField.executeCommand(['insert', latex]);
                 activeField.focus();
+                pulseMathField(activeField);
             }
         });
     });
@@ -3330,25 +3449,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Make inline equation palette draggable
+    // Drag the palette only when in floating (popped-out) mode.
     if (inlineEquationPalette) {
-        const paletteHeader = document.querySelector('.equation-palette-header');
+        const paletteHeader = inlineEquationPalette.querySelector('.equation-palette-header');
         let isDraggingPalette = false;
         let paletteOffsetX = 0;
         let paletteOffsetY = 0;
 
         if (paletteHeader) {
             paletteHeader.addEventListener('mousedown', (e) => {
-                // Don't drag if clicking on close button
-                if (e.target.closest('.palette-close-btn')) return;
+                // Only drag in floating mode
+                if (!inlineEquationPalette.classList.contains('eq-floating')) return;
+                // Don't drag if clicking on a header button
+                if (e.target.closest('.palette-close-btn') ||
+                    e.target.closest('.palette-action-btn')) return;
 
                 isDraggingPalette = true;
                 const rect = inlineEquationPalette.getBoundingClientRect();
                 paletteOffsetX = e.clientX - rect.left;
                 paletteOffsetY = e.clientY - rect.top;
                 paletteHeader.style.cursor = 'grabbing';
-
-                // Disable transform to allow free positioning
                 inlineEquationPalette.style.transform = 'none';
             });
 
@@ -3359,7 +3479,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 let newX = e.clientX - paletteOffsetX;
                 let newY = e.clientY - paletteOffsetY;
 
-                // Keep within viewport bounds
                 const maxX = window.innerWidth - inlineEquationPalette.offsetWidth;
                 const maxY = window.innerHeight - inlineEquationPalette.offsetHeight;
 
@@ -3373,7 +3492,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.addEventListener('mouseup', () => {
                 if (isDraggingPalette) {
                     isDraggingPalette = false;
-                    paletteHeader.style.cursor = 'move';
+                    if (inlineEquationPalette.classList.contains('eq-floating')) {
+                        paletteHeader.style.cursor = 'move';
+                    } else {
+                        paletteHeader.style.cursor = 'default';
+                    }
                 }
             });
         }
@@ -3674,19 +3797,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 savedRange = null;
             }
 
-            // On mobile with EQ panel already showing: just insert
-            // another equation box so the student can continue typing math
-            if (window.MathmatixKeyboard && window.MathmatixKeyboard.isEqPanelVisible()) {
-                if (window.InlineEquationBox) {
-                    window.InlineEquationBox.insertEquationBoxAtCursor();
-                }
+            if (!inlineEquationPalette) return;
+
+            const isMobile = window.innerWidth <= 768;
+            const isOpen = inlineEquationPalette.style.display === 'block';
+
+            if (isOpen) {
+                closeEquationPalette();
+                openEquationBtn.classList.remove('mk-active');
                 return;
             }
 
-            // Desktop / fallback: use inline equation box
-            if (window.InlineEquationBox) {
-                activateMathMode();
+            // Mobile: fullscreen mode with sticky problem context strip.
+            // Desktop: docked above compose bar (default).
+            if (isMobile) {
+                inlineEquationPalette.classList.remove('eq-docked', 'eq-floating');
+                inlineEquationPalette.classList.add('eq-fullscreen');
+                document.body.classList.add('eq-fullscreen-active');
+                populateEqContextStrip();
+                // Suppress the mobile EQ panel — fullscreen IS the keyboard
+                if (window.MathmatixKeyboard && window.MathmatixKeyboard.hideEqPanel) {
+                    window.MathmatixKeyboard.hideEqPanel();
+                }
+            } else {
+                inlineEquationPalette.classList.remove('eq-fullscreen', 'eq-floating');
+                inlineEquationPalette.classList.add('eq-docked');
             }
+            openEquationPalette();
+            openEquationBtn.classList.add('mk-active');
         }, true);
     }
 

@@ -477,58 +477,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Hidden button triggers for sidebar -->
     <button id="toggle-calculator-btn" style="display: none;"></button>
 
-    <!-- Inline Equation Palette (MS Word-like) -->
-    <div id="inline-equation-palette" class="inline-equation-palette" style="display: none;">
+    <!-- Inline Equation Palette (MS Word-like, docked above compose bar) -->
+    <div id="inline-equation-palette" class="inline-equation-palette eq-docked" style="display: none;">
       <div class="equation-palette-header">
-        <span>Insert Math Symbol</span>
-        <button id="close-inline-palette" class="palette-close-btn" title="Close">&times;</button>
+        <span class="equation-palette-title"><i class="fas fa-square-root-variable"></i> Equation Editor</span>
+        <div class="equation-palette-header-actions">
+          <button id="popout-inline-palette" class="palette-action-btn" title="Pop out (drag &amp; resize)" aria-label="Pop out">
+            <i class="fas fa-up-right-from-square"></i>
+          </button>
+          <button id="close-inline-palette" class="palette-close-btn" title="Close">&times;</button>
+        </div>
       </div>
-      <!-- Subscripts and Superscripts Section -->
-      <div class="equation-section-header">Subscripts and Superscripts</div>
-      <div class="subscript-superscript-grid">
-        <button class="script-btn" data-latex="#0^{#1}" title="Superscript/Power">
-          <span class="script-label">x<sup>n</sup></span>
-        </button>
-        <button class="script-btn" data-latex="#0_{#1}" title="Subscript">
-          <span class="script-label">x<sub>n</sub></span>
-        </button>
-        <button class="script-btn" data-latex="#0_{#1}^{#2}" title="Subscript and Superscript">
-          <span class="script-label">x<sub>n</sub><sup>m</sup></span>
-        </button>
-        <button class="script-btn" data-latex="{}_{#0}#1" title="Left Subscript">
-          <span class="script-label"><sub>n</sub>x</span>
+
+      <!-- Context strip — only shown in mobile fullscreen mode.
+           Populated with the most recent tutor message so the student
+           can refer back to the problem while typing. -->
+      <div id="eq-context-strip" class="eq-context-strip">
+        <div class="eq-context-label"><i class="fas fa-quote-left"></i> Problem</div>
+        <div id="eq-context-text" class="eq-context-text"></div>
+        <button id="eq-context-expand" class="eq-context-expand" type="button" aria-label="Show more context">
+          <i class="fas fa-chevron-down"></i>
         </button>
       </div>
 
-      <div class="equation-symbols-grid">
-        <!-- Common operations -->
-        <button class="symbol-btn" data-latex="\frac{#0}{#1}" title="Fraction">x/y</button>
-        <button class="symbol-btn" data-latex="\sqrt{#0}" title="Square root">√</button>
-        <button class="symbol-btn" data-latex="\sqrt[#1]{#0}" title="Nth root">ⁿ√</button>
-        <!-- Calculus -->
-        <button class="symbol-btn" data-latex="\sum_{#0}^{#1}" title="Summation">∑</button>
-        <button class="symbol-btn" data-latex="\int_{#0}^{#1}" title="Integral">∫</button>
-        <button class="symbol-btn" data-latex="\lim_{#0 \to #1}" title="Limit">lim</button>
-        <!-- Greek letters -->
-        <button class="symbol-btn" data-latex="\pi" title="Pi">π</button>
-        <button class="symbol-btn" data-latex="\alpha" title="Alpha">α</button>
-        <button class="symbol-btn" data-latex="\beta" title="Beta">β</button>
-        <button class="symbol-btn" data-latex="\theta" title="Theta">θ</button>
-        <button class="symbol-btn" data-latex="\Delta" title="Delta (change)">Δ</button>
-        <!-- Common symbols -->
-        <button class="symbol-btn" data-latex="\infty" title="Infinity">∞</button>
-        <button class="symbol-btn" data-latex="\pm" title="Plus-minus">±</button>
-        <button class="symbol-btn" data-latex="\times" title="Multiplication">×</button>
-        <button class="symbol-btn" data-latex="\div" title="Division">÷</button>
-        <!-- Comparisons -->
-        <button class="symbol-btn" data-latex="\leq" title="Less than or equal">≤</button>
-        <button class="symbol-btn" data-latex="\geq" title="Greater than or equal">≥</button>
-        <button class="symbol-btn" data-latex="\neq" title="Not equal">≠</button>
-        <button class="symbol-btn" data-latex="\approx" title="Approximately">≈</button>
-      </div>
-      <p class="palette-tip">Tip: Type _ for subscript (a_n), ^ for superscript (x^2)</p>
+      <!-- Live editor: math-field shows what you're writing as you build it -->
       <div class="inline-math-field-container">
-        <label>Equation lines:</label>
         <div id="math-lines-container">
           <div class="math-line-row">
             <math-field class="inline-math-field math-line-field"></math-field>
@@ -536,8 +509,293 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
         <div class="math-line-actions">
+          <span class="palette-hint">Type <code>1/2</code> for fractions, <code>x^2</code> for powers, <code>\alpha</code> for α — or click symbols below.</span>
           <button id="add-math-line" class="btn btn-tertiary btn-sm" title="Add another line">+ Add Line</button>
-          <button id="insert-inline-equation" class="btn btn-primary btn-sm">Insert</button>
+          <button id="insert-inline-equation" class="btn btn-primary btn-sm">Insert into Chat</button>
+        </div>
+      </div>
+
+      <!-- Tabbed symbol/structure keyboard -->
+      <div class="eq-tabs" role="tablist">
+        <button class="eq-tab eq-tab-active" data-eq-tab="structures" role="tab">Structures</button>
+        <button class="eq-tab" data-eq-tab="symbols" role="tab">Symbols</button>
+        <button class="eq-tab" data-eq-tab="greek" role="tab">Greek</button>
+        <button class="eq-tab" data-eq-tab="operators" role="tab">Operators</button>
+        <button class="eq-tab" data-eq-tab="calculus" role="tab">Calculus</button>
+        <button class="eq-tab" data-eq-tab="sets" role="tab">Sets &amp; Logic</button>
+      </div>
+
+      <!-- Structures tab (templates with placeholders) -->
+      <div class="eq-tab-page eq-tab-page-active" data-eq-page="structures">
+        <div class="equation-section-header">Fractions</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\frac{#0}{#1}" title="Fraction">a&frasl;b</button>
+          <button class="symbol-btn" data-latex="\dfrac{#0}{#1}" title="Display fraction (large)"><span style="font-size:0.85em">a&frasl;b</span></button>
+          <button class="symbol-btn" data-latex="\binom{#0}{#1}" title="Binomial">(<sup>n</sup><sub>k</sub>)</button>
+          <button class="symbol-btn" data-latex="\frac{#0}{\frac{#1}{#2}}" title="Mixed / nested fraction">a&frasl;<sub>b&frasl;c</sub></button>
+        </div>
+
+        <div class="equation-section-header">Scripts (sub/superscript)</div>
+        <div class="subscript-superscript-grid">
+          <button class="script-btn" data-latex="#0^{#1}" title="Superscript/Power"><span class="script-label">x<sup>n</sup></span></button>
+          <button class="script-btn" data-latex="#0_{#1}" title="Subscript"><span class="script-label">x<sub>n</sub></span></button>
+          <button class="script-btn" data-latex="#0_{#1}^{#2}" title="Subscript and Superscript"><span class="script-label">x<sub>n</sub><sup>m</sup></span></button>
+          <button class="script-btn" data-latex="{}_{#0}^{#1}#2" title="Left subscript and superscript"><span class="script-label"><sub>n</sub><sup>m</sup>x</span></button>
+        </div>
+
+        <div class="equation-section-header">Radicals</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\sqrt{#0}" title="Square root">&radic;</button>
+          <button class="symbol-btn" data-latex="\sqrt[3]{#0}" title="Cube root"><sup>3</sup>&radic;</button>
+          <button class="symbol-btn" data-latex="\sqrt[#1]{#0}" title="N-th root"><sup>n</sup>&radic;</button>
+        </div>
+
+        <div class="equation-section-header">Brackets</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\left(#0\right)" title="Parentheses">( )</button>
+          <button class="symbol-btn" data-latex="\left[#0\right]" title="Square brackets">[ ]</button>
+          <button class="symbol-btn" data-latex="\left\{#0\right\}" title="Curly braces">{ }</button>
+          <button class="symbol-btn" data-latex="\left|#0\right|" title="Absolute value">| |</button>
+          <button class="symbol-btn" data-latex="\langle #0 \rangle" title="Angle brackets">&langle; &rangle;</button>
+          <button class="symbol-btn" data-latex="\lceil #0 \rceil" title="Ceiling">&lceil; &rceil;</button>
+          <button class="symbol-btn" data-latex="\lfloor #0 \rfloor" title="Floor">&lfloor; &rfloor;</button>
+          <button class="symbol-btn" data-latex="\overline{#0}" title="Overline / repeating">x&#773;</button>
+          <button class="symbol-btn" data-latex="\vec{#0}" title="Vector arrow">x&#8407;</button>
+          <button class="symbol-btn" data-latex="\hat{#0}" title="Hat">x&#770;</button>
+        </div>
+
+        <div class="equation-section-header">Functions &amp; Limits</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\sin(#0)" title="Sine">sin</button>
+          <button class="symbol-btn" data-latex="\cos(#0)" title="Cosine">cos</button>
+          <button class="symbol-btn" data-latex="\tan(#0)" title="Tangent">tan</button>
+          <button class="symbol-btn" data-latex="\csc(#0)" title="Cosecant">csc</button>
+          <button class="symbol-btn" data-latex="\sec(#0)" title="Secant">sec</button>
+          <button class="symbol-btn" data-latex="\cot(#0)" title="Cotangent">cot</button>
+          <button class="symbol-btn" data-latex="\log_{#1}(#0)" title="Log base n">log</button>
+          <button class="symbol-btn" data-latex="\ln(#0)" title="Natural log">ln</button>
+          <button class="symbol-btn" data-latex="\lim_{#0 \to #1}" title="Limit">lim</button>
+        </div>
+
+        <div class="equation-section-header">Matrices &amp; Cases</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn symbol-btn-wide" data-latex="\begin{pmatrix} #0 & #1 \\ #2 & #3 \end{pmatrix}" title="2&times;2 matrix">[2&times;2]</button>
+          <button class="symbol-btn symbol-btn-wide" data-latex="\begin{pmatrix} #0 & #1 & #2 \\ #3 & #4 & #5 \\ #6 & #7 & #8 \end{pmatrix}" title="3&times;3 matrix">[3&times;3]</button>
+          <button class="symbol-btn symbol-btn-wide" data-latex="\begin{cases} #0 \\ #1 \end{cases}" title="Piecewise / cases">{cases}</button>
+          <button class="symbol-btn symbol-btn-wide" data-latex="\begin{aligned} #0 &= #1 \\ &= #2 \end{aligned}" title="Aligned multi-line">aligned</button>
+        </div>
+      </div>
+
+      <!-- Symbols tab -->
+      <div class="eq-tab-page" data-eq-page="symbols" style="display:none">
+        <div class="equation-section-header">Common</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\pi" title="Pi">&pi;</button>
+          <button class="symbol-btn" data-latex="e" title="Euler's number">e</button>
+          <button class="symbol-btn" data-latex="\infty" title="Infinity">&infin;</button>
+          <button class="symbol-btn" data-latex="^\circ" title="Degree">&deg;</button>
+          <button class="symbol-btn" data-latex="\%" title="Percent">%</button>
+          <button class="symbol-btn" data-latex="\$" title="Dollar">$</button>
+          <button class="symbol-btn" data-latex="\cdot" title="Dot product">&middot;</button>
+          <button class="symbol-btn" data-latex="\ldots" title="Horizontal dots">&hellip;</button>
+          <button class="symbol-btn" data-latex="\cdots" title="Centered dots">&middot;&middot;&middot;</button>
+          <button class="symbol-btn" data-latex="^{2}" title="Squared">x&sup2;</button>
+          <button class="symbol-btn" data-latex="^{3}" title="Cubed">x&sup3;</button>
+          <button class="symbol-btn" data-latex="^{-1}" title="Inverse">x&#8315;&sup1;</button>
+        </div>
+        <div class="equation-section-header">Relations</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="=" title="Equal">=</button>
+          <button class="symbol-btn" data-latex="\neq" title="Not equal">&ne;</button>
+          <button class="symbol-btn" data-latex="\approx" title="Approximately">&asymp;</button>
+          <button class="symbol-btn" data-latex="\equiv" title="Equivalent">&equiv;</button>
+          <button class="symbol-btn" data-latex="\leq" title="Less than or equal">&le;</button>
+          <button class="symbol-btn" data-latex="\geq" title="Greater than or equal">&ge;</button>
+          <button class="symbol-btn" data-latex="\ll" title="Much less than">&lt;&lt;</button>
+          <button class="symbol-btn" data-latex="\gg" title="Much greater than">&gt;&gt;</button>
+          <button class="symbol-btn" data-latex="\propto" title="Proportional to">&prop;</button>
+          <button class="symbol-btn" data-latex="\sim" title="Similar">&sim;</button>
+          <button class="symbol-btn" data-latex="\cong" title="Congruent">&cong;</button>
+          <button class="symbol-btn" data-latex="\parallel" title="Parallel">&#8741;</button>
+          <button class="symbol-btn" data-latex="\perp" title="Perpendicular">&perp;</button>
+        </div>
+        <div class="equation-section-header">Geometry</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\angle" title="Angle">&ang;</button>
+          <button class="symbol-btn" data-latex="\triangle" title="Triangle">&#9651;</button>
+          <button class="symbol-btn" data-latex="\square" title="Square">&square;</button>
+          <button class="symbol-btn" data-latex="\circ" title="Circle">&#9675;</button>
+          <button class="symbol-btn" data-latex="\overline{#0}" title="Segment">AB&#773;</button>
+          <button class="symbol-btn" data-latex="\overrightarrow{#0}" title="Ray">AB&#8407;</button>
+          <button class="symbol-btn" data-latex="\overleftrightarrow{#0}" title="Line">AB&#8596;</button>
+          <button class="symbol-btn" data-latex="^\circ" title="Degrees">&deg;</button>
+        </div>
+      </div>
+
+      <!-- Greek tab -->
+      <div class="eq-tab-page" data-eq-page="greek" style="display:none">
+        <div class="equation-section-header">Lowercase</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\alpha" title="alpha">&alpha;</button>
+          <button class="symbol-btn" data-latex="\beta" title="beta">&beta;</button>
+          <button class="symbol-btn" data-latex="\gamma" title="gamma">&gamma;</button>
+          <button class="symbol-btn" data-latex="\delta" title="delta">&delta;</button>
+          <button class="symbol-btn" data-latex="\epsilon" title="epsilon">&epsilon;</button>
+          <button class="symbol-btn" data-latex="\varepsilon" title="varepsilon">&#1013;</button>
+          <button class="symbol-btn" data-latex="\zeta" title="zeta">&zeta;</button>
+          <button class="symbol-btn" data-latex="\eta" title="eta">&eta;</button>
+          <button class="symbol-btn" data-latex="\theta" title="theta">&theta;</button>
+          <button class="symbol-btn" data-latex="\vartheta" title="vartheta">&#977;</button>
+          <button class="symbol-btn" data-latex="\iota" title="iota">&iota;</button>
+          <button class="symbol-btn" data-latex="\kappa" title="kappa">&kappa;</button>
+          <button class="symbol-btn" data-latex="\lambda" title="lambda">&lambda;</button>
+          <button class="symbol-btn" data-latex="\mu" title="mu">&mu;</button>
+          <button class="symbol-btn" data-latex="\nu" title="nu">&nu;</button>
+          <button class="symbol-btn" data-latex="\xi" title="xi">&xi;</button>
+          <button class="symbol-btn" data-latex="\pi" title="pi">&pi;</button>
+          <button class="symbol-btn" data-latex="\rho" title="rho">&rho;</button>
+          <button class="symbol-btn" data-latex="\sigma" title="sigma">&sigma;</button>
+          <button class="symbol-btn" data-latex="\tau" title="tau">&tau;</button>
+          <button class="symbol-btn" data-latex="\upsilon" title="upsilon">&upsilon;</button>
+          <button class="symbol-btn" data-latex="\phi" title="phi">&phi;</button>
+          <button class="symbol-btn" data-latex="\varphi" title="varphi">&#981;</button>
+          <button class="symbol-btn" data-latex="\chi" title="chi">&chi;</button>
+          <button class="symbol-btn" data-latex="\psi" title="psi">&psi;</button>
+          <button class="symbol-btn" data-latex="\omega" title="omega">&omega;</button>
+        </div>
+        <div class="equation-section-header">Uppercase</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\Gamma" title="Gamma">&Gamma;</button>
+          <button class="symbol-btn" data-latex="\Delta" title="Delta">&Delta;</button>
+          <button class="symbol-btn" data-latex="\Theta" title="Theta">&Theta;</button>
+          <button class="symbol-btn" data-latex="\Lambda" title="Lambda">&Lambda;</button>
+          <button class="symbol-btn" data-latex="\Xi" title="Xi">&Xi;</button>
+          <button class="symbol-btn" data-latex="\Pi" title="Pi">&Pi;</button>
+          <button class="symbol-btn" data-latex="\Sigma" title="Sigma">&Sigma;</button>
+          <button class="symbol-btn" data-latex="\Upsilon" title="Upsilon">&Upsilon;</button>
+          <button class="symbol-btn" data-latex="\Phi" title="Phi">&Phi;</button>
+          <button class="symbol-btn" data-latex="\Psi" title="Psi">&Psi;</button>
+          <button class="symbol-btn" data-latex="\Omega" title="Omega">&Omega;</button>
+        </div>
+      </div>
+
+      <!-- Operators tab -->
+      <div class="eq-tab-page" data-eq-page="operators" style="display:none">
+        <div class="equation-section-header">Arithmetic</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="+" title="Plus">+</button>
+          <button class="symbol-btn" data-latex="-" title="Minus">&minus;</button>
+          <button class="symbol-btn" data-latex="\pm" title="Plus or minus">&plusmn;</button>
+          <button class="symbol-btn" data-latex="\mp" title="Minus or plus">&#8723;</button>
+          <button class="symbol-btn" data-latex="\times" title="Times">&times;</button>
+          <button class="symbol-btn" data-latex="\div" title="Divide">&divide;</button>
+          <button class="symbol-btn" data-latex="\cdot" title="Center dot">&middot;</button>
+          <button class="symbol-btn" data-latex="\ast" title="Asterisk">&lowast;</button>
+          <button class="symbol-btn" data-latex="\star" title="Star">&#8902;</button>
+          <button class="symbol-btn" data-latex="\circ" title="Composition">&#8728;</button>
+        </div>
+        <div class="equation-section-header">Set / Vector</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\oplus" title="Direct sum">&oplus;</button>
+          <button class="symbol-btn" data-latex="\ominus" title="Circle minus">&#8854;</button>
+          <button class="symbol-btn" data-latex="\otimes" title="Tensor product">&otimes;</button>
+          <button class="symbol-btn" data-latex="\odot" title="Circle dot">&#8857;</button>
+          <button class="symbol-btn" data-latex="\cup" title="Union">&cup;</button>
+          <button class="symbol-btn" data-latex="\cap" title="Intersection">&cap;</button>
+          <button class="symbol-btn" data-latex="\setminus" title="Set minus">&#8726;</button>
+        </div>
+        <div class="equation-section-header">Arrows</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\to" title="Right arrow">&rarr;</button>
+          <button class="symbol-btn" data-latex="\leftarrow" title="Left arrow">&larr;</button>
+          <button class="symbol-btn" data-latex="\leftrightarrow" title="Left-right arrow">&harr;</button>
+          <button class="symbol-btn" data-latex="\Rightarrow" title="Implies">&rArr;</button>
+          <button class="symbol-btn" data-latex="\Leftarrow" title="Reverse implies">&lArr;</button>
+          <button class="symbol-btn" data-latex="\Leftrightarrow" title="If and only if">&hArr;</button>
+          <button class="symbol-btn" data-latex="\uparrow" title="Up arrow">&uarr;</button>
+          <button class="symbol-btn" data-latex="\downarrow" title="Down arrow">&darr;</button>
+          <button class="symbol-btn" data-latex="\mapsto" title="Maps to">&#8614;</button>
+          <button class="symbol-btn" data-latex="\nearrow" title="NE arrow">&#8599;</button>
+          <button class="symbol-btn" data-latex="\searrow" title="SE arrow">&#8600;</button>
+        </div>
+      </div>
+
+      <!-- Calculus tab -->
+      <div class="eq-tab-page" data-eq-page="calculus" style="display:none">
+        <div class="equation-section-header">Sums &amp; Products</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\sum_{#0}^{#1}" title="Summation">&sum;</button>
+          <button class="symbol-btn" data-latex="\prod_{#0}^{#1}" title="Product">&prod;</button>
+          <button class="symbol-btn" data-latex="\coprod_{#0}^{#1}" title="Coproduct">&#8720;</button>
+          <button class="symbol-btn" data-latex="\bigcup_{#0}^{#1}" title="Big union">&#8899;</button>
+          <button class="symbol-btn" data-latex="\bigcap_{#0}^{#1}" title="Big intersection">&#8898;</button>
+        </div>
+        <div class="equation-section-header">Integrals</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\int #0\, d#1" title="Integral">&int;</button>
+          <button class="symbol-btn" data-latex="\int_{#0}^{#1} #2 \, d#3" title="Definite integral">&int;<sub>a</sub><sup>b</sup></button>
+          <button class="symbol-btn" data-latex="\iint" title="Double integral">&#8748;</button>
+          <button class="symbol-btn" data-latex="\iiint" title="Triple integral">&#8749;</button>
+          <button class="symbol-btn" data-latex="\oint" title="Contour integral">&#8750;</button>
+        </div>
+        <div class="equation-section-header">Derivatives</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\frac{d#0}{d#1}" title="Derivative">d/dx</button>
+          <button class="symbol-btn" data-latex="\frac{\partial #0}{\partial #1}" title="Partial derivative">&part;/&part;x</button>
+          <button class="symbol-btn" data-latex="\frac{d^{#0}#1}{d#2^{#0}}" title="Higher derivative">d&sup2;/dx&sup2;</button>
+          <button class="symbol-btn" data-latex="\nabla" title="Nabla / del">&nabla;</button>
+          <button class="symbol-btn" data-latex="\partial" title="Partial">&part;</button>
+          <button class="symbol-btn" data-latex="\Delta" title="Delta (change)">&Delta;</button>
+          <button class="symbol-btn" data-latex="'" title="Prime">&prime;</button>
+          <button class="symbol-btn" data-latex="''" title="Double prime">&Prime;</button>
+        </div>
+        <div class="equation-section-header">Limits</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn symbol-btn-wide" data-latex="\lim_{#0 \to #1}" title="Limit">lim</button>
+          <button class="symbol-btn symbol-btn-wide" data-latex="\lim_{#0 \to \infty}" title="Limit to infinity">lim &rarr; &infin;</button>
+          <button class="symbol-btn symbol-btn-wide" data-latex="\lim_{#0 \to 0^+}" title="Right-hand limit">lim &rarr; 0&#8314;</button>
+          <button class="symbol-btn symbol-btn-wide" data-latex="\lim_{#0 \to 0^-}" title="Left-hand limit">lim &rarr; 0&#8315;</button>
+        </div>
+      </div>
+
+      <!-- Sets & Logic tab -->
+      <div class="eq-tab-page" data-eq-page="sets" style="display:none">
+        <div class="equation-section-header">Number Sets</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\mathbb{N}" title="Natural numbers">&#8469;</button>
+          <button class="symbol-btn" data-latex="\mathbb{Z}" title="Integers">&#8484;</button>
+          <button class="symbol-btn" data-latex="\mathbb{Q}" title="Rationals">&#8474;</button>
+          <button class="symbol-btn" data-latex="\mathbb{R}" title="Reals">&#8477;</button>
+          <button class="symbol-btn" data-latex="\mathbb{C}" title="Complex">&#8450;</button>
+          <button class="symbol-btn" data-latex="\emptyset" title="Empty set">&empty;</button>
+        </div>
+        <div class="equation-section-header">Set Relations</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\in" title="Element of">&isin;</button>
+          <button class="symbol-btn" data-latex="\notin" title="Not element of">&notin;</button>
+          <button class="symbol-btn" data-latex="\ni" title="Contains">&ni;</button>
+          <button class="symbol-btn" data-latex="\subset" title="Subset">&sub;</button>
+          <button class="symbol-btn" data-latex="\subseteq" title="Subset or equal">&sube;</button>
+          <button class="symbol-btn" data-latex="\supset" title="Superset">&sup;</button>
+          <button class="symbol-btn" data-latex="\supseteq" title="Superset or equal">&supe;</button>
+          <button class="symbol-btn" data-latex="\cup" title="Union">&cup;</button>
+          <button class="symbol-btn" data-latex="\cap" title="Intersection">&cap;</button>
+          <button class="symbol-btn" data-latex="\setminus" title="Difference">&#8726;</button>
+        </div>
+        <div class="equation-section-header">Logic</div>
+        <div class="equation-symbols-grid">
+          <button class="symbol-btn" data-latex="\forall" title="For all">&forall;</button>
+          <button class="symbol-btn" data-latex="\exists" title="There exists">&exist;</button>
+          <button class="symbol-btn" data-latex="\nexists" title="No exists">&#8708;</button>
+          <button class="symbol-btn" data-latex="\neg" title="Not">&not;</button>
+          <button class="symbol-btn" data-latex="\land" title="And">&and;</button>
+          <button class="symbol-btn" data-latex="\lor" title="Or">&or;</button>
+          <button class="symbol-btn" data-latex="\Rightarrow" title="Implies">&rArr;</button>
+          <button class="symbol-btn" data-latex="\Leftrightarrow" title="If and only if">&hArr;</button>
+          <button class="symbol-btn" data-latex="\therefore" title="Therefore">&there4;</button>
+          <button class="symbol-btn" data-latex="\because" title="Because">&#8757;</button>
+          <button class="symbol-btn" data-latex="\square" title="QED box">&#9633;</button>
+          <button class="symbol-btn" data-latex="\blacksquare" title="QED filled">&#9632;</button>
         </div>
       </div>
     </div>
