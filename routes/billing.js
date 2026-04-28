@@ -25,6 +25,7 @@ const Affiliate = require('../models/affiliate');
 const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
 const { sendCancellationConfirmation } = require('../utils/emailService');
+const logger = require('../utils/logger').child({ route: 'billing' });
 
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
@@ -90,9 +91,9 @@ let stripe;
 if (BILLING_ENABLED && process.env.STRIPE_SECRET_KEY) {
   stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 } else if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('[Billing] STRIPE_SECRET_KEY not set — billing endpoints disabled');
+  logger.warn('STRIPE_SECRET_KEY not set — billing endpoints disabled');
 } else {
-  console.log('[Billing] BILLING_ENABLED=false — billing endpoints disabled');
+  logger.info('BILLING_ENABLED=false — billing endpoints disabled');
 }
 
 // =====================================================
@@ -190,7 +191,7 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
 
     res.json({ url: session.url });
   } catch (error) {
-    console.error('[Billing] Checkout session error:', error);
+    logger.error('Checkout session error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to create checkout session' });
   }
 });
@@ -209,7 +210,7 @@ router.post('/webhook', async (req, res) => {
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
   } catch (err) {
-    console.error('[Billing] Webhook signature verification failed:', err.message);
+    logger.error('Webhook signature verification failed', { error: err.message });
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -219,11 +220,11 @@ router.post('/webhook', async (req, res) => {
   } catch (err) {
     if (err.code === 11000) {
       // Duplicate key — already processed this event
-      console.log(`[Billing] Duplicate webhook event ${event.id} (${event.type}) — skipping`);
+      logger.info('Duplicate webhook event — skipping', { eventId: event.id, eventType: event.type });
       return res.json({ received: true });
     }
     // Non-duplicate DB error — log but continue processing
-    console.error('[Billing] Webhook dedup check error:', err.message);
+    logger.error('Webhook dedup check error', { error: err.message, eventId: event.id });
   }
 
   try {
@@ -247,7 +248,7 @@ router.post('/webhook', async (req, res) => {
           // Unlimited monthly
           user.subscriptionTier = 'unlimited';
           user.stripeSubscriptionId = session.subscription;
-          console.log(`[Billing] ${user.firstName} ${user.lastName} subscribed to Unlimited`);
+          logger.info('User subscribed to Unlimited', { userId: user._id.toString() });
 
           // Attribute conversion to affiliate if coupon was used
           const affId = session.metadata?.affiliateId;
@@ -276,10 +277,15 @@ router.post('/webhook', async (req, res) => {
                 user.referredByAffiliateId = affiliate._id;
                 user.referredByCouponCode = affiliate.couponCode;
 
-                console.log(`[Affiliate] Conversion: ${affiliate.couponCode} → ${user.firstName} ${user.lastName} ($${(commissionCents / 100).toFixed(2)} commission)`);
+                logger.info('Affiliate conversion recorded', {
+                  affiliateId: affiliate._id.toString(),
+                  couponCode: affiliate.couponCode,
+                  userId: user._id.toString(),
+                  commissionCents
+                });
               }
             } catch (affErr) {
-              console.error('[Affiliate] Conversion tracking error:', affErr.message);
+              logger.error('Affiliate conversion tracking error', { error: affErr.message, userId: user._id.toString() });
             }
           }
         } else {
@@ -294,7 +300,12 @@ router.post('/webhook', async (req, res) => {
           } else {
             user.packExpiresAt = expiry;
           }
-          console.log(`[Billing] ${user.firstName} ${user.lastName} purchased ${pack} (${packConfig.seconds / 60} min, expires ${user.packExpiresAt.toISOString().slice(0, 10)})`);
+          logger.info('Pack purchased', {
+            userId: user._id.toString(),
+            pack,
+            minutes: packConfig.seconds / 60,
+            expiresAt: user.packExpiresAt.toISOString().slice(0, 10)
+          });
         }
 
         await user.save();
@@ -312,7 +323,7 @@ router.post('/webhook', async (req, res) => {
         user.subscriptionEndDate = new Date();
         await user.save();
 
-        console.log(`[Billing] ${user.firstName} ${user.lastName} cancelled Unlimited — downgraded to Free`);
+        logger.info('User cancelled Unlimited — downgraded to Free', { userId: user._id.toString() });
         break;
       }
 
@@ -341,7 +352,7 @@ router.post('/webhook', async (req, res) => {
         const invoice = event.data.object;
         const user = await User.findOne({ stripeCustomerId: invoice.customer });
         if (user) {
-          console.warn(`[Billing] Payment failed for ${user.firstName} ${user.lastName} — downgrading to free`);
+          logger.warn('Payment failed — downgrading to free', { userId: user._id.toString() });
           // Downgrade immediately so user doesn't retain unlimited access
           if (user.subscriptionTier === 'unlimited') {
             user.subscriptionTier = 'free';
@@ -359,7 +370,7 @@ router.post('/webhook', async (req, res) => {
     // Return 200 only after successful processing
     return res.json({ received: true });
   } catch (error) {
-    console.error('[Billing] Webhook processing error:', error);
+    logger.error('Webhook processing error', { error: error.message, eventType: event?.type });
     // Return 500 so Stripe retries the webhook
     return res.status(500).json({ error: 'Webhook processing failed' });
   }
@@ -384,7 +395,7 @@ router.get('/portal', isAuthenticated, async (req, res) => {
 
     res.json({ url: portalSession.url });
   } catch (error) {
-    console.error('[Billing] Portal session error:', error);
+    logger.error('Portal session error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to create portal session' });
   }
 });
@@ -424,12 +435,12 @@ router.post('/cancel', isAuthenticated, async (req, res) => {
       ? accessUntilDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
       : null;
 
-    console.log(`[Billing] ${user.firstName} ${user.lastName} scheduled cancellation (reason: ${reason || 'none'})`);
+    logger.info('Cancellation scheduled', { userId: user._id.toString(), hasReason: !!reason });
 
     // Send cancellation confirmation email (best-effort, don't block response)
     if (user.email) {
       sendCancellationConfirmation(user.email, user.firstName || 'there', accessUntilStr || 'the end of your billing period')
-        .catch(err => console.error('[Billing] Cancellation email failed:', err.message));
+        .catch(err => logger.error('Cancellation email failed', { userId: user._id.toString(), error: err.message }));
     }
 
     res.json({
@@ -438,7 +449,7 @@ router.post('/cancel', isAuthenticated, async (req, res) => {
       accessUntil: accessUntilDate ? accessUntilDate.toISOString() : null
     });
   } catch (error) {
-    console.error('[Billing] Cancel error:', error);
+    logger.error('Cancel error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to cancel subscription. Please try again or contact support.' });
   }
 });
@@ -465,14 +476,14 @@ router.post('/reactivate', isAuthenticated, async (req, res) => {
     user.cancellationDate = null;
     await user.save();
 
-    console.log(`[Billing] ${user.firstName} ${user.lastName} reactivated subscription`);
+    logger.info('Subscription reactivated', { userId: user._id.toString() });
 
     res.json({
       success: true,
       message: 'Your subscription has been reactivated! You will continue to be billed monthly.'
     });
   } catch (error) {
-    console.error('[Billing] Reactivate error:', error);
+    logger.error('Reactivate error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to reactivate subscription.' });
   }
 });
@@ -509,7 +520,11 @@ router.post('/pause', isAuthenticated, async (req, res) => {
       }
     });
 
-    console.log(`[Billing] ${user.firstName} ${user.lastName} paused subscription for ${months} month(s), resumes ${resumeDate.toISOString().slice(0, 10)}`);
+    logger.info('Subscription paused', {
+      userId: user._id.toString(),
+      months,
+      resumesAt: resumeDate.toISOString().slice(0, 10)
+    });
 
     res.json({
       success: true,
@@ -517,7 +532,7 @@ router.post('/pause', isAuthenticated, async (req, res) => {
       resumesAt: resumeDate.toISOString()
     });
   } catch (error) {
-    console.error('[Billing] Pause error:', error);
+    logger.error('Pause error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to pause subscription. Please try again or contact support.' });
   }
 });
@@ -541,14 +556,14 @@ router.post('/resume', isAuthenticated, async (req, res) => {
       pause_collection: ''  // Empty string clears the pause
     });
 
-    console.log(`[Billing] ${user.firstName} ${user.lastName} resumed paused subscription`);
+    logger.info('Paused subscription resumed', { userId: user._id.toString() });
 
     res.json({
       success: true,
       message: 'Your subscription has been resumed! Unlimited tutoring is back.'
     });
   } catch (error) {
-    console.error('[Billing] Resume error:', error);
+    logger.error('Resume error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to resume subscription.' });
   }
 });
@@ -594,7 +609,7 @@ router.get('/subscription-details', isAuthenticated, async (req, res) => {
       resumesAt
     });
   } catch (error) {
-    console.error('[Billing] Subscription details error:', error);
+    logger.error('Subscription details error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to fetch subscription details.' });
   }
 });
@@ -742,7 +757,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('[Billing] Status check error:', error);
+    logger.error('Status check error', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to fetch billing status' });
   }
 });
@@ -758,6 +773,7 @@ router.post('/seen-pricing', async (req, res) => {
     }
     res.json({ success: true });
   } catch (error) {
+    logger.error('Seen-pricing update failed', { userId: req.user?._id?.toString(), error: error.message });
     res.status(500).json({ message: 'Failed to update' });
   }
 });
