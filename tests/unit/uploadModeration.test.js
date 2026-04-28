@@ -9,7 +9,9 @@
 const {
   isStrictlyFlagged,
   STRICT_CATEGORIES,
-  STRICT_SCORE_THRESHOLD
+  STRICT_SCORE_THRESHOLD,
+  getRetentionDays,
+  DEFAULT_UPLOAD_RETENTION_DAYS
 } = require('../../middleware/uploadSecurity');
 
 describe('isStrictlyFlagged', () => {
@@ -55,5 +57,33 @@ describe('isStrictlyFlagged', () => {
 
   test('STRICT_CATEGORIES covers minor-protection categories', () => {
     expect(STRICT_CATEGORIES).toEqual(expect.arrayContaining(['sexual', 'sexual/minors']));
+  });
+});
+
+describe('getRetentionDays', () => {
+  const original = process.env.UPLOAD_RETENTION_DAYS;
+  afterEach(() => {
+    if (original === undefined) delete process.env.UPLOAD_RETENTION_DAYS;
+    else process.env.UPLOAD_RETENTION_DAYS = original;
+  });
+
+  test('returns the default when env var unset', () => {
+    delete process.env.UPLOAD_RETENTION_DAYS;
+    expect(getRetentionDays()).toBe(DEFAULT_UPLOAD_RETENTION_DAYS);
+    expect(DEFAULT_UPLOAD_RETENTION_DAYS).toBe(30);
+  });
+
+  test('honors a valid env override', () => {
+    process.env.UPLOAD_RETENTION_DAYS = '90';
+    expect(getRetentionDays()).toBe(90);
+  });
+
+  test('falls back to default for invalid values', () => {
+    process.env.UPLOAD_RETENTION_DAYS = 'forever';
+    expect(getRetentionDays()).toBe(DEFAULT_UPLOAD_RETENTION_DAYS);
+    process.env.UPLOAD_RETENTION_DAYS = '0';
+    expect(getRetentionDays()).toBe(DEFAULT_UPLOAD_RETENTION_DAYS);
+    process.env.UPLOAD_RETENTION_DAYS = '-5';
+    expect(getRetentionDays()).toBe(DEFAULT_UPLOAD_RETENTION_DAYS);
   });
 });

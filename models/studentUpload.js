@@ -104,11 +104,41 @@ studentUploadSchema.statics.getUploadDetails = async function(uploadId, userId) 
     return this.findOne({ _id: uploadId, userId }).lean();
 };
 
-// Instance method to generate thumbnail from image
+// Instance method to generate a small webp thumbnail next to the original.
+// Best-effort: returns null on failure (callers should fall back to the
+// full image). PDFs are skipped — sharp can't natively rasterize PDF
+// pages and pdf-to-image is too heavy for the upload hot path.
 studentUploadSchema.methods.generateThumbnail = async function() {
-    // TODO: Implement thumbnail generation if needed
-    // For now, we'll just use the full image
-    return this.filePath;
+    if (this.fileType !== 'image' || !this.filePath) return null;
+
+    const path = require('path');
+    const fs = require('fs/promises');
+    let sharp;
+    try {
+        sharp = require('sharp');
+    } catch (_) {
+        return null; // sharp not installed in this env
+    }
+
+    try {
+        const dir = path.join(path.dirname(this.filePath), 'thumbnails');
+        await fs.mkdir(dir, { recursive: true });
+        const baseName = path.basename(this.storedFilename, path.extname(this.storedFilename));
+        const thumbPath = path.join(dir, `${baseName}.webp`);
+
+        await sharp(this.filePath)
+            .rotate() // honor EXIF orientation
+            .resize(200, 200, { fit: 'inside', withoutEnlargement: true })
+            .webp({ quality: 75 })
+            .toFile(thumbPath);
+
+        this.thumbnail = thumbPath;
+        // Don't await save — caller decides when to persist. Many callers
+        // create+save the doc then call this in the background.
+        return thumbPath;
+    } catch (_) {
+        return null;
+    }
 };
 
 // Field-level encryption for student file metadata

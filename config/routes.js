@@ -38,7 +38,7 @@ const {
 
 const { errorMetricsHandler } = require('../middleware/errorTracking');
 const { usageGate, premiumFeatureGate } = require('../middleware/usageGate');
-const { uploadRateLimiter, scheduleCleanup } = require('../middleware/uploadSecurity');
+const { uploadRateLimiter, scheduleCleanup, getRetentionDays } = require('../middleware/uploadSecurity');
 const { scheduleDemoCleanup } = require('../utils/demoClone');
 
 // Route imports
@@ -297,7 +297,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // Upload cleanup scheduler
   scheduleCleanup();
   logger.info('🛡️ Upload security: Auto-deletion scheduler initialized', {
-    retention: '30 days',
+    retentionDays: getRetentionDays(),
     service: 'upload-security',
   });
 

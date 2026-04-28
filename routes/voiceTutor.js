@@ -15,6 +15,7 @@ const ttsProvider = require('../utils/ttsProvider');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const logger = require('../utils/logger').child({ route: 'voice-tutor' });
 
 const VOICE_MODEL = 'gpt-4o-mini';
 
@@ -229,7 +230,7 @@ function extractMathSteps(text) {
           blocks.push(...retried);
         }
       } catch (_) {
-        console.warn('[VoiceTutor] Failed to parse mathSteps block (even after fix):', e.message);
+        logger.warn('Failed to parse mathSteps block (even after fix)', { error: e.message });
       }
     }
   }
@@ -336,7 +337,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
     const audioExt = resolveAudioExt(mimeType);
     const tempPath = path.join(tempDir, `vt_${userId}_${Date.now()}${audioExt}`);
     fs.writeFileSync(tempPath, audioBuffer);
-    console.log(`[VoiceTutor] Audio: ${audioBuffer.length} bytes, MIME: ${mimeType}, ext: ${audioExt}`);
+    logger.debug('Audio received', { userId, bytes: audioBuffer.length, mimeType, audioExt });
 
     const langMap = {
       'English': 'en', 'Spanish': 'es', 'Russian': 'ru', 'Chinese': 'zh',
@@ -357,7 +358,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
     const userMessage = transcription.text;
     if (!userMessage || userMessage.trim().length === 0) {
-      console.log(`[VoiceTutor] Empty transcription for user ${userId} (${audioBuffer.length} bytes, ${mimeType})`);
+      logger.info('Empty transcription', { userId, bytes: audioBuffer.length, mimeType });
       sendPhase({ phase: 'transcription', transcription: '' });
       sendPhase({ phase: 'response', response: "I didn't catch that. Could you try again?", mathSteps: [] });
       sendPhase({ phase: 'audio', audioUrl: null });
@@ -376,7 +377,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
     // ── Step 3: TTS + history save in parallel ──
     const [audioUrl] = await Promise.all([
       generateTTS(userId, spoken, user).catch(err => {
-        console.warn('[VoiceTutor] TTS failed:', err.message);
+        logger.warn('TTS failed', { userId, error: err.message });
         return null;
       }),
       saveToHistory(userId, userMessage, aiRaw)
@@ -387,7 +388,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
     res.end();
 
   } catch (err) {
-    console.error('[VoiceTutor] Error:', err.message, err.stack);
+    logger.error('Voice session error', { userId, error: err.message, stack: err.stack });
     let message = 'Something went wrong. Please try again.';
     if (err.message.includes('Whisper') || err.message.includes('transcription')) {
       message = 'Speech recognition failed. Please try speaking again.';
@@ -423,7 +424,7 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
       try {
         audioUrl = await generateTTS(userId, spoken);
       } catch (e) {
-        console.warn('[VoiceTutor] TTS failed, continuing without audio:', e.message);
+        logger.warn('TTS failed, continuing without audio', { userId, error: e.message });
       }
     }
 
@@ -436,7 +437,7 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
     });
 
   } catch (err) {
-    console.error('[VoiceTutor] Text error:', err.message);
+    logger.error('Text session error', { userId, error: err.message });
     res.status(500).json({ error: 'Processing failed', message: 'Could not get a response. Please try again.' });
   }
 });
@@ -499,7 +500,7 @@ async function generateResponse(userId, userMessage, preloadedUser) {
       mathSteps = parsed.steps.filter(s => s && s.latex);
     }
   } catch (e) {
-    console.warn('[VoiceTutor] JSON parse failed, falling back to tag extraction:', e.message);
+    logger.warn('JSON parse failed, falling back to tag extraction', { error: e.message });
     // ── Fallback: old tag-based extraction ──
     mathSteps = extractMathSteps(rawContent);
     spoken = stripMathSteps(rawContent);
@@ -545,10 +546,11 @@ async function generateResponse(userId, userMessage, preloadedUser) {
   if (iepReadingLevel) {
     const readCheck = checkReadingLevel(spoken, iepReadingLevel);
     if (!readCheck.passes) {
-      console.log(
-        `[VoiceTutor] Reading level violation for ${user.firstName}: ` +
-        `response at Grade ${readCheck.responseGrade}, target Grade ${readCheck.targetGrade}`
-      );
+      logger.info('Reading level violation — simplifying', {
+        userId: user._id?.toString(),
+        responseGrade: readCheck.responseGrade,
+        targetGrade: readCheck.targetGrade
+      });
       try {
         const simplifyPrompt = buildSimplificationPrompt(spoken, readCheck.targetGrade, user.firstName || 'the student');
         const simplified = await callLLM(VOICE_MODEL, [{ role: 'system', content: simplifyPrompt }], {
@@ -558,10 +560,10 @@ async function generateResponse(userId, userMessage, preloadedUser) {
         const simplifiedText = simplified.choices[0]?.message?.content?.trim();
         if (simplifiedText && simplifiedText.length > 20) {
           spoken = simplifiedText;
-          console.log(`[VoiceTutor] Response simplified to target Grade ${readCheck.targetGrade}`);
+          logger.info('Response simplified', { userId: user._id?.toString(), targetGrade: readCheck.targetGrade });
         }
       } catch (err) {
-        console.error('[VoiceTutor] Simplification failed:', err.message);
+        logger.error('Simplification failed', { userId: user._id?.toString(), error: err.message });
       }
     }
   }
@@ -600,7 +602,11 @@ async function generateTTS(userId, responseText, preloadedUser) {
     for (let i = 50; i < files.length; i++) {
       fs.unlinkSync(files[i].path);
     }
-  } catch (e) { /* cleanup is best-effort */ }
+  } catch (e) {
+    // Best-effort cleanup; surface only at debug level so a transient
+    // disk hiccup doesn't pollute warning channels.
+    logger.debug('Voice audio cleanup failed (non-fatal)', { error: e.message });
+  }
 
   return `/audio/voice/${filename}`;
 }
@@ -691,7 +697,7 @@ async function getLastMathSteps(userId) {
       if (steps.length > 0) return steps;
     }
   } catch (e) {
-    console.warn('[VoiceTutor] Failed to recover last math steps:', e.message);
+    logger.warn('Failed to recover last math steps', { error: e.message });
   }
   return [];
 }

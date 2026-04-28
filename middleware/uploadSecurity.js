@@ -213,17 +213,31 @@ const uploadRateLimiter = require('express-rate-limit')({
 });
 
 /**
+ * Default retention window for student uploads. Override per environment
+ * with UPLOAD_RETENTION_DAYS (e.g., longer for paid tiers, shorter for
+ * districts with strict data-minimization policies).
+ */
+const DEFAULT_UPLOAD_RETENTION_DAYS = 30;
+
+function getRetentionDays() {
+    const raw = parseInt(process.env.UPLOAD_RETENTION_DAYS, 10);
+    if (!Number.isFinite(raw) || raw < 1) return DEFAULT_UPLOAD_RETENTION_DAYS;
+    return raw;
+}
+
+/**
  * Auto-deletion job
- * Deletes uploads older than specified retention period
+ * Deletes uploads older than the configured retention period.
  * Respects user's retainUploadsIndefinitely setting (set by parent/teacher/admin)
+ * and individual StudentUpload.retainIndefinitely flag.
  */
 async function cleanupOldUploads() {
     try {
-        const RETENTION_DAYS = 30;
+        const retentionDays = getRetentionDays();
         const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - RETENTION_DAYS);
+        cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
-        logger.info('[Upload Cleanup] Checking for old uploads', { cutoffDate: cutoffDate.toISOString() });
+        logger.info('[Upload Cleanup] Checking for old uploads', { cutoffDate: cutoffDate.toISOString(), retentionDays });
 
         // Get all old uploads
         const oldUploads = await StudentUpload.find({
@@ -306,6 +320,8 @@ module.exports = {
     uploadRateLimiter,
     cleanupOldUploads,
     scheduleCleanup,
+    getRetentionDays,
+    DEFAULT_UPLOAD_RETENTION_DAYS,
     // Exported for unit testing — keeps the moderation policy in one place.
     isStrictlyFlagged,
     STRICT_CATEGORIES,

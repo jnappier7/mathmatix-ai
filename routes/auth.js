@@ -8,6 +8,11 @@ const User = require('../models/user');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { sendEmailVerification } = require('../utils/emailService');
 const { generateUniqueStudentLinkCode } = require('./student');
+const logger = require('../utils/logger').child({ route: 'auth' });
+
+// Cooldown between successive verification-email resends to the same address.
+// Prevents abuse / accidental double-clicks from blasting users' inboxes.
+const RESEND_COOLDOWN_MS = 60 * 1000; // 60 seconds
 
 /**
  * GET /api/auth/verify-email
@@ -40,13 +45,13 @@ router.get('/verify-email', async (req, res) => {
     user.emailVerificationExpires = undefined;
     await user.save();
 
-    console.log(`LOG: Email verified for user ${user.username}`);
+    logger.info('Email verified', { userId: user._id.toString() });
 
     // Redirect to success page
     return res.redirect('/email-verification.html?status=success');
 
   } catch (error) {
-    console.error('ERROR: Email verification failed:', error);
+    logger.error('Email verification failed', { error: error.message });
     return res.redirect('/email-verification.html?status=error');
   }
 });
@@ -74,27 +79,46 @@ router.post('/resend-verification', async (req, res) => {
       return res.json({ success: true, message: 'Email is already verified. You can log in.' });
     }
 
+    // Per-user cooldown — prevent users (or bots) from spamming the inbox.
+    // We infer the last-send time from the existing token's expiry: every
+    // resend bumps emailVerificationExpires to now + 24h, so anything within
+    // (24h - cooldown) of that is too soon.
+    const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+    if (user.emailVerificationExpires) {
+      const lastSentAt = user.emailVerificationExpires.getTime() - TOKEN_TTL_MS;
+      const elapsed = Date.now() - lastSentAt;
+      if (elapsed >= 0 && elapsed < RESEND_COOLDOWN_MS) {
+        const retryAfter = Math.ceil((RESEND_COOLDOWN_MS - elapsed) / 1000);
+        res.setHeader('Retry-After', String(retryAfter));
+        return res.status(429).json({
+          success: false,
+          message: `Please wait ${retryAfter} second${retryAfter === 1 ? '' : 's'} before requesting another verification email.`,
+          retryAfter
+        });
+      }
+    }
+
     // Generate new verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
 
     user.emailVerificationToken = hashedToken;
-    user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    user.emailVerificationExpires = new Date(Date.now() + TOKEN_TTL_MS);
     await user.save();
 
     // Send verification email
     const result = await sendEmailVerification(user.email, user.firstName, verificationToken);
 
     if (result.success) {
-      console.log(`LOG: Verification email resent to ${user.email}`);
+      logger.info('Verification email resent', { userId: user._id.toString() });
       return res.json({ success: true, message: 'Verification email sent. Please check your inbox.' });
     } else {
-      console.error('ERROR: Failed to resend verification email:', result.error);
+      logger.error('Failed to resend verification email', { userId: user._id.toString(), error: result.error });
       return res.status(500).json({ success: false, message: 'Failed to send verification email. Please try again.' });
     }
 
   } catch (error) {
-    console.error('ERROR: Resend verification failed:', error);
+    logger.error('Resend verification failed', { error: error.message });
     return res.status(500).json({ success: false, message: 'An error occurred. Please try again.' });
   }
 });
@@ -220,15 +244,15 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
     });
 
     await newUser.save();
-    console.log(`LOG: OAuth user ${newUser.username} created with enrollment code ${enrollmentCode}`);
+    logger.info('OAuth user created with enrollment code', { userId: newUser._id.toString() });
 
     // Record enrollment (only for DB-based codes, not env-based)
     if (enrollmentCodeDoc) {
       try {
         await enrollmentCodeDoc.enrollStudent(newUser._id, 'oauth-signup');
-        console.log(`LOG: Student ${newUser.username} enrolled via code ${enrollmentCodeDoc.code}`);
+        logger.info('Student enrolled via code', { userId: newUser._id.toString(), enrollmentCodeId: enrollmentCodeDoc._id.toString() });
       } catch (enrollError) {
-        console.error('ERROR: Failed to record enrollment:', enrollError);
+        logger.error('Failed to record enrollment', { userId: newUser._id.toString(), error: enrollError.message });
       }
     }
 
@@ -237,9 +261,9 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       try {
         const { syncOnLogin } = require('../services/cleverSync');
         const syncResult = await syncOnLogin(pendingProfile.accessToken, newUser);
-        console.log(`LOG: Post-enrollment Clever sync for ${newUser.username}: sections=${syncResult.stats.sectionsProcessed}`);
+        logger.info('Post-enrollment Clever sync complete', { userId: newUser._id.toString(), sectionsProcessed: syncResult.stats.sectionsProcessed });
       } catch (syncErr) {
-        console.error('WARN: Post-enrollment Clever sync failed (non-fatal):', syncErr.message);
+        logger.warn('Post-enrollment Clever sync failed (non-fatal)', { userId: newUser._id.toString(), error: syncErr.message });
       }
     }
 
@@ -247,7 +271,7 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
     try {
       await User.findByIdAndUpdate(newUser._id, { lastLogin: new Date() });
     } catch (updateErr) {
-      console.error("ERROR: Failed to update lastLogin on OAuth signup:", updateErr);
+      logger.error('Failed to update lastLogin on OAuth signup', { userId: newUser._id.toString(), error: updateErr.message });
     }
 
     // Clear pending profile from session
@@ -256,7 +280,7 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
     // Log the user in
     req.logIn(newUser, (err) => {
       if (err) {
-        console.error('ERROR: Failed to log in OAuth user after enrollment:', err);
+        logger.error('Failed to log in OAuth user after enrollment', { userId: newUser._id.toString(), error: err.message });
         return res.status(500).json({
           success: false,
           message: 'Account created but login failed. Please try logging in.'
@@ -269,12 +293,12 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
         redirect = '/pick-tutor.html';
       }
 
-      console.log(`LOG: OAuth user ${newUser.username} logged in, redirecting to ${redirect}`);
+      logger.info('OAuth user logged in after enrollment', { userId: newUser._id.toString(), redirect });
 
       // Persist session to MongoDB before responding to prevent race condition
       req.session.save((saveErr) => {
         if (saveErr) {
-          console.error('ERROR: Failed to save session after OAuth enrollment:', saveErr);
+          logger.error('Failed to save session after OAuth enrollment', { userId: newUser._id.toString(), error: saveErr.message });
           return res.status(500).json({
             success: false,
             message: 'Account created but session save failed. Please try logging in.'
@@ -289,7 +313,7 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('ERROR: Complete OAuth enrollment failed:', error);
+    logger.error('Complete OAuth enrollment failed', { error: error.message });
 
     // Handle duplicate key errors
     if (error.code === 11000) {
