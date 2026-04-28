@@ -1273,6 +1273,21 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                         });
                         await studentUpload.save();
                         logger.info('Upload saved', { uploadId: studentUpload._id, filename: file.originalname });
+
+                        // Generate thumbnail in the background — best-effort,
+                        // failure here doesn't affect the upload itself.
+                        if (studentUpload.fileType === 'image') {
+                            studentUpload.generateThumbnail()
+                                .then(thumbPath => {
+                                    if (thumbPath) {
+                                        return studentUpload.save();
+                                    }
+                                })
+                                .catch(err => logger.warn('Thumbnail generation failed', {
+                                    uploadId: studentUpload._id,
+                                    error: err.message
+                                }));
+                        }
                     } catch (saveError) {
                         logger.error('Error saving uploaded file', { filename: file.originalname, error: saveError.message });
                     }
@@ -1398,7 +1413,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             iepGoalUpdates: pipelineResult.iepGoalUpdates?.length > 0 ? pipelineResult.iepGoalUpdates : null,
             problemResult: pipelineResult.problemResult,
             currentSkillId: pipelineResult.activeSkillId || masteryContext?.skillId || null,
-            errorAnnotation: pipelineResult.errorAnnotation || null,
+            // errorAnnotation removed from student response — the misconception
+            // detector is too inconsistent to surface a clinical label to
+            // students. Diagnosis still runs server-side for tutor strategy
+            // and teacher-facing analytics.
             isParallelExample: pipelineResult.isParallelExample || false,
             sessionStats: pipelineResult.sessionStats,
             xpLadder: {

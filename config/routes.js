@@ -38,7 +38,8 @@ const {
 
 const { errorMetricsHandler } = require('../middleware/errorTracking');
 const { usageGate, premiumFeatureGate } = require('../middleware/usageGate');
-const { uploadRateLimiter, scheduleCleanup } = require('../middleware/uploadSecurity');
+const { uploadRateLimiter, scheduleCleanup, getRetentionDays } = require('../middleware/uploadSecurity');
+const { scheduleDemoCleanup } = require('../utils/demoClone');
 
 // Route imports
 const loginRoutes = require('../routes/login');
@@ -111,6 +112,7 @@ const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
+const notificationsRoutes = require('../routes/notifications');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
@@ -238,6 +240,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/practice-pack', isAuthenticated, practicePackRoutes);
   app.use('/api/impersonation', isAuthenticated, impersonationRoutes);
   app.use('/api/transcript-flags', isAuthenticated, transcriptFlagsRoutes);
+  app.use('/api/notifications', isAuthenticated, notificationsRoutes);
   app.use('/api/role-switch', isAuthenticated, roleSwitchRoutes);
 
   // --- Inline Routes (User Profile & Settings) ---
@@ -294,9 +297,13 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // Upload cleanup scheduler
   scheduleCleanup();
   logger.info('🛡️ Upload security: Auto-deletion scheduler initialized', {
-    retention: '30 days',
+    retentionDays: getRetentionDays(),
     service: 'upload-security',
   });
+
+  // Demo clone cleanup scheduler — sweeps expired per-session demo clones
+  // even when no one is logging in. (Without this, expired clones leak.)
+  scheduleDemoCleanup();
 }
 
 // --- OAuth callback handlers ---

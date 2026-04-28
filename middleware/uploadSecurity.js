@@ -3,7 +3,25 @@
 
 const StudentUpload = require('../models/studentUpload');
 const path = require('path');
+const fs = require('fs');
 const logger = require('../utils/logger');
+const { moderateImage } = require('../utils/openaiClient');
+
+// Categories that should always reject K-12 uploads, even if OpenAI's overall
+// `flagged` is false. We're stricter than the default threshold for student
+// safety. Score threshold is intentionally low.
+const STRICT_CATEGORIES = ['sexual', 'sexual/minors', 'violence/graphic', 'self-harm'];
+const STRICT_SCORE_THRESHOLD = 0.3;
+const IMAGE_MIMETYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
+
+function isStrictlyFlagged({ flagged, categories, scores }) {
+    if (flagged) return true;
+    for (const cat of STRICT_CATEGORIES) {
+        if (categories?.[cat]) return true;
+        if ((scores?.[cat] || 0) >= STRICT_SCORE_THRESHOLD) return true;
+    }
+    return false;
+}
 
 /**
  * Middleware to verify user can access uploaded file
@@ -73,9 +91,14 @@ async function verifyUploadAccess(req, res, next) {
  * Validate file uploads for safety
  * - Check file size
  * - Validate file type
- * - Scan for inappropriate content (future: integrate content moderation API)
+ * - Scan images for inappropriate content via OpenAI's moderation API
+ *
+ * Behavior on moderation API failure:
+ *   - Default: fail-open (allow upload, log warning) so a moderation outage
+ *     doesn't take the whole upload pipeline down.
+ *   - STRICT_MODERATION=true: fail-closed (reject upload).
  */
-function validateUpload(req, res, next) {
+async function validateUpload(req, res, next) {
     const file = req.file;
 
     if (!file) {
@@ -111,8 +134,60 @@ function validateUpload(req, res, next) {
 
     logger.info('[Upload Security] File validated', { mimetype: file.mimetype, size: file.size });
 
-    // TODO: Integrate content moderation API here
-    // Example: await moderateImage(file.path);
+    // Content moderation — images only. PDFs need text/page extraction
+    // before we can moderate, which is heavy enough to be a follow-up.
+    if (IMAGE_MIMETYPES.has(file.mimetype)) {
+        const strict = process.env.STRICT_MODERATION === 'true';
+        try {
+            const buffer = file.buffer || (file.path ? fs.readFileSync(file.path) : null);
+            if (!buffer) {
+                logger.warn('[Upload Moderation] No buffer/path available, skipping moderation', {
+                    userId: req.user?._id?.toString(),
+                    filename: file.originalname
+                });
+                return next();
+            }
+
+            const result = await moderateImage(buffer, file.mimetype);
+            const blocked = isStrictlyFlagged(result);
+
+            if (blocked) {
+                logger.warn('[Upload Moderation] Rejected flagged upload', {
+                    userId: req.user?._id?.toString(),
+                    filename: file.originalname,
+                    categories: Object.keys(result.categories || {}).filter(k => result.categories[k])
+                });
+                // Best-effort cleanup of the saved file so flagged content
+                // doesn't sit on disk waiting for the retention sweep.
+                if (file.path && fs.existsSync(file.path)) {
+                    try { fs.unlinkSync(file.path); } catch (_) { /* non-blocking */ }
+                }
+                return res.status(400).json({
+                    success: false,
+                    message: 'This image was flagged by our content safety check. Please upload a different image.'
+                });
+            }
+
+            logger.info('[Upload Moderation] Image passed moderation', {
+                userId: req.user?._id?.toString(),
+                filename: file.originalname
+            });
+        } catch (err) {
+            logger.error('[Upload Moderation] Moderation API error', {
+                userId: req.user?._id?.toString(),
+                filename: file.originalname,
+                error: err.message,
+                strict
+            });
+            if (strict) {
+                return res.status(503).json({
+                    success: false,
+                    message: 'Content safety check is temporarily unavailable. Please try again shortly.'
+                });
+            }
+            // Fail-open: log and continue.
+        }
+    }
 
     next();
 }
@@ -138,17 +213,31 @@ const uploadRateLimiter = require('express-rate-limit')({
 });
 
 /**
+ * Default retention window for student uploads. Override per environment
+ * with UPLOAD_RETENTION_DAYS (e.g., longer for paid tiers, shorter for
+ * districts with strict data-minimization policies).
+ */
+const DEFAULT_UPLOAD_RETENTION_DAYS = 30;
+
+function getRetentionDays() {
+    const raw = parseInt(process.env.UPLOAD_RETENTION_DAYS, 10);
+    if (!Number.isFinite(raw) || raw < 1) return DEFAULT_UPLOAD_RETENTION_DAYS;
+    return raw;
+}
+
+/**
  * Auto-deletion job
- * Deletes uploads older than specified retention period
+ * Deletes uploads older than the configured retention period.
  * Respects user's retainUploadsIndefinitely setting (set by parent/teacher/admin)
+ * and individual StudentUpload.retainIndefinitely flag.
  */
 async function cleanupOldUploads() {
     try {
-        const RETENTION_DAYS = 30;
+        const retentionDays = getRetentionDays();
         const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - RETENTION_DAYS);
+        cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
-        logger.info('[Upload Cleanup] Checking for old uploads', { cutoffDate: cutoffDate.toISOString() });
+        logger.info('[Upload Cleanup] Checking for old uploads', { cutoffDate: cutoffDate.toISOString(), retentionDays });
 
         // Get all old uploads
         const oldUploads = await StudentUpload.find({
@@ -230,5 +319,11 @@ module.exports = {
     validateUpload,
     uploadRateLimiter,
     cleanupOldUploads,
-    scheduleCleanup
+    scheduleCleanup,
+    getRetentionDays,
+    DEFAULT_UPLOAD_RETENTION_DAYS,
+    // Exported for unit testing — keeps the moderation policy in one place.
+    isStrictlyFlagged,
+    STRICT_CATEGORIES,
+    STRICT_SCORE_THRESHOLD
 };

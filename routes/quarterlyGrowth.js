@@ -5,7 +5,56 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const Skill = require('../models/skill');
+const Conversation = require('../models/conversation');
 const { calculateRetentionMetrics } = require('../utils/retentionProbe');
+
+// Default lookback window when there's no previous checkpoint to bound by.
+const DEFAULT_LOOKBACK_DAYS = 90;
+
+/**
+ * Aggregate session activity for a student over a time window.
+ * Sums problemsAttempted/Correct and time spent across Conversation docs.
+ */
+async function aggregateActivity(userId, startDate, endDate) {
+  const [agg] = await Conversation.aggregate([
+    {
+      $match: {
+        userId,
+        lastActivity: { $gte: startDate, $lte: endDate }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        problemsAttempted: { $sum: { $ifNull: ['$problemsAttempted', 0] } },
+        problemsCorrect: { $sum: { $ifNull: ['$problemsCorrect', 0] } },
+        // Prefer activeSeconds when present (higher precision), else activeMinutes*60
+        totalSeconds: {
+          $sum: {
+            $cond: [
+              { $gt: ['$activeSeconds', 0] },
+              '$activeSeconds',
+              { $multiply: [{ $ifNull: ['$activeMinutes', 0] }, 60] }
+            ]
+          }
+        }
+      }
+    }
+  ]);
+
+  if (!agg) {
+    return { totalMinutes: 0, problemsAttempted: 0, problemsCorrect: 0, accuracy: 0 };
+  }
+
+  const totalMinutes = Math.round((agg.totalSeconds || 0) / 60);
+  const problemsAttempted = agg.problemsAttempted || 0;
+  const problemsCorrect = agg.problemsCorrect || 0;
+  const accuracy = problemsAttempted > 0
+    ? Math.round((problemsCorrect / problemsAttempted) * 100)
+    : 0;
+
+  return { totalMinutes, problemsAttempted, problemsCorrect, accuracy };
+}
 
 // Middleware to check if user is teacher or admin
 const isTeacherOrAdmin = (req, res, next) => {
@@ -127,17 +176,24 @@ router.post('/checkpoint/:studentId', isTeacherOrAdmin, async (req, res) => {
       }
     }
 
-    // TODO: Calculate theta change (requires IRT implementation)
-    const thetaChange = null;
+    // Theta snapshot + change vs. previous checkpoint.
+    // currentTheta is maintained by the IRT screener / growth-check pipeline.
+    const currentTheta = typeof student.currentTheta === 'number' ? student.currentTheta : null;
+    const previousTheta = (previousCheckpoint && typeof previousCheckpoint.metrics?.theta === 'number')
+      ? previousCheckpoint.metrics.theta
+      : null;
+    const thetaChange = (currentTheta !== null && previousTheta !== null)
+      ? Math.round((currentTheta - previousTheta) * 100) / 100
+      : null;
 
-    // Calculate activity metrics
-    // TODO: Aggregate from session history
-    const activity = {
-      totalMinutes: 0,
-      problemsAttempted: 0,
-      problemsCorrect: 0,
-      accuracy: 0
-    };
+    // Activity metrics — aggregate from conversations in the quarter window.
+    // Window is [previousCheckpoint.checkpointDate, currentDate]; for the
+    // first checkpoint we look back DEFAULT_LOOKBACK_DAYS so teachers see
+    // meaningful baseline numbers.
+    const windowStart = previousCheckpoint?.checkpointDate
+      ? new Date(previousCheckpoint.checkpointDate)
+      : new Date(currentDate.getTime() - DEFAULT_LOOKBACK_DAYS * 24 * 60 * 60 * 1000);
+    const activity = await aggregateActivity(student._id, windowStart, currentDate);
 
     // Create checkpoint
     const checkpoint = {
@@ -154,6 +210,7 @@ router.post('/checkpoint/:studentId', isTeacherOrAdmin, async (req, res) => {
         lostSkillsCount: retentionMetrics.lostCount,
         lostSkillsList: retentionMetrics.lostSkills,
         skillsPerWeek,
+        theta: currentTheta,
         thetaChange,
         coursesInProgress,
         coursesCompleted

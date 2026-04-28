@@ -1,11 +1,18 @@
 // tests/setup.js
 // Global test setup and configuration
 
-// Load environment variables for testing
+// Load environment variables for testing (optional — most unit tests use stubs)
 require('dotenv').config({ path: '.env.test' });
 
 // Set test environment
 process.env.NODE_ENV = 'test';
+
+// Provide harmless defaults for env vars that the codebase reads at module
+// load time. Unit tests should NOT make real API calls; these placeholders
+// only let third-party SDK clients construct without throwing.
+process.env.OPENAI_API_KEY = process.env.OPENAI_API_KEY || 'test_openai_key';
+process.env.MATHPIX_APP_ID = process.env.MATHPIX_APP_ID || 'test_mathpix_id';
+process.env.MATHPIX_APP_KEY = process.env.MATHPIX_APP_KEY || 'test_mathpix_key';
 
 // Increase test timeout for database operations
 jest.setTimeout(10000);
