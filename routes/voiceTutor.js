@@ -10,6 +10,7 @@ const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require('../utils/llmGateway');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
+const { verify: pipelineVerify } = require('../utils/pipeline');
 const { openai } = require('../utils/openaiClient');
 const ttsProvider = require('../utils/ttsProvider');
 const fs = require('fs');
@@ -539,6 +540,29 @@ async function generateResponse(userId, userMessage, preloadedUser) {
     }
     // If still empty, give a safe generic response rather than silence
     if (!spoken) spoken = "Let me think about that. Could you tell me more?";
+  }
+
+  // ── Pipeline verify (defense-in-depth) ──
+  // Every student-facing response runs through verify to catch answer
+  // giveaways, system-tag leaks, and reading-level violations. If verify
+  // rewrites the spoken text (answer-giveaway redirected), drop the
+  // mathSteps board content too — otherwise the visual still leaks the
+  // solution the redirected speech avoided.
+  try {
+    const verified = await pipelineVerify(spoken, {
+      userId: user._id?.toString(),
+      userMessage,
+      iepReadingLevel: user.iepPlan?.readingLevel || null,
+      firstName: user.firstName,
+      isStreaming: false,
+    });
+    if (verified.flags?.some(f => f.startsWith('answer_giveaway') || f.startsWith('answer_key') || f.startsWith('upload_'))) {
+      logger.warn('Voice tutor: response redirected by verify', { userId: user._id?.toString(), flags: verified.flags });
+      mathSteps = [];
+    }
+    spoken = verified.text || spoken;
+  } catch (err) {
+    logger.error('Voice tutor verify failed', { userId: user._id?.toString(), error: err.message });
   }
 
   // IEP reading level enforcement (operates on spoken text only)

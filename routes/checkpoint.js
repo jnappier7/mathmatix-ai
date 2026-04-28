@@ -22,6 +22,7 @@ const fs = require('fs');
 const CourseSession = require('../models/courseSession');
 const { verifyAnswer } = require('../utils/mathSolver');
 const { callLLM } = require('../utils/llmGateway');
+const { verify: pipelineVerify } = require('../utils/pipeline');
 
 /**
  * Helper: Load the active course session for the authenticated user.
@@ -360,22 +361,34 @@ Respond in JSON only: {"correct": true or false, "feedback": "Brief feedback"}`;
   ], { temperature: 0, max_tokens: 100 });
 
   const text = result.choices[0]?.message?.content?.trim() || '';
+  let parsed = null;
   try {
-    // Try to parse JSON from the response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
-      return {
-        correct: !!parsed.correct,
-        feedback: parsed.feedback || null,
-      };
+      parsed = JSON.parse(jsonMatch[0]);
     }
   } catch {
-    // If JSON parsing fails, check for obvious correct/incorrect keywords
     const isCorrect = /correct.*true|"correct"\s*:\s*true/i.test(text);
     return { correct: isCorrect, feedback: null };
   }
-  return { correct: false, feedback: null };
+  if (!parsed) return { correct: false, feedback: null };
+
+  // Pipeline verify on the student-facing feedback string. Grader feedback
+  // is short (one sentence) so most guards no-op, but tag stripping and
+  // answer-key detection still apply.
+  let feedback = parsed.feedback || null;
+  if (feedback) {
+    try {
+      const verified = await pipelineVerify(feedback, {
+        userMessage: studentAnswer,
+        isStreaming: false,
+      });
+      feedback = verified.text || feedback;
+    } catch (err) {
+      // Verify failure is non-fatal here — fall back to raw feedback.
+    }
+  }
+  return { correct: !!parsed.correct, feedback };
 }
 
 function buildSummary(checkpointState, moduleData) {

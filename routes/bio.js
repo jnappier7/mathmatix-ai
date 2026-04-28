@@ -8,6 +8,7 @@ const router = express.Router();
 const multer = require('multer');
 const ChapterContent = require('../models/chapterContent');
 const { callLLMStream, callLLM } = require('../utils/openaiClient');
+const { verify: pipelineVerify } = require('../utils/pipeline');
 const { generateBioSystemPrompt } = require('../utils/bioPromptCompact');
 
 // Multer config for chapter PDFs (memory storage, 50MB limit)
@@ -218,9 +219,26 @@ router.post('/chat', async (req, res) => {
           }
         }
 
+        // Pipeline verify before completion event — replace if the
+        // response leaked an answer or violated a guardrail.
+        let verifiedText = fullText;
+        try {
+          const verified = await pipelineVerify(fullText, {
+            userId: req.user?._id?.toString?.(),
+            userMessage: message,
+            iepReadingLevel: req.user?.iepPlan?.readingLevel || null,
+            firstName: req.user?.firstName,
+            isStreaming: true,
+            res: clientDisconnected ? null : res,
+          });
+          verifiedText = verified.text || fullText;
+        } catch (err) {
+          console.warn('[Bio Chat] verify failed (using unverified):', err.message);
+        }
+
         // Send completion event
         if (!clientDisconnected) {
-          res.write(`data: ${JSON.stringify({ type: 'complete', text: fullText })}\n\n`);
+          res.write(`data: ${JSON.stringify({ type: 'complete', text: verifiedText })}\n\n`);
           res.write('data: [DONE]\n\n');
         }
         res.end();
@@ -238,8 +256,22 @@ router.post('/chat', async (req, res) => {
         max_tokens: 1200
       });
 
-      const text = completion.choices?.[0]?.message?.content?.trim()
+      let text = completion.choices?.[0]?.message?.content?.trim()
         || "I had trouble thinking. Could you try again?";
+
+      // Pipeline verify — defense-in-depth on student-facing text.
+      try {
+        const verified = await pipelineVerify(text, {
+          userId: req.user?._id?.toString?.(),
+          userMessage: message,
+          iepReadingLevel: req.user?.iepPlan?.readingLevel || null,
+          firstName: req.user?.firstName,
+          isStreaming: false,
+        });
+        text = verified.text || text;
+      } catch (err) {
+        console.warn('[Bio Chat] verify failed (using unverified):', err.message);
+      }
 
       res.json({ success: true, text });
     }

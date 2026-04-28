@@ -18,6 +18,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { callLLM } = require('../utils/llmGateway');
+const { verify: pipelineVerify } = require('../utils/pipeline');
 const { generateSystemPrompt } = require('../utils/prompt');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
@@ -170,6 +171,23 @@ RESPOND IN JSON:
         }
 
         await user.save();
+
+        // Pipeline verify on the student-facing nextMessage. Rapport
+        // dialogue is short and non-mathematical, but verify still
+        // strips stray system tags and catches accidental math leaks.
+        if (result.nextMessage) {
+            try {
+                const verified = await pipelineVerify(result.nextMessage, {
+                    userId: user._id?.toString?.(),
+                    userMessage: req.body?.message,
+                    firstName: user.firstName,
+                    isStreaming: false,
+                });
+                result.nextMessage = verified.text || result.nextMessage;
+            } catch (err) {
+                console.warn('[Rapport] verify failed (using unverified):', err.message);
+            }
+        }
 
         // Add AI's response to conversation
         conversation.messages.push({

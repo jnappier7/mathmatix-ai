@@ -8,6 +8,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/llmGateway");
+const { verify: pipelineVerify } = require("../utils/pipeline");
 const { openai } = require('../utils/openaiClient');
 const { processAIResponse } = require('../utils/chatBoardParser');
 const { cleanTextForTTS } = require('../utils/mathTTS');
@@ -250,7 +251,30 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         const boardParsed = processAIResponse(aiResponseText);
         aiResponseText = boardParsed.text;
-        const boardContextData = boardParsed.boardContext;
+        let boardContextData = boardParsed.boardContext;
+
+        // ── Pipeline verify (defense-in-depth) ──
+        // Catch answer giveaways, system-tag leaks, and reading-level
+        // issues before the response (and matching board actions) reach
+        // the student. If verify rewrites the text, drop the board
+        // actions too — they would visually leak the redirected solution.
+        try {
+            const verified = await pipelineVerify(aiResponseText, {
+                userId: userId?.toString?.() || userId,
+                userMessage,
+                iepReadingLevel: user?.iepPlan?.readingLevel || null,
+                firstName: user?.firstName,
+                isStreaming: false,
+            });
+            if (verified.flags?.some(f => f.startsWith('answer_giveaway') || f.startsWith('answer_key') || f.startsWith('upload_'))) {
+                logger.warn('[Voice] response redirected by verify', { userId, flags: verified.flags });
+                boardActions.length = 0;
+                boardContextData = null;
+            }
+            aiResponseText = verified.text || aiResponseText;
+        } catch (err) {
+            logger.warn('[Voice] verify failed (using unverified)', { error: err.message });
+        }
 
         // ── Send text + board immediately — don't wait for TTS ──
         sendPhase({
