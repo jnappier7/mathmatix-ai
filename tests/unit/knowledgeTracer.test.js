@@ -8,6 +8,8 @@ const {
   applyTemporalDecay,
   calculateZPDScore,
   shouldReview,
+  prioritizeSkills,
+  getKnowledgeSummary,
   MASTERY_THRESHOLD,
 } = require('../../utils/knowledgeTracer');
 
@@ -168,6 +170,86 @@ describe('Knowledge Tracer (BKT)', () => {
       state.pLearned = 0.96;
       const result = shouldReview(state, 1);
       expect(result.needsReview).toBe(false);
+    });
+  });
+
+  describe('prioritizeSkills', () => {
+    it('returns skills sorted by priority (highest first)', () => {
+      const states = new Map([
+        ['s-mastered', { ...initializeBKT('s-mastered'), pLearned: 0.95, totalAttempts: 10 }],
+        ['s-learning', { ...initializeBKT('s-learning'), pLearned: 0.55, totalAttempts: 5 }],
+        ['s-cold', initializeBKT('s-cold')]
+      ]);
+      const r = prioritizeSkills(states);
+      expect(Array.isArray(r)).toBe(true);
+      expect(r).toHaveLength(3);
+      // priorities should be descending
+      for (let i = 1; i < r.length; i++) {
+        expect(r[i - 1].priority).toBeGreaterThanOrEqual(r[i].priority);
+      }
+    });
+
+    it('marks mastered skills via the "mastered" flag', () => {
+      const states = new Map([
+        ['s1', { ...initializeBKT('s1'), pLearned: 0.97 }]
+      ]);
+      const r = prioritizeSkills(states);
+      expect(r[0].mastered).toBe(true);
+    });
+
+    it('respects prerequisites — unmet prereqs lower priority', () => {
+      const masteredPrereq = new Map([
+        ['prereq', { ...initializeBKT('prereq'), pLearned: 0.96 }],
+        ['target', { ...initializeBKT('target'), pLearned: 0.5, totalAttempts: 3 }]
+      ]);
+      const r1 = prioritizeSkills(masteredPrereq, { prerequisites: { target: ['prereq'] } });
+      const targetWithPrereq = r1.find(x => x.skillId === 'target');
+      expect(targetWithPrereq.prereqsMet).toBe(true);
+
+      const noPrereq = new Map([
+        ['prereq', { ...initializeBKT('prereq'), pLearned: 0.2 }],
+        ['target', { ...initializeBKT('target'), pLearned: 0.5, totalAttempts: 3 }]
+      ]);
+      const r2 = prioritizeSkills(noPrereq, { prerequisites: { target: ['prereq'] } });
+      const targetWithoutPrereq = r2.find(x => x.skillId === 'target');
+      expect(targetWithoutPrereq.prereqsMet).toBe(false);
+    });
+
+    it('applies temporal decay when daysSinceLastMap provided', () => {
+      const states = new Map([
+        ['s1', { ...initializeBKT('s1'), pLearned: 0.95, totalAttempts: 10 }]
+      ]);
+      const r = prioritizeSkills(states, { daysSinceLastMap: { s1: 60 } });
+      expect(r[0].pLearned).toBeLessThan(0.95); // decay applied
+    });
+  });
+
+  describe('getKnowledgeSummary', () => {
+    it('counts mastered/learning/not-started buckets', () => {
+      const states = new Map([
+        ['m1', { ...initializeBKT('m1'), pLearned: 0.96 }],
+        ['m2', { ...initializeBKT('m2'), pLearned: 0.97 }],
+        ['l1', { ...initializeBKT('l1'), pLearned: 0.4, totalAttempts: 3 }],
+        ['n1', initializeBKT('n1')]
+      ]);
+      const r = getKnowledgeSummary(states);
+      expect(r.totalSkills).toBe(4);
+      expect(r.masteredCount).toBe(2);
+      expect(r.learningCount).toBe(1);
+      expect(r.notStartedCount).toBe(1);
+      expect(r.masteryRate).toBe(50);
+      expect(r.averagePLearned).toBeGreaterThan(0);
+    });
+
+    it('handles empty input cleanly', () => {
+      expect(getKnowledgeSummary(new Map())).toEqual({
+        totalSkills: 0,
+        masteredCount: 0,
+        learningCount: 0,
+        notStartedCount: 0,
+        averagePLearned: 0,
+        masteryRate: 0
+      });
     });
   });
 });
