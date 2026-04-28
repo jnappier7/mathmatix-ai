@@ -17,7 +17,7 @@ const { parseVisualTeaching } = require('../visualTeachingParser');
 const { processAIResponse } = require('../chatBoardParser');
 const { callLLM } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
-const { MESSAGE_TYPES } = require('./observe');
+const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 
@@ -239,10 +239,35 @@ async function verify(responseText, context = {}) {
   // the AI dumps a full solution instead of guiding Socratically, catch it.
   // This is defense-in-depth — the primary gate is in chat.js which suppresses
   // answer injection for non-answer messages. This catches LLM over-helpfulness.
-  if (context.action === ACTIONS.CONTINUE_CONVERSATION &&
-      (context.messageType === MESSAGE_TYPES.GENERAL_MATH || context.messageType === MESSAGE_TYPES.QUESTION) &&
-      context.diagnosisType === 'no_answer' &&
-      !context.hasRecentUpload && !context.isWorksheetFollowUp) {
+  //
+  // Trigger conditions are intentionally permissive: a worked solution to a
+  // student-posed problem is unacceptable regardless of which message type
+  // observe picked or which action decide chose, EXCEPT when the tutor is
+  // explicitly demonstrating in the I-DO phase (the only legit teach-don't-ask
+  // path). Bare problem drops are always covered.
+  const studentPosedTypes = new Set([
+    MESSAGE_TYPES.GENERAL_MATH,
+    MESSAGE_TYPES.QUESTION,
+    MESSAGE_TYPES.HELP_REQUEST,
+    MESSAGE_TYPES.GIVE_UP,
+    MESSAGE_TYPES.IDK,
+  ]);
+  // Fallback: if upstream didn't classify (e.g. pipeline crash + direct LLM
+  // fallback), recompute isBareProblemDrop from the user message so this
+  // guard still catches answer leaks on bare math drops.
+  const inferredBareDrop = (context.isBareProblemDrop === undefined && context.userMessage)
+    ? detectBareProblemDrop(context.userMessage, context.messageType, false)
+    : false;
+  const isStudentPosed =
+    context.isBareProblemDrop ||
+    inferredBareDrop ||
+    (studentPosedTypes.has(context.messageType) && context.diagnosisType !== 'student_correct');
+  const isIDoPhase = (context.phaseState?.currentPhase || context.phaseState?.phase) === 'i_do';
+
+  if (isStudentPosed &&
+      !isIDoPhase &&
+      !context.hasRecentUpload &&
+      !context.isWorksheetFollowUp) {
     // Shared detector handles multi-root announcements ("x=7 or x=-7"),
     // pluralized conclusions ("so the solutions are..."), transitional
     // reveals ("this gives us x="), and the original explicit-answer set.
@@ -250,12 +275,19 @@ async function verify(responseText, context = {}) {
     // Legacy trailing-assignment check — a line ending in "x = 9" on its own
     // is still a conclusion even when no announcement phrase precedes it.
     const trailingAssignment = /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
-    const hasCompleteSolution = announcement.detected || trailingAssignment.test(text);
+    // Full worked solution with multiple structural signals (steps, summary,
+    // labeled key points) — even without an explicit "answer is" phrase the
+    // tutor has handed over the work.
+    const worked = detectWorkedSolution(text);
+    const hasCompleteSolution =
+      announcement.detected ||
+      trailingAssignment.test(text) ||
+      worked.isWorkedSolution;
 
     // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
     // The guard fires whenever the AI reveals a complete solution to a student-posed problem.
     if (hasCompleteSolution) {
-      console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem. Redirecting to Socratic.`);
+      console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem (announcement=${announcement.pattern}, workedSignals=${worked.signalCount}, isBareDrop=${!!context.isBareProblemDrop}). Redirecting to Socratic.`);
       try {
         const socraticRedirect = await callLLM(PRIMARY_CHAT_MODEL,
           [{ role: 'system', content: 'You are a Socratic math tutor. Your previous response solved the student\'s problem and gave the answer — this violates the #1 tutoring rule. Rewrite the response: acknowledge the problem, identify the FIRST step the student needs to take, and ask THEM to attempt that step. Do NOT show subsequent steps or the final answer. End with a guiding question. Keep it concise (2-4 sentences max).' },
