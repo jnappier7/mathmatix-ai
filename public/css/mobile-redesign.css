@@ -1714,47 +1714,47 @@
 
     /* --- Equation Palette Bottom Sheet --- */
 
-    body.has-chat-nav .inline-equation-palette {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) {
         background: var(--clr-bg-light, #fff);
         border-radius: 20px 20px 0 0;
         box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) {
         background: #141E29;
     }
 
     /* Header with drag handle */
-    body.has-chat-nav .inline-equation-palette .equation-palette-header {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .equation-palette-header {
         padding: 12px 16px 8px;
         border-bottom: 1px solid var(--clr-border-light, #e2e8f0);
     }
 
-    body.has-chat-nav .inline-equation-palette .equation-palette-header span {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .equation-palette-header span {
         font-size: 0.95rem;
         font-weight: 700;
         color: #1a1a2e;
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .equation-palette-header {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .equation-palette-header {
         border-bottom-color: rgba(255, 255, 255, 0.1);
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .equation-palette-header span {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .equation-palette-header span {
         color: #f0f0f5;
     }
 
     /* Close button in palette */
-    body.has-chat-nav .inline-equation-palette .palette-close-btn {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .palette-close-btn {
         color: #5b6876;
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .palette-close-btn {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .palette-close-btn {
         color: #a0aab5;
     }
 
     /* Symbol buttons — HIGH CONTRAST text, rounded, teal active */
-    body.has-chat-nav .inline-equation-palette .symbol-btn {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .symbol-btn {
         border-radius: 10px;
         min-height: 44px;
         font-size: 1.25em;
@@ -1765,70 +1765,70 @@
         transition: background 150ms ease, transform 150ms ease;
     }
 
-    body.has-chat-nav .inline-equation-palette .symbol-btn:active {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .symbol-btn:active {
         background: rgba(18, 179, 179, 0.15);
         border-color: var(--clr-primary-teal, #12B3B3);
         transform: scale(0.93);
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .symbol-btn {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .symbol-btn {
         background: rgba(255, 255, 255, 0.08);
         border-color: rgba(255, 255, 255, 0.15);
         color: #f0f0f5;
     }
 
     /* Script buttons (sub/superscript) — HIGH CONTRAST */
-    body.has-chat-nav .inline-equation-palette .script-btn {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .script-btn {
         background: var(--clr-bg-subtle, #f5f7f9);
         border: 1px solid var(--clr-border-light, #d1d5db);
         border-radius: 10px;
         min-height: 44px;
     }
 
-    body.has-chat-nav .inline-equation-palette .script-btn:active {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .script-btn:active {
         background: rgba(18, 179, 179, 0.15);
         border-color: var(--clr-primary-teal, #12B3B3);
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .script-btn {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .script-btn {
         background: rgba(255, 255, 255, 0.08);
         border-color: rgba(255, 255, 255, 0.15);
     }
 
-    body.has-chat-nav .inline-equation-palette .script-label {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .script-label {
         color: #1a1a2e;
         font-size: 1.15em;
         font-weight: 500;
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .script-label {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .script-label {
         color: #f0f0f5;
     }
 
     /* Section headers in palette */
-    body.has-chat-nav .inline-equation-palette .equation-section-header {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .equation-section-header {
         color: #5b6876;
         font-weight: 600;
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .equation-section-header {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .equation-section-header {
         color: #a0aab5;
     }
 
     /* Math field container in palette */
-    body.has-chat-nav .inline-equation-palette .inline-math-field-container {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) .inline-math-field-container {
         padding: 10px 14px 12px;
         border-top: 1px solid var(--clr-border-light, #e2e8f0);
         background: var(--clr-bg-light, #fff);
     }
 
-    [data-theme="dark"] body.has-chat-nav .inline-equation-palette .inline-math-field-container {
+    [data-theme="dark"] body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen):not(.eq-fullscreen) .inline-math-field-container {
         background: #141E29;
         border-top-color: rgba(255, 255, 255, 0.08);
     }
 
     /* Insert button in palette */
-    body.has-chat-nav .inline-equation-palette #insert-inline-equation {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) #insert-inline-equation {
         background: var(--clr-primary-teal, #12B3B3);
         border-color: var(--clr-primary-teal, #12B3B3);
         color: white;
@@ -1837,7 +1837,7 @@
         padding: 10px 16px;
     }
 
-    body.has-chat-nav .inline-equation-palette #insert-inline-equation:active {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) #insert-inline-equation:active {
         background: #0E9494;
     }
 
@@ -1855,7 +1855,7 @@
     }
 
     /* Add line button */
-    body.has-chat-nav .inline-equation-palette #add-math-line {
+    body.has-chat-nav .inline-equation-palette:not(.eq-fullscreen) #add-math-line {
         color: var(--clr-primary-teal, #12B3B3);
         font-weight: 600;
     }

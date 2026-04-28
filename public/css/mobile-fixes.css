@@ -1778,8 +1778,10 @@ a {
 }
 
 @media (max-width: 600px) {
-    /* --- Equation Palette: Mobile Bottom Sheet --- */
-    .inline-equation-palette {
+    /* --- Equation Palette: Mobile Bottom Sheet (legacy fallback) ---
+     * Scoped to :not(.eq-fullscreen) so the new mobile fullscreen mode
+     * can take over without these !important rules clobbering it.       */
+    .inline-equation-palette:not(.eq-fullscreen) {
         position: fixed !important;
         top: auto !important;
         bottom: 0 !important;
@@ -1806,7 +1808,7 @@ a {
     }
 
     /* Drag handle at top of bottom sheet */
-    .inline-equation-palette .equation-palette-header {
+    .inline-equation-palette:not(.eq-fullscreen) .equation-palette-header {
         position: sticky;
         top: 0;
         background: inherit;
@@ -1817,7 +1819,7 @@ a {
         cursor: default;
     }
 
-    .inline-equation-palette .equation-palette-header::before {
+    .inline-equation-palette:not(.eq-fullscreen) .equation-palette-header::before {
         content: '';
         display: block;
         width: 36px;
@@ -1828,7 +1830,7 @@ a {
     }
 
     /* Close button larger on mobile */
-    .inline-equation-palette .palette-close-btn {
+    .inline-equation-palette:not(.eq-fullscreen) .palette-close-btn {
         width: 44px;
         height: 44px;
         font-size: 1.8em;
@@ -1838,7 +1840,7 @@ a {
     }
 
     /* Move common symbols ABOVE subscripts/superscripts on mobile */
-    .inline-equation-palette .equation-symbols-grid {
+    .inline-equation-palette:not(.eq-fullscreen) .equation-symbols-grid {
         order: -1;
         padding: 6px 12px;
         grid-template-columns: repeat(5, 1fr);
@@ -1846,35 +1848,35 @@ a {
     }
 
     /* Collapse subscripts section — less useful on mobile, show behind a summary */
-    .inline-equation-palette .equation-section-header {
+    .inline-equation-palette:not(.eq-fullscreen) .equation-section-header {
         padding: 0 12px;
         margin-top: 2px;
         font-size: 0.8em;
     }
-    .inline-equation-palette .subscript-superscript-grid {
+    .inline-equation-palette:not(.eq-fullscreen) .subscript-superscript-grid {
         padding: 0 12px;
         grid-template-columns: repeat(4, 1fr);
         gap: 5px;
     }
 
     /* Symbol buttons: compact touch targets */
-    .inline-equation-palette .symbol-btn {
+    .inline-equation-palette:not(.eq-fullscreen) .symbol-btn {
         min-height: 40px;
         font-size: 1.15em;
         padding: 6px;
     }
-    .inline-equation-palette .script-btn {
+    .inline-equation-palette:not(.eq-fullscreen) .script-btn {
         min-height: 40px;
         padding: 8px;
     }
 
     /* Hide tip text on mobile to save space */
-    .inline-equation-palette .palette-tip {
+    .inline-equation-palette:not(.eq-fullscreen) .palette-tip {
         display: none;
     }
 
     /* Math field container pinned to bottom of sheet */
-    .inline-equation-palette .inline-math-field-container {
+    .inline-equation-palette:not(.eq-fullscreen) .inline-math-field-container {
         position: sticky;
         bottom: 0;
         background: inherit;
@@ -1884,15 +1886,15 @@ a {
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
     }
 
-    .inline-equation-palette .inline-math-field-container label {
+    .inline-equation-palette:not(.eq-fullscreen) .inline-math-field-container label {
         font-size: 0.8em;
     }
 
     /* Insert button: full-width on mobile */
-    .inline-equation-palette .math-line-actions {
+    .inline-equation-palette:not(.eq-fullscreen) .math-line-actions {
         flex-direction: row;
     }
-    .inline-equation-palette #insert-inline-equation {
+    .inline-equation-palette:not(.eq-fullscreen) #insert-inline-equation {
         flex: 1;
         padding: 10px;
         font-size: 1em;

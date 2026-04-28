@@ -489,6 +489,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
+      <!-- Context strip — only shown in mobile fullscreen mode.
+           Populated with the most recent tutor message so the student
+           can refer back to the problem while typing. -->
+      <div id="eq-context-strip" class="eq-context-strip">
+        <div class="eq-context-label"><i class="fas fa-quote-left"></i> Problem</div>
+        <div id="eq-context-text" class="eq-context-text"></div>
+        <button id="eq-context-expand" class="eq-context-expand" type="button" aria-label="Show more context">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+
       <!-- Live editor: math-field shows what you're writing as you build it -->
       <div class="inline-math-field-container">
         <div id="math-lines-container">
