@@ -360,6 +360,8 @@ async function runPipeline(message, ctx) {
     diagnosisType: diagnosis.type,
     hasRecentUpload: ctx.hasRecentUpload || false,
     isWorksheetFollowUp: observation.isWorksheetFollowUp || false,
+    isBareProblemDrop: observation.isBareProblemDrop || false,
+    phaseState: ctx.phaseState || ctx.conversation?.phaseState || null,
     studentAnswer: observation.answer?.value || null,
     llmVerdict,
   });

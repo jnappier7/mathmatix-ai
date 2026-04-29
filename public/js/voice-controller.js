@@ -95,6 +95,10 @@ class VoiceController {
         // Create floating voice button (like GPT's orb)
         const voiceContainer = document.createElement('div');
         voiceContainer.id = 'voice-chat-container';
+        // pointer-events:none on the container lets clicks on empty container
+        // space (e.g. between the orb and the status label) pass through to
+        // the send button, which sits at the same screen region. The orb and
+        // status label re-enable pointer-events on themselves below.
         voiceContainer.style.cssText = `
             position: fixed;
             bottom: 30px;
@@ -104,6 +108,7 @@ class VoiceController {
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            pointer-events: none;
         `;
 
         // Voice orb button
@@ -111,6 +116,7 @@ class VoiceController {
         orbButton.id = 'voice-orb';
         orbButton.className = 'voice-orb idle';
         orbButton.setAttribute('aria-label', 'Start voice chat');
+        orbButton.style.pointerEvents = 'auto';
         orbButton.innerHTML = `
             <div class="orb-inner">
                 <div class="orb-pulse"></div>
@@ -122,6 +128,7 @@ class VoiceController {
         const statusText = document.createElement('div');
         statusText.id = 'voice-status';
         statusText.className = 'voice-status';
+        statusText.style.pointerEvents = 'auto';
         statusText.textContent = this.handsFreeMode ? 'Click to start (hands-free)' : 'Click to start voice chat';
 
         voiceContainer.appendChild(orbButton);

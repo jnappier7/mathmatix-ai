@@ -7,6 +7,7 @@ const Conversation = require('../models/conversation');
 const ScreenerSession = require('../models/screenerSession');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
+const { verify: pipelineVerify } = require("../utils/pipeline");
 const TUTOR_CONFIG = require("../utils/tutorConfig");
 const { needsAssessment } = require('../services/chatService');
 
@@ -262,7 +263,22 @@ router.get('/', async (req, res) => {
         // Use GPT-4o-mini for natural, engaging welcome messages
         const welcomeAiStart = Date.now();
         const completion = await callLLM("gpt-4o-mini", messagesForAI, { max_tokens: 80 });
-        const initialWelcomeMessage = completion.choices[0].message.content.trim();
+        let initialWelcomeMessage = completion.choices[0].message.content.trim();
+
+        // Pipeline verify (defense-in-depth) — strips stray system tags
+        // and catches the rare case the greeting prompt drifts into a
+        // worked solution.
+        try {
+            const verified = await pipelineVerify(initialWelcomeMessage, {
+                userId: user?._id?.toString?.(),
+                firstName: user?.firstName,
+                iepReadingLevel: user?.iepPlan?.readingLevel || null,
+                isStreaming: false,
+            });
+            initialWelcomeMessage = verified.text || initialWelcomeMessage;
+        } catch (err) {
+            console.warn('[Welcome] verify failed (using unverified):', err.message);
+        }
 
         // Track AI processing time (server-side, for fair billing)
         const welcomeAiSeconds = Math.ceil((Date.now() - welcomeAiStart) / 1000);

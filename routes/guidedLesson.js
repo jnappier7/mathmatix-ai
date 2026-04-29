@@ -8,6 +8,7 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const User = require('../models/user');
 const { callLLM, retryWithExponentialBackoff } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
 const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/readability');
+const { verify: pipelineVerify } = require('../utils/pipeline');
 const { selectWarmupSkill, checkPrerequisiteReadiness } = require('../utils/prerequisiteMapper');
 const logger = require('../utils/logger').child({ route: 'guidedLesson' });
 const {
@@ -163,6 +164,38 @@ ${phasePrompt}
             }
         }
 
+        // Pipeline verify (defense-in-depth) — runs answer-key, answer-
+        // giveaway, system-tag, and reading-level guards before sending
+        // student-facing text. Lesson dialogue tag is preserved by extracting
+        // it pre-verify (verify strips system tags by design).
+        const lastUserTurn = (conversationHistory || [])
+            .filter(m => m?.role === 'user')
+            .slice(-1)[0]?.content || '';
+        const phaseStateForVerify = currentPhaseState ? {
+            currentPhase: currentPhaseState.currentPhase,
+            phase: currentPhaseState.currentPhase,
+        } : null;
+        try {
+            const verified = await pipelineVerify(aiResponseText, {
+                userId: req.user?._id?.toString?.(),
+                userMessage: lastUserTurn,
+                iepReadingLevel: userProfile.iepPlan?.readingLevel || null,
+                firstName: userProfile.firstName,
+                isStreaming: false,
+                phaseState: phaseStateForVerify,
+            });
+            // Verify strips system tags including <END_LESSON_DIALOGUE />,
+            // so re-detect the mastery signal on the original text below.
+            if (verified.text && verified.text !== aiResponseText) {
+                const hadMasterySignal = aiResponseText.includes('<END_LESSON_DIALOGUE />');
+                aiResponseText = hadMasterySignal
+                    ? verified.text + ' <END_LESSON_DIALOGUE />'
+                    : verified.text;
+            }
+        } catch (err) {
+            logger.warn('[GuidedLesson] verify failed (using unverified):', err.message);
+        }
+
         let lessonState = 'continue';
         let cleanMessage = aiResponseText;
 
@@ -296,6 +329,23 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
                     logger.error('[GuidedLesson/Hint] Simplification failed:', err.message);
                 }
             }
+        }
+
+        // Pipeline verify (defense-in-depth) — hints must never reveal
+        // the correct answer, even though `correctAnswer` was passed to
+        // the prompt for context. Verify catches an LLM that ignores
+        // instruction #3 ("DO NOT give them the direct answer").
+        try {
+            const verified = await pipelineVerify(hintText, {
+                userId: req.user?._id?.toString?.(),
+                userMessage: problem,
+                iepReadingLevel: userProfile.iepPlan?.readingLevel || null,
+                firstName: userProfile.firstName,
+                isStreaming: false,
+            });
+            hintText = verified.text || hintText;
+        } catch (err) {
+            logger.warn('[GuidedLesson/Hint] verify failed (using unverified):', err.message);
         }
 
         res.json({ hint: hintText });
