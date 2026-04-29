@@ -240,11 +240,12 @@ async function verify(responseText, context = {}) {
   // This is defense-in-depth — the primary gate is in chat.js which suppresses
   // answer injection for non-answer messages. This catches LLM over-helpfulness.
   //
-  // Trigger conditions are intentionally permissive: a worked solution to a
-  // student-posed problem is unacceptable regardless of which message type
-  // observe picked or which action decide chose, EXCEPT when the tutor is
-  // explicitly demonstrating in the I-DO phase (the only legit teach-don't-ask
-  // path). Bare problem drops are always covered.
+  // The guard fires whenever the student posed the problem, regardless of
+  // phase. I-DO is allowed to demonstrate, but only on a PARALLEL problem
+  // (same skill, different numbers) — never on the student's actual problem.
+  // The redirect prompt below switches to "demonstrate a parallel example"
+  // language when phase=I-DO so the tutor still teaches, just not by solving
+  // what the student handed over.
   const studentPosedTypes = new Set([
     MESSAGE_TYPES.GENERAL_MATH,
     MESSAGE_TYPES.QUESTION,
@@ -262,10 +263,10 @@ async function verify(responseText, context = {}) {
     context.isBareProblemDrop ||
     inferredBareDrop ||
     (studentPosedTypes.has(context.messageType) && context.diagnosisType !== 'student_correct');
-  const isIDoPhase = (context.phaseState?.currentPhase || context.phaseState?.phase) === 'i_do';
+  const currentPhase = context.phaseState?.currentPhase || context.phaseState?.phase || null;
+  const isIDoPhase = currentPhase === 'i-do';
 
   if (isStudentPosed &&
-      !isIDoPhase &&
       !context.hasRecentUpload &&
       !context.isWorksheetFollowUp) {
     // Shared detector handles multi-root announcements ("x=7 or x=-7"),
@@ -287,18 +288,27 @@ async function verify(responseText, context = {}) {
     // A trailing question ("Does that make sense?") does NOT excuse dumping the answer.
     // The guard fires whenever the AI reveals a complete solution to a student-posed problem.
     if (hasCompleteSolution) {
-      console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem (announcement=${announcement.pattern}, workedSignals=${worked.signalCount}, isBareDrop=${!!context.isBareProblemDrop}). Redirecting to Socratic.`);
+      console.warn(`[Verify] ANSWER GIVEAWAY: AI solved a student-posed problem (phase=${currentPhase || 'none'}, announcement=${announcement.pattern}, workedSignals=${worked.signalCount}, isBareDrop=${!!context.isBareProblemDrop}). Redirecting (${isIDoPhase ? 'parallel-demo' : 'socratic'}).`);
+      // Phase-aware redirect:
+      //   - I-DO: tutor IS teaching by demonstration, but must use a
+      //     PARALLEL problem (same skill, different numbers) — never the
+      //     student's actual problem.
+      //   - Any other phase: pivot to Socratic first-step prompting.
+      const idoSystemPrompt = 'You are a math tutor in I-DO phase (modeling). The previous response solved the STUDENT\'S OWN problem, which violates the #1 tutoring rule — in I-DO you may demonstrate, but ONLY on a PARALLEL problem (same skill, different numbers), never on the problem the student handed you. Rewrite the response: briefly acknowledge what the student brought, then say you\'ll show a similar example first, INVENT a parallel problem with different numbers, and walk through that one step-by-step with think-aloud reasoning. End by inviting the student to try their original problem with the same approach. Do NOT solve, hint at, or reveal the answer to the student\'s actual problem.';
+      const idoUserPrompt = 'Rewrite this. Use a parallel problem (different numbers, same skill) for the demo. Never solve the student\'s actual problem.';
+      const socraticSystemPrompt = 'You are a Socratic math tutor. Your previous response solved the student\'s problem and gave the answer — this violates the #1 tutoring rule. Rewrite the response: acknowledge the problem, identify the FIRST step the student needs to take, and ask THEM to attempt that step. Do NOT show subsequent steps or the final answer. End with a guiding question. Keep it concise (2-4 sentences max).';
+      const socraticUserPrompt = 'Rewrite this to be Socratic. Only guide the first step, ask the student to try it. Never reveal the answer.';
       try {
-        const socraticRedirect = await callLLM(PRIMARY_CHAT_MODEL,
-          [{ role: 'system', content: 'You are a Socratic math tutor. Your previous response solved the student\'s problem and gave the answer — this violates the #1 tutoring rule. Rewrite the response: acknowledge the problem, identify the FIRST step the student needs to take, and ask THEM to attempt that step. Do NOT show subsequent steps or the final answer. End with a guiding question. Keep it concise (2-4 sentences max).' },
+        const redirect = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: isIDoPhase ? idoSystemPrompt : socraticSystemPrompt },
            { role: 'assistant', content: text },
-           { role: 'user', content: 'Rewrite this to be Socratic. Only guide the first step, ask the student to try it. Never reveal the answer.' }],
+           { role: 'user', content: isIDoPhase ? idoUserPrompt : socraticUserPrompt }],
           { temperature: 0.55, max_tokens: 800 }
         );
-        const redirectedText = socraticRedirect.choices[0]?.message?.content?.trim();
+        const redirectedText = redirect.choices[0]?.message?.content?.trim();
         if (redirectedText && redirectedText.length > 10) {
           text = redirectedText;
-          flags.push('answer_giveaway_redirected');
+          flags.push(isIDoPhase ? 'answer_giveaway_parallel_redirected' : 'answer_giveaway_redirected');
 
           if (context.isStreaming && context.res) {
             try {
