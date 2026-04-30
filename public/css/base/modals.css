@@ -748,45 +748,63 @@ body.dark-mode .math-block-container {
     min-height: 48px;
 }
 
-.inline-equation-palette.eq-fullscreen .eq-tabs {
-    margin: 0 16px;
-    flex-shrink: 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+/* Mobile fullscreen uses MathLive's own virtual keyboard for digits,
+ * letters, backspace, and arrow keys (and hosts our advanced structure
+ * layouts in additional panels). The custom palette tabs/symbols are
+ * therefore redundant on mobile and we hide them to avoid the
+ * "tab labels truncated + button cropped" problems from the QA pass. */
+.inline-equation-palette.eq-fullscreen .eq-tabs,
+.inline-equation-palette.eq-fullscreen .eq-tab-page {
+    display: none !important;
 }
-.inline-equation-palette.eq-fullscreen .eq-tabs::-webkit-scrollbar {
-    display: none;
-}
-.inline-equation-palette.eq-fullscreen .eq-tab {
-    padding: 10px 14px;
-    font-size: 0.9em;
-    min-height: 44px;
-}
-
-.inline-equation-palette.eq-fullscreen .eq-tab-page-active {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 10px 16px 24px;
-}
-.inline-equation-palette.eq-fullscreen .equation-symbols-grid {
-    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+/* Hint takes a full row of its own ABOVE the buttons (was flexed beside
+ * them and wrapping into a 7-line column). */
+.inline-equation-palette.eq-fullscreen .math-line-actions {
+    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
+    align-items: stretch;
 }
-.inline-equation-palette.eq-fullscreen .symbol-btn {
-    min-height: 52px;
-    font-size: 1.25em;
+.inline-equation-palette.eq-fullscreen .palette-hint {
+    flex: 1 0 100%;
+    margin: 0 0 4px 0;
+    font-size: 0.78em;
+    line-height: 1.3;
+    order: -1;
 }
-.inline-equation-palette.eq-fullscreen .subscript-superscript-grid {
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-    gap: 8px;
+.inline-equation-palette.eq-fullscreen #add-math-line {
+    flex: 1 1 30%;
+    min-width: 110px;
+    min-height: 48px;
 }
-.inline-equation-palette.eq-fullscreen .script-btn {
-    min-height: 56px;
+.inline-equation-palette.eq-fullscreen #insert-inline-equation {
+    flex: 2 1 50%;
+    min-width: 0;
+    min-height: 48px;
+    font-size: 1em;
+    font-weight: 600;
 }
-.inline-equation-palette.eq-fullscreen .equation-section-header {
-    margin-top: 12px;
+/* Override the global ML__keyboard suppression specifically for fullscreen
+ * mode so MathLive can render its keyboard for us. */
+body.eq-fullscreen-active .ML__keyboard {
+    display: flex !important;
+}
+body.eq-fullscreen-active .ML__keyboard-toggle {
+    display: none !important;
+}
+/* Hide the floating mic button + hero actions while the editor owns the
+ * screen so they don't overlap the Insert button. */
+body.eq-fullscreen-active #mic-button,
+body.eq-fullscreen-active .floating-voice-mic,
+body.eq-fullscreen-active #hero-actions,
+body.eq-fullscreen-active #suggestion-chips-container {
+    display: none !important;
+}
+/* MathLive's keyboard is fixed at the bottom of the viewport — give the
+ * palette body padding so the Insert button isn't covered. */
+body.eq-fullscreen-active .inline-equation-palette.eq-fullscreen {
+    padding-bottom: 320px;
+    box-sizing: border-box;
 }
 
 [data-theme="dark"] .inline-equation-palette.eq-fullscreen {
