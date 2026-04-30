@@ -3154,19 +3154,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const isFullscreen = inlineEquationPalette.classList.contains('eq-fullscreen');
 
-        // Fullscreen (mobile) and legacy mobile bottom-sheet: reparent to
-        // body so we escape any clipping ancestors. Fullscreen draws on
-        // top of everything by itself, so no backdrop is needed.
         if (isFullscreen) {
+            // Mobile fullscreen: reparent to body so we escape any clipping
+            // ancestors. MathLive's own virtual keyboard provides numbers,
+            // letters, backspace, and arrow keys at the bottom of the
+            // viewport — our custom palette adds the advanced structures.
             if (inlineEquationPalette.parentElement !== document.body) {
                 document.body.appendChild(inlineEquationPalette);
             }
-            if (window.mathVirtualKeyboard) {
-                window.mathVirtualKeyboard.visible = false;
-            }
+            // Switch math-field policy so MathLive's keyboard auto-shows
+            // when the field is focused.
             inlineEquationPalette.querySelectorAll('math-field').forEach(mf => {
-                mf.setAttribute('virtual-keyboard-mode', 'off');
+                mf.setAttribute('math-virtual-keyboard-policy', 'auto');
+                mf.removeAttribute('virtual-keyboard-mode');
+                if ('mathVirtualKeyboardPolicy' in mf) {
+                    mf.mathVirtualKeyboardPolicy = 'auto';
+                }
             });
+            // Install our custom MathLive layouts (advanced structures).
+            installMathLiveLayouts();
+            if (window.mathVirtualKeyboard) {
+                try { window.mathVirtualKeyboard.visible = true; } catch (_) {}
+            }
         } else if (isMobileView()) {
             // Legacy mobile bottom-sheet path (kept as fallback).
             if (inlineEquationPalette.parentElement !== document.body) {
@@ -3191,10 +3200,152 @@ document.addEventListener("DOMContentLoaded", () => {
         if (field) setTimeout(() => field.focus(), 100);
     }
 
+    // Install (once) custom MathLive virtual-keyboard layouts that surface
+    // our advanced structures inside the same keyboard students already use
+    // for numbers/letters/backspace. Falls back gracefully if MathLive
+    // isn't ready yet.
+    let mlLayoutsInstalled = false;
+    function installMathLiveLayouts() {
+        if (mlLayoutsInstalled) return;
+        const mvk = window.mathVirtualKeyboard;
+        if (!mvk) return; // MathLive not loaded yet; user can retry on next open
+        try {
+            // Compact key spec helper
+            const k = (label, latex, opts = {}) => Object.assign(
+                { label, latex }, opts
+            );
+
+            const structuresLayout = {
+                label: 'Structures',
+                tooltip: 'Fractions, scripts, radicals, brackets',
+                rows: [
+                    [
+                        k('<span><span style="font-size:1.1em">a&frasl;b</span></span>', '\\frac{#@}{#?}'),
+                        k('a&frasl;b', '\\dfrac{#@}{#?}'),
+                        k('(<sup>n</sup><sub>k</sub>)', '\\binom{#@}{#?}'),
+                        k('x<sup>n</sup>', '#@^{#?}'),
+                        k('x<sub>n</sub>', '#@_{#?}'),
+                        k('x<sub>n</sub><sup>m</sup>', '#@_{#?}^{#?}'),
+                        k('&radic;&#9645;', '\\sqrt{#@}'),
+                        k('<sup>n</sup>&radic;', '\\sqrt[#?]{#@}'),
+                    ],
+                    [
+                        k('(&#9645;)', '\\left(#@\\right)'),
+                        k('[&#9645;]', '\\left[#@\\right]'),
+                        k('{&#9645;}', '\\left\\{#@\\right\\}'),
+                        k('|&#9645;|', '\\left|#@\\right|'),
+                        k('&lang;&rang;', '\\langle #@ \\rangle'),
+                        k('&lceil;&rceil;', '\\lceil #@ \\rceil'),
+                        k('&lfloor;&rfloor;', '\\lfloor #@ \\rfloor'),
+                        k('&#9645;&#773;', '\\overline{#@}'),
+                    ],
+                    [
+                        k('sin', '\\sin(#@)'),
+                        k('cos', '\\cos(#@)'),
+                        k('tan', '\\tan(#@)'),
+                        k('log', '\\log_{#?}(#@)'),
+                        k('ln', '\\ln(#@)'),
+                        k('lim', '\\lim_{#? \\to #?}'),
+                        k('&deg;', '^\\circ'),
+                        k('vec', '\\vec{#@}'),
+                    ],
+                    [
+                        k('[2&times;2]', '\\begin{pmatrix} #@ & #? \\\\ #? & #? \\end{pmatrix}'),
+                        k('[3&times;3]', '\\begin{pmatrix} #@ & #? & #? \\\\ #? & #? & #? \\\\ #? & #? & #? \\end{pmatrix}'),
+                        k('{cases}', '\\begin{cases} #@ \\\\ #? \\end{cases}'),
+                        k('aligned', '\\begin{aligned} #@ &= #? \\\\ &= #? \\end{aligned}'),
+                    ],
+                ],
+            };
+
+            const calcLayout = {
+                label: 'Calculus',
+                tooltip: 'Sums, integrals, derivatives, limits',
+                rows: [
+                    [
+                        k('&sum;', '\\sum_{#?}^{#?}'),
+                        k('&prod;', '\\prod_{#?}^{#?}'),
+                        k('&int;', '\\int #@ \\, d#?'),
+                        k('&int;<sub>a</sub><sup>b</sup>', '\\int_{#?}^{#?} #@ \\, d#?'),
+                        k('&#8748;', '\\iint'),
+                        k('&#8749;', '\\iiint'),
+                        k('&#8750;', '\\oint'),
+                        k('&#8899;', '\\bigcup_{#?}^{#?}'),
+                    ],
+                    [
+                        k('d&frasl;dx', '\\frac{d#?}{d#?}'),
+                        k('&part;&frasl;&part;x', '\\frac{\\partial #?}{\\partial #?}'),
+                        k('d&sup2;&frasl;dx&sup2;', '\\frac{d^{#?}#?}{d#?^{#?}}'),
+                        k('&nabla;', '\\nabla'),
+                        k('&part;', '\\partial'),
+                        k('&Delta;', '\\Delta'),
+                        k('&prime;', "'"),
+                        k('&Prime;', "''"),
+                    ],
+                    [
+                        k('lim', '\\lim_{#? \\to #?}'),
+                        k('lim &rarr; &infin;', '\\lim_{#? \\to \\infty}'),
+                        k('lim &rarr; 0&#8314;', '\\lim_{#? \\to 0^+}'),
+                        k('lim &rarr; 0&#8315;', '\\lim_{#? \\to 0^-}'),
+                        k('&infin;', '\\infty'),
+                    ],
+                ],
+            };
+
+            const setsLayout = {
+                label: 'Sets&Logic',
+                tooltip: 'Number sets, set relations, logic',
+                rows: [
+                    [
+                        k('&#8469;', '\\mathbb{N}'),
+                        k('&#8484;', '\\mathbb{Z}'),
+                        k('&#8474;', '\\mathbb{Q}'),
+                        k('&#8477;', '\\mathbb{R}'),
+                        k('&#8450;', '\\mathbb{C}'),
+                        k('&empty;', '\\emptyset'),
+                        k('&isin;', '\\in'),
+                        k('&notin;', '\\notin'),
+                    ],
+                    [
+                        k('&sub;', '\\subset'),
+                        k('&sube;', '\\subseteq'),
+                        k('&sup;', '\\supset'),
+                        k('&supe;', '\\supseteq'),
+                        k('&cup;', '\\cup'),
+                        k('&cap;', '\\cap'),
+                        k('&#8726;', '\\setminus'),
+                    ],
+                    [
+                        k('&forall;', '\\forall'),
+                        k('&exist;', '\\exists'),
+                        k('&not;', '\\neg'),
+                        k('&and;', '\\land'),
+                        k('&or;', '\\lor'),
+                        k('&rArr;', '\\Rightarrow'),
+                        k('&hArr;', '\\Leftrightarrow'),
+                        k('&there4;', '\\therefore'),
+                    ],
+                ],
+            };
+
+            // Append our custom layouts to MathLive's built-in ones so
+            // students still get numeric / symbols / alphabetic for free.
+            mvk.layouts = ['numeric', 'symbols', 'alphabetic',
+                           structuresLayout, calcLayout, setsLayout];
+            mlLayoutsInstalled = true;
+        } catch (err) {
+            console.warn('[EquationEditor] Custom MathLive layouts failed to install:', err);
+        }
+    }
+
     function closeEquationPalette() {
         if (inlineEquationPalette) inlineEquationPalette.style.display = 'none';
         if (eqBackdrop && eqBackdrop.parentNode) {
             eqBackdrop.parentNode.removeChild(eqBackdrop);
+        }
+        // Hide MathLive's virtual keyboard (it was opened by fullscreen mode)
+        if (window.mathVirtualKeyboard) {
+            try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
         }
         // Tear down fullscreen state on close
         if (inlineEquationPalette && inlineEquationPalette.classList.contains('eq-fullscreen')) {
@@ -3203,6 +3354,15 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.remove('eq-fullscreen-active');
             const ctxStrip = document.getElementById('eq-context-strip');
             if (ctxStrip) ctxStrip.classList.remove('expanded');
+            // Restore manual keyboard policy so MathLive's KB doesn't pop up
+            // elsewhere on the page (e.g. inline equation boxes in chat).
+            inlineEquationPalette.querySelectorAll('math-field').forEach(mf => {
+                mf.setAttribute('math-virtual-keyboard-policy', 'manual');
+                mf.setAttribute('virtual-keyboard-mode', 'off');
+                if ('mathVirtualKeyboardPolicy' in mf) {
+                    mf.mathVirtualKeyboardPolicy = 'manual';
+                }
+            });
         }
         // Restore palette to its original position in the DOM
         if (inlineEquationPalette && paletteOriginalParent && inlineEquationPalette.parentElement === document.body) {
