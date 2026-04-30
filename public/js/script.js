@@ -2955,6 +2955,120 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ─── Auto-math conversion in chat input ─────────────────────────
+    // As the student types, recognise three common patterns and replace
+    // them with rendered math the moment they hit a separator (space,
+    // punctuation, paren). Lets you write "1/2" or "x^2" or "v_max"
+    // without ever opening the equation editor.
+    if (userInput) {
+        const TRIGGER_CHARS = new Set([' ', ' ', ',', '.', '=', '+', '-', '*', '(', ')', '\n']);
+
+        // Returns { start, latex } if the tail of `text` matches a math
+        // pattern with a clean word boundary before it, else null.
+        function matchTrailingMath(text) {
+            const checkBoundary = (matchStart) => {
+                if (matchStart === 0) return true;
+                const prev = text.charAt(matchStart - 1);
+                return !/[\w.]/.test(prev);
+            };
+            const tryPattern = (re, latexFn) => {
+                const m = text.match(re);
+                if (!m) return null;
+                const start = text.length - m[0].length;
+                if (!checkBoundary(start)) return null;
+                return { start, latex: latexFn(m) };
+            };
+
+            return (
+                // Braced super/subscript: x^{abc}, x_{max}
+                tryPattern(/([a-zA-Z]\w*)\^\{([^}]+)\}$/, m => `${m[1]}^{${m[2]}}`) ||
+                tryPattern(/([a-zA-Z]\w*)_\{([^}]+)\}$/, m => `${m[1]}_{${m[2]}}`) ||
+                // Simple super/subscript: x^2, x^n, a^-1, x_0, v_max
+                tryPattern(/([a-zA-Z]\w?)\^(-?\w)$/, m => `${m[1]}^{${m[2]}}`) ||
+                tryPattern(/([a-zA-Z]\w?)_(\w+)$/,    m => `${m[1]}_{${m[2]}}`) ||
+                // Fraction: 1/2, 12/34
+                tryPattern(/(\d+)\/(\d+)$/, m => `\\frac{${m[1]}}{${m[2]}}`)
+            );
+        }
+
+        function applyAutoMath(textNode, conversion, cursorOffset) {
+            const fullText = textNode.textContent;
+            const matchEnd = cursorOffset - 1; // index of the trigger char
+            const before = fullText.substring(0, conversion.start);
+            const triggerAndAfter = fullText.substring(matchEnd);
+
+            const parent = textNode.parentNode;
+            const beforeNode = document.createTextNode(before);
+            const mathSpan = document.createElement('span');
+            mathSpan.className = 'math-container';
+            mathSpan.setAttribute('data-latex', conversion.latex);
+            mathSpan.textContent = `\\(${conversion.latex}\\)`;
+            const afterNode = document.createTextNode(triggerAndAfter);
+
+            parent.insertBefore(beforeNode, textNode);
+            parent.insertBefore(mathSpan, textNode);
+            parent.insertBefore(afterNode, textNode);
+            parent.removeChild(textNode);
+
+            if (typeof renderMathInElement === 'function') {
+                try { renderMathInElement(mathSpan); } catch (_) {}
+            }
+
+            // Restore cursor just after the trigger character
+            const sel = window.getSelection();
+            if (sel) {
+                const newRange = document.createRange();
+                const targetOffset = Math.min(1, afterNode.textContent.length);
+                newRange.setStart(afterNode, targetOffset);
+                newRange.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+            }
+        }
+
+        function isInsideMathBoundary(node) {
+            let n = node && node.parentElement;
+            while (n && n !== userInput) {
+                const cls = n.classList;
+                if (cls && (cls.contains('math-container') ||
+                            cls.contains('math-block-container') ||
+                            cls.contains('inline-eq-box'))) {
+                    return true;
+                }
+                n = n.parentElement;
+            }
+            return false;
+        }
+
+        userInput.addEventListener('input', (e) => {
+            if (e.isComposing) return;
+            if (e.inputType && e.inputType !== 'insertText') return;
+
+            const sel = window.getSelection();
+            if (!sel || sel.rangeCount === 0) return;
+            const range = sel.getRangeAt(0);
+            if (!range.collapsed) return;
+
+            const node = range.startContainer;
+            if (!node || node.nodeType !== Node.TEXT_NODE) return;
+            if (!userInput.contains(node)) return;
+            if (isInsideMathBoundary(node)) return;
+
+            const offset = range.startOffset;
+            if (offset === 0) return;
+
+            const text = node.textContent;
+            const lastChar = text.charAt(offset - 1);
+            if (!TRIGGER_CHARS.has(lastChar)) return;
+
+            const beforeTrigger = text.substring(0, offset - 1);
+            const conversion = matchTrailingMath(beforeTrigger);
+            if (!conversion) return;
+
+            applyAutoMath(node, conversion, offset);
+        });
+    }
+
     // Audio control event listeners
     if (stopAudioBtn) {
         stopAudioBtn.addEventListener('click', stopAudio);
