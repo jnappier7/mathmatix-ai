@@ -2956,12 +2956,74 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ─── Auto-math conversion in chat input ─────────────────────────
-    // As the student types, recognise three common patterns and replace
-    // them with rendered math the moment they hit a separator (space,
-    // punctuation, paren). Lets you write "1/2" or "x^2" or "v_max"
-    // without ever opening the equation editor.
+    // As the student types, recognise common patterns and replace them
+    // with rendered math the moment they hit a separator. Coverage:
+    //   1/2, 12/34                  →  fractions
+    //   x^2, x^n, x^-3, x^{abc}     →  superscript
+    //   x_0, v_max, v_{max}         →  subscript
+    //   alpha, \alpha, Omega, ...   →  Greek letters (bare or LaTeX form)
+    //   pi, infinity, inf, ...      →  named constants
+    //   sqrt(x), abs(x), floor(x)   →  named functions
+    //   <=, >=, !=, ~=, ->, =>, ... →  multi-char operators
     if (userInput) {
         const TRIGGER_CHARS = new Set([' ', ' ', ',', '.', '=', '+', '-', '*', '(', ')', '\n']);
+
+        // Lookup table of named symbols (Greek letters + constants).
+        // Backslash-prefixed input ("\alpha") matches the same entries.
+        const NAMED_SYMBOLS = {
+            // Greek lowercase
+            alpha: '\\alpha', beta: '\\beta', gamma: '\\gamma',
+            delta: '\\delta', epsilon: '\\epsilon', varepsilon: '\\varepsilon',
+            zeta: '\\zeta', eta: '\\eta', theta: '\\theta', vartheta: '\\vartheta',
+            iota: '\\iota', kappa: '\\kappa', lambda: '\\lambda',
+            mu: '\\mu', nu: '\\nu', xi: '\\xi', omicron: 'o',
+            pi: '\\pi', rho: '\\rho', sigma: '\\sigma', tau: '\\tau',
+            upsilon: '\\upsilon', phi: '\\phi', varphi: '\\varphi',
+            chi: '\\chi', psi: '\\psi', omega: '\\omega',
+            // Greek uppercase (those with unique LaTeX commands)
+            Gamma: '\\Gamma', Delta: '\\Delta', Theta: '\\Theta',
+            Lambda: '\\Lambda', Xi: '\\Xi', Pi: '\\Pi',
+            Sigma: '\\Sigma', Upsilon: '\\Upsilon', Phi: '\\Phi',
+            Psi: '\\Psi', Omega: '\\Omega',
+            // Constants & named symbols
+            infinity: '\\infty', inf: '\\infty',
+            emptyset: '\\emptyset',
+            naturals: '\\mathbb{N}', integers: '\\mathbb{Z}',
+            rationals: '\\mathbb{Q}', reals: '\\mathbb{R}',
+            complexes: '\\mathbb{C}',
+            nabla: '\\nabla', partial: '\\partial',
+            forall: '\\forall', exists: '\\exists',
+            ldots: '\\ldots', cdots: '\\cdots',
+        };
+
+        // Multi-char operators. Listed longest-first so "<=>" beats "=>".
+        const OPERATORS = [
+            ['<=>', '\\Leftrightarrow'],
+            ['<->', '\\leftrightarrow'],
+            ['=>',  '\\Rightarrow'],
+            ['->',  '\\to'],
+            ['<=',  '\\leq'],
+            ['>=',  '\\geq'],
+            ['!=',  '\\neq'],
+            ['~=',  '\\approx'],
+            ['<<',  '\\ll'],
+            ['>>',  '\\gg'],
+            ['+-',  '\\pm'],
+            ['-+',  '\\mp'],
+            ['...', '\\ldots'],
+        ];
+
+        // Named functions: name(arg) → LaTeX template.
+        const FUNCTIONS = [
+            ['sqrt',  arg => `\\sqrt{${arg}}`],
+            ['cbrt',  arg => `\\sqrt[3]{${arg}}`],
+            ['abs',   arg => `\\left|${arg}\\right|`],
+            ['floor', arg => `\\lfloor ${arg} \\rfloor`],
+            ['ceil',  arg => `\\lceil ${arg} \\rceil`],
+            ['vec',   arg => `\\vec{${arg}}`],
+            ['hat',   arg => `\\hat{${arg}}`],
+            ['bar',   arg => `\\overline{${arg}}`],
+        ];
 
         // Returns { start, latex } if the tail of `text` matches a math
         // pattern with a clean word boundary before it, else null.
@@ -2969,7 +3031,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkBoundary = (matchStart) => {
                 if (matchStart === 0) return true;
                 const prev = text.charAt(matchStart - 1);
-                return !/[\w.]/.test(prev);
+                return !/[\w.\)\]\}]/.test(prev);
             };
             const tryPattern = (re, latexFn) => {
                 const m = text.match(re);
@@ -2979,16 +3041,59 @@ document.addEventListener("DOMContentLoaded", () => {
                 return { start, latex: latexFn(m) };
             };
 
-            return (
-                // Braced super/subscript: x^{abc}, x_{max}
-                tryPattern(/([a-zA-Z]\w*)\^\{([^}]+)\}$/, m => `${m[1]}^{${m[2]}}`) ||
-                tryPattern(/([a-zA-Z]\w*)_\{([^}]+)\}$/, m => `${m[1]}_{${m[2]}}`) ||
-                // Simple super/subscript: x^2, x^n, a^-1, x_0, v_max
-                tryPattern(/([a-zA-Z]\w?)\^(-?\w)$/, m => `${m[1]}^{${m[2]}}`) ||
-                tryPattern(/([a-zA-Z]\w?)_(\w+)$/,    m => `${m[1]}_{${m[2]}}`) ||
-                // Fraction: 1/2, 12/34
-                tryPattern(/(\d+)\/(\d+)$/, m => `\\frac{${m[1]}}{${m[2]}}`)
-            );
+            // 1. Multi-char operators at end (no boundary check — they're
+            //    unambiguous and may follow any character, e.g. x<=5).
+            for (const [op, latex] of OPERATORS) {
+                if (text.endsWith(op)) {
+                    return { start: text.length - op.length, latex };
+                }
+            }
+
+            // 2. Named functions with parens: sqrt(x), abs(2x+1)
+            for (const [name, build] of FUNCTIONS) {
+                const re = new RegExp('(^|[^\\w\\\\])' + name + '\\(([^()]+)\\)$');
+                const m = text.match(re);
+                if (m) {
+                    const matchLen = m[0].length - m[1].length;
+                    const start = text.length - matchLen;
+                    return { start, latex: build(m[2]) };
+                }
+            }
+
+            // 3. Braced super/subscript: x^{abc}, x_{max}
+            const sup = tryPattern(/([a-zA-Z]\w*)\^\{([^}]+)\}$/,
+                m => `${m[1]}^{${m[2]}}`);
+            if (sup) return sup;
+            const sub = tryPattern(/([a-zA-Z]\w*)_\{([^}]+)\}$/,
+                m => `${m[1]}_{${m[2]}}`);
+            if (sub) return sub;
+
+            // 4. Simple super/subscript: x^2, x^n, a^-1, x_0, v_max
+            const supSimple = tryPattern(/([a-zA-Z]\w?)\^(-?\w)$/,
+                m => `${m[1]}^{${m[2]}}`);
+            if (supSimple) return supSimple;
+            const subSimple = tryPattern(/([a-zA-Z]\w?)_(\w+)$/,
+                m => `${m[1]}_{${m[2]}}`);
+            if (subSimple) return subSimple;
+
+            // 5. Fraction: 1/2, 12/34
+            const frac = tryPattern(/(\d+)\/(\d+)$/,
+                m => `\\frac{${m[1]}}{${m[2]}}`);
+            if (frac) return frac;
+
+            // 6. Named symbols (Greek + constants), with optional leading
+            //    backslash for LaTeX-style entry (\alpha, \pi, ...).
+            const nameMatch = text.match(/(\\?)([A-Za-z]+)$/);
+            if (nameMatch) {
+                const full = nameMatch[0];
+                const word = nameMatch[2];
+                const start = text.length - full.length;
+                if (checkBoundary(start) && NAMED_SYMBOLS[word]) {
+                    return { start, latex: NAMED_SYMBOLS[word] };
+                }
+            }
+
+            return null;
         }
 
         function applyAutoMath(textNode, conversion, cursorOffset) {
