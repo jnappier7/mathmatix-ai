@@ -2925,12 +2925,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ─── Auto-math conversion in chat input ─────────────────────────
-    // As the student types, recognise three common patterns and replace
-    // them with rendered math the moment they hit a separator (space,
-    // punctuation, paren). Lets you write "1/2" or "x^2" or "v_max"
-    // without ever opening the equation editor.
+    // As the student types, recognise common patterns and replace them
+    // with rendered math the moment they hit a separator. Coverage is
+    // intentionally conservative to keep false-positives rare:
+    //   1/2, 12/34                  →  fractions
+    //   x^2, x^n, x^-3, x^{abc}     →  superscript
+    //   x_0, v_max, v_{max}         →  subscript
+    //   pi, infinity, inf           →  named constants (bare ok — unambiguous)
+    //   \alpha, \beta, ... \Omega   →  Greek letters (backslash required so
+    //                                  bare words like "delta force" or
+    //                                  "alpha male" stay as plain text)
     if (userInput) {
         const TRIGGER_CHARS = new Set([' ', ' ', ',', '.', '=', '+', '-', '*', '(', ')', '\n']);
+
+        // Bare words that auto-convert without a backslash. Kept tight
+        // so that everyday English doesn't trip conversion: "pi" almost
+        // always means π in a math chat, "infinity" / "inf" likewise.
+        const BARE_NAMES = {
+            pi: '\\pi',
+            infinity: '\\infty',
+            inf: '\\infty',
+        };
+
+        // Names that ONLY convert when typed with a leading backslash.
+        // Covers the full Greek alphabet so "\alpha" → α works, but a
+        // bare "alpha" (in "alpha male", "delta force", etc.) stays as
+        // plain text.
+        const BACKSLASH_NAMES = {
+            // Greek lowercase
+            alpha: '\\alpha', beta: '\\beta', gamma: '\\gamma',
+            delta: '\\delta', epsilon: '\\epsilon', varepsilon: '\\varepsilon',
+            zeta: '\\zeta', eta: '\\eta', theta: '\\theta', vartheta: '\\vartheta',
+            iota: '\\iota', kappa: '\\kappa', lambda: '\\lambda',
+            mu: '\\mu', nu: '\\nu', xi: '\\xi',
+            rho: '\\rho', sigma: '\\sigma', tau: '\\tau',
+            upsilon: '\\upsilon', phi: '\\phi', varphi: '\\varphi',
+            chi: '\\chi', psi: '\\psi', omega: '\\omega',
+            // Greek uppercase (those with unique LaTeX commands)
+            Gamma: '\\Gamma', Delta: '\\Delta', Theta: '\\Theta',
+            Lambda: '\\Lambda', Xi: '\\Xi', Pi: '\\Pi',
+            Sigma: '\\Sigma', Upsilon: '\\Upsilon', Phi: '\\Phi',
+            Psi: '\\Psi', Omega: '\\Omega',
+        };
 
         // Returns { start, latex } if the tail of `text` matches a math
         // pattern with a clean word boundary before it, else null.
@@ -2938,7 +2974,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkBoundary = (matchStart) => {
                 if (matchStart === 0) return true;
                 const prev = text.charAt(matchStart - 1);
-                return !/[\w.]/.test(prev);
+                return !/[\w.\)\]\}]/.test(prev);
             };
             const tryPattern = (re, latexFn) => {
                 const m = text.match(re);
@@ -2948,16 +2984,47 @@ document.addEventListener("DOMContentLoaded", () => {
                 return { start, latex: latexFn(m) };
             };
 
-            return (
-                // Braced super/subscript: x^{abc}, x_{max}
-                tryPattern(/([a-zA-Z]\w*)\^\{([^}]+)\}$/, m => `${m[1]}^{${m[2]}}`) ||
-                tryPattern(/([a-zA-Z]\w*)_\{([^}]+)\}$/, m => `${m[1]}_{${m[2]}}`) ||
-                // Simple super/subscript: x^2, x^n, a^-1, x_0, v_max
-                tryPattern(/([a-zA-Z]\w?)\^(-?\w)$/, m => `${m[1]}^{${m[2]}}`) ||
-                tryPattern(/([a-zA-Z]\w?)_(\w+)$/,    m => `${m[1]}_{${m[2]}}`) ||
-                // Fraction: 1/2, 12/34
-                tryPattern(/(\d+)\/(\d+)$/, m => `\\frac{${m[1]}}{${m[2]}}`)
-            );
+            // 1. Braced super/subscript: x^{abc}, x_{max}
+            const sup = tryPattern(/([a-zA-Z]\w*)\^\{([^}]+)\}$/,
+                m => `${m[1]}^{${m[2]}}`);
+            if (sup) return sup;
+            const sub = tryPattern(/([a-zA-Z]\w*)_\{([^}]+)\}$/,
+                m => `${m[1]}_{${m[2]}}`);
+            if (sub) return sub;
+
+            // 2. Simple super/subscript: x^2, x^n, a^-1, x_0, v_max
+            const supSimple = tryPattern(/([a-zA-Z]\w?)\^(-?\w)$/,
+                m => `${m[1]}^{${m[2]}}`);
+            if (supSimple) return supSimple;
+            const subSimple = tryPattern(/([a-zA-Z]\w?)_(\w+)$/,
+                m => `${m[1]}_{${m[2]}}`);
+            if (subSimple) return subSimple;
+
+            // 3. Fraction: 1/2, 12/34
+            const frac = tryPattern(/(\d+)\/(\d+)$/,
+                m => `\\frac{${m[1]}}{${m[2]}}`);
+            if (frac) return frac;
+
+            // 4. Named symbols. Bare words (BARE_NAMES) match without a
+            //    backslash; the full Greek alphabet (BACKSLASH_NAMES)
+            //    requires a leading "\" to avoid colliding with English.
+            const nameMatch = text.match(/(\\?)([A-Za-z]+)$/);
+            if (nameMatch) {
+                const slash = nameMatch[1];
+                const word = nameMatch[2];
+                const start = text.length - nameMatch[0].length;
+                if (checkBoundary(start)) {
+                    if (slash === '\\') {
+                        const latex = BARE_NAMES[word] || BACKSLASH_NAMES[word];
+                        if (latex) return { start, latex };
+                    } else {
+                        const latex = BARE_NAMES[word];
+                        if (latex) return { start, latex };
+                    }
+                }
+            }
+
+            return null;
         }
 
         function applyAutoMath(textNode, conversion, cursorOffset) {
