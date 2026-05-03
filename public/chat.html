@@ -818,6 +818,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- iMessage-style compose bar -->
     <div class="imessage-compose-bar">
+      <!-- Mobile math symbol strip — toggled by the √x button on phones.
+           Each button inserts a Unicode/LaTeX snippet directly into the
+           chat input; the auto-converter renders fractions/powers/Greek
+           the student types via the iOS native keyboard. -->
+      <div id="mobile-math-strip" class="mobile-math-strip" style="display:none;">
+        <button class="mms-key" data-insert="π" title="Pi">π</button>
+        <button class="mms-key" data-insert="α" title="Alpha">α</button>
+        <button class="mms-key" data-insert="β" title="Beta">β</button>
+        <button class="mms-key" data-insert="θ" title="Theta">θ</button>
+        <button class="mms-key" data-insert="λ" title="Lambda">λ</button>
+        <button class="mms-key" data-insert="σ" title="Sigma">σ</button>
+        <button class="mms-key" data-insert="Δ" title="Delta">Δ</button>
+        <button class="mms-key" data-insert="Σ" title="Sigma (sum)">Σ</button>
+        <button class="mms-key" data-insert="∞" title="Infinity">∞</button>
+        <button class="mms-key" data-insert="√" title="Square root">√</button>
+        <button class="mms-key" data-insert="∫" title="Integral">∫</button>
+        <button class="mms-key" data-insert="∂" title="Partial">∂</button>
+        <button class="mms-key" data-insert="±" title="Plus-minus">±</button>
+        <button class="mms-key" data-insert="≤" title="Less than or equal">≤</button>
+        <button class="mms-key" data-insert="≥" title="Greater than or equal">≥</button>
+        <button class="mms-key" data-insert="≠" title="Not equal">≠</button>
+        <button class="mms-key" data-insert="≈" title="Approximately">≈</button>
+        <button class="mms-key" data-insert="°" title="Degrees">°</button>
+        <button class="mms-key" data-insert="·" title="Multiply (dot)">·</button>
+        <button class="mms-key" data-insert="÷" title="Divide">÷</button>
+      </div>
       <div class="imessage-tool-btns">
         <button id="insert-equation-btn" title="Insert Equation" aria-label="Insert equation" class="imessage-tool-btn">
           <i class="fas fa-square-root-variable"></i>
