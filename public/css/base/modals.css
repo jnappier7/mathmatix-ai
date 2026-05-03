@@ -821,6 +821,60 @@ body.eq-fullscreen-active {
     touch-action: none;
 }
 
+/* ─── Mobile math symbol strip ─────────────────────────────────────
+ * Sits above the compose bar on mobile when the √x button is toggled.
+ * iOS native keyboard handles digits/letters/operators; this strip
+ * adds the math-only characters that aren't on a standard keyboard.
+ * Tapping a button inserts the character at the cursor position
+ * inside the chat input. Auto-math conversion runs on space/Send
+ * to render fractions, powers, and Greek typed via the keyboard.
+ * --------------------------------------------------------------- */
+.mobile-math-strip {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--clr-bg-light, #fff);
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    -webkit-tap-highlight-color: transparent;
+}
+.mobile-math-strip::-webkit-scrollbar {
+    display: none;
+}
+.mms-key {
+    flex: 0 0 auto;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 12px;
+    background: #f8f9fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1.25em;
+    font-family: 'KaTeX_Main', 'Cambria Math', 'Latin Modern Math', 'Georgia', serif;
+    color: #1f2937;
+    cursor: pointer;
+    transition: transform 0.05s ease, background 0.05s ease, color 0.05s ease;
+}
+.mms-key:active {
+    transform: scale(0.92);
+    background: #12B3B3;
+    color: white;
+    border-color: #12B3B3;
+}
+[data-theme="dark"] .mobile-math-strip {
+    background: #1f2937;
+    border-color: #374151;
+}
+[data-theme="dark"] .mms-key {
+    background: #111827;
+    border-color: #374151;
+    color: #e5e7eb;
+}
+
 .btn-sm {
     padding: 6px 12px;
     font-size: 0.85em;

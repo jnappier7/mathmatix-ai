@@ -1821,6 +1821,68 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Send a message - uses the message queue to handle back-to-back messages gracefully
      */
+    // Final-pass auto-math conversion that runs on send. Catches the
+    // case where a student types "X^2" and hits Send without a trailing
+    // separator — the live converter wouldn't have fired. Mirrors the
+    // BARE_NAMES / BACKSLASH_NAMES + super/sub/fraction patterns used
+    // in the live converter; only operates on text outside existing
+    // \(...\) math blocks so we never double-wrap.
+    function convertTrailingMathOnSend(s) {
+        if (!s) return s;
+        // Skip if already inside any LaTeX delimiters somewhere — be safe
+        // and only process tokens at end of segments delimited by spaces
+        // or punctuation.
+        const BARE = { pi: '\\pi', infinity: '\\infty', inf: '\\infty' };
+        const BS = {
+            alpha: '\\alpha', beta: '\\beta', gamma: '\\gamma',
+            delta: '\\delta', epsilon: '\\epsilon', zeta: '\\zeta',
+            eta: '\\eta', theta: '\\theta', iota: '\\iota', kappa: '\\kappa',
+            lambda: '\\lambda', mu: '\\mu', nu: '\\nu', xi: '\\xi',
+            rho: '\\rho', sigma: '\\sigma', tau: '\\tau', upsilon: '\\upsilon',
+            phi: '\\phi', chi: '\\chi', psi: '\\psi', omega: '\\omega',
+            Gamma: '\\Gamma', Delta: '\\Delta', Theta: '\\Theta',
+            Lambda: '\\Lambda', Xi: '\\Xi', Pi: '\\Pi', Sigma: '\\Sigma',
+            Upsilon: '\\Upsilon', Phi: '\\Phi', Psi: '\\Psi', Omega: '\\Omega',
+        };
+        // Walk segments split by whitespace; convert each segment if it
+        // matches a math pattern. Existing \(...\) blocks pass through
+        // because they don't match the trailing patterns.
+        return s.split(/(\s+)/).map(seg => {
+            if (!seg.trim()) return seg;
+            // Skip if this segment already contains LaTeX delimiters
+            if (/\\\(|\\\)|\\\[|\\\]/.test(seg)) return seg;
+
+            // Try patterns in order — match the WHOLE segment for safety
+            let m;
+            // Braced super/subscript: x^{abc}, x_{max}
+            m = seg.match(/^([a-zA-Z]\w*)\^\{([^}]+)\}$/);
+            if (m) return `\\(${m[1]}^{${m[2]}}\\)`;
+            m = seg.match(/^([a-zA-Z]\w*)_\{([^}]+)\}$/);
+            if (m) return `\\(${m[1]}_{${m[2]}}\\)`;
+            // Simple super/subscript: x^2, x^n, a^-1, x_0, v_max
+            m = seg.match(/^([a-zA-Z]\w?)\^(-?\w)$/);
+            if (m) return `\\(${m[1]}^{${m[2]}}\\)`;
+            m = seg.match(/^([a-zA-Z]\w?)_(\w+)$/);
+            if (m) return `\\(${m[1]}_{${m[2]}}\\)`;
+            // Fraction: 1/2, 12/34
+            m = seg.match(/^(\d+)\/(\d+)$/);
+            if (m) return `\\(\\frac{${m[1]}}{${m[2]}}\\)`;
+            // Named symbols (bare or backslash form)
+            m = seg.match(/^(\\?)([A-Za-z]+)$/);
+            if (m) {
+                const slash = m[1], word = m[2];
+                if (slash === '\\') {
+                    const tex = BARE[word] || BS[word];
+                    if (tex) return `\\(${tex}\\)`;
+                } else {
+                    const tex = BARE[word];
+                    if (tex) return `\\(${tex}\\)`;
+                }
+            }
+            return seg;
+        }).join('');
+    }
+
     function sendMessage() {
         // Seal any active inline equation boxes so their data-latex is set
         if (window.InlineEquationBox) {
@@ -1836,6 +1898,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         let messageText = extractMessageText(userInput).trim();
+        // Final-pass auto-math conversion: catch trailing math patterns
+        // that the student typed without a separator (e.g. "X^2" + Send).
+        messageText = convertTrailingMathOnSend(messageText);
 
         // Append math-field LaTeX (wrapped for rendering)
         if (mathLatex) {
@@ -1873,6 +1938,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (filesToSend.length > 0) {
             console.log(`[Frontend] Queuing ${filesToSend.length} file(s)`);
             clearAllFiles();
+        }
+
+        // Hide the mobile math symbol strip if it was open
+        const _strip = document.getElementById('mobile-math-strip');
+        if (_strip && _strip.style.display !== 'none') {
+            _strip.style.display = 'none';
+            const _btn = document.getElementById('insert-equation-btn');
+            if (_btn) _btn.classList.remove('mk-active');
         }
 
         // Queue the message for processing
@@ -3843,6 +3916,61 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // ─── Mobile math symbol strip: insert at cursor on tap ──────────
+    const mobileMathStrip = document.getElementById('mobile-math-strip');
+    if (mobileMathStrip && userInput) {
+        let stripSavedRange = null;
+        // Snapshot cursor position before the button steals focus (mousedown
+        // fires before focus moves on touch devices too).
+        mobileMathStrip.addEventListener('mousedown', (e) => {
+            if (!e.target.closest('.mms-key')) return;
+            e.preventDefault();
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0 && userInput.contains(sel.anchorNode)) {
+                stripSavedRange = sel.getRangeAt(0).cloneRange();
+            }
+        });
+        mobileMathStrip.addEventListener('touchstart', (e) => {
+            if (!e.target.closest('.mms-key')) return;
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0 && userInput.contains(sel.anchorNode)) {
+                stripSavedRange = sel.getRangeAt(0).cloneRange();
+            }
+        }, { passive: true });
+
+        mobileMathStrip.addEventListener('click', (e) => {
+            const btn = e.target.closest('.mms-key');
+            if (!btn) return;
+            const text = btn.getAttribute('data-insert');
+            if (!text) return;
+
+            userInput.focus();
+            // Restore the saved cursor position
+            if (stripSavedRange) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(stripSavedRange);
+                stripSavedRange = null;
+            }
+            // Insert the character at cursor via Selection API
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode(text);
+                range.insertNode(node);
+                range.setStartAfter(node);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else {
+                userInput.appendChild(document.createTextNode(text));
+            }
+            // Trigger input event so suggestion-hide etc. fire
+            userInput.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text }));
+        });
+    }
+
     // Equation Modal with Draggable Functionality (kept for legacy support)
     let isDraggingModal = false;
     let modalOffsetX = 0;
@@ -4138,32 +4266,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 savedRange = null;
             }
 
-            if (!inlineEquationPalette) return;
-
             const isMobile = window.innerWidth <= 768;
-            const isOpen = inlineEquationPalette.style.display === 'block';
 
+            // Mobile: toggle the math symbol strip above the compose bar.
+            // The iOS native keyboard handles all the typing — the strip
+            // just adds math symbols that aren't on a standard keyboard.
+            if (isMobile) {
+                const strip = document.getElementById('mobile-math-strip');
+                if (!strip) return;
+                const isOpen = strip.style.display !== 'none';
+                strip.style.display = isOpen ? 'none' : 'flex';
+                openEquationBtn.classList.toggle('mk-active', !isOpen);
+                if (!isOpen && userInput) userInput.focus();
+                return;
+            }
+
+            // Desktop: open the docked MS Word-style palette.
+            if (!inlineEquationPalette) return;
+            const isOpen = inlineEquationPalette.style.display === 'block';
             if (isOpen) {
                 closeEquationPalette();
                 openEquationBtn.classList.remove('mk-active');
                 return;
             }
-
-            // Mobile: fullscreen mode with sticky problem context strip.
-            // Desktop: docked above compose bar (default).
-            if (isMobile) {
-                inlineEquationPalette.classList.remove('eq-docked', 'eq-floating');
-                inlineEquationPalette.classList.add('eq-fullscreen');
-                document.body.classList.add('eq-fullscreen-active');
-                populateEqContextStrip();
-                // Suppress the mobile EQ panel — fullscreen IS the keyboard
-                if (window.MathmatixKeyboard && window.MathmatixKeyboard.hideEqPanel) {
-                    window.MathmatixKeyboard.hideEqPanel();
-                }
-            } else {
-                inlineEquationPalette.classList.remove('eq-fullscreen', 'eq-floating');
-                inlineEquationPalette.classList.add('eq-docked');
-            }
+            inlineEquationPalette.classList.remove('eq-fullscreen', 'eq-floating');
+            inlineEquationPalette.classList.add('eq-docked');
             openEquationPalette();
             openEquationBtn.classList.add('mk-active');
         }, true);
