@@ -488,6 +488,87 @@ describe('Tutor Validation: False Rejection Guard (Full Pipeline)', () => {
 });
 
 // ============================================================================
+// FULL PIPELINE: SELF-CONTRADICTION GUARD
+// ============================================================================
+
+describe('Tutor Validation: Self-Contradiction Guard (Full Pipeline)', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    __mainTextQueue.length = 0;
+    __installMockRouter();
+  });
+
+  // Reproduces the probability-quiz transcript: the deterministic solver
+  // can't verify combinatorics, the LLM verifier returns low confidence
+  // (so action stays unverifiable and llmVerdict.isCorrect is null), and
+  // the LLM's reply opens with "Close, but not quite!" yet ends with
+  // "So you were right!". The self-contradiction guard must catch this on
+  // the response text alone.
+  test('rejection-then-confirmation in same reply triggers regeneration', async () => {
+    const user = mockUser();
+    const conversation = mockConversation([
+      { role: 'assistant', content: 'If you roll two six-sided dice, what is the probability of rolling a total of 7?' },
+      { role: 'user', content: '1/6' },
+    ]);
+
+    // Original buggy reply: opens with rejection, computes the math,
+    // then admits the student was right.
+    mockLLMResponse(
+      "Close, but not quite! The probability of rolling a total of 7 with two six-sided dice is actually a bit different. " +
+      "To get a total of 7, the possible combinations are (1,6), (2,5), (3,4), (4,3), (5,2), (6,1) — 6 favorable outcomes. " +
+      "Since there are 6x6 = 36 possible outcomes, the probability is 6/36 = 1/6. " +
+      "So you were right! You just caught yourself in a little trap there!"
+    );
+    // Regeneration call returns a clean confirmation.
+    mockLLMResponse("That's it — 1/6. Six combinations land on a sum of 7 out of 36 total rolls, so 6/36 = 1/6. Nice.");
+
+    const result = await runPipeline('1/6', buildCtx(user, conversation));
+
+    expect(result._pipeline.flags).toContain('self_contradiction_detected');
+    expect(result._pipeline.flags).toContain('self_contradiction_regenerated');
+    expect(result.text).not.toMatch(/close,?\s*but/i);
+    expect(result.text).not.toMatch(/not quite/i);
+    expect(result.text).not.toMatch(/caught yourself/i);
+  });
+
+  // A reply that opens with rejection but never confirms must NOT regenerate
+  // — the rejection might be legitimate.
+  test('rejection without later confirmation does NOT trigger guard', async () => {
+    const user = mockUser();
+    const conversation = mockConversation([
+      { role: 'assistant', content: 'If you roll two six-sided dice, what is the probability of rolling a total of 7?' },
+      { role: 'user', content: '1/12' },
+    ]);
+
+    mockLLMResponse(
+      "Not quite. Think about how many ways two dice can land — and how many of those add to 7. " +
+      "Want to list out the pairs?"
+    );
+
+    const result = await runPipeline('1/12', buildCtx(user, conversation));
+
+    expect(result._pipeline.flags).not.toContain('self_contradiction_detected');
+  });
+
+  // A clean confirmation (no rejection at the start) must pass through
+  // untouched — the rejection regex is anchored to the opening, so this
+  // is the existing-behavior baseline.
+  test('clean confirmation passes through untouched', async () => {
+    const user = mockUser();
+    const conversation = mockConversation([
+      { role: 'assistant', content: 'If you roll two six-sided dice, what is the probability of rolling a total of 7?' },
+      { role: 'user', content: '1/6' },
+    ]);
+
+    mockLLMResponse("That's it — 1/6. Six pairs sum to 7 out of 36 rolls.");
+
+    const result = await runPipeline('1/6', buildCtx(user, conversation));
+
+    expect(result._pipeline.flags).not.toContain('self_contradiction_detected');
+  });
+});
+
+// ============================================================================
 // ANSWER EXTRACTION EDGE CASES
 // ============================================================================
 
