@@ -3,6 +3,7 @@
 
 const axios = require('axios');
 const { retryWithExponentialBackoff } = require('./openaiClient');
+const ttsStream = require('./ttsStream');
 
 const TTS_PROVIDER = 'cartesia';
 
@@ -207,6 +208,17 @@ async function testConnection(voiceId) {
     }
 }
 
+/**
+ * Streaming TTS — opens a WebSocket synthesis context for the active
+ * provider. Used by the streaming voice pipeline (utils/voiceSession.js).
+ * Falls back to ttsStream's no-op synth if the provider isn't configured.
+ *
+ * @param {Object} opts See utils/ttsStream.createSynthesizer
+ */
+function createSynthesizer(opts) {
+    return ttsStream.createSynthesizer(opts);
+}
+
 module.exports = {
     getProvider,
     isConfigured,
@@ -217,5 +229,6 @@ module.exports = {
     getFileExtension,
     generateAudio,
     generateAudioStream,
+    createSynthesizer,
     testConnection
 };
