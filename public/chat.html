@@ -57,6 +57,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
+  <!-- Fabric.js for intelligent whiteboard (Phase 0 wire-up) -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
   <!-- MathGraph: self-contained canvas graphing engine (replaces function-plot CDN) -->
   <script defer src="/js/mathGraph.js"></script>
@@ -1845,6 +1847,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
+  <!-- Intelligent Whiteboard Panel (Phase 0 wire-up — hidden by default) -->
+  <div id="mathmatix-whiteboard-panel" class="is-hidden" style="display:none; position:fixed; top:80px; left:80px; width:900px; height:600px; background:#fff; border:1px solid #ccc; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.2); z-index:9000;">
+    <div class="whiteboard-header" style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #eee; background:#f7f7f7; border-radius:8px 8px 0 0; cursor:move;">
+      <span style="font-weight:600;">Whiteboard</span>
+      <button id="mathmatix-whiteboard-close" style="background:none; border:none; font-size:18px; cursor:pointer;">&times;</button>
+    </div>
+    <div class="whiteboard-canvas-container" style="position:relative; width:100%; height:calc(100% - 40px);">
+      <canvas id="mathmatix-whiteboard-canvas"></canvas>
+    </div>
+  </div>
+
   <!-- Returning User Welcome Modal -->
   <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
 
@@ -2145,6 +2158,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
   <script src="/js/voice-controller.js"></script>
+  <!-- Intelligent Whiteboard stack (Phase 0 wire-up — order matters: core → enhancements → integration) -->
+  <script src="/js/whiteboard.js"></script>
+  <script src="/js/whiteboard-handwriting.js"></script>
+  <script src="/js/whiteboard-phase2.js"></script>
+  <script src="/js/whiteboard-math-procedures.js"></script>
+  <script src="/js/chat-board-integration.js"></script>
   <script src="/js/floating-calculator.js"></script>
   <script src="/js/floating-screener.js"></script>
   <script src="/js/floating-checkpoint.js"></script>
@@ -2213,5 +2232,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="/js/ux-enhancements.js"></script>
 <script src="/js/demo-banner.js"></script>
 <script src="/js/browser-lock.js"></script>
+
+<!-- Intelligent Whiteboard init (Phase 0 wire-up) -->
+<script>
+  (function initMathmatixWhiteboard() {
+    const start = Date.now();
+    const tryInit = setInterval(() => {
+      if (typeof MathmatixWhiteboard !== 'undefined' && typeof fabric !== 'undefined') {
+        clearInterval(tryInit);
+        try {
+          window.whiteboard = new MathmatixWhiteboard(
+            'mathmatix-whiteboard-canvas',
+            'mathmatix-whiteboard-panel'
+          );
+          const closeBtn = document.getElementById('mathmatix-whiteboard-close');
+          if (closeBtn) closeBtn.addEventListener('click', () => window.whiteboard.hide());
+          console.log('✅ window.whiteboard initialized in chat.html');
+        } catch (err) {
+          console.error('[Whiteboard] init failed:', err);
+        }
+      } else if (Date.now() - start > 10000) {
+        clearInterval(tryInit);
+        console.warn('[Whiteboard] timeout: fabric or MathmatixWhiteboard not loaded');
+      }
+    }, 100);
+  })();
+</script>
 </body>
 </html>
