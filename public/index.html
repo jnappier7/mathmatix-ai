@@ -267,6 +267,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
     </section>
 
+    <!-- ── Counter Billboard (McDonald's-style cumulative tally) ──── -->
+    <section class="lp-counter-band lp-reveal" id="lp-counter-band" aria-labelledby="lp-counter-label">
+      <div class="lp-inner">
+        <div class="lp-counter-wrap">
+          <span class="lp-counter-label" id="lp-counter-label">Problems Solved</span>
+          <span class="lp-counter-number" id="lp-counter-number" aria-live="polite">&mdash;</span>
+          <span class="lp-counter-sub">And counting. Every problem a step toward confidence.</span>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Social Proof Photo ──────────────────────────────── -->
     <section class="lp-photo-banner lp-reveal">
       <div class="lp-inner">
@@ -521,6 +532,49 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               </div>
             </div>
           </div>
+
+          <!-- Weekly digest preview — what parents actually get every Sunday -->
+          <div class="lp-digest-preview" aria-label="Sample weekly digest email">
+            <div class="lp-digest-header">
+              <div class="lp-digest-from">
+                <span class="lp-digest-avatar">M</span>
+                <div>
+                  <div class="lp-digest-from-name">MathMatix Weekly Digest</div>
+                  <div class="lp-digest-from-meta">Sundays at 6pm &middot; preview</div>
+                </div>
+              </div>
+              <span class="lp-digest-pill">Sample</span>
+            </div>
+            <div class="lp-digest-body">
+              <p class="lp-digest-subject">This week with Maya &mdash; 4 sessions, 38 minutes</p>
+              <div class="lp-digest-stats">
+                <div class="lp-digest-stat">
+                  <span class="lp-digest-stat-num">12</span>
+                  <span class="lp-digest-stat-label">Problems solved</span>
+                </div>
+                <div class="lp-digest-stat">
+                  <span class="lp-digest-stat-num">3</span>
+                  <span class="lp-digest-stat-label">New skills</span>
+                </div>
+                <div class="lp-digest-stat">
+                  <span class="lp-digest-stat-num">5</span>
+                  <span class="lp-digest-stat-label">Day streak</span>
+                </div>
+              </div>
+              <div class="lp-digest-row">
+                <span class="lp-digest-tag lp-digest-tag--win"><i class="fas fa-trophy"></i> Win</span>
+                <span>Mastered adding fractions with unlike denominators.</span>
+              </div>
+              <div class="lp-digest-row">
+                <span class="lp-digest-tag lp-digest-tag--watch"><i class="fas fa-eye"></i> Watch</span>
+                <span>Still confusing &minus;3<sup>2</sup> with (&minus;3)<sup>2</sup> &mdash; we&rsquo;re working on it.</span>
+              </div>
+              <div class="lp-digest-row">
+                <span class="lp-digest-tag lp-digest-tag--try"><i class="fas fa-lightbulb"></i> Try this</span>
+                <span>Ask her: &ldquo;What&rsquo;s the difference between negative-three squared and the opposite of three squared?&rdquo;</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Teacher Panel -->
@@ -606,8 +660,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <!-- ── Comparison ─────────────────────────────────────── -->
     <section class="lp-compare lp-reveal lp-section-alt">
       <div class="lp-inner">
-        <h2 class="lp-section-heading">How Mathmatix Compares</h2>
-        <p class="lp-section-sub">The personalization of a private tutor. The accessibility of AI. None of the shortcuts.</p>
+        <h2 class="lp-section-heading">Why MathMatix Isn&rsquo;t Just Another AI Tool</h2>
+        <p class="lp-section-sub">A private tutor&rsquo;s personalization. A teacher&rsquo;s pedagogy. The accessibility of AI. None of the shortcuts.</p>
         <div class="lp-compare-grid lp-stagger">
           <div class="lp-compare-card">
             <h3>Private Tutor</h3>
@@ -615,11 +669,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <ul>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Personalized attention</li>
               <li class="lp-compare-yes"><i class="fas fa-check"></i> Human connection</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Limited availability</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Expensive for most families</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No homework OCR</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No parent dashboard</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Not accessible to most families</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Booked weeks out, not 9pm-ready</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Out of reach for most families</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No homework photo review</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No parent dashboard or weekly digest</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Doesn&rsquo;t sync with classroom curriculum</li>
             </ul>
           </div>
           <div class="lp-compare-card lp-compare-card--highlight">
@@ -627,26 +681,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <h3>Mathmatix+</h3>
             <div class="lp-compare-price">$9.95<span>/mo</span></div>
             <ul>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> Deeply personalized over time</li>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> Available 24/7</li>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> Guides &mdash; never gives answers</li>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> OCR homework review</li>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> Real-time progress dashboards</li>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> Teacher curriculum sync</li>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> Free baseline access for every student</li>
+              <li class="lp-compare-yes"><i class="fas fa-check"></i> Diagnoses misconceptions, not just wrong answers</li>
+              <li class="lp-compare-yes"><i class="fas fa-check"></i> 15-min adaptive screener finds the exact level</li>
+              <li class="lp-compare-yes"><i class="fas fa-check"></i> IEP-aware: pacing, reading level, anxiety mode</li>
+              <li class="lp-compare-yes"><i class="fas fa-check"></i> Voice tutor + interactive whiteboard</li>
+              <li class="lp-compare-yes"><i class="fas fa-check"></i> Reads handwriting on uploaded homework</li>
+              <li class="lp-compare-yes"><i class="fas fa-check"></i> Real-time parent dashboard &amp; weekly digest</li>
+              <li class="lp-compare-yes"><i class="fas fa-check"></i> Built &amp; tuned by a working math teacher</li>
             </ul>
           </div>
           <div class="lp-compare-card">
-            <h3>Other AI Tools</h3>
+            <h3>Other AI Tutors</h3>
             <div class="lp-compare-price">Free&ndash;$20<span>/mo</span></div>
             <ul>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Generic, not personalized</li>
-              <li class="lp-compare-yes"><i class="fas fa-check"></i> Available 24/7</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Gives away answers</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No homework analysis</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No progress tracking</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No teacher tools</li>
-              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No equity-focused access model</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Generic chatbot &mdash; not built for math</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Hands over answers on request</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No screener &mdash; doesn&rsquo;t know your child&rsquo;s level</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No IEP or accommodations awareness</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No homework photo review</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> No parent or teacher visibility</li>
+              <li class="lp-compare-no"><i class="fas fa-xmark"></i> Trained on the internet, not on pedagogy</li>
             </ul>
           </div>
         </div>
@@ -810,6 +864,65 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         revealEls.forEach(function (el) { el.classList.add('lp-visible'); });
       }
 
+      /* ── Counter Billboard (animated count-up) ─────────── */
+      var counterBand = document.getElementById('lp-counter-band');
+      var counterNumber = document.getElementById('lp-counter-number');
+      if (counterBand && counterNumber) {
+        var counterTarget = null;
+        var counterAnimated = false;
+
+        function formatCount(n) {
+          return Math.round(n).toLocaleString('en-US');
+        }
+
+        function animateCounter(target) {
+          if (counterAnimated) return;
+          counterAnimated = true;
+          var duration = 1800;
+          var startTs = null;
+          function step(ts) {
+            if (!startTs) startTs = ts;
+            var t = Math.min(1, (ts - startTs) / duration);
+            // easeOutCubic
+            var eased = 1 - Math.pow(1 - t, 3);
+            counterNumber.textContent = formatCount(target * eased);
+            if (t < 1) requestAnimationFrame(step);
+            else counterNumber.textContent = formatCount(target);
+          }
+          requestAnimationFrame(step);
+        }
+
+        // Hide gracefully if the API is unreachable — we'd rather show
+        // nothing than a static zero.
+        fetch('/api/stats/problems-solved', { credentials: 'omit' })
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+          .then(function (data) {
+            if (typeof data.count !== 'number' || data.count <= 0) {
+              counterBand.style.display = 'none';
+              return;
+            }
+            counterTarget = data.count;
+            // If the band is already in view, fire immediately; otherwise
+            // wait for the IntersectionObserver below to trigger it.
+            if (counterBand.classList.contains('lp-visible')) {
+              animateCounter(counterTarget);
+            }
+          })
+          .catch(function () { counterBand.style.display = 'none'; });
+
+        if ('IntersectionObserver' in window) {
+          var counterObs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting && counterTarget !== null) {
+                animateCounter(counterTarget);
+                counterObs.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.4 });
+          counterObs.observe(counterBand);
+        }
+      }
+
       /* ── Animated Chat Preview — Cycling Topics ─────────── */
       var chatContainer = document.getElementById('lp-chat');
       var typingEl = document.getElementById('lp-typing');
@@ -826,6 +939,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               { from: 'tutor', text: 'Great question! Let\u2019s figure it out together. First \u2014 can you think of a number that both 3 and 4 divide into evenly?' },
               { from: 'student', text: '12?' },
               { from: 'tutor', text: 'That\u2019s it! Now we can rewrite both fractions with 12 as the denominator. What would \u2153 become?' }
+            ]
+          },
+          {
+            tutor: 'Mr. Nappier',
+            studentAvatar: '/images/avatars/astronaut.png',
+            tutorAvatar: '/images/tutor_avatars/mr-nappier.png',
+            // Misconception-detection moment \u2014 names the underlying error,
+            // not just "you got it wrong." This is the pedagogy hook.
+            messages: [
+              { from: 'student', text: 'I got 1/2 + 1/3 = 2/5' },
+              { from: 'tutor', text: 'I see exactly what happened \u2014 you added the tops, then added the bottoms. That\u2019s a really common spot to slip! The catch: fractions need to be cut into the same-size pieces first. Halves and thirds are different sizes. Can you think of a size that works for both?' },
+              { from: 'student', text: 'Sixths?' },
+              { from: 'tutor', text: 'Exactly. So 1/2 becomes 3/6 and 1/3 becomes 2/6. Now we\u2019re adding pieces that are actually the same size. What do you get?' }
             ]
           },
           {
