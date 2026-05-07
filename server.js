@@ -42,6 +42,17 @@ const server = app.listen(PORT, () => {
   });
 });
 
+// --- WebSocket: streaming voice tutor ---
+// Attached after listen so the HTTP server is ready to receive upgrades.
+try {
+  const voiceTutorRoutes = require('./routes/voiceTutor');
+  if (typeof voiceTutorRoutes.attachStreamWebSocket === 'function') {
+    voiceTutorRoutes.attachStreamWebSocket(server, app);
+  }
+} catch (err) {
+  logger.error('Failed to attach voice-tutor WebSocket', { error: err.message });
+}
+
 // --- Graceful Shutdown ---
 const mongoose = require('mongoose');
 

@@ -4,6 +4,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { WebSocketServer } = require('ws');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
@@ -13,6 +14,8 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 const { verify: pipelineVerify } = require('../utils/pipeline');
 const { openai } = require('../utils/openaiClient');
 const ttsProvider = require('../utils/ttsProvider');
+const { createVoiceSession } = require('../utils/voiceSession');
+const voiceMetrics = require('../utils/voiceMetrics');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -746,4 +749,107 @@ async function saveToHistory(userId, userMessage, aiResponse) {
   }
 }
 
+// ═══════════════════════════════════════
+// GET /api/voice-tutor/metrics  (admin observability)
+// ═══════════════════════════════════════
+router.get('/metrics', isAuthenticated, (req, res) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ error: 'admin only' });
+  }
+  res.json({
+    aggregate: voiceMetrics.aggregate(),
+    recent: voiceMetrics.snapshot(50),
+  });
+});
+
+// ═══════════════════════════════════════
+// WebSocket: /api/voice-tutor/stream
+// Streaming voice pipeline — replaces /process for the immersive
+// voice-tutor.html experience. The HTTP /process endpoint above stays
+// in place as a fallback when WebSocket connection fails.
+// ═══════════════════════════════════════
+function attachStreamWebSocket(server, app) {
+  const wss = new WebSocketServer({ noServer: true });
+  const STREAM_PATH = '/api/voice-tutor/stream';
+  const sttStream = require('../utils/sttStream');
+
+  server.on('upgrade', (request, socket, head) => {
+    let pathname;
+    try { pathname = new URL(request.url, 'http://x').pathname; }
+    catch (_) { socket.destroy(); return; }
+    if (pathname !== STREAM_PATH) return; // not ours
+
+    // Streaming STT must be configured for this pipeline. If not, refuse
+    // the upgrade so the client falls back to the legacy /process path.
+    if (!sttStream.isConfigured() || !ttsProvider.isConfigured()) {
+      socket.write('HTTP/1.1 503 Service Unavailable\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+
+    // Run session + passport middleware against the upgrade request to
+    // populate request.user from the connect.sid cookie.
+    const sessionMw = app.locals.sessionMiddleware;
+    const passportInit = app.locals.passportInit;
+    const passportSession = app.locals.passportSession;
+
+    if (!sessionMw || !passportInit || !passportSession) {
+      logger.error('voice ws upgrade: middleware not registered on app.locals');
+      socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
+      socket.destroy();
+      return;
+    }
+
+    const fakeRes = {
+      writeHead: () => {},
+      setHeader: () => {},
+      getHeader: () => undefined,
+      end: () => {},
+      on: () => {},
+      once: () => {},
+      emit: () => {},
+    };
+
+    sessionMw(request, fakeRes, () => {
+      passportInit(request, fakeRes, () => {
+        passportSession(request, fakeRes, () => {
+          if (!request.user) {
+            logger.warn('voice ws upgrade: unauthenticated');
+            socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+            socket.destroy();
+            return;
+          }
+          // Under-13 compliance: third-party voice services prohibited.
+          if (isUnder13(request.user)) {
+            socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+            socket.destroy();
+            return;
+          }
+          wss.handleUpgrade(request, socket, head, (ws) => {
+            wss.emit('connection', ws, request);
+          });
+        });
+      });
+    });
+  });
+
+  wss.on('connection', async (ws, request) => {
+    const userDoc = await User.findById(request.user._id).lean();
+    if (!userDoc) {
+      ws.close(1008, 'user not found');
+      return;
+    }
+    try {
+      await createVoiceSession({ ws, user: userDoc });
+      logger.info('voice ws session opened', { userId: String(userDoc._id) });
+    } catch (err) {
+      logger.error('voice ws session init failed', { error: err.message });
+      try { ws.close(1011, 'init failed'); } catch (_) {}
+    }
+  });
+
+  logger.info('voice ws upgrade handler attached', { path: STREAM_PATH });
+}
+
 module.exports = router;
+module.exports.attachStreamWebSocket = attachStreamWebSocket;

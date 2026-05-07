@@ -37,6 +37,10 @@
     timerInterval: null,   // session timer interval
     processing: false,     // guard against double processVoiceInput
     boardSteps: [],        // cumulative math board — never loses steps
+    // Streaming pipeline (sub-300ms TTFA, mid-utterance interrupt)
+    streamClient: null,
+    useStreamingPipeline: false,
+    pendingResponseText: '',     // accumulator for response_delta tokens within current turn
   };
 
   // --- DOM refs ---
@@ -91,11 +95,152 @@
     startSessionTimer();
     addSystemMessage('Voice session started. Tap the mic or just say something.');
 
+    // Try to set up the streaming pipeline. Falls back to legacy MediaRecorder
+    // path if the browser lacks AudioWorklet/WebSocket or if the connection
+    // fails. The fallback is the entire pre-existing flow below.
+    setupStreamingPipeline().catch(err => {
+      console.warn('[VoiceTutor] streaming pipeline unavailable, using legacy path:', err?.message);
+    });
+
     // Auto-start listening if hands-free
     // Delayed to let user settle in; skipped entirely on mobile (requires user gesture)
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768;
     if (state.handsFree && !isMobile) {
       setTimeout(() => startListening(), 1500);
+    }
+  }
+
+  // ═══════════════════════════════════════
+  // STREAMING PIPELINE (Deepgram + Cartesia WebSocket)
+  // Replaces MediaRecorder + POST + URL-audio with a single duplex socket.
+  // ═══════════════════════════════════════
+  async function setupStreamingPipeline() {
+    if (typeof window.VoiceStreamClient !== 'function') return;
+    if (typeof window.AudioWorklet === 'undefined' &&
+        !(window.AudioContext && AudioContext.prototype.audioWorklet)) {
+      return; // Old browser — keep legacy path
+    }
+
+    const client = new window.VoiceStreamClient({
+      on: (ev) => handleStreamEvent(ev),
+    });
+
+    try {
+      await client.connect();
+    } catch (err) {
+      console.warn('[VoiceTutor] WebSocket connect failed:', err?.message);
+      return;
+    }
+
+    state.streamClient = client;
+    state.useStreamingPipeline = true;
+    console.log('[VoiceTutor] streaming pipeline active');
+  }
+
+  function handleStreamEvent(ev) {
+    switch (ev.type) {
+      case 'ready':
+        // Server is ready; nothing to do — startListening triggers mic
+        break;
+
+      case 'listening_started':
+        setMode('listening');
+        break;
+
+      case 'listening_stopped':
+        if (state.mode === 'listening') setMode('idle');
+        break;
+
+      case 'transcript_partial':
+        // Show interim transcript in live transcript bubble (optional)
+        if (dom.transcriptText && ev.text) {
+          dom.transcriptText.textContent = ev.text;
+          if (dom.liveTranscript) dom.liveTranscript.classList.add('vt-active');
+        }
+        break;
+
+      case 'transcript_final':
+        if (ev.text) addMessage(ev.text, 'user');
+        if (dom.liveTranscript) dom.liveTranscript.classList.remove('vt-active');
+        break;
+
+      case 'turn_start':
+        setMode('thinking');
+        state.pendingResponseText = '';
+        break;
+
+      case 'response_delta':
+        state.pendingResponseText += ev.text || '';
+        // Live-update the transcript bubble while AI speaks
+        if (dom.transcriptText) {
+          dom.transcriptText.textContent = state.pendingResponseText;
+          if (dom.liveTranscript) dom.liveTranscript.classList.add('vt-active');
+        }
+        break;
+
+      case 'math_steps':
+        if (state.showVisuals && Array.isArray(ev.mathSteps) && ev.mathSteps.length) {
+          renderMathSteps(ev.mathSteps);
+        }
+        break;
+
+      case 'response_final':
+        if (ev.text) addMessage(ev.text, 'ai');
+        if (state.showVisuals && Array.isArray(ev.mathSteps) && ev.mathSteps.length) {
+          renderMathSteps(ev.mathSteps);
+        }
+        state.pendingResponseText = '';
+        break;
+
+      case 'ai_speaking_started':
+        setMode('speaking');
+        break;
+
+      case 'ai_speaking_ended':
+        if (state.mode === 'speaking') {
+          if (state.handsFree && state.autoListen) {
+            startListening();
+          } else {
+            setMode('idle');
+          }
+        }
+        break;
+
+      case 'barge_in':
+        if (dom.presence) {
+          dom.presence.classList.add('vt-interrupted');
+          setTimeout(() => dom.presence.classList.remove('vt-interrupted'), 400);
+        }
+        break;
+
+      case 'interrupted':
+        // Server confirmed interrupt — ensure UI shows we're back to listening
+        hideTranscript();
+        if (state.mode !== 'listening') setMode('listening');
+        break;
+
+      case 'turn_end':
+        // No-op — listening continues automatically
+        break;
+
+      case 'status':
+        // Server-driven status hint; client UI already updated above
+        break;
+
+      case 'disconnected':
+        console.warn('[VoiceTutor] stream disconnected — falling back to legacy path');
+        state.useStreamingPipeline = false;
+        state.streamClient = null;
+        setMode('idle');
+        break;
+
+      case 'error':
+        console.warn('[VoiceTutor] stream error:', ev.message);
+        if (ev.message === 'worklet_load_failed') {
+          state.useStreamingPipeline = false;
+          state.streamClient = null;
+        }
+        break;
     }
   }
 
@@ -275,6 +420,18 @@
   async function startListening() {
     if (state.mode === 'listening' || state.mode === 'thinking') return;
 
+    // ── Streaming pipeline path (Deepgram + Cartesia, sub-300ms TTFA) ──
+    if (state.useStreamingPipeline && state.streamClient) {
+      try {
+        await state.streamClient.startListening();
+      } catch (err) {
+        console.error('[VoiceTutor] stream startListening failed, falling back:', err);
+        state.useStreamingPipeline = false;
+        // fall through to legacy path
+      }
+      if (state.useStreamingPipeline) return;
+    }
+
     // Guard: set mode immediately to prevent double-click races
     state.mode = 'starting';
 
@@ -359,6 +516,13 @@
 
   function stopListening() {
     if (state.mode !== 'listening') return;
+
+    // ── Streaming pipeline path ──
+    if (state.useStreamingPipeline && state.streamClient) {
+      state.streamClient.stopListening();
+      return;
+    }
+
     clearTimeout(state.vadTimer);
     clearTimeout(state.maxRecordTimer);
     state.isSpeaking = false;
@@ -691,6 +855,15 @@
     if (!text) return;
     dom.textInput.value = '';
 
+    // ── Streaming pipeline: route text through the open WebSocket so
+    //    response audio plays via the same chunk queue as voice turns ──
+    if (state.useStreamingPipeline && state.streamClient) {
+      addMessage(text, 'user');
+      setMode('thinking');
+      state.streamClient.sendText(text);
+      return;
+    }
+
     addMessage(text, 'user');
     setMode('thinking');
 
@@ -801,6 +974,14 @@
   }
 
   function stopSpeaking() {
+    // ── Streaming pipeline: barge-in via local VAD or explicit user action ──
+    if (state.useStreamingPipeline && state.streamClient) {
+      state.streamClient._fireBargeIn();
+      hideTranscript();
+      state.processing = false;
+      return;
+    }
+
     if (state.currentAudio) {
       state.currentAudio.onended = null;
       state.currentAudio.onerror = null;

@@ -144,7 +144,9 @@ function configureMiddleware(app) {
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
   app.use(cookieParser());
 
-  app.use(session({
+  // Session middleware — constructed once and shared with the WebSocket
+  // upgrade handler (utils/voiceSession) so cookie-auth works for /api/voice-tutor/stream.
+  const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -161,10 +163,19 @@ function configureMiddleware(app) {
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
-  }));
+  });
+  const passportInit = passport.initialize();
+  const passportSession = passport.session();
 
-  app.use(passport.initialize());
-  app.use(passport.session());
+  app.use(sessionMiddleware);
+  app.use(passportInit);
+  app.use(passportSession);
+
+  // Expose for WebSocket upgrade handler (cannot run Express middleware
+  // chain on a raw upgrade request — these are invoked directly).
+  app.locals.sessionMiddleware = sessionMiddleware;
+  app.locals.passportInit = passportInit;
+  app.locals.passportSession = passportSession;
 
   // Impersonation middleware — must run after passport
   app.use(handleImpersonation);
