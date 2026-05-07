@@ -42,7 +42,7 @@ const server = app.listen(PORT, () => {
   });
 });
 
-// --- WebSocket: streaming voice tutor ---
+// --- WebSocket: streaming voice (immersive tutor + chat-page orb) ---
 // Attached after listen so the HTTP server is ready to receive upgrades.
 try {
   const voiceTutorRoutes = require('./routes/voiceTutor');
@@ -51,6 +51,14 @@ try {
   }
 } catch (err) {
   logger.error('Failed to attach voice-tutor WebSocket', { error: err.message });
+}
+try {
+  const voiceRoutes = require('./routes/voice');
+  if (typeof voiceRoutes.attachStreamWebSocket === 'function') {
+    voiceRoutes.attachStreamWebSocket(server, app);
+  }
+} catch (err) {
+  logger.error('Failed to attach voice (chat orb) WebSocket', { error: err.message });
 }
 
 // --- Graceful Shutdown ---

@@ -81,7 +81,134 @@ class VoiceController {
         // Setup event listeners
         this.setupEventListeners();
 
+        // Try the streaming pipeline. Falls back to legacy MediaRecorder
+        // path if browser lacks AudioWorklet/WebSocket or upgrade fails.
+        this.setupStreamingPipeline().catch(err => {
+            console.warn('[Voice] streaming pipeline unavailable, using legacy path:', err?.message);
+        });
+
         console.log('✅ Voice Controller ready');
+    }
+
+    // ============================================
+    // STREAMING PIPELINE (Phase 2 — chat-page orb)
+    // ============================================
+
+    async setupStreamingPipeline() {
+        if (typeof window.VoiceStreamClient !== 'function') return;
+        if (typeof window.AudioWorklet === 'undefined' &&
+            !(window.AudioContext && AudioContext.prototype.audioWorklet)) {
+            return;
+        }
+
+        const client = new window.VoiceStreamClient({
+            wsPath: '/api/voice/stream',
+            on: (ev) => this.handleStreamEvent(ev),
+        });
+
+        try {
+            await client.connect();
+        } catch (err) {
+            console.warn('[Voice] WebSocket connect failed:', err?.message);
+            return;
+        }
+
+        this.streamClient = client;
+        this.useStreamingPipeline = true;
+        console.log('[Voice] streaming pipeline active (chat-page orb)');
+    }
+
+    handleStreamEvent(ev) {
+        switch (ev.type) {
+            case 'ready':
+                break;
+
+            case 'listening_started':
+                this.isListening = true;
+                this.updateUI('listening');
+                break;
+
+            case 'listening_stopped':
+                this.isListening = false;
+                if (!this.isAISpeaking) this.updateUI('idle');
+                break;
+
+            case 'transcript_final':
+                if (ev.text && window.appendMessage) {
+                    window.appendMessage(ev.text, 'user');
+                }
+                break;
+
+            case 'turn_start':
+                this.updateUI('thinking');
+                this._pendingResponseText = '';
+                break;
+
+            case 'response_delta':
+                this._pendingResponseText = (this._pendingResponseText || '') + (ev.text || '');
+                break;
+
+            case 'board_actions':
+                if (this.config.enableBoardCommands && Array.isArray(ev.boardActions)) {
+                    this.executeBoardActions(ev.boardActions);
+                }
+                break;
+
+            case 'response_final':
+                if (ev.text && window.appendMessage) {
+                    window.appendMessage(ev.text, 'ai');
+                }
+                if (this.config.enableBoardCommands && Array.isArray(ev.boardActions) && ev.boardActions.length) {
+                    this.executeBoardActions(ev.boardActions);
+                }
+                this._pendingResponseText = '';
+                break;
+
+            case 'ai_speaking_started':
+                this.isAISpeaking = true;
+                this.updateUI('speaking');
+                break;
+
+            case 'ai_speaking_ended':
+                this.isAISpeaking = false;
+                this.updateUI('idle');
+                break;
+
+            case 'barge_in':
+                // local UI ack — server does the heavy lifting
+                break;
+
+            case 'interrupted':
+                this.isAISpeaking = false;
+                this.updateUI('idle');
+                break;
+
+            case 'turn_end':
+                break;
+
+            case 'disconnected':
+                console.warn('[Voice] stream disconnected — falling back to legacy path');
+                this.useStreamingPipeline = false;
+                this.streamClient = null;
+                this.updateUI('idle');
+                break;
+
+            case 'error':
+                console.warn('[Voice] stream error:', ev.message);
+                if (
+                    ev.message === 'worklet_load_failed' ||
+                    (typeof ev.message === 'string' && ev.message.indexOf('Streaming STT unavailable') === 0)
+                ) {
+                    console.warn('[Voice] disabling streaming pipeline, falling back');
+                    this.useStreamingPipeline = false;
+                    if (this.streamClient) {
+                        try { this.streamClient.disconnect(); } catch (_) {}
+                        this.streamClient = null;
+                    }
+                    if (this.isListening || this.isAISpeaking) this.updateUI('idle');
+                }
+                break;
+        }
     }
 
     // ============================================
@@ -433,6 +560,23 @@ class VoiceController {
 
     async startListening() {
         console.log('🎙️ [Voice] startListening() called');
+
+        // ── Streaming pipeline path (Phase 2) ──
+        if (this.useStreamingPipeline && this.streamClient) {
+            try {
+                // Push current board state so the AI can reference existing objects
+                if (this.whiteboard) {
+                    this.streamClient.setBoardContext(this.getBoardContext());
+                }
+                await this.streamClient.startListening();
+                return;
+            } catch (err) {
+                console.warn('[Voice] stream startListening failed, falling back:', err);
+                this.useStreamingPipeline = false;
+                // fall through to legacy path
+            }
+        }
+
         console.log('🎙️ [Voice] handsFreeMode:', this.handsFreeMode);
         console.log('🎙️ [Voice] silenceThreshold:', this.silenceThreshold, 'ms');
         console.log('🎙️ [Voice] minSpeechDuration:', this.minSpeechDuration, 'ms');
@@ -514,6 +658,12 @@ class VoiceController {
 
     stopListening() {
         if (!this.isListening) return;
+
+        // ── Streaming pipeline path ──
+        if (this.useStreamingPipeline && this.streamClient) {
+            this.streamClient.stopListening();
+            return;
+        }
 
         console.log('🎙️ [Voice] stopListening() called');
         this.isListening = false;
@@ -849,6 +999,14 @@ class VoiceController {
 
     // Stop AI speaking (for interruption)
     stopSpeaking() {
+        // ── Streaming pipeline: barge-in via local VAD or explicit user action ──
+        if (this.useStreamingPipeline && this.streamClient) {
+            this.streamClient._fireBargeIn();
+            this.isAISpeaking = false;
+            this.updateUI('idle');
+            return;
+        }
+
         if (this.currentAudio) {
             console.log('🛑 [Voice] Stopping AI speech (interrupted by user)');
             this.currentAudio.pause();

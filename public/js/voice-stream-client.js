@@ -16,7 +16,7 @@
 (function (global) {
     'use strict';
 
-    const WS_PATH = '/api/voice-tutor/stream';
+    const DEFAULT_WS_PATH = '/api/voice-tutor/stream';
     const WORKLET_PATH = '/js/audio/pcm16-worklet.js';
 
     // Local VAD tuning
@@ -28,6 +28,7 @@
     class VoiceStreamClient {
         constructor(opts = {}) {
             this.on = opts.on || (() => {});
+            this.wsPath = opts.wsPath || DEFAULT_WS_PATH;
             this.ws = null;
             this.connected = false;
 
@@ -55,7 +56,7 @@
             if (this.ws && this.ws.readyState <= 1) return;
             // ws scheme matches page scheme
             const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            this.ws = new WebSocket(`${proto}//${location.host}${WS_PATH}`);
+            this.ws = new WebSocket(`${proto}//${location.host}${this.wsPath}`);
             this.ws.binaryType = 'arraybuffer';
 
             await new Promise((resolve, reject) => {
@@ -192,6 +193,16 @@
             this._sendJson({ type: 'text_input', text: text.trim() });
         }
 
+        /**
+         * Push current whiteboard state to the server (board-actions mode).
+         * Call before each user turn so the AI can reference existing
+         * objects by id.
+         */
+        setBoardContext(boardContext) {
+            if (!boardContext) return;
+            this._sendJson({ type: 'set_board_context', boardContext });
+        }
+
         _sendJson(obj) {
             if (!this.ws || this.ws.readyState !== 1) return;
             try { this.ws.send(JSON.stringify(obj)); } catch (_) { /* socket dead */ }
@@ -268,11 +279,15 @@
                 case 'math_steps_partial':
                     this.on({ type: 'math_steps', mathSteps: msg.mathSteps });
                     break;
+                case 'board_actions_partial':
+                    this.on({ type: 'board_actions', boardActions: msg.boardActions });
+                    break;
                 case 'response_final':
                     this.on({
                         type: 'response_final',
                         text: msg.text,
                         mathSteps: msg.mathSteps,
+                        boardActions: msg.boardActions,
                     });
                     break;
                 case 'tts_flush':
