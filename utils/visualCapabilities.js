@@ -63,6 +63,17 @@ INTERACTIVE DIAGRAMS (students can see and explore these):
 [DIAGRAM:angle:degrees=V,label='θ',showMeasure=true]
 [TRIANGLE_PROBLEM:A=V,B=V,C=?]
 
+CIRCLE GEOMETRY (chords, secants, tangents, inscribed/central angles — use this for ANY circle problem, NEVER use [FUNCTION_GRAPH] for a circle):
+[CIRCLE_DIAGRAM:type=basic,radius=V,title="..."] — circle with labeled radius
+[CIRCLE_DIAGRAM:type=chord,radius=V,chord=V,distance=V] — circle with chord and (optional) perpendicular distance from center
+[CIRCLE_DIAGRAM:type=two_secants,nearArc=V,farArc=V] — TWO SECANTS from external point P. Auto-labels both arcs and ∠P = ½(farArc − nearArc).
+[CIRCLE_DIAGRAM:type=tangent_secant,nearArc=V,farArc=V] — tangent + secant from external point. ∠P = ½(farArc − nearArc).
+[CIRCLE_DIAGRAM:type=two_chords,arcA=V,arcB=V,arcC=V,arcD=V] — two chords meeting INSIDE the circle (four arcs sum to 360°). ∠ = ½(arcA + arcC).
+[CIRCLE_DIAGRAM:type=inscribed_angle,arc=V] — inscribed angle on circle intercepting an arc. Angle = ½ × arc.
+[CIRCLE_DIAGRAM:type=central_angle,angle=V] — central angle (= intercepted arc).
+[CIRCLE_DIAGRAM:type=tangent_chord,arc=V] — tangent and chord meeting at point on circle. Angle = ½ × arc.
+[CIRCLE_DIAGRAM:type=tangent_from_external,radius=V,external=V] — tangent from external point with right-triangle (radius ⊥ tangent). Auto-computes tangent length via Pythagorean.
+
 INTERACTIVE GRAPHS (live, explorable graphs):
 [FUNCTION_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"]
 [SLIDER_GRAPH:fn=EXPR,params="name:default:min:max",title="T"] — student can drag sliders to explore how parameters change the graph
