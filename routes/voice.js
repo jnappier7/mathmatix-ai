@@ -30,7 +30,10 @@ const MIME_TO_EXT = {
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { WebSocketServer } = require('ws');
 const ttsProvider = require('../utils/ttsProvider');
+const sttStream = require('../utils/sttStream');
+const { createVoiceSession } = require('../utils/voiceSession');
 const logger = require('../utils/logger').child({ route: 'voice' });
 
 /**
@@ -441,4 +444,79 @@ function cleanupOldAudioFiles(directory, keepCount = 100) {
 
 // cleanTextForTTS and convertLatexToSpeech are now in utils/mathTTS.js
 
+// ═══════════════════════════════════════
+// WebSocket: /api/voice/stream  (Phase 2 — chat-page orb)
+// Streaming voice pipeline for the chat-page orb. Same orchestrator as
+// /api/voice-tutor/stream but in 'board-actions' mode so the AI emits
+// inline [WRITE:x,y,text] etc. tags that update the whiteboard.
+// Falls back to the legacy /process endpoint above if upgrade fails.
+// ═══════════════════════════════════════
+function attachStreamWebSocket(server, app) {
+    const wss = new WebSocketServer({ noServer: true });
+    const STREAM_PATH = '/api/voice/stream';
+
+    server.on('upgrade', (request, socket, head) => {
+        let pathname;
+        try { pathname = new URL(request.url, 'http://x').pathname; }
+        catch (_) { socket.destroy(); return; }
+        if (pathname !== STREAM_PATH) return;
+
+        if (!sttStream.isConfigured() || !ttsProvider.isConfigured()) {
+            socket.write('HTTP/1.1 503 Service Unavailable\r\n\r\n');
+            socket.destroy();
+            return;
+        }
+
+        const sessionMw = app.locals.sessionMiddleware;
+        const passportInit = app.locals.passportInit;
+        const passportSession = app.locals.passportSession;
+        if (!sessionMw || !passportInit || !passportSession) {
+            logger.error('voice ws upgrade: middleware not registered on app.locals');
+            socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
+            socket.destroy();
+            return;
+        }
+
+        const fakeRes = {
+            writeHead: () => {}, setHeader: () => {}, getHeader: () => undefined,
+            end: () => {}, on: () => {}, once: () => {}, emit: () => {},
+        };
+
+        sessionMw(request, fakeRes, () => {
+            passportInit(request, fakeRes, () => {
+                passportSession(request, fakeRes, () => {
+                    if (!request.user) {
+                        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+                        socket.destroy();
+                        return;
+                    }
+                    if (isUnder13(request.user)) {
+                        socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+                        socket.destroy();
+                        return;
+                    }
+                    wss.handleUpgrade(request, socket, head, (ws) => {
+                        wss.emit('connection', ws, request);
+                    });
+                });
+            });
+        });
+    });
+
+    wss.on('connection', async (ws, request) => {
+        const userDoc = await User.findById(request.user._id).lean();
+        if (!userDoc) { ws.close(1008, 'user not found'); return; }
+        try {
+            await createVoiceSession({ ws, user: userDoc, mode: 'board-actions' });
+            logger.info('voice ws session opened (board-actions mode)', { userId: String(userDoc._id) });
+        } catch (err) {
+            logger.error('voice ws session init failed', { error: err.message });
+            try { ws.close(1011, 'init failed'); } catch (_) {}
+        }
+    });
+
+    logger.info('voice ws upgrade handler attached', { path: STREAM_PATH, mode: 'board-actions' });
+}
+
 module.exports = router;
+module.exports.attachStreamWebSocket = attachStreamWebSocket;

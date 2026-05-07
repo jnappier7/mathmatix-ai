@@ -63,12 +63,51 @@ REMEMBER: never speak math notation. The LaTeX goes in the math tag only.
 Never put system tags or JSON inside the spoken portion.
 `;
 
+// Board-actions voice prompt — used by the chat-page orb. Actions are
+// inline, scattered through the response (a [WRITE:x,y,text] can sit
+// mid-sentence). The orchestrator strips action tags from the TTS stream
+// in real time and forwards them to the client as discrete board events.
+const BOARD_ACTIONS_VOICE_INSTRUCTIONS = `
+
+**STREAMING VOICE MODE — ACTIVE**
+
+You are in a real-time spoken math tutoring session with a shared
+whiteboard. Speak conversationally (1-3 sentences) and use the
+whiteboard for any visual math. Whatever you SAY is heard by the
+student; whatever you WRITE inline as a tag updates the board.
+
+CRITICAL RULES FOR SPOKEN TEXT:
+- Plain English only. No LaTeX delimiters ($, $$, \\(, \\[).
+- "x squared plus 3x" not "$x^2 + 3x$".
+- Warm, conversational, like a tutor sitting next to the student.
+- ONE follow-up question per turn.
+
+BOARD ACTIONS (inline, anywhere in your response):
+- [WRITE:x,y,text]              write text at canvas position (x,y)
+- [CIRCLE:objectId,message]     circle an existing board object
+- [ARROW:fromId,toX,toY,message] draw arrow from a board object
+- [HIGHLIGHT:objectId,color]    highlight an object (color = hex)
+- [CLEAR]                       clear the board
+
+The student does NOT hear these tags — they're stripped before TTS.
+Use [BOARD_REF:objectId] inline to reference an existing object by id
+(this is also stripped from spoken text but kept in the chat transcript).
+
+PEDAGOGY (CRITICAL):
+- Don't show steps the student hasn't worked through yet.
+- Wrong answer: don't add it to the board. Gently guide.
+- Never just give the answer — scaffold with hints and parallel problems.
+
+REMEMBER: speak naturally; let the board do the visual work.
+`;
+
 class VoiceSession {
-    constructor({ ws, user, sessionId }) {
+    constructor({ ws, user, sessionId, mode }) {
         this.ws = ws;
         this.user = user;                       // populated user doc (lean)
         this.userId = String(user._id);
         this.sessionId = sessionId || `${this.userId}-${Date.now()}`;
+        this.mode = mode === 'board-actions' ? 'board-actions' : 'math-steps';
         this.tutorProfile = TUTOR_CONFIG[user.selectedTutorId || 'default'] || TUTOR_CONFIG['default'];
         this.voiceId = ttsProvider.getVoiceId(this.tutorProfile);
         this.langCode = ({
@@ -77,7 +116,8 @@ class VoiceSession {
         })[user.preferredLanguage] || 'en';
 
         this.history = [];        // {role, content} from Mongo + this session
-        this.lastBoardSteps = []; // most recent <math> array, used as fallback
+        this.lastBoardSteps = []; // most recent <math> array (math-steps mode)
+        this.boardContext = null; // current whiteboard state (board-actions mode)
         this.systemPrompt = '';
 
         this.stt = null;
@@ -136,6 +176,13 @@ class VoiceSession {
             case 'text_input':
                 if (typeof msg.text === 'string' && msg.text.trim()) {
                     this._startTurn(msg.text.trim(), { source: 'text' });
+                }
+                break;
+            case 'set_board_context':
+                // board-actions mode: the chat orb sends current whiteboard
+                // state so the AI can reference existing objects by id.
+                if (msg.boardContext && typeof msg.boardContext === 'object') {
+                    this.boardContext = msg.boardContext;
                 }
                 break;
             case 'ping':
@@ -233,9 +280,10 @@ class VoiceSession {
             startedAt: Date.now(),
             status: 'thinking',
             spokenAcc: '',           // accumulating spoken portion forwarded to TTS
-            mathBuffer: '',          // buffered <math>...</math> contents
+            mathBuffer: '',          // buffered <math>...</math> contents (math-steps mode)
             inMathTag: false,
             tagBuffer: '',           // straddle buffer for tag boundaries
+            boardActions: [],        // accumulated [WRITE:...] etc. (board-actions mode)
             tts: null,
             spokenSent: '',          // already-sent-to-TTS spoken text
             tokensEmitted: 0,
@@ -270,8 +318,29 @@ class VoiceSession {
 
     async _driveTurn(turn) {
         // ── Build messages for LLM ──
+        const modeInstructions = this.mode === 'board-actions'
+            ? BOARD_ACTIONS_VOICE_INSTRUCTIONS
+            : STREAMING_VOICE_INSTRUCTIONS;
+
+        let systemContent = this.systemPrompt + modeInstructions;
+
+        // board-actions mode: enrich prompt with current whiteboard state
+        if (this.mode === 'board-actions' && this.boardContext) {
+            const ctx = this.boardContext;
+            let boardPrompt = '\n\n**WHITEBOARD STATE:**\n';
+            if (ctx.semanticObjects && ctx.semanticObjects.length > 0) {
+                boardPrompt += `Mode: ${ctx.mode || 'default'}\nCurrent objects:\n`;
+                for (const obj of ctx.semanticObjects) {
+                    boardPrompt += `- [${obj.id}] ${obj.type}: ${obj.content} (${obj.region || 'main'})\n`;
+                }
+            } else {
+                boardPrompt += 'Board is empty.\n';
+            }
+            systemContent += boardPrompt;
+        }
+
         const messages = [
-            { role: 'system', content: this.systemPrompt + STREAMING_VOICE_INSTRUCTIONS },
+            { role: 'system', content: systemContent },
             ...this.history,
             { role: 'user', content: turn.userMessage },
         ];
@@ -332,7 +401,10 @@ class VoiceSession {
 
         // ── Pipeline verify on assembled spoken text in parallel with TTS draining ──
         let verifiedText = turn.spokenAcc;
-        let mathStepsForBoard = this._parseMathBuffer(turn.mathBuffer);
+        let mathStepsForBoard = this.mode === 'math-steps'
+            ? this._parseMathBuffer(turn.mathBuffer)
+            : [];
+        let boardActionsForFinal = turn.boardActions || [];
 
         try {
             const verified = await pipelineVerify(turn.spokenAcc, {
@@ -354,6 +426,7 @@ class VoiceSession {
                 this._send({ type: 'tts_flush', turnId: turn.metric.turnId });
                 verifiedText = verified.text;
                 mathStepsForBoard = []; // drop board content alongside redirect
+                boardActionsForFinal = []; // drop board actions alongside redirect
                 await this._synthesizeOneShot(turn, verifiedText);
                 turn.metric.abortReason = 'verify_redirect';
             } else if (verified.text) {
@@ -378,15 +451,16 @@ class VoiceSession {
             } catch (_) { /* non-fatal */ }
         }
 
-        // ── Send final response + math ──
+        // ── Send final response + math/board ──
         this._send({
             type: 'response_final',
             turnId: turn.metric.turnId,
             text: verifiedText,
             mathSteps: mathStepsForBoard,
+            boardActions: boardActionsForFinal,
         });
 
-        // Update local state for next turn's pedagogy
+        // Update local state for next turn's pedagogy (math-steps mode only)
         if (mathStepsForBoard.length > 0) this.lastBoardSteps = mathStepsForBoard;
 
         // ── Persist to history (do not block turn_end) ──
@@ -409,13 +483,23 @@ class VoiceSession {
     }
 
     /**
-     * Token processor — splits incoming text on the <math>...</math> boundary.
-     * Spoken portion streams to TTS; math portion buffers for the board.
+     * Token processor — dispatches to the active mode's tag scanner.
+     * Spoken portion streams to TTS; meta portion (math JSON or action
+     * tags) is held back and parsed.
      */
     _processToken(turn, delta) {
-        // Walk char-by-char through delta and route into spoken or math buckets.
-        // We use a small straddle buffer so a tag opener split across deltas
-        // ("<ma" + "th>") doesn't get mistakenly spoken.
+        if (this.mode === 'board-actions') {
+            this._processTokenBoardActions(turn, delta);
+        } else {
+            this._processTokenMathSteps(turn, delta);
+        }
+    }
+
+    /**
+     * Math-steps parser: <math>...</math> at the END of the response.
+     * Forwards everything before <math> directly to TTS.
+     */
+    _processTokenMathSteps(turn, delta) {
         let working = turn.tagBuffer + delta;
         turn.tagBuffer = '';
 
@@ -429,7 +513,6 @@ class VoiceSession {
                 turn.mathBuffer += working.slice(0, closeIdx);
                 working = working.slice(closeIdx + '</math>'.length);
                 turn.inMathTag = false;
-                // Emit math snapshot now (live board update)
                 const steps = this._parseMathBuffer(turn.mathBuffer);
                 if (steps.length) {
                     this._send({
@@ -458,6 +541,115 @@ class VoiceSession {
                 working = working.slice(openIdx + '<math>'.length);
                 turn.inMathTag = true;
             }
+        }
+    }
+
+    /**
+     * Board-actions parser: inline tags like [WRITE:...] [CIRCLE:...] can
+     * appear ANYWHERE in the response. We hold back text from TTS until
+     * we're sure it doesn't start a tag, then flush.
+     */
+    _processTokenBoardActions(turn, delta) {
+        // Accumulate into a sliding buffer. Forward characters to TTS
+        // greedily, but stop at any '[' until we know whether it's a
+        // known action tag (closed by ']').
+        let buf = turn.tagBuffer + delta;
+        turn.tagBuffer = '';
+
+        while (buf.length > 0) {
+            const openIdx = buf.indexOf('[');
+            if (openIdx === -1) {
+                this._forwardSpoken(turn, buf);
+                return;
+            }
+            // Speak everything before the '['
+            if (openIdx > 0) {
+                this._forwardSpoken(turn, buf.slice(0, openIdx));
+                buf = buf.slice(openIdx);
+            }
+            // buf now starts with '['. Look for ']'.
+            const closeIdx = buf.indexOf(']');
+            if (closeIdx === -1) {
+                // Tag still open — defer the rest. Cap at 200 chars to
+                // protect against runaway buffers (an unmatched '[' in
+                // free-form text). If too long, treat as plain text.
+                if (buf.length > 200) {
+                    this._forwardSpoken(turn, buf);
+                    return;
+                }
+                turn.tagBuffer = buf;
+                return;
+            }
+            const candidate = buf.slice(0, closeIdx + 1);
+            buf = buf.slice(closeIdx + 1);
+
+            if (this._isKnownActionTag(candidate)) {
+                const action = this._parseActionTag(candidate);
+                if (action) {
+                    turn.boardActions = turn.boardActions || [];
+                    turn.boardActions.push(action);
+                    this._send({
+                        type: 'board_actions_partial',
+                        turnId: turn.metric.turnId,
+                        boardActions: [action],
+                    });
+                }
+                // Strip the tag from spoken stream (don't speak the bracket text)
+            } else {
+                // Not an action tag — speak it verbatim
+                this._forwardSpoken(turn, candidate);
+            }
+        }
+    }
+
+    _isKnownActionTag(s) {
+        return /^\[(?:WRITE|CIRCLE|ARROW|HIGHLIGHT|CLEAR|BOARD_REF)(?::[^\]]*)?\]$/.test(s);
+    }
+
+    _parseActionTag(s) {
+        // s looks like "[WRITE:100,200,2x+5=10]" — strip brackets, split on first ':'.
+        const inner = s.slice(1, -1);
+        const colonIdx = inner.indexOf(':');
+        const name = colonIdx === -1 ? inner : inner.slice(0, colonIdx);
+        const args = colonIdx === -1 ? '' : inner.slice(colonIdx + 1);
+
+        switch (name) {
+            case 'WRITE': {
+                const m = args.match(/^(\d+),(\d+),(.+)$/s);
+                if (!m) return null;
+                return { type: 'write', x: parseInt(m[1]), y: parseInt(m[2]), text: m[3].trim(), pause: true };
+            }
+            case 'CIRCLE': {
+                const [objectId, ...msg] = args.split(',');
+                if (!objectId) return null;
+                return { type: 'circle', objectId: objectId.trim(), message: msg.join(',').trim() || null };
+            }
+            case 'ARROW': {
+                const m = args.match(/^([^,]+),(\d+),(\d+)(?:,(.+))?$/s);
+                if (!m) return null;
+                return {
+                    type: 'arrow', fromId: m[1].trim(),
+                    toX: parseInt(m[2]), toY: parseInt(m[3]),
+                    message: m[4] ? m[4].trim() : null,
+                };
+            }
+            case 'HIGHLIGHT': {
+                const [objectId, color] = args.split(',');
+                if (!objectId) return null;
+                return {
+                    type: 'highlight', objectId: objectId.trim(),
+                    color: color ? color.trim() : '#fbbf24',
+                    duration: 3000,
+                };
+            }
+            case 'CLEAR':
+                return { type: 'clear' };
+            case 'BOARD_REF':
+                // Inline reference — keep the chat transcript reference but
+                // don't trigger a board action. Return null so we strip it.
+                return null;
+            default:
+                return null;
         }
     }
 
@@ -613,9 +805,19 @@ function hash32(str) {
 /**
  * Factory used by the upgrade handler. Returns a session that's already
  * begun loading user/history. Caller binds ws lifecycle.
+ *
+ * @param {Object} opts
+ * @param {WebSocket} opts.ws
+ * @param {Object} opts.user           - lean user doc
+ * @param {string} [opts.sessionId]
+ * @param {'math-steps'|'board-actions'} [opts.mode='math-steps']
+ *        - 'math-steps' (default): immersive /voice-tutor.html flow.
+ *          AI emits <math>JSON</math> at the end; client renders math board.
+ *        - 'board-actions': chat-page orb. AI emits inline tags like
+ *          [WRITE:x,y,text], [CIRCLE:id], etc. Client executes against whiteboard.
  */
-async function createVoiceSession({ ws, user, sessionId }) {
-    const session = new VoiceSession({ ws, user, sessionId });
+async function createVoiceSession({ ws, user, sessionId, mode }) {
+    const session = new VoiceSession({ ws, user, sessionId, mode });
     await session.init();
     return session;
 }
