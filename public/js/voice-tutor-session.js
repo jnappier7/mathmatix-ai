@@ -236,9 +236,25 @@
 
       case 'error':
         console.warn('[VoiceTutor] stream error:', ev.message);
-        if (ev.message === 'worklet_load_failed') {
+        // Any fatal-class error: disable streaming and let the legacy
+        // MediaRecorder path take over on the next user action.
+        if (
+          ev.message === 'worklet_load_failed' ||
+          (typeof ev.message === 'string' && ev.message.indexOf('Streaming STT unavailable') === 0)
+        ) {
+          console.warn('[VoiceTutor] disabling streaming pipeline, falling back to legacy path');
           state.useStreamingPipeline = false;
-          state.streamClient = null;
+          if (state.streamClient) {
+            try { state.streamClient.disconnect(); } catch (_) {}
+            state.streamClient = null;
+          }
+          // Reset the orb so the user isn't stuck in "listening"
+          if (state.mode === 'listening' || state.mode === 'thinking' || state.mode === 'speaking') {
+            setMode('idle');
+          }
+          if (typeof showToast === 'function') {
+            showToast('Voice mode falling back to standard quality. Try speaking again.', 4000);
+          }
         }
         break;
     }

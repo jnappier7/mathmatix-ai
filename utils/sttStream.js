@@ -1,12 +1,15 @@
 // utils/sttStream.js
-// Deepgram Nova-3 streaming STT wrapper. Hides SDK details so a future
+// Deepgram streaming STT wrapper. Hides SDK details so a future
 // AssemblyAI swap is a single-file change.
 
 const { createClient, LiveTranscriptionEvents } = require('@deepgram/sdk');
 const logger = require('./logger').child({ module: 'sttStream' });
 
 const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
-const MODEL = process.env.DEEPGRAM_MODEL || 'nova-3';
+// nova-2 is GA on every tier; nova-3 is opt-in and newer. Override with
+// DEEPGRAM_MODEL=nova-3 once you've confirmed the model is enabled on
+// your Deepgram project, otherwise the API returns HTTP 400 on connect.
+const MODEL = process.env.DEEPGRAM_MODEL || 'nova-2';
 
 let _client = null;
 function client() {
@@ -64,8 +67,6 @@ function createSession(opts = {}) {
         endpointing,
         utterance_end_ms: utteranceEndMs,
         vad_events: true,
-        // Don't fire UtteranceEnd from short partial fragments
-        no_delay: false,
     });
 
     let opened = false;
@@ -75,7 +76,7 @@ function createSession(opts = {}) {
 
     conn.on(LiveTranscriptionEvents.Open, () => {
         opened = true;
-        logger.debug('Deepgram open');
+        logger.info('Deepgram open', { model: MODEL, language, sampleRate });
     });
 
     conn.on(LiveTranscriptionEvents.Transcript, (data) => {
@@ -101,7 +102,8 @@ function createSession(opts = {}) {
     });
 
     conn.on(LiveTranscriptionEvents.Error, (err) => {
-        logger.warn('Deepgram error', { error: err?.message || String(err) });
+        const detail = err?.message || err?.reason || err?.statusCode || String(err);
+        logger.warn('Deepgram error', { error: detail, model: MODEL });
         onError(err);
     });
 

@@ -166,7 +166,12 @@ class VoiceSession {
             onFinal: (text) => this._onFinal(text),
             onUtteranceEnd: () => this._onUtteranceEnd(),
             onError: (err) => {
-                this._send({ type: 'stt_error', message: err.message || 'stt error' });
+                const detail = err?.message || err?.reason || String(err);
+                logger.warn('stt error → telling client to fall back', { userId: this.userId, error: detail });
+                // Surface as fatal so the client switches off the streaming
+                // pipeline and re-enables the legacy MediaRecorder path.
+                this._send({ type: 'fatal', message: `Streaming STT unavailable: ${detail}` });
+                this.shutdown('stt_error');
             },
             onClose: () => {
                 logger.debug('stt closed', { userId: this.userId });
