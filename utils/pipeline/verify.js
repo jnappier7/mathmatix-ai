@@ -517,6 +517,56 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── 2d-self. Self-contradiction guard ──
+  // Defense-in-depth for the case where neither the deterministic solver
+  // nor the LLM verifier returns a high-confidence verdict (so upstream
+  // guards 2c/2d and their llm variants never fire). The LLM still
+  // sometimes opens with rejection language ("Close, but not quite!"),
+  // walks through the arithmetic, discovers the student was right, and
+  // ends with "So you were right!" — leaving a self-contradicting reply.
+  // This guard inspects the response text alone and asks the LLM to
+  // rewrite with a single, consistent verdict.
+  //
+  // To minimize false positives ("you were right that we should factor,
+  // but..."), the confirmation half requires either explicit verdict
+  // language with terminal punctuation or strong "I changed my mind"
+  // markers ("caught yourself", "actually, you're right").
+  if (!regeneratedThisPass && falseRejectionOpener.test(text.trim())) {
+    const selfContradictionConfirm = /(?:\bso\s+you(?:'?re|\s+(?:are|were))\s+(?:right|correct)\s*[!.]|\byou\s+(?:were|are)\s+(?:right|correct)\s*[!.]|\byou(?:'?re|\s+are)\s+(?:absolutely|actually)\s+(?:right|correct)\b|\byou\s+(?:got|nailed)\s+it\s*[!.]|\bactually[,!]?\s+you(?:'?re|\s+(?:are|were))\s+(?:right|correct)\b|\bcaught\s+yourself\b)/i;
+    // Strip the opening rejection sentence so the rejection itself can't
+    // satisfy the confirmation pattern.
+    const afterFirstSentence = text.trim().replace(/^[^.!?\n]*[.!?\n]\s*/, '');
+    if (selfContradictionConfirm.test(afterFirstSentence)) {
+      flags.push('self_contradiction_detected');
+      console.log('[Verify] SELF-CONTRADICTION: response opens with rejection but later confirms — regenerating');
+
+      try {
+        const correctionPrompt = 'CRITICAL: Your previous response opened by telling the student they were wrong ("close, but not quite", "almost", "let\'s check", etc.) and then later said they were right. That is contradictory and confusing. Re-examine the math in your own response, decide whether the student\'s answer is actually correct, and rewrite with a single, consistent verdict. If the student is correct, confirm immediately and naturally — do NOT use any "let\'s check / not quite / close but / almost" language. If the student is wrong, guide them with a Socratic question without revealing the answer. Keep your tutor personality.';
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite this with one consistent verdict. No contradiction.' }],
+          { temperature: 0.4, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('self_contradiction_regenerated');
+          regeneratedThisPass = true;
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] Self-contradiction regeneration failed:', err.message);
+        flags.push('self_contradiction_regeneration_failed');
+      }
+    }
+  }
+
   // ── 2e. Math contradiction cross-check ──
   // Catches a subtle but damaging pattern: the AI shows the correct computation
   // (e.g., "24(2) - 12 = 36") but affirms the student's different answer
