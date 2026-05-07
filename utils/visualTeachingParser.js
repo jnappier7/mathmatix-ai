@@ -315,6 +315,30 @@ function parseVisualTeaching(aiResponseText) {
     searchImageRegex.lastIndex = 0; // Reset before reuse in replace()
     cleanedText = cleanedText.replace(searchImageRegex, '');
 
+    // ── Hallucinated-URL guard ──
+    // LLMs sometimes emit markdown image syntax `![alt](http://...)` or raw
+    // `<img src="...">` with URLs they invented. Those URLs almost always 404
+    // and render as broken-image icons. Convert any non-data URL into a
+    // SEARCH_IMAGE command so the alt text becomes a real safe-image-search
+    // query, then strip the original markdown/HTML from the visible text.
+    const mdImageRegex = /!\[([^\]]*)\]\((https?:[^)\s]+|\/\/[^)\s]+)\)/g;
+    while ((match = mdImageRegex.exec(aiResponseText)) !== null) {
+        const alt = (match[1] || '').trim();
+        if (alt) {
+            visualCommands.images.push({
+                type: 'search',
+                query: alt,
+                category: null,
+                inline: true
+            });
+        }
+    }
+    cleanedText = cleanedText.replace(mdImageRegex, '');
+
+    // Strip raw <img> tags that point to non-data URLs (data: URLs come from
+    // our own SVG renderers and stay).
+    cleanedText = cleanedText.replace(/<img\b(?![^>]*src=["']data:)[^>]*>/gi, '');
+
     // --- COUNTER COMMANDS ---
     // [COUNTERS:...] - Handled inline by inlineChatVisuals.js (key=value format).
     // Strip any COUNTERS tags so they don't appear as raw text.

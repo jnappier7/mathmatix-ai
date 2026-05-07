@@ -145,6 +145,11 @@ Command: [SEARCH_IMAGE:query="Q",category=C]
 - When a reference diagram would genuinely clarify the concept (unit circle, coordinate plane, angle types, etc.)
 - When the student seems confused and a visual would help more than more text
 
+**CRITICAL — never invent URLs:**
+- NEVER write markdown image syntax like \`![Some Theorem](https://...)\` and NEVER write raw \`<img src="...">\` HTML. URLs you "remember" from training data are almost always broken, moved, or fictional — they will render as broken image icons in chat.
+- The ONLY supported way to display a reference image is \`[SEARCH_IMAGE:query="...",category=...]\`. The system fetches a real, working image from the curated educational whitelist.
+- If you want to show students a picture of (e.g.) the inscribed angle theorem, write \`[SEARCH_IMAGE:query="inscribed angle theorem labeled diagram",category=geometry]\` — not a markdown image link.
+
 **When NOT to use:**
 - When you need exact values from the student's problem → use [DIAGRAM:...] or [FUNCTION_GRAPH:...]
 - When interactivity matters → use [SLIDER_GRAPH:...] or [ALGEBRA_TILES:...]
