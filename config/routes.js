@@ -88,7 +88,6 @@ const learningCurveRoutes = require('../routes/learningCurve');
 const sessionRoutes = require('../routes/session');
 const feedbackRoutes = require('../routes/feedback');
 const tourSurveyRoutes = require('../routes/tourSurvey');
-const diagramRoutes = require('../routes/diagram');
 const messagingRoutes = require('../routes/messaging');
 const iepTemplatesRoutes = require('../routes/iepTemplates');
 const roleSwitchRoutes = require('../routes/roleSwitch');
@@ -203,7 +202,6 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
   app.use('/api/stats', publicStatsRoutes);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
-  app.use('/api', isAuthenticated, diagramRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
   app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes);
   app.use('/api/course-sessions', isAuthenticated, premiumFeatureGate('Courses'), courseSessionRoutes);
