@@ -107,6 +107,7 @@ const { router: dataPrivacyRoutes } = require('../routes/dataPrivacy');
 const consentRoutes = require('../routes/consent');
 const demoRoutes = require('../routes/demo');
 const trialChatRoutes = require('../routes/trialChat');
+const publicStatsRoutes = require('../routes/publicStats');
 const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
@@ -200,6 +201,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/waitlist', waitlistRoutes);
   app.use('/api/demo', demoRoutes);
   app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
+  app.use('/api/stats', publicStatsRoutes);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api', isAuthenticated, diagramRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
