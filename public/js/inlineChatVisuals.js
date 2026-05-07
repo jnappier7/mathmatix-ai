@@ -170,7 +170,9 @@ class InlineChatVisuals {
             // Rational function graph (HA, VA, holes auto-detected)
             { regex: /\[RATIONAL_GRAPH:([^\]]+)\]/g, handler: this.createRationalGraph.bind(this) },
             // Physics: Position/Velocity/Acceleration overlay
-            { regex: /\[VELOCITY_GRAPH:([^\]]+)\]/g, handler: this.createVelocityGraph.bind(this) }
+            { regex: /\[VELOCITY_GRAPH:([^\]]+)\]/g, handler: this.createVelocityGraph.bind(this) },
+            // Circle geometry: chords, secants, tangents, inscribed/central angles
+            { regex: /\[CIRCLE_DIAGRAM:([^\]]+)\]/g, handler: this.createCircleDiagram.bind(this) }
         ];
 
         for (const { regex, handler } of visualTypes) {
@@ -4528,6 +4530,331 @@ class InlineChatVisuals {
             console.error(`[InlineChatVisuals] Error rendering multi-graph ${id}:`, error);
             container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
         }
+    }
+
+    // ==========================================
+    // CIRCLE GEOMETRY DIAGRAM
+    // [CIRCLE_DIAGRAM:type=basic,radius=10]
+    // [CIRCLE_DIAGRAM:type=two_secants,nearArc=80,farArc=120]
+    // [CIRCLE_DIAGRAM:type=tangent_secant,nearArc=40,farArc=120]
+    // [CIRCLE_DIAGRAM:type=two_chords,arcA=60,arcB=120,arcC=80,arcD=100]
+    // [CIRCLE_DIAGRAM:type=inscribed_angle,arc=130]
+    // [CIRCLE_DIAGRAM:type=central_angle,angle=90]
+    // [CIRCLE_DIAGRAM:type=tangent_chord,arc=120]
+    // [CIRCLE_DIAGRAM:type=chord,radius=10,chord=16]
+    // [CIRCLE_DIAGRAM:type=tangent_from_external,radius=10,external=24]
+    // ==========================================
+    createCircleDiagram(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('circle-diag');
+        const type = String(params.type || 'basic').toLowerCase();
+
+        const W = 340, H = 320;
+        const cx = W / 2, cy = H / 2;
+        const R = 90;
+
+        const ARC_NEAR = '#e74c3c';
+        const ARC_FAR = '#3498db';
+        const LINE = '#2c3e50';
+        const HIGHLIGHT = '#f39c12';
+
+        const ptAt = (deg, r = R) => {
+            const a = (deg * Math.PI) / 180;
+            return { x: cx + r * Math.cos(a), y: cy - r * Math.sin(a) };
+        };
+
+        const arcPathBetween = (startDeg, endDeg, r = R, ccw = true) => {
+            // Sweep CCW (math direction) from startDeg through to endDeg.
+            // SVG y-axis is flipped, so math-CCW corresponds to SVG sweep flag = 0.
+            let delta = ((endDeg - startDeg) % 360 + 360) % 360;
+            if (!ccw) delta = 360 - delta;
+            const largeArc = delta > 180 ? 1 : 0;
+            const sweep = ccw ? 0 : 1;
+            const s = ptAt(startDeg, r);
+            const e = ptAt(endDeg, r);
+            return `M ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${r} ${r} 0 ${largeArc} ${sweep} ${e.x.toFixed(2)} ${e.y.toFixed(2)}`;
+        };
+
+        const arcMidpoint = (startDeg, endDeg, r, ccw = true) => {
+            let delta = ((endDeg - startDeg) % 360 + 360) % 360;
+            const mid = ccw ? startDeg + delta / 2 : startDeg - (360 - delta) / 2;
+            return ptAt(mid, r);
+        };
+
+        const lineThrough = (p1, p2, extend = 60) => {
+            const dx = p2.x - p1.x, dy = p2.y - p1.y;
+            const len = Math.hypot(dx, dy);
+            if (len === 0) return { a: p1, b: p2 };
+            const ux = dx / len, uy = dy / len;
+            return {
+                a: { x: p1.x - ux * extend, y: p1.y - uy * extend },
+                b: { x: p2.x + ux * extend, y: p2.y + ux * 0 + uy * extend }
+            };
+        };
+
+        const intersectLines = (p1, p2, p3, p4) => {
+            const denom = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
+            if (Math.abs(denom) < 1e-9) return null;
+            const t = ((p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x)) / denom;
+            return { x: p1.x + t * (p2.x - p1.x), y: p1.y + t * (p2.y - p1.y) };
+        };
+
+        let body = '';
+        body += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#667eea" stroke-width="2"/>`;
+        body += `<circle cx="${cx}" cy="${cy}" r="2.5" fill="#333"/>`;
+
+        let title = params.title;
+        let caption = '';
+
+        switch (type) {
+            case 'basic':
+            case 'circle': {
+                const radiusVal = params.radius != null ? params.radius : 10;
+                const edge = ptAt(35);
+                body += `<line x1="${cx}" y1="${cy}" x2="${edge.x.toFixed(2)}" y2="${edge.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                const mid = { x: (cx + edge.x) / 2, y: (cy + edge.y) / 2 };
+                body += `<text x="${mid.x.toFixed(2)}" y="${(mid.y - 8).toFixed(2)}" text-anchor="middle" font-size="13" font-weight="bold" fill="${LINE}">r = ${radiusVal}</text>`;
+                body += `<text x="${(cx - 8).toFixed(2)}" y="${(cy + 14).toFixed(2)}" font-size="12" fill="#555">O</text>`;
+                if (!title) title = `Circle with radius ${radiusVal}`;
+                break;
+            }
+
+            case 'chord': {
+                const radiusVal = params.radius != null ? params.radius : 10;
+                const chordVal = params.chord != null ? params.chord : 16;
+                // Half-angle θ where 2R sin θ = chord  →  θ = asin(chord / (2R)), clamped
+                const ratio = Math.max(-1, Math.min(1, chordVal / (2 * radiusVal)));
+                const theta = Math.asin(ratio) * 180 / Math.PI;
+                const a = ptAt(90 - theta);
+                const b = ptAt(90 + theta);
+                const midChord = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+                body += `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<line x1="${cx}" y1="${cy}" x2="${midChord.x.toFixed(2)}" y2="${midChord.y.toFixed(2)}" stroke="#888" stroke-width="1.5" stroke-dasharray="4,4"/>`;
+                body += `<line x1="${cx}" y1="${cy}" x2="${a.x.toFixed(2)}" y2="${a.y.toFixed(2)}" stroke="#bbb" stroke-width="1" stroke-dasharray="3,3"/>`;
+                body += `<text x="${midChord.x.toFixed(2)}" y="${(midChord.y - 8).toFixed(2)}" text-anchor="middle" font-size="12" font-weight="bold" fill="${LINE}">chord = ${chordVal}</text>`;
+                const distMid = { x: (cx + midChord.x) / 2 + 8, y: (cy + midChord.y) / 2 };
+                if (params.distance != null) {
+                    body += `<text x="${distMid.x.toFixed(2)}" y="${distMid.y.toFixed(2)}" font-size="11" fill="#666">d = ${params.distance}</text>`;
+                }
+                body += `<circle cx="${a.x.toFixed(2)}" cy="${a.y.toFixed(2)}" r="3" fill="${LINE}"/>`;
+                body += `<circle cx="${b.x.toFixed(2)}" cy="${b.y.toFixed(2)}" r="3" fill="${LINE}"/>`;
+                if (!title) title = `Chord of length ${chordVal} in circle (r = ${radiusVal})`;
+                break;
+            }
+
+            case 'two_secants':
+            case 'two_secants_outside': {
+                const farArc = +params.farArc || +params.bigArc || 120;
+                const nearArc = +params.nearArc || +params.smallArc || 80;
+                const tn = nearArc / 2;
+                const tf = farArc / 2;
+                const nearUp = ptAt(tn);
+                const nearDn = ptAt(-tn);
+                const farUp = ptAt(180 - tf);
+                const farDn = ptAt(180 + tf);
+                const P = intersectLines(nearUp, farUp, nearDn, farDn);
+                if (P) {
+                    body += `<line x1="${P.x.toFixed(2)}" y1="${P.y.toFixed(2)}" x2="${farUp.x.toFixed(2)}" y2="${farUp.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                    body += `<line x1="${P.x.toFixed(2)}" y1="${P.y.toFixed(2)}" x2="${farDn.x.toFixed(2)}" y2="${farDn.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                    body += `<circle cx="${P.x.toFixed(2)}" cy="${P.y.toFixed(2)}" r="4" fill="${LINE}"/>`;
+                    body += `<text x="${(P.x + 8).toFixed(2)}" y="${(P.y + 4).toFixed(2)}" font-size="13" font-weight="bold">P</text>`;
+                    const pAngle = (farArc - nearArc) / 2;
+                    body += `<text x="${(P.x - 56).toFixed(2)}" y="${(P.y + 4).toFixed(2)}" font-size="12" fill="${HIGHLIGHT}" font-weight="bold">∠P = ${pAngle}°</text>`;
+                }
+                body += `<path d="${arcPathBetween(-tn, tn, R, true)}" stroke="${ARC_NEAR}" stroke-width="4" fill="none"/>`;
+                body += `<path d="${arcPathBetween(180 - tf, 180 + tf, R, true)}" stroke="${ARC_FAR}" stroke-width="4" fill="none"/>`;
+                const nearLabel = arcMidpoint(-tn, tn, R + 18, true);
+                const farLabel = arcMidpoint(180 - tf, 180 + tf, R + 18, true);
+                body += `<text x="${nearLabel.x.toFixed(2)}" y="${nearLabel.y.toFixed(2)}" text-anchor="middle" font-size="12" fill="${ARC_NEAR}" font-weight="bold">${nearArc}°</text>`;
+                body += `<text x="${farLabel.x.toFixed(2)}" y="${farLabel.y.toFixed(2)}" text-anchor="middle" font-size="12" fill="${ARC_FAR}" font-weight="bold">${farArc}°</text>`;
+                if (!title) title = 'Two secants from external point';
+                caption = `∠P = ½(${farArc}° − ${nearArc}°) = ${(farArc - nearArc) / 2}°`;
+                break;
+            }
+
+            case 'tangent_secant':
+            case 'tangent_secant_outside': {
+                const farArc = +params.farArc || 120;
+                const nearArc = +params.nearArc || 40;
+                const tn = nearArc / 2;
+                const tf = farArc / 2;
+                // Tangent at angle 0 (rightmost point of circle)
+                const T = ptAt(0);
+                const nearUp = ptAt(tn);
+                const farUp = ptAt(180 - tf);
+                // Tangent at T is vertical; mirror tangent on bottom is the same line. Use secant-secant geometry:
+                // External point: intersect tangent (vertical at T) with secant line through nearUp & farUp.
+                const tangentA = { x: T.x, y: T.y - 100 };
+                const tangentB = { x: T.x, y: T.y + 100 };
+                // Use generic intersection; tangent line is x = T.x, so just solve secant line at x = T.x
+                const P = intersectLines(tangentA, tangentB, nearUp, farUp);
+                if (P) {
+                    body += `<line x1="${P.x.toFixed(2)}" y1="${P.y.toFixed(2)}" x2="${T.x.toFixed(2)}" y2="${(T.y + 30).toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                    body += `<line x1="${P.x.toFixed(2)}" y1="${P.y.toFixed(2)}" x2="${farUp.x.toFixed(2)}" y2="${farUp.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                    body += `<circle cx="${P.x.toFixed(2)}" cy="${P.y.toFixed(2)}" r="4" fill="${LINE}"/>`;
+                    body += `<text x="${(P.x + 8).toFixed(2)}" y="${(P.y + 4).toFixed(2)}" font-size="13" font-weight="bold">P</text>`;
+                    const pAngle = (farArc - nearArc) / 2;
+                    body += `<text x="${(P.x - 60).toFixed(2)}" y="${(P.y - 6).toFixed(2)}" font-size="12" fill="${HIGHLIGHT}" font-weight="bold">∠P = ${pAngle}°</text>`;
+                }
+                // Highlight the near (intercepted between tangent-point T and nearUp) and far arcs
+                body += `<path d="${arcPathBetween(0, tn, R, true)}" stroke="${ARC_NEAR}" stroke-width="4" fill="none"/>`;
+                body += `<path d="${arcPathBetween(180 - tf, tn, R, false)}" stroke="${ARC_FAR}" stroke-width="4" fill="none"/>`;
+                body += `<circle cx="${T.x.toFixed(2)}" cy="${T.y.toFixed(2)}" r="3" fill="${LINE}"/>`;
+                body += `<text x="${(T.x + 6).toFixed(2)}" y="${(T.y + 14).toFixed(2)}" font-size="11" fill="#555">T</text>`;
+                if (!title) title = 'Tangent and secant from external point';
+                caption = `∠P = ½(${farArc}° − ${nearArc}°) = ${(farArc - nearArc) / 2}°`;
+                break;
+            }
+
+            case 'two_chords':
+            case 'two_chords_inside': {
+                // Four arcs around the circle, summing to 360.
+                let arcA = +params.arcA || 60;
+                let arcB = +params.arcB || 120;
+                let arcC = +params.arcC || 80;
+                let arcD = +params.arcD || 100;
+                const sum = arcA + arcB + arcC + arcD;
+                if (sum > 0 && Math.abs(sum - 360) > 0.5) {
+                    const k = 360 / sum;
+                    arcA *= k; arcB *= k; arcC *= k; arcD *= k;
+                }
+                // Place 4 points around the circle starting at angle 30
+                const a0 = 30;
+                const A = ptAt(a0);
+                const B = ptAt(a0 + arcA);
+                const C = ptAt(a0 + arcA + arcB);
+                const D = ptAt(a0 + arcA + arcB + arcC);
+                // Chord 1: A-C ; Chord 2: B-D ; intersection inside
+                body += `<line x1="${A.x.toFixed(2)}" y1="${A.y.toFixed(2)}" x2="${C.x.toFixed(2)}" y2="${C.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<line x1="${B.x.toFixed(2)}" y1="${B.y.toFixed(2)}" x2="${D.x.toFixed(2)}" y2="${D.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                const X = intersectLines(A, C, B, D);
+                if (X) {
+                    body += `<circle cx="${X.x.toFixed(2)}" cy="${X.y.toFixed(2)}" r="3.5" fill="${HIGHLIGHT}"/>`;
+                    const angle = (+params.arcA + +params.arcC || arcA + arcC) / 2;
+                    body += `<text x="${(X.x + 6).toFixed(2)}" y="${(X.y - 6).toFixed(2)}" font-size="12" fill="${HIGHLIGHT}" font-weight="bold">∠ = ${(arcA + arcC) / 2}°</text>`;
+                }
+                // Arc labels
+                const labels = [
+                    { mid: arcMidpoint(a0, a0 + arcA, R + 16, true), val: Math.round(arcA), color: ARC_NEAR },
+                    { mid: arcMidpoint(a0 + arcA, a0 + arcA + arcB, R + 16, true), val: Math.round(arcB), color: ARC_FAR },
+                    { mid: arcMidpoint(a0 + arcA + arcB, a0 + arcA + arcB + arcC, R + 16, true), val: Math.round(arcC), color: ARC_NEAR },
+                    { mid: arcMidpoint(a0 + arcA + arcB + arcC, a0 + 360, R + 16, true), val: Math.round(arcD), color: ARC_FAR }
+                ];
+                for (const L of labels) {
+                    body += `<text x="${L.mid.x.toFixed(2)}" y="${L.mid.y.toFixed(2)}" text-anchor="middle" font-size="11" fill="${L.color}" font-weight="bold">${L.val}°</text>`;
+                }
+                if (!title) title = 'Two chords meeting inside';
+                caption = `∠ = ½(${Math.round(arcA)}° + ${Math.round(arcC)}°) = ${(arcA + arcC) / 2}°`;
+                break;
+            }
+
+            case 'inscribed_angle': {
+                const arc = +params.arc || 130;
+                // Vertex on circle at angle 270 (bottom). Intercepted arc opposite, centered at 90.
+                const V = ptAt(270);
+                const A = ptAt(90 - arc / 2);
+                const B = ptAt(90 + arc / 2);
+                body += `<line x1="${V.x.toFixed(2)}" y1="${V.y.toFixed(2)}" x2="${A.x.toFixed(2)}" y2="${A.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<line x1="${V.x.toFixed(2)}" y1="${V.y.toFixed(2)}" x2="${B.x.toFixed(2)}" y2="${B.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<path d="${arcPathBetween(90 - arc / 2, 90 + arc / 2, R, true)}" stroke="${ARC_FAR}" stroke-width="4" fill="none"/>`;
+                const arcLabel = ptAt(90, R + 18);
+                body += `<text x="${arcLabel.x.toFixed(2)}" y="${arcLabel.y.toFixed(2)}" text-anchor="middle" font-size="12" fill="${ARC_FAR}" font-weight="bold">${arc}°</text>`;
+                body += `<circle cx="${V.x.toFixed(2)}" cy="${V.y.toFixed(2)}" r="3" fill="${LINE}"/>`;
+                body += `<text x="${V.x.toFixed(2)}" y="${(V.y + 18).toFixed(2)}" text-anchor="middle" font-size="12">V</text>`;
+                body += `<text x="${cx.toFixed(2)}" y="${(cy + 30).toFixed(2)}" text-anchor="middle" font-size="12" fill="${HIGHLIGHT}" font-weight="bold">∠V = ${arc / 2}°</text>`;
+                if (!title) title = 'Inscribed angle';
+                caption = `∠V = ½ × ${arc}° = ${arc / 2}°`;
+                break;
+            }
+
+            case 'central_angle': {
+                const angle = +params.angle || 90;
+                const A = ptAt(90 - angle / 2);
+                const B = ptAt(90 + angle / 2);
+                body += `<line x1="${cx}" y1="${cy}" x2="${A.x.toFixed(2)}" y2="${A.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<line x1="${cx}" y1="${cy}" x2="${B.x.toFixed(2)}" y2="${B.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<path d="${arcPathBetween(90 - angle / 2, 90 + angle / 2, R, true)}" stroke="${ARC_FAR}" stroke-width="4" fill="none"/>`;
+                body += `<path d="${arcPathBetween(90 - angle / 2, 90 + angle / 2, 24, true)}" stroke="${HIGHLIGHT}" stroke-width="2" fill="none"/>`;
+                const arcLabel = ptAt(90, R + 18);
+                body += `<text x="${arcLabel.x.toFixed(2)}" y="${arcLabel.y.toFixed(2)}" text-anchor="middle" font-size="12" fill="${ARC_FAR}" font-weight="bold">arc = ${angle}°</text>`;
+                body += `<text x="${(cx + 8).toFixed(2)}" y="${(cy - 8).toFixed(2)}" font-size="12" fill="${HIGHLIGHT}" font-weight="bold">${angle}°</text>`;
+                if (!title) title = 'Central angle';
+                caption = `Central angle = intercepted arc = ${angle}°`;
+                break;
+            }
+
+            case 'tangent_chord': {
+                const arc = +params.arc || 120;
+                // Tangent point at angle 0; chord from tangent point to angle (arc).
+                const T = ptAt(0);
+                const C = ptAt(arc);
+                // Tangent line at T is vertical
+                body += `<line x1="${T.x.toFixed(2)}" y1="${(T.y - 70).toFixed(2)}" x2="${T.x.toFixed(2)}" y2="${(T.y + 70).toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<line x1="${T.x.toFixed(2)}" y1="${T.y.toFixed(2)}" x2="${C.x.toFixed(2)}" y2="${C.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<path d="${arcPathBetween(0, arc, R, true)}" stroke="${ARC_FAR}" stroke-width="4" fill="none"/>`;
+                const arcLabel = arcMidpoint(0, arc, R + 18, true);
+                body += `<text x="${arcLabel.x.toFixed(2)}" y="${arcLabel.y.toFixed(2)}" text-anchor="middle" font-size="12" fill="${ARC_FAR}" font-weight="bold">${arc}°</text>`;
+                body += `<text x="${(T.x - 12).toFixed(2)}" y="${(T.y - 16).toFixed(2)}" font-size="12" fill="${HIGHLIGHT}" font-weight="bold">${arc / 2}°</text>`;
+                body += `<circle cx="${T.x.toFixed(2)}" cy="${T.y.toFixed(2)}" r="3" fill="${LINE}"/>`;
+                if (!title) title = 'Tangent–chord angle';
+                caption = `Angle = ½ × ${arc}° = ${arc / 2}°`;
+                break;
+            }
+
+            case 'tangent_from_external': {
+                const radiusVal = +params.radius || 10;
+                const externalVal = +params.external || +params.distance || 24;
+                // Right triangle: radius (vertical) + tangent (horizontal) + hypotenuse from external point to center.
+                // Place external point P below the circle at (cx, cy + radius_screen + tangentLen_screen?)
+                // Use a simple geometric layout: tangent point at angle 0, P below at distance externalVal.
+                // Scale so external length on screen ≈ 1.6*R
+                const screenScale = (1.6 * R) / Math.max(externalVal, 1);
+                const T = ptAt(0); // tangent point at right of circle
+                const O = { x: cx, y: cy };
+                const Px = T.x;
+                const tangentScreen = Math.sqrt(Math.max(0, externalVal * externalVal - radiusVal * radiusVal)) * screenScale;
+                const Py = T.y + tangentScreen;
+                const P = { x: Px, y: Py };
+                // Draw triangle: O-T (radius), T-P (tangent), O-P (hypotenuse)
+                body += `<line x1="${O.x}" y1="${O.y}" x2="${T.x.toFixed(2)}" y2="${T.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<line x1="${T.x.toFixed(2)}" y1="${T.y.toFixed(2)}" x2="${P.x.toFixed(2)}" y2="${P.y.toFixed(2)}" stroke="${LINE}" stroke-width="2"/>`;
+                body += `<line x1="${O.x}" y1="${O.y}" x2="${P.x.toFixed(2)}" y2="${P.y.toFixed(2)}" stroke="#888" stroke-width="1.5" stroke-dasharray="5,4"/>`;
+                // Right angle marker at T
+                const sq = 10;
+                body += `<rect x="${(T.x - sq).toFixed(2)}" y="${T.y.toFixed(2)}" width="${sq}" height="${sq}" fill="none" stroke="${LINE}" stroke-width="1.5"/>`;
+                body += `<circle cx="${P.x.toFixed(2)}" cy="${P.y.toFixed(2)}" r="3" fill="${LINE}"/>`;
+                body += `<text x="${(P.x + 8).toFixed(2)}" y="${(P.y + 4).toFixed(2)}" font-size="12" font-weight="bold">B</text>`;
+                body += `<text x="${(O.x - 12).toFixed(2)}" y="${(O.y + 4).toFixed(2)}" font-size="12">O</text>`;
+                body += `<text x="${(T.x + 6).toFixed(2)}" y="${(T.y - 6).toFixed(2)}" font-size="12">A</text>`;
+                // Labels
+                const radMid = { x: (O.x + T.x) / 2, y: (O.y + T.y) / 2 - 6 };
+                body += `<text x="${radMid.x.toFixed(2)}" y="${radMid.y.toFixed(2)}" text-anchor="middle" font-size="11" fill="${LINE}">OA = ${radiusVal}</text>`;
+                const hypMid = { x: (O.x + P.x) / 2 - 8, y: (O.y + P.y) / 2 };
+                body += `<text x="${hypMid.x.toFixed(2)}" y="${hypMid.y.toFixed(2)}" text-anchor="end" font-size="11" fill="#666">OB = ${externalVal}</text>`;
+                const tangentLen = Math.sqrt(Math.max(0, externalVal * externalVal - radiusVal * radiusVal));
+                const tanMid = { x: T.x + 8, y: (T.y + P.y) / 2 };
+                body += `<text x="${tanMid.x.toFixed(2)}" y="${tanMid.y.toFixed(2)}" font-size="11" fill="${HIGHLIGHT}" font-weight="bold">AB = √(${externalVal}² − ${radiusVal}²) = ${tangentLen.toFixed(2)}</text>`;
+                if (!title) title = 'Tangent from external point';
+                caption = `Right triangle: AB² + OA² = OB²`;
+                break;
+            }
+
+            default: {
+                if (!title) title = 'Circle';
+            }
+        }
+
+        const captionHTML = caption
+            ? `<div class="icv-caption" style="margin-top:6px;font-size:12px;color:#555;text-align:center;">${this.escapeHtml(caption)}</div>`
+            : '';
+
+        return `
+        <div class="icv-container icv-circle-diagram" id="${id}">
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <svg viewBox="0 0 ${W} ${H}" class="icv-circle-svg" style="max-width:100%;height:auto;">${body}</svg>
+            ${captionHTML}
+        </div>
+        `;
     }
 }
 
