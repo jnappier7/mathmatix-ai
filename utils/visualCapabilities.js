@@ -80,7 +80,7 @@ INTERACTIVE GRAPHS (live, explorable graphs):
   Example: [SLIDER_GRAPH:fn=m*x+b,params="m:1:-5:5,b:0:-5:5",title="Explore slope"]
   Multiple sliders: [SLIDER_GRAPH:fn=a*x^2+b*x+c,params="a:1:-3:3,b:0:-5:5,c:0:-5:5",title="Explore quadratics"]
   IMPORTANT: Always QUOTE the params value with double quotes when using multiple sliders.
-[POINTS:points=(x1,y1),(x2,y2),connect=bool,title="T"]
+[POINTS:points=(x1,y1),(x2,y2),connect=bool,title="T"] — REQUIRED: include at least one (x,y) pair. Emitting [POINTS] without real coordinates renders nothing.
 
 CALCULUS & ADVANCED GRAPHS (interactive, auto-detect key features):
 [DERIVATIVE_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"] — overlays f(x) and f′(x) on the same graph with interactive tangent line. Student can hover to see slope at any point. Use when teaching derivatives, power rule, rates of change.

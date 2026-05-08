@@ -1278,6 +1278,13 @@ class InlineChatVisuals {
             });
         }
 
+        // Don't render an empty default-axis grid when the LLM emitted [POINTS:...]
+        // without actual coordinate data. Returning empty string drops the placeholder
+        // entirely so the user doesn't see ghost widgets.
+        if (points.length === 0) {
+            return '';
+        }
+
         const xMin = params.xMin ?? params.xmin ?? -10;
         const xMax = params.xMax ?? params.xmax ?? 10;
         const yMin = params.yMin ?? params.ymin ?? -10;
