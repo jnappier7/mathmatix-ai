@@ -39,20 +39,16 @@ try {
 const MAX_PROBLEMS = 15;
 const DEFAULT_PROBLEM_COUNT = 8;
 
-// Chromium launch options for headless PDF rendering inside the container.
-// `--disable-crash-reporter` and `--no-crash-upload` are required to avoid
-// `chrome_crashpad_handler: --database is required` failures when chromium
-// re-execs itself as the crashpad subprocess (the args get stripped when
-// running headless under our container's sandbox-disabled launch).
+// Launch options for headless PDF rendering. Uses chrome-headless-shell
+// (bundled by Puppeteer via .puppeteerrc.cjs) instead of the system chromium
+// package — the latter ships a broken crashpad handler in our deploy
+// environment that fails with "chrome_crashpad_handler: --database is required".
 const BROWSER_LAUNCH_OPTIONS = {
-  headless: 'new',
+  headless: 'shell',
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
     '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--disable-crash-reporter',
-    '--no-crash-upload',
   ],
 };
 

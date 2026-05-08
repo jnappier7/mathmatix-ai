@@ -13,16 +13,11 @@ services:
       - name: mathmatix.ai
       - name: www.mathmatix.ai
 
-    # Puppeteer needs this
     envVars:
       - key: NODE_VERSION
         value: 20.14.0
       - key: NODE_ENV
         value: production
-      - key: PUPPETEER_SKIP_DOWNLOAD
-        value: true
-      - key: PUPPETEER_EXECUTABLE_PATH
-        value: /usr/bin/chromium
 
       # Your app's environment variables (set these in Render dashboard)
       - key: MONGO_URI
