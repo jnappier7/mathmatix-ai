@@ -10,10 +10,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-  <meta name="theme-color" content="#0a0a1a" />
-  <title>M∆THM∆TIΧ — Voice Tutor</title>
+  <meta name="theme-color" content="#06070f" />
+  <title>Mathmatix+ — Voice Tutor</title>
   <link rel="stylesheet" href="/css/base/variables.css?v=3" />
-  <link rel="stylesheet" href="/css/voice-tutor.css?v=3" />
+  <link rel="stylesheet" href="/css/voice-tutor.css?v=4" />
   <link rel="stylesheet" href="/css/dark-mode.css?v=3" />
   <link rel="stylesheet" href="/css/age-adaptive.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
@@ -25,30 +25,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-  <!-- Ambient background -->
-  <div class="vt-ambient">
+
+  <!-- Ambient depth layers -->
+  <div class="vt-ambient" aria-hidden="true">
     <div class="vt-ambient-gradient"></div>
+    <div class="vt-ambient-aurora vt-ambient-aurora-1"></div>
+    <div class="vt-ambient-aurora vt-ambient-aurora-2"></div>
+    <div class="vt-ambient-grain"></div>
     <canvas id="vt-particle-canvas"></canvas>
   </div>
 
   <!-- Top bar -->
   <header class="vt-header">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WDF79L47');</script>
-<!-- End Google Tag Manager -->
-    <a href="/chat.html" class="vt-back-btn" title="Back to chat">
-      <i class="fas fa-arrow-left"></i>
-    </a>
+    <div class="vt-header-left">
+      <a href="/chat.html" class="vt-back-btn" title="Back to chat" aria-label="Back to chat">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <a href="/chat.html" class="vt-brand" aria-label="Mathmatix Plus Voice Tutor">
+        <img src="/images/mathmatix-plus-logo.svg" alt="" class="vt-brand-mark" />
+        <span class="vt-brand-text">
+          <span class="vt-brand-product">Voice Tutor</span>
+          <span class="vt-brand-tier">Mathmatix+</span>
+        </span>
+      </a>
+    </div>
     <div class="vt-header-center">
-      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix" class="vt-logo" />
-      <span class="vt-session-label">Voice Session</span>
-      <span class="vt-session-timer" id="vt-session-timer">00:00</span>
+      <div class="vt-session-pill">
+        <span class="vt-session-pill-dot" aria-hidden="true"></span>
+        <span class="vt-session-pill-label">Live</span>
+        <span class="vt-session-pill-divider" aria-hidden="true"></span>
+        <span class="vt-session-timer" id="vt-session-timer">00:00</span>
+      </div>
     </div>
     <div class="vt-header-actions">
+      <button id="vt-toggle-chat" class="vt-icon-btn vt-chat-toggle-btn" title="Toggle transcript" aria-label="Toggle transcript">
+        <i class="fas fa-comments"></i>
+      </button>
       <button id="vt-settings-btn" class="vt-icon-btn" title="Settings" aria-label="Settings">
         <i class="fas fa-sliders-h"></i>
       </button>
@@ -57,121 +69,156 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- Main content area -->
   <main class="vt-main">
-    <!-- Left: Visual panel — three defined zones stacked vertically -->
-    <section class="vt-visual-panel">
-      <!-- Zone 1: Math steps (scrollable, fills remaining space) -->
+    <!-- Left: Stage — math board, transcript, tutor presence -->
+    <section class="vt-stage">
+      <!-- Math board (scrollable) -->
       <div class="vt-canvas-area" id="vt-canvas-area">
+        <!-- Empty state: tutor greeting + suggestion chips -->
         <div class="vt-canvas-placeholder" id="vt-canvas-placeholder">
-          <p><i class="fas fa-function"></i> Equations appear here as you talk</p>
+          <div class="vt-empty-glyph" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <h2 class="vt-empty-title" id="vt-empty-title">Say hello, or ask a problem</h2>
+          <p class="vt-empty-subtitle">I'm listening. Try one of these to get started.</p>
+          <div class="vt-suggestion-chips" id="vt-suggestion-chips" role="list">
+            <button class="vt-chip" data-prompt="Help me solve 2x + 7 = 19" role="listitem">
+              <i class="fas fa-square-root-variable" aria-hidden="true"></i>
+              <span>Solve a linear equation</span>
+            </button>
+            <button class="vt-chip" data-prompt="Can you explain how slope works?" role="listitem">
+              <i class="fas fa-chart-line" aria-hidden="true"></i>
+              <span>Explain slope</span>
+            </button>
+            <button class="vt-chip" data-prompt="I want to practice fractions" role="listitem">
+              <i class="fas fa-divide" aria-hidden="true"></i>
+              <span>Practice fractions</span>
+            </button>
+          </div>
         </div>
         <div id="vt-math-display" class="vt-math-display"></div>
         <canvas id="vt-graph-canvas" class="vt-graph-canvas" style="display:none;"></canvas>
       </div>
 
-      <!-- Zone 2: Live transcript speech bubble -->
-      <div class="vt-live-transcript" id="vt-live-transcript">
+      <!-- Live transcript bubble (between math area and tutor) -->
+      <div class="vt-live-transcript" id="vt-live-transcript" aria-live="polite">
         <div class="vt-transcript-text" id="vt-transcript-text"></div>
       </div>
 
-      <!-- Zone 3: Tutor avatar presence (fixed at bottom) -->
-      <div class="vt-presence" id="vt-presence">
-        <div class="vt-presence-rings">
+      <!-- Tutor presence (bottom of stage) -->
+      <div class="vt-presence" id="vt-presence" data-state="idle">
+        <div class="vt-presence-rings" aria-hidden="true">
           <div class="vt-ring vt-ring-outer"></div>
           <div class="vt-ring vt-ring-mid"></div>
           <div class="vt-ring vt-ring-inner"></div>
         </div>
         <div class="vt-avatar-circle" id="vt-avatar-circle">
-          <img id="vt-tutor-face" alt="Tutor" class="vt-tutor-face" />
-          <canvas id="vt-orb-waveform" width="200" height="200" class="vt-waveform-overlay"></canvas>
+          <img id="vt-tutor-face" alt="" class="vt-tutor-face" />
+          <canvas id="vt-orb-waveform" width="240" height="240" class="vt-waveform-overlay"></canvas>
+          <div class="vt-avatar-specular" aria-hidden="true"></div>
         </div>
-        <div class="vt-presence-glow"></div>
-        <div class="vt-presence-status" id="vt-orb-status">
-          <span class="vt-status-dot"></span>
-          <span class="vt-status-text" id="vt-status-text" aria-live="polite">Tap to begin</span>
-        </div>
+        <div class="vt-presence-glow" aria-hidden="true"></div>
       </div>
     </section>
 
     <!-- Right: Chat transcript panel -->
-    <aside class="vt-chat-panel" id="vt-chat-panel">
+    <aside class="vt-chat-panel" id="vt-chat-panel" aria-label="Conversation transcript">
       <div class="vt-chat-header">
         <div class="vt-tutor-info">
-          <img id="vt-tutor-avatar" alt="Tutor" class="vt-tutor-avatar" />
-          <div>
+          <div class="vt-tutor-avatar-wrap">
+            <img id="vt-tutor-avatar" alt="" class="vt-tutor-avatar" />
+            <span class="vt-tutor-presence-dot" aria-hidden="true"></span>
+          </div>
+          <div class="vt-tutor-meta">
             <div class="vt-tutor-name" id="vt-tutor-name">Tutor</div>
             <div class="vt-tutor-status" id="vt-tutor-status">Ready</div>
           </div>
         </div>
-        <button id="vt-toggle-chat" class="vt-icon-btn vt-chat-toggle" title="Toggle transcript" aria-label="Toggle transcript">
-          <i class="fas fa-comments"></i>
+        <button id="vt-close-chat" class="vt-icon-btn vt-icon-btn-ghost" title="Hide transcript" aria-label="Hide transcript">
+          <i class="fas fa-times"></i>
         </button>
       </div>
       <div class="vt-chat-messages" id="vt-chat-messages" role="log" aria-live="polite">
         <!-- Messages will be appended here -->
       </div>
       <div class="vt-chat-input-bar">
-        <input type="text" id="vt-text-input" placeholder="Type if you prefer..." class="vt-text-input" />
+        <input type="text" id="vt-text-input" placeholder="Type if you prefer…" class="vt-text-input" aria-label="Type a message" />
         <button id="vt-send-text" class="vt-send-btn" title="Send" aria-label="Send message">
-          <i class="fas fa-paper-plane"></i>
+          <i class="fas fa-arrow-up"></i>
         </button>
       </div>
     </aside>
   </main>
 
-  <!-- Bottom controls -->
-  <footer class="vt-controls">
-    <div class="vt-control-group">
-      <button id="vt-end-btn" class="vt-control-btn vt-end-btn" title="End session" aria-label="End session">
-        <i class="fas fa-phone-slash"></i>
+  <!-- Bottom controls — single primary affordance + minimal secondaries -->
+  <footer class="vt-controls" aria-label="Voice controls">
+    <button id="vt-mute-btn" class="vt-control-btn vt-secondary-btn vt-mute-btn" title="Mute tutor" aria-label="Mute tutor">
+      <i class="fas fa-volume-up"></i>
+    </button>
+
+    <div class="vt-mic-wrap">
+      <button id="vt-mic-btn" class="vt-control-btn vt-mic-btn" title="Tap to speak" aria-label="Tap to speak" data-state="idle">
+        <span class="vt-mic-ripple" aria-hidden="true"></span>
+        <span class="vt-mic-ripple vt-mic-ripple-2" aria-hidden="true"></span>
+        <i class="fas fa-microphone" id="vt-mic-icon"></i>
       </button>
-      <span class="vt-control-label">End</span>
+      <div class="vt-mic-status" id="vt-status-text" aria-live="polite">Tap to speak</div>
     </div>
-    <div class="vt-control-group">
-      <button id="vt-mic-btn" class="vt-control-btn vt-mic-btn" title="Tap to speak" aria-label="Tap to speak">
-        <div class="vt-mic-ripple"></div>
-        <i class="fas fa-microphone"></i>
-      </button>
-    </div>
-    <div class="vt-control-group">
-      <button id="vt-mute-btn" class="vt-control-btn vt-mute-btn" title="Mute tutor" aria-label="Mute tutor">
-        <i class="fas fa-volume-up"></i>
-      </button>
-      <span class="vt-control-label">Mute</span>
-    </div>
+
+    <button id="vt-end-btn" class="vt-control-btn vt-secondary-btn vt-end-btn" title="End session" aria-label="End session">
+      <i class="fas fa-phone-slash"></i>
+    </button>
   </footer>
 
   <!-- Settings drawer -->
-  <div class="vt-settings-drawer" id="vt-settings-drawer">
+  <div class="vt-settings-drawer" id="vt-settings-drawer" role="dialog" aria-modal="true" aria-labelledby="vt-settings-heading">
     <div class="vt-settings-content">
-      <h3>Voice Settings</h3>
+      <div class="vt-settings-head">
+        <h3 id="vt-settings-heading">Voice Settings</h3>
+        <button id="vt-settings-close" class="vt-icon-btn vt-icon-btn-ghost" aria-label="Close settings">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
       <label class="vt-setting">
-        <span>Hands-free mode</span>
+        <span class="vt-setting-label">
+          <span class="vt-setting-title">Hands-free mode</span>
+          <span class="vt-setting-help">Auto-listen as soon as the session opens</span>
+        </span>
         <input type="checkbox" id="vt-handsfree-toggle" checked />
       </label>
       <label class="vt-setting">
-        <span>Auto-listen after response</span>
+        <span class="vt-setting-label">
+          <span class="vt-setting-title">Auto-listen after response</span>
+          <span class="vt-setting-help">Reopen the mic the moment the tutor finishes</span>
+        </span>
         <input type="checkbox" id="vt-autolisten-toggle" checked />
       </label>
       <label class="vt-setting">
-        <span>Show math visuals</span>
+        <span class="vt-setting-label">
+          <span class="vt-setting-title">Show math visuals</span>
+          <span class="vt-setting-help">Render equations on the board as you talk</span>
+        </span>
         <input type="checkbox" id="vt-visuals-toggle" checked />
       </label>
       <label class="vt-setting">
-        <span>Silence timeout</span>
+        <span class="vt-setting-label">
+          <span class="vt-setting-title">Silence timeout</span>
+          <span class="vt-setting-help">How long to wait before sending what you said</span>
+        </span>
         <select id="vt-silence-timeout">
-          <option value="800">0.8s (fastest)</option>
-          <option value="1200" selected>1.2s (normal)</option>
-          <option value="2000">2s (relaxed)</option>
-          <option value="3000">3s (extra relaxed)</option>
+          <option value="800">0.8s — fastest</option>
+          <option value="1200" selected>1.2s — normal</option>
+          <option value="2000">2s — relaxed</option>
+          <option value="3000">3s — extra relaxed</option>
         </select>
       </label>
-      <button id="vt-settings-close" class="vt-btn-close">Done</button>
+      <button id="vt-settings-done" class="vt-btn-close">Done</button>
     </div>
   </div>
+  <div class="vt-settings-scrim" id="vt-settings-scrim" aria-hidden="true"></div>
 
   <script src="/js/csrf.js"></script>
   <script src="/js/age-tier-standalone.js"></script>
-  <script src="/js/voice-stream-client.js?v=1"></script>
-  <script src="/js/voice-tutor-session.js?v=5"></script>
+  <script src="/js/voice-stream-client.js?v=2"></script>
+  <script src="/js/voice-tutor-session.js?v=6"></script>
 </body>
 </html>

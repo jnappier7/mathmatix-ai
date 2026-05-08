@@ -55,16 +55,20 @@
     dom.tutorFace = $('#vt-tutor-face');
     dom.statusText = $('#vt-status-text');
     dom.micBtn = $('#vt-mic-btn');
+    dom.micIcon = $('#vt-mic-icon');
     dom.endBtn = $('#vt-end-btn');
     dom.muteBtn = $('#vt-mute-btn');
     dom.chatMessages = $('#vt-chat-messages');
     dom.chatPanel = $('#vt-chat-panel');
     dom.toggleChat = $('#vt-toggle-chat');
+    dom.closeChat = $('#vt-close-chat');
     dom.textInput = $('#vt-text-input');
     dom.sendText = $('#vt-send-text');
     dom.settingsBtn = $('#vt-settings-btn');
     dom.settingsDrawer = $('#vt-settings-drawer');
     dom.settingsClose = $('#vt-settings-close');
+    dom.settingsDone = $('#vt-settings-done');
+    dom.settingsScrim = $('#vt-settings-scrim');
     dom.handsfreeToggle = $('#vt-handsfree-toggle');
     dom.autolistenToggle = $('#vt-autolisten-toggle');
     dom.visualsToggle = $('#vt-visuals-toggle');
@@ -79,6 +83,8 @@
     dom.tutorStatus = $('#vt-tutor-status');
     dom.particleCanvas = $('#vt-particle-canvas');
     dom.sessionTimer = $('#vt-session-timer');
+    dom.suggestionChips = $('#vt-suggestion-chips');
+    dom.emptyTitle = $('#vt-empty-title');
   }
 
   // ═══════════════════════════════════════
@@ -143,12 +149,25 @@
         // Server is ready; nothing to do — startListening triggers mic
         break;
 
+      case 'mic_level':
+        // Drive the orb's level-reactive visual via CSS custom property.
+        // The CSS uses --vt-mic-level (0..1) for transform/glow scaling.
+        if (dom.presence) {
+          // Smooth a bit so we don't jitter on every 20ms frame
+          state.smoothedMicLevel = (state.smoothedMicLevel || 0) * 0.6 + (ev.level || 0) * 0.4;
+          dom.presence.style.setProperty('--vt-mic-level', state.smoothedMicLevel.toFixed(3));
+        }
+        break;
+
       case 'listening_started':
         setMode('listening');
         break;
 
       case 'listening_stopped':
         if (state.mode === 'listening') setMode('idle');
+        // Decay level on stop
+        if (dom.presence) dom.presence.style.setProperty('--vt-mic-level', '0');
+        state.smoothedMicLevel = 0;
         break;
 
       case 'transcript_partial':
@@ -304,6 +323,13 @@
         if (dom.tutorAvatar) { dom.tutorAvatar.src = imgSrc; dom.tutorAvatar.alt = state.tutorName; }
         if (dom.tutorFace) { dom.tutorFace.src = imgSrc; dom.tutorFace.alt = state.tutorName; }
       }
+      // Personalized greeting on the empty-state title
+      if (dom.emptyTitle && state.tutorName && state.tutorName !== 'Tutor') {
+        const firstName = (user.firstName || '').trim();
+        dom.emptyTitle.textContent = firstName
+          ? `Hey ${firstName} — say hi to ${state.tutorName}, or ask a problem`
+          : `Say hi to ${state.tutorName}, or ask a problem`;
+      }
     } catch (e) {
       console.warn('[VoiceTutor] Could not load user data:', e);
     }
@@ -347,11 +373,25 @@
     // Mute toggle
     dom.muteBtn.addEventListener('click', toggleMute);
 
-    // Chat panel toggle
-    dom.toggleChat.addEventListener('click', () => {
-      dom.chatPanel.classList.toggle('collapsed');
-      dom.chatPanel.classList.toggle('mobile-open');
-    });
+    // Chat panel toggle (header button) — open on desktop, slide in on mobile
+    if (dom.toggleChat) {
+      dom.toggleChat.addEventListener('click', () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+          dom.chatPanel.classList.toggle('mobile-open');
+        } else {
+          dom.chatPanel.classList.toggle('collapsed');
+        }
+      });
+    }
+    // Close-chat button inside the panel header
+    if (dom.closeChat) {
+      dom.closeChat.addEventListener('click', () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) dom.chatPanel.classList.remove('mobile-open');
+        else dom.chatPanel.classList.add('collapsed');
+      });
+    }
 
     // Text input (fallback)
     dom.sendText.addEventListener('click', sendTextMessage);
@@ -363,12 +403,38 @@
     });
 
     // Settings
-    dom.settingsBtn.addEventListener('click', () => dom.settingsDrawer.classList.add('open'));
-    dom.settingsClose.addEventListener('click', () => dom.settingsDrawer.classList.remove('open'));
+    function openSettings() {
+      dom.settingsDrawer.classList.add('open');
+      if (dom.settingsScrim) dom.settingsScrim.classList.add('visible');
+    }
+    function closeSettings() {
+      dom.settingsDrawer.classList.remove('open');
+      if (dom.settingsScrim) dom.settingsScrim.classList.remove('visible');
+    }
+    dom.settingsBtn.addEventListener('click', openSettings);
+    if (dom.settingsClose) dom.settingsClose.addEventListener('click', closeSettings);
+    if (dom.settingsDone) dom.settingsDone.addEventListener('click', closeSettings);
+    if (dom.settingsScrim) dom.settingsScrim.addEventListener('click', closeSettings);
+
     dom.handsfreeToggle.addEventListener('change', (e) => { state.handsFree = e.target.checked; });
     dom.autolistenToggle.addEventListener('change', (e) => { state.autoListen = e.target.checked; });
     dom.visualsToggle.addEventListener('change', (e) => { state.showVisuals = e.target.checked; });
     dom.silenceSelect.addEventListener('change', (e) => { state.silenceTimeout = parseInt(e.target.value, 10); });
+
+    // Suggestion chips — clicking sends the chip's prompt as a text turn
+    if (dom.suggestionChips) {
+      dom.suggestionChips.addEventListener('click', (e) => {
+        const chip = e.target.closest('.vt-chip');
+        if (!chip) return;
+        const prompt = chip.getAttribute('data-prompt');
+        if (!prompt) return;
+        // Hide empty state immediately so the user sees their action register
+        if (dom.canvasPlaceholder) dom.canvasPlaceholder.classList.add('hidden');
+        // Use the same path as a typed message so streaming/legacy fallback works
+        if (dom.textInput) dom.textInput.value = prompt;
+        sendTextMessage();
+      });
+    }
 
     // Keyboard: space to toggle, ESC to stop
     document.addEventListener('keydown', (e) => {
@@ -524,8 +590,9 @@
         msg += ' Make sure no other app is using your microphone and try again.';
       }
       addSystemMessage(msg);
-      // Also show a toast so mobile users see the error (chat panel may be hidden)
-      showToast(msg);
+      // Force toast: permission errors block the entire feature, so the
+      // user must see this even with chat panel open.
+      showToast(msg, 6000, { force: true });
       setMode('idle');
     }
   }
@@ -1518,17 +1585,29 @@
   function setMode(mode) {
     state.mode = mode;
     if (dom.presence) dom.presence.setAttribute('data-state', mode);
+    if (dom.micBtn) dom.micBtn.setAttribute('data-state', mode);
 
-    // Mic button
+    // Clear the orb canvas on every state transition so we never show
+    // a stale frame from the prior state. The active state's draw fn
+    // (legacy VAD waveform / thinking spinner / etc.) will repaint.
+    if (dom.orbWaveform) {
+      const ctx = dom.orbWaveform.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, dom.orbWaveform.width, dom.orbWaveform.height);
+    }
+
+    // Mic button — single icon source of truth
     if (dom.micBtn) {
       dom.micBtn.classList.toggle('active', mode === 'listening');
-      const micIcon = dom.micBtn.querySelector('i');
+      const micIcon = dom.micIcon || dom.micBtn.querySelector('i');
 
       switch (mode) {
         case 'idle':
           if (micIcon) micIcon.className = 'fas fa-microphone';
           cancelAnimationFrame(state.waveformRAF);
           drawIdleWaveform();
+          break;
+        case 'starting':
+          if (micIcon) micIcon.className = 'fas fa-microphone';
           break;
         case 'listening':
           if (micIcon) micIcon.className = 'fas fa-stop';
@@ -1543,23 +1622,25 @@
       }
     }
 
-    // Tutor status
-    const statusMap = {
-      idle: 'Ready',
-      listening: 'Listening to you...',
-      thinking: 'Thinking...',
-      speaking: 'Speaking...'
-    };
-
+    // Status — short and modern. Single source per mode, used by both
+    // the mic-status line (footer) and the chat tutor status (right panel).
     const statusTextMap = {
       idle: 'Tap to speak',
-      listening: 'Listening...',
-      thinking: 'Thinking — tap to interrupt',
+      starting: 'Starting mic…',
+      listening: 'Listening',
+      thinking: 'Thinking',
       speaking: 'Speaking — tap to interrupt'
+    };
+    const tutorStatusMap = {
+      idle: 'Ready',
+      starting: 'Starting…',
+      listening: 'Listening',
+      thinking: 'Thinking',
+      speaking: 'Speaking'
     };
 
     if (dom.statusText) dom.statusText.textContent = statusTextMap[mode] || 'Tap to speak';
-    if (dom.tutorStatus) dom.tutorStatus.textContent = statusMap[mode] || 'Ready';
+    if (dom.tutorStatus) dom.tutorStatus.textContent = tutorStatusMap[mode] || 'Ready';
   }
 
   function drawThinkingWaveform() {
@@ -1655,9 +1736,31 @@
     dom.chatMessages.scrollTo({ top: dom.chatMessages.scrollHeight, behavior: 'smooth' });
   }
 
-  /** Show a floating toast message visible on mobile even when chat panel is hidden */
-  function showToast(text, duration) {
+  /**
+   * Show a floating toast — but ONLY if the chat panel isn't visible.
+   * If chat is open, the message is already in the transcript log; a
+   * second copy on the canvas would be a duplicate (and the most prominent
+   * thing on screen, paradoxically biased toward errors).
+   *
+   * Pass force=true to bypass — used for transient critical things like
+   * permission failures that the user must see regardless.
+   */
+  function isChatVisible() {
+    if (!dom.chatPanel) return false;
+    if (dom.chatPanel.classList.contains('collapsed')) return false;
+    // Mobile: the panel is fixed/translated off-screen unless 'mobile-open'
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) return dom.chatPanel.classList.contains('mobile-open');
+    return true; // desktop default: visible
+  }
+
+  function showToast(text, duration, opts) {
     duration = duration || 4000;
+    const force = opts && opts.force;
+
+    // Suppress duplicate when chat already shows the message
+    if (!force && isChatVisible()) return;
+
     const existing = document.querySelector('.vt-toast');
     if (existing) existing.remove();
 
@@ -1667,7 +1770,6 @@
     toast.setAttribute('role', 'alert');
     document.body.appendChild(toast);
 
-    // Trigger enter animation
     requestAnimationFrame(() => toast.classList.add('vt-toast-visible'));
 
     setTimeout(() => {
