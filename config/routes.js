@@ -443,7 +443,7 @@ function registerUserRoutes(app) {
 
       res.json({ user: userObj });
     } catch (error) {
-      logger.error('[/user] Error:', error.message);
+      logger.error('[/user] Error', { error: error.message });
       res.status(500).json({ error: 'Failed to load user data', message: error.message });
     }
   });

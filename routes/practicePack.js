@@ -39,6 +39,23 @@ try {
 const MAX_PROBLEMS = 15;
 const DEFAULT_PROBLEM_COUNT = 8;
 
+// Chromium launch options for headless PDF rendering inside the container.
+// `--disable-crash-reporter` and `--no-crash-upload` are required to avoid
+// `chrome_crashpad_handler: --database is required` failures when chromium
+// re-execs itself as the crashpad subprocess (the args get stripped when
+// running headless under our container's sandbox-disabled launch).
+const BROWSER_LAUNCH_OPTIONS = {
+  headless: 'new',
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--disable-crash-reporter',
+    '--no-crash-upload',
+  ],
+};
+
 // ============================================================================
 // PROBLEM SELECTION — Adaptive, personalized to student
 // ============================================================================
@@ -239,7 +256,7 @@ async function generateQRDataURI(url) {
       color: { dark: '#1a1a2e', light: '#ffffff' }
     });
   } catch (e) {
-    logger.warn('[PracticePack] QR generation failed:', e.message);
+    logger.warn('[PracticePack] QR generation failed', { error: e.message });
     return null;
   }
 }
@@ -671,10 +688,7 @@ router.get('/generate', isAuthenticated, async (req, res) => {
     const html = await generateWorksheetHTML(user, problems, { title, showAnswerKey });
 
     // Render to PDF via Puppeteer
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
+    browser = await puppeteer.launch(BROWSER_LAUNCH_OPTIONS);
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
@@ -846,10 +860,7 @@ router.get('/generate-for-child', isAuthenticated, async (req, res) => {
 
     const html = await generateWorksheetHTML(child, problems, { title, showAnswerKey });
 
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
+    browser = await puppeteer.launch(BROWSER_LAUNCH_OPTIONS);
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
@@ -931,10 +942,7 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
 
     const html = await generateWorksheetHTML(representative, problems, { title, showAnswerKey });
 
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
+    browser = await puppeteer.launch(BROWSER_LAUNCH_OPTIONS);
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
