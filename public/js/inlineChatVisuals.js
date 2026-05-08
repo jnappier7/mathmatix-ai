@@ -4855,13 +4855,59 @@ class InlineChatVisuals {
             ? `<div class="icv-caption" style="margin-top:6px;font-size:12px;color:#555;text-align:center;">${this.escapeHtml(caption)}</div>`
             : '';
 
+        // Auto-fit the viewBox to the drawn elements. The default 340x320 box
+        // assumes everything stays within a circle of radius 90 around (170,160),
+        // but cases like two_secants and tangent_secant place P far outside that
+        // (e.g. P at x=567 for arcs 120/80) and would otherwise be clipped.
+        const bounds = this._circleDiagramBounds(body);
+        let vb = `0 0 ${W} ${H}`;
+        if (bounds) {
+            const pad = 28;
+            const x0 = Math.min(0, bounds.xMin - pad);
+            const y0 = Math.min(0, bounds.yMin - pad);
+            const x1 = Math.max(W, bounds.xMax + pad);
+            const y1 = Math.max(H, bounds.yMax + pad);
+            vb = `${x0.toFixed(2)} ${y0.toFixed(2)} ${(x1 - x0).toFixed(2)} ${(y1 - y0).toFixed(2)}`;
+        }
+
         return `
         <div class="icv-container icv-circle-diagram" id="${id}">
             <div class="icv-title">${this.escapeHtml(title)}</div>
-            <svg viewBox="0 0 ${W} ${H}" class="icv-circle-svg" style="max-width:100%;height:auto;">${body}</svg>
+            <svg viewBox="${vb}" class="icv-circle-svg" style="max-width:100%;height:auto;">${body}</svg>
             ${captionHTML}
         </div>
         `;
+    }
+
+    _circleDiagramBounds(body) {
+        const xs = [], ys = [];
+        const reAttr = /\b(cx|cy|x1|y1|x2|y2|x|y)="(-?[\d.]+)"/g;
+        let m;
+        while ((m = reAttr.exec(body)) !== null) {
+            const v = parseFloat(m[2]);
+            if (!Number.isFinite(v)) continue;
+            const k = m[1];
+            if (k === 'cx' || k === 'x' || k === 'x1' || k === 'x2') xs.push(v);
+            else ys.push(v);
+        }
+        // Path d="M x y A rx ry rot lf sf x y" — capture trailing x,y of M and A
+        const reD = /\sd="([^"]+)"/g;
+        while ((m = reD.exec(body)) !== null) {
+            const d = m[1];
+            const reSeg = /[ML]\s*(-?[\d.]+)[\s,]+(-?[\d.]+)|A\s+(?:-?[\d.]+[\s,]+){5}(-?[\d.]+)[\s,]+(-?[\d.]+)/g;
+            let dm;
+            while ((dm = reSeg.exec(d)) !== null) {
+                const x = parseFloat(dm[1] ?? dm[3]);
+                const y = parseFloat(dm[2] ?? dm[4]);
+                if (Number.isFinite(x)) xs.push(x);
+                if (Number.isFinite(y)) ys.push(y);
+            }
+        }
+        if (xs.length === 0 || ys.length === 0) return null;
+        return {
+            xMin: Math.min(...xs), xMax: Math.max(...xs),
+            yMin: Math.min(...ys), yMax: Math.max(...ys),
+        };
     }
 }
 
