@@ -159,7 +159,7 @@ ${phasePrompt}
                         logger.info(`[GuidedLesson] Response simplified to target Grade ${readCheck.targetGrade}`);
                     }
                 } catch (err) {
-                    logger.error('[GuidedLesson] Simplification failed:', err.message);
+                    logger.error('[GuidedLesson] Simplification failed', { error: err.message });
                 }
             }
         }
@@ -326,7 +326,7 @@ A student needs help with a problem. Use your adaptive teaching strategies to pr
                         logger.info(`[GuidedLesson/Hint] Hint simplified to target Grade ${readCheck.targetGrade}`);
                     }
                 } catch (err) {
-                    logger.error('[GuidedLesson/Hint] Simplification failed:', err.message);
+                    logger.error('[GuidedLesson/Hint] Simplification failed', { error: err.message });
                 }
             }
         }

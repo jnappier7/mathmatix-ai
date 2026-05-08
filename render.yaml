@@ -1,28 +1,21 @@
 services:
   - type: web
     name: mathmatix-ai
-    env: node
+    runtime: docker
+    dockerfilePath: ./Dockerfile
     region: oregon
     plan: pro
-    # Simple build - no apt-get needed
-    buildCommand: npm install
-    startCommand: npm start
 
     # Custom domain with SSL (Render auto-provisions Let's Encrypt certs)
     customDomains:
       - name: mathmatix.ai
       - name: www.mathmatix.ai
 
-    # Puppeteer needs this
     envVars:
       - key: NODE_VERSION
         value: 20.14.0
       - key: NODE_ENV
         value: production
-      - key: PUPPETEER_SKIP_DOWNLOAD
-        value: true
-      - key: PUPPETEER_EXECUTABLE_PATH
-        value: /usr/bin/chromium
 
       # Your app's environment variables (set these in Render dashboard)
       - key: MONGO_URI

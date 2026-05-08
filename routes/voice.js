@@ -63,9 +63,11 @@ router.post('/process', isAuthenticated, async (req, res) => {
     const { audio, mimeType, boardContext } = req.body;
     const userId = req.user._id;
 
-    logger.info('[Voice] Received request from user:', userId);
-    logger.info('[Voice] Audio data size:', audio ? audio.length : 0, 'chars');
-    logger.info('[Voice] Board context present:', !!boardContext);
+    logger.info('[Voice] Received request', {
+        userId: String(userId),
+        audioSize: audio ? audio.length : 0,
+        hasBoardContext: !!boardContext,
+    });
 
     if (!audio) {
         logger.error('[Voice] No audio data provided');
@@ -116,7 +118,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         // STEP 1: SPEECH-TO-TEXT (Whisper) — parallelized with user data
         // ============================================
 
-        logger.info('[Voice] Processing audio from user:', userId);
+        logger.info('[Voice] Processing audio', { userId: String(userId) });
 
         // Decode base64 audio
         let audioBuffer;
@@ -160,7 +162,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         const step1Time = Date.now() - startTime;
         const userMessage = transcription.text;
-        logger.info(`[Voice] Transcription (${step1Time}ms):`, userMessage);
+        logger.info(`[Voice] Transcription (${step1Time}ms)`, { transcription: userMessage });
 
         if (!userMessage || userMessage.trim().length === 0) {
             sendPhase({ phase: 'transcription', transcription: '' });
@@ -310,7 +312,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
                     cleanupOldAudioFiles(audioDir, 100);
                     return `/audio/voice/${audioFilename}`;
                 } catch (err) {
-                    logger.warn('[Voice] TTS failed:', err.message);
+                    logger.warn('[Voice] TTS failed', { error: err.message });
                     return null;
                 }
             })(),
@@ -337,8 +339,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         res.end();
 
     } catch (error) {
-        logger.error('[Voice] FATAL ERROR processing voice:', error);
-        logger.error('Error stack:', error.stack);
+        logger.error('[Voice] FATAL ERROR processing voice', error);
 
         let message = 'Failed to process voice input';
         if (error.message.includes('Whisper')) {
@@ -438,7 +439,7 @@ function cleanupOldAudioFiles(directory, keepCount = 100) {
             logger.debug(`[Voice] Cleaned up old audio: ${files[i].filename}`);
         }
     } catch (error) {
-        logger.warn('[Voice] Error cleaning up audio files:', error.message);
+        logger.warn('[Voice] Error cleaning up audio files', { error: error.message });
     }
 }
 
