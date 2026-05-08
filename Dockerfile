@@ -58,12 +58,17 @@ RUN groupadd --system appgroup && useradd --system --gid appgroup appuser \
 # 9. Run as non-root user
 USER appuser
 
-# 10. Tell Docker what port the app will run on
+# 10. Smoke-test chrome-headless-shell as the runtime user. If a system lib is
+#     missing or the binary didn't download, this fails the BUILD with a clear
+#     error instead of letting the first PDF request 500 in production.
+RUN node -e "require('puppeteer').launch({headless:'shell',args:['--no-sandbox','--disable-setuid-sandbox','--disable-dev-shm-usage']}).then(b=>b.close()).then(()=>console.log('chrome-headless-shell OK')).catch(e=>{console.error('SMOKE FAIL:',e.message);process.exit(1)})"
+
+# 11. Tell Docker what port the app will run on
 EXPOSE 3000
 
-# 11. Health check — verifies app is responsive and database is connected
+# 12. Health check — verifies app is responsive and database is connected
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD node -e "const http = require('http'); const req = http.get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
 
-# 12. Define the command to start your server
+# 13. Define the command to start your server
 CMD ["node", "server.js"]

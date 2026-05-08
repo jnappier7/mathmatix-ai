@@ -1,12 +1,10 @@
 services:
   - type: web
     name: mathmatix-ai
-    env: node
+    runtime: docker
+    dockerfilePath: ./Dockerfile
     region: oregon
     plan: pro
-    # Simple build - no apt-get needed
-    buildCommand: npm install
-    startCommand: npm start
 
     # Custom domain with SSL (Render auto-provisions Let's Encrypt certs)
     customDomains:
