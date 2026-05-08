@@ -20,6 +20,18 @@ const logger = require('./logger').child({ module: 'voiceSession' });
 const VOICE_MODEL = process.env.VOICE_LLM_MODEL || 'gpt-4o-mini';
 const HISTORY_DEPTH = 12;
 
+// Active-session registry for multi-tab collision handling.
+// Keyed by `${userId}:${mode}` — same user can have one math-steps session
+// (immersive page) AND one board-actions session (chat orb) open at the
+// same time without colliding. Two of the same mode → newer one wins.
+const activeSessions = new Map();
+
+// Idle-STT thresholds. Keeping a Deepgram session open while a student
+// walks away from their tab burns money. We close after STT_IDLE_MS of
+// no transcript activity and lazy-reopen on the next mic frame.
+const STT_IDLE_MS = 30_000;
+const STT_IDLE_CHECK_MS = 5_000;
+
 // Streaming voice prompt — natural English first, then tagged math at the
 // end. The orchestrator forwards everything before <math> to TTS in real
 // time, then parses the JSON inside the tag for the board.
@@ -131,6 +143,19 @@ class VoiceSession {
     }
 
     async init() {
+        // Multi-tab collision handling: if this user already has a session
+        // running in the SAME mode, shut it down. Different modes (e.g.
+        // chat orb + immersive page in two tabs) can coexist.
+        const registryKey = `${this.userId}:${this.mode}`;
+        const existing = activeSessions.get(registryKey);
+        if (existing && existing !== this && !existing.closed) {
+            logger.info('voice ws: superseding prior session for same user+mode', {
+                userId: this.userId, mode: this.mode,
+            });
+            try { existing.shutdown('superseded_by_new_session'); } catch (_) {}
+        }
+        activeSessions.set(registryKey, this);
+
         this.systemPrompt = await generateSystemPrompt(this.user, this.tutorProfile);
 
         // Load recent conversation for context
@@ -142,6 +167,15 @@ class VoiceSession {
             .filter(m => m.content && m.content.trim().length > 0)
             .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
 
+        // Persistent Cartesia pool — one WS per session, context_id per turn.
+        // Saves ~50–100ms handshake on every turn vs opening a fresh WS.
+        if (this.voiceId && ttsStream.isConfigured()) {
+            this.ttsPool = ttsStream.createPool({
+                voiceId: this.voiceId,
+                language: this.langCode,
+            });
+        }
+
         this._send({ type: 'session_ready', sampleRate: 22050, voiceId: this.voiceId });
         this._openStt();
     }
@@ -152,7 +186,11 @@ class VoiceSession {
         this.ws.on('message', (raw, isBinary) => {
             if (this.closed) return;
             if (isBinary) {
-                // Binary frames are PCM s16 16kHz mono mic audio
+                // Binary frames are PCM s16 16kHz mono mic audio.
+                // Lazy-reopen STT if we closed it for idle.
+                if (!this.stt || !this.stt.isOpen()) {
+                    this._openStt();
+                }
                 if (this.stt) this.stt.sendFrame(raw);
                 return;
             }
@@ -204,14 +242,16 @@ class VoiceSession {
             this._send({ type: 'fatal', message: 'Speech recognition not configured' });
             return;
         }
+        if (this.stt && this.stt.isOpen()) return; // already open
+        this._lastSttActivity = Date.now();
         this.stt = sttStream.createSession({
             language: this.langCode,
             sampleRate: 16000,
             endpointing: 300,
             utteranceEndMs: 800,
-            onPartial: (text) => this._onPartial(text),
-            onFinal: (text) => this._onFinal(text),
-            onUtteranceEnd: () => this._onUtteranceEnd(),
+            onPartial: (text) => { this._lastSttActivity = Date.now(); this._onPartial(text); },
+            onFinal: (text) => { this._lastSttActivity = Date.now(); this._onFinal(text); },
+            onUtteranceEnd: () => { this._lastSttActivity = Date.now(); this._onUtteranceEnd(); },
             onError: (err) => {
                 const detail = err?.message || err?.reason || String(err);
                 logger.warn('stt error → telling client to fall back', { userId: this.userId, error: detail });
@@ -224,6 +264,25 @@ class VoiceSession {
                 logger.debug('stt closed', { userId: this.userId });
             },
         });
+        // Start (or restart) the idle watchdog
+        if (!this._sttIdleTimer) {
+            this._sttIdleTimer = setInterval(() => this._checkSttIdle(), STT_IDLE_CHECK_MS);
+            this._sttIdleTimer.unref?.();
+        }
+    }
+
+    _checkSttIdle() {
+        if (this.closed) {
+            if (this._sttIdleTimer) { clearInterval(this._sttIdleTimer); this._sttIdleTimer = null; }
+            return;
+        }
+        if (!this.stt || !this.stt.isOpen()) return;
+        if (this.currentTurn) return;          // never close mid-turn
+        const idle = Date.now() - (this._lastSttActivity || 0);
+        if (idle < STT_IDLE_MS) return;
+        logger.info('closing idle stt to save billing', { userId: this.userId, idleMs: idle });
+        try { this.stt.close(); } catch (_) {}
+        // Don't null this.stt — sendFrame will see isOpen()===false and lazy-reopen
     }
 
     _onPartial(text) {
@@ -345,11 +404,9 @@ class VoiceSession {
             { role: 'user', content: turn.userMessage },
         ];
 
-        // ── Open Cartesia synthesizer ──
-        if (this.voiceId && ttsStream.isConfigured()) {
-            turn.tts = ttsStream.createSynthesizer({
-                voiceId: this.voiceId,
-                language: this.langCode,
+        // ── Open Cartesia synthesis context (reuses persistent pool) ──
+        if (this.ttsPool) {
+            turn.tts = this.ttsPool.synthesize({
                 signal: turn.ac.signal,
                 onChunk: (i16, sampleRate) => {
                     if (!turn.metric.t_first_audio_chunk) {
@@ -570,10 +627,10 @@ class VoiceSession {
             // buf now starts with '['. Look for ']'.
             const closeIdx = buf.indexOf(']');
             if (closeIdx === -1) {
-                // Tag still open — defer the rest. Cap at 200 chars to
+                // Tag still open — defer the rest. Cap at 500 chars to
                 // protect against runaway buffers (an unmatched '[' in
                 // free-form text). If too long, treat as plain text.
-                if (buf.length > 200) {
+                if (buf.length > 500) {
                     this._forwardSpoken(turn, buf);
                     return;
                 }
@@ -690,14 +747,12 @@ class VoiceSession {
 
     /**
      * One-shot synthesis of a verified text (used after a verify-redirect).
-     * Opens a fresh Cartesia context and finalizes immediately.
+     * Reuses the persistent pool with a fresh context_id.
      */
     async _synthesizeOneShot(turn, text) {
-        if (!this.voiceId || !ttsStream.isConfigured() || !text) return;
+        if (!this.ttsPool || !text) return;
         return new Promise((resolve) => {
-            const ts = ttsStream.createSynthesizer({
-                voiceId: this.voiceId,
-                language: this.langCode,
+            const ts = this.ttsPool.synthesize({
                 signal: turn.ac.signal,
                 onChunk: (i16, sampleRate) => {
                     this._sendAudioChunk(i16, sampleRate, turn.metric.turnId);
@@ -788,8 +843,17 @@ class VoiceSession {
     shutdown(reason = 'shutdown') {
         if (this.closed) return;
         this.closed = true;
+        const registryKey = `${this.userId}:${this.mode}`;
+        if (activeSessions.get(registryKey) === this) {
+            activeSessions.delete(registryKey);
+        }
+        if (this._sttIdleTimer) {
+            clearInterval(this._sttIdleTimer);
+            this._sttIdleTimer = null;
+        }
         if (this.currentTurn) this._abortCurrentTurn(reason);
         try { this.stt?.close(); } catch (_) {}
+        try { this.ttsPool?.close(); } catch (_) {}
         try { this.ws.close(1000, reason); } catch (_) {}
     }
 }

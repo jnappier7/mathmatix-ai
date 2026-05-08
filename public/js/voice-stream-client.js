@@ -25,12 +25,19 @@
     const INTERRUPT_FRAMES = 4;     // ~80ms confirmation
     const PLAYBACK_FADE_MS = 30;    // ramp gain to 0 on interrupt
 
+    // Reconnect tuning
+    const RECONNECT_MAX_ATTEMPTS = 4;
+    const RECONNECT_BASE_DELAY_MS = 500;     // doubled per attempt: 500, 1000, 2000, 4000
+
     class VoiceStreamClient {
         constructor(opts = {}) {
             this.on = opts.on || (() => {});
             this.wsPath = opts.wsPath || DEFAULT_WS_PATH;
             this.ws = null;
             this.connected = false;
+            this._reconnectAttempts = 0;
+            this._intentionalDisconnect = false;
+            this._reconnectTimer = null;
 
             this.audioCtx = null;
             this.outGain = null;
@@ -67,10 +74,76 @@
             });
 
             this.connected = true;
+            this._reconnectAttempts = 0;
             this.ws.addEventListener('message', (ev) => this._onWsMessage(ev));
             this.ws.addEventListener('close', () => {
                 this.connected = false;
+                if (this._intentionalDisconnect) {
+                    this.on({ type: 'disconnected' });
+                    return;
+                }
+                this._scheduleReconnect();
+            });
+            this.ws.addEventListener('error', (err) => {
+                this.on({ type: 'error', message: 'connection_error', detail: err?.message || '' });
+            });
+        }
+
+        _scheduleReconnect() {
+            if (this._reconnectAttempts >= RECONNECT_MAX_ATTEMPTS) {
+                console.warn('[VoiceStreamClient] reconnect attempts exhausted — falling back');
                 this.on({ type: 'disconnected' });
+                return;
+            }
+            this._reconnectAttempts++;
+            const delay = RECONNECT_BASE_DELAY_MS * Math.pow(2, this._reconnectAttempts - 1);
+            console.warn(`[VoiceStreamClient] disconnected, reconnecting in ${delay}ms (attempt ${this._reconnectAttempts}/${RECONNECT_MAX_ATTEMPTS})`);
+            this.on({ type: 'reconnecting', attempt: this._reconnectAttempts, delayMs: delay });
+            if (this._reconnectTimer) clearTimeout(this._reconnectTimer);
+            this._reconnectTimer = setTimeout(() => this._reconnect(), delay);
+        }
+
+        async _reconnect() {
+            this._reconnectTimer = null;
+            try {
+                // Re-open WS only — preserve audioCtx, gainNode, mic stream.
+                // Server-side state (history, board context) reloads on its
+                // own from Mongo when the session re-inits.
+                const wasListening = this.listening;
+                await this._openWsOnly();
+                this.on({ type: 'reconnected' });
+                if (wasListening) {
+                    // Mic worklet is still attached; just resume sending frames
+                    // by ensuring the listening flag is true. _openMic is a no-op
+                    // if the stream is still live.
+                    this.listening = true;
+                }
+            } catch (err) {
+                // close handler will fire and trigger another retry or give up
+                console.warn('[VoiceStreamClient] reconnect attempt failed:', err?.message);
+            }
+        }
+
+        async _openWsOnly() {
+            const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            this.ws = new WebSocket(`${proto}//${location.host}${this.wsPath}`);
+            this.ws.binaryType = 'arraybuffer';
+            await new Promise((resolve, reject) => {
+                const onOpen = () => { this.ws.removeEventListener('error', onErr); resolve(); };
+                const onErr = (e) => { this.ws.removeEventListener('open', onOpen); reject(e); };
+                this.ws.addEventListener('open', onOpen, { once: true });
+                this.ws.addEventListener('error', onErr, { once: true });
+            });
+            this.connected = true;
+            this._reconnectAttempts = 0;
+            this.ws.addEventListener('message', (ev) => this._onWsMessage(ev));
+            this.ws.addEventListener('close', () => {
+                this.connected = false;
+                if (this._intentionalDisconnect) {
+                    this.on({ type: 'disconnected' });
+                    return;
+                }
+                this._scheduleReconnect();
             });
             this.ws.addEventListener('error', (err) => {
                 this.on({ type: 'error', message: 'connection_error', detail: err?.message || '' });
@@ -92,6 +165,16 @@
                     this.on({ type: 'error', message: 'worklet_load_failed', detail: err?.message });
                     throw err;
                 }
+                // Safari (and aggressive mobile browsers) suspend AudioContext
+                // when a tab loses focus or after idle. Auto-resume so AI
+                // audio doesn't go silent mid-conversation. Resume() requires
+                // a user gesture for the FIRST resume; after that it works
+                // freely (we got the gesture from the orb tap).
+                this.audioCtx.addEventListener('statechange', () => {
+                    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                        this.audioCtx.resume().catch(() => {});
+                    }
+                });
             }
             if (this.audioCtx.state === 'suspended') {
                 try { await this.audioCtx.resume(); } catch (_) { /* user gesture needed */ }
@@ -230,6 +313,12 @@
 
         _playPcmS16(i16, sampleRate) {
             if (!this.audioCtx) return;
+            // Defensive: Safari may have suspended the context between
+            // chunks. Try to resume; if it fails (no gesture credit yet),
+            // the chunk is dropped — better than queuing forever.
+            if (this.audioCtx.state === 'suspended') {
+                this.audioCtx.resume().catch(() => {});
+            }
             const f32 = new Float32Array(i16.length);
             for (let i = 0; i < i16.length; i++) f32[i] = i16[i] / 0x8000;
             const buf = this.audioCtx.createBuffer(1, f32.length, sampleRate);
@@ -304,6 +393,11 @@
                 case 'turn_error':
                 case 'stt_error':
                 case 'fatal':
+                    // Server has decided the session is unrecoverable — don't
+                    // reconnect-spam, fall through to legacy fallback.
+                    if (msg.type === 'fatal') {
+                        this._intentionalDisconnect = true;
+                    }
                     this.on({ type: 'error', message: msg.message || msg.type });
                     break;
                 default:
@@ -312,6 +406,11 @@
         }
 
         disconnect() {
+            this._intentionalDisconnect = true;
+            if (this._reconnectTimer) {
+                clearTimeout(this._reconnectTimer);
+                this._reconnectTimer = null;
+            }
             this.stopListening();
             try { this.ws?.close(); } catch (_) {}
             try { this.audioCtx?.close(); } catch (_) {}

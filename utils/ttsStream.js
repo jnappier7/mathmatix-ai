@@ -189,4 +189,209 @@ function noopSynth() {
     };
 }
 
-module.exports = { isConfigured, createSynthesizer };
+/**
+ * Persistent-WS pool. One WebSocket to Cartesia per session; each turn
+ * is a `context_id` on that socket. Saves a ~50–100ms handshake per turn
+ * vs opening a fresh WS in createSynthesizer().
+ *
+ * @param {Object} opts
+ * @param {string} opts.voiceId
+ * @param {string} [opts.language='en']
+ *
+ * @returns {{
+ *   synthesize: (handlers) => synthesizer,
+ *   close: () => void,
+ *   isOpen: () => boolean
+ * }}
+ */
+function createPool({ voiceId, language = 'en' }) {
+    if (!CARTESIA_API_KEY || !voiceId) {
+        return {
+            synthesize: () => noopSynth(),
+            close: () => {},
+            isOpen: () => false,
+        };
+    }
+
+    let ws = null;
+    let opening = false;
+    let openWaiters = [];
+    let closed = false;
+    const contexts = new Map();   // context_id -> ctx state
+
+    function ensureOpen() {
+        if (closed) return Promise.reject(new Error('pool closed'));
+        if (ws && ws.readyState === WebSocket.OPEN) return Promise.resolve();
+        if (opening) return new Promise(r => openWaiters.push(r));
+
+        opening = true;
+        ws = new WebSocket(CARTESIA_WS_URL);
+
+        ws.on('open', () => {
+            opening = false;
+            for (const r of openWaiters) r();
+            openWaiters = [];
+        });
+
+        ws.on('message', (raw) => {
+            let msg;
+            try { msg = JSON.parse(raw.toString('utf8')); } catch (_) { return; }
+            const cid = msg.context_id;
+            if (!cid) return;
+            const ctx = contexts.get(cid);
+            if (!ctx || ctx.aborted) return;
+
+            if (msg.type === 'chunk' && msg.data) {
+                const buf = Buffer.from(msg.data, 'base64');
+                const aligned = Buffer.alloc(buf.length);
+                buf.copy(aligned);
+                const i16 = new Int16Array(aligned.buffer, aligned.byteOffset, aligned.length / 2);
+                try { ctx.onChunk(i16, OUTPUT_FORMAT.sample_rate); } catch (_) { /* swallow */ }
+            } else if (msg.type === 'done' || msg.done === true) {
+                try { ctx.onDone(); } catch (_) { /* swallow */ }
+                contexts.delete(cid);
+            } else if (msg.type === 'error') {
+                const err = new Error(msg.message || 'cartesia stream error');
+                try { ctx.onError(err); } catch (_) { /* swallow */ }
+                contexts.delete(cid);
+            }
+        });
+
+        ws.on('error', (err) => {
+            logger.warn('Cartesia pool WS error', { error: err.message });
+            opening = false;
+            // Notify all in-flight contexts
+            for (const ctx of contexts.values()) {
+                try { ctx.onError(err); } catch (_) {}
+            }
+            contexts.clear();
+            for (const r of openWaiters) r();
+            openWaiters = [];
+        });
+
+        ws.on('close', () => {
+            opening = false;
+            ws = null;
+            // Notify in-flight contexts that the underlying socket dropped
+            for (const ctx of contexts.values()) {
+                try { ctx.onError(new Error('cartesia ws closed')); } catch (_) {}
+            }
+            contexts.clear();
+            for (const r of openWaiters) r();
+            openWaiters = [];
+        });
+
+        return new Promise(r => openWaiters.push(r));
+    }
+
+    function synthesize({ signal, onChunk = () => {}, onDone = () => {}, onError = () => {} } = {}) {
+        if (closed) {
+            const err = new Error('pool closed');
+            queueMicrotask(() => onError(err));
+            return noopSynth();
+        }
+        const cid = crypto.randomUUID();
+        const ctx = {
+            onChunk, onDone, onError,
+            charsSent: 0,
+            finalizedLocal: false,
+            finalizedSent: false,
+            aborted: false,
+            pending: [],
+        };
+        contexts.set(cid, ctx);
+
+        const onAbort = () => abort('signal_abort');
+        if (signal) {
+            if (signal.aborted) queueMicrotask(onAbort);
+            else signal.addEventListener('abort', onAbort, { once: true });
+        }
+
+        function sendChunk(text, isFinal) {
+            if (!ws || ws.readyState !== WebSocket.OPEN || ctx.aborted) return;
+            try {
+                ws.send(JSON.stringify({
+                    model_id: CARTESIA_MODEL,
+                    voice: { mode: 'id', id: voiceId },
+                    transcript: text,
+                    continue: !isFinal,
+                    context_id: cid,
+                    language,
+                    output_format: OUTPUT_FORMAT,
+                    add_timestamps: false,
+                }));
+                ctx.charsSent += text.length;
+            } catch (err) {
+                logger.warn('Cartesia pool send failed', { error: err.message });
+            }
+        }
+
+        function sendFinalize() {
+            ctx.finalizedSent = true;
+            sendChunk('', true);
+        }
+
+        function appendText(text) {
+            if (ctx.aborted || ctx.finalizedLocal || !text) return;
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                ctx.pending.push(text);
+                ensureOpen().then(() => {
+                    if (ctx.aborted) return;
+                    for (const t of ctx.pending) sendChunk(t, false);
+                    ctx.pending = [];
+                    if (ctx.finalizedLocal && !ctx.finalizedSent) sendFinalize();
+                }).catch(() => { /* error handler dispatched above */ });
+                return;
+            }
+            sendChunk(text, false);
+        }
+
+        function finalize() {
+            if (ctx.aborted || ctx.finalizedLocal) return;
+            ctx.finalizedLocal = true;
+            if (ws && ws.readyState === WebSocket.OPEN && ctx.pending.length === 0) {
+                sendFinalize();
+            }
+            // else: drain handler will finalize after pending text flushes
+        }
+
+        function abort() {
+            if (ctx.aborted) return;
+            ctx.aborted = true;
+            contexts.delete(cid);
+            if (signal) {
+                try { signal.removeEventListener('abort', onAbort); } catch (_) {}
+            }
+            // No explicit cancel message to Cartesia — drop incoming chunks
+            // for this cid in handleMessage. Server may still generate audio
+            // for a moment but we ignore it.
+        }
+
+        // Eagerly open the pool on first synth so the WS is warm
+        ensureOpen().catch(() => { /* error handler dispatched above */ });
+
+        return {
+            appendText,
+            finalize,
+            abort,
+            charsSent: () => ctx.charsSent,
+            sampleRate: OUTPUT_FORMAT.sample_rate,
+        };
+    }
+
+    function close() {
+        if (closed) return;
+        closed = true;
+        try { ws?.close(1000); } catch (_) {}
+        ws = null;
+        contexts.clear();
+    }
+
+    function isOpen() {
+        return !!(ws && ws.readyState === WebSocket.OPEN);
+    }
+
+    return { synthesize, close, isOpen };
+}
+
+module.exports = { isConfigured, createSynthesizer, createPool };
