@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Metrics - MATHMATIX AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --border: #e9ecef;
+      --text: #2c3e50;
+      --muted: #7f8c8d;
+      --accent: #6366f1;
+      --good: #16a34a;
+      --warn: #f59e0b;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 16px 24px; display: flex; align-items: center; gap: 16px;
+    }
+    header h1 { margin: 0; font-size: 18px; flex: 1; }
+    header .controls { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
+    header a.back { color: var(--accent); text-decoration: none; font-size: 14px; }
+    header a.back:hover { text-decoration: underline; }
+    main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .stat .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat .value { font-size: 28px; font-weight: 600; margin-top: 6px; line-height: 1; }
+    .stat .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .stat.good .value { color: var(--good); }
+    .stat.warn .value { color: var(--warn); }
+    .stat.bad .value { color: var(--bad); }
+    .table-wrap {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .table-wrap h2 { margin: 0; padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th { background: var(--bg); font-weight: 600; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--bg); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .pill.ok { background: #dcfce7; color: var(--good); }
+    .pill.interrupt { background: #fef3c7; color: var(--warn); }
+    .pill.error { background: #fee2e2; color: var(--bad); }
+    .pill.redirect { background: #e0e7ff; color: var(--accent); }
+    .empty { padding: 32px; text-align: center; color: var(--muted); }
+    .footer-note { margin-top: 16px; font-size: 12px; color: var(--muted); }
+    code { background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+    .refresh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); display: inline-block; }
+    .refresh-dot.stale { background: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/admin-dashboard.html" class="back"><i class="fas fa-arrow-left"></i> Admin</a>
+    <h1>Voice Pipeline Metrics</h1>
+    <div class="controls">
+      <span class="refresh-dot" id="refresh-dot"></span>
+      <span id="last-updated">never</span>
+      <label><input type="checkbox" id="auto-refresh" checked /> auto-refresh</label>
+    </div>
+  </header>
+  <main>
+    <div class="stats" id="stats"></div>
+    <div class="table-wrap">
+      <h2>Recent turns (last 50)</h2>
+      <table id="turns-table">
+        <thead>
+          <tr>
+            <th>Turn</th>
+            <th>User</th>
+            <th>Mode</th>
+            <th class="num">TTFA</th>
+            <th class="num">First token</th>
+            <th class="num">Interrupt</th>
+            <th class="num">Duration</th>
+            <th class="num">Cost</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="turns-body">
+          <tr><td colspan="9" class="empty">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="footer-note">
+      Targets: TTFA p50 &lt; <code>350ms</code>, p95 &lt; <code>700ms</code>.
+      Interrupt-stop p95 &lt; <code>200ms</code>. Avg cost / turn &lt; <code>$0.0004</code>.
+      Source: <code>/api/voice-tutor/metrics</code> (admin-only, in-memory ring buffer of last 1000 turns).
+    </p>
+  </main>
+  <script>
+    const fmtMs = (n) => n == null ? '—' : `${Math.round(n)}ms`;
+    const fmtUsd = (n) => n == null ? '—' : `$${n.toFixed(5)}`;
+    const fmtPct = (n) => n == null ? '—' : `${(n * 100).toFixed(1)}%`;
+    const shortId = (s) => s ? String(s).slice(-6) : '—';
+    const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
+
+    function classify(value, goodMax, warnMax) {
+      if (value == null) return '';
+      if (value <= goodMax) return 'good';
+      if (value <= warnMax) return 'warn';
+      return 'bad';
+    }
+
+    function statusPill(turn) {
+      if (turn.abortReason === 'user_barge_in' || turn.abortReason === 'user_barge_in_server_detected') {
+        return '<span class="pill interrupt">interrupted</span>';
+      }
+      if (turn.abortReason === 'verify_redirect') {
+        return '<span class="pill redirect">redirected</span>';
+      }
+      if (turn.abortReason && turn.abortReason !== null) {
+        return `<span class="pill error">${escapeHtml(turn.abortReason)}</span>`;
+      }
+      return '<span class="pill ok">ok</span>';
+    }
+
+    function renderStats(agg) {
+      const stats = document.getElementById('stats');
+      if (!agg || agg.count === 0) {
+        stats.innerHTML = '<div class="stat"><div class="label">No data yet</div><div class="value">—</div><div class="sub">Run some voice turns to populate</div></div>';
+        return;
+      }
+      const cards = [
+        { label: 'Turns recorded', value: agg.count, sub: `total all-time: ${agg.total_recorded ?? agg.count}`, klass: '' },
+        { label: 'TTFA p50', value: fmtMs(agg.ttfa_ms_p50), sub: 'time to first audio', klass: classify(agg.ttfa_ms_p50, 350, 700) },
+        { label: 'TTFA p95', value: fmtMs(agg.ttfa_ms_p95), sub: 'p95 first-audio latency', klass: classify(agg.ttfa_ms_p95, 700, 1500) },
+        { label: 'Interrupt p95', value: fmtMs(agg.interrupt_stop_ms_p95), sub: 'barge-in to silence', klass: classify(agg.interrupt_stop_ms_p95, 200, 400) },
+        { label: 'Interrupt rate', value: fmtPct(agg.interrupt_rate), sub: 'turns ended by user', klass: '' },
+        { label: 'Avg cost / turn', value: fmtUsd(agg.avg_cost_usd), sub: 'STT + LLM + TTS', klass: classify(agg.avg_cost_usd, 0.0004, 0.001) },
+      ];
+      stats.innerHTML = cards.map(c => `
+        <div class="stat ${c.klass}">
+          <div class="label">${escapeHtml(c.label)}</div>
+          <div class="value">${escapeHtml(c.value)}</div>
+          <div class="sub">${escapeHtml(c.sub)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderTurns(rows) {
+      const tbody = document.getElementById('turns-body');
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty">No turns recorded yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows.map(t => `
+        <tr>
+          <td><code>${escapeHtml(shortId(t.turnId))}</code></td>
+          <td><code>${escapeHtml(shortId(t.userId))}</code></td>
+          <td>${escapeHtml(t.tutorId || '—')}</td>
+          <td class="num">${escapeHtml(fmtMs(t.time_to_first_audio_ms))}</td>
+          <td class="num">${escapeHtml(fmtMs(t.time_to_first_token_ms))}</td>
+          <td class="num">${escapeHtml(t.interrupt_stop_ms != null ? fmtMs(t.interrupt_stop_ms) : '—')}</td>
+          <td class="num">${escapeHtml(fmtMs(t.turn_duration_ms))}</td>
+          <td class="num">${escapeHtml(fmtUsd(t.estimated_cost_usd))}</td>
+          <td>${statusPill(t)}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function refresh() {
+      const dot = document.getElementById('refresh-dot');
+      const updated = document.getElementById('last-updated');
+      try {
+        const fetchFn = window.csrfFetch || fetch;
+        const res = await fetchFn('/api/voice-tutor/metrics', { credentials: 'include' });
+        if (!res.ok) {
+          dot.classList.add('stale');
+          updated.textContent = `error ${res.status}`;
+          return;
+        }
+        const data = await res.json();
+        renderStats(data.aggregate || {});
+        renderTurns(data.recent || []);
+        dot.classList.remove('stale');
+        updated.textContent = new Date().toLocaleTimeString();
+      } catch (err) {
+        dot.classList.add('stale');
+        updated.textContent = 'fetch error';
+      }
+    }
+
+    let timer = null;
+    function startAutoRefresh() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(refresh, 5000);
+    }
+    function stopAutoRefresh() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    document.getElementById('auto-refresh').addEventListener('change', (e) => {
+      if (e.target.checked) startAutoRefresh();
+      else stopAutoRefresh();
+    });
+
+    refresh();
+    startAutoRefresh();
+  </script>
+</body>
+</html>
