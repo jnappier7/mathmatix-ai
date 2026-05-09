@@ -16,6 +16,8 @@ const { openai } = require('../utils/openaiClient');
 const ttsProvider = require('../utils/ttsProvider');
 const { createVoiceSession } = require('../utils/voiceSession');
 const voiceMetrics = require('../utils/voiceMetrics');
+const orchestrator = require('../utils/orchestrator');
+const { loadOrCreatePlan, resolveCurrentTarget } = require('../utils/tutorPlanManager');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -443,6 +445,228 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
   } catch (err) {
     logger.error('Text session error', { userId, error: err.message });
     res.status(500).json({ error: 'Processing failed', message: 'Could not get a response. Please try again.' });
+  }
+});
+
+// ═══════════════════════════════════════
+// POST /api/voice-tutor/process-orchestrated
+// Opt-in orchestrator path. Same input shape as /process — accepts an
+// audio blob (base64) or text, runs the same generateResponse() flow
+// (which already routes through pipelineVerify), then streams the result
+// as orchestrator NDJSON frames instead of the legacy 3-phase ones.
+//
+// Compatible with the legacy /process — clients pick at request time
+// based on a feature flag. The client uses public/js/segmentPlayer.js
+// to consume these frames; renderMathSteps still works because the
+// orchestrator emits the legacy mathSteps mirror in the 'envelope' frame.
+// ═══════════════════════════════════════
+router.post('/process-orchestrated', isAuthenticated, async (req, res) => {
+  const { audio, mimeType, text, sessionId: providedSessionId } = req.body;
+  const userId = req.user._id;
+  const sessionId = providedSessionId || `vt-${userId}-${Date.now()}`;
+
+  if (!audio && !text) {
+    return res.status(400).json({ error: 'audio or text is required' });
+  }
+  if (!ttsProvider.isConfigured()) {
+    return res.status(503).json({ error: 'Voice not configured' });
+  }
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(503).json({ error: 'Voice not configured' });
+  }
+  if (isUnder13(req.user)) {
+    return res.status(403).json({ error: 'Voice unavailable for your account', useWebSpeech: true });
+  }
+
+  res.setHeader('Content-Type', 'application/x-ndjson');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('X-Accel-Buffering', 'no');
+
+  function send(frame) {
+    res.write(JSON.stringify(frame) + '\n');
+    if (res.flush) res.flush();
+  }
+  const transport = { send, end: () => res.end() };
+
+  try {
+    let userMessage = text ? String(text).trim() : '';
+
+    if (audio) {
+      let audioBuffer;
+      try { audioBuffer = Buffer.from(audio, 'base64'); }
+      catch (e) {
+        send({ phase: 'error', message: 'Invalid audio format' });
+        return res.end();
+      }
+      const tempDir = path.join(__dirname, '../temp');
+      if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
+      const audioExt = resolveAudioExt(mimeType);
+      const tempPath = path.join(tempDir, `vto_${userId}_${Date.now()}${audioExt}`);
+      fs.writeFileSync(tempPath, audioBuffer);
+      const langMap = {
+        'English': 'en', 'Spanish': 'es', 'Russian': 'ru', 'Chinese': 'zh',
+        'Vietnamese': 'vi', 'Arabic': 'ar', 'Somali': 'so', 'French': 'fr', 'German': 'de'
+      };
+      const transcription = await openai.audio.transcriptions.create({
+        file: fs.createReadStream(tempPath),
+        model: 'whisper-1',
+        language: langMap[req.user.preferredLanguage] || 'en',
+      }).finally(() => {
+        if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
+      });
+      userMessage = transcription.text || '';
+      send({ phase: 'transcription', transcription: userMessage });
+    }
+
+    if (!userMessage) {
+      send({ phase: 'error', message: 'empty input' });
+      return res.end();
+    }
+
+    // Resolve current phase + target so phaseEnforcer can apply rules.
+    let expectedPhase = null;
+    let activeTarget = null;
+    try {
+      const plan = await loadOrCreatePlan(userId, { user: req.user });
+      const resolved = await resolveCurrentTarget(plan, { user: req.user });
+      expectedPhase = resolved?.plan?.currentTarget?.instructionPhase || null;
+      activeTarget = resolved?.plan?.currentTarget || null;
+    } catch (e) {
+      logger.warn('orchestrated: tutorplan load failed (non-fatal)', { error: e.message });
+    }
+
+    // Run the existing voice-tutor response generation. This already
+    // routes through pipelineVerify — see generateResponse() above.
+    const { spoken, mathSteps, raw: aiRaw } = await generateResponse(userId, userMessage, req.user);
+
+    // Hand off to orchestrator
+    const dispatcher = new (require('../utils/orchestrator/dispatcher').Dispatcher)({
+      transport,
+      session: orchestrator.sessionStore.getOrCreate(sessionId, userId),
+      user: req.user,
+    });
+
+    const result = await orchestrator.handleTurn(
+      { kind: 'voice', voiceJson: { spoken, mathSteps } },
+      { sessionId, userId: String(userId), expectedPhase, activeTarget },
+      dispatcher,
+    );
+
+    // Persist the assistant turn to history (same shape as /process)
+    saveToHistory(userId, userMessage, aiRaw).catch(err => {
+      logger.warn('orchestrated: persist failed', { error: err.message });
+    });
+
+    // Synthesize TTS for the spoken portion alongside streaming. We send
+    // the audio URL once it's ready; segmentPlayer ties it to the active
+    // segment (single segment in this path, so id matching is automatic).
+    if (!result.paused) {
+      generateTTS(userId, spoken, req.user).then(audioUrl => {
+        if (audioUrl) send({ phase: 'segment-audio', segmentId: null, audioUrl });
+        send({ phase: 'turn-end', turnId: result.turnId });
+        res.end();
+      }).catch(err => {
+        logger.warn('orchestrated: TTS failed', { error: err.message });
+        send({ phase: 'turn-end', turnId: result.turnId });
+        res.end();
+      });
+    } else {
+      // Paused on a WAIT — keep the connection open via the dispatcher's
+      // own frames. (Not implemented for HTTP-NDJSON in this build —
+      // the hint-ladder rungs require a long-lived connection. WS path
+      // is the production target for full WAIT support.)
+      generateTTS(userId, spoken, req.user).then(audioUrl => {
+        if (audioUrl) send({ phase: 'segment-audio', segmentId: null, audioUrl });
+        res.end();
+      }).catch(() => res.end());
+    }
+
+  } catch (err) {
+    logger.error('orchestrated voice session error', { userId, error: err.message, stack: err.stack });
+    send({ phase: 'error', message: 'Something went wrong. Please try again.' });
+    res.end();
+  }
+});
+
+// ═══════════════════════════════════════
+// POST /api/voice-tutor/interrupt
+// Student spoke mid-turn. Body: {sessionId, studentText, atMs?}.
+// The classifier + evaluator decide a tier action; the response streams
+// orchestrator frames for the resolution (fast-path clarification,
+// disambiguator, or {needsPipelinePass:true} hint). Caller (the page's
+// client JS) issues a follow-up /process-orchestrated when needed.
+// ═══════════════════════════════════════
+router.post('/interrupt', isAuthenticated, async (req, res) => {
+  const { sessionId, studentText, atMs } = req.body || {};
+  const userId = req.user._id;
+  if (!sessionId || !studentText) {
+    return res.status(400).json({ error: 'sessionId and studentText required' });
+  }
+
+  res.setHeader('Content-Type', 'application/x-ndjson');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('X-Accel-Buffering', 'no');
+
+  function send(frame) {
+    res.write(JSON.stringify(frame) + '\n');
+    if (res.flush) res.flush();
+  }
+  const transport = { send, end: () => res.end() };
+
+  try {
+    const dispatcher = new (require('../utils/orchestrator/dispatcher').Dispatcher)({
+      transport,
+      session: orchestrator.sessionStore.getOrCreate(sessionId, userId),
+      user: req.user,
+    });
+
+    let expectedPhase = null;
+    try {
+      const plan = await loadOrCreatePlan(userId, { user: req.user });
+      const resolved = await resolveCurrentTarget(plan, { user: req.user });
+      expectedPhase = resolved?.plan?.currentTarget?.instructionPhase || null;
+    } catch (_) { /* non-fatal */ }
+
+    const result = await orchestrator.handleInterrupt(
+      String(studentText),
+      { sessionId, userId: String(userId), expectedPhase, atMs: Number(atMs) || 0 },
+      dispatcher,
+    );
+
+    // Stream the resolution envelope (fast-path or disambiguator) if any
+    if (result.envelope) {
+      const session = orchestrator.sessionStore.getOrCreate(sessionId, userId);
+      // Reuse the dispatcher to stream the new envelope as if it were a
+      // fresh turn. Segment ids are unique so client can distinguish.
+      session.startTurn(result.envelope.turnId);
+      await dispatcher.stream(result.envelope, {});
+      // For fast-path clarification, also synthesize TTS for the spoken
+      // portion. Single segment so segmentId match is implicit.
+      const seg = result.envelope.segments?.[0];
+      if (seg?.spoken) {
+        try {
+          const audioUrl = await generateTTS(userId, seg.spoken, req.user);
+          if (audioUrl) send({ phase: 'segment-audio', segmentId: seg.id, audioUrl });
+        } catch (e) {
+          logger.warn('interrupt: TTS failed', { error: e.message });
+        }
+      }
+    }
+
+    // Tell the caller whether they need to issue a pipeline pass next
+    send({
+      phase: 'interrupt-resolution',
+      resolution: result.resolution,
+      needsPipelinePass: !!result.needsPipelinePass,
+      previousInterruption: result.previousInterruption,
+      nextPhaseHint: result.nextPhaseHint || null,
+    });
+    send({ phase: 'turn-end', turnId: result.previousInterruption?.turnId || null });
+    res.end();
+  } catch (err) {
+    logger.error('interrupt error', { userId, error: err.message, stack: err.stack });
+    send({ phase: 'error', message: 'interrupt processing failed' });
+    res.end();
   }
 });
 
