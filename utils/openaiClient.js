@@ -91,7 +91,7 @@ async function callLLM(model, messages, options = {}) {
                 ...toolParams,
                 stream: options.stream || false,
                 ...(options.response_format ? { response_format: options.response_format } : {}),
-            })
+            }, options.signal ? { signal: options.signal } : undefined)
         );
         return completion;
     } catch (openAiError) {

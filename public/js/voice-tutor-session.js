@@ -41,6 +41,13 @@
     streamClient: null,
     useStreamingPipeline: false,
     pendingResponseText: '',     // accumulator for response_delta tokens within current turn
+    // Segment orchestrator (opt-in feature flag — ?orchestrator=1 or
+    // localStorage.mmx_orchestrator='1'). Engages only when the WS
+    // streaming pipeline is NOT active; the WS path gets the orchestrator
+    // separately in voiceSession.js.
+    useOrchestrator: false,
+    orchestratorSessionId: null,
+    segmentPlayer: null,
   };
 
   // --- DOM refs ---
@@ -95,6 +102,11 @@
     startSessionTimer();
     addSystemMessage('Voice session started. Tap the mic or just say something.');
 
+    // Orchestrator opt-in (independent of streaming pipeline). Engages
+    // only when WS streaming isn't active — see processVoiceInput for
+    // the precedence rules.
+    setupOrchestratorPlayer();
+
     // Try to set up the streaming pipeline. Falls back to legacy MediaRecorder
     // path if the browser lacks AudioWorklet/WebSocket or if the connection
     // fails. The fallback is the entire pre-existing flow below.
@@ -111,6 +123,140 @@
   }
 
   // ═══════════════════════════════════════
+  // SEGMENT ORCHESTRATOR (opt-in)
+  // Drives /process-orchestrated and renders the resulting NDJSON
+  // segment frames via MMXSegmentPlayer. Falls through to legacy if
+  // disabled or if MMXSegmentPlayer didn't load.
+  // ═══════════════════════════════════════
+  function setupOrchestratorPlayer() {
+    if (typeof window.MMXSegmentPlayer !== 'function') return;
+    const flag = (() => {
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('orchestrator') === '1') return true;
+        if (window.localStorage?.getItem('mmx_orchestrator') === '1') return true;
+      } catch (_) { /* private mode etc. */ }
+      return false;
+    })();
+    if (!flag) return;
+
+    state.useOrchestrator = true;
+    state.orchestratorSessionId = `vt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    state.segmentPlayer = new window.MMXSegmentPlayer({
+      sendInterrupt: postInterrupt,
+      renderMathSteps: state.showVisuals ? renderMathSteps : null,
+      whiteboard: window.whiteboard || null,
+      onTranscript: (t) => { if (t) addMessage(t, 'user'); },
+      onTurnEnd: () => {
+        if (state.handsFree && state.autoListen) startListening();
+        else setMode('idle');
+      },
+      onError: (e) => {
+        console.warn('[VoiceTutor] orchestrator error:', e?.message);
+        setMode('idle');
+      },
+      onWait: (frame) => {
+        // WAIT entered — keep mode='speaking' through hint rungs but
+        // mark the orb so the user knows it's their turn.
+        if (dom.statusText) dom.statusText.textContent = 'Your turn — take your time.';
+      },
+      onWaitRung: (rung) => {
+        // Hint-ladder rung played from the server. Spoken text is
+        // delivered as a fresh segment-start, not here — this handler
+        // is informational for UI-side cues if needed.
+      },
+    });
+    console.log('[VoiceTutor] orchestrator player active', { sessionId: state.orchestratorSessionId });
+  }
+
+  function postInterrupt(payload) {
+    // Wired in the WS commit. For now: HTTP /interrupt with the
+    // sessionId; client doesn't transcribe, so this only fires on
+    // explicit text-mode interrupts. VAD-triggered interrupts during
+    // 'speaking' mode are deferred to the WS path.
+    if (!state.orchestratorSessionId) return;
+    const fetchFn = window.csrfFetch || fetch;
+    fetchFn('/api/voice-tutor/interrupt', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: state.orchestratorSessionId,
+        studentText: payload.studentText || '',
+        atMs: payload.atMs || 0,
+      }),
+    }).catch(() => { /* best-effort */ });
+  }
+
+  /**
+   * Run a turn through /process-orchestrated. Accepts either an audio
+   * blob (base64 + mimeType) or text. Streams NDJSON frames into the
+   * segment player.
+   */
+  async function processOrchestrated({ audioBase64, mimeType, text }) {
+    if (!state.segmentPlayer) return false;
+    setMode('thinking');
+
+    const fetchFn = window.csrfFetch || fetch;
+    const body = { sessionId: state.orchestratorSessionId };
+    if (audioBase64) { body.audio = audioBase64; body.mimeType = mimeType || 'audio/webm'; }
+    else if (text) { body.text = text; }
+    else return false;
+
+    const res = await fetchFn('/api/voice-tutor/process-orchestrated', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Orchestrated processing failed');
+    }
+
+    setMode('speaking');
+    await consumeNDJSON(res, (frame) => state.segmentPlayer.handleFrame(frame));
+    return true;
+  }
+
+  /**
+   * Read an NDJSON streamed response, parsing one JSON object per line.
+   * Tolerates trailing partials between chunks.
+   */
+  async function consumeNDJSON(res, onFrame) {
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/x-ndjson') || !res.body || typeof res.body.getReader !== 'function') {
+      const txt = await res.text();
+      for (const line of txt.split('\n')) {
+        const t = line.trim();
+        if (!t) continue;
+        try { onFrame(JSON.parse(t)); } catch (_) { /* skip bad line */ }
+      }
+      return;
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let nl;
+      while ((nl = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, nl).trim();
+        buf = buf.slice(nl + 1);
+        if (!line) continue;
+        try { onFrame(JSON.parse(line)); } catch (_) { /* skip */ }
+      }
+    }
+    const tail = buf.trim();
+    if (tail) {
+      try { onFrame(JSON.parse(tail)); } catch (_) { /* skip */ }
+    }
+  }
+
+  // ═══════════════════════════════════════
   // STREAMING PIPELINE (Deepgram + Cartesia WebSocket)
   // Replaces MediaRecorder + POST + URL-audio with a single duplex socket.
   // ═══════════════════════════════════════
@@ -121,7 +267,16 @@
       return; // Old browser — keep legacy path
     }
 
+    // When the orchestrator flag is on, request the orchestrated server
+    // mode at WS connect time. The server's _driveTurnOrchestrated path
+    // emits the same legacy events (response_final, math_steps,
+    // ai_speaking_started/ended) plus type:'orch' frames; the existing
+    // handleStreamEvent handler covers the legacy ones.
+    const wsPath = state.useOrchestrator
+      ? '/api/voice-tutor/stream?mode=orchestrated'
+      : '/api/voice-tutor/stream';
     const client = new window.VoiceStreamClient({
+      wsPath,
       on: (ev) => handleStreamEvent(ev),
     });
 
@@ -685,6 +840,19 @@
     try {
       const base64 = await blobToBase64(audioBlob);
 
+      // Orchestrator path takes precedence over the legacy /process
+      // endpoint when the feature flag is on AND the WS pipeline isn't
+      // active. (WS path will gain its own orchestrator wiring later.)
+      if (state.useOrchestrator && !state.useStreamingPipeline) {
+        try {
+          await processOrchestrated({ audioBase64: base64, mimeType: audioBlob.type || 'audio/webm' });
+          return;
+        } catch (err) {
+          console.warn('[VoiceTutor] orchestrator path failed, falling back:', err?.message);
+          // fall through to legacy /process path
+        }
+      }
+
       const fetchFn = window.csrfFetch || fetch;
       const res = await fetchFn('/api/voice-tutor/process', {
         method: 'POST',
@@ -882,6 +1050,17 @@
 
     addMessage(text, 'user');
     setMode('thinking');
+
+    // Orchestrator path (text input) — same precedence rules as voice.
+    if (state.useOrchestrator) {
+      try {
+        await processOrchestrated({ text });
+        return;
+      } catch (err) {
+        console.warn('[VoiceTutor] orchestrator text path failed, falling back:', err?.message);
+        // fall through to legacy /process-text
+      }
+    }
 
     try {
       const fetchFn = window.csrfFetch || fetch;
