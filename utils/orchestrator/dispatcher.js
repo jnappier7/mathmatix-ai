@@ -80,6 +80,10 @@ class Dispatcher {
    * @param {import('./types').OrchestratorEnvelope} envelope
    * @param {Object} [opts]
    * @param {Function} [opts.onWait] - (segment) => void — fires when a WAIT segment is reached
+   * @param {Function} [opts.onSegmentTTS] - async (segment, abortSignal) => void
+   *        Called between board-op dispatch and segment-end. Awaited.
+   *        Used by the WS path to drive per-segment Cartesia synthesis
+   *        through voiceSession's persistent pool.
    */
   async stream(envelope, opts = {}) {
     if (!envelope || !Array.isArray(envelope.segments)) {
@@ -141,6 +145,23 @@ class Dispatcher {
       for (const op of (seg.boardOps || [])) {
         if (this._closed) break;
         this.send({ phase: 'board-op', segmentId: seg.id, op });
+      }
+
+      // Per-segment TTS hook (WS path uses this to drive Cartesia). The
+      // hook owns segment audio lifecycle; dispatcher just awaits it.
+      // Aborts via the segment's AbortController if the turn is killed.
+      if (typeof opts.onSegmentTTS === 'function') {
+        const segAc = this.session.segmentAbort.get(seg.id);
+        try {
+          await opts.onSegmentTTS(seg, segAc?.signal || null);
+        } catch (err) {
+          if (segAc?.signal?.aborted) {
+            // Aborted mid-TTS — emit segment-end so client can clean up
+            this.send({ phase: 'segment-end', segmentId: seg.id, aborted: true });
+            return;
+          }
+          logger.warn('onSegmentTTS error', { error: err.message, segmentId: seg.id });
+        }
       }
 
       // If the segment carries a WAIT, schedule the ladder and PAUSE the

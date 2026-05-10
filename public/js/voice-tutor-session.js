@@ -267,7 +267,16 @@
       return; // Old browser — keep legacy path
     }
 
+    // When the orchestrator flag is on, request the orchestrated server
+    // mode at WS connect time. The server's _driveTurnOrchestrated path
+    // emits the same legacy events (response_final, math_steps,
+    // ai_speaking_started/ended) plus type:'orch' frames; the existing
+    // handleStreamEvent handler covers the legacy ones.
+    const wsPath = state.useOrchestrator
+      ? '/api/voice-tutor/stream?mode=orchestrated'
+      : '/api/voice-tutor/stream';
     const client = new window.VoiceStreamClient({
+      wsPath,
       on: (ev) => handleStreamEvent(ev),
     });
 

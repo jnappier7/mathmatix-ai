@@ -1007,9 +1007,17 @@ function attachStreamWebSocket(server, app) {
       ws.close(1008, 'user not found');
       return;
     }
+    // Mode is opt-in via ?mode=orchestrated. Defaults preserve the
+    // existing immersive math-steps experience.
+    let requestedMode = 'math-steps';
     try {
-      await createVoiceSession({ ws, user: userDoc, mode: 'math-steps' });
-      logger.info('voice ws session opened', { userId: String(userDoc._id), mode: 'math-steps' });
+      const url = new URL(request.url, `http://${request.headers.host || 'localhost'}`);
+      const m = url.searchParams.get('mode');
+      if (m === 'orchestrated' || m === 'board-actions') requestedMode = m;
+    } catch (_) { /* fall through to default */ }
+    try {
+      await createVoiceSession({ ws, user: userDoc, mode: requestedMode });
+      logger.info('voice ws session opened', { userId: String(userDoc._id), mode: requestedMode });
     } catch (err) {
       logger.error('voice ws session init failed', { error: err.message });
       try { ws.close(1011, 'init failed'); } catch (_) {}

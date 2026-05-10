@@ -120,9 +120,14 @@ function decidePauseResolution(c, e, phase) {
  * @param {string} [ctx.expectedPhase]         tutorPlan.currentTarget.instructionPhase
  * @param {Object} [ctx.activeTarget]          {prompt, expect, masteryPrompt} for phaseEnforcer rewrites
  * @param {Object} dispatcher                  Built by route handler
+ * @param {Object} [opts]
+ * @param {Function} [opts.onSegmentTTS]       async (segment, abortSignal) => void
+ *        Forwarded to dispatcher.stream(); used by the WS path to drive
+ *        per-segment Cartesia synthesis. HTTP path leaves this null and
+ *        synthesizes audio out-of-band via generateTTS.
  * @returns {Promise<{turnId:string, segmentsPlayed:number, paused:boolean}>}
  */
-async function handleTurn(input, ctx, dispatcher) {
+async function handleTurn(input, ctx, dispatcher, opts = {}) {
   const session = sessionStore.getOrCreate(ctx.sessionId, ctx.userId);
   const turnSignal = session.startTurn(/* turnId set below */);
 
@@ -157,6 +162,7 @@ async function handleTurn(input, ctx, dispatcher) {
   let paused = false;
   await dispatcher.stream(rewritten, {
     onWait: () => { paused = true; },
+    onSegmentTTS: opts.onSegmentTTS,
   });
 
   return {
