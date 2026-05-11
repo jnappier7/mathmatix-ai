@@ -230,6 +230,12 @@
         }
 
         _onMicFrame({ pcm, dbfs }) {
+            // Surface mic level to UI for reactive visualizations.
+            // Map dBFS (-90..0) to 0..1 with a soft floor so background hum
+            // doesn't drive the visual; speech sits comfortably in the upper half.
+            const level = Math.max(0, Math.min(1, (dbfs + 60) / 45));
+            this.on({ type: 'mic_level', dbfs, level });
+
             // Barge-in detection during AI playback
             if (this.aiSpeaking) {
                 const threshold = this.useHardThreshold ? INTERRUPT_DBFS_HARD : INTERRUPT_DBFS;
