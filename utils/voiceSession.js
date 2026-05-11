@@ -8,13 +8,16 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const TUTOR_CONFIG = require('./tutorConfig');
 const { generateSystemPrompt } = require('./prompt');
-const { callLLMStream } = require('./llmGateway');
+const { callLLM, callLLMStream } = require('./llmGateway');
 const { verify: pipelineVerify } = require('./pipeline');
 const { checkReadingLevel } = require('./readability');
 const sttStream = require('./sttStream');
 const ttsStream = require('./ttsStream');
 const ttsProvider = require('./ttsProvider');
 const metrics = require('./voiceMetrics');
+const orchestrator = require('./orchestrator');
+const { Dispatcher } = require('./orchestrator/dispatcher');
+const { loadOrCreatePlan, resolveCurrentTarget } = require('./tutorPlanManager');
 const logger = require('./logger').child({ module: 'voiceSession' });
 
 const VOICE_MODEL = process.env.VOICE_LLM_MODEL || 'gpt-4o-mini';
@@ -119,7 +122,15 @@ class VoiceSession {
         this.user = user;                       // populated user doc (lean)
         this.userId = String(user._id);
         this.sessionId = sessionId || `${this.userId}-${Date.now()}`;
-        this.mode = mode === 'board-actions' ? 'board-actions' : 'math-steps';
+        // Three modes:
+        //   'math-steps'   — immersive voice-tutor.html, <math>JSON</math> trailer
+        //   'board-actions' — chat orb, inline [WRITE:...] tags
+        //   'orchestrated' — segment orchestrator path; trades streaming
+        //                    LLM TTFA (~250ms -> ~1.5s) for per-segment
+        //                    structure, WAIT semantics, and 3-tier interrupts
+        this.mode = mode === 'board-actions' ? 'board-actions'
+                  : mode === 'orchestrated'  ? 'orchestrated'
+                  : 'math-steps';
         this.tutorProfile = TUTOR_CONFIG[user.selectedTutorId || 'default'] || TUTOR_CONFIG['default'];
         this.voiceId = ttsProvider.getVoiceId(this.tutorProfile);
         this.langCode = ({
@@ -376,6 +387,13 @@ class VoiceSession {
     }
 
     async _driveTurn(turn) {
+        // Orchestrated mode replaces token-streaming with a JSON-mode
+        // call + segment orchestrator. Trades TTFA for segment-level
+        // playback control. See _driveTurnOrchestrated for the flow.
+        if (this.mode === 'orchestrated') {
+            return this._driveTurnOrchestrated(turn);
+        }
+
         // ── Build messages for LLM ──
         const modeInstructions = this.mode === 'board-actions'
             ? BOARD_ACTIONS_VOICE_INSTRUCTIONS
@@ -537,6 +555,199 @@ class VoiceSession {
         turn.metric.ttsChars = turn.tts ? turn.tts.charsSent() : 0;
         turn.metric.sttSecondsBilled = this.stt ? this.stt.billedSeconds : 0;
         turn.metric.llmOutputTokens = turn.tokensEmitted;
+    }
+
+    /**
+     * Orchestrated turn: JSON-mode LLM call -> verify -> orchestrator
+     * handleTurn with per-segment Cartesia synthesis. Same persistent
+     * pool, same _sendAudioChunk path — orchestrator just adds segment
+     * structure on top.
+     */
+    async _driveTurnOrchestrated(turn) {
+        const ORCH_VOICE_INSTRUCTIONS = `
+
+**VOICE TUTOR MODE — ACTIVE**
+
+You are in a real-time spoken math tutoring session. Respond with a JSON
+object in this exact shape:
+
+{
+  "spoken": "1-2 sentences, plain English, no LaTeX delimiters",
+  "mathSteps": [{"label":"...","latex":"...","explanation":"..."}]
+}
+
+The "spoken" field is what the student hears. The "mathSteps" field is
+the cumulative math board — include ONLY steps the student has worked
+through. Don't spoil the next step. On wrong answers, repeat the prior
+mathSteps unchanged (don't add the wrong step). For non-math turns,
+include the most recent prior mathSteps (or [] if none yet).
+
+Always include an "explanation" field on the most recent mathStep when
+possible — the orchestrator uses it to answer mid-explanation
+clarifications without a fresh pipeline pass.
+
+Never speak math notation. Never include system tags. Always valid JSON.`;
+
+        const messages = [
+            { role: 'system', content: this.systemPrompt + ORCH_VOICE_INSTRUCTIONS },
+            ...this.history,
+            { role: 'user', content: turn.userMessage },
+        ];
+
+        // ── 1. JSON-mode LLM call (non-streaming) ──
+        let parsed;
+        try {
+            const completion = await callLLM(VOICE_MODEL, messages, {
+                temperature: 0.45,
+                max_tokens: 600,
+                response_format: { type: 'json_object' },
+                signal: turn.ac.signal,
+            });
+            if (turn.ac.signal.aborted) return;
+            turn.metric.t_first_llm_token = Date.now();
+            const raw = completion.choices?.[0]?.message?.content || '{}';
+            try { parsed = JSON.parse(raw); } catch (_) { parsed = {}; }
+            turn.metric.llmOutputTokens = completion.usage?.completion_tokens || 0;
+            turn.metric.llmInputTokens = completion.usage?.prompt_tokens || 0;
+        } catch (err) {
+            if (turn.ac.signal.aborted) return;
+            throw err;
+        }
+
+        const spoken = (parsed.spoken || parsed.text || parsed.response || '').trim();
+        const mathSteps = Array.isArray(parsed.mathSteps)
+            ? parsed.mathSteps.filter(s => s && s.latex)
+            : Array.isArray(parsed.math_steps)
+              ? parsed.math_steps.filter(s => s && s.latex)
+              : [];
+
+        // ── 2. Pipeline verify (defense in depth) ──
+        let verifiedSpoken = spoken;
+        let verifiedSteps = mathSteps;
+        try {
+            const verified = await pipelineVerify(spoken, {
+                userId: this.userId,
+                userMessage: turn.userMessage,
+                iepReadingLevel: this.user.iepPlan?.readingLevel || null,
+                firstName: this.user.firstName,
+                isStreaming: false,
+            });
+            const flagged = (verified.flags || []).some(f =>
+                f.startsWith('answer_giveaway') || f.startsWith('answer_key') || f.startsWith('upload_')
+            );
+            if (flagged && verified.text && verified.text !== spoken) {
+                verifiedSpoken = verified.text;
+                verifiedSteps = []; // drop the board alongside the spoken redirect
+                turn.metric.abortReason = 'verify_redirect';
+            } else if (verified.text) {
+                verifiedSpoken = verified.text;
+            }
+        } catch (err) {
+            logger.warn('orch verify failed (using unverified)', { error: err.message });
+        }
+
+        // ── 3. Resolve current phase for phaseEnforcer ──
+        let expectedPhase = null;
+        let activeTarget = null;
+        try {
+            const plan = await loadOrCreatePlan(this.userId, { user: this.user });
+            const resolved = await resolveCurrentTarget(plan, { user: this.user });
+            expectedPhase = resolved?.plan?.currentTarget?.instructionPhase || null;
+            activeTarget = resolved?.plan?.currentTarget || null;
+        } catch (e) {
+            logger.warn('orch tutorplan load failed (non-fatal)', { error: e.message });
+        }
+
+        // ── 4. Build a WS transport for the dispatcher ──
+        // The dispatcher emits orchestrator frames as JSON WS messages.
+        // The legacy client events (response_final, math_steps,
+        // ai_speaking_started/ended) are still emitted alongside so older
+        // clients keep working without changes.
+        const wsTransport = {
+            send: (frame) => this._send({ type: 'orch', ...frame }),
+            end: () => { /* no-op — WS stays open across turns */ },
+        };
+        const session = orchestrator.sessionStore.getOrCreate(this.sessionId, this.userId);
+        const dispatcher = new Dispatcher({ transport: wsTransport, session, user: this.user });
+
+        // ── 5. Per-segment TTS hook — uses the persistent Cartesia pool ──
+        const onSegmentTTS = (segment, signal) => new Promise((resolve) => {
+            if (!this.ttsPool || !segment.spoken) { resolve(); return; }
+            // First-audio-chunk telemetry maps to the LEGACY metric and
+            // also feeds the orchestrator's interrupt_ack/substantive
+            // split (caller sets t_stt_final upstream when STT finalizes).
+            const ts = this.ttsPool.synthesize({
+                signal,
+                onChunk: (i16, sr) => {
+                    if (!turn.metric.t_first_audio_chunk) {
+                        turn.metric.t_first_audio_chunk = Date.now();
+                        if (turn.status === 'thinking') {
+                            turn.status = 'speaking';
+                            this._setStatus('speaking');
+                            this._send({ type: 'ai_speaking_started', turnId: turn.metric.turnId });
+                        }
+                    }
+                    // Mark first ack/substantive audio for orchestrator metrics
+                    if (turn.metric.t_stt_final && !turn.metric.t_first_substantive_audio) {
+                        turn.metric.t_first_substantive_audio = Date.now();
+                        if (!turn.metric.t_first_ack_audio) {
+                            turn.metric.t_first_ack_audio = turn.metric.t_first_substantive_audio;
+                        }
+                    }
+                    this._sendAudioChunk(i16, sr, turn.metric.turnId);
+                },
+                onDone: () => resolve(),
+                onError: (err) => {
+                    logger.warn('orch TTS chunk error', { error: err.message });
+                    resolve();
+                },
+            });
+            ts.appendText(segment.spoken);
+            ts.finalize();
+            // If the segment is aborted mid-stream, the synthesizer's
+            // signal listener will close the Cartesia context and onDone
+            // / onError will fire. Resolve eagerly on abort to unblock
+            // the dispatcher loop.
+            if (signal) {
+                if (signal.aborted) resolve();
+                else signal.addEventListener('abort', () => resolve(), { once: true });
+            }
+        });
+
+        // ── 6. Hand off to orchestrator (drives per-segment Cartesia via onSegmentTTS) ──
+        await orchestrator.handleTurn(
+            { kind: 'voice', voiceJson: { spoken: verifiedSpoken, mathSteps: verifiedSteps } },
+            { sessionId: this.sessionId, userId: this.userId, expectedPhase, activeTarget },
+            dispatcher,
+            { onSegmentTTS },
+        );
+
+        // ── 7. Legacy events for the existing client ──
+        // The old voice-stream-client.js consumes these; orchestrator
+        // frames coexist as type:'orch'.
+        this._send({
+            type: 'response_final',
+            turnId: turn.metric.turnId,
+            text: verifiedSpoken,
+            mathSteps: verifiedSteps,
+            boardActions: [],
+        });
+        if (verifiedSteps.length > 0) this.lastBoardSteps = verifiedSteps;
+
+        // ── 8. Persist turn ──
+        const assistantContent = verifiedSpoken
+            + (verifiedSteps.length ? ` <math>${JSON.stringify(verifiedSteps)}</math>` : '');
+        this.history.push({ role: 'user', content: turn.userMessage });
+        this.history.push({ role: 'assistant', content: assistantContent });
+        if (this.history.length > HISTORY_DEPTH * 2) {
+            this.history = this.history.slice(-HISTORY_DEPTH * 2);
+        }
+        this._persistTurn(turn.userMessage, assistantContent).catch(err => {
+            logger.warn('orch persist failed', { error: err.message });
+        });
+
+        turn.metric.spokenChars = verifiedSpoken.length;
+        this._send({ type: 'ai_speaking_ended', turnId: turn.metric.turnId });
     }
 
     /**

@@ -32,6 +32,12 @@ function newTurn(sessionId, userId, tutorId) {
         t_audio_play_started: null,
         t_interrupt_requested: null,
         t_audio_silenced: null,
+        // Orchestrator-era latency split: ack = first acknowledgment audio
+        // (templated thinking-ack or fast-path), substantive = first audio
+        // of the substantive response. Both measured from STT-final.
+        t_stt_final: null,
+        t_first_ack_audio: null,
+        t_first_substantive_audio: null,
         t_turn_end: null,
         sttSecondsBilled: 0,
         llmInputTokens: 0,
@@ -39,6 +45,56 @@ function newTurn(sessionId, userId, tutorId) {
         ttsChars: 0,
         abortReason: null,
         spokenChars: 0,
+    };
+}
+
+// ── Orchestrator counters ────────────────────────────────────────────
+// Lightweight counters for non-per-turn metrics. Reset on process restart;
+// scraped via /api/voice-tutor/metrics alongside aggregate().
+
+const counters = {
+    phase_strip:         { _total: 0 },   // keyed by `${phase}:${from}->${to}`
+    classifier_consensus: { unanimous: 0, majority: 0, split: 0 },
+    wait_abandon:        { _total: 0 },   // keyed by skillId or 'unknown'
+    fast_path_clarification: 0,
+};
+
+function recordPhaseStrip(phase, from, to) {
+    const k = `${phase || 'unknown'}:${from}->${to}`;
+    counters.phase_strip[k] = (counters.phase_strip[k] || 0) + 1;
+    counters.phase_strip._total++;
+}
+
+function recordClassifierConsensus(consensus) {
+    if (!consensus) return;
+    if (counters.classifier_consensus[consensus] != null) {
+        counters.classifier_consensus[consensus]++;
+    }
+}
+
+function recordWaitAbandon(skillId) {
+    const k = skillId || 'unknown';
+    counters.wait_abandon[k] = (counters.wait_abandon[k] || 0) + 1;
+    counters.wait_abandon._total++;
+}
+
+function recordFastPathClarification() {
+    counters.fast_path_clarification++;
+}
+
+function getCounters() {
+    // Compute consensus rate
+    const consTotal = counters.classifier_consensus.unanimous
+                    + counters.classifier_consensus.majority
+                    + counters.classifier_consensus.split;
+    const consensusRate = consTotal > 0
+        ? counters.classifier_consensus.unanimous / consTotal
+        : null;
+    return {
+        phase_strip: { ...counters.phase_strip },
+        classifier_consensus: { ...counters.classifier_consensus, rate_unanimous: consensusRate },
+        wait_abandon: { ...counters.wait_abandon },
+        fast_path_clarification: counters.fast_path_clarification,
     };
 }
 
@@ -56,6 +112,14 @@ function record(turn) {
             : null,
         interrupt_stop_ms: turn.t_audio_silenced && turn.t_interrupt_requested
             ? turn.t_audio_silenced - turn.t_interrupt_requested
+            : null,
+        // Orchestrator-era split — populated by orchestrator turns; null on
+        // legacy single-segment turns where the distinction doesn't apply.
+        interrupt_ack_ms: turn.t_first_ack_audio && turn.t_stt_final
+            ? turn.t_first_ack_audio - turn.t_stt_final
+            : null,
+        interrupt_substantive_ms: turn.t_first_substantive_audio && turn.t_stt_final
+            ? turn.t_first_substantive_audio - turn.t_stt_final
             : null,
         turn_duration_ms: turn.t_turn_end - turn.t_started,
         estimated_cost_usd: estimateCost(turn),
@@ -101,10 +165,12 @@ function snapshot(limit = 100) {
 function aggregate() {
     const turns = snapshot(RING_SIZE).filter(t => t.time_to_first_audio_ms != null);
     if (turns.length === 0) {
-        return { count: 0 };
+        return { count: 0, orchestrator: getCounters() };
     }
     const ttfa = turns.map(t => t.time_to_first_audio_ms).sort((a, b) => a - b);
     const interrupts = turns.map(t => t.interrupt_stop_ms).filter(x => x != null).sort((a, b) => a - b);
+    const ack = turns.map(t => t.interrupt_ack_ms).filter(x => x != null).sort((a, b) => a - b);
+    const sub = turns.map(t => t.interrupt_substantive_ms).filter(x => x != null).sort((a, b) => a - b);
     const costs = turns.map(t => t.estimated_cost_usd);
     const interrupted = turns.filter(t => t.abortReason === 'user_barge_in').length;
     return {
@@ -113,9 +179,14 @@ function aggregate() {
         ttfa_ms_p95: percentile(ttfa, 0.95),
         interrupt_stop_ms_p50: interrupts.length ? percentile(interrupts, 0.50) : null,
         interrupt_stop_ms_p95: interrupts.length ? percentile(interrupts, 0.95) : null,
+        interrupt_ack_ms_p50: ack.length ? percentile(ack, 0.50) : null,
+        interrupt_ack_ms_p95: ack.length ? percentile(ack, 0.95) : null,
+        interrupt_substantive_ms_p50: sub.length ? percentile(sub, 0.50) : null,
+        interrupt_substantive_ms_p95: sub.length ? percentile(sub, 0.95) : null,
         avg_cost_usd: costs.reduce((a, b) => a + b, 0) / costs.length,
         interrupt_rate: interrupted / turns.length,
         total_recorded: total,
+        orchestrator: getCounters(),
     };
 }
 
@@ -125,4 +196,12 @@ function percentile(sorted, p) {
     return sorted[idx];
 }
 
-module.exports = { newTurn, record, snapshot, aggregate, COST };
+module.exports = {
+    newTurn, record, snapshot, aggregate, COST,
+    // Orchestrator counters
+    recordPhaseStrip,
+    recordClassifierConsensus,
+    recordWaitAbandon,
+    recordFastPathClarification,
+    getCounters,
+};
