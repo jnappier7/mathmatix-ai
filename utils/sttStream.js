@@ -33,7 +33,9 @@ function isConfigured() {
  * @param {string} opts.language        - Language code, default 'en'
  * @param {number} opts.sampleRate      - Input PCM sample rate (16000)
  * @param {number} opts.endpointing     - Silence ms before "is_final" fires (300)
- * @param {number} opts.utteranceEndMs  - Silence ms before UtteranceEnd fires (800)
+ * @param {number} opts.utteranceEndMs  - Silence ms before UtteranceEnd fires.
+ *                                        Deepgram requires >=1000; values below
+ *                                        that cause an HTTP 400 on upgrade.
  * @param {Function} opts.onPartial     - (text, confidence) => void
  * @param {Function} opts.onFinal       - (text, confidence) => void  -- per-segment final
  * @param {Function} opts.onUtteranceEnd- () => void  -- "user is done speaking, fire LLM"
@@ -47,13 +49,17 @@ function createSession(opts = {}) {
         language = 'en',
         sampleRate = 16000,
         endpointing = 300,
-        utteranceEndMs = 800,
+        utteranceEndMs = 1000,
         onPartial = () => {},
         onFinal = () => {},
         onUtteranceEnd = () => {},
         onError = () => {},
         onClose = () => {},
     } = opts;
+
+    // Deepgram rejects utterance_end_ms < 1000 with HTTP 400 on websocket
+    // upgrade. Clamp here so a stale caller can't bring the session down.
+    const utteranceEndMsSafe = Math.max(1000, utteranceEndMs | 0);
 
     const conn = client().listen.live({
         model: MODEL,
@@ -65,7 +71,7 @@ function createSession(opts = {}) {
         smart_format: true,
         punctuate: true,
         endpointing,
-        utterance_end_ms: utteranceEndMs,
+        utterance_end_ms: utteranceEndMsSafe,
         vad_events: true,
     });
 
