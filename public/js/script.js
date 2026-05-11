@@ -945,14 +945,21 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     } else {
-      // Image preview card
+      // Image preview card with inline "Check my work" action
       card.style.padding = '0'; // Remove padding for images
       const reader = new FileReader();
       reader.onload = (e) => {
         card.innerHTML = `
           <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">×</button>
           <img src="${e.target.result}" class="file-card-preview" alt="${escapeHtml(file.name)}" title="${escapeHtml(file.name)}"/>
+          <button class="file-card-check-work" data-file-id="${file.uploadId}" title="Have my tutor check this work">
+            <i class="fas fa-clipboard-check"></i> Check my work
+          </button>
         `;
+        const checkBtn = card.querySelector('.file-card-check-work');
+        if (checkBtn) {
+          checkBtn.addEventListener('click', () => runWorkCheckFromChat(file));
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -989,6 +996,104 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById('file-grid-container');
     if (container) container.innerHTML = '';
   }
+
+  /**
+   * Render a work-check breakdown for a historical conversation message.
+   * Fetches the GradingResult by id and asks show-your-work.js to render
+   * the same inline card as fresh submissions.
+   */
+  window.renderHistoricalWorkCheck = async function(resultId) {
+    if (!resultId) return;
+    // Reserve a placeholder slot so the card lands in the right chronological spot.
+    const placeholder = document.createElement('div');
+    placeholder.className = 'work-check-message work-check-loading';
+    placeholder.innerHTML = '<div class="work-check-card"><em>Loading work check…</em></div>';
+    const chatContainer = document.getElementById('chat-messages-container') || document.getElementById('chat-messages');
+    chatContainer?.appendChild(placeholder);
+
+    try {
+      const response = await csrfFetch(`/api/grade-work/${resultId}`, { credentials: 'include' });
+      if (!response.ok) throw new Error('Failed to load work check');
+      const data = await response.json();
+      if (!data.success || !data.result) throw new Error('Missing result');
+
+      if (window.showYourWork && typeof window.showYourWork.buildInlineWorkCard === 'function') {
+        const card = window.showYourWork.buildInlineWorkCard(data.result);
+        if (card) {
+          placeholder.replaceWith(card);
+          if (typeof window.showYourWork.typesetMath === 'function') {
+            window.showYourWork.typesetMath(card);
+          }
+        } else {
+          placeholder.remove();
+        }
+      } else {
+        placeholder.remove();
+      }
+    } catch (err) {
+      console.warn('[renderHistoricalWorkCheck] failed:', err);
+      placeholder.remove();
+    }
+  };
+
+  /**
+   * Route an attached image through /api/grade-work without leaving the chat.
+   * On success the server appends a work-check message and tutor greeting to
+   * the active conversation; show-your-work.js renders the breakdown card.
+   */
+  window.runWorkCheckFromChat = async function(file) {
+    if (!file) return;
+    const card = document.querySelector(`[data-file-id="${file.uploadId}"]`);
+    const checkBtn = card?.querySelector('.file-card-check-work');
+    if (checkBtn) {
+      checkBtn.disabled = true;
+      checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking…';
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const prevId = window.showYourWork?.lastResultId;
+      if (prevId) formData.append('previousAttemptId', prevId);
+
+      const response = await csrfFetch('/api/grade-work', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      });
+
+      if (!response.ok) {
+        let errMsg = 'Failed to check your work.';
+        if (response.status === 429) errMsg = 'Too many requests — wait a moment and try again.';
+        else { try { const err = await response.json(); errMsg = err.message || errMsg; } catch {} }
+        throw new Error(errMsg);
+      }
+
+      const result = await response.json();
+
+      // Remove the file from the attach queue so it doesn't get double-sent.
+      attachedFiles = attachedFiles.filter(f => f.uploadId !== file.uploadId);
+      if (card) card.remove();
+
+      // Render the breakdown inline (same content as the modal) and surface
+      // the tutor greeting. Reuses the show-your-work instance so the modal
+      // stays in sync for "Open full view".
+      if (window.showYourWork && typeof window.showYourWork.addWorkSnippetToChat === 'function') {
+        window.showYourWork.analysisResult = result;
+        window.showYourWork.lastResultId = result.id || null;
+        if (!window.showYourWork._renderedInChatIds) window.showYourWork._renderedInChatIds = new Set();
+        if (result.id) window.showYourWork._renderedInChatIds.add(result.id);
+        window.showYourWork.addWorkSnippetToChat(result);
+      }
+    } catch (err) {
+      console.error('[runWorkCheckFromChat] error:', err);
+      if (typeof showToast === 'function') showToast(err.message || 'Could not check your work right now.', 4000);
+      if (checkBtn) {
+        checkBtn.disabled = false;
+        checkBtn.innerHTML = '<i class="fas fa-clipboard-check"></i> Check my work';
+      }
+    }
+  };
 
   /**
    * Escape HTML to prevent XSS
@@ -4681,6 +4786,12 @@ document.addEventListener("DOMContentLoaded", () => {
         // Load and display messages
         if (messages && messages.length > 0) {
             messages.forEach(msg => {
+                // Work-check messages render as full breakdown cards
+                // instead of plain user bubbles.
+                if (msg.workCheckId) {
+                    renderHistoricalWorkCheck(msg.workCheckId);
+                    return;
+                }
                 const sender = msg.role === 'user' ? 'user' : 'ai';
                 appendMessage(msg.content, sender);
             });

@@ -21,6 +21,11 @@ const messageSchema = new Schema({
         type: { type: String },       // e.g. 'derivative', 'arithmetic', 'linear_equation'
         correctAnswer: { type: String },
     },
+    // Show My Work integration: when a student submits work for grading,
+    // a 'user' message is appended with workCheckId pointing to the GradingResult.
+    // The frontend renders these messages as rich work-check cards rather than
+    // plain bubbles; the LLM still sees the human-readable summary in `content`.
+    workCheckId: { type: Schema.Types.ObjectId, ref: 'GradingResult', default: null },
 }, { _id: false });
 
 const conversationSchema = new Schema({

@@ -7,11 +7,115 @@ const sharp = require('sharp');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const GradingResult = require('../models/gradingResult');
-const { gradeWithVision } = require('../utils/llmGateway');
+const { gradeWithVision, callLLM } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuard');
 const pdfOcr = require('../utils/pdfOcr');
 const { checkUnpluggedBadges } = require('../utils/unpluggedBadges');
+const Conversation = require('../models/conversation');
+const TUTOR_CONFIG = require('../utils/tutorConfig');
+
+// ============================================================================
+// Chat interlacing helpers — link Show My Work into the active conversation
+// ============================================================================
+
+async function getOrCreateActiveConversation(user) {
+    let conversation = null;
+    if (user.activeConversationId) {
+        conversation = await Conversation.findById(user.activeConversationId);
+        if (conversation && !conversation.isActive) conversation = null;
+    }
+    if (!conversation) {
+        conversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+        user.activeConversationId = conversation._id;
+        await user.save();
+    }
+    return conversation;
+}
+
+function buildWorkCheckSummary(result, attemptNumber, improvement) {
+    const problems = result.problems || [];
+    const incorrect = problems.filter(p => p.isCorrect === false).map(p => '#' + p.problemNumber);
+    const unsure = problems.filter(p => p.isCorrect === null || p.isCorrect === undefined).map(p => '#' + p.problemNumber);
+    const correct = problems.filter(p => p.isCorrect === true).map(p => '#' + p.problemNumber);
+
+    const lines = [`[WORK CHECK] I submitted my work for review — ${result.correctCount}/${result.problemCount} correct (attempt #${attemptNumber || 1}).`];
+    if (correct.length)   lines.push(`Correct: ${correct.join(', ')}.`);
+    if (incorrect.length) lines.push(`Incorrect: ${incorrect.join(', ')}.`);
+    if (unsure.length)    lines.push(`Need to discuss (unsure): ${unsure.join(', ')}.`);
+
+    const focus = problems.filter(p => p.isCorrect !== true).slice(0, 4);
+    if (focus.length) {
+        lines.push('');
+        lines.push('Per-problem detail:');
+        focus.forEach(p => {
+            const status = p.isCorrect === false ? 'incorrect' : 'unsure';
+            const stmt = (p.problemStatement || '').toString().substring(0, 160);
+            const ans = (p.studentAnswer || '').toString().substring(0, 80);
+            const fb = (p.feedback || '').toString().substring(0, 200);
+            lines.push(`  • Problem ${p.problemNumber} (${status}): "${stmt}" — student wrote: ${ans}. ${fb}`);
+        });
+    }
+
+    if (improvement && improvement.improved) {
+        lines.push('');
+        lines.push(`Improved from ${improvement.previousCorrect}/${improvement.previousTotal} to ${improvement.currentCorrect}/${improvement.currentTotal}.`);
+    }
+
+    return lines.join('\n');
+}
+
+async function generateTutorGreeting(user, result, improvement) {
+    try {
+        const tutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : 'default';
+        const tutor = TUTOR_CONFIG[tutorKey] || {};
+        const tutorName = tutor.name || 'your tutor';
+        const tutorPersona = tutor.persona || tutor.systemPrompt || '';
+        const firstName = user.firstName || 'there';
+
+        const problems = result.problems || [];
+        const incorrect = problems.filter(p => p.isCorrect === false);
+        const unsure = problems.filter(p => p.isCorrect === null || p.isCorrect === undefined);
+        const correct = problems.filter(p => p.isCorrect === true);
+
+        const detailBlock = problems.slice(0, 6).map(p => {
+            const status = p.isCorrect === true ? 'correct' : p.isCorrect === false ? 'incorrect' : 'unsure';
+            return `- Problem ${p.problemNumber} (${status}): ${p.problemStatement || ''} — student wrote: ${p.studentAnswer || '(blank)'}. Feedback: ${p.feedback || ''}`;
+        }).join('\n');
+
+        const systemMsg = `You are ${tutorName}, a warm math tutor.${tutorPersona ? ' ' + tutorPersona : ''}
+${firstName} just submitted handwritten work for you to review. The analysis is below.
+Write a SHORT (2-3 sentences max), warm, in-character follow-up message in chat that:
+1. Acknowledges what you saw (specific — name a problem or pattern).
+2. Picks ONE concrete next step to discuss (prioritize "unsure" problems, then incorrect).
+3. Ends with an open question inviting them to start.
+
+Do NOT list every problem. Do NOT give the answer. No headers, no bullet points. Just a natural chat message.`;
+
+        const userMsg = `Work analysis:
+Score: ${result.correctCount}/${result.problemCount}
+Correct: ${correct.length} (${correct.map(p => '#' + p.problemNumber).join(', ') || 'none'})
+Incorrect: ${incorrect.length} (${incorrect.map(p => '#' + p.problemNumber).join(', ') || 'none'})
+Unsure: ${unsure.length} (${unsure.map(p => '#' + p.problemNumber).join(', ') || 'none'})
+Overall feedback: ${result.overallFeedback || ''}
+${improvement && improvement.improved ? `Improved from ${improvement.previousCorrect}/${improvement.previousTotal} to ${improvement.currentCorrect}/${improvement.currentTotal}.` : ''}
+
+Per-problem detail:
+${detailBlock}
+
+Write your short greeting now:`;
+
+        const completion = await callLLM('gpt-4o', [
+            { role: 'system', content: systemMsg },
+            { role: 'user', content: userMsg }
+        ], { max_tokens: 220, temperature: 0.7 });
+
+        return completion.choices[0]?.message?.content?.trim() || '';
+    } catch (err) {
+        console.warn('[gradeWork] Tutor greeting generation failed (non-fatal):', err.message);
+        return '';
+    }
+}
 
 // Disk storage to avoid memory bloat on large uploads
 const upload = multer({
@@ -418,6 +522,38 @@ router.post('/',
 
         console.log(`[gradeWork] Saved analysis ${result._id} (attempt #${attemptNumber})`);
 
+        // ── Interlace with chat: append a work-check message + tutor greeting ──
+        // Stays in conversation history so the tutor (and student) can refer
+        // back to it later. Frontend renders the user message as a rich card.
+        let tutorGreeting = null;
+        try {
+            const conversation = await getOrCreateActiveConversation(user);
+            if (conversation) {
+                const summary = buildWorkCheckSummary(result, attemptNumber, improvement);
+                conversation.messages.push({
+                    role: 'user',
+                    content: summary,
+                    timestamp: new Date(),
+                    workCheckId: result._id
+                });
+
+                tutorGreeting = await generateTutorGreeting(user, result, improvement);
+                if (tutorGreeting && tutorGreeting.trim()) {
+                    conversation.messages.push({
+                        role: 'assistant',
+                        content: tutorGreeting,
+                        timestamp: new Date()
+                    });
+                }
+
+                conversation.lastActivity = new Date();
+                await conversation.save();
+                console.log(`[gradeWork] Appended work-check + greeting to conversation ${conversation._id}`);
+            }
+        } catch (convErr) {
+            console.warn('[gradeWork] Could not interlace with chat (non-fatal):', convErr.message);
+        }
+
         // Track paper practice submission for Unplugged badges
         let newUnpluggedBadges = [];
         try {
@@ -479,6 +615,7 @@ router.post('/',
             whatWentWell: parsed.whatWentWell || '',
             practiceRecommendations: parsed.practiceRecommendations || [],
             xpEarned,
+            tutorGreeting: tutorGreeting || null,
             unpluggedBadgesEarned: newUnpluggedBadges.length > 0 ? newUnpluggedBadges : undefined,
             message: improvement && improvement.improved
                 ? `Nice improvement! ${improvement.previousCorrect}/${improvement.previousTotal} → ${correctCount}/${parsed.problems.length}`
