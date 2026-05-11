@@ -259,7 +259,7 @@ class VoiceSession {
             language: this.langCode,
             sampleRate: 16000,
             endpointing: 300,
-            utteranceEndMs: 800,
+            utteranceEndMs: 1000,
             onPartial: (text) => { this._lastSttActivity = Date.now(); this._onPartial(text); },
             onFinal: (text) => { this._lastSttActivity = Date.now(); this._onFinal(text); },
             onUtteranceEnd: () => { this._lastSttActivity = Date.now(); this._onUtteranceEnd(); },
