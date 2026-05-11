@@ -13,7 +13,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="theme-color" content="#06070f" />
   <title>Mathmatix+ — Voice Tutor</title>
   <link rel="stylesheet" href="/css/base/variables.css?v=3" />
-  <link rel="stylesheet" href="/css/voice-tutor.css?v=4" />
+  <link rel="stylesheet" href="/css/voice-tutor.css?v=5" />
   <link rel="stylesheet" href="/css/dark-mode.css?v=3" />
   <link rel="stylesheet" href="/css/age-adaptive.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
@@ -216,10 +216,51 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
   <div class="vt-settings-scrim" id="vt-settings-scrim" aria-hidden="true"></div>
 
+  <!-- Session-summary card — shown when user ends the session -->
+  <div class="vt-summary-scrim" id="vt-summary-scrim" aria-hidden="true"></div>
+  <div class="vt-summary-card" id="vt-summary-card" role="dialog" aria-modal="true" aria-labelledby="vt-summary-title" aria-hidden="true">
+    <div class="vt-summary-glow" aria-hidden="true"></div>
+    <div class="vt-summary-head">
+      <img id="vt-summary-avatar" alt="" class="vt-summary-avatar" />
+      <div class="vt-summary-eyebrow">Session complete</div>
+      <h2 id="vt-summary-title" class="vt-summary-title">Nice work.</h2>
+      <div class="vt-summary-meta">
+        <span class="vt-summary-meta-item">
+          <i class="fas fa-clock" aria-hidden="true"></i>
+          <span id="vt-summary-duration">—</span>
+        </span>
+        <span class="vt-summary-meta-divider" aria-hidden="true"></span>
+        <span class="vt-summary-meta-item">
+          <i class="fas fa-list-check" aria-hidden="true"></i>
+          <span id="vt-summary-step-count">0 steps</span>
+        </span>
+      </div>
+    </div>
+    <div class="vt-summary-body">
+      <div class="vt-summary-section" id="vt-summary-topics-section" hidden>
+        <div class="vt-summary-section-label">What we covered</div>
+        <div class="vt-summary-topics" id="vt-summary-topics"></div>
+      </div>
+      <div class="vt-summary-section" id="vt-summary-steps-section" hidden>
+        <div class="vt-summary-section-label">Key work</div>
+        <ol class="vt-summary-steps" id="vt-summary-steps"></ol>
+      </div>
+      <div class="vt-summary-empty" id="vt-summary-empty" hidden>
+        Saved to your conversation. Your tutor will pick up where we left off.
+      </div>
+    </div>
+    <div class="vt-summary-actions">
+      <button class="vt-summary-cta" id="vt-summary-done">
+        Back to chat
+        <i class="fas fa-arrow-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
   <script src="/js/csrf.js"></script>
   <script src="/js/age-tier-standalone.js"></script>
   <script src="/js/voice-stream-client.js?v=2"></script>
   <script src="/js/segmentPlayer.js?v=1"></script>
-  <script src="/js/voice-tutor-session.js?v=6"></script>
+  <script src="/js/voice-tutor-session.js?v=7"></script>
 </body>
 </html>

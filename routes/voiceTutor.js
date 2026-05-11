@@ -381,12 +381,15 @@ router.post('/process', isAuthenticated, async (req, res) => {
     sendPhase({ phase: 'response', response: spoken, mathSteps });
 
     // ── Step 3: TTS + history save in parallel ──
+    // Persist the spoken text only — NOT the raw JSON/<math> blob. The
+    // board state lives client-side and gets serialized at end-session.
+    // Storing raw JSON pollutes the chat tutor's later context.
     const [audioUrl] = await Promise.all([
       generateTTS(userId, spoken, user).catch(err => {
         logger.warn('TTS failed', { userId, error: err.message });
         return null;
       }),
-      saveToHistory(userId, userMessage, aiRaw)
+      saveToHistory(userId, userMessage, spoken)
     ]);
 
     // ── Send audio URL ──
@@ -971,6 +974,138 @@ async function saveToHistory(userId, userMessage, aiResponse) {
       { upsert: true }
     );
   }
+}
+
+// ═══════════════════════════════════════
+// POST /api/voice-tutor/end-session
+// Finalizes a voice session: writes a continuity marker into the
+// conversation so the chat tutor can pick up where the voice tutor left
+// off, and returns a summary card payload for the client to display.
+//
+// Body: { boardSteps?: Array, durationSeconds?: number }
+// Returns: { summary: { duration, durationSeconds, stepsWorked, topics, tutorName } }
+// ═══════════════════════════════════════
+router.post('/end-session', isAuthenticated, async (req, res) => {
+  const userId = req.user._id;
+  const { boardSteps = [], durationSeconds = 0 } = req.body || {};
+
+  try {
+    const user = await User.findById(userId).lean();
+    const TUTOR_CONFIG = require('../utils/tutorConfig');
+    const tutorProfile = TUTOR_CONFIG[user?.selectedTutorId || 'default'] || TUTOR_CONFIG['default'];
+    const tutorName = tutorProfile.name || 'Tutor';
+
+    // De-dupe and sanitize the board steps the client sent.
+    const cleanSteps = Array.isArray(boardSteps)
+      ? boardSteps
+          .filter(s => s && (s.latex || s.text))
+          .map(s => ({
+            label: typeof s.label === 'string' ? s.label.slice(0, 60) : '',
+            latex: typeof s.latex === 'string' ? s.latex.slice(0, 400) : '',
+            text: typeof s.text === 'string' ? s.text.slice(0, 400) : '',
+          }))
+          .slice(0, 40)
+      : [];
+
+    // Heuristic topic extraction from labels + a small set of keywords in
+    // recent assistant content. This is intentionally simple — the goal
+    // is a usable summary card, not a research-grade classifier.
+    const topics = extractTopicsFromSteps(cleanSteps);
+
+    // Format duration as "Nm Ss" or "Ns"
+    const mins = Math.floor(durationSeconds / 60);
+    const secs = Math.floor(durationSeconds % 60);
+    const durationLabel = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+
+    // Build the continuity marker. Stored as an assistant message because
+    // chat.js drops 'system' roles from history. The prefix is recognizable
+    // so the next chat turn knows this is a recap, not free-form dialogue.
+    const stepLines = cleanSteps
+      .slice(-12)
+      .map(s => `  · ${s.label ? `${s.label}: ` : ''}${s.latex || s.text || ''}`)
+      .join('\n');
+
+    const marker = [
+      `[Voice session with ${tutorName} just ended (${durationLabel}).`,
+      stepLines ? `We worked through:\n${stepLines}` : 'We chatted, no math worked through.',
+      topics.length ? `Topics: ${topics.join(', ')}.` : '',
+      'The student is back in chat now — pick up naturally from here.]',
+    ].filter(Boolean).join('\n\n');
+
+    await Conversation.findOneAndUpdate(
+      { userId },
+      {
+        $push: { messages: { role: 'assistant', content: marker, timestamp: new Date() } },
+        $set: { updatedAt: new Date() },
+      },
+      { upsert: true }
+    );
+
+    res.json({
+      summary: {
+        tutorName,
+        duration: durationLabel,
+        durationSeconds,
+        stepsWorked: cleanSteps,
+        topics,
+      },
+    });
+  } catch (err) {
+    logger.error('Voice end-session error', { userId: String(userId), error: err.message });
+    // Don't block the user's exit — return a minimal payload so the UI
+    // can still render a summary card from the data it already has.
+    res.status(200).json({
+      summary: {
+        tutorName: 'Your tutor',
+        duration: '',
+        durationSeconds,
+        stepsWorked: Array.isArray(boardSteps) ? boardSteps : [],
+        topics: [],
+        degraded: true,
+      },
+    });
+  }
+});
+
+/**
+ * Lightweight topic extraction from math step labels. Looks for common
+ * algebra/geometry/calc keywords; falls back to step labels.
+ */
+function extractTopicsFromSteps(steps) {
+  if (!steps || steps.length === 0) return [];
+  const haystack = steps
+    .map(s => `${s.label || ''} ${s.latex || ''} ${s.text || ''}`)
+    .join(' ')
+    .toLowerCase();
+
+  const buckets = [
+    { kw: /slope|y\s*=\s*mx|linear/, name: 'Linear equations & slope' },
+    { kw: /quadratic|x\^2|x\^{2}|factor|complet(e|ing).*square/, name: 'Quadratics' },
+    { kw: /derivative|\\frac\{d/, name: 'Derivatives' },
+    { kw: /integral|antideriv|\\int/, name: 'Integrals' },
+    { kw: /fraction|\\frac/, name: 'Fractions' },
+    { kw: /percent|%/, name: 'Percents' },
+    { kw: /sin|cos|tan|trig/, name: 'Trigonometry' },
+    { kw: /probability|combin|permut/, name: 'Probability' },
+    { kw: /geometry|triangle|circle|area|volume/, name: 'Geometry' },
+    { kw: /system|substitut|elimin/, name: 'Systems of equations' },
+    { kw: /inequal|<|>|\\leq|\\geq/, name: 'Inequalities' },
+    { kw: /exponent|logarithm|log\(/, name: 'Exponents & logs' },
+  ];
+
+  const found = new Set();
+  for (const b of buckets) {
+    if (b.kw.test(haystack)) found.add(b.name);
+  }
+  // Fallback: distinct step labels (capped)
+  if (found.size === 0) {
+    for (const s of steps) {
+      const lbl = (s.label || '').trim();
+      if (lbl && lbl.length < 30) found.add(lbl);
+      if (found.size >= 3) break;
+    }
+  }
+  return Array.from(found).slice(0, 4);
 }
 
 // ═══════════════════════════════════════

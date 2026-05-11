@@ -92,6 +92,19 @@
     dom.sessionTimer = $('#vt-session-timer');
     dom.suggestionChips = $('#vt-suggestion-chips');
     dom.emptyTitle = $('#vt-empty-title');
+    // Session summary card
+    dom.summaryCard = $('#vt-summary-card');
+    dom.summaryScrim = $('#vt-summary-scrim');
+    dom.summaryAvatar = $('#vt-summary-avatar');
+    dom.summaryTitle = $('#vt-summary-title');
+    dom.summaryDuration = $('#vt-summary-duration');
+    dom.summaryStepCount = $('#vt-summary-step-count');
+    dom.summaryTopics = $('#vt-summary-topics');
+    dom.summaryTopicsSection = $('#vt-summary-topics-section');
+    dom.summarySteps = $('#vt-summary-steps');
+    dom.summaryStepsSection = $('#vt-summary-steps-section');
+    dom.summaryEmpty = $('#vt-summary-empty');
+    dom.summaryDone = $('#vt-summary-done');
   }
 
   // ═══════════════════════════════════════
@@ -519,11 +532,14 @@
       handleMicTap(e);
     });
 
-    // End session
-    dom.endBtn.addEventListener('click', () => {
-      cleanup();
-      window.location.href = '/chat.html';
-    });
+    // End session — show summary card, then redirect on user dismiss
+    dom.endBtn.addEventListener('click', () => endSession());
+    if (dom.summaryDone) {
+      dom.summaryDone.addEventListener('click', () => {
+        cleanup();
+        window.location.href = '/chat.html';
+      });
+    }
 
     // Mute toggle
     dom.muteBtn.addEventListener('click', toggleMute);
@@ -2109,6 +2125,195 @@
 
   function escapeAttr(str) {
     return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // ═══════════════════════════════════════
+  // END SESSION — show summary card, persist continuity marker
+  // ═══════════════════════════════════════
+
+  /**
+   * Build the client-side summary payload from local state. Always
+   * available so we can render a card even if the server call fails.
+   */
+  function buildLocalSummary() {
+    const durationSeconds = state.sessionStart
+      ? Math.floor((Date.now() - state.sessionStart) / 1000)
+      : 0;
+    const mins = Math.floor(durationSeconds / 60);
+    const secs = durationSeconds % 60;
+    const duration = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+    const realSteps = (state.boardSteps || []).filter(s => !s._divider);
+    return {
+      tutorName: state.tutorName || 'Your tutor',
+      duration,
+      durationSeconds,
+      stepsWorked: realSteps,
+      topics: [],
+    };
+  }
+
+  /**
+   * Render a summary object into the card DOM.
+   */
+  function renderSummary(summary) {
+    if (!dom.summaryCard) return;
+
+    // Tutor avatar
+    if (dom.summaryAvatar && state.tutorImage) {
+      dom.summaryAvatar.src = `/images/tutor_avatars/${state.tutorImage}`;
+      dom.summaryAvatar.alt = summary.tutorName || state.tutorName || '';
+    }
+
+    // Title — vary by whether real work happened
+    const hasWork = (summary.stepsWorked || []).length > 0;
+    if (dom.summaryTitle) {
+      dom.summaryTitle.textContent = hasWork
+        ? 'Nice work.'
+        : 'Session saved.';
+    }
+
+    // Meta line
+    if (dom.summaryDuration) dom.summaryDuration.textContent = summary.duration || '—';
+    if (dom.summaryStepCount) {
+      const n = (summary.stepsWorked || []).length;
+      dom.summaryStepCount.textContent = n === 1 ? '1 step' : `${n} steps`;
+    }
+
+    // Topics
+    if (dom.summaryTopics && dom.summaryTopicsSection) {
+      dom.summaryTopics.innerHTML = '';
+      const topics = summary.topics || [];
+      if (topics.length > 0) {
+        topics.forEach(t => {
+          const chip = document.createElement('span');
+          chip.className = 'vt-summary-topic';
+          chip.textContent = t;
+          dom.summaryTopics.appendChild(chip);
+        });
+        dom.summaryTopicsSection.hidden = false;
+      } else {
+        dom.summaryTopicsSection.hidden = true;
+      }
+    }
+
+    // Steps — render up to 4 most-recent so the card stays scannable
+    if (dom.summarySteps && dom.summaryStepsSection) {
+      dom.summarySteps.innerHTML = '';
+      const steps = (summary.stepsWorked || []).slice(-4);
+      if (steps.length > 0) {
+        steps.forEach(step => {
+          const li = document.createElement('li');
+          li.className = 'vt-summary-step';
+          if (step.label) {
+            const lbl = document.createElement('span');
+            lbl.className = 'vt-summary-step-label';
+            lbl.textContent = step.label;
+            li.appendChild(lbl);
+          }
+          if (step.latex) {
+            const span = document.createElement('span');
+            span.className = 'vt-summary-step-latex';
+            try {
+              if (window.katex) {
+                window.katex.render(step.latex, span, { displayMode: false, throwOnError: false });
+              } else {
+                span.textContent = step.latex;
+              }
+            } catch (_) {
+              span.textContent = step.latex;
+            }
+            li.appendChild(span);
+          } else if (step.text) {
+            const span = document.createElement('span');
+            span.textContent = step.text;
+            li.appendChild(span);
+          }
+          dom.summarySteps.appendChild(li);
+        });
+        dom.summaryStepsSection.hidden = false;
+      } else {
+        dom.summaryStepsSection.hidden = true;
+      }
+    }
+
+    // Empty state copy (no work + no topics)
+    if (dom.summaryEmpty) {
+      dom.summaryEmpty.hidden = hasWork || (summary.topics || []).length > 0;
+    }
+  }
+
+  /**
+   * Show the card with a soft entrance.
+   */
+  function showSummaryCard() {
+    if (!dom.summaryCard) return;
+    if (dom.summaryScrim) dom.summaryScrim.classList.add('visible');
+    dom.summaryCard.classList.add('visible');
+    dom.summaryCard.setAttribute('aria-hidden', 'false');
+    // Focus the primary CTA for keyboard users
+    if (dom.summaryDone) {
+      setTimeout(() => { try { dom.summaryDone.focus(); } catch (_) {} }, 50);
+    }
+  }
+
+  /**
+   * Coordinator: end the session, show the summary card, fire the
+   * server-side finalization request, render the response (or the local
+   * fallback) into the card.
+   */
+  async function endSession() {
+    if (state._ending) return; // idempotent
+    state._ending = true;
+
+    // Stop any active audio/listening immediately so the orb settles
+    try {
+      if (state.mode === 'listening') stopListening();
+      if (state.currentAudio || state.useStreamingPipeline) stopSpeaking();
+    } catch (_) { /* swallow */ }
+    setMode('idle');
+
+    // Render the card with whatever we have locally — this guarantees
+    // the UI feels instant even if the network is slow.
+    const local = buildLocalSummary();
+    renderSummary(local);
+    showSummaryCard();
+
+    // Fire-and-await the server call with a generous timeout. On any
+    // failure we keep the local card visible — the user can still proceed.
+    const fetchFn = window.csrfFetch || fetch;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+    try {
+      const res = await fetchFn('/api/voice-tutor/end-session', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          boardSteps: (state.boardSteps || []).filter(s => !s._divider),
+          durationSeconds: local.durationSeconds,
+        }),
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.summary) {
+          // Merge: prefer server values (topic extraction, duration label),
+          // fall back to local steps if server returned none.
+          const merged = Object.assign({}, local, data.summary, {
+            stepsWorked: (data.summary.stepsWorked && data.summary.stepsWorked.length)
+              ? data.summary.stepsWorked
+              : local.stepsWorked,
+          });
+          renderSummary(merged);
+        }
+      }
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.warn('[VoiceTutor] end-session call failed (using local summary):', err?.message);
+    }
   }
 
   function cleanup() {
