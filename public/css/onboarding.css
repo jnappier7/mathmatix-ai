@@ -23,7 +23,12 @@
   box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0,0,0,0.08));
   padding: clamp(20px, 5vw, 36px);
   text-align: center;
+  overflow: hidden;
 }
+
+/* Mobile: brand panel is hidden, body fills the card. */
+.onboarding-brand { display: none; }
+.onboarding-body { width: 100%; }
 
 .onboarding-prompt {
   font-size: clamp(1.5rem, 5vw, 2rem);
@@ -247,6 +252,115 @@
 @media (max-width: 360px) {
   .onboarding-card { padding: 18px 16px; }
   .onboarding-prompt { font-size: 1.35rem; }
+}
+
+/* --- Desktop: two-column layout with branded left panel --- */
+@media (min-width: 900px) {
+  .onboarding-card {
+    max-width: 960px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 0.85fr 1fr;
+    text-align: left;
+    min-height: 540px;
+  }
+
+  .onboarding-brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4, 16px);
+    padding: 40px;
+    color: #fff;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255,255,255,0.18) 0%, transparent 55%),
+      linear-gradient(160deg, var(--clr-primary-teal, #12B3B3) 0%, var(--clr-primary-teal-dark, #0E8F8F) 65%, #095555 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .onboarding-brand::after {
+    content: '';
+    position: absolute;
+    right: -80px;
+    bottom: -120px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: rgba(var(--clr-accent-hotpink-rgb), 0.18);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+  .onboarding-brand-logo {
+    width: 72px;
+    height: auto;
+    align-self: flex-start;
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
+  }
+  .onboarding-brand-title {
+    font-size: clamp(1.6rem, 2.2vw, 2.1rem);
+    font-weight: var(--font-weight-headlines, 700);
+    letter-spacing: var(--letter-spacing-tight, -0.02em);
+    line-height: 1.15;
+    margin: 0;
+  }
+  .onboarding-brand-tagline {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    margin: 0;
+    color: rgba(255,255,255,0.92);
+  }
+  .onboarding-brand-points {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-4, 16px) 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.92);
+  }
+  .onboarding-brand-points li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .onboarding-brand-points i {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full, 9999px);
+    background: rgba(255,255,255,0.18);
+    font-size: 0.9rem;
+  }
+
+  .onboarding-body {
+    padding: 48px 44px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* Slightly larger primary affordance on desktop. */
+  .onboarding-mic-btn {
+    --mic-size: 168px;
+  }
+  .onboarding-prompt {
+    font-size: clamp(1.7rem, 2.6vw, 2.1rem);
+  }
+}
+
+@media (min-width: 1200px) {
+  .onboarding-card { max-width: 1040px; }
+  .onboarding-body { padding: 56px 64px; }
+}
+
+body.dark-mode .onboarding-brand,
+html[data-theme="dark"] .onboarding-brand {
+  /* Brand panel already uses solid teal — leave it the same in dark mode. */
 }
 
 /* --- Dark-mode shim (uses existing variables when dark-mode is active) --- */
