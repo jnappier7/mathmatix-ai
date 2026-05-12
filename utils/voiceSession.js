@@ -539,8 +539,10 @@ class VoiceSession {
         if (mathStepsForBoard.length > 0) this.lastBoardSteps = mathStepsForBoard;
 
         // ── Persist to history (do not block turn_end) ──
-        const assistantContent = verifiedText
-            + (mathStepsForBoard.length ? ` <math>${JSON.stringify(mathStepsForBoard)}</math>` : '');
+        // Store the spoken text only. Math steps live on the client board
+        // and get serialized at end-session. Storing <math>JSON</math> in
+        // the message content pollutes downstream chat tutor context.
+        const assistantContent = verifiedText;
         this.history.push({ role: 'user', content: turn.userMessage });
         this.history.push({ role: 'assistant', content: assistantContent });
         if (this.history.length > HISTORY_DEPTH * 2) {
