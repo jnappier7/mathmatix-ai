@@ -44,7 +44,11 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
             let redirectUrl = '/chat.html'; // Default for students
             const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
 
-            if (user.needsProfileCompletion) {
+            // Voice-first onboarding precedes profile completion for new users.
+            const onboardingDone = !!(user.onboarding && user.onboarding.completed);
+            if (user.needsProfileCompletion && !onboardingDone) {
+                redirectUrl = "/onboarding.html";
+            } else if (user.needsProfileCompletion) {
                 redirectUrl = "/complete-profile.html";
             } else if (userRoles.length > 1) {
                 // Multi-role user: let them pick which role to enter as

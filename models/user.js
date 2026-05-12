@@ -671,6 +671,27 @@ const userSchema = new Schema({
   /* Onboarding */
   needsProfileCompletion: { type: Boolean, default: true },
 
+  /* Voice-first intent onboarding (Speak-style open-ended prompt) */
+  onboarding: {
+    completed:      { type: Boolean, default: false },
+    intentText:     { type: String, trim: true, maxlength: 2000 },
+    intentCategory: {
+      type: String,
+      enum: [
+        'student_homework',
+        'student_test_prep',
+        'act_sat_prep',
+        'parent_support',
+        'teacher_exploring',
+        'general_math_help',
+        'just_exploring',
+        'unknown'
+      ]
+    },
+    capturedVia:    { type: String, enum: ['voice', 'text'] },
+    completedAt:    { type: Date }
+  },
+
   /* Terms of Service / Privacy Policy acceptance */
   termsAcceptedAt: { type: Date, default: null },
 

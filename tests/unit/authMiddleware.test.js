@@ -102,10 +102,20 @@ describe('ensureNotAuthenticated', () => {
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ alreadyLoggedIn: true }));
   });
 
-  test('redirects student needing profile completion', () => {
+  test('redirects student needing onboarding to onboarding intent page', () => {
     const req = makeReq({
       authenticated: true,
       user: { needsProfileCompletion: true, role: 'student' }
+    });
+    const res = makeRes();
+    ensureNotAuthenticated(req, res, jest.fn());
+    expect(res.redirect).toHaveBeenCalledWith('/onboarding.html');
+  });
+
+  test('redirects student needing profile completion (onboarding done) to complete-profile', () => {
+    const req = makeReq({
+      authenticated: true,
+      user: { needsProfileCompletion: true, role: 'student', onboarding: { completed: true } }
     });
     const res = makeRes();
     ensureNotAuthenticated(req, res, jest.fn());

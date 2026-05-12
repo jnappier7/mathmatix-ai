@@ -43,7 +43,13 @@ function ensureNotAuthenticated(req, res, next) {
         let redirectUrl = '/chat.html'; // Default for students
         const userRoles = (req.user.roles && req.user.roles.length > 0) ? req.user.roles : [req.user.role];
 
-        if (req.user.needsProfileCompletion) {
+        // Voice-first onboarding intent capture comes BEFORE profile completion
+        // for brand-new users. Existing users with completed profiles skip it
+        // automatically (so they don't get an onboarding screen on every login).
+        const onboardingDone = !!(req.user.onboarding && req.user.onboarding.completed);
+        if (req.user.needsProfileCompletion && !onboardingDone) {
+            redirectUrl = '/onboarding.html';
+        } else if (req.user.needsProfileCompletion) {
             redirectUrl = '/complete-profile.html';
         } else if (userRoles.length > 1) {
             redirectUrl = '/role-picker.html';

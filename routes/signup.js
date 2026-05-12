@@ -314,8 +314,11 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
                 return res.status(500).json({ success: true, message: 'Account created successfully, but auto-login failed. Please try logging in manually.' });
             }
             // --- 7. Determine Redirect URL ---
-            let redirectUrl = '/complete-profile.html'; // Default for new users
-            if (newUser.role === 'student' && !newUser.selectedTutorId) {
+            // New users always start with voice-first onboarding (open-ended
+            // "What brings you to Mathmatix today?"). After answering, the
+            // onboarding page routes them to complete-profile / pick-tutor.
+            let redirectUrl = '/onboarding.html';
+            if (!newUser.needsProfileCompletion && newUser.role === 'student' && !newUser.selectedTutorId) {
                 redirectUrl = '/pick-tutor.html'; // Student needs to pick a tutor
             }
             // Other roles redirect to their dashboards if profile completion not needed

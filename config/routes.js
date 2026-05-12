@@ -113,6 +113,7 @@ const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
 const notificationsRoutes = require('../routes/notifications');
+const onboardingRoutes = require('../routes/onboarding');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 function registerRoutes(app, { authLimiter, signupLimiter }) {
@@ -242,6 +243,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/transcript-flags', isAuthenticated, transcriptFlagsRoutes);
   app.use('/api/notifications', isAuthenticated, notificationsRoutes);
   app.use('/api/role-switch', isAuthenticated, roleSwitchRoutes);
+  app.use('/api/onboarding', onboardingRoutes);
 
   // --- Inline Routes (User Profile & Settings) ---
   registerUserRoutes(app);
@@ -323,6 +325,8 @@ function oauthCallback(strategy) {
 
         req.session.save((saveErr) => {
           if (saveErr) return next(saveErr);
+          const onboardingDone = !!(user.onboarding && user.onboarding.completed);
+          if (user.needsProfileCompletion && !onboardingDone) return res.redirect('/onboarding.html');
           if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
           const userRoles = (user.roles && user.roles.length > 0) ? user.roles : [user.role];
           if (userRoles.length > 1) return res.redirect('/role-picker.html');
@@ -377,6 +381,8 @@ function registerOAuthRoutes(app, authLimiter) {
 
             req.session.save((saveErr) => {
               if (saveErr) return next(saveErr);
+              const onboardingDone = !!(user.onboarding && user.onboarding.completed);
+              if (user.needsProfileCompletion && !onboardingDone) return res.redirect('/onboarding.html');
               if (user.needsProfileCompletion) return res.redirect('/complete-profile.html');
               if (user.role === 'student' && !user.selectedTutorId) return res.redirect('/pick-tutor.html');
               const dashboardMap = { student: '/chat.html', teacher: '/teacher-dashboard.html', admin: '/admin-dashboard.html', parent: '/parent-dashboard.html' };
@@ -565,6 +571,7 @@ function registerHtmlRoutes(app) {
   app.get('/reset-password.html', sendHtml('reset-password.html'));
   app.get('/privacy.html', sendHtml('privacy.html'));
   app.get('/terms.html', sendHtml('terms.html'));
+  app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   app.get('/pricing.html', sendHtml('pricing.html'));
   // Protected HTML routes
