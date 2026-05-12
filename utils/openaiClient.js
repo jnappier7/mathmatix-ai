@@ -82,16 +82,24 @@ async function callLLM(model, messages, options = {}) {
             }
         }
 
+        const requestBody = {
+            model: model,
+            messages: messages,
+            ...temperatureParam,
+            ...tokenParam,
+            ...toolParams,
+            stream: options.stream || false,
+            ...(options.response_format ? { response_format: options.response_format } : {}),
+        };
+
+        // Only pass the SDK's request-options arg when we actually have a
+        // signal. Passing `undefined` as a second arg changes the call
+        // shape (always 2 args) and breaks unit tests that use
+        // toHaveBeenCalledWith strict-arity matching.
         const completion = await retryWithExponentialBackoff(() =>
-            openai.chat.completions.create({
-                model: model,
-                messages: messages,
-                ...temperatureParam,
-                ...tokenParam,
-                ...toolParams,
-                stream: options.stream || false,
-                ...(options.response_format ? { response_format: options.response_format } : {}),
-            }, options.signal ? { signal: options.signal } : undefined)
+            options.signal
+                ? openai.chat.completions.create(requestBody, { signal: options.signal })
+                : openai.chat.completions.create(requestBody)
         );
         return completion;
     } catch (openAiError) {
