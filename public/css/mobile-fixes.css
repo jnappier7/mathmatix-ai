@@ -1560,13 +1560,16 @@ a {
    ------------------------------------------------------------------- */
 
 @media (max-width: 768px) {
-    /* Hide footer — copyright is not needed in chat */
-    body.landing-page-body footer {
+    /* Hide footer — copyright is not needed on the chat page */
+    body.landing-page-body:has(#chat-container) footer {
         display: none !important;
     }
 
-    /* ---- THE FLEX COLUMN ---- */
-    body.landing-page-body {
+    /* ---- THE FLEX COLUMN ----
+       Scoped to the chat page only. Other landing-page-body pages
+       (signup, dashboards, onboarding, terms, etc.) must keep their
+       natural document scroll on mobile. */
+    body.landing-page-body:has(#chat-container) {
         display: flex !important;
         flex-direction: column !important;
         height: 100vh !important;
@@ -1576,8 +1579,8 @@ a {
         padding: 0 !important;
     }
 
-    /* Header hidden — no flex space needed */
-    body.landing-page-body .landing-header {
+    /* Header hidden — no flex space needed (chat only) */
+    body.landing-page-body:has(#chat-container) .landing-header {
         flex: 0 0 0px !important;
         display: none !important;
     }

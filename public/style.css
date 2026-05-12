@@ -1280,16 +1280,17 @@ form label, .password-label-row label {
 
 /* --- UI Layout Fix for Scrollable Chat --- */
 
-/* 1. Constrain the body to the viewport height and prevent it from scrolling. */
-/* Only apply to pages with landing-page-body class (chat page) */
-body.landing-page-body {
+/* 1. Constrain the body to the viewport height and prevent it from scrolling.
+   Scoped to the chat page only (detected by #chat-container). Other pages
+   that happen to share landing-page-body (signup, onboarding, dashboards,
+   terms, etc.) must scroll their own content naturally. */
+body.landing-page-body:has(#chat-container) {
     height: 100vh;
     overflow: hidden;
 }
 
 /* 2. Ensure the main content area properly fills the space between the header and footer. */
-/* Only apply to chat page main element */
-body.landing-page-body main {
+body.landing-page-body:has(#chat-container) main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -1297,8 +1298,9 @@ body.landing-page-body main {
     overflow: hidden;
 }
 
-/* Allow other pages (badge-map, mastery-chat, etc.) to scroll normally */
-body:not(.landing-page-body) {
+/* Everything that isn't the chat viewport-lock should scroll normally. */
+body:not(.landing-page-body),
+body.landing-page-body:not(:has(#chat-container)) {
     min-height: 100vh;
     overflow-y: auto;
 }
