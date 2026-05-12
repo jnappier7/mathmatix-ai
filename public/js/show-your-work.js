@@ -373,71 +373,26 @@ class ShowYourWorkManager {
         // Render any LaTeX in the feedback
         this.typesetMath(this.resultsContainer);
 
-        // Bind per-problem "Ask my tutor about this" buttons
+        // Bind per-problem "Ask my tutor about this" buttons inside the modal
         this.resultsContainer.querySelectorAll('.syw-ask-tutor-problem').forEach(btn => {
             btn.addEventListener('click', () => {
                 const num = btn.dataset.problem;
-                const statement = btn.dataset.statement;
                 const isUnsure = btn.dataset.unsure === 'true';
-
-                let msg;
-                if (isUnsure) {
-                    msg = `Can we go over problem #${num} from my work? You weren't sure about it. The problem was: ${statement}`;
-                } else {
-                    msg = `Can you help me with problem #${num} from my work? I got it wrong. The problem was: ${statement}`;
-                }
-
+                const msg = isUnsure
+                    ? `Can we go over problem #${num} together? You weren't sure about it.`
+                    : `Can you help me with problem #${num}? I got it wrong.`;
                 this.closeModal();
-                const userInput = document.getElementById('user-input');
-                if (userInput) {
-                    userInput.textContent = msg;
-                    userInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    setTimeout(() => {
-                        const sendBtn = document.getElementById('send-button');
-                        if (sendBtn && !sendBtn.disabled) sendBtn.click();
-                    }, 100);
-                }
+                this.sendChatMessage(msg);
             });
         });
 
-        // Add snippet to chat
-        this.addWorkSnippetToChat(result);
-
-        // If there are unsure problems, auto-send a ghost message to the tutor
-        // so the conversation picks up immediately when the student returns to chat
-        const hasUnsure = (result.problems || []).some(p => p.isCorrect === null);
-        if (hasUnsure) {
-            this.sendGhostMessage(result);
-        }
-    }
-
-    /**
-     * Send a silent message to the tutor with grading context so the
-     * conversation picks up immediately when the student closes Show My Work.
-     */
-    sendGhostMessage(result) {
-        const unsure = (result.problems || []).filter(p => p.isCorrect === null);
-        const incorrect = (result.problems || []).filter(p => p.isCorrect === false);
-
-        let parts = [`I just submitted my work (${result.correctCount}/${result.problemCount} correct).`];
-        if (unsure.length > 0) {
-            parts.push(`You weren't sure about problem${unsure.length > 1 ? 's' : ''} ${unsure.map(p => '#' + p.problemNumber).join(', ')} — can we go over ${unsure.length > 1 ? 'those' : 'that one'} together?`);
-        }
-        if (incorrect.length > 0) {
-            parts.push(`I also got ${incorrect.map(p => '#' + p.problemNumber).join(', ')} wrong.`);
-        }
-
-        const msg = parts.join(' ');
-        const userInput = document.getElementById('user-input');
-        if (userInput) {
-            userInput.textContent = msg;
-            userInput.dispatchEvent(new Event('input', { bubbles: true }));
-            setTimeout(() => {
-                const sendBtn = document.getElementById('send-button');
-                if (sendBtn && !sendBtn.disabled) {
-                    sendBtn.click();
-                }
-            }, 100);
+        // Render the same breakdown inline in chat so it stays visible
+        // alongside the conversation. Skip if this is just a re-render
+        // of a result already shown in chat (avoid duplicate cards).
+        if (!this._renderedInChatIds) this._renderedInChatIds = new Set();
+        if (result.id && !this._renderedInChatIds.has(result.id)) {
+            this._renderedInChatIds.add(result.id);
+            this.addWorkSnippetToChat(result);
         }
     }
 
@@ -709,40 +664,146 @@ class ShowYourWorkManager {
     // ----------------------------------------------------------------
 
     addWorkSnippetToChat(result) {
-        const chatContainer = document.getElementById('chat-messages');
+        const chatContainer = document.getElementById('chat-messages-container')
+            || document.getElementById('chat-messages');
         if (!chatContainer) return;
 
-        const card = document.createElement('div');
-        card.className = 'work-snippet-card';
+        const card = this.buildInlineWorkCard(result);
+        if (!card) return;
 
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const feedbackPreview = (result.overallFeedback || '').substring(0, 120);
+        chatContainer.appendChild(card);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        this.typesetMath(card);
 
-        card.innerHTML = `
-            <div class="work-snippet-header">
-                <div class="work-snippet-icon">📝</div>
-                <div class="work-snippet-title">
-                    <strong>Work Analyzed</strong>
-                    <span class="work-snippet-time">${time}</span>
+        // Surface the AI-generated tutor greeting as a real assistant message
+        // (already persisted server-side; this just renders it client-side).
+        if (result.tutorGreeting && typeof window.appendMessage === 'function') {
+            window.appendMessage(result.tutorGreeting, 'ai');
+        }
+    }
+
+    /**
+     * Build the full breakdown card (same content as the modal results)
+     * for inline rendering inside the chat history.
+     */
+    buildInlineWorkCard(result) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'message-container work-check-message';
+        wrapper.setAttribute('data-work-check-id', result.id || '');
+
+        if (result.noWorkDetected) {
+            wrapper.innerHTML = `
+                <div class="work-check-card work-check-empty">
+                    <div class="work-check-header">
+                        <i class="fas fa-pencil-alt"></i>
+                        <strong>Work Check</strong>
+                    </div>
+                    <div class="work-check-empty-body">
+                        ${this.escapeHtml(result.overallFeedback || "Looks like the worksheet isn't filled in yet — give it a try first, then snap another photo.")}
+                    </div>
                 </div>
-            </div>
-            <div class="work-snippet-body">
-                <div class="work-snippet-details">
-                    <div class="work-snippet-counts">${result.correctCount}/${result.problemCount} correct${(result.problems || []).some(p => p.isCorrect === null) ? ' · ' + (result.problems || []).filter(p => p.isCorrect === null).length + ' to discuss' : ''}</div>
-                    <div class="work-snippet-feedback">${this.escapeHtml(feedbackPreview)}</div>
-                    <div class="work-snippet-xp">+${result.xpEarned || 0} XP</div>
+            `;
+            return wrapper;
+        }
+
+        const total = result.problemCount || 0;
+        const correct = result.correctCount || 0;
+        const allCorrect = total > 0 && correct === total;
+        const imp = result.improvement;
+        const attempt = result.attemptNumber || 1;
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        wrapper.innerHTML = `
+            <div class="work-check-card">
+                <div class="work-check-header">
+                    <i class="fas fa-clipboard-check"></i>
+                    <strong>Work Check</strong>
+                    <span class="work-check-time">${time}</span>
+                </div>
+
+                ${imp ? `<div class="syw-improvement-banner ${imp.improved ? 'syw-improved' : 'syw-no-change'}" style="padding: 10px 14px; border-radius: 8px; margin: 8px 0; text-align: center; font-weight: 600; ${imp.improved ? 'background: linear-gradient(135deg, #d4edda, #c3e6cb); color: #155724;' : 'background: #fff3cd; color: #856404;'}">
+                    ${imp.improved
+                        ? `Attempt #${attempt}: ${imp.previousCorrect}/${imp.previousTotal} → ${correct}/${total} — Nice improvement!`
+                        : `Attempt #${attempt}: Keep at it! Review the feedback and try again.`}
+                </div>` : ''}
+
+                <div class="syw-summary-header ${allCorrect ? 'syw-all-correct' : ''}">
+                    <div class="syw-summary-counts">
+                        <span class="syw-count-correct">${correct}</span>
+                        <span class="syw-count-sep">of</span>
+                        <span class="syw-count-total">${total}</span>
+                        <span class="syw-count-label">correct</span>
+                    </div>
+                    ${result.whatWentWell ? `<div class="syw-went-well">${this.escapeHtml(result.whatWentWell)}</div>` : ''}
+                    <div class="syw-xp-badge">+${result.xpEarned || 0} XP</div>
+                </div>
+
+                <div class="syw-problems-list">
+                    <h4 class="syw-section-title"><i class="fas fa-list-ol"></i> Problem-by-Problem Feedback</h4>
+                    ${(result.problems || []).map(p => this.renderProblemCard(p)).join('')}
+                </div>
+
+                ${result.overallFeedback ? `<div class="syw-overall-feedback">
+                    <h4 class="syw-section-title"><i class="fas fa-comment-alt"></i> Overall</h4>
+                    <div class="syw-overall-feedback-body">${this.renderMath(result.overallFeedback)}</div>
+                </div>` : ''}
+
+                ${result.practiceRecommendations?.length ? `<div class="syw-practice-recs">
+                    <h4 class="syw-section-title"><i class="fas fa-dumbbell"></i> What to Practice</h4>
+                    <ul>${result.practiceRecommendations.map(r => `<li>${this.escapeHtml(r)}</li>`).join('')}</ul>
+                </div>` : ''}
+
+                <div class="work-check-actions">
+                    <button class="syw-btn syw-btn-secondary work-check-open-modal" type="button">
+                        <i class="fas fa-expand"></i> Open full view
+                    </button>
+                    ${!allCorrect ? `<button class="syw-btn syw-btn-primary work-check-discuss" type="button">
+                        <i class="fas fa-comments"></i> Discuss with tutor
+                    </button>` : ''}
                 </div>
             </div>
         `;
 
-        card.style.cursor = 'pointer';
-        card.addEventListener('click', () => {
-            this.modal?.classList.add('is-visible');
-            this.displayResults(this.analysisResult);
+        // Bind per-problem "Ask my tutor about this" buttons inside the chat card
+        wrapper.querySelectorAll('.syw-ask-tutor-problem').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const num = btn.dataset.problem;
+                const statement = btn.dataset.statement;
+                const isUnsure = btn.dataset.unsure === 'true';
+                const msg = isUnsure
+                    ? `Can we go over problem #${num} together? You weren't sure about it.`
+                    : `Can you help me with problem #${num}? I got it wrong.`;
+                this.sendChatMessage(msg);
+            });
         });
 
-        chatContainer.appendChild(card);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        wrapper.querySelector('.work-check-open-modal')?.addEventListener('click', () => {
+            this.analysisResult = result;
+            this.modal?.classList.add('is-visible');
+            this.displayResults(result);
+        });
+
+        wrapper.querySelector('.work-check-discuss')?.addEventListener('click', () => {
+            this.analysisResult = result;
+            this.askTutorAboutWork();
+        });
+
+        return wrapper;
+    }
+
+    /**
+     * Send a chat message via the existing chat send pipeline.
+     * Used by "Ask my tutor" buttons on inline cards and inside the modal.
+     */
+    sendChatMessage(msg) {
+        const userInput = document.getElementById('user-input');
+        if (!userInput) return;
+        userInput.textContent = msg;
+        userInput.dispatchEvent(new Event('input', { bubbles: true }));
+        setTimeout(() => {
+            const sendBtn = document.getElementById('send-button');
+            if (sendBtn && !sendBtn.disabled) sendBtn.click();
+        }, 100);
     }
 
     askTutorAboutWork() {
@@ -751,44 +812,22 @@ class ShowYourWorkManager {
 
         const r = this.analysisResult;
 
-        // Build a clean, natural message instead of dumping raw data.
-        // The tutor already has gradingContext in its system prompt, so
-        // it knows the details — the student just needs to reference the work.
-        const incorrectProblems = (r.problems || [])
-            .filter(p => p.isCorrect === false)
-            .map(p => `#${p.problemNumber}`)
-            .join(', ');
-
-        const unsureProblems = (r.problems || [])
-            .filter(p => p.isCorrect === null || p.isCorrect === undefined)
-            .map(p => `#${p.problemNumber}`)
-            .join(', ');
+        // The work-check card and tutor greeting are already in the
+        // conversation history, so this is just a short follow-up nudge.
+        const incorrect = (r.problems || []).filter(p => p.isCorrect === false).map(p => `#${p.problemNumber}`);
+        const unsure = (r.problems || []).filter(p => p.isCorrect === null || p.isCorrect === undefined).map(p => `#${p.problemNumber}`);
 
         let msg;
-        if (unsureProblems && incorrectProblems) {
-            msg = `I just checked my work and got ${r.correctCount} out of ${r.problemCount} right. Can you help me with the ones I got wrong (${incorrectProblems})? Also, you weren't sure about ${unsureProblems} — can we go over those together?`;
-        } else if (unsureProblems) {
-            msg = `I just checked my work and got ${r.correctCount} out of ${r.problemCount} right. You weren't sure about ${unsureProblems} — can we go over those together?`;
-        } else if (incorrectProblems) {
-            msg = `I just checked my work and got ${r.correctCount} out of ${r.problemCount} right. Can you help me with the ones I got wrong? (${incorrectProblems})`;
+        if (unsure.length && incorrect.length) {
+            msg = `Let's start with ${unsure.join(', ')} — I want to walk through those with you.`;
+        } else if (unsure.length) {
+            msg = `Can we go through ${unsure.join(', ')} together?`;
+        } else if (incorrect.length) {
+            msg = `Help me with ${incorrect.join(', ')} please.`;
         } else {
-            msg = `I just checked my work and got them all right! What should I work on next?`;
+            msg = `I got them all — what should I try next?`;
         }
-
-        // Auto-send the message so the tutor picks up immediately
-        const userInput = document.getElementById('user-input');
-        if (userInput) {
-            userInput.textContent = msg;
-            userInput.dispatchEvent(new Event('input', { bubbles: true }));
-
-            // Trigger send after a brief delay so the input registers
-            setTimeout(() => {
-                const sendBtn = document.getElementById('send-button');
-                if (sendBtn && !sendBtn.disabled) {
-                    sendBtn.click();
-                }
-            }, 100);
-        }
+        this.sendChatMessage(msg);
     }
 
     // ----------------------------------------------------------------
@@ -964,4 +1003,6 @@ class ShowYourWorkManager {
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
     window.showYourWorkManager = new ShowYourWorkManager();
+    // Convenience alias used by chat integrations (e.g. file-card "Check my work").
+    window.showYourWork = window.showYourWorkManager;
 });

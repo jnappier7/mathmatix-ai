@@ -606,3 +606,113 @@
     color: #8b5cf6;
     margin-top: 6px;
 }
+
+/* ---- Inline Work-Check Card (full breakdown in chat) ---- */
+.work-check-message {
+    width: 100%;
+    margin: 14px 0;
+    display: flex;
+    justify-content: stretch;
+}
+
+.work-check-card {
+    background: linear-gradient(180deg, #ffffff 0%, #faf9ff 100%);
+    border: 1px solid #d8d3f0;
+    border-left: 4px solid #8b5cf6;
+    border-radius: 14px;
+    padding: 18px 20px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.08);
+}
+
+.work-check-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: #4c1d95;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ede9fe;
+}
+
+.work-check-header i {
+    font-size: 18px;
+    color: #8b5cf6;
+}
+
+.work-check-time {
+    margin-left: auto;
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.work-check-empty .work-check-empty-body {
+    padding: 8px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.work-check-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #ede9fe;
+}
+
+.work-check-actions .syw-btn {
+    flex: 1 1 auto;
+    min-width: 140px;
+    font-size: 13px;
+    padding: 8px 14px;
+}
+
+.work-check-loading .work-check-card em {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* ---- "Check my work" button on attached image cards ---- */
+.file-card {
+    position: relative;
+}
+
+.file-card-check-work {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+    background: rgba(139, 92, 246, 0.95);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+    z-index: 2;
+}
+
+.file-card:hover .file-card-check-work,
+.file-card-check-work:focus,
+.file-card-check-work:disabled {
+    opacity: 1;
+}
+
+.file-card-check-work:hover {
+    background: #7c3aed;
+}
+
+.file-card-check-work:disabled {
+    background: #a78bfa;
+    cursor: wait;
+}
