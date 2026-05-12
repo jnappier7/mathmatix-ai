@@ -46,6 +46,9 @@
   const $ = (id) => document.getElementById(id);
   const stage1     = $('onboarding-stage1');
   const stage2     = $('onboarding-stage2');
+  const stageDob   = $('onboarding-stage-dob');
+  const stageCoppa = $('onboarding-stage-coppa');
+  const stageTeen  = $('onboarding-stage-teen');
   const micBtn     = $('onboarding-mic-btn');
   const micHint    = $('onboarding-mic-hint');
   const typingToggle = $('onboarding-typing-toggle');
@@ -57,6 +60,27 @@
   const responseEl = $('onboarding-response-text');
   const continueBtn = $('onboarding-continue');
   const tutorAvatar = $('onboarding-tutor-avatar');
+
+  // DOB stage
+  const dobInput      = $('onboarding-dob');
+  const dobSubmitBtn  = $('onboarding-dob-submit');
+  const dobStatus     = $('onboarding-dob-status');
+
+  // COPPA (<13) stage
+  const coppaCode     = $('onboarding-coppa-code');
+  const coppaLinkBtn  = $('onboarding-coppa-link');
+  const coppaStatus   = $('onboarding-coppa-status');
+
+  // Teen (13-17) stage
+  const teenEmail     = $('onboarding-teen-email');
+  const teenSendBtn   = $('onboarding-teen-send');
+  const teenCode      = $('onboarding-teen-code');
+  const teenLinkBtn   = $('onboarding-teen-link');
+  const teenStatus    = $('onboarding-teen-status');
+
+  // Working state — populated from the server after intent save.
+  let pendingCategory = 'unknown';
+  let pendingRedirect = '/chat.html';
 
   // ---- Speech recognition setup (feature-detected) ----
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -229,7 +253,9 @@
     }
 
     // Server returns the authoritative category + next redirect.
-    showWarmResponse(serverResponse.intentCategory || intentCategory, false, serverResponse.redirect);
+    pendingCategory = serverResponse.intentCategory || intentCategory;
+    pendingRedirect = serverResponse.redirect || '/chat.html';
+    advanceStage(serverResponse);
   }
 
   function saveLocally(payload) {
@@ -241,24 +267,190 @@
     } catch (_) { /* storage disabled — best effort only */ }
   }
 
+  // ---- Stage chaining ----
+  // The server tells us which gate the user still needs to clear:
+  // needsDob → ask DOB inline; then needsParentalConsent (under-13 → COPPA invite
+  // code; 13-17 → email or invite code); then warm response.
+  function hideAllStages() {
+    [stage1, stageDob, stageCoppa, stageTeen, stage2].forEach(el => {
+      if (!el) return;
+      el.classList.remove('active', 'fade-out');
+      el.hidden = true;
+    });
+  }
+  function showStage(el) {
+    if (!el) return;
+    el.hidden = false;
+    el.classList.add('active');
+  }
+
+  function advanceStage(serverState) {
+    const s = serverState || {};
+    hideAllStages();
+
+    if (s.needsDob) {
+      showStage(stageDob);
+      // Cap the max date to today so users can't pick a future birthday.
+      try { dobInput.max = new Date().toISOString().slice(0, 10); } catch (_) {}
+      setTimeout(() => { try { dobInput.focus(); } catch (_) {} }, 50);
+      return;
+    }
+
+    if (s.needsParentalConsent) {
+      // Under-13 → COPPA invite code only (legally required, email alone is not
+      // verifiable parental consent). 13-17 → parent email OR invite code.
+      if (typeof s.age === 'number' && s.age < 13) {
+        showStage(stageCoppa);
+      } else {
+        showStage(stageTeen);
+      }
+      return;
+    }
+
+    // Everything cleared → warm response.
+    showWarmResponse(pendingCategory, false, pendingRedirect);
+  }
+
   function showWarmResponse(category, isAnon, redirectUrl) {
     const text = WARM_RESPONSES[category] || WARM_RESPONSES.unknown;
     if (responseEl) responseEl.textContent = text;
+    hideAllStages();
+    showStage(stage2);
 
-    // Transition stages
-    stage1.classList.add('fade-out');
-    setTimeout(() => {
-      stage1.hidden = true;
-      stage2.classList.add('active');
-    }, 250);
-
-    // Configure the Continue button
     if (isAnon) {
       continueBtn.textContent = 'Continue to sign up';
       continueBtn.dataset.redirect = '/signup.html';
     } else {
       continueBtn.textContent = 'Continue';
-      continueBtn.dataset.redirect = redirectUrl || '/chat.html';
+      continueBtn.dataset.redirect = redirectUrl || pendingRedirect || '/chat.html';
+    }
+  }
+
+  // ---- DOB submit ----
+  function setDobStatus(msg, isError) {
+    if (!dobStatus) return;
+    dobStatus.textContent = msg || '';
+    dobStatus.classList.toggle('error', !!isError);
+  }
+  if (dobInput) {
+    dobInput.addEventListener('input', () => {
+      dobSubmitBtn.disabled = !dobInput.value;
+    });
+  }
+  async function submitDob() {
+    const value = (dobInput.value || '').trim();
+    if (!value) {
+      setDobStatus('Pick your birthday to keep going.', true);
+      return;
+    }
+    dobSubmitBtn.disabled = true;
+    dobSubmitBtn.textContent = 'Saving…';
+    try {
+      const res = await postJson('/api/onboarding/intent', {
+        intentText: (textarea.value || '').trim(),
+        intentCategory: pendingCategory,
+        capturedVia: 'text',
+        dateOfBirth: value
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.message || ('Save failed (' + res.status + ')'));
+      }
+      const data = await res.json();
+      pendingRedirect = data.redirect || pendingRedirect;
+      advanceStage(data);
+    } catch (err) {
+      console.warn('[onboarding] DOB save error:', err);
+      setDobStatus(err.message || 'Couldn’t save that — try again.', true);
+    } finally {
+      dobSubmitBtn.disabled = false;
+      dobSubmitBtn.textContent = 'Continue';
+    }
+  }
+
+  // ---- Under-13 (COPPA) — parent invite code only ----
+  function setCoppaStatus(msg, isError) {
+    if (!coppaStatus) return;
+    coppaStatus.textContent = msg || '';
+    coppaStatus.classList.toggle('error', !!isError);
+  }
+  async function submitCoppaCode() {
+    const code = (coppaCode.value || '').trim();
+    if (!code) return setCoppaStatus('Enter your parent’s invite code.', true);
+    coppaLinkBtn.disabled = true;
+    coppaLinkBtn.textContent = 'Linking…';
+    try {
+      const res = await postJson('/api/student/link-to-parent', { parentInviteCode: code });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        return setCoppaStatus(data.message || 'That code didn’t work — double-check with your parent.', true);
+      }
+      setCoppaStatus('Linked! One sec…', false);
+      const fin = await postJson('/api/onboarding/finalize', {});
+      const finData = await fin.json().catch(() => ({}));
+      pendingRedirect = finData.redirect || pendingRedirect;
+      advanceStage({ needsDob: false, needsParentalConsent: false });
+    } catch (err) {
+      console.warn('[onboarding] coppa link error:', err);
+      setCoppaStatus('Network hiccup — try again.', true);
+    } finally {
+      coppaLinkBtn.disabled = false;
+      coppaLinkBtn.textContent = 'Link to parent';
+    }
+  }
+
+  // ---- 13-17 — parent email OR invite code ----
+  function setTeenStatus(msg, isError) {
+    if (!teenStatus) return;
+    teenStatus.textContent = msg || '';
+    teenStatus.classList.toggle('error', !!isError);
+  }
+  async function submitTeenEmail() {
+    const email = (teenEmail.value || '').trim();
+    if (!email) return setTeenStatus('Enter your parent’s email.', true);
+    teenSendBtn.disabled = true;
+    teenSendBtn.textContent = 'Sending…';
+    try {
+      const res = await postJson('/api/consent/request-parent-email', { parentEmail: email });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        return setTeenStatus(data.message || 'Couldn’t send that — try again.', true);
+      }
+      setTeenStatus('Sent! We’ll let them know.', false);
+      const fin = await postJson('/api/onboarding/finalize', {});
+      const finData = await fin.json().catch(() => ({}));
+      pendingRedirect = finData.redirect || pendingRedirect;
+      advanceStage({ needsDob: false, needsParentalConsent: false });
+    } catch (err) {
+      console.warn('[onboarding] teen email error:', err);
+      setTeenStatus('Network hiccup — try again.', true);
+    } finally {
+      teenSendBtn.disabled = false;
+      teenSendBtn.textContent = 'Send verification email';
+    }
+  }
+  async function submitTeenCode() {
+    const code = (teenCode.value || '').trim();
+    if (!code) return setTeenStatus('Enter your parent’s invite code.', true);
+    teenLinkBtn.disabled = true;
+    teenLinkBtn.textContent = 'Linking…';
+    try {
+      const res = await postJson('/api/student/link-to-parent', { parentInviteCode: code });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        return setTeenStatus(data.message || 'That code didn’t work — double-check with your parent.', true);
+      }
+      setTeenStatus('Linked!', false);
+      const fin = await postJson('/api/onboarding/finalize', {});
+      const finData = await fin.json().catch(() => ({}));
+      pendingRedirect = finData.redirect || pendingRedirect;
+      advanceStage({ needsDob: false, needsParentalConsent: false });
+    } catch (err) {
+      console.warn('[onboarding] teen link error:', err);
+      setTeenStatus('Network hiccup — try again.', true);
+    } finally {
+      teenLinkBtn.disabled = false;
+      teenLinkBtn.textContent = 'Link to parent';
     }
   }
 
@@ -294,6 +486,12 @@
     }
 
     if (submitBtn) submitBtn.addEventListener('click', submitAnswer);
+
+    // DOB + consent stage wiring (students only, gated by server response).
+    if (dobSubmitBtn) dobSubmitBtn.addEventListener('click', submitDob);
+    if (coppaLinkBtn) coppaLinkBtn.addEventListener('click', submitCoppaCode);
+    if (teenSendBtn)  teenSendBtn.addEventListener('click', submitTeenEmail);
+    if (teenLinkBtn)  teenLinkBtn.addEventListener('click', submitTeenCode);
 
     if (skipBtn) {
       skipBtn.addEventListener('click', async () => {

@@ -88,6 +88,59 @@
         <div id="onboarding-status" class="onboarding-status" aria-live="polite"></div>
       </div>
 
+      <!-- STAGE 1.5: DOB (students only, shown after the voice/text answer) -->
+      <div id="onboarding-stage-dob" class="onboarding-response" aria-live="polite">
+        <p class="onboarding-response-text">
+          Quick one — when’s your birthday? <small style="display:block; color:var(--clr-text-dim,#5b6876); font-weight:400; font-size:.9rem; margin-top:.25rem;">We use this to make sure you have the right permissions to use AI.</small>
+        </p>
+        <div class="onboarding-answer-box" style="display:block;">
+          <label for="onboarding-dob">Date of birth</label>
+          <input id="onboarding-dob" type="date" autocomplete="bday" style="width:100%; padding:12px 16px; font-size:1rem; font-family:inherit; color:var(--clr-text,#18202b); background:var(--clr-bg-subtle,#f8fafb); border:1px solid var(--clr-border,#e2e8f0); border-radius:var(--radius-base,10px);" />
+        </div>
+        <div class="onboarding-actions">
+          <button id="onboarding-dob-submit" type="button" class="onboarding-submit-btn" disabled>Continue</button>
+        </div>
+        <div id="onboarding-dob-status" class="onboarding-status" aria-live="polite"></div>
+      </div>
+
+      <!-- STAGE 1.6: Under-13 parental consent (parent invite code required) -->
+      <div id="onboarding-stage-coppa" class="onboarding-response" aria-live="polite">
+        <p class="onboarding-response-text">
+          Since you’re under 13, we need a parent’s invite code first. <small style="display:block; color:var(--clr-text-dim,#5b6876); font-weight:400; font-size:.9rem; margin-top:.25rem;">Ask a parent to create an account on Mathmatix — they’ll get a code you can enter here.</small>
+        </p>
+        <div class="onboarding-answer-box" style="display:block;">
+          <label for="onboarding-coppa-code">Parent’s invite code</label>
+          <input id="onboarding-coppa-code" type="text" autocomplete="off" placeholder="e.g. ABC123" style="width:100%; padding:12px 16px; font-size:1rem; font-family:inherit; color:var(--clr-text,#18202b); background:var(--clr-bg-subtle,#f8fafb); border:1px solid var(--clr-border,#e2e8f0); border-radius:var(--radius-base,10px);" />
+        </div>
+        <div class="onboarding-actions">
+          <button id="onboarding-coppa-link" type="button" class="onboarding-submit-btn">Link to parent</button>
+        </div>
+        <div id="onboarding-coppa-status" class="onboarding-status" aria-live="polite"></div>
+      </div>
+
+      <!-- STAGE 1.7: Teen consent (13-17) — parent email OR invite code -->
+      <div id="onboarding-stage-teen" class="onboarding-response" aria-live="polite">
+        <p class="onboarding-response-text">
+          One last thing — we need a parent or guardian to know you’re here. <small style="display:block; color:var(--clr-text-dim,#5b6876); font-weight:400; font-size:.9rem; margin-top:.25rem;">Send them a confirmation email, or enter their invite code if they already have an account.</small>
+        </p>
+        <div class="onboarding-answer-box" style="display:block;">
+          <label for="onboarding-teen-email">Parent/guardian email</label>
+          <input id="onboarding-teen-email" type="email" autocomplete="email" placeholder="parent@email.com" style="width:100%; padding:12px 16px; font-size:1rem; font-family:inherit; color:var(--clr-text,#18202b); background:var(--clr-bg-subtle,#f8fafb); border:1px solid var(--clr-border,#e2e8f0); border-radius:var(--radius-base,10px);" />
+        </div>
+        <div class="onboarding-actions">
+          <button id="onboarding-teen-send" type="button" class="onboarding-submit-btn">Send verification email</button>
+        </div>
+        <p style="text-align:center; color:var(--clr-text-dim,#5b6876); font-size:.9rem; margin:12px 0;">— or —</p>
+        <div class="onboarding-answer-box" style="display:block;">
+          <label for="onboarding-teen-code">Parent’s invite code</label>
+          <input id="onboarding-teen-code" type="text" autocomplete="off" placeholder="e.g. ABC123" style="width:100%; padding:12px 16px; font-size:1rem; font-family:inherit; color:var(--clr-text,#18202b); background:var(--clr-bg-subtle,#f8fafb); border:1px solid var(--clr-border,#e2e8f0); border-radius:var(--radius-base,10px);" />
+        </div>
+        <div class="onboarding-actions">
+          <button id="onboarding-teen-link" type="button" class="onboarding-submit-btn">Link to parent</button>
+        </div>
+        <div id="onboarding-teen-status" class="onboarding-status" aria-live="polite"></div>
+      </div>
+
       <!-- STAGE 2: warm response + continue -->
       <div id="onboarding-stage2" class="onboarding-response" aria-live="polite">
         <img

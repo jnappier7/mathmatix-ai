@@ -164,6 +164,13 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         const verificationToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
 
+        // Parents/teachers/admins don't need DOB or grade-level info, so they
+        // can skip the legacy complete-profile screen. The voice-first
+        // onboarding screen handles them with the open-ended question and
+        // routes straight to their dashboard. Students stay gated until
+        // DOB (and, if minor, parental consent) are captured on onboarding.
+        const skipProfileGate = (role !== 'student');
+
         const newUser = new User({
             firstName,
             lastName,
@@ -171,7 +178,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             username: username.toLowerCase(),
             passwordHash: password, // The pre-save hook in models/user.js will hash this
             role,
-            needsProfileCompletion: true, // New users need to complete their profile
+            needsProfileCompletion: !skipProfileGate,
             termsAcceptedAt: new Date(),
             // Email verification
             emailVerified: false,
