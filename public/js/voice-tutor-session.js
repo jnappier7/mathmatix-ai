@@ -1198,17 +1198,38 @@
       state.playResolve = resolve;
 
       const audio = new Audio(audioUrl);
+      // iOS requires playsInline to play audio without forcing fullscreen video UI
+      audio.playsInline = true;
+      audio.setAttribute('playsinline', '');
+      audio.preload = 'auto';
       state.currentAudio = audio;
 
       // Draw speaking waveform — use a FRESH AudioContext to avoid
-      // conflicts with the mic AudioContext
+      // conflicts with the mic AudioContext.
+      //
+      // Mobile note: once an <audio> element is connected to an AudioContext
+      // via createMediaElementSource, ALL of its output is routed through
+      // that context's destination. On iOS Safari (and some Android
+      // browsers) a freshly-created AudioContext starts in "suspended"
+      // state — audio.play() resolves successfully but no sound reaches
+      // the speakers until the context is resumed. We resume() it here
+      // (we're inside the user-gesture chain that started playback) and
+      // also listen for statechange to re-resume if the browser suspends
+      // it again later.
+      let playCtx = null;
       try {
-        const playCtx = new (window.AudioContext || window.webkitAudioContext)();
+        playCtx = new (window.AudioContext || window.webkitAudioContext)();
         const source = playCtx.createMediaElementSource(audio);
         const analyser = playCtx.createAnalyser();
         analyser.fftSize = 256;
         source.connect(analyser);
         analyser.connect(playCtx.destination);
+
+        playCtx.addEventListener('statechange', () => {
+          if (playCtx && playCtx.state === 'suspended') {
+            playCtx.resume().catch(() => {});
+          }
+        });
 
         const buffer = new Uint8Array(analyser.frequencyBinCount);
         const drawSpeaking = () => {
@@ -1225,7 +1246,9 @@
         // Store for cleanup
         audio._playCtx = playCtx;
       } catch (e) {
-        // Fallback: play without waveform visualization
+        // createMediaElementSource can throw if the element is already
+        // attached to a context. Fall back to bare playback (no waveform).
+        playCtx = null;
       }
 
       const done = (startNext) => {
@@ -1247,7 +1270,19 @@
       audio.onended = () => done(true);
       audio.onerror = () => done(true);
 
-      audio.play().catch(() => done(true));
+      const startPlayback = async () => {
+        // Resume the AudioContext before play() so iOS doesn't route
+        // playback into a suspended graph (which plays silently).
+        if (playCtx && playCtx.state === 'suspended') {
+          try { await playCtx.resume(); } catch (_) { /* needs gesture */ }
+        }
+        try {
+          await audio.play();
+        } catch (_) {
+          done(true);
+        }
+      };
+      startPlayback();
     });
   }
 
