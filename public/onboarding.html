@@ -27,6 +27,21 @@
   <main class="onboarding-wrap" role="main">
     <section class="onboarding-card" aria-labelledby="onboarding-prompt-heading">
 
+      <!-- Desktop-only brand panel (hidden on mobile via CSS) -->
+      <aside class="onboarding-brand" aria-hidden="true">
+        <img src="/images/mathmatix-ai-logo.png" alt="" class="onboarding-brand-logo" />
+        <h2 class="onboarding-brand-title">Welcome to Mathmatix.</h2>
+        <p class="onboarding-brand-tagline">
+          Tell us what brings you here — we’ll start there.
+        </p>
+        <ul class="onboarding-brand-points">
+          <li><i class="fas fa-microphone" aria-hidden="true"></i> Talk to it like a person</li>
+          <li><i class="fas fa-graduation-cap" aria-hidden="true"></i> Built for real learning, not answer-dumping</li>
+          <li><i class="fas fa-shield-halved" aria-hidden="true"></i> Safe for students K–college</li>
+        </ul>
+      </aside>
+
+      <div class="onboarding-body">
       <!-- STAGE 1: open-ended capture -->
       <div id="onboarding-stage1">
         <h1 id="onboarding-prompt-heading" class="onboarding-prompt">
@@ -159,6 +174,7 @@
         >Continue</button>
       </div>
 
+      </div><!-- /.onboarding-body -->
     </section>
   </main>
 
