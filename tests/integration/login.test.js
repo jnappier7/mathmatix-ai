@@ -111,8 +111,15 @@ describe('POST /login (passport flow)', () => {
     expect(r.body.redirect).toBe('/chat.html');
   });
 
-  test('redirect for needsProfileCompletion → /complete-profile.html', async () => {
+  test('redirect for needsProfileCompletion without onboarding → /onboarding.html', async () => {
     setupPassport({ user: makeUser({ needsProfileCompletion: true }) });
+    const r = await supertest(appWithLogin((u, cb) => cb(null)))
+      .post('/login').send({ email: 'a@b.io', password: 'p' });
+    expect(r.body.redirect).toBe('/onboarding.html');
+  });
+
+  test('redirect for needsProfileCompletion with onboarding done → /complete-profile.html', async () => {
+    setupPassport({ user: makeUser({ needsProfileCompletion: true, onboarding: { completed: true } }) });
     const r = await supertest(appWithLogin((u, cb) => cb(null)))
       .post('/login').send({ email: 'a@b.io', password: 'p' });
     expect(r.body.redirect).toBe('/complete-profile.html');

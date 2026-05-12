@@ -287,10 +287,11 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
         });
       }
 
-      // Determine redirect
-      let redirect = '/complete-profile.html';
-      if (!newUser.needsProfileCompletion) {
-        redirect = '/pick-tutor.html';
+      // Determine redirect — new users always start with voice-first
+      // onboarding intent capture, then continue to profile/tutor flow.
+      let redirect = '/onboarding.html';
+      if (newUser.onboarding && newUser.onboarding.completed) {
+        redirect = newUser.needsProfileCompletion ? '/complete-profile.html' : '/pick-tutor.html';
       }
 
       logger.info('OAuth user logged in after enrollment', { userId: newUser._id.toString(), redirect });

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Welcome | M∆THM∆TIΧ AI</title>
+  <meta name="description" content="Tell us what brings you here today — we'll start there." />
+  <meta name="robots" content="noindex, follow" />
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/dark-mode.css" />
+  <link rel="stylesheet" href="/css/onboarding.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+
+  <script src="/js/csrf.js"></script>
+</head>
+<body class="landing-page-body">
+  <header class="landing-header">
+    <div class="header-logo-container">
+      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI" class="main-logo-hero" />
+    </div>
+    <nav class="landing-nav">
+      <button id="logoutBtn" class="btn btn-tertiary" type="button" style="display:none;">Log out</button>
+    </nav>
+  </header>
+
+  <main class="onboarding-wrap" role="main">
+    <section class="onboarding-card" aria-labelledby="onboarding-prompt-heading">
+
+      <!-- STAGE 1: open-ended capture -->
+      <div id="onboarding-stage1">
+        <h1 id="onboarding-prompt-heading" class="onboarding-prompt">
+          What brings you to Mathmatix today?
+        </h1>
+        <p class="onboarding-subtle">
+          Answer however you want — there’s no wrong answer.
+          <small>Take a second if you need to.</small>
+        </p>
+
+        <div class="onboarding-mic-area">
+          <button
+            id="onboarding-mic-btn"
+            type="button"
+            class="onboarding-mic-btn"
+            aria-label="Tap to speak your answer"
+            aria-pressed="false"
+          >
+            <i class="fas fa-microphone" aria-hidden="true"></i>
+          </button>
+          <div id="onboarding-mic-hint" class="onboarding-mic-hint">
+            Tap the mic when you’re ready.
+          </div>
+        </div>
+
+        <!-- Low-pressure typing fallback -->
+        <button
+          id="onboarding-typing-toggle"
+          type="button"
+          class="onboarding-typing-toggle"
+        >Prefer typing?</button>
+
+        <div id="onboarding-answer-box" class="onboarding-answer-box" hidden>
+          <label for="onboarding-textarea">Type your answer</label>
+          <textarea
+            id="onboarding-textarea"
+            rows="3"
+            placeholder="For example: I’m a parent trying to help my kid, I need homework help, I’m prepping for the ACT…"
+            autocomplete="off"
+            autocapitalize="sentences"
+            spellcheck="true"
+          ></textarea>
+        </div>
+
+        <div class="onboarding-actions">
+          <button
+            id="onboarding-submit"
+            type="button"
+            class="onboarding-submit-btn"
+            disabled
+          >Continue</button>
+          <button
+            id="onboarding-skip"
+            type="button"
+            class="onboarding-skip-btn"
+          >Skip for now</button>
+        </div>
+
+        <div id="onboarding-status" class="onboarding-status" aria-live="polite"></div>
+      </div>
+
+      <!-- STAGE 2: warm response + continue -->
+      <div id="onboarding-stage2" class="onboarding-response" aria-live="polite">
+        <img
+          id="onboarding-tutor-avatar"
+          class="onboarding-tutor-avatar"
+          src="/images/mathmatix-ai-logo.png"
+          alt=""
+        />
+        <p id="onboarding-response-text" class="onboarding-response-text">
+          Got it. I’ll use that to help decide where we start.
+        </p>
+        <button
+          id="onboarding-continue"
+          type="button"
+          class="onboarding-submit-btn"
+        >Continue</button>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 M∆THM∆TIΧ AI. <a href="/privacy.html">Privacy</a> | <a href="/terms.html">Terms</a></p>
+  </footer>
+
+  <script src="/js/onboarding.js"></script>
+</body>
+</html>
