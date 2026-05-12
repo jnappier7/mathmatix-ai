@@ -314,11 +314,17 @@
   function showWarmResponse(category, isAnon, redirectUrl) {
     const text = WARM_RESPONSES[category] || WARM_RESPONSES.unknown;
     if (responseEl) responseEl.textContent = text;
+
+    // Conversational bridge: only shown for anonymous visitors who still
+    // need to create an account. Authenticated users already have one.
+    const followup = document.getElementById('onboarding-followup');
+    if (followup) followup.hidden = !isAnon;
+
     hideAllStages();
     showStage(stage2);
 
     if (isAnon) {
-      continueBtn.textContent = 'Continue to sign up';
+      continueBtn.textContent = 'Sure, let’s do it';
       continueBtn.dataset.redirect = '/signup.html';
     } else {
       continueBtn.textContent = 'Continue';
