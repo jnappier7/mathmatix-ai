@@ -860,6 +860,10 @@ class VoiceController {
             }
 
             const audio = new Audio(audioUrl);
+            // iOS requires playsInline so audio plays without fullscreen UI
+            audio.playsInline = true;
+            audio.setAttribute('playsinline', '');
+            audio.preload = 'auto';
             this.currentAudio = audio;
 
             audio.onended = () => {
