@@ -312,8 +312,14 @@
             if (u8.length < 7 || u8[0] !== 0x01) return;
             const sampleRate = (u8[5] << 8) | u8[6];
             const pcmStart = 7;
-            const byteLen = u8.byteLength - pcmStart;
-            const i16 = new Int16Array(u8.buffer, u8.byteOffset + pcmStart, byteLen / 2);
+            // Int16Array requires a 2-byte aligned byteOffset. The frame
+            // header is 7 bytes (odd), so the PCM payload starts on an
+            // odd offset inside the WebSocket buffer — constructing a
+            // view directly throws RangeError. Copy into a fresh buffer
+            // via slice() so the Int16Array sits at offset 0.
+            const pcmBytes = u8.slice(pcmStart);
+            const evenLen = pcmBytes.byteLength - (pcmBytes.byteLength % 2);
+            const i16 = new Int16Array(pcmBytes.buffer, 0, evenLen / 2);
             this._playPcmS16(i16, sampleRate);
         }
 
