@@ -103,14 +103,18 @@ body.cr-mode .landing-header .main-logo-hero {
 /* Hide non-essential header buttons in cr-mode for cleaner look */
 body.cr-mode .landing-nav #theme-toggle-btn { display: none; }
 
-/* ----- Sidebar: collapsed by default in cr-mode ----- */
-body.cr-mode #app-sidebar:not(.cr-open) { transform: translateX(-280px); }
+/* ----- Sidebar: hidden entirely in cr-mode (desktop + mobile) ----- */
+body.cr-mode #app-sidebar,
+body.cr-mode #sidebar-toggle,
+body.cr-mode #left-drawer-toggle { display: none !important; }
+
 body.cr-mode #app-layout-wrapper.sidebar-layout {
   margin-left: 0 !important;
   max-width: 100vw !important;
 }
 
-/* Hide the "My Chats" / session history section in the redesigned shell. */
+/* Belt-and-suspenders: the "My Chats" section is also explicitly hidden
+   in case the sidebar is ever re-enabled. */
 body.cr-mode .sidebar-ctx-general { display: none !important; }
 
 /* ----- Stage: 3 column grid hero | chat | hint ----- */
