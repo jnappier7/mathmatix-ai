@@ -110,6 +110,9 @@ body.cr-mode #app-layout-wrapper.sidebar-layout {
   max-width: 100vw !important;
 }
 
+/* Hide the "My Chats" / session history section in the redesigned shell. */
+body.cr-mode .sidebar-ctx-general { display: none !important; }
+
 /* ----- Stage: 3 column grid hero | chat | hint ----- */
 body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
 
