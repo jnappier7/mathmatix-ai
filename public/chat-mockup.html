@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chat Redesign — Mockup</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="/css/chat-redesign.css" />
+<style>
+  /* ---------- Mockup-only stand-ins for shared site styles ----------
+     The real app already provides these via /style.css and friends.
+     This block only exists so the preview renders in isolation. */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { background: #0B0F1A; color: #E6E9F2; min-height: 100vh; }
+
+  .landing-header {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 22px;
+    height: 60px;
+  }
+  .header-logo-container { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, #1F2742, #2A2255);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text { font-weight: 800; letter-spacing: 2px; font-size: 14px; }
+  .landing-nav { display: inline-flex; align-items: center; gap: 12px; }
+
+  /* dashboard panel (used by the real chat) */
+  .dashboard-panel { background: transparent; }
+
+  /* Mock chat-container interior */
+  #chat-container { display: flex; flex-direction: column; }
+  #chat-messages-container {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 480px;
+    max-height: calc(100vh - 320px);
+  }
+
+  /* Message DOM mirrors what script.js renders */
+  .message-container { display: flex; gap: 10px; margin: 12px 0; align-items: flex-start; }
+  .message-container.ai { justify-content: flex-start; }
+  .message-container.user { justify-content: flex-end; flex-direction: row-reverse; }
+  .message-avatar img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.08); }
+  .message {
+    max-width: min(72%, 640px);
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .msg-meta { display: flex; gap: 8px; align-items: baseline; margin-bottom: 4px; font-size: 12px; }
+  .msg-name { color: #C8A2FF; font-weight: 700; }
+  .msg-time { color: #9AA3B8; }
+
+  /* Compose bar stand-ins (real app uses iMessage classes) */
+  #input-container { background: transparent; padding: 10px 18px 14px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .imessage-compose-bar { background: #1B2238; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
+  .imessage-tool-btn { background: transparent; border: none; color: #9AA3B8; font-size: 16px; padding: 6px 8px; cursor: pointer; border-radius: 8px; }
+  .imessage-tool-btn:hover { color: #E6E9F2; background: rgba(255,255,255,0.06); }
+  #user-input {
+    flex: 1; min-height: 28px; outline: none;
+    color: #E6E9F2; padding: 6px 8px;
+  }
+  #user-input:empty::before {
+    content: attr(data-placeholder); color: #9AA3B8; opacity: 0.7;
+  }
+  .imessage-send-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, #8B7BFF, #6C5CE7);
+    color: white; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 14px rgba(108, 92, 231, 0.45);
+  }
+
+  .composer-shell { display: flex; align-items: center; gap: 14px; }
+  .composer-shell .imessage-compose-bar { flex: 1; }
+
+  /* Tutor switcher (mockup only) */
+  .mock-switcher {
+    position: fixed; bottom: 14px; left: 14px; z-index: 50;
+    background: rgba(20, 26, 44, 0.9); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px; padding: 10px 12px;
+    display: inline-flex; align-items: center; gap: 8px;
+    backdrop-filter: blur(8px);
+    font-size: 12px;
+  }
+  .mock-switcher select {
+    background: #161B2C; color: #E6E9F2; border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px; padding: 6px 10px; font-size: 12px;
+  }
+  .mock-note { color: #9AA3B8; font-size: 11px; }
+
+  /* Make body class active for the preview */
+</style>
+</head>
+<body class="cr-mode">
+
+<header class="landing-header">
+  <a class="header-logo-container" href="#">
+    <span class="logo-mark"><i class="fas fa-glasses"></i></span>
+    <span class="logo-text">MATHMATIX AI</span>
+  </a>
+  <nav class="landing-nav" aria-label="Chat controls">
+    <div class="cr-header-extras">
+      <span class="cr-streak-pill" title="Daily streak">
+        <span class="cr-flame" aria-hidden="true">🔥</span>
+        <span id="cr-streak-value">12 day streak</span>
+      </span>
+      <button id="cr-progress-btn" class="cr-progress-btn" type="button">
+        <i class="fas fa-chart-bar"></i> <span>Progress</span>
+      </button>
+      <button id="cr-user-avatar" class="cr-user-avatar" type="button" aria-label="Profile">
+        <span>A</span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="app-layout-wrapper" class="sidebar-layout">
+  <div class="cr-stage">
+    <aside class="cr-tutor-hero" aria-hidden="true">
+      <div class="cr-tutor-backdrop"></div>
+      <img id="cr-tutor-portrait" class="cr-tutor-portrait"
+           src="/images/tutor_avatars/maya-new2.png"
+           onerror="this.onerror=null;this.src='/images/tutor_avatars/maya.png'" alt="" />
+      <div class="cr-live-badge">
+        <span class="cr-live-dot"></span>
+        <span>Live with <span id="cr-tutor-name">Maya</span></span>
+        <span class="cr-waveform" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </span>
+      </div>
+      <div class="cr-encourage-card">
+        <div class="cr-encourage-title"><span aria-hidden="true">⭐</span> Keep it up!</div>
+        <div class="cr-encourage-body">
+          You're making great progress and asking great questions
+          <span class="cr-heart" aria-hidden="true">💜</span>
+        </div>
+      </div>
+    </aside>
+
+    <div id="chat-container" class="dashboard-panel full-width">
+      <div id="chat-messages-container">
+
+        <div class="message-container ai">
+          <div class="message-avatar">
+            <img id="msg-avatar-1" src="/images/tutor_avatars/maya.png" alt="" />
+          </div>
+          <div class="message ai">
+            <div class="msg-meta">
+              <span class="msg-name" id="msg-name-1">Maya</span>
+              <span class="msg-time">9:41 AM</span>
+            </div>
+            <div class="message-text">
+              Hey Alex 👋<br>What do you want to work on today?<br>We'll figure it out together.
+            </div>
+          </div>
+        </div>
+
+        <div class="message-container user">
+          <div class="message-avatar">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#8B7BFF,#6C5CE7);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">A</div>
+          </div>
+          <div class="message user">
+            <div class="msg-meta"><span class="msg-name" style="color:#C9C0FF">You</span><span class="msg-time">9:42 AM</span></div>
+            <div class="message-text">I need help with distributing and combining like terms.</div>
+          </div>
+        </div>
+
+        <div class="message-container ai">
+          <div class="message-avatar"><img id="msg-avatar-2" src="/images/tutor_avatars/maya.png" alt="" /></div>
+          <div class="message ai">
+            <div class="msg-meta"><span class="msg-name" id="msg-name-2">Maya</span><span class="msg-time">9:42 AM</span></div>
+            <div class="message-text">
+              Perfect! Let's work through an example together.<br>
+              Solve for x: 2(x − 3) + 5 = 3x − 7
+            </div>
+          </div>
+        </div>
+
+        <div class="message-container user">
+          <div class="message-avatar">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#8B7BFF,#6C5CE7);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">A</div>
+          </div>
+          <div class="message user">
+            <div class="msg-meta"><span class="msg-name" style="color:#C9C0FF">You</span><span class="msg-time">9:43 AM</span></div>
+            <div class="message-text">Ok let's do it.</div>
+          </div>
+        </div>
+
+        <div class="message-container ai">
+          <div class="message-avatar"><img id="msg-avatar-3" src="/images/tutor_avatars/maya.png" alt="" /></div>
+          <div class="message ai">
+            <div class="msg-meta"><span class="msg-name" id="msg-name-3">Maya</span><span class="msg-time">9:43 AM</span></div>
+            <div class="message-text">
+              Great! First, we'll distribute the 2 to both terms inside the parentheses.<br>
+              What do you get when you multiply 2 by (x − 3)?
+            </div>
+          </div>
+        </div>
+
+        <div class="message-container user">
+          <div class="message-avatar">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#8B7BFF,#6C5CE7);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">A</div>
+          </div>
+          <div class="message user">
+            <div class="msg-meta"><span class="msg-name" style="color:#C9C0FF">You</span><span class="msg-time">9:43 AM</span></div>
+            <div class="message-text">2x − 6</div>
+          </div>
+        </div>
+
+        <div class="message-container ai">
+          <div class="message-avatar"><img id="msg-avatar-4" src="/images/tutor_avatars/maya.png" alt="" /></div>
+          <div class="message ai">
+            <div class="msg-meta"><span class="msg-name" id="msg-name-4">Maya</span><span class="msg-time">9:43 AM</span></div>
+            <div class="message-text">
+              Exactly! So our equation now looks like:<br>
+              2x − 6 + 5 = 3x − 7<br>
+              What should we do next?
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="input-container">
+        <div class="composer-shell">
+          <button id="cr-mic-btn" class="cr-mic-btn" type="button" aria-label="Voice">
+            <i class="fas fa-microphone"></i>
+          </button>
+          <div class="imessage-compose-bar">
+            <div id="user-input" contenteditable="true" data-placeholder="Type a question or describe what you need help with..." role="textbox"></div>
+            <button class="imessage-tool-btn" title="Attach"><i class="fas fa-paperclip"></i></button>
+            <button class="imessage-tool-btn" title="Camera"><i class="fas fa-camera"></i></button>
+            <button class="imessage-send-btn" title="Send"><i class="fas fa-arrow-up"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="cr-hint-card" aria-label="Tutor hint">
+      <img id="cr-hint-avatar" class="cr-hint-avatar" src="/images/tutor_avatars/maya.png" alt="" />
+      <div class="cr-hint-text">
+        <p>Stuck? I can show you an example or give you a hint.</p>
+        <p>Just ask!</p>
+      </div>
+    </aside>
+  </div><!-- /.cr-stage -->
+
+  <div class="cr-quick-actions" role="toolbar" aria-label="Quick actions">
+    <button class="cr-qa-btn" type="button"><i class="fas fa-upload"></i> Upload Homework</button>
+    <button class="cr-qa-btn" type="button"><i class="fas fa-bullseye"></i> Practice a Skill</button>
+    <button class="cr-qa-btn" type="button"><i class="fas fa-book"></i> Prep for a Test</button>
+    <button class="cr-qa-btn" type="button"><i class="fas fa-ellipsis-h"></i> More</button>
+  </div>
+</main>
+
+<!-- Tutor switcher (preview only) -->
+<div class="mock-switcher">
+  <label for="mock-tutor" class="mock-note">Preview tutor:</label>
+  <select id="mock-tutor">
+    <option value="maya" selected>Maya</option>
+    <option value="bob">Bob</option>
+    <option value="mr-nappier">Mr. Nappier</option>
+    <option value="ms-maria">Ms. Maria</option>
+    <option value="ms-rashida">Ms. Rashida (no backdrop)</option>
+    <option value="dr-g">Dr. G (no backdrop)</option>
+  </select>
+  <span class="mock-note">— shows hero swap behavior</span>
+</div>
+
+<script>
+  // Tutor metadata mirrors the runtime config (just enough for the preview).
+  const TUTORS = {
+    'maya':        { name: 'Maya',        image: 'maya.png',        hero: 'maya-new2.png',       backdrop: 'maya-backdrop.png' },
+    'bob':         { name: 'Bob',         image: 'bob.png',         hero: 'bob-new2.png',        backdrop: 'bob-backdrop.png' },
+    'mr-nappier':  { name: 'Mr. Nappier', image: 'mr-nappier.png',  hero: 'mrnappier-new2.png',  backdrop: 'mr-nappier-backdrop.png' },
+    'ms-maria':    { name: 'Ms. Maria',   image: 'ms-maria.png',    hero: 'ms-maria_new.png',    backdrop: 'ms-maria-backdrop.png' },
+    'ms-rashida':  { name: 'Ms. Rashida', image: 'ms-rashida.png',  hero: 'ms-rashida.png',      backdrop: null },
+    'dr-g':        { name: 'Dr. G',       image: 'dr-g.png',        hero: 'dr-g.png',            backdrop: null }
+  };
+
+  const DEFAULT_BACKDROP = '/images/tutor_avatars/maya-backdrop.png';
+
+  function applyTutor(id) {
+    const t = TUTORS[id]; if (!t) return;
+    const base = '/images/tutor_avatars/';
+
+    // Hero portrait — try the "new" art, fall back to the standard PNG
+    const heroEl = document.getElementById('cr-tutor-portrait');
+    heroEl.src = base + t.hero;
+    heroEl.onerror = function() { this.onerror = null; this.src = base + t.image; };
+
+    // Backdrop
+    const bd = document.querySelector('.cr-tutor-backdrop');
+    bd.style.backgroundImage = 'url("' + (t.backdrop ? base + t.backdrop : DEFAULT_BACKDROP) + '")';
+
+    // Name
+    document.getElementById('cr-tutor-name').textContent = t.name.split(' ')[0];
+
+    // Message avatars + names
+    ['msg-avatar-1','msg-avatar-2','msg-avatar-3','msg-avatar-4'].forEach(function(elId){
+      const el = document.getElementById(elId);
+      if (el) el.src = base + t.image;
+    });
+    ['msg-name-1','msg-name-2','msg-name-3','msg-name-4'].forEach(function(elId){
+      const el = document.getElementById(elId);
+      if (el) el.textContent = t.name;
+    });
+
+    // Hint card avatar
+    const hint = document.getElementById('cr-hint-avatar');
+    if (hint) hint.src = base + t.image;
+  }
+
+  document.getElementById('mock-tutor').addEventListener('change', function(e){
+    applyTutor(e.target.value);
+  });
+
+  applyTutor('maya');
+</script>
+</body>
+</html>
