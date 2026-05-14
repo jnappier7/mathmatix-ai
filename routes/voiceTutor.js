@@ -5,6 +5,10 @@
 const express = require('express');
 const router = express.Router();
 const { WebSocketServer } = require('ws');
+const multer = require('multer');
+const sharp = require('sharp');
+const pdfOcr = require('../utils/pdfOcr');
+const { validateUpload } = require('../middleware/uploadSecurity');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
@@ -22,6 +26,44 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const logger = require('../utils/logger').child({ route: 'voice-tutor' });
+
+// Multer for voice-tutor file uploads — disk storage matches chat.js
+const ALLOWED_UPLOAD_MIMETYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+const vtUpload = multer({
+  storage: multer.diskStorage({
+    destination: '/tmp',
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+  }),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB per file
+  fileFilter: (req, file, cb) => {
+    if (ALLOWED_UPLOAD_MIMETYPES.includes(file.mimetype)) cb(null, true);
+    else cb(new Error('Invalid file type. Only images (JPG, PNG, WEBP) and PDFs are allowed.'), false);
+  }
+});
+
+// Run multer only on multipart requests; JSON requests pass through unchanged.
+const conditionalVtUpload = (req, res, next) => {
+  if (req.is('multipart/form-data')) {
+    vtUpload.any()(req, res, (err) => {
+      if (err) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(413).json({ error: 'File too large (max 10MB per file).' });
+        }
+        return res.status(400).json({ error: `Upload error: ${err.message}` });
+      }
+      next();
+    });
+  } else {
+    next();
+  }
+};
+const conditionalVtValidate = (req, res, next) => {
+  if (req.files && req.files.length > 0) validateUpload(req, res, next);
+  else next();
+};
 
 const VOICE_MODEL = 'gpt-4o-mini';
 
@@ -73,6 +115,12 @@ CRITICAL RULES FOR THE "spoken" FIELD:
 3. Be warm and natural — like a real tutor sitting next to the student
 4. NEVER use LaTeX delimiters ($, $$, \\(, \\[) — use plain English. Say "x squared plus 3x" not "$x^2 + 3x$"
 5. NEVER use markdown formatting (**, *, #)
+6. SPELL OUT MATH IN WORDS so text-to-speech reads it correctly:
+   - "3y minus 2 equals 24" — NOT "3y-2=24"
+   - "two x plus 5" — NOT "2x+5"
+   - "x squared" — NOT "x^2"
+   - Always insert a space between a number and a variable ("3 y", not "3y")
+   - Use "equals", "plus", "minus", "times", "over", "squared", "cubed" instead of symbols
 
 CRITICAL RULES FOR THE "mathSteps" FIELD:
 The student's math board ONLY updates from this field. If you omit it or leave it empty when math has been discussed, the board goes blank and the student loses all visual context.
@@ -156,7 +204,48 @@ function convertLatexToSpeech(latex) {
   speech = speech.replace(/=/g, ' equals ');
   speech = speech.replace(/[{}]/g, '');
   speech = speech.replace(/\\/g, '');
+  // Insert space between digit and variable so TTS doesn't slur "3y" into "three-ey"
+  speech = speech.replace(/(\d)([a-zA-Z])/g, '$1 $2');
+  speech = speech.replace(/([a-zA-Z])(\d)/g, '$1 $2');
   return speech;
+}
+
+/**
+ * Normalize bare math notation in plain text (no LaTeX delimiters) so TTS
+ * pronounces it naturally. Handles digit-letter glue ("3y" → "3 y"),
+ * comparison operators, and arithmetic symbols between alphanumerics.
+ */
+function normalizeBareMathForSpeech(text) {
+  let out = text;
+  // Multi-char comparison operators first (longest match wins)
+  out = out.replace(/<=|≤/g, ' less than or equal to ');
+  out = out.replace(/>=|≥/g, ' greater than or equal to ');
+  out = out.replace(/!=|≠/g, ' not equal to ');
+  out = out.replace(/≈/g, ' approximately ');
+  out = out.replace(/±/g, ' plus or minus ');
+  // Arithmetic operators: convert only when at least one side is a digit
+  // (skip hyphenated words like "well-known", sentence dashes, em-dashes,
+  // and "x + y" prose unless it's recognizable math). Allow optional spaces.
+  // Equals — fairly safe: only between alphanumeric on both sides.
+  out = out.replace(/([0-9A-Za-z\)\]])\s*=\s*([0-9A-Za-z\(\[\-+])/g, '$1 equals $2');
+  // Minus — require a digit adjacent to avoid mangling "well-known".
+  out = out.replace(/(\d)\s*-\s*([0-9A-Za-z\(\[])/g, '$1 minus $2');
+  out = out.replace(/([A-Za-z\)\]])\s*-\s*(\d)/g, '$1 minus $2');
+  // Plus — require a digit adjacent.
+  out = out.replace(/(\d)\s*\+\s*([0-9A-Za-z\(\[])/g, '$1 plus $2');
+  out = out.replace(/([A-Za-z\)\]])\s*\+\s*(\d)/g, '$1 plus $2');
+  // Times — explicit math symbols are always safe; bare "*" between alphanumerics
+  out = out.replace(/([0-9A-Za-z\)\]])\s*\*\s*([0-9A-Za-z\(\[])/g, '$1 times $2');
+  out = out.replace(/([0-9A-Za-z\)\]])\s*[×·]\s*([0-9A-Za-z\(\[])/g, '$1 times $2');
+  // Division: numeric fractions only (avoid URLs and file paths)
+  out = out.replace(/(\d)\s*\/\s*(\d)/g, '$1 over $2');
+  out = out.replace(/÷/g, ' divided by ');
+  // Stragglers — bare "=" at boundaries (e.g. " =24" or "x= 24")
+  out = out.replace(/=/g, ' equals ');
+  // Digit-letter glue and letter-digit glue (3y → "3 y", y3 → "y 3")
+  out = out.replace(/(\d)([a-zA-Z])/g, '$1 $2');
+  out = out.replace(/([a-zA-Z])(\d)/g, '$1 $2');
+  return out;
 }
 
 /**
@@ -192,9 +281,8 @@ function cleanForTTS(text) {
   // Function notation: f(x) → "f of x", f'(x) → "f prime of x"
   cleaned = cleaned.replace(/\b([a-zA-Z])'\(([^)]+)\)/g, '$1 prime of $2');
   cleaned = cleaned.replace(/\b([a-zA-Z])\(([^)]{1,20})\)/g, '$1 of $2');
-  // Equals sign: "x = 5" → "x equals 5"
-  cleaned = cleaned.replace(/(\w)\s*=\s*(\w)/g, '$1 equals $2');
-  // Caret exponents
+  // Caret exponents — convert before normalizing operators so "x^2 + 3"
+  // becomes "x squared plus 3" rather than tripping the bare-minus rule.
   cleaned = cleaned.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
   cleaned = cleaned.replace(/\^2(?=\b|[^0-9]|$)/g, ' squared');
   cleaned = cleaned.replace(/\^3(?=\b|[^0-9]|$)/g, ' cubed');
@@ -203,6 +291,9 @@ function cleanForTTS(text) {
   cleaned = cleaned.replace(/_\{([^}]+)\}/g, ' sub $1');
   cleaned = cleaned.replace(/_(\d)/g, ' sub $1');
   cleaned = cleaned.replace(/[{}]/g, '');
+  // Normalize bare arithmetic so TTS speaks "3 y minus 2 equals 24"
+  // instead of "three-ey minus 2 equal sign twenty four".
+  cleaned = normalizeBareMathForSpeech(cleaned);
   // Strip emoji
   cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, '');
   // Clean up whitespace
@@ -413,20 +504,80 @@ router.post('/process', isAuthenticated, async (req, res) => {
 // POST /api/voice-tutor/process-text
 // Text input fallback (typed messages)
 // ═══════════════════════════════════════
-router.post('/process-text', isAuthenticated, async (req, res) => {
-  const { text } = req.body;
+router.post('/process-text', isAuthenticated, conditionalVtUpload, conditionalVtValidate, async (req, res) => {
   const userId = req.user._id;
+  const rawText = (req.body && req.body.text) || '';
+  const uploadedFiles = req.files || [];
+  const hasFiles = uploadedFiles.length > 0;
 
-  if (!text || !text.trim()) {
-    return res.status(400).json({ error: 'Text is required' });
+  if (!rawText.trim() && !hasFiles) {
+    return res.status(400).json({ error: 'Text or file is required' });
   }
 
-  if (text.length > 5000) {
+  if (rawText.length > 5000) {
+    // Clean up files before bailing out
+    uploadedFiles.forEach(f => { if (f.path) try { fs.unlinkSync(f.path); } catch (_) {} });
     return res.status(400).json({ error: 'Message too long' });
   }
 
+  // ── Process attached files: extract PDF text + build image content blocks ──
+  let combinedText = rawText.trim() || (hasFiles ? 'Can you help me with this?' : '');
+  let imageContents = [];
+  let pdfTexts = [];
+
+  if (hasFiles) {
+    try {
+      const fileResults = await Promise.all(uploadedFiles.map(async (file) => {
+        if (file.mimetype === 'application/pdf') {
+          const buf = fs.readFileSync(file.path);
+          const extracted = await pdfOcr(buf, file.originalname);
+          return { type: 'pdf', filename: file.originalname, text: extracted || `[Could not extract text from ${file.originalname}]` };
+        }
+        let buf = fs.readFileSync(file.path);
+        try {
+          buf = await sharp(buf).rotate().withMetadata({}).toBuffer();
+        } catch (e) {
+          logger.warn('EXIF strip failed', { error: e.message });
+        }
+        const base64 = buf.toString('base64');
+        return {
+          type: 'image',
+          content: { type: 'image_url', image_url: { url: `data:${file.mimetype};base64,${base64}`, detail: 'high' } }
+        };
+      }));
+
+      for (const r of fileResults) {
+        if (r.type === 'pdf') pdfTexts.push({ filename: r.filename, text: r.text });
+        else imageContents.push(r.content);
+      }
+
+      if (pdfTexts.length > 0) {
+        const MAX_PDF_CHARS = 12000;
+        const pdfBlock = pdfTexts.map(({ filename, text }) => {
+          if (text.length > MAX_PDF_CHARS) {
+            return `[Content from ${filename} — first ${MAX_PDF_CHARS} of ${text.length} characters]\n${text.substring(0, MAX_PDF_CHARS)}\n[... truncated]`;
+          }
+          return `[Content from ${filename}]\n${text}`;
+        }).join('\n\n');
+        combinedText = `${combinedText}\n\n${pdfBlock}`;
+      }
+
+      logger.info('voice-tutor: files prepared', { userId, imageCount: imageContents.length, pdfCount: pdfTexts.length });
+    } catch (procErr) {
+      logger.error('voice-tutor: file processing failed', { userId, error: procErr.message });
+      return res.status(500).json({ error: 'FILE_PROCESSING_ERROR', message: `Failed to process files: ${procErr.message}` });
+    } finally {
+      uploadedFiles.forEach(f => { if (f.path) try { fs.unlinkSync(f.path); } catch (_) {} });
+    }
+  }
+
   try {
-    const { spoken, mathSteps, raw: aiRaw } = await generateResponse(userId, text.trim());
+    const { spoken, mathSteps, raw: aiRaw } = await generateResponse(
+      userId,
+      combinedText,
+      null,
+      { imageContents }
+    );
 
     let audioUrl = null;
     if (ttsProvider.isConfigured()) {
@@ -437,7 +588,8 @@ router.post('/process-text', isAuthenticated, async (req, res) => {
       }
     }
 
-    await saveToHistory(userId, text.trim(), aiRaw);
+    // Save the user-facing text (without giant base64 image blobs) to history
+    await saveToHistory(userId, combinedText, aiRaw);
 
     res.json({
       response: spoken,
@@ -681,7 +833,7 @@ router.post('/interrupt', isAuthenticated, async (req, res) => {
  * Generate a voice tutor response using structured JSON output.
  * Returns { spoken, mathSteps, raw } — no dependency on LLM tags.
  */
-async function generateResponse(userId, userMessage, preloadedUser) {
+async function generateResponse(userId, userMessage, preloadedUser, opts = {}) {
   const user = preloadedUser || await User.findById(userId).lean();
   if (!user) throw new Error('User not found');
 
@@ -703,10 +855,16 @@ async function generateResponse(userId, userMessage, preloadedUser) {
 
   const systemPrompt = await generateSystemPrompt(user, tutorProfile);
 
+  // Build the user turn — multimodal if images were attached (vision API)
+  const imageContents = Array.isArray(opts.imageContents) ? opts.imageContents : [];
+  const userContent = imageContents.length > 0
+    ? [{ type: 'text', text: userMessage }, ...imageContents]
+    : userMessage;
+
   const messages = [
     { role: 'system', content: systemPrompt + VOICE_TUTOR_INSTRUCTIONS },
     ...history,
-    { role: 'user', content: userMessage }
+    { role: 'user', content: userContent }
   ];
 
   const completion = await callLLM(VOICE_MODEL, messages, {

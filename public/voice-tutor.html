@@ -13,7 +13,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="theme-color" content="#06070f" />
   <title>Mathmatix+ — Voice Tutor</title>
   <link rel="stylesheet" href="/css/base/variables.css?v=3" />
-  <link rel="stylesheet" href="/css/voice-tutor.css?v=5" />
+  <link rel="stylesheet" href="/css/voice-tutor.css?v=6" />
   <link rel="stylesheet" href="/css/dark-mode.css?v=3" />
   <link rel="stylesheet" href="/css/age-adaptive.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
@@ -140,7 +140,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="vt-chat-messages" id="vt-chat-messages" role="log" aria-live="polite">
         <!-- Messages will be appended here -->
       </div>
+      <div class="vt-attachments" id="vt-attachments" hidden aria-label="Attached files"></div>
       <div class="vt-chat-input-bar">
+        <button id="vt-attach-btn" class="vt-attach-btn" title="Attach image or PDF" aria-label="Attach image or PDF">
+          <i class="fas fa-paperclip"></i>
+        </button>
+        <input type="file" id="vt-file-input" class="vt-hidden-file-input" accept="image/png,image/jpeg,image/jpg,image/webp,application/pdf" multiple aria-hidden="true" tabindex="-1" />
         <input type="text" id="vt-text-input" placeholder="Type if you prefer…" class="vt-text-input" aria-label="Type a message" />
         <button id="vt-send-text" class="vt-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-arrow-up"></i>
@@ -148,6 +153,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </aside>
   </main>
+
+  <!-- Drag-drop overlay for files -->
+  <div id="vt-drag-overlay" class="vt-drag-overlay" aria-hidden="true">
+    <div class="vt-drag-overlay-inner">
+      <i class="fas fa-cloud-arrow-up"></i>
+      <div class="vt-drag-overlay-title">Drop to attach</div>
+      <div class="vt-drag-overlay-hint">Images (PNG, JPG, WebP) or PDFs &middot; 10MB max</div>
+    </div>
+  </div>
 
   <!-- Bottom controls — single primary affordance + minimal secondaries -->
   <footer class="vt-controls" aria-label="Voice controls">
@@ -261,6 +275,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/age-tier-standalone.js"></script>
   <script src="/js/voice-stream-client.js?v=3"></script>
   <script src="/js/segmentPlayer.js?v=1"></script>
-  <script src="/js/voice-tutor-session.js?v=7"></script>
+  <script src="/js/voice-tutor-session.js?v=8"></script>
 </body>
 </html>

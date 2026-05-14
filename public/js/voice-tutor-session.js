@@ -9,6 +9,9 @@
 
   // --- State ---
   const MAX_RECORDING_DURATION = 60000; // 60s max recording to prevent runaway captures
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB — matches server-side multer limit
+  const MAX_FILES = 4;
+  const ALLOWED_FILE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'application/pdf'];
   const state = {
     mode: 'idle',          // idle | listening | thinking | speaking
     handsFree: true,
@@ -48,6 +51,9 @@
     useOrchestrator: false,
     orchestratorSessionId: null,
     segmentPlayer: null,
+    // File attachments queued for the next text message
+    attachedFiles: [],
+    dragDepth: 0,
   };
 
   // --- DOM refs ---
@@ -71,6 +77,10 @@
     dom.closeChat = $('#vt-close-chat');
     dom.textInput = $('#vt-text-input');
     dom.sendText = $('#vt-send-text');
+    dom.attachBtn = $('#vt-attach-btn');
+    dom.fileInput = $('#vt-file-input');
+    dom.attachments = $('#vt-attachments');
+    dom.dragOverlay = $('#vt-drag-overlay');
     dom.settingsBtn = $('#vt-settings-btn');
     dom.settingsDrawer = $('#vt-settings-drawer');
     dom.settingsClose = $('#vt-settings-close');
@@ -572,6 +582,18 @@
         sendTextMessage();
       }
     });
+
+    // File attachments — paperclip button + hidden file input + drag-drop
+    if (dom.attachBtn && dom.fileInput) {
+      dom.attachBtn.addEventListener('click', () => dom.fileInput.click());
+      dom.fileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length) handleSelectedFiles(files);
+        dom.fileInput.value = '';
+      });
+    }
+    setupFileDragDrop();
+    setupClipboardPaste();
 
     // Settings
     function openSettings() {
@@ -1117,10 +1139,223 @@
     }
   }
 
+  // ═══════════════════════════════════════
+  // FILE ATTACHMENTS — paperclip / drag-drop / paste
+  // Files are queued client-side and sent with the next text message
+  // via multipart/form-data to /api/voice-tutor/process-text.
+  // ═══════════════════════════════════════
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+  }
+
+  function handleSelectedFiles(files) {
+    for (const file of files) {
+      if (state.attachedFiles.length >= MAX_FILES) {
+        showToast(`Up to ${MAX_FILES} files at a time.`, 3500, { force: true });
+        break;
+      }
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        showToast(`${file.name}: unsupported type. Use PNG, JPG, WebP, or PDF.`, 4000, { force: true });
+        continue;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        showToast(`${file.name}: over 10MB.`, 4000, { force: true });
+        continue;
+      }
+      if (state.attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
+        continue; // skip exact duplicates
+      }
+      const id = `att-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      state.attachedFiles.push({ id, file, name: file.name, size: file.size, type: file.type });
+    }
+    renderAttachments();
+  }
+
+  function removeAttachment(id) {
+    state.attachedFiles = state.attachedFiles.filter(f => f.id !== id);
+    renderAttachments();
+  }
+
+  function clearAttachments() {
+    state.attachedFiles = [];
+    renderAttachments();
+  }
+
+  function renderAttachments() {
+    if (!dom.attachments) return;
+    if (state.attachedFiles.length === 0) {
+      dom.attachments.innerHTML = '';
+      dom.attachments.hidden = true;
+      return;
+    }
+    dom.attachments.hidden = false;
+    dom.attachments.innerHTML = '';
+    state.attachedFiles.forEach(entry => {
+      const card = document.createElement('div');
+      card.className = 'vt-file-card';
+      card.dataset.id = entry.id;
+
+      const thumb = document.createElement('div');
+      thumb.className = 'vt-file-card-thumb';
+
+      if (entry.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        const reader = new FileReader();
+        reader.onload = e => { img.src = e.target.result; };
+        reader.readAsDataURL(entry.file);
+        img.alt = '';
+        thumb.appendChild(img);
+      } else {
+        thumb.innerHTML = '<i class="fas fa-file-pdf"></i>';
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'vt-file-card-meta';
+      const name = document.createElement('span');
+      name.className = 'vt-file-card-name';
+      name.title = entry.name;
+      name.textContent = entry.name;
+      const size = document.createElement('span');
+      size.className = 'vt-file-card-size';
+      size.textContent = formatFileSize(entry.size);
+      meta.appendChild(name);
+      meta.appendChild(size);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'vt-file-card-remove';
+      removeBtn.type = 'button';
+      removeBtn.setAttribute('aria-label', `Remove ${entry.name}`);
+      removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+      removeBtn.addEventListener('click', () => removeAttachment(entry.id));
+
+      card.appendChild(thumb);
+      card.appendChild(meta);
+      card.appendChild(removeBtn);
+      dom.attachments.appendChild(card);
+    });
+  }
+
+  function setupFileDragDrop() {
+    if (!dom.dragOverlay) return;
+    const prevent = (e) => { e.preventDefault(); e.stopPropagation(); };
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev => {
+      window.addEventListener(ev, prevent, false);
+    });
+
+    window.addEventListener('dragenter', (e) => {
+      if (!e.dataTransfer || !e.dataTransfer.types) return;
+      if (!Array.from(e.dataTransfer.types).includes('Files')) return;
+      state.dragDepth++;
+      dom.dragOverlay.classList.add('visible');
+      dom.dragOverlay.setAttribute('aria-hidden', 'false');
+    });
+
+    window.addEventListener('dragleave', () => {
+      state.dragDepth = Math.max(0, state.dragDepth - 1);
+      if (state.dragDepth === 0) {
+        dom.dragOverlay.classList.remove('visible');
+        dom.dragOverlay.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    window.addEventListener('drop', (e) => {
+      state.dragDepth = 0;
+      dom.dragOverlay.classList.remove('visible');
+      dom.dragOverlay.setAttribute('aria-hidden', 'true');
+      const files = Array.from((e.dataTransfer && e.dataTransfer.files) || []);
+      if (files.length) handleSelectedFiles(files);
+    });
+  }
+
+  function setupClipboardPaste() {
+    document.addEventListener('paste', (e) => {
+      if (!e.clipboardData || !e.clipboardData.items) return;
+      const files = [];
+      for (const item of e.clipboardData.items) {
+        if (item.kind === 'file') {
+          const f = item.getAsFile();
+          if (f) files.push(f);
+        }
+      }
+      if (files.length) handleSelectedFiles(files);
+    });
+  }
+
+  async function sendTextWithFiles(text) {
+    // Visual user message — mention attachments if any
+    const attachmentSummary = state.attachedFiles.length
+      ? `[${state.attachedFiles.length} file${state.attachedFiles.length === 1 ? '' : 's'} attached] `
+      : '';
+    addMessage(`${attachmentSummary}${text || '(uploaded files)'}`, 'user');
+    setMode('thinking');
+
+    const formData = new FormData();
+    formData.append('text', text);
+    state.attachedFiles.forEach(entry => {
+      formData.append('files', entry.file, entry.name);
+    });
+
+    const filesToClear = state.attachedFiles.slice();
+    clearAttachments();
+
+    try {
+      const fetchFn = window.csrfFetch || fetch;
+      const res = await fetchFn('/api/voice-tutor/process-text', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      });
+
+      if (!res.ok) {
+        let msg = 'Upload processing failed';
+        try { const err = await res.json(); if (err.message || err.error) msg = err.message || err.error; } catch (_) {}
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+
+      if (data.response) addMessage(data.response, 'ai');
+      if (state.showVisuals) {
+        if (data.mathSteps && data.mathSteps.length > 0) {
+          renderMathSteps(data.mathSteps);
+        } else {
+          const extracted = extractEquationsFromText(data.response || '');
+          if (extracted.length > 0) renderMathSteps(extracted);
+        }
+      }
+
+      if (data.audioUrl && !state.muted) {
+        await playResponse(data.audioUrl, data.response || '');
+      } else {
+        setMode('idle');
+      }
+    } catch (err) {
+      console.error('[VoiceTutor] File upload error:', err);
+      addSystemMessage(err.message || 'Could not process the uploaded files. Try again.');
+      // Restore attachments so the user can retry without re-picking them
+      state.attachedFiles = filesToClear;
+      renderAttachments();
+      setMode('idle');
+    }
+  }
+
   async function sendTextMessage() {
     const text = dom.textInput.value.trim();
-    if (!text) return;
+    const hasFiles = state.attachedFiles.length > 0;
+    if (!text && !hasFiles) return;
     dom.textInput.value = '';
+
+    // Files require multipart — bypass the streaming/orchestrator paths
+    // (those use JSON/WebSocket transports that don't carry binary).
+    if (hasFiles) {
+      const effectiveText = text || 'Can you help me with this?';
+      await sendTextWithFiles(effectiveText);
+      return;
+    }
 
     // ── Streaming pipeline: route text through the open WebSocket so
     //    response audio plays via the same chunk queue as voice turns ──

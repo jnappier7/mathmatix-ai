@@ -1052,6 +1052,147 @@ button { font-family: inherit; }
 .vt-send-btn:active { transform: scale(0.96); }
 .vt-send-btn:focus-visible { outline: 2px solid var(--vt-teal); outline-offset: 2px; }
 
+/* ─── Attachments: paperclip button, hidden file input, file cards ─── */
+.vt-attach-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--vt-glass-border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--vt-ink-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s, transform 0.15s, border-color 0.2s;
+}
+.vt-attach-btn:hover { background: rgba(18, 179, 179, 0.12); color: var(--vt-teal); border-color: rgba(18, 179, 179, 0.5); }
+.vt-attach-btn:active { transform: scale(0.94); }
+.vt-attach-btn:focus-visible { outline: 2px solid var(--vt-teal); outline-offset: 2px; }
+.vt-attach-btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+.vt-hidden-file-input {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.vt-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px 0;
+  max-height: 120px;
+  overflow-y: auto;
+}
+.vt-attachments[hidden] { display: none; }
+
+.vt-file-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--vt-glass-border);
+  border-radius: 10px;
+  padding: 6px 10px 6px 6px;
+  max-width: 220px;
+  position: relative;
+}
+.vt-file-card-thumb {
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  background: rgba(18, 179, 179, 0.18);
+  color: var(--vt-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.vt-file-card-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vt-file-card-meta {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.vt-file-card-name {
+  font-size: 12px;
+  color: var(--vt-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vt-file-card-size {
+  font-size: 10px;
+  color: var(--vt-ink-4);
+}
+.vt-file-card-remove {
+  width: 20px; height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--vt-ink-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+.vt-file-card-remove:hover { background: rgba(255, 80, 80, 0.2); color: #ff8080; }
+.vt-file-card-remove:focus-visible { outline: 2px solid var(--vt-teal); outline-offset: 2px; }
+
+/* ─── Drag-drop overlay ─── */
+.vt-drag-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(8, 10, 22, 0.75);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.vt-drag-overlay.visible { display: flex; pointer-events: auto; }
+.vt-drag-overlay-inner {
+  border: 2px dashed rgba(18, 179, 179, 0.6);
+  border-radius: 24px;
+  padding: 48px 64px;
+  text-align: center;
+  background: rgba(18, 179, 179, 0.08);
+}
+.vt-drag-overlay-inner i {
+  font-size: 56px;
+  color: var(--vt-teal);
+  display: block;
+  margin-bottom: 12px;
+}
+.vt-drag-overlay-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--vt-ink);
+  margin-bottom: 4px;
+}
+.vt-drag-overlay-hint {
+  font-size: 13px;
+  color: var(--vt-ink-3);
+}
+
 /* ═══════════════════════════════════════════════════════════
    FOOTER CONTROLS — single primary, restrained secondaries
    ═══════════════════════════════════════════════════════════ */
@@ -1401,6 +1542,9 @@ button { font-family: inherit; }
   .vt-controls { padding-bottom: max(22px, env(safe-area-inset-bottom)); gap: 24px; }
   .vt-text-input { font-size: 16px; padding: 12px 16px; }
   .vt-send-btn { width: 42px; height: 42px; }
+  .vt-attach-btn { width: 42px; height: 42px; }
+  .vt-drag-overlay-inner { padding: 32px 28px; }
+  .vt-drag-overlay-inner i { font-size: 44px; }
 
   .vt-settings-drawer { width: 100%; max-width: 380px; right: -100%; padding: 22px 20px 28px; }
   .vt-live-transcript { max-width: 92vw; word-wrap: break-word; }
