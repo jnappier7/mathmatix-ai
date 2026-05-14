@@ -128,8 +128,75 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   .cr-hint-card { display: none; }
 }
 @media (max-width: 900px) {
-  .cr-stage { grid-template-columns: 1fr; padding: 8px 8px 0; }
-  .cr-tutor-hero { display: none; }
+  /* Stack to a single column; collapse the hero into a compact top banner
+     so the tutor character + Live badge still anchor the experience. */
+  .cr-stage {
+    grid-template-columns: 1fr;
+    padding: 8px 8px 0;
+    gap: 10px;
+  }
+  .cr-tutor-hero {
+    min-height: 0;
+    height: 96px;
+    border-radius: 14px;
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    align-items: stretch;
+  }
+  .cr-tutor-portrait {
+    position: relative;
+    left: auto; bottom: auto; transform: none;
+    width: 96px; height: 96px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 14px 0 0 14px;
+  }
+  .cr-tutor-backdrop {
+    /* let the backdrop fill the right column behind the badge/card */
+    inset: 0 0 0 96px;
+  }
+  .cr-tutor-backdrop::after {
+    background: linear-gradient(90deg, rgba(11,15,26,0.85) 0%, rgba(11,15,26,0.45) 100%);
+  }
+  .cr-live-badge {
+    position: absolute; top: 10px; left: 108px;
+    font-size: 11px; padding: 4px 10px;
+  }
+  .cr-encourage-card {
+    position: absolute;
+    inset: auto 10px 8px 108px;
+    margin: 0;
+    padding: 8px 10px;
+  }
+  .cr-encourage-title { font-size: 12px; margin-bottom: 2px; }
+  .cr-encourage-body { font-size: 11px; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+@media (max-width: 600px) {
+  /* Phone: shrink header pills and let quick actions scroll horizontally. */
+  body.cr-mode .landing-header { padding: 8px 12px; height: 54px; }
+  .cr-header-extras { gap: 6px; }
+  .cr-streak-pill { padding: 5px 9px; font-size: 12px; }
+  .cr-progress-btn { padding: 5px 10px; font-size: 12px; }
+  .cr-progress-btn span { display: none; } /* icon-only on phone */
+  .cr-user-avatar { width: 32px; height: 32px; }
+
+  body.cr-mode #chat-messages-container { padding: 12px 14px !important; }
+  body.cr-mode .message { max-width: 86%; font-size: 14px; padding: 10px 13px; }
+
+  .cr-quick-actions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 8px 12px 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cr-quick-actions::-webkit-scrollbar { display: none; }
+  .cr-qa-btn {
+    flex-shrink: 0;
+    padding: 9px 14px;
+    font-size: 12px;
+  }
 }
 
 /* ----- Tutor hero panel ----- */
