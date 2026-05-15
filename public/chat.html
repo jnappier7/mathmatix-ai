@@ -44,6 +44,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
   <link rel="stylesheet" href="/css/mobile-redesign.css" />
   <link rel="stylesheet" href="/css/mathmatix-keyboard.css" />
+  <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
+  <link rel="stylesheet" href="/css/chat-redesign.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -104,7 +106,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script defer src="/js/i18n-translations.js"></script>
   <script defer src="/js/i18n.js"></script>
 </head>
-<body class="landing-page-body">
+<body class="landing-page-body cr-mode">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -122,6 +124,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
     </a>
     <nav class="landing-nav" aria-label="Chat controls">
+      <!-- Redesigned header extras (streak / progress / avatar) -->
+      <div class="cr-header-extras">
+        <span class="cr-streak-pill" title="Daily streak">
+          <span class="cr-flame" aria-hidden="true">🔥</span>
+          <span id="cr-streak-value">0 day streak</span>
+        </span>
+        <button id="cr-progress-btn" class="cr-progress-btn" type="button" aria-label="Open progress panel">
+          <i class="fas fa-chart-bar"></i>
+          <span>Progress</span>
+        </button>
+        <button id="cr-user-avatar" class="cr-user-avatar" type="button" aria-label="Profile">
+          <span>A</span>
+        </button>
+      </div>
       <!-- TTS Playback Controls (only visible during audio playback) -->
       <button id="restart-audio-btn" class="btn btn-tertiary icon-only" title="Restart Audio" aria-label="Restart audio" style="display: none;">
         <i class="fas fa-redo"></i>
@@ -378,6 +394,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- Main Content Area (Full Width) -->
   <main id="app-layout-wrapper" class="sidebar-layout">
+    <div class="cr-stage">
+      <!-- Tutor hero panel (left) — portrait + backdrop swap per tutor -->
+      <aside class="cr-tutor-hero" aria-hidden="true">
+        <div class="cr-tutor-backdrop"></div>
+        <img id="cr-tutor-portrait" class="cr-tutor-portrait" src="/images/tutor_avatars/maya-new2.png" alt="" />
+        <div class="cr-live-badge">
+          <span class="cr-live-dot"></span>
+          <span>Live with <span id="cr-tutor-name">Maya</span></span>
+          <span class="cr-waveform" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </span>
+        </div>
+        <div class="cr-encourage-card">
+          <div class="cr-encourage-title"><span aria-hidden="true">⭐</span> Keep it up!</div>
+          <div class="cr-encourage-body">
+            You're making great progress and asking great questions <span class="cr-heart" aria-hidden="true">💜</span>
+          </div>
+        </div>
+      </aside>
+
     <div id="chat-container" class="dashboard-panel full-width">
       <!-- Course Progress Bar (shown when course session is active) -->
       <div id="course-progress-wrapper" style="position: relative; display: none;">
@@ -1002,6 +1038,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span id="session-problems" class="stat-value">0/0</span>
         </div>
       </div>
+    </div>
+      <!-- Hint card (right) -->
+      <aside class="cr-hint-card" aria-label="Tutor hint">
+        <img id="cr-hint-avatar" class="cr-hint-avatar" src="/images/tutor_avatars/maya.png" alt="" />
+        <div class="cr-hint-text">
+          <p>Stuck? I can show you an example or give you a hint.</p>
+          <p>Just ask!</p>
+        </div>
+      </aside>
+    </div><!-- /.cr-stage -->
+
+    <!-- Quick action chips -->
+    <div class="cr-quick-actions" role="toolbar" aria-label="Quick actions">
+      <button class="cr-qa-btn" type="button" data-action="upload">
+        <i class="fas fa-upload"></i> Upload Homework
+      </button>
+      <button class="cr-qa-btn" type="button" data-action="practice">
+        <i class="fas fa-bullseye"></i> Practice a Skill
+      </button>
+      <button class="cr-qa-btn" type="button" data-action="test">
+        <i class="fas fa-book"></i> Prep for a Test
+      </button>
+      <button class="cr-qa-btn" type="button" data-action="more">
+        <i class="fas fa-ellipsis-h"></i> More
+      </button>
     </div>
   </main>
   
@@ -2157,6 +2218,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
+  <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
+  <script defer src="/js/chat-redesign.js"></script>
   <script src="/js/voice-stream-client.js?v=3"></script>
   <script src="/js/voice-controller.js"></script>
   <!-- Intelligent Whiteboard stack (Phase 0 wire-up — order matters: core → enhancements → integration) -->
