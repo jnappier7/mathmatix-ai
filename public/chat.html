@@ -46,6 +46,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/mathmatix-keyboard.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
   <link rel="stylesheet" href="/css/chat-redesign.css" />
+  <!-- Session atmosphere overlay (loaded LAST so it can override prior session styling) -->
+  <link rel="stylesheet" href="/css/session-atmosphere.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -2287,6 +2289,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/resume-card.js"></script>
   <script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
+  <!-- Session atmosphere: tutor presence rail, lightweight context, session opener -->
+  <script defer src="/js/session-presence.js"></script>
 <script src="/js/sessionManager.js"></script>
 <script src="/js/feedback.js"></script>
 <script src="/js/tour.js"></script>

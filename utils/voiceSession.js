@@ -617,10 +617,11 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         }
 
         const spoken = (parsed.spoken || parsed.text || parsed.response || '').trim();
+        const isUsableStep = (s) => s && (s.latex || s.visual || s.text);
         const mathSteps = Array.isArray(parsed.mathSteps)
-            ? parsed.mathSteps.filter(s => s && s.latex)
+            ? parsed.mathSteps.filter(isUsableStep)
             : Array.isArray(parsed.math_steps)
-              ? parsed.math_steps.filter(s => s && s.latex)
+              ? parsed.math_steps.filter(isUsableStep)
               : [];
 
         // ── 2. Pipeline verify (defense in depth) ──
@@ -925,6 +926,14 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
 
     _forwardSpoken(turn, text) {
         if (!text) return;
+        // Strip any [UPPERCASE_TAG:...] directives that leaked from the
+        // model into the spoken stream. Voice mode uses `mathSteps` for
+        // visuals — these tags belong on the board, not in speech or the
+        // transcript bubble. Best-effort per-chunk; the client also
+        // re-scrubs the accumulated text, so tags split across deltas
+        // are caught when the closing ']' arrives.
+        text = this._stripVisualDirectives(text);
+        if (!text) return;
         turn.spokenAcc += text;
         // Emit a streamed-text event so client transcript renders incrementally
         this._send({
@@ -936,21 +945,43 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         if (turn.tts) turn.tts.appendText(text);
     }
 
+    _stripVisualDirectives(text) {
+        if (!text) return '';
+        let out = '';
+        let i = 0;
+        while (i < text.length) {
+            if (text[i] === '[' && i + 1 < text.length && /[A-Z]/.test(text[i + 1])) {
+                let depth = 1;
+                let j = i + 1;
+                while (j < text.length && depth > 0) {
+                    if (text[j] === '[') depth++;
+                    else if (text[j] === ']') depth--;
+                    j++;
+                }
+                if (depth === 0) { i = j; continue; }
+            }
+            out += text[i];
+            i++;
+        }
+        return out;
+    }
+
     _parseMathBuffer(buf) {
         if (!buf) return this.lastBoardSteps;
         const trimmed = buf.trim();
         if (!trimmed) return this.lastBoardSteps;
+        const isUsableStep = (s) => s && (s.latex || s.visual || s.text);
         try {
             const parsed = JSON.parse(trimmed);
             if (Array.isArray(parsed)) {
-                return parsed.filter(s => s && s.latex);
+                return parsed.filter(isUsableStep);
             }
         } catch (_) {
             // Try common LLM JSON quirks
             try {
                 const fixed = trimmed.replace(/,\s*([}\]])/g, '$1').replace(/'/g, '"');
                 const parsed = JSON.parse(fixed);
-                if (Array.isArray(parsed)) return parsed.filter(s => s && s.latex);
+                if (Array.isArray(parsed)) return parsed.filter(isUsableStep);
             } catch (_) {
                 logger.warn('math buffer parse failed', { snippet: trimmed.slice(0, 80) });
             }

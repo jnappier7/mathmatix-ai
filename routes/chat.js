@@ -43,7 +43,7 @@ const { initializeLessonPhase, transitionPhase, PHASES } = require('../utils/les
 const { evaluatePhaseAdvancement, updatePhaseTracker } = require('../utils/phaseEvidenceEvaluator');
 const { selectWarmupSkill } = require('../utils/prerequisiteMapper');
 const TutorPlan = require('../models/tutorPlan');
-const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic } = require('../utils/sessionOpener');
+const { generateSessionOpener, generateReentryPrompt, shouldOverrideTopic, getRecentGreetings } = require('../utils/sessionOpener');
 
 // File upload support (consolidated from chatWithFile.js)
 const multer = require('multer');
@@ -2264,31 +2264,53 @@ async function handleGreetingRequest(req, res, userId) {
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
 
-            // Build grade-appropriate warm-up examples. These are inspiration
-            // for the LLM, not a fixed list — it should vary each session and
-            // feel free to invent its own at the right level.
+            // ── Build the warm-up instruction ──
+            // Grounded in what the student was just working on (via the session
+            // opener's suggestedTopic), with an explicit anti-repeat list pulled
+            // from the student's most recent prior greetings.
+            let recentGreetings = [];
+            try {
+                recentGreetings = await getRecentGreetings({
+                    userId: user._id,
+                    excludeConversationId: activeConversation?._id,
+                    limit: 5,
+                });
+            } catch (greetErr) {
+                logger.warn('Could not load recent greetings for warm-up anti-repeat', { error: greetErr.message });
+            }
+
             const gradeStr = user.gradeLevel ? String(user.gradeLevel).toLowerCase().replace(/[^0-9k]/g, '') : '';
             const gradeNum = gradeStr === 'k' ? 0 : parseInt(gradeStr) || 6;
-            let warmUpExamples;
-            if (gradeNum <= 3) {
-                warmUpExamples = '"Quick warm-up: what\'s 3 × 7?", "What\'s 15 + 28?", "Share 12 cookies with 3 friends — how many each?", "What comes next: 5, 10, 15, __?", or "What\'s half of 20?"';
-            } else if (gradeNum <= 5) {
-                warmUpExamples = '"Quick warm-up: what\'s 3/4 + 1/4?", "What\'s 12 × 15?", "Round 4,782 to the nearest hundred.", "Write 0.6 as a fraction.", or "Perimeter of a 5-by-3 rectangle?"';
-            } else if (gradeNum <= 7) {
-                warmUpExamples = '"Quick warm-up: what\'s 20% of 80?", "Simplify: 3x + 5x.", "What\'s -8 + 3?", "Ratio of 2 cups sugar to 3 cups flour in simplest form?", or "Solve: x/4 = 7."';
-            } else if (gradeNum <= 9) {
-                warmUpExamples = '"Quick warm-up: solve 2x + 3 = 11.", "What\'s the slope of y = 3x - 5?", "Hypotenuse of a 3-4-? right triangle?", "Solve the system: y = x + 1, y = 2x.", or "Factor: x² + 5x + 6."';
-            } else {
-                warmUpExamples = '"Quick warm-up: what\'s the derivative of x²?", "Factor: x² - 9.", "Evaluate log₂(8).", "What\'s sin(π/2)?", or "Limit of (x² - 1)/(x - 1) as x → 1?"';
-            }
-            const courseHint = user.mathCourse ? ` The student is taking ${user.mathCourse} — make sure the warm-up is relevant to that level, not below it.` : '';
+            const gradeBand =
+                gradeNum <= 3 ? 'early elementary: single-digit operations, simple word problems, basic shapes' :
+                gradeNum <= 5 ? 'upper elementary: fractions, decimals, multi-digit ops, area/perimeter' :
+                gradeNum <= 7 ? 'middle school: percentages, ratios, integers, one-step equations, simplifying' :
+                gradeNum <= 9 ? 'pre-algebra / algebra 1: linear equations, slope, factoring, systems, exponents' :
+                'algebra 2 and beyond: quadratics, logs, trig, functions, limits if applicable';
+            const levelHint = user.mathCourse
+                ? `The student is taking ${user.mathCourse} — pick something at THAT level, not below it.`
+                : `Aim at the right level: ${gradeBand}.`;
+
+            // Pick the most specific topic anchor available. suggestedTopic is
+            // set by every strategy except FRESH_START and MILESTONE.
+            const topicAnchor = openerResult?.suggestedTopic || null;
+
+            const anchorLine = topicAnchor
+                ? `If you include a warm-up, ground it in what they were just working on (${topicAnchor}) — a 30-second check that tells you where they are with that specific topic. Not a canonical textbook example.`
+                : `If you include a warm-up, invent one fresh at the right level. Don't reach for tired canonical examples (e.g., "limit of (x²-1)/(x-1)", "derivative of x²", "factor x²-9") — make up something new.`;
+
+            const recentGreetingsBlock = recentGreetings.length
+                ? `\n\nFor reference, here are your most recent greetings to this student. DO NOT repeat any warm-up question that appears in them — pick something different:\n${recentGreetings.map((g, i) => `[${i + 1}] ${g.slice(0, 400)}`).join('\n')}`
+                : '';
+
+            const warmUpInstruction =
+                `You MAY include a quick warm-up question — optional, not required. ${anchorLine} ${levelHint} NEVER give a warm-up below the student's level.${recentGreetingsBlock}`;
 
             if (openerResult && openerResult.directives?.length > 0) {
                 // Use intelligent session opener directives from TutorPlan
                 greetingInstruction = openerResult.directives.join('\n') +
                     `\n\nKeep it to 1-3 sentences. Talk like a real person — the way you'd greet a student who just walked into your room. Don't repeat back their info.` +
-                    `\nYou MAY optionally include a quick warm-up question. Vary it every session — invent your own or riff on ideas like: ${warmUpExamples}. Don't reach for the same warm-up twice in a row.${courseHint}` +
-                    `\nNEVER give a warm-up below the student's level.`;
+                    `\n${warmUpInstruction}`;
             } else {
                 // Fallback: default greeting instruction (no TutorPlan yet)
                 greetingInstruction = `The student just opened the chat. They haven't typed anything yet — YOU are starting the conversation, like a tutor greeting a student who just sat down.
@@ -2299,7 +2321,7 @@ Keep it to 1-3 sentences. Sound like a real person, not a welcome screen. Match 
 
 If they're new, introduce yourself IN CHARACTER — just be yourself, not formal. If they're returning, welcome them back like you remember them. If they were struggling with something, mention it like you've been thinking about it.
 
-End with something they can respond to. You MAY include a quick warm-up question to build momentum. Vary it every session — invent your own or riff on ideas like: ${warmUpExamples}. Don't reach for the same warm-up twice in a row.${courseHint} NEVER give a warm-up below their level.`;
+End with something they can respond to. ${warmUpInstruction}`;
             }
 
             // Add Starting Point offer (only on first session, never again)

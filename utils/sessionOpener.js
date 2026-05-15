@@ -444,9 +444,42 @@ function findReviewDueSkills(tutorPlan) {
     .map(sf => ({ skillId: sf.skillId, displayName: sf.displayName }));
 }
 
+/**
+ * Pull the first assistant message from each of the student's most recent
+ * prior conversations. Used to anti-repeat warm-up questions across sessions.
+ *
+ * @param {Object} opts
+ * @param {ObjectId|string} opts.userId
+ * @param {ObjectId|string} [opts.excludeConversationId] - Skip this conversation (usually the active one)
+ * @param {number} [opts.limit=5]
+ * @returns {Promise<string[]>}
+ */
+async function getRecentGreetings({ userId, excludeConversationId = null, limit = 5 }) {
+  const Conversation = require('../models/conversation');
+  const query = { userId };
+  if (excludeConversationId) {
+    query._id = { $ne: excludeConversationId };
+  }
+  const convos = await Conversation.find(query)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .select('messages')
+    .lean();
+
+  const greetings = [];
+  for (const convo of convos) {
+    const firstAssistant = (convo.messages || []).find(m => m.role === 'assistant');
+    if (firstAssistant?.content) {
+      greetings.push(firstAssistant.content);
+    }
+  }
+  return greetings;
+}
+
 module.exports = {
   generateSessionOpener,
   generateReentryPrompt,
   shouldOverrideTopic,
+  getRecentGreetings,
   STRATEGIES,
 };

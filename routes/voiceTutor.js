@@ -121,11 +121,25 @@ CRITICAL RULES FOR THE "spoken" FIELD:
    - "x squared" — NOT "x^2"
    - Always insert a space between a number and a variable ("3 y", not "3y")
    - Use "equals", "plus", "minus", "times", "over", "squared", "cubed" instead of symbols
+7. NEVER emit bracketed directives like [DIAGRAM:...], [ALGEBRA_TILES:...], [FUNCTION_GRAPH:...], [WHITEBOARD_WRITE:...], [STEPS], etc. in "spoken". Those are chat-mode tags and DO NOT WORK in voice mode. Visuals go through "mathSteps" only. If a visual is needed, add a visual step to "mathSteps" (schema below) — do NOT mention or reference the tag form in speech.
 
 CRITICAL RULES FOR THE "mathSteps" FIELD:
 The student's math board ONLY updates from this field. If you omit it or leave it empty when math has been discussed, the board goes blank and the student loses all visual context.
 
-Always include "mathSteps" as an array. Each element: { "label": "string", "latex": "LaTeX string", "explanation": "string (optional)" }
+Always include "mathSteps" as an array. Each element is ONE of these shapes:
+- LaTeX step:    { "label": "string", "latex": "LaTeX string", "explanation": "string (optional)" }
+- Visual step:   { "label": "string", "visual": { "kind": "<visual_kind>", ...params } }
+- Text step:     { "label": "string", "text": "plain text" }
+
+SUPPORTED visual.kind values (use these EXACTLY — anything else won't render):
+- "algebra_tiles"  — params: { "expression": "x^2-10x+25" }
+- "function_graph" — params: { "function": "x^2", "xMin": -5, "xMax": 5 }
+- "number_line"    — params: { "min": -5, "max": 5, "point": 2 }
+- "fraction"       — params: { "numerator": 1, "denominator": 2 }
+- "unit_circle"    — params: { "angle": 60 }
+- "points_plot"    — params: { "points": [[1,3],[4,9]] }
+
+When to use a visual step: when a manipulative or graph would help the student see the structure (factoring with tiles, slope on a coordinate plane, fractions, etc.). Add it as ONE element in mathSteps alongside the LaTeX steps — do NOT replace the LaTeX steps with it.
 
 WHEN TO INCLUDE STEPS (non-empty array):
 - ANY time math has been discussed (even if this reply is just encouragement)
@@ -169,7 +183,10 @@ Student says: "now what about the slope between (1,3) and (4,9)"
 Student says: "Great job!" (no math in this turn, but math was discussed earlier)
 {"spoken": "Thanks! Want to try another problem?", "mathSteps": [{"label": "Given", "latex": "2x - 4 = 0"}, {"label": "Add 4", "latex": "2x = 4"}, {"label": "Divide by 2", "latex": "x = 2"}]}
 
-REMEMBER: Always respond with valid JSON. The "mathSteps" array must be present in every response.
+Student says: "Can you show me x squared minus 10 x plus 25 with algebra tiles?"
+{"spoken": "Sure — here's that perfect square laid out with tiles. What do you notice about the shape?", "mathSteps": [{"label": "Given", "latex": "x^2 - 10x + 25"}, {"label": "Algebra Tiles", "visual": {"kind": "algebra_tiles", "expression": "x^2-10x+25"}}]}
+
+REMEMBER: Always respond with valid JSON. The "mathSteps" array must be present in every response. Bracketed directives in "spoken" are forbidden — use visual steps in "mathSteps" instead.
 `;
 
 /**
@@ -878,15 +895,19 @@ async function generateResponse(userId, userMessage, preloadedUser, opts = {}) {
   let mathSteps = [];
 
   // ── Primary path: parse structured JSON ──
+  // A step is kept if it has latex content, a structured visual, or
+  // standalone text. (Visual steps mount an interactive widget on the
+  // board — see voice-tutor-session.js renderMathSteps.)
+  const isUsableStep = (s) => s && (s.latex || s.visual || s.text);
   try {
     const parsed = JSON.parse(rawContent);
     spoken = (parsed.spoken || parsed.text || parsed.response || '').trim();
     if (Array.isArray(parsed.mathSteps)) {
-      mathSteps = parsed.mathSteps.filter(s => s && s.latex);
+      mathSteps = parsed.mathSteps.filter(isUsableStep);
     } else if (Array.isArray(parsed.math_steps)) {
-      mathSteps = parsed.math_steps.filter(s => s && s.latex);
+      mathSteps = parsed.math_steps.filter(isUsableStep);
     } else if (Array.isArray(parsed.steps)) {
-      mathSteps = parsed.steps.filter(s => s && s.latex);
+      mathSteps = parsed.steps.filter(isUsableStep);
     }
   } catch (e) {
     logger.warn('JSON parse failed, falling back to tag extraction', { error: e.message });
@@ -1099,7 +1120,7 @@ async function getLastMathSteps(userId) {
         const parsed = JSON.parse(msg.content);
         const steps = parsed.mathSteps || parsed.math_steps || parsed.steps;
         if (Array.isArray(steps) && steps.length > 0) {
-          const valid = steps.filter(s => s && s.latex);
+          const valid = steps.filter(s => s && (s.latex || s.visual || s.text));
           if (valid.length > 0) return valid;
         }
       } catch (_) {
@@ -1156,12 +1177,20 @@ router.post('/end-session', isAuthenticated, async (req, res) => {
     // De-dupe and sanitize the board steps the client sent.
     const cleanSteps = Array.isArray(boardSteps)
       ? boardSteps
-          .filter(s => s && (s.latex || s.text))
-          .map(s => ({
-            label: typeof s.label === 'string' ? s.label.slice(0, 60) : '',
-            latex: typeof s.latex === 'string' ? s.latex.slice(0, 400) : '',
-            text: typeof s.text === 'string' ? s.text.slice(0, 400) : '',
-          }))
+          .filter(s => s && (s.latex || s.text || s.visual))
+          .map(s => {
+            const out = {
+              label: typeof s.label === 'string' ? s.label.slice(0, 60) : '',
+              latex: typeof s.latex === 'string' ? s.latex.slice(0, 400) : '',
+              text: typeof s.text === 'string' ? s.text.slice(0, 400) : '',
+            };
+            // Preserve interactive visuals (algebra tiles, etc.) — pass through
+            // the structured spec rather than flattening to a string.
+            if (s.visual && typeof s.visual === 'object' && typeof s.visual.kind === 'string') {
+              out.visual = s.visual;
+            }
+            return out;
+          })
           .slice(0, 40)
       : [];
 

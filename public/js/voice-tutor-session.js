@@ -351,7 +351,7 @@
       case 'transcript_partial':
         // Show interim transcript in live transcript bubble (optional)
         if (dom.transcriptText && ev.text) {
-          dom.transcriptText.textContent = ev.text;
+          setTranscriptBubble(ev.text);
           if (dom.liveTranscript) dom.liveTranscript.classList.add('vt-active');
         }
         break;
@@ -370,7 +370,7 @@
         state.pendingResponseText += ev.text || '';
         // Live-update the transcript bubble while AI speaks
         if (dom.transcriptText) {
-          dom.transcriptText.textContent = state.pendingResponseText;
+          setTranscriptBubble(state.pendingResponseText);
           if (dom.liveTranscript) dom.liveTranscript.classList.add('vt-active');
         }
         break;
@@ -1600,11 +1600,19 @@
     if (!incomingSteps || incomingSteps.length === 0) return state.boardSteps;
 
     const normalize = (latex) => (latex || '').replace(/\s+/g, '').trim();
+    // Stable dedup key — handles latex steps, visual steps, and text steps.
+    const stepKey = (s) => {
+      if (!s) return '';
+      if (s.latex) return normalize(s.latex);
+      if (s.visual) return 'visual:' + JSON.stringify(s.visual);
+      if (s.text) return 'text:' + normalize(s.text);
+      return '';
+    };
 
     // Get only the real (non-divider) steps on the board
     const realBoardSteps = state.boardSteps.filter(s => !s._divider);
-    const boardLatex = realBoardSteps.map(s => normalize(s.latex));
-    const incomingLatex = incomingSteps.map(s => normalize(s.latex));
+    const boardLatex = realBoardSteps.map(stepKey);
+    const incomingLatex = incomingSteps.map(stepKey);
 
     // Find how many incoming steps match the TAIL of our board (current problem overlap)
     // The LLM sends the full current problem each turn, so overlapping steps
@@ -1635,7 +1643,7 @@
       // The LLM resent existing steps plus potentially new ones.
       // Append only the genuinely new steps after the overlap.
       const newSteps = incomingSteps.slice(tailOverlap).filter(
-        s => !boardLatex.includes(normalize(s.latex))
+        s => !boardLatex.includes(stepKey(s))
       );
       if (newSteps.length > 0) {
         state.boardSteps = state.boardSteps.concat(newSteps);
@@ -1644,7 +1652,7 @@
       // No tail overlap — these steps don't continue the current board tail.
       // Filter out any steps already on the board (dedup).
       const genuinelyNew = incomingSteps.filter(
-        s => !boardLatex.includes(normalize(s.latex))
+        s => !boardLatex.includes(stepKey(s))
       );
 
       if (genuinelyNew.length > 0) {
@@ -1719,6 +1727,11 @@
         html += `<div class="vt-step-content">`;
         if (step.latex) {
           html += `<span class="vt-katex-render" data-latex="${escapeAttr(step.latex)}"></span>`;
+        } else if (step.visual) {
+          // Mount point for an interactive visual (algebra tiles, etc.)
+          // The actual HTML is injected after this element is in the DOM
+          // so inlineChatVisuals can attach behavior to it.
+          html += `<span class="vt-visual-mount" data-visual='${escapeAttr(JSON.stringify(step.visual))}'></span>`;
         } else if (step.text) {
           html += escapeHtml(step.text);
         } else if (step.label) {
@@ -1745,6 +1758,33 @@
           el.textContent = latex;
           el.style.fontFamily = 'monospace';
           el.style.color = '#4a5568';
+        }
+      });
+
+      // Render interactive visuals (algebra tiles, etc.)
+      dom.mathDisplay.querySelectorAll('.vt-visual-mount').forEach((el) => {
+        if (el._mounted) return;
+        el._mounted = true;
+        const raw = el.getAttribute('data-visual');
+        if (!raw || !window.inlineChatVisuals) return;
+        try {
+          const visual = JSON.parse(raw);
+          const toolName = visualKindToToolName(visual.kind);
+          if (!toolName) {
+            el.textContent = `[unknown visual: ${visual.kind}]`;
+            return;
+          }
+          const { kind, ...input } = visual;
+          const visualHtml = window.inlineChatVisuals.renderFromToolCall(toolName, input);
+          if (visualHtml) {
+            el.innerHTML = visualHtml;
+            if (typeof window.inlineChatVisuals.initializeVisuals === 'function') {
+              window.inlineChatVisuals.initializeVisuals(el);
+            }
+          }
+        } catch (err) {
+          console.error('[VoiceTutor] visual mount failed', err);
+          el.textContent = '[visual error]';
         }
       });
 
@@ -1786,6 +1826,54 @@
       setTimeout(showNextWord, avgWordDuration);
     }
     showNextWord();
+  }
+
+  // Map a mathSteps `visual.kind` to the inlineChatVisuals tool name.
+  // Add a row here when extending the schema with a new visual type.
+  function visualKindToToolName(kind) {
+    switch (kind) {
+      case 'algebra_tiles': return 'render_algebra_tiles';
+      case 'function_graph': return 'render_function_graph';
+      case 'number_line': return 'render_number_line';
+      case 'fraction': return 'render_fraction';
+      case 'fraction_bars': return 'render_fraction_bars';
+      case 'counters': return 'render_counters';
+      case 'unit_circle': return 'render_unit_circle';
+      case 'points_plot': return 'render_points_plot';
+      default: return null;
+    }
+  }
+
+  // Remove [UPPERCASE_TAG:...] visual directives (e.g. [DIAGRAM:...],
+  // [ALGEBRA_TILES:...]) that belong on the math board, not in the
+  // spoken bubble. Walks character-by-character so nested brackets like
+  // [DIAGRAM:tiles=[{...}]] are stripped as a single token.
+  function stripVisualDirectives(text) {
+    if (!text) return '';
+    let out = '';
+    let i = 0;
+    while (i < text.length) {
+      if (text[i] === '[' && i + 1 < text.length && /[A-Z]/.test(text[i + 1])) {
+        let depth = 1;
+        let j = i + 1;
+        while (j < text.length && depth > 0) {
+          if (text[j] === '[') depth++;
+          else if (text[j] === ']') depth--;
+          j++;
+        }
+        if (depth === 0) { i = j; continue; }
+      }
+      out += text[i];
+      i++;
+    }
+    return out;
+  }
+
+  function setTranscriptBubble(text) {
+    if (!dom.transcriptText) return;
+    const cleaned = stripVisualDirectives(text || '');
+    dom.transcriptText.innerHTML = escapeHtml(cleaned);
+    renderTranscriptMath();
   }
 
   /**
@@ -2244,7 +2332,9 @@
   }
 
   function renderMathInText(text) {
-    // Sanitize first
+    // Strip visual directives (board content, not speech) first
+    text = stripVisualDirectives(text || '');
+    // Sanitize
     let safe = escapeHtml(text);
 
     // Display math: \[ ... \] or $$ ... $$
