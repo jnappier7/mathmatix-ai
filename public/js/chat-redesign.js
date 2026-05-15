@@ -29,6 +29,18 @@
 
   function imgSrc(file) { return '/images/tutor_avatars/' + file; }
 
+  // Remembers the last resolved tutor so a returning user gets the correct
+  // hero on first paint instead of the hardcoded Maya placeholder.
+  const TUTOR_CACHE_KEY = 'mx_selected_tutor';
+  function cachedTutorId() {
+    try { return localStorage.getItem(TUTOR_CACHE_KEY) || null; }
+    catch (_) { return null; }
+  }
+  function cacheTutorId(id) {
+    try { if (id) localStorage.setItem(TUTOR_CACHE_KEY, id); }
+    catch (_) {}
+  }
+
   function getTutorConfig(tutorId) {
     const cfg = (window.TUTOR_CONFIG || {});
     return cfg[tutorId] || cfg['default'] || null;
@@ -66,6 +78,10 @@
       hintAvatar.src = imgSrc(tutor.image);
       hintAvatar.alt = tutor.name || '';
     }
+
+    // Reveal the hero now that the correct tutor is in place.
+    const hero = document.querySelector('.cr-tutor-hero');
+    if (hero) hero.classList.add('cr-ready');
   }
 
   // Wait for window.TUTOR_CONFIG AND user data (which lives in the
@@ -95,13 +111,27 @@
 
   async function init() {
     await waitForTutorConfig();
-    const tutorId = await loadCurrentTutorId();
-    applyTutor(tutorId || 'default');
+
     wireQuickActions();
     wireStreakPill();
     wireProgressButton();
     wireUserAvatar();
     wireMicButton();
+
+    // Apply the cached tutor immediately so returning users never see the
+    // hardcoded Maya placeholder while the /user request is in flight.
+    const cached = cachedTutorId();
+    if (cached) applyTutor(cached);
+
+    // Confirm against the server; correct the hero + refresh the cache if
+    // the stored choice is stale or missing.
+    const tutorId = await loadCurrentTutorId();
+    if (tutorId) {
+      if (tutorId !== cached) applyTutor(tutorId);
+      cacheTutorId(tutorId);
+    } else if (!cached) {
+      applyTutor('default');
+    }
   }
 
   // --- Quick action chips ------------------------------------------------

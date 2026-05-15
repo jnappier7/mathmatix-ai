@@ -27,7 +27,7 @@ body.cr-mode {
   --cr-accent-strong: #6C5CE7;
   --cr-border: rgba(255, 255, 255, 0.08);
   --cr-pill-bg: rgba(255, 255, 255, 0.06);
-  --cr-hero-w: 320px;
+  --cr-hero-w: clamp(340px, 28vw, 520px);
   --cr-hint-w: 260px;
 
   background: var(--cr-bg-0) !important;
@@ -117,17 +117,18 @@ body.cr-mode #app-layout-wrapper.sidebar-layout {
    in case the sidebar is ever re-enabled. */
 body.cr-mode .sidebar-ctx-general { display: none !important; }
 
-/* ----- Stage: 3 column grid hero | chat | hint ----- */
+/* ----- Stage: 2 column grid hero | chat (hint card floats over chat) ----- */
 body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
 
 .cr-stage {
   display: grid;
-  grid-template-columns: var(--cr-hero-w) minmax(0, 1fr) var(--cr-hint-w);
+  grid-template-columns: var(--cr-hero-w) minmax(0, 1fr);
   gap: 18px;
   align-items: stretch;
   padding: 16px 18px 0;
   min-height: calc(100vh - 60px);
   box-sizing: border-box;
+  position: relative;
 }
 
 @media (max-width: 1200px) {
@@ -224,7 +225,8 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.95;
+  opacity: 0;
+  transition: opacity 0.3s ease;
   z-index: 0;
 }
 .cr-tutor-backdrop::after {
@@ -317,17 +319,37 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
 }
 .cr-heart { color: #E879F9; }
 
-/* ----- Hint card (right side) ----- */
+/* Tutor-specific hero elements stay hidden until chat-redesign.js resolves
+   the real tutor, so the hardcoded Maya placeholder never flashes on load. */
+.cr-tutor-portrait,
+.cr-live-badge {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cr-tutor-hero.cr-ready .cr-tutor-portrait,
+.cr-tutor-hero.cr-ready .cr-live-badge {
+  opacity: 1;
+}
+.cr-tutor-hero.cr-ready .cr-tutor-backdrop {
+  opacity: 0.95;
+}
+
+/* ----- Hint card: floats over the bottom-right of the chat column ----- */
 .cr-hint-card {
+  position: absolute;
+  right: 18px;
+  bottom: 150px; /* clears the composer inside the chat panel */
+  width: var(--cr-hint-w);
+  box-sizing: border-box;
   border-radius: 18px;
   background: var(--cr-bg-panel);
   border: 1px solid var(--cr-border);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
   padding: 14px;
-  align-self: end;
-  margin-bottom: 110px; /* lifts above composer */
   display: flex;
   gap: 10px;
   align-items: flex-start;
+  z-index: 5;
 }
 .cr-hint-avatar {
   width: 40px; height: 40px;

@@ -21,7 +21,6 @@
   let observer = null;
   let idleTimer = null;
   let presenceEl = null;
-  let contextEl = null;
   let openerEl = null;
   let stateEl = null;
 
@@ -54,25 +53,6 @@
       </div>
       <div class="mx-presence-name">${tutor.name}</div>
       <div class="mx-presence-state">here with you</div>
-    `;
-    document.body.appendChild(el);
-    requestAnimationFrame(() => el.classList.add('is-ready'));
-    return el;
-  }
-
-  function buildContext() {
-    const el = document.createElement('aside');
-    el.id = 'session-context';
-    el.setAttribute('aria-label', 'Session context');
-    el.innerHTML = `
-      <div class="mx-context-card" id="mx-recent-card">
-        <div class="mx-context-title">Recent</div>
-        <div class="mx-context-empty">Your recent topics will appear here.</div>
-      </div>
-      <div class="mx-context-card" id="mx-summary-card">
-        <div class="mx-context-title">This session</div>
-        <p class="mx-context-summary">We just started — wherever you want to begin is fine.</p>
-      </div>
     `;
     document.body.appendChild(el);
     requestAnimationFrame(() => el.classList.add('is-ready'));
@@ -244,9 +224,10 @@
     const tutor = resolveTutor(user);
     applyTheme(tutor.id);
 
-    presenceEl = buildPresence(tutor);
-    stateEl = presenceEl.querySelector('.mx-presence-state');
-    contextEl = buildContext();
+    // The redesigned chat shell renders its own tutor hero (cr-tutor-hero)
+    // and lets the chat column run to the right edge, so neither the legacy
+    // framed presence card nor the right-hand context rail are built here.
+    // State tracking still flows through document.body.
 
     showOpenerIfEmpty(chatBox, user);
     watchChat(chatBox);
