@@ -72,13 +72,16 @@
     filter: none !important;
   }
 
-  /* the readability scrim — a fixed gradient over the poster.
-     Deepens once the conversation has messages (.mpc-has-messages). */
+  /* the readability scrim — a gradient over the poster.
+     Deepens once the conversation has messages (.mpc-has-messages).
+     It is a child of .cr-tutor-hero (see mobile-poster-chat.js), so it is
+     absolutely positioned within the fixed, full-bleed poster and stacks
+     above the portrait but always BELOW the chat. */
   body.cr-mode .mpc-scrim {
     display: block;
-    position: fixed;
+    position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 2;
     pointer-events: none;
     background: linear-gradient(180deg,
       rgba(7,9,15,.18) 0%,

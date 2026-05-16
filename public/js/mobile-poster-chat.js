@@ -32,9 +32,15 @@
   }
 
   /* ---- scrim --------------------------------------------------------- */
+  // The scrim must live INSIDE the poster (.cr-tutor-hero), not as a body
+  // sibling. mobile-fixes.css makes #app-layout-wrapper a z-index:1 stacking
+  // context, which traps #chat-container's z-index — so a body-level scrim
+  // paints OVER the chat instead of behind it. As a hero child it can only
+  // ever darken the poster.
   function buildScrim() {
     if (document.querySelector('.mpc-scrim')) return;
-    document.body.appendChild(el('div', 'mpc-scrim'));
+    var host = document.querySelector('.cr-tutor-hero') || document.body;
+    host.appendChild(el('div', 'mpc-scrim'));
   }
 
   /* ---- top chrome ---------------------------------------------------- */
