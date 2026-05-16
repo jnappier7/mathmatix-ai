@@ -58,8 +58,9 @@
       backdrop.style.backgroundImage = 'url("' + url + '")';
     }
 
-    // Live-with label
-    if (nameEl) nameEl.textContent = (tutor.name || 'Tutor').split(' ')[0];
+    // Live-with label — full name, so titled tutors read "Mr. Nappier"
+    // rather than being truncated to just "Mr.".
+    if (nameEl) nameEl.textContent = (tutor.name || 'Tutor');
 
     // Small avatar in the hint card
     if (hintAvatar && tutor.image) {
