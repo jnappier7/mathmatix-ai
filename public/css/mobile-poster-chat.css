@@ -281,7 +281,7 @@
     border: none !important;
     border-radius: 18px 18px 5px 18px !important;
     padding: 10px 14px !important;
-    font-size: 14.5px !important;
+    font-size: calc(14.5px * var(--chat-font-scale, 1)) !important;
     line-height: 1.5 !important;
     box-shadow: 0 4px 14px rgba(108,92,231,.32);
   }
@@ -293,7 +293,7 @@
     border: 1px solid rgba(124,107,255,.30) !important;
     border-radius: 5px 18px 18px 18px !important;
     padding: 13px 15px !important;
-    font-size: 14.5px !important;
+    font-size: calc(14.5px * var(--chat-font-scale, 1)) !important;
     line-height: 1.6 !important;
     box-shadow: 0 8px 26px rgba(0,0,0,.45);
     backdrop-filter: blur(6px);
