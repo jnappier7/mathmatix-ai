@@ -31,8 +31,9 @@
         let currentScale;
         try { currentScale = parseFloat(StorageUtils.local.getItem(STORAGE_KEY)) || DEFAULT_FONT_SIZE; } catch (e) { currentScale = DEFAULT_FONT_SIZE; }
 
-        // Apply saved scale on load
-        applyFontScale(currentScale);
+        // Apply saved scale on load — silent: applying the *stored* scale is
+        // not a user gesture, so it must not flash the centred "%" indicator.
+        applyFontScale(currentScale, false);
 
         // Show hint on first visit (mobile only)
         if (window.innerWidth <= 767 && !StorageUtils.local.getItem('pinch-zoom-hint-shown')) {
@@ -57,7 +58,7 @@
         /**
          * Apply font scale to chat messages
          */
-        function applyFontScale(scale) {
+        function applyFontScale(scale, showIndicator = true) {
             // Clamp scale to min/max
             scale = Math.max(MIN_FONT_SIZE, Math.min(MAX_FONT_SIZE, scale));
             currentScale = scale;
@@ -69,8 +70,8 @@
             // Save to localStorage
             StorageUtils.local.setItem(STORAGE_KEY, scale.toString());
 
-            // Show feedback indicator
-            showScaleIndicator(scale);
+            // Show feedback indicator — only for live user gestures
+            if (showIndicator) showScaleIndicator(scale);
         }
 
         /**
