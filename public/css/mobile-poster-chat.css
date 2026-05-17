@@ -152,7 +152,8 @@
   body.cr-mode .cr-quick-actions,
   body.cr-mode .cr-hint-card,
   body.cr-mode .mobile-chat-nav,
-  body.cr-mode .chat-disclaimer { display: none !important; }
+  body.cr-mode .chat-disclaimer,
+  body.cr-mode #voice-chat-container { display: none !important; }
 
   /* ---- 4. TOP CHROME (floats over poster) ---------------------------- */
   #mpc-topbar {
