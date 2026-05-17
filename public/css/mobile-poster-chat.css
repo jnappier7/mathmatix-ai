@@ -330,6 +330,17 @@
     color: #8a93a8;
     margin-top: 4px;
   }
+  /* Per-message TTS button: its base styling is light-theme (near-black
+     icon on a faint dark wash) so it was invisible on the dark poster
+     bubbles. Theme it light, and bump opacity since touch has no hover. */
+  body.cr-mode #chat-messages-container .play-audio-btn {
+    background-color: rgba(255,255,255,.14) !important;
+    color: #E6E9F2 !important;
+    opacity: 0.9 !important;
+  }
+  body.cr-mode #chat-messages-container .play-audio-btn:active {
+    background-color: rgba(124,107,255,.34) !important;
+  }
   /* give rendered math room to breathe */
   body.cr-mode #chat-messages-container .message.ai .katex-display {
     margin: 10px 0;
