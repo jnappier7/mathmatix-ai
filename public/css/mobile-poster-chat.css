@@ -251,9 +251,12 @@
   }
 
   /* ---- 6. MESSAGES — lesson cards ------------------------------------ */
+  /* Deterministic flex row: a fixed avatar track + an 8px gap means the
+     bubble can never slide under the avatar (the overlap bug). The
+     !important guards against other mobile sheets re-flowing the row. */
   body.cr-mode #chat-messages-container .message-container {
-    display: flex;
-    gap: 8px;
+    display: flex !important;
+    gap: 8px !important;
     align-items: flex-start;
     margin: 0 !important;
   }
@@ -264,14 +267,28 @@
     flex-direction: row-reverse;
     justify-content: flex-end;
   }
+  /* Avatar = fixed, non-shrinking, non-overlapping column. */
+  body.cr-mode #chat-messages-container .message-avatar {
+    position: static !important;
+    flex: 0 0 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
   body.cr-mode #chat-messages-container .message-avatar img,
   body.cr-mode #chat-messages-container .message-avatar > div {
-    width: 30px !important;
-    height: 30px !important;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50%;
     object-fit: cover;
     object-position: center top;
     border: 1px solid rgba(255,255,255,.16);
+  }
+  /* Bubble: drop inherited margins and let it shrink within the row. */
+  body.cr-mode #chat-messages-container .message {
+    margin: 0 !important;
+    min-width: 0;
   }
   /* student bubble */
   body.cr-mode #chat-messages-container .message.user {
