@@ -383,6 +383,23 @@
     box-shadow: 0 4px 13px rgba(108,92,231,.5);
   }
 
+  /* Math symbol strip — its dark styling is gated behind [data-theme=dark],
+     but the poster chat is dark regardless of that attribute, so it leaked
+     a white bar. Theme it explicitly for cr-mode. */
+  body.cr-mode .mobile-math-strip {
+    background: rgba(11,15,26,.95) !important;
+    border-top-color: rgba(255,255,255,.08) !important;
+    border-bottom-color: rgba(255,255,255,.08) !important;
+  }
+  body.cr-mode .mms-key {
+    background: rgba(255,255,255,.06) !important;
+    border-color: rgba(255,255,255,.1) !important;
+    color: #E6E9F2 !important;
+  }
+  body.cr-mode .mms-key:active {
+    background: rgba(124,107,255,.24) !important;
+  }
+
   /* ---- 8. BOTTOM SHEET MENU ------------------------------------------ */
   #mpc-sheet-overlay {
     display: block;
