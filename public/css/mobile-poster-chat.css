@@ -234,7 +234,9 @@
   }
   #mpc-greeting h2 {
     color: #fff;
-    font-size: 26px;
+    /* Scale with viewport so the greeting doesn't overflow / wrap badly
+       on narrow phones; caps at 26px on larger screens. */
+    font-size: clamp(20px, 5.8vw, 26px);
     font-weight: 800;
     line-height: 1.24;
     margin: 0 0 8px;
