@@ -32,6 +32,29 @@ export function playAudio(text, voiceId, messageId) {
 }
 
 /**
+ * Browser WebSpeech fallback — used when the TTS service is unavailable
+ * (403 COPPA/CSRF, 5xx, or a network/decode failure) so playback degrades
+ * gracefully instead of going silent.
+ */
+function speakViaWebSpeech(text, playButton) {
+    const finish = (reEnable) => {
+        resetAudioState();
+        if (playButton) {
+            playButton.classList.remove('is-loading', 'is-playing');
+            if (reEnable) playButton.disabled = false;
+        }
+        processAudioQueue();
+    };
+    if (!text || !window.speechSynthesis) { finish(true); return; }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = (typeof window._ageTierWebSpeechRate === 'number') ? window._ageTierWebSpeechRate : 0.95;
+    utterance.onend = () => finish(false);
+    utterance.onerror = () => finish(true);
+    if (playButton) playButton.classList.add('is-playing');
+    window.speechSynthesis.speak(utterance);
+}
+
+/**
  * Process the audio queue - plays items one at a time
  */
 export async function processAudioQueue() {
@@ -63,38 +86,23 @@ export async function processAudioQueue() {
             body: JSON.stringify({ text, voiceId })
         });
 
-        // 403 = COPPA under-13 block or CSRF issue — fall back to browser WebSpeech
-        if (response.status === 403 && window.speechSynthesis) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            // Use age-tier web speech rate if available, otherwise 0.95
-            const tierRate = (typeof window._ageTierWebSpeechRate === 'number') ? window._ageTierWebSpeechRate : 0.95;
-            utterance.rate = tierRate;
-            utterance.onend = () => {
-                resetAudioState();
-                if (playButton) {
-                    playButton.classList.remove('is-loading');
-                    playButton.classList.remove('is-playing');
-                }
-                processAudioQueue();
-            };
-            utterance.onerror = () => {
-                resetAudioState();
-                if (playButton) {
-                    playButton.classList.remove('is-loading');
-                    playButton.classList.remove('is-playing');
-                    playButton.disabled = false;
-                }
-                processAudioQueue();
-            };
-            if (playButton) playButton.classList.add('is-playing');
-            window.speechSynthesis.speak(utterance);
+        // 403 = COPPA under-13 block or CSRF issue — use browser WebSpeech.
+        if (response.status === 403) {
+            speakViaWebSpeech(text, playButton);
             return;
         }
 
-        if (!response.ok) throw new Error('Failed to fetch audio stream.');
+        if (!response.ok) throw new Error('TTS request failed (' + response.status + ')');
 
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         audioState.context = audioContext;
+
+        // iOS Safari (and others) start an AudioContext suspended unless it
+        // is resumed within a user gesture — without this the audio decodes
+        // but plays silently.
+        if (audioContext.state === 'suspended') {
+            try { await audioContext.resume(); } catch (_) { /* best effort */ }
+        }
 
         const audioBuffer = await response.arrayBuffer();
         await audioContext.decodeAudioData(audioBuffer, (buffer) => {
@@ -102,14 +110,10 @@ export async function processAudioQueue() {
             startAudioPlayback(0, playButton);
         });
     } catch (error) {
-        console.error('Audio playback error:', error);
-        resetAudioState();
-        if (playButton) {
-            playButton.classList.remove('is-loading');
-            playButton.classList.remove('is-playing');
-            playButton.disabled = false;
-        }
-        processAudioQueue();
+        // Network failure, 5xx, or decode error — degrade to browser speech
+        // instead of failing silently.
+        console.error('Audio playback error — falling back to browser speech:', error);
+        speakViaWebSpeech(text, playButton);
     }
 }
 
