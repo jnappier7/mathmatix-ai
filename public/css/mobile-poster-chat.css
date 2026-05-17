@@ -152,7 +152,8 @@
   body.cr-mode .cr-quick-actions,
   body.cr-mode .cr-hint-card,
   body.cr-mode .mobile-chat-nav,
-  body.cr-mode .chat-disclaimer { display: none !important; }
+  body.cr-mode .chat-disclaimer,
+  body.cr-mode #voice-chat-container { display: none !important; }
 
   /* ---- 4. TOP CHROME (floats over poster) ---------------------------- */
   #mpc-topbar {
@@ -233,7 +234,9 @@
   }
   #mpc-greeting h2 {
     color: #fff;
-    font-size: 26px;
+    /* Scale with viewport so the greeting doesn't overflow / wrap badly
+       on narrow phones; caps at 26px on larger screens. */
+    font-size: clamp(20px, 5.8vw, 26px);
     font-weight: 800;
     line-height: 1.24;
     margin: 0 0 8px;
@@ -251,9 +254,12 @@
   }
 
   /* ---- 6. MESSAGES — lesson cards ------------------------------------ */
+  /* Deterministic flex row: a fixed avatar track + an 8px gap means the
+     bubble can never slide under the avatar (the overlap bug). The
+     !important guards against other mobile sheets re-flowing the row. */
   body.cr-mode #chat-messages-container .message-container {
-    display: flex;
-    gap: 8px;
+    display: flex !important;
+    gap: 8px !important;
     align-items: flex-start;
     margin: 0 !important;
   }
@@ -264,14 +270,28 @@
     flex-direction: row-reverse;
     justify-content: flex-end;
   }
+  /* Avatar = fixed, non-shrinking, non-overlapping column. */
+  body.cr-mode #chat-messages-container .message-avatar {
+    position: static !important;
+    flex: 0 0 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
   body.cr-mode #chat-messages-container .message-avatar img,
   body.cr-mode #chat-messages-container .message-avatar > div {
-    width: 30px !important;
-    height: 30px !important;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50%;
     object-fit: cover;
     object-position: center top;
     border: 1px solid rgba(255,255,255,.16);
+  }
+  /* Bubble: drop inherited margins and let it shrink within the row. */
+  body.cr-mode #chat-messages-container .message {
+    margin: 0 !important;
+    min-width: 0;
   }
   /* student bubble */
   body.cr-mode #chat-messages-container .message.user {
@@ -281,7 +301,7 @@
     border: none !important;
     border-radius: 18px 18px 5px 18px !important;
     padding: 10px 14px !important;
-    font-size: 14.5px !important;
+    font-size: calc(14.5px * var(--chat-font-scale, 1)) !important;
     line-height: 1.5 !important;
     box-shadow: 0 4px 14px rgba(108,92,231,.32);
   }
@@ -293,7 +313,7 @@
     border: 1px solid rgba(124,107,255,.30) !important;
     border-radius: 5px 18px 18px 18px !important;
     padding: 13px 15px !important;
-    font-size: 14.5px !important;
+    font-size: calc(14.5px * var(--chat-font-scale, 1)) !important;
     line-height: 1.6 !important;
     box-shadow: 0 8px 26px rgba(0,0,0,.45);
     backdrop-filter: blur(6px);
@@ -309,6 +329,17 @@
     font-size: 11px;
     color: #8a93a8;
     margin-top: 4px;
+  }
+  /* Per-message TTS button: its base styling is light-theme (near-black
+     icon on a faint dark wash) so it was invisible on the dark poster
+     bubbles. Theme it light, and bump opacity since touch has no hover. */
+  body.cr-mode #chat-messages-container .play-audio-btn {
+    background-color: rgba(255,255,255,.14) !important;
+    color: #E6E9F2 !important;
+    opacity: 0.9 !important;
+  }
+  body.cr-mode #chat-messages-container .play-audio-btn:active {
+    background-color: rgba(124,107,255,.34) !important;
   }
   /* give rendered math room to breathe */
   body.cr-mode #chat-messages-container .message.ai .katex-display {
@@ -363,6 +394,23 @@
     color: #fff !important;
     border: none !important;
     box-shadow: 0 4px 13px rgba(108,92,231,.5);
+  }
+
+  /* Math symbol strip — its dark styling is gated behind [data-theme=dark],
+     but the poster chat is dark regardless of that attribute, so it leaked
+     a white bar. Theme it explicitly for cr-mode. */
+  body.cr-mode .mobile-math-strip {
+    background: rgba(11,15,26,.95) !important;
+    border-top-color: rgba(255,255,255,.08) !important;
+    border-bottom-color: rgba(255,255,255,.08) !important;
+  }
+  body.cr-mode .mms-key {
+    background: rgba(255,255,255,.06) !important;
+    border-color: rgba(255,255,255,.1) !important;
+    color: #E6E9F2 !important;
+  }
+  body.cr-mode .mms-key:active {
+    background: rgba(124,107,255,.24) !important;
   }
 
   /* ---- 8. BOTTOM SHEET MENU ------------------------------------------ */

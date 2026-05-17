@@ -94,10 +94,33 @@
     });
   }
 
+  // Remember the last tutor so the poster paints instantly on the next
+  // load instead of flashing the hard-coded default portrait (Maya).
+  const TUTOR_CACHE_KEY = 'mathmatix_last_tutor';
+  function readCachedTutorId() {
+    try { return localStorage.getItem(TUTOR_CACHE_KEY); } catch (_) { return null; }
+  }
+  function cacheTutorId(id) {
+    try { if (id) localStorage.setItem(TUTOR_CACHE_KEY, id); } catch (_) { /* storage unavailable */ }
+  }
+
   async function init() {
     await waitForTutorConfig();
+
+    // Paint the last-known tutor immediately — avoids a flash of the
+    // hard-coded default poster while /user is still in flight.
+    const cached = readCachedTutorId();
+    if (cached) applyTutor(cached);
+
+    // Confirm against the server; re-apply only if it actually differs.
     const tutorId = await loadCurrentTutorId();
-    applyTutor(tutorId || 'default');
+    if (tutorId) {
+      if (tutorId !== cached) applyTutor(tutorId);
+      cacheTutorId(tutorId);
+    } else if (!cached) {
+      applyTutor('default');
+    }
+
     wireQuickActions();
     wireStreakPill();
     wireProgressButton();
