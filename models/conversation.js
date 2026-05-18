@@ -10,6 +10,7 @@ const messageSchema = new Schema({
     role: { type: String, required: true }, // 'user' or 'assistant'
     content: { type: String, required: true },
     timestamp: { type: Date, default: Date.now },
+    tutorId: { type: String, default: null }, // Tutor persona that authored this assistant message (e.g. 'bob')
     reaction: { type: String, default: null }, // Emoji reaction (e.g., '❤️', '👍', '💯')
     // Course scaffold tracking — persisted so progress survives across requests
     problemResult: { type: String, default: null }, // 'correct' | 'incorrect' | 'skipped' (set on AI messages)

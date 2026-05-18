@@ -2017,9 +2017,14 @@ async function handleGreetingRequest(req, res, userId) {
             const lastMsgAge = lastMsg && lastMsg.timestamp
                 ? Date.now() - new Date(lastMsg.timestamp).getTime()
                 : Infinity;
-            if (lastMsg && lastMsg.role === 'assistant' && lastMsgAge < GREETING_REPLAY_MS) {
+            const replayTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+            // Only replay when the stored greeting was authored by the currently
+            // selected tutor. Switching tutors must force a fresh greeting —
+            // otherwise the old tutor's words get served under the new tutor's
+            // name and voice.
+            if (lastMsg && lastMsg.role === 'assistant' && lastMsgAge < GREETING_REPLAY_MS && lastMsg.tutorId === replayTutorKey) {
                 const lastAiMsg = lastMsg;
-                const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+                const selectedTutorKey = replayTutorKey;
                 const currentTutor = TUTOR_CONFIG[selectedTutorKey];
 
                 // Update lastActivity so subsequent reuse checks stay fresh
@@ -2402,7 +2407,8 @@ This is the student's first session. After your greeting, casually mention the "
                 activeConversation.messages.push({
                     role: 'assistant',
                     content: greetingText,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    tutorId: selectedTutorKey
                 });
                 activeConversation.lastActivity = new Date();
                 await activeConversation.save();
@@ -2471,7 +2477,8 @@ This is the student's first session. After your greeting, casually mention the "
             activeConversation.messages.push({
                 role: 'assistant',
                 content: greetingText,
-                timestamp: new Date()
+                timestamp: new Date(),
+                tutorId: selectedTutorKey
             });
             activeConversation.lastActivity = new Date();
             await activeConversation.save();

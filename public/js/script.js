@@ -1138,7 +1138,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const avatar = document.createElement("div");
             avatar.className = "message-avatar";
             const tutor = TUTOR_CONFIG[currentUser.selectedTutorId] || TUTOR_CONFIG.default;
-            avatar.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name}" />`;
+            const portraitSrc = (window.getTutorPortraitSrc && window.getTutorPortraitSrc(currentUser.selectedTutorId)) || `/images/tutor_avatars/${tutor.image}`;
+            avatar.innerHTML = `<img src="${portraitSrc}" alt="${tutor.name}" />`;
             messageContainer.appendChild(avatar);
         }
 
@@ -1766,8 +1767,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const avatar = document.createElement("div");
             avatar.className = "message-avatar";
             const tutor = TUTOR_CONFIG[currentUser.selectedTutorId] || TUTOR_CONFIG.default;
-            if (tutor && tutor.image) {
-                avatar.innerHTML = `<img src="/images/tutor_avatars/${tutor.image}" alt="${tutor.name || 'Tutor'}" />`;
+            const portraitSrc = (window.getTutorPortraitSrc && window.getTutorPortraitSrc(currentUser.selectedTutorId))
+                || (tutor && tutor.image ? `/images/tutor_avatars/${tutor.image}` : null);
+            if (portraitSrc) {
+                avatar.innerHTML = `<img src="${portraitSrc}" alt="${tutor.name || 'Tutor'}" />`;
             }
             messageContainer.appendChild(avatar);
         }

@@ -232,6 +232,12 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   position: absolute; inset: 0;
   background: linear-gradient(180deg, rgba(11,15,26,0.10) 30%, rgba(11,15,26,0.92) 100%);
 }
+/* Depth-of-field blur for busy backdrops (toggled per-tutor in chat-redesign.js).
+   Scaled up so the blurred soft edge stays clipped by .cr-tutor-hero's overflow. */
+.cr-tutor-backdrop.cr-backdrop-blur {
+  filter: blur(8px);
+  transform: scale(1.12);
+}
 .cr-tutor-portrait {
   position: absolute;
   bottom: 0;

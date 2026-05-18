@@ -16,18 +16,30 @@
   // Tutors that ship with a custom backdrop asset.
   const TUTORS_WITH_BACKDROP = new Set(['maya', 'bob', 'mr-nappier', 'ms-maria']);
 
+  // Tutors whose backdrop gets a depth-of-field blur so the portrait reads
+  // cleanly. Maya's backdrop is already soft, so she's left sharp.
+  const BLUR_BACKDROP = new Set(['bob', 'mr-nappier', 'ms-maria']);
+
   // Preferred "new" hero portraits when available.
   // The standard avatar PNG is the fallback.
   const HERO_PORTRAIT_OVERRIDES = {
     'maya': 'maya-new2.png',
     'bob': 'bob-new2.png',
-    'mr-nappier': 'mrnappier-new2.png',
-    'ms-maria': 'ms-maria_new.png'
+    'mr-nappier': 'mr-nappier-new2.png',
+    'ms-maria': 'ms-maria-new2.png'
   };
 
   const DEFAULT_BACKDROP = '/images/tutor_avatars/maya-backdrop.png';
 
   function imgSrc(file) { return '/images/tutor_avatars/' + file; }
+
+  // Shared so other scripts (e.g. chat message avatars) render the same
+  // "new" hero portrait as this poster instead of the legacy avatar PNG.
+  window.getTutorPortraitSrc = function (tutorId) {
+    const tutor = (window.TUTOR_CONFIG || {})[tutorId];
+    const file = HERO_PORTRAIT_OVERRIDES[tutorId] || (tutor && tutor.image);
+    return file ? imgSrc(file) : null;
+  };
 
   function getTutorConfig(tutorId) {
     const cfg = (window.TUTOR_CONFIG || {});
@@ -56,6 +68,7 @@
         ? imgSrc(tutorId + '-backdrop.png')
         : DEFAULT_BACKDROP;
       backdrop.style.backgroundImage = 'url("' + url + '")';
+      backdrop.classList.toggle('cr-backdrop-blur', BLUR_BACKDROP.has(tutorId));
     }
 
     // Live-with label — full name, so titled tutors read "Mr. Nappier"
