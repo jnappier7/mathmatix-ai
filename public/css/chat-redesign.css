@@ -297,7 +297,11 @@ body.cr-mode #chat-container {
   border: 1px solid var(--cr-border);
   border-radius: 22px;
   padding: 8px 0 0 !important;
-  margin-bottom: 60px !important;
+  /* Lifts the container clear of the fixed footer so the composer's input
+     row is fully visible. The old 60px let the bottom of the container —
+     and with it the message-entry row — slip into the fixed footer's
+     overlap zone. */
+  margin-bottom: 120px !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;
