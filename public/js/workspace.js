@@ -1,15 +1,20 @@
 /* ============================================================
    workspace.js — interactive math workspace (chat right slot)
 
-   A tabbed panel that lives in the chat's right column.
-   - "Graph" embeds a live MathGraph instance the student drives.
+   A tabbed panel in the chat's right column:
+   - "Graph" embeds a live MathGraph the student drives.
    - "Board" / "Tiles" / "Calc" launch the existing floating tools
-     (whiteboard, algebra tiles, calculator) — a 320px panel is too
-     narrow for them, so they pop out to their own surfaces.
+     (whiteboard, algebra tiles, calculator).
 
-   Built as a small registry so more tools can be added as tabs,
-   and so the whole panel can later be re-mounted into the centre
-   slot for voice mode.
+   Exposes window.MathWorkspace so other code (e.g. the tutor
+   pushing a concept graph or a parallel-problem example) can open
+   the panel and display a visual.
+
+   IMPORTANT — the #1 product rule: the workspace only ever shows
+   concept illustrations or PARALLEL-problem examples. It must never
+   display the answer or worked solution to the student's own
+   problem. Callers are responsible for honoring that; the caption
+   slot exists to label example/parallel content as such.
    ============================================================ */
 
 (function () {
@@ -84,19 +89,39 @@
         'aria-label="Function to graph" />' +
       '<button class="cr-ws-graph-plot" type="submit">Plot</button>';
 
+    // Caption labels pushed content (e.g. "Example: y = x² − 4"); hidden
+    // until a caller sets it. Manual plots clear it.
+    var caption = el('div', 'cr-ws-caption');
+    caption.style.display = 'none';
+
     var area = el('div', 'cr-ws-graph-plot-area');
     area.appendChild(el('div', 'cr-ws-empty',
       'Type a function above and press Plot to see it graphed.'));
 
     body.appendChild(form);
+    body.appendChild(caption);
     body.appendChild(area);
 
     var input = form.querySelector('.cr-ws-graph-input');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var expr = (input.value || '').trim();
-      if (expr) drawGraph(area, expr);
+      if (!expr) return;
+      setGraphCaption(body, null); // a manual plot is the student's own
+      drawGraph(area, expr);
     });
+  }
+
+  function setGraphCaption(body, text) {
+    var cap = body && body.querySelector('.cr-ws-caption');
+    if (!cap) return;
+    if (text) {
+      cap.textContent = text;
+      cap.style.display = '';
+    } else {
+      cap.textContent = '';
+      cap.style.display = 'none';
+    }
   }
 
   function drawGraph(area, expr) {
@@ -152,7 +177,10 @@
     });
   }
 
-  // ---- Mobile drawer toggle --------------------------------------------
+  // ---- Drawer (mobile) --------------------------------------------------
+  function openWorkspace()  { if (WS.el) WS.el.classList.add('is-open'); }
+  function closeWorkspace() { if (WS.el) WS.el.classList.remove('is-open'); }
+
   function buildFab() {
     var fab = el('button', 'cr-ws-fab',
       '<i class="fas fa-shapes" aria-hidden="true"></i>');
@@ -163,6 +191,45 @@
     });
     document.body.appendChild(fab);
   }
+
+  // ---- Public API: receive a pushed visual -----------------------------
+  // See the header note: concept / parallel-problem content only.
+  window.MathWorkspace = {
+    /** Reveal the panel (opens the drawer on mobile; no-op on desktop). */
+    open: function () { openWorkspace(); },
+
+    /** Close the mobile drawer. */
+    close: function () { closeWorkspace(); },
+
+    /** Switch to a tab by id ('graph' | 'board' | 'tiles' | 'calc'). */
+    showTool: function (id) {
+      if (!WS.body || !TOOLS[id]) return false;
+      openWorkspace();
+      switchTool(id);
+      return true;
+    },
+
+    /**
+     * Plot a function in the Graph tab.
+     * @param {string} expr   function of x, e.g. "x^2 - 4"
+     * @param {object} [opts] { caption } — a label for example/parallel
+     *                        content, e.g. "Example: y = x² − 4"
+     * @returns {boolean} whether the graph was shown
+     */
+    showGraph: function (expr, opts) {
+      expr = (expr == null ? '' : String(expr)).trim();
+      if (!expr || !WS.body) return false;
+      openWorkspace();
+      switchTool('graph');
+      var area  = WS.body.querySelector('.cr-ws-graph-plot-area');
+      var input = WS.body.querySelector('.cr-ws-graph-input');
+      if (!area) return false;
+      if (input) input.value = expr;
+      setGraphCaption(WS.body, opts && opts.caption);
+      drawGraph(area, expr);
+      return true;
+    }
+  };
 
   // ---- Boot -------------------------------------------------------------
   function init() {
@@ -178,9 +245,7 @@
 
     var closeBtn = WS.el.querySelector('.cr-ws-close');
     if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        WS.el.classList.remove('is-open');
-      });
+      closeBtn.addEventListener('click', closeWorkspace);
     }
 
     buildFab();
