@@ -12,7 +12,7 @@
 
 const { filterAnswerKeyResponse, detectAnswerKeyResponse, detectWorkedSolution, detectAnswerAnnouncement } = require('../worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../readability');
-const { enforceVisualTeaching, autoVisualizeByTopic } = require('../visualCommandEnforcer');
+const { enforceVisualTeaching } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
 const { processAIResponse } = require('../chatBoardParser');
 const { callLLM } = require('../llmGateway');
@@ -699,16 +699,13 @@ async function verify(responseText, context = {}) {
 
   // ── 4. Visual teaching enforcement ──
   if (context.userMessage) {
-    // Always run: handles explicit student requests ("show me", "graph this")
-    // and normalizes malformed LLM-generated visual commands
+    // Handles explicit student requests ("show me", "graph this") and
+    // normalizes malformed LLM-generated visual commands. Keyword-based
+    // topic auto-injection was removed — it force-injected generic visuals
+    // (e.g. the parent parabola for any "quadratic" mention) on a keyword
+    // match. The LLM decides when a visual genuinely helps; it is prompted
+    // with the visual tools.
     text = enforceVisualTeaching(context.userMessage, text, '', context.isVisualLearner || false);
-    // Topic-based auto-injection: only for visual learners as a safety net.
-    // For all students, the LLM is already prompted with VISUAL_TOOLS_SECTION
-    // and decides itself when a graph is appropriate — regex topic matching
-    // can't distinguish "teaching derivatives" from "mentioning derivatives."
-    if (context.isVisualLearner) {
-      text = autoVisualizeByTopic(context.userMessage, text, true);
-    }
   }
 
   // ── 5. Parse visual commands ──
