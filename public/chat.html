@@ -405,7 +405,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Tutor hero panel (left) — portrait + backdrop swap per tutor -->
       <aside class="cr-tutor-hero" aria-hidden="true">
         <div class="cr-tutor-backdrop"></div>
-        <img id="cr-tutor-portrait" class="cr-tutor-portrait" src="/images/tutor_avatars/maya-new2.png" alt="" />
+        <img id="cr-tutor-portrait" class="cr-tutor-portrait" alt="" />
+        <script>
+          /* No-flash poster: paint the returning student's tutor before
+             chat-redesign.js boots, so non-Maya users never see a Maya
+             flash. Only the 4 core tutors are selectable; all use the
+             "-new2" hero frame. First-time users stay blank until JS. */
+          (function () {
+            try {
+              var t = localStorage.getItem('mathmatix_last_tutor');
+              var core = { maya: 1, bob: 1, 'mr-nappier': 1, 'ms-maria': 1 };
+              if (t && core[t]) {
+                document.getElementById('cr-tutor-portrait').src =
+                  '/images/tutor_avatars/' + t + '-new2.png';
+              }
+            } catch (e) { /* localStorage unavailable */ }
+          })();
+        </script>
         <div class="cr-live-badge">
           <span class="cr-live-dot"></span>
           <span>Live with <span id="cr-tutor-name">Maya</span></span>
