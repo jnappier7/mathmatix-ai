@@ -32,6 +32,8 @@ function getTutorsToUnlock(userLevel, unlockedItems = [], behaviorStats = []) {
 
   return Object.entries(TUTOR_CONFIG)
     .filter(([tutorId, tutor]) => {
+      // Inactive tutors never unlock (see `active` in tutorConfig.js)
+      if (tutor.active === false) return false;
       // Must have unlock config and not already be unlocked
       if (!tutor.unlockLevel) return false;
       if (unlockedItems.includes(tutorId)) return false;

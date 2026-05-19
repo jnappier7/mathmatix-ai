@@ -23,21 +23,16 @@ describe('getTutorsToUnlock', () => {
     expect(getTutorsToUnlock(6, [])).toEqual(getTutorsToUnlock(6, []));
   });
 
-  test('guarantees unlocks at a very high level', () => {
-    const result = getTutorsToUnlock(99, []);
-    expect(result.length).toBeGreaterThan(0);
+  // Every unlockable tutor currently has active:false in tutorConfig.js, so
+  // the unlock system is dormant: nothing unlocks regardless of level or
+  // behavior. These tests pin that contract — if a tutor is reactivated,
+  // they will fail and should be revisited alongside that change.
+  test('returns [] even at a very high level — all unlockable tutors are inactive', () => {
+    expect(getTutorsToUnlock(99, [])).toEqual([]);
   });
 
-  test('never returns a tutor that is already unlocked', () => {
-    const all = getTutorsToUnlock(99, []);
-    const result = getTutorsToUnlock(99, [all[0]]);
-    expect(result).not.toContain(all[0]);
-  });
-
-  test('a met behavior trigger produces an early unlock', () => {
+  test('returns [] even when a behavior trigger is fully met', () => {
     const behaviorStats = [{ behavior: 'persistence', count: 50 }];
-    const result = getTutorsToUnlock(6, [], behaviorStats);
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBeGreaterThan(0);
+    expect(getTutorsToUnlock(6, [], behaviorStats)).toEqual([]);
   });
 });

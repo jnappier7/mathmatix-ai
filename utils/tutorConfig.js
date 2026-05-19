@@ -63,9 +63,13 @@ const TUTOR_CONFIG = {
     unlocked: true
   },
   
-  // --- LOCKED / UNLOCKABLE TUTORS ---
+  // --- INACTIVE TUTORS ---
+  // active:false — not selectable on the tutor picker and not unlockable by
+  // the variable-ratio system. Kept here (voices, personas, unlock config
+  // intact) so any of them can be reactivated later by removing the flag.
   "ms-rashida": {
     name: "Ms. Rashida",
+    active: false,
     voiceId: "03vEurziQfq3V8WZhQvn",
     cartesiaVoiceId: "607167f6-9bf2-473c-accc-ac7b3b66b30b",
     image: "ms-rashida.png",
@@ -86,6 +90,7 @@ const TUTOR_CONFIG = {
   },
   "mr-sierawski": {
     name: "Mr. Sierawski",
+    active: false,
     voiceId: "Eo4lLlaFSMCbef4YVmc6",
     cartesiaVoiceId: "34575e71-908f-4ab6-ab54-b08c95d6597d",
     image: "mr-sierawski.png",
@@ -106,6 +111,7 @@ const TUTOR_CONFIG = {
   },
   "prof-davies": {
     name: "Prof. Davies",
+    active: false,
     voiceId: "jn34bTlmmOgOJU9XfPuy",
     cartesiaVoiceId: "34d923aa-c3b5-4f21-aac7-2c1f12730d4b",
     image: "prof-davies.png",
@@ -126,6 +132,7 @@ const TUTOR_CONFIG = {
   },
   "ms-alex": {
     name: "Ms. Alex",
+    active: false,
     voiceId: "8DzKSPdgEQPaK5vKG0Rs",
     cartesiaVoiceId: "a33f7a4c-100f-41cf-a1fd-5822e8fc253f",
     image: "ms-alex.png",
@@ -146,6 +153,7 @@ const TUTOR_CONFIG = {
   },
   "mr-lee": {
     name: "Mr. Lee",
+    active: false,
     voiceId: "dZUDKQDfSHNzYzM1epKR",
     cartesiaVoiceId: "16212f18-4955-4be9-a6cd-2196ce2c11d1",
     image: "mr-lee.png",
@@ -166,6 +174,7 @@ const TUTOR_CONFIG = {
   },
   "dr-g": {
     name: "Dr. G",
+    active: false,
     voiceId: "Iz2kaKkJmFf0yaZAMDTV",
     cartesiaVoiceId: "0ad65e7f-006c-47cf-bd31-52279d487913",
     image: "dr-g.png",
@@ -186,6 +195,7 @@ const TUTOR_CONFIG = {
   },
   "mr-wiggles": {
     name: "Mr. Wiggles",
+    active: false,
     voiceId: "52d3CDIZuiBA0XXTytxR",
     cartesiaVoiceId: "fb26447f-308b-471e-8b00-8e9f04284eb5",
     image: "wiggles.png",

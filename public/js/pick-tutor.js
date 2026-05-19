@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!tutorsData) throw new Error('Tutor configuration not loaded.');
 
       allTutors = Object.keys(tutorsData)
-        .filter(key => key !== 'default')
+        .filter(key => key !== 'default' && tutorsData[key].active !== false)
         .map(key => ({ id: key, ...tutorsData[key] }));
 
       // If coming from trial chat, pre-select that tutor
