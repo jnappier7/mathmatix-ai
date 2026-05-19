@@ -31,6 +31,20 @@
 
   const DEFAULT_BACKDROP = '/images/tutor_avatars/maya-backdrop.png';
 
+  // Idle animation frames per core tutor. The hero portrait frame-swaps to
+  // these so the poster feels alive. `blink` is a brief eyes-closed frame;
+  // `glance` is a slower look toward the chat. A tutor missing a frame just
+  // skips that beat.
+  const ANIM_FRAMES = {
+    'maya':       { blink: 'maya-blink.png',       glance: 'maya-look-left.png' },
+    'bob':        { blink: 'bob-blink.png',        glance: 'bob-look-left.png' },
+    'ms-maria':   { blink: 'ms-maria-blink.png',   glance: 'ms-maria-look-left.png' },
+    'mr-nappier': { blink: 'mr-nappier-blink.png', glance: 'mr-nappier-look-left.png' }
+  };
+
+  const PREFERS_REDUCED_MOTION = !!(window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
   function imgSrc(file) { return '/images/tutor_avatars/' + file; }
 
   // Shared so other scripts (e.g. chat message avatars) render the same
@@ -44,6 +58,96 @@
   function getTutorConfig(tutorId) {
     const cfg = (window.TUTOR_CONFIG || {});
     return cfg[tutorId] || cfg['default'] || null;
+  }
+
+  // --- Idle poster animation --------------------------------------------
+  // One animation loop runs at a time, owned by `posterAnim`. Swapping the
+  // tutor stops the old loop and starts a fresh one. Frames are preloaded
+  // so swaps are instant (cached) with no flash.
+
+  let posterAnim = null;
+
+  // Stop is only ever called by startPosterAnimation, and applyTutor always
+  // sets the correct portrait src before that — so we just kill the loop
+  // and leave the src alone (restoring it here would clobber a tutor swap).
+  function stopPosterAnimation() {
+    if (!posterAnim) return;
+    posterAnim.alive = false;
+    posterAnim.timers.forEach(clearTimeout);
+    posterAnim = null;
+  }
+
+  function startPosterAnimation(tutorId) {
+    stopPosterAnimation();
+    if (PREFERS_REDUCED_MOTION) return;
+
+    // 'default' renders as Mr. Nappier — borrow his frames.
+    const frames = ANIM_FRAMES[tutorId] ||
+      (tutorId === 'default' ? ANIM_FRAMES['mr-nappier'] : null);
+    if (!frames) return; // non-core tutor — static poster
+
+    const img = document.getElementById('cr-tutor-portrait');
+    if (!img) return;
+
+    const anim = { alive: true, baseSrc: img.src, timers: [], ready: {}, busy: false };
+    posterAnim = anim;
+
+    // Preload frames; a beat only fires once its frame has loaded.
+    Object.keys(frames).forEach(function (key) {
+      const pre = new Image();
+      pre.onload = function () { anim.ready[key] = pre.src; };
+      pre.src = imgSrc(frames[key]);
+    });
+
+    const live = function () {
+      return posterAnim === anim && anim.alive &&
+        document.getElementById('cr-tutor-portrait') === img;
+    };
+    const wait = function (ms, fn) {
+      const t = setTimeout(function () {
+        anim.timers = anim.timers.filter(function (x) { return x !== t; });
+        if (live()) fn();
+      }, ms);
+      anim.timers.push(t);
+    };
+    const rand = function (lo, hi) { return lo + Math.random() * (hi - lo); };
+    const swap = function (src) { if (live()) img.src = src; };
+    const reset = function () { if (live()) img.src = anim.baseSrc; };
+
+    function scheduleBlink() { wait(rand(3400, 7600), blink); }
+    function blink() {
+      if (anim.busy || !anim.ready.blink) return scheduleBlink();
+      anim.busy = true;
+      swap(anim.ready.blink);
+      wait(110, function () {
+        reset();
+        if (Math.random() < 0.3) {
+          // occasional natural double-blink
+          wait(150, function () {
+            swap(anim.ready.blink);
+            wait(110, function () { reset(); anim.busy = false; scheduleBlink(); });
+          });
+        } else {
+          anim.busy = false;
+          scheduleBlink();
+        }
+      });
+    }
+
+    function scheduleGlance() { wait(rand(15000, 32000), glance); }
+    function glance() {
+      if (anim.busy || !anim.ready.glance) return scheduleGlance();
+      anim.busy = true;
+      swap(anim.ready.glance);
+      wait(rand(1000, 1600), function () {
+        reset();
+        anim.busy = false;
+        scheduleGlance();
+      });
+    }
+
+    if (frames.blink) scheduleBlink();
+    if (frames.glance) scheduleGlance();
   }
 
   function applyTutor(tutorId) {
@@ -80,6 +184,9 @@
       hintAvatar.src = imgSrc(tutor.image);
       hintAvatar.alt = tutor.name || '';
     }
+
+    // Bring the poster to life with idle micro-animation.
+    startPosterAnimation(tutorId);
   }
 
   // Wait for window.TUTOR_CONFIG AND user data (which lives in the
