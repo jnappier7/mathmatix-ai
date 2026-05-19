@@ -372,6 +372,27 @@ class InlineChatVisuals {
     // FUNCTION GRAPH
     // [FUNCTION_GRAPH:fn=sin(x)/x,xMin=-10,xMax=10,title="Graph of sinc function"]
     // ==========================================
+    /**
+     * Hand an inline function graph off to the math workspace panel.
+     * Reads the graph's stored data-config and re-plots it there at full
+     * size. This is a concept/example illustration — never the answer to
+     * the student's own problem.
+     */
+    sendGraphToWorkspace(graphId) {
+        try {
+            if (!window.MathWorkspace) return;
+            const graphEl = document.getElementById(graphId);
+            if (!graphEl) return;
+            const raw = (graphEl.getAttribute('data-config') || '{}').replace(/&quot;/g, '"');
+            const cfg = JSON.parse(raw);
+            if (cfg && cfg.fn) {
+                window.MathWorkspace.showGraph(cfg.fn, { caption: cfg.title });
+            }
+        } catch (e) {
+            console.warn('[InlineChatVisuals] sendGraphToWorkspace failed:', e);
+        }
+    }
+
     createFunctionGraph(paramStr) {
         const params = this.parseParams(paramStr);
         const id = this.getUniqueId('graph');
@@ -415,6 +436,7 @@ class InlineChatVisuals {
                 <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
                 <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
                 <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
+                ${window.MathWorkspace ? `<button class="icv-btn icv-to-workspace" onclick="event.stopPropagation(); window.inlineChatVisuals.sendGraphToWorkspace('${id}')" title="Open in workspace" aria-label="Open this graph in the math workspace">⧉</button>` : ''}
             </div>
         </div>
         `;
