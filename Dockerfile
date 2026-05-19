@@ -61,7 +61,10 @@ USER appuser
 # 10. Smoke-test chrome-headless-shell as the runtime user. If a system lib is
 #     missing or the binary didn't download, this fails the BUILD with a clear
 #     error instead of letting the first PDF request 500 in production.
-RUN node -e "require('puppeteer').launch({headless:'shell',args:['--no-sandbox','--disable-setuid-sandbox','--disable-dev-shm-usage']}).then(b=>b.close()).then(()=>console.log('chrome-headless-shell OK')).catch(e=>{console.error('SMOKE FAIL:',e.message);process.exit(1)})"
+#     The success branch exits 0 explicitly: once launch + close succeed the
+#     test has passed, so we terminate before any stray async rejection from
+#     Puppeteer's teardown can flip Node's exit code and fail the build.
+RUN node -e "require('puppeteer').launch({headless:'shell',args:['--no-sandbox','--disable-setuid-sandbox','--disable-dev-shm-usage']}).then(b=>b.close()).then(()=>{console.log('chrome-headless-shell OK');process.exit(0)}).catch(e=>{console.error('SMOKE FAIL:',e.message);process.exit(1)})"
 
 # 11. Tell Docker what port the app will run on
 EXPOSE 3000
