@@ -13,23 +13,9 @@
    - Quick-action chip row below the composer
    ============================================================ */
 
+/* Design tokens live in design-system.css (linked before this file).
+   cr-mode only needs to paint the page with them. */
 body.cr-mode {
-  --cr-bg-0: #0B0F1A;
-  --cr-bg-1: #121829;
-  --cr-bg-2: #1B2238;
-  --cr-bg-panel: #161B2C;
-  --cr-bubble-ai: #1F2742;
-  --cr-bubble-user: #2A2255;
-  --cr-bubble-user-accent: #7C6BFF;
-  --cr-text: #E6E9F2;
-  --cr-text-dim: #9AA3B8;
-  --cr-accent: #8B7BFF;
-  --cr-accent-strong: #6C5CE7;
-  --cr-border: rgba(255, 255, 255, 0.08);
-  --cr-pill-bg: rgba(255, 255, 255, 0.06);
-  --cr-hero-w: 320px;
-  --cr-hint-w: 260px;
-
   background: var(--cr-bg-0) !important;
   color: var(--cr-text);
 }

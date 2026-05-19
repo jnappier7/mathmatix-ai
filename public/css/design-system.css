@@ -1,0 +1,83 @@
+/* ============================================================
+   design-system.css — Mathmatix design tokens (single source of truth)
+
+   The canonical palette, spacing, radius, shadow and motion scale
+   for the product. Born from the chat redesign (`cr-mode`); now the
+   shared foundation every page is being migrated onto.
+
+   Tokens keep the `--cr-` prefix for continuity with the chat code
+   that already consumes them. Linking this file on a page is inert
+   until those variables are referenced — safe to add anywhere.
+
+   Load order: link this BEFORE chat-redesign.css / page styles.
+   ============================================================ */
+
+:root {
+  /* ---- Background layers (darkest → lightest) ---- */
+  --cr-bg-0: #0B0F1A;          /* app backdrop / stage */
+  --cr-bg-1: #121829;          /* raised surface */
+  --cr-bg-2: #1B2238;          /* input wells, inset surfaces */
+  --cr-bg-panel: #161B2C;      /* cards / panels */
+
+  /* ---- Surface gradient (hero / feature panels) ---- */
+  --cr-panel-grad-from: #1A1F35;
+  --cr-panel-grad-to:   #0E1322;
+
+  /* ---- Chat bubbles ---- */
+  --cr-bubble-ai: #1F2742;
+  --cr-bubble-user: #2A2255;
+  --cr-bubble-user-accent: #7C6BFF;
+
+  /* ---- Text ---- */
+  --cr-text: #E6E9F2;          /* primary */
+  --cr-text-dim: #9AA3B8;      /* secondary / captions */
+
+  /* ---- Accent (purple) ---- */
+  --cr-accent: #8B7BFF;
+  --cr-accent-strong: #6C5CE7;
+  --cr-accent-grad: linear-gradient(135deg, var(--cr-accent), var(--cr-accent-strong));
+
+  /* ---- Semantic status ---- */
+  --cr-success: #2ECC71;       /* live dot, correct, positive */
+  --cr-warning: #FFD66B;       /* encouragement, caution */
+  --cr-danger:  #FF5C7A;       /* errors, end-session */
+  --cr-info:    #5BA8FF;       /* neutral callouts */
+  --cr-heart:   #E879F9;       /* delight / affection accent */
+
+  /* ---- Lines & frosted fills ---- */
+  --cr-border: rgba(255, 255, 255, 0.08);
+  --cr-border-strong: rgba(255, 255, 255, 0.18);
+  --cr-pill-bg: rgba(255, 255, 255, 0.06);
+  --cr-pill-bg-hover: rgba(255, 255, 255, 0.10);
+  --cr-scrim: rgba(11, 15, 26, 0.92);
+
+  /* ---- Radius scale ---- */
+  --cr-radius-sm: 10px;
+  --cr-radius-md: 14px;
+  --cr-radius-lg: 18px;
+  --cr-radius-xl: 22px;
+  --cr-radius-pill: 999px;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --cr-space-1: 4px;
+  --cr-space-2: 8px;
+  --cr-space-3: 12px;
+  --cr-space-4: 16px;
+  --cr-space-5: 24px;
+  --cr-space-6: 32px;
+
+  /* ---- Elevation ---- */
+  --cr-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30);
+  --cr-shadow-md: 0 8px 20px rgba(0, 0, 0, 0.38);
+  --cr-shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.45);
+
+  /* ---- Motion ---- */
+  --cr-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --cr-transition-fast: 0.15s var(--cr-ease);
+  --cr-transition: 0.25s var(--cr-ease);
+
+  /* ---- Layout widths (chat stage) ---- */
+  --cr-hero-w: 320px;
+  --cr-hint-w: 260px;          /* legacy alias of the right slot */
+  --cr-side-w: 320px;          /* workspace / transcript slot */
+}
