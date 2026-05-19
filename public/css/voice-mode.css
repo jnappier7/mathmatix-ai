@@ -1,0 +1,83 @@
+/* ============================================================
+   voice-mode.css — voice as a layout mode of the chat page
+
+   Toggled by body.cr-voice (see voice-mode.js). The chat stage
+   reflows from  [poster | chat | workspace]  to a call-style
+   layout:  [voice presence | workspace centre stage | transcript].
+   The voice engine's orb (voice-controller.js) is re-staged from
+   a corner float to a centred control.
+
+   Depends on design-system.css tokens.
+   ============================================================ */
+
+/* Smooth the column reflow when the mode flips. */
+.cr-stage { transition: grid-template-columns var(--cr-transition); }
+
+/* ---- The header access point ---- */
+.cr-voice-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: var(--cr-radius-pill);
+  background: var(--cr-accent-grad);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter var(--cr-transition-fast), background var(--cr-transition-fast);
+}
+.cr-voice-toggle:hover { filter: brightness(1.08); }
+body.cr-voice .cr-voice-toggle {
+  background: var(--cr-pill-bg);
+  color: var(--cr-text);
+  border: 1px solid var(--cr-border);
+}
+
+/* ---- Stage reflow (desktop — the 3-column stage) ---- */
+@media (min-width: 1201px) {
+  body.cr-voice .cr-stage {
+    grid-template-columns: 360px minmax(0, 1fr) 340px;
+  }
+  body.cr-voice .cr-tutor-hero  { order: 1; }
+  body.cr-voice #cr-workspace   { order: 2; }   /* centre stage */
+  body.cr-voice #chat-container { order: 3; }   /* becomes the transcript */
+
+  /* Transcript: a calmer, more compact read than the active chat. */
+  body.cr-voice #chat-container { opacity: 0.96; }
+  body.cr-voice #chat-messages-container { font-size: 13px; }
+}
+
+/* ---- Voice presence: the tutor hero gains a listening aura ---- */
+body.cr-voice .cr-tutor-hero {
+  animation: cr-voice-aura 3.6s var(--cr-ease) infinite;
+}
+@keyframes cr-voice-aura {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(139, 123, 255, 0.45), 0 0 34px -12px rgba(139, 123, 255, 0.5); }
+  50%      { box-shadow: 0 0 0 1px rgba(139, 123, 255, 0.85), 0 0 58px -6px rgba(139, 123, 255, 0.8); }
+}
+/* The live badge waveform is the heartbeat of voice mode — lift it. */
+body.cr-voice .cr-live-badge { transform: scale(1.06); }
+
+/* ---- Re-stage the voice orb from corner float to centred control ----
+   voice-controller.js positions the orb with inline styles, so the
+   properties it sets (right, bottom) need !important to be overridden. */
+body.cr-voice #voice-chat-container {
+  left: 50%;
+  right: auto !important;
+  bottom: 26px !important;
+  transform: translateX(-50%);
+  /* The orb is the voice control here — show it even if the ambient
+     corner orb is switched off in settings. */
+  display: flex !important;
+}
+
+/* ---- Trim chrome that competes with the voice experience ---- */
+body.cr-voice .cr-quick-actions { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-stage { transition: none; }
+  body.cr-voice .cr-tutor-hero { animation: none; }
+}

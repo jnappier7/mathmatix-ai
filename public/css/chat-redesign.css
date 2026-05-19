@@ -69,23 +69,6 @@ body.cr-mode .landing-header .main-logo-hero {
 }
 .cr-progress-btn:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.18); }
 
-.cr-user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--cr-accent), var(--cr-accent-strong));
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 14px;
-  overflow: hidden;
-  border: 1px solid var(--cr-border);
-  flex-shrink: 0;
-}
-.cr-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
 /* Hide non-essential header buttons in cr-mode for cleaner look */
 body.cr-mode .landing-nav #theme-toggle-btn { display: none; }
 
@@ -172,7 +155,6 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   .cr-streak-pill { padding: 5px 9px; font-size: 12px; }
   .cr-progress-btn { padding: 5px 10px; font-size: 12px; }
   .cr-progress-btn span { display: none; } /* icon-only on phone */
-  .cr-user-avatar { width: 32px; height: 32px; }
 
   body.cr-mode #chat-messages-container { padding: 12px 14px !important; }
   body.cr-mode .message { max-width: 86%; font-size: 14px; padding: 10px 13px; }

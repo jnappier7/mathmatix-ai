@@ -50,6 +50,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/chat-redesign.css" />
   <!-- Interactive math workspace (chat right slot) -->
   <link rel="stylesheet" href="/css/workspace.css" />
+  <!-- Voice mode (layout mode of the chat stage) -->
+  <link rel="stylesheet" href="/css/voice-mode.css" />
+  <!-- Fresh styling for rendered math (equation cards) -->
+  <link rel="stylesheet" href="/css/math-style.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -139,9 +143,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button id="cr-progress-btn" class="cr-progress-btn" type="button" aria-label="Open progress panel">
           <i class="fas fa-chart-bar"></i>
           <span>Progress</span>
-        </button>
-        <button id="cr-user-avatar" class="cr-user-avatar" type="button" aria-label="Profile">
-          <span>A</span>
         </button>
       </div>
       <!-- TTS Playback Controls (only visible during audio playback) -->
@@ -2222,6 +2223,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script defer src="/js/chat-redesign.js"></script>
   <script src="/js/voice-stream-client.js?v=3"></script>
   <script src="/js/voice-controller.js"></script>
+  <!-- Voice as a layout mode of the chat stage -->
+  <script src="/js/voice-mode.js"></script>
   <!-- Intelligent Whiteboard stack (Phase 0 wire-up — order matters: core → enhancements → integration) -->
   <script src="/js/whiteboard.js"></script>
   <script src="/js/whiteboard-handwriting.js"></script>

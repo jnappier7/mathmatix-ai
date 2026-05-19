@@ -237,7 +237,6 @@
     wireQuickActions();
     wireStreakPill();
     wireProgressButton();
-    wireUserAvatar();
     wireMicButton();
   }
 
@@ -317,32 +316,6 @@
     if (!btn) return;
     btn.addEventListener('click', function () {
       // Open the existing right drawer (Progress & Profile)
-      document.getElementById('right-drawer-toggle')?.click();
-    });
-  }
-
-  // --- User avatar (top right) ------------------------------------------
-
-  function wireUserAvatar() {
-    const el = document.getElementById('cr-user-avatar');
-    if (!el) return;
-
-    // Try to render the user's avatar from /user; otherwise the
-    // initial letter is already in the markup as fallback.
-    fetch('/user', { credentials: 'include' })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (data) {
-        const u = data?.user;
-        if (!u) return;
-        if (u.avatar?.dicebearUrl) {
-          el.innerHTML = '<img src="' + u.avatar.dicebearUrl + '" alt="Me" />';
-        } else if (u.firstName) {
-          el.textContent = u.firstName.charAt(0).toUpperCase();
-        }
-      })
-      .catch(function () { /* keep fallback */ });
-
-    el.addEventListener('click', function () {
       document.getElementById('right-drawer-toggle')?.click();
     });
   }

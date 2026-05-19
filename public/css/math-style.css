@@ -1,0 +1,40 @@
+/* ============================================================
+   math-style.css — fresh styling for rendered math in chat
+
+   KaTeX renders the glyphs, and its fonts stay — they are what
+   make a fraction read as a fraction. This file restyles the
+   *presentation*: display equations become cards, inline math
+   gets a subtle lift. Scoped to chat messages so it never
+   touches math inside the workspace or other tools.
+
+   Depends on design-system.css tokens.
+   ============================================================ */
+
+/* ---- Display equations become equation cards ---- */
+body.cr-mode #chat-messages-container .katex-display {
+  margin: 14px 0;
+  padding: 16px 20px;
+  background: linear-gradient(160deg, var(--cr-bg-2), var(--cr-bg-1));
+  border: 1px solid var(--cr-border);
+  border-left: 3px solid var(--cr-accent);
+  border-radius: var(--cr-radius-md);
+  box-shadow: var(--cr-shadow-sm);
+  /* Long equations scroll inside the card instead of breaking layout. */
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+body.cr-mode #chat-messages-container .katex-display > .katex {
+  font-size: 1.18em;
+}
+body.cr-mode #chat-messages-container .katex-display::-webkit-scrollbar {
+  height: 6px;
+}
+body.cr-mode #chat-messages-container .katex-display::-webkit-scrollbar-thumb {
+  background: var(--cr-border-strong);
+  border-radius: 3px;
+}
+
+/* ---- Inline math: a subtle lift so it reads as math, not prose ---- */
+body.cr-mode #chat-messages-container .katex {
+  color: #F2F3F8;
+}
