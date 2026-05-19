@@ -146,11 +146,8 @@
 
   /* ---- 3. HIDE mobile clutter (desktop keeps these) ------------------ */
   body.cr-mode #mobile-stats-bar,
-  body.cr-mode #session-stats-bar,
   body.cr-mode #hero-actions,
-  body.cr-mode #suggestion-chips-container,
   body.cr-mode .cr-quick-actions,
-  body.cr-mode .cr-hint-card,
   body.cr-mode .mobile-chat-nav,
   body.cr-mode .chat-disclaimer,
   body.cr-mode #voice-chat-container { display: none !important; }

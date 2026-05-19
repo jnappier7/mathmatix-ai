@@ -157,7 +157,6 @@
     const heroImg = document.getElementById('cr-tutor-portrait');
     const backdrop = document.querySelector('.cr-tutor-backdrop');
     const nameEl = document.getElementById('cr-tutor-name');
-    const hintAvatar = document.getElementById('cr-hint-avatar');
 
     // Portrait: prefer the "new2" hero if present for one of the 4
     const heroFile = HERO_PORTRAIT_OVERRIDES[tutorId] || tutor.image;
@@ -178,12 +177,6 @@
     // Live-with label — full name, so titled tutors read "Mr. Nappier"
     // rather than being truncated to just "Mr.".
     if (nameEl) nameEl.textContent = (tutor.name || 'Tutor');
-
-    // Small avatar in the hint card
-    if (hintAvatar && tutor.image) {
-      hintAvatar.src = imgSrc(tutor.image);
-      hintAvatar.alt = tutor.name || '';
-    }
 
     // Bring the poster to life with idle micro-animation.
     startPosterAnimation(tutorId);

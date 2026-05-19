@@ -1,0 +1,218 @@
+/* ============================================================
+   workspace.css — interactive math workspace (chat right slot)
+
+   The right column of the chat stage. Tabbed:
+   - Graph embeds a live grapher (MathGraph) inline.
+   - Board / Tiles / Calc launch the existing floating tools,
+     which need more room than this panel can give.
+
+   Below 1200px the panel leaves grid flow and becomes a
+   slide-in drawer opened by a floating button.
+
+   Depends on design-system.css tokens.
+   ============================================================ */
+
+.cr-workspace {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  margin-bottom: 60px;
+  max-height: calc(100vh - 124px);
+  background: var(--cr-bg-panel);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-lg);
+  overflow: hidden;
+}
+
+/* ---- Tab bar ---- */
+.cr-ws-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 6px;
+  border-bottom: 1px solid var(--cr-border);
+  flex-shrink: 0;
+}
+.cr-ws-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cr-text-dim);
+  background: transparent;
+  border: 0;
+  border-radius: var(--cr-radius-sm);
+  cursor: pointer;
+  transition: background var(--cr-transition-fast), color var(--cr-transition-fast);
+}
+.cr-ws-tab:hover { color: var(--cr-text); background: var(--cr-pill-bg); }
+.cr-ws-tab.is-active { color: #fff; background: var(--cr-accent-grad); }
+.cr-ws-tab i { font-size: 11px; }
+
+/* ---- Close button (mobile drawer only) ---- */
+.cr-ws-close {
+  display: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--cr-pill-bg);
+  color: var(--cr-text);
+  font-size: 15px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* ---- Tool body ---- */
+.cr-ws-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---- Graph tab ---- */
+.cr-ws-graph-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.cr-ws-graph-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cr-text-dim);
+  white-space: nowrap;
+}
+.cr-ws-graph-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--cr-text);
+  background: var(--cr-bg-2);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-sm);
+  outline: none;
+}
+.cr-ws-graph-input:focus { border-color: var(--cr-accent); }
+.cr-ws-graph-plot {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--cr-accent-grad);
+  border: 0;
+  border-radius: var(--cr-radius-sm);
+  cursor: pointer;
+}
+.cr-ws-graph-plot-area {
+  flex: 1;
+  min-height: 240px;
+  display: flex;
+  border-radius: var(--cr-radius-md);
+  overflow: hidden;
+  background: var(--cr-bg-1);
+}
+.cr-ws-graph-plot-area .mg-wrapper { flex: 1; }
+
+/* ---- Empty state ---- */
+.cr-ws-empty {
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cr-text-dim);
+}
+
+/* ---- Launcher card (Board / Tiles / Calc) ---- */
+.cr-ws-launch {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.cr-ws-launch-ico {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cr-pill-bg);
+  color: var(--cr-accent);
+  font-size: 22px;
+}
+.cr-ws-launch-title { margin: 0; font-size: 16px; font-weight: 700; color: var(--cr-text); }
+.cr-ws-launch-blurb { margin: 0; font-size: 13px; line-height: 1.5; color: var(--cr-text-dim); }
+.cr-ws-launch-btn {
+  margin-top: 4px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--cr-accent-grad);
+  border: 0;
+  border-radius: var(--cr-radius-md);
+  cursor: pointer;
+}
+.cr-ws-launch-btn:hover { filter: brightness(1.08); }
+
+/* ---- Mobile / tablet: workspace becomes a slide-in drawer ---- */
+.cr-ws-fab { display: none; }
+
+@media (max-width: 1200px) {
+  .cr-workspace {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(380px, 90vw);
+    margin: 0;
+    max-height: none;
+    border-radius: var(--cr-radius-lg) 0 0 var(--cr-radius-lg);
+    box-shadow: var(--cr-shadow-lg);
+    transform: translateX(105%);
+    transition: transform var(--cr-transition);
+    z-index: 900;
+  }
+  .cr-workspace.is-open { transform: none; }
+  .cr-ws-close { display: block; }
+  .cr-ws-tabs { padding-right: 44px; }
+
+  .cr-ws-fab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: 16px;
+    bottom: 84px;
+    width: 52px;
+    height: 52px;
+    border: 1px solid var(--cr-border);
+    border-radius: 50%;
+    background: var(--cr-accent-grad);
+    color: #fff;
+    font-size: 19px;
+    box-shadow: var(--cr-shadow-md);
+    cursor: pointer;
+    z-index: 901;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-workspace { transition: none; }
+}

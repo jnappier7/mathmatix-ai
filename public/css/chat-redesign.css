@@ -103,12 +103,12 @@ body.cr-mode #app-layout-wrapper.sidebar-layout {
    in case the sidebar is ever re-enabled. */
 body.cr-mode .sidebar-ctx-general { display: none !important; }
 
-/* ----- Stage: 3 column grid hero | chat | hint ----- */
+/* ----- Stage: 3 column grid hero | chat | workspace ----- */
 body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
 
 .cr-stage {
   display: grid;
-  grid-template-columns: var(--cr-hero-w) minmax(0, 1fr) var(--cr-hint-w);
+  grid-template-columns: var(--cr-hero-w) minmax(0, 1fr) var(--cr-side-w);
   gap: 18px;
   align-items: stretch;
   padding: 16px 18px 0;
@@ -117,8 +117,8 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
 }
 
 @media (max-width: 1200px) {
+  /* Workspace leaves grid flow here (becomes a drawer — see workspace.css). */
   .cr-stage { grid-template-columns: 260px minmax(0, 1fr); }
-  .cr-hint-card { display: none; }
 }
 @media (max-width: 900px) {
   /* Stack to a single column; collapse the hero into a compact top banner
@@ -308,33 +308,6 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   line-height: 1.4;
 }
 .cr-heart { color: #E879F9; }
-
-/* ----- Hint card (right side) ----- */
-.cr-hint-card {
-  border-radius: 18px;
-  background: var(--cr-bg-panel);
-  border: 1px solid var(--cr-border);
-  padding: 14px;
-  align-self: end;
-  margin-bottom: 110px; /* lifts above composer */
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-.cr-hint-avatar {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--cr-bg-2);
-}
-.cr-hint-text {
-  font-size: 13px;
-  color: var(--cr-text-dim);
-  line-height: 1.45;
-}
-.cr-hint-text p { margin: 0; }
-.cr-hint-text p + p { margin-top: 4px; color: var(--cr-text); font-weight: 600; }
 
 /* ----- Chat container: dark, rounded ----- */
 body.cr-mode #chat-container {

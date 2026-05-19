@@ -48,6 +48,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
   <link rel="stylesheet" href="/css/chat-redesign.css" />
+  <!-- Interactive math workspace (chat right slot) -->
+  <link rel="stylesheet" href="/css/workspace.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -853,10 +855,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </button>
     </div>
 
-    <!-- Quick Reply Suggestions -->
-    <div id="suggestion-chips-container" class="imessage-chips-row">
-      <!-- Chips will be dynamically inserted here -->
-    </div>
 
     <!-- iMessage-style compose bar -->
     <div class="imessage-compose-bar">
@@ -1027,29 +1025,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p class="chat-disclaimer"><i class="fas fa-info-circle"></i> AI can make mistakes. Always check your work.</p>
 </div>
 
-      <!-- Session Stats Bar -->
-      <div id="session-stats-bar" class="session-stats-bar">
-        <div class="stat-item">
-          <span class="stat-label">Session XP:</span>
-          <span id="session-xp" class="stat-value">0</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Accuracy:</span>
-          <span id="session-accuracy" class="stat-value">--</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Problems:</span>
-          <span id="session-problems" class="stat-value">0/0</span>
-        </div>
-      </div>
     </div>
-      <!-- Hint card (right) -->
-      <aside class="cr-hint-card" aria-label="Tutor hint">
-        <img id="cr-hint-avatar" class="cr-hint-avatar" src="/images/tutor_avatars/maya.png" alt="" />
-        <div class="cr-hint-text">
-          <p>Stuck? I can show you an example or give you a hint.</p>
-          <p>Just ask!</p>
+      <!-- Math workspace (right slot) — driven by workspace.js -->
+      <aside class="cr-workspace" id="cr-workspace" aria-label="Math workspace">
+        <button class="cr-ws-close" type="button" aria-label="Close workspace">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+        <div class="cr-ws-tabs" role="tablist" aria-label="Workspace tools">
+          <button class="cr-ws-tab is-active" type="button" data-tool="graph" role="tab" aria-selected="true">
+            <i class="fas fa-chart-line" aria-hidden="true"></i> Graph
+          </button>
+          <button class="cr-ws-tab" type="button" data-tool="board" role="tab" aria-selected="false">
+            <i class="fas fa-pen" aria-hidden="true"></i> Board
+          </button>
+          <button class="cr-ws-tab" type="button" data-tool="tiles" role="tab" aria-selected="false">
+            <i class="fas fa-shapes" aria-hidden="true"></i> Tiles
+          </button>
+          <button class="cr-ws-tab" type="button" data-tool="calc" role="tab" aria-selected="false">
+            <i class="fas fa-calculator" aria-hidden="true"></i> Calc
+          </button>
         </div>
+        <div class="cr-ws-body" id="cr-ws-body"></div>
       </aside>
     </div><!-- /.cr-stage -->
 
@@ -2245,6 +2241,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <link rel="stylesheet" href="/css/algebra-tiles.css">
   <script src="/js/algebra-tiles.js"></script>
   <div id="algebraTilesContainer"></div>
+  <!-- Interactive math workspace (chat right slot) — after the tools it can launch -->
+  <script src="/js/workspace.js"></script>
   <script src="/js/dailyQuests.js"></script>
   <script src="/js/weeklyChallenges.js"></script>
   <script src="/js/engagement-widgets.js"></script>
