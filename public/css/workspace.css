@@ -115,6 +115,19 @@
   border-radius: var(--cr-radius-sm);
   cursor: pointer;
 }
+
+/* Caption for pushed content — labels example / parallel-problem graphs. */
+.cr-ws-caption {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cr-accent);
+  background: var(--cr-pill-bg);
+  border-left: 3px solid var(--cr-accent);
+  border-radius: var(--cr-radius-sm);
+}
+
 .cr-ws-graph-plot-area {
   flex: 1;
   min-height: 240px;
