@@ -9,6 +9,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const { sendEmailVerification } = require('../utils/emailService');
 const { generateUniqueStudentLinkCode } = require('./student');
 const logger = require('../utils/logger').child({ route: 'auth' });
+const { computeNudges } = require('../utils/userNudges');
 
 // Cooldown between successive verification-email resends to the same address.
 // Prevents abuse / accidental double-clicks from blasting users' inboxes.
@@ -297,6 +298,18 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
       logger.info('OAuth user logged in after enrollment', { userId: newUser._id.toString(), redirect });
 
       // Persist session to MongoDB before responding to prevent race condition
+      // Brand-new account — nudges will fire on the next login, not now,
+      // since the user hasn't seen anything yet and the chat greeting will
+      // handle the very first starting-point offer.
+      let nudges = [];
+      try {
+        if (newUser.role === 'student') {
+          nudges = computeNudges(newUser);
+        }
+      } catch (nudgeErr) {
+        logger.warn('computeNudges error during OAuth enrollment', { error: nudgeErr.message });
+      }
+
       req.session.save((saveErr) => {
         if (saveErr) {
           logger.error('Failed to save session after OAuth enrollment', { userId: newUser._id.toString(), error: saveErr.message });
@@ -308,7 +321,8 @@ router.post('/complete-oauth-enrollment', async (req, res) => {
         return res.json({
           success: true,
           message: 'Account created successfully!',
-          redirect
+          redirect,
+          nudges
         });
       });
     });

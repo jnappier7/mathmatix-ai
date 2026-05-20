@@ -875,6 +875,29 @@ const userSchema = new Schema({
   nextGrowthCheckDue: { type: Date },  // When next growth check becomes available (3 months after last)
   assessmentExpiresAt: { type: Date },  // When current Starting Point expires (1 year after completion)
 
+  // Per-nudge state tracked separately from the events themselves so we can
+  // re-prompt users who skip the chat-greeting offer or who let their growth
+  // check go past due. Computed by utils/userNudges.js on every login.
+  //
+  // dismissedAt + dismissCount are telemetry — how often / when did this user
+  // brush off the prompt? snoozedUntil is what actually suppresses the nudge.
+  // A regular dismiss stamps snoozedUntil = now + 3 days. A "Skip for today"
+  // snooze stamps snoozedUntil = now + 24 hours. Both bump dismissCount.
+  nudgeState: {
+    screener: {
+      promptedAt: { type: Date },
+      dismissedAt: { type: Date },
+      snoozedUntil: { type: Date },
+      dismissCount: { type: Number, default: 0 }
+    },
+    growthCheck: {
+      promptedAt: { type: Date },
+      dismissedAt: { type: Date },
+      snoozedUntil: { type: Date },
+      dismissCount: { type: Number, default: 0 }
+    }
+  },
+
   sessionSurveys: {
     enabled: { type: Boolean, default: true },  // Can be disabled by user
     lastShownAt: { type: Date },

@@ -28,6 +28,7 @@ const { updateFluencyTracking, evaluateResponseTime, calculateAdaptiveTimeLimit 
 const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
+const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -2334,6 +2335,28 @@ End with something they can respond to. ${warmUpInstruction}`;
                 greetingInstruction += `
 
 This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar — but do it in YOUR voice, not as a product announcement. The idea is: "There's a quick thing in the sidebar that helps me figure out where you're at — it's not a test, just helps me know what to focus on. No rush." Keep it one sentence, super low-pressure. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
+            }
+
+            // Re-engage students who are sitting on an overdue growth check.
+            // The dashboard banner handles the lighter cases; here we lean on
+            // the tutor relationship — when a student opens chat, having
+            // Maya/Mr.Nappier mention it lands as care, not as a system demand.
+            try {
+                const nudges = computeNudges(user);
+                const growthOverdue = nudges.find(n =>
+                    n.type === NUDGE_TYPES.GROWTH_CHECK && n.severity === 'overdue'
+                );
+                if (growthOverdue && !shouldOfferStartingPoint) {
+                    const daysPastDue = growthOverdue.meta?.daysPastDue ?? 0;
+                    const timingPhrase = daysPastDue >= 14
+                        ? "it's been a while"
+                        : "it's been a few months";
+                    greetingInstruction += `
+
+The student has an overdue Growth Check (${timingPhrase} since their last one). Mention it once in your own voice, the way a tutor who cares would — something like "before we dive in, I want to make sure I'm still teaching you at the right level — want to spend 5 minutes on a quick growth check, or jump into what you were working on?" Give them BOTH options clearly so it feels collaborative, not coercive. Keep it to one sentence. Do not lecture about why growth checks matter. Do not say "system" or "the app" — speak as you, not as a bot.`;
+                }
+            } catch (err) {
+                logger.warn('Greeting nudge check error (non-fatal)', { error: err.message });
             }
         }
 
