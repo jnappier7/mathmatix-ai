@@ -17,6 +17,7 @@ const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = requi
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
+const { isSkillMastered } = require('../utils/masteryGuard');
 // ============================================================================
 // MASTERY BADGES
 // ============================================================================
@@ -556,6 +557,17 @@ router.post('/select-badge', isAuthenticated, async (req, res) => {
       return res.status(400).json({ error: 'Badge already earned' });
     }
 
+    // Don't open a badge for a skill the student has already mastered.
+    // Otherwise the badge would pin the tutor's focus to that skill and
+    // the student would be re-recommended a topic they're done with.
+    if (badge.skillId && isSkillMastered(user, badge.skillId)) {
+      return res.status(409).json({
+        error: 'Skill already mastered',
+        skillId: badge.skillId,
+        message: `${badge.skillName || badge.skillId} is already marked mastered. Pick a new skill to work on.`,
+      });
+    }
+
     // TEACHING ENHANCEMENT: Prepare comprehensive launch information
     const launchInfo = await prepareBadgeLaunch(badge, user);
 
@@ -620,6 +632,17 @@ router.post('/start-skill-practice', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'Skill not found' });
     }
 
+    // Skip skills the student has already mastered — practicing a mastered
+    // skill via this entry point would create an activeBadge that the
+    // tutor would then keep recommending.
+    if (isSkillMastered(user, skillId)) {
+      return res.status(409).json({
+        error: 'Skill already mastered',
+        skillId,
+        message: `${skill.skillName || skillId} is already mastered. Choose a new skill to practice.`,
+      });
+    }
+
     // Initialize masteryProgress if needed
     if (!user.masteryProgress) {
       user.masteryProgress = { activeBadge: null, attempts: [] };
@@ -674,6 +697,14 @@ router.post('/start-badge', isAuthenticated, async (req, res) => {
 
     if (!badge) {
       return res.status(404).json({ error: 'Badge not found or not available' });
+    }
+
+    if (badge.skillId && isSkillMastered(user, badge.skillId)) {
+      return res.status(409).json({
+        error: 'Skill already mastered',
+        skillId: badge.skillId,
+        message: `${badge.skillName || badge.skillId} is already mastered. Pick a new badge.`,
+      });
     }
 
     // Initialize badge attempt in user profile

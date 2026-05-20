@@ -261,30 +261,48 @@ tutorPlanSchema.statics.familiarityToMode = function (familiarity) {
 /**
  * Determine familiarity from existing skill mastery data.
  * This bridges the existing user.skillMastery map to the new plan system.
+ *
+ * masteryScore is normalized: values in [0, 1] are treated as fractions,
+ * values > 1 are treated as percentages. The screener writes fractions
+ * (e.g. masteryScore: 1), older code paths write percentages (e.g. 92).
  */
 tutorPlanSchema.statics.inferFamiliarity = function (skillMasteryEntry) {
   if (!skillMasteryEntry) return 'never-seen';
 
-  const { status, masteryScore, totalAttempts, pillars } = skillMasteryEntry;
+  const { status, masteryScore, totalAttempts, pillars, masteredDate } = skillMasteryEntry;
+
+  // Normalize masteryScore to 0-100 percentage. Treat values <= 1 as
+  // fractions (the screener writes 0..1) so the threshold checks below
+  // work regardless of which producer wrote the field.
+  const scorePct = typeof masteryScore === 'number'
+    ? (masteryScore <= 1 ? masteryScore * 100 : masteryScore)
+    : 0;
+
+  // Verified mastery short-circuits attempt-count gates.
+  // The screener can mark a skill mastered with totalAttempts: 0 (it
+  // judges via the adaptive items, not the per-skill attempt counter).
+  // If status says mastered and there's a masteredDate as evidence,
+  // trust it regardless of attempts.
+  if (status === 'mastered' && masteredDate) return 'mastered';
 
   // Never attempted
   if (!totalAttempts || totalAttempts === 0) return 'never-seen';
 
   // Mastered — status + strong score + sufficient evidence
-  if (status === 'mastered' && masteryScore >= 80) return 'mastered';
+  if (status === 'mastered' && scorePct >= 80) return 'mastered';
 
   // Proficient — high score AND enough attempts to trust it.
   // A 75% score on 2 attempts is noise. A 75% on 8 attempts is signal.
   // Also check pillar accuracy if available — raw score can be inflated
   // by easy problems or lucky guesses.
   const accuracyPct = pillars?.accuracy?.percentage;
-  if (masteryScore >= 75 && totalAttempts >= 5) return 'proficient';
+  if (scorePct >= 75 && totalAttempts >= 5) return 'proficient';
   if (accuracyPct >= 0.80 && totalAttempts >= 5) return 'proficient';
 
   // Developing — student has real experience but is not solid.
   // 'practicing' status alone is NOT enough for proficient — a student
   // who's practiced 3 times at 40% accuracy is developing, not proficient.
-  if (status === 'practicing' && masteryScore >= 50 && totalAttempts >= 3) return 'developing';
+  if (status === 'practicing' && scorePct >= 50 && totalAttempts >= 3) return 'developing';
   if (status === 'learning' && totalAttempts >= 3) return 'developing';
 
   // Introduced — minimal exposure, not enough to guide
