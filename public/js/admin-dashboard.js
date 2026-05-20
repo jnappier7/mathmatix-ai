@@ -137,6 +137,220 @@ document.addEventListener("DOMContentLoaded", async () => {
         setUserParam(null);
     };
 
+    // ---- Teacher detail modal control ----
+    // Same deep-link contract as ?user= but on a separate query key so both
+    // modals can coexist (e.g. arriving via ?teacher=<id> while a student
+    // detail is also being viewed in a different tab).
+    const teacherDetailModal = document.getElementById('teacherDetailModal');
+    const closeTeacherModalButton = document.getElementById('closeTeacherModalButton');
+    const teacherClassesList = document.getElementById('teacherClassesList');
+    const teacherRosterSection = document.getElementById('teacherRosterSection');
+    const teacherRosterList = document.getElementById('teacherRosterList');
+    const teacherRosterClassName = document.getElementById('teacherRosterClassName');
+
+    const setTeacherParam = (id) => {
+        try {
+            const url = new URL(window.location.href);
+            if (id) url.searchParams.set('teacher', id);
+            else url.searchParams.delete('teacher');
+            window.history.replaceState({}, '', url.toString());
+        } catch (_) { /* same-origin safety; ignore */ }
+    };
+    const openTeacherModalUI = (id) => {
+        teacherDetailModal?.classList.add('is-visible');
+        if (id) setTeacherParam(id);
+    };
+    const closeTeacherModal = () => {
+        teacherDetailModal?.classList.remove('is-visible');
+        setTeacherParam(null);
+        if (teacherRosterSection) teacherRosterSection.hidden = true;
+        if (teacherRosterList) teacherRosterList.innerHTML = '';
+    };
+
+    closeTeacherModalButton?.addEventListener('click', closeTeacherModal);
+    teacherDetailModal?.addEventListener('click', (e) => {
+        if (e.target === teacherDetailModal) closeTeacherModal();
+    });
+
+    function isTeacherUser(user) {
+        if (!user) return false;
+        if (user.role === 'teacher') return true;
+        if (Array.isArray(user.roles) && user.roles.includes('teacher')) return true;
+        return false;
+    }
+
+    function getInitials(firstName, lastName) {
+        const f = (firstName || '').trim().charAt(0).toUpperCase();
+        const l = (lastName || '').trim().charAt(0).toUpperCase();
+        return (f + l) || '?';
+    }
+
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function statusPillClass(status) {
+        // Backend returns 'active' | 'struggling' | 'inactive'; map struggling
+        // to the existing .watch pill so colors line up with the teacher view.
+        if (status === 'struggling') return 'watch';
+        if (status === 'inactive') return 'inactive';
+        return 'active';
+    }
+
+    function formatLastActivity(date) {
+        if (!date) return 'No activity yet';
+        return new Date(date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    }
+
+    async function openTeacherModal(teacherId) {
+        if (!teacherDetailModal) return;
+        openTeacherModalUI(teacherId);
+
+        // Reset header + body while we fetch so a previously-open teacher's
+        // data doesn't bleed into the next one.
+        document.getElementById('teacherModalAvatar').textContent = '…';
+        document.getElementById('teacherModalName').textContent = 'Loading…';
+        document.getElementById('teacherModalEmail').textContent = '';
+        document.getElementById('teacherModalSummary').textContent = '';
+        if (teacherRosterSection) teacherRosterSection.hidden = true;
+        if (teacherRosterList) teacherRosterList.innerHTML = '';
+        if (teacherClassesList) teacherClassesList.innerHTML = '<div class="teacher-classes-loading">Loading classes…</div>';
+
+        try {
+            const res = await fetch(`/api/admin/teachers/${teacherId}/classes`, { credentials: 'include' });
+            if (!res.ok) throw new Error(`Server returned ${res.status}`);
+            const data = await res.json();
+            renderTeacherModal(teacherId, data);
+        } catch (err) {
+            console.error('Error loading teacher detail:', err);
+            if (teacherClassesList) {
+                teacherClassesList.innerHTML = '<div class="teacher-classes-empty">Could not load this teacher\'s classes.</div>';
+            }
+            const fallback = students.find(s => s._id === teacherId);
+            if (fallback) {
+                document.getElementById('teacherModalAvatar').textContent = getInitials(fallback.firstName, fallback.lastName);
+                document.getElementById('teacherModalName').textContent = `${fallback.firstName || ''} ${fallback.lastName || ''}`.trim() || 'Teacher';
+                document.getElementById('teacherModalEmail').textContent = fallback.email || '';
+            }
+        }
+    }
+
+    function renderTeacherModal(teacherId, data) {
+        const teacher = data.teacher || {};
+        const classes = data.classes || [];
+
+        document.getElementById('teacherModalAvatar').textContent = getInitials(teacher.firstName, teacher.lastName);
+        document.getElementById('teacherModalName').textContent = `${teacher.firstName || ''} ${teacher.lastName || ''}`.trim() || 'Teacher';
+        document.getElementById('teacherModalEmail').textContent = teacher.email || '';
+
+        const totalStudents = classes.reduce((sum, c) => sum + (c.studentCount || 0), 0);
+        document.getElementById('teacherModalSummary').textContent =
+            `${classes.length} class${classes.length === 1 ? '' : 'es'} · ${totalStudents} student${totalStudents === 1 ? '' : 's'} total`;
+
+        if (!teacherClassesList) return;
+        if (classes.length === 0) {
+            teacherClassesList.innerHTML = '<div class="teacher-classes-empty">This teacher has not created any classes yet.</div>';
+            return;
+        }
+
+        teacherClassesList.innerHTML = classes.map(c => {
+            const usage = c.usage || {};
+            return `
+            <button type="button" class="teacher-class-card" data-classid="${escapeHtml(c._id)}" data-classname="${escapeHtml(c.className || '')}">
+                <div class="teacher-class-card-head">
+                    <span class="teacher-class-name">${escapeHtml(c.className || 'Untitled class')}</span>
+                    <span class="teacher-class-code" title="Click to copy code" data-code="${escapeHtml(c.code || '')}">${escapeHtml(c.code || '—')}</span>
+                </div>
+                <div class="teacher-class-metrics">
+                    <div class="teacher-class-metric"><strong>${c.studentCount || 0}</strong>Students</div>
+                    <div class="teacher-class-metric"><strong>${usage.weeklyActiveStudents || 0}</strong>Active this week</div>
+                    <div class="teacher-class-metric"><strong>${usage.weeklyMinutes || 0}</strong>Weekly minutes</div>
+                    <div class="teacher-class-metric"><strong>${usage.problemsSolved || 0}</strong>Problems solved</div>
+                </div>
+            </button>`;
+        }).join('');
+
+        // Card click → load roster; code click → copy to clipboard.
+        teacherClassesList.querySelectorAll('.teacher-class-card').forEach(card => {
+            card.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('teacher-class-code')) {
+                    e.stopPropagation();
+                    const code = e.target.dataset.code || '';
+                    try {
+                        await navigator.clipboard.writeText(code);
+                        showToast(`Copied code ${code}`, 'success', 2000);
+                    } catch (_) {
+                        // Clipboard API can be blocked (e.g. file://); fall back silently.
+                    }
+                    return;
+                }
+                teacherClassesList.querySelectorAll('.teacher-class-card').forEach(el => el.classList.remove('is-selected'));
+                card.classList.add('is-selected');
+                loadClassRoster(card.dataset.classid, card.dataset.classname);
+            });
+        });
+    }
+
+    async function loadClassRoster(classId, className) {
+        if (!teacherRosterSection || !teacherRosterList) return;
+        teacherRosterSection.hidden = false;
+        if (teacherRosterClassName) teacherRosterClassName.textContent = className ? `· ${className}` : '';
+        teacherRosterList.innerHTML = '<div class="teacher-roster-empty">Loading roster…</div>';
+
+        try {
+            const res = await fetch(`/api/admin/classes/${classId}/students`, { credentials: 'include' });
+            if (!res.ok) throw new Error(`Server returned ${res.status}`);
+            const data = await res.json();
+            renderClassRoster(data);
+        } catch (err) {
+            console.error('Error loading class roster:', err);
+            teacherRosterList.innerHTML = '<div class="teacher-roster-empty">Could not load this class roster.</div>';
+        }
+    }
+
+    function renderClassRoster(data) {
+        const students = data.students || [];
+        if (students.length === 0) {
+            teacherRosterList.innerHTML = '<div class="teacher-roster-empty">No students enrolled in this class.</div>';
+            return;
+        }
+        teacherRosterList.innerHTML = students.map(s => {
+            const name = `${s.firstName || ''} ${s.lastName || ''}`.trim() || s.username || 'Student';
+            const pill = statusPillClass(s.status);
+            const lastLogin = s.lastLogin
+                ? new Date(s.lastLogin).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                : '—';
+            return `
+            <div class="teacher-roster-row">
+                <div>
+                    <span class="teacher-roster-name">${escapeHtml(name)}</span>
+                    <span class="teacher-roster-sub">${escapeHtml(s.email || s.username || '')}${s.gradeLevel ? ' · Grade ' + escapeHtml(s.gradeLevel) : ''}</span>
+                </div>
+                <span class="teacher-roster-stat"><strong>${s.weeklyMinutes || 0}</strong> wk min · <strong>L${s.level || 0}</strong> · ${lastLogin}</span>
+                <span class="status-pill ${pill}">${escapeHtml(s.status || 'active')}</span>
+                <button type="button" class="teacher-roster-action" data-studentid="${escapeHtml(s._id)}">View profile</button>
+            </div>`;
+        }).join('');
+
+        teacherRosterList.querySelectorAll('.teacher-roster-action').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sid = btn.dataset.studentid;
+                if (!sid) return;
+                // Deep-link via ?user=<id> — handled on next load and by the
+                // existing populateModal pipeline if the student is in scope.
+                const url = new URL(window.location.href);
+                url.searchParams.delete('teacher');
+                url.searchParams.set('user', sid);
+                window.location.href = url.toString();
+            });
+        });
+    }
+
     // -------------------------------------------------------------------------
     // --- Data Fetching & Initialization ---
     // -------------------------------------------------------------------------
@@ -174,9 +388,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Deep-link: if the URL carries ?user=<id> AND that user is
             // in the loaded set, auto-open the detail modal. Lets admins
             // share or bookmark a link straight to a user's profile.
-            const deepLinkUserId = new URLSearchParams(window.location.search).get('user');
+            const params = new URLSearchParams(window.location.search);
+            const deepLinkUserId = params.get('user');
             if (deepLinkUserId && students.some(s => s._id === deepLinkUserId)) {
                 populateModal(deepLinkUserId);
+            }
+            // Parallel deep-link for the teacher drill-down. The teacher modal
+            // fetches its own data, so we don't gate on whether the teacher
+            // appears in the user list (admins may follow a link to a teacher
+            // they haven't searched up yet).
+            const deepLinkTeacherId = params.get('teacher');
+            if (deepLinkTeacherId) {
+                openTeacherModal(deepLinkTeacherId);
             }
 
         } catch (error) {
@@ -533,13 +756,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (userTableBody) {
         userTableBody.addEventListener('click', async (e) => {
-            // Handle student name link click
+            // Handle student name link click — route by role so teachers open
+            // the drill-down modal and everyone else opens the student profile.
             const link = e.target.closest('.student-name-link');
             if (link) {
                 e.preventDefault();
-                const studentId = link.closest('tr')?.dataset.studentid;
-                if (studentId) {
-                    populateModal(studentId);
+                const userId = link.closest('tr')?.dataset.studentid;
+                if (userId) {
+                    const target = students.find(s => s._id === userId);
+                    if (isTeacherUser(target)) {
+                        openTeacherModal(userId);
+                    } else {
+                        populateModal(userId);
+                    }
                 }
                 return;
             }

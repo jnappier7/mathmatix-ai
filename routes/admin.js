@@ -2439,4 +2439,211 @@ router.post('/merge-accounts', isAdmin, async (req, res) => {
   }
 });
 
+// -----------------------------------------------------------------------------
+// --- Teacher → Class → Student Drill-Down ---
+// -----------------------------------------------------------------------------
+// Lets admins drill into any teacher's classes with usage aggregates. The
+// teacher-side equivalents live in routes/teacher.js (GET /api/teacher/classes
+// and GET /api/teacher/classes/:codeId/students); these mirror them scoped by
+// the requested teacherId so the existing client formatters still work.
+
+const mongoose = require('mongoose');
+
+// Mirror of the client getStudentStatus in public/js/teacher-dashboard.js so the
+// admin and teacher dashboards label students identically. Backend returns the
+// resolved status string; the frontend maps it onto the .status-pill class set.
+function resolveStudentStatus(student) {
+  const lastLogin = student.lastLogin ? new Date(student.lastLogin) : null;
+  const daysSinceLogin = lastLogin
+    ? (Date.now() - lastLogin.getTime()) / (1000 * 60 * 60 * 24)
+    : Infinity;
+  if (daysSinceLogin > 7) return 'inactive';
+  const weeklyMinutes = student.weeklyActiveTutoringMinutes || 0;
+  if (weeklyMinutes < 10 && daysSinceLogin <= 7) return 'struggling';
+  return 'active';
+}
+
+/**
+ * @route   GET /api/admin/teachers/:teacherId/classes
+ * @desc    Get a teacher's classes with aggregate usage in the last 7 days.
+ * @access  Private (Admin)
+ */
+router.get('/teachers/:teacherId/classes', isAdmin, async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(teacherId)) {
+      return res.status(400).json({ message: 'Invalid teacherId.' });
+    }
+
+    const teacher = await User.findById(teacherId).select('firstName lastName email role roles').lean();
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found.' });
+    }
+    const teacherRoles = teacher.roles && teacher.roles.length ? teacher.roles : [teacher.role];
+    if (!teacherRoles.includes('teacher')) {
+      return res.status(400).json({ message: 'User is not a teacher.' });
+    }
+
+    const codes = await EnrollmentCode.find({ teacherId })
+      .select('code className description gradeLevel mathCourse isActive expiresAt enrolledStudents createdAt')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    // Pre-aggregate Conversation stats per student across all of this teacher's
+    // enrolled students in one pass, then bucket per class. One round-trip
+    // beats N (codes × Conversation.aggregate) calls for teachers with many
+    // classes.
+    const allStudentIds = [...new Set(
+      codes.flatMap(c => c.enrolledStudents.map(e => e.studentId?.toString()).filter(Boolean))
+    )];
+
+    const studentAggMap = new Map();
+    if (allStudentIds.length > 0) {
+      const objectIds = allStudentIds.map(id => new mongoose.Types.ObjectId(id));
+      const agg = await Conversation.aggregate([
+        { $match: { userId: { $in: objectIds } } },
+        { $group: {
+            _id: '$userId',
+            totalMinutes: { $sum: { $ifNull: ['$activeMinutes', 0] } },
+            weeklyMinutes: {
+              $sum: {
+                $cond: [
+                  { $gte: ['$lastActivity', sevenDaysAgo] },
+                  { $ifNull: ['$activeMinutes', 0] },
+                  0
+                ]
+              }
+            },
+            problemsSolved: { $sum: { $ifNull: ['$problemsCorrect', 0] } },
+            lastActivityAt: { $max: '$lastActivity' },
+            activeThisWeek: {
+              $max: { $cond: [{ $gte: ['$lastActivity', sevenDaysAgo] }, 1, 0] }
+            }
+        }}
+      ]);
+      for (const row of agg) {
+        studentAggMap.set(row._id.toString(), row);
+      }
+    }
+
+    const classes = codes.map(c => {
+      const studentIds = c.enrolledStudents.map(e => e.studentId?.toString()).filter(Boolean);
+      let weeklyActiveStudents = 0;
+      let weeklyMinutes = 0;
+      let totalMinutes = 0;
+      let problemsSolved = 0;
+      let lastActivityAt = null;
+      for (const sid of studentIds) {
+        const a = studentAggMap.get(sid);
+        if (!a) continue;
+        if (a.activeThisWeek) weeklyActiveStudents++;
+        weeklyMinutes += a.weeklyMinutes || 0;
+        totalMinutes += a.totalMinutes || 0;
+        problemsSolved += a.problemsSolved || 0;
+        if (a.lastActivityAt && (!lastActivityAt || a.lastActivityAt > lastActivityAt)) {
+          lastActivityAt = a.lastActivityAt;
+        }
+      }
+      return {
+        _id: c._id,
+        className: c.className,
+        code: c.code,
+        gradeLevel: c.gradeLevel,
+        mathCourse: c.mathCourse,
+        isActive: c.isActive,
+        createdAt: c.createdAt,
+        studentCount: studentIds.length,
+        usage: {
+          weeklyActiveStudents,
+          weeklyMinutes,
+          totalMinutes,
+          problemsSolved,
+          lastActivityAt
+        }
+      };
+    });
+
+    res.json({
+      success: true,
+      teacher: {
+        _id: teacher._id,
+        firstName: teacher.firstName,
+        lastName: teacher.lastName,
+        email: teacher.email
+      },
+      classes
+    });
+  } catch (err) {
+    console.error('Error fetching teacher classes for admin:', err);
+    res.status(500).json({ message: 'Server error fetching teacher classes.' });
+  }
+});
+
+/**
+ * @route   GET /api/admin/classes/:classId/students
+ * @desc    Get the students enrolled in a class with per-student usage.
+ * @access  Private (Admin)
+ */
+router.get('/classes/:classId/students', isAdmin, async (req, res) => {
+  try {
+    const { classId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(classId)) {
+      return res.status(400).json({ message: 'Invalid classId.' });
+    }
+
+    const code = await EnrollmentCode.findById(classId).lean();
+    if (!code) {
+      return res.status(404).json({ message: 'Class not found.' });
+    }
+
+    // Sanity check: a class without a teacher would mean orphaned data; surface
+    // it loudly rather than silently returning a partial response.
+    if (!code.teacherId) {
+      return res.status(409).json({ message: 'Class is not attached to a teacher.' });
+    }
+
+    const teacher = await User.findById(code.teacherId).select('firstName lastName').lean();
+
+    const studentIds = code.enrolledStudents.map(e => e.studentId).filter(Boolean);
+    const students = studentIds.length > 0
+      ? await User.find({ _id: { $in: studentIds } })
+          .select('firstName lastName username email gradeLevel mathCourse level xp lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes')
+          .lean()
+      : [];
+
+    const enriched = students.map(s => ({
+      _id: s._id,
+      firstName: s.firstName,
+      lastName: s.lastName,
+      username: s.username,
+      email: s.email,
+      gradeLevel: s.gradeLevel,
+      mathCourse: s.mathCourse,
+      level: s.level || 0,
+      xp: s.xp || 0,
+      lastLogin: s.lastLogin,
+      weeklyMinutes: s.weeklyActiveTutoringMinutes || 0,
+      totalMinutes: s.totalActiveTutoringMinutes || 0,
+      status: resolveStudentStatus(s)
+    }));
+
+    res.json({
+      success: true,
+      class: {
+        _id: code._id,
+        className: code.className,
+        code: code.code,
+        teacherId: code.teacherId,
+        teacherName: teacher ? `${teacher.firstName || ''} ${teacher.lastName || ''}`.trim() : null
+      },
+      students: enriched
+    });
+  } catch (err) {
+    console.error('Error fetching class students for admin:', err);
+    res.status(500).json({ message: 'Server error fetching class students.' });
+  }
+});
+
 module.exports = router;
