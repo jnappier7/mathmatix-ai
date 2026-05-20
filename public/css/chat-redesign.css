@@ -219,6 +219,60 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   pointer-events: none;
 }
 
+/* ----- Living-avatar overlay (breathing + eye-only blink/glance) -----
+   Sits on top of .cr-tutor-portrait, sized to the same box (height:100%,
+   3:2 aspect). Mask fades the layer out above the desk so scaling moves
+   the upper body without dragging the desk. Eye frames cross-fade via
+   data-frame on the wrapper. Hidden in DOM until JS wires the srcs to
+   avoid an empty layer covering the portrait's head before boot. */
+.cr-tutor-breath {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 100%;
+  aspect-ratio: 3 / 2;          /* matches the source frames */
+  z-index: 1;                   /* same plane as portrait, after in DOM */
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
+          mask-image: linear-gradient(to bottom, #000 42%, transparent 56%);
+  transform: translateX(-50%) scaleY(1);
+  transform-origin: 50% 49%;    /* anchor inside the fade zone */
+  animation: cr-tutor-breathe 4.4s ease-in-out infinite;
+  will-change: transform;
+  display: none;                /* shown by JS once frame srcs are set */
+}
+.cr-tutor-breath.is-ready { display: block; }
+
+.cr-tutor-frame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 240ms ease;          /* gaze cross-fade: smooth */
+  user-select: none; -webkit-user-drag: none;
+}
+.cr-tutor-frame.cr-frame-blink { transition: opacity 70ms ease; }  /* snappy */
+
+.cr-tutor-breath[data-frame="open"]  .cr-frame-open  { opacity: 1; }
+.cr-tutor-breath[data-frame="blink"] .cr-frame-blink { opacity: 1; }
+.cr-tutor-breath[data-frame="gaze"]  .cr-frame-gaze  { opacity: 1; }
+
+@keyframes cr-tutor-breathe {
+  0%, 100% { transform: translateX(-50%) scaleY(1);     }
+  50%      { transform: translateX(-50%) scaleY(1.024); }
+}
+
+@media (max-width: 900px) {
+  /* Compact mobile hero: portrait is a 96px square; the breath layer's
+     3:2 aspect doesn't align with that, so we just hide it on mobile.
+     Static portrait behavior is unchanged. */
+  .cr-tutor-breath { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cr-tutor-breath { animation: none; transform: translateX(-50%); }
+  .cr-tutor-frame { transition: none; }
+}
+
 .cr-live-badge {
   position: absolute;
   top: 14px;
@@ -297,11 +351,16 @@ body.cr-mode #chat-container {
   border: 1px solid var(--cr-border);
   border-radius: 22px;
   padding: 8px 0 0 !important;
-  /* Lifts the container clear of the fixed footer so the composer's input
-     row is fully visible. The old 60px let the bottom of the container —
-     and with it the message-entry row — slip into the fixed footer's
-     overlap zone. */
-  margin-bottom: 120px !important;
+  margin-bottom: 60px !important;
+  /* Cap the container's height so its bottom — and the composer's input
+     row inside it — cannot extend past the visible viewport, regardless of
+     how the stage's min-height adds up. The fixed footer occupies ~52px
+     at the bottom; 200px leaves room for the footer + a typical header +
+     padding. Inside the container, #chat-messages-container is flex:1
+     overflow:auto so it shrinks; the composer (flex-shrink:0) keeps its
+     full height and stays visible. The previous margin-bottom-only lift
+     was too fragile across header sizes. */
+  max-height: calc(100vh - 200px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
