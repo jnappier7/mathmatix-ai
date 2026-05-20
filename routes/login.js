@@ -7,6 +7,7 @@ const passport = require('passport'); // Import passport for authentication
 const User = require('../models/user'); // Ensure User model is accessible
 const { isAuthenticated } = require('../middleware/auth'); // For potentially checking if user is already logged in
 const { loginValidation, handleValidationErrors } = require('../middleware/validation');
+const { computeNudges } = require('../utils/userNudges');
 
 // POST /login - Local authentication strategy
 // Frontend calls this endpoint directly (e.g., fetch('/login', ...))
@@ -77,6 +78,18 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
                 user.save().catch(err => console.error('[Login] Avatar migration failed:', err.message));
             }
 
+            // Compute student nudges (starting-point re-offer, growth check)
+            // so the dashboard can render them immediately without another
+            // round-trip. Best-effort: a failure here must not block login.
+            let nudges = [];
+            try {
+                if (user.role === 'student') {
+                    nudges = computeNudges(user);
+                }
+            } catch (nudgeErr) {
+                console.error('[Login] computeNudges error (non-fatal):', nudgeErr.message);
+            }
+
             // Persist session to MongoDB before responding to prevent race condition
             // where the frontend navigates before the session is saved
             req.session.save((saveErr) => {
@@ -84,7 +97,7 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
                     console.error("ERROR: Failed to save session after login:", saveErr);
                     return res.status(500).json({ success: false, message: 'Login successful, but session save failed.' });
                 }
-                return res.status(200).json({ success: true, message: 'Logged in successfully!', redirect: redirectUrl });
+                return res.status(200).json({ success: true, message: 'Logged in successfully!', redirect: redirectUrl, nudges });
             });
         });
     })(req, res, next); // Ensure passport.authenticate is called with req, res, next

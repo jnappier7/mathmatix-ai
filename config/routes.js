@@ -72,6 +72,7 @@ const screenerRoutes = require('../routes/screener');
 const checkpointRoutes = require('../routes/checkpoint');
 const growthCheckRoutes = require('../routes/growthCheck');
 const masteryRoutes = require('../routes/mastery');
+const nudgeRoutes = require('../routes/nudges');
 // masteryChat: REMOVED — mastery mode consolidated into /api/chat with { mastery: true }
 const reviewRoutes = require('../routes/review');
 const teacherResourceRoutes = require('../routes/teacherResources');
@@ -214,6 +215,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/checkpoint', isAuthenticated, checkpointRoutes);
   app.use('/api/growth-check', isAuthenticated, growthCheckRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
+  app.use('/api/nudges', isAuthenticated, nudgeRoutes);
   // masteryChat route REMOVED — mastery mode consolidated into /api/chat
   app.use('/api/review', isAuthenticated, reviewRoutes);
   app.use('/api/settings', isAuthenticated, settingsRoutes);
