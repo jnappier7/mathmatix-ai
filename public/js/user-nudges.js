@@ -77,6 +77,7 @@
     el.appendChild(action);
 
     if (nudge.dismissible) {
+      // Standard dismiss: 3-day server-side snooze via /dismiss.
       const dismiss = document.createElement('button');
       dismiss.setAttribute('aria-label', 'Dismiss');
       dismiss.textContent = '×';
@@ -98,6 +99,31 @@
         }
       });
       el.appendChild(dismiss);
+    } else if (nudge.severity === 'overdue') {
+      // Overdue: no × dismiss, but offer a "Skip for today" 24h snooze so
+      // the banner isn't a hostage situation if the student genuinely
+      // needs to do something else first.
+      const skip = document.createElement('button');
+      skip.textContent = 'Skip for today';
+      skip.style.cssText = `
+        background: transparent; border: 1px solid ${c.border}; cursor: pointer;
+        color: ${c.border}; font-size: 13px; font-weight: 500;
+        padding: 6px 12px; border-radius: 6px; flex-shrink: 0;
+      `;
+      skip.addEventListener('click', async () => {
+        el.remove();
+        try {
+          await fetch(`/api/nudges/${encodeURIComponent(nudge.type)}/snooze`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', ...csrfHeader() },
+            body: JSON.stringify({ hours: 24 }),
+          });
+        } catch (err) {
+          console.warn('[nudges] snooze request failed:', err);
+        }
+      });
+      el.appendChild(skip);
     }
 
     return el;

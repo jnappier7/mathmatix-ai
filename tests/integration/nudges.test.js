@@ -114,4 +114,68 @@ describe('POST /api/nudges/:type/dismiss', () => {
     const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/starting-point/dismiss');
     expect(res.status).toBe(404);
   });
+
+  test('dismiss stamps snoozedUntil ~3 days out', async () => {
+    const user = makeUserDoc();
+    User.findById.mockResolvedValue(user);
+    const t0 = Date.now();
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/starting-point/dismiss');
+    expect(res.status).toBe(200);
+    const snoozedAt = new Date(user.nudgeState.screener.snoozedUntil).getTime();
+    const expectedMin = t0 + 3 * 24 * 60 * 60 * 1000 - 5000;
+    const expectedMax = t0 + 3 * 24 * 60 * 60 * 1000 + 5000;
+    expect(snoozedAt).toBeGreaterThanOrEqual(expectedMin);
+    expect(snoozedAt).toBeLessThanOrEqual(expectedMax);
+  });
+});
+
+describe('POST /api/nudges/:type/snooze', () => {
+  test('rejects unknown nudge types', async () => {
+    User.findById.mockResolvedValue(makeUserDoc());
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/cheeseburger/snooze');
+    expect(res.status).toBe(400);
+  });
+
+  test('default 24h snooze when no hours given', async () => {
+    const user = makeUserDoc();
+    User.findById.mockResolvedValue(user);
+    const t0 = Date.now();
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/growth-check/snooze').send({});
+    expect(res.status).toBe(200);
+    expect(res.body.hours).toBe(24);
+    const snoozedAt = new Date(user.nudgeState.growthCheck.snoozedUntil).getTime();
+    expect(snoozedAt).toBeGreaterThanOrEqual(t0 + 24 * 60 * 60 * 1000 - 5000);
+    expect(snoozedAt).toBeLessThanOrEqual(t0 + 24 * 60 * 60 * 1000 + 5000);
+  });
+
+  test('explicit hours param is honored', async () => {
+    const user = makeUserDoc();
+    User.findById.mockResolvedValue(user);
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/growth-check/snooze').send({ hours: 6 });
+    expect(res.status).toBe(200);
+    expect(res.body.hours).toBe(6);
+  });
+
+  test('rejects non-positive hours', async () => {
+    User.findById.mockResolvedValue(makeUserDoc());
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/growth-check/snooze').send({ hours: -5 });
+    expect(res.status).toBe(400);
+  });
+
+  test('clamps hours to MAX_SNOOZE_HOURS (one week)', async () => {
+    const user = makeUserDoc();
+    User.findById.mockResolvedValue(user);
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/growth-check/snooze').send({ hours: 24 * 30 });
+    expect(res.status).toBe(200);
+    expect(res.body.hours).toBe(24 * 7); // capped at one week
+  });
+
+  test('snooze increments dismissCount (same telemetry as dismiss)', async () => {
+    const user = makeUserDoc({
+      nudgeState: { growthCheck: { dismissCount: 4 } },
+    });
+    User.findById.mockResolvedValue(user);
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/growth-check/snooze').send({});
+    expect(res.body.dismissCount).toBe(5);
+  });
 });

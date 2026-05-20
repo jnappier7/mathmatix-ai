@@ -52,8 +52,19 @@ function daysSince(date, now) {
   return (now.getTime() - new Date(date).getTime()) / DAY_MS;
 }
 
-function snoozeActive(dismissedAt, now, days = SNOOZE_DAYS) {
-  return daysSince(dismissedAt, now) < days;
+/**
+ * Is this nudge currently snoozed?
+ *
+ * Prefers an explicit snoozedUntil timestamp (set by either dismiss or
+ * snooze endpoints). Falls back to `dismissedAt + SNOOZE_DAYS` for users
+ * whose state was written before snoozedUntil existed on the schema.
+ */
+function snoozeActive(state, now, days = SNOOZE_DAYS) {
+  if (!state) return false;
+  if (state.snoozedUntil && new Date(state.snoozedUntil).getTime() > now.getTime()) {
+    return true;
+  }
+  return daysSince(state.dismissedAt, now) < days;
 }
 
 function buildStartingPointNudge(user, now) {
@@ -63,10 +74,9 @@ function buildStartingPointNudge(user, now) {
 
   const offered = !!user.startingPointOffered;
   const offeredAt = user.startingPointOfferedAt;
-  const dismissedAt = user.nudgeState?.screener?.dismissedAt;
 
   // Quiet period after a dismissal — don't re-prompt during the cooldown.
-  if (snoozeActive(dismissedAt, now)) return null;
+  if (snoozeActive(user.nudgeState?.screener, now)) return null;
 
   // If we've never offered, or it's been long enough since the first offer,
   // surface the nudge. The chat greeting handles the very first offer in
@@ -109,10 +119,16 @@ function buildGrowthCheckNudge(user, now) {
   if (daysPastDue >= GROWTH_CHECK_OVERDUE_DAYS) severity = 'overdue';
   else if (daysPastDue >= GROWTH_CHECK_DUE_DAYS) severity = 'due';
 
-  // At `overdue`, the snooze is intentionally bypassed — we keep surfacing
-  // it every session. Below `overdue`, respect a normal dismissal cooldown.
-  const dismissedAt = user.nudgeState?.growthCheck?.dismissedAt;
-  if (severity !== 'overdue' && snoozeActive(dismissedAt, now)) {
+  // At `overdue`, the regular 3-day snooze is bypassed — we keep surfacing
+  // it every session. But a short "Skip for today" snooze (snoozedUntil
+  // explicitly set in the near future) IS still honored, so a user who
+  // genuinely needs to do something else first isn't trapped.
+  const state = user.nudgeState?.growthCheck;
+  if (severity === 'overdue') {
+    if (state?.snoozedUntil && new Date(state.snoozedUntil).getTime() > now.getTime()) {
+      return null;
+    }
+  } else if (snoozeActive(state, now)) {
     return null;
   }
 

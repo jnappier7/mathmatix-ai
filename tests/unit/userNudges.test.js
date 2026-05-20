@@ -173,6 +173,66 @@ describe('computeNudges — growth check', () => {
   });
 });
 
+describe('computeNudges — snoozedUntil semantics', () => {
+  test('snoozedUntil in the future suppresses a `due` nudge', () => {
+    const user = newStudent({
+      assessmentCompleted: true,
+      nextGrowthCheckDue: daysAgo(GROWTH_CHECK_DUE_DAYS + 1),
+      nudgeState: { growthCheck: { snoozedUntil: daysFromNow(0.5) } }, // 12h ahead
+    });
+    expect(computeNudges(user, { now: NOW })).toEqual([]);
+  });
+
+  test('snoozedUntil in the past does NOT suppress', () => {
+    const user = newStudent({
+      assessmentCompleted: true,
+      nextGrowthCheckDue: daysAgo(GROWTH_CHECK_DUE_DAYS + 1),
+      nudgeState: { growthCheck: { snoozedUntil: daysAgo(1) } },
+    });
+    const n = computeNudges(user, { now: NOW }).find(x => x.type === NUDGE_TYPES.GROWTH_CHECK);
+    expect(n).toBeDefined();
+  });
+
+  test('a short snoozedUntil ALSO suppresses overdue ("Skip for today")', () => {
+    // The UX guarantee of the hybrid: even at overdue severity, a fresh
+    // 24h snooze gives the student one day of peace so they can focus on
+    // what they came to do. This is the difference between a banner and
+    // a hostage situation.
+    const user = newStudent({
+      assessmentCompleted: true,
+      nextGrowthCheckDue: daysAgo(GROWTH_CHECK_OVERDUE_DAYS + 5),
+      nudgeState: { growthCheck: { snoozedUntil: daysFromNow(0.5) } },
+    });
+    expect(computeNudges(user, { now: NOW })).toEqual([]);
+  });
+
+  test('legacy dismissedAt without snoozedUntil still snoozes below overdue', () => {
+    // Backwards-compat: users who dismissed before snoozedUntil existed
+    // only have dismissedAt. snoozeActive falls back to the 3-day
+    // dismissedAt rule for non-overdue severities.
+    const user = newStudent({
+      assessmentCompleted: true,
+      nextGrowthCheckDue: daysAgo(GROWTH_CHECK_DUE_DAYS + 1),
+      nudgeState: { growthCheck: { dismissedAt: daysAgo(1) } },
+    });
+    expect(computeNudges(user, { now: NOW }).find(n => n.type === NUDGE_TYPES.GROWTH_CHECK)).toBeUndefined();
+  });
+
+  test('legacy dismissedAt does NOT suppress overdue (only snoozedUntil can)', () => {
+    // At overdue severity the fallback dismissedAt rule is bypassed; only
+    // an explicit snoozedUntil can hide the nudge. This guarantees a
+    // legacy dismissal doesn't accidentally bury a critical nudge.
+    const user = newStudent({
+      assessmentCompleted: true,
+      nextGrowthCheckDue: daysAgo(GROWTH_CHECK_OVERDUE_DAYS + 5),
+      nudgeState: { growthCheck: { dismissedAt: daysAgo(0) } },
+    });
+    const n = computeNudges(user, { now: NOW }).find(x => x.type === NUDGE_TYPES.GROWTH_CHECK);
+    expect(n).toBeDefined();
+    expect(n.severity).toBe('overdue');
+  });
+});
+
 describe('computeNudges — Jason’s real profile shape', () => {
   // The exact pattern from the user document that motivated this work:
   //   nextGrowthCheckDue: 2026-05-15, assessed 2026-02-15, nothing taken
