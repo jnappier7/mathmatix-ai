@@ -296,15 +296,30 @@
     // We mirror those into the new pill via MutationObserver.
     const target = document.getElementById('msb-streak') || document.getElementById('drawer-streak-count');
     const pillValue = document.getElementById('cr-streak-value');
+    const pill = document.getElementById('cr-streak-pill');
     if (!pillValue) return;
 
+    // Reframe the pill based on streak length:
+    //   0 days  → "Start your streak"  (no flame; dispirited "0 day streak" was the original UI bug)
+    //   1 day   → "1 day streak"       (flame on)
+    //   2+ days → "N day streak"       (flame on; existing copy)
+    // Sets data-streak so CSS can dim the flame at 0 without
+    // shipping new icons.
     const sync = function () {
-      const v = (target?.textContent || '0').trim();
-      pillValue.textContent = v + ' day streak';
+      const raw = (target?.textContent || '0').trim();
+      const n = parseInt(raw, 10) || 0;
+      if (n <= 0) {
+        pillValue.textContent = 'Start your streak';
+      } else if (n === 1) {
+        pillValue.textContent = '1 day streak';
+      } else {
+        pillValue.textContent = n + ' day streak';
+      }
+      if (pill) pill.setAttribute('data-streak', String(n));
     };
 
+    sync();
     if (target) {
-      sync();
       new MutationObserver(sync).observe(target, { childList: true, characterData: true, subtree: true });
     }
   }

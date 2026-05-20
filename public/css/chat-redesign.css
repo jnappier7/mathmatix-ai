@@ -51,7 +51,62 @@ body.cr-mode .landing-header .main-logo-hero {
   font-weight: 600;
   white-space: nowrap;
 }
-.cr-streak-pill .cr-flame { filter: drop-shadow(0 0 6px rgba(255,140,40,0.55)); }
+.cr-streak-pill .cr-flame { filter: drop-shadow(0 0 6px rgba(255,140,40,0.55)); transition: filter 0.3s, opacity 0.3s; }
+/* At 0 days the flame is decorative and dispiriting — desaturate
+   it so the pill reads as an invitation, not a failure indicator.
+   wireStreakPill() in chat-redesign.js sets data-streak on the pill. */
+.cr-streak-pill[data-streak="0"] .cr-flame {
+  filter: grayscale(1) brightness(1.1);
+  opacity: 0.55;
+}
+
+/* Tour floating button + welcome prompt collide with the cr-stage's
+   left column (the tutor hero + encourage card) when the redesigned
+   chat is active. Hide the floating button entirely in cr-mode — the
+   tour can still be launched from the header hamburger menu — and
+   re-anchor the welcome prompt above the voice/time stack so it
+   doesn't fight for the bottom-right corner either. */
+body.cr-mode .tour-help-btn { display: none !important; }
+body.cr-mode #tour-prompt > div {
+  bottom: 200px !important;
+  right: 30px !important;
+  left: auto !important;
+}
+
+/* Composer icon tooltips — pure CSS, sourced from data-tip on each
+   .imessage-tool-btn. Uses data-tip rather than title so the native
+   browser tooltip doesn't double-up; aria-label remains for screen
+   readers. Tooltips fire faster than the native ~1s delay so the
+   icons stop reading as "unlabeled" on first scan. */
+.imessage-tool-btn[data-tip] {
+  position: relative;
+}
+.imessage-tool-btn[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(2px);
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(11, 15, 26, 0.96);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease-out 0.15s, transform 0.12s ease-out 0.15s;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 100;
+}
+.imessage-tool-btn[data-tip]:hover::after,
+.imessage-tool-btn[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
 .cr-progress-btn {
   display: inline-flex;
