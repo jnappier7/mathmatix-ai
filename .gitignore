@@ -37,3 +37,6 @@ scripts/generators-batch2.js
 
 Archive.zip
 public/audio/voice/
+
+# Local Claude Code preview config (per-dev tooling)
+.claude/
