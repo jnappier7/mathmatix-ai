@@ -138,6 +138,22 @@ async function runPipeline(message, ctx) {
     console.log(`[Pipeline] Mood: ${sessionMood.trajectory} (energy: ${sessionMood.energy}, momentum: ${sessionMood.momentum}${sessionMood.inFlow ? ', IN FLOW' : ''}${sessionMood.fatigueSignal ? ', FATIGUE' : ''}${emotionalTag})`);
   }
 
+  // ── Self-heal: clear an activeBadge pointing to an already-mastered skill ──
+  // Cheap, idempotent, runs once per pipeline turn. Catches users whose
+  // masteryProgress.activeBadge was set before we hardened badge selection
+  // (or who got mastered via a different code path while a badge was open).
+  // Without this, applyMasteryOverrides in suggestions.js keeps nudging the
+  // student toward a topic they're already done with.
+  try {
+    const { isSkillMastered, clearActiveBadge } = require('../masteryGuard');
+    const badge = ctx.user.masteryProgress?.activeBadge;
+    if (badge?.skillId && isSkillMastered(ctx.user, badge.skillId)) {
+      clearActiveBadge(ctx.user, 'self-heal: activeBadge pointed to an already-mastered skill');
+    }
+  } catch (err) {
+    console.error('[Pipeline] activeBadge self-heal error (non-fatal):', err.message);
+  }
+
   // ── Backbone: Load Tutor Plan ──
   // The tutor's persistent mental model of this student. Loaded at the start
   // of every interaction so the decide stage knows the instructional mode.
