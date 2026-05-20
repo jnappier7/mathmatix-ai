@@ -330,6 +330,14 @@ function detectAnswerAnnouncement(text) {
     const transitionalReveal = /(?:this\s+gives\s+(?:us\s+)?|so\s+we\s+(?:get|have|end\s+up\s+with)\s+|so\s+it\s+becomes\s+)[^,.\n]{0,30}\b[a-z]\s*=/i;
     if (transitionalReveal.test(text)) return { detected: true, pattern: 'transitional-reveal' };
 
+    // "Now, we can express it as: EXPR = EXPR", "So, we have: EXPR = EXPR",
+    // "This simplifies to: ...", "The simplified/factored form is: ..." — the
+    // conversational walkthrough pattern that hands over a worked result via
+    // an explicit equation, without ever saying "the answer is". The colon +
+    // an `=` within ~100 chars (possibly on the next line) is the signature.
+    const conclusionalReveal = /(?:now,?\s+we\s+can\s+(?:express|write|simplify)\s+(?:it|this)\s+as|so,?\s+we\s+(?:have|get|end\s+up\s+with)|we\s+end\s+up\s+with|this\s+(?:simplifies|reduces|evaluates)\s+to|the\s+(?:simplified|expanded|factored|reduced)\s+form\s+is)\s*[:：]\s*[\s\S]{0,100}=/i;
+    if (conclusionalReveal.test(text)) return { detected: true, pattern: 'conclusional-reveal' };
+
     // Original patterns, pluralized and kept.
     const explicitAnswer = [
         /(?:the\s+)?(?:answers?|solutions?)\s+(?:is|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
@@ -384,8 +392,17 @@ function detectWorkedSolution(text) {
     const isHardAnnouncement = announcement.detected && (
         announcement.pattern === 'multi-root-announcement' ||
         announcement.pattern === 'plural-conclusion' ||
-        announcement.pattern === 'transitional-reveal'
+        announcement.pattern === 'transitional-reveal' ||
+        announcement.pattern === 'conclusional-reveal'
     );
+
+    // Conversational walkthrough density — the "let's do this together / now
+    // let's simplify / so we have / now we can express it as" cadence is the
+    // signature of an LLM narrating a full solve without using formal
+    // Step 1/Step 2 headers. Three or more transitions = strong signal.
+    const walkthroughTransitions = text.match(
+        /\b(?:now,?\s+let'?s|let'?s\s+do\s+(?:this|that)\s+together|so,?\s+we\s+(?:have|get|end\s+up)|now,?\s+we\s+can\s+(?:express|write|simplify)|next,?\s+we'?ll?)\b/gi
+    ) || [];
 
     let signalCount = 0;
     if (stepHeaderMatches.length >= 3) signalCount += 2;
@@ -396,6 +413,8 @@ function detectWorkedSolution(text) {
     if (conclusionLines.length >= 2) signalCount += 1;
     if (hasCompleteSolution) signalCount += 1;
     if (isHardAnnouncement) signalCount += 3;
+    if (walkthroughTransitions.length >= 3) signalCount += 2;
+    else if (walkthroughTransitions.length >= 2) signalCount += 1;
 
     return {
         isWorkedSolution: signalCount >= 3,
@@ -408,6 +427,7 @@ function detectWorkedSolution(text) {
             summaryBlock,
             keyPoints: labeledKeyPoints.length,
             conclusions: conclusionLines.length,
+            walkthroughTransitions: walkthroughTransitions.length,
         },
     };
 }
