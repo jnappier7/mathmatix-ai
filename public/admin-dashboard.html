@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -12,6 +12,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard - MATHMATIX AI</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/css/design-system.css">
   <link rel="stylesheet" href="/css/impersonation-banner.css">
   <link rel="stylesheet" href="/css/transcript-viewer.css">
   <style>
@@ -20,42 +21,62 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        Fixed 3-Column Layout with Admin Branding
        ============================================ */
 
-    /* --- Design Tokens --- */
+    /* --- Design Tokens ---
+
+       Admin keeps its slate-neutral primary so the page reads as a
+       working surface, not a brand surface. Accent aligns to the
+       shared system purple (--cr-accent) so the whole product
+       speaks one accent across the four role dashboards. Everything
+       else (text, surfaces, borders, shadows, radii) flows from
+       /css/design-system.css. */
     :root {
+      /* Slate backbone — modern Linear-style neutral. */
       --color-primary: #475569;
       --color-primary-dark: #334155;
       --color-primary-deeper: #1e293b;
-      --color-accent: #6366f1;
-      --color-success: #27ae60;
-      --color-warning: #f39c12;
-      --color-danger: #e74c3c;
-      --color-info: #3498db;
 
-      --color-text: #2c3e50;
-      --color-text-muted: #7f8c8d;
-      --color-text-light: #95a5a6;
+      /* Brand accent — aligned to the shared --cr-accent purple so
+         admin, login, parent, teacher, and chat all speak one
+         accent. */
+      --color-accent: var(--cr-accent);
 
-      --color-bg: #f8f9fa;
-      --color-surface: #ffffff;
-      --color-border: #e9ecef;
-      --color-border-light: #f1f1f1;
+      /* Semantic colors from the shared ramp. */
+      --color-success: var(--cr-success);
+      --color-warning: var(--cr-warning);
+      --color-danger: var(--cr-danger);
+      --color-info: var(--cr-info);
 
-      --color-hover-row: #f8fafc;
+      /* Text from shared ramp. */
+      --color-text: var(--cr-text);
+      --color-text-muted: var(--cr-text-dim);
+      --color-text-light: var(--cr-text-dim);
+
+      /* Surfaces from shared ramp. */
+      --color-bg: var(--cr-bg-0);
+      --color-surface: var(--cr-bg-1);
+      --color-border: var(--cr-border);
+      --color-border-light: rgba(15, 23, 42, 0.04);
+
+      --color-hover-row: var(--cr-pill-bg);
       --color-primary-tint: rgba(71, 85, 105, 0.08);
 
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-pill: 20px;
+      /* Radii from shared scale. */
+      --radius-sm: var(--cr-radius-sm);
+      --radius-md: var(--cr-radius-md);
+      --radius-lg: var(--cr-radius-lg);
+      --radius-pill: var(--cr-radius-pill);
 
-      --shadow-sm: 0 2px 6px rgba(0,0,0,0.05);
-      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
-      --shadow-lg: 0 4px 12px rgba(0,0,0,0.15);
-      --shadow-xl: 0 10px 40px rgba(0,0,0,0.3);
+      /* Shadows from shared elevation ramp (softer on light). */
+      --shadow-sm: var(--cr-shadow-sm);
+      --shadow-md: var(--cr-shadow-md);
+      --shadow-lg: var(--cr-shadow-md);
+      --shadow-xl: var(--cr-shadow-lg);
 
-      --transition-fast: 0.2s ease;
-      --transition-normal: 0.3s ease;
+      /* Motion from shared scale. */
+      --transition-fast: var(--cr-transition-fast);
+      --transition-normal: var(--cr-transition);
 
+      /* Local typographic scale unchanged. */
       --font-xs: 0.75em;
       --font-sm: 0.85em;
       --font-base: 0.95em;
@@ -575,6 +596,238 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     /* ============================================
+       TEACHER DETAIL MODAL
+       --------------------------------------------
+       Drill-down surface for admins. Reuses .modal-overlay/.modal-content
+       and the --cr-* token vocabulary so it sits next to the existing
+       studentDetailModal without diverging.
+       ============================================ */
+
+    .teacher-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .teacher-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--cr-accent-grad, linear-gradient(135deg, #8B7BFF, #6C5CE7));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .teacher-modal-heading h2 {
+      margin: 0;
+      color: var(--color-primary);
+      font-size: 1.35rem;
+    }
+
+    .teacher-modal-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 4px;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+    }
+
+    .teacher-modal-email { font-weight: 500; }
+    .teacher-modal-summary { font-size: 0.85rem; }
+
+    .teacher-classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .teacher-classes-loading,
+    .teacher-classes-empty,
+    .teacher-roster-empty {
+      grid-column: 1 / -1;
+      padding: 24px;
+      text-align: center;
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+
+    .teacher-class-card {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      width: 100%;
+    }
+
+    .teacher-class-card:hover,
+    .teacher-class-card:focus-visible {
+      border-color: var(--color-accent);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .teacher-class-card.is-selected {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--cr-accent, #8B7BFF);
+    }
+
+    .teacher-class-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .teacher-class-name {
+      font-weight: 600;
+      color: var(--color-text);
+      font-size: 1rem;
+    }
+
+    .teacher-class-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      background: var(--cr-pill-bg, rgba(124,107,255,0.12));
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      cursor: copy;
+      user-select: all;
+    }
+
+    .teacher-class-code:hover { color: var(--color-accent); }
+
+    .teacher-class-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 12px;
+      font-size: 0.82rem;
+      color: var(--color-text-muted);
+    }
+
+    .teacher-class-metric strong {
+      display: block;
+      color: var(--color-text);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .teacher-roster-classname {
+      font-weight: normal;
+      color: var(--color-text-muted);
+      font-size: 0.95rem;
+      margin-left: 6px;
+    }
+
+    .teacher-roster-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .teacher-roster-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+    }
+
+    .teacher-roster-name {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .teacher-roster-sub {
+      display: block;
+      font-weight: normal;
+      color: var(--color-text-muted);
+      font-size: 0.8rem;
+    }
+
+    .teacher-roster-stat {
+      color: var(--color-text-muted);
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .teacher-roster-stat strong {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+
+    .teacher-roster-action {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-accent);
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .teacher-roster-action:hover {
+      background: var(--color-accent);
+      color: #fff;
+    }
+
+    /* Status pill — mirrors the vocabulary from the teacher dashboard polish
+       layer. Backend returns 'active'|'struggling'|'inactive'; the frontend
+       maps struggling → .watch so we share colors with the teacher view. */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      letter-spacing: 0.02em;
+    }
+
+    .status-pill::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-pill.active   { background: #ECFDF5; color: #047857; border-color: #A7F3D0; }
+    .status-pill.watch    { background: #FEF3C7; color: #B45309; border-color: #FDE68A; }
+    .status-pill.inactive { background: #F1F5F9; color: #475569; border-color: #E2E8F0; }
+
+    @media (max-width: 640px) {
+      .teacher-roster-row {
+        grid-template-columns: 1fr auto;
+        row-gap: 4px;
+      }
+      .teacher-roster-stat { grid-column: 1 / -1; }
+    }
+
+    /* ============================================
        FOOTER
        ============================================ */
 
@@ -865,6 +1118,483 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         font-size: 0.75em;
       }
     }
+
+    /* ============================================================
+       SLEEK POLISH LAYER — ADMIN DASHBOARD
+
+       Brief from the chef: sleek, professional, clean. Linear-class
+       polish without abandoning what's already there. Slate backbone,
+       single purple accent, monochrome data surfaces. Motion lives
+       in hover lifts and the live indicator pulse — no decorative
+       animation.
+
+       Where this layer disagrees with rules above, this layer wins
+       (later in source order, same specificity).
+       ============================================================ */
+
+    /* ---------- A11y: hide leaking skip-to-content ---------- */
+    .skip-to-content {
+      position: absolute;
+      left: var(--cr-space-4);
+      top: -100%;
+      z-index: 10001;
+      padding: var(--cr-space-3) var(--cr-space-5);
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 0 0 var(--cr-radius-md) var(--cr-radius-md);
+      text-decoration: none;
+      transition: top var(--cr-transition-fast);
+    }
+    .skip-to-content:focus { top: 0; }
+
+    /* ---------- Header: slate→accent gradient softened ----------
+       Old 135deg gradient was correct in palette but too saturated.
+       180deg vertical sweep + hairline border reads more like Linear
+       than 2014-SaaS. Mode indicator becomes a glass pill. */
+    .main-header {
+      background:
+        linear-gradient(180deg,
+          rgba(255,255,255,0.04) 0%,
+          rgba(255,255,255,0) 100%
+        ),
+        linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .mode-indicator {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: var(--cr-radius-pill);
+      backdrop-filter: blur(6px);
+      letter-spacing: 0.01em;
+    }
+    .nav-btn,
+    .main-header-nav button {
+      border-radius: var(--cr-radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.10);
+      transition: background var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .nav-btn:hover,
+    .main-header-nav button:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.30);
+    }
+
+    /* ---------- Panels: cleaner edges, shared elevation ---------- */
+    .dashboard-panel {
+      border: 1px solid var(--cr-border);
+      box-shadow: var(--cr-shadow-sm);
+      border-radius: var(--cr-radius-lg);
+      transition: box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .dashboard-panel:hover {
+      box-shadow: var(--cr-shadow-md);
+      border-color: var(--cr-border-strong);
+    }
+    .dashboard-panel-header {
+      letter-spacing: -0.01em;
+      color: var(--cr-text);
+    }
+
+    /* ---------- System Status: dense, ops-flavored ----------
+       The original "Database: Online / AI Service: Operational" was
+       decorative. Re-skin so it reads like Linear/Vercel's status
+       row: small dot + label + state, monospace-leaning if available,
+       muted text. The status DOT carries the urgency, not the bg. */
+    .system-status,
+    [class*="system-status"] {
+      font-variant-numeric: tabular-nums;
+    }
+    .system-status-row,
+    .system-status li,
+    .system-status > div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--cr-text-dim);
+      border-bottom: 1px dashed var(--cr-border);
+    }
+    .system-status-row:last-child,
+    .system-status li:last-child,
+    .system-status > div:last-child { border-bottom: none; }
+
+    /* ---------- User-count cards (254 / 229 / 6 / 18 / 1) ----------
+       Old design used five card boxes with weak hierarchy. Sleek
+       version: pill-bordered surfaces with the count in display
+       weight, role in caps eyebrow type. Hover lifts subtly. */
+    .user-stat-card {
+      border: 1px solid var(--cr-border);
+      background: var(--cr-bg-1);
+      border-radius: var(--cr-radius-md);
+      box-shadow: var(--cr-shadow-sm);
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .user-stat-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--cr-shadow-md);
+      border-color: var(--cr-border-strong);
+    }
+    .user-stat-card .stat-count {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--cr-text);
+      font-variant-numeric: tabular-nums;
+    }
+    .user-stat-card .stat-role {
+      color: var(--cr-text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ---------- Stat cards (general) — same vocab as user-stat ---------- */
+    .stat-card {
+      border: 1px solid var(--cr-border);
+      background: var(--cr-bg-1);
+      border-radius: var(--cr-radius-md);
+      box-shadow: var(--cr-shadow-sm);
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast);
+    }
+    .stat-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--cr-shadow-md);
+    }
+
+    /* ---------- Sortable column headers ----------
+       TH elements marked .th-sortable get a click affordance: cursor
+       pointer, hover tint, and an inline sort indicator icon that
+       lights up when the column is the active sort. The active
+       column also picks up an accent text color. aria-sort drives
+       both the visual and screen-reader state. */
+    .user-table thead th.th-sortable,
+    #userListTable thead th.th-sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: color var(--cr-transition-fast), background var(--cr-transition-fast);
+    }
+    .user-table thead th.th-sortable:hover,
+    #userListTable thead th.th-sortable:hover {
+      color: var(--color-accent);
+      background: var(--cr-pill-bg);
+    }
+    .user-table thead th.th-sortable:focus-visible,
+    #userListTable thead th.th-sortable:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+    .user-table thead th .sort-icon,
+    #userListTable thead th .sort-icon {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-left: 6px;
+      vertical-align: 1px;
+      opacity: 0.35;
+      transition: opacity var(--cr-transition-fast), transform var(--cr-transition-fast);
+      background:
+        linear-gradient(45deg, transparent 50%, currentColor 50%) no-repeat top left / 4px 4px,
+        linear-gradient(-45deg, transparent 50%, currentColor 50%) no-repeat top right / 4px 4px,
+        linear-gradient(135deg, transparent 50%, currentColor 50%) no-repeat bottom left / 4px 4px,
+        linear-gradient(-135deg, transparent 50%, currentColor 50%) no-repeat bottom right / 4px 4px;
+    }
+    .user-table thead th.th-sortable[aria-sort="ascending"],
+    #userListTable thead th.th-sortable[aria-sort="ascending"],
+    .user-table thead th.th-sortable[aria-sort="descending"],
+    #userListTable thead th.th-sortable[aria-sort="descending"] {
+      color: var(--color-accent);
+    }
+    .user-table thead th.th-sortable[aria-sort="ascending"] .sort-icon,
+    #userListTable thead th.th-sortable[aria-sort="ascending"] .sort-icon {
+      opacity: 1;
+      background:
+        linear-gradient(45deg, transparent 50%, currentColor 50%) no-repeat top left / 4px 4px,
+        linear-gradient(-45deg, transparent 50%, currentColor 50%) no-repeat top right / 4px 4px;
+    }
+    .user-table thead th.th-sortable[aria-sort="descending"] .sort-icon,
+    #userListTable thead th.th-sortable[aria-sort="descending"] .sort-icon {
+      opacity: 1;
+      background:
+        linear-gradient(135deg, transparent 50%, currentColor 50%) no-repeat bottom left / 4px 4px,
+        linear-gradient(-135deg, transparent 50%, currentColor 50%) no-repeat bottom right / 4px 4px;
+    }
+
+    /* ---------- Bulk-action bar (admin) — modernize the existing
+       JS-driven bar. The fixed bottom bar already gets injected by
+       admin-dashboard.js; these rules style it via id, so no JS
+       change is required. The old hardcoded inline styles still
+       apply, but the rules below override them via specificity. */
+    #admin-bulk-bar {
+      background: var(--cr-bg-1) !important;
+      color: var(--cr-text) !important;
+      border-top: 1px solid var(--cr-border) !important;
+      box-shadow: var(--cr-shadow-lg) !important;
+      padding: 14px 24px !important;
+      gap: 12px !important;
+    }
+    #admin-bulk-bar > span {
+      color: var(--cr-text) !important;
+      font-weight: 600;
+      margin-right: auto;
+    }
+    #admin-bulk-bar > span::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent);
+      border-radius: var(--cr-radius-pill);
+      margin-right: 8px;
+      vertical-align: 1px;
+    }
+    #admin-bulk-bar button {
+      border-radius: var(--cr-radius-md) !important;
+      border: 1px solid var(--cr-border-strong) !important;
+      padding: 9px 16px !important;
+      font-weight: 600 !important;
+      font-size: 13px !important;
+      background: var(--cr-bg-1) !important;
+      color: var(--cr-text) !important;
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast) !important;
+    }
+    #admin-bulk-bar button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--cr-shadow-sm) !important;
+      border-color: var(--color-accent) !important;
+    }
+    /* Action-specific accent tints (overrides the inline blue/green/orange
+       so each action reads in the new system vocabulary). */
+    #admin-bulk-bar button[onclick*="bulkAssignTeacher"] { color: #1D4ED8 !important; background: #EFF6FF !important; border-color: #BFDBFE !important; }
+    #admin-bulk-bar button[onclick*="bulkExportUsers"]   { color: #047857 !important; background: #ECFDF5 !important; border-color: #A7F3D0 !important; }
+    #admin-bulk-bar button[onclick*="bulkResetScreeners"] { color: #B45309 !important; background: #FEF3C7 !important; border-color: #FDE68A !important; }
+    #admin-bulk-bar button[onclick*="clearBulkSelection"] { color: var(--cr-text-dim) !important; background: transparent !important; border-color: var(--cr-border) !important; }
+
+    /* ---------- Tables: row hover, status pills inline ----------
+       User list is the primary admin data surface. Linear's discipline:
+       no zebra, generous row padding, hover row tint, header in caps
+       eyebrow, action buttons quiet by default and brand-tinted on
+       hover. Add status-pill support inline for role tags. */
+    .user-table,
+    table.user-table,
+    #userListTable {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+    .user-table thead th,
+    #userListTable thead th {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--cr-text-dim);
+      padding: 12px 14px;
+      background: var(--cr-bg-2);
+      border-bottom: 1px solid var(--cr-border);
+      text-align: left;
+    }
+    .user-table tbody td,
+    #userListTable tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--cr-border);
+      color: var(--cr-text);
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+    .user-table tbody tr,
+    #userListTable tbody tr {
+      transition: background var(--cr-transition-fast);
+    }
+    .user-table tbody tr:hover,
+    #userListTable tbody tr:hover {
+      background: var(--cr-pill-bg);
+    }
+    .user-table tbody tr:last-child td,
+    #userListTable tbody tr:last-child td { border-bottom: none; }
+
+    /* Inline role tags in the table (if present as <span class="role-tag student|teacher|...">).
+       Reuse the .status-pill vocabulary from the teacher dashboard,
+       extended with role colors. */
+    .role-tag,
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: capitalize;
+      border-radius: var(--cr-radius-pill);
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .role-tag.student,    .role-badge.student    { background: #ECFDF5; color: #047857; border-color: #A7F3D0; }
+    .role-tag.teacher,    .role-badge.teacher    { background: #ECFDF5; color: #047857; border-color: #A7F3D0; }
+    .role-tag.parent,     .role-badge.parent     { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
+    .role-tag.admin,      .role-badge.admin      { background: #EDE9FE; color: #5B21B6; border-color: #DDD6FE; }
+    .role-tag.flagged,    .role-badge.flagged    { background: #FEE2E2; color: #B91C1C; border-color: #FECACA; }
+    .role-tag.unverified, .role-badge.unverified { background: #FEF3C7; color: #B45309; border-color: #FDE68A; }
+
+    /* ---------- Search + filter row ---------- */
+    .user-list-controls input[type="search"],
+    .user-list-controls input[type="text"],
+    .user-list-controls select {
+      border: 1px solid var(--cr-border-strong);
+      border-radius: var(--cr-radius-md);
+      background: var(--cr-bg-1);
+      color: var(--cr-text);
+      padding: 9px 12px;
+      font-size: 13.5px;
+      transition: border-color var(--cr-transition-fast), box-shadow var(--cr-transition-fast);
+    }
+    .user-list-controls input:focus,
+    .user-list-controls select:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.18);
+    }
+
+    /* ---------- Action buttons in right rail ----------
+       Each card-style button gets the shared button vocabulary so
+       they read as a cohesive action group, not five different chips. */
+    .action-card,
+    .action-btn,
+    .roster-setup-btn,
+    .admin-action-btn {
+      border: 1px solid var(--cr-border);
+      background: var(--cr-bg-1);
+      border-radius: var(--cr-radius-md);
+      box-shadow: var(--cr-shadow-sm);
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .action-card:hover,
+    .action-btn:hover,
+    .roster-setup-btn:hover,
+    .admin-action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--cr-shadow-md);
+      border-color: var(--color-accent);
+    }
+
+    /* ---------- "Review flags" alarm button — calmer ----------
+       The old "Review flags" button used solid red. Keep the urgency
+       but soften the surface so it doesn't dominate the page. */
+    .review-flags-btn,
+    [class*="review-flags"],
+    .btn-danger-soft {
+      background: #FEE2E2;
+      color: #B91C1C;
+      border: 1px solid #FECACA;
+      border-radius: var(--cr-radius-md);
+      font-weight: 600;
+      transition: background var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .review-flags-btn:hover,
+    [class*="review-flags"]:hover,
+    .btn-danger-soft:hover {
+      background: #FECACA;
+      border-color: #FCA5A5;
+    }
+
+    /* ---------- Tour popup positioning fix (UI review item) ----------
+       The "Welcome! New here?" tour callout was overlapping the user-
+       list table header. Re-anchor to a corner that's always empty
+       (bottom-right with safe inset), and give it the modern card
+       geometry so it doesn't look like a flat advertisement. */
+    .tour-popup,
+    .tour-callout,
+    [class*="tour-welcome"],
+    .feature-tour-prompt {
+      position: fixed !important;
+      right: 24px !important;
+      bottom: 24px !important;
+      left: auto !important;
+      top: auto !important;
+      max-width: 320px;
+      background: var(--cr-bg-1);
+      border: 1px solid var(--cr-border);
+      box-shadow: var(--cr-shadow-lg);
+      border-radius: var(--cr-radius-lg);
+      padding: 16px 18px;
+      z-index: 9000;
+    }
+
+    /* ---------- Top Students sidebar table ---------- */
+    .top-students-table,
+    .top-students th,
+    .top-students td {
+      font-size: 13px;
+    }
+    .top-students th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--cr-text-dim);
+      font-weight: 600;
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--cr-border);
+      text-align: left;
+    }
+    .top-students td {
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--cr-border);
+      color: var(--cr-text);
+      font-variant-numeric: tabular-nums;
+    }
+    .top-students tr:last-child td { border-bottom: none; }
+
+    /* ---------- Logout button on dark header ----------
+       Confirm action — slightly more presence than the other nav
+       buttons. Quiet outline that pops red on hover. */
+    #logoutBtn {
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: var(--cr-radius-md);
+      padding: 8px 14px;
+      transition: background var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    #logoutBtn:hover {
+      background: rgba(220, 38, 38, 0.18);
+      border-color: rgba(220, 38, 38, 0.40);
+    }
+
+    /* ---------- Status-pill vocabulary (mirrors teacher dashboard) ----
+       Drop a <span class="status-pill watch">…</span> anywhere a
+       quick state read is useful. Identical to the version in the
+       teacher dashboard — same component, same vocabulary. */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      font-size: 11.5px;
+      font-weight: 600;
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+      border-radius: var(--cr-radius-pill);
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .status-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: var(--cr-radius-pill);
+      background: currentColor;
+      opacity: 0.85;
+    }
+    .status-pill.urgent   { background: #FEE2E2; color: #B91C1C; border-color: #FECACA; }
+    .status-pill.watch    { background: #FEF3C7; color: #B45309; border-color: #FDE68A; }
+    .status-pill.win      { background: #ECFDF5; color: #047857; border-color: #A7F3D0; }
+    .status-pill.inactive { background: #F1F5F9; color: #475569; border-color: #E2E8F0; }
+    .status-pill.streak   { background: #FFEDD5; color: #C2410C; border-color: #FED7AA; }
+    .status-pill.mastery  { background: #EDE9FE; color: #5B21B6; border-color: #DDD6FE; }
   </style>
   <link rel="stylesheet" href="/css/dashboard-mobile.css" />
 </head>
@@ -1021,13 +1751,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <table class="user-table" aria-label="User accounts table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" id="selectAllCheckbox" title="Select All" aria-label="Select all users"></th>
-                  <th>Name</th>
+                  <th class="th-checkbox"><input type="checkbox" id="selectAllCheckbox" title="Select All" aria-label="Select all users"></th>
+                  <th class="th-sortable" data-sort-key="name" tabindex="0" role="button" aria-sort="none" title="Sort by name">Name<i class="sort-icon" aria-hidden="true"></i></th>
                   <th>Email</th>
                   <th>Role</th>
                   <th>Current Teacher</th>
-                  <th>Date Created</th>
-                  <th>Last Login</th>
+                  <th class="th-sortable" data-sort-key="created" tabindex="0" role="button" aria-sort="none" title="Sort by date created">Date Created<i class="sort-icon" aria-hidden="true"></i></th>
+                  <th class="th-sortable" data-sort-key="lastLogin" tabindex="0" role="button" aria-sort="none" title="Sort by last login">Last Login<i class="sort-icon" aria-hidden="true"></i></th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -1365,6 +2095,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div class="modal-actions">
         <button class="btn btn-primary" id="saveChangesButton"><i class="fas fa-save"></i> Save Changes</button>
         <button class="btn btn-tertiary" id="cancelButton">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teacher Detail Modal -->
+  <!-- Drill-down for admins: shows a teacher's classes + per-class roster.
+       Uses the same .modal-overlay/.modal-content vocabulary as
+       studentDetailModal so the close/escape behaviors stay consistent. -->
+  <div id="teacherDetailModal" class="modal-overlay" role="dialog" aria-labelledby="teacherModalName" aria-modal="true">
+    <div class="modal-content" style="max-width: 960px;">
+      <button class="modal-close-button" id="closeTeacherModalButton" aria-label="Close teacher detail">&times;</button>
+
+      <div class="teacher-modal-header">
+        <div class="teacher-avatar" id="teacherModalAvatar" aria-hidden="true">--</div>
+        <div class="teacher-modal-heading">
+          <h2 id="teacherModalName">Teacher Profile</h2>
+          <div class="teacher-modal-meta">
+            <span id="teacherModalEmail" class="teacher-modal-email"></span>
+            <span id="teacherModalSummary" class="teacher-modal-summary"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3><i class="fas fa-chalkboard"></i> Classes</h3>
+        <div id="teacherClassesList" class="teacher-classes-grid" aria-live="polite">
+          <div class="teacher-classes-loading">Loading classes…</div>
+        </div>
+      </div>
+
+      <div class="modal-section" id="teacherRosterSection" hidden>
+        <h3>
+          <i class="fas fa-users"></i>
+          Class roster
+          <span id="teacherRosterClassName" class="teacher-roster-classname"></span>
+        </h3>
+        <div id="teacherRosterList" class="teacher-roster-list" aria-live="polite"></div>
       </div>
     </div>
   </div>

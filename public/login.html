@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -31,8 +31,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="twitter:description" content="Log in to continue your personalized math learning journey." />
   <meta name="twitter:image" content="https://mathmatix.ai/images/mathmatix-ai-logo.png" />
 
+  <link rel="stylesheet" href="/css/design-system.css" />
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
@@ -41,157 +41,610 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/i18n-translations.js"></script>
   <script src="/js/i18n.js"></script>
   <style>
-    /* Auth page background */
-    .login-page-wrapper {
-      background: linear-gradient(135deg, rgba(var(--clr-primary-teal-rgb, 18,179,179), 0.03) 0%, transparent 50%);
-      min-height: calc(100dvh - 140px);
+    /* ============================================================
+       login.html — modernized auth surface, pilot for the new
+       design system. Uses --cr-* tokens in light mode. Preserves
+       all form IDs, i18n keys, and JS hooks from the original.
+       Scoped under .auth-modern so legacy auth styling on other
+       pages (signup.html, forgot-password.html) is untouched.
+       ============================================================ */
+
+    /* Reset legacy body chrome so the auth canvas can take over.
+       The default .landing-page-body adds a hard column flex; we
+       override below for the split layout. */
+    body.auth-modern {
+      background: var(--cr-bg-0);
+      color: var(--cr-text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font-family-body, "Inter", system-ui, sans-serif);
     }
 
-    /* Error message styling */
-    .error-message {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: var(--radius-sm, 8px);
-      font-size: 0.875rem;
-      line-height: 1.5;
-      text-align: center;
-      margin-top: 12px;
-      background: rgba(255, 107, 107, 0.08);
-      border: 1px solid rgba(255, 107, 107, 0.2);
-      color: var(--clr-error-red, #e74c3c);
+    /* ---------- Header: minimal, clear escape route ---------- */
+    .auth-modern .auth-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 28px;
+      background: transparent;
+      box-shadow: none;
+      border-bottom: 1px solid var(--cr-border);
+      backdrop-filter: none;
+      min-height: 64px;
+    }
+    .auth-modern .auth-header a.auth-logo {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .auth-modern .auth-header .main-logo-hero {
+      max-height: 36px;
+      width: auto;
+    }
+    .auth-modern .auth-header-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+    }
+    .auth-modern .auth-header-nav .auth-nav-text {
+      color: var(--cr-text-dim);
+    }
+    .auth-modern .auth-header-nav .auth-nav-link {
+      color: var(--cr-accent);
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: var(--cr-radius-pill);
+      border: 1px solid var(--cr-accent);
+      transition: background var(--cr-transition-fast), color var(--cr-transition-fast);
+    }
+    .auth-modern .auth-header-nav .auth-nav-link:hover {
+      background: var(--cr-accent);
+      color: #fff;
     }
 
-    /* Demo section */
-    .login-demo-section {
-      margin-top: var(--space-5);
-      padding-top: var(--space-5);
-      border-top: 1px solid var(--clr-border);
-      text-align: center;
+    /* ---------- Stage: split layout, brand left / form right ---------- */
+    .auth-modern .auth-stage {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: 0;
+      min-height: 0;
     }
-
-    .btn-demo {
+    .auth-modern .auth-brand {
+      position: relative;
+      padding: 64px 56px;
+      background: linear-gradient(160deg, #EDE9FF 0%, #F5F7FB 55%, #FFFFFF 100%);
+      border-right: 1px solid var(--cr-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+    .auth-modern .auth-brand::before {
+      /* soft accent halo, anchors the eye to the headline area */
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(108,92,231,0.18) 0%, rgba(108,92,231,0) 70%);
+      pointer-events: none;
+    }
+    .auth-modern .auth-brand-inner {
+      position: relative;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .auth-modern .auth-brand-eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 20px;
-      border-radius: var(--radius-base);
-      background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%);
-      color: #fff;
-      text-decoration: none;
-      font-size: 0.9rem;
+      align-self: flex-start;
+      padding: 6px 14px;
+      border-radius: var(--cr-radius-pill);
+      background: var(--cr-pill-bg);
+      border: 1px solid var(--cr-border);
+      color: var(--cr-text-dim);
+      font-size: 12px;
       font-weight: 600;
-      transition: all var(--transition-base);
-      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .auth-modern .auth-brand-eyebrow .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cr-success);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.18);
+    }
+    .auth-modern .auth-brand h2 {
+      font-size: clamp(28px, 3vw, 36px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      color: var(--cr-text);
+      margin: 0;
+    }
+    .auth-modern .auth-brand h2 .accent {
+      background: var(--cr-accent-grad);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+              color: transparent;
+    }
+    .auth-modern .auth-brand p.auth-brand-sub {
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--cr-text-dim);
+      margin: 0;
     }
 
-    .btn-demo:hover {
+    /* Sample chat preview — a believable, pedagogy-correct snippet
+       that shows the product's value prop in one glance. */
+    .auth-modern .auth-preview {
+      background: var(--cr-bg-panel);
+      border: 1px solid var(--cr-border);
+      border-radius: var(--cr-radius-xl);
+      box-shadow: var(--cr-shadow-md);
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .auth-modern .auth-preview-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--cr-text-dim);
+    }
+    .auth-modern .auth-preview-head .auth-preview-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center top;
+      background: var(--cr-bg-2);
+      border: 1px solid var(--cr-border);
+    }
+    .auth-modern .auth-preview-head strong { color: var(--cr-text); font-weight: 600; }
+    .auth-modern .auth-preview-bubble {
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 92%;
+    }
+    .auth-modern .auth-preview-bubble.from-student {
+      align-self: flex-end;
+      background: var(--cr-bubble-user);
+      color: var(--cr-text);
+      border-top-right-radius: 4px;
+    }
+    .auth-modern .auth-preview-bubble.from-tutor {
+      align-self: flex-start;
+      background: var(--cr-bubble-ai);
+      color: var(--cr-text);
+      border-top-left-radius: 4px;
+    }
+
+    .auth-modern .auth-brand-foot {
+      position: relative;
+      font-size: 13px;
+      color: var(--cr-text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .auth-modern .auth-brand-foot i { color: var(--cr-accent); }
+
+    /* ---------- Form panel ---------- */
+    .auth-modern .auth-form-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 56px 32px;
+      background: var(--cr-bg-1);
+    }
+    .auth-modern .auth-card {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .auth-modern .auth-card h1 {
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      color: var(--cr-text);
+      margin: 0;
+    }
+    .auth-modern .auth-card .subtitle {
+      font-size: 15px;
+      color: var(--cr-text-dim);
+      margin: 6px 0 0;
+      line-height: 1.5;
+    }
+
+    .auth-modern form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin: 0;
+    }
+    .auth-modern .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .auth-modern .form-group label,
+    .auth-modern .password-label-row label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cr-text);
+      letter-spacing: 0.01em;
+    }
+    .auth-modern .password-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .auth-modern .password-label-row a {
+      font-size: 13px;
+      color: var(--cr-accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .auth-modern .password-label-row a:hover { text-decoration: underline; }
+
+    .auth-modern input[type="email"],
+    .auth-modern input[type="password"] {
+      width: 100%;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--cr-text);
+      background: var(--cr-bg-1);
+      border: 1px solid var(--cr-border-strong);
+      border-radius: var(--cr-radius-md);
+      transition: border-color var(--cr-transition-fast), box-shadow var(--cr-transition-fast);
+      box-shadow: var(--cr-shadow-sm);
+    }
+    .auth-modern input[type="email"]::placeholder,
+    .auth-modern input[type="password"]::placeholder {
+      color: var(--cr-text-dim);
+      opacity: 0.7;
+    }
+    .auth-modern input[type="email"]:focus,
+    .auth-modern input[type="password"]:focus {
+      outline: none;
+      border-color: var(--cr-accent);
+      box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.18);
+    }
+
+    .auth-modern .submit-btn {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
       color: #fff;
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+      background: var(--cr-accent-grad);
+      border: none;
+      border-radius: var(--cr-radius-md);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(108, 92, 231, 0.28);
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast), filter var(--cr-transition-fast);
+    }
+    .auth-modern .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(108, 92, 231, 0.34);
+      filter: brightness(1.04);
+    }
+    .auth-modern .submit-btn:active { transform: translateY(0); filter: brightness(0.98); }
+
+    .auth-modern #login-message.error-message {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--cr-radius-sm);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+      background: rgba(220, 38, 38, 0.06);
+      border: 1px solid rgba(220, 38, 38, 0.22);
+      color: var(--cr-danger);
+    }
+
+    .auth-modern .or-separator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 4px 0;
+    }
+    .auth-modern .or-separator::before,
+    .auth-modern .or-separator::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--cr-border);
+    }
+    .auth-modern .or-separator span {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--cr-text-dim);
+    }
+
+    .auth-modern .social-login-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .auth-modern .social-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--cr-text);
+      background: var(--cr-bg-1);
+      border: 1px solid var(--cr-border-strong);
+      border-radius: var(--cr-radius-md);
+      text-decoration: none;
+      transition: background var(--cr-transition-fast), border-color var(--cr-transition-fast), transform var(--cr-transition-fast);
+    }
+    .auth-modern .social-btn:hover {
+      background: var(--cr-pill-bg-hover);
+      border-color: var(--cr-text-dim);
       transform: translateY(-1px);
     }
-
-    .login-demo-note {
-      font-size: 0.8rem;
-      color: var(--clr-text-dim);
-      margin-top: 8px;
+    .auth-modern .social-btn img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
     }
 
-    .login-demo-post-launch {
-      display: none;
-      font-size: 0.85rem;
-      color: var(--clr-text-dim);
+    .auth-modern .signup-link {
+      text-align: center;
+      font-size: 14px;
+      color: var(--cr-text-dim);
+      margin: 0;
     }
-
-    .login-demo-post-launch a {
-      color: #7C3AED;
+    .auth-modern .signup-link a {
+      color: var(--cr-accent);
       font-weight: 600;
       text-decoration: none;
+    }
+    .auth-modern .signup-link a:hover { text-decoration: underline; }
+
+    .auth-modern .login-demo-section {
+      margin-top: 8px;
+      padding-top: 22px;
+      border-top: 1px solid var(--cr-border);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .auth-modern .btn-demo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--cr-radius-pill);
+      background: var(--cr-pill-bg);
+      border: 1px solid var(--cr-border-strong);
+      color: var(--cr-text);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: background var(--cr-transition-fast), border-color var(--cr-transition-fast), transform var(--cr-transition-fast);
+    }
+    .auth-modern .btn-demo:hover {
+      background: var(--cr-pill-bg-hover);
+      border-color: var(--cr-text-dim);
+      transform: translateY(-1px);
+    }
+    .auth-modern .btn-demo i { color: var(--cr-accent); }
+    .auth-modern .login-demo-note {
+      font-size: 12.5px;
+      color: var(--cr-text-dim);
+      margin: 0;
+    }
+    .auth-modern .login-demo-post-launch {
+      display: none;
+      font-size: 13px;
+      color: var(--cr-text-dim);
+      margin: 0;
+    }
+    .auth-modern .login-demo-post-launch a {
+      color: var(--cr-accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* ---------- Footer ---------- */
+    .auth-modern footer {
+      padding: 18px 28px;
+      border-top: 1px solid var(--cr-border);
+      background: var(--cr-bg-1);
+      color: var(--cr-text-dim);
+      font-size: 12.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .auth-modern footer a {
+      color: var(--cr-text-dim);
+      text-decoration: none;
+      margin-left: 14px;
+    }
+    .auth-modern footer a:hover { color: var(--cr-text); text-decoration: underline; }
+
+    /* ---------- Responsive: collapse to single column ---------- */
+    @media (max-width: 880px) {
+      .auth-modern .auth-stage { grid-template-columns: 1fr; }
+      .auth-modern .auth-brand {
+        padding: 40px 28px 32px;
+        border-right: none;
+        border-bottom: 1px solid var(--cr-border);
+        min-height: auto;
+      }
+      .auth-modern .auth-brand-inner { gap: 22px; }
+      .auth-modern .auth-form-panel { padding: 40px 24px; }
+      .auth-modern .auth-card h1 { font-size: 26px; }
+    }
+
+    @media (max-width: 520px) {
+      .auth-modern .auth-header { padding: 14px 18px; }
+      .auth-modern .auth-brand { padding: 32px 22px 28px; }
+      .auth-modern .auth-brand h2 { font-size: 24px; }
+      .auth-modern .auth-form-panel { padding: 32px 20px; }
+      .auth-modern footer { flex-direction: column; align-items: center; text-align: center; }
+      .auth-modern footer a { margin-left: 0; margin-right: 8px; }
     }
   </style>
   </head>
-<body class="landing-page-body">
+<body class="landing-page-body auth-modern">
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <a href="#main-content" class="skip-to-content" data-i18n="misc.skipToContent">Skip to main content</a>
-  <header class="landing-header">
-    <div class="header-logo-container">
+
+  <header class="auth-header">
+    <a href="/" class="auth-logo" aria-label="Mathmatix AI home">
       <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix AI Logo" class="main-logo-hero" />
-    </div>
-    <nav class="landing-nav">
-      <a href="/signup.html" class="btn btn-primary" data-i18n="nav.signUp">Sign Up</a>
+    </a>
+    <nav class="auth-header-nav" aria-label="Account options">
+      <span class="auth-nav-text" data-i18n="login.noAccount">Don't have an account?</span>
+      <a href="/signup.html" class="auth-nav-link" data-i18n="nav.signUp">Sign Up</a>
     </nav>
   </header>
 
-  <main id="main-content" class="login-page-wrapper">
-    <div class="login-container">
-      <h1 data-i18n="login.welcomeBack">Welcome Back!</h1>
-      <p class="subtitle" data-i18n="login.subtitle">Log in to continue your learning journey.</p>
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="email" data-i18n="login.email">Email Address</label>
-          <input type="email" id="email" name="email" required autocomplete="email" placeholder="Enter your email" data-i18n-placeholder="login.emailPlaceholder" />
-        </div>
+  <main id="main-content" class="auth-stage">
+    <!-- Left: brand panel. Earns the dead space the old layout left empty. -->
+    <aside class="auth-brand" aria-hidden="true">
+      <div class="auth-brand-inner">
+        <span class="auth-brand-eyebrow">
+          <span class="dot" aria-hidden="true"></span>
+          AI Math Tutor
+        </span>
+        <h2>
+          Won't give answers — <span class="accent">teaches them to think.</span>
+        </h2>
+        <p class="auth-brand-sub">
+          Patient, step-by-step help that meets your child where they are. Real pedagogy, not a chatbot shortcut.
+        </p>
 
-        <div class="form-group">
-          <div class="password-label-row">
-            <label for="password" data-i18n="login.password">Password</label>
-            <a href="/forgot-password.html" data-i18n="login.forgotPassword">Forgot Password?</a>
+        <div class="auth-preview" role="presentation">
+          <div class="auth-preview-head">
+            <img src="/images/tutor_avatars/mr-nappier.png" alt="" class="auth-preview-avatar" />
+            <span><strong>Mr. Nappier</strong> · sample session</span>
           </div>
-          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password" data-i18n-placeholder="login.passwordPlaceholder" />
+          <div class="auth-preview-bubble from-student">
+            I got 1/2 + 1/3 = 2/5
+          </div>
+          <div class="auth-preview-bubble from-tutor">
+            I see exactly what happened — you added the tops, then the bottoms. That's a common spot to slip! Fractions need pieces of the same size first. What size works for both halves and thirds?
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-brand-foot">
+        <i class="fas fa-shield-halved" aria-hidden="true"></i>
+        Built by a math teacher · Grade 3 through Calculus
+      </div>
+    </aside>
+
+    <!-- Right: the form -->
+    <section class="auth-form-panel" aria-labelledby="auth-heading">
+      <div class="auth-card">
+        <div>
+          <h1 id="auth-heading" data-i18n="login.welcomeBack">Welcome Back!</h1>
+          <p class="subtitle" data-i18n="login.subtitle">Log in to continue your learning journey.</p>
         </div>
 
-        <button type="submit" class="submit-btn" data-i18n="login.logIn">
-          <i class="fas fa-sign-in-alt"></i> Log In
-        </button>
-      </form>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="email" data-i18n="login.email">Email Address</label>
+            <input type="email" id="email" name="email" required autocomplete="email" placeholder="Enter your email" data-i18n-placeholder="login.emailPlaceholder" />
+          </div>
 
-      <div id="login-message" class="error-message" style="display: none;"></div>
+          <div class="form-group">
+            <div class="password-label-row">
+              <label for="password" data-i18n="login.password">Password</label>
+              <a href="/forgot-password.html" data-i18n="login.forgotPassword">Forgot Password?</a>
+            </div>
+            <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password" data-i18n-placeholder="login.passwordPlaceholder" />
+          </div>
 
-      <div class="or-separator"><span data-i18n="login.or">OR</span></div>
+          <button type="submit" class="submit-btn" data-i18n="login.logIn">
+            <i class="fas fa-sign-in-alt"></i> Log In
+          </button>
+        </form>
 
-      <div class="social-login-buttons">
-        <a href="/auth/google" class="social-btn google-btn" data-i18n="login.continueGoogle">
-          <img src="/images/google-icon.png" alt="Google" />
-          Continue with Google
-        </a>
-        <a href="/auth/microsoft" class="social-btn microsoft-btn" data-i18n="login.continueMicrosoft">
-          <img src="/images/microsoft-icon.png" alt="Microsoft" />
-          Continue with Microsoft
-        </a>
-        <!-- Clever login hidden for now
-        <a href="/auth/clever" class="social-btn clever-btn" style="background: #4274f6; color: #fff; border-color: #4274f6;" data-i18n="login.loginClever">
-          <img src="/images/clever-icon.svg" alt="Clever" style="height: 20px; width: 20px;" />
-          Log in with Clever
-        </a>
-        -->
+        <div id="login-message" class="error-message" style="display: none;"></div>
+
+        <div class="or-separator"><span data-i18n="login.or">OR</span></div>
+
+        <div class="social-login-buttons">
+          <a href="/auth/google" class="social-btn google-btn" data-i18n="login.continueGoogle">
+            <img src="/images/google-icon.png" alt="Google" />
+            Continue with Google
+          </a>
+          <a href="/auth/microsoft" class="social-btn microsoft-btn" data-i18n="login.continueMicrosoft">
+            <img src="/images/microsoft-icon.png" alt="Microsoft" />
+            Continue with Microsoft
+          </a>
+          <!-- Clever login hidden for now
+          <a href="/auth/clever" class="social-btn clever-btn" style="background: #4274f6; color: #fff; border-color: #4274f6;" data-i18n="login.loginClever">
+            <img src="/images/clever-icon.svg" alt="Clever" style="height: 20px; width: 20px;" />
+            Log in with Clever
+          </a>
+          -->
+        </div>
+
+        <div id="login-demo-section" class="login-demo-section">
+          <a href="/demo.html" class="btn-demo lp-pre-launch">
+            <i class="fas fa-play-circle"></i> <span data-i18n="login.tryDemo">Try the Interactive Demo</span>
+          </a>
+          <p class="lp-pre-launch login-demo-note" data-i18n="login.demoNote">
+            No account needed. Explore as a teacher, parent, or student.
+          </p>
+          <p class="lp-post-launch login-demo-post-launch">
+            <a href="/signup.html">Sign up free</a> — get 30 minutes of AI tutoring every week.
+          </p>
+        </div>
       </div>
-
-      <p class="signup-link">
-        <span data-i18n="login.noAccount">Don't have an account?</span> <a href="/signup.html" data-i18n="login.createAccount">Create an account</a>
-      </p>
-
-      <div id="login-demo-section" class="login-demo-section">
-        <a href="/demo.html" class="btn-demo lp-pre-launch">
-          <i class="fas fa-play-circle"></i> <span data-i18n="login.tryDemo">Try the Interactive Demo</span>
-        </a>
-        <p class="lp-pre-launch login-demo-note" data-i18n="login.demoNote">
-          No account needed. Explore as a teacher, parent, or student.
-        </p>
-        <p class="lp-post-launch login-demo-post-launch">
-          <a href="/signup.html">Sign up free</a> — get 30 minutes of AI tutoring every week.
-        </p>
-      </div>
-    </div>
+    </section>
   </main>
 
   <footer>
-    <p>© 2026 M∆THM∆TIΧ AI. <span data-i18n="footer.rights">All rights reserved.</span></p>
-    <p>
-      <a href="/privacy.html" data-i18n="footer.privacy">Privacy Policy</a> |
+    <span>© 2026 M∆THM∆TIΧ AI. <span data-i18n="footer.rights">All rights reserved.</span></span>
+    <span>
+      <a href="/privacy.html" data-i18n="footer.privacy">Privacy Policy</a>
       <a href="/terms.html" data-i18n="footer.terms">Terms of Use</a>
-    </p>
+    </span>
   </footer>
 
   <script src="/js/login-form.js"></script>
