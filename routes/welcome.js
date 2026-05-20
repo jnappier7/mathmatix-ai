@@ -46,11 +46,22 @@ router.get('/', async (req, res) => {
 
         let lastContextForAI = null;
         let contextType = 'none';
+        // Days since the prior session activity. The greeting composer
+        // needs this so it doesn't greet a 6-month-absent student with
+        // "you're working on quadratic equations now" — a stale topic
+        // reference plants false context and looks like a hallucination
+        // even when the data is technically real.
+        let lastActivityDaysAgo = null;
 
         // Use existing conversation for context (no need to reload)
         if (activeConversation && activeConversation.messages && activeConversation.messages.length > 0) {
             lastContextForAI = activeConversation.messages.slice(-6).map(msg => `${msg.role}: ${msg.content}`).join('\n');
             contextType = 'recent_messages';
+            if (activeConversation.lastActivity) {
+                lastActivityDaysAgo = Math.floor(
+                    (Date.now() - new Date(activeConversation.lastActivity).getTime()) / (1000 * 60 * 60 * 24)
+                );
+            }
         }
 
         if (!lastContextForAI) {
@@ -62,6 +73,11 @@ router.get('/', async (req, res) => {
             if (lastArchivedConversation) {
                 lastContextForAI = lastArchivedConversation.summary;
                 contextType = 'summary';
+                if (lastArchivedConversation.lastActivity) {
+                    lastActivityDaysAgo = Math.floor(
+                        (Date.now() - new Date(lastArchivedConversation.lastActivity).getTime()) / (1000 * 60 * 60 * 24)
+                    );
+                }
             }
         }
 
@@ -243,11 +259,32 @@ router.get('/', async (req, res) => {
             const randomStyle = greetingStyles[Math.floor(Math.random() * greetingStyles.length)];
             const varietySeed = Math.floor(Math.random() * 10000); // Random number to force different responses
 
+            // Tag the context with its age so the model can decide
+            // whether the prior topic is still relevant. Anything older
+            // than 14 days should be treated as "long-absent" — don't
+            // assume they're still mid-session on whatever they last did.
+            const ageDescriptor =
+                lastActivityDaysAgo == null ? 'unknown age' :
+                lastActivityDaysAgo === 0  ? 'today' :
+                lastActivityDaysAgo === 1  ? 'yesterday' :
+                lastActivityDaysAgo <  7   ? `${lastActivityDaysAgo} days ago` :
+                lastActivityDaysAgo < 30   ? `${Math.round(lastActivityDaysAgo / 7)} week(s) ago` :
+                                              `${Math.round(lastActivityDaysAgo / 30)} month(s) ago`;
+            const isLongAbsence = lastActivityDaysAgo != null && lastActivityDaysAgo > 14;
+
             messagesForAI.push({
                 role: "system",
-                content: `Returning student. ${temporalContext}. Last session context: ${lastContextForAI}. Variety seed: ${varietySeed}`
+                content: `Returning student. ${temporalContext}. Last session was ${ageDescriptor}. Last session context: ${lastContextForAI}. Variety seed: ${varietySeed}`
             });
-            userMessagePart = `Write a ${randomStyle}. For ${user.firstName}. Keep it VERY short (1 sentence). Sound natural, like texting. CRITICAL: DON'T introduce yourself - they already know you. Vary your word choice every time - don't repeat phrases like "my friend", "buddy", "pal" etc. Just jump right in. Context: ${temporalContext}. NO canned greetings. Be spontaneous.`;
+
+            // Tighten the user prompt: gate the last-topic reference on
+            // freshness. Long-absent students get a clean re-entry, not
+            // a "you're working on X" line based on stale state.
+            const stalenessRule = isLongAbsence
+                ? `IMPORTANT: The last session was ${ageDescriptor} — do NOT reference a specific topic or assume they're "still working on" anything. Just welcome them back and ask what they want to do today.`
+                : `If the last session was within the past few days, you may briefly reference it; otherwise just ask what they want to work on.`;
+
+            userMessagePart = `Write a ${randomStyle}. For ${user.firstName}. Keep it VERY short (1 sentence). Sound natural, like texting. CRITICAL: DON'T introduce yourself - they already know you. Vary your word choice every time - don't repeat phrases like "my friend", "buddy", "pal" etc. Just jump right in. Context: ${temporalContext}. ${stalenessRule} NO canned greetings. Be spontaneous.`;
         }
 
         // FALLBACK: Simple natural greeting

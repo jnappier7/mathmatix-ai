@@ -67,7 +67,14 @@ export function updateFreeTimeIndicator(usage) {
     if (!indicator) {
         indicator = document.createElement('div');
         indicator.id = 'free-time-indicator';
-        indicator.style.cssText = 'position:fixed;bottom:12px;right:12px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;z-index:1750;cursor:pointer;border:1px solid #333;transition:all 0.3s;';
+        // Stacked ABOVE the voice orb container (which sits at
+        // bottom:30/right:30 and is ~150px tall with the status
+        // label). Previously this pill was at bottom:12 and lived
+        // inside the orb's vertical range, so the "Resets soon"
+        // sub-line was clipped by the orb's drop shadow. Right-
+        // aligned with the orb (right:30) so they read as one
+        // cohesive corner stack.
+        indicator.style.cssText = 'position:fixed;bottom:160px;right:30px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;z-index:1750;cursor:pointer;border:1px solid #333;transition:all 0.3s;box-shadow:0 6px 18px rgba(0,0,0,0.35);max-width:280px;';
         indicator.title = 'AI processing time only — reading and thinking time is free';
         indicator.addEventListener('click', () => showUpgradePrompt({}));
         document.body.appendChild(indicator);
@@ -76,7 +83,11 @@ export function updateFreeTimeIndicator(usage) {
     const remaining = usage.secondsRemaining || 0;
     const mins = Math.floor(remaining / 60);
 
-    // Calculate human-readable reset time
+    // Calculate human-readable reset time. "Resets soon" was the
+    // previous fallback for the last hour, which my UI review flagged
+    // as too vague. Show concrete minutes instead (rounded up so we
+    // never claim "0 min" — that reads as "right now" but the budget
+    // hasn't actually rolled over yet).
     let resetText = '';
     if (usage.nextResetAt) {
         const resetDate = new Date(usage.nextResetAt);
@@ -84,12 +95,13 @@ export function updateFreeTimeIndicator(usage) {
         if (msUntilReset > 0) {
             const daysUntil = Math.floor(msUntilReset / (1000 * 60 * 60 * 24));
             const hoursUntil = Math.floor((msUntilReset % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutesUntil = Math.max(1, Math.ceil(msUntilReset / 60000));
             if (daysUntil > 0) {
                 resetText = `Resets in ${daysUntil}d ${hoursUntil}h`;
             } else if (hoursUntil > 0) {
                 resetText = `Resets in ${hoursUntil}h`;
             } else {
-                resetText = 'Resets soon';
+                resetText = `Resets in ${minutesUntil}m`;
             }
         }
     }

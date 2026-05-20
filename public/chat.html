@@ -136,9 +136,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <nav class="landing-nav" aria-label="Chat controls">
       <!-- Redesigned header extras (streak / progress / avatar) -->
       <div class="cr-header-extras">
-        <span class="cr-streak-pill" title="Daily streak">
+        <span class="cr-streak-pill" id="cr-streak-pill" data-streak="0" title="Daily streak">
           <span class="cr-flame" aria-hidden="true">🔥</span>
-          <span id="cr-streak-value">0 day streak</span>
+          <span id="cr-streak-value">Start your streak</span>
         </span>
         <button id="cr-progress-btn" class="cr-progress-btn" type="button" aria-label="Open progress panel">
           <i class="fas fa-chart-bar"></i>
@@ -902,16 +902,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="mms-key" data-insert="÷" title="Divide">÷</button>
       </div>
       <div class="imessage-tool-btns">
-        <button id="insert-equation-btn" title="Insert Equation" aria-label="Insert equation" class="imessage-tool-btn">
+        <button id="insert-equation-btn" data-tip="Insert equation" aria-label="Insert equation" class="imessage-tool-btn">
           <i class="fas fa-square-root-variable"></i>
         </button>
-        <button id="attach-button" title="Upload Files" aria-label="Upload files" class="imessage-tool-btn">
+        <button id="attach-button" data-tip="Upload files" aria-label="Upload files" class="imessage-tool-btn">
           <i class="fas fa-paperclip"></i>
         </button>
-        <button id="camera-button" title="Show Your Work" aria-label="Show your work" class="imessage-tool-btn">
+        <button id="camera-button" data-tip="Show your work" aria-label="Show your work" class="imessage-tool-btn">
           <i class="fas fa-camera-retro"></i>
         </button>
-        <button id="mic-button" title="Voice Input" aria-label="Voice input" class="imessage-tool-btn">
+        <button id="mic-button" data-tip="Voice input" aria-label="Voice input" class="imessage-tool-btn">
           <i class="fas fa-microphone"></i>
         </button>
         <!-- Calculator and Break hidden — not production ready -->

@@ -18,13 +18,58 @@
 
   function isOn() { return document.body.classList.contains('cr-voice'); }
 
+  // Read the active tutor's display name from the live element that
+  // chat-redesign.js's applyTutor() writes into. Falls back to a
+  // generic label when the page hasn't bound a tutor yet (e.g. very
+  // early in load, before user data resolves). Using textContent
+  // means the tutor name is always treated as plain text — no XSS
+  // surface even if the config ever sources a name from the server.
+  function getActiveTutorName() {
+    var el = document.getElementById('cr-tutor-name');
+    var name = el ? (el.textContent || '').trim() : '';
+    if (!name || name.toLowerCase() === 'tutor') return null;
+    return name;
+  }
+
   function paintButton() {
     if (!btn) return;
     var on = isOn();
-    btn.innerHTML = on
-      ? '<i class="fas fa-keyboard" aria-hidden="true"></i> Type instead'
-      : '<i class="fas fa-microphone" aria-hidden="true"></i> Talk to Maya';
+    var tutorName = getActiveTutorName();
+
+    // Build with DOM nodes (not innerHTML + concatenation) so the
+    // tutor name is safely escaped no matter what.
+    btn.innerHTML = '';
+    var icon = document.createElement('i');
+    icon.className = on ? 'fas fa-keyboard' : 'fas fa-microphone';
+    icon.setAttribute('aria-hidden', 'true');
+    btn.appendChild(icon);
+
+    var label;
+    if (on) {
+      label = ' Type instead';
+    } else if (tutorName) {
+      label = ' Talk to ' + tutorName;
+    } else {
+      label = ' Voice mode';
+    }
+    btn.appendChild(document.createTextNode(label));
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  // Re-paint the button whenever the active tutor name changes so the
+  // label tracks tutor switches (chat-redesign.js's applyTutor mutates
+  // #cr-tutor-name; this observer is the cleanest contract — no event
+  // coupling required).
+  function watchTutorName() {
+    var el = document.getElementById('cr-tutor-name');
+    if (!el || typeof MutationObserver !== 'function') return;
+    try {
+      new MutationObserver(paintButton).observe(el, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+    } catch (_) { /* observer unsupported — label stays at initial paint */ }
   }
 
   function enter() {
@@ -66,6 +111,7 @@
     btn.addEventListener('click', toggle);
     host.insertBefore(btn, host.firstChild);
     paintButton();
+    watchTutorName();
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && isOn()) exit();
