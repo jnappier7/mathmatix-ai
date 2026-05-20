@@ -1033,6 +1033,115 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       box-shadow: var(--cr-shadow-md);
     }
 
+    /* ---------- Sortable column headers ----------
+       TH elements marked .th-sortable get a click affordance: cursor
+       pointer, hover tint, and an inline sort indicator icon that
+       lights up when the column is the active sort. The active
+       column also picks up an accent text color. aria-sort drives
+       both the visual and screen-reader state. */
+    .user-table thead th.th-sortable,
+    #userListTable thead th.th-sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: color var(--cr-transition-fast), background var(--cr-transition-fast);
+    }
+    .user-table thead th.th-sortable:hover,
+    #userListTable thead th.th-sortable:hover {
+      color: var(--color-accent);
+      background: var(--cr-pill-bg);
+    }
+    .user-table thead th.th-sortable:focus-visible,
+    #userListTable thead th.th-sortable:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+    .user-table thead th .sort-icon,
+    #userListTable thead th .sort-icon {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-left: 6px;
+      vertical-align: 1px;
+      opacity: 0.35;
+      transition: opacity var(--cr-transition-fast), transform var(--cr-transition-fast);
+      background:
+        linear-gradient(45deg, transparent 50%, currentColor 50%) no-repeat top left / 4px 4px,
+        linear-gradient(-45deg, transparent 50%, currentColor 50%) no-repeat top right / 4px 4px,
+        linear-gradient(135deg, transparent 50%, currentColor 50%) no-repeat bottom left / 4px 4px,
+        linear-gradient(-135deg, transparent 50%, currentColor 50%) no-repeat bottom right / 4px 4px;
+    }
+    .user-table thead th.th-sortable[aria-sort="ascending"],
+    #userListTable thead th.th-sortable[aria-sort="ascending"],
+    .user-table thead th.th-sortable[aria-sort="descending"],
+    #userListTable thead th.th-sortable[aria-sort="descending"] {
+      color: var(--color-accent);
+    }
+    .user-table thead th.th-sortable[aria-sort="ascending"] .sort-icon,
+    #userListTable thead th.th-sortable[aria-sort="ascending"] .sort-icon {
+      opacity: 1;
+      background:
+        linear-gradient(45deg, transparent 50%, currentColor 50%) no-repeat top left / 4px 4px,
+        linear-gradient(-45deg, transparent 50%, currentColor 50%) no-repeat top right / 4px 4px;
+    }
+    .user-table thead th.th-sortable[aria-sort="descending"] .sort-icon,
+    #userListTable thead th.th-sortable[aria-sort="descending"] .sort-icon {
+      opacity: 1;
+      background:
+        linear-gradient(135deg, transparent 50%, currentColor 50%) no-repeat bottom left / 4px 4px,
+        linear-gradient(-135deg, transparent 50%, currentColor 50%) no-repeat bottom right / 4px 4px;
+    }
+
+    /* ---------- Bulk-action bar (admin) — modernize the existing
+       JS-driven bar. The fixed bottom bar already gets injected by
+       admin-dashboard.js; these rules style it via id, so no JS
+       change is required. The old hardcoded inline styles still
+       apply, but the rules below override them via specificity. */
+    #admin-bulk-bar {
+      background: var(--cr-bg-1) !important;
+      color: var(--cr-text) !important;
+      border-top: 1px solid var(--cr-border) !important;
+      box-shadow: var(--cr-shadow-lg) !important;
+      padding: 14px 24px !important;
+      gap: 12px !important;
+    }
+    #admin-bulk-bar > span {
+      color: var(--cr-text) !important;
+      font-weight: 600;
+      margin-right: auto;
+    }
+    #admin-bulk-bar > span::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--color-accent);
+      border-radius: var(--cr-radius-pill);
+      margin-right: 8px;
+      vertical-align: 1px;
+    }
+    #admin-bulk-bar button {
+      border-radius: var(--cr-radius-md) !important;
+      border: 1px solid var(--cr-border-strong) !important;
+      padding: 9px 16px !important;
+      font-weight: 600 !important;
+      font-size: 13px !important;
+      background: var(--cr-bg-1) !important;
+      color: var(--cr-text) !important;
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast) !important;
+    }
+    #admin-bulk-bar button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--cr-shadow-sm) !important;
+      border-color: var(--color-accent) !important;
+    }
+    /* Action-specific accent tints (overrides the inline blue/green/orange
+       so each action reads in the new system vocabulary). */
+    #admin-bulk-bar button[onclick*="bulkAssignTeacher"] { color: #1D4ED8 !important; background: #EFF6FF !important; border-color: #BFDBFE !important; }
+    #admin-bulk-bar button[onclick*="bulkExportUsers"]   { color: #047857 !important; background: #ECFDF5 !important; border-color: #A7F3D0 !important; }
+    #admin-bulk-bar button[onclick*="bulkResetScreeners"] { color: #B45309 !important; background: #FEF3C7 !important; border-color: #FDE68A !important; }
+    #admin-bulk-bar button[onclick*="clearBulkSelection"] { color: var(--cr-text-dim) !important; background: transparent !important; border-color: var(--cr-border) !important; }
+
     /* ---------- Tables: row hover, status pills inline ----------
        User list is the primary admin data surface. Linear's discipline:
        no zebra, generous row padding, hover row tint, header in caps
@@ -1410,13 +1519,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <table class="user-table" aria-label="User accounts table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" id="selectAllCheckbox" title="Select All" aria-label="Select all users"></th>
-                  <th>Name</th>
+                  <th class="th-checkbox"><input type="checkbox" id="selectAllCheckbox" title="Select All" aria-label="Select all users"></th>
+                  <th class="th-sortable" data-sort-key="name" tabindex="0" role="button" aria-sort="none" title="Sort by name">Name<i class="sort-icon" aria-hidden="true"></i></th>
                   <th>Email</th>
                   <th>Role</th>
                   <th>Current Teacher</th>
-                  <th>Date Created</th>
-                  <th>Last Login</th>
+                  <th class="th-sortable" data-sort-key="created" tabindex="0" role="button" aria-sort="none" title="Sort by date created">Date Created<i class="sort-icon" aria-hidden="true"></i></th>
+                  <th class="th-sortable" data-sort-key="lastLogin" tabindex="0" role="button" aria-sort="none" title="Sort by last login">Last Login<i class="sort-icon" aria-hidden="true"></i></th>
                   <th>Actions</th>
                 </tr>
               </thead>

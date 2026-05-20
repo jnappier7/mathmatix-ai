@@ -115,8 +115,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -------------------------------------------------------------------------
     // --- Modal Control ---
     // -------------------------------------------------------------------------
-    const openModal = () => studentDetailModal?.classList.add('is-visible');
-    const closeModal = () => studentDetailModal?.classList.remove('is-visible');
+    // The modal supports URL deep-linking via ?user=<id>. Opening pushes
+    // the id into the query string (replaceState — no history pollution
+    // on every cell click), closing strips it. A reload of the page with
+    // ?user=<id> in the URL will re-open the detail view (handled in
+    // initializeDashboard once the user list has loaded).
+    const setUserParam = (id) => {
+        try {
+            const url = new URL(window.location.href);
+            if (id) url.searchParams.set('user', id);
+            else url.searchParams.delete('user');
+            window.history.replaceState({}, '', url.toString());
+        } catch (_) { /* same-origin safety; ignore */ }
+    };
+    const openModal = (id) => {
+        studentDetailModal?.classList.add('is-visible');
+        if (id) setUserParam(id);
+    };
+    const closeModal = () => {
+        studentDetailModal?.classList.remove('is-visible');
+        setUserParam(null);
+    };
 
     // -------------------------------------------------------------------------
     // --- Data Fetching & Initialization ---
@@ -151,6 +170,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             hideUserTableSkeleton();
             fetchAndDisplayLeaderboard();
             fetchSystemStatus();
+
+            // Deep-link: if the URL carries ?user=<id> AND that user is
+            // in the loaded set, auto-open the detail modal. Lets admins
+            // share or bookmark a link straight to a user's profile.
+            const deepLinkUserId = new URLSearchParams(window.location.search).get('user');
+            if (deepLinkUserId && students.some(s => s._id === deepLinkUserId)) {
+                populateModal(deepLinkUserId);
+            }
 
         } catch (error) {
             console.error("Error initializing dashboard:", error);
@@ -378,7 +405,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("lastLoginDisplay").textContent = formatDate(student.lastLogin);
         document.getElementById("createdAtDisplay").textContent = formatDate(student.createdAt);
         
-        openModal();
+        openModal(studentId);
 
         // --- Asynchronously Fetch Dynamic Data ---
         conversationSummariesList.innerHTML = '<li>Loading conversation history...</li>';
@@ -758,7 +785,66 @@ document.addEventListener("DOMContentLoaded", async () => {
     const userRoleFilter = document.getElementById('userRoleFilter');
     if (userRoleFilter) userRoleFilter.addEventListener("change", renderStudents);
     const userSortSelect = document.getElementById('userSortSelect');
-    if (userSortSelect) userSortSelect.addEventListener("change", renderStudents);
+    if (userSortSelect) userSortSelect.addEventListener("change", () => {
+        // When the dropdown changes, sync the column-header indicators
+        // so the visual state matches whichever control the user used.
+        syncSortHeaderState(userSortSelect.value);
+        renderStudents();
+    });
+
+    // --- Clickable column-header sort ---
+    // Each .th-sortable in #userListTable carries a data-sort-key.
+    // Click cycles ascending → descending; setting #userSortSelect to
+    // the corresponding option keeps the existing dropdown in sync
+    // and the existing renderStudents/sortStudents pipeline does the
+    // actual ordering. No new sort engine.
+    const SORT_HEADER_MAP = {
+        // headerKey: { asc: <userSortSelect value>, desc: <userSortSelect value> }
+        name:      { asc: 'name-asc',  desc: 'name-desc' },
+        created:   { asc: 'oldest',    desc: 'newest' },
+        lastLogin: { asc: 'last-login', desc: 'last-login' } // last-login already sorts most-recent first
+    };
+
+    function syncSortHeaderState(selectValue) {
+        // Map a userSortSelect value back to a header key + direction
+        // so the active column header lights up correctly.
+        const headers = document.querySelectorAll('.user-table thead th.th-sortable');
+        headers.forEach(th => th.setAttribute('aria-sort', 'none'));
+        for (const [key, dirs] of Object.entries(SORT_HEADER_MAP)) {
+            const header = document.querySelector(`.user-table thead th.th-sortable[data-sort-key="${key}"]`);
+            if (!header) continue;
+            if (dirs.asc === selectValue)  header.setAttribute('aria-sort', 'ascending');
+            if (dirs.desc === selectValue) header.setAttribute('aria-sort', 'descending');
+        }
+    }
+
+    document.querySelectorAll('.user-table thead th.th-sortable').forEach(th => {
+        const handler = () => {
+            if (!userSortSelect) return;
+            const key = th.dataset.sortKey;
+            const dirs = SORT_HEADER_MAP[key];
+            if (!dirs) return;
+            const current = th.getAttribute('aria-sort');
+            // Default cycle: clicking an inactive column starts descending
+            // for date-like columns, ascending for name. Re-clicking
+            // toggles direction.
+            let next;
+            if (current === 'ascending') next = dirs.desc;
+            else if (current === 'descending') next = dirs.asc;
+            else next = (key === 'name') ? dirs.asc : dirs.desc;
+            userSortSelect.value = next;
+            syncSortHeaderState(next);
+            renderStudents();
+        };
+        th.addEventListener('click', handler);
+        th.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+        });
+    });
+
+    // Initialize the indicator state to reflect whatever the dropdown
+    // currently shows (defaults to "newest" on first paint).
+    if (userSortSelect) syncSortHeaderState(userSortSelect.value);
 
     if (assignButton) {
         assignButton.addEventListener("click", async () => {

@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let currentViewMode = 'grouped'; // 'grouped' or 'flat'
     let classesData = []; // Store classes for grouped view
     let previousWeekData = null; // Store for weekly comparison
+    let selectedClassId = null; // null = "All Classes"; otherwise scope student list to this class
 
     // --- Tab Switching Logic ---
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -188,6 +189,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (classesData.length > 0 && currentStudentsData.length > 0) {
         renderStudentList(currentStudentsData);
     }
+    // Paint the class-chip rail now that we have both classes + students.
+    renderClassChips();
+
+    // Deep-link: if URL carries ?student=<id> AND that student is in
+    // the loaded roster, auto-open the detail modal. Useful for
+    // sharing or bookmarking a student profile.
+    const deepLinkStudentId = new URLSearchParams(window.location.search).get('student');
+    if (deepLinkStudentId && currentStudentsData.some(s => s._id === deepLinkStudentId)) {
+        openStudentProfile(deepLinkStudentId);
+    }
 
     // Initialize search and filter
     initializeSearchAndFilter();
@@ -214,12 +225,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     initializeSmartAlerts();
 
     // --- Modal Control Functions ---
-    function showModal(modalElement) {
+    // Pushed into the URL whenever the student-detail modal opens
+    // (cleared on close) so admins/teachers can share a link straight
+    // to a student's profile. replaceState avoids polluting history
+    // on every navigation; the deep-link is captured on initial page
+    // load below (after currentStudentsData is populated).
+    function setStudentParam(id) {
+        try {
+            const url = new URL(window.location.href);
+            if (id) url.searchParams.set('student', id);
+            else url.searchParams.delete('student');
+            window.history.replaceState({}, '', url.toString());
+        } catch (_) { /* same-origin safety; ignore */ }
+    }
+
+    function showModal(modalElement, options = {}) {
         if (modalElement) modalElement.classList.add('is-visible');
+        if (modalElement === studentDetailModal && options.studentId) {
+            setStudentParam(options.studentId);
+        }
     }
 
     function hideModal(modalElement) {
         if (modalElement) modalElement.classList.remove('is-visible');
+        if (modalElement === studentDetailModal) setStudentParam(null);
     }
     
     // Setup all modal close buttons
@@ -407,6 +436,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             const students = await response.json();
             currentStudentsData = students; // Store for detail lookup
             renderStudentList(students);
+            // Re-paint the class-chip rail so "All Classes" count reflects
+            // the now-loaded roster size.
+            if (typeof renderClassChips === 'function') renderClassChips();
         } catch (error) {
             console.error("Failed to fetch students:", error);
             studentListDiv.innerHTML = "<p>Error loading student data. Please refresh.</p>";
@@ -472,8 +504,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const sortBy = document.getElementById('student-sort')?.value || 'status';
         filteredStudents = sortStudentsList(filteredStudents, sortBy);
 
-        // Render based on view mode
-        if (currentViewMode === 'grouped' && classesData.length > 0 && !searchQuery) {
+        // Render based on view mode. If the teacher has scoped to a
+        // single class via the chip rail, fall back to flat — grouped
+        // view would render an empty placeholder for every other
+        // class, which is noise.
+        if (currentViewMode === 'grouped' && classesData.length > 0 && !searchQuery && !selectedClassId) {
             renderGroupedView(filteredStudents);
         } else {
             renderFlatView(filteredStudents);
@@ -483,6 +518,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function filterStudents(students, filterType, searchQuery) {
+        // Build a fast Set of student IDs that belong to the selected
+        // class (if any). Lookup via cls.studentIds — the same array
+        // renderGroupedView reads. Null/'__unassigned__' selectedClassId
+        // means "All Classes" (no membership filter applied).
+        let classMemberSet = null;
+        if (selectedClassId && selectedClassId !== '__unassigned__') {
+            const cls = classesData.find(c => c._id === selectedClassId);
+            classMemberSet = new Set(cls && Array.isArray(cls.studentIds) ? cls.studentIds : []);
+        } else if (selectedClassId === '__unassigned__') {
+            // Special bucket: students not in ANY class.
+            const inAnyClass = new Set();
+            classesData.forEach(c => (c.studentIds || []).forEach(id => inAnyClass.add(id)));
+            classMemberSet = { has: (id) => !inAnyClass.has(id) };
+        }
         return students.filter(student => {
             const fullName = `${student.firstName || ''} ${student.lastName || ''}`.trim().toLowerCase();
             const username = (student.username || '').toLowerCase();
@@ -493,7 +542,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (filterType === 'active') filterMatch = status === 'active';
             else if (filterType === 'struggling') filterMatch = status === 'struggling';
             else if (filterType === 'inactive') filterMatch = status === 'inactive';
-            return searchMatch && filterMatch;
+            const classMatch = !classMemberSet || classMemberSet.has(student._id);
+            return searchMatch && filterMatch && classMatch;
         });
     }
 
@@ -1014,8 +1064,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.querySelector('[data-profile-tab="overview"]').classList.add('active');
         document.getElementById('profile-overview-tab').classList.add('active');
 
-        // Show modal
-        showModal(studentDetailModal);
+        // Show modal (push ?student=<id> into the URL so the view is
+        // deep-linkable; cleared automatically on hideModal).
+        showModal(studentDetailModal, { studentId: student._id });
 
         // Render sparkline (weekly activity trend)
         renderSparkline(student);
@@ -1898,6 +1949,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const searchQuery = studentSearchInput ? studentSearchInput.value : '';
             const filterType = studentFilterSelect ? studentFilterSelect.value : 'all';
             renderStudentList(students, filterType, searchQuery);
+            // Refresh chips so the All Classes count reflects polled data
+            if (typeof renderClassChips === 'function') renderClassChips();
 
             // Update all the UX components
             updateClassOverview(students);
@@ -2550,9 +2603,94 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Update class count badge in tab
             const classCountEl = document.getElementById('tab-class-count');
             if (classCountEl) classCountEl.textContent = `(${classesData.length})`;
+            renderClassChips();
         } catch (err) {
             console.log('Could not load classes for grouping:', err.message);
         }
+    }
+
+    // ============================================
+    // CLASS-CHIP RAIL — scope the student list to one class
+    // ============================================
+    //
+    // Paints one pill per class above the student list. "All Classes"
+    // is the default; clicking a class chip sets selectedClassId, which
+    // filterStudents() reads to scope the visible roster. Rail is
+    // hidden when the teacher has fewer than 2 classes (no value-add).
+    //
+    // Counts on each chip reflect class membership only (not the
+    // status filter), so a teacher can see roster size at a glance
+    // before drilling in.
+    function renderClassChips() {
+        const rail = document.getElementById('class-chip-rail');
+        if (!rail) return;
+
+        // Hide the rail until there are 2+ classes — a single class
+        // means nothing to scope away.
+        if (!classesData || classesData.length < 2) {
+            rail.hidden = true;
+            rail.innerHTML = '';
+            return;
+        }
+        rail.hidden = false;
+
+        const inAnyClass = new Set();
+        classesData.forEach(c => (c.studentIds || []).forEach(id => inAnyClass.add(id)));
+        const unassignedCount = currentStudentsData.filter(s => !inAnyClass.has(s._id)).length;
+
+        const chips = [
+            { id: null, label: 'All Classes', count: currentStudentsData.length, icon: 'fa-layer-group' }
+        ];
+        classesData.forEach(c => {
+            chips.push({
+                id: c._id,
+                label: c.className || 'Untitled Class',
+                count: Array.isArray(c.studentIds) ? c.studentIds.length : 0,
+                icon: 'fa-chalkboard'
+            });
+        });
+        if (unassignedCount > 0) {
+            chips.push({ id: '__unassigned__', label: 'Unassigned', count: unassignedCount, icon: 'fa-user-slash' });
+        }
+
+        rail.innerHTML = chips.map(chip => {
+            const isActive = (chip.id === selectedClassId) || (chip.id === null && selectedClassId === null);
+            return `
+                <button type="button" class="class-chip${isActive ? ' active' : ''}"
+                        role="tab" aria-selected="${isActive}"
+                        data-class-id="${chip.id === null ? '' : chip.id}"
+                        title="${escapeHtml(chip.label)}">
+                    <i class="fas ${chip.icon}" aria-hidden="true"></i>
+                    <span>${escapeHtml(chip.label)}</span>
+                    <span class="class-chip-count">${chip.count}</span>
+                </button>
+            `;
+        }).join('');
+
+        // Wire chip clicks. Each chip carries its target classId in
+        // dataset; clicking sets state and re-renders the student list
+        // through the existing pipeline (search/filter/sort already
+        // applied on top of the new class scope).
+        rail.querySelectorAll('.class-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const raw = btn.getAttribute('data-class-id') || '';
+                setSelectedClass(raw === '' ? null : raw);
+            });
+        });
+    }
+
+    function setSelectedClass(classId) {
+        selectedClassId = classId;
+        // Re-render chips so the active state moves
+        renderClassChips();
+        // Re-render student list through the existing pipeline. Read
+        // the current search/filter values straight from the inputs
+        // so the new class scope composes with whatever's already set.
+        const searchEl = document.getElementById('student-search');
+        const filterEl = document.getElementById('student-filter');
+        const searchQuery = searchEl ? searchEl.value : '';
+        const filterType = filterEl ? filterEl.value : 'all';
+        renderStudentList(currentStudentsData, filterType, searchQuery);
     }
 
     // ============================================

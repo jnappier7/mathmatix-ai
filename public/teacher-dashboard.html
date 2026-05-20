@@ -4378,6 +4378,70 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       border-color: var(--color-primary);
     }
 
+    /* ============================================================
+       CLASS-CHIP RAIL — multi-class scoping for the teacher's
+       student list. When the teacher has 2+ classes, this rail
+       paints one pill per class (plus an "All Classes" default).
+       Clicking a pill scopes the underlying student-list, search,
+       filter, and sort to just that class's roster. Pure pill
+       segmented control aesthetic — matches Linear's "scope chips".
+       ============================================================ */
+    .class-chip-rail {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 14px;
+      margin: 0 0 8px;
+      border-bottom: 1px solid var(--cr-border);
+    }
+    .class-chip-rail[hidden] { display: none; }
+    .class-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--cr-radius-pill);
+      background: var(--cr-pill-bg);
+      border: 1px solid var(--cr-border);
+      color: var(--cr-text-dim);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--cr-transition-fast), border-color var(--cr-transition-fast), color var(--cr-transition-fast), box-shadow var(--cr-transition-fast);
+    }
+    .class-chip:hover {
+      background: var(--cr-pill-bg-hover);
+      color: var(--cr-text);
+    }
+    .class-chip:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+    .class-chip.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+      box-shadow: 0 1px 6px rgba(16, 185, 129, 0.28);
+    }
+    .class-chip .class-chip-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      padding: 0 6px;
+      height: 18px;
+      border-radius: var(--cr-radius-pill);
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--cr-text-dim);
+      font-size: 11px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .class-chip.active .class-chip-count {
+      background: rgba(255, 255, 255, 0.20);
+      color: #fff;
+    }
+
     /* ---------- Class Overview tiles ---------- */
     .class-overview-section,
     #class-overview {
@@ -4788,6 +4852,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </select>
               </div>
             </div>
+            <!-- Class picker rail: shown when the teacher owns 2+ classes.
+                 Painted by teacher-dashboard.js (renderClassChips). Picking
+                 a chip scopes the student list, search, filter, and sort to
+                 just that class's students; "All Classes" returns to the
+                 aggregate roster. -->
+            <div id="class-chip-rail" class="class-chip-rail" role="tablist" aria-label="Class scope" hidden></div>
             <div id="student-list" class="table-scroll-container">
             </div>
           </div>
