@@ -872,10 +872,14 @@ function showTourPrompt(tour) {
         tour.markCompleted(); // Don't show again
     });
 
-    // Auto-dismiss after 30 seconds
+    // Auto-dismiss after 30 seconds. Previously this just removed the
+    // element without persisting — so an ignored prompt would pop again
+    // on every page load. "If dismissed, it goes" means *any* dismissal
+    // (button, timeout, future X close) counts. Mark completed here too.
     setTimeout(() => {
         if (prompt.parentElement) {
             prompt.remove();
+            tour.markCompleted();
         }
     }, 30000);
 }
@@ -885,6 +889,16 @@ function addTourButton(tour) {
     // Check if there's already a help button area
     let helpArea = document.querySelector('.tour-help-btn');
     if (helpArea) return;
+
+    // "If dismissed, it goes" — once the user has dismissed the prompt
+    // (Maybe Later, X close, or 30s auto-dismiss), the floating help
+    // pill stops auto-injecting on subsequent loads too. The tour can
+    // still be re-launched programmatically (e.g. from a hamburger menu
+    // "Replay tour" item) via tour.start(true) — that bypasses
+    // hasCompleted, so power users aren't permanently locked out.
+    if (typeof tour?.hasCompleted === 'function' && tour.hasCompleted()) {
+        return;
+    }
 
     const btn = document.createElement('button');
     btn.className = 'tour-help-btn';
