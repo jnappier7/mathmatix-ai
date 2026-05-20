@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -11,6 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teacher Dashboard - MATHMATIX AI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
   <link rel="stylesheet" href="/css/teacher-live-feed.css">
   <link rel="stylesheet" href="/css/teacher-live-monitor.css">
   <link rel="stylesheet" href="/css/impersonation-banner.css">
@@ -24,61 +25,69 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* ============================================
        DESIGN SYSTEM - CSS CUSTOM PROPERTIES
+
+       Teacher dashboard keeps its green identity (role color, matches
+       the parent dashboard's blue and admin's purple in the system)
+       but every non-brand token now derives from /css/design-system.css
+       so spacing, text, surfaces, shadows, radii flip with the page
+       theme.
        ============================================ */
     :root {
-      /* Brand Colors */
-      --color-primary: #27ae60;
-      --color-primary-dark: #16a085;
-      --color-primary-light: #e8f5e9;
-      --color-primary-bg: #f0fdf4;
+      /* Brand Colors (Teacher Green) — modernized from the old
+         #27ae60 / #16a085 (2014-SaaS) to the contemporary emerald
+         family. Same hue, more sophisticated saturation. */
+      --color-primary: #10B981;
+      --color-primary-dark: #059669;
+      --color-primary-light: #ECFDF5;
+      --color-primary-bg: #D1FAE5;
 
-      /* Status Colors */
-      --color-success: #16C86D;
-      --color-warning: #f39c12;
-      --color-warning-light: #FFC24B;
-      --color-danger: #e74c3c;
-      --color-info: #3498db;
-      --color-purple: #7b1fa2;
+      /* Status Colors — derive from the shared semantic ramp. */
+      --color-success: var(--cr-success);
+      --color-warning: var(--cr-warning);
+      --color-warning-light: #FCD34D;
+      --color-danger: var(--cr-danger);
+      --color-info: #3B82F6;
+      --color-purple: var(--cr-accent);
 
-      /* Text Colors */
-      --color-text: #2c3e50;
-      --color-text-secondary: #5B6876;
-      --color-text-muted: #7f8c8d;
-      --color-text-disabled: #95a5a6;
+      /* Text Colors — shared text ramp. */
+      --color-text: var(--cr-text);
+      --color-text-secondary: var(--cr-text-dim);
+      --color-text-muted: var(--cr-text-dim);
+      --color-text-disabled: #94A3B8;
 
-      /* Background Colors */
-      --color-bg: #f8f9fa;
-      --color-bg-white: #ffffff;
-      --color-border: #e9ecef;
-      --color-border-light: #f1f1f1;
+      /* Background Colors — shared surface ramp. */
+      --color-bg: var(--cr-bg-0);
+      --color-bg-white: var(--cr-bg-1);
+      --color-border: var(--cr-border);
+      --color-border-light: rgba(15, 23, 42, 0.04);
 
-      /* Spacing Scale (4px base) */
-      --space-xs: 4px;
-      --space-sm: 8px;
-      --space-md: 12px;
-      --space-lg: 16px;
-      --space-xl: 20px;
-      --space-2xl: 24px;
-      --space-3xl: 32px;
+      /* Spacing Scale — aliases to shared scale. */
+      --space-xs: var(--cr-space-1);
+      --space-sm: var(--cr-space-2);
+      --space-md: var(--cr-space-3);
+      --space-lg: var(--cr-space-4);
+      --space-xl: var(--cr-space-5);
+      --space-2xl: var(--cr-space-5);
+      --space-3xl: var(--cr-space-6);
 
-      /* Border Radius */
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 10px;
-      --radius-xl: 12px;
+      /* Border Radius — aliases to shared radii. */
+      --radius-sm: var(--cr-radius-sm);
+      --radius-md: var(--cr-radius-md);
+      --radius-lg: var(--cr-radius-md);
+      --radius-xl: var(--cr-radius-lg);
       --radius-full: 50%;
 
-      /* Shadows */
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
-      --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
-      --shadow-xl: 0 10px 40px rgba(0,0,0,0.15);
+      /* Shadows — shared elevation ramp. */
+      --shadow-sm: var(--cr-shadow-sm);
+      --shadow-md: var(--cr-shadow-md);
+      --shadow-lg: var(--cr-shadow-md);
+      --shadow-xl: var(--cr-shadow-lg);
 
-      /* Transitions */
-      --transition-fast: 0.15s ease;
-      --transition-normal: 0.3s ease;
+      /* Transitions — shared motion language. */
+      --transition-fast: var(--cr-transition-fast);
+      --transition-normal: var(--cr-transition);
 
-      /* Font sizes */
+      /* Font sizes (unchanged — local typographic scale). */
       --text-xs: 0.72em;
       --text-sm: 0.85em;
       --text-base: 0.95em;
@@ -4062,6 +4071,328 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       background: #f0faf0;
       border-radius: 10px;
       text-align: left;
+    }
+
+    /* ============================================================
+       MODERN POLISH LAYER — TEACHER DASHBOARD
+
+       Final overrides that lift the dashboard into the new design
+       system. Targets the surfaces visible on first scan: header,
+       Smart Alerts (most-criticized surface in the UI review),
+       weekly comparison cards, class overview, and quick actions.
+
+       Where this layer disagrees with rules above, this layer wins
+       (later in source order, same specificity).
+       ============================================================ */
+
+    /* ---------- A11y: hide leaking skip-to-content link ---------- */
+    .skip-to-content {
+      position: absolute;
+      left: var(--cr-space-4);
+      top: -100%;
+      z-index: 10001;
+      padding: var(--cr-space-3) var(--cr-space-5);
+      background: var(--color-primary-dark);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 0 0 var(--cr-radius-md) var(--cr-radius-md);
+      text-decoration: none;
+      transition: top var(--cr-transition-fast);
+    }
+    .skip-to-content:focus { top: 0; }
+
+    /* ---------- Header: softer green, less 2014 ---------- */
+    .main-header {
+      background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .mode-indicator {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: var(--cr-radius-pill);
+      backdrop-filter: blur(4px);
+    }
+
+    /* ---------- Panels: shared elevation + tighter borders ---------- */
+    .dashboard-panel {
+      border: 1px solid var(--cr-border);
+      box-shadow: var(--cr-shadow-sm);
+      border-radius: var(--cr-radius-lg);
+      transition: box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .dashboard-panel:hover {
+      box-shadow: var(--cr-shadow-md);
+      border-color: var(--cr-border-strong);
+    }
+
+    /* ============================================================
+       SMART ALERTS — the most-criticized surface in the review.
+       Old design used a RED ALARM gradient header (#e74c3c → #c0392b)
+       which is exactly the anti-pattern the benchmarking flagged:
+       "red/warning badges on parent/teacher dashboards — teachers
+       arrive worried already." Replace with the role-color brand
+       gradient and reframe the count as a to-do indicator, not an
+       alarm.
+       ============================================================ */
+    .smart-alerts-header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      border-radius: var(--cr-radius-lg) var(--cr-radius-lg) 0 0;
+      padding: 14px 18px;
+    }
+    .smart-alerts-header h2 {
+      font-size: 15px;
+      letter-spacing: -0.005em;
+    }
+    .live-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--cr-radius-pill);
+      background: #fff;
+      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+      animation: cr-pulse 2s infinite;
+    }
+    @keyframes cr-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+      70%  { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    }
+    .alert-count-badge {
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--color-primary-dark);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: var(--cr-radius-pill);
+      letter-spacing: 0.02em;
+    }
+    .feed-control-btn {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #fff;
+      border-radius: var(--cr-radius-md);
+      transition: background var(--cr-transition-fast);
+    }
+    .feed-control-btn:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    /* Filter row — segmented-control feel. Active pill takes brand
+       fill; idle pills are quiet outlines. */
+    .smart-alerts-filters {
+      background: transparent;
+      border-bottom: 1px solid var(--cr-border);
+      padding: 10px 14px;
+      gap: 6px;
+    }
+    .smart-alerts-filters .filter-btn {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--cr-radius-pill);
+      background: var(--cr-pill-bg);
+      border: 1px solid var(--cr-border);
+      color: var(--cr-text-dim);
+      cursor: pointer;
+      transition: background var(--cr-transition-fast), border-color var(--cr-transition-fast), color var(--cr-transition-fast);
+    }
+    .smart-alerts-filters .filter-btn:hover {
+      background: var(--cr-pill-bg-hover);
+      color: var(--cr-text);
+    }
+    .smart-alerts-filters .filter-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+      box-shadow: 0 1px 6px rgba(16, 185, 129, 0.28);
+    }
+
+    /* Alert cards — refined left-border triage. */
+    .smart-alert-item {
+      border: 1px solid var(--cr-border);
+      border-radius: var(--cr-radius-md);
+      padding: 12px 14px;
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast);
+    }
+    .smart-alert-item:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--cr-shadow-md);
+    }
+    .smart-alert-item.alert-struggle {
+      border-left: 3px solid #F59E0B;
+      background: #FFFBEB;
+    }
+    .smart-alert-item.alert-inactive {
+      border-left: 3px solid #94A3B8;
+      background: #F8FAFC;
+    }
+    .smart-alert-item.alert-milestone {
+      border-left: 3px solid var(--cr-success);
+      background: #ECFDF5;
+    }
+
+    /* Alert action chips — brand-aware and tighter. */
+    .smart-alert-action {
+      padding: 6px 12px;
+      border-radius: var(--cr-radius-pill);
+      font-size: 0.78em;
+      font-weight: 600;
+      transition: transform var(--cr-transition-fast), filter var(--cr-transition-fast);
+    }
+    .smart-alert-action:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .smart-alert-action.action-encourage { background: #FEF3C7; color: #B45309; }
+    .smart-alert-action.action-encourage:hover { background: #F59E0B; color: #fff; }
+    .smart-alert-action.action-remind   { background: #F1F5F9; color: #475569; }
+    .smart-alert-action.action-remind:hover   { background: #475569; color: #fff; }
+    .smart-alert-action.action-celebrate { background: var(--color-primary-light); color: var(--color-primary-dark); }
+    .smart-alert-action.action-celebrate:hover { background: var(--color-primary); color: #fff; }
+
+    /* ============================================================
+       STATUS-PILL VOCABULARY (universal)
+
+       Reusable inline label per the benchmarking findings (Linear-
+       style "On track / Needs review / Stuck" reads the same across
+       student, parent, teacher, and admin views). Drop a
+       <span class="status-pill urgent|watch|win|inactive|streak|mastery">
+       anywhere a quick state read is useful. Designed to live on
+       light AND dark surfaces — colors include a subtle stroke.
+       ============================================================ */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      font-size: 11.5px;
+      font-weight: 600;
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+      border-radius: var(--cr-radius-pill);
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .status-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: var(--cr-radius-pill);
+      background: currentColor;
+      opacity: 0.85;
+    }
+    .status-pill.urgent   { background: #FEE2E2; color: #B91C1C; border-color: #FECACA; }
+    .status-pill.watch    { background: #FEF3C7; color: #B45309; border-color: #FDE68A; }
+    .status-pill.win      { background: #ECFDF5; color: #047857; border-color: #A7F3D0; }
+    .status-pill.inactive { background: #F1F5F9; color: #475569; border-color: #E2E8F0; }
+    .status-pill.streak   { background: #FFEDD5; color: #C2410C; border-color: #FED7AA; }
+    .status-pill.mastery  { background: #EDE9FE; color: #5B21B6; border-color: #DDD6FE; }
+
+    /* ============================================================
+       WEEKLY COMPARISON ROW — turn the trend indicators into proper
+       semantic pills. The old framing put "-50% Active Students" in
+       hostile red text right next to the number. Reframe: number is
+       the headline, trend is a quiet pill below, semantics use the
+       same color vocabulary as status-pill so the system reads
+       consistent. .trend-invert flips the meaning (e.g. "Need Help"
+       — fewer is better) so a positive change should still read as
+       negative.
+       ============================================================ */
+    .weekly-comparison-row {
+      border-radius: var(--cr-radius-lg);
+      border: 1px solid var(--cr-border);
+      background: var(--cr-bg-1);
+      box-shadow: var(--cr-shadow-sm);
+    }
+    .comparison-card {
+      background: transparent;
+      border-radius: var(--cr-radius-md);
+      transition: background var(--cr-transition-fast);
+    }
+    .comparison-card:hover { background: var(--cr-pill-bg); }
+    .comparison-value {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--cr-text);
+    }
+    .comparison-label {
+      color: var(--cr-text-dim);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .comparison-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--cr-radius-pill);
+      font-size: 11.5px;
+      font-weight: 600;
+      background: #F1F5F9;
+      color: #475569;
+      border: 1px solid #E2E8F0;
+      margin-top: 4px;
+    }
+    /* Default trend semantics: positive = good (success), negative = caution (watch). */
+    .comparison-trend.trend-up,
+    .comparison-trend:has(.trend-arrow.up) {
+      background: #ECFDF5;
+      color: #047857;
+      border-color: #A7F3D0;
+    }
+    .comparison-trend.trend-down,
+    .comparison-trend:has(.trend-arrow.down) {
+      background: #FEF3C7;
+      color: #B45309;
+      border-color: #FDE68A;
+    }
+    /* Inverted semantics ("Need Help" — bigger is worse): up reads as
+       warning, down reads as positive. */
+    .comparison-trend.trend-invert.trend-up,
+    .comparison-trend.trend-invert:has(.trend-arrow.up) {
+      background: #FEF3C7;
+      color: #B45309;
+      border-color: #FDE68A;
+    }
+    .comparison-trend.trend-invert.trend-down,
+    .comparison-trend.trend-invert:has(.trend-arrow.down) {
+      background: #ECFDF5;
+      color: #047857;
+      border-color: #A7F3D0;
+    }
+
+    /* ---------- Quick Actions right rail — tighter geometry ---------- */
+    .quick-actions-grid {
+      gap: 10px;
+    }
+    .quick-actions-grid .quick-action-btn,
+    .quick-actions-grid button {
+      border-radius: var(--cr-radius-md);
+      border: 1px solid var(--cr-border);
+      background: var(--cr-bg-1);
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .quick-actions-grid .quick-action-btn:hover,
+    .quick-actions-grid button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--cr-shadow-sm);
+      border-color: var(--color-primary);
+    }
+
+    /* ---------- Class Overview tiles ---------- */
+    .class-overview-section,
+    #class-overview {
+      border-radius: var(--cr-radius-lg);
+      border: 1px solid var(--cr-border);
+      background: var(--cr-bg-1);
+    }
+    /* Demote the "Need Attention" alarm tile: same data, calmer color
+       vocabulary. Old design used a yellow exclamation icon that
+       read as urgent; reframe as a watch state with the shared
+       status-pill palette. */
+    .class-overview-section .stat-tile.attention,
+    .class-overview-section [data-tile="attention"] {
+      background: #FEFCE8;
+      border: 1px solid #FDE68A;
     }
   </style>
   <link rel="stylesheet" href="/css/dashboard-mobile.css" />
