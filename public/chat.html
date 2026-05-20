@@ -1049,11 +1049,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <i class="fas fa-times" aria-hidden="true"></i>
         </button>
         <div class="cr-ws-tabs" role="tablist" aria-label="Workspace tools">
-          <button class="cr-ws-tab is-active" type="button" data-tool="graph" role="tab" aria-selected="true">
-            <i class="fas fa-chart-line" aria-hidden="true"></i> Graph
-          </button>
-          <button class="cr-ws-tab" type="button" data-tool="board" role="tab" aria-selected="false">
+          <!-- Board is the home base. Graph / Tiles / Calc are excursions
+               the tutor (or student) can drive into. -->
+          <button class="cr-ws-tab is-active" type="button" data-tool="board" role="tab" aria-selected="true">
             <i class="fas fa-pen" aria-hidden="true"></i> Board
+          </button>
+          <button class="cr-ws-tab" type="button" data-tool="graph" role="tab" aria-selected="false">
+            <i class="fas fa-chart-line" aria-hidden="true"></i> Graph
           </button>
           <button class="cr-ws-tab" type="button" data-tool="tiles" role="tab" aria-selected="false">
             <i class="fas fa-shapes" aria-hidden="true"></i> Tiles

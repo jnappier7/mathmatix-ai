@@ -20,7 +20,15 @@
 (function () {
   'use strict';
 
-  var WS = { el: null, body: null, current: null, graph: null };
+  var WS = {
+    el: null,
+    body: null,
+    current: null,
+    graph: null,
+    // Persistent board state — steps survive tab switches. The DOM is
+    // rebuilt from this when the user returns to the Board tab.
+    board: { steps: [] }
+  };
 
   function el(tag, cls, html) {
     var n = document.createElement(tag);
@@ -29,15 +37,28 @@
     return n;
   }
 
+  // KaTeX renderer with a safe text fallback if KaTeX hasn't loaded yet
+  // (very early in page life) or the expression doesn't parse.
+  function renderTex(target, tex) {
+    if (!target) return;
+    if (window.katex && typeof window.katex.render === 'function') {
+      try {
+        window.katex.render(String(tex || ''), target, {
+          throwOnError: false,
+          displayMode: true,
+          output: 'html'
+        });
+        return;
+      } catch (_) { /* fall through to text */ }
+    }
+    target.textContent = String(tex || '');
+  }
+
   // ---- Launcher tools (open an existing floating surface) --------------
+  // Board used to be a launcher into the floating whiteboard; it's now
+  // the embedded home base (see renderBoard below). Tiles + Calc stay
+  // as launchers since they're full floating UIs of their own.
   var LAUNCHERS = {
-    board: {
-      icon: 'fa-pen',
-      title: 'Scratchpad',
-      blurb: 'A resizable board for working problems by hand — drawing, handwriting and step-by-step layout.',
-      btn: 'Open scratchpad',
-      open: function () { if (window.whiteboard && window.whiteboard.show) window.whiteboard.show(); }
-    },
     tiles: {
       icon: 'fa-shapes',
       title: 'Algebra tiles',
@@ -77,6 +98,109 @@
       card.appendChild(btn);
       body.appendChild(card);
     };
+  }
+
+  // ---- Board tool (embedded WorkBoard) ---------------------------------
+  // The Board is now the home base: an embedded step-stack that reflects
+  // the in-progress work. Cards are appended via the public API
+  // (boardPose / boardApply / boardResolve / boardVerify) which the chat
+  // pipeline will drive via <BOARD ...> tags in a future PR. For now the
+  // API is callable from the console for manual testing.
+  //
+  // PEDAGOGY RULE (the #1 product rule, restated): cards on the board
+  // mirror the starting problem and the moves the STUDENT has stated.
+  // The board never previews a step the student hasn't said. Callers
+  // are responsible for honoring this; the rule will be backstopped by
+  // a server-side guard in the next phase.
+  function renderBoard(body) {
+    var head = el('div', 'cr-ws-board-head');
+    head.innerHTML =
+      '<h4 class="cr-ws-board-title"><i class="fas fa-pen" aria-hidden="true"></i> Work Board</h4>' +
+      '<button type="button" class="cr-ws-board-clear" aria-label="Clear board">' +
+        '<i class="fas fa-eraser" aria-hidden="true"></i></button>';
+    body.appendChild(head);
+
+    var stack = el('div', 'cr-ws-board-stack');
+    body.appendChild(stack);
+
+    var empty = el('div', 'cr-ws-empty cr-ws-board-empty',
+      'Your working solution will appear here as you and your tutor reason through it together.');
+    if (WS.board.steps.length === 0) stack.appendChild(empty);
+
+    // Rebuild any persisted steps (e.g. when re-entering the tab).
+    WS.board.steps.forEach(function (step) { appendStepCard(stack, step, /*animate*/ false); });
+
+    head.querySelector('.cr-ws-board-clear').addEventListener('click', function () {
+      WS.board.steps = [];
+      var s = WS.body && WS.body.querySelector('.cr-ws-board-stack');
+      if (s) s.innerHTML = '';
+      if (s) s.appendChild(empty.cloneNode(true));
+    });
+  }
+
+  function teardownBoard() {
+    // DOM is discarded by switchTool. State persists in WS.board.steps
+    // so re-entering the tab restores the same cards.
+  }
+
+  function appendStepCard(stack, step, animate) {
+    if (!stack) return;
+    // First real card replaces the empty hint.
+    var emptyHint = stack.querySelector('.cr-ws-board-empty');
+    if (emptyHint) emptyHint.remove();
+
+    var card;
+    if (step.type === 'apply') {
+      // Transition card — narrow, italicized, sits between equation
+      // cards and reads as "what we just did".
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--apply');
+      card.innerHTML =
+        '<span class="cr-ws-board-apply-arrow" aria-hidden="true">↓</span>' +
+        '<span class="cr-ws-board-apply-op"></span>';
+      card.querySelector('.cr-ws-board-apply-op').textContent = step.op || '';
+    } else {
+      // Equation card — pose / resolve / verify all share the same shape;
+      // verify gets a badge + an expanded check line.
+      var variant =
+        step.type === 'pose'    ? 'cr-ws-board-card--pose' :
+        step.type === 'verify'  ? 'cr-ws-board-card--verify' :
+                                  'cr-ws-board-card--resolve';
+      card = el('div', 'cr-ws-board-card ' + variant);
+
+      var math = el('div', 'cr-ws-board-card-math');
+      card.appendChild(math);
+      renderTex(math, step.tex);
+
+      if (step.type === 'verify' && step.check) {
+        var checkRow = el('div', 'cr-ws-board-card-check');
+        checkRow.innerHTML =
+          '<i class="fas fa-check-circle" aria-hidden="true"></i> ' +
+          '<span class="cr-ws-board-card-check-math"></span>';
+        card.appendChild(checkRow);
+        renderTex(checkRow.querySelector('.cr-ws-board-card-check-math'), step.check);
+      }
+    }
+
+    if (animate) card.classList.add('cr-ws-board-card--enter');
+    stack.appendChild(card);
+    // Scroll the new card into view (smooth so the eye follows the work).
+    try { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) { /* old browser */ }
+    if (animate) {
+      // Next frame: remove the enter class to play the transition.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { card.classList.remove('cr-ws-board-card--enter'); });
+      });
+    }
+  }
+
+  function pushBoardStep(step) {
+    WS.board.steps.push(step);
+    // If the user is currently looking at a different tab, the cards
+    // will materialize when they return — no need to switch them.
+    if (WS.current === 'board' && WS.body) {
+      var stack = WS.body.querySelector('.cr-ws-board-stack');
+      appendStepCard(stack, step, /*animate*/ true);
+    }
   }
 
   // ---- Graph tool (live embed) -----------------------------------------
@@ -154,9 +278,11 @@
   }
 
   // ---- Tool registry ----------------------------------------------------
+  // Board is now first — it's the home base. Graph/Tiles/Calc are
+  // excursions the tutor can drive into for specific visuals.
   var TOOLS = {
+    board: { render: renderBoard, teardown: teardownBoard },
     graph: { render: renderGraph, teardown: destroyGraph },
-    board: { render: renderLauncher('board') },
     tiles: { render: renderLauncher('tiles') },
     calc:  { render: renderLauncher('calc') }
   };
@@ -228,6 +354,81 @@
       setGraphCaption(WS.body, opts && opts.caption);
       drawGraph(area, expr);
       return true;
+    },
+
+    // ---- Board API ------------------------------------------------------
+    // Drive the embedded WorkBoard. Each call appends a card to the
+    // step stack and (if the Board tab isn't active) keeps the state
+    // ready for when the student returns to it. Callers MUST honor the
+    // pedagogy rule: only post the starting problem and steps the
+    // student has stated.
+
+    /**
+     * Render the starting problem as the top card.
+     * @param {string} tex  LaTeX expression, e.g. "2x + 4 = 20"
+     * @param {object} [opts] reserved for future caption/parallel marks
+     */
+    boardPose: function (tex, opts) {
+      tex = (tex == null ? '' : String(tex)).trim();
+      if (!tex) return false;
+      openWorkspace();
+      // Switching only if the user isn't actively in another tab. For
+      // now we DO switch — Board is the natural home and a fresh pose
+      // is a new conversation move. Revisit if telemetry shows focus
+      // stealing is annoying.
+      this.showTool('board');
+      pushBoardStep({ type: 'pose', tex: tex, opts: opts || null });
+      return true;
+    },
+
+    /**
+     * Visualize a transformation the student just announced.
+     * @param {string} op  human-readable operation, e.g.
+     *                     "subtract 4 from both sides"
+     */
+    boardApply: function (op) {
+      op = (op == null ? '' : String(op)).trim();
+      if (!op) return false;
+      pushBoardStep({ type: 'apply', op: op });
+      return true;
+    },
+
+    /**
+     * Lock the result the student arrived at.
+     * @param {string} tex  LaTeX of the resulting equation/expression
+     */
+    boardResolve: function (tex) {
+      tex = (tex == null ? '' : String(tex)).trim();
+      if (!tex) return false;
+      pushBoardStep({ type: 'resolve', tex: tex });
+      return true;
+    },
+
+    /**
+     * Confirm a verified solution the student proved.
+     * @param {string} tex    LaTeX of the solution, e.g. "x = 8"
+     * @param {string} check  LaTeX of the verification, e.g. "2(8) + 4 = 20"
+     */
+    boardVerify: function (tex, check) {
+      tex = (tex == null ? '' : String(tex)).trim();
+      if (!tex) return false;
+      pushBoardStep({
+        type: 'verify',
+        tex: tex,
+        check: check == null ? '' : String(check).trim()
+      });
+      return true;
+    },
+
+    /** Wipe the board to a clean slate (e.g. new problem). */
+    boardClear: function () {
+      WS.board.steps = [];
+      if (WS.current === 'board' && WS.body) {
+        // Re-render from now-empty state to bring the placeholder back.
+        WS.body.innerHTML = '';
+        TOOLS.board.render(WS.body);
+      }
+      return true;
     }
   };
 
@@ -249,7 +450,9 @@
     }
 
     buildFab();
-    switchTool('graph');
+    // Board is the home base. Graph/Tiles/Calc are excursions the tutor
+    // (or the student) can drive into via tabs or the public API.
+    switchTool('board');
   }
 
   if (document.readyState === 'loading') {
