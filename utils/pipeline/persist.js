@@ -528,9 +528,16 @@ function processIepGoalUpdate(user, goalIdentifier, progressChange) {
  * Update badge progress when a problem is answered.
  * Returns mastery completion info so chat.js can send celebration data.
  *
- * @returns {{ completed: boolean, success: boolean, badgeAwarded: Object|null }}
+ * Also enforces a staleness valve: if a badge has been attempted well past
+ * its required number of problems without reaching the accuracy threshold,
+ * we clear it. Otherwise it would stay pinned to the user forever and keep
+ * dominating the tutor's focus and the suggestion chips.
+ *
+ * @returns {{ completed: boolean, success: boolean, badgeAwarded: Object|null, stuckCleared?: boolean }}
  */
 function updateBadgeProgress(user, wasCorrect) {
+  const { isBadgeStuck, clearActiveBadge } = require('../masteryGuard');
+
   const badge = user.masteryProgress.activeBadge;
   badge.problemsCompleted = (badge.problemsCompleted || 0) + 1;
   if (wasCorrect) badge.problemsCorrect = (badge.problemsCorrect || 0) + 1;
@@ -540,6 +547,12 @@ function updateBadgeProgress(user, wasCorrect) {
   // Check for badge completion
   const accuracy = badge.problemsCorrect / badge.problemsCompleted;
   if (badge.problemsCompleted < badge.requiredProblems || accuracy < badge.requiredAccuracy) {
+    // Not earned yet — but check if we've been hammering this badge with
+    // no path to success. If so, clear it so the next session starts fresh.
+    if (isBadgeStuck(badge)) {
+      clearActiveBadge(user, 'staleness valve: attempts exceeded threshold without earning');
+      return { completed: false, success: false, badgeAwarded: null, stuckCleared: true };
+    }
     return { completed: false, success: false, badgeAwarded: null };
   }
 

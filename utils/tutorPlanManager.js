@@ -67,6 +67,10 @@ async function loadOrCreatePlan(userId, options = {}) {
  * Called after the plan is loaded, before the decide stage runs.
  * Determines the instructional mode for whatever the tutor is about to teach.
  *
+ * If the resolved skill is already mastered (and no explicit override forced
+ * it), the focus entry is marked resolved and we pick the next-priority skill
+ * instead. This prevents the tutor from re-recommending mastered skills.
+ *
  * @param {Object} plan - The TutorPlan document
  * @param {Object} context
  * @param {Object} context.user - User document (for skillMastery)
@@ -78,35 +82,87 @@ async function resolveCurrentTarget(plan, context) {
   const { user, activeSkillId, courseSkillId } = context;
   const skillMastery = user.skillMastery || new Map();
 
-  // Determine which skill to target
-  // Priority: explicit active skill > course skill > highest-priority plan item
-  const targetSkillId = activeSkillId
-    || courseSkillId
+  // Skills the caller explicitly asked us to focus on (e.g. student opened a
+  // course session or asked about a specific topic). These bypass the
+  // auto-resolve-when-mastered behavior — if the student is asking about it,
+  // we still resolve it, just in 'leverage' mode.
+  const explicitOverride = activeSkillId || courseSkillId;
+
+  // Try up to N candidates so a queue full of already-mastered skills can be
+  // drained in a single resolution pass without recursion blowing the stack.
+  const MAX_AUTO_ADVANCE = 25;
+  const visited = new Set();
+  let targetSkillId = explicitOverride
     || plan.currentTarget?.skillId
     || getHighestPrioritySkill(plan);
 
   if (!targetSkillId) return { plan, skillResolution: null };
 
-  // Resolve familiarity and prerequisites
-  const skillResolution = await resolveSkill(targetSkillId, skillMastery);
+  let skillResolution = null;
+  for (let i = 0; i < MAX_AUTO_ADVANCE; i++) {
+    if (visited.has(targetSkillId)) {
+      // Defensive — should never happen, but guarantees termination
+      break;
+    }
+    visited.add(targetSkillId);
+
+    skillResolution = await resolveSkill(targetSkillId, skillMastery);
+
+    const isMastered = skillResolution.familiarity === FAMILIARITY.MASTERED;
+
+    // If the student didn't explicitly ask for this skill and it's already
+    // mastered, retire it from the focus queue and try the next candidate.
+    if (isMastered && !explicitOverride) {
+      const focusEntry = plan.skillFocus.find(sf => sf.skillId === targetSkillId);
+      if (focusEntry && focusEntry.status !== 'resolved') {
+        focusEntry.status = 'resolved';
+        focusEntry.resolvedAt = new Date();
+        focusEntry.familiarity = skillResolution.familiarity;
+        focusEntry.instructionalMode = skillResolution.instructionalMode;
+      }
+      // Clear stale currentTarget so the next lookup uses the queue
+      if (plan.currentTarget?.skillId === targetSkillId) {
+        plan.currentTarget = { skillId: null, displayName: null, instructionalMode: null };
+      }
+
+      const nextId = getHighestPrioritySkill(plan);
+      if (!nextId || nextId === targetSkillId) {
+        // Queue is empty or every remaining entry is already mastered.
+        // Return a null resolution so the caller surfaces a "pick a new
+        // topic" prompt rather than re-running the same mastered skill
+        // in leverage mode (which is itself a stuck-loop pattern).
+        skillResolution = null;
+        break;
+      }
+      targetSkillId = nextId;
+      skillResolution = null;
+      continue;
+    }
+
+    break;
+  }
+
+  if (!skillResolution) {
+    return { plan, skillResolution: null };
+  }
 
   // Update the plan's current target
   plan.currentTarget = {
     skillId: skillResolution.skillId,
     displayName: skillResolution.displayName,
     instructionalMode: skillResolution.instructionalMode,
-    startedAt: plan.currentTarget?.skillId === targetSkillId
+    startedAt: plan.currentTarget?.skillId === skillResolution.skillId
       ? plan.currentTarget.startedAt
       : new Date(),
     instructionPhase: determineInstructionPhase(
       skillResolution.instructionalMode,
       plan.currentTarget,
-      targetSkillId
+      skillResolution.skillId
     ),
   };
 
   // Update skill focus entry if it exists
-  const focusEntry = plan.skillFocus.find(sf => sf.skillId === targetSkillId);
+  const focusEntry = plan.skillFocus.find(sf => sf.skillId === skillResolution.skillId);
   if (focusEntry) {
     focusEntry.familiarity = skillResolution.familiarity;
     focusEntry.instructionalMode = skillResolution.instructionalMode;

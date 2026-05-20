@@ -90,6 +90,34 @@ describe('TutorPlan.statics.inferFamiliarity', () => {
     })).toBe('mastered');
   });
 
+  test('trusts screener-verified mastery even with totalAttempts: 0', () => {
+    // The screener marks skills mastered without per-skill attempts —
+    // it judges via the adaptive item bank. If status+masteredDate are
+    // set, we trust it regardless of the attempt counter.
+    expect(statics.inferFamiliarity({
+      status: 'mastered',
+      masteryScore: 1,
+      totalAttempts: 0,
+      masteredDate: new Date('2026-02-15'),
+    })).toBe('mastered');
+  });
+
+  test('accepts mastery on a 0-1 score scale', () => {
+    // Some producers write masteryScore as a fraction (0..1), others as
+    // a percentage (0..100). Both should be honored.
+    expect(statics.inferFamiliarity({
+      status: 'mastered',
+      masteryScore: 0.95,
+      totalAttempts: 10,
+    })).toBe('mastered');
+  });
+
+  test('accepts proficient on a 0-1 score scale', () => {
+    expect(statics.inferFamiliarity({
+      status: 'practicing', masteryScore: 0.82, totalAttempts: 6
+    })).toBe('proficient');
+  });
+
   test('"proficient" when score ≥75 and totalAttempts ≥5', () => {
     expect(statics.inferFamiliarity({
       status: 'practicing', masteryScore: 80, totalAttempts: 6
