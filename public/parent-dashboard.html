@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -12,6 +12,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parent Dashboard - MATHMATIX AI</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/css/design-system.css" />
   <link rel="stylesheet" href="/css/impersonation-banner.css" />
   <link rel="stylesheet" href="/css/practice-pack.css" />
   <style>
@@ -22,63 +23,78 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     /* ============================================
        DESIGN SYSTEM - CSS CUSTOM PROPERTIES
+
+       The parent dashboard keeps its blue identity (so users get the
+       same visual handoff from the role color in the header that the
+       teacher dashboard gets in green) but every other token now
+       derives from the shared design system in /css/design-system.css.
+       Spacing, radius, shadows, and text color flip with the page
+       theme; the brand blue stays consistent.
        ============================================ */
     :root {
-      /* Brand Colors (Parent Blue Theme) */
-      --color-primary: #3498db;
-      --color-primary-dark: #2980b9;
-      --color-primary-deeper: #21618c;
-      --color-primary-light: #ebf5fb;
-      --color-primary-bg: #d6eaf8;
+      /* Brand Colors (Parent Blue Theme) — softened for the modern
+         palette. The old #3498db read as 2014-era SaaS; #3B82F6 is
+         the same hue family but with more sophisticated saturation. */
+      --color-primary: #3B82F6;
+      --color-primary-dark: #2563EB;
+      --color-primary-deeper: #1D4ED8;
+      --color-primary-light: #EFF6FF;
+      --color-primary-bg: #DBEAFE;
 
-      /* Status Colors */
-      --color-success: #27ae60;
-      --color-success-light: #2ecc71;
-      --color-warning: #f39c12;
-      --color-warning-dark: #e67e22;
-      --color-danger: #e74c3c;
-      --color-info: #3498db;
-      --color-purple: #9b59b6;
+      /* Status Colors — derive from design-system.css so all
+         dashboards (parent/teacher/admin) speak the same semantic
+         language. Re-aliased here so existing rules keep working. */
+      --color-success: var(--cr-success);
+      --color-success-light: #34D399;
+      --color-warning: var(--cr-warning);
+      --color-warning-dark: #B45309;
+      --color-danger: var(--cr-danger);
+      --color-info: var(--color-primary);
+      --color-purple: var(--cr-accent);
 
-      /* Text Colors */
-      --color-text: #2c3e50;
-      --color-text-secondary: #5B6876;
-      --color-text-muted: #7f8c8d;
-      --color-text-disabled: #95a5a6;
+      /* Text Colors — fall through to the shared text ramp. */
+      --color-text: var(--cr-text);
+      --color-text-secondary: var(--cr-text-dim);
+      --color-text-muted: var(--cr-text-dim);
+      --color-text-disabled: #94A3B8;
 
-      /* Background Colors */
-      --color-bg: #f8f9fa;
-      --color-bg-white: #ffffff;
-      --color-border: #e9ecef;
-      --color-border-light: #f1f1f1;
+      /* Background Colors — shared background ramp. The dashboard
+         backdrop (--cr-bg-0) is a soft warm-white; cards sit on
+         --cr-bg-1 (true white) for clear elevation contrast. */
+      --color-bg: var(--cr-bg-0);
+      --color-bg-white: var(--cr-bg-1);
+      --color-border: var(--cr-border);
+      --color-border-light: rgba(15, 23, 42, 0.04);
 
-      /* Spacing Scale (4px base) */
-      --space-xs: 4px;
-      --space-sm: 8px;
-      --space-md: 12px;
-      --space-lg: 16px;
-      --space-xl: 20px;
-      --space-2xl: 24px;
-      --space-3xl: 32px;
+      /* Spacing Scale — alias to shared scale. Existing rules use
+         --space-xs..3xl so we keep those names while the values
+         come from the canonical scale. */
+      --space-xs: var(--cr-space-1);
+      --space-sm: var(--cr-space-2);
+      --space-md: var(--cr-space-3);
+      --space-lg: var(--cr-space-4);
+      --space-xl: var(--cr-space-5);
+      --space-2xl: var(--cr-space-5);
+      --space-3xl: var(--cr-space-6);
 
-      /* Border Radius */
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 10px;
-      --radius-xl: 12px;
+      /* Border Radius — aliases to shared radii. */
+      --radius-sm: var(--cr-radius-sm);
+      --radius-md: var(--cr-radius-md);
+      --radius-lg: var(--cr-radius-md);
+      --radius-xl: var(--cr-radius-lg);
       --radius-full: 50%;
 
-      /* Shadows */
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
-      --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
-      --shadow-xl: 0 10px 40px rgba(0,0,0,0.15);
+      /* Shadows — shared elevation ramp (softer on light surfaces). */
+      --shadow-sm: var(--cr-shadow-sm);
+      --shadow-md: var(--cr-shadow-md);
+      --shadow-lg: var(--cr-shadow-md);
+      --shadow-xl: var(--cr-shadow-lg);
 
-      /* Transitions */
-      --transition-fast: 0.15s ease;
-      --transition-normal: 0.3s ease;
+      /* Transitions — shared motion language. */
+      --transition-fast: var(--cr-transition-fast);
+      --transition-normal: var(--cr-transition);
 
-      /* Font sizes */
+      /* Font sizes (unchanged — local typographic scale). */
       --text-xs: 0.72em;
       --text-sm: 0.85em;
       --text-base: 0.95em;
@@ -1536,6 +1552,218 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .lr-stat-grid { grid-template-columns: repeat(2, 1fr); }
       .lr-modal-overlay { padding: 12px; }
     }
+
+    /* ============================================================
+       MODERN POLISH LAYER
+
+       Final overrides that lift the dashboard into the new design
+       system without rewriting the structure above. Targeted to
+       the surfaces visible on first scan: header, panels, inputs,
+       and the Parent-Tutor Conference gate.
+       ============================================================ */
+
+    /* A11y: hide the skip-to-content link until it receives focus.
+       The page didn't link the global skip-link styles, so the link
+       was rendering in normal flow at the top-left — visible bug
+       I flagged in the dashboard UI review. Pattern matches the
+       canonical .skip-to-content treatment used by other pages. */
+    .skip-to-content {
+      position: absolute;
+      left: var(--cr-space-4);
+      top: -100%;
+      z-index: 10001;
+      padding: var(--cr-space-3) var(--cr-space-5);
+      background: var(--color-primary);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 0 0 var(--cr-radius-md) var(--cr-radius-md);
+      text-decoration: none;
+      transition: top var(--cr-transition-fast);
+    }
+    .skip-to-content:focus { top: 0; }
+
+    /* Header: replace the heavy 135deg gradient with a softer
+       vertical gradient + subtle border. Still parent-blue, but
+       reads as 2026 not 2014. */
+    .main-header {
+      background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .mode-indicator {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: var(--cr-radius-pill);
+      backdrop-filter: blur(4px);
+    }
+
+    /* Dashboard panels: tighter border + the shared elevation ramp.
+       The existing rule sets a card-style background; we just refine
+       the edge and shadow. */
+    .dashboard-panel {
+      border: 1px solid var(--cr-border);
+      box-shadow: var(--cr-shadow-sm);
+      border-radius: var(--cr-radius-lg);
+      transition: box-shadow var(--cr-transition-fast), border-color var(--cr-transition-fast);
+    }
+    .dashboard-panel:hover {
+      box-shadow: var(--cr-shadow-md);
+      border-color: var(--cr-border-strong);
+    }
+
+    /* Panel headers: a hair more contrast, sentence-case-friendly. */
+    .dashboard-panel-header {
+      letter-spacing: -0.01em;
+    }
+
+    /* Form controls: shared field treatment so the right rail
+       (settings) and the left rail (link code) match. */
+    .dashboard-panel input[type="text"],
+    .dashboard-panel input[type="email"],
+    .dashboard-panel textarea,
+    .dashboard-panel select {
+      border: 1px solid var(--cr-border-strong);
+      border-radius: var(--cr-radius-md);
+      background: var(--cr-bg-1);
+      color: var(--cr-text);
+      transition: border-color var(--cr-transition-fast), box-shadow var(--cr-transition-fast);
+    }
+    .dashboard-panel input[type="text"]:focus,
+    .dashboard-panel input[type="email"]:focus,
+    .dashboard-panel textarea:focus,
+    .dashboard-panel select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18);
+    }
+
+    /* Primary buttons: gradient + lift on hover, matches login. */
+    .btn-primary,
+    .main-action-btn.btn-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      border: none;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.24);
+      transition: transform var(--cr-transition-fast), box-shadow var(--cr-transition-fast);
+    }
+    .btn-primary:hover,
+    .main-action-btn.btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.30);
+    }
+
+    /* Helper-copy lines on the invite/link/settings panels.
+       Distinguishes the two onboarding paths (Generate vs Link)
+       so a parent doesn't have to guess which one is "theirs". */
+    .panel-helper {
+      font-size: 0.8em;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      margin: -4px 0 12px;
+    }
+
+    /* Parent-Tutor Conference: disable the entire widget when no
+       child is in the selector. Uses :has() so it stays in sync
+       with parent-dashboard.js without requiring a JS hook. A white
+       scrim sits above the panel (z=1) and a badge floats on top
+       (z=2) — opacity on the parent would inherit to all text and
+       hurt readability, so we keep the underlying content full-
+       strength and just veil it. */
+    .parent-chat-widget {
+      position: relative;
+    }
+    .parent-chat-widget:has(#childSelector:empty),
+    .parent-chat-widget:has(#childSelector option[value=""]:only-of-type) {
+      pointer-events: none;
+    }
+    .parent-chat-widget:has(#childSelector:empty)::before,
+    .parent-chat-widget:has(#childSelector option[value=""]:only-of-type)::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.62);
+      border-radius: var(--cr-radius-lg);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .parent-chat-widget:has(#childSelector:empty)::after,
+    .parent-chat-widget:has(#childSelector option[value=""]:only-of-type)::after {
+      content: "🔒  Link a child first to open a conference";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 10px 18px;
+      border-radius: var(--cr-radius-pill);
+      background: var(--cr-bg-1);
+      color: var(--cr-text);
+      border: 1px solid var(--cr-border-strong);
+      font-size: 0.85em;
+      font-weight: 600;
+      box-shadow: var(--cr-shadow-md);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* Empty-state earner for the "Your Linked Children" card.
+       Activated when JS replaces #loading-children with a node
+       carrying .no-children-empty (no JS change required if JS
+       already renders an element with that class; otherwise the
+       existing empty UI is unaffected). */
+    .no-children-empty {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--color-text-secondary);
+    }
+    .no-children-empty .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--cr-radius-pill);
+      background: var(--color-primary-light);
+      color: var(--color-primary-dark);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .no-children-empty h3 {
+      color: var(--color-text);
+      font-size: 1.05em;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+    .no-children-empty p {
+      margin: 0 0 18px;
+      font-size: 0.9em;
+      line-height: 1.55;
+    }
+    .no-children-empty .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+      text-align: left;
+    }
+    .no-children-empty .step {
+      background: var(--color-primary-light);
+      border: 1px solid var(--cr-border);
+      border-radius: var(--cr-radius-md);
+      padding: 10px 12px;
+      font-size: 0.8em;
+      line-height: 1.5;
+      color: var(--color-text);
+    }
+    .no-children-empty .step strong {
+      display: block;
+      color: var(--color-primary-deeper);
+      font-size: 0.78em;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    @media (max-width: 700px) {
+      .no-children-empty .steps { grid-template-columns: 1fr; }
+    }
   </style>
   <link rel="stylesheet" href="/css/dashboard-mobile.css" />
   <link rel="stylesheet" href="/css/demo-mode.css" />
@@ -1620,6 +1848,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <div class="dashboard-panel">
           <div class="dashboard-panel-header">Invite a Child</div>
+          <p class="panel-helper">Generate a code, then have your child enter it when they sign up. Best when your child doesn't have a Mathmatix account yet.</p>
           <button id="generate-code-btn" class="btn btn-primary main-action-btn">
             <i class="fas fa-user-plus"></i> Generate Invite Code
           </button>
@@ -1637,6 +1866,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <div class="dashboard-panel">
           <div class="dashboard-panel-header">Link to Existing Student</div>
+          <p class="panel-helper">Already have a child using Mathmatix? Ask them for their 6-character link code (Profile → Family) and enter it below.</p>
           <form id="link-student-form">
             <div class="form-group">
               <label for="studentLinkCode">Student's Link Code</label>
