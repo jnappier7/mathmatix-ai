@@ -81,3 +81,63 @@
   --cr-hint-w: 260px;          /* legacy alias of the right slot */
   --cr-side-w: 320px;          /* workspace / transcript slot */
 }
+
+/* ============================================================
+   Light theme — opt-in via <html data-theme="light"> on pages
+   that want a daylight surface (login, dashboards, marketing).
+   Chat keeps the dark default; this override never reaches it
+   unless data-theme="light" is set on the document.
+
+   Token NAMES stay the same so components are theme-agnostic.
+   ============================================================ */
+[data-theme="light"] {
+  /* Surfaces shift from deep navy → paper-warm whites. The
+     ramp keeps the same relationship (0 darkest stage → panel
+     raised) but inverted: 0 is now the page backdrop, panel
+     is the elevated card. */
+  --cr-bg-0: #F5F7FB;
+  --cr-bg-1: #FFFFFF;
+  --cr-bg-2: #EEF1F7;
+  --cr-bg-panel: #FFFFFF;
+
+  --cr-panel-grad-from: #FFFFFF;
+  --cr-panel-grad-to:   #F2F4FA;
+
+  /* Bubbles tuned for light: AI gets a soft neutral, the user
+     keeps the brand purple but at a tint that reads on white. */
+  --cr-bubble-ai: #F1F3F9;
+  --cr-bubble-user: #EDE9FF;
+  --cr-bubble-user-accent: #6C5CE7;
+
+  /* Text inverts. Dim is a true mid-gray, not a washed purple. */
+  --cr-text: #18202B;
+  --cr-text-dim: #5B6876;
+
+  /* Accent darkens just enough to keep AA contrast on white.
+     The gradient also rotates slightly so it doesn't look flat. */
+  --cr-accent: #6C5CE7;
+  --cr-accent-strong: #4D3DD1;
+  --cr-accent-grad: linear-gradient(135deg, var(--cr-accent), var(--cr-accent-strong));
+
+  /* Semantic colors get richer saturation since they're sitting
+     on white instead of glowing on black. */
+  --cr-success: #16A34A;
+  --cr-warning: #D97706;
+  --cr-danger:  #DC2626;
+  --cr-info:    #2563EB;
+  --cr-heart:   #C026D3;
+
+  /* Lines on light pages: subtle gray, not translucent white. */
+  --cr-border: rgba(15, 23, 42, 0.08);
+  --cr-border-strong: rgba(15, 23, 42, 0.16);
+  --cr-pill-bg: rgba(15, 23, 42, 0.04);
+  --cr-pill-bg-hover: rgba(15, 23, 42, 0.07);
+  --cr-scrim: rgba(245, 247, 251, 0.92);
+
+  /* Shadows step down to a soft architectural ramp — heavy
+     drop-shadows from the dark theme would look bruised on
+     white. */
+  --cr-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
+  --cr-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --cr-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 8px rgba(15, 23, 42, 0.06);
+}

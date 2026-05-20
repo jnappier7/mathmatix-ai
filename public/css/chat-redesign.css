@@ -27,7 +27,11 @@ body.cr-mode .landing-header {
 }
 
 body.cr-mode .landing-header .main-logo-hero {
-  filter: brightness(1.15);
+  /* Flip the colored mark to a clean white silhouette so it reads on
+     the dark header. Brand identity here is the SHAPE (glasses +
+     wordmark); the teal/pink fills don't survive on a navy backdrop.
+     Stopgap until a proper white logo asset exists. */
+  filter: brightness(0) invert(1);
 }
 
 /* ----- Header pills (streak + Progress + avatar) ----- */
