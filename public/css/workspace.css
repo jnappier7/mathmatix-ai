@@ -229,3 +229,179 @@
 @media (prefers-reduced-motion: reduce) {
   .cr-workspace { transition: none; }
 }
+
+/* ============================================================
+   WORK BOARD — embedded step-stack on the Board tab.
+
+   Cards stack vertically. Each card is its own visual unit:
+     - pose    → the starting problem (top of the stack)
+     - apply   → narrow transition row ("subtract 4 from both sides")
+     - resolve → the resulting equation after the student's move
+     - verify  → the proven solution + verification check line
+
+   Slide-in via the .cr-ws-board-card--enter class added the frame the
+   card is mounted, then removed the next frame to play the transition.
+   Respects prefers-reduced-motion.
+   ============================================================ */
+.cr-ws-board-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px 12px;
+  border-bottom: 1px solid var(--cr-border);
+  margin-bottom: 12px;
+}
+.cr-ws-board-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--cr-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.cr-ws-board-title i { color: var(--cr-accent); }
+
+.cr-ws-board-clear {
+  background: var(--cr-pill-bg);
+  border: 1px solid var(--cr-border);
+  color: var(--cr-text-dim);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--cr-radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background var(--cr-transition-fast), color var(--cr-transition-fast);
+}
+.cr-ws-board-clear:hover {
+  background: var(--cr-pill-bg-hover);
+  color: var(--cr-text);
+}
+
+.cr-ws-board-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cr-ws-board-empty {
+  text-align: center;
+  padding: 28px 14px;
+  color: var(--cr-text-dim);
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px dashed var(--cr-border);
+  border-radius: var(--cr-radius-md);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Common card chrome */
+.cr-ws-board-card {
+  border-radius: var(--cr-radius-md);
+  padding: 14px 16px;
+  background: var(--cr-bg-panel);
+  border: 1px solid var(--cr-border);
+  box-shadow: var(--cr-shadow-sm);
+  transition: opacity 0.28s var(--cr-ease), transform 0.28s var(--cr-ease);
+  position: relative;
+}
+
+/* Slide-in entry — class is added then removed on the next frame so the
+   transition runs. The from-state is opacity 0 + translateY 6px. */
+.cr-ws-board-card--enter {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* The pose (starting problem) — slightly more accent presence so the
+   eye lands here first. */
+.cr-ws-board-card--pose {
+  border-color: rgba(139, 123, 255, 0.30);
+  background: linear-gradient(180deg,
+    rgba(139, 123, 255, 0.06) 0%,
+    var(--cr-bg-panel) 100%);
+}
+.cr-ws-board-card--pose::before {
+  content: "PROBLEM";
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: var(--cr-accent);
+  opacity: 0.85;
+}
+
+/* Verify — proven solution. Green presence, eyebrow label. */
+.cr-ws-board-card--verify {
+  border-color: rgba(46, 204, 113, 0.35);
+  background: linear-gradient(180deg,
+    rgba(46, 204, 113, 0.08) 0%,
+    var(--cr-bg-panel) 100%);
+}
+.cr-ws-board-card--verify::before {
+  content: "SOLVED";
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: var(--cr-success);
+}
+
+/* Math display inside cards — KaTeX renders into here. */
+.cr-ws-board-card-math {
+  padding-top: 14px;
+  font-size: 18px;
+  color: var(--cr-text);
+  text-align: center;
+  overflow-x: auto;
+}
+.cr-ws-board-card-math .katex { font-size: 1.15em; }
+
+/* Verify card: secondary "check" math line under the solution */
+.cr-ws-board-card-check {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(46, 204, 113, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--cr-success);
+  font-size: 13px;
+}
+.cr-ws-board-card-check i { font-size: 14px; }
+.cr-ws-board-card-check-math .katex { font-size: 0.95em; color: var(--cr-text); }
+
+/* Apply — narrow transition row between equation cards. */
+.cr-ws-board-card--apply {
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-style: dashed;
+  background: transparent;
+  box-shadow: none;
+  color: var(--cr-text-dim);
+  font-size: 12.5px;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+.cr-ws-board-apply-arrow {
+  color: var(--cr-accent);
+  font-style: normal;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-ws-board-card { transition: none; }
+  .cr-ws-board-card--enter { opacity: 1; transform: none; }
+}
