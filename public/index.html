@@ -990,10 +990,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         ];
 
         var convoIndex = 0;
+        // Generation token — every playConversation() increments it; every
+        // setTimeout callback below stamps the gen it was scheduled in and
+        // bails out if a newer generation has started. Without this guard,
+        // a callback from the previous conversation could fire after the
+        // next one has begun (most reliably when the tab is backgrounded
+        // and browsers throttle/batch setTimeouts) and call appendMessage
+        // with the OLD convo into the NEW container — that's the bug from
+        // the UI review where two students' avatars and topics appeared
+        // interleaved during a transition.
+        var convoGen = 0;
 
         function playConversation() {
           var convo = conversations[convoIndex % conversations.length];
           convoIndex++;
+          var gen = ++convoGen; // closure-captured; all callbacks below check against the live convoGen
 
           // Update tutor name
           if (tutorNameEl) tutorNameEl.textContent = convo.tutor;
@@ -1005,13 +1016,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           var msgIdx = 0;
 
           function showNextMessage() {
+            if (gen !== convoGen) return; // stale — a newer conversation owns the stage
             if (msgIdx >= convo.messages.length) {
               // Pause on completed conversation, then start next
               setTimeout(function () {
+                if (gen !== convoGen) return;
                 // Fade out current messages
                 var allRows = chatContainer.querySelectorAll('.lp-chat-row');
                 allRows.forEach(function (r) { r.style.opacity = '0'; r.style.transform = 'translateY(-8px)'; });
-                setTimeout(playConversation, 400);
+                setTimeout(function () {
+                  if (gen !== convoGen) return;
+                  playConversation();
+                }, 400);
               }, 3000);
               return;
             }
@@ -1023,6 +1039,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               // Show typing indicator before tutor message
               typingEl.style.display = 'flex';
               setTimeout(function () {
+                if (gen !== convoGen) return;
                 typingEl.style.display = 'none';
                 appendMessage(msg, isStudent, convo);
                 msgIdx++;
