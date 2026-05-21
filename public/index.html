@@ -88,6 +88,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="/js/csrf.js"></script>
   <script src="/js/landing.js" defer></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
+  <!-- Chat design tokens (--cr-*) so the chat preview block can mirror the real product. -->
+  <link rel="stylesheet" href="/css/design-system.css" />
   <link rel="stylesheet" href="/css/landing-page.css" />
 </head>
 <body>
@@ -293,21 +295,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
     </section>
 
-    <!-- ── Chat Preview (moved below fold from hero) ────────── -->
+    <!-- ── Chat Preview (mirrors the real cr-mode chat) ────────── -->
     <section class="lp-chat-preview-section lp-reveal lp-section-alt">
       <div class="lp-inner">
         <h2 class="lp-section-heading">See How a Session Works</h2>
         <p class="lp-section-sub">Real conversations with our AI tutors. No scripts &mdash; every session is personalized.</p>
-        <div class="lp-hero-preview" style="margin: 0 auto;">
+        <!-- Branded as a window into the actual product: dark navy panel,
+             "Live with [tutor]" pill, streak, hamburger — matches /chat.html. -->
+        <div class="lp-hero-preview lp-preview-chat" aria-label="Example tutoring session">
           <div class="lp-preview-header">
-            <div class="lp-preview-dot"></div>
-            <span id="lp-tutor-name">Mr. Nappier</span> &mdash; Mathmatix AI Tutor
+            <div class="lp-preview-live-pill">
+              <span class="lp-preview-live-dot" aria-hidden="true"></span>
+              <span>Live with <span id="lp-tutor-name">Mr. Nappier</span></span>
+            </div>
+            <div class="lp-preview-header-right">
+              <span class="lp-preview-streak-pill" title="Daily streak">
+                <span class="lp-preview-flame" aria-hidden="true">🔥</span>
+                <span>2</span>
+              </span>
+              <span class="lp-preview-menu-btn" aria-hidden="true">
+                <i class="fas fa-bars"></i>
+              </span>
+            </div>
           </div>
-          <div class="lp-chat-messages" id="lp-chat"></div>
-          <div class="lp-typing" id="lp-typing">
-            <div class="lp-typing-dot"></div>
-            <div class="lp-typing-dot"></div>
-            <div class="lp-typing-dot"></div>
+          <div class="lp-preview-stage">
+            <img id="lp-preview-backdrop" class="lp-preview-backdrop" src="/images/tutor_avatars/mr-nappier.png" alt="" aria-hidden="true" />
+            <div class="lp-preview-scrim" aria-hidden="true"></div>
+            <div class="lp-chat-messages" id="lp-chat"></div>
+            <div class="lp-typing" id="lp-typing">
+              <div class="lp-typing-dot"></div>
+              <div class="lp-typing-dot"></div>
+              <div class="lp-typing-dot"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -927,6 +946,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       var chatContainer = document.getElementById('lp-chat');
       var typingEl = document.getElementById('lp-typing');
       var tutorNameEl = document.getElementById('lp-tutor-name');
+      var backdropEl = document.getElementById('lp-preview-backdrop');
 
       if (chatContainer && typingEl) {
         var conversations = [
@@ -992,24 +1012,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         var convoIndex = 0;
         // Generation token — every playConversation() increments it; every
         // setTimeout callback below stamps the gen it was scheduled in and
-        // bails out if a newer generation has started. Without this guard,
-        // a callback from the previous conversation could fire after the
-        // next one has begun (most reliably when the tab is backgrounded
-        // and browsers throttle/batch setTimeouts) and call appendMessage
-        // with the OLD convo into the NEW container — that's the bug from
-        // the UI review where two students' avatars and topics appeared
-        // interleaved during a transition.
+        // bails out if a newer generation has started.
         var convoGen = 0;
+        // Track every pending timeout so a new conversation can cancel
+        // them outright instead of relying on gen-guards alone. Without
+        // this, throttled tabs could fire a stale typing-finish callback
+        // that appends a duplicate of the message just rendered.
+        var pendingTimers = [];
+        function schedule(fn, ms) {
+          var id = setTimeout(function () {
+            // Remove ourselves from the list before running.
+            var i = pendingTimers.indexOf(id);
+            if (i !== -1) pendingTimers.splice(i, 1);
+            fn();
+          }, ms);
+          pendingTimers.push(id);
+          return id;
+        }
+        function cancelAllTimers() {
+          for (var i = 0; i < pendingTimers.length; i++) clearTimeout(pendingTimers[i]);
+          pendingTimers.length = 0;
+        }
 
         function playConversation() {
           var convo = conversations[convoIndex % conversations.length];
           convoIndex++;
-          var gen = ++convoGen; // closure-captured; all callbacks below check against the live convoGen
+          var gen = ++convoGen;
 
-          // Update tutor name
+          // Cancel any timers from the previous cycle BEFORE clearing the
+          // DOM. Otherwise a stale typing-finish callback could fire after
+          // the new conversation starts and re-render a message that's
+          // already on screen (the duplicate-bubble bug).
+          cancelAllTimers();
+
           if (tutorNameEl) tutorNameEl.textContent = convo.tutor;
+          if (backdropEl && convo.tutorAvatar) backdropEl.src = convo.tutorAvatar;
 
-          // Clear previous messages
           chatContainer.innerHTML = '';
           typingEl.style.display = 'none';
 
@@ -1018,13 +1056,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           function showNextMessage() {
             if (gen !== convoGen) return; // stale — a newer conversation owns the stage
             if (msgIdx >= convo.messages.length) {
-              // Pause on completed conversation, then start next
-              setTimeout(function () {
+              schedule(function () {
                 if (gen !== convoGen) return;
-                // Fade out current messages
                 var allRows = chatContainer.querySelectorAll('.lp-chat-row');
                 allRows.forEach(function (r) { r.style.opacity = '0'; r.style.transform = 'translateY(-8px)'; });
-                setTimeout(function () {
+                schedule(function () {
                   if (gen !== convoGen) return;
                   playConversation();
                 }, 400);
@@ -1036,23 +1072,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             var isStudent = msg.from === 'student';
 
             if (!isStudent) {
-              // Show typing indicator before tutor message
               typingEl.style.display = 'flex';
-              setTimeout(function () {
+              schedule(function () {
                 if (gen !== convoGen) return;
                 typingEl.style.display = 'none';
                 appendMessage(msg, isStudent, convo);
                 msgIdx++;
-                setTimeout(showNextMessage, 900);
+                schedule(showNextMessage, 900);
               }, 1100);
             } else {
               appendMessage(msg, isStudent, convo);
               msgIdx++;
-              setTimeout(showNextMessage, 800);
+              schedule(showNextMessage, 800);
             }
           }
 
           function appendMessage(msg, isStudent, c) {
+            // Dedup guard: if the last row already shows this exact (from + text),
+            // skip. Belt-and-suspenders against any race that slipped past the
+            // timer cancel.
+            var lastRow = chatContainer.lastElementChild;
+            if (lastRow && lastRow.classList && lastRow.classList.contains('lp-chat-row')) {
+              var lastIsStudent = lastRow.classList.contains('lp-chat-row--student');
+              var lastBubble = lastRow.querySelector('.lp-chat-bubble');
+              if (lastIsStudent === isStudent && lastBubble && lastBubble.textContent === msg.text) {
+                return;
+              }
+            }
             var row = document.createElement('div');
             row.className = 'lp-chat-row' + (isStudent ? ' lp-chat-row--student' : '');
 
@@ -1079,7 +1125,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             });
           }
 
-          setTimeout(showNextMessage, 600);
+          schedule(showNextMessage, 600);
         }
 
         setTimeout(playConversation, 700);
