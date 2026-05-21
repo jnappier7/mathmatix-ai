@@ -41,6 +41,50 @@ function buildStaticRules(options = {}) {
   return STATIC_RULES_TEMPLATE.replace('{{RULE_1}}', rule1);
 }
 
+// ── BOARD TAG PROTOCOL (Phase B) ──
+// Inline <BOARD action="…"/> tags drive the embedded WorkBoard panel
+// alongside the chat bubble. Mirrors the student's reasoning; never
+// previews a step they haven't said.
+const BOARD_TAG_INSTRUCTIONS = `
+--- WORKBOARD TAG PROTOCOL ---
+The student sees an embedded WorkBoard panel beside the chat. You drive it with inline tags. Emit these in your reply text — they're invisible to the student, but a parser turns each one into a card on the board. The cards mirror the work the STUDENT has done; the board never previews a step they haven't said.
+
+SYNTAX (case-sensitive on action; quotes can be " or '):
+<BOARD action="pose" tex="2x + 4 = 20" />
+<BOARD action="apply" op="subtract 4 from both sides" />
+<BOARD action="resolve" tex="2x = 16" />
+<BOARD action="verify" tex="x = 8" check="2(8) + 4 = 20" />
+<BOARD action="clear" />
+
+WHEN TO EMIT (the only six rules — follow them strictly):
+1. POSE: when you first present a problem to the student. Emit once per problem at the moment the problem starts. Don't re-pose mid-conversation.
+2. APPLY: AFTER the student tells you the move they want to make ("I'd subtract 4 from both sides"). Never before. The op="..." must restate the student's stated move.
+3. RESOLVE: AFTER the student tells you the result of that move ("so 2x = 16"). The tex="..." must be what the student wrote.
+4. VERIFY: when the student verifies the solution (substitutes back, or you've confirmed the final answer). tex="..." is the student's solution; check="..." shows the substitution math (e.g., "2(8) + 4 = 20").
+5. CLEAR: ONLY when the student signals a new problem ("new one", "let's try another") OR right after a verify card lands. Never to "demonstrate a cleaner path" — that erases the student's work.
+6. NEVER emit a resolve or apply for a step the student hasn't said. The board mirrors the student's reasoning, not yours. A server-side guard drops any tag that doesn't trace back to the student's recent message — don't try to slip them past.
+
+WORKED EXAMPLE (the canonical dialog):
+  Student: "I need help with 2x + 4 = 20"
+  You: "Let's tackle it. What's a good first move?"
+       <BOARD action="pose" tex="2x + 4 = 20" />
+  Student: "I'd subtract 4 from both sides"
+  You: "Nice. What does that leave you with?"
+       <BOARD action="apply" op="subtract 4 from both sides" />
+  Student: "2x = 16"
+  You: "Right. Now how do you isolate x?"
+       <BOARD action="resolve" tex="2x = 16" />
+  Student: "divide by 2, so x = 8"
+  You: "Quick check — does that work in the original?"
+       <BOARD action="apply" op="divide both sides by 2" />
+       <BOARD action="resolve" tex="x = 8" />
+  Student: "yeah, 2(8) + 4 = 20"
+  You: "Solid. You proved it."
+       <BOARD action="verify" tex="x = 8" check="2(8) + 4 = 20" />
+
+The tags do not replace your spoken response — keep talking like a tutor. The tags are just a side channel that makes the board reflect the work as it happens.
+`.trim();
+
 const STATIC_RULES_TEMPLATE = `
 ${CAPABILITY_IDENTITY}
 
@@ -234,6 +278,8 @@ Talk like a real person who knows this student. Use contractions. Vary your rhyt
 Read the energy behind the message — not just the words — and respond to that. Two students can say the same words and mean completely different things.
 
 ${VISUAL_TOOLS_SECTION}
+
+${BOARD_TAG_INSTRUCTIONS}
 
 ${IMAGE_SEARCH_SECTION}
 

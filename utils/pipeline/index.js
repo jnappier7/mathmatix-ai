@@ -40,6 +40,10 @@ const { reassessFamiliarity } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
+const { parseBoardTags } = require('../boardTagParser');
+const { enforcePedagogyRule } = require('../boardCommandGuard');
+const log = require('../logger');
+const boardLogger = log.child({ service: 'board-tag-protocol' });
 
 /**
  * Run the full tutoring pipeline.
@@ -383,6 +387,43 @@ async function runPipeline(message, ctx) {
   });
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);
+
+  // ── Stage 5b: BOARD TAG PROTOCOL (Phase B) ──
+  // Extract <BOARD …/> tags from verify.text, run the pedagogy guard,
+  // and replace verify.text with the stripped version. The guard drops
+  // any command that doesn't trace back to the student's recent
+  // message — backstop for the #1 product rule.
+  const boardParseInput = verified.text;
+  const boardParsed = parseBoardTags(boardParseInput);
+  if (boardParsed.boardCommands.length > 0) {
+    const recentUserMessages = (ctx.conversation?.messages || [])
+      .filter(m => m.role === 'user')
+      .slice(-3); // current message lives in `message`; this is prior history
+    const guardResult = enforcePedagogyRule({
+      commands: boardParsed.boardCommands,
+      userMessage: message,
+      recentUserMessages,
+      lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+    });
+    verified.text = boardParsed.cleanedText;
+    verified.boardCommands = guardResult.allowed;
+    if (guardResult.dropped.length > 0) {
+      for (const { command, reason } of guardResult.dropped) {
+        boardLogger.warn('Pedagogy guard dropped board command', {
+          action: command.action,
+          reason,
+          tex: command.tex || null,
+          op: command.op || null,
+        });
+      }
+    }
+    if (guardResult.allowed.length > 0 && ctx.conversation) {
+      const lastEmitted = guardResult.allowed[guardResult.allowed.length - 1].action;
+      ctx.conversation.lastBoardAction = lastEmitted;
+    }
+  } else {
+    verified.boardCommands = [];
+  }
 
   // ── Merge LLM signals into sidecar ──
   mergeLlmSignals(sidecar, verified.extracted);
@@ -747,6 +788,7 @@ async function runPipeline(message, ctx) {
   return {
     text: verified.text,
     visualCommands: verified.visualCommands,
+    boardCommands: verified.boardCommands || [],
     drawingSequence: verified.drawingSequence,
     boardContext: verified.boardContext,
     xpBreakdown: persistResults.xpBreakdown,

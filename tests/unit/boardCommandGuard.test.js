@@ -1,0 +1,197 @@
+const {
+  enforcePedagogyRule,
+  texMatchesStudentText,
+  opMatchesStudentText,
+  hasStartOverIntent,
+} = require('../../utils/boardCommandGuard');
+
+describe('boardCommandGuard', () => {
+  describe('pose', () => {
+    it('is always allowed regardless of student message', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'pose', tex: '2x + 4 = 20' }],
+        userMessage: 'hi',
+      });
+      expect(allowed).toHaveLength(1);
+      expect(dropped).toHaveLength(0);
+    });
+
+    it('is allowed even when student says nothing', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'pose', tex: 'x^2 = 9' }],
+        userMessage: '',
+      });
+      expect(allowed).toHaveLength(1);
+    });
+  });
+
+  describe('apply', () => {
+    it('is allowed when op keyword appears in the user message', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'apply', op: 'subtract 4 from both sides' }],
+        userMessage: "I'd subtract 4 from both sides",
+      });
+      expect(allowed).toHaveLength(1);
+      expect(dropped).toHaveLength(0);
+    });
+
+    it('matches on a fuzzy keyword ("subtract") even if op wording differs slightly', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'apply', op: 'subtract 4 from both sides' }],
+        userMessage: "I think we should subtract 4 here",
+      });
+      expect(allowed).toHaveLength(1);
+    });
+
+    it('is dropped when the student message does not mention the operation', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'apply', op: 'subtract 4 from both sides' }],
+        userMessage: 'idk where to start',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped).toHaveLength(1);
+      expect(dropped[0].reason).toBe('apply_op_not_in_student_message');
+    });
+
+    it('falls back to the prior user message for confirmation flows', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'apply', op: 'subtract 4 from both sides' }],
+        userMessage: 'yes',
+        recentUserMessages: [{ role: 'user', content: 'subtract 4 from both sides' }],
+      });
+      expect(allowed).toHaveLength(1);
+    });
+  });
+
+  describe('resolve', () => {
+    it('is allowed when tex appears in student message', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'resolve', tex: '2x = 16' }],
+        userMessage: 'so 2x = 16, right?',
+      });
+      expect(allowed).toHaveLength(1);
+    });
+
+    it('matches per-side after splitting on =', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'resolve', tex: '2x = 16' }],
+        userMessage: 'I got 2x equals 16',
+      });
+      expect(allowed).toHaveLength(1);
+    });
+
+    it('is dropped when tex does not appear in student message', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'resolve', tex: 'x = 99' }],
+        userMessage: 'I have no idea',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('resolve_tex_not_in_student_message');
+    });
+  });
+
+  describe('verify', () => {
+    it('is allowed when tex appears in student verification text', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'verify', tex: 'x = 8', check: '2(8) + 4 = 20' }],
+        userMessage: 'yeah, x = 8 checks out',
+      });
+      expect(allowed).toHaveLength(1);
+    });
+
+    it('is dropped when tex is missing', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'verify', check: '2(8) + 4 = 20' }],
+        userMessage: 'x = 8',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('verify_missing_tex');
+    });
+  });
+
+  describe('clear', () => {
+    it('is allowed on explicit start-over intent ("new problem")', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'clear' }],
+        userMessage: 'can we do a new problem',
+      });
+      expect(allowed).toHaveLength(1);
+    });
+
+    it('is allowed on "let\'s try another"', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'clear' }],
+        userMessage: "let's try another",
+      });
+      expect(allowed).toHaveLength(1);
+    });
+
+    it('is allowed when last board action was verify', () => {
+      const { allowed } = enforcePedagogyRule({
+        commands: [{ action: 'clear' }],
+        userMessage: 'cool',
+        lastBoardActionInConversation: 'verify',
+      });
+      expect(allowed).toHaveLength(1);
+    });
+
+    it('is dropped when the student gave no start-over signal and last action was not verify', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'clear' }],
+        userMessage: 'what about this step',
+        lastBoardActionInConversation: 'apply',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('clear_without_start_over_or_completed_problem');
+    });
+  });
+
+  describe('full drop scenario', () => {
+    it('drops every move-tag when the student message is unrelated', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [
+          { action: 'apply', op: 'subtract 4 from both sides' },
+          { action: 'resolve', tex: '2x = 16' },
+          { action: 'verify', tex: 'x = 8', check: '2(8) + 4 = 20' },
+        ],
+        userMessage: 'what time does the library close',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped).toHaveLength(3);
+    });
+
+    it('preserves pose even when everything else is dropped', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [
+          { action: 'pose', tex: '2x + 4 = 20' },
+          { action: 'apply', op: 'subtract 4 from both sides' },
+          { action: 'resolve', tex: '2x = 16' },
+        ],
+        userMessage: 'help',
+      });
+      expect(allowed).toHaveLength(1);
+      expect(allowed[0].action).toBe('pose');
+      expect(dropped).toHaveLength(2);
+    });
+  });
+
+  describe('helpers', () => {
+    it('texMatchesStudentText normalizes LaTeX cdot/times', () => {
+      expect(texMatchesStudentText('2 \\cdot x = 6', '2x=6')).toBe(true);
+      expect(texMatchesStudentText('2 \\times 3 = 6', '2*3 = 6')).toBe(true);
+    });
+
+    it('opMatchesStudentText catches keyword overlap', () => {
+      expect(opMatchesStudentText('combine like terms', 'I want to combine these')).toBe(true);
+      expect(opMatchesStudentText('factor the trinomial', 'try factoring')).toBe(true);
+      expect(opMatchesStudentText('factor the trinomial', 'just guessing')).toBe(false);
+    });
+
+    it('hasStartOverIntent picks up common phrasings', () => {
+      expect(hasStartOverIntent('new problem please')).toBe(true);
+      expect(hasStartOverIntent('start over')).toBe(true);
+      expect(hasStartOverIntent("let's try another")).toBe(true);
+      expect(hasStartOverIntent('I want to continue this one')).toBe(false);
+    });
+  });
+});

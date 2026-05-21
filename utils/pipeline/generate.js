@@ -15,6 +15,16 @@ const { ACTIONS } = require('./decide');
 const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCompact');
 const { buildSlimRules } = require('./promptSlim');
 const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTools');
+const { parseBoardTags } = require('../boardTagParser');
+const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
+
+// Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
+// replacement / narration paths). Streaming chunks use the stateful
+// filter instead, because tags can fragment across chunks.
+function stripBoardTagsForStream(text) {
+  if (!text) return text;
+  return parseBoardTags(text).cleanedText;
+}
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 
@@ -415,7 +425,8 @@ async function generate(assembled, options = {}) {
     const text = assembled.deterministicResponse;
     if (options.stream && options.res) {
       try {
-        options.res.write(`data: ${JSON.stringify({ type: 'chunk', content: text })}\n\n`);
+        const safe = stripBoardTagsForStream(text);
+        options.res.write(`data: ${JSON.stringify({ type: 'chunk', content: safe })}\n\n`);
       } catch (e) { /* client disconnected */ }
     }
     return { text, toolCalls: [], resolvedTools: null };
@@ -499,6 +510,10 @@ async function generateStreaming(model, messages, llmOptions, res) {
   const toolCallAccumulator = new Map();
   let finishReason = null;
 
+  // Stateful filter that holds back any partial / unclosed <BOARD> tag
+  // so raw tag fragments never flicker into the chat bubble.
+  const boardFilter = createBoardTagStreamFilter();
+
   try {
     const stream = await callLLMStream(model, messages, llmOptions);
     let clientDisconnected = false;
@@ -514,7 +529,10 @@ async function generateStreaming(model, messages, llmOptions, res) {
 
       if (delta.content) {
         fullResponse += delta.content;
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content: delta.content })}\n\n`);
+        const safe = boardFilter.push(delta.content);
+        if (safe) {
+          res.write(`data: ${JSON.stringify({ type: 'chunk', content: safe })}\n\n`);
+        }
       }
 
       if (Array.isArray(delta.tool_calls)) {
@@ -533,6 +551,14 @@ async function generateStreaming(model, messages, llmOptions, res) {
           }
           toolCallAccumulator.set(idx, existing);
         }
+      }
+    }
+
+    // Drain any text the stream filter was still holding back.
+    {
+      const tail = boardFilter.flush();
+      if (tail && !clientDisconnected) {
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: tail })}\n\n`);
       }
     }
 
@@ -564,7 +590,8 @@ async function generateStreaming(model, messages, llmOptions, res) {
       );
 
       if (narration && !clientDisconnected) {
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content: narration })}\n\n`);
+        const safeNarration = stripBoardTagsForStream(narration);
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: safeNarration })}\n\n`);
       }
 
       return {
@@ -585,11 +612,12 @@ async function generateStreaming(model, messages, llmOptions, res) {
     const completion = await callLLM(model, messages, llmOptions);
     const text = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
 
+    const safeText = stripBoardTagsForStream(text);
     if (fullResponse.length > 0) {
       // Partial content was already sent — tell client to replace it
-      res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+      res.write(`data: ${JSON.stringify({ type: 'replacement', content: safeText })}\n\n`);
     } else {
-      res.write(`data: ${JSON.stringify({ type: 'chunk', content: text })}\n\n`);
+      res.write(`data: ${JSON.stringify({ type: 'chunk', content: safeText })}\n\n`);
     }
     return { text, toolCalls: [], resolvedTools: null };
   }
