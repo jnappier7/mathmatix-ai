@@ -2621,6 +2621,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Phase B: execute server-emitted <BOARD> commands against
+            // the embedded WorkBoard. The pipeline pre-guards these
+            // against the #1 rule; this handler just dispatches.
+            if (Array.isArray(data.boardCommands) && data.boardCommands.length > 0 && window.BoardCommandHandler) {
+                try {
+                    window.BoardCommandHandler.executeBoardCommands(data.boardCommands);
+                } catch (error) {
+                    console.error('[BoardCommandHandler] Failed to execute commands:', error);
+                }
+            }
+
             if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
                 showTutorUnlockCelebration(data.newlyUnlockedTutors);
             }

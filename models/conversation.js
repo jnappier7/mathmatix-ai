@@ -144,6 +144,15 @@ const conversationSchema = new Schema({
         type: Date,
         default: null
     },
+    // Last <BOARD> action emitted into this conversation (Phase B). The
+    // pedagogy guard reads this to allow `clear` after a `verify` even
+    // without an explicit student start-over signal. Null when no board
+    // commands have been emitted yet.
+    lastBoardAction: {
+        type: String,
+        enum: ['pose', 'apply', 'resolve', 'verify', 'clear', null],
+        default: null,
+    },
     alerts: [{
         type: { type: String }, // 'struggle', 'milestone', 'help_request', 'session_start', 'session_end'
         message: String,
