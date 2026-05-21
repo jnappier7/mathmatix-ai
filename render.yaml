@@ -6,6 +6,11 @@ services:
     region: oregon
     plan: pro
 
+    # HTTP health check — enables zero-downtime deploys. Render waits for this
+    # endpoint to return 200 on the new instance before routing traffic and
+    # draining the old one, which removes the 502 gap during normal deploys.
+    healthCheckPath: /api/health
+
     # Custom domain with SSL (Render auto-provisions Let's Encrypt certs)
     customDomains:
       - name: mathmatix.ai
