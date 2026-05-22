@@ -803,21 +803,25 @@
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  max-height: 380px;
+  /* aspect-ratio gives the wrap a deterministic height regardless of the
+     image's intrinsic dimensions — replaces the old max-height clip which
+     left the headline crashing into the viewport edge on tall phones. */
+  aspect-ratio: 16 / 9;
 }
 
 .lp-photo-banner-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 35%;
   display: block;
 }
 
 .lp-photo-banner-overlay {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
-  padding: 2.5rem 2rem 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.15) 60%, transparent 100%);
+  padding: 3rem 2rem 1.5rem;
 }
 
 .lp-photo-banner-text {
@@ -830,13 +834,13 @@
 
 @media (max-width: 768px) {
   .lp-photo-banner { padding: 1.5rem var(--page-horizontal-padding) 0; }
-  .lp-photo-banner-wrap { max-height: 240px; border-radius: 12px; }
+  .lp-photo-banner-wrap { aspect-ratio: 4 / 3; border-radius: 12px; }
   .lp-photo-banner-text { font-size: 1.05rem; }
-  .lp-photo-banner-overlay { padding: 2rem 1.25rem 1rem; }
+  .lp-photo-banner-overlay { padding: 2.25rem 1.25rem 1.1rem; }
 }
 
 @media (max-width: 375px) {
-  .lp-photo-banner-wrap { max-height: 200px; }
+  .lp-photo-banner-wrap { aspect-ratio: 4 / 3; }
   .lp-photo-banner-text { font-size: 0.95rem; }
 }
 
@@ -1553,6 +1557,184 @@
   padding: 4rem var(--page-horizontal-padding);
 }
 
+/* ── Chat Preview: window into the real /chat.html (cr-mode) ───
+   Mirrors the actual product so the marketing demo IS the product
+   visual identity — dark navy panel, "Live with [tutor]" pill, streak,
+   purple bubbles. Uses the --cr-* tokens from design-system.css.
+   ──────────────────────────────────────────────────────────── */
+.lp-preview-chat {
+  background: var(--cr-bg-panel, #161B2C);
+  border: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  border-radius: 22px;
+  padding: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(11, 15, 26, 0.35), 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.lp-preview-chat .lp-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  background: linear-gradient(180deg, rgba(11,15,26,0.65), rgba(11,15,26,0.35));
+  font-size: 13px;
+  color: var(--cr-text, #E6E9F2);
+}
+
+.lp-preview-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(15, 20, 35, 0.65);
+  border: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  color: var(--cr-text, #E6E9F2);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lp-preview-live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cr-success, #2ECC71);
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+  animation: lpPreviewPulse 2s ease-in-out infinite;
+}
+
+@keyframes lpPreviewPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.65; transform: scale(0.88); }
+}
+
+.lp-preview-header-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lp-preview-streak-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  color: var(--cr-warning, #FFD66B);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lp-preview-flame {
+  filter: drop-shadow(0 0 6px rgba(255, 140, 40, 0.55));
+}
+
+.lp-preview-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  color: var(--cr-text, #E6E9F2);
+  font-size: 13px;
+}
+
+/* Stage: tutor portrait backdrop behind the chat messages, scrim on top. */
+.lp-preview-stage {
+  position: relative;
+  background: linear-gradient(180deg, #1A1F35 0%, #0E1322 100%);
+  min-height: 320px;
+  overflow: hidden;
+}
+
+.lp-preview-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.55;
+  filter: blur(2px);
+  transform: scale(1.05);
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lp-preview-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11,15,26,0.25) 0%, rgba(11,15,26,0.78) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lp-preview-chat .lp-chat-messages {
+  position: relative;
+  z-index: 2;
+  height: auto;
+  max-height: 320px;
+  min-height: 240px;
+  padding: 16px 16px 12px;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+/* Bubble palette overrides — tutor bubble goes dark navy, student bubble
+   goes deep purple. Matches body.cr-mode .message colors in chat-redesign.css. */
+.lp-preview-chat .lp-chat-tutor {
+  background: var(--cr-bubble-ai, #1F2742);
+  color: var(--cr-text, #E6E9F2);
+  border: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  box-shadow: none;
+}
+
+.lp-preview-chat .lp-chat-student {
+  background: var(--cr-bubble-user, #2A2255);
+  color: var(--cr-text, #E6E9F2);
+  border: 1px solid rgba(124, 107, 255, 0.35);
+  box-shadow: 0 2px 8px rgba(44, 33, 100, 0.4);
+}
+
+.lp-preview-chat .lp-chat-avatar {
+  border: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  background: var(--cr-bg-1, #121829);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.lp-preview-chat .lp-typing {
+  position: relative;
+  z-index: 2;
+  background: var(--cr-bubble-ai, #1F2742);
+  border: 1px solid var(--cr-border, rgba(255,255,255,0.08));
+  margin: 0 0 12px 50px;
+  border-bottom-left-radius: 4px;
+}
+
+.lp-preview-chat .lp-typing-dot {
+  background: var(--cr-accent, #8B7BFF);
+}
+
+@media (max-width: 600px) {
+  .lp-preview-chat { max-width: 100%; border-radius: 18px; }
+  .lp-preview-chat .lp-preview-header { padding: 10px 12px; }
+  .lp-preview-live-pill { font-size: 11px; padding: 5px 10px; }
+  .lp-preview-streak-pill { font-size: 11px; padding: 4px 8px; }
+  .lp-preview-menu-btn { width: 28px; height: 28px; font-size: 12px; }
+  .lp-preview-stage { min-height: 280px; }
+  .lp-preview-chat .lp-chat-messages { max-height: 280px; min-height: 220px; padding: 12px 12px 8px; }
+}
+
 /* ═══════════════════════════════════════════════════════
    TRIAL CHAT: Tutor Cards, Celebration, Chat UI, Gate
    ═══════════════════════════════════════════════════════ */
@@ -1610,6 +1792,18 @@
   font-family: inherit;
   font-size: inherit;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  /* Stretch the info block so .lp-tutor-card-hear (margin-top:auto) pins to
+     the card bottom. Without this, a longer spec line (Ms. Maria) pushes
+     "Hear me" up into the spec text on narrow mobile cards. */
+  justify-content: flex-start;
+}
+
+.lp-tutor-card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1 1 auto;
 }
 
 .lp-tutor-card:hover {
@@ -1662,12 +1856,18 @@
   color: var(--clr-text-dim);
   margin: 0;
   line-height: 1.5;
+  /* Reserve room for the longest spec line (Ms. Maria's bilingual + 3 subjects)
+     so cards stay the same height and "Hear me" never crashes into the spec. */
+  min-height: calc(0.78rem * 1.5 * 2);
 }
 
 .lp-tutor-card-hear {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  /* Combined with .lp-tutor-card-info{flex:1 1 auto}, this margin guarantees
+     visible breathing room above the pill even when the spec text wraps to
+     two lines on narrow mobile cards. */
   margin-top: 0.85rem;
   font-size: 0.75rem;
   color: var(--clr-accent-hotpink);
@@ -1676,6 +1876,7 @@
   border-radius: 20px;
   background: rgba(255, 59, 127, 0.05);
   transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
 }
 
 .lp-tutor-card-hear:hover {
