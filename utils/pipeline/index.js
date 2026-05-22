@@ -42,6 +42,7 @@ const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrad
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
+const { inferBoardEvents } = require('./inferWorkspace');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
 
@@ -395,14 +396,15 @@ async function runPipeline(message, ctx) {
   // message — backstop for the #1 product rule.
   const boardParseInput = verified.text;
   const boardParsed = parseBoardTags(boardParseInput);
+  // Reuse the recentUserMessages slice from the observe stage (line ~71).
+  // It already holds the last 6 user messages; the guard only looks at
+  // the immediate predecessor, so the larger window is fine.
+  const recentUserMessagesForBoard = recentUserMessages;
   if (boardParsed.boardCommands.length > 0) {
-    const recentUserMessages = (ctx.conversation?.messages || [])
-      .filter(m => m.role === 'user')
-      .slice(-3); // current message lives in `message`; this is prior history
     const guardResult = enforcePedagogyRule({
       commands: boardParsed.boardCommands,
       userMessage: message,
-      recentUserMessages,
+      recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
     });
     verified.text = boardParsed.cleanedText;
@@ -423,6 +425,68 @@ async function runPipeline(message, ctx) {
     }
   } else {
     verified.boardCommands = [];
+  }
+
+  // ── Stage 5c: DEFENSIVE BOARD INFERENCE (Phase B.5) ──
+  // Layer 3 of the workboard reliability stack. When the tutor
+  // forgets to emit a <BOARD> tag (Layer 2 produced nothing), look
+  // at the student's last message + the tutor's response and infer
+  // a board event if BOTH high-confidence signals fire: the student
+  // stated a math shape AND the tutor affirmed without correction.
+  // The same pedagogy guard re-runs on the inferred command so the
+  // #1 rule is enforced twice.
+  if (verified.boardCommands.length === 0) {
+    try {
+      const inferredEvents = inferBoardEvents(
+        message,
+        verified.text,
+        { workspaceCount: 0 } // we're only here because Layers 1+2 were silent
+      );
+      if (inferredEvents.length > 0) {
+        // Map the legacy { tag, attrs } shape from inferWorkspace.js
+        // onto the boardCommands shape consumed by chat.js.
+        const inferredCommands = inferredEvents
+          .filter(e => e.tag === 'board' && e.attrs && e.attrs.action)
+          .map(e => {
+            const cmd = { action: e.attrs.action };
+            if (e.attrs.tex) cmd.tex = e.attrs.tex;
+            if (e.attrs.op) cmd.op = e.attrs.op;
+            if (e.attrs.check) cmd.check = e.attrs.check;
+            return cmd;
+          });
+        if (inferredCommands.length > 0) {
+          const guarded = enforcePedagogyRule({
+            commands: inferredCommands,
+            userMessage: message,
+            recentUserMessages: recentUserMessagesForBoard,
+            lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+          });
+          verified.boardCommands = guarded.allowed;
+          if (guarded.allowed.length > 0) {
+            boardLogger.info('Inferred board command (Layer 3)', {
+              count: guarded.allowed.length,
+              actions: guarded.allowed.map(c => c.action),
+            });
+            if (ctx.conversation) {
+              ctx.conversation.lastBoardAction = guarded.allowed[guarded.allowed.length - 1].action;
+            }
+          }
+          if (guarded.dropped.length > 0) {
+            for (const { command, reason } of guarded.dropped) {
+              boardLogger.warn('Pedagogy guard dropped INFERRED board command', {
+                action: command.action,
+                reason,
+                tex: command.tex || null,
+                op: command.op || null,
+              });
+            }
+          }
+        }
+      }
+    } catch (inferErr) {
+      // Layer 3 must never break the response.
+      boardLogger.error('Defensive board inference failed (non-fatal)', { error: inferErr.message });
+    }
   }
 
   // ── Merge LLM signals into sidecar ──
