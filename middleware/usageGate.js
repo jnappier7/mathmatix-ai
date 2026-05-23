@@ -164,6 +164,47 @@ async function usageGate(req, res, next) {
 }
 
 /**
+ * Pure access check — does this user qualify for premium features?
+ * Mirrors the gating logic of paidFeatureGate / premiumFeatureGate but
+ * exposed as a function so non-Express callers (e.g. WebSocket upgrades
+ * in utils/voiceUpgrade.js) can enforce the same paywall. Without this,
+ * the WS endpoints leak past the HTTP-level premiumFeatureGate.
+ *
+ * @param {Object} user - req.user / hydrated user doc (mongoose or lean)
+ * @returns {Promise<boolean>} true if the user should be allowed in
+ */
+async function hasPremiumAccess(user) {
+  // Master switch — pre-launch mode opens everything
+  if (!BILLING_ENABLED) return true;
+  if (!user) return false;
+
+  // Role bypasses (drive adoption; teachers/parents/admins never paywalled)
+  if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+    return true;
+  }
+
+  // Unlimited individual subscribers
+  if (user.subscriptionTier === 'unlimited') return true;
+
+  // Active school license
+  if (user.schoolLicenseId) {
+    const valid = await isLicenseValid(user.schoolLicenseId);
+    if (valid) return true;
+  }
+
+  // Linked parent with active Mathmatix+ subscription (parent pays → child gets in)
+  if (user.parentIds && user.parentIds.length > 0) {
+    const subscribedParent = await User.findOne({
+      _id: { $in: user.parentIds },
+      subscriptionTier: 'unlimited'
+    }).lean();
+    if (subscribedParent) return true;
+  }
+
+  return false;
+}
+
+/**
  * Feature gate for premium-only features (voice, uploads, Show My Work).
  * School-licensed students and unlimited subscribers get full access.
  * Free users get a limited taste: 1 free upload and 1 free Show My Work,
@@ -286,4 +327,4 @@ function paidFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, premiumFeatureGate, paidFeatureGate, FREE_WEEKLY_SECONDS, isLicenseValid };
+module.exports = { usageGate, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, FREE_WEEKLY_SECONDS, isLicenseValid };
