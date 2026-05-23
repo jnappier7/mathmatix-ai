@@ -8,6 +8,7 @@ const logger = require('./logger').child({ module: 'voiceUpgrade' });
 
 const sttStream = require('./sttStream');
 const ttsProvider = require('./ttsProvider');
+const { hasPremiumAccess } = require('../middleware/usageGate');
 
 const ALLOWED_ORIGINS = (process.env.VOICE_WS_ALLOWED_ORIGINS || '')
     .split(',')
@@ -101,7 +102,7 @@ function handleUpgrade({ request, socket, head, app, wss, streamPath }) {
 
     sessionMw(request, fakeRes, () => {
         passportInit(request, fakeRes, () => {
-            passportSession(request, fakeRes, () => {
+            passportSession(request, fakeRes, async () => {
                 if (!request.user) {
                     socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
                     socket.destroy();
@@ -109,6 +110,29 @@ function handleUpgrade({ request, socket, head, app, wss, streamPath }) {
                 }
                 if (isUnder13(request.user)) {
                     socket.write('HTTP/1.1 403 Forbidden\r\n\r\n');
+                    socket.destroy();
+                    return;
+                }
+                // Premium-tier paywall — mirrors premiumFeatureGate('Voice chat')
+                // on the HTTP routes (config/routes.js). Without this, a logged-in
+                // free-tier user who knows the WS path could open a session
+                // directly and burn unlimited Cartesia minutes, bypassing the
+                // HTTP-level gate entirely.
+                try {
+                    const allowed = await hasPremiumAccess(request.user);
+                    if (!allowed) {
+                        logger.warn('voice ws upgrade: paywall blocked', {
+                            userId: String(request.user._id),
+                            tier: request.user.subscriptionTier || 'free',
+                            path: streamPath,
+                        });
+                        socket.write('HTTP/1.1 402 Payment Required\r\n\r\n');
+                        socket.destroy();
+                        return;
+                    }
+                } catch (err) {
+                    logger.error('voice ws upgrade: paywall check failed', { error: err.message });
+                    socket.write('HTTP/1.1 500 Internal Server Error\r\n\r\n');
                     socket.destroy();
                     return;
                 }
