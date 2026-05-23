@@ -144,6 +144,13 @@ function configureMiddleware(app) {
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
   app.use(cookieParser());
 
+  // Surface preference — resolves the user's preferred chat UI (voice
+  // orb vs bubble chat) into req.surface so downstream routes can do
+  // form-factor-aware redirects. Helper-only today; routing follows
+  // in the next PR. Needs cookie-parser; does not depend on session.
+  const { surfaceMiddleware } = require('../utils/surfacePreference');
+  app.use(surfaceMiddleware);
+
   // Session middleware — constructed once and shared with the WebSocket
   // upgrade handler (utils/voiceSession) so cookie-auth works for /api/voice-tutor/stream.
   const sessionMiddleware = session({
