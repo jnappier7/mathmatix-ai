@@ -138,7 +138,10 @@
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
     background: transparent !important;
-    padding: 76px 14px 14px !important;   /* top clears the top chrome */
+    /* Top padding must clear the full top chrome, including the device's
+       safe-area inset. The topbar = safe-area-top + ~48px (pill + its own
+       padding); 64px gives a ~16px buffer below the pill on every device. */
+    padding: calc(env(safe-area-inset-top, 0px) + 64px) 14px 14px !important;
     display: flex;
     flex-direction: column;
     gap: 14px;
