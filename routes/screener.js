@@ -156,11 +156,20 @@ router.post('/start', isAuthenticated, async (req, res) => {
 
     // Determine starting theta based on mode
     let startingTheta;
+    let priorSD = null;
 
     if (isGrowthCheck) {
       // Growth Check: Start at user's current level (from previous assessment)
       startingTheta = user.learningProfile?.abilityEstimate?.theta || 0;
-      console.log(`[Screener Start] GROWTH CHECK - Starting at current level θ=${startingTheta.toFixed(2)}`);
+
+      // Anchor the Bayesian prior to the saved SE so MAP estimation trusts
+      // what we already know. Floor at 0.4 so the prior doesn't completely
+      // swamp new evidence; if we have no saved SE, use 0.6 (still tighter
+      // than the cold-start default of 1.25).
+      const savedSE = user.learningProfile?.abilityEstimate?.standardError;
+      priorSD = savedSE && savedSE > 0 ? Math.max(savedSE, 0.4) : 0.6;
+
+      console.log(`[Screener Start] GROWTH CHECK - Starting at current level θ=${startingTheta.toFixed(2)}, priorSD=${priorSD.toFixed(2)} (savedSE=${savedSE ?? 'none'})`);
     } else {
       // Starting Point: Start one grade below current to build confidence
       const currentGrade = parseInt(user.gradeLevel, 10);
@@ -183,6 +192,17 @@ router.post('/start', isAuthenticated, async (req, res) => {
       userId: user._id,
       sessionType: isGrowthCheck ? 'growth-check' : 'starting-point'
     });
+
+    // Growth checks are short progress checks, not full placement assessments.
+    // We already know roughly where the student stands, so we use a tighter
+    // question budget and a narrower prior to converge quickly.
+    if (isGrowthCheck) {
+      session.priorSD = priorSD;
+      session.minQuestions = 5;
+      session.targetQuestions = 6;
+      session.maxQuestions = 10;
+    }
+
     await session.save();
 
     res.json({
@@ -262,82 +282,82 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
     console.log(`[DEBUG] Tested skills so far: [${session.testedSkills.join(', ')}]`);
     console.log(`[DEBUG] Category counts:`, session.testedSkillCategories);
 
-    // Use the new modular skill selection system
-    // This replaces 300+ lines of inline skill scoring, clustering, and balancing logic
-    const selectionResult = selectSkill(filteredSkills, session, targetDifficulty, {
-      templateDifficultyMap: templateDifficulties,
-    });
-
-    const { selectedSkill, scoredCandidates, reason } = selectionResult;
-    const selectedSkillId = selectedSkill.skillId;
-
-    // Log selection results
-    if (reason === 'fallback') {
-      console.log(`[Screener Fallback] Using "${selectedSkillId}" - no optimal candidates found`);
-    } else {
-      console.log(`[Screener Q${session.questionCount + 1}] Target d=${targetDifficulty.toFixed(2)} → "${selectedSkillId}" (d=${selectedSkill.difficulty.toFixed(2)})`);
-      if (scoredCandidates.length > 0) {
-        console.log(`[DEBUG] Top candidates:`);
-        scoredCandidates.slice(0, 3).forEach((s, i) => {
-          console.log(`  ${i+1}. ${formatScoringLog(s)}`);
-        });
-      }
-    }
-
-    // SIMPLIFIED PROBLEM SELECTION
-    // Strategy: Prefer multiple-choice for screener reliability
+    // Compute LRU exclusion window once
     const recentProblemIds = session.responses
       .slice(-LRU_EXCLUSION_WINDOW)
       .map(r => r.problemId);
 
-    let problem = await Problem.findNearDifficulty(
-      selectedSkillId,
-      targetDifficulty,
-      recentProblemIds,
-      { preferMultipleChoice: true }  // Screener uses MC for clarity
-    );
+    // ADAPTIVE SKILL SELECTION with session blacklist retry.
+    // If the picked skill has no usable problem (e.g. position-words), we
+    // blacklist it on the session and re-run selection at the same target
+    // difficulty so we keep matching the student's level instead of falling
+    // back to whatever random easy problem Mongo returns first.
+    const MAX_SKILL_ATTEMPTS = 3;
+    let selectedSkillId = null;
+    let selectedSkill = null;
+    let problem = null;
+    let blacklistChanged = false;
 
-    // Fallback: Generate or find any problem
-    if (!problem) {
-      // Try generation first (templates are optimized for target difficulty)
-      try {
-        const generated = generateProblem(selectedSkillId, { difficulty: targetDifficulty });
-        problem = new Problem(generated);
-        await problem.save();
-      } catch {
-        // No template - find any existing problem for this skill
-        problem = await Problem.findOne({
-          skillId: selectedSkillId,
-          isActive: true,
-          answerType: 'multiple-choice'  // Prefer MC even in fallback
-        });
+    for (let attempt = 0; attempt < MAX_SKILL_ATTEMPTS; attempt++) {
+      const selectionResult = selectSkill(filteredSkills, session, targetDifficulty, {
+        templateDifficultyMap: templateDifficulties,
+        excludedSkillIds: session.excludedSkills || [],
+      });
 
-        // Last resort: any problem type
-        if (!problem) {
-          problem = await Problem.findOne({
-            skillId: selectedSkillId,
-            isActive: true
-          });
-        }
-      }
+      selectedSkill = selectionResult.selectedSkill;
+      selectedSkillId = selectedSkill.skillId;
+      const { scoredCandidates, reason } = selectionResult;
 
-      // If still no problem, try a different skill instead of crashing
-      if (!problem) {
-        console.warn(`[Screener] No problems for skill ${selectedSkillId}, selecting alternative`);
-        // Find any skill with available problems near target difficulty
-        const alternativeProblem = await Problem.findOne({
-          isActive: true,
-          answerType: 'multiple-choice',
-          problemId: { $nin: recentProblemIds }
-        });
-
-        if (alternativeProblem) {
-          problem = alternativeProblem;
-          console.log(`[Screener] Using alternative skill: ${problem.skillId}`);
+      if (attempt === 0) {
+        if (reason === 'fallback') {
+          console.log(`[Screener Fallback] Using "${selectedSkillId}" - no optimal candidates found`);
         } else {
-          throw new Error(`No problems available for screener`);
+          console.log(`[Screener Q${session.questionCount + 1}] Target d=${targetDifficulty.toFixed(2)} → "${selectedSkillId}" (d=${selectedSkill.difficulty.toFixed(2)})`);
+          if (scoredCandidates.length > 0) {
+            console.log(`[DEBUG] Top candidates:`);
+            scoredCandidates.slice(0, 3).forEach((s, i) => {
+              console.log(`  ${i+1}. ${formatScoringLog(s)}`);
+            });
+          }
+        }
+      } else {
+        console.log(`[Screener Retry ${attempt}] Target d=${targetDifficulty.toFixed(2)} → "${selectedSkillId}" (d=${selectedSkill.difficulty.toFixed(2)}), blacklist=${(session.excludedSkills || []).length}`);
+      }
+
+      // Try a real DB problem near target difficulty
+      problem = await Problem.findNearDifficulty(
+        selectedSkillId,
+        targetDifficulty,
+        recentProblemIds,
+        { preferMultipleChoice: true }
+      );
+
+      // Try template generation (templates are optimized for target difficulty)
+      if (!problem) {
+        try {
+          const generated = generateProblem(selectedSkillId, { difficulty: targetDifficulty });
+          problem = new Problem(generated);
+          await problem.save();
+        } catch {
+          // No template available for this skill
         }
       }
+
+      if (problem) break;
+
+      // Skill has no usable problem - blacklist it for the rest of the session.
+      console.warn(`[Screener] No problems for skill ${selectedSkillId}, blacklisting for session`);
+      session.excludedSkills = [...(session.excludedSkills || []), selectedSkillId];
+      blacklistChanged = true;
+    }
+
+    // Persist blacklist additions so subsequent /next-problem calls see them
+    if (blacklistChanged) {
+      await session.save();
+    }
+
+    if (!problem) {
+      throw new Error(`No problems available for screener after ${MAX_SKILL_ATTEMPTS} skill attempts`);
     }
 
     // Fix mismatched answer types
