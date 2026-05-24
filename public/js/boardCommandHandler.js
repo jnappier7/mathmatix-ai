@@ -21,7 +21,7 @@
     'use strict';
 
     var STAGGER_MS = 250;
-    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true };
+    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true };
 
     function getWorkspace() {
         return typeof window !== 'undefined' ? window.MathWorkspace : null;
@@ -49,6 +49,12 @@
                     break;
                 case 'clear':
                     W.boardClear();
+                    break;
+                case 'graph':
+                    if (command.fn) W.boardGraph(command.fn, command.caption || '');
+                    break;
+                case 'image':
+                    if (command.query) W.boardImage(command.query, command.caption || '');
                     break;
                 default:
                     console.warn('[BoardCommandHandler] Unknown action', command.action);

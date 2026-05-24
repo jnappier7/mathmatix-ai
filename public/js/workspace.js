@@ -158,6 +158,64 @@
         '<span class="cr-ws-board-apply-arrow" aria-hidden="true">↓</span>' +
         '<span class="cr-ws-board-apply-op"></span>';
       card.querySelector('.cr-ws-board-apply-op').textContent = step.op || '';
+    } else if (step.type === 'graph') {
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--graph');
+      var graphHost = el('div', 'cr-ws-board-card-graph');
+      card.appendChild(graphHost);
+      if (step.caption) {
+        var graphCap = el('div', 'cr-ws-board-card-caption');
+        graphCap.textContent = step.caption;
+        card.appendChild(graphCap);
+      }
+      // Defer instantiation until the card is attached; MathGraph reads
+      // container dimensions at construction time.
+      requestAnimationFrame(function () {
+        if (!window.MathGraph) {
+          graphHost.textContent = 'Graphing engine still loading.';
+          return;
+        }
+        try {
+          new window.MathGraph(graphHost, {
+            fn: step.fn,
+            animate: true,
+            showKeyPoints: false,
+            showInfoBar: false
+          });
+        } catch (e) {
+          graphHost.textContent = "Couldn't graph " + step.fn;
+        }
+      });
+    } else if (step.type === 'image') {
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--image');
+      var imgHost = el('div', 'cr-ws-board-card-image-host');
+      imgHost.textContent = 'Loading image…';
+      card.appendChild(imgHost);
+      if (step.caption) {
+        var imgCap = el('div', 'cr-ws-board-card-caption');
+        imgCap.textContent = step.caption;
+        card.appendChild(imgCap);
+      }
+      // Hit the existing safe image search; render the first result.
+      fetch('/api/images/search?q=' + encodeURIComponent(step.query), {
+        credentials: 'same-origin'
+      })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function (data) {
+          var first = data && data.results && data.results[0];
+          if (!first || !first.url) {
+            imgHost.textContent = 'No image found for "' + step.query + '".';
+            return;
+          }
+          imgHost.innerHTML = '';
+          var img = el('img', 'cr-ws-board-card-image-img');
+          img.src = first.url;
+          img.alt = first.title || step.query;
+          img.loading = 'lazy';
+          imgHost.appendChild(img);
+        })
+        .catch(function () {
+          imgHost.textContent = 'Image unavailable.';
+        });
     } else {
       // Equation card — pose / resolve / verify all share the same shape;
       // verify gets a badge + an expanded check line.
@@ -417,6 +475,39 @@
         tex: tex,
         check: check == null ? '' : String(check).trim()
       });
+      return true;
+    },
+
+    /**
+     * Drop a graph card into the board timeline.
+     * @param {string} fn       function of x, e.g. "x^2 - 4"
+     * @param {string} [caption] short label rendered under the graph
+     */
+    boardGraph: function (fn, caption) {
+      fn = (fn == null ? '' : String(fn)).trim();
+      if (!fn) return false;
+      openWorkspace();
+      this.showTool('board');
+      var step = { type: 'graph', fn: fn };
+      if (caption) step.caption = String(caption).trim();
+      pushBoardStep(step);
+      return true;
+    },
+
+    /**
+     * Drop an image card into the board timeline. Hits the existing
+     * safe-image-search endpoint; the first whitelisted result renders.
+     * @param {string} query    educational image query
+     * @param {string} [caption] short label rendered under the image
+     */
+    boardImage: function (query, caption) {
+      query = (query == null ? '' : String(query)).trim();
+      if (!query) return false;
+      openWorkspace();
+      this.showTool('board');
+      var step = { type: 'image', query: query };
+      if (caption) step.caption = String(caption).trim();
+      pushBoardStep(step);
       return true;
     },
 

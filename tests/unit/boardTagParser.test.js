@@ -37,6 +37,42 @@ describe('boardTagParser', () => {
       expect(parseBoardTags('Time for a fresh one. <BOARD action="clear" /> What problem?').boardCommands)
         .toEqual([{ action: 'clear' }]);
     });
+
+    it('extracts a graph with fn only', () => {
+      const input = '<BOARD action="graph" fn="x^2 - 4" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'graph', fn: 'x^2 - 4' },
+      ]);
+    });
+
+    it('extracts a graph with fn and caption', () => {
+      const input = '<BOARD action="graph" fn="sin(x)" caption="One full period" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'graph', fn: 'sin(x)', caption: 'One full period' },
+      ]);
+    });
+
+    it('drops a graph with no fn', () => {
+      expect(parseBoardTags('<BOARD action="graph" />').boardCommands).toEqual([]);
+    });
+
+    it('extracts an image with query only', () => {
+      const input = '<BOARD action="image" query="unit circle labeled" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'image', query: 'unit circle labeled' },
+      ]);
+    });
+
+    it('extracts an image with query and caption', () => {
+      const input = '<BOARD action="image" query="zero product property" caption="Reference" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'image', query: 'zero product property', caption: 'Reference' },
+      ]);
+    });
+
+    it('drops an image with no query', () => {
+      expect(parseBoardTags('<BOARD action="image" />').boardCommands).toEqual([]);
+    });
   });
 
   describe('open/close form', () => {

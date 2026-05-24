@@ -12,6 +12,8 @@
 //   <BOARD action="resolve" tex="2x = 16" />
 //   <BOARD action="verify"  tex="x = 8" check="2(8) + 4 = 20" />
 //   <BOARD action="clear" />
+//   <BOARD action="graph"   fn="x^2 - 4" caption="The parabola" />
+//   <BOARD action="image"   query="unit circle labeled" caption="Reference" />
 //
 // Both self-closing (<BOARD … />) and open/close (<BOARD …>…</BOARD>)
 // forms are accepted. Attributes accept both single and double quotes.
@@ -22,7 +24,7 @@
 
 'use strict';
 
-const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear']);
+const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image']);
 
 // Matches a single <BOARD …/> or <BOARD …>…</BOARD> tag. The `g` flag
 // lets us iterate multiple occurrences in one response. The inner
@@ -73,6 +75,9 @@ function parseBoardTags(aiResponseText) {
         const texAttr = extractAttr(attrString, 'tex');
         const opAttr = extractAttr(attrString, 'op');
         const checkAttr = extractAttr(attrString, 'check');
+        const fnAttr = extractAttr(attrString, 'fn');
+        const queryAttr = extractAttr(attrString, 'query');
+        const captionAttr = extractAttr(attrString, 'caption');
         const innerTrim = innerBody ? innerBody.trim() : '';
 
         const command = { action };
@@ -88,6 +93,18 @@ function parseBoardTags(aiResponseText) {
         }
         if (action === 'verify' && checkAttr) {
             command.check = checkAttr;
+        }
+        if (action === 'graph') {
+            const fn = fnAttr || innerTrim || null;
+            if (!fn) continue;
+            command.fn = fn;
+            if (captionAttr) command.caption = captionAttr;
+        }
+        if (action === 'image') {
+            const query = queryAttr || innerTrim || null;
+            if (!query) continue;
+            command.query = query;
+            if (captionAttr) command.caption = captionAttr;
         }
         boardCommands.push(command);
     }

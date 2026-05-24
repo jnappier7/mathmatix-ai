@@ -401,6 +401,57 @@
   font-weight: 700;
 }
 
+/* Graph card — inline live plot inside the board timeline. */
+.cr-ws-board-card--graph {
+  padding: 10px;
+}
+.cr-ws-board-card-graph {
+  width: 100%;
+  height: 220px;
+  border-radius: var(--cr-radius-sm);
+  background: var(--cr-bg-deep, var(--cr-bg-panel));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cr-text-dim);
+  font-size: 12px;
+  overflow: hidden;
+}
+
+/* Image card — educational reference image from the safe-search API. */
+.cr-ws-board-card--image {
+  padding: 10px;
+}
+.cr-ws-board-card-image-host {
+  width: 100%;
+  min-height: 120px;
+  border-radius: var(--cr-radius-sm);
+  background: var(--cr-bg-deep, var(--cr-bg-panel));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cr-text-dim);
+  font-size: 12px;
+  overflow: hidden;
+}
+.cr-ws-board-card-image-img {
+  display: block;
+  max-width: 100%;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  border-radius: var(--cr-radius-sm);
+}
+
+/* Shared caption styling for graph + image cards. */
+.cr-ws-board-card-caption {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--cr-text-dim);
+  text-align: center;
+  font-style: italic;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cr-ws-board-card { transition: none; }
   .cr-ws-board-card--enter { opacity: 1; transform: none; }
