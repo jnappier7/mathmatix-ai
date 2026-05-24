@@ -543,6 +543,35 @@ body.cr-mode .imessage-send-btn:hover {
   filter: brightness(1.1);
 }
 
+/* Voice-mode entry — bright purple anchor in the composer row that
+   navigates to /voice-tutor.html. Modeled on ChatGPT's prominent
+   voice-mode button: distinct from the inline #mic-button (which
+   dictates into the text input), this one switches surface entirely.
+   The voice paywall fires server-side on the WS upgrade if the user
+   lacks entitlement (utils/voiceUpgrade.js, PR #985). */
+.imessage-voice-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cr-accent, #8B7BFF), var(--cr-accent-strong, #6C5CE7));
+  color: #fff;
+  text-decoration: none;
+  flex-shrink: 0;
+  font-size: 16px;
+  margin-right: 6px;
+  box-shadow: 0 4px 14px rgba(108, 92, 231, 0.45);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.imessage-voice-btn:hover { filter: brightness(1.08); transform: scale(1.04); }
+.imessage-voice-btn:active { transform: scale(0.96); }
+.imessage-voice-btn:focus-visible {
+  outline: 2px solid var(--cr-accent-strong, #6C5CE7);
+  outline-offset: 2px;
+}
+
 /* Big mic button to the left of composer (new) */
 .cr-mic-btn {
   width: 52px; height: 52px;

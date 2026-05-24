@@ -8,7 +8,6 @@ const User = require('../models/user'); // Ensure User model is accessible
 const { isAuthenticated } = require('../middleware/auth'); // For potentially checking if user is already logged in
 const { loginValidation, handleValidationErrors } = require('../middleware/validation');
 const { computeNudges } = require('../utils/userNudges');
-const { resolveStudentLandingUrl, TEXT_SURFACE_URL } = require('../utils/surfaceRouting');
 
 // POST /login - Local authentication strategy
 // Frontend calls this endpoint directly (e.g., fetch('/login', ...))
@@ -63,15 +62,6 @@ router.post('/', loginValidation, handleValidationErrors, (req, res, next) => {
                 redirectUrl = "/parent-dashboard.html";
             } else if (user.role === "student" && !user.selectedTutorId) {
                 redirectUrl = "/pick-tutor.html";
-            } else if (user.role === "student") {
-                // Surface-aware: voice orb on mobile when entitlement allows,
-                // text bubble chat otherwise. Policy in utils/surfaceRouting.
-                try {
-                    redirectUrl = await resolveStudentLandingUrl(req, user);
-                } catch (surfaceErr) {
-                    console.error('[Login] surface routing failed, falling back to text', surfaceErr);
-                    redirectUrl = TEXT_SURFACE_URL;
-                }
             }
             // Auto-assign default avatar for legacy users missing one (avatar
             // selection removed from onboarding — assigned at signup now).
