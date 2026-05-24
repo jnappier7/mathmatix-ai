@@ -29,6 +29,7 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
+const { detectGrowthCheckAcceptance } = require('../utils/growthCheckIntent');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -523,6 +524,56 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             : message;
         if (!effectiveMessage) {
             return res.status(400).json({ message: "Message content is required and cannot be empty." });
+        }
+
+        // ── GROWTH CHECK LAUNCH INTERCEPT ──
+        // The greeting offers a Growth Check ("want to spend 5 minutes on a
+        // quick growth check?"). Without this intercept the LLM happily
+        // accepts and invents 2 freeform calculus questions in the chat
+        // bubble — which is not a growth check. The real one is a 5-8
+        // question IRT assessment served by the FloatingScreener (see
+        // public/js/floating-screener.js).
+        //
+        // When the student explicitly accepts ("yes growth check",
+        // "growth check", "let's do the growth check") AND is eligible,
+        // we short-circuit the pipeline and tell the client to open the
+        // structured assessment UI.
+        if (!hasFiles && !isMasteryMode && detectGrowthCheckAcceptance(effectiveMessage)) {
+            const eligible = user.assessmentCompleted
+                && user.nextGrowthCheckDue
+                && new Date(user.nextGrowthCheckDue) <= new Date();
+
+            if (eligible) {
+                const tutorReply = "Cool — opening the Growth Check now. Come back here when you're done and we'll pick up where we left off.";
+                activeConversation.messages.push({ role: 'user', content: effectiveMessage });
+                activeConversation.messages.push({ role: 'assistant', content: tutorReply });
+                activeConversation.lastActivity = new Date();
+                try {
+                    await activeConversation.save();
+                } catch (saveErr) {
+                    logger.warn('Growth check intercept conversation save failed', { error: saveErr.message });
+                }
+
+                logger.info('Growth check acceptance intercepted', { userId });
+
+                const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+                const userXpInCurrentLevel = Math.max(0, (user.xp || 0) - xpForLevelStart);
+                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.voiceId || 'default';
+
+                return res.json({
+                    text: tutorReply,
+                    userXp: userXpInCurrentLevel,
+                    userLevel: user.level,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
+                    specialXpAwarded: "",
+                    voiceId: tutorVoice,
+                    newlyUnlockedTutors: [],
+                    drawingSequence: null,
+                    launchAssessment: 'growth-check',
+                });
+            }
+            // Not eligible (no baseline, or just did one) — let the normal
+            // pipeline handle it so the AI can explain why naturally.
         }
 
         // ── FILE UPLOAD PROCESSING (consolidated from chatWithFile.js) ──
@@ -2215,6 +2266,10 @@ async function handleGreetingRequest(req, res, userId) {
         let greetingInstruction;
         let maxTokens = 150;
         let openerResult = null;
+        // Optional inline call-to-action button attached to the greeting
+        // bubble. Set when the student is overdue for a Growth Check so the
+        // client can render a one-tap launcher inside the message.
+        let greetingInlineCta = null;
 
         if (isCourseGreeting && courseContext) {
             // COURSE MODE: Use dedicated course prompt
@@ -2343,6 +2398,12 @@ This is the student's first session. After your greeting, casually mention the "
             // The dashboard banner handles the lighter cases; here we lean on
             // the tutor relationship — when a student opens chat, having
             // Maya/Mr.Nappier mention it lands as care, not as a system demand.
+            //
+            // The actual Growth Check is a structured 5-8 question assessment
+            // (FloatingScreener). We attach a button to the greeting message
+            // so the student launches the real UI with one tap. The AI just
+            // sets up the moment in its own voice — it does NOT improvise
+            // questions in chat (that's not a growth check, just hallucination).
             try {
                 const nudges = computeNudges(user);
                 const growthOverdue = nudges.find(n =>
@@ -2353,9 +2414,14 @@ This is the student's first session. After your greeting, casually mention the "
                     const timingPhrase = daysPastDue >= 14
                         ? "it's been a while"
                         : "it's been a few months";
+                    greetingInlineCta = {
+                        type: 'launch-growth-check',
+                        label: 'Start Growth Check',
+                        emoji: '📊',
+                    };
                     greetingInstruction += `
 
-The student has an overdue Growth Check (${timingPhrase} since their last one). Mention it once in your own voice, the way a tutor who cares would — something like "before we dive in, I want to make sure I'm still teaching you at the right level — want to spend 5 minutes on a quick growth check, or jump into what you were working on?" Give them BOTH options clearly so it feels collaborative, not coercive. Keep it to one sentence. Do not lecture about why growth checks matter. Do not say "system" or "the app" — speak as you, not as a bot.`;
+The student has an overdue Growth Check (${timingPhrase} since their last one). A button labeled "${greetingInlineCta.label}" is rendered below your greeting — they tap it to start. So in your message: acknowledge it briefly in your own voice (e.g., "before we dive in, I want to make sure I'm still teaching you at the right level — tap the button below if you've got 5 minutes for a quick growth check, or just tell me what you want to work on"). Keep it ONE sentence. Reference the button — do NOT invent your own questions or pretend to start the check inline. Do not say "system" or "the app".`;
                 }
             } catch (err) {
                 logger.warn('Greeting nudge check error (non-fatal)', { error: err.message });
@@ -2456,6 +2522,9 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
                 if (openerResult?.suggestionChips) {
                     streamDonePayload.suggestionChips = openerResult.suggestionChips;
                 }
+                if (greetingInlineCta) {
+                    streamDonePayload.inlineCta = greetingInlineCta;
+                }
                 res.write(`data: ${JSON.stringify(streamDonePayload)}\n\n`);
                 res.end();
 
@@ -2527,6 +2596,9 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
             };
             if (openerResult?.suggestionChips) {
                 greetingResponse.suggestionChips = openerResult.suggestionChips;
+            }
+            if (greetingInlineCta) {
+                greetingResponse.inlineCta = greetingInlineCta;
             }
             res.json(greetingResponse);
         }

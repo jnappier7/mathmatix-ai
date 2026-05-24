@@ -617,12 +617,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.text) {
                 appendMessage(data.text, "ai");
+                if (data.inlineCta) attachInlineCtaToLatestMessage(data.inlineCta);
             }
         } catch (error) {
             showThinkingIndicator(false);
             appendMessage("Hey! What do you need help with?", "ai");
         }
     }
+
+    // Attach a server-provided call-to-action button to the latest AI
+    // message bubble. Used for greeting CTAs like "Start Growth Check"
+    // — one tap routes to the proper UI instead of relying on the AI
+    // to interpret a "yes" reply.
+    function attachInlineCtaToLatestMessage(cta) {
+        if (!cta || !cta.type || !cta.label) return;
+
+        const messages = document.querySelectorAll('.message.ai');
+        const latest = messages[messages.length - 1];
+        if (!latest) return;
+        if (latest.querySelector('.message-cta')) return; // idempotent
+
+        const btn = document.createElement('button');
+        btn.className = 'message-cta';
+        btn.dataset.ctaType = cta.type;
+        btn.type = 'button';
+        if (cta.emoji) {
+            const span = document.createElement('span');
+            span.className = 'cta-emoji';
+            span.textContent = cta.emoji;
+            btn.appendChild(span);
+        }
+        btn.appendChild(document.createTextNode(cta.label));
+
+        btn.addEventListener('click', () => {
+            btn.disabled = true;
+            handleInlineCtaClick(cta);
+        });
+
+        latest.appendChild(btn);
+    }
+
+    // Route an inline-CTA action to its handler. Centralized so future
+    // CTA types (Starting Point, end-of-session quiz, etc.) plug in
+    // without re-templating the greeting flow.
+    function handleInlineCtaClick(cta) {
+        switch (cta.type) {
+            case 'launch-growth-check':
+            case 'launch-starting-point':
+                if (window.floatingScreener) {
+                    Promise.resolve(window.floatingScreener.checkAssessmentStatus())
+                        .then(() => window.floatingScreener.open())
+                        .catch(err => console.error('[InlineCta] open failed', err));
+                } else if (typeof window.openStartingPoint === 'function') {
+                    window.openStartingPoint();
+                }
+                break;
+            default:
+                console.warn('[InlineCta] unknown action type', cta.type);
+        }
+    }
+
+    // Expose for other modules that append AI messages (e.g. streaming finalizer).
+    window.attachInlineCtaToLatestMessage = attachInlineCtaToLatestMessage;
 
     // ── Unified Markdown + Math renderer (marked + KaTeX) ──
     // Pipeline: protect LaTeX → marked.parse → restore with katex.renderToString
@@ -2630,6 +2686,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (error) {
                     console.error('[BoardCommandHandler] Failed to execute commands:', error);
                 }
+            }
+
+            // Server-initiated assessment launch. Fires when the student
+            // accepted a Growth Check (or Starting Point) offer in chat —
+            // we open the structured FloatingScreener instead of letting
+            // the AI improvise questions in the bubble.
+            if (data.launchAssessment && window.floatingScreener) {
+                try {
+                    await window.floatingScreener.checkAssessmentStatus();
+                    window.floatingScreener.open();
+                } catch (error) {
+                    console.error('[launchAssessment] Failed to open assessment', error);
+                }
+            }
+
+            // Inline CTA button attached to the AI bubble (e.g. a primary
+            // "Start Growth Check" launcher). Greetings emit these via
+            // handleGreetingRequest; regular chat responses can too.
+            if (data.inlineCta && typeof window.attachInlineCtaToLatestMessage === 'function') {
+                window.attachInlineCtaToLatestMessage(data.inlineCta);
             }
 
             if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
