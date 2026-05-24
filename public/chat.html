@@ -180,6 +180,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <select id="roleSwitcherSelect" class="role-switcher-select" title="Switch Role" aria-label="Switch Role"></select>
       </div>
 
+      <!-- Surface toggle — switch to the immersive voice tutor -->
+      <button id="surface-toggle-voice" class="btn btn-tertiary icon-only" title="Switch to voice tutor" aria-label="Switch to voice tutor">
+        <i class="fas fa-microphone"></i>
+      </button>
+
       <!-- Theme toggle — always visible -->
       <button id="theme-toggle-btn" class="btn btn-tertiary icon-only" title="Toggle dark mode" aria-label="Toggle dark mode" data-i18n-title="nav.darkMode" data-i18n-aria="nav.darkMode">
         <i class="fas fa-moon"></i>
@@ -2228,6 +2233,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <!-- Load CSRF and storage utilities FIRST -->
   <script src="/js/csrf.js"></script>
+  <script src="/js/surface-toggle.js" defer></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
   <script src="/js/impersonationBanner.js"></script>
   <script src="/js/storage-utils.js"></script>
