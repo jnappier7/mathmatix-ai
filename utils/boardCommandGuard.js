@@ -242,6 +242,23 @@ function evaluate(command, ctx) {
         return { allowed: false, reason: 'clear_without_start_over_or_completed_problem' };
     }
 
+    // Tutor-emitted reference content: graph/image cards are teaching aids,
+    // not the student's worked steps. They can't reveal the solution, so
+    // the #1-rule guard doesn't apply — we only validate required attrs.
+    if (action === 'graph') {
+        if (!command.fn) {
+            return { allowed: false, reason: 'graph_missing_fn' };
+        }
+        return { allowed: true };
+    }
+
+    if (action === 'image') {
+        if (!command.query) {
+            return { allowed: false, reason: 'image_missing_query' };
+        }
+        return { allowed: true };
+    }
+
     return { allowed: false, reason: 'unknown_action' };
 }
 

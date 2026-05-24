@@ -146,6 +146,48 @@ describe('boardCommandGuard', () => {
     });
   });
 
+  describe('graph (tutor-emitted reference content)', () => {
+    it('is always allowed when fn is present, regardless of student message', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'graph', fn: 'x^2 - 4', caption: 'Where it crosses zero' }],
+        userMessage: 'idk where to start',
+      });
+      expect(allowed).toEqual([
+        { action: 'graph', fn: 'x^2 - 4', caption: 'Where it crosses zero' },
+      ]);
+      expect(dropped).toHaveLength(0);
+    });
+
+    it('is dropped when fn is missing', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'graph' }],
+        userMessage: 'graph it for me',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('graph_missing_fn');
+    });
+  });
+
+  describe('image (tutor-emitted reference content)', () => {
+    it('is always allowed when query is present', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'image', query: 'unit circle labeled' }],
+        userMessage: 'what do you mean by reference angle',
+      });
+      expect(allowed).toEqual([{ action: 'image', query: 'unit circle labeled' }]);
+      expect(dropped).toHaveLength(0);
+    });
+
+    it('is dropped when query is missing', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'image' }],
+        userMessage: 'show me a picture',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('image_missing_query');
+    });
+  });
+
   describe('full drop scenario', () => {
     it('drops every move-tag when the student message is unrelated', () => {
       const { allowed, dropped } = enforcePedagogyRule({
