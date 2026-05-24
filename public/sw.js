@@ -1,5 +1,6 @@
 // Service Worker for MATHMATIX AI PWA
-const CACHE_VERSION = 'mathmatix-v2';
+// Bump CACHE_VERSION on every deploy so students get fresh CSS/JS/images.
+const CACHE_VERSION = 'mathmatix-v3';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 
