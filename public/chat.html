@@ -929,6 +929,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <math-field id="math-keyboard-field" class="math-keyboard-field" virtual-keyboard-mode="off" math-virtual-keyboard-policy="manual"></math-field>
           <button id="mk-done-btn" class="mk-done-btn" title="Insert equation and return to text">Done</button>
         </div>
+        <!-- Enter immersive voice tutor — plain anchor, no JS needed.
+             The actual paywall fires when voice-tutor's WS upgrade is
+             attempted (utils/voiceUpgrade.js / PR #985). -->
+        <a href="/voice-tutor.html" id="voice-mode-btn" class="imessage-voice-btn" title="Talk to your tutor" aria-label="Switch to voice tutor">
+          <i class="fas fa-microphone-lines"></i>
+        </a>
         <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-arrow-up"></i>
         </button>
