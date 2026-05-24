@@ -59,6 +59,7 @@ const voiceRoutes = require('../routes/voice');
 const voiceTestRoutes = require('../routes/voice-test');
 const voiceTutorRoutes = require('../routes/voiceTutor');
 const uploadRoutes = require('../routes/upload');
+const surfaceRoutes = require('../routes/surface');
 // chatWithFile: REMOVED — file uploads consolidated into /api/chat
 const welcomeRoutes = require('../routes/welcome');
 const rapportBuildingRoutes = require('../routes/rapportBuilding');
@@ -187,6 +188,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
   app.use('/api/voice', isAuthenticated, voiceTestRoutes);
   app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
+  // Surface toggle (voice ↔ text). Not gated: setting a preference is
+  // free — the actual voice paywall fires at WebSocket time via PR #985.
+  app.use('/api/surface', isAuthenticated, surfaceRoutes);
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
