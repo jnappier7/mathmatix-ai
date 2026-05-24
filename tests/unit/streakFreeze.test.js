@@ -68,9 +68,21 @@ describe('Streak Freeze Mechanic', () => {
     });
 
     test('missing 1 day with freeze already used this week resets streak', () => {
-        // Set freeze used at a time that's guaranteed to be in the current week
-        // (1 hour ago is always within this calendar week)
-        const recentFreezeTime = new Date(Date.now() - 60 * 60 * 1000);
+        // Pick a timestamp "recently in the current week", computed against
+        // production's week boundary (Sunday 00:00 UTC, matching
+        // canUseStreakFreeze in utils/gamificationEvents.js). The naive
+        // "1 hour ago" lands in last week if CI runs in the first hour of
+        // a new calendar week — May 24 2026 Sunday tripped this assertion.
+        const now = new Date();
+        const weekStartMs = Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - now.getUTCDay()
+        );
+        const recentFreezeTime = new Date(Math.max(
+            weekStartMs + 1000,           // safely inside this week
+            Date.now() - 60 * 60 * 1000   // or 1 hour ago, whichever is later
+        ));
         const user = makeUser({
             lastPracticeDate: daysAgo(2),
             currentStreak: 7,
