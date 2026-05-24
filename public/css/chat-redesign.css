@@ -612,3 +612,32 @@ body.cr-mode .inline-equation-palette {
   color: var(--cr-text);
   border: 1px solid var(--cr-border);
 }
+
+/* ----- Inline CTA button attached to an AI message bubble -----
+ * Used when the server attaches a call-to-action to a greeting
+ * (e.g. "Start Growth Check"). The button replaces parsed-intent
+ * heuristics — one tap launches the proper UI flow.
+ */
+.message-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7c6bff 0%, #00d4ff 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(124, 107, 255, 0.32);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.message-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(124, 107, 255, 0.42);
+}
+.message-cta:active { transform: translateY(0); }
+.message-cta:disabled { opacity: 0.55; cursor: default; transform: none; }
+.message-cta .cta-emoji { font-size: 16px; line-height: 1; }

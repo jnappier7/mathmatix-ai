@@ -2266,6 +2266,10 @@ async function handleGreetingRequest(req, res, userId) {
         let greetingInstruction;
         let maxTokens = 150;
         let openerResult = null;
+        // Optional inline call-to-action button attached to the greeting
+        // bubble. Set when the student is overdue for a Growth Check so the
+        // client can render a one-tap launcher inside the message.
+        let greetingInlineCta = null;
 
         if (isCourseGreeting && courseContext) {
             // COURSE MODE: Use dedicated course prompt
@@ -2394,6 +2398,12 @@ This is the student's first session. After your greeting, casually mention the "
             // The dashboard banner handles the lighter cases; here we lean on
             // the tutor relationship — when a student opens chat, having
             // Maya/Mr.Nappier mention it lands as care, not as a system demand.
+            //
+            // The actual Growth Check is a structured 5-8 question assessment
+            // (FloatingScreener). We attach a button to the greeting message
+            // so the student launches the real UI with one tap. The AI just
+            // sets up the moment in its own voice — it does NOT improvise
+            // questions in chat (that's not a growth check, just hallucination).
             try {
                 const nudges = computeNudges(user);
                 const growthOverdue = nudges.find(n =>
@@ -2404,9 +2414,14 @@ This is the student's first session. After your greeting, casually mention the "
                     const timingPhrase = daysPastDue >= 14
                         ? "it's been a while"
                         : "it's been a few months";
+                    greetingInlineCta = {
+                        type: 'launch-growth-check',
+                        label: 'Start Growth Check',
+                        emoji: '📊',
+                    };
                     greetingInstruction += `
 
-The student has an overdue Growth Check (${timingPhrase} since their last one). Mention it once in your own voice, the way a tutor who cares would — something like "before we dive in, I want to make sure I'm still teaching you at the right level — want to spend 5 minutes on a quick growth check, or jump into what you were working on?" Give them BOTH options clearly so it feels collaborative, not coercive. Keep it to one sentence. Do not lecture about why growth checks matter. Do not say "system" or "the app" — speak as you, not as a bot.`;
+The student has an overdue Growth Check (${timingPhrase} since their last one). A button labeled "${greetingInlineCta.label}" is rendered below your greeting — they tap it to start. So in your message: acknowledge it briefly in your own voice (e.g., "before we dive in, I want to make sure I'm still teaching you at the right level — tap the button below if you've got 5 minutes for a quick growth check, or just tell me what you want to work on"). Keep it ONE sentence. Reference the button — do NOT invent your own questions or pretend to start the check inline. Do not say "system" or "the app".`;
                 }
             } catch (err) {
                 logger.warn('Greeting nudge check error (non-fatal)', { error: err.message });
@@ -2507,6 +2522,9 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
                 if (openerResult?.suggestionChips) {
                     streamDonePayload.suggestionChips = openerResult.suggestionChips;
                 }
+                if (greetingInlineCta) {
+                    streamDonePayload.inlineCta = greetingInlineCta;
+                }
                 res.write(`data: ${JSON.stringify(streamDonePayload)}\n\n`);
                 res.end();
 
@@ -2578,6 +2596,9 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
             };
             if (openerResult?.suggestionChips) {
                 greetingResponse.suggestionChips = openerResult.suggestionChips;
+            }
+            if (greetingInlineCta) {
+                greetingResponse.inlineCta = greetingInlineCta;
             }
             res.json(greetingResponse);
         }
