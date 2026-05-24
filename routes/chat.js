@@ -29,6 +29,7 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
+const { detectGrowthCheckAcceptance } = require('../utils/growthCheckIntent');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -523,6 +524,56 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             : message;
         if (!effectiveMessage) {
             return res.status(400).json({ message: "Message content is required and cannot be empty." });
+        }
+
+        // ── GROWTH CHECK LAUNCH INTERCEPT ──
+        // The greeting offers a Growth Check ("want to spend 5 minutes on a
+        // quick growth check?"). Without this intercept the LLM happily
+        // accepts and invents 2 freeform calculus questions in the chat
+        // bubble — which is not a growth check. The real one is a 5-8
+        // question IRT assessment served by the FloatingScreener (see
+        // public/js/floating-screener.js).
+        //
+        // When the student explicitly accepts ("yes growth check",
+        // "growth check", "let's do the growth check") AND is eligible,
+        // we short-circuit the pipeline and tell the client to open the
+        // structured assessment UI.
+        if (!hasFiles && !isMasteryMode && detectGrowthCheckAcceptance(effectiveMessage)) {
+            const eligible = user.assessmentCompleted
+                && user.nextGrowthCheckDue
+                && new Date(user.nextGrowthCheckDue) <= new Date();
+
+            if (eligible) {
+                const tutorReply = "Cool — opening the Growth Check now. Come back here when you're done and we'll pick up where we left off.";
+                activeConversation.messages.push({ role: 'user', content: effectiveMessage });
+                activeConversation.messages.push({ role: 'assistant', content: tutorReply });
+                activeConversation.lastActivity = new Date();
+                try {
+                    await activeConversation.save();
+                } catch (saveErr) {
+                    logger.warn('Growth check intercept conversation save failed', { error: saveErr.message });
+                }
+
+                logger.info('Growth check acceptance intercepted', { userId });
+
+                const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+                const userXpInCurrentLevel = Math.max(0, (user.xp || 0) - xpForLevelStart);
+                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.voiceId || 'default';
+
+                return res.json({
+                    text: tutorReply,
+                    userXp: userXpInCurrentLevel,
+                    userLevel: user.level,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
+                    specialXpAwarded: "",
+                    voiceId: tutorVoice,
+                    newlyUnlockedTutors: [],
+                    drawingSequence: null,
+                    launchAssessment: 'growth-check',
+                });
+            }
+            // Not eligible (no baseline, or just did one) — let the normal
+            // pipeline handle it so the AI can explain why naturally.
         }
 
         // ── FILE UPLOAD PROCESSING (consolidated from chatWithFile.js) ──

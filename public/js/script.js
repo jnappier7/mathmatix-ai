@@ -2632,6 +2632,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Server-initiated assessment launch. Fires when the student
+            // accepted a Growth Check (or Starting Point) offer in chat —
+            // we open the structured FloatingScreener instead of letting
+            // the AI improvise questions in the bubble.
+            if (data.launchAssessment && window.floatingScreener) {
+                try {
+                    await window.floatingScreener.checkAssessmentStatus();
+                    window.floatingScreener.open();
+                } catch (error) {
+                    console.error('[launchAssessment] Failed to open assessment', error);
+                }
+            }
+
             if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
                 showTutorUnlockCelebration(data.newlyUnlockedTutors);
             }
