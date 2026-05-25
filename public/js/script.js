@@ -2324,6 +2324,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Auto-detect the user's IANA timezone so the streak day-boundary
+            // math respects the student's local day, not server UTC.
+            let clientTimezone = null;
+            try { clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) {}
+
             // All chat goes through /api/chat — files, courses, and regular chat
             if (queuedFiles.length > 0) {
                 console.log(`[Frontend] Sending ${queuedFiles.length} file(s) to /api/chat`);
@@ -2342,6 +2347,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     formData.append('responseTime', responseTime);
                 }
 
+                if (clientTimezone) formData.append('clientTimezone', clientTimezone);
+
                 response = await csrfFetch("/api/chat", {
                     method: "POST",
                     body: formData,
@@ -2354,6 +2361,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (responseTime !== null) {
                     payload.responseTime = responseTime;
                 }
+
+                if (clientTimezone) payload.clientTimezone = clientTimezone;
 
                 response = await csrfFetch('/api/chat?stream=true', {
                     method: "POST",

@@ -544,6 +544,11 @@ const userSchema = new Schema({
   cloneSessionId:{ type: String, default: null },      // Groups all docs in one clone session
   cloneExpiresAt:{ type: Date, default: null },        // TTL for orphan cleanup
 
+  /* IANA timezone (e.g., 'America/Chicago'). Used for streak day-boundary math
+     so late-night students don't lose their streak to UTC midnight crossings.
+     Auto-detected from the browser on chat turns; null falls back to UTC. */
+  timezone: { type: String, trim: true, default: null },
+
   /* Student-specific profile */
   gradeLevel: { type: String, trim: true },              // e.g., '7th Grade', '9th Grade', 'College'
   mathCourse: { type: String, trim: true },              // e.g., 'Algebra 1', 'Geometry', 'Pre-Calculus'
