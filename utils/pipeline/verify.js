@@ -10,7 +10,7 @@
  * @module pipeline/verify
  */
 
-const { filterAnswerKeyResponse, detectAnswerKeyResponse, detectWorkedSolution, detectAnswerAnnouncement } = require('../worksheetGuard');
+const { detectAnswerKeyResponse, detectWorkedSolution, detectAnswerAnnouncement } = require('../worksheetGuard');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../readability');
 const { enforceVisualTeaching } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
@@ -20,6 +20,44 @@ const { ACTIONS } = require('./decide');
 const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
+
+/**
+ * Regenerate a tutor reply in voice when post-checks (answer-key pattern,
+ * full worked solution, etc.) caught the original response handing too
+ * much over. Replaces the older pattern of swapping in canned worksheet
+ * text — which sounded robotic, lied about a worksheet outside upload
+ * context, and created a feedback loop when retries kept tripping the
+ * same detector.
+ *
+ * Returns the rewritten text on success, or null if the LLM call fails
+ * or produces something too short to trust. Callers decide the fallback.
+ *
+ * @param {string} originalText - The response that tripped a guard
+ * @param {Object} context - verify() context (hasRecentUpload, etc.)
+ * @param {string} reason - Short phrase explaining what tripped — used
+ *   in the system prompt so the rewrite addresses the real issue
+ * @returns {Promise<string|null>}
+ */
+async function socraticRegenerate(originalText, context, reason) {
+  const inUploadContext = !!(context.hasRecentUpload || context.isWorksheetFollowUp);
+  const systemPrompt = inUploadContext
+    ? `You are a math tutor. The student uploaded a worksheet. Your previous response ${reason}, which violates tutoring rules — you MUST guide with Socratic questions and NEVER give away answers. Rewrite the response in your own warm tutor voice: acknowledge what they are working on, surface the FIRST step only, and invite the student to attempt that step. Do NOT show subsequent steps. Do NOT name the final answer. End with a single guiding question. Keep it short (2–3 sentences).`
+    : `You are a math tutor. Your previous response ${reason}, which is too much at once for a conversation. Rewrite it in your own warm tutor voice as a short, conversational reply that invites the student into the FIRST idea or step. No numbered breakdowns. Do NOT name a final answer. Keep it to 2–3 sentences. End with a single guiding question.`;
+  try {
+    const completion = await callLLM(PRIMARY_CHAT_MODEL,
+      [{ role: 'system', content: systemPrompt },
+       { role: 'assistant', content: originalText },
+       { role: 'user', content: 'Rewrite this response. One step, one question, in voice.' }],
+      { temperature: 0.55, max_tokens: 600 }
+    );
+    const rewritten = completion?.choices?.[0]?.message?.content?.trim();
+    if (rewritten && rewritten.length > 10) return rewritten;
+    return null;
+  } catch (err) {
+    console.error('[Verify] Socratic regenerate failed:', err.message);
+    return null;
+  }
+}
 
 // Tags the system uses internally — must be stripped before showing to student
 const SYSTEM_TAG_PATTERNS = [
@@ -160,31 +198,33 @@ async function verify(responseText, context = {}) {
   const { text: tagStrippedText, extracted } = extractSystemTags(text);
   text = tagStrippedText;
 
-  // ── 2. Anti-answer-key filter ──
-  const answerKeyCheck = filterAnswerKeyResponse(text, context.userId);
-  if (answerKeyCheck.wasFiltered) {
-    text = answerKeyCheck.text;
-    flags.push('answer_key_blocked');
-
-    if (context.isStreaming && context.res) {
-      try {
-        context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
-      } catch (e) { /* client disconnected */ }
-    }
-  }
-
-  // ── 2a. Upload-context answer giveaway detection ──
-  // When a student has uploaded a worksheet, apply STRICTER answer detection.
-  // Standard filter needs 3+ problems; during uploads, catch even 2 problems.
-  // Also detect single-problem complete solutions (the AI solving the student's problem).
-  if ((context.hasRecentUpload || context.isWorksheetFollowUp) && !answerKeyCheck.wasFiltered) {
-    // Lower threshold: catch 2+ numbered solutions
+  // ── 2. Anti-answer-key filter (upload-gated) ──
+  //
+  // The "numbered list of solutions" detector is only meaningful when an
+  // upload is in play. Outside that context, a tutor explaining (say) the
+  // three conditions of the Triangle Inequality Theorem with 3 numbered
+  // lines is pedagogy, not an answer key — running the detector there
+  // misfires and used to swap the reply with a hardcoded worksheet line.
+  //
+  // Inside upload context: use the strict 2+ threshold and regenerate
+  // through the LLM so the tutor stays in voice. The complete-solution
+  // detector (one problem fully solved) also routes through the same
+  // helper, replacing the older copy-pasted regen block.
+  if (context.hasRecentUpload || context.isWorksheetFollowUp) {
     const strictCheck = detectAnswerKeyResponse(text, { minProblems: 2 });
-    if (strictCheck.isAnswerKey) {
-      console.warn(`[Verify] UPLOAD CONTEXT: Answer giveaway detected (${strictCheck.problemCount} problems). Blocking.`);
-      text = "I can see the problems on your worksheet! Which one do you want to tackle first? Pick one and let's work through it together.";
-      flags.push('upload_answer_giveaway_blocked');
 
+    if (strictCheck.isAnswerKey) {
+      console.warn(`[Verify] UPLOAD CONTEXT: Answer-key pattern detected (${strictCheck.problemCount} problems, ${strictCheck.matchedPattern}). Regenerating in voice.`);
+      const rewritten = await socraticRegenerate(text, context, 'looked like an answer key — multiple problems solved at once');
+      if (rewritten) {
+        text = rewritten;
+        flags.push('upload_answer_giveaway_regenerated');
+      } else {
+        // Regen failed — last-resort fallback. We can't safely emit the
+        // original, but we're guaranteed to be in upload context here.
+        text = `Let's not jump to all of them at once — pick one problem and we'll work through the first step together.`;
+        flags.push('upload_answer_giveaway_fallback');
+      }
       if (context.isStreaming && context.res) {
         try {
           context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
@@ -196,37 +236,25 @@ async function verify(responseText, context = {}) {
       const worked = detectWorkedSolution(text);
       const hasCompleteSolution = worked.breakdown.hasCompleteSolution;
       const hasFullWorkedSolution = worked.isWorkedSolution;
-
-      // Also check: does the response NOT contain a question mark? (Socratic should ask questions)
       const hasQuestion = /\?\s*$|\?\s*\n/m.test(text);
 
       // Redirect when:
-      //   (a) clear answer phrase with no question at all (original behavior), OR
-      //   (b) full worked solution with multiple signals — even if it ends with a
-      //       "now you try" question, the work has already been handed over.
+      //   (a) clear answer phrase with no question at all, OR
+      //   (b) full worked solution with multiple signals — even if it ends
+      //       with a "now you try" question, the work has been handed over.
       if ((hasCompleteSolution && !hasQuestion) || hasFullWorkedSolution) {
         console.warn(`[Verify] UPLOAD CONTEXT: Complete solution detected (signals=${worked.signalCount}, breakdown=${JSON.stringify(worked.breakdown)}). Regenerating.`);
-        try {
-          const socraticRedirect = await callLLM(PRIMARY_CHAT_MODEL,
-            [{ role: 'system', content: 'You are a math tutor. The student uploaded a worksheet. You MUST guide them with Socratic questions — NEVER give away answers. Your previous response gave a complete solution, which violates tutoring rules. Rewrite it: acknowledge the problem, break it into the FIRST step only, and ask the STUDENT to attempt that step. Do NOT show any subsequent steps or the final answer. End with a guiding question.' },
-             { role: 'assistant', content: text },
-             { role: 'user', content: 'Rewrite this response to be Socratic. Only show the first step, ask the student to try it. Never reveal the answer.' }],
-            { temperature: 0.55, max_tokens: 800 }
-          );
-          const redirectedText = socraticRedirect.choices[0]?.message?.content?.trim();
-          if (redirectedText && redirectedText.length > 10) {
-            text = redirectedText;
-            flags.push('upload_solution_redirected');
-
-            if (context.isStreaming && context.res) {
-              try {
-                context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
-              } catch (e) { /* client disconnected */ }
-            }
+        const rewritten = await socraticRegenerate(text, context, 'gave a complete solution');
+        if (rewritten) {
+          text = rewritten;
+          flags.push('upload_solution_redirected');
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
           }
-        } catch (err) {
-          console.error('[Verify] Upload solution redirect failed:', err.message);
-          // Fallback: just add a question to the end
+        } else {
+          // Regen failed — append a guiding question rather than emit the full solution as-is.
           text += "\n\nWhat do you think the first step should be?";
           flags.push('upload_solution_redirect_fallback');
         }
