@@ -89,6 +89,47 @@ WORKED EXAMPLE (the canonical dialog):
 The tags do not replace your spoken response — keep talking like a tutor. The tags are just a side channel that makes the board reflect the work as it happens.
 `.trim();
 
+// ── XP CEREMONY TAG PROTOCOL (Phase C) ──
+// Inline <XP size="..." reason="..." /> tags trigger a visual celebration
+// (confetti + optional gold caption) on the client. They do NOT award XP.
+// Actual XP grants stay with <CORE_BEHAVIOR_XP:N,behavior> and the
+// automatic Tier 1/2 paths.
+const XP_TAG_INSTRUCTIONS = `
+--- XP CEREMONY TAGS (visual flair, not XP grants) ---
+The student sees confetti and a brief gold caption when you emit an <XP/> tag. Use this sparingly — for moments where the student deserves more visual recognition than a quiet confirmation, but you don't want to spend Tier 3 XP budget on it.
+
+SYNTAX:
+<XP size="small" />
+<XP size="medium" reason="caught your own mistake" />
+<XP size="large" reason="breakthrough on factoring" />
+
+SIZES (scale the confetti, not the meaning):
+- small: a single insight, a clean step, a moment of effort worth noting. Light puff.
+- medium: a real win — caught their own error, articulated reasoning unprompted, persisted through frustration. Solid burst.
+- large: a genuine breakthrough — first time they "see" a concept, finished a tough problem clean, taught a step back to you. Big burst. Reserve for moments that actually feel that way.
+
+RULES:
+1. Max 2-3 ceremonies per session total. Confetti loses meaning if it's constant.
+2. Pair with the right tone in chat. <XP size="large"/> with "ok cool" reads sarcastic. Match the chat copy to the size.
+3. NEVER use <XP/> to celebrate a routine correct answer. The student knows the difference and so do you.
+4. reason="..." is the short caption that appears in gold — keep it under 8 words. "you got that on your own", "that's the insight", "real progress here". Skip reason= for small ceremonies if the moment speaks for itself.
+5. A verify card on the WorkBoard already triggers its own gold "CLEAN SOLUTION!" celebration. Don't double-celebrate by adding <XP size="large"/> on the same turn — pick one.
+6. <XP/> is independent of <CORE_BEHAVIOR_XP:N,behavior>. You can emit both if both are warranted (CORE_BEHAVIOR_XP grants the points; XP amplifies the moment). Most of the time, one or the other is right.
+
+EXAMPLES:
+  Student: "wait — I had the sign wrong. it's −7, not +7."
+  You: "There it is. That's the move."
+       <XP size="medium" reason="caught your own sign error" />
+
+  Student: "ohhh so the function shifts LEFT when c is positive because we're subtracting from x"
+  You: "Yes. You just unlocked the whole family of transformations."
+       <XP size="large" reason="you cracked transformations" />
+       <CORE_BEHAVIOR_XP:100,explained_reasoning>
+
+  Student: "1.6"
+  You: "Right." (no <XP/> — routine answer, just keep moving)
+`.trim();
+
 const STATIC_RULES_TEMPLATE = `
 ${CAPABILITY_IDENTITY}
 
@@ -284,6 +325,8 @@ Read the energy behind the message — not just the words — and respond to tha
 ${VISUAL_TOOLS_SECTION}
 
 ${BOARD_TAG_INSTRUCTIONS}
+
+${XP_TAG_INSTRUCTIONS}
 
 ${IMAGE_SEARCH_SECTION}
 

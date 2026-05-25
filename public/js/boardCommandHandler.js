@@ -45,7 +45,21 @@
                     if (command.tex) W.boardResolve(command.tex);
                     break;
                 case 'verify':
-                    if (command.tex) W.boardVerify(command.tex, command.check || '');
+                    if (command.tex) {
+                        W.boardVerify(command.tex, command.check || '');
+                        // Phase C: celebrate the moment a verify card lands.
+                        // Confetti + gold-pulse + "CLEAN SOLUTION!" eyebrow swap.
+                        // The card is appended on this tick; wait two frames
+                        // so the slide-in animation has started before we
+                        // pile the celebration on top of it.
+                        if (typeof requestAnimationFrame === 'function') {
+                            requestAnimationFrame(function () {
+                                requestAnimationFrame(celebrateLatestVerifyCard);
+                            });
+                        } else {
+                            setTimeout(celebrateLatestVerifyCard, 32);
+                        }
+                    }
                     break;
                 case 'clear':
                     W.boardClear();
@@ -62,6 +76,42 @@
         } catch (err) {
             console.error('[BoardCommandHandler] Failed to execute', command, err);
         }
+    }
+
+    // Phase C — verify-card celebration.
+    // Adds .cr-ws-board-card--celebrating to the newest verify card
+    // (which swaps the eyebrow to "CLEAN SOLUTION!" and plays a gold
+    // pulse via workspace.css) and fires confetti. Confetti loads lazily
+    // through window.ensureConfetti() — the lazy loader was added for
+    // other celebrations and is reused here.
+    function celebrateLatestVerifyCard() {
+        try {
+            var cards = document.querySelectorAll('.cr-ws-board-card--verify');
+            var card = cards[cards.length - 1];
+            if (card) {
+                card.classList.add('cr-ws-board-card--celebrating');
+                // Strip the class after the animation completes so a later
+                // verify on the same problem doesn't double-glow.
+                setTimeout(function () {
+                    card.classList.remove('cr-ws-board-card--celebrating');
+                }, 2400);
+            }
+        } catch (e) { /* DOM gone — nothing to celebrate */ }
+
+        try {
+            var loader = (typeof window !== 'undefined' && typeof window.ensureConfetti === 'function')
+                ? window.ensureConfetti()
+                : Promise.resolve();
+            loader.then(function () {
+                if (typeof window === 'undefined' || typeof window.confetti !== 'function') return;
+                window.confetti({
+                    particleCount: 90,
+                    spread: 70,
+                    origin: { y: 0.45 },
+                    colors: ['#2ECC71', '#8B7BFF', '#FFD66B', '#5BA8FF']
+                });
+            }).catch(function () { /* confetti vendor not loadable — silent */ });
+        } catch (e) { /* confetti shim missing — silent */ }
     }
 
     /**

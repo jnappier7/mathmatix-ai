@@ -42,6 +42,7 @@ const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrad
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
+const { parseXpTags } = require('../xpTagParser');
 const { inferBoardEvents } = require('./inferWorkspace');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
@@ -489,6 +490,21 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // ── Stage 5d: XP CEREMONY TAGS (Phase C) ──
+  // Extract <XP size="..." reason="..." /> ceremony tags from verify.text
+  // and strip them from the visible message. Purely visual — does NOT
+  // award XP (that stays the job of <CORE_BEHAVIOR_XP> + Tier 1/2).
+  // Cap at 3 ceremonies per turn so a runaway model can't confetti-bomb
+  // the chat. No pedagogy guard needed: the model can decide when a
+  // moment deserves amplification.
+  const xpParsed = parseXpTags(verified.text);
+  if (xpParsed.xpCommands.length > 0) {
+    verified.text = xpParsed.cleanedText;
+    verified.xpCommands = xpParsed.xpCommands.slice(0, 3);
+  } else {
+    verified.xpCommands = [];
+  }
+
   // ── Merge LLM signals into sidecar ──
   mergeLlmSignals(sidecar, verified.extracted);
   const signalStats = getSignalStats(sidecar);
@@ -853,6 +869,7 @@ async function runPipeline(message, ctx) {
     text: verified.text,
     visualCommands: verified.visualCommands,
     boardCommands: verified.boardCommands || [],
+    xpCommands: verified.xpCommands || [],
     drawingSequence: verified.drawingSequence,
     boardContext: verified.boardContext,
     xpBreakdown: persistResults.xpBreakdown,
