@@ -118,30 +118,31 @@ function decideCore(observation, diagnosis, context) {
     directives: [], // Additional instructions for the generate stage
   };
 
-  // ── Bare problem drop — deterministic elicit-first gate ──
+  // ── Bare problem drop — elicit-first gate ──
   //
   // Student handed over a new math problem (e.g. "4x-5=22", "x²=49") with
   // no attempt, no stuck-point, no reasoning. This is the single highest-
-  // risk moment for answer leaks — GPT's helpfulness training wins the
-  // fight against every prompt directive. So we take the LLM out of the
-  // loop entirely: return a deterministic response asking for the student's
-  // work or offering a parallel example.
+  // risk moment for answer leaks — the LLM's helpfulness training pushes
+  // it to solve the problem outright. The decide stage marks the action
+  // so generate can attach strong anti-leak directives; the tutor still
+  // responds in voice, like a human would.
   //
   // Gate conditions:
   //   - observation flagged isBareProblemDrop (structural signals)
   //   - no recent upload (worksheet flow has its own guards)
   //   - no active mastery/lesson phase (those are structured contexts with
   //     their own appropriate pedagogical path, e.g. I-DO phase teaches)
-  //
-  // When this fires, the LLM does not generate the turn — the deterministic
-  // template in decision.deterministicResponse is returned verbatim.
   if (observation.isBareProblemDrop
       && !context.hasRecentUpload
       && !phaseState?.currentPhase) {
     decision.action = ACTIONS.ELICIT_FIRST;
-    decision.deterministicResponse = buildElicitFirstResponse(observation.raw, context);
     decision.directives.push(
-      'BARE PROBLEM DROP: student handed over a new problem with no attempt or question. This turn is deterministic — no LLM generation, no leak surface.'
+      'BARE PROBLEM DROP: the student handed you a new problem with no attempt, no stuck-point, no reasoning. Respond like a human tutor — in your own voice, not a template.',
+      'DO NOT solve. DO NOT show steps. DO NOT name the answer or any intermediate value. DO NOT walk through the method.',
+      'DO show interest in the problem and invite them in: ask where they want to start, what they already see, or which part feels unclear. One short, natural opener — not a checklist.',
+      'If they truly have nothing, offer to work a similar problem (different numbers) first, then hand the original back to them.',
+      'NEVER use canned phrasing like "show me what you tried" or "what step is tripping you up" — say it the way YOU would say it, fitted to this student and this problem.',
+      'Keep it short. 1–3 sentences. End with a single concrete invitation, not a wall of questions.'
     );
     return decision;
   }
@@ -545,30 +546,6 @@ function decideCore(observation, diagnosis, context) {
     'Do NOT repeat information already confirmed or covered.'
   );
   return decision;
-}
-
-/**
- * Build the deterministic response for a bare problem drop.
- *
- * This text is returned to the student VERBATIM — it never passes through
- * an LLM, so it cannot leak an answer regardless of model behavior. Voice
- * is kept neutral-warm; tutor-specific personality layering happens in
- * follow-up turns once the student engages.
- *
- * @param {string} problem - The student's raw message (treated as the problem)
- * @param {Object} context - Pipeline context (for user firstName, if available)
- * @returns {string}
- */
-function buildElicitFirstResponse(problem, context) {
-  const cleaned = (problem || '').trim().replace(/\s+/g, ' ').slice(0, 100);
-  const firstName = context?.user?.firstName;
-  const opener = firstName ? `Got it, ${firstName}` : 'Got it';
-  const problemEcho = cleaned ? ` — ${cleaned}.` : '.';
-  return (
-    `${opener}${problemEcho}\n\n` +
-    `Before I help, show me what you've tried so far — even if it's a guess — or tell me which step is tripping you up.\n\n` +
-    `If you're truly starting from zero, say **"show me an example"** and I'll walk through a similar problem, then you try yours.`
-  );
 }
 
 // Transitions that indicate the student's message is off the plan target.

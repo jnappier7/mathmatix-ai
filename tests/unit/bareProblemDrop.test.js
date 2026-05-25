@@ -11,9 +11,12 @@
  *
  * The two fixes tested here:
  *   1. observe.detectBareProblemDrop flags bare equation drops.
- *      decide routes them to ACTIONS.ELICIT_FIRST with a deterministic
- *      response (no LLM). The response cannot leak an answer because no
- *      LLM is involved in producing it.
+ *      decide routes them to ACTIONS.ELICIT_FIRST and attaches strong
+ *      anti-leak directives. The LLM still generates the reply in tutor
+ *      voice — no canned templates — but is barred from naming a value.
+ *      The detector also skips when the tutor's prior turn asked the
+ *      student to perform a step (mid-conversation, the student's math
+ *      reply is an answer, not a fresh drop).
  *   2. decide checks modeTransition before applying plan-based mode. When
  *      the transition detector reports exploratory_tangent / homework /
  *      prerequisite_surface / course_topic_overlap at ≥0.6 confidence, the
@@ -102,6 +105,35 @@ describe('detectBareProblemDrop', () => {
     expect(detectBareProblemDrop('hello', MESSAGE_TYPES.GREETING, noAnswer)).toBe(false);
     expect(detectBareProblemDrop('tell me about derivatives', MESSAGE_TYPES.QUESTION, noAnswer)).toBe(false);
   });
+
+  // ── Conversation-context guard: math replies to step prompts are NOT drops ──
+
+  test('does NOT flag math reply when tutor just asked "what\'s the first step?"', () => {
+    const recent = [{ content: "What's the first step you think we should take to set this up?" }];
+    expect(detectBareProblemDrop('1/3x^3', typeGeneralMath, noAnswer, recent)).toBe(false);
+  });
+
+  test('does NOT flag math reply when tutor just asked "what do you think we should do?"', () => {
+    const recent = [{ content: 'What do you think we should do with 1/3x^3 at those points?' }];
+    expect(detectBareProblemDrop('9- 1/3 = 26/3', typeGeneralMath, noAnswer, recent)).toBe(false);
+  });
+
+  test('does NOT flag math reply when tutor asked "can you evaluate that?"', () => {
+    const recent = [{ content: 'Can you evaluate that at x=3 and x=1?' }];
+    expect(detectBareProblemDrop('27-1=26', typeGeneralMath, noAnswer, recent)).toBe(false);
+  });
+
+  test('STILL flags a fresh problem drop after a generic invite ("what do you want to work on?")', () => {
+    const recent = [{ content: 'What do you want to work on today? Anything specific on your mind?' }];
+    // "want" isn't a step-progression verb — the tutor is opening the floor,
+    // not asking the student to perform a step. A fresh equation is a drop.
+    expect(detectBareProblemDrop('4x-5=22', typeGeneralMath, noAnswer, recent)).toBe(true);
+  });
+
+  test('STILL flags a fresh drop when there are no prior tutor messages', () => {
+    expect(detectBareProblemDrop('4x-5=22', typeGeneralMath, noAnswer, [])).toBe(true);
+    expect(detectBareProblemDrop('4x-5=22', typeGeneralMath, noAnswer, undefined)).toBe(true);
+  });
 });
 
 // ============================================================================
@@ -127,7 +159,7 @@ describe('observe() — isBareProblemDrop flag', () => {
 });
 
 // ============================================================================
-// decide() — bare-drop routes to ELICIT_FIRST with a deterministic response
+// decide() — bare-drop routes to ELICIT_FIRST with anti-leak directives
 // ============================================================================
 
 describe('decide() — ELICIT_FIRST for bare problem drops', () => {
@@ -147,28 +179,23 @@ describe('decide() — ELICIT_FIRST for bare problem drops', () => {
 
   const noAnswerDiagnosis = { type: 'no_answer', isCorrect: null, answer: null, correctAnswer: null };
 
-  test('routes to ELICIT_FIRST and attaches a deterministic response', () => {
+  test('routes to ELICIT_FIRST with anti-leak directives, no canned response', () => {
     const decision = decide(baseObservation, noAnswerDiagnosis, {
       phaseState: null,
       hasRecentUpload: false,
     });
 
     expect(decision.action).toBe(ACTIONS.ELICIT_FIRST);
-    expect(typeof decision.deterministicResponse).toBe('string');
-    expect(decision.deterministicResponse.length).toBeGreaterThan(20);
-    // Response must not contain a solved answer
-    expect(decision.deterministicResponse).not.toMatch(/x\s*=\s*-?\d/);
-    // Response must invite the student to show work or request an example
-    expect(decision.deterministicResponse).toMatch(/tried|tripping|stuck|example/i);
-  });
+    // The LLM generates the turn — no deterministic short-circuit anymore.
+    expect(decision.deterministicResponse).toBeUndefined();
+    expect(Array.isArray(decision.directives)).toBe(true);
+    expect(decision.directives.length).toBeGreaterThan(0);
 
-  test('uses student first name when available', () => {
-    const decision = decide(baseObservation, noAnswerDiagnosis, {
-      phaseState: null,
-      hasRecentUpload: false,
-      user: { firstName: 'Jason' },
-    });
-    expect(decision.deterministicResponse).toContain('Jason');
+    const joined = decision.directives.join('\n').toLowerCase();
+    // Must instruct the LLM not to solve / not to name an answer.
+    expect(joined).toMatch(/do not solve|do not name the answer|do not show steps/);
+    // Must explicitly forbid the old canned phrases (scripted-voice fix).
+    expect(joined).toMatch(/show me what you tried|tripping you up|canned/);
   });
 
   test('does NOT route to ELICIT_FIRST when hasRecentUpload (worksheet guards own this flow)', () => {
