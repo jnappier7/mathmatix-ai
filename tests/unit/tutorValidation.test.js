@@ -703,14 +703,13 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
   // ────────────────────────────────────────────────────────────────────────
 
   // ────────────────────────────────────────────────────────────────────────
-  // These bare-equation drops are now caught earlier by the ELICIT_FIRST
-  // gate (decide.js) — the pipeline returns a deterministic response that
-  // never reaches the LLM, so there is no leak surface. The old behavior
-  // (continue_conversation + Socratic directives) was a prompt-level
-  // mitigation; the new behavior is a structural guarantee.
+  // These bare-equation drops are caught by the ELICIT_FIRST gate
+  // (decide.js). The pipeline routes the action and attaches strong
+  // anti-leak directives, but the LLM still generates the reply so the
+  // tutor speaks in voice — no canned templates.
   // ────────────────────────────────────────────────────────────────────────
 
-  test('ANSWER LEAK BUG: "4x-15=21" routes to ELICIT_FIRST with deterministic response', async () => {
+  test('ANSWER LEAK BUG: "4x-15=21" routes to ELICIT_FIRST with anti-leak directives', async () => {
     const { observation, diagnosis, decision } = await runDeterministicStages(
       '4x-15=21',
       [] // no prior tutor messages — student is posing a new problem
@@ -724,12 +723,13 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     expect(diagnosis.type).toBe('no_answer');
     expect(diagnosis.isCorrect).toBeNull();
 
-    // Structural guarantee: bare drop → deterministic template, no LLM call.
+    // Bare drop → ELICIT_FIRST + directives, no deterministic template.
     expect(observation.isBareProblemDrop).toBe(true);
     expect(decision.action).toBe('elicit_first');
-    expect(typeof decision.deterministicResponse).toBe('string');
-    // The template must not reveal a solved answer.
-    expect(decision.deterministicResponse).not.toMatch(/x\s*=\s*-?\d/);
+    expect(decision.deterministicResponse).toBeUndefined();
+
+    const joined = decision.directives.join('\n').toLowerCase();
+    expect(joined).toMatch(/do not solve|do not show steps|do not name the answer/);
   });
 
   test('ANSWER LEAK BUG: "3^(x+1) = 81" routes to ELICIT_FIRST', async () => {
@@ -743,6 +743,7 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     expect(diagnosis.type).toBe('no_answer');
     expect(observation.isBareProblemDrop).toBe(true);
     expect(decision.action).toBe('elicit_first');
+    expect(decision.deterministicResponse).toBeUndefined();
   });
 
   test('ANSWER LEAK BUG: "3(3^x + 3^(x+1)) = 108" routes to ELICIT_FIRST', async () => {
@@ -756,6 +757,7 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     expect(diagnosis.type).toBe('no_answer');
     expect(observation.isBareProblemDrop).toBe(true);
     expect(decision.action).toBe('elicit_first');
+    expect(decision.deterministicResponse).toBeUndefined();
   });
 
   test('ANSWER LEAK BUG: "solve 2x + 5 = 13" routes to ELICIT_FIRST', async () => {
@@ -769,6 +771,24 @@ describe('Tutor Validation: Answer Leak Prevention', () => {
     expect(observation.answer).toBeNull();
     expect(observation.isBareProblemDrop).toBe(true);
     expect(decision.action).toBe('elicit_first');
+    expect(decision.deterministicResponse).toBeUndefined();
+  });
+
+  // Regression: the misfire from the production transcript. Maya asked
+  // "what's the first step?" and the student answered with the antiderivative.
+  // The detector was treating that math reply as a fresh problem drop and
+  // hijacking the conversation with a canned template.
+  test('REGRESSION: math reply to tutor\'s step prompt is NOT a bare drop', async () => {
+    const { observation, decision } = await runDeterministicStages(
+      '1/3x^3',
+      [
+        'Let\'s find the definite integral of f(x)=x² from x=1 to x=3.',
+        'What\'s the first step you think we should take to set this up?',
+      ]
+    );
+    expect(observation.isBareProblemDrop).toBe(false);
+    expect(decision.action).not.toBe('elicit_first');
+    expect(decision.deterministicResponse).toBeUndefined();
   });
 
   // ────────────────────────────────────────────────────────────────────────

@@ -297,6 +297,45 @@ function detectStreaks(recentUserMessages) {
 }
 
 /**
+ * Did the tutor's last message ask the student to perform or describe the
+ * next math step? If yes, any math-shaped reply is an answer attempt to that
+ * step — not a fresh problem drop. Without this guard, the bare-drop gate
+ * fires mid-conversation and clobbers the student's work with a canned
+ * "show me what you tried" message.
+ *
+ * Matches "what's the first step", "what do you think we should do",
+ * "what's next", "now what", "try it", "can you evaluate", etc.
+ *
+ * Returns false when there is no last assistant message or it doesn't
+ * read as a step-guidance question.
+ */
+function lastTutorAskedForNextStep(recentAssistantMessages) {
+  if (!recentAssistantMessages || recentAssistantMessages.length === 0) return false;
+  const last = recentAssistantMessages[recentAssistantMessages.length - 1];
+  const text = (last?.content || '').toLowerCase();
+  if (!text) return false;
+  if (!/\?/.test(text)) return false;
+
+  const stepGuidance = [
+    /\bwhat'?s\s+the\s+(?:next|first|second|third|last|final)\s+step\b/,
+    /\bwhat\s+(?:do|should|would|could)\s+(?:we|you)\s+(?:do|try|use|think|get|notice|see|need|start|begin)\b/,
+    /\bwhat\s+(?:do|did)\s+you\s+(?:think|get|notice|see|find|come\s+up\s+with)\b/,
+    /\bwhat'?s\s+(?:next|the\s+(?:answer|result|value|next\s+step))\b/,
+    /\bnow\s+what\b/,
+    /\bany\s+ideas?\b/,
+    /\bcan\s+you\s+(?:tell|show|try|evaluate|simplify|factor|solve|find|compute|integrate|differentiate|plug|substitute)\b/,
+    /\b(?:give\s+it\s+a\s+(?:try|shot)|take\s+a\s+(?:try|shot|stab)|try\s+(?:it|that|this|one))\b/,
+    /\bwhat\s+about\s+(?:the\s+)?(?:next|second|first|other|remaining)\s+(?:step|part|piece)\b/,
+    /\bplug(?:\s+(?:that|those|it|in))\b/,
+    /\bevaluate\s+(?:at|that|this|it)\b/,
+    /\bhow\s+(?:do|would|should)\s+(?:we|you)\s+(?:start|begin|approach|set\s+up|tackle)\b/,
+    /\bwhat\s+(?:goes?|happens?)\s+(?:there|next|in\s+the\s+blank)\b/,
+  ];
+
+  return stepGuidance.some(pat => pat.test(text));
+}
+
+/**
  * Detect a "bare problem drop" — the student handed over a new math problem
  * (equation, expression, worked-problem prompt) without an attempt, without
  * a specific stuck point, and without reasoning language.
@@ -312,16 +351,22 @@ function detectStreaks(recentUserMessages) {
  *   "I'm stuck on step 2 of 4x-5=22"             (stuck indicator)
  *   "after I factor, what do I do next?"          (reasoning indicator)
  *   "the square root of 49 is 7"                  (statement, not a new problem)
+ *   ANY math reply right after the tutor asked "what's the next step?"
  *
- * When this fires, the pipeline must respond deterministically — ask what
- * the student tried or offer a parallel example. Never solve.
+ * When this fires, the decide stage steers the LLM to ask for the student's
+ * work or offer a parallel example. Never solve.
  *
  * @returns {boolean}
  */
-function detectBareProblemDrop(text, messageType, hasAnswer) {
+function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMessages) {
   if (!text || typeof text !== 'string') return false;
   const t = text.trim();
   if (t.length === 0 || t.length > 140) return false;
+
+  // Conversation guard: if the tutor just asked the student to perform or
+  // describe a step, the student's math reply is an answer to that step, not
+  // a fresh problem. Suppress the bare-drop flag.
+  if (lastTutorAskedForNextStep(recentAssistantMessages)) return false;
 
   // Message types that encode student intent already — don't override.
   const NON_DROP_TYPES = new Set([
@@ -468,9 +513,13 @@ function observe(message, context = {}) {
 
   // Detect a bare problem drop — student handed over a new problem with no
   // attempt and no specific question. This is the #1 leak vector: LLM
-  // defaults to helpfulness and solves it. The pipeline must respond
-  // deterministically when this fires (see decide.js ELICIT_FIRST action).
-  const isBareProblemDrop = detectBareProblemDrop(text, messageType, !!answer);
+  // defaults to helpfulness and solves it. The pipeline steers the LLM with
+  // anti-leak directives when this fires (see decide.js ELICIT_FIRST action).
+  // We pass recent tutor turns so a math reply to "what's the next step?"
+  // doesn't get misread as a fresh drop.
+  const isBareProblemDrop = detectBareProblemDrop(
+    text, messageType, !!answer, context.recentAssistantMessages
+  );
 
   return {
     messageType,
@@ -502,6 +551,7 @@ module.exports = {
   detectParroting,
   detectEvasiveAffirmative,
   detectBareProblemDrop,
+  lastTutorAskedForNextStep,
   MESSAGE_TYPES,
   CONTEXT_SIGNALS,
   PATTERNS,

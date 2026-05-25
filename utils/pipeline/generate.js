@@ -125,6 +125,15 @@ function buildActionPrompt(decision) {
       parts.push('Brief, not preachy. One sentence redirect, then offer a problem.');
       break;
 
+    case ACTIONS.ELICIT_FIRST:
+      parts.push('The student dropped a fresh problem with no work attached. You are NOT solving it. Read the room first.');
+      parts.push('Respond in your tutor voice — warm, brief, curious about THEIR thinking. Sound like a person, not a form.');
+      parts.push('Do not echo the problem back verbatim, do not announce a procedure, do not list steps, do not state any value that could be part of the answer.');
+      parts.push('Pick ONE natural opener that invites them in — e.g. wonder where they want to start, ask what they notice, or offer to work a parallel problem if they\'re cold.');
+      parts.push('No canned phrasing. Avoid the literal strings "show me what you tried", "what step is tripping you up", "say show me an example".');
+      parts.push('1–3 sentences. End with a single concrete invitation, not a barrage of questions.');
+      break;
+
     case ACTIONS.PRESENT_PROBLEM:
       parts.push('Present the next problem for the student to work on.');
       parts.push('ANSWER-DUMP GUARD: Do NOT state, hint at, or embed the answer in the problem presentation.');
