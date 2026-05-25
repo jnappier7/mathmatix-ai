@@ -204,6 +204,22 @@
     s.style.transform = '';
   }
 
+  /* ---- visual viewport tracker --------------------------------------- */
+  // iOS Safari leaves a gap between the composer and the on-screen keyboard
+  // because `100dvh` doesn't always recompute when the keyboard animates in.
+  // Mirror the actual visible height into --app-height so the body can dock
+  // to the keyboard. Falls back to 100dvh on browsers without VisualViewport.
+  function trackViewport() {
+    var vv = window.visualViewport;
+    if (!vv) return;
+    var update = function () {
+      document.documentElement.style.setProperty('--app-height', vv.height + 'px');
+    };
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    update();
+  }
+
   /* ---- idle <-> conversation state ----------------------------------- */
   function watchMessages() {
     var box = document.getElementById('chat-messages-container');
@@ -223,6 +239,7 @@
     buildGreeting();
     buildSheet();
     watchMessages();
+    trackViewport();
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeSheet();
     });

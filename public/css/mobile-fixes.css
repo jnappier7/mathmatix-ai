@@ -1574,6 +1574,10 @@ a {
         flex-direction: column !important;
         height: 100vh !important;
         height: 100dvh !important;
+        /* --app-height is set by mobile-poster-chat.js from VisualViewport so the
+           composer docks to the on-screen keyboard instead of leaving a black
+           gap on iOS Safari. Falls back to 100dvh when the var is unset. */
+        height: var(--app-height, 100dvh) !important;
         overflow: hidden !important;
         margin: 0 !important;
         padding: 0 !important;
