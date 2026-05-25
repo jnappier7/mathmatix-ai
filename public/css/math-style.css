@@ -36,5 +36,5 @@ body.cr-mode #chat-messages-container .katex-display::-webkit-scrollbar-thumb {
 
 /* ---- Inline math: a subtle lift so it reads as math, not prose ---- */
 body.cr-mode #chat-messages-container .katex {
-  color: #F2F3F8;
+  color: var(--cr-text);
 }
