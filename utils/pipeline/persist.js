@@ -19,7 +19,7 @@ const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
 const { processMathMessage } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
-const { emitGamificationEvent } = require('../gamificationEvents');
+const { emitGamificationEvent, bumpDailyStreak } = require('../gamificationEvents');
 const { canonicalProblemId, contentHash, recordShownProblem } = require('../problemTracking');
 const { getNextActions } = require('../nextActionSuggestions');
 const { checkForInterventionAlert } = require('../interventionAlerts');
@@ -332,6 +332,20 @@ async function persist(params) {
       results.badgeAwarded = masteryResult.badgeAwarded;
     }
   }
+
+  // ── 8a-streak. Daily streak ──
+  // Bump unconditionally on any persist call — reaching this stage means the
+  // student sent a substantive message and received a reply. Decoupled from
+  // problemAnswered because the turn-classifier is imperfect; gating the
+  // streak on it left long-running users stuck at 2 days for months.
+  const streakResult = bumpDailyStreak(user);
+  results.streak = {
+    current: user.dailyQuests?.currentStreak || 0,
+    longest: user.dailyQuests?.longestStreak || 0,
+    freezeUsed: streakResult.streakFreezeUsed || false,
+    lost: streakResult.streakLost || 0,
+  };
+  user.markModified('dailyQuests');
 
   // ── 8b. Gamification events (daily quests, weekly challenges) ──
   if (results.problemAnswered) {
