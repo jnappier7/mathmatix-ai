@@ -40,6 +40,46 @@ const { getReviewSummary } = require('../smartReviewQueue');
  * @param {number} params.aiProcessingSeconds - How long the AI took
  * @returns {Object} Persistence results for the response payload
  */
+/**
+ * Build a canonical, wrapper-free string for a detected math problem so
+ * dedup hashes collide across sessions even when Maya's surrounding text
+ * varies. Returns null when we can't extract anything useful — caller
+ * falls back to responseText.
+ *
+ * Shape-by-shape because processMathMessage returns different keys per
+ * problem type (limits use {numerator, denominator, approachValue, raw};
+ * evaluation uses {expression}; arithmetic uses {left, operator, right};
+ * etc.). We don't need a complete switchboard — just the types where the
+ * wrapper-text fallback was causing dedup misses in practice.
+ */
+function extractCanonicalProblemText(problem) {
+  if (!problem) return null;
+  switch (problem.type) {
+    case 'limit':
+      // raw is the expression as the detector pulled it; combined with
+      // approachValue it uniquely identifies the limit math.
+      if (problem.raw && typeof problem.approachValue === 'number') {
+        return `lim x→${problem.approachValue} of ${problem.raw}`;
+      }
+      return problem.raw || null;
+    case 'evaluation':
+    case 'expand_polynomial':
+    case 'factor_quadratic':
+    case 'factor_diff_of_squares':
+      return problem.expression || null;
+    case 'arithmetic':
+      if (problem.left !== undefined && problem.right !== undefined && problem.operator) {
+        return `${problem.left} ${problem.operator} ${problem.right}`;
+      }
+      return null;
+    case 'quadratic_equation':
+    case 'general_linear':
+      return problem.expression || problem.equation || null;
+    default:
+      return problem.expression || problem.raw || null;
+  }
+}
+
 async function persist(params) {
   const {
     user, conversation, extracted, diagnosis, observation,
@@ -153,10 +193,13 @@ async function persist(params) {
       };
 
       // Record this AI-generated problem in the user's recent-problems history
-      // so warmup/lesson prompts can avoid re-serving it within 7 days. The
-      // canonical content for the hash is the detector's expression (the math
-      // part of Maya's reply) — falls back to the full responseText if absent.
-      const problemContent = mathResult.problem.expression || responseText;
+      // so warmup/lesson prompts can avoid re-serving it within 7 days.
+      //
+      // The canonical content must come from the math itself, not the wrapper
+      // text — "Hey Jason! Let's warm up with lim x→1 (x²-1)/(x-1)" and
+      // "Welcome back! Try this one: lim x→1 (x²-1)/(x-1)" should collide.
+      // Fallback to responseText only when no math is extractable.
+      const problemContent = extractCanonicalProblemText(mathResult.problem) || responseText;
       const skillIdForRecord = observation?.activeSkill?.skillId
         || decision?.activeSkill?.skillId
         || null;
