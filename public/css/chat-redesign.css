@@ -90,6 +90,36 @@ body.cr-mode #tour-prompt > div {
   left: auto !important;
 }
 
+/* Voice entry: the floating mic orb (#voice-chat-container, painted by
+   voice-controller.js) is the intuitive entry point — a universally
+   recognized "press mic to talk" pattern. The header pill .cr-voice-toggle
+   (added by voice-mode.js as "Talk to <Tutor>") is hidden in cr-mode
+   because the label reads as a brand/nav CTA rather than a voice control.
+   The composer's #voice-mode-btn is unchanged — it links to /voice-tutor.html
+   for the separate immersive (premium) experience.
+
+   The orb's inline `bottom: 30px; right: 30px` (from voice-controller.js)
+   placed it ON TOP of the right workspace column and its wordy status
+   label bled into the fixed footer. Override with !important since the
+   source styles are inline. Anchor the orb to the bottom-right of the
+   chat column (clearing the workspace's 320px width + 18px stage gap on
+   the right, and the 52px fixed footer on the bottom), and drop the
+   "Click to start voice chat" label — the mic icon is self-explanatory. */
+body.cr-mode .cr-voice-toggle { display: none !important; }
+body.cr-mode #voice-chat-container {
+  right: calc(var(--cr-side-w) + 48px) !important;
+  bottom: 80px !important;
+}
+body.cr-mode #voice-status { display: none !important; }
+
+@media (max-width: 1200px) {
+  /* Workspace leaves grid flow at this breakpoint (becomes a slide-in
+     drawer), so the orb can return to its normal bottom-right corner. */
+  body.cr-mode #voice-chat-container {
+    right: 30px !important;
+  }
+}
+
 /* Composer icon tooltips — pure CSS, sourced from data-tip on each
    .imessage-tool-btn. Uses data-tip rather than title so the native
    browser tooltip doesn't double-up; aria-label remains for screen
@@ -490,7 +520,13 @@ body.cr-mode .message.user {
   border: 1px solid rgba(124, 107, 255, 0.35);
   border-top-right-radius: 6px;
 }
-body.cr-mode .message-timestamp {
+body.cr-mode .message-timestamp,
+body.cr-mode .message.user .message-timestamp {
+  /* Both halves listed so this beats base/chat.css's
+     `.message.user .message-timestamp { color: rgba(255,255,255,0.6); }`
+     — that white-at-60% reads on a dark bubble but disappears against
+     the lavender light-theme user bubble (#EDE9FF). Routing both
+     through --cr-text-dim keeps them readable in either theme. */
   font-size: 11px;
   color: var(--cr-text-dim);
   margin-top: 4px;
