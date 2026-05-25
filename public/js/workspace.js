@@ -162,9 +162,16 @@
       card = el('div', 'cr-ws-board-card cr-ws-board-card--graph');
       var graphHost = el('div', 'cr-ws-board-card-graph');
       card.appendChild(graphHost);
-      if (step.caption) {
+      // Drop a caption whose embedded "y = X" math doesn't match the fn
+      // we're about to plot — otherwise the curve and its own label
+      // disagree on screen.
+      var syncedCaption = step.caption || null;
+      if (window.MathmatixGraphTitleSync) {
+        syncedCaption = window.MathmatixGraphTitleSync.syncGraphCaption(step.caption, step.fn);
+      }
+      if (syncedCaption) {
         var graphCap = el('div', 'cr-ws-board-card-caption');
-        graphCap.textContent = step.caption;
+        graphCap.textContent = syncedCaption;
         card.appendChild(graphCap);
       }
       // Defer instantiation until the card is attached; MathGraph reads
