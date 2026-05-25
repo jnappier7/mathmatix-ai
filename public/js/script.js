@@ -2355,6 +2355,16 @@ document.addEventListener("DOMContentLoaded", () => {
             let clientTimezone = null;
             try { clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) {}
 
+            // Bound the request with an AbortController so a silently-dead
+            // SSE connection (proxy closed the socket mid-stream) can't park
+            // the "thinking…" indicator forever. The idle timer below resets
+            // on every reader.read() return; if more than STREAM_IDLE_MS
+            // elapses with no bytes (the server's : ping keepalive should
+            // arrive every 15s), we abort and show a retry-able error.
+            var STREAM_IDLE_MS = 90 * 1000;
+            var streamAbort = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+            var streamSignal = streamAbort ? streamAbort.signal : undefined;
+
             // All chat goes through /api/chat — files, courses, and regular chat
             if (queuedFiles.length > 0) {
                 console.log(`[Frontend] Sending ${queuedFiles.length} file(s) to /api/chat`);
@@ -2378,7 +2388,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 response = await csrfFetch("/api/chat", {
                     method: "POST",
                     body: formData,
-                    credentials: 'include'
+                    credentials: 'include',
+                    signal: streamSignal
                 });
             } else {
                 // Regular chat (no files) — same endpoint for courses and main chat
@@ -2394,7 +2405,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
-                    credentials: 'include'
+                    credentials: 'include',
+                    signal: streamSignal
                 });
             }
 
@@ -2469,9 +2481,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 const decoder = new TextDecoder();
                 let buffer = '';
 
+                // Idle-watchdog: if no bytes arrive for STREAM_IDLE_MS (well
+                // above the server's 15s keepalive cadence), the connection
+                // is silently dead. Abort the fetch so the outer catch can
+                // surface an error instead of leaving "thinking…" forever.
+                let streamIdleTimer = null;
+                function resetStreamIdleTimer() {
+                    if (streamIdleTimer) clearTimeout(streamIdleTimer);
+                    if (!streamAbort) return;
+                    streamIdleTimer = setTimeout(() => {
+                        console.warn(`[Stream] No bytes received in ${STREAM_IDLE_MS}ms — aborting`);
+                        try { streamAbort.abort(); } catch (_) { /* already aborted */ }
+                    }, STREAM_IDLE_MS);
+                }
+                resetStreamIdleTimer();
+
                 while (true) {
                     const { done, value } = await reader.read();
-                    if (done) break;
+                    resetStreamIdleTimer();
+                    if (done) {
+                        if (streamIdleTimer) clearTimeout(streamIdleTimer);
+                        break;
+                    }
 
                     buffer += decoder.decode(value, { stream: true });
                     const lines = buffer.split('\n');
@@ -3143,7 +3174,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let errorMessage = "I'm having trouble connecting.";
             let isRetryable = true;
-            if (error.message) {
+            // AbortError fires when our stream-idle watchdog gives up on a
+            // silently-dead connection. Show a clearer message than the
+            // generic "trouble connecting" so the student knows to retry.
+            if (error && (error.name === 'AbortError' || /aborted/i.test(error.message || ''))) {
+                errorMessage = "The connection dropped before a response came back. Tap retry to try again.";
+            } else if (error.message) {
                 if (error.message.includes('Mathpix') || error.message.includes('API credentials')) {
                     errorMessage = "There was an issue processing your file. Our OCR service may be temporarily unavailable.";
                     isRetryable = false; // File-specific errors need a different file
