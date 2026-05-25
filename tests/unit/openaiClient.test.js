@@ -82,18 +82,14 @@ describe('callLLM', () => {
   test('passes max_completion_tokens for gpt-4o models', async () => {
     mockChatCreate.mockResolvedValue({ choices: [{ message: { content: 'hi' } }] });
     await callLLM('gpt-4o', [{ role: 'user', content: 'hello' }], { max_tokens: 200 });
-    expect(mockChatCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ max_completion_tokens: 200 })
-    );
+    expect(mockChatCreate.mock.calls[0][0]).toMatchObject({ max_completion_tokens: 200 });
     expect(mockChatCreate.mock.calls[0][0].max_tokens).toBeUndefined();
   });
 
   test('uses legacy max_tokens for older models', async () => {
     mockChatCreate.mockResolvedValue({ choices: [{ message: { content: 'hi' } }] });
     await callLLM('gpt-3.5-turbo', [{ role: 'user', content: 'x' }], { max_tokens: 100 });
-    expect(mockChatCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ max_tokens: 100 })
-    );
+    expect(mockChatCreate.mock.calls[0][0]).toMatchObject({ max_tokens: 100 });
     expect(mockChatCreate.mock.calls[0][0].max_completion_tokens).toBeUndefined();
   });
 

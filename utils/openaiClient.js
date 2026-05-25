@@ -15,6 +15,14 @@ if (process.env.OPENAI_API_KEY) {
 }
 
 
+// Default request timeout for chat completions. The OpenAI SDK defaults
+// to 10 minutes, which is far longer than any tutor reply should take —
+// long enough that an upstream hang freezes the SSE response and leaves
+// the student's "thinking…" indicator spinning indefinitely. 90 seconds
+// covers the slowest reasonable completion; callers needing more can
+// pass options.timeoutMs.
+const DEFAULT_CHAT_TIMEOUT_MS = 90 * 1000;
+
 // Utility for exponential backoff and retry
 async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
     let attempts = 0;
@@ -92,14 +100,22 @@ async function callLLM(model, messages, options = {}) {
             ...(options.response_format ? { response_format: options.response_format } : {}),
         };
 
-        // Only pass the SDK's request-options arg when we actually have a
-        // signal. Passing `undefined` as a second arg changes the call
-        // shape (always 2 args) and breaks unit tests that use
-        // toHaveBeenCalledWith strict-arity matching.
+        // Build the request-options arg. Always include a timeout so
+        // an upstream hang can't freeze the SSE response indefinitely.
+        // (See DEFAULT_CHAT_TIMEOUT_MS comment above for why.)
+        //
+        // maxRetries: 0 disables the SDK's built-in 2x retry — we have
+        // our own retryWithExponentialBackoff layer wrapped around this
+        // call, and stacking the two would multiply worst-case wait
+        // times by 3x with no added robustness.
+        const requestOptions = {
+            timeout: options.timeoutMs || DEFAULT_CHAT_TIMEOUT_MS,
+            maxRetries: 0,
+        };
+        if (options.signal) requestOptions.signal = options.signal;
+
         const completion = await retryWithExponentialBackoff(() =>
-            options.signal
-                ? openai.chat.completions.create(requestBody, { signal: options.signal })
-                : openai.chat.completions.create(requestBody)
+            openai.chat.completions.create(requestBody, requestOptions)
         );
         return completion;
     } catch (openAiError) {
@@ -140,6 +156,14 @@ async function callLLMStream(model, messages, options = {}) {
             }
         }
 
+        // Streaming responses can take longer than a one-shot completion,
+        // but they still need a bound. An upstream hang here blocks the
+        // SSE response from completing, so the student's "thinking…"
+        // indicator never clears. Caller can override via options.timeoutMs.
+        //
+        // maxRetries: 0 because there is no retry wrapper around the
+        // streaming call — and the streaming caller (generate.js) has
+        // its own non-stream fallback that handles transient failures.
         const stream = await openai.chat.completions.create({
             model: model,
             messages: messages,
@@ -147,6 +171,10 @@ async function callLLMStream(model, messages, options = {}) {
             ...tokenParam,
             ...toolParams,
             stream: true,
+        }, {
+            timeout: options.timeoutMs || DEFAULT_CHAT_TIMEOUT_MS,
+            maxRetries: 0,
+            ...(options.signal ? { signal: options.signal } : {}),
         });
         return stream;
     } catch (openAiError) {
@@ -256,6 +284,7 @@ async function moderateImage(image, mimetype = 'image/png') {
 module.exports = {
     openai,
     retryWithExponentialBackoff,
+    DEFAULT_CHAT_TIMEOUT_MS,
     callLLM,
     callLLMStream,
     generateEmbedding,
