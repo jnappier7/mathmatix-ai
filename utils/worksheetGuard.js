@@ -254,12 +254,11 @@ function detectAnswerKeyResponse(responseText, options = {}) {
 }
 
 /**
- * The safe redirect message sent to the student when an answer key is detected.
- * This replaces the AI's response entirely.
+ * Last-resort fallback used by filterAnswerKeyResponse when an answer key
+ * is detected. Pipeline callers (verify.js) regenerate through the LLM
+ * instead of using this canned line — see socraticRegenerate. This is
+ * retained only for legacy callers that don't have access to an LLM.
  */
-// When the AI generates an answer-key-like response (multiple numbered solutions),
-// we regenerate through the LLM instead of showing a canned message. This fallback
-// is only used if regeneration fails.
 const ANSWER_KEY_REDIRECT_FALLBACK = `I can see the problems — which one do you want to work through first?`;
 
 /**
