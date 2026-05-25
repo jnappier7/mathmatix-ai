@@ -17,7 +17,7 @@
 const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
-const { processMathMessage } = require('../mathSolver');
+const { parseCleanProblem } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { emitGamificationEvent, bumpDailyStreak } = require('../gamificationEvents');
 const { canonicalProblemId, contentHash, recordShownProblem } = require('../problemTracking');
@@ -181,7 +181,13 @@ async function persist(params) {
   // This lets the diagnose stage read it directly on the next turn instead of
   // re-parsing the AI's natural language text with fragile regex patterns.
   try {
-    const mathResult = processMathMessage(responseText);
+    // parseCleanProblem strips conversational prose before matching so
+    // a tutor turn like "Here's another problem: Solve 4x+3=27" stores
+    // correctAnswer=6 instead of a bogus 331 from the evaluation
+    // catch-all. The bogus answer would otherwise poison the next
+    // turn's diagnose stage and trigger an incorrect "answer wrong"
+    // injection on a right answer.
+    const mathResult = parseCleanProblem(responseText);
     if (mathResult.hasMath && mathResult.solution?.success) {
       const lastIdx = conversation.messages.length - 1;
       const problemType = mathResult.problem.type;

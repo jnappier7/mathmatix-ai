@@ -3459,11 +3459,92 @@ function processMathMessage(message) {
     };
 }
 
+// ── parseCleanProblem ──
+//
+// Wrap processMathMessage with two guard layers so callers that store
+// or compare against the "correct answer" don't get poisoned by
+// conversational prose.
+//
+//   Without this guard, a tutor turn like
+//     "Here's another equation for you to solve: Solve 4x+3=27."
+//   parses as { type: 'evaluation', expression: ': Solve 4x+3=27. …',
+//   answer: '331' }. Persisted as a problemInfo.correctAnswer, the
+//   next student answer ("x = 6") then diagnoses as INCORRECT against
+//   that fake "331" — which fires an ANSWER_PRE_CHECK INCORRECT
+//   directive, and the tutor hedges on a right answer.
+//
+// Guard 1: Try the whole input verbatim. If the parser returns the
+// generic 'evaluation' catch-all AND the input contains conversational
+// prose (4+ letter words), reject — the result is almost certainly
+// noise, not the student's answer.
+//
+// Guard 2: When the whole-input parse is rejected (or it's a 'evaluation'
+// fallback we don't trust), scan the input for clean math substrings
+// — "Solve X", "Try X", or a bare "<expr> = <expr>" — and re-parse
+// each substring in isolation. The first clean parse wins.
+//
+// Returns the same { hasMath, problem, solution } shape as
+// processMathMessage, or { hasMath: false } when nothing trustworthy
+// is found. Callers that need the raw catch-all (e.g. legacy chat.js
+// arithmetic checks) keep using processMathMessage directly.
+const PROSE_WORD_RX = /[a-z]{4,}/i;
+const MATH_CANDIDATE_VERB_RX = /\b(?:solve|try|find|evaluate|simplify|factor|graph|compute)\s+([^.?!\n]+?)(?=[.?!\n]|$)/gi;
+const MATH_CANDIDATE_EQ_RX = /(?:^|[\s:>])(\(?-?\d*[a-z][a-z0-9\s+\-*/^().]*=\s*-?[a-z0-9\s+\-*/^()]+?)(?=[.?!\n]|$|\s{2})/gi;
+
+function _extractMathCandidates(text) {
+    const out = [];
+    let m;
+    MATH_CANDIDATE_VERB_RX.lastIndex = 0;
+    while ((m = MATH_CANDIDATE_VERB_RX.exec(text)) !== null) {
+        out.push(m[1].trim());
+    }
+    MATH_CANDIDATE_EQ_RX.lastIndex = 0;
+    while ((m = MATH_CANDIDATE_EQ_RX.exec(text)) !== null) {
+        out.push(m[1].trim());
+    }
+    return out;
+}
+
+function _isTrustedProblem(problem, source) {
+    if (!problem) return false;
+    // The 'evaluation' type is mathSolver's catch-all when text doesn't
+    // match a more specific pattern. Its `expression` field carries
+    // whatever the matcher grabbed — often prose. Only trust it when
+    // the source text reads like a math expression, not a sentence.
+    if (problem.type === 'evaluation') {
+        if (PROSE_WORD_RX.test(source)) return false;
+        if (problem.expression && PROSE_WORD_RX.test(problem.expression)) return false;
+    }
+    return true;
+}
+
+function parseCleanProblem(text) {
+    if (!text || typeof text !== 'string') return { hasMath: false };
+
+    const direct = processMathMessage(text);
+    if (direct.hasMath && direct.solution?.success
+        && _isTrustedProblem(direct.problem, text)) {
+        return direct;
+    }
+
+    // Slow path: pull math substrings out of conversational prose and
+    // parse each one. First clean parse wins.
+    for (const candidate of _extractMathCandidates(text)) {
+        const result = processMathMessage(candidate);
+        if (!result.hasMath || !result.solution?.success) continue;
+        if (!_isTrustedProblem(result.problem, candidate)) continue;
+        return result;
+    }
+
+    return { hasMath: false };
+}
+
 module.exports = {
     detectMathProblem,
     solveProblem,
     verifyAnswer,
     processMathMessage,
+    parseCleanProblem,
     // Export individual solvers for testing
     solveArithmetic,
     solveLinearEquation,

@@ -25,6 +25,7 @@ jest.mock('../../utils/openaiClient', () => ({
 
 jest.mock('../../utils/mathSolver', () => ({
   processMathMessage: jest.fn(() => ({ hasMath: false, problem: null, solution: null })),
+  parseCleanProblem: jest.fn(() => ({ hasMath: false, problem: null, solution: null })),
   verifyAnswer: jest.fn(() => null),
 }));
 
