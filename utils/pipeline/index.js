@@ -45,7 +45,7 @@ const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { inferBoardEvents } = require('./inferWorkspace');
+const { synthesizeBoardCommands, mergeWithLlmCommands } = require('./boardSynthesizer');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
 
@@ -392,17 +392,15 @@ async function runPipeline(message, ctx) {
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);
 
-  // ── Stage 5b: BOARD TAG PROTOCOL (Phase B) ──
-  // Extract <BOARD …/> tags from verify.text, run the pedagogy guard,
-  // and replace verify.text with the stripped version. The guard drops
-  // any command that doesn't trace back to the student's recent
-  // message — backstop for the #1 product rule.
+  // ── Stage 5b: BOARD TAG PROTOCOL (LLM-emitted tags) ──
+  // Extract <BOARD …/> tags from verify.text and replace verify.text
+  // with the stripped version. The guard drops any tag that doesn't
+  // trace back to the student's recent message (#1 product rule).
   const boardParseInput = verified.text;
   const boardParsed = parseBoardTags(boardParseInput);
-  // Reuse the recentUserMessages slice from the observe stage (line ~71).
-  // It already holds the last 6 user messages; the guard only looks at
-  // the immediate predecessor, so the larger window is fine.
+  // Reuse the recentUserMessages slice from the observe stage.
   const recentUserMessagesForBoard = recentUserMessages;
+  let llmBoardCommands = [];
   if (boardParsed.boardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({
       commands: boardParsed.boardCommands,
@@ -411,7 +409,7 @@ async function runPipeline(message, ctx) {
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
     });
     verified.text = boardParsed.cleanedText;
-    verified.boardCommands = guardResult.allowed;
+    llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
       for (const { command, reason } of guardResult.dropped) {
         boardLogger.warn('Pedagogy guard dropped board command', {
@@ -422,74 +420,71 @@ async function runPipeline(message, ctx) {
         });
       }
     }
-    if (guardResult.allowed.length > 0 && ctx.conversation) {
-      const lastEmitted = guardResult.allowed[guardResult.allowed.length - 1].action;
-      ctx.conversation.lastBoardAction = lastEmitted;
-    }
-  } else {
-    verified.boardCommands = [];
   }
 
-  // ── Stage 5c: DEFENSIVE BOARD INFERENCE (Phase B.5) ──
-  // Layer 3 of the workboard reliability stack. When the tutor
-  // forgets to emit a <BOARD> tag (Layer 2 produced nothing), look
-  // at the student's last message + the tutor's response and infer
-  // a board event if BOTH high-confidence signals fire: the student
-  // stated a math shape AND the tutor affirmed without correction.
-  // The same pedagogy guard re-runs on the inferred command so the
-  // #1 rule is enforced twice.
-  if (verified.boardCommands.length === 0) {
-    try {
-      const inferredEvents = inferBoardEvents(
-        message,
-        verified.text,
-        { workspaceCount: 0 } // we're only here because Layers 1+2 were silent
-      );
-      if (inferredEvents.length > 0) {
-        // Map the legacy { tag, attrs } shape from inferWorkspace.js
-        // onto the boardCommands shape consumed by chat.js.
-        const inferredCommands = inferredEvents
-          .filter(e => e.tag === 'board' && e.attrs && e.attrs.action)
-          .map(e => {
-            const cmd = { action: e.attrs.action };
-            if (e.attrs.tex) cmd.tex = e.attrs.tex;
-            if (e.attrs.op) cmd.op = e.attrs.op;
-            if (e.attrs.check) cmd.check = e.attrs.check;
-            return cmd;
-          });
-        if (inferredCommands.length > 0) {
-          const guarded = enforcePedagogyRule({
-            commands: inferredCommands,
-            userMessage: message,
-            recentUserMessages: recentUserMessagesForBoard,
-            lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
-          });
-          verified.boardCommands = guarded.allowed;
-          if (guarded.allowed.length > 0) {
-            boardLogger.info('Inferred board command (Layer 3)', {
-              count: guarded.allowed.length,
-              actions: guarded.allowed.map(c => c.action),
-            });
-            if (ctx.conversation) {
-              ctx.conversation.lastBoardAction = guarded.allowed[guarded.allowed.length - 1].action;
-            }
-          }
-          if (guarded.dropped.length > 0) {
-            for (const { command, reason } of guarded.dropped) {
-              boardLogger.warn('Pedagogy guard dropped INFERRED board command', {
-                action: command.action,
-                reason,
-                tex: command.tex || null,
-                op: command.op || null,
-              });
-            }
-          }
-        }
+  // ── Stage 5c: DETERMINISTIC BOARD SYNTHESIZER ──
+  // The LLM-emitted tag path (Layer 2) is unreliable — pose cards at
+  // the start of a problem and verify cards at the end are the most
+  // common misses, and partial emission (one resolve tag in the
+  // middle, nothing else) leaves the board stuck. The synthesizer
+  // runs every turn and derives cards from pipeline ground truth
+  // (math engine + diagnose stage + the student's literal text). Its
+  // output is merged with the LLM's; the LLM wins on overlap so its
+  // wording is preserved when present.
+  let synthesizedCommands = [];
+  try {
+    synthesizedCommands = synthesizeBoardCommands({
+      studentMessage: message,
+      tutorResponse: verified.text,
+      diagnosis,
+      observation,
+      lastBoardAction: ctx.conversation?.lastBoardAction || null,
+      recentAssistantMessages,
+    });
+  } catch (synthErr) {
+    // Synthesis must never break the response.
+    boardLogger.error('Board synthesizer failed (non-fatal)', { error: synthErr.message });
+  }
+
+  // Guard synthesized cards through the same pedagogy rule —
+  // defense in depth. Synthesized cards are derived from the
+  // student's own message so they should always pass, but if a
+  // detector regression slips through, the guard catches it.
+  let guardedSynth = synthesizedCommands;
+  if (synthesizedCommands.length > 0) {
+    const synthGuard = enforcePedagogyRule({
+      commands: synthesizedCommands,
+      userMessage: message,
+      recentUserMessages: recentUserMessagesForBoard,
+      lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+    });
+    guardedSynth = synthGuard.allowed;
+    if (synthGuard.dropped.length > 0) {
+      for (const { command, reason } of synthGuard.dropped) {
+        boardLogger.warn('Pedagogy guard dropped synthesized board command', {
+          action: command.action,
+          reason,
+          tex: command.tex || null,
+          op: command.op || null,
+        });
       }
-    } catch (inferErr) {
-      // Layer 3 must never break the response.
-      boardLogger.error('Defensive board inference failed (non-fatal)', { error: inferErr.message });
     }
+  }
+
+  const merged = mergeWithLlmCommands(llmBoardCommands, guardedSynth);
+  verified.boardCommands = merged.all;
+
+  if (merged.added.length > 0) {
+    boardLogger.info('Synthesized board commands', {
+      count: merged.added.length,
+      actions: merged.added.map(c => c.action),
+      llmEmitted: llmBoardCommands.length,
+    });
+  }
+
+  if (verified.boardCommands.length > 0 && ctx.conversation) {
+    const lastEmitted = verified.boardCommands[verified.boardCommands.length - 1].action;
+    ctx.conversation.lastBoardAction = lastEmitted;
   }
 
   // ── Stage 5d: XP CEREMONY TAGS (Phase C) ──
