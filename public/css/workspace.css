@@ -355,6 +355,41 @@
   color: var(--cr-success);
 }
 
+/* Phase C — verify celebration.
+   Layered on top of the verify card the instant it lands. Boards the
+   eyebrow to "CLEAN SOLUTION!", boosts the green halo to a gold pulse
+   for ~2s, then naturally returns to the regular SOLVED state when
+   boardCommandHandler.js strips the class. Confetti is fired from
+   that same handler — this is the in-card half of the celebration. */
+.cr-ws-board-card--verify.cr-ws-board-card--celebrating {
+  border-color: rgba(255, 214, 107, 0.85);
+  background: linear-gradient(180deg,
+    rgba(255, 214, 107, 0.16) 0%,
+    var(--cr-bg-panel) 100%);
+  animation: cr-clean-solution-pulse 2.2s var(--cr-ease, ease-out) 1;
+}
+.cr-ws-board-card--verify.cr-ws-board-card--celebrating::before {
+  content: "CLEAN SOLUTION!";
+  color: #FFD66B;
+  text-shadow: 0 0 12px rgba(255, 214, 107, 0.55);
+}
+
+@keyframes cr-clean-solution-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 214, 107, 0.0),
+                     0 8px 22px rgba(0, 0, 0, 0.30); }
+  40%  { box-shadow: 0 0 0 14px rgba(255, 214, 107, 0.0),
+                     0 0 26px 4px rgba(255, 214, 107, 0.55),
+                     0 8px 22px rgba(0, 0, 0, 0.30); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 214, 107, 0.0),
+                     0 8px 22px rgba(0, 0, 0, 0.30); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-ws-board-card--verify.cr-ws-board-card--celebrating {
+    animation: none;
+  }
+}
+
 /* Math display inside cards — KaTeX renders into here. */
 .cr-ws-board-card-math {
   padding-top: 14px;
