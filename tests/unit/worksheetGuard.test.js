@@ -23,6 +23,7 @@ const {
   stripCorrectAnswers,
   detectAnswerKeyResponse,
   filterAnswerKeyResponse,
+  detectParallelExampleIntroduction,
 } = require('../../utils/worksheetGuard');
 
 describe('detectAnswerAnnouncement', () => {
@@ -283,5 +284,64 @@ describe('filterAnswerKeyResponse', () => {
     const r = filterAnswerKeyResponse(safe, 'u1');
     expect(r.wasFiltered).toBe(false);
     expect(r.text).toBe(safe);
+  });
+});
+
+describe('detectParallelExampleIntroduction', () => {
+  // Positive: response actually introduces a parallel example.
+  test('flags "let me show you a similar problem"', () => {
+    expect(detectParallelExampleIntroduction(
+      'Let me show you a similar problem with different numbers.'
+    )).toBe(true);
+  });
+
+  test('flags "let\'s try one together"', () => {
+    expect(detectParallelExampleIntroduction(
+      'Let\'s try one together: 2x + 3 = 7.'
+    )).toBe(true);
+  });
+
+  test('flags "here\'s a similar example"', () => {
+    expect(detectParallelExampleIntroduction(
+      'Here\'s a similar example we can work through first.'
+    )).toBe(true);
+  });
+
+  test('flags "different numbers"', () => {
+    expect(detectParallelExampleIntroduction(
+      'Let me walk through this with different numbers so you can see the pattern.'
+    )).toBe(true);
+  });
+
+  test('flags "worked example"', () => {
+    expect(detectParallelExampleIntroduction(
+      'Here is a worked example.'
+    )).toBe(true);
+  });
+
+  // Negative: tutor continuing the same problem, no parallel pivot.
+  test('does NOT flag a normal Socratic continuation', () => {
+    expect(detectParallelExampleIntroduction(
+      'You\'re right that -8(2) = -16. Now combine 8 - 16 + 6. What do you get?'
+    )).toBe(false);
+  });
+
+  test('does NOT flag a hint', () => {
+    expect(detectParallelExampleIntroduction(
+      'Remember to include the sign — what would -(-8) be?'
+    )).toBe(false);
+  });
+
+  test('does NOT flag confirmation', () => {
+    expect(detectParallelExampleIntroduction(
+      'Yes! That\'s right. The next step is to combine like terms.'
+    )).toBe(false);
+  });
+
+  test('handles empty / non-string input', () => {
+    expect(detectParallelExampleIntroduction(null)).toBe(false);
+    expect(detectParallelExampleIntroduction('')).toBe(false);
+    expect(detectParallelExampleIntroduction(undefined)).toBe(false);
+    expect(detectParallelExampleIntroduction(123)).toBe(false);
   });
 });

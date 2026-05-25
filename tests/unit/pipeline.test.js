@@ -1282,3 +1282,94 @@ describe('Pipeline: Verify Stage — Answer-key guard', () => {
     expect(callLLM).not.toHaveBeenCalled();
   });
 });
+
+// ============================================================================
+// VERIFY STAGE — Answer-leak guard on tutor-posed problems
+// ============================================================================
+//
+// Origin: transcript where the tutor asked the student to compute -b/(2a)
+// for a vertex problem. After two wrong attempts the LLM caved and wrote
+// "t = -(-8)/(2·2) = 8/4 = 2. So the x-coordinate of the vertex is 2."
+// The 2a guard above only fires for student-posed problems, so an answer
+// leak on a tutor-posed problem had no defense in depth. This guard fills
+// that gap.
+describe('Pipeline: Verify Stage — Answer-leak guard on tutor-posed problems', () => {
+  // The real transcript shape: tutor solves the arithmetic and names the
+  // answer ("so the x-coordinate of the vertex is 2") after a wrong attempt.
+  const leakedAnswer =
+    'Almost there! When you calculate t = -(-8)/(2·2) = 8/4 = 2. ' +
+    'So the x-coordinate of the vertex is 2. Now substitute that back in.';
+
+  // Variant: same leak but with the simpler "so the vertex is 2" phrasing
+  // that hits the original explicit-answer-1 pattern.
+  const leakedAnswerSimple =
+    'Almost there! When you calculate t = -(-8)/(2·2) = 8/4 = 2. ' +
+    'So the vertex is 2.';
+
+  beforeEach(() => {
+    callLLM.mockReset();
+  });
+
+  test('GUIDE_INCORRECT + answer announcement → regenerates in voice', async () => {
+    callLLM.mockResolvedValueOnce({
+      choices: [{ message: { content: 'Take another look at the sign on that numerator — what should the negative of -8 be?' } }],
+    });
+    const result = await verify(leakedAnswer, {
+      userId: 'u1',
+      action: ACTIONS.GUIDE_INCORRECT,
+      messageType: MESSAGE_TYPES.ANSWER_ATTEMPT,
+    });
+    expect(callLLM).toHaveBeenCalledTimes(1);
+    expect(result.flags).toContain('answer_leak_on_tutor_posed_detected');
+    expect(result.flags).toContain('answer_leak_on_tutor_posed_regenerated');
+    expect(result.text).toMatch(/sign|negative/i);
+    expect(result.text).not.toMatch(/x-coordinate of the vertex is 2/i);
+  });
+
+  test('RETEACH_MISCONCEPTION + answer announcement → regenerates in voice', async () => {
+    callLLM.mockResolvedValueOnce({
+      choices: [{ message: { content: 'Try plugging your value back into the original equation — does it balance?' } }],
+    });
+    const result = await verify(leakedAnswer, {
+      userId: 'u1',
+      action: ACTIONS.RETEACH_MISCONCEPTION,
+      messageType: MESSAGE_TYPES.ANSWER_ATTEMPT,
+    });
+    expect(callLLM).toHaveBeenCalledTimes(1);
+    expect(result.flags).toContain('answer_leak_on_tutor_posed_regenerated');
+  });
+
+  test('GUIDE_INCORRECT + Socratic question only (no leak) → passes through', async () => {
+    const clean = 'Almost there! What sign should the numerator have when you take the negative of -8?';
+    const result = await verify(clean, {
+      userId: 'u1',
+      action: ACTIONS.GUIDE_INCORRECT,
+      messageType: MESSAGE_TYPES.ANSWER_ATTEMPT,
+    });
+    expect(result.text).toBe(clean);
+    expect(result.flags).not.toContain('answer_leak_on_tutor_posed_detected');
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('action is CONFIRM_CORRECT (not a wrong-answer turn) → guard does not fire', async () => {
+    const result = await verify(leakedAnswer, {
+      userId: 'u1',
+      action: ACTIONS.CONFIRM_CORRECT,
+      messageType: MESSAGE_TYPES.ANSWER_ATTEMPT,
+    });
+    expect(result.flags).not.toContain('answer_leak_on_tutor_posed_detected');
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('regen failure → leaves leak flag but does not crash', async () => {
+    callLLM.mockRejectedValueOnce(new Error('LLM unavailable'));
+    const result = await verify(leakedAnswer, {
+      userId: 'u1',
+      action: ACTIONS.GUIDE_INCORRECT,
+      messageType: MESSAGE_TYPES.ANSWER_ATTEMPT,
+    });
+    expect(result.flags).toContain('answer_leak_on_tutor_posed_detected');
+    expect(result.flags).toContain('answer_leak_on_tutor_posed_regeneration_failed');
+    expect(result.flags).not.toContain('answer_leak_on_tutor_posed_regenerated');
+  });
+});

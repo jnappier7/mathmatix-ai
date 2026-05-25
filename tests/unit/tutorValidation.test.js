@@ -40,6 +40,10 @@ jest.mock('../../utils/misconceptionDetector', () => ({
 
 jest.mock('../../utils/worksheetGuard', () => ({
   filterAnswerKeyResponse: jest.fn((text) => ({ text, wasFiltered: false })),
+  detectAnswerKeyResponse: jest.fn(() => ({ isAnswerKey: false, problemCount: 0, matchedPattern: null, problemNumbers: [] })),
+  detectAnswerAnnouncement: jest.fn(() => ({ detected: false, pattern: null })),
+  detectWorkedSolution: jest.fn(() => ({ isWorkedSolution: false, signalCount: 0, breakdown: {} })),
+  detectParallelExampleIntroduction: jest.fn(() => false),
 }));
 
 jest.mock('../../utils/readability', () => ({
