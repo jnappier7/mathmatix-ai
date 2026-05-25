@@ -998,10 +998,16 @@ function determineDOKLevel(fluencyZScore) {
  * @param {Object} options - { difficulty, templateHint, fluencyModifier }
  * @returns {Object} Generated problem
  */
-function generateProblem(skillId, options = {}) {
+const { canonicalProblemId, contentHash, wasRecentlyShown } = require('./problemTracking');
+
+const MAX_DEDUP_RETRIES = 5;
+
+/**
+ * Build a single problem candidate (no dedup). Internal helper.
+ */
+function buildProblemCandidate(skillId, options) {
   const { difficulty = 0, templateHint, fluencyModifier } = options;
 
-  // DIRECTIVE 2: Adjust difficulty based on fluency
   let adjustedDifficulty = difficulty;
   let dokLevel = 1;
 
@@ -1010,28 +1016,30 @@ function generateProblem(skillId, options = {}) {
     dokLevel = determineDOKLevel(fluencyModifier.fluencyZScore);
   }
 
-  // Find templates for this skill
   const matchingTemplates = Object.entries(TEMPLATES)
-    .filter(([key, template]) => template.skillId === skillId);
+    .filter(([, template]) => template.skillId === skillId);
 
   if (matchingTemplates.length === 0) {
     throw new Error(`No templates found for skill: ${skillId}`);
   }
 
-  // Select template (use hint if provided, otherwise random)
+  let templateKey;
   let template;
   if (templateHint && TEMPLATES[templateHint]) {
+    templateKey = templateHint;
     template = TEMPLATES[templateHint];
   } else {
-    template = randomChoice(matchingTemplates.map(([k, v]) => v));
+    const chosen = randomChoice(matchingTemplates);
+    templateKey = chosen[0];
+    template = chosen[1];
   }
 
-  // Generate problem with adjusted difficulty
   const problem = template.generate(adjustedDifficulty);
 
-  // Add metadata
+  const pid = canonicalProblemId({ skillId, content: problem.content, answer: problem.answer });
+
   return {
-    problemId: generateProblemId(),
+    problemId: pid,
     skillId,
     content: problem.content,
     answer: problem.answer,
@@ -1041,20 +1049,54 @@ function generateProblem(skillId, options = {}) {
       discrimination: problem.discrimination,
       calibrationConfidence: 'expert'
     },
-    dokLevel: dokLevel, // DIRECTIVE 2: Use adaptive DOK level
+    dokLevel,
     metadata: {
       estimatedTime: problem.estimatedTime,
       source: 'template',
-      templateId: templateHint,
+      templateId: templateKey,
+      contentHash: contentHash(problem.content),
       generationParams: {
         difficulty,
-        adjustedDifficulty, // Track adjustment
+        adjustedDifficulty,
         templateHint,
         fluencyModifier: fluencyModifier || null
       }
     },
     isActive: true
   };
+}
+
+/**
+ * Generate a problem for a skill. When `user` is supplied, retries up to
+ * MAX_DEDUP_RETRIES times to avoid re-showing a problem the user has seen
+ * in the last 7 days (see utils/problemTracking.js). After exhausting
+ * retries, returns the last candidate — a repeat is better than a crash.
+ *
+ * @param {string} skillId
+ * @param {Object} [options]
+ * @param {number} [options.difficulty=0]
+ * @param {string} [options.templateHint]
+ * @param {Object} [options.fluencyModifier]
+ * @param {Object} [user] - Mongoose user doc for dedup. Optional; without
+ *   it, dedup is skipped and a single candidate is returned (legacy callers
+ *   that don't have a user remain unaffected).
+ */
+function generateProblem(skillId, options = {}, user = null) {
+  if (!user) {
+    return buildProblemCandidate(skillId, options);
+  }
+
+  let candidate;
+  for (let i = 0; i < MAX_DEDUP_RETRIES; i++) {
+    candidate = buildProblemCandidate(skillId, options);
+    const seen = wasRecentlyShown(user, {
+      problemId: candidate.problemId,
+      contentHash: candidate.metadata.contentHash,
+    });
+    if (!seen) return candidate;
+  }
+  // Fall through — better a repeat than no problem
+  return candidate;
 }
 
 /**
@@ -1074,13 +1116,6 @@ function generateBatch(skillId, count = 10) {
   }
 
   return problems;
-}
-
-/**
- * Generate problem ID
- */
-function generateProblemId() {
-  return `prob_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 // ===========================================================================

@@ -531,7 +531,7 @@ function decideCore(observation, diagnosis, context) {
 
   // ── Phase-specific decisions (when in structured lesson) ──
   if (phaseState && activeSkill) {
-    decision.phasePrompt = getPhasePrompt(phaseState, activeSkill.displayName);
+    decision.phasePrompt = getPhasePrompt(phaseState, activeSkill.displayName, context.user);
     decision.action = ACTIONS.PHASE_INSTRUCTION;
     decision.directives.push(`Follow ${phaseState.currentPhase} phase instructions.`);
     return decision;

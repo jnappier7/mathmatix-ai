@@ -2727,8 +2727,9 @@ function formatPolynomialTerms(terms) {
  */
 function cleanTrailingText(expr) {
     return expr
-        .replace(/[?!]\s*\w.*$/, '')   // "expr? What..." → "expr"
-        .replace(/\.\s+[A-Z].*$/, '')  // "expr. Let's..." → "expr"
+        .replace(/\s*[—–]\s*\S.*$/, '') // "expr — what's next" → "expr" (em-dash / en-dash)
+        .replace(/[?!]\s*\w.*$/, '')    // "expr? What..." → "expr"
+        .replace(/\.\s+[A-Z].*$/, '')   // "expr. Let's..." → "expr"
         .replace(/[?!.]+$/, '')         // trailing punctuation
         .trim();
 }
@@ -3094,18 +3095,79 @@ function solveDerivative(problem) {
  *
  * Returns a problem object or null.
  */
+/**
+ * Convert LaTeX \frac{NUM}{DEN} to (NUM)/(DEN), with proper brace matching
+ * so contents like \frac{x^2-1}{x-1} survive. Repeats until no \frac remains
+ * so nested fractions (e.g. \frac{\frac{a}{b}}{c}) collapse fully.
+ *
+ * Pure string normalization — does not validate the math inside the braces.
+ */
+function normalizeLatexFrac(text) {
+    if (!text || !text.includes('\\frac')) return text;
+
+    function readBraceGroup(src, startIdx) {
+        if (src[startIdx] !== '{') return null;
+        let depth = 1;
+        for (let i = startIdx + 1; i < src.length; i++) {
+            if (src[i] === '{') depth++;
+            else if (src[i] === '}') {
+                depth--;
+                if (depth === 0) return { content: src.slice(startIdx + 1, i), endIdx: i };
+            }
+        }
+        return null;
+    }
+
+    let prev;
+    let out = text;
+    let guard = 0;
+    do {
+        prev = out;
+        const idx = out.indexOf('\\frac');
+        if (idx < 0) break;
+
+        // Allow optional whitespace between \frac and the first brace
+        let cursor = idx + 5;
+        while (cursor < out.length && /\s/.test(out[cursor])) cursor++;
+
+        const num = readBraceGroup(out, cursor);
+        if (!num) break;
+
+        let cursor2 = num.endIdx + 1;
+        while (cursor2 < out.length && /\s/.test(out[cursor2])) cursor2++;
+
+        const den = readBraceGroup(out, cursor2);
+        if (!den) break;
+
+        out = out.slice(0, idx) + `(${num.content})/(${den.content})` + out.slice(den.endIdx + 1);
+    } while (out !== prev && ++guard < 20);
+
+    return out;
+}
+
 function detectLimit(message) {
     if (!message) return null;
 
-    // Strip LaTeX delimiters
+    // Strip LaTeX delimiters and normalize commands. Maya outputs limits as
+    // \(\lim_{x \to 1} \frac{x^2-1}{x-1}\) almost exclusively; without this
+    // normalization, the rational-expression parser sees no "/" and bails.
     let text = message
         .replace(/\\\(([^)]*?)\\\)/g, '$1')
         .replace(/\\\[([^\]]*?)\\\]/g, '$1')
         .replace(/\$\$([^$]*?)\$\$/g, '$1')
         .replace(/(?<![\\$])\$([^$\n]+?)\$/g, '$1')
+        .replace(/\\displaystyle\b/g, '')
         .replace(/\\to\b/g, '→')
         .replace(/\\rightarrow\b/g, '→')
-        .replace(/\\lim\b/g, 'lim');
+        .replace(/\\lim\b/g, 'lim')
+        .replace(/\\cdot\b/g, '*')
+        .replace(/\\left\s*([(\[|])/g, '$1')
+        .replace(/\\right\s*([)\]|])/g, '$1');
+
+    // Normalize \frac{NUM}{DEN} → (NUM)/(DEN). Run repeatedly so nested
+    // \frac calls collapse. Brace-matched, not regex-greedy, to handle
+    // expressions like \frac{x^2-1}{x-1} where braces contain ^ and -.
+    text = normalizeLatexFrac(text);
 
     // Normalize arrow notations
     text = text.replace(/->/g, '→');
@@ -3164,15 +3226,21 @@ function parseLimitExpression(exprStr) {
 
     let s = exprStr.trim();
 
-    // Remove outer parentheses if they wrap the entire expression
-    if (s.startsWith('(') && s.endsWith(')')) {
-        const inner = s.slice(1, -1);
-        // Only strip if the parens are balanced (not "(a)/(b)")
-        if (!inner.includes('/') || (inner.match(/\(/g) || []).length === (inner.match(/\)/g) || []).length) {
-            // Check if stripping parens leaves a valid expression
-            const testTerms = parsePolynomialTerms(inner);
-            if (testTerms) s = inner;
+    // Strip outer parentheses while they wrap the ENTIRE expression — i.e. the
+    // opening paren matches the closing one at the end of the string. Repeat so
+    // double-wraps like ((x^2-1)/(x-1)) (from \left(\frac{}{}\right)) collapse.
+    while (s.startsWith('(') && s.endsWith(')')) {
+        let depth = 0;
+        let matchesEnd = true;
+        for (let i = 0; i < s.length; i++) {
+            if (s[i] === '(') depth++;
+            else if (s[i] === ')') {
+                depth--;
+                if (depth === 0 && i !== s.length - 1) { matchesEnd = false; break; }
+            }
         }
+        if (!matchesEnd) break;
+        s = s.slice(1, -1).trim();
     }
 
     // Try to split on "/" for rational expressions
