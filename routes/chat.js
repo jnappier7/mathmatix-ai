@@ -14,6 +14,7 @@ const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM, callLLMStream } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
+const { createKeepalive } = require('../utils/sseKeepalive');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const axios = require('axios');
@@ -898,6 +899,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         let clientDisconnected = false;
 
         // Set up streaming if requested
+        let sseKeepalive = null;
         if (useStreaming) {
             logger.debug('Streaming mode activated', { userId });
             res.setHeader('Content-Type', 'text/event-stream');
@@ -905,7 +907,18 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             res.setHeader('Connection', 'keep-alive');
             res.setHeader('X-Accel-Buffering', 'no'); // Prevent proxy/ISP buffering (Nginx, Spectrum, etc.)
             res.flushHeaders();
-            req.on('close', () => { clientDisconnected = true; });
+            // Heartbeat through the silent stretch while we wait on the LLM.
+            // Without this, proxies between Express and the browser
+            // (Cloudflare, Render's edge, corporate routers) silently drop
+            // connections that go ~15-60s without any bytes — the server
+            // eventually writes the response, but the socket is already
+            // dead and the client's "thinking…" indicator spins forever.
+            sseKeepalive = createKeepalive(res);
+            sseKeepalive.start();
+            req.on('close', () => {
+                clientDisconnected = true;
+                if (sseKeepalive) sseKeepalive.stop();
+            });
         }
 
         // ── Re-entry detection & topic override ──
@@ -1335,6 +1348,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         };
 
         if (useStreaming) {
+            if (sseKeepalive) sseKeepalive.stop();
             if (!clientDisconnected) {
                 try {
                     res.write(`data: ${JSON.stringify({ type: 'complete', data: responseData })}\n\n`);
@@ -1349,6 +1363,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
     } catch (error) {
         logger.error('Chat route failed', error);
+        if (sseKeepalive) sseKeepalive.stop();
         // Prevent "headers already sent" crash during streaming mode
         if (res.headersSent) {
             try {
@@ -2290,6 +2305,11 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
             res.setHeader('Connection', 'keep-alive');
             res.setHeader('X-Accel-Buffering', 'no'); // Prevent proxy/ISP buffering (Nginx, Spectrum, etc.)
             res.flushHeaders();
+            // Same proxy-drop guard as the main chat route — keep the
+            // connection visibly alive during the LLM round-trip.
+            const greetingKeepalive = createKeepalive(res);
+            greetingKeepalive.start();
+            req.on('close', () => greetingKeepalive.stop());
 
             try {
                 const stream = await callLLMStream(PRIMARY_CHAT_MODEL, messagesForAI, { temperature: 0.55, max_tokens: maxTokens });
@@ -2367,11 +2387,13 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
                 if (greetingInlineCta) {
                     streamDonePayload.inlineCta = greetingInlineCta;
                 }
+                greetingKeepalive.stop();
                 res.write(`data: ${JSON.stringify(streamDonePayload)}\n\n`);
                 res.end();
 
             } catch (streamError) {
                 logger.error('Greeting stream error', streamError);
+                greetingKeepalive.stop();
                 res.write(`data: ${JSON.stringify({ error: 'Stream failed' })}\n\n`);
                 res.end();
             }
