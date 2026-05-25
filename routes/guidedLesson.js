@@ -97,9 +97,9 @@ router.post('/generate-interactive-lesson', async (req, res) => {
             }
         }
 
-        // Get adaptive phase prompt
+        // Get adaptive phase prompt (passes user so warmup can avoid recently-shown problems)
         const phasePrompt = currentPhaseState
-            ? getPhasePrompt(currentPhaseState, title)
+            ? getPhasePrompt(currentPhaseState, title, userProfile)
             : '';
 
         // Build task prompt based on lesson context

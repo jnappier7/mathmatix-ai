@@ -15,6 +15,7 @@
 
 const Skill = require('../models/skill');
 const { generateProblem } = require('./problemGenerator');
+const { recordShownProblem } = require('./problemTracking');
 const { reason } = require('./llmGateway');
 
 // ============================================================================
@@ -189,13 +190,26 @@ async function generateWorkedExamples(skill, badge, user) {
         const examples = [];
 
         for (let i = 0; i < 2; i++) {
-            // Generate problem
+            // Generate problem (with 7-day dedup against user.recentProblems)
             const problem = generateProblem(skill.skillId, {
                 difficulty: baseDifficulty + (i * 0.2),
                 templateHint: null
-            });
+            }, user);
 
             if (!problem) continue;
+
+            // Record this problem in the user's recent-problems history.
+            // Caller is responsible for the user.save() that follows.
+            if (user) {
+                recordShownProblem(user, {
+                    problemId: problem.problemId,
+                    skillId: problem.skillId,
+                    source: 'generator',
+                    contentHash: problem.metadata?.contentHash,
+                    content: problem.content,
+                });
+                user.markModified('recentProblems');
+            }
 
             // Generate step-by-step solution using AI
             const solution = await generateStepByStepSolution(problem, skill);

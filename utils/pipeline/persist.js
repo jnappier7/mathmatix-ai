@@ -20,6 +20,7 @@ const { recordMisconception } = require('../misconceptionDetector');
 const { processMathMessage } = require('../mathSolver');
 const { computeXpBreakdown, applyXpToUser } = require('./xpEngine');
 const { emitGamificationEvent } = require('../gamificationEvents');
+const { canonicalProblemId, contentHash, recordShownProblem } = require('../problemTracking');
 const { getNextActions } = require('../nextActionSuggestions');
 const { checkForInterventionAlert } = require('../interventionAlerts');
 const { getReviewSummary } = require('../smartReviewQueue');
@@ -143,10 +144,35 @@ async function persist(params) {
     const mathResult = processMathMessage(responseText);
     if (mathResult.hasMath && mathResult.solution?.success) {
       const lastIdx = conversation.messages.length - 1;
+      const problemType = mathResult.problem.type;
+      const correctAnswer = String(mathResult.solution.answer);
+
       conversation.messages[lastIdx].problemInfo = {
-        type: mathResult.problem.type,
-        correctAnswer: String(mathResult.solution.answer),
+        type: problemType,
+        correctAnswer,
       };
+
+      // Record this AI-generated problem in the user's recent-problems history
+      // so warmup/lesson prompts can avoid re-serving it within 7 days. The
+      // canonical content for the hash is the detector's expression (the math
+      // part of Maya's reply) — falls back to the full responseText if absent.
+      const problemContent = mathResult.problem.expression || responseText;
+      const skillIdForRecord = observation?.activeSkill?.skillId
+        || decision?.activeSkill?.skillId
+        || null;
+      const pid = canonicalProblemId({
+        skillId: skillIdForRecord || problemType,
+        content: problemContent,
+        answer: correctAnswer,
+      });
+      recordShownProblem(user, {
+        problemId: pid,
+        skillId: skillIdForRecord,
+        source: 'ai-text',
+        contentHash: contentHash(problemContent),
+        content: problemContent,
+      });
+      user.markModified('recentProblems');
     }
   } catch (_) {
     // Non-fatal — worst case we fall back to re-parsing in diagnose

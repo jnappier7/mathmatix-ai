@@ -1119,6 +1119,20 @@ const userSchema = new Schema({
     }
   },
 
+  /* Recently shown problems — for 7-day dedup across template-generated
+     and AI-text-generated problems. Capped at 500 entries by application
+     code (utils/problemTracking.js) — covers ~7 days at heavy practice.
+     contentSnippet is stored truncated (~200 chars) so warmup/lesson
+     prompts can show Maya the actual text she's served recently. */
+  recentProblems: [{
+    problemId: { type: String, required: true },   // canonical hash (skillId+content+answer) or generator-emitted ID
+    shownAt: { type: Date, default: Date.now },
+    skillId: String,
+    source: { type: String, enum: ['generator', 'ai-text'], required: true },
+    contentHash: String,                            // raw hash of problem text, for cross-source matching
+    contentSnippet: String                          // truncated problem text (≤200 chars) for prompt injection
+  }],
+
   /* Daily Quests & Streak System */
   dailyQuests: {
     // Current quests (reset daily)
