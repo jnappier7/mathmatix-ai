@@ -141,6 +141,14 @@ const screenerSessionSchema = new mongoose.Schema({
 
     // Skill coverage tracking
     testedSkills: [String],
+
+    // Skills blacklisted during this session because no usable problem was found.
+    // Prevents the selector from re-picking the same dead-end skill every question.
+    excludedSkills: {
+        type: [String],
+        default: []
+    },
+
     testedSkillCategories: {
         'number-operations': {
             type: Number,

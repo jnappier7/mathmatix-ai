@@ -275,7 +275,7 @@ function applyContentBalancing(candidates, testedCategories) {
  */
 function selectSkill(availableSkills, session, targetDifficulty, options = {}) {
   const { theta, testedSkills, testedSkillCategories } = session;
-  const { templateDifficultyMap = {} } = options;
+  const { templateDifficultyMap = {}, excludedSkillIds = [] } = options;
 
   // Build context for scoring
   const context = {
@@ -285,8 +285,12 @@ function selectSkill(availableSkills, session, targetDifficulty, options = {}) {
     testedCategories: testedSkillCategories || {},
   };
 
-  // Filter out excluded skills (conceptual/vague questions)
-  let eligibleSkills = availableSkills.filter(skill => !isScreenerExcluded(skill.skillId));
+  // Filter out skills that are conceptually excluded from the screener or have
+  // been blacklisted for this session (no usable problems found).
+  const sessionBlacklist = new Set(excludedSkillIds);
+  let eligibleSkills = availableSkills.filter(skill =>
+    !isScreenerExcluded(skill.skillId) && !sessionBlacklist.has(skill.skillId)
+  );
 
   // HARD DIFFICULTY FLOOR: Never select skills too far below current level
   // Prevents calculus students from getting skip counting questions
