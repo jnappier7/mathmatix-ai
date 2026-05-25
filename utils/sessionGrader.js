@@ -88,7 +88,14 @@ function gradeTurn(params) {
     scorecard: existingScorecard,
   } = params;
 
-  const scorecard = existingScorecard || createScorecard();
+  // Defensive: a scorecard reloaded from Mongo (sessionScorecard is
+  // Schema.Types.Mixed) can arrive missing fields if it was persisted
+  // before this shape was finalized — or if any code path produced a
+  // partial scorecard. The accumulator below assumes every field is
+  // present (e.g. scorecard.dimensions[dim] crashes on the engagement
+  // iteration if .dimensions is undefined). Backfill defaults so
+  // gradeTurn never throws on a missing field.
+  const scorecard = normalizeScorecard(existingScorecard);
   const flags = [];
   const coachingNotes = [];
   const dimensionScores = {};
@@ -629,6 +636,30 @@ function createScorecard() {
     _lastWasInstruction: false,
     _consecutiveScaffoldDowns: 0,
     _responseLengths: [],
+  };
+}
+
+/**
+ * Backfill any missing fields on a scorecard so gradeTurn's accumulator
+ * never throws on `scorecard.dimensions[dim]` or `scorecard.X.push(...)`.
+ *
+ * Needed because `sessionScorecard` on the conversation is
+ * Schema.Types.Mixed — Mongoose can hand us a partial object if it was
+ * persisted before the current shape was finalized, or if a code path
+ * stored an incomplete scorecard. Returns a normalized copy; never
+ * mutates the input.
+ */
+function normalizeScorecard(s) {
+  const defaults = createScorecard();
+  if (!s || typeof s !== 'object') return defaults;
+  return {
+    ...defaults,
+    ...s,
+    turnScores: Array.isArray(s.turnScores) ? s.turnScores : [],
+    allFlags: Array.isArray(s.allFlags) ? s.allFlags : [],
+    dimensions: (s.dimensions && typeof s.dimensions === 'object') ? s.dimensions : {},
+    _responseLengths: Array.isArray(s._responseLengths) ? s._responseLengths : [],
+    turnCount: Number.isFinite(s.turnCount) ? s.turnCount : 0,
   };
 }
 
