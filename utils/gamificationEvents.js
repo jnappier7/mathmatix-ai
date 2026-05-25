@@ -85,12 +85,9 @@ function emitGamificationEvent(user, eventType, data = {}) {
 }
 
 /**
- * Update daily quests based on an event.
- * Mirrors the logic in routes/dailyQuests.js POST handler but runs in-process.
+ * Initialize user.dailyQuests in place if missing. Idempotent.
  */
-function updateDailyQuests(user, eventType, data) {
-  const result = { completed: [], xpAwarded: 0 };
-
+function ensureDailyQuestsInit(user) {
   if (!user.dailyQuests) {
     user.dailyQuests = {
       quests: [],
@@ -102,10 +99,27 @@ function updateDailyQuests(user, eventType, data) {
       todayProgress: {},
     };
   }
+}
 
-  // Always update streak on any activity — even if quests need refresh.
-  // Streak tracking is independent of quest generation.
-  //
+/**
+ * Bump the daily streak based on session activity. Called once per substantive
+ * student turn — NOT gated on problem classification, since the streak measures
+ * "did the student show up and engage today," not "did they answer a graded
+ * problem correctly." See [[mathmatix-streak-design]] for the rationale.
+ *
+ * Preserves:
+ *  - same-day repeat → no change
+ *  - consecutive day → +1
+ *  - exactly 1 missed day with freeze available → +1 + consume weekly freeze
+ *  - 2+ missed days OR freeze exhausted → reset to 1
+ *
+ * @param {Object} user - Mongoose user document (mutated in place; caller saves)
+ * @returns {{ streakFreezeUsed?: true, streakLost?: number }}
+ */
+function bumpDailyStreak(user) {
+  ensureDailyQuestsInit(user);
+  const result = {};
+
   // Day boundaries are computed in the user's IANA timezone (user.timezone),
   // falling back to UTC when missing. Server-local setHours(0,0,0,0) breaks
   // for students whose local-day boundary doesn't line up with the server.
@@ -123,7 +137,6 @@ function updateDailyQuests(user, eventType, data) {
     if (daysDiff === 1) {
       user.dailyQuests.currentStreak = (user.dailyQuests.currentStreak || 0) + 1;
     } else if (daysDiff === 2 && canUseStreakFreeze(user)) {
-      // Missed exactly 1 day — auto-apply weekly streak freeze
       user.dailyQuests.currentStreak = (user.dailyQuests.currentStreak || 0) + 1;
       user.dailyQuests.streakFreezeUsedAt = now;
       result.streakFreezeUsed = true;
@@ -131,7 +144,7 @@ function updateDailyQuests(user, eventType, data) {
       result.streakLost = user.dailyQuests.currentStreak || 0;
       user.dailyQuests.currentStreak = 1;
     }
-    // daysDiff === 0 means same day — keep current streak
+    // daysDiff === 0 → same day, keep streak
   } else {
     user.dailyQuests.currentStreak = 1;
   }
@@ -141,6 +154,22 @@ function updateDailyQuests(user, eventType, data) {
   if ((user.dailyQuests.currentStreak || 0) > (user.dailyQuests.longestStreak || 0)) {
     user.dailyQuests.longestStreak = user.dailyQuests.currentStreak;
   }
+
+  return result;
+}
+
+/**
+ * Update daily quests based on an event.
+ * Mirrors the logic in routes/dailyQuests.js POST handler but runs in-process.
+ */
+function updateDailyQuests(user, eventType, data) {
+  const result = { completed: [], xpAwarded: 0 };
+
+  ensureDailyQuestsInit(user);
+
+  const streakResult = bumpDailyStreak(user);
+  if (streakResult.streakFreezeUsed) result.streakFreezeUsed = true;
+  if (streakResult.streakLost) result.streakLost = streakResult.streakLost;
 
   // Check if quests need refresh (new day)
   if (shouldRefreshDailyQuests(user.dailyQuests.lastRefreshDate)) {
@@ -433,4 +462,4 @@ function getWeekStart(date = new Date()) {
   return d;
 }
 
-module.exports = { emitGamificationEvent };
+module.exports = { emitGamificationEvent, bumpDailyStreak };
