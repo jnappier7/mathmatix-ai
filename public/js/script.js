@@ -2723,6 +2723,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Phase C: execute server-emitted <XP> ceremony commands
+            // (confetti + optional gold caption). Pipeline caps the batch
+            // at 3 so a runaway model can't confetti-bomb the chat.
+            if (Array.isArray(data.xpCommands) && data.xpCommands.length > 0 && window.XpTagHandler) {
+                try {
+                    window.XpTagHandler.executeXpCommands(data.xpCommands);
+                } catch (error) {
+                    console.error('[XpTagHandler] Failed to execute commands:', error);
+                }
+            }
+
             // Server-initiated assessment launch. Fires when the student
             // accepted a Growth Check (or Starting Point) offer in chat —
             // we open the structured FloatingScreener instead of letting

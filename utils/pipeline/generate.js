@@ -17,6 +17,7 @@ const { buildSlimRules } = require('./promptSlim');
 const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTools');
 const { parseBoardTags } = require('../boardTagParser');
 const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
+const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
 
 // Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
 // replacement / narration paths). Streaming chunks use the stateful
@@ -519,9 +520,12 @@ async function generateStreaming(model, messages, llmOptions, res) {
   const toolCallAccumulator = new Map();
   let finishReason = null;
 
-  // Stateful filter that holds back any partial / unclosed <BOARD> tag
-  // so raw tag fragments never flicker into the chat bubble.
+  // Stateful filters that hold back any partial / unclosed tag so raw
+  // tag fragments never flicker into the chat bubble. Chained: board
+  // strips <BOARD> first, then xp strips <XP>. Each is independent —
+  // order is just a deterministic pipeline.
   const boardFilter = createBoardTagStreamFilter();
+  const xpFilter = createXpTagStreamFilter();
 
   try {
     const stream = await callLLMStream(model, messages, llmOptions);
@@ -538,7 +542,8 @@ async function generateStreaming(model, messages, llmOptions, res) {
 
       if (delta.content) {
         fullResponse += delta.content;
-        const safe = boardFilter.push(delta.content);
+        const afterBoard = boardFilter.push(delta.content);
+        const safe = afterBoard ? xpFilter.push(afterBoard) : '';
         if (safe) {
           res.write(`data: ${JSON.stringify({ type: 'chunk', content: safe })}\n\n`);
         }
@@ -563,9 +568,14 @@ async function generateStreaming(model, messages, llmOptions, res) {
       }
     }
 
-    // Drain any text the stream filter was still holding back.
+    // Drain any text the stream filters were still holding back. Board
+    // first (it may release a partial-opener tail that xp then sees),
+    // then xp.
     {
-      const tail = boardFilter.flush();
+      const boardTail = boardFilter.flush();
+      const xpHead = boardTail ? xpFilter.push(boardTail) : '';
+      const xpTail = xpFilter.flush();
+      const tail = xpHead + xpTail;
       if (tail && !clientDisconnected) {
         res.write(`data: ${JSON.stringify({ type: 'chunk', content: tail })}\n\n`);
       }

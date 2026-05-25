@@ -108,6 +108,52 @@
   .cr-streak-shake { animation: none; }
 }
 
+/* ----- <XP> ceremony caption (Phase C) -----
+   xpTagHandler.js floats this over the chat when the tutor emits an
+   <XP reason="..."/> tag. Pure ceremony — does not award XP. Sized
+   variants nudge the type-scale; the gold gradient + glow matches the
+   verify-card CLEAN SOLUTION! eyebrow so the two celebrations read as
+   one visual family. */
+.cr-xp-caption {
+  position: fixed;
+  left: 50%;
+  top: 28%;
+  transform: translate(-50%, -8px);
+  z-index: 10001;
+  padding: 10px 22px;
+  border-radius: var(--cr-radius-pill);
+  background: linear-gradient(135deg, #FFD66B 0%, #F0A800 100%);
+  color: #1B2238;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-align: center;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32),
+              0 0 0 1px rgba(255, 214, 107, 0.5),
+              0 0 28px 4px rgba(255, 214, 107, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s var(--cr-ease), transform 0.28s var(--cr-ease);
+  max-width: 85vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cr-xp-caption--small  { font-size: 13px; padding: 7px 16px; }
+.cr-xp-caption--medium { font-size: 15px; }
+.cr-xp-caption--large  { font-size: 17px; padding: 12px 26px; }
+.cr-xp-caption--enter {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.cr-xp-caption--exit {
+  opacity: 0;
+  transform: translate(-50%, -6px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cr-xp-caption { transition: opacity 0.2s linear; }
+  .cr-xp-caption--enter, .cr-xp-caption--exit { transform: translate(-50%, 0); }
+}
+
 /* ============================================================
    Light theme — opt-in via <html data-theme="light"> on pages
    that want a daylight surface (login, dashboards, marketing).
