@@ -22,7 +22,8 @@ const { observe, MESSAGE_TYPES, PATTERNS, extractAnswer, detectContextSignals } 
 const { estimateIndependence, diagnose } = require('../../utils/pipeline/diagnose');
 const { decide, ACTIONS } = require('../../utils/pipeline/decide');
 const { buildActionPrompt, buildVerificationContext, buildStreakWarning, assemblePrompt } = require('../../utils/pipeline/generate');
-const { extractSystemTags, normalizeLatex } = require('../../utils/pipeline/verify');
+const { extractSystemTags, normalizeLatex, verify } = require('../../utils/pipeline/verify');
+const { callLLM } = require('../../utils/llmGateway');
 const { buildSidecar, mergeLlmSignals, getSidecarInstruction, getSignalStats } = require('../../utils/pipeline/sidecar');
 const { buildSlimRules, CORE_RULES } = require('../../utils/pipeline/promptSlim');
 const { computeSessionMood, scoreMessage, buildMoodDirective, TRAJECTORIES, ENERGY_LEVELS } = require('../../utils/pipeline/sessionMood');
@@ -1203,5 +1204,81 @@ describe('Pipeline: normalizeLatex', () => {
       // Should have at least one proper \\) close
       expect(result).toContain('\\)');
     });
+  });
+});
+
+// ============================================================================
+// VERIFY STAGE — Answer-key guard (regression: Triangle Inequality misfire)
+// ============================================================================
+//
+// Origin: live transcript where Maya explained the Triangle Inequality
+// Theorem with 3 numbered conditions and the verify stage swapped her reply
+// for "I can see the problems — which one do you want to work through
+// first?" — a hardcoded worksheet line that made no sense in a
+// no-upload chat. The same trip wire then fired on every retry,
+// trapping the conversation in a loop.
+//
+// The fix: gate the loose answer-key detector behind upload context.
+// When it fires (only in upload context), regenerate in voice via
+// socraticRegenerate instead of swapping in canned worksheet text.
+describe('Pipeline: Verify Stage — Answer-key guard', () => {
+  // A response that LOOKS like an answer key under the strict detector:
+  // three numbered lines, sequential, each starting with a digit so the
+  // numbered-list-math pattern fires.
+  const numberedExplanation =
+    'The Triangle Inequality Theorem has three conditions:\n' +
+    '1. 3 + 4 > 5\n' +
+    '2. 4 + 5 > 3\n' +
+    '3. 3 + 5 > 4\n' +
+    'What do you notice?';
+
+  beforeEach(() => {
+    callLLM.mockReset();
+  });
+
+  test('non-upload context: 3 numbered lines pass through unchanged (no canned worksheet swap)', async () => {
+    const result = await verify(numberedExplanation, {
+      userId: 'u1',
+      hasRecentUpload: false,
+      isWorksheetFollowUp: false,
+    });
+    expect(result.text).toBe(numberedExplanation);
+    expect(result.flags).not.toContain('answer_key_blocked');
+    expect(result.flags).not.toContain('upload_answer_giveaway_regenerated');
+    expect(result.text).not.toMatch(/i can see the problems/i);
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('upload context: same response triggers Socratic regeneration in voice', async () => {
+    callLLM.mockResolvedValueOnce({
+      choices: [{ message: { content: 'Let\'s look at the first condition together — what do you think happens if 3 + 4 is bigger than 5?' } }],
+    });
+    const result = await verify(numberedExplanation, {
+      userId: 'u1',
+      hasRecentUpload: true,
+      isWorksheetFollowUp: false,
+    });
+    expect(callLLM).toHaveBeenCalledTimes(1);
+    expect(result.text).toMatch(/first condition/i);
+    expect(result.text).not.toMatch(/i can see the problems on your worksheet/i);
+    expect(result.flags).toContain('upload_answer_giveaway_regenerated');
+  });
+
+  test('upload context with regen failure: falls back to a non-worksheet-specific line', async () => {
+    callLLM.mockRejectedValueOnce(new Error('LLM unavailable'));
+    const result = await verify(numberedExplanation, {
+      userId: 'u1',
+      hasRecentUpload: true,
+    });
+    expect(result.text).not.toBe(numberedExplanation); // must NOT pass the original through
+    expect(result.flags).toContain('upload_answer_giveaway_fallback');
+  });
+
+  test('non-upload context: safe response passes through untouched', async () => {
+    const safe = 'What is the first step?';
+    const result = await verify(safe, { userId: 'u1' });
+    expect(result.text).toBe(safe);
+    expect(result.flags).toEqual([]);
+    expect(callLLM).not.toHaveBeenCalled();
   });
 });
