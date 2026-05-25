@@ -425,6 +425,46 @@ async function verify(responseText, context = {}) {
     }
   }
 
+  // ── 2c-leak. Answer-announcement guard on tutor-posed problems ──
+  //
+  // When the tutor posed the problem (action is GUIDE_INCORRECT or
+  // RETEACH_MISCONCEPTION) and the student gave a wrong answer, the LLM
+  // is supposed to guide them to find the fix — NOT solve the problem
+  // and name the answer. The 2a guard above only fires for student-posed
+  // problems (it gates on isStudentPosed), so this fills the gap.
+  //
+  // Trigger: detectAnswerAnnouncement matches (multi-root reveal,
+  // pluralized conclusion, transitional reveal, explicit "answer is"),
+  // OR a trailing bare assignment like "x = 2." on its own line.
+  // Action: regenerate through the LLM so the reply stays in voice and
+  // doesn't leak the answer. Reuses socraticRegenerate for consistency.
+  if (!regeneratedThisPass &&
+      (context.action === ACTIONS.GUIDE_INCORRECT || context.action === ACTIONS.RETEACH_MISCONCEPTION)) {
+    const announcement = detectAnswerAnnouncement(text);
+    const trailingAssignment = /[a-z]\s*=\s*-?\d+\.?\d*\s*(?:[.!)\]]?\s*)$/m;
+    if (announcement.detected || trailingAssignment.test(text)) {
+      console.warn(`[Verify] ANSWER LEAK on tutor-posed problem (action=${context.action}, pattern=${announcement.pattern || 'trailing-assignment'}). Regenerating in voice.`);
+      flags.push('answer_leak_on_tutor_posed_detected');
+      const rewritten = await socraticRegenerate(
+        text,
+        context,
+        'named the correct answer or solved the problem for the student after they got it wrong'
+      );
+      if (rewritten) {
+        text = rewritten;
+        flags.push('answer_leak_on_tutor_posed_regenerated');
+        regeneratedThisPass = true;
+        if (context.isStreaming && context.res) {
+          try {
+            context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+          } catch (e) { /* client disconnected */ }
+        }
+      } else {
+        flags.push('answer_leak_on_tutor_posed_regeneration_failed');
+      }
+    }
+  }
+
   // ── 2d. False-rejection guard (CRITICAL — protects correct answers) ──
   // When the pipeline has VERIFIED the student's answer is correct
   // (action === CONFIRM_CORRECT) but the LLM's response implies the
@@ -756,7 +796,18 @@ async function verify(responseText, context = {}) {
   // ── 7. LaTeX normalization ──
   // gpt-4o-mini sometimes uses plain parentheses for math instead of \( \)
   // or omits delimiters entirely. Normalize common patterns.
+  //
+  // TEMP DEBUG (remove once LaTeX mangled-fraction bug is diagnosed):
+  // when LATEX_DEBUG=1, log pre- and post-normalize text for any response
+  // that contains plausible math markup, so we can compare what the LLM
+  // emits vs. what the frontend receives.
+  if (process.env.LATEX_DEBUG === '1' && /\\frac|\$|\bfrac\{|\\sqrt|\\\(|\\\[/.test(text)) {
+    console.log('[LATEX_DEBUG] pre-normalize:', JSON.stringify(text));
+  }
   text = normalizeLatex(text);
+  if (process.env.LATEX_DEBUG === '1' && /\\frac|\$|\bfrac\{|\\sqrt|\\\(|\\\[/.test(text)) {
+    console.log('[LATEX_DEBUG] post-normalize:', JSON.stringify(text));
+  }
 
   // ── 8. Final cleanup: strip any remaining system tags ──
   for (const pattern of SYSTEM_TAG_PATTERNS) {

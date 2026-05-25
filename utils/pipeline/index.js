@@ -21,6 +21,7 @@ const { diagnose } = require('./diagnose');
 const { decide, ACTIONS } = require('./decide');
 const { generate, assemblePrompt } = require('./generate');
 const { verify } = require('./verify');
+const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { persist } = require('./persist');
 const { llmVerifyAnswer, pickProblemContext } = require('./llmVerifier');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
@@ -893,8 +894,15 @@ async function runPipeline(message, ctx) {
     problemResult: persistResults.problemAnswered
       ? (persistResults.wasCorrect ? 'correct' : 'incorrect')
       : null,
-    // Parallel worked example flag — frontend can render a distinct "similar problem" label
-    isParallelExample: decision.action === ACTIONS.WORKED_EXAMPLE || decision.action === ACTIONS.EXIT_RAMP,
+    // Parallel worked example flag — drives the "🔄 Similar problem" UI badge.
+    // Gated on BOTH the decision (intent) AND the verified response text
+    // (actual behavior). The decide stage sometimes routes to WORKED_EXAMPLE
+    // / EXIT_RAMP from cumulative wrong-counts that include misdiagnosed
+    // turns, so action alone is unreliable — we confirm the tutor's reply
+    // actually introduces a parallel example before tagging the turn.
+    isParallelExample:
+      (decision.action === ACTIONS.WORKED_EXAMPLE || decision.action === ACTIONS.EXIT_RAMP)
+      && detectParallelExampleIntroduction(verified.text),
     // Error annotation: misconception label for frontend display (no answer revealed)
     errorAnnotation: (diagnosis.isCorrect === false && diagnosis.misconception) ? {
       name: diagnosis.misconception.name,

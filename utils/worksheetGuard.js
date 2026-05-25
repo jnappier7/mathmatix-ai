@@ -343,6 +343,12 @@ function detectAnswerAnnouncement(text) {
         /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:factored\s+form|factors?|answers?|solutions?|results?|sum|difference|product|quotient|vertex|y-?intercept|x-?intercept|axis\s+of\s+symmetry|roots?|zeros?|maximum|minimum|slope|derivative|domain|range|equation)\s+(?:is|=|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
         /(?:=\s*\\[(\[])\s*\(.*?\)\s*\(.*?\)\s*(?:\\[\])])/,
         /(?:final\s+answer|boxed|result)\s*[:=]\s*/i,
+        // Coordinate-form leak: "so the x-coordinate of the vertex is 2",
+        // "so the y-coordinate is 5", "thus the y-value of the maximum is 12".
+        // Real transcripts from a vertex-of-parabola lesson hit this exact
+        // shape, which the prior patterns missed because a noun phrase
+        // ("x-coordinate of the vertex") sits between "the" and the verb.
+        /(?:therefore|so|thus|hence)\s*,?\s*(?:the\s+)?(?:[xyz]\s*-?\s*(?:coordinate|value|intercept))\s+(?:of\s+(?:the\s+)?[^,.\n]{1,40})?\s*(?:is|=|equals|are)\s*[:=]?\s*(?:\\[(\[])?\s*[-\d(x]/i,
     ];
     for (let i = 0; i < explicitAnswer.length; i++) {
         if (explicitAnswer[i].test(text)) {
@@ -431,6 +437,41 @@ function detectWorkedSolution(text) {
     };
 }
 
+/**
+ * Detect whether the tutor's response actually introduces a parallel /
+ * worked example (e.g. "let me show you a similar problem with different
+ * numbers"). This decouples the "🔄 Similar problem" UI badge from the
+ * decide stage's action name — when the decision engine miscounts wrong
+ * answers and routes to WORKED_EXAMPLE on a turn where the tutor doesn't
+ * actually pivot to a parallel problem, the badge would misfire. Using
+ * the actual response text as the source of truth fixes that.
+ *
+ * Requires explicit phrasing — "different numbers", "similar problem",
+ * "let's try one together", "let me work through an example", etc. The
+ * standard tutor reply that just keeps guiding the same problem will
+ * NOT match.
+ *
+ * @param {string} text - The verified AI response text
+ * @returns {boolean}
+ */
+function detectParallelExampleIntroduction(text) {
+    if (!text || typeof text !== 'string') return false;
+    const PARALLEL_INTRO_PATTERNS = [
+        /\bsimilar\s+(?:problem|example|one|equation|question)\b/i,
+        /\b(?:different|new|fresh|other)\s+numbers\b/i,
+        /\blet'?s\s+try\s+(?:a\s+)?(?:similar|another|one\s+together|different)\b/i,
+        /\blet\s+me\s+(?:show|walk)\s+you\s+(?:through\s+)?(?:a|an|another)\s+(?:example|similar|problem)\b/i,
+        /\blet\s+me\s+(?:work\s+through|do)\s+(?:a|an|another|one)\s+(?:example|similar|problem|first)\b/i,
+        /\bhere'?s\s+(?:a|an|another)\s+(?:similar|example|practice)\s+(?:problem|one|example)?\b/i,
+        /\bworked?\s+example\b/i,
+        /\bparallel\s+(?:problem|example)\b/i,
+        /\btry\s+(?:this|one)\s+(?:first|together|instead)[:,.]/i,
+        /\bsay\s+we\s+had\s+(?:the\s+)?(?:problem|equation|expression)\b/i,
+        /\bsuppose\s+(?:we|you)\s+(?:had|were\s+given|see)\s+(?:the\s+)?(?:problem|equation)\b/i,
+    ];
+    return PARALLEL_INTRO_PATTERNS.some(pat => pat.test(text));
+}
+
 module.exports = {
     WORKSHEET_GUARD_INSTRUCTION,
     applyWorksheetGuard,
@@ -441,5 +482,6 @@ module.exports = {
     filterAnswerKeyResponse,
     detectAnswerAnnouncement,
     detectWorkedSolution,
+    detectParallelExampleIntroduction,
     ANSWER_KEY_REDIRECT_FALLBACK
 };
