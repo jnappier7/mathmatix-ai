@@ -99,6 +99,18 @@ const conditionalValidation = (req, res, next) => {
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
 const MAX_MESSAGE_LENGTH = 2000;
+
+// Validate an IANA timezone string by asking Intl whether it can format
+// against it. Rejects garbage strings like "MyTimezone" without an allowlist.
+function isValidIanaTimezone(tz) {
+    if (!tz || typeof tz !== 'string') return false;
+    try {
+        new Intl.DateTimeFormat('en-CA', { timeZone: tz });
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
 const MAX_HISTORY_LENGTH_FOR_AI = 100; // Increased from 40 — GPT-4o-mini has 128K context, 40 was causing context loss
 
 // Per-user request lock to prevent concurrent chat processing (race condition fix).
@@ -273,6 +285,18 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
     try {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found." });
+
+        // ── Auto-detect timezone ──
+        // The browser sends Intl.DateTimeFormat().resolvedOptions().timeZone in
+        // req.body.clientTimezone. Persist it on the user doc when it's a valid
+        // IANA string and differs from what we have. The streak day-boundary
+        // math reads user.timezone in the pipeline's persist stage.
+        const clientTimezone = req.body?.clientTimezone;
+        if (clientTimezone && typeof clientTimezone === 'string' && isValidIanaTimezone(clientTimezone)
+            && user.timezone !== clientTimezone) {
+            user.timezone = clientTimezone;
+            // No explicit save — the pipeline saves user at the end of the turn.
+        }
 
         // ── Conversation loading ──
         // Mastery mode (badge-earning) uses a separate conversation so regular

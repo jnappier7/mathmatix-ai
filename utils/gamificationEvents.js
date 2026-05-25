@@ -9,6 +9,7 @@
  */
 
 const logger = require('./logger').child({ module: 'gamificationEvents' });
+const { localDayKey, daysBetween } = require('./timeHelpers');
 
 /**
  * Check whether a user can use their weekly streak freeze.
@@ -104,17 +105,20 @@ function updateDailyQuests(user, eventType, data) {
 
   // Always update streak on any activity — even if quests need refresh.
   // Streak tracking is independent of quest generation.
+  //
+  // Day boundaries are computed in the user's IANA timezone (user.timezone),
+  // falling back to UTC when missing. Server-local setHours(0,0,0,0) breaks
+  // for students whose local-day boundary doesn't line up with the server.
   const now = new Date();
+  const tz = user.timezone || 'UTC';
   const lastPractice = user.dailyQuests.lastPracticeDate
     ? new Date(user.dailyQuests.lastPracticeDate)
     : null;
 
   if (lastPractice) {
-    const today = new Date(now);
-    today.setHours(0, 0, 0, 0);
-    const lastDay = new Date(lastPractice);
-    lastDay.setHours(0, 0, 0, 0);
-    const daysDiff = Math.floor((today - lastDay) / (1000 * 60 * 60 * 24));
+    const todayKey = localDayKey(now, tz);
+    const lastDayKey = localDayKey(lastPractice, tz);
+    const daysDiff = daysBetween(lastDayKey, todayKey);
 
     if (daysDiff === 1) {
       user.dailyQuests.currentStreak = (user.dailyQuests.currentStreak || 0) + 1;
