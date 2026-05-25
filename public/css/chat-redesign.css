@@ -90,6 +90,35 @@ body.cr-mode #tour-prompt > div {
   left: auto !important;
 }
 
+/* Voice entry: the floating mic orb (#voice-chat-container, painted by
+   voice-controller.js) is the intuitive entry point — a universally
+   recognized "press mic to talk" pattern. The header pill .cr-voice-toggle
+   (added by voice-mode.js as "Talk to <Tutor>") is hidden in cr-mode
+   because the label reads as a brand/nav CTA rather than a voice control.
+   The composer's #voice-mode-btn is unchanged — it links to /voice-tutor.html
+   for the separate immersive (premium) experience.
+
+   The orb's inline `bottom: 30px; right: 30px` (from voice-controller.js)
+   placed it ON TOP of the right workspace column and its wordy status
+   label bled into the fixed footer. Override with !important since the
+   source styles are inline. Anchor the orb to the bottom-right of the
+   chat column (clearing the workspace's 320px width + 18px stage gap on
+   the right, and the 52px fixed footer on the bottom), and drop the
+   "Click to start voice chat" label — the mic icon is self-explanatory. */
+body.cr-mode .cr-voice-toggle { display: none !important; }
+body.cr-mode #voice-chat-container {
+  right: calc(var(--cr-side-w) + 48px) !important;
+  bottom: 80px !important;
+}
+body.cr-mode #voice-status { display: none !important; }
+
+@media (max-width: 1200px) {
+  /* Workspace leaves grid flow at this breakpoint (becomes a slide-in
+     drawer), so the orb can return to its normal bottom-right corner. */
+  body.cr-mode #voice-chat-container {
+    right: 30px !important;
+  }
+}
 /* Floating voice orb (#voice-chat-container) is the legacy entry into
    in-page voice mode. Redundant with the header "Talk to <Tutor>" pill
    (.cr-voice-toggle), which triggers the same body.cr-voice toggle.
