@@ -78,7 +78,26 @@ window.updateStreakCounter = function(streak) {
     const numberEl = counter?.querySelector('.streak-number');
     const multiplierEl = counter?.querySelector('.streak-multiplier');
 
-    if (!counter || !numberEl) return;
+    // Phase C: shake whenever the streak actually goes UP (not on reset,
+    // not on a no-op refresh). The shake lands on every visible streak
+    // chip — legacy #streak-counter, mobile poster topbar pill .mpc-streak,
+    // and desktop header chip #cr-streak-pill — via triggerStreakShake().
+    const previousStreak = sessionStats.currentStreak || 0;
+    const isIncrement = streak > previousStreak;
+
+    if (!counter || !numberEl) {
+        // Legacy counter element isn't on this page (e.g. chat-redesign
+        // shell hides it). Still fire the shake for the chips that ARE
+        // visible, then update the in-memory tally and return.
+        if (isIncrement && typeof window.triggerStreakShake === 'function') {
+            window.triggerStreakShake();
+        }
+        sessionStats.currentStreak = streak;
+        if (streak > sessionStats.longestStreak) {
+            sessionStats.longestStreak = streak;
+        }
+        return;
+    }
 
     sessionStats.currentStreak = streak;
     if (streak > sessionStats.longestStreak) {
@@ -93,6 +112,10 @@ window.updateStreakCounter = function(streak) {
         const multiplier = Math.min(1 + (streak * 0.1), 3.0);
         if (multiplierEl) {
             multiplierEl.textContent = `${multiplier.toFixed(1)}x`;
+        }
+
+        if (isIncrement && typeof window.triggerStreakShake === 'function') {
+            window.triggerStreakShake();
         }
 
         // Special animations at milestones
@@ -116,6 +139,77 @@ window.updateStreakCounter = function(streak) {
         counter.style.display = 'none';
     }
 };
+
+/**
+ * Phase C — briefly shake all visible streak chips.
+ *
+ * Three streak surfaces coexist depending on which shell the chat
+ * page is rendering: the legacy #streak-counter, the mobile
+ * poster-chat hybrid's topbar pill (.mpc-streak), and the
+ * chat-redesign desktop header chip (#cr-streak-pill). They're all
+ * downstream of the same drawer value, but each owns its own paint.
+ * This helper shakes whichever ones exist on the page without
+ * requiring per-shell wiring.
+ *
+ * Idempotent: re-adding the class while it's already on does nothing
+ * unless we first remove it. We restart the animation by toggling the
+ * class via reflow so back-to-back increments still play.
+ */
+let _lastStreakShakeAt = 0;
+window.triggerStreakShake = function () {
+    // Dedupe rapid re-triggers (updateStreakCounter + the source
+    // MutationObserver below can both fire on the same increment).
+    // 200ms is well under the 650ms animation, so a real second
+    // increment a moment later still plays its own shake.
+    const now = Date.now();
+    if (now - _lastStreakShakeAt < 200) return;
+    _lastStreakShakeAt = now;
+
+    const selectors = ['#streak-counter', '.mpc-streak', '#cr-streak-pill'];
+    selectors.forEach(function (sel) {
+        const els = document.querySelectorAll(sel);
+        els.forEach(function (el) {
+            el.classList.remove('cr-streak-shake');
+            // Force a reflow so removing+re-adding the class restarts
+            // the keyframe animation even if it was already running.
+            void el.offsetWidth;
+            el.classList.add('cr-streak-shake');
+            setTimeout(function () {
+                el.classList.remove('cr-streak-shake');
+            }, 650);
+        });
+    });
+};
+
+// Mirror-path watcher: some streak increments arrive via the sidebar
+// updating #msb-streak (the cross-shell source value) without ever
+// calling updateStreakCounter. Watch that element directly so the
+// shake fires regardless of which write path was taken.
+(function watchStreakSource() {
+    function attach() {
+        const src = document.getElementById('msb-streak');
+        if (!src) {
+            // The source element isn't mounted yet (chat shell loads
+            // async). Re-try once after DOM is ready, then give up —
+            // some pages just don't have a streak source.
+            return false;
+        }
+        let lastVal = parseInt((src.textContent || '0').replace(/\D/g, ''), 10) || 0;
+        new MutationObserver(function () {
+            const v = parseInt((src.textContent || '0').replace(/\D/g, ''), 10) || 0;
+            if (v > lastVal && typeof window.triggerStreakShake === 'function') {
+                window.triggerStreakShake();
+            }
+            lastVal = v;
+        }).observe(src, { childList: true, characterData: true, subtree: true });
+        return true;
+    }
+    if (typeof document === 'undefined') return;
+    if (!attach()) {
+        // Wait for DOMContentLoaded, try once more, then give up.
+        document.addEventListener('DOMContentLoaded', attach, { once: true });
+    }
+})();
 
 /**
  * Reset streak (called when student gets answer wrong)
