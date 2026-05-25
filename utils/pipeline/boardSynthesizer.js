@@ -44,7 +44,7 @@
 
 'use strict';
 
-const { processMathMessage } = require('../mathSolver');
+const { parseCleanProblem } = require('../mathSolver');
 
 // ---------------------------------------------------------------------------
 // Detectors — operations, intermediate equations, final answers
@@ -256,59 +256,19 @@ function canonicalProblemTex(problem) {
   }
 }
 
-// Extract candidate math substrings out of conversational text so we
-// don't feed full prose to processMathMessage (its evaluation
-// catch-all happily takes whole sentences and returns garbage like
-// "the first step you want to take" = 331). Each candidate is a
-// small chunk that looks like a math expression a tutor or student
-// would have written.
-function extractMathCandidates(text) {
-  const candidates = [];
-  // "Solve <expr>", "Try <expr>", "Find <expr>", etc. — grab up to
-  // a sentence-ending punctuator.
-  const verbPattern = /\b(?:solve|try|find|evaluate|simplify|factor|graph|compute)\s+([^.?!\n]+?)(?=[.?!\n]|$)/gi;
-  let m;
-  while ((m = verbPattern.exec(text)) !== null) {
-    candidates.push(m[1].trim());
-  }
-  // A bare equation: variable+coefficient on at least one side, "=",
-  // and a number or expression on the other. Conservative; pulls
-  // just the equation portion.
-  const eqPattern = /(?:^|[\s:>])(\(?-?\d*[a-z][a-z0-9\s+\-*/^().]*=\s*-?[a-z0-9\s+\-*/^()]+?)(?=[.?!\n]|$|\s{2})/gi;
-  while ((m = eqPattern.exec(text)) !== null) {
-    candidates.push(m[1].trim());
-  }
-  return candidates;
-}
-
 function detectPosedProblem(text) {
   if (!text || typeof text !== 'string') return null;
   // Bound the input — tutor messages can run long and we don't want
-  // to scan multi-paragraph recaps.
+  // to scan multi-paragraph recaps. The first 600 chars cover any
+  // realistic "Solve …" intro line.
   const sample = text.slice(0, 600);
-
-  // Try whole-string parsing first — fast path for a clean student
-  // bare-drop like "solve 3x-5=16" or "Solve 4x+3=27".
-  const direct = processMathMessage(sample);
-  if (direct.hasMath && direct.solution?.success) {
-    const tex = canonicalProblemTex(direct.problem);
-    if (tex) {
-      return { tex, problem: direct.problem, correctAnswer: String(direct.solution.answer) };
-    }
-  }
-
-  // Slow path: pull math substrings out of conversational prose and
-  // parse each one. First successful parse wins.
-  const candidates = extractMathCandidates(sample);
-  for (const candidate of candidates) {
-    const result = processMathMessage(candidate);
-    if (!result.hasMath || !result.solution?.success) continue;
-    const tex = canonicalProblemTex(result.problem);
-    if (!tex) continue;
-    return { tex, problem: result.problem, correctAnswer: String(result.solution.answer) };
-  }
-
-  return null;
+  // parseCleanProblem handles whole-string parsing, prose rejection,
+  // and math-substring extraction internally.
+  const result = parseCleanProblem(sample);
+  if (!result.hasMath || !result.solution?.success) return null;
+  const tex = canonicalProblemTex(result.problem);
+  if (!tex) return null;
+  return { tex, problem: result.problem, correctAnswer: String(result.solution.answer) };
 }
 
 // ---------------------------------------------------------------------------

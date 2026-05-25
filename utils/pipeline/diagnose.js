@@ -10,13 +10,13 @@
  * @module pipeline/diagnose
  */
 
-const { processMathMessage, verifyAnswer } = require('../mathSolver');
+const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 
 /**
  * Strip LaTeX delimiters from text so regex-based math detection works.
  * AI messages store numbers wrapped in \(...\) or \[...\] per the system prompt's
- * MATH FORMATTING rule, but processMathMessage expects plain text.
+ * MATH FORMATTING rule, but parseCleanProblem expects plain text.
  *
  * "When you add \(141\) and \(94\):" → "When you add 141 and 94:"
  */
@@ -109,7 +109,11 @@ async function diagnose(observation, context = {}) {
     // which breaks regex-based math detection (e.g. "add \(141\) and \(94\)"
     // won't match the nlAddPattern expecting "add 141 and 94").
     const plainContent = stripLatexDelimiters(msg.content);
-    const result = processMathMessage(plainContent);
+    // parseCleanProblem rejects the evaluation catch-all on prose-laden
+    // text and extracts clean math substrings from sentences like
+    // "Here's another for you: Solve 4x+3=27." so the fallback path
+    // doesn't poison verification with a bogus correctAnswer.
+    const result = parseCleanProblem(plainContent);
     if (result.hasMath && result.solution?.success) {
       problemInfo = {
         problemType: result.problem.type,
