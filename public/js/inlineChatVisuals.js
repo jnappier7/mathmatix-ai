@@ -417,6 +417,13 @@ class InlineChatVisuals {
             // Pure numeric/symbol title — almost certainly garbage (e.g. "1783").
             title = defaultTitle;
         }
+        // Final sync: if the title carries math that doesn't match fn
+        // (e.g. fn="x^2" but title="Graph of y=x^2 + 4x - 12"), override
+        // with the canonical "Graph of y = ${fn}". Without this, the
+        // rendered curve and the label disagree on screen.
+        if (window.MathmatixGraphTitleSync) {
+            title = window.MathmatixGraphTitleSync.syncGraphTitle(title, fn);
+        }
         const color = params.color || '#667eea';
 
         // Store graph config for later rendering
@@ -4366,7 +4373,10 @@ class InlineChatVisuals {
         const fn = params.fn || params.function || 'x^3-3*x^2+2*x';
         const xMin = params.xMin ?? params.xmin ?? -5;
         const xMax = params.xMax ?? params.xmax ?? 5;
-        const title = params.title || `f(x) and f′(x)`;
+        let title = params.title || `f(x) and f′(x)`;
+        if (window.MathmatixGraphTitleSync) {
+            title = window.MathmatixGraphTitleSync.syncGraphTitle(title, fn);
+        }
 
         const graphConfig = JSON.stringify({
             type: 'derivative', fn, xMin, xMax
@@ -4401,7 +4411,10 @@ class InlineChatVisuals {
         const fn = params.fn || params.function || '(x^2-1)/(x-1)';
         const xMin = params.xMin ?? params.xmin ?? -8;
         const xMax = params.xMax ?? params.xmax ?? 8;
-        const title = params.title || `Rational Function`;
+        let title = params.title || `Rational Function`;
+        if (window.MathmatixGraphTitleSync) {
+            title = window.MathmatixGraphTitleSync.syncGraphTitle(title, fn);
+        }
 
         const graphConfig = JSON.stringify({
             type: 'rational', fn, xMin, xMax
@@ -4436,7 +4449,10 @@ class InlineChatVisuals {
         const fn = params.fn || params.function || '4*x^3-6*x^2+2*x';
         const xMin = params.xMin ?? params.xmin ?? 0;
         const xMax = params.xMax ?? params.xmax ?? 4;
-        const title = params.title || `Position, Velocity & Acceleration`;
+        let title = params.title || `Position, Velocity & Acceleration`;
+        if (window.MathmatixGraphTitleSync) {
+            title = window.MathmatixGraphTitleSync.syncGraphTitle(title, fn);
+        }
 
         const graphConfig = JSON.stringify({
             type: 'velocity', fn, xMin, xMax
