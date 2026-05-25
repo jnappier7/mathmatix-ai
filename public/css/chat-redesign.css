@@ -26,6 +26,19 @@ body.cr-mode .landing-header {
   border-bottom: 1px solid var(--cr-border);
 }
 
+/* The header is always painted dark navy regardless of theme, so its
+   contents must use a light foreground. Without this, light-theme
+   pages inherit --cr-text: #18202B (near-black) and the streak/Progress
+   pills go invisible against the navy backdrop. */
+body.cr-mode .landing-header,
+body.cr-mode .landing-header .cr-streak-pill,
+body.cr-mode .landing-header .cr-progress-btn {
+  --cr-text: #E6E9F2;
+  --cr-border: rgba(255, 255, 255, 0.18);
+  --cr-pill-bg: rgba(255, 255, 255, 0.08);
+  --cr-pill-bg-hover: rgba(255, 255, 255, 0.14);
+}
+
 body.cr-mode .landing-header .main-logo-hero {
   /* Flip the colored mark to a clean white silhouette so it reads on
      the dark header. Brand identity here is the SHAPE (glasses +
@@ -241,6 +254,12 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   background: linear-gradient(180deg, #1A1F35 0%, #0E1322 100%);
   border: 1px solid var(--cr-border);
   min-height: 520px;
+  /* Cap + margin-bottom match #chat-container and .cr-workspace so the
+     three stage columns end at the same vertical line above the fixed
+     footer. Without this the hero stretched the full grid row while the
+     other two were capped, leaving the middle short. */
+  max-height: calc(100vh - 124px);
+  margin-bottom: 60px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -411,15 +430,12 @@ body.cr-mode #chat-container {
   border-radius: 22px;
   padding: 8px 0 0 !important;
   margin-bottom: 60px !important;
-  /* Cap the container's height so its bottom — and the composer's input
-     row inside it — cannot extend past the visible viewport, regardless of
-     how the stage's min-height adds up. The fixed footer occupies ~52px
-     at the bottom; 200px leaves room for the footer + a typical header +
-     padding. Inside the container, #chat-messages-container is flex:1
-     overflow:auto so it shrinks; the composer (flex-shrink:0) keeps its
-     full height and stays visible. The previous margin-bottom-only lift
-     was too fragile across header sizes. */
-  max-height: calc(100vh - 200px);
+  /* Cap matches .cr-workspace so the three stage columns end at the same
+     vertical line. The fixed footer occupies ~52px; this leaves room for
+     the header + footer + a small breathing gap. Inside the container,
+     #chat-messages-container is flex:1 overflow:auto so it shrinks; the
+     composer (flex-shrink:0) keeps its full height and stays visible. */
+  max-height: calc(100vh - 124px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
