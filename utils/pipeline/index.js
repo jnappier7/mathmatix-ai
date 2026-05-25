@@ -43,6 +43,7 @@ const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../s
 const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
+const { parseVisualTabTags } = require('../visualTabTagParser');
 const { inferBoardEvents } = require('./inferWorkspace');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
@@ -505,6 +506,21 @@ async function runPipeline(message, ctx) {
     verified.xpCommands = [];
   }
 
+  // ── Stage 5e: VISUAL TAB TAGS (Phase D) ──
+  // Extract <GRAPH fn="..."/> and <TILES expression="..."/> tags from
+  // verify.text and strip them from the visible message. These switch
+  // the workspace tab on the client to a focused tool (Graph or Tiles)
+  // rather than dropping a card into the board timeline — coexists
+  // with <BOARD action="graph"/>. Cap at 2 per turn so a single reply
+  // can't whipsaw the workspace through several tab changes.
+  const visualTabParsed = parseVisualTabTags(verified.text);
+  if (visualTabParsed.visualTabCommands.length > 0) {
+    verified.text = visualTabParsed.cleanedText;
+    verified.visualTabCommands = visualTabParsed.visualTabCommands.slice(0, 2);
+  } else {
+    verified.visualTabCommands = [];
+  }
+
   // ── Merge LLM signals into sidecar ──
   mergeLlmSignals(sidecar, verified.extracted);
   const signalStats = getSignalStats(sidecar);
@@ -870,6 +886,7 @@ async function runPipeline(message, ctx) {
     visualCommands: verified.visualCommands,
     boardCommands: verified.boardCommands || [],
     xpCommands: verified.xpCommands || [],
+    visualTabCommands: verified.visualTabCommands || [],
     drawingSequence: verified.drawingSequence,
     boardContext: verified.boardContext,
     xpBreakdown: persistResults.xpBreakdown,

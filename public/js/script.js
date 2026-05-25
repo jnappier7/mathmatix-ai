@@ -2734,6 +2734,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Phase D: execute server-emitted <GRAPH>/<TILES> tab-switch
+            // commands. Pipeline caps the batch at 2 so a single reply
+            // can't whipsaw the workspace.
+            if (Array.isArray(data.visualTabCommands) && data.visualTabCommands.length > 0 && window.VisualTabTagHandler) {
+                try {
+                    window.VisualTabTagHandler.executeVisualTabCommands(data.visualTabCommands);
+                } catch (error) {
+                    console.error('[VisualTabTagHandler] Failed to execute commands:', error);
+                }
+            }
+
             // Server-initiated assessment launch. Fires when the student
             // accepted a Growth Check (or Starting Point) offer in chat —
             // we open the structured FloatingScreener instead of letting

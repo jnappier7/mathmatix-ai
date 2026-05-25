@@ -18,6 +18,7 @@ const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTool
 const { parseBoardTags } = require('../boardTagParser');
 const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
 const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
+const { createVisualTabTagStreamFilter } = require('../visualTabTagStreamFilter');
 
 // Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
 // replacement / narration paths). Streaming chunks use the stateful
@@ -521,11 +522,13 @@ async function generateStreaming(model, messages, llmOptions, res) {
   let finishReason = null;
 
   // Stateful filters that hold back any partial / unclosed tag so raw
-  // tag fragments never flicker into the chat bubble. Chained: board
-  // strips <BOARD> first, then xp strips <XP>. Each is independent —
-  // order is just a deterministic pipeline.
+  // tag fragments never flicker into the chat bubble. Chained:
+  // board → xp → visual-tab. Each filter is independent; order is
+  // just a deterministic pipeline so combined Phase C+D rebases stay
+  // commutative.
   const boardFilter = createBoardTagStreamFilter();
   const xpFilter = createXpTagStreamFilter();
+  const visualTabFilter = createVisualTabTagStreamFilter();
 
   try {
     const stream = await callLLMStream(model, messages, llmOptions);
@@ -543,7 +546,8 @@ async function generateStreaming(model, messages, llmOptions, res) {
       if (delta.content) {
         fullResponse += delta.content;
         const afterBoard = boardFilter.push(delta.content);
-        const safe = afterBoard ? xpFilter.push(afterBoard) : '';
+        const afterXp = afterBoard ? xpFilter.push(afterBoard) : '';
+        const safe = afterXp ? visualTabFilter.push(afterXp) : '';
         if (safe) {
           res.write(`data: ${JSON.stringify({ type: 'chunk', content: safe })}\n\n`);
         }
@@ -568,14 +572,18 @@ async function generateStreaming(model, messages, llmOptions, res) {
       }
     }
 
-    // Drain any text the stream filters were still holding back. Board
-    // first (it may release a partial-opener tail that xp then sees),
-    // then xp.
+    // Drain any text the stream filters were still holding back. Same
+    // chain order as live streaming: board flushes first (may release
+    // a partial-opener tail), the xp filter sees that, then visual-tab
+    // sees the xp output and flushes last.
     {
       const boardTail = boardFilter.flush();
       const xpHead = boardTail ? xpFilter.push(boardTail) : '';
       const xpTail = xpFilter.flush();
-      const tail = xpHead + xpTail;
+      const xpDrained = xpHead + xpTail;
+      const tabHead = xpDrained ? visualTabFilter.push(xpDrained) : '';
+      const tabTail = visualTabFilter.flush();
+      const tail = tabHead + tabTail;
       if (tail && !clientDisconnected) {
         res.write(`data: ${JSON.stringify({ type: 'chunk', content: tail })}\n\n`);
       }

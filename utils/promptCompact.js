@@ -147,6 +147,43 @@ EXAMPLES:
   You: "Right." (no <XP/> — routine answer, just keep moving)
 `.trim();
 
+// ── VISUAL TAB TAGS (Phase D) ──
+// Inline <GRAPH/> and <TILES/> tags switch the workspace right slot to
+// a focused tool tab where the student can interact directly. Sibling
+// protocol to <BOARD>: same shape, different surface.
+const VISUAL_TAB_TAG_INSTRUCTIONS = `
+--- WORKSPACE TAB TAGS — <GRAPH/> and <TILES/> ---
+The workspace beside the chat has tabs: Board (the step stack), Graph (a live interactive plotter), Tiles (the algebra-tile workspace), Calc (a calculator). Use these tags to switch the student INTO a tool tab when they need to manipulate something, not just look at a reference.
+
+SYNTAX:
+<GRAPH fn="x^2 - 4" caption="Try moving the slider" />
+<TILES expression="2x + 3" />
+<TILES />
+
+DIFFERENCE FROM <BOARD action="graph"/>:
+- <BOARD action="graph" fn="..."/> drops a STATIC reference graph into the board timeline alongside the equation steps. Use when you want the student to keep looking at the plot while they reason through the problem on the board.
+- <GRAPH fn="..."/> switches them to the GRAPH TAB so they can drag, zoom, plot additional functions, and explore. Use when the lesson IS the exploration — slopes, transformations, intercepts, "what happens when you change a coefficient."
+
+WHEN TO EMIT:
+1. <GRAPH/> — when the student needs to MANIPULATE the function, not just see it. Transformations, slope/intercept explorations, function comparisons, "drag this and notice...". fn= is required (function of x). Optional caption= is one short line shown above the plot.
+2. <TILES/> — when the student is learning factoring, completing the square, distributive property with negatives, or any concept where physically arranging tiles makes the structure visible. expression= is optional (currently informational — the workspace launches blank and the student lays tiles themselves; the inline [ALGEBRA_TILES:expr] syntax still seeds tiles inside the chat bubble).
+3. NEVER tab-switch as decoration. A tab change is a context shift for the student — only emit when the next move actually happens IN that tool.
+4. Max 1-2 tab switches per turn. Whipsawing through tabs makes the workspace feel chaotic. The pipeline caps at 2; emit fewer in practice.
+5. If the student is mid-step on the board, don't yank them away. Finish the current move first, then offer the tab switch ("want to try this on the graph?") and emit the tag when they accept.
+
+EXAMPLES:
+  Student: "what happens to a parabola when I change the c in ax^2 + bx + c?"
+  You: "Great question — easier to feel than describe. Drag the c slider and watch."
+       <GRAPH fn="x^2 + 0*x + 0" caption="Change c with the slider — watch the whole curve shift" />
+
+  Student: "I keep messing up factoring x^2 + 5x + 6"
+  You: "Let's use the tiles for this one — the rectangle has to be the right shape."
+       <TILES expression="x^2 + 5x + 6" />
+
+  Student: "ok so y = 2x + 3 — what's the slope?"
+  You: "Trace from one point to the next on the line and count." (NO <GRAPH/> — the student didn't ask for the tool, and a tab switch here interrupts a direct question that's faster to answer in chat.)
+`.trim();
+
 const STATIC_RULES_TEMPLATE = `
 ${CAPABILITY_IDENTITY}
 
@@ -343,7 +380,7 @@ ${BOARD_TAG_INSTRUCTIONS}
 
 ${XP_TAG_INSTRUCTIONS}
 
-${VISUAL_TOOLS_SECTION}
+${VISUAL_TAB_TAG_INSTRUCTIONS}
 
 ${IMAGE_SEARCH_SECTION}
 
