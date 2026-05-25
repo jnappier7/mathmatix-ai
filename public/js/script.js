@@ -1848,31 +1848,53 @@ document.addEventListener("DOMContentLoaded", () => {
         return { bubble, textNode, messageContainer };
     }
 
-    // Accumulate raw text for streaming — we keep the raw source
-    // and re-render the full text on each chunk. KaTeX is synchronous
-    // so no debounce is needed.
+    // Accumulate raw text for streaming. The render is throttled to ~120ms
+    // because KaTeX, while synchronous, re-parses the entire accumulated
+    // string on every call — long responses with embedded math become
+    // O(n²) main-thread work and freeze the page. Buffer chunks here; a
+    // single timer flushes the latest text. finalizeStreamingMessage clears
+    // the timer and does the authoritative final render.
     let _streamRawText = '';
+    let _streamRenderTimer = null;
+    let _streamRenderTarget = null;
+    const STREAM_RENDER_INTERVAL_MS = 120;
+
+    function _flushStreamRender() {
+        _streamRenderTimer = null;
+        const ref = _streamRenderTarget;
+        if (!ref || !ref.textNode) return;
+        if (ref.bubble.classList.contains('ai')) {
+            ref.textNode.innerHTML = renderMarkdownMath(_streamRawText);
+        } else {
+            ref.textNode.textContent = _streamRawText;
+        }
+        if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+    }
 
     // Helper function to append a chunk to a streaming message
     function appendStreamingChunk(messageRef, chunk) {
         if (!messageRef || !messageRef.textNode) return;
 
         _streamRawText += chunk;
+        _streamRenderTarget = messageRef;
 
-        // Single-pass render: markdown + KaTeX in one call, synchronous
-        if (messageRef.bubble.classList.contains('ai')) {
-            messageRef.textNode.innerHTML = renderMarkdownMath(_streamRawText);
-        } else {
-            messageRef.textNode.textContent = _streamRawText;
+        if (_streamRenderTimer == null) {
+            _streamRenderTimer = setTimeout(_flushStreamRender, STREAM_RENDER_INTERVAL_MS);
         }
-
-        // Auto-scroll
-        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     // Finalize streaming message (add audio, reactions, etc.)
     function finalizeStreamingMessage(messageRef, fullText) {
         if (!messageRef || !messageRef.bubble) return;
+
+        // Cancel any pending throttled render so a stale flush can't paint
+        // over the authoritative final render below (or, worse, write into
+        // the next message's bubble if a new turn starts immediately).
+        if (_streamRenderTimer != null) {
+            clearTimeout(_streamRenderTimer);
+            _streamRenderTimer = null;
+        }
+        _streamRenderTarget = null;
 
         messageRef.bubble.classList.remove('streaming');
         messageRef.bubble.dataset.rawText = fullText || ''; // Store raw text for TTS (avoids KaTeX DOM triple-read)
