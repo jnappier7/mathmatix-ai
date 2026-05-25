@@ -2096,6 +2096,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // Clear input immediately for responsive UX
         userInput.textContent = "";
         userInput.setAttribute('data-placeholder', "Ask a math question...");
+        // Dismiss the soft keyboard on mobile so the conversation is visible.
+        if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+            userInput.blur();
+        }
 
         // Copy attached files and clear them from UI
         const filesToSend = attachedFiles.length > 0 ? [...attachedFiles] : [];
