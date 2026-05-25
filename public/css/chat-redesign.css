@@ -90,6 +90,18 @@ body.cr-mode #tour-prompt > div {
   left: auto !important;
 }
 
+/* Floating voice orb (#voice-chat-container) is the legacy entry into
+   in-page voice mode. Redundant with the header "Talk to <Tutor>" pill
+   (.cr-voice-toggle), which triggers the same body.cr-voice toggle.
+   The orb also overlapped the workspace column and its "Click to start
+   voice chat" label bled into the footer. Hide it in cr-mode; voice mode
+   is still reachable from the header. The composer's #voice-mode-btn is
+   a separate link to /voice-tutor.html (immersive tutor page) and stays.
+   Re-show it when cr-voice is active — voice-controller.js paints the
+   listening orb on this container, and it shouldn't disappear once the
+   user has actually entered the voice experience. */
+body.cr-mode:not(.cr-voice) #voice-chat-container { display: none !important; }
+
 /* Composer icon tooltips — pure CSS, sourced from data-tip on each
    .imessage-tool-btn. Uses data-tip rather than title so the native
    browser tooltip doesn't double-up; aria-label remains for screen
@@ -490,7 +502,13 @@ body.cr-mode .message.user {
   border: 1px solid rgba(124, 107, 255, 0.35);
   border-top-right-radius: 6px;
 }
-body.cr-mode .message-timestamp {
+body.cr-mode .message-timestamp,
+body.cr-mode .message.user .message-timestamp {
+  /* Both halves listed so this beats base/chat.css's
+     `.message.user .message-timestamp { color: rgba(255,255,255,0.6); }`
+     — that white-at-60% reads on a dark bubble but disappears against
+     the lavender light-theme user bubble (#EDE9FF). Routing both
+     through --cr-text-dim keeps them readable in either theme. */
   font-size: 11px;
   color: var(--cr-text-dim);
   margin-top: 4px;
