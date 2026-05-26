@@ -337,17 +337,48 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  /* Number resolve cards in document order so the student sees STEP 1,
+     STEP 2, ... without needing JS bookkeeping. Reset per board. */
+  counter-reset: cr-ws-step;
 }
 
 .cr-ws-board-empty {
   text-align: center;
-  padding: 28px 14px;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   color: var(--cr-text-dim);
   font-size: 13px;
   line-height: 1.5;
   border: 1px dashed var(--cr-border);
   border-radius: var(--cr-radius-md);
   background: rgba(255, 255, 255, 0.02);
+}
+.cr-ws-board-empty-ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cr-pill-bg);
+  color: var(--cr-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.cr-ws-board-empty-title {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cr-text);
+}
+.cr-ws-board-empty-body {
+  margin: 0;
+  max-width: 260px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--cr-text-dim);
 }
 
 /* Common card chrome */
@@ -385,6 +416,25 @@
   font-weight: 700;
   letter-spacing: 0.10em;
   color: var(--cr-accent);
+  opacity: 0.85;
+}
+
+/* Resolve — a step the student has taken. Numbered (STEP 1, STEP 2, ...)
+   so two cards with the same equation don't read as a duplicate. The
+   counter is incremented by the card itself and reset on the stack. */
+.cr-ws-board-card--resolve {
+  counter-increment: cr-ws-step;
+  border-color: rgba(139, 123, 255, 0.18);
+}
+.cr-ws-board-card--resolve::before {
+  content: "STEP " counter(cr-ws-step);
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: var(--cr-text-dim);
   opacity: 0.85;
 }
 

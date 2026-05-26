@@ -124,7 +124,12 @@
     body.appendChild(stack);
 
     var empty = el('div', 'cr-ws-empty cr-ws-board-empty',
-      'Your working solution will appear here as you and your tutor reason through it together.');
+      '<div class="cr-ws-board-empty-ico" aria-hidden="true">' +
+        '<i class="fas fa-pen-ruler"></i></div>' +
+      '<h5 class="cr-ws-board-empty-title">Ready to work it out?</h5>' +
+      '<p class="cr-ws-board-empty-body">' +
+        'Your steps will land here as you and your tutor work through ' +
+        'the problem together.</p>');
     if (WS.board.steps.length === 0) stack.appendChild(empty);
 
     // Rebuild any persisted steps (e.g. when re-entering the tab).
