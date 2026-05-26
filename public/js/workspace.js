@@ -401,10 +401,13 @@
   }
 
   function buildFab() {
+    // Labeled pill, not a mystery circle. Students don't intuit a shapes
+    // icon as "math tools"; the explicit "Workspace" word does the work.
     var fab = el('button', 'cr-ws-fab',
-      '<i class="fas fa-shapes" aria-hidden="true"></i>');
+      '<i class="fas fa-shapes" aria-hidden="true"></i>' +
+      '<span class="cr-ws-fab-label">Workspace</span>');
     fab.type = 'button';
-    fab.setAttribute('aria-label', 'Toggle math workspace');
+    fab.setAttribute('aria-label', 'Open math workspace');
     fab.addEventListener('click', function () {
       if (WS.el.classList.contains('is-open')) closeWorkspace();
       else openWorkspace();
