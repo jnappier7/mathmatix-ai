@@ -90,11 +90,15 @@
       rgba(7,9,15,.97) 100%);
     transition: background .45s ease;
   }
+  /* Conversation state: darken the top of the gradient too. Idle keeps a
+     bright poster behind the greeting; once the student is reading lesson
+     cards, every part of the surface has to support text, including the
+     top band that sits in front of the tutor's face. */
   body.cr-mode.mpc-has-messages .mpc-scrim {
     background: linear-gradient(180deg,
-      rgba(7,9,15,.30) 0%,
-      rgba(7,9,15,.34) 24%,
-      rgba(7,9,15,.86) 52%,
+      rgba(7,9,15,.58) 0%,
+      rgba(7,9,15,.62) 22%,
+      rgba(7,9,15,.90) 52%,
       rgba(7,9,15,.98) 78%);
   }
 
@@ -311,7 +315,7 @@
   /* assistant = lesson card */
   body.cr-mode #chat-messages-container .message.ai {
     max-width: 88% !important;
-    background: rgba(22,27,46,.92) !important;
+    background: rgba(22,27,46,.96) !important;
     color: #E6E9F2 !important;
     border: 1px solid rgba(124,107,255,.30) !important;
     border-radius: 5px 18px 18px 18px !important;
@@ -323,6 +327,32 @@
     -webkit-backdrop-filter: blur(6px);
   }
   body.cr-mode #chat-messages-container .message.ai .message-text { color: #E6E9F2; }
+
+  /* KaTeX inside AI bubbles — the default .katex color inherits, but
+     the serif math glyphs are thinner than the surrounding sans text
+     and read as washed-out against the poster bleed. Force a brighter
+     stroke and a hair more weight so equations land with the same
+     visual weight as the prose around them. Targeting just .katex
+     keeps any future colored-math (\color{...}) intact via specificity. */
+  body.cr-mode #chat-messages-container .message.ai .katex {
+    color: #F4F6FB !important;
+    font-weight: 500;
+  }
+  /* Display math inside AI bubbles needs its own surface — without one,
+     the gradient card from math-style.css collapses into the bubble and
+     equations lose their "this is the thing" framing. Lift it onto a
+     slightly darker pad with a brighter accent rail. */
+  body.cr-mode #chat-messages-container .message.ai .katex-display {
+    margin: 10px 0;
+    padding: 12px 14px !important;
+    background: rgba(7, 9, 15, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-left: 3px solid #8B7BFF !important;
+    border-radius: 10px !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
   body.cr-mode #chat-messages-container .message.system-error {
     background: rgba(255,78,78,.16) !important;
     border: 1px solid rgba(255,78,78,.4) !important;
@@ -330,8 +360,9 @@
   }
   body.cr-mode #chat-messages-container .message-timestamp {
     font-size: 11px;
-    color: #8a93a8;
+    color: #b6bfd2;
     margin-top: 4px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
   }
   /* Per-message TTS button: its base styling is light-theme (near-black
      icon on a faint dark wash) so it was invisible on the dark poster
@@ -343,12 +374,6 @@
   }
   body.cr-mode #chat-messages-container .play-audio-btn:active {
     background-color: rgba(124,107,255,.34) !important;
-  }
-  /* give rendered math room to breathe */
-  body.cr-mode #chat-messages-container .message.ai .katex-display {
-    margin: 10px 0;
-    overflow-x: auto;
-    overflow-y: hidden;
   }
   body.cr-mode #thinking-indicator {
     margin: 4px 16px 10px !important;
