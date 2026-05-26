@@ -186,6 +186,7 @@
 
 /* ---- Mobile / tablet: workspace becomes a slide-in drawer ---- */
 .cr-ws-fab { display: none; }
+.cr-ws-backdrop { display: none; }
 
 @media (max-width: 1200px) {
   .cr-workspace {
@@ -204,7 +205,44 @@
   }
   .cr-workspace.is-open { transform: none; }
   .cr-ws-close { display: block; }
-  .cr-ws-tabs { padding-right: 44px; }
+
+  /* Reserve room for the close X (top-right) and respect the device notch
+     so the first tab ("Board") isn't sliced when the drawer opens. */
+  .cr-ws-tabs {
+    padding-right: 44px;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 6px);
+  }
+  .cr-ws-close {
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+  }
+
+  /* Dimmed backdrop. Acts as the tap-to-close target and visually anchors
+     the drawer as a modal surface over the chat poster. Lives at the body
+     level (see workspace.js) so it can sit above #mpc-topbar (z-index 30)
+     and clear the wrapper's mobile stacking context. */
+  .cr-ws-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 9, 15, 0.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--cr-transition);
+    z-index: 1700;
+  }
+  .cr-ws-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* When the drawer is open, hide the floating top chrome so it doesn't
+     paint over the drawer's own tab row (mpc-topbar is z-index:30 at body
+     level; the drawer is trapped inside #app-layout-wrapper's z-index:1
+     stacking context on mobile, so it can't beat the topbar from inside). */
+  body.cr-ws-drawer-open #mpc-topbar { display: none !important; }
+  body.cr-ws-drawer-open .cr-ws-fab { display: none; }
 
   .cr-ws-fab {
     display: inline-flex;
@@ -226,8 +264,21 @@
   }
 }
 
+/* Phones: drawer goes full-width so chat content doesn't leak through on
+   the left and read as "half-open". The body class also bumps the wrapper
+   above mpc-topbar in case the user has a tablet-width device where the
+   backdrop alone isn't enough. */
+@media (max-width: 768px) {
+  .cr-workspace {
+    width: 100vw;
+    border-radius: 0;
+  }
+  body.cr-ws-drawer-open #app-layout-wrapper { z-index: 50; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cr-workspace { transition: none; }
+  .cr-ws-backdrop { transition: none; }
 }
 
 /* ============================================================

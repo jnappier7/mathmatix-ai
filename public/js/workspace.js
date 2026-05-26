@@ -92,7 +92,7 @@
       btn.textContent = L.btn;
       btn.addEventListener('click', function () {
         // On the mobile drawer, get out of the way of the tool.
-        WS.el.classList.remove('is-open');
+        closeWorkspace();
         try { L.open(); } catch (e) { /* tool not ready yet */ }
       });
       card.appendChild(btn);
@@ -369,8 +369,31 @@
   }
 
   // ---- Drawer (mobile) --------------------------------------------------
-  function openWorkspace()  { if (WS.el) WS.el.classList.add('is-open'); }
-  function closeWorkspace() { if (WS.el) WS.el.classList.remove('is-open'); }
+  // The backdrop is a body-level sibling of the drawer so it can outrank
+  // #mpc-topbar — the drawer itself is trapped inside #app-layout-wrapper's
+  // mobile stacking context, so the backdrop is what actually wins the
+  // z-fight against the floating top chrome.
+  function ensureBackdrop() {
+    if (WS.backdrop) return WS.backdrop;
+    var b = el('div', 'cr-ws-backdrop');
+    b.setAttribute('aria-hidden', 'true');
+    b.addEventListener('click', closeWorkspace);
+    document.body.appendChild(b);
+    WS.backdrop = b;
+    return b;
+  }
+  function openWorkspace() {
+    if (!WS.el) return;
+    WS.el.classList.add('is-open');
+    ensureBackdrop().classList.add('is-open');
+    document.body.classList.add('cr-ws-drawer-open');
+  }
+  function closeWorkspace() {
+    if (!WS.el) return;
+    WS.el.classList.remove('is-open');
+    if (WS.backdrop) WS.backdrop.classList.remove('is-open');
+    document.body.classList.remove('cr-ws-drawer-open');
+  }
 
   function buildFab() {
     var fab = el('button', 'cr-ws-fab',
@@ -378,7 +401,8 @@
     fab.type = 'button';
     fab.setAttribute('aria-label', 'Toggle math workspace');
     fab.addEventListener('click', function () {
-      WS.el.classList.toggle('is-open');
+      if (WS.el.classList.contains('is-open')) closeWorkspace();
+      else openWorkspace();
     });
     document.body.appendChild(fab);
   }
