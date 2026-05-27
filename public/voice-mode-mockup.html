@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
   <script defer src="/vendor/katex/katex.min.js"></script>
-  <script defer src="/vendor/katex/contrib/auto-render.min.js"></script>
 
   <style>
     /* ----- VOICE MODE — STATIC MOCKUP -----
@@ -380,7 +379,7 @@
       <h2 class="vm-board-title"><i class="fas fa-pen"></i> Work Board</h2>
       <div class="vm-stack">
         <div class="vm-card vm-card--pose">
-          <div class="vm-card-math">\(2x + 6 = 12\)</div>
+          <div class="vm-card-math" data-tex="2x + 6 = 12"></div>
         </div>
 
         <div class="vm-apply">
@@ -389,7 +388,7 @@
         </div>
 
         <div class="vm-card vm-card--resolve">
-          <div class="vm-card-math">\(2x = 6\)</div>
+          <div class="vm-card-math" data-tex="2x = 6"></div>
         </div>
 
         <div class="vm-apply">
@@ -398,11 +397,11 @@
         </div>
 
         <div class="vm-card vm-card--resolve">
-          <div class="vm-card-math">\(x = 3\)</div>
+          <div class="vm-card-math" data-tex="x = 3"></div>
         </div>
 
         <div class="vm-card vm-card--verify">
-          <div class="vm-card-math">\(2(3) + 6 = 12\) ✓</div>
+          <div class="vm-card-math" data-tex="2(3) + 6 = 12 \\;\\checkmark"></div>
         </div>
       </div>
     </main>
@@ -464,15 +463,25 @@
   </div>
 
   <script>
-    // Auto-render the LaTeX in card bodies. Defer waits for KaTeX libs to
-    // finish loading — we kick this on DOMContentLoaded.
+    // Render math by direct katex.render() calls. The vendor in this
+    // repo doesn't ship auto-render.min.js, so the [data-tex] attribute
+    // is the contract: any element with a TeX source on data-tex gets
+    // typeset into its own innerHTML. Falls back to the raw TeX as
+    // text if KaTeX failed to load.
     document.addEventListener('DOMContentLoaded', function () {
-      if (window.renderMathInElement) {
-        renderMathInElement(document.body, {
-          delimiters: [{ left: '\\(', right: '\\)', display: false }],
-          throwOnError: false
-        });
-      }
+      var nodes = document.querySelectorAll('[data-tex]');
+      nodes.forEach(function (n) {
+        var tex = n.getAttribute('data-tex') || '';
+        if (window.katex && typeof window.katex.render === 'function') {
+          try {
+            window.katex.render(tex, n, { throwOnError: false, displayMode: true, output: 'html' });
+          } catch (e) {
+            n.textContent = tex;
+          }
+        } else {
+          n.textContent = tex;
+        }
+      });
     });
 
     // Demo-only state flip so you can see both listening + speaking states
