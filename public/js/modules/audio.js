@@ -6,6 +6,7 @@ export const audioState = {
     context: null,
     buffer: null,
     source: null,
+    analyser: null,
     startTime: 0,
     pausedAt: 0,
     isPaused: false,
@@ -123,7 +124,20 @@ function startAudioPlayback(offset = 0, playButton = null) {
     const source = audioState.context.createBufferSource();
     source.buffer = audioState.buffer;
     source.playbackRate.value = audioState.playbackRate;
-    source.connect(audioState.context.destination);
+
+    // Insert an AnalyserNode between the source and the destination so
+    // voice-reactive meters (chat pill, voice-tutor orb) can pull
+    // frequency data from a live playback chain. Reuses the analyser
+    // across playbacks within the same context so listeners stay
+    // attached across queue items.
+    if (!audioState.analyser || audioState.analyser.context !== audioState.context) {
+        const analyser = audioState.context.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.8;
+        analyser.connect(audioState.context.destination);
+        audioState.analyser = analyser;
+    }
+    source.connect(audioState.analyser);
 
     audioState.source = source;
     _currentAudioSource = source;
@@ -136,6 +150,9 @@ function startAudioPlayback(offset = 0, playButton = null) {
     }
 
     source.start(0, offset);
+    document.dispatchEvent(new CustomEvent('audioPlaybackStarted', {
+        detail: { analyser: audioState.analyser }
+    }));
 
     source.onended = () => {
         if (audioState.isPlaying && !audioState.isPaused) {
@@ -250,6 +267,7 @@ export function resetAudioState() {
     audioState.context = null;
     audioState.buffer = null;
     audioState.source = null;
+    audioState.analyser = null;
     audioState.startTime = 0;
     audioState.pausedAt = 0;
     audioState.isPaused = false;
