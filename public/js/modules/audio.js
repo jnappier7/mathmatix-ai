@@ -127,9 +127,10 @@ function startAudioPlayback(offset = 0, playButton = null) {
 
     // Insert an AnalyserNode between the source and the destination so
     // voice-reactive meters (chat pill, voice-tutor orb) can pull
-    // frequency data from a live playback chain. Reuses the analyser
-    // across playbacks within the same context so listeners stay
-    // attached across queue items.
+    // frequency data from a live playback chain. Guarded null check is
+    // defensive — in current flow resetAudioState nulls audioState.analyser
+    // alongside the context so the second branch never trips, but we keep
+    // it in case the lifecycle changes.
     if (!audioState.analyser || audioState.analyser.context !== audioState.context) {
         const analyser = audioState.context.createAnalyser();
         analyser.fftSize = 256;

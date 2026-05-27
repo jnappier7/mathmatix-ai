@@ -29,7 +29,15 @@ import { createStripMeter } from './modules/voice-meter.js';
   }
 
   function loop() {
-    if (!analyser) return;
+    // Self-terminate if the audio context was closed under us. stopAudio()
+    // in modules/audio.js closes the context without dispatching
+    // audioPlaybackEnded, so without this check the loop would keep polling
+    // a dead analyser and the bars would freeze at floor value instead of
+    // returning to the CSS keyframe pulse.
+    if (!analyser || (analyser.context && analyser.context.state === 'closed')) {
+      stop();
+      return;
+    }
     analyser.getByteFrequencyData(buf);
     meter.update(buf);
     raf = requestAnimationFrame(loop);
