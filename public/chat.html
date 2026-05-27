@@ -931,9 +931,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <!-- Enter immersive voice tutor — plain anchor, no JS needed.
              The actual paywall fires when voice-tutor's WS upgrade is
-             attempted (utils/voiceUpgrade.js / PR #985). -->
+             attempted (utils/voiceUpgrade.js / PR #985). Icon is a
+             headset so it reads as "voice call with tutor" rather than
+             "another dictation mic" (the toolbar already has a mic). -->
         <a href="/voice-tutor.html" id="voice-mode-btn" class="imessage-voice-btn" title="Talk to your tutor" aria-label="Switch to voice tutor">
-          <i class="fas fa-microphone-lines"></i>
+          <i class="fas fa-headset"></i>
         </a>
         <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
           <i class="fas fa-arrow-up"></i>
@@ -2245,6 +2247,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/avatar-config-data.js"></script>
   <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
   <script defer src="/js/chat-redesign.js"></script>
+  <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
+  <script type="module" src="/js/chat-voice-meter.js"></script>
   <script src="/js/voice-stream-client.js?v=3"></script>
   <script src="/js/voice-controller.js"></script>
   <!-- Voice as a layout mode of the chat stage -->

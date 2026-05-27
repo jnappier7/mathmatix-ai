@@ -186,6 +186,7 @@
 
 /* ---- Mobile / tablet: workspace becomes a slide-in drawer ---- */
 .cr-ws-fab { display: none; }
+.cr-ws-backdrop { display: none; }
 
 @media (max-width: 1200px) {
   .cr-workspace {
@@ -204,30 +205,85 @@
   }
   .cr-workspace.is-open { transform: none; }
   .cr-ws-close { display: block; }
-  .cr-ws-tabs { padding-right: 44px; }
+
+  /* Reserve room for the close X (top-right) and respect the device notch
+     so the first tab ("Board") isn't sliced when the drawer opens. */
+  .cr-ws-tabs {
+    padding-right: 44px;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 6px);
+  }
+  .cr-ws-close {
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+  }
+
+  /* Dimmed backdrop. Acts as the tap-to-close target and visually anchors
+     the drawer as a modal surface over the chat poster. Lives at the body
+     level (see workspace.js) so it can sit above #mpc-topbar (z-index 30)
+     and clear the wrapper's mobile stacking context. */
+  .cr-ws-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 9, 15, 0.55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--cr-transition);
+    z-index: 1700;
+  }
+  .cr-ws-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* When the drawer is open, hide the floating top chrome so it doesn't
+     paint over the drawer's own tab row (mpc-topbar is z-index:30 at body
+     level; the drawer is trapped inside #app-layout-wrapper's z-index:1
+     stacking context on mobile, so it can't beat the topbar from inside). */
+  body.cr-ws-drawer-open #mpc-topbar { display: none !important; }
+  body.cr-ws-drawer-open .cr-ws-fab { display: none; }
 
   .cr-ws-fab {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 7px;
     position: fixed;
-    right: 16px;
-    bottom: 84px;
-    width: 52px;
-    height: 52px;
-    border: 1px solid var(--cr-border);
-    border-radius: 50%;
+    right: 14px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+    height: 38px;
+    padding: 0 14px 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
     background: var(--cr-accent-grad);
     color: #fff;
-    font-size: 19px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     box-shadow: var(--cr-shadow-md);
     cursor: pointer;
     z-index: 901;
   }
+  .cr-ws-fab i { font-size: 14px; }
+  .cr-ws-fab-label { line-height: 1; }
+}
+
+/* Phones: drawer goes full-width so chat content doesn't leak through on
+   the left and read as "half-open". The body class also bumps the wrapper
+   above mpc-topbar in case the user has a tablet-width device where the
+   backdrop alone isn't enough. */
+@media (max-width: 768px) {
+  .cr-workspace {
+    width: 100vw;
+    border-radius: 0;
+  }
+  body.cr-ws-drawer-open #app-layout-wrapper { z-index: 50; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cr-workspace { transition: none; }
+  .cr-ws-backdrop { transition: none; }
 }
 
 /* ============================================================
@@ -286,17 +342,48 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  /* Number resolve cards in document order so the student sees STEP 1,
+     STEP 2, ... without needing JS bookkeeping. Reset per board. */
+  counter-reset: cr-ws-step;
 }
 
 .cr-ws-board-empty {
   text-align: center;
-  padding: 28px 14px;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   color: var(--cr-text-dim);
   font-size: 13px;
   line-height: 1.5;
   border: 1px dashed var(--cr-border);
   border-radius: var(--cr-radius-md);
   background: rgba(255, 255, 255, 0.02);
+}
+.cr-ws-board-empty-ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--cr-pill-bg);
+  color: var(--cr-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.cr-ws-board-empty-title {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cr-text);
+}
+.cr-ws-board-empty-body {
+  margin: 0;
+  max-width: 260px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--cr-text-dim);
 }
 
 /* Common card chrome */
@@ -334,6 +421,25 @@
   font-weight: 700;
   letter-spacing: 0.10em;
   color: var(--cr-accent);
+  opacity: 0.85;
+}
+
+/* Resolve — a step the student has taken. Numbered (STEP 1, STEP 2, ...)
+   so two cards with the same equation don't read as a duplicate. The
+   counter is incremented by the card itself and reset on the stack. */
+.cr-ws-board-card--resolve {
+  counter-increment: cr-ws-step;
+  border-color: rgba(139, 123, 255, 0.18);
+}
+.cr-ws-board-card--resolve::before {
+  content: "STEP " counter(cr-ws-step);
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: var(--cr-text-dim);
   opacity: 0.85;
 }
 
