@@ -3,6 +3,16 @@
 
 import { triggerConfetti, showToast } from './helpers.js';
 
+// Tutors with refreshed celebration video art. Anyone outside this set
+// gets XP + confetti but no modal, so the legacy art doesn't ship alongside
+// the new style. Re-add the others here once their new videos land.
+const TUTORS_WITH_CELEBRATION_VIDEO = new Set([
+    'bob',
+    'maya',
+    'mr-nappier',
+    'ms-maria',
+]);
+
 /**
  * Show level-up celebration modal with tutor video
  * Uses smallcele for regular levels, levelUp for milestone levels (every 5)
@@ -16,6 +26,7 @@ export function showLevelUpCelebration(currentUser) {
     if (!modal || !video || !currentUser || !currentUser.selectedTutorId) return;
 
     const tutorId = currentUser.selectedTutorId;
+    if (!TUTORS_WITH_CELEBRATION_VIDEO.has(tutorId)) return;
     const currentLevel = currentUser.level || 1;
     const isMilestone = currentLevel % 5 === 0;
     const videoType = isMilestone ? 'levelUp' : 'smallcele';
