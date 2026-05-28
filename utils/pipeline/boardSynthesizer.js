@@ -272,6 +272,85 @@ function detectPosedProblem(text) {
 }
 
 // ---------------------------------------------------------------------------
+// Geometry pose fallback — when parseCleanProblem can't see a problem.
+//
+// Why this exists: parseCleanProblem only recognizes equation-shaped
+// math (general_linear, quadratic, factor, arithmetic, evaluation,
+// limit). Geometry word problems — triangle congruence, circle area,
+// equation-of-a-circle, similar-triangle ratios — come in as prose
+// with concrete numbers and never parse, so the algebra-side pose
+// detector returns null and the board sits empty for an entire
+// geometry session.
+//
+// Strategy: detect that the tutor is *posing* a geometry problem
+// (geometry vocab + problem-framing cue + at least one digit), then
+// quote the question sentence verbatim into the pose tex. Verbatim
+// quotation is ground truth — no guessing about what the problem
+// means. KaTeX renders `\text{...}` as serif prose; if the
+// sanitized sentence fails to parse the workspace falls back to
+// textContent (see public/js/workspace.js:42).
+// ---------------------------------------------------------------------------
+
+const GEOMETRY_VOCAB = /\b(triangles?|circles?|angles?|radius|diameter|circumference|hypotenuse|polygons?|quadrilaterals?|parallelograms?|rectangles?|trapezoids?|pentagons?|hexagons?|perimeters?|congruent|similar|parallel|perpendicular|bisectors?|midpoints?|chords?|tangents?|secants?|arcs?|sectors?|(?:vertex|vertices)|legs?|diagonals?|altitudes?|medians?|centroids?|equation\s+of\s+(?:a|the)\s+circle)\b/i;
+
+// "Question:", "Here's one", "What is …", "Find …", "Convert …",
+// etc. Conservative — bare statements without a cue don't fire so
+// concept explanations stay off the board.
+const PROBLEM_CUE = /\b(question\s*:|here'?s\s+(?:a|one|another)|try\s+(?:this|one|the\s+following)|let'?s\s+try|what\s+(?:is|are|'?s)\b|find\s+(?:the|how|out)\b|calculate\b|determine\b|convert\b|how\s+(?:many|long|wide|much|tall|far)\b|solve\s+for\b)/i;
+
+function extractProblemSentence(text) {
+  // Prefer an explicit "Question:" marker — covers Maya's review-mode
+  // formatting ("Question: Triangle ABC is congruent to …").
+  const qMark = text.match(/Question\s*:\s*([\s\S]+?)(?:\n\n|$)/i);
+  let body = qMark ? qMark[1] : text;
+  body = body.trim();
+
+  // Split into sentence units. The lookbehind keeps the terminator
+  // on the preceding sentence so we can find the one ending in '?'.
+  const sentences = body.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s));
+  if (qIdx === -1) return null;
+
+  // Include up to two preceding setup sentences (the parameters) so
+  // the pose card shows the full problem, not just the bare ask.
+  const start = Math.max(0, qIdx - 2);
+  const chunk = sentences.slice(start, qIdx + 1).join(' ').trim();
+  if (chunk.length < 12 || chunk.length > 320) return null;
+  return chunk;
+}
+
+// KaTeX \text{...} treats most prose as literal, but a handful of
+// characters need neutralizing to avoid throwing.
+function sentenceToTex(sentence) {
+  const safe = sentence
+    .replace(/\\/g, ' ')
+    .replace(/[${}#%&_^]/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  return `\\text{${safe}}`;
+}
+
+function detectGeometryProblem(tutorText) {
+  if (!tutorText || typeof tutorText !== 'string') return null;
+  const sample = tutorText.slice(0, 800);
+  if (!GEOMETRY_VOCAB.test(sample)) return null;
+  if (!PROBLEM_CUE.test(sample)) return null;
+  // Concept explanations don't carry concrete numbers; a posed
+  // problem nearly always does. This filter cheaply rules out
+  // "Triangles have three angles" style narration.
+  if (!/\d/.test(sample)) return null;
+
+  const sentence = extractProblemSentence(sample);
+  if (!sentence) return null;
+  // Re-check vocab on the extracted chunk so we don't quote a
+  // generic question from a tutor recap whose geometry vocab lived
+  // in a different paragraph.
+  if (!GEOMETRY_VOCAB.test(sentence)) return null;
+
+  return { tex: sentenceToTex(sentence), sentence };
+}
+
+// ---------------------------------------------------------------------------
 // Dedupe — does an LLM-emitted command already cover this synthesized one?
 // ---------------------------------------------------------------------------
 
@@ -333,6 +412,13 @@ function synthesizeBoardCommands({
     // the canonical text matches what they typed. Fall back to tutor.
     let posed = detectPosedProblem(studentMessage);
     if (!posed) posed = detectPosedProblem(tutorResponse);
+    // Geometry word problems don't parse as algebra; quote the
+    // tutor's question sentence verbatim so the board reflects the
+    // problem the student is looking at.
+    if (!posed) {
+      const geo = detectGeometryProblem(tutorResponse);
+      if (geo) posed = { tex: geo.tex };
+    }
     if (posed) {
       cards.push({ action: 'pose', tex: posed.tex });
     }
@@ -450,6 +536,9 @@ module.exports = {
   _detectFinalSolution: detectFinalSolution,
   _detectSubstitutionCheck: detectSubstitutionCheck,
   _detectPosedProblem: detectPosedProblem,
+  _detectGeometryProblem: detectGeometryProblem,
+  _extractProblemSentence: extractProblemSentence,
+  _sentenceToTex: sentenceToTex,
   _tutorAffirms: tutorAffirms,
   _commandsOverlap: commandsOverlap,
 };
