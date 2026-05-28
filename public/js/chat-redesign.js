@@ -16,6 +16,11 @@
   // Tutors that ship with a custom backdrop asset.
   const TUTORS_WITH_BACKDROP = new Set(['maya', 'bob', 'mr-nappier', 'ms-maria']);
 
+  // Tutors with a refreshed celebration video — keep in sync with the
+  // matching set in modules/gamification.js. Used here to decide whether
+  // to preload the clip when the tutor swaps.
+  const TUTORS_WITH_CELEBRATION_VIDEO = new Set(['bob', 'maya', 'mr-nappier', 'ms-maria']);
+
   // Tutors whose backdrop gets a depth-of-field blur so the portrait reads
   // cleanly. Maya's backdrop is already soft, so she's left sharp.
   const BLUR_BACKDROP = new Set(['bob', 'mr-nappier', 'ms-maria']);
@@ -180,46 +185,83 @@
 
     // Bring the poster to life with idle micro-animation.
     startPosterAnimation(tutorId);
+
+    // Preload the celebration video silently so the level-up reveal is
+    // instant — no fetch latency, no first-frame flash.
+    preloadCelebrationVideo(tutorId);
   }
 
   // --- In-place level-up celebration ------------------------------------
-  // Plays the celebration video over the hero portrait so the tutor itself
-  // appears to come alive. Pauses idle blink/glance while playing and
-  // restores it on end. Called by gamification.js when a level-up fires.
+  // The video lives in the same hero box as the portrait, preloaded and
+  // paused at frame 0 with opacity:0. On level-up we call play() FIRST and
+  // only fade the video in once it's actually rendering frames — so the
+  // kid sees motion appear, never a swap.
+
+  function celebrationSrcFor(tutorId) {
+    return '/videos/' + tutorId + '_levelUp.mp4';
+  }
+
+  function preloadCelebrationVideo(tutorId) {
+    const video = document.getElementById('cr-tutor-celebration-video');
+    if (!video) return;
+    if (!TUTORS_WITH_CELEBRATION_VIDEO.has(tutorId)) {
+      // Free the previous tutor's clip so we don't leak it.
+      if (video.src) { video.removeAttribute('src'); video.load(); }
+      return;
+    }
+    const want = celebrationSrcFor(tutorId);
+    // Already loaded for this tutor — leave it alone, currentTime stays at 0.
+    if (video.src && video.src.endsWith(want)) return;
+    video.src = want;
+    // .load() kicks off the fetch; preload="auto" tells the browser to buffer.
+    try { video.load(); } catch (_) { /* ignore */ }
+  }
+
   window.playInPlaceCelebration = function (tutorId) {
     const video = document.getElementById('cr-tutor-celebration-video');
     const portrait = document.getElementById('cr-tutor-portrait');
     if (!video || !portrait || !tutorId) return false;
 
+    // If preload didn't run (e.g. tutor never applied), wire the src now —
+    // but the reveal will be slower because we have to wait for buffer.
+    preloadCelebrationVideo(tutorId);
+
     stopPosterAnimation();
 
-    const src = '/videos/' + tutorId + '_levelUp.mp4';
     let restored = false;
     const restore = function () {
       if (restored) return;
       restored = true;
       video.classList.remove('is-playing');
-      // Wait for the fade-out so the portrait reveal isn't a hard cut,
-      // then clear the src so the next play starts from frame 0.
+      // Wait for the fade-out so the portrait reveal isn't a hard cut.
+      // Keep the src loaded so the next celebration can play instantly;
+      // just rewind to frame 0.
       setTimeout(function () {
         video.pause();
-        video.removeAttribute('src');
-        video.load();
+        try { video.currentTime = 0; } catch (_) { /* ignore */ }
         startPosterAnimation(tutorId);
       }, 260);
     };
 
-    video.src = src;
-    video.currentTime = 0;
-    video.classList.add('is-playing');
     video.addEventListener('ended', restore, { once: true });
     video.addEventListener('error', restore, { once: true });
-    // Safety net: never leave the video covering the portrait.
+    // Safety net so a stuck video never traps the portrait offscreen.
     setTimeout(restore, 10000);
 
+    // Start playback first; only reveal once frames are actually decoding
+    // so the fade-in masks motion, not a static first frame.
+    const reveal = function () { video.classList.add('is-playing'); };
     const playPromise = video.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-      playPromise.catch(function () { restore(); });
+    if (playPromise && typeof playPromise.then === 'function') {
+      playPromise.then(function () {
+        if (video.readyState >= 3) {
+          reveal();
+        } else {
+          video.addEventListener('playing', reveal, { once: true });
+        }
+      }).catch(function () { restore(); });
+    } else {
+      reveal();
     }
     return true;
   };
