@@ -160,7 +160,12 @@ async function callLLMStructured(model, messages, responseFormat, options = {}) 
     const callOptions = {
         ...options,
         response_format: responseFormat,
-        stream: false, // structured streaming is Phase 2
+        // This helper is non-streaming on purpose. The streaming
+        // structured path lives in generate.js's generateStreaming,
+        // which calls callLLMStream with response_format directly
+        // and forwards the chat_message value via the
+        // structuredChatStreamExtractor.
+        stream: false,
     };
     const completion = await callLLM(model, messages, callOptions);
     const content = completion?.choices?.[0]?.message?.content;
@@ -225,6 +230,7 @@ async function callLLMStream(model, messages, options = {}) {
             ...tokenParam,
             ...toolParams,
             stream: true,
+            ...(options.response_format ? { response_format: options.response_format } : {}),
         }, {
             timeout: options.timeoutMs || DEFAULT_CHAT_TIMEOUT_MS,
             maxRetries: 0,

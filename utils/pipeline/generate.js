@@ -19,6 +19,7 @@ const { parseBoardTags } = require('../boardTagParser');
 const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
 const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
 const { createVisualTabTagStreamFilter } = require('../visualTabTagStreamFilter');
+const { createStructuredChatStreamExtractor } = require('../structuredChatStreamExtractor');
 const {
   OPENAI_RESPONSE_FORMAT,
   normalizeStructuredResponse,
@@ -559,8 +560,34 @@ async function generateToolNarration(model, priorMessages, assistantMessage, llm
 
 /**
  * Streaming generation via SSE.
+ *
+ * Two streaming paths converge here:
+ *
+ *   1. Structured path (Phase 2, flag-gated). When
+ *      STRUCTURED_TUTOR_RESPONSE is on AND no tools are wired,
+ *      we ask the model for schema-enforced JSON and extract
+ *      `chat_message` progressively. board_commands arrive
+ *      structured at the end of the stream. This is the future
+ *      production path.
+ *
+ *   2. Legacy path. Free-text response with inline <BOARD /> tags
+ *      stripped by createBoardTagStreamFilter. Unchanged from
+ *      pre-Phase-2 behavior; this remains the default until the
+ *      flag flips on.
+ *
+ * Either path returns `{ text, toolCalls, resolvedTools,
+ * structuredBoardCommands? }` and writes SSE chunks identical
+ * in shape (`{type: 'chunk', content}`) so the frontend doesn't
+ * know which path served it.
  */
 async function generateStreaming(model, messages, llmOptions, res) {
+  const wantStructured = isStructuredModeEnabled()
+    && !(Array.isArray(llmOptions.tools) && llmOptions.tools.length > 0);
+
+  if (wantStructured) {
+    return await generateStreamingStructured(model, messages, llmOptions, res);
+  }
+
   const { callLLMStream } = require('../llmGateway');
 
   let fullResponse = '';
@@ -694,6 +721,131 @@ async function generateStreaming(model, messages, llmOptions, res) {
       res.write(`data: ${JSON.stringify({ type: 'chunk', content: safeText })}\n\n`);
     }
     return { text, toolCalls: [], resolvedTools: null };
+  }
+}
+
+/**
+ * Streaming generation under the structured-tutor-response flag.
+ *
+ * Calls callLLMStream with `response_format` set to the strict
+ * JSON schema. The model emits the body field-by-field; we use
+ * structuredChatStreamExtractor to forward chat_message text as
+ * it arrives, then JSON.parse the full body once the stream ends
+ * to recover board_commands.
+ *
+ * The xp + visual-tab tag stream filters STILL run on the
+ * extracted chat text — those side channels remain inline tags
+ * inside chat_message and are migrated in later phases. The
+ * board tag filter is intentionally absent: board commands now
+ * come from the JSON sidecar, not parsed prose.
+ *
+ * Errors fall back to a non-streaming legacy callLLM, same as
+ * the legacy streaming path's catch block, so a flag-on session
+ * is never worse than a flag-off session.
+ */
+async function generateStreamingStructured(model, messages, llmOptions, res) {
+  const { callLLMStream } = require('../llmGateway');
+
+  let extractedChatSoFar = '';
+  let finishReason = null;
+  let clientDisconnected = false;
+
+  // The board filter drops out under structured mode (board data
+  // arrives in the JSON sidecar). XP + visual-tab filters still
+  // run — those tag protocols haven't migrated yet.
+  const xpFilter = createXpTagStreamFilter();
+  const visualTabFilter = createVisualTabTagStreamFilter();
+  const extractor = createStructuredChatStreamExtractor();
+
+  const structuredOptions = { ...llmOptions, response_format: OPENAI_RESPONSE_FORMAT };
+
+  try {
+    const stream = await callLLMStream(model, messages, structuredOptions);
+    res.req.on('close', () => { clientDisconnected = true; });
+
+    for await (const chunk of stream) {
+      if (clientDisconnected) break;
+
+      const delta = chunk.choices[0]?.delta || {};
+      const reason = chunk.choices[0]?.finish_reason;
+      if (reason) finishReason = reason;
+
+      if (delta.content) {
+        const newChat = extractor.push(delta.content);
+        if (newChat) {
+          extractedChatSoFar += newChat;
+          const afterXp = xpFilter.push(newChat);
+          const safe = afterXp ? visualTabFilter.push(afterXp) : '';
+          if (safe) {
+            res.write(`data: ${JSON.stringify({ type: 'chunk', content: safe })}\n\n`);
+          }
+        }
+      }
+    }
+
+    // Drain the xp + visual-tab filters in the same chain order the
+    // legacy streaming path uses, so any partial-opener tail still
+    // makes it out.
+    {
+      const xpTail = xpFilter.flush();
+      const tabHead = xpTail ? visualTabFilter.push(xpTail) : '';
+      const tabTail = visualTabFilter.flush();
+      const tail = tabHead + tabTail;
+      if (tail && !clientDisconnected) {
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: tail })}\n\n`);
+      }
+    }
+
+    // Tool-calls cannot coexist with response_format on the OpenAI
+    // API, so we never expect finishReason === 'tool_calls' here.
+    // If we ever do (defensive), treat it as malformed and fall
+    // through to the catch block.
+    if (finishReason === 'tool_calls') {
+      throw new Error('unexpected tool_calls finish_reason under structured streaming');
+    }
+
+    const parsed = extractor.finalize();
+    if (!parsed) {
+      throw new Error('structured stream finalize: JSON.parse returned null');
+    }
+    const { chat_message, board_commands } = normalizeStructuredResponse(parsed);
+    // Prefer the schema-parsed chat_message over our extractor's
+    // running buffer — the JSON.parse decode is authoritative for
+    // anything we forwarded with escape edge cases.
+    const finalText = (chat_message || extractedChatSoFar).trim() || "I'm not sure how to respond.";
+    return {
+      text: finalText,
+      toolCalls: [],
+      resolvedTools: null,
+      structuredBoardCommands: board_commands,
+    };
+  } catch (streamError) {
+    console.error('[Generate] Structured streaming failed, falling back:', streamError.message);
+
+    // Fallback strategy: ask the model again, this time non-stream
+    // and without response_format, then send a 'replacement' SSE
+    // event if anything was already forwarded so the client doesn't
+    // show a half-sentence next to the full one.
+    try {
+      const completion = await callLLM(model, messages, llmOptions);
+      const text = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+      const safeText = stripBoardTagsForStream(text);
+      if (!clientDisconnected) {
+        if (extractedChatSoFar.length > 0) {
+          res.write(`data: ${JSON.stringify({ type: 'replacement', content: safeText })}\n\n`);
+        } else {
+          res.write(`data: ${JSON.stringify({ type: 'chunk', content: safeText })}\n\n`);
+        }
+      }
+      return { text, toolCalls: [], resolvedTools: null };
+    } catch (fallbackErr) {
+      console.error('[Generate] Structured-stream fallback also failed:', fallbackErr.message);
+      const text = "I'm having trouble generating a response right now. Could you please rephrase?";
+      if (!clientDisconnected) {
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: text })}\n\n`);
+      }
+      return { text, toolCalls: [], resolvedTools: null };
+    }
   }
 }
 
