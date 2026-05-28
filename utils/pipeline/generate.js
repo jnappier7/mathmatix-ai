@@ -10,7 +10,7 @@
  * @module pipeline/generate
  */
 
-const { callLLM, callLLMStream } = require('../llmGateway');
+const { callLLM, callLLMStream, callLLMStructured } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCompact');
 const { buildSlimRules } = require('./promptSlim');
@@ -19,6 +19,11 @@ const { parseBoardTags } = require('../boardTagParser');
 const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
 const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
 const { createVisualTabTagStreamFilter } = require('../visualTabTagStreamFilter');
+const {
+  OPENAI_RESPONSE_FORMAT,
+  normalizeStructuredResponse,
+  isStructuredModeEnabled,
+} = require('../boardResponseSchema');
 
 // Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
 // replacement / narration paths). Streaming chunks use the stateful
@@ -447,6 +452,48 @@ async function generate(assembled, options = {}) {
 
   if (options.stream && options.res) {
     return await generateStreaming(model, messages, llmOptions, options.res);
+  }
+
+  // ── Structured-output path (Phase 1, dark by default) ──
+  // When STRUCTURED_TUTOR_RESPONSE is on, ask the LLM for a
+  // schema-enforced JSON object instead of free text with inline
+  // <BOARD /> tags. The board_commands array comes back already
+  // structured and skips Stage 5b's regex parsing in index.js.
+  //
+  // Tool-calling cannot be combined with response_format (OpenAI
+  // returns either tool_calls OR a content message). Visual tools
+  // are currently opt-in and rarely overlap with main tutor turns,
+  // but if they were requested we fall through to the legacy path
+  // so we don't lose the tool surface.
+  const wantStructured = isStructuredModeEnabled()
+    && !(Array.isArray(llmOptions.tools) && llmOptions.tools.length > 0);
+
+  if (wantStructured) {
+    try {
+      const parsed = await callLLMStructured(
+        model,
+        messages,
+        OPENAI_RESPONSE_FORMAT,
+        llmOptions,
+      );
+      const { chat_message, board_commands } = normalizeStructuredResponse(parsed);
+      const text = chat_message.trim() || "I'm not sure how to respond.";
+      return {
+        text,
+        toolCalls: [],
+        resolvedTools: null,
+        structuredBoardCommands: board_commands,
+      };
+    } catch (structuredErr) {
+      // Schema enforcement is a hard guarantee at the API level, so
+      // this branch is for catastrophic failures (network, parse).
+      // Fall through to the legacy free-text path so a flag-on
+      // session is not worse than a flag-off session.
+      console.warn(
+        '[Generate] Structured-output call failed, falling back to legacy path:',
+        structuredErr.message,
+      );
+    }
   }
 
   const completion = await callLLM(model, messages, llmOptions);
