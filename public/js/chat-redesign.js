@@ -182,6 +182,48 @@
     startPosterAnimation(tutorId);
   }
 
+  // --- In-place level-up celebration ------------------------------------
+  // Plays the celebration video over the hero portrait so the tutor itself
+  // appears to come alive. Pauses idle blink/glance while playing and
+  // restores it on end. Called by gamification.js when a level-up fires.
+  window.playInPlaceCelebration = function (tutorId) {
+    const video = document.getElementById('cr-tutor-celebration-video');
+    const portrait = document.getElementById('cr-tutor-portrait');
+    if (!video || !portrait || !tutorId) return false;
+
+    stopPosterAnimation();
+
+    const src = '/videos/' + tutorId + '_levelUp.mp4';
+    let restored = false;
+    const restore = function () {
+      if (restored) return;
+      restored = true;
+      video.classList.remove('is-playing');
+      // Wait for the fade-out so the portrait reveal isn't a hard cut,
+      // then clear the src so the next play starts from frame 0.
+      setTimeout(function () {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+        startPosterAnimation(tutorId);
+      }, 260);
+    };
+
+    video.src = src;
+    video.currentTime = 0;
+    video.classList.add('is-playing');
+    video.addEventListener('ended', restore, { once: true });
+    video.addEventListener('error', restore, { once: true });
+    // Safety net: never leave the video covering the portrait.
+    setTimeout(restore, 10000);
+
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(function () { restore(); });
+    }
+    return true;
+  };
+
   // Wait for window.TUTOR_CONFIG AND user data (which lives in the
   // closure-scoped currentUser of script.js). We don't have direct
   // access, so we fetch /user ourselves — cheap and avoids coupling.

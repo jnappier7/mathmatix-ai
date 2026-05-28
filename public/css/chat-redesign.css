@@ -338,6 +338,24 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   pointer-events: none;
 }
 
+/* In-place level-up celebration. Overlays the portrait in the same hero box
+   so the tutor appears to come to life. Hidden until JS toggles .is-playing. */
+.cr-tutor-celebration-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+.cr-tutor-celebration-video.is-playing {
+  opacity: 1;
+}
+
 /* ----- Living-avatar overlay (breathing + eye-only blink/glance) -----
    Sits on top of .cr-tutor-portrait, sized to the same box (height:100%,
    3:2 aspect). Mask fades the layer out above the desk so scaling moves
