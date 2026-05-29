@@ -45,7 +45,7 @@ const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose } = require('./boardSynthesizer');
 const { auditTurn } = require('../turnTypeAudit');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
@@ -442,12 +442,13 @@ async function runPipeline(message, ctx) {
   }
 
   // ── Stage 5b.1: TURN-TYPE AUDIT (Phase 3) ──
-  // Observe-only. Phase 3 lights up the signal so we can measure
-  // how often the model's declared turn_type contradicts the board
-  // it emitted. Phase 5 will wire hard mismatches (e.g., a
-  // problem_introduction with no pose) to the deterministic
-  // synthesizer for backfill. The audit is a no-op under the legacy
-  // free-text path because there is no turn_type to audit.
+  // Lights up the signal so we can measure how often the model's
+  // declared turn_type contradicts the board it emitted. The one hard
+  // bug it detects — problem_introduction with no pose — is acted on
+  // downstream in Stage 5c.1 (Phase 5), which runs after synthesis so
+  // it only fires when no pose survives the merge. Soft mismatches stay
+  // observe-only. The audit is a no-op under the legacy free-text path
+  // because there is no turn_type to audit.
   if (generatedResult.structuredTurnType) {
     const mismatches = auditTurn({
       turnType: generatedResult.structuredTurnType,
@@ -522,6 +523,52 @@ async function runPipeline(message, ctx) {
       actions: merged.added.map(c => c.action),
       llmEmitted: llmBoardCommands.length,
     });
+  }
+
+  // ── Stage 5c.1: TURN-TYPE BACKFILL (Phase 5) ──
+  // Phase 3 lit the audit signal; Phase 5 acts on the one hard bug it
+  // detects. When the model self-declared turn_type=problem_introduction
+  // yet no pose survived the merge — neither LLM-emitted nor synthesized
+  // (the problem parses as neither algebra nor recognized geometry, or
+  // the main synth skipped pose on a stale-but-open cycle) — the board
+  // would sit empty on the exact turn the model said a problem is on the
+  // table. The turn_type is ground truth the synthesizer can't otherwise
+  // see, so we backfill a verbatim pose. Naturally dark-flagged:
+  // structuredTurnType is only populated when STRUCTURED_TUTOR_RESPONSE
+  // is on, so flag-off traffic never reaches this branch.
+  if (generatedResult.structuredTurnType === 'problem_introduction'
+      && !verified.boardCommands.some(c => c.action === 'pose')) {
+    const fallbackPose = synthesizeFallbackPose({
+      tutorResponse: verified.text,
+      studentMessage: message,
+    });
+    if (fallbackPose) {
+      // Defense in depth — same guard every other board path runs.
+      const backfillGuard = enforcePedagogyRule({
+        commands: [fallbackPose],
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      });
+      if (backfillGuard.allowed.length > 0) {
+        // Re-merge so canonical ordering (pose first) is preserved.
+        const backfilled = mergeWithLlmCommands(verified.boardCommands, backfillGuard.allowed);
+        verified.boardCommands = backfilled.all;
+        boardLogger.info('Turn-type backfill posed problem (Phase 5)', {
+          turnType: generatedResult.structuredTurnType,
+          tex: fallbackPose.tex,
+        });
+      } else if (backfillGuard.dropped.length > 0) {
+        boardLogger.warn('Pedagogy guard dropped turn-type backfill pose', {
+          reason: backfillGuard.dropped[0].reason,
+          tex: fallbackPose.tex,
+        });
+      }
+    } else {
+      turnTypeLogger.warn('turn_type=problem_introduction with no posable problem; board left empty', {
+        turnType: generatedResult.structuredTurnType,
+      });
+    }
   }
 
   if (verified.boardCommands.length > 0 && ctx.conversation) {
