@@ -20,6 +20,7 @@ const {
   normalizeBoardCommand,
   normalizeStructuredResponse,
   isStructuredModeEnabled,
+  buildStructuredResponseInstructions,
 } = require('../../utils/boardResponseSchema');
 
 describe('boardResponseSchema — normalizeBoardCommand', () => {
@@ -223,6 +224,44 @@ describe('boardResponseSchema — isStructuredModeEnabled', () => {
   test('env=anything-else is OFF', () => {
     process.env.STRUCTURED_TUTOR_RESPONSE = 'maybe';
     expect(isStructuredModeEnabled()).toBe(false);
+  });
+});
+
+describe('boardResponseSchema — buildStructuredResponseInstructions (Phase 4)', () => {
+  const instructions = buildStructuredResponseInstructions();
+
+  test('returns a non-trivial system-prompt block', () => {
+    expect(typeof instructions).toBe('string');
+    expect(instructions.length).toBeGreaterThan(200);
+  });
+
+  test('is deterministic — no per-request data leaks in (stays cacheable)', () => {
+    expect(buildStructuredResponseInstructions()).toBe(instructions);
+  });
+
+  test('announces itself as overriding the legacy WorkBoard tag protocol', () => {
+    expect(instructions).toMatch(/OVERRIDES THE WORKBOARD TAG PROTOCOL/);
+  });
+
+  test('tells the model NOT to write <BOARD/> tags in chat_message', () => {
+    expect(instructions).toMatch(/Do NOT write <BOARD/);
+  });
+
+  test('names every turn_type so the model can classify', () => {
+    for (const tt of TURN_TYPES) {
+      expect(instructions).toContain(tt);
+    }
+  });
+
+  test('states the hard rule the audit enforces: problem_introduction MUST pose', () => {
+    // Mirrors turnTypeAudit.js problem_introduction_missing_pose.
+    expect(instructions).toMatch(/problem_introduction[\s\S]*MUST include a pose/);
+  });
+
+  test('documents each board action shape', () => {
+    for (const action of BOARD_ACTIONS) {
+      expect(instructions).toContain(action);
+    }
   });
 });
 
