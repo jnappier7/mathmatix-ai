@@ -47,6 +47,7 @@ const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose } = require('./boardSynthesizer');
 const { auditTurn } = require('../turnTypeAudit');
+const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
 const turnTypeLogger = log.child({ service: 'turn-type-audit' });
@@ -448,15 +449,18 @@ async function runPipeline(message, ctx) {
   // downstream in Stage 5c.1 (Phase 5), which runs after synthesis so
   // it only fires when no pose survives the merge. Soft mismatches stay
   // observe-only. The audit is a no-op under the legacy free-text path
-  // because there is no turn_type to audit.
+  // because there is no turn_type to audit. Phase 6 records the
+  // mismatches into structuredTutorMetrics (after Stage 5c.1, so the
+  // backfill outcome lands in the same record).
+  let auditMismatches = [];
   if (generatedResult.structuredTurnType) {
-    const mismatches = auditTurn({
+    auditMismatches = auditTurn({
       turnType: generatedResult.structuredTurnType,
       boardCommands: Array.isArray(generatedResult.structuredBoardCommands)
         ? generatedResult.structuredBoardCommands
         : [],
     });
-    for (const m of mismatches) {
+    for (const m of auditMismatches) {
       if (m.severity === 'hard') {
         turnTypeLogger.warn('turn_type mismatch (hard)', m);
       } else {
@@ -536,6 +540,7 @@ async function runPipeline(message, ctx) {
   // see, so we backfill a verbatim pose. Naturally dark-flagged:
   // structuredTurnType is only populated when STRUCTURED_TUTOR_RESPONSE
   // is on, so flag-off traffic never reaches this branch.
+  let backfillOutcome = null;
   if (generatedResult.structuredTurnType === 'problem_introduction'
       && !verified.boardCommands.some(c => c.action === 'pose')) {
     const fallbackPose = synthesizeFallbackPose({
@@ -554,20 +559,43 @@ async function runPipeline(message, ctx) {
         // Re-merge so canonical ordering (pose first) is preserved.
         const backfilled = mergeWithLlmCommands(verified.boardCommands, backfillGuard.allowed);
         verified.boardCommands = backfilled.all;
+        backfillOutcome = 'posed';
         boardLogger.info('Turn-type backfill posed problem (Phase 5)', {
           turnType: generatedResult.structuredTurnType,
           tex: fallbackPose.tex,
         });
       } else if (backfillGuard.dropped.length > 0) {
+        backfillOutcome = 'guard_dropped';
         boardLogger.warn('Pedagogy guard dropped turn-type backfill pose', {
           reason: backfillGuard.dropped[0].reason,
           tex: fallbackPose.tex,
         });
       }
     } else {
+      backfillOutcome = 'no_posable_problem';
       turnTypeLogger.warn('turn_type=problem_introduction with no posable problem; board left empty', {
         turnType: generatedResult.structuredTurnType,
       });
+    }
+  }
+
+  // ── Stage 5c.2: STRUCTURED-PATH METRICS (Phase 6) ──
+  // One passive record per structured turn — turn_type, audit mismatches,
+  // and the Stage 5c.1 backfill outcome — so the flag-on misclassification
+  // and backfill rates are observable in aggregate (scraped via
+  // GET /api/admin/structured-tutor-metrics). Same dark gate as the audit:
+  // structuredTurnType is only set when STRUCTURED_TUTOR_RESPONSE is on.
+  if (generatedResult.structuredTurnType) {
+    try {
+      structuredMetrics.recordStructuredTurn({
+        turnType: generatedResult.structuredTurnType,
+        llmBoardCount: llmBoardCommands.length,
+        mismatches: auditMismatches,
+        backfill: backfillOutcome,
+      });
+    } catch (metricsErr) {
+      // Metrics must never break a response.
+      turnTypeLogger.warn('structured metrics record failed (non-fatal)', { error: metricsErr.message });
     }
   }
 
