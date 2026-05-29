@@ -24,6 +24,7 @@ const {
   OPENAI_RESPONSE_FORMAT,
   normalizeStructuredResponse,
   isStructuredModeEnabled,
+  buildStructuredResponseInstructions,
 } = require('../boardResponseSchema');
 
 // Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
@@ -342,6 +343,17 @@ function assemblePrompt(decision, promptContext) {
     // Fallback: slim rules not used, but Socratic suppression is active.
     // Swap Rule 1 in the full static rules using the named constants.
     fullSystemPrompt = fullSystemPrompt.replace(RULE_1_SOCRATIC, RULE_1_TEACHING);
+  }
+
+  // ── Structured-response mode (Phase 4) ──
+  // When the dark flag is on, the generate stage asks the LLM for the
+  // schema-enforced JSON object and the board comes from board_commands,
+  // not <BOARD/> tags. The static prompt still teaches the legacy tag
+  // protocol; append the override block so the model drives the board
+  // through structured output and classifies its turn_type correctly.
+  // Flag off → this is a no-op and the prompt is byte-for-byte today's.
+  if (isStructuredModeEnabled()) {
+    fullSystemPrompt += '\n\n' + buildStructuredResponseInstructions();
   }
 
   // Inject phase-specific prompt if available
