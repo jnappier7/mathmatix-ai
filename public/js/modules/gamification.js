@@ -3,19 +3,38 @@
 
 import { triggerConfetti, showToast } from './helpers.js';
 
+// Tutors with refreshed celebration video art. Anyone outside this set
+// gets XP + confetti but no modal, so the legacy art doesn't ship alongside
+// the new style. Re-add the others here once their new videos land.
+const TUTORS_WITH_CELEBRATION_VIDEO = new Set([
+    'bob',
+    'maya',
+    'mr-nappier',
+    'ms-maria',
+]);
+
 /**
- * Show level-up celebration modal with tutor video
- * Uses smallcele for regular levels, levelUp for milestone levels (every 5)
+ * Show level-up celebration. Prefers the in-place hero overlay (the tutor
+ * "comes to life" in their portrait spot, owned by chat-redesign.js).
+ * Falls back to the fullscreen modal on surfaces without the hero panel.
  */
 export function showLevelUpCelebration(currentUser) {
+    if (!currentUser || !currentUser.selectedTutorId) return;
+    const tutorId = currentUser.selectedTutorId;
+    if (!TUTORS_WITH_CELEBRATION_VIDEO.has(tutorId)) return;
+
+    if (typeof window.playInPlaceCelebration === 'function' &&
+        window.playInPlaceCelebration(tutorId)) {
+        return;
+    }
+
+    // Fallback: legacy fullscreen modal (non-chat surfaces).
     const modal = document.getElementById('levelup-celebration-modal');
     const video = document.getElementById('celebration-tutor-video');
     const titleEl = document.getElementById('celebration-title');
     const subtitleEl = document.getElementById('celebration-subtitle');
+    if (!modal || !video) return;
 
-    if (!modal || !video || !currentUser || !currentUser.selectedTutorId) return;
-
-    const tutorId = currentUser.selectedTutorId;
     const currentLevel = currentUser.level || 1;
     const isMilestone = currentLevel % 5 === 0;
     const videoType = isMilestone ? 'levelUp' : 'smallcele';
