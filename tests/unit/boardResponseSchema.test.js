@@ -13,6 +13,7 @@
 
 const {
   BOARD_ACTIONS,
+  TURN_TYPES,
   BOARD_COMMAND_SCHEMA,
   BOARD_RESPONSE_SCHEMA,
   OPENAI_RESPONSE_FORMAT,
@@ -112,12 +113,14 @@ describe('boardResponseSchema — normalizeBoardCommand', () => {
 describe('boardResponseSchema — normalizeStructuredResponse', () => {
   test('well-formed payload passes through cleanly', () => {
     const result = normalizeStructuredResponse({
+      turn_type: 'problem_introduction',
       chat_message: "Let's tackle this.",
       board_commands: [
         { action: 'pose', tex: '2x + 4 = 20', op: null, check: null, fn: null, query: null, caption: null },
         { action: 'apply', tex: null, op: 'subtract 4 from both sides', check: null, fn: null, query: null, caption: null },
       ],
     });
+    expect(result.turn_type).toBe('problem_introduction');
     expect(result.chat_message).toBe("Let's tackle this.");
     expect(result.board_commands).toEqual([
       { action: 'pose', tex: '2x + 4 = 20' },
@@ -126,25 +129,43 @@ describe('boardResponseSchema — normalizeStructuredResponse', () => {
   });
 
   test('missing chat_message → empty string', () => {
-    const result = normalizeStructuredResponse({ board_commands: [] });
+    const result = normalizeStructuredResponse({ turn_type: 'small_talk', board_commands: [] });
     expect(result.chat_message).toBe('');
     expect(result.board_commands).toEqual([]);
   });
 
   test('missing board_commands → empty array', () => {
-    const result = normalizeStructuredResponse({ chat_message: 'hi' });
+    const result = normalizeStructuredResponse({ turn_type: 'small_talk', chat_message: 'hi' });
     expect(result.chat_message).toBe('hi');
     expect(result.board_commands).toEqual([]);
   });
 
-  test('non-object input → safe defaults', () => {
-    expect(normalizeStructuredResponse(null)).toEqual({ chat_message: '', board_commands: [] });
-    expect(normalizeStructuredResponse(undefined)).toEqual({ chat_message: '', board_commands: [] });
-    expect(normalizeStructuredResponse('not an object')).toEqual({ chat_message: '', board_commands: [] });
+  test('missing turn_type → null (signals legacy or invalid)', () => {
+    const result = normalizeStructuredResponse({
+      chat_message: 'hi',
+      board_commands: [],
+    });
+    expect(result.turn_type).toBeNull();
+  });
+
+  test('unknown turn_type value → null (not in enum, dropped)', () => {
+    const result = normalizeStructuredResponse({
+      turn_type: 'tutor_freestyle',
+      chat_message: 'hi',
+      board_commands: [],
+    });
+    expect(result.turn_type).toBeNull();
+  });
+
+  test('non-object input → safe defaults with null turn_type', () => {
+    expect(normalizeStructuredResponse(null)).toEqual({ turn_type: null, chat_message: '', board_commands: [] });
+    expect(normalizeStructuredResponse(undefined)).toEqual({ turn_type: null, chat_message: '', board_commands: [] });
+    expect(normalizeStructuredResponse('not an object')).toEqual({ turn_type: null, chat_message: '', board_commands: [] });
   });
 
   test('invalid commands are silently dropped', () => {
     const result = normalizeStructuredResponse({
+      turn_type: 'problem_introduction',
       chat_message: 'ok',
       board_commands: [
         { action: 'pose', tex: 'x = 1', op: null, check: null, fn: null, query: null, caption: null },
@@ -154,6 +175,17 @@ describe('boardResponseSchema — normalizeStructuredResponse', () => {
       ],
     });
     expect(result.board_commands).toEqual([{ action: 'pose', tex: 'x = 1' }]);
+  });
+
+  test('every known turn_type round-trips cleanly', () => {
+    for (const tt of TURN_TYPES) {
+      const result = normalizeStructuredResponse({
+        turn_type: tt,
+        chat_message: '',
+        board_commands: [],
+      });
+      expect(result.turn_type).toBe(tt);
+    }
   });
 });
 
@@ -228,6 +260,26 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
     expect(OPENAI_RESPONSE_FORMAT.json_schema.name).toBe('TutorResponse');
     expect(OPENAI_RESPONSE_FORMAT.json_schema.strict).toBe(true);
     expect(OPENAI_RESPONSE_FORMAT.json_schema.schema).toBe(BOARD_RESPONSE_SCHEMA);
+  });
+
+  test('BOARD_RESPONSE_SCHEMA includes turn_type as a required enum', () => {
+    expect(BOARD_RESPONSE_SCHEMA.properties.turn_type).toBeDefined();
+    expect(BOARD_RESPONSE_SCHEMA.properties.turn_type.type).toBe('string');
+    expect(BOARD_RESPONSE_SCHEMA.properties.turn_type.enum).toEqual(TURN_TYPES);
+    expect(BOARD_RESPONSE_SCHEMA.required).toContain('turn_type');
+  });
+
+  test('TURN_TYPES has the eight expected values', () => {
+    expect(TURN_TYPES).toEqual([
+      'problem_introduction',
+      'step_acknowledgment',
+      'verification',
+      'concept_reference',
+      'feedback',
+      'scaffold',
+      'redirect',
+      'small_talk',
+    ]);
   });
 
   test('every nullable field declares ["string", "null"] so strict mode accepts null', () => {

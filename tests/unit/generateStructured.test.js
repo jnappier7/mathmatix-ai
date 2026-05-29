@@ -65,9 +65,10 @@ describe('generate() — structured-output branch', () => {
     expect(result.structuredBoardCommands).toBeUndefined();
   });
 
-  test('flag on → uses callLLMStructured and returns structuredBoardCommands', async () => {
+  test('flag on → uses callLLMStructured and returns structuredBoardCommands + turn_type', async () => {
     process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
     callLLMStructured.mockResolvedValue({
+      turn_type: 'problem_introduction',
       chat_message: 'Sure, let\'s try this problem.',
       board_commands: [
         { action: 'pose', tex: 'x + 1 = 5', op: null, check: null, fn: null, query: null, caption: null },
@@ -80,8 +81,20 @@ describe('generate() — structured-output branch', () => {
     expect(callLLM).not.toHaveBeenCalled();
     expect(result.text).toBe('Sure, let\'s try this problem.');
     expect(result.structuredBoardCommands).toEqual([{ action: 'pose', tex: 'x + 1 = 5' }]);
+    expect(result.structuredTurnType).toBe('problem_introduction');
     expect(result.toolCalls).toEqual([]);
     expect(result.resolvedTools).toBeNull();
+  });
+
+  test('flag on, model omits turn_type → result has null turn_type (no crash)', async () => {
+    process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
+    callLLMStructured.mockResolvedValue({
+      chat_message: 'hi',
+      board_commands: [],
+    });
+    const result = await generate(buildAssembled());
+    expect(result.structuredTurnType).toBeNull();
+    expect(result.structuredBoardCommands).toEqual([]);
   });
 
   test('flag on but tools requested → falls back to legacy callLLM', async () => {

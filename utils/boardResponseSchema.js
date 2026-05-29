@@ -43,6 +43,29 @@
 
 const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image'];
 
+// The kind of turn Maya is serving. The model self-declares this
+// on every structured response. Server-side audit (utils/turnTypeAudit.js)
+// flags pedagogical mismatches between the declared turn_type and
+// the emitted board_commands — e.g., turn_type='problem_introduction'
+// with no pose card is the failure mode the geometry-review session
+// surfaced.
+//
+// OpenAI strict mode supports enum gating but NOT cardinality
+// constraints (no minItems), so "turn_type=problem_introduction must
+// have a pose card" is enforced in audit, not in schema. The schema
+// keeps the field required and limits values to this enum; semantics
+// live next door.
+const TURN_TYPES = [
+  'problem_introduction',  // tutor poses a new problem — pose card expected
+  'step_acknowledgment',   // tutor responds to a student step in an open problem — apply/resolve possible
+  'verification',          // student stated final answer — verify card expected
+  'concept_reference',     // student asked about a concept — image card expected
+  'feedback',              // tutor reacts (praise / correction) without advancing the work
+  'scaffold',              // tutor lowers difficulty, hints, or breaks into sub-question
+  'redirect',              // off-topic redirect back to math
+  'small_talk',            // greeting, closing, off-task chitchat
+];
+
 const BOARD_COMMAND_SCHEMA = {
   type: 'object',
   properties: {
@@ -83,6 +106,11 @@ const BOARD_COMMAND_SCHEMA = {
 const BOARD_RESPONSE_SCHEMA = {
   type: 'object',
   properties: {
+    turn_type: {
+      type: 'string',
+      enum: TURN_TYPES,
+      description: 'What kind of turn this is. "problem_introduction" when you put a new problem in front of the student (board_commands MUST include a pose). "step_acknowledgment" when responding to a step they took in an open problem. "verification" when they stated a final answer (board_commands SHOULD include verify). "concept_reference" when they asked about a concept and you are showing reference content (board_commands MAY include image). "feedback" for praise or correction without advancing. "scaffold" when lowering difficulty / hinting. "redirect" when steering back to math. "small_talk" for greetings, closings, off-task chitchat.',
+    },
     chat_message: {
       type: 'string',
       description: 'The natural-language reply the student sees in the chat bubble. Keep it conversational, in voice — do NOT include any <BOARD>, <XP>, or other system tags; structured fields carry that signal.',
@@ -93,7 +121,7 @@ const BOARD_RESPONSE_SCHEMA = {
       items: BOARD_COMMAND_SCHEMA,
     },
   },
-  required: ['chat_message', 'board_commands'],
+  required: ['turn_type', 'chat_message', 'board_commands'],
   additionalProperties: false,
 };
 
@@ -145,18 +173,21 @@ function normalizeBoardCommand(cmd) {
  * `board_commands` as authoritative.
  *
  * @param {object} parsed - Parsed JSON from the structured call.
- * @returns {{ chat_message: string, board_commands: object[] }}
+ * @returns {{ turn_type: string|null, chat_message: string, board_commands: object[] }}
  */
 function normalizeStructuredResponse(parsed) {
   if (!parsed || typeof parsed !== 'object') {
-    return { chat_message: '', board_commands: [] };
+    return { turn_type: null, chat_message: '', board_commands: [] };
   }
+  const turnType = typeof parsed.turn_type === 'string' && TURN_TYPES.includes(parsed.turn_type)
+    ? parsed.turn_type
+    : null;
   const chat = typeof parsed.chat_message === 'string' ? parsed.chat_message : '';
   const rawCmds = Array.isArray(parsed.board_commands) ? parsed.board_commands : [];
   const cmds = rawCmds
     .map(normalizeBoardCommand)
     .filter(Boolean);
-  return { chat_message: chat, board_commands: cmds };
+  return { turn_type: turnType, chat_message: chat, board_commands: cmds };
 }
 
 /**
@@ -177,6 +208,7 @@ function isStructuredModeEnabled() {
 
 module.exports = {
   BOARD_ACTIONS,
+  TURN_TYPES,
   BOARD_COMMAND_SCHEMA,
   BOARD_RESPONSE_SCHEMA,
   OPENAI_RESPONSE_FORMAT,

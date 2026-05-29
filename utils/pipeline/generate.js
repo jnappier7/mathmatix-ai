@@ -477,13 +477,14 @@ async function generate(assembled, options = {}) {
         OPENAI_RESPONSE_FORMAT,
         llmOptions,
       );
-      const { chat_message, board_commands } = normalizeStructuredResponse(parsed);
+      const { turn_type, chat_message, board_commands } = normalizeStructuredResponse(parsed);
       const text = chat_message.trim() || "I'm not sure how to respond.";
       return {
         text,
         toolCalls: [],
         resolvedTools: null,
         structuredBoardCommands: board_commands,
+        structuredTurnType: turn_type,
       };
     } catch (structuredErr) {
       // Schema enforcement is a hard guarantee at the API level, so
@@ -808,7 +809,7 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
     if (!parsed) {
       throw new Error('structured stream finalize: JSON.parse returned null');
     }
-    const { chat_message, board_commands } = normalizeStructuredResponse(parsed);
+    const { turn_type, chat_message, board_commands } = normalizeStructuredResponse(parsed);
     // Prefer the schema-parsed chat_message over our extractor's
     // running buffer — the JSON.parse decode is authoritative for
     // anything we forwarded with escape edge cases.
@@ -818,6 +819,7 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
       toolCalls: [],
       resolvedTools: null,
       structuredBoardCommands: board_commands,
+      structuredTurnType: turn_type,
     };
   } catch (streamError) {
     console.error('[Generate] Structured streaming failed, falling back:', streamError.message);

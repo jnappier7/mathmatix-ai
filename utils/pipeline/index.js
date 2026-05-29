@@ -46,8 +46,10 @@ const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands } = require('./boardSynthesizer');
+const { auditTurn } = require('../turnTypeAudit');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
+const turnTypeLogger = log.child({ service: 'turn-type-audit' });
 
 /**
  * Run the full tutoring pipeline.
@@ -435,6 +437,29 @@ async function runPipeline(message, ctx) {
           tex: command.tex || null,
           op: command.op || null,
         });
+      }
+    }
+  }
+
+  // ── Stage 5b.1: TURN-TYPE AUDIT (Phase 3) ──
+  // Observe-only. Phase 3 lights up the signal so we can measure
+  // how often the model's declared turn_type contradicts the board
+  // it emitted. Phase 5 will wire hard mismatches (e.g., a
+  // problem_introduction with no pose) to the deterministic
+  // synthesizer for backfill. The audit is a no-op under the legacy
+  // free-text path because there is no turn_type to audit.
+  if (generatedResult.structuredTurnType) {
+    const mismatches = auditTurn({
+      turnType: generatedResult.structuredTurnType,
+      boardCommands: Array.isArray(generatedResult.structuredBoardCommands)
+        ? generatedResult.structuredBoardCommands
+        : [],
+    });
+    for (const m of mismatches) {
+      if (m.severity === 'hard') {
+        turnTypeLogger.warn('turn_type mismatch (hard)', m);
+      } else {
+        turnTypeLogger.info('turn_type mismatch (soft)', m);
       }
     }
   }
