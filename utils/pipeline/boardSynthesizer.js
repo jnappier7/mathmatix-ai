@@ -527,9 +527,94 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   return { added, kept: llm, all };
 }
 
+// ---------------------------------------------------------------------------
+// Phase 5 — turn-type backfill pose
+//
+// synthesizeBoardCommands derives a pose from pipeline ground truth, but
+// only for parseable algebra / recognized geometry AND only when the prior
+// cycle was closed. When the model self-declares turn_type=problem_intro-
+// duction yet no pose survives (the text parses as neither algebra nor
+// geometry, or the main synth skipped pose on a stale-but-open cycle), the
+// board sits empty on the exact turn the model said a problem is on the
+// table. The turn_type is the missing ground-truth signal; this turns it
+// into a card.
+// ---------------------------------------------------------------------------
+
+/**
+ * Relaxed problem-sentence extractor for the backfill fallback. Unlike
+ * extractProblemSentence it does NOT require geometry vocab — by the time
+ * we reach it the model has already declared a problem_introduction, so the
+ * only job is to quote what the tutor put on the table. Verbatim quotation
+ * is ground truth (it's literally the tutor's own words), so there is no
+ * guessing about what the problem means.
+ *
+ * Prefers the question sentence (plus up to two setup sentences carrying
+ * the parameters). With no explicit question, falls back to the first
+ * sentence that carries a concrete number — problems almost always do, and
+ * it skips greeting / transition prose.
+ *
+ * @returns {string|null}
+ */
+function extractPosableSentence(text) {
+  if (!text || typeof text !== 'string') return null;
+  const sample = text.slice(0, 800).trim();
+  if (!sample) return null;
+
+  const sentences = sample.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
+  if (sentences.length === 0) return null;
+
+  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s));
+  let chunk;
+  if (qIdx !== -1) {
+    chunk = sentences.slice(Math.max(0, qIdx - 2), qIdx + 1).join(' ').trim();
+  } else {
+    const numIdx = sentences.findIndex(s => /\d/.test(s));
+    if (numIdx === -1) return null;
+    chunk = sentences[numIdx];
+  }
+
+  if (chunk.length < 8 || chunk.length > 320) return null;
+  return chunk;
+}
+
+/**
+ * Last-resort pose synthesis for the Phase 5 turn-type backfill. Called
+ * only when turn_type=problem_introduction yet no pose card survived from
+ * either the LLM or the main synthesizer.
+ *
+ * Resolution order, best tex first:
+ *   1. detectPosedProblem(student) / detectPosedProblem(tutor) — exact
+ *      algebra tex when either side carries a parseable equation. (The
+ *      main synth may have skipped this purely because the prior cycle
+ *      wasn't closed; here the model's turn_type overrides that.)
+ *   2. detectGeometryProblem(tutor) — verbatim geometry question.
+ *   3. extractPosableSentence(tutor) — verbatim tutor sentence, the
+ *      universal fallback so the board never sits empty on a declared
+ *      problem_introduction.
+ *
+ * @param {object} params
+ * @param {string} params.tutorResponse  tutor's reply (post-tag-strip)
+ * @param {string} params.studentMessage incoming student text
+ * @returns {{action:'pose', tex:string}|null}
+ */
+function synthesizeFallbackPose({ tutorResponse, studentMessage } = {}) {
+  let posed = detectPosedProblem(studentMessage);
+  if (!posed) posed = detectPosedProblem(tutorResponse);
+  if (posed) return { action: 'pose', tex: posed.tex };
+
+  const geo = detectGeometryProblem(tutorResponse);
+  if (geo) return { action: 'pose', tex: geo.tex };
+
+  const sentence = extractPosableSentence(tutorResponse);
+  if (sentence) return { action: 'pose', tex: sentenceToTex(sentence) };
+
+  return null;
+}
+
 module.exports = {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
+  synthesizeFallbackPose,
   // Exposed for tests
   _detectAppliedOperation: detectAppliedOperation,
   _detectIntermediateEquation: detectIntermediateEquation,
@@ -538,6 +623,7 @@ module.exports = {
   _detectPosedProblem: detectPosedProblem,
   _detectGeometryProblem: detectGeometryProblem,
   _extractProblemSentence: extractProblemSentence,
+  _extractPosableSentence: extractPosableSentence,
   _sentenceToTex: sentenceToTex,
   _tutorAffirms: tutorAffirms,
   _commandsOverlap: commandsOverlap,

@@ -21,11 +21,13 @@
    Phase 3 policy: observe, don't act
    ----------------------------------
    The audit returns structured mismatches that the pipeline logs.
-   It does NOT mutate board_commands. We need a few sessions of
-   real data to know which mismatch patterns are bugs vs. legitimate
-   tutor judgment, so Phase 3 only lights up the signal. Phase 5
-   wires the audit to the deterministic synthesizer where a hard
-   bug ("problem_introduction with no pose") gets backfilled.
+   It does NOT mutate board_commands itself — it is pure observation.
+   Phase 5 acts on the one hard bug it detects ("problem_introduction
+   with no pose"): the pipeline's Stage 5c.1 backfills a verbatim pose
+   via the deterministic synthesizer when no pose survives the merge.
+   Soft mismatches stay observe-only — a few sessions of real data are
+   needed to know which patterns are bugs vs. legitimate tutor
+   judgment.
    ============================================================ */
 
 'use strict';
@@ -34,7 +36,8 @@ const { TURN_TYPES } = require('./boardResponseSchema');
 
 const SEVERITY = {
   HARD: 'hard',   // schema-allowed but pedagogically wrong; the
-                  // synthesizer should backfill (Phase 5 wires this).
+                  // synthesizer backfills it (wired in pipeline
+                  // Stage 5c.1, Phase 5).
   SOFT: 'soft',   // unusual combination; log for analysis but the
                   // tutor's judgment may be legitimate.
 };

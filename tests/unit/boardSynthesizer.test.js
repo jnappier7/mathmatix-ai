@@ -14,6 +14,7 @@
 const {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
+  synthesizeFallbackPose,
   _detectAppliedOperation,
   _detectIntermediateEquation,
   _detectFinalSolution,
@@ -21,6 +22,7 @@ const {
   _detectPosedProblem,
   _detectGeometryProblem,
   _extractProblemSentence,
+  _extractPosableSentence,
   _sentenceToTex,
   _tutorAffirms,
   _commandsOverlap,
@@ -576,5 +578,80 @@ describe('boardSynthesizer — merge with LLM commands', () => {
       { action: 'pose', tex: '3x - 5 = 16' },
       { action: 'pose', tex: '3x-5=16' }
     )).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase 5 — turn-type backfill pose
+// ---------------------------------------------------------------------------
+
+describe('boardSynthesizer — Phase 5 backfill', () => {
+  describe('_extractPosableSentence', () => {
+    test('quotes the question sentence plus up to two setup sentences', () => {
+      const text = 'A train leaves at noon. It travels 60 mph. How far does it go in 3 hours?';
+      expect(_extractPosableSentence(text)).toBe(text);
+    });
+
+    test('falls back to the first sentence carrying a number when no question', () => {
+      const text = 'Sure, let me set this up. A rectangle has length 8 and width 5. Find its area.';
+      // No "?" — quote the first numeric sentence, skipping the greeting.
+      expect(_extractPosableSentence(text)).toBe('A rectangle has length 8 and width 5.');
+    });
+
+    test('returns null when there is no question and no numbers', () => {
+      expect(_extractPosableSentence('Great work today. You really get this.')).toBeNull();
+    });
+
+    test('rejects an over-long chunk', () => {
+      const long = `${'x'.repeat(400)}?`;
+      expect(_extractPosableSentence(long)).toBeNull();
+    });
+
+    test('returns null on empty / non-string input', () => {
+      expect(_extractPosableSentence('')).toBeNull();
+      expect(_extractPosableSentence(null)).toBeNull();
+      expect(_extractPosableSentence(undefined)).toBeNull();
+    });
+  });
+
+  describe('synthesizeFallbackPose', () => {
+    test('prefers exact algebra tex from the student message', () => {
+      const pose = synthesizeFallbackPose({
+        tutorResponse: "Let's give this a shot together!",
+        studentMessage: 'solve 3x - 5 = 16',
+      });
+      expect(pose).toMatchObject({ action: 'pose' });
+      expect(_commandsOverlap(pose, { action: 'pose', tex: '3x-5=16' })).toBe(true);
+    });
+
+    test('uses exact algebra tex from the tutor when the student has none', () => {
+      const pose = synthesizeFallbackPose({
+        tutorResponse: 'Okay, try this one: 4x + 3 = 27.',
+        studentMessage: 'ok ready',
+      });
+      expect(pose).toMatchObject({ action: 'pose' });
+      expect(_commandsOverlap(pose, { action: 'pose', tex: '4x+3=27' })).toBe(true);
+    });
+
+    test('falls back to a verbatim \\text pose for an unparseable word problem', () => {
+      const tutor = "Here's one for you. A baker has 24 cookies and packs them into boxes of 6. How many boxes does she fill?";
+      const pose = synthesizeFallbackPose({ tutorResponse: tutor, studentMessage: 'next please' });
+      expect(pose.action).toBe('pose');
+      expect(pose.tex).toMatch(/^\\text\{/);
+      expect(pose.tex).toContain('How many boxes');
+    });
+
+    test('returns null when there is no posable problem anywhere', () => {
+      const pose = synthesizeFallbackPose({
+        tutorResponse: 'Nice — you nailed that. Proud of you.',
+        studentMessage: 'thanks!',
+      });
+      expect(pose).toBeNull();
+    });
+
+    test('returns null on empty input', () => {
+      expect(synthesizeFallbackPose({})).toBeNull();
+      expect(synthesizeFallbackPose()).toBeNull();
+    });
   });
 });

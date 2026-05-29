@@ -17,6 +17,7 @@
 jest.mock('../../utils/llmGateway', () => ({
   callLLM: jest.fn(),
   callLLMStream: jest.fn(),
+  callLLMStructured: jest.fn(),
 }));
 
 jest.mock('../../utils/openaiClient', () => ({
@@ -80,7 +81,7 @@ jest.mock('../../utils/promptCompressor', () => ({
   buildSystemPrompt: jest.fn(() => 'system prompt'),
 }));
 
-const { callLLM } = require('../../utils/llmGateway');
+const { callLLM, callLLMStructured } = require('../../utils/llmGateway');
 const { runPipeline } = require('../../utils/pipeline');
 
 // ── Helpers ──
@@ -361,5 +362,71 @@ describe('Pipeline Integration: runPipeline', () => {
 
     expect(result.text).not.toMatch(/\n\s*\?/);
     expect(result.text).toMatch(/answer\??/); // ? should be right after "answer"
+  });
+
+  // ──────────────────────────────────────────────────────────────────────
+  // Phase 5 — turn-type backfill (Stage 5c.1)
+  //
+  // When the structured path returns turn_type=problem_introduction but no
+  // board_commands, and the deterministic synthesizer also can't derive a
+  // pose (mathSolver is mocked to see no math here), the pipeline must
+  // backfill a verbatim pose so the board never sits empty on the turn the
+  // model itself declared a problem. Dark-flagged behind
+  // STRUCTURED_TUTOR_RESPONSE.
+  // ──────────────────────────────────────────────────────────────────────
+  describe('Phase 5: turn-type backfill', () => {
+    const ORIGINAL_FLAG = process.env.STRUCTURED_TUTOR_RESPONSE;
+    afterEach(() => {
+      if (ORIGINAL_FLAG === undefined) delete process.env.STRUCTURED_TUTOR_RESPONSE;
+      else process.env.STRUCTURED_TUTOR_RESPONSE = ORIGINAL_FLAG;
+    });
+
+    test('problem_introduction with no pose backfills a verbatim pose', async () => {
+      process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
+      callLLMStructured.mockResolvedValue({
+        turn_type: 'problem_introduction',
+        chat_message:
+          "Here's one for you. A baker has 24 cookies and packs them into boxes of 6. How many boxes does she fill?",
+        board_commands: [], // model forgot the pose
+      });
+
+      const user = mockUser();
+      const conversation = mockConversation([]);
+      const result = await runPipeline('give me a word problem', buildCtx(user, conversation));
+
+      const poses = result.boardCommands.filter(c => c.action === 'pose');
+      expect(poses).toHaveLength(1);
+      expect(poses[0].tex).toContain('How many boxes');
+    });
+
+    test('flag off → no structured turn_type, no backfill', async () => {
+      delete process.env.STRUCTURED_TUTOR_RESPONSE;
+      // Legacy path: free-text reply with no board tags.
+      mockLLMResponse(
+        "Here's one for you. A baker has 24 cookies and packs them into boxes of 6. How many boxes does she fill?"
+      );
+
+      const user = mockUser();
+      const conversation = mockConversation([]);
+      const result = await runPipeline('give me a word problem', buildCtx(user, conversation));
+
+      expect(result.boardCommands.some(c => c.action === 'pose')).toBe(false);
+      expect(callLLMStructured).not.toHaveBeenCalled();
+    });
+
+    test('does not double-pose when the model already emitted one', async () => {
+      process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
+      callLLMStructured.mockResolvedValue({
+        turn_type: 'problem_introduction',
+        chat_message: 'Try this one!',
+        board_commands: [{ action: 'pose', tex: '\\text{A baker has 24 cookies...}' }],
+      });
+
+      const user = mockUser();
+      const conversation = mockConversation([]);
+      const result = await runPipeline('give me a word problem', buildCtx(user, conversation));
+
+      expect(result.boardCommands.filter(c => c.action === 'pose')).toHaveLength(1);
+    });
   });
 });
