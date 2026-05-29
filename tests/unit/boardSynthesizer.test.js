@@ -19,6 +19,9 @@ const {
   _detectFinalSolution,
   _detectSubstitutionCheck,
   _detectPosedProblem,
+  _detectGeometryProblem,
+  _extractProblemSentence,
+  _sentenceToTex,
   _tutorAffirms,
   _commandsOverlap,
 } = require('../../utils/pipeline/boardSynthesizer');
@@ -323,6 +326,208 @@ describe('boardSynthesizer — guard rails', () => {
       lastBoardAction: null,
     });
     expect(cards).toHaveLength(0);
+  });
+});
+
+describe('boardSynthesizer — geometry pose fallback', () => {
+  // Backstop the failure mode from the 2026-05-26 review-session
+  // transcript: Maya ran 6 geometry problems back-to-back and the
+  // WorkBoard stayed empty because parseCleanProblem only recognizes
+  // algebra-shaped math.
+
+  describe('_detectGeometryProblem', () => {
+    test('catches triangle congruence angle problem', () => {
+      const r = _detectGeometryProblem(
+        'Triangle ABC is congruent to triangle DEF. If angle A measures 40 degrees and angle B measures 70 degrees, what is the measure of angle D?'
+      );
+      expect(r).not.toBeNull();
+      expect(r.tex).toMatch(/^\\text\{/);
+      expect(r.sentence).toMatch(/angle D\?$/);
+    });
+
+    test('catches 30-60-90 hypotenuse problem', () => {
+      const r = _detectGeometryProblem(
+        'In a right triangle, if one of the angles is 30 degrees and the length of the side opposite that angle is 5 units, what is the length of the hypotenuse?'
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/hypotenuse/);
+    });
+
+    test('catches circle area question', () => {
+      const r = _detectGeometryProblem(
+        'A circle has a radius of 8 units. What is the area of the circle?'
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/circle/);
+    });
+
+    test('catches standard form of a circle from center and radius', () => {
+      const r = _detectGeometryProblem(
+        'What is the standard form of the equation of a circle with a center at (3,-2) and a radius of 5 units?'
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/standard form/i);
+    });
+
+    test('catches convert-to-standard-form completing-the-square problem', () => {
+      const r = _detectGeometryProblem(
+        'Convert the equation of the circle x^2 + y^2 - 6x + 4y - 12 = 0 into standard form. What is your first step?'
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/standard form/i);
+    });
+
+    test('catches similar triangles side-ratio problem', () => {
+      const r = _detectGeometryProblem(
+        'Triangle ABC is similar to triangle DEF. If the lengths of the sides of triangle ABC are 6, 8, and 10, and the length of the shortest side of triangle DEF is 3, what are the lengths of the other sides of triangle DEF?'
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/triangle DEF\?$/);
+    });
+
+    test('catches a "Question:" framed prompt', () => {
+      const r = _detectGeometryProblem(
+        "Awesome! Let's try this:\n\nQuestion: A circle has a radius of 8 units. What is the area of the circle?"
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/area of the circle/);
+    });
+
+    test('rejects pure small talk', () => {
+      expect(_detectGeometryProblem('Good luck on your exam tomorrow!')).toBeNull();
+    });
+
+    test('rejects a geometry recap that has no problem cue', () => {
+      // Praise turn — mentions "circle" but is not posing a problem.
+      expect(_detectGeometryProblem(
+        'Exactly right! The area of the circle is 64π square units. Great work!'
+      )).toBeNull();
+    });
+
+    test('rejects an explanation that lacks digits (concept narration)', () => {
+      expect(_detectGeometryProblem(
+        'A triangle has three sides and three angles. What is a triangle, in your own words?'
+      )).toBeNull();
+    });
+
+    test('rejects an algebra-only "what is x" prompt with no geometry vocab', () => {
+      expect(_detectGeometryProblem(
+        'Solve for x: 2x + 4 = 20. What is x?'
+      )).toBeNull();
+    });
+  });
+
+  describe('_extractProblemSentence', () => {
+    test('returns the question sentence plus up to two setup sentences', () => {
+      const s = _extractProblemSentence(
+        'A circle has a radius of 8 units. What is the area of the circle?'
+      );
+      expect(s).toBe('A circle has a radius of 8 units. What is the area of the circle?');
+    });
+
+    test('honors an explicit "Question:" marker', () => {
+      const s = _extractProblemSentence(
+        "Sure thing! Here's a question on circles:\n\nQuestion: A circle has a radius of 8 units. What is the area of the circle?"
+      );
+      expect(s).toMatch(/^A circle/);
+      expect(s).toMatch(/area of the circle\?$/);
+    });
+
+    test('returns null when no sentence ends in a question mark', () => {
+      expect(_extractProblemSentence(
+        'A circle has a radius of 8 units. The area is 64π.'
+      )).toBeNull();
+    });
+
+    test('rejects very short sentences', () => {
+      expect(_extractProblemSentence('What?')).toBeNull();
+    });
+  });
+
+  describe('_sentenceToTex', () => {
+    test('wraps the sentence in \\text{...}', () => {
+      expect(_sentenceToTex('What is the area?')).toBe('\\text{What is the area?}');
+    });
+
+    test('strips KaTeX-hostile characters from the content', () => {
+      const tex = _sentenceToTex('Find x_1 ^ 2 with $ braces { } # %.');
+      expect(tex.startsWith('\\text{')).toBe(true);
+      expect(tex.endsWith('}')).toBe(true);
+      // Inspect only the content between the wrapper braces.
+      const content = tex.slice('\\text{'.length, -1);
+      expect(content).not.toMatch(/[${}#%&_^\\]/);
+    });
+  });
+
+  describe('synthesizeBoardCommands — full geometry turns', () => {
+    test('tutor poses triangle congruence question → pose card emitted', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: 'yes... or trig',
+        tutorResponse:
+          "Awesome! Let's tackle some review questions. Question: Triangle ABC is congruent to triangle DEF. If angle A measures 40 degrees and angle B measures 70 degrees, what is the measure of angle D?",
+        diagnosis: { type: 'no_answer', isCorrect: null },
+        observation: { messageType: 'general_math' },
+        lastBoardAction: null,
+      });
+      expect(cards).toHaveLength(1);
+      expect(cards[0].action).toBe('pose');
+      expect(cards[0].tex).toMatch(/angle D/);
+    });
+
+    test('tutor poses circle area question after a verify (cycle closed) → pose card', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: 'yup',
+        tutorResponse:
+          "Great! Question: A circle has a radius of 8 units. What is the area of the circle?",
+        diagnosis: { type: 'no_answer', isCorrect: null },
+        observation: { messageType: 'affirmative' },
+        lastBoardAction: 'verify',
+      });
+      expect(cards.some(c => c.action === 'pose')).toBe(true);
+    });
+
+    test('does NOT pose when the cycle is open (lastBoardAction=pose)', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: 'idk',
+        tutorResponse:
+          'A circle has a radius of 8 units. What is the area of the circle?',
+        diagnosis: { type: 'no_answer', isCorrect: null },
+        observation: { messageType: 'general_math' },
+        lastBoardAction: 'pose',
+      });
+      expect(cards.some(c => c.action === 'pose')).toBe(false);
+    });
+
+    test('algebra path still wins when an equation is parseable in the tutor message', () => {
+      // If parseCleanProblem succeeds, we never fall through to the
+      // geometry path — the algebra tex carries math-engine ground
+      // truth and should be preferred.
+      const cards = synthesizeBoardCommands({
+        studentMessage: 'sure',
+        tutorResponse:
+          "Let's try this circle problem: Solve 3x - 5 = 16. What's the first move?",
+        diagnosis: { type: 'no_answer', isCorrect: null },
+        observation: { messageType: 'general_math' },
+        lastBoardAction: null,
+      });
+      const pose = cards.find(c => c.action === 'pose');
+      expect(pose).toBeTruthy();
+      // Algebra tex is bare equation, not a \text{...} wrap.
+      expect(pose.tex).not.toMatch(/^\\text\{/);
+      expect(pose.tex).toMatch(/3x.*5.*16/);
+    });
+
+    test('praise-only geometry message after a verify emits nothing', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: '64pi',
+        tutorResponse:
+          'Exactly right! The area of the circle is 64π square units. Great job!',
+        diagnosis: { type: 'no_answer', isCorrect: null },
+        observation: { messageType: 'answer_attempt' },
+        lastBoardAction: 'verify',
+      });
+      expect(cards).toHaveLength(0);
+    });
   });
 });
 
