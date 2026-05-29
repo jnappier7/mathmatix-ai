@@ -125,6 +125,65 @@ async function callLLM(model, messages, options = {}) {
 }
 
 /**
+ * Call the LLM with a strict JSON-schema response format and
+ * return the parsed JSON object. Thin wrapper over callLLM that
+ * pairs the API-level structured-output mode with response
+ * parsing so callers don't repeat the boilerplate.
+ *
+ * Throws if:
+ *   - the LLM call itself fails (after retries)
+ *   - the LLM returned no content (e.g., it produced a tool_call
+ *     instead — should not happen with `tools` absent, but is
+ *     defensive)
+ *   - the content fails to JSON.parse (should not happen with
+ *     strict: true on the response_format, but is defensive
+ *     against future API regressions or proxies that munge JSON)
+ *
+ * Callers are responsible for validating semantic correctness
+ * beyond JSON-shape; the OpenAI API guarantees schema conformance
+ * when `strict: true` is set on the response_format.
+ *
+ * @param {string} model
+ * @param {Array<Object>} messages
+ * @param {Object} responseFormat - The full `response_format`
+ *   object as documented by OpenAI, e.g. the OPENAI_RESPONSE_FORMAT
+ *   exported from utils/boardResponseSchema.js.
+ * @param {Object} [options] - Forwarded to callLLM (temperature,
+ *   max_tokens, timeoutMs, signal). `response_format` and
+ *   `stream` are ignored if present here.
+ * @returns {Promise<Object>} Parsed JSON content.
+ */
+async function callLLMStructured(model, messages, responseFormat, options = {}) {
+    if (!responseFormat || typeof responseFormat !== 'object') {
+        throw new Error('callLLMStructured: responseFormat is required');
+    }
+    const callOptions = {
+        ...options,
+        response_format: responseFormat,
+        // This helper is non-streaming on purpose. The streaming
+        // structured path lives in generate.js's generateStreaming,
+        // which calls callLLMStream with response_format directly
+        // and forwards the chat_message value via the
+        // structuredChatStreamExtractor.
+        stream: false,
+    };
+    const completion = await callLLM(model, messages, callOptions);
+    const content = completion?.choices?.[0]?.message?.content;
+    if (typeof content !== 'string' || content.length === 0) {
+        const finishReason = completion?.choices?.[0]?.finish_reason || 'unknown';
+        throw new Error(`callLLMStructured: empty content (finish_reason=${finishReason})`);
+    }
+    try {
+        return JSON.parse(content);
+    } catch (parseErr) {
+        // strict: true should prevent this, but log enough to
+        // diagnose if a proxy ever munges the body.
+        const preview = content.slice(0, 200).replace(/\n/g, '\\n');
+        throw new Error(`callLLMStructured: JSON.parse failed (${parseErr.message}). Content preview: ${preview}`);
+    }
+}
+
+/**
  * Streaming version of callLLM - returns a stream object for real-time responses
  * @param {string} model - The model name (e.g., "gpt-4o-mini", "gpt-4o")
  * @param {Array<Object>} messages - Array of message objects for the AI
@@ -171,6 +230,7 @@ async function callLLMStream(model, messages, options = {}) {
             ...tokenParam,
             ...toolParams,
             stream: true,
+            ...(options.response_format ? { response_format: options.response_format } : {}),
         }, {
             timeout: options.timeoutMs || DEFAULT_CHAT_TIMEOUT_MS,
             maxRetries: 0,
@@ -286,6 +346,7 @@ module.exports = {
     retryWithExponentialBackoff,
     DEFAULT_CHAT_TIMEOUT_MS,
     callLLM,
+    callLLMStructured,
     callLLMStream,
     generateEmbedding,
     moderateText,

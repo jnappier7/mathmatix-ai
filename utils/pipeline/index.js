@@ -46,8 +46,10 @@ const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands } = require('./boardSynthesizer');
+const { auditTurn } = require('../turnTypeAudit');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
+const turnTypeLogger = log.child({ service: 'turn-type-audit' });
 
 /**
  * Run the full tutoring pipeline.
@@ -392,23 +394,40 @@ async function runPipeline(message, ctx) {
 
   console.log(`[Pipeline] Verify: ${verified.flags.length > 0 ? verified.flags.join(', ') : 'clean'}`);
 
-  // ── Stage 5b: BOARD TAG PROTOCOL (LLM-emitted tags) ──
-  // Extract <BOARD …/> tags from verify.text and replace verify.text
-  // with the stripped version. The guard drops any tag that doesn't
-  // trace back to the student's recent message (#1 product rule).
-  const boardParseInput = verified.text;
-  const boardParsed = parseBoardTags(boardParseInput);
-  // Reuse the recentUserMessages slice from the observe stage.
+  // ── Stage 5b: BOARD COMMANDS FROM LLM ──
+  // Two paths converge here:
+  //   (A) Structured-output path (Phase 1, flag-gated): the LLM
+  //       returned board_commands directly via JSON schema. They
+  //       are already in the legacy compact shape and skip the
+  //       regex parser entirely.
+  //   (B) Legacy free-text path: <BOARD …/> tags are extracted
+  //       from verify.text and verify.text is replaced with the
+  //       stripped version.
+  // Either way the result is run through the same pedagogy guard
+  // so the #1 product rule is enforced identically.
   const recentUserMessagesForBoard = recentUserMessages;
   let llmBoardCommands = [];
-  if (boardParsed.boardCommands.length > 0) {
+  let rawLlmBoardCommands = [];
+
+  if (Array.isArray(generatedResult.structuredBoardCommands)
+      && generatedResult.structuredBoardCommands.length > 0) {
+    rawLlmBoardCommands = generatedResult.structuredBoardCommands;
+  } else {
+    // Legacy path: parse tags out of verify.text.
+    const boardParsed = parseBoardTags(verified.text);
+    if (boardParsed.boardCommands.length > 0) {
+      verified.text = boardParsed.cleanedText;
+      rawLlmBoardCommands = boardParsed.boardCommands;
+    }
+  }
+
+  if (rawLlmBoardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({
-      commands: boardParsed.boardCommands,
+      commands: rawLlmBoardCommands,
       userMessage: message,
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
     });
-    verified.text = boardParsed.cleanedText;
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
       for (const { command, reason } of guardResult.dropped) {
@@ -418,6 +437,29 @@ async function runPipeline(message, ctx) {
           tex: command.tex || null,
           op: command.op || null,
         });
+      }
+    }
+  }
+
+  // ── Stage 5b.1: TURN-TYPE AUDIT (Phase 3) ──
+  // Observe-only. Phase 3 lights up the signal so we can measure
+  // how often the model's declared turn_type contradicts the board
+  // it emitted. Phase 5 will wire hard mismatches (e.g., a
+  // problem_introduction with no pose) to the deterministic
+  // synthesizer for backfill. The audit is a no-op under the legacy
+  // free-text path because there is no turn_type to audit.
+  if (generatedResult.structuredTurnType) {
+    const mismatches = auditTurn({
+      turnType: generatedResult.structuredTurnType,
+      boardCommands: Array.isArray(generatedResult.structuredBoardCommands)
+        ? generatedResult.structuredBoardCommands
+        : [],
+    });
+    for (const m of mismatches) {
+      if (m.severity === 'hard') {
+        turnTypeLogger.warn('turn_type mismatch (hard)', m);
+      } else {
+        turnTypeLogger.info('turn_type mismatch (soft)', m);
       }
     }
   }

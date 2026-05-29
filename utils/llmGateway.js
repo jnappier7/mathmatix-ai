@@ -11,7 +11,7 @@
  * @module llmGateway
  */
 
-const { openai, retryWithExponentialBackoff, callLLM, callLLMStream, generateEmbedding } = require('./openaiClient');
+const { openai, retryWithExponentialBackoff, callLLM, callLLMStructured, callLLMStream, generateEmbedding } = require('./openaiClient');
 const { generateSystemPrompt } = require('./prompt');
 const { createAnonymizationContext, anonymizeMessages, anonymizeSystemPrompt, rehydrateResponse, logAnonymizationEvent } = require('./piiAnonymizer');
 
@@ -254,6 +254,7 @@ module.exports = {
 
     // Low-level direct access (for special cases)
     callLLM,                // Direct LLM call
+    callLLMStructured,      // JSON-schema response, parsed
     callLLMStream,          // Direct streaming call
     generateEmbedding,      // Vector embeddings
 
