@@ -1419,6 +1419,25 @@ router.get('/health-check', isAdmin, (req, res) => {
 });
 
 /**
+ * @route   GET /api/admin/structured-tutor-metrics
+ * @desc    Observability for the structured-tutor-response path
+ *          (STRUCTURED_TUTOR_RESPONSE). Returns aggregate turn_type
+ *          distribution, hard/soft audit mismatch rates, and Stage 5c.1
+ *          pose-backfill outcomes — the signal for deciding whether the
+ *          flag is safe to flip on. In-memory, resets on restart.
+ * @access  Private (Admin)
+ */
+router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
+  const structuredMetrics = require('../utils/structuredTutorMetrics');
+  const { isStructuredModeEnabled } = require('../utils/boardResponseSchema');
+  res.json({
+    flagEnabled: isStructuredModeEnabled(),
+    aggregate: structuredMetrics.aggregate(),
+    recent: structuredMetrics.snapshot(50),
+  });
+});
+
+/**
  * @route   POST /api/admin/seed-skills
  * @desc    Seed the skills database with Ready for Algebra 1 skills.
  * @access  Private (Admin)

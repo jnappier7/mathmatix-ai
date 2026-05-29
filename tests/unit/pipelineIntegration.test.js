@@ -399,6 +399,28 @@ describe('Pipeline Integration: runPipeline', () => {
       expect(poses[0].tex).toContain('How many boxes');
     });
 
+    test('records the structured turn + backfill into metrics (Phase 6)', async () => {
+      process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
+      const structuredMetrics = require('../../utils/structuredTutorMetrics');
+      structuredMetrics.reset();
+      callLLMStructured.mockResolvedValue({
+        turn_type: 'problem_introduction',
+        chat_message:
+          "Here's one for you. A baker has 24 cookies and packs them into boxes of 6. How many boxes does she fill?",
+        board_commands: [],
+      });
+
+      const user = mockUser();
+      const conversation = mockConversation([]);
+      await runPipeline('give me a word problem', buildCtx(user, conversation));
+
+      const agg = structuredMetrics.aggregate();
+      expect(agg.turns).toBe(1);
+      expect(agg.turn_type.problem_introduction).toBe(1);
+      expect(agg.mismatch.hard.problem_introduction_missing_pose).toBe(1);
+      expect(agg.backfill.posed).toBe(1);
+    });
+
     test('flag off → no structured turn_type, no backfill', async () => {
       delete process.env.STRUCTURED_TUTOR_RESPONSE;
       // Legacy path: free-text reply with no board tags.
