@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Structured Tutor Metrics - MATHMATIX AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --surface: #ffffff;
+      --border: #e9ecef;
+      --text: #2c3e50;
+      --muted: #7f8c8d;
+      --accent: #6366f1;
+      --good: #16a34a;
+      --warn: #f59e0b;
+      --bad: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 16px 24px; display: flex; align-items: center; gap: 16px;
+    }
+    header h1 { margin: 0; font-size: 18px; flex: 1; }
+    header .controls { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
+    header a.back { color: var(--accent); text-decoration: none; font-size: 14px; }
+    header a.back:hover { text-decoration: underline; }
+    main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .flag-banner {
+      border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px;
+      display: flex; align-items: center; gap: 10px; border: 1px solid var(--border);
+    }
+    .flag-banner.on { background: #dcfce7; color: var(--good); border-color: #bbf7d0; }
+    .flag-banner.off { background: var(--surface); color: var(--muted); }
+    .flag-banner i { font-size: 16px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .stat .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat .value { font-size: 28px; font-weight: 600; margin-top: 6px; line-height: 1; }
+    .stat .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .stat.good .value { color: var(--good); }
+    .stat.warn .value { color: var(--warn); }
+    .stat.bad .value { color: var(--bad); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } }
+    .table-wrap {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04); margin-bottom: 24px;
+    }
+    .table-wrap h2 { margin: 0; padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th { background: var(--bg); font-weight: 600; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--bg); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+    .pill.ok { background: #dcfce7; color: var(--good); }
+    .pill.warn { background: #fef3c7; color: var(--warn); }
+    .pill.bad { background: #fee2e2; color: var(--bad); }
+    .pill.type { background: #e0e7ff; color: var(--accent); }
+    .pill.muted { background: var(--bg); color: var(--muted); }
+    .empty { padding: 32px; text-align: center; color: var(--muted); }
+    .footer-note { margin-top: 16px; font-size: 12px; color: var(--muted); }
+    code { background: var(--bg); padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+    .refresh-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); display: inline-block; }
+    .refresh-dot.stale { background: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/admin-dashboard.html" class="back"><i class="fas fa-arrow-left"></i> Admin</a>
+    <h1>Structured Tutor Metrics</h1>
+    <div class="controls">
+      <span class="refresh-dot" id="refresh-dot"></span>
+      <span id="last-updated">never</span>
+      <label><input type="checkbox" id="auto-refresh" checked /> auto-refresh</label>
+    </div>
+  </header>
+  <main>
+    <div class="flag-banner off" id="flag-banner">
+      <i class="fas fa-circle-notch fa-spin"></i> <span id="flag-text">Checking flag…</span>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="grid-2">
+      <div class="table-wrap">
+        <h2>Turn-type distribution</h2>
+        <table>
+          <thead><tr><th>Turn type</th><th class="num">Count</th><th class="num">Share</th></tr></thead>
+          <tbody id="turntype-body"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <h2>Mismatch breakdown (by kind)</h2>
+        <table>
+          <thead><tr><th>Kind</th><th>Severity</th><th class="num">Count</th></tr></thead>
+          <tbody id="mismatch-body"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <h2>Recent structured turns (last 50)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Turn type</th>
+            <th class="num">LLM board cmds</th>
+            <th>Hard mismatches</th>
+            <th>Soft mismatches</th>
+            <th>Backfill</th>
+          </tr>
+        </thead>
+        <tbody id="turns-body">
+          <tr><td colspan="6" class="empty">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="footer-note">
+      The <code>STRUCTURED_TUTOR_RESPONSE</code> path is dark by default — this page is empty until the flag is on.
+      Watch <strong>hard mismatch rate</strong> (model misclassified the turn) and <strong>backfill pose-success</strong>
+      (Stage 5c.1 rescued a forgotten pose) to decide whether the flag is safe to ramp.
+      Source: <code>/api/admin/structured-tutor-metrics</code> (admin-only, in-memory ring buffer of last 1000 turns, resets on restart).
+    </p>
+  </main>
+  <script>
+    const fmtPct = (n) => n == null ? '—' : `${(n * 100).toFixed(1)}%`;
+    const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    })[c]);
+
+    // For "lower is better" rates (mismatch). Returns a color class.
+    function classifyLowerBetter(value, goodMax, warnMax) {
+      if (value == null) return '';
+      if (value <= goodMax) return 'good';
+      if (value <= warnMax) return 'warn';
+      return 'bad';
+    }
+    // For "higher is better" rates (clean turns, pose success).
+    function classifyHigherBetter(value, goodMin, warnMin) {
+      if (value == null) return '';
+      if (value >= goodMin) return 'good';
+      if (value >= warnMin) return 'warn';
+      return 'bad';
+    }
+
+    function renderFlag(enabled) {
+      const banner = document.getElementById('flag-banner');
+      const text = document.getElementById('flag-text');
+      banner.classList.remove('on', 'off');
+      if (enabled) {
+        banner.classList.add('on');
+        banner.querySelector('i').className = 'fas fa-toggle-on';
+        text.innerHTML = '<strong>STRUCTURED_TUTOR_RESPONSE is ON</strong> — these numbers reflect live structured-path traffic.';
+      } else {
+        banner.classList.add('off');
+        banner.querySelector('i').className = 'fas fa-toggle-off';
+        text.innerHTML = '<strong>STRUCTURED_TUTOR_RESPONSE is OFF</strong> — the structured path is dark, so no turns are being recorded.';
+      }
+    }
+
+    function renderStats(agg) {
+      const stats = document.getElementById('stats');
+      if (!agg || !agg.turns) {
+        stats.innerHTML = '<div class="stat"><div class="label">No data yet</div><div class="value">—</div><div class="sub">Enable the flag to populate</div></div>';
+        return;
+      }
+      const m = agg.mismatch || {};
+      const b = agg.backfill || {};
+      const cards = [
+        { label: 'Structured turns', value: agg.turns, sub: 'recorded since restart', klass: '' },
+        { label: 'Clean turn rate', value: fmtPct(m.clean_turn_rate), sub: 'no mismatch at all', klass: classifyHigherBetter(m.clean_turn_rate, 0.8, 0.5) },
+        { label: 'Hard mismatch rate', value: fmtPct(m.hard_turn_rate), sub: 'turns the model misclassified', klass: classifyLowerBetter(m.hard_turn_rate, 0.05, 0.15) },
+        { label: 'Soft mismatch rate', value: fmtPct(m.soft_turn_rate), sub: 'observe-only signals', klass: classifyLowerBetter(m.soft_turn_rate, 0.15, 0.35) },
+        { label: 'Backfill attempt rate', value: fmtPct(b.attempt_rate), sub: 'turns needing a pose rescue', klass: classifyLowerBetter(b.attempt_rate, 0.05, 0.15) },
+        { label: 'Backfill pose-success', value: fmtPct(b.pose_success_rate), sub: `${b.posed ?? 0} posed / ${b.attempted ?? 0} attempts`, klass: classifyHigherBetter(b.pose_success_rate, 0.9, 0.6) },
+      ];
+      stats.innerHTML = cards.map(c => `
+        <div class="stat ${c.klass}">
+          <div class="label">${escapeHtml(c.label)}</div>
+          <div class="value">${escapeHtml(c.value)}</div>
+          <div class="sub">${escapeHtml(c.sub)}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderTurnTypes(turnType) {
+      const tbody = document.getElementById('turntype-body');
+      const total = turnType && turnType._total ? turnType._total : 0;
+      const entries = Object.entries(turnType || {})
+        .filter(([k]) => k !== '_total')
+        .sort((a, b) => b[1] - a[1]);
+      if (!entries.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty">No turns recorded.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = entries.map(([type, count]) => `
+        <tr>
+          <td><span class="pill type">${escapeHtml(type)}</span></td>
+          <td class="num">${count}</td>
+          <td class="num">${total ? fmtPct(count / total) : '—'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderMismatches(mismatch) {
+      const tbody = document.getElementById('mismatch-body');
+      const rows = [];
+      for (const [kind, count] of Object.entries((mismatch && mismatch.hard) || {})) {
+        if (kind === '_total') continue;
+        rows.push({ kind, severity: 'hard', count });
+      }
+      for (const [kind, count] of Object.entries((mismatch && mismatch.soft) || {})) {
+        if (kind === '_total') continue;
+        rows.push({ kind, severity: 'soft', count });
+      }
+      rows.sort((a, b) => b.count - a.count);
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="3" class="empty">No mismatches — every turn matched its declared type.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td><code>${escapeHtml(r.kind)}</code></td>
+          <td><span class="pill ${r.severity === 'hard' ? 'bad' : 'warn'}">${escapeHtml(r.severity)}</span></td>
+          <td class="num">${r.count}</td>
+        </tr>
+      `).join('');
+    }
+
+    function backfillPill(outcome) {
+      if (!outcome) return '<span class="pill muted">—</span>';
+      if (outcome === 'posed') return '<span class="pill ok">posed</span>';
+      if (outcome === 'guard_dropped') return '<span class="pill warn">guard dropped</span>';
+      if (outcome === 'no_posable_problem') return '<span class="pill bad">no posable problem</span>';
+      return `<span class="pill muted">${escapeHtml(outcome)}</span>`;
+    }
+
+    function mismatchCell(kinds) {
+      if (!kinds || !kinds.length) return '<span class="pill ok">none</span>';
+      return kinds.map(k => `<code>${escapeHtml(k)}</code>`).join(' ');
+    }
+
+    function renderTurns(rows) {
+      const tbody = document.getElementById('turns-body');
+      if (!rows || rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">No structured turns recorded yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows.map(t => `
+        <tr>
+          <td>${escapeHtml(t.ts ? new Date(t.ts).toLocaleTimeString() : '—')}</td>
+          <td><span class="pill type">${escapeHtml(t.turnType || '—')}</span></td>
+          <td class="num">${escapeHtml(t.llmBoardCount ?? 0)}</td>
+          <td>${mismatchCell(t.hard)}</td>
+          <td>${mismatchCell(t.soft)}</td>
+          <td>${backfillPill(t.backfill)}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function refresh() {
+      const dot = document.getElementById('refresh-dot');
+      const updated = document.getElementById('last-updated');
+      try {
+        const fetchFn = window.csrfFetch || fetch;
+        const res = await fetchFn('/api/admin/structured-tutor-metrics', { credentials: 'include' });
+        if (!res.ok) {
+          dot.classList.add('stale');
+          updated.textContent = `error ${res.status}`;
+          return;
+        }
+        const data = await res.json();
+        const agg = data.aggregate || {};
+        renderFlag(!!data.flagEnabled);
+        renderStats(agg);
+        renderTurnTypes(agg.turn_type || {});
+        renderMismatches(agg.mismatch || {});
+        renderTurns(data.recent || []);
+        dot.classList.remove('stale');
+        updated.textContent = new Date().toLocaleTimeString();
+      } catch (err) {
+        dot.classList.add('stale');
+        updated.textContent = 'fetch error';
+      }
+    }
+
+    let timer = null;
+    function startAutoRefresh() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(refresh, 5000);
+    }
+    function stopAutoRefresh() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    document.getElementById('auto-refresh').addEventListener('change', (e) => {
+      if (e.target.checked) startAutoRefresh();
+      else stopAutoRefresh();
+    });
+
+    refresh();
+    startAutoRefresh();
+  </script>
+</body>
+</html>

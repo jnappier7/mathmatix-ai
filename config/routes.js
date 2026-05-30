@@ -606,6 +606,7 @@ function registerHtmlRoutes(app) {
   app.get('/admin-dashboard.html', isAuthenticated, isAdmin, sendHtml('admin-dashboard.html'));
   app.get('/admin-upload.html', isAuthenticated, isAdmin, sendHtml('admin-upload.html'));
   app.get('/admin-voice-metrics.html', isAuthenticated, isAdmin, sendHtml('admin-voice-metrics.html'));
+  app.get('/admin-structured-metrics.html', isAuthenticated, isAdmin, sendHtml('admin-structured-metrics.html'));
   app.get('/teacher-dashboard.html', isAuthenticated, isTeacher, sendHtml('teacher-dashboard.html'));
   // app.get('/teacher-celeration-dashboard.html', isAuthenticated, isTeacher, sendHtml('teacher-celeration-dashboard.html')); // Shelved
   app.get('/parent-dashboard.html', isAuthenticated, isParent, sendHtml('parent-dashboard.html'));
