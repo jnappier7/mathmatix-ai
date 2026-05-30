@@ -448,17 +448,25 @@ async function runPipeline(message, ctx) {
   // bug it detects — problem_introduction with no pose — is acted on
   // downstream in Stage 5c.1 (Phase 5), which runs after synthesis so
   // it only fires when no pose survives the merge. Soft mismatches stay
-  // observe-only. The audit is a no-op under the legacy free-text path
-  // because there is no turn_type to audit. Phase 6 records the
-  // mismatches into structuredTutorMetrics (after Stage 5c.1, so the
-  // backfill outcome lands in the same record).
+  // observe-only. Phase 6 records the mismatches into
+  // structuredTutorMetrics (after Stage 5c.1, so the backfill outcome
+  // lands in the same record).
+  //
+  // Gate on structuredBoardCommands being an array — the reliable
+  // "this was a structured attempt" signal — rather than on a truthy
+  // turn_type. A turn_type the model botched is normalized to null
+  // upstream (normalizeStructuredResponse), so gating on the turn_type
+  // would make the audit's own `invalid_turn_type` case unreachable and
+  // drop those turns from the metrics denominator entirely — the exact
+  // misclassification the dashboard exists to catch. The legacy
+  // free-text path never sets structuredBoardCommands, so it stays a
+  // no-op there.
+  const isStructuredTurn = Array.isArray(generatedResult.structuredBoardCommands);
   let auditMismatches = [];
-  if (generatedResult.structuredTurnType) {
+  if (isStructuredTurn) {
     auditMismatches = auditTurn({
-      turnType: generatedResult.structuredTurnType,
-      boardCommands: Array.isArray(generatedResult.structuredBoardCommands)
-        ? generatedResult.structuredBoardCommands
-        : [],
+      turnType: generatedResult.structuredTurnType, // null → invalid_turn_type
+      boardCommands: generatedResult.structuredBoardCommands,
     });
     for (const m of auditMismatches) {
       if (m.severity === 'hard') {
@@ -583,13 +591,16 @@ async function runPipeline(message, ctx) {
   // One passive record per structured turn — turn_type, audit mismatches,
   // and the Stage 5c.1 backfill outcome — so the flag-on misclassification
   // and backfill rates are observable in aggregate (scraped via
-  // GET /api/admin/structured-tutor-metrics). Same dark gate as the audit:
-  // structuredTurnType is only set when STRUCTURED_TUTOR_RESPONSE is on.
-  if (generatedResult.structuredTurnType) {
+  // GET /api/admin/structured-tutor-metrics). Same gate as the audit
+  // (isStructuredTurn), so a turn with a botched/null turn_type still
+  // counts toward the denominator instead of vanishing. llmBoardCount is
+  // the model's raw pre-guard emission — what it actually tried to draw,
+  // not what survived the pedagogy guard.
+  if (isStructuredTurn) {
     try {
       structuredMetrics.recordStructuredTurn({
         turnType: generatedResult.structuredTurnType,
-        llmBoardCount: llmBoardCommands.length,
+        llmBoardCount: rawLlmBoardCommands.length,
         mismatches: auditMismatches,
         backfill: backfillOutcome,
       });

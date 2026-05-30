@@ -421,6 +421,30 @@ describe('Pipeline Integration: runPipeline', () => {
       expect(agg.backfill.posed).toBe(1);
     });
 
+    test('a botched turn_type is still counted (does not vanish from the denominator)', async () => {
+      process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
+      const structuredMetrics = require('../../utils/structuredTutorMetrics');
+      structuredMetrics.reset();
+      // Model returns a turn_type outside the enum → normalized to null
+      // upstream. The turn must still be recorded (as 'null') and flagged
+      // invalid_turn_type, or the dashboard silently under-counts exactly
+      // the misclassification it exists to catch.
+      callLLMStructured.mockResolvedValue({
+        turn_type: 'totally_not_a_real_turn_type',
+        chat_message: 'Nice work so far!',
+        board_commands: [],
+      });
+
+      const user = mockUser();
+      const conversation = mockConversation([]);
+      await runPipeline('how am I doing?', buildCtx(user, conversation));
+
+      const agg = structuredMetrics.aggregate();
+      expect(agg.turns).toBe(1);
+      expect(agg.turn_type.null).toBe(1);
+      expect(agg.mismatch.soft.invalid_turn_type).toBe(1);
+    });
+
     test('flag off → no structured turn_type, no backfill', async () => {
       delete process.env.STRUCTURED_TUTOR_RESPONSE;
       // Legacy path: free-text reply with no board tags.

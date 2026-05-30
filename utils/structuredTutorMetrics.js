@@ -24,6 +24,13 @@
 const logger = require('./logger').child({ module: 'structuredTutorMetrics' });
 
 const RING_SIZE = 1000;
+// Rolling window for the rates an admin watches during a ramp. Cumulative
+// rates (below) go stale: once thousands of healthy turns are logged, a
+// fresh batch of broken ones barely moves the all-time number. The window
+// stays sensitive to "what's happening right now", which is the whole
+// point of the dashboard. Mirrors voiceMetrics, which aggregates over its
+// ring rather than over all-time counters.
+const WINDOW_SIZE = 200;
 let ring = new Array(RING_SIZE);
 let cursor = 0;
 
@@ -138,7 +145,49 @@ function snapshot(limit = 100) {
 }
 
 /**
- * Cumulative counters with computed rates. This is the rollout dashboard.
+ * Rates over the last `size` turns. This is the signal an admin should
+ * watch during a ramp — unlike the cumulative rates, it stays sensitive
+ * to a regression that only just started. Computed from the ring, so it
+ * sees at most RING_SIZE turns of history.
+ */
+function windowStats(size = WINDOW_SIZE) {
+  const recent = snapshot(size);
+  const n = recent.length;
+  if (n === 0) {
+    return { window_size: size, turns: 0 };
+  }
+  let hard = 0;
+  let soft = 0;
+  let clean = 0;
+  let attempted = 0;
+  let posed = 0;
+  for (const r of recent) {
+    const h = r.hard && r.hard.length > 0;
+    const s = r.soft && r.soft.length > 0;
+    if (h) hard++;
+    if (s) soft++;
+    if (!h && !s) clean++;
+    if (r.backfill) {
+      attempted++;
+      if (r.backfill === 'posed') posed++;
+    }
+  }
+  return {
+    window_size: size,
+    turns: n,
+    hard_turn_rate: hard / n,
+    soft_turn_rate: soft / n,
+    clean_turn_rate: clean / n,
+    backfill_attempt_rate: attempted / n,
+    backfill_pose_success_rate: attempted > 0 ? posed / attempted : null,
+  };
+}
+
+/**
+ * The rollout dashboard. `window` holds the responsive last-N rates the
+ * dashboard leads with; the `mismatch`/`backfill` rates are cumulative
+ * (lifetime since restart) and intentionally lag — kept for the long-run
+ * baseline and per-kind totals.
  */
 function aggregate() {
   const n = counters.turns;
@@ -146,6 +195,7 @@ function aggregate() {
   return {
     turns: n,
     turn_type: { ...counters.turn_type },
+    window: windowStats(WINDOW_SIZE),
     mismatch: {
       hard: { ...counters.mismatch_hard },
       soft: { ...counters.mismatch_soft },
@@ -177,6 +227,7 @@ function reset() {
 module.exports = {
   recordStructuredTurn,
   snapshot,
+  windowStats,
   aggregate,
   reset,
 };
