@@ -1428,10 +1428,21 @@ router.get('/health-check', isAdmin, (req, res) => {
  * @access  Private (Admin)
  */
 router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
+  const os = require('os');
   const structuredMetrics = require('../utils/structuredTutorMetrics');
   const { isStructuredModeEnabled } = require('../utils/boardResponseSchema');
   res.json({
     flagEnabled: isStructuredModeEnabled(),
+    // The counters are per-process and in-memory. The app is single-instance
+    // today, so this is the whole picture — but if it's ever scaled
+    // (numInstances > 1), each instance keeps its own ring and a plain HTTP
+    // refresh will bounce between them. Stamping the instance + uptime makes
+    // that self-evident on the page instead of looking like jittering data.
+    instance: {
+      hostname: os.hostname(),
+      pid: process.pid,
+      uptimeSeconds: Math.round(process.uptime()),
+    },
     aggregate: structuredMetrics.aggregate(),
     recent: structuredMetrics.snapshot(50),
   });

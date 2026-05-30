@@ -77,6 +77,7 @@
     <a href="/admin-dashboard.html" class="back"><i class="fas fa-arrow-left"></i> Admin</a>
     <h1>Structured Tutor Metrics</h1>
     <div class="controls">
+      <span id="instance" title="Counters are per-process and in-memory. If this hostname changes between refreshes, the app is running more than one instance and each holds its own slice."></span>
       <span class="refresh-dot" id="refresh-dot"></span>
       <span id="last-updated">never</span>
       <label><input type="checkbox" id="auto-refresh" checked /> auto-refresh</label>
@@ -126,10 +127,20 @@
       Watch <strong>hard mismatch rate</strong> (model misclassified the turn) and <strong>backfill pose-success</strong>
       (Stage 5c.1 rescued a forgotten pose) to decide whether the flag is safe to ramp.
       Source: <code>/api/admin/structured-tutor-metrics</code> (admin-only, in-memory ring buffer of last 1000 turns, resets on restart).
+      Counters are <strong>per-process</strong> — the <code>inst</code> tag in the header names the instance serving these numbers.
+      If that hostname changes between refreshes, the app is running more than one instance and each holds its own slice.
     </p>
   </main>
   <script>
     const fmtPct = (n) => n == null ? '—' : `${(n * 100).toFixed(1)}%`;
+    const fmtUptime = (s) => {
+      if (s == null) return '';
+      if (s < 60) return `${s}s`;
+      if (s < 3600) return `${Math.floor(s / 60)}m`;
+      if (s < 86400) return `${Math.floor(s / 3600)}h`;
+      return `${Math.floor(s / 86400)}d`;
+    };
+    const shortHost = (h) => h ? String(h).slice(0, 12) : '?';
     const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     })[c]);
@@ -281,6 +292,9 @@
         }
         const data = await res.json();
         const agg = data.aggregate || {};
+        const inst = data.instance || {};
+        document.getElementById('instance').textContent =
+          inst.hostname ? `inst ${shortHost(inst.hostname)} · up ${fmtUptime(inst.uptimeSeconds)}` : '';
         renderFlag(!!data.flagEnabled);
         renderStats(agg);
         renderTurnTypes(agg.turn_type || {});
