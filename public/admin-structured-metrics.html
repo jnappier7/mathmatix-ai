@@ -172,13 +172,17 @@
       }
       const m = agg.mismatch || {};
       const b = agg.backfill || {};
+      // Lead with the rolling window (responsive to a regression as it
+      // starts); show the lifetime rate beneath as the long-run baseline.
+      const w = agg.window || {};
+      const win = w.turns ? `last ${w.turns}` : 'last —';
       const cards = [
         { label: 'Structured turns', value: agg.turns, sub: 'recorded since restart', klass: '' },
-        { label: 'Clean turn rate', value: fmtPct(m.clean_turn_rate), sub: 'no mismatch at all', klass: classifyHigherBetter(m.clean_turn_rate, 0.8, 0.5) },
-        { label: 'Hard mismatch rate', value: fmtPct(m.hard_turn_rate), sub: 'turns the model misclassified', klass: classifyLowerBetter(m.hard_turn_rate, 0.05, 0.15) },
-        { label: 'Soft mismatch rate', value: fmtPct(m.soft_turn_rate), sub: 'observe-only signals', klass: classifyLowerBetter(m.soft_turn_rate, 0.15, 0.35) },
-        { label: 'Backfill attempt rate', value: fmtPct(b.attempt_rate), sub: 'turns needing a pose rescue', klass: classifyLowerBetter(b.attempt_rate, 0.05, 0.15) },
-        { label: 'Backfill pose-success', value: fmtPct(b.pose_success_rate), sub: `${b.posed ?? 0} posed / ${b.attempted ?? 0} attempts`, klass: classifyHigherBetter(b.pose_success_rate, 0.9, 0.6) },
+        { label: 'Clean turn rate', value: fmtPct(w.clean_turn_rate), sub: `${win} · lifetime ${fmtPct(m.clean_turn_rate)}`, klass: classifyHigherBetter(w.clean_turn_rate, 0.8, 0.5) },
+        { label: 'Hard mismatch rate', value: fmtPct(w.hard_turn_rate), sub: `${win} · lifetime ${fmtPct(m.hard_turn_rate)}`, klass: classifyLowerBetter(w.hard_turn_rate, 0.05, 0.15) },
+        { label: 'Soft mismatch rate', value: fmtPct(w.soft_turn_rate), sub: `${win} · lifetime ${fmtPct(m.soft_turn_rate)}`, klass: classifyLowerBetter(w.soft_turn_rate, 0.15, 0.35) },
+        { label: 'Backfill attempt rate', value: fmtPct(w.backfill_attempt_rate), sub: `${win} · lifetime ${fmtPct(b.attempt_rate)}`, klass: classifyLowerBetter(w.backfill_attempt_rate, 0.05, 0.15) },
+        { label: 'Backfill pose-success', value: fmtPct(w.backfill_pose_success_rate), sub: `lifetime ${b.posed ?? 0} posed / ${b.attempted ?? 0}`, klass: classifyHigherBetter(w.backfill_pose_success_rate, 0.9, 0.6) },
       ];
       stats.innerHTML = cards.map(c => `
         <div class="stat ${c.klass}">

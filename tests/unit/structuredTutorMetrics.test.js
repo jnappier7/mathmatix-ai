@@ -110,6 +110,60 @@ describe('structuredTutorMetrics', () => {
     });
   });
 
+  describe('windowed rates', () => {
+    test('window rates reflect only the turns in the window', () => {
+      metrics.recordStructuredTurn({ turnType: 'feedback' });
+      metrics.recordStructuredTurn({ turnType: 'feedback' });
+      metrics.recordStructuredTurn({
+        turnType: 'problem_introduction',
+        mismatches: [{ severity: 'hard', kind: 'problem_introduction_missing_pose' }],
+      });
+      const w = metrics.windowStats(10);
+      expect(w.turns).toBe(3);
+      expect(w.hard_turn_rate).toBeCloseTo(1 / 3);
+      expect(w.clean_turn_rate).toBeCloseTo(2 / 3);
+    });
+
+    test('window catches a fresh regression that the lifetime rate barely registers', () => {
+      // 100 clean turns establish a healthy baseline...
+      for (let i = 0; i < 100; i++) metrics.recordStructuredTurn({ turnType: 'feedback' });
+      // ...then a burst of 5 misclassified turns arrives.
+      for (let i = 0; i < 5; i++) {
+        metrics.recordStructuredTurn({
+          turnType: 'problem_introduction',
+          mismatches: [{ severity: 'hard', kind: 'problem_introduction_missing_pose' }],
+        });
+      }
+      // Last-10 window = 5 hard + 5 clean → the spike is loud (50%).
+      const w = metrics.windowStats(10);
+      expect(w.window_size).toBe(10);
+      expect(w.turns).toBe(10);
+      expect(w.hard_turn_rate).toBeCloseTo(0.5);
+      // Lifetime rate is swamped by the 100 healthy turns (5/105 ≈ 4.8%).
+      const a = metrics.aggregate();
+      expect(a.mismatch.hard_turn_rate).toBeCloseTo(5 / 105);
+      // This gap is the whole reason the dashboard leads with the window.
+      expect(w.hard_turn_rate).toBeGreaterThan(a.mismatch.hard_turn_rate);
+      expect(a.window).toBeDefined();
+      expect(a.window.window_size).toBe(200);
+    });
+
+    test('empty window reports zero turns', () => {
+      const w = metrics.windowStats(50);
+      expect(w.turns).toBe(0);
+      expect(w.window_size).toBe(50);
+    });
+
+    test('window pose-success rate counts only backfill attempts', () => {
+      metrics.recordStructuredTurn({ turnType: 'problem_introduction', backfill: 'posed' });
+      metrics.recordStructuredTurn({ turnType: 'problem_introduction', backfill: 'guard_dropped' });
+      metrics.recordStructuredTurn({ turnType: 'feedback' });
+      const w = metrics.windowStats(10);
+      expect(w.backfill_attempt_rate).toBeCloseTo(2 / 3);
+      expect(w.backfill_pose_success_rate).toBeCloseTo(0.5);
+    });
+  });
+
   describe('snapshot', () => {
     test('returns records newest-first with the recorded fields', () => {
       metrics.recordStructuredTurn({ turnType: 'feedback', llmBoardCount: 0 });
