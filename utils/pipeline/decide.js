@@ -40,6 +40,7 @@ const ACTIONS = {
   ACKNOWLEDGE_FRUSTRATION: 'acknowledge_frustration',
   CONTINUE_CONVERSATION: 'continue_conversation',
   CHECK_UNDERSTANDING: 'check_understanding',
+  ACKNOWLEDGE_PROGRESS: 'acknowledge_progress',
   PRESENT_PROBLEM: 'present_problem',
   PHASE_INSTRUCTION: 'phase_instruction',
   // Deterministic: bare problem drop — never reaches the LLM.
@@ -215,6 +216,26 @@ function decideCore(observation, diagnosis, context) {
       'Push gently but firmly: "Show me — walk me through [specific step]."',
       'Or give them a problem to prove it: "Great — then solve this one: [related problem]."',
       'Keep your tone warm and encouraging, not accusatory.'
+    );
+    return decision;
+  }
+
+  // ── Progress report — student described a step they ALREADY completed ──
+  //
+  // They are NOT dropping a fresh problem and NOT asking to start over.
+  // Without this branch the message falls to GENERAL_MATH, which tells the
+  // LLM to "break the problem into its first step and ask the student to
+  // attempt THAT step" — i.e. re-teach a step they just did. That is the
+  // documented "Maya re-explains a completed step" bug. Handle it before the
+  // give-up streak check so re-engagement isn't hijacked by a stale streak.
+  if (msgType === MESSAGE_TYPES.PROGRESS_REPORT) {
+    decision.action = ACTIONS.ACKNOWLEDGE_PROGRESS;
+    decision.directives.push(
+      'PROGRESS REPORT: The student told you about a step they ALREADY completed (e.g. "I completed the square by adding 16 to both sides").',
+      'Acknowledge their completed step as done. Do NOT re-teach, re-explain, or ask them to redo the step they just described.',
+      'If you can tell their step is correct, confirm it briefly and ask for the NEXT step. If something looks off, point to the specific issue — do NOT do it for them.',
+      'Do NOT ask "what have you tried?" or restart the problem — they just told you where they are. Build forward from there.',
+      'NEVER reveal the final answer or perform the next step yourself — prompt the student to take it.'
     );
     return decision;
   }

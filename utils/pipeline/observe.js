@@ -25,6 +25,7 @@ const MESSAGE_TYPES = {
   GENERAL_MATH: 'general_math',
   PARROTING: 'parroting',
   EVASIVE_AFFIRMATIVE: 'evasive_affirmative',
+  PROGRESS_REPORT: 'progress_report',
 };
 
 // ── Context signal categories ──
@@ -178,6 +179,44 @@ function extractAnswerFromExplanation(message) {
  */
 function hasReasoningIndicators(message) {
   return PATTERNS.reasoningIndicators.test(message);
+}
+
+/**
+ * Detect a "progress report" — the student is describing a step they ALREADY
+ * completed, not asking for help and not dropping a fresh problem. Re-teaching
+ * a step the student just performed is the documented "Maya re-explains a
+ * completed step" bug.
+ *
+ * Examples that match:
+ *   "I completed the square by adding 16 to both sides"
+ *   "I factored it into (x+2)(x-3)"
+ *   "I already distributed and combined like terms"
+ *   "I subtracted 5 from both sides"
+ *
+ * Examples that do NOT match (caught by earlier classifiers, so they never
+ * reach this fallback):
+ *   "I don't know how to factor"  → IDK
+ *   "how do I factor this?"       → HELP_REQUEST / QUESTION
+ *   "I got x = 7"                 → ANSWER_ATTEMPT (answer extracted first)
+ *   "I'm stuck after I factored"  → HELP_REQUEST
+ *
+ * This runs only in the classify fallback (no intent keyword matched, no
+ * answer extracted), which is exactly where completed-step reports used to
+ * fall through to GENERAL_MATH and get re-taught from step one.
+ *
+ * @returns {boolean}
+ */
+function detectProgressReport(message) {
+  if (!message || typeof message !== 'string') return false;
+  const t = message.trim();
+  if (t.length < 6 || t.length > 300) return false;
+
+  // First-person ("I"/"we") report of a completed math action. Allows up to
+  // two helper/adverb words between the subject and the verb so present-perfect
+  // and hedged forms still match ("I have already factored", "we then added").
+  const completedStep = /\b(?:i|we)\s+(?:(?:just|already|then|also|first|next|have|'ve)\s+){0,2}(?:completed|finished|factored|simplified|distributed|expanded|foiled|combined|subtracted|added|multiplied|divided|moved|plugged|substituted|cancell?ed|isolated|rewrote|squared|cubed|cross[\s-]?multiplied|reduced|converted|flipped|inverted|grouped|split|set)\b/i;
+
+  return completedStep.test(t);
 }
 
 /**
@@ -382,6 +421,7 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
     MESSAGE_TYPES.SKIP_REQUEST,
     MESSAGE_TYPES.EVASIVE_AFFIRMATIVE,
     MESSAGE_TYPES.PARROTING,
+    MESSAGE_TYPES.PROGRESS_REPORT,
   ]);
   if (NON_DROP_TYPES.has(messageType)) return false;
   if (hasAnswer) return false;
@@ -493,6 +533,11 @@ function observe(message, context = {}) {
     answer = extractAnswer(text);
     if (answer) {
       messageType = MESSAGE_TYPES.ANSWER_ATTEMPT;
+    } else if (detectProgressReport(text)) {
+      // Student described a step they already did — confirm and advance,
+      // do NOT re-teach it (handled by decide's PROGRESS_REPORT branch).
+      messageType = MESSAGE_TYPES.PROGRESS_REPORT;
+      confidence = 0.8;
     } else {
       messageType = MESSAGE_TYPES.GENERAL_MATH;
       confidence = 0.5;
@@ -550,6 +595,7 @@ module.exports = {
   detectStreaks,
   detectParroting,
   detectEvasiveAffirmative,
+  detectProgressReport,
   detectBareProblemDrop,
   lastTutorAskedForNextStep,
   MESSAGE_TYPES,
