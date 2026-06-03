@@ -6,6 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const rateLimit = require('express-rate-limit');
+const Sentry = require('@sentry/node');
 
 const logger = require('../utils/logger');
 const User = require('../models/user');
@@ -311,10 +312,32 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
 }
 
 // --- OAuth callback handlers ---
+// A provider-side OAuth failure (e.g. expired Azure client secret →
+// AADSTS7000222, or a token-exchange TokenError) means our credentials are
+// stale, not that the user did anything wrong. Render a friendly "try another
+// method" page and alert Sentry, instead of throwing a raw 500 at the student.
+function isProviderConfigError(err) {
+  if (!err) return false;
+  if (err.name === 'TokenError' || err.name === 'InternalOAuthError') return true;
+  const msg = String(err.message || '');
+  return /AADSTS\d+/.test(msg) || /client secret|invalid_client/i.test(msg);
+}
+
 function oauthCallback(strategy) {
   return (req, res, next) => {
     passport.authenticate(strategy, (err, user) => {
-      if (err) return next(err);
+      if (err) {
+        if (isProviderConfigError(err)) {
+          logger.error(`${strategy} OAuth provider/credential error — login disabled until fixed:`, err);
+          Sentry.captureException(err, {
+            level: 'fatal',
+            tags: { area: 'oauth', provider: strategy, kind: 'provider_config' },
+            extra: { hint: 'Rotate the OAuth client secret for this provider and redeploy.' },
+          });
+          return res.redirect(`/login.html?error=oauth_unavailable&provider=${encodeURIComponent(strategy)}`);
+        }
+        return next(err);
+      }
       if (!user) return res.redirect('/login.html');
 
       req.logIn(user, async (err) => {
