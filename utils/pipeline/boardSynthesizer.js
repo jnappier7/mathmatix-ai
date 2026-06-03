@@ -298,6 +298,12 @@ const GEOMETRY_VOCAB = /\b(triangles?|circles?|angles?|radius|diameter|circumfer
 // concept explanations stay off the board.
 const PROBLEM_CUE = /\b(question\s*:|here'?s\s+(?:a|one|another)|try\s+(?:this|one|the\s+following)|let'?s\s+try|what\s+(?:is|are|'?s)\b|find\s+(?:the|how|out)\b|calculate\b|determine\b|convert\b|how\s+(?:many|long|wide|much|tall|far)\b|solve\s+for\b)/i;
 
+// Conversational offers Maya makes at the end of a concept explanation
+// ("What would you like to explore next?", "Do you want to try one?").
+// These end in '?' but are NOT posed problems — quoting them onto the
+// board surfaces the prose recap before them as a fake PROBLEM card.
+const OFFER_QUESTION = /\b(would you like|do you want|wanna|want to (?:try|explore|do|practice|work|tackle|see|learn|review|start|continue|keep)|shall we|should we|are you ready|ready to|what would you like|which would you|how does that (?:sound|look)|sound good|let me know|ready for)\b/i;
+
 function extractProblemSentence(text) {
   // Prefer an explicit "Question:" marker — covers Maya's review-mode
   // formatting ("Question: Triangle ABC is congruent to …").
@@ -307,8 +313,9 @@ function extractProblemSentence(text) {
 
   // Split into sentence units. The lookbehind keeps the terminator
   // on the preceding sentence so we can find the one ending in '?'.
+  // Skip offer questions — they're tutor next-step prompts, not problems.
   const sentences = body.split(/(?<=[.!?])\s+/).filter(s => s.trim());
-  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s));
+  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s) && !OFFER_QUESTION.test(s));
   if (qIdx === -1) return null;
 
   // Include up to two preceding setup sentences (the parameters) so
@@ -563,7 +570,9 @@ function extractPosableSentence(text) {
   const sentences = sample.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
   if (sentences.length === 0) return null;
 
-  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s));
+  // Offer questions ("want to try one?") are tutor next-step prompts,
+  // not problems — don't anchor a pose on them.
+  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s) && !OFFER_QUESTION.test(s));
   let chunk;
   if (qIdx !== -1) {
     chunk = sentences.slice(Math.max(0, qIdx - 2), qIdx + 1).join(' ').trim();

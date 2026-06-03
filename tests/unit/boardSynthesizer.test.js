@@ -417,6 +417,17 @@ describe('boardSynthesizer — geometry pose fallback', () => {
         'Solve for x: 2x + 4 = 20. What is x?'
       )).toBeNull();
     });
+
+    test('rejects a concept explanation that ends in an offer question', () => {
+      // Regression: student asked "can you show that on the board?" and
+      // Maya replied with a unit-circle explanation ending in offers.
+      // The trailing "What … would you like to explore?" / "do you want
+      // to find …" are NOT posed problems — they must not quote the
+      // prose recap onto the board as a PROBLEM card.
+      expect(_detectGeometryProblem(
+        "Here's the unit circle! You can see the angles in both degrees and radians, along with the corresponding sine and cosine values. For example, at 0 radians, the coordinates are (1, 0), which means cos(0) = 1 and sin(0) = 0. What angle would you like to explore next? Or do you want to find the sine and cosine for a specific angle?"
+      )).toBeNull();
+    });
   });
 
   describe('_extractProblemSentence', () => {
@@ -443,6 +454,20 @@ describe('boardSynthesizer — geometry pose fallback', () => {
 
     test('rejects very short sentences', () => {
       expect(_extractProblemSentence('What?')).toBeNull();
+    });
+
+    test('skips conversational offer questions', () => {
+      // Only offer questions end in '?', so there is no real problem.
+      expect(_extractProblemSentence(
+        'You can see the angles in both degrees and radians. What would you like to explore next? Or do you want to try one?'
+      )).toBeNull();
+    });
+
+    test('picks the real problem question even when an offer question follows', () => {
+      const s = _extractProblemSentence(
+        'A circle has a radius of 8 units. What is the area of the circle? Want to try another one?'
+      );
+      expect(s).toMatch(/area of the circle\?$/);
     });
   });
 
