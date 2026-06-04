@@ -176,11 +176,14 @@ function enforcePedagogyRule({
     // is judged against the student's message, not the in-batch pose.
     let runningLastAction = lastBoardActionInConversation;
 
-    for (const command of commands) {
+    for (let i = 0; i < commands.length; i++) {
+        const command = commands[i];
+        const nextAction = commands[i + 1] ? commands[i + 1].action : null;
         const decision = evaluate(command, {
             currentText,
             combinedText,
             runningLastAction,
+            nextAction,
         });
 
         if (decision.allowed) {
@@ -237,6 +240,12 @@ function evaluate(command, ctx) {
             return { allowed: true };
         }
         if (ctx.runningLastAction === 'verify') {
+            return { allowed: true };
+        }
+        // A clear immediately followed by a pose is a board reset for a
+        // new problem (auto-advance). The pose itself is always allowed,
+        // so the reset that precedes it is too.
+        if (ctx.nextAction === 'pose') {
             return { allowed: true };
         }
         return { allowed: false, reason: 'clear_without_start_over_or_completed_problem' };

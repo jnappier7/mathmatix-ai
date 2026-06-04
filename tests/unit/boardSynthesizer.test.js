@@ -20,6 +20,7 @@ const {
   _detectFinalSolution,
   _detectSubstitutionCheck,
   _detectPosedProblem,
+  _looksLikeProblemStatement,
   _detectGeometryProblem,
   _extractProblemSentence,
   _extractPosableSentence,
@@ -118,6 +119,18 @@ describe('boardSynthesizer — detectors', () => {
       const r = _detectPosedProblem('Solve 4x+3=27');
       expect(r).not.toBeNull();
       expect(r.tex).toMatch(/4x.*3.*27/);
+    });
+
+    test('renders a quadratic equation (was null before the coeff-shape fix)', () => {
+      const r = _detectPosedProblem('solve 2x^2+4x-6=0');
+      expect(r).not.toBeNull();
+      expect(r.tex).toBe('2x^2 + 4x - 6 = 0');
+    });
+
+    test('renders a factoring task as the bare trinomial (no "= 0")', () => {
+      const r = _detectPosedProblem('factor x^2-7x+10');
+      expect(r).not.toBeNull();
+      expect(r.tex).toBe('x^2 - 7x + 10');
     });
   });
 
@@ -678,5 +691,112 @@ describe('boardSynthesizer — Phase 5 backfill', () => {
       expect(synthesizeFallbackPose({})).toBeNull();
       expect(synthesizeFallbackPose()).toBeNull();
     });
+  });
+});
+
+describe('boardSynthesizer — pinned problem anchor', () => {
+  // Regression coverage for the two WorkBoard PROBLEM bugs:
+  //   • Screenshot 1: an intermediate scratch line ("x(x+6)-2(x+6)=0")
+  //     overwrote the PROBLEM card.
+  //   • Screenshot 2: a stale earlier problem ("(x+3)(x+2)") stayed
+  //     pinned while the student worked a different one.
+  // The fix pins the canonical problem and passes it back in as
+  // `pinnedProblem`; pose decisions key on that, not on whatever
+  // equation happens to appear in the turn.
+
+  describe('_looksLikeProblemStatement', () => {
+    test('accepts a single fresh equation', () => {
+      expect(_looksLikeProblemStatement('2x^2+4x-6=0')).toBe(true);
+    });
+    test('accepts a command-prefixed problem', () => {
+      expect(_looksLikeProblemStatement('factor x^2-7x+10')).toBe(true);
+    });
+    test('rejects a stated solution "x=2 or -6"', () => {
+      expect(_looksLikeProblemStatement('x=2 or -6')).toBe(false);
+    });
+    test('rejects multi-line worked scratch (screenshot 1)', () => {
+      expect(_looksLikeProblemStatement(
+        'x^2 +6x-2x-12=0\nx(x+6)-2(x+6)=0\n(x-2)(x+6)=0\nx=2 or -6'
+      )).toBe(false);
+    });
+    test('does not misread "2x = 10" as an answer', () => {
+      expect(_looksLikeProblemStatement('solve 2x = 10')).toBe(true);
+    });
+  });
+
+  test('no pin + worked scratch dropped on a closed cycle → no pose (screenshot 1 closed-cycle guard)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'x^2 +6x-2x-12=0\nx(x+6)-2(x+6)=0\n(x-2)(x+6)=0\nx=2 or -6',
+      tutorResponse: "Let's double-check those factors together.",
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'verify', // cycle closed
+      pinnedProblem: null,
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+  });
+
+  test('pinned problem holds while student posts intermediate work → no re-pose (screenshot 1)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'x(x+6)-2(x+6)=0',
+      tutorResponse: 'Good grouping! What comes next?',
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'apply',
+      pinnedProblem: '2x^2 + 4x - 6 = 0',
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+    expect(cards.some(c => c.action === 'clear')).toBe(false);
+  });
+
+  test('pinned problem + intermediate equation "3x=21" → resolve, never a re-pose', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '3x=21',
+      tutorResponse: 'Great job! Now what?',
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'apply',
+      pinnedProblem: '3x - 5 = 16',
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+    expect(cards).toEqual([{ action: 'resolve', tex: '3x = 21' }]);
+  });
+
+  test('student explicitly starts a DIFFERENT problem → clear + pose (auto-advance, fixes screenshot 2)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'factor x^2-7x+10',
+      tutorResponse: "Sure! Let's factor that one.",
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'resolve',          // old cycle still open
+      pinnedProblem: '(x+3)(x+2)',          // stale pin from a prior problem
+    });
+    const actions = cards.map(c => c.action);
+    expect(actions).toContain('clear');
+    expect(actions).toContain('pose');
+    // clear must precede pose so the board resets before the new problem
+    expect(actions.indexOf('clear')).toBeLessThan(actions.indexOf('pose'));
+    const pose = cards.find(c => c.action === 'pose');
+    expect(pose.tex).toMatch(/7x.*10/);
+  });
+
+  test('re-stating the SAME pinned problem does not re-pose', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'solve 3x-5=16',
+      tutorResponse: "We're already on it!",
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'apply',
+      pinnedProblem: '3x - 5 = 16',
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+  });
+
+  test('merge keeps clear before pose for an auto-advance pair', () => {
+    const { all } = mergeWithLlmCommands([], [
+      { action: 'pose', tex: 'x^2 - 7x + 10' },
+      { action: 'clear' },
+    ]);
+    expect(all.map(c => c.action)).toEqual(['clear', 'pose']);
   });
 });

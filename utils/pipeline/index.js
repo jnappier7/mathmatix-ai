@@ -494,6 +494,7 @@ async function runPipeline(message, ctx) {
       diagnosis,
       observation,
       lastBoardAction: ctx.conversation?.lastBoardAction || null,
+      pinnedProblem: ctx.conversation?.boardProblem?.tex || null,
       recentAssistantMessages,
     });
   } catch (synthErr) {
@@ -613,6 +614,20 @@ async function runPipeline(message, ctx) {
   if (verified.boardCommands.length > 0 && ctx.conversation) {
     const lastEmitted = verified.boardCommands[verified.boardCommands.length - 1].action;
     ctx.conversation.lastBoardAction = lastEmitted;
+
+    // Pin / unpin the canonical board problem so future turns anchor to
+    // it instead of re-parsing intermediate scratch work (or leaving a
+    // stale problem on the board). A pose — including an auto-advance
+    // clear+pose or a turn-type backfill — sets the pin; a verify/clear
+    // that ends the cycle drops it.
+    const poseCard = [...verified.boardCommands].reverse().find(c => c.action === 'pose');
+    if (poseCard && poseCard.tex) {
+      ctx.conversation.boardProblem = { tex: poseCard.tex, posedAt: new Date() };
+      ctx.conversation.markModified?.('boardProblem');
+    } else if (lastEmitted === 'verify' || lastEmitted === 'clear') {
+      ctx.conversation.boardProblem = null;
+      ctx.conversation.markModified?.('boardProblem');
+    }
   }
 
   // ── Stage 5d: XP CEREMONY TAGS (Phase C) ──
