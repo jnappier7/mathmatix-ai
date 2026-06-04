@@ -207,6 +207,31 @@ function tutorAffirms(tutorResponse) {
 // dependencies).
 // ---------------------------------------------------------------------------
 
+// Reconstruct a quadratic's tex from mathSolver's coefficient shape
+// { a, bSign, b, cSign, c }. Drops unit coefficients (1x² → x²,
+// 1x → x) and zero terms so the card reads the way a student writes it.
+function quadraticTex(p, withEquals) {
+  const a = p.a;
+  let head;
+  if (a === 1) head = 'x^2';
+  else if (a === -1) head = '-x^2';
+  else head = `${a}x^2`;
+
+  let mid = '';
+  if (p.b !== undefined && p.b !== 0) {
+    const coeff = p.b === 1 ? '' : `${p.b}`;
+    mid = ` ${p.bSign || '+'} ${coeff}x`;
+  }
+
+  let tail = '';
+  if (p.c !== undefined && p.c !== 0) {
+    tail = ` ${p.cSign || '+'} ${p.c}`;
+  }
+
+  const expr = `${head}${mid}${tail}`.trim();
+  return withEquals ? `${expr} = 0` : expr;
+}
+
 function canonicalProblemTex(problem) {
   if (!problem) return null;
   switch (problem.type) {
@@ -220,10 +245,16 @@ function canonicalProblemTex(problem) {
       }
       return problem.equation || problem.expression || null;
     case 'quadratic_equation':
+      // mathSolver returns { a, bSign, b, cSign, c } for quadratics —
+      // no `equation`/`expression` field — so reconstruct the trinomial.
+      if (problem.a !== undefined) return quadraticTex(problem, /*withEquals*/ true);
       return problem.equation || problem.expression || null;
     case 'expand_polynomial':
     case 'factor_quadratic':
     case 'factor_diff_of_squares':
+      // Same coefficient shape, but a factoring/expansion task shows the
+      // bare trinomial (no "= 0").
+      if (problem.a !== undefined) return quadraticTex(problem, /*withEquals*/ false);
       return problem.expression || null;
     case 'evaluation':
       // The evaluation type is mathSolver's catch-all when text like
@@ -270,6 +301,31 @@ function detectPosedProblem(text) {
   if (!tex) return null;
   return { tex, problem: result.problem, correctAnswer: String(result.solution.answer) };
 }
+
+// A fresh problem *statement* is a single ask — one equation/expression,
+// optionally prefixed with a command verb. A worked-solution message
+// (multiple equation lines, or a stated "x = …" answer) is the student's
+// scratch work, NOT a new problem to pin on the board. This guard is what
+// stops an intermediate derivation line from being posed as the PROBLEM.
+function looksLikeProblemStatement(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.trim();
+  // A stated solution ("x = 2 or -6", "y= -3") is the end of work, never
+  // a new problem. Require the variable isolated on one side so a real
+  // problem like "2x = 10" isn't misread as an answer.
+  if (/(^|[\s,(])[a-z]\s*=\s*-?\d/i.test(t)) return false;
+  // Two or more equation/expression lines = a derivation, not a fresh ask.
+  const eqLines = t.split(/\n+/).map(l => l.trim())
+    .filter(l => /=/.test(l) || /[+\-*/^]/.test(l));
+  if (eqLines.length >= 2) return false;
+  return true;
+}
+
+// Explicit "I'm starting a new problem" verbs. Required before we'll
+// REPLACE a problem already pinned on the board — an intermediate
+// equation like "3x = 21" carries no cue and must never be mistaken for
+// a new problem to re-pose.
+const NEW_PROBLEM_CUE = /\b(solve|factor|simplify|expand|evaluate|graph|compute|calculate|find|what\s+is|new\s+problem|next\s+problem|another\s+(?:one|problem))\b/i;
 
 // ---------------------------------------------------------------------------
 // Geometry pose fallback — when parseCleanProblem can't see a problem.
@@ -399,6 +455,7 @@ function synthesizeBoardCommands({
   diagnosis,
   observation,
   lastBoardAction = null,
+  pinnedProblem = null,
   recentAssistantMessages: _recentAssistantMessages = [], // eslint-disable-line no-unused-vars
 } = {}) {
   const cards = [];
@@ -408,16 +465,34 @@ function synthesizeBoardCommands({
     || lastBoardAction === 'clear';
 
   // ── 1. POSE ──
-  // A new problem can appear on either side of the turn:
-  //   - student bare-drops "solve 3x-5=16"
-  //   - tutor offers "Try 4x+3=27"
-  // The math engine is the source of truth: if it parses a problem
-  // out of the text AND there's no active problem on the board, emit
-  // pose.
-  if (cycleIsClosed) {
-    // Prefer the student's message — if they introduced the problem,
-    // the canonical text matches what they typed. Fall back to tutor.
+  // A problem reaches the board one of two ways:
+  //   • the board is empty → pose the problem the student bare-dropped
+  //     ("solve 3x-5=16") or the tutor offered ("Try 4x+3=27");
+  //   • a problem is already pinned but the student explicitly starts a
+  //     DIFFERENT one → clear the old board and pose the new one.
+  // `pinnedProblem` (conversation.boardProblem.tex) is the source of
+  // truth for "what's on the board". Without it the synthesizer used to
+  // re-parse whatever equation appeared in the turn and latch onto
+  // intermediate scratch work (or leave a stale problem pinned).
+  if (pinnedProblem) {
+    // Replace only on an explicit, different new problem statement. An
+    // intermediate equation ("3x = 21") carries no NEW_PROBLEM_CUE and
+    // must not be mistaken for a fresh problem; a clear+pose resets the
+    // board to the new one.
+    const fresh = detectPosedProblem(studentMessage);
+    if (fresh
+        && NEW_PROBLEM_CUE.test(studentMessage)
+        && looksLikeProblemStatement(studentMessage)
+        && normalizeForCompare(fresh.tex) !== normalizeForCompare(pinnedProblem)) {
+      cards.push({ action: 'clear' });
+      cards.push({ action: 'pose', tex: fresh.tex });
+    }
+  } else if (cycleIsClosed) {
+    // Empty board. Prefer the student's message — if they introduced
+    // the problem, the canonical text matches what they typed — but
+    // never pose from the student's own worked solution.
     let posed = detectPosedProblem(studentMessage);
+    if (posed && !looksLikeProblemStatement(studentMessage)) posed = null;
     if (!posed) posed = detectPosedProblem(tutorResponse);
     // Geometry word problems don't parse as algebra; quote the
     // tutor's question sentence verbatim so the board reflects the
@@ -524,7 +599,7 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   // Order by canonical sequence — the frontend renders in array
   // order, so pose-first / verify-last produces the cleanest
   // animation when both LLM and synthesizer fire in the same turn.
-  const ORDER = { pose: 0, apply: 1, resolve: 2, verify: 3, clear: 4, graph: 5, image: 6 };
+  const ORDER = { clear: 0, pose: 1, apply: 2, resolve: 3, verify: 4, graph: 5, image: 6 };
   const all = [...llm, ...added].sort((a, b) => {
     const ai = ORDER[a.action] ?? 99;
     const bi = ORDER[b.action] ?? 99;
@@ -630,6 +705,7 @@ module.exports = {
   _detectFinalSolution: detectFinalSolution,
   _detectSubstitutionCheck: detectSubstitutionCheck,
   _detectPosedProblem: detectPosedProblem,
+  _looksLikeProblemStatement: looksLikeProblemStatement,
   _detectGeometryProblem: detectGeometryProblem,
   _extractProblemSentence: extractProblemSentence,
   _extractPosableSentence: extractPosableSentence,

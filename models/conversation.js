@@ -192,6 +192,16 @@ const conversationSchema = new Schema({
         type: Schema.Types.Mixed,
         default: null
     },
+    // Canonical problem currently pinned on the WorkBoard PROBLEM card.
+    // { tex, posedAt }. Set when a problem is posed, cleared on verify/clear.
+    // The board synthesizer reads this so it never re-parses an
+    // intermediate scratch line (or a stale earlier problem) as the
+    // PROBLEM — the pin is the single source of truth for "what's on the
+    // board". Null when the board has no active problem.
+    boardProblem: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
     // Session summary: compact snapshot for cross-session pattern detection.
     // Written at periodic intervals (every 10 turns) by the pipeline.
     sessionSummary: {
