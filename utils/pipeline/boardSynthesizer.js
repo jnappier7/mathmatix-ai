@@ -599,7 +599,7 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   // Order by canonical sequence — the frontend renders in array
   // order, so pose-first / verify-last produces the cleanest
   // animation when both LLM and synthesizer fire in the same turn.
-  const ORDER = { clear: 0, pose: 1, apply: 2, resolve: 3, verify: 4, graph: 5, image: 6 };
+  const ORDER = { clear: 0, pose: 1, scaffold: 2, apply: 3, resolve: 4, verify: 5, graph: 6, image: 7 };
   const all = [...llm, ...added].sort((a, b) => {
     const ai = ORDER[a.action] ?? 99;
     const bi = ORDER[b.action] ?? 99;

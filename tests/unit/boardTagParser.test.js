@@ -38,6 +38,19 @@ describe('boardTagParser', () => {
         .toEqual([{ action: 'clear' }]);
     });
 
+    it('extracts a scaffold with tex carrying boxed blanks', () => {
+      const input = 'Try this. <BOARD action="scaffold" tex="x^2 + 4x + \\boxed{} = 12 + \\boxed{}" /> What goes in the boxes?';
+      const { cleanedText, boardCommands } = parseBoardTags(input);
+      expect(boardCommands).toEqual([
+        { action: 'scaffold', tex: 'x^2 + 4x + \\boxed{} = 12 + \\boxed{}' },
+      ]);
+      expect(cleanedText).toBe('Try this. What goes in the boxes?');
+    });
+
+    it('drops a scaffold tag with no tex', () => {
+      expect(parseBoardTags('<BOARD action="scaffold" />').boardCommands).toEqual([]);
+    });
+
     it('extracts a graph with fn only', () => {
       const input = '<BOARD action="graph" fn="x^2 - 4" />';
       expect(parseBoardTags(input).boardCommands).toEqual([

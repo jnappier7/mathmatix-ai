@@ -131,6 +131,27 @@ function hasStartOverIntent(text) {
 }
 
 /**
+ * True if a scaffold's tex contains at least one *empty* slot for the
+ * student to fill. This is the anti-cheat property for scaffold cards:
+ * scaffolding shows structure with holes; a "scaffold" with every term
+ * filled in is just an answer dump on the student's own problem and must
+ * be rejected. Recognized blanks:
+ *   - an empty (or whitespace/spacing-only) \boxed{...}  e.g. \boxed{}, \boxed{\;\;}
+ *   - \square                                            the open-box glyph
+ *   - a run of 3+ underscores                            e.g. _____ or \_\_\_
+ */
+function texHasBlank(tex) {
+    if (!tex || typeof tex !== 'string') return false;
+    // \boxed{...} whose contents are only LaTeX spacing macros / whitespace.
+    const EMPTY_BOXED = /\\boxed\s*\{\s*(?:\\(?:[;,:!\s]|quad|qquad|phantom\s*\{[^}]*\}|hspace\s*\{[^}]*\}|,|;)\s*)*\}/;
+    if (EMPTY_BOXED.test(tex)) return true;
+    if (/\\square\b/.test(tex)) return true;
+    if (/_{3,}/.test(tex)) return true;          // raw underscores
+    if (/(?:\\_){3,}/.test(tex)) return true;    // escaped underscores
+    return false;
+}
+
+/**
  * Enforce the #1-rule guard on a parsed list of board commands.
  *
  * @param {Object}   input
@@ -251,6 +272,22 @@ function evaluate(command, ctx) {
         return { allowed: false, reason: 'clear_without_start_over_or_completed_problem' };
     }
 
+    // Scaffold: the tutor shows the next step's STRUCTURE with empty slots
+    // for the student to fill (e.g. "x^2 + 4x + \boxed{} = 12 + \boxed{}").
+    // A blank reveals nothing, so this does not violate the #1 rule even on
+    // the student's own problem — it's a hint, not the answer. But we DO
+    // require a real blank: a "scaffold" with everything filled in is an
+    // answer dump wearing the wrong label, so reject it.
+    if (action === 'scaffold') {
+        if (!command.tex) {
+            return { allowed: false, reason: 'scaffold_missing_tex' };
+        }
+        if (!texHasBlank(command.tex)) {
+            return { allowed: false, reason: 'scaffold_has_no_blank' };
+        }
+        return { allowed: true };
+    }
+
     // Tutor-emitted reference content: graph/image cards are teaching aids,
     // not the student's worked steps. They can't reveal the solution, so
     // the #1-rule guard doesn't apply — we only validate required attrs.
@@ -278,4 +315,5 @@ module.exports = {
     texMatchesStudentText,
     opMatchesStudentText,
     hasStartOverIntent,
+    texHasBlank,
 };

@@ -41,7 +41,7 @@
 
 'use strict';
 
-const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image'];
+const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold'];
 
 // The kind of turn Maya is serving. The model self-declares this
 // on every structured response. Server-side audit (utils/turnTypeAudit.js)
@@ -76,7 +76,7 @@ const BOARD_COMMAND_SCHEMA = {
     },
     tex: {
       type: ['string', 'null'],
-      description: 'LaTeX expression. Required for pose, resolve, verify. Null for apply, clear, graph, image.',
+      description: 'LaTeX expression. Required for pose, resolve, verify, and scaffold. For scaffold it MUST contain at least one empty slot the student fills, written as \\boxed{} (e.g. "x^2 + 4x + \\boxed{} = 12 + \\boxed{}"). Null for apply, clear, graph, image.',
     },
     op: {
       type: ['string', 'null'],
@@ -242,7 +242,7 @@ Your reply is a structured object, not free text. You fill three fields:
   • verification — the student stated a final answer. board_commands SHOULD include a verify card.
   • concept_reference — the student asked about a concept and you're showing reference content. board_commands SHOULD include an image or graph card.
   • feedback — praise or correction that does NOT advance the work. board_commands SHOULD be empty (an image/graph reference aid is fine; a pose/apply/resolve/verify here usually means you mislabeled the turn).
-  • scaffold — you lowered difficulty, hinted, or broke the problem into a sub-question. Usually no work-advancing cards.
+  • scaffold — you lowered difficulty, hinted, or broke the problem into a sub-question. Pair it with a scaffold card when a visual hint helps (see below); never an apply/resolve/verify that does the step for them.
   • redirect — steering an off-topic student back to math. Usually no cards.
   • small_talk — greeting, closing, or off-task chitchat. board_commands empty.
 
@@ -254,6 +254,7 @@ CARD SHAPE (fields not used for an action are null):
 - clear:   { action: "clear" }                                            — only on a new problem or right after a verify lands.
 - graph:   { action: "graph", fn: "x^2 - 4", caption: "Where it crosses zero" } — reference plot in the board timeline.
 - image:   { action: "image", query: "unit circle labeled", caption: "Reference" } — reference diagram from the safe whitelist.
+- scaffold:{ action: "scaffold", tex: "x^2 + 4x + \\boxed{} = 12 + \\boxed{}" } — show the NEXT step's structure on the student's own problem with the new terms left as empty \\boxed{} slots for THEM to fill. This is the one card you may put on the student's own problem without them stating it first, BECAUSE the blanks reveal nothing — they're a hint, not the answer. Every scaffold MUST contain at least one \\boxed{} blank; never fill the boxes in yourself (that would be handing over the answer). Use it when a student is stuck and a partially-drawn step would unstick them.
 
 If the student references the board ("show me on the board", "draw it", "use the board"), you MUST include a relevant card (pose for an equation, graph for a function, image for a geometry concept). An empty board while a problem is on screen is the worst-case defect.`;
 }

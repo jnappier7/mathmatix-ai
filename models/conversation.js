@@ -150,7 +150,7 @@ const conversationSchema = new Schema({
     // commands have been emitted yet.
     lastBoardAction: {
         type: String,
-        enum: ['pose', 'apply', 'resolve', 'verify', 'clear', null],
+        enum: ['pose', 'apply', 'resolve', 'verify', 'clear', 'scaffold', null],
         default: null,
     },
     alerts: [{

@@ -14,6 +14,7 @@
 //   <BOARD action="clear" />
 //   <BOARD action="graph"   fn="x^2 - 4" caption="The parabola" />
 //   <BOARD action="image"   query="unit circle labeled" caption="Reference" />
+//   <BOARD action="scaffold" tex="x^2 + 4x + \boxed{\;\;} = 12 + \boxed{\;\;}" />
 //
 // Both self-closing (<BOARD … />) and open/close (<BOARD …>…</BOARD>)
 // forms are accepted. Attributes accept both single and double quotes.
@@ -24,7 +25,7 @@
 
 'use strict';
 
-const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image']);
+const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold']);
 
 // Matches a single <BOARD …/> or <BOARD …>…</BOARD> tag. The `g` flag
 // lets us iterate multiple occurrences in one response. The inner
@@ -81,7 +82,7 @@ function parseBoardTags(aiResponseText) {
         const innerTrim = innerBody ? innerBody.trim() : '';
 
         const command = { action };
-        if (action === 'pose' || action === 'resolve' || action === 'verify') {
+        if (action === 'pose' || action === 'resolve' || action === 'verify' || action === 'scaffold') {
             const tex = texAttr || innerTrim || null;
             if (!tex) continue; // require tex for these actions
             command.tex = tex;
