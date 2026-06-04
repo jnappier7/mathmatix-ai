@@ -76,6 +76,18 @@ describe('boardResponseSchema — normalizeBoardCommand', () => {
     });
   });
 
+  test('keeps tex on a scaffold command', () => {
+    expect(normalizeBoardCommand({
+      action: 'scaffold',
+      tex: 'x^2 + 4x + \\boxed{} = 12 + \\boxed{}',
+      op: null,
+      check: null,
+      fn: null,
+      query: null,
+      caption: null,
+    })).toEqual({ action: 'scaffold', tex: 'x^2 + 4x + \\boxed{} = 12 + \\boxed{}' });
+  });
+
   test('empty-string field is treated as null and dropped', () => {
     expect(normalizeBoardCommand({
       action: 'apply',
@@ -270,9 +282,9 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
   // the API will reject the schema at call time; better to fail
   // loudly here than in production.
 
-  test('BOARD_ACTIONS lists the seven supported actions', () => {
+  test('BOARD_ACTIONS lists the eight supported actions', () => {
     expect(BOARD_ACTIONS).toEqual([
-      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image',
+      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold',
     ]);
   });
 

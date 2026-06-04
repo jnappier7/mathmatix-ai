@@ -496,6 +496,38 @@
   }
 }
 
+/* Scaffold — a hint card: the next step's structure with empty \boxed{}
+   slots for the student to fill. Dashed amber presence + a "your turn"
+   eyebrow so it reads as an invitation, not a finished step. The blanks
+   reveal nothing, which is why this card is allowed on the student's own
+   problem (see utils/boardCommandGuard.js). */
+.cr-ws-board-card--scaffold {
+  border-style: dashed;
+  border-color: rgba(255, 184, 77, 0.55);
+  background: linear-gradient(180deg,
+    rgba(255, 184, 77, 0.07) 0%,
+    var(--cr-bg-panel) 100%);
+}
+.cr-ws-board-card--scaffold::before {
+  content: "YOUR TURN — FILL THE BLANKS";
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  color: #E0962B;
+  opacity: 0.95;
+}
+/* The empty boxes themselves: dashed amber outline so they read as slots
+   waiting for input rather than rendered (filled) answers. */
+.cr-ws-board-card--scaffold .cr-ws-board-card-math .boxed,
+.cr-ws-board-card--scaffold .cr-ws-board-card-math .katex .boxpad {
+  border-color: rgba(224, 150, 43, 0.85) !important;
+  border-style: dashed !important;
+  background: rgba(255, 184, 77, 0.10);
+}
+
 /* Math display inside cards — KaTeX renders into here. */
 .cr-ws-board-card-math {
   padding-top: 14px;

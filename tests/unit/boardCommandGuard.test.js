@@ -3,6 +3,7 @@ const {
   texMatchesStudentText,
   opMatchesStudentText,
   hasStartOverIntent,
+  texHasBlank,
 } = require('../../utils/boardCommandGuard');
 
 describe('boardCommandGuard', () => {
@@ -188,6 +189,51 @@ describe('boardCommandGuard', () => {
     });
   });
 
+  describe('scaffold (fill-in-the-blank hint)', () => {
+    it('is allowed on the student\'s own problem when it carries a blank', () => {
+      // The scaffold sits on the student's OWN equation but reveals nothing —
+      // the boxes are empty. This is the case the #1 rule must permit.
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'scaffold', tex: 'x^2 + 4x + \\boxed{} = 12 + \\boxed{}' }],
+        userMessage: "I'm stuck on completing the square",
+      });
+      expect(allowed).toHaveLength(1);
+      expect(allowed[0].action).toBe('scaffold');
+      expect(dropped).toHaveLength(0);
+    });
+
+    it('accepts spacing-only boxes and \\square blanks', () => {
+      const a = enforcePedagogyRule({
+        commands: [{ action: 'scaffold', tex: 'x^2 + 4x + \\boxed{\\;\\;} = 12 + \\boxed{\\;\\;}' }],
+        userMessage: 'help',
+      });
+      expect(a.allowed).toHaveLength(1);
+      const b = enforcePedagogyRule({
+        commands: [{ action: 'scaffold', tex: '2x = \\square' }],
+        userMessage: 'help',
+      });
+      expect(b.allowed).toHaveLength(1);
+    });
+
+    it('DROPS a scaffold with no blank — a filled-in scaffold is an answer dump', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'scaffold', tex: 'x^2 + 4x + 4 = 12 + 4' }],
+        userMessage: 'what do I add to both sides',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('scaffold_has_no_blank');
+    });
+
+    it('is dropped when tex is missing', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'scaffold' }],
+        userMessage: 'hint please',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('scaffold_missing_tex');
+    });
+  });
+
   describe('full drop scenario', () => {
     it('drops every move-tag when the student message is unrelated', () => {
       const { allowed, dropped } = enforcePedagogyRule({
@@ -234,6 +280,19 @@ describe('boardCommandGuard', () => {
       expect(hasStartOverIntent('start over')).toBe(true);
       expect(hasStartOverIntent("let's try another")).toBe(true);
       expect(hasStartOverIntent('I want to continue this one')).toBe(false);
+    });
+
+    it('texHasBlank recognizes empty boxes, squares, and underscores', () => {
+      expect(texHasBlank('x + \\boxed{}')).toBe(true);
+      expect(texHasBlank('x + \\boxed{\\;\\;}')).toBe(true);
+      expect(texHasBlank('x + \\boxed{\\quad}')).toBe(true);
+      expect(texHasBlank('2x = \\square')).toBe(true);
+      expect(texHasBlank('x + _____')).toBe(true);
+      // A fully-filled expression has no blank — must be false.
+      expect(texHasBlank('x^2 + 4x + 4 = 16')).toBe(false);
+      expect(texHasBlank('\\boxed{4}')).toBe(false); // a filled box is not a blank
+      expect(texHasBlank('')).toBe(false);
+      expect(texHasBlank(null)).toBe(false);
     });
   });
 });

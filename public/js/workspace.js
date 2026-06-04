@@ -54,6 +54,17 @@
     target.textContent = String(tex || '');
   }
 
+  // Give empty \boxed{} scaffold slots a visible width so they read as
+  // fill-in blanks rather than collapsing to a hairline box. Only widens
+  // boxes that are empty or contain nothing but LaTeX spacing macros.
+  function widenScaffoldBlanks(tex) {
+    if (!tex || typeof tex !== 'string') return tex || '';
+    return tex.replace(
+      /\\boxed\s*\{\s*(?:\\(?:[;,:! ]|quad|qquad)\s*)*\}/g,
+      '\\boxed{\\phantom{00}}'
+    );
+  }
+
   // ---- Launcher tools (open an existing floating surface) --------------
   // Board used to be a launcher into the floating whiteboard; it's now
   // the embedded home base (see renderBoard below). Tiles + Calc stay
@@ -228,6 +239,15 @@
         .catch(function () {
           imgHost.textContent = 'Image unavailable.';
         });
+    } else if (step.type === 'scaffold') {
+      // Hint card — shows the next step's structure with empty \boxed{}
+      // slots the student fills in. Distinct look + an eyebrow so it reads
+      // as "your move", not as a finished step. Blanks reveal nothing, so
+      // this is the one card allowed on the student's own problem.
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--scaffold');
+      var sMath = el('div', 'cr-ws-board-card-math');
+      card.appendChild(sMath);
+      renderTex(sMath, widenScaffoldBlanks(step.tex));
     } else {
       // Equation card — pose / resolve / verify all share the same shape;
       // verify gets a badge + an expanded check line.
@@ -498,6 +518,22 @@
       tex = (tex == null ? '' : String(tex)).trim();
       if (!tex) return false;
       pushBoardStep({ type: 'resolve', tex: tex });
+      return true;
+    },
+
+    /**
+     * Post a scaffold hint — the next step's structure with empty \boxed{}
+     * slots for the student to fill. Unlike resolve, this is NOT a step the
+     * student has stated; the blanks are the teaching affordance.
+     * @param {string} tex  LaTeX with at least one \boxed{} blank, e.g.
+     *                      "x^2 + 4x + \\boxed{} = 12 + \\boxed{}"
+     */
+    boardScaffold: function (tex) {
+      tex = (tex == null ? '' : String(tex)).trim();
+      if (!tex) return false;
+      openWorkspace();
+      this.showTool('board');
+      pushBoardStep({ type: 'scaffold', tex: tex });
       return true;
     },
 

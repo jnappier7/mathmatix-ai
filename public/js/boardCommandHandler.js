@@ -21,7 +21,7 @@
     'use strict';
 
     var STAGGER_MS = 250;
-    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true };
+    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true, scaffold: true };
 
     function getWorkspace() {
         return typeof window !== 'undefined' ? window.MathWorkspace : null;
@@ -43,6 +43,9 @@
                     break;
                 case 'resolve':
                     if (command.tex) W.boardResolve(command.tex);
+                    break;
+                case 'scaffold':
+                    if (command.tex) W.boardScaffold(command.tex);
                     break;
                 case 'verify':
                     if (command.tex) {
