@@ -15,6 +15,7 @@ const {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
   synthesizeFallbackPose,
+  detectBoardReference,
   _detectAppliedOperation,
   _detectIntermediateEquation,
   _detectFinalSolution,
@@ -690,6 +691,36 @@ describe('boardSynthesizer — Phase 5 backfill', () => {
     test('returns null on empty input', () => {
       expect(synthesizeFallbackPose({})).toBeNull();
       expect(synthesizeFallbackPose()).toBeNull();
+    });
+  });
+
+  describe('detectBoardReference', () => {
+    test.each([
+      'show me on the work board',
+      'can you put it on the board?',
+      'draw it out for me',
+      'draw that please',
+      'show me on the whiteboard',
+      'use the workspace',
+      'show me on the board',
+    ])('fires on board reference: "%s"', (msg) => {
+      expect(detectBoardReference(msg)).toBe(true);
+    });
+
+    test.each([
+      "i'm on board with that plan",       // agreement idiom, not the board
+      'can you explain the next step?',
+      'i think the answer is 5',
+      'what does congruent mean?',
+      'yeah that makes sense',
+    ])('does not fire on: "%s"', (msg) => {
+      expect(detectBoardReference(msg)).toBe(false);
+    });
+
+    test('safe on empty / non-string input', () => {
+      expect(detectBoardReference('')).toBe(false);
+      expect(detectBoardReference(null)).toBe(false);
+      expect(detectBoardReference(undefined)).toBe(false);
     });
   });
 });
