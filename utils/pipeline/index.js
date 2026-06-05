@@ -45,7 +45,7 @@ const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
@@ -609,6 +609,45 @@ async function runPipeline(message, ctx) {
     } catch (metricsErr) {
       // Metrics must never break a response.
       turnTypeLogger.warn('structured metrics record failed (non-fatal)', { error: metricsErr.message });
+    }
+  }
+
+  // ── Stage 5c.3: BOARD-REFERENCE BACKSTOP ──
+  // The LLM is supposed to emit a board card when the student points at the
+  // work board ("show me on the board"), but tag compliance is unreliable and
+  // the deterministic synthesizer only fires on a posable problem statement —
+  // neither covers a student referencing a problem that's already in play. When
+  // the student explicitly references the board yet nothing survived the turn,
+  // re-pose the pinned problem so the board isn't left empty. Unlike the
+  // turn-type backfill this is NOT gated on the structured flag — it runs on
+  // all production traffic. Conservative by construction: tight reference
+  // detection + fires only on an empty board + poses ground-truth tex (the pin,
+  // else a verbatim tutor sentence). Worst case on a false positive is
+  // re-drawing the current problem.
+  if (verified.boardCommands.length === 0
+      && ctx.conversation
+      && detectBoardReference(message)) {
+    const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+    const backstopPose = pinnedTex
+      ? { action: 'pose', tex: pinnedTex }
+      : synthesizeFallbackPose({ tutorResponse: verified.text, studentMessage: message });
+
+    if (backstopPose) {
+      const backstopGuard = enforcePedagogyRule({
+        commands: [backstopPose],
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      });
+      if (backstopGuard.allowed.length > 0) {
+        verified.boardCommands = backstopGuard.allowed;
+        boardLogger.info('Board-reference backstop posed problem', {
+          source: pinnedTex ? 'pin' : 'fallback',
+          tex: backstopPose.tex,
+        });
+      }
+    } else {
+      boardLogger.warn('Board referenced but nothing posable; board left empty', {});
     }
   }
 

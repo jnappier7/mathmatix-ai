@@ -47,6 +47,38 @@
 const { parseCleanProblem } = require('../mathSolver');
 
 // ---------------------------------------------------------------------------
+// Board reference — student explicitly asks to use the work board
+// ---------------------------------------------------------------------------
+
+// Tight, false-alarm-averse patterns: the student is literally pointing at the
+// board ("show me on the work board", "put it on the board", "draw it"). We
+// deliberately require the word "board"/"workspace" or an explicit "draw it" —
+// bare "on board" is excluded because it collides with the agreement idiom
+// ("I'm on board with that"). Used only as a backstop when no board command
+// survived the turn, so a false positive's worst case is re-posing the
+// already-pinned problem.
+const BOARD_REFERENCE_PATTERNS = [
+  /\bwork\s?board\b/i,
+  /\bwhite\s?board\b/i,
+  /\bworkspace\b/i,
+  /\bthe\s+board\b/i,
+  /\bdraw\s+(?:it|that|this)\b/i,
+  /\bshow\s+me\s+on\b/i,
+];
+
+/**
+ * True if the student's message explicitly references the work board /
+ * workspace or asks the tutor to draw the problem out.
+ *
+ * @param {string} text
+ * @returns {boolean}
+ */
+function detectBoardReference(text) {
+  if (!text || typeof text !== 'string') return false;
+  return BOARD_REFERENCE_PATTERNS.some(p => p.test(text));
+}
+
+// ---------------------------------------------------------------------------
 // Detectors — operations, intermediate equations, final answers
 // ---------------------------------------------------------------------------
 
@@ -699,6 +731,7 @@ module.exports = {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
   synthesizeFallbackPose,
+  detectBoardReference,
   // Exposed for tests
   _detectAppliedOperation: detectAppliedOperation,
   _detectIntermediateEquation: detectIntermediateEquation,
