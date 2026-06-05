@@ -1026,6 +1026,7 @@ function solveQuadratic(problem) {
         return {
             success: true,
             answer: formatNumber(x1),
+            roots: [x1],
             steps: [
                 `Using quadratic formula: x = (-b ± √(b²-4ac)) / 2a`,
                 `Discriminant = ${discriminant} (perfect square)`,
@@ -1037,6 +1038,7 @@ function solveQuadratic(problem) {
     return {
         success: true,
         answer: `x = ${formatNumber(x1)} or x = ${formatNumber(x2)}`,
+        roots: [x1, x2],
         steps: [
             `Using quadratic formula: x = (-b ± √(b²-4ac)) / 2a`,
             `Discriminant = ${formatNumber(discriminant)}`,
@@ -1795,6 +1797,7 @@ function solveAbsoluteValue(problem) {
     return {
         success: true,
         answer: `x = ${formatNumber(smaller)} or x = ${formatNumber(larger)}`,
+        roots: [smaller, larger],
         steps: [
             `|${coefficient}x ${operator} ${constant}| = ${result}`,
             `Case 1: ${coefficient}x ${operator} ${constant} = ${result} → x = ${formatNumber(x1)}`,
@@ -2363,6 +2366,50 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     }
 
     return { isCorrect: false };
+}
+
+/**
+ * Given a free-text student message and a known set of roots, return which
+ * roots the message satisfies. Format-agnostic: extracts every signed number
+ * (including simple fractions like "3/2") from the text and matches each
+ * against the root set within tolerance. Used for multi-root grading where a
+ * student may name roots one at a time ("3", "x = 2", "3 and 2").
+ *
+ * @param {string} text - the student's raw message
+ * @param {number[]} roots - the full solution set, e.g. [3, 2]
+ * @param {number} tolerance - numeric match tolerance (default 0.01)
+ * @returns {number[]} the subset of `roots` named in `text` (deduped, in root order)
+ */
+function matchRootsInText(text, roots, tolerance = 0.01) {
+    if (!text || !Array.isArray(roots) || roots.length === 0) return [];
+
+    const normalized = String(text).replace(/−/g, '-');
+    const candidates = [];
+
+    // Simple fractions first: "3/2", "-1/4"
+    const fracRegex = /(-?\d+)\s*\/\s*(\d+)/g;
+    let m;
+    while ((m = fracRegex.exec(normalized)) !== null) {
+        const den = parseFloat(m[2]);
+        if (den !== 0) candidates.push(parseFloat(m[1]) / den);
+    }
+
+    // Then standalone signed decimals/integers (skip those already inside a fraction).
+    const stripped = normalized.replace(fracRegex, ' ');
+    const numRegex = /-?\d+\.?\d*/g;
+    while ((m = numRegex.exec(stripped)) !== null) {
+        const v = parseFloat(m[0]);
+        if (!isNaN(v)) candidates.push(v);
+    }
+
+    const matched = [];
+    for (const root of roots) {
+        if (matched.some(r => Math.abs(r - root) <= tolerance)) continue; // dedupe roots
+        if (candidates.some(c => Math.abs(c - root) <= tolerance)) {
+            matched.push(root);
+        }
+    }
+    return matched;
 }
 
 /**
@@ -3543,12 +3590,14 @@ module.exports = {
     detectMathProblem,
     solveProblem,
     verifyAnswer,
+    matchRootsInText,
     processMathMessage,
     parseCleanProblem,
     // Export individual solvers for testing
     solveArithmetic,
     solveLinearEquation,
     solveQuadratic,
+    solveAbsoluteValue,
     solveFactorQuadratic,
     solveFractionArithmetic,
     solvePercentage,

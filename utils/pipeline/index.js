@@ -130,6 +130,7 @@ async function runPipeline(message, ctx) {
     recentUserMessages: recentUserMessages.map(msg => ({ content: msg.content })),
     activeSkill: ctx.activeSkill || null,
     user: ctx.user,
+    lastProblemState: ctx.conversation?.lastProblemState || null,
     llmVerificationPromise,
   });
 
