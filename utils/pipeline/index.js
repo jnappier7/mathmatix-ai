@@ -46,6 +46,7 @@ const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
+const { applyVisualGate } = require('../visualGate');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
@@ -537,6 +538,68 @@ async function runPipeline(message, ctx) {
       actions: merged.added.map(c => c.action),
       llmEmitted: llmBoardCommands.length,
     });
+  }
+
+  // ── Stage 5c.0b: VISUAL GATE (conceptual-visual safety) ──
+  // graph/image commands bypass the pedagogy guard's student-text rule by
+  // design (they're teaching aids, not echoes of the student's work). That
+  // leaves one hole the guard structurally can't close: a graph/image of the
+  // student's OWN unsolved problem leaks the answer geometrically (a parabola
+  // crossing at x=2 and x=3 *is* the roots). The visual gate computes what each
+  // graph would reveal (mathSolver: solve fn=0) and blocks/transforms anything
+  // whose roots hit the known correctAnswer. Audit-first: VISUAL_GATE_MODE
+  // defaults to 'shadow' (evaluate + log, never change what renders), matching
+  // the structured-tutor rollout convention.
+  if (verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+    try {
+      const visualGateMode = process.env.VISUAL_GATE_MODE || 'shadow';
+      const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+      const activeProblem = {
+        problemText: pinnedTex,
+        normalizedExpression: pinnedTex,
+        correctAnswer: diagnosis.correctAnswer || null,
+        problemType: diagnosis.problemType || null,
+        status: diagnosis.isCorrect === true
+          ? 'solved'
+          : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
+      };
+      const learningState = {
+        concept: ctx.activeSkill?.name || null,
+        misconception: diagnosis.misconception?.name || null,
+        masteryScore: null,
+      };
+      const gatedCommands = [];
+      for (const cmd of verified.boardCommands) {
+        if (cmd.action !== 'graph' && cmd.action !== 'image') {
+          gatedCommands.push(cmd);
+          continue;
+        }
+        const { command: gated, record } = await applyVisualGate({
+          command: cmd,
+          activeProblem,
+          learningState,
+          tutorMessage: verified.text,
+          user: ctx.user || null,
+          mode: visualGateMode,
+        });
+        if (record.decision !== 'allow') {
+          boardLogger.info('Visual gate decision', {
+            mode: visualGateMode,
+            action: record.action,
+            decision: record.decision,
+            reasonCode: record.reasonCode,
+            riskLevel: record.riskLevel,
+          });
+        }
+        // In shadow/audit_only/off the gate returns the command unchanged, so
+        // this is a no-op for render; only live modes drop/transform.
+        if (gated) gatedCommands.push(gated);
+      }
+      verified.boardCommands = gatedCommands;
+    } catch (gateErr) {
+      // The gate must never break a response.
+      boardLogger.error('Visual gate failed (non-fatal)', { error: gateErr.message });
+    }
   }
 
   // ── Stage 5c.1: TURN-TYPE BACKFILL (Phase 5) ──
