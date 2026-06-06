@@ -548,12 +548,15 @@ async function runPipeline(message, ctx) {
   // student's OWN unsolved problem leaks the answer geometrically (a parabola
   // crossing at x=2 and x=3 *is* the roots). The visual gate computes what each
   // graph would reveal (mathSolver: solve fn=0) and blocks/transforms anything
-  // whose roots hit the known correctAnswer. Audit-first: VISUAL_GATE_MODE
-  // defaults to 'shadow' (evaluate + log, never change what renders), matching
-  // the structured-tutor rollout convention.
+  // whose roots hit the known correctAnswer. Defaults to 'live_control' —
+  // enforcement ON, deterministic leak-block only (the LLM value judge is a
+  // separate opt-in, VISUAL_GATE_VALUE_JUDGE, default off). Fail-safe by design:
+  // this protects the #1 anti-cheat rule, so the secure posture is the default.
+  // Set VISUAL_GATE_MODE=shadow to log-without-enforcing, or =off to bypass.
+  //
   // Read the mode once. `off` is a complete, zero-cost bypass (true kill
   // switch): the whole stage is skipped, no evaluation, no writes.
-  const visualGateMode = process.env.VISUAL_GATE_MODE || 'shadow';
+  const visualGateMode = process.env.VISUAL_GATE_MODE || 'live_control';
   if (visualGateMode !== 'off'
       && verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
     try {

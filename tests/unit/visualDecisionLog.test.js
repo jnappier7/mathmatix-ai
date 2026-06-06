@@ -1,4 +1,5 @@
-const { buildDecisionDoc } = require('../../utils/visualDecisionLog');
+const { buildDecisionDoc, persistVisualDecisions } = require('../../utils/visualDecisionLog');
+const VisualDecision = require('../../models/visualDecision');
 
 describe('visualDecisionLog.buildDecisionDoc', () => {
   const baseRecord = {
@@ -61,5 +62,29 @@ describe('visualDecisionLog.buildDecisionDoc', () => {
       mode: 'live_control',
     });
     expect(doc.learningState.masteryScore).toBeNull();
+  });
+});
+
+describe('visualDecisionLog.persistVisualDecisions', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it('bulk-inserts unordered and returns the count', async () => {
+    const spy = jest.spyOn(VisualDecision, 'insertMany').mockResolvedValue([{}, {}]);
+    const n = await persistVisualDecisions([{ a: 1 }, { b: 2 }]);
+    expect(spy).toHaveBeenCalledWith([{ a: 1 }, { b: 2 }], { ordered: false });
+    expect(n).toBe(2);
+  });
+
+  it('swallows a write error and returns 0 (never throws)', async () => {
+    jest.spyOn(VisualDecision, 'insertMany').mockRejectedValue(new Error('no db connection'));
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    await expect(persistVisualDecisions([{ a: 1 }])).resolves.toBe(0);
+  });
+
+  it('no-ops on empty input without touching the DB', async () => {
+    const spy = jest.spyOn(VisualDecision, 'insertMany').mockResolvedValue([]);
+    expect(await persistVisualDecisions([])).toBe(0);
+    expect(await persistVisualDecisions(null)).toBe(0);
+    expect(spy).not.toHaveBeenCalled();
   });
 });
