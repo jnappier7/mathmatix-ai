@@ -161,6 +161,36 @@ function detectIntermediateEquation(studentText) {
   return `${lhs} = ${rhs}`;
 }
 
+// Detect a bare algebraic EXPRESSION the student stated as a rewrite step —
+// factoring, regrouping, simplifying — which carries no "=" and is therefore
+// missed by the equation/final/substitution detectors. Without this, an entire
+// class of problems (factoring, simplification) leaves the board frozen at the
+// pose while the whole solve happens in chat.
+//
+// Deliberately conservative so a sentence can NEVER land on the board: the
+// message must be essentially pure math — a single-letter variable, real
+// expression structure (exponent/grouping/multi-term), a digit, and crucially
+// NO multi-letter word (any run of 2+ letters is prose, not a variable). The
+// caller still gates on an open cycle + tutor affirmation, and the pedagogy
+// guard still requires the tex to trace to the student's own text.
+function detectIntermediateExpression(studentText) {
+  if (!studentText || typeof studentText !== 'string') return null;
+  const t = studentText.trim();
+  if (t.length === 0 || t.length > 120) return null;
+  if (/[?]$/.test(t)) return null;
+  if (t.includes('=')) return null;            // equations handled elsewhere
+  if (/[a-z]{2,}/i.test(t)) return null;       // any 2+ letter run = prose word
+  if (!/[a-z]/i.test(t)) return null;          // must contain a variable
+  if (!/\d/.test(t)) return null;              // and a number
+  if (!/[+\-*/^()]/.test(t)) return null;      // and operator/exponent/grouping
+  // Require real multi-term/grouped structure — not a lone term like "3x^2".
+  const hasGroup = /[()]/.test(t);
+  const termOps = (t.match(/[+\-]/g) || []).length;
+  if (!hasGroup && termOps < 2) return null;
+
+  return t.replace(/\s+/g, ' ').trim();
+}
+
 function detectFinalSolution(studentText) {
   if (!studentText || typeof studentText !== 'string') return null;
   const t = studentText.trim();
@@ -600,6 +630,14 @@ function synthesizeBoardCommands({
     const eq = detectIntermediateEquation(studentMessage);
     if (eq && tutorAffirms(tutorResponse)) {
       cards.push({ action: 'resolve', tex: eq });
+    } else {
+      // No equation form — but the student may have stated an expression
+      // rewrite (a factoring/regrouping step). Post that as the resolve so the
+      // board tracks factoring/simplification problems, not just solve-for-x.
+      const expr = detectIntermediateExpression(studentMessage);
+      if (expr && tutorAffirms(tutorResponse)) {
+        cards.push({ action: 'resolve', tex: expr });
+      }
     }
   }
 
@@ -771,6 +809,7 @@ module.exports = {
   // Exposed for tests
   _detectAppliedOperation: detectAppliedOperation,
   _detectIntermediateEquation: detectIntermediateEquation,
+  _detectIntermediateExpression: detectIntermediateExpression,
   _detectFinalSolution: detectFinalSolution,
   _detectSubstitutionCheck: detectSubstitutionCheck,
   _detectPosedProblem: detectPosedProblem,
