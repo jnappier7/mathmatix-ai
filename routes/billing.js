@@ -1,7 +1,7 @@
-// routes/billing.js — Stripe billing: Free (30 min/week) + Mathmatix+ ($9.95/mo unlimited)
+// routes/billing.js — Stripe billing: Free (30 min/month) + Mathmatix+ ($9.95/mo unlimited)
 //
 // Plans:
-//   Free      — 30 AI min/week (~2-3 hours real help), no credit card
+//   Free      — 30 AI min/month (~2-3 hours real help), no credit card
 //   Mathmatix+ — $9.95/mo recurring, unlimited everything, cancel anytime
 //
 // Legacy minute packs (pack_60, pack_120) are retained in webhook processing
@@ -29,7 +29,8 @@ const logger = require('../utils/logger').child({ route: 'billing' });
 
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per week for all students
+const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per reset period (now monthly) for all students
+const FREE_QUOTA_RESET_DAYS = 30;    // free-AI-minute quota window — keep in sync with middleware/usageGate.js
 
 // Active plan — Mathmatix+ is the only paid tier for new purchases
 const PACKS = {
@@ -652,15 +653,15 @@ router.get('/status', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Legacy pack users — check free weekly allowance + pack balance
+    // Legacy pack users — check free monthly allowance + pack balance
     if (tier === 'pack_60' || tier === 'pack_120') {
       const expired = user.packExpiresAt && now > user.packExpiresAt;
       const packRemaining = expired ? 0 : (user.packSecondsRemaining || 0);
 
-      // Pack users also get 30 free minutes/week before pack is used
+      // Pack users also get 30 free minutes/month before pack is used
       let weeklyAIUsedPack = user.weeklyAISeconds || 0;
-      const lastResetPack = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
-      if ((now - lastResetPack) / (1000 * 60 * 60 * 24) >= 7) {
+      const lastResetPack = user.lastAIQuotaReset ? new Date(user.lastAIQuotaReset) : new Date(0);
+      if ((now - lastResetPack) / (1000 * 60 * 60 * 24) >= FREE_QUOTA_RESET_DAYS) {
         weeklyAIUsedPack = 0;
       }
       const freeRemainingPack = Math.max(0, FREE_WEEKLY_SECONDS - weeklyAIUsedPack);
@@ -713,8 +714,8 @@ router.get('/status', isAuthenticated, async (req, res) => {
       }
     }
 
-    // Free users — calculate remaining free weekly AI minutes
-    // Teachers, parents, admins get unlimited; students get 30 free AI minutes/week
+    // Free users — calculate remaining free monthly AI minutes
+    // Teachers, parents, admins get unlimited; students get 30 free AI minutes/month
     if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
       return res.json({
         success: true,
@@ -725,21 +726,21 @@ router.get('/status', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Students: check weekly AI seconds used vs free allowance
+    // Students: check monthly AI seconds used vs free allowance
     let weeklyAIUsed = user.weeklyAISeconds || 0;
-    const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
-    if ((now - lastReset) / (1000 * 60 * 60 * 24) >= 7) {
+    const lastReset = user.lastAIQuotaReset ? new Date(user.lastAIQuotaReset) : new Date(0);
+    if ((now - lastReset) / (1000 * 60 * 60 * 24) >= FREE_QUOTA_RESET_DAYS) {
       // Reset is pending — they effectively have full free minutes
       weeklyAIUsed = 0;
     }
     const freeRemaining = Math.max(0, FREE_WEEKLY_SECONDS - weeklyAIUsed);
     const limitReached = freeRemaining <= 0;
 
-    // Calculate when free minutes reset (7 days from lastWeeklyReset)
-    const lastResetDate = weeklyAIUsed === 0 && (now - lastReset) / (1000 * 60 * 60 * 24) >= 7
-      ? now  // Reset just happened, next reset is 7 days from now
+    // Calculate when free minutes reset (FREE_QUOTA_RESET_DAYS from lastAIQuotaReset)
+    const lastResetDate = weeklyAIUsed === 0 && (now - lastReset) / (1000 * 60 * 60 * 24) >= FREE_QUOTA_RESET_DAYS
+      ? now  // Reset just happened, next reset is FREE_QUOTA_RESET_DAYS from now
       : lastReset;
-    const nextReset = new Date(lastResetDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const nextReset = new Date(lastResetDate.getTime() + FREE_QUOTA_RESET_DAYS * 24 * 60 * 60 * 1000);
 
     res.json({
       success: true,
