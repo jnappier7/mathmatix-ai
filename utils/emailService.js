@@ -1522,7 +1522,7 @@ function getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl
       </div>
 
       <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
-        After ${accessUntilDate}, the account will switch to our free plan (30 AI minutes per week).
+        After ${accessUntilDate}, the account will switch to our free plan (30 AI minutes per month).
       </p>
 
       <h3 style="margin: 25px 0 12px 0; color: #2c3e50; font-size: 18px;">Changed your mind?</h3>

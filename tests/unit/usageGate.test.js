@@ -27,6 +27,7 @@ describe('Feature Gating Middleware', () => {
         subscriptionTier: 'free',
         weeklyAISeconds: 0,
         lastWeeklyReset: new Date(),
+        lastAIQuotaReset: new Date(),
         freeUploadsUsed: 0,
         freeGradesUsed: 0,
         freeCoursesUsed: 0,
@@ -210,13 +211,22 @@ describe('Feature Gating Middleware', () => {
       expect(warningCalls.length).toBe(0);
     });
 
-    // --- Weekly reset ---
-    test('should reset weekly usage when 7+ days have passed', async () => {
+    // --- Monthly AI quota reset (decoupled from weekly engagement reset) ---
+    test('should reset AI quota when 30+ days have passed', async () => {
       req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
-      req.user.lastWeeklyReset = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000); // 8 days ago
+      req.user.lastAIQuotaReset = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000); // 31 days ago
       await usageGate(req, res, next);
       expect(User.findOneAndUpdate).toHaveBeenCalled();
       expect(next).toHaveBeenCalled(); // After reset, free minutes are available
+    });
+
+    test('should NOT reset AI quota before 30 days, even after the weekly engagement reset', async () => {
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
+      req.user.lastAIQuotaReset = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000); // 8 days — quota NOT due
+      req.user.lastWeeklyReset = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000);  // 8 days — engagement reset due
+      await usageGate(req, res, next);
+      expect(res.status).toHaveBeenCalledWith(402); // quota still exhausted
+      expect(next).not.toHaveBeenCalled();
     });
 
     // --- Free minutes exhausted, free tier ---
