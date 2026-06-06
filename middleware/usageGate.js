@@ -2,7 +2,7 @@
 //
 // OPTION D — School License Model:
 //   Teachers: always free unlimited (drives adoption)
-//   Students: 30 free AI-minutes per week
+//   Students: 30 free AI-minutes per month
 //   Students with school license: unlimited (school purchased access)
 //   Unlimited individual subscribers: always pass
 //   Parents/admins: always pass (free unlimited)
@@ -16,7 +16,10 @@ const User = require('../models/user');
 const SchoolLicense = require('../models/schoolLicense');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
-const FREE_WEEKLY_SECONDS = 30 * 60; // 30 minutes per week for ALL students
+// NOTE: constant/field names keep the "weekly" prefix for backward compatibility
+// (no DB migration), but the free AI quota now resets MONTHLY (see FREE_QUOTA_RESET_DAYS).
+const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per RESET PERIOD (now monthly) for ALL students
+const FREE_QUOTA_RESET_DAYS = 30;    // free-AI-minute quota window (was 7 / weekly)
 
 // Freemium taste limits — free users get a sample before upgrade prompt
 const FREE_UPLOAD_LIMIT  = 1;    // 1 free upload, then Mathmatix+ required
@@ -66,7 +69,7 @@ async function isLicenseValid(licenseId) {
  * - Teachers, parents, admins: always pass (free unlimited)
  * - Students with active school license: always pass (school purchased access)
  * - Unlimited individual subscribers: always pass
- * - Any student with free weekly minutes remaining: pass (free minutes first)
+ * - Any student with free monthly minutes remaining: pass (free minutes first)
  * - Otherwise: 402 Payment Required
  */
 async function usageGate(req, res, next) {
@@ -115,21 +118,35 @@ async function usageGate(req, res, next) {
       if (subscribedParent) return next();
     }
 
-    // --- Weekly reset check (applies to all students) ---
-    let weeklyAIUsed = user.weeklyAISeconds || 0;
     const now = new Date();
-    const lastReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
-    if ((now - lastReset) / (1000 * 60 * 60 * 24) >= 7) {
-      weeklyAIUsed = 0;
+
+    // --- WEEKLY engagement-metric reset (every 7 days) ---
+    // weeklyActive* feed the teacher/parent "min/wk" dashboards and the
+    // struggling heuristic, so they stay weekly even though the free-AI quota
+    // below is monthly. (Decoupled from the quota anchor on purpose.)
+    const lastWeeklyReset = user.lastWeeklyReset ? new Date(user.lastWeeklyReset) : new Date(0);
+    if ((now - lastWeeklyReset) / (1000 * 60 * 60 * 24) >= 7) {
       // Atomic reset: only resets if lastWeeklyReset hasn't changed (prevents race condition)
       await User.findOneAndUpdate(
         { _id: user._id, lastWeeklyReset: user.lastWeeklyReset },
-        { $set: { weeklyAISeconds: 0, weeklyActiveSeconds: 0, weeklyActiveTutoringMinutes: 0, lastWeeklyReset: now } }
+        { $set: { weeklyActiveSeconds: 0, weeklyActiveTutoringMinutes: 0, lastWeeklyReset: now } }
       );
     }
 
-    // --- Free weekly minutes (every student gets these first) ---
-    const freeRemaining = FREE_WEEKLY_SECONDS - weeklyAIUsed;
+    // --- MONTHLY free-AI-minute quota reset (rolling 30-day window) ---
+    let aiUsed = user.weeklyAISeconds || 0;
+    const lastQuotaReset = user.lastAIQuotaReset ? new Date(user.lastAIQuotaReset) : new Date(0);
+    if ((now - lastQuotaReset) / (1000 * 60 * 60 * 24) >= FREE_QUOTA_RESET_DAYS) {
+      aiUsed = 0;
+      // Atomic reset: only resets if lastAIQuotaReset hasn't changed (prevents race condition)
+      await User.findOneAndUpdate(
+        { _id: user._id, lastAIQuotaReset: user.lastAIQuotaReset },
+        { $set: { weeklyAISeconds: 0, lastAIQuotaReset: now } }
+      );
+    }
+
+    // --- Free monthly minutes (every student gets these first) ---
+    const freeRemaining = FREE_WEEKLY_SECONDS - aiUsed;
 
     if (freeRemaining > 0) {
       // Still have free minutes — let them through regardless of tier
@@ -142,15 +159,15 @@ async function usageGate(req, res, next) {
     }
 
     // --- Free minutes exhausted — calculate when they reset ---
-    const resetDate = new Date(lastReset.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const resetDate = new Date(lastQuotaReset.getTime() + FREE_QUOTA_RESET_DAYS * 24 * 60 * 60 * 1000);
     const msUntilReset = resetDate - now;
     const daysUntilReset = Math.max(0, Math.ceil(msUntilReset / (1000 * 60 * 60 * 24)));
 
     return res.status(402).json({
-      message: `You've used your 30 free minutes this week. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade to Unlimited for non-stop tutoring, or ask your teacher about a school license!`,
+      message: `You've used your 30 free minutes this month. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade to Unlimited for non-stop tutoring, or ask your teacher about a school license!`,
       usageLimitReached: true,
       tier: 'free',
-      freeMinutesUsed: Math.floor(weeklyAIUsed / 60),
+      freeMinutesUsed: Math.floor(aiUsed / 60),
       freeMinutesTotal: 30,
       freeSecondsRemaining: 0,
       nextResetAt: resetDate.toISOString(),

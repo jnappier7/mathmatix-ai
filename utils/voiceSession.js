@@ -254,6 +254,12 @@ class VoiceSession {
             return;
         }
         if (this.stt && this.stt.isOpen()) return; // already open
+        // Flush the prior (idle-closed) STT session's billed seconds before we
+        // replace it — createSession() starts a fresh billedSeconds=0 closure,
+        // so reading it only at shutdown would lose pre-reopen usage.
+        if (this.stt) {
+            this._sttBilledTotal = (this._sttBilledTotal || 0) + (this.stt.billedSeconds || 0);
+        }
         this._lastSttActivity = Date.now();
         this.stt = sttStream.createSession({
             language: this.langCode,
@@ -378,6 +384,13 @@ class VoiceSession {
         } finally {
             if (this.currentTurn === turn) {
                 turn.metric.t_turn_end = Date.now();
+                // LLM contribution to voice cost = latency from first token to
+                // first audio chunk (the part NOT overlapped by TTS playback,
+                // which is metered separately via _ttsSamples).
+                if (turn.metric.t_first_llm_token && turn.metric.t_first_audio_chunk) {
+                    this._llmLatencyMs = (this._llmLatencyMs || 0) +
+                        Math.max(0, turn.metric.t_first_audio_chunk - turn.metric.t_first_llm_token);
+                }
                 metrics.record(turn.metric);
                 this.currentTurn = null;
                 this._setStatus('idle');
@@ -1059,6 +1072,11 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
     }
 
     _sendAudioChunk(i16, sampleRate, turnId) {
+        // Meter synthesized playback duration (= samples / sampleRate). Accumulate
+        // BEFORE the readyState guard: Cartesia already billed for this audio even
+        // if the client socket has gone away.
+        this._ttsSamples = (this._ttsSamples || 0) + i16.length;
+        this._ttsSampleRate = sampleRate;
         if (this.ws.readyState !== 1) return;
         // Frame protocol: [1 byte type=0x01][8 bytes turnId hash][2 bytes sr][N bytes pcm s16]
         // Simpler: send a small JSON header followed by binary frame is
@@ -1087,6 +1105,34 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
     shutdown(reason = 'shutdown') {
         if (this.closed) return;
         this.closed = true;
+
+        // ── Meter voice usage against the AI-seconds budget (cost-accurate) ──
+        // Voice is the only path that stacks three paid vendors. Count the full
+        // turn: STT input (Deepgram) + TTS playback (Cartesia) + LLM latency.
+        // Metered once here so async audio has finished arriving. Written to
+        // totalAISeconds (cost analytics) and weeklyAISeconds (the quota meter —
+        // no gating effect while voice is paid/unlimited, but correct and ready
+        // if a free voice sample is introduced later).
+        try {
+            const sttSeconds = (this._sttBilledTotal || 0) + (this.stt?.billedSeconds || 0);
+            const ttsSeconds = this._ttsSampleRate ? (this._ttsSamples || 0) / this._ttsSampleRate : 0;
+            const llmSeconds = (this._llmLatencyMs || 0) / 1000;
+            const voiceSeconds = Math.round(sttSeconds + ttsSeconds + llmSeconds);
+            if (voiceSeconds > 0 && this.userId) {
+                User.findByIdAndUpdate(this.userId, {
+                    $inc: { weeklyAISeconds: voiceSeconds, totalAISeconds: voiceSeconds }
+                }).catch(err => logger.warn('voice usage meter failed', { userId: this.userId, error: err.message }));
+                logger.info('voice usage metered', {
+                    userId: this.userId, voiceSeconds,
+                    sttSeconds: Math.round(sttSeconds),
+                    ttsSeconds: Math.round(ttsSeconds),
+                    llmSeconds: Math.round(llmSeconds),
+                });
+            }
+        } catch (err) {
+            logger.warn('voice metering error', { userId: this.userId, error: err.message });
+        }
+
         const registryKey = `${this.userId}:${this.mode}`;
         if (activeSessions.get(registryKey) === this) {
             activeSessions.delete(registryKey);

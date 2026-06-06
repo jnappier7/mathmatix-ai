@@ -31,11 +31,31 @@ function makeUser(overrides = {}) {
 }
 
 function daysAgo(n) {
+    // UTC-anchored on purpose: the production day-boundary diff uses UTC (the
+    // no-timezone fallback). Local setDate/setHours would land n+1 UTC-days back
+    // whenever the process TZ's calendar date differs from UTC, shifting every
+    // expectation by one — the bug below.
     const d = new Date();
-    d.setDate(d.getDate() - n);
-    d.setHours(12, 0, 0, 0); // Noon to avoid edge cases
+    d.setUTCDate(d.getUTCDate() - n);
+    d.setUTCHours(12, 0, 0, 0); // Noon UTC, far from any day boundary
     return d;
 }
+
+// Freeze "now" to a fixed instant so the suite is deterministic regardless of
+// when (wall-clock) it runs. Combined with the UTC-anchored daysAgo above, this
+// makes the streak math identical under any process timezone — previously these
+// date-based tests failed nondeterministically when the file happened to run in
+// a parallel worker during the window where process-local date trailed UTC.
+const RealDate = Date;
+const FIXED_NOW = RealDate.UTC(2026, 5, 17, 17, 0, 0); // Wed 2026-06-17 17:00 UTC
+class FixedDate extends RealDate {
+    constructor(...args) {
+        if (args.length === 0) { super(FIXED_NOW); } else { super(...args); }
+    }
+    static now() { return FIXED_NOW; }
+}
+beforeEach(() => { global.Date = FixedDate; });
+afterEach(() => { global.Date = RealDate; });
 
 describe('Streak Freeze Mechanic', () => {
 

@@ -338,7 +338,7 @@
     }
   }
 
-  function drawGraph(area, expr) {
+  function drawGraph(area, expr, opts) {
     destroyGraph();
     area.innerHTML = '';
 
@@ -347,11 +347,16 @@
         'Graphing engine is still loading — give it a moment and try again.'));
       return;
     }
+    // Key points (labeled intercepts/extrema) are appropriate for the student's
+    // own exploration but are an answer leak when a tutor pushes a graph of the
+    // student's current problem. Default ON for direct exploration; callers that
+    // render tutor-driven graphs pass showKeyPoints:false.
+    var showKeyPoints = opts && typeof opts.showKeyPoints === 'boolean' ? opts.showKeyPoints : true;
     try {
       WS.graph = new window.MathGraph(area, {
         fn: expr,
         animate: true,
-        showKeyPoints: true,
+        showKeyPoints: showKeyPoints,
         showInfoBar: true
       });
     } catch (err) {
@@ -453,10 +458,13 @@
     },
 
     /**
-     * Plot a function in the Graph tab.
+     * Plot a function in the Graph tab. This is the tutor/external entry point;
+     * key points (labeled intercepts/extrema) are OFF by default here because a
+     * labeled graph of the student's own problem leaks the answer. Pass
+     * { showKeyPoints: true } to opt in for genuine example/exploration content.
      * @param {string} expr   function of x, e.g. "x^2 - 4"
-     * @param {object} [opts] { caption } — a label for example/parallel
-     *                        content, e.g. "Example: y = x² − 4"
+     * @param {object} [opts] { caption, showKeyPoints } — caption labels
+     *                        example/parallel content, e.g. "Example: y = x² − 4"
      * @returns {boolean} whether the graph was shown
      */
     showGraph: function (expr, opts) {
@@ -469,7 +477,7 @@
       if (!area) return false;
       if (input) input.value = expr;
       setGraphCaption(WS.body, opts && opts.caption);
-      drawGraph(area, expr);
+      drawGraph(area, expr, { showKeyPoints: !!(opts && opts.showKeyPoints === true) });
       return true;
     },
 

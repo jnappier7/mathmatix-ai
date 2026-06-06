@@ -630,7 +630,8 @@ const userSchema = new Schema({
   // Only counts time while AI is generating a response - not reading/thinking/idle time
   totalAISeconds:  { type: Number, default: 0 },
   weeklyAISeconds: { type: Number, default: 0 },
-  lastWeeklyReset: { type: Date, default: Date.now },
+  lastWeeklyReset: { type: Date, default: Date.now },   // anchors WEEKLY engagement-metric reset (weeklyActive*)
+  lastAIQuotaReset: { type: Date, default: Date.now },  // anchors MONTHLY free-AI-minute quota reset (weeklyAISeconds)
 
   /* Conversations */
   activeConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
