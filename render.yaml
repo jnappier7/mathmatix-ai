@@ -46,34 +46,32 @@ services:
       - key: MATHPIX_APP_KEY
         sync: false
 
-      # ── Tutoring feature flags (version-controlled; edit value to roll out) ──
-      # NOTE: a flag only does something once its CODE is on main and deployed.
+      # ── Tutoring feature flags (dashboard-managed; toggled in Render UI) ──
+      # These are declared sync:false on purpose: they're rolled out by toggling
+      # in the Render dashboard, and a pinned blueprint `value:` would REVERT a
+      # dashboard change on the next sync. sync:false documents the flag in git
+      # without fighting the dashboard. When unset, code defaults apply (below).
+      # A flag only does something once its CODE is on main and deployed.
       #
-      # Visual Gate — blocks graph/image board commands that would reveal the
-      # answer to the student's OWN problem. Secure-by-default. Options:
-      #   live_control     enforce, deterministic leak-block only (current)
-      #   live_experimental enforce + transform leaks into parallel examples
-      #   shadow           log decisions only, render unchanged (observe first)
-      #   audit_only       log, don't render experimental
-      #   off              full bypass / kill switch
-      # Read the corpus at GET /api/admin/visual-gate-decisions.
+      # VISUAL_GATE_MODE — blocks graph/image board commands that would reveal the
+      # answer to the student's OWN problem. Code default when unset: live_control
+      # (enforcing). Options: live_control | live_experimental | shadow |
+      # audit_only | off. Corpus at GET /api/admin/visual-gate-decisions.
       - key: VISUAL_GATE_MODE
-        value: live_control
-      # Visual Gate LLM value judge (decorative-visual filter). Prompt is a first
-      # draft / UNVALIDATED — keep off until its shadow decisions are reviewed.
-      # The code checks for the literal string 'on'.
+        sync: false
+      # VISUAL_GATE_VALUE_JUDGE — decorative-visual LLM filter. Code default off.
+      # Prompt UNVALIDATED; set to literal 'on' only after reviewing shadow data.
       - key: VISUAL_GATE_VALUE_JUDGE
-        value: "off"
-      # Structured tutor response — makes board_commands a guaranteed array every
-      # turn (the board can't be silently skipped). Flip to "true" after checking
-      # the structured-tutor metrics dashboard. Code accepts "true" or "1".
+        sync: false
+      # STRUCTURED_TUTOR_RESPONSE — guarantees a board_commands array every turn.
+      # Code default off; set 'true' (or '1') to enable. (Enabled via dashboard.)
       - key: STRUCTURED_TUTOR_RESPONSE
-        value: "false"
-      # I_DO worked-example board — lets the tutor demonstrate full steps on a
-      # PARALLEL example (relaxes the #1 guard, double-gated on a WORKED_EXAMPLE
-      # move). REQUIRES fix/board-turn-state merged + deployed, AND a live check
-      # that WORKED_EXAMPLE never works the student's own problem. Then flip "true".
+        sync: false
+      # WORKED_EXAMPLE_BOARD — lets the tutor demonstrate full steps on a PARALLEL
+      # example (relaxes the #1 guard, double-gated on a WORKED_EXAMPLE move). Code
+      # default off. REQUIRES fix/board-turn-state merged + deployed AND a live
+      # check that WORKED_EXAMPLE never works the student's own problem; then 'true'.
       - key: WORKED_EXAMPLE_BOARD
-        value: "false"
+        sync: false
 
     autoDeploy: true
