@@ -1449,6 +1449,47 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
 });
 
 /**
+ * @route   GET /api/admin/visual-gate-decisions
+ * @desc    Observability for the Visual Gate (VISUAL_GATE_MODE). Aggregates the
+ *          VisualDecision corpus — decision/reasonCode/risk/mode/action
+ *          distributions plus recent samples — so the shadow-mode behavior is
+ *          visible before any enforcement is flipped on. Backed by the Mongo
+ *          collection (TTL-bounded to 180 days), so it survives restarts.
+ * @access  Private (Admin)
+ */
+router.get('/visual-gate-decisions', isAdmin, async (req, res) => {
+  try {
+    const VisualDecision = require('../models/visualDecision');
+    const limit = Math.min(parseInt(req.query.limit, 10) || 50, 200);
+
+    const [total, byDecision, byReason, byRisk, byMode, byAction, recent] = await Promise.all([
+      VisualDecision.countDocuments({}),
+      VisualDecision.aggregate([{ $group: { _id: '$decision', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$reasonCode', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$riskLevel', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$mode', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$action', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.find({}).sort({ createdAt: -1 }).limit(limit).lean(),
+    ]);
+
+    const asMap = (rows) => rows.reduce((m, r) => { m[r._id == null ? 'null' : r._id] = r.count; return m; }, {});
+
+    res.json({
+      configuredMode: process.env.VISUAL_GATE_MODE || 'shadow',
+      total,
+      byDecision: asMap(byDecision),
+      byReasonCode: asMap(byReason),
+      byRiskLevel: asMap(byRisk),
+      byMode: asMap(byMode),
+      byAction: asMap(byAction),
+      recent,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
  * @route   POST /api/admin/seed-skills
  * @desc    Seed the skills database with Ready for Algebra 1 skills.
  * @access  Private (Admin)

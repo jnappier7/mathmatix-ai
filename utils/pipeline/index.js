@@ -46,6 +46,8 @@ const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
+const { applyVisualGate } = require('../visualGate');
+const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
@@ -537,6 +539,99 @@ async function runPipeline(message, ctx) {
       actions: merged.added.map(c => c.action),
       llmEmitted: llmBoardCommands.length,
     });
+  }
+
+  // ── Stage 5c.0b: VISUAL GATE (conceptual-visual safety) ──
+  // graph/image commands bypass the pedagogy guard's student-text rule by
+  // design (they're teaching aids, not echoes of the student's work). That
+  // leaves one hole the guard structurally can't close: a graph/image of the
+  // student's OWN unsolved problem leaks the answer geometrically (a parabola
+  // crossing at x=2 and x=3 *is* the roots). The visual gate computes what each
+  // graph would reveal (mathSolver: solve fn=0) and blocks/transforms anything
+  // whose roots hit the known correctAnswer. Defaults to 'live_control' —
+  // enforcement ON, deterministic leak-block only (the LLM value judge is a
+  // separate opt-in, VISUAL_GATE_VALUE_JUDGE, default off). Fail-safe by design:
+  // this protects the #1 anti-cheat rule, so the secure posture is the default.
+  // Set VISUAL_GATE_MODE=shadow to log-without-enforcing, or =off to bypass.
+  //
+  // Read the mode once. `off` is a complete, zero-cost bypass (true kill
+  // switch): the whole stage is skipped, no evaluation, no writes.
+  const visualGateMode = process.env.VISUAL_GATE_MODE || 'live_control';
+  if (visualGateMode !== 'off'
+      && verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+    try {
+      const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+      const activeProblem = {
+        problemText: pinnedTex,
+        normalizedExpression: pinnedTex,
+        correctAnswer: diagnosis.correctAnswer || null,
+        problemType: diagnosis.problemType || null,
+        status: diagnosis.isCorrect === true
+          ? 'solved'
+          : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
+      };
+      const learningState = {
+        concept: ctx.activeSkill?.name || null,
+        misconception: diagnosis.misconception?.name || null,
+        masteryScore: null,
+      };
+      const gatedCommands = [];
+      const decisionDocs = [];
+      const turnIndex = Array.isArray(ctx.conversation?.messages) ? ctx.conversation.messages.length : null;
+      for (const cmd of verified.boardCommands) {
+        if (cmd.action !== 'graph' && cmd.action !== 'image') {
+          gatedCommands.push(cmd);
+          continue;
+        }
+        const { command: gated, record } = await applyVisualGate({
+          command: cmd,
+          activeProblem,
+          learningState,
+          tutorMessage: verified.text,
+          user: ctx.user || null,
+          mode: visualGateMode,
+          // Leak enforcement runs deterministically in live modes; the LLM
+          // value judge is a separate opt-in (default off) so it can't suppress
+          // useful visuals until it's been validated against shadow data.
+          enableValueJudge: process.env.VISUAL_GATE_VALUE_JUDGE === 'on',
+        });
+        if (record.decision !== 'allow') {
+          boardLogger.info('Visual gate decision', {
+            mode: visualGateMode,
+            action: record.action,
+            decision: record.decision,
+            reasonCode: record.reasonCode,
+            riskLevel: record.riskLevel,
+          });
+        }
+        // Capture every decision (allow/block/transform) for the corpus —
+        // positive examples matter for training too.
+        decisionDocs.push(buildDecisionDoc({
+          record,
+          activeProblem,
+          learningState,
+          mode: visualGateMode,
+          userId: ctx.user?._id || null,
+          conversationId: ctx.conversation?._id || null,
+          turnIndex,
+        }));
+        // In shadow/audit_only/off the gate returns the command unchanged, so
+        // this is a no-op for render; only live modes drop/transform.
+        if (gated) gatedCommands.push(gated);
+      }
+      verified.boardCommands = gatedCommands;
+
+      // Persist the corpus FIRE-AND-FORGET — a logging write must never sit in
+      // the critical path of a tutoring response (no await, so it can't delay
+      // or hang the turn). persistVisualDecisions is internally guarded and
+      // never rejects, so there's no floating-rejection risk.
+      if (decisionDocs.length > 0) {
+        persistVisualDecisions(decisionDocs);
+      }
+    } catch (gateErr) {
+      // The gate must never break a response.
+      boardLogger.error('Visual gate failed (non-fatal)', { error: gateErr.message });
+    }
   }
 
   // ── Stage 5c.1: TURN-TYPE BACKFILL (Phase 5) ──
