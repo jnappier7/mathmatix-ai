@@ -641,6 +641,41 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   return { added, kept: llm, all };
 }
 
+/**
+ * Drop redundant pose cards. The LLM sometimes re-poses a problem that's
+ * already pinned on the board — most often after the student says something
+ * like "use the board", where the model apologizes and re-emits a pose for the
+ * SAME problem. That creates a duplicate PROBLEM card and, worse, a re-pose
+ * resets the solve cycle and re-pins the problem, orphaning the student's
+ * in-progress work and their final answer (the board-regression bug).
+ *
+ * Keeps at most one pose per problem and never a pose that just restates what's
+ * already pinned. A genuinely NEW problem (different normalized tex) is kept —
+ * the synthesizer pairs it with a `clear`, so the board still resets cleanly.
+ *
+ * @param {Array} commands - merged board commands for this turn
+ * @param {string|null} pinnedTex - conversation.boardProblem.tex (current pin)
+ * @returns {{ kept: Array, dropped: Array }}
+ */
+function dropRedundantPoses(commands, pinnedTex) {
+  const list = Array.isArray(commands) ? commands : [];
+  const pinKey = pinnedTex ? normalizeForCompare(pinnedTex) : null;
+  const seen = new Set();
+  const kept = [];
+  const dropped = [];
+  for (const c of list) {
+    if (!c || c.action !== 'pose') { kept.push(c); continue; }
+    const key = normalizeForCompare(c.tex || '');
+    if ((pinKey && key === pinKey) || seen.has(key)) {
+      dropped.push(c);
+      continue;
+    }
+    seen.add(key);
+    kept.push(c);
+  }
+  return { kept, dropped };
+}
+
 // ---------------------------------------------------------------------------
 // Phase 5 — turn-type backfill pose
 //
@@ -730,6 +765,7 @@ function synthesizeFallbackPose({ tutorResponse, studentMessage } = {}) {
 module.exports = {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
+  dropRedundantPoses,
   synthesizeFallbackPose,
   detectBoardReference,
   // Exposed for tests

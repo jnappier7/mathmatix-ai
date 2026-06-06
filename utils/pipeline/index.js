@@ -45,7 +45,7 @@ const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
@@ -530,6 +530,24 @@ async function runPipeline(message, ctx) {
 
   const merged = mergeWithLlmCommands(llmBoardCommands, guardedSynth);
   verified.boardCommands = merged.all;
+
+  // Drop a redundant re-pose of the already-pinned problem. The LLM tends to
+  // re-emit a pose after the student says "use the board" (it apologizes and
+  // re-poses the same problem) — that both duplicates the PROBLEM card and
+  // resets the solve cycle, orphaning the student's in-progress work and their
+  // final answer. Keep the pin; drop the echo.
+  {
+    const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+    const { kept, dropped } = dropRedundantPoses(verified.boardCommands, pinnedTex);
+    if (dropped.length > 0) {
+      verified.boardCommands = kept;
+      boardLogger.info('Dropped redundant pose(s)', {
+        count: dropped.length,
+        tex: dropped.map(c => c.tex),
+        pinnedTex,
+      });
+    }
+  }
 
   if (merged.added.length > 0) {
     boardLogger.info('Synthesized board commands', {
