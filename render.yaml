@@ -46,4 +46,32 @@ services:
       - key: MATHPIX_APP_KEY
         sync: false
 
+      # ── Tutoring feature flags (dashboard-managed; toggled in Render UI) ──
+      # These are declared sync:false on purpose: they're rolled out by toggling
+      # in the Render dashboard, and a pinned blueprint `value:` would REVERT a
+      # dashboard change on the next sync. sync:false documents the flag in git
+      # without fighting the dashboard. When unset, code defaults apply (below).
+      # A flag only does something once its CODE is on main and deployed.
+      #
+      # VISUAL_GATE_MODE — blocks graph/image board commands that would reveal the
+      # answer to the student's OWN problem. Code default when unset: live_control
+      # (enforcing). Options: live_control | live_experimental | shadow |
+      # audit_only | off. Corpus at GET /api/admin/visual-gate-decisions.
+      - key: VISUAL_GATE_MODE
+        sync: false
+      # VISUAL_GATE_VALUE_JUDGE — decorative-visual LLM filter. Code default off.
+      # Prompt UNVALIDATED; set to literal 'on' only after reviewing shadow data.
+      - key: VISUAL_GATE_VALUE_JUDGE
+        sync: false
+      # STRUCTURED_TUTOR_RESPONSE — guarantees a board_commands array every turn.
+      # Code default off; set 'true' (or '1') to enable. (Enabled via dashboard.)
+      - key: STRUCTURED_TUTOR_RESPONSE
+        sync: false
+      # WORKED_EXAMPLE_BOARD — lets the tutor demonstrate full steps on a PARALLEL
+      # example (relaxes the #1 guard, double-gated on a WORKED_EXAMPLE move). Code
+      # default off. REQUIRES fix/board-turn-state merged + deployed AND a live
+      # check that WORKED_EXAMPLE never works the student's own problem; then 'true'.
+      - key: WORKED_EXAMPLE_BOARD
+        sync: false
+
     autoDeploy: true
