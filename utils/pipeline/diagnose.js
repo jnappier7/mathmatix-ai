@@ -37,8 +37,24 @@ function stripLatexDelimiters(text) {
  * @param {Array}  context.recentAssistantMessages - Last few AI messages (to find the posed problem)
  * @param {Object} context.activeSkill - Current skill being practiced { skillId, displayName, teachingGuidance }
  * @param {Object} context.user - The user document (for misconception history)
+ * @param {string} [context.pinnedProblemTex] - The canonical board problem (conversation.boardProblem.tex)
  * @returns {Object} Diagnosis result
  */
+
+/**
+ * Does the student's text state a SET of roots (a final answer to a
+ * multi-root problem) rather than a single value? Requires 2+ numeric
+ * candidates joined by a connector ("or" / "and" / comma), e.g.
+ * "x = -7/3 or 1", "3 and 2". Used to gate the canonical-problem override
+ * so single-value sub-step answers are never affected.
+ */
+function statesRootSet(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.toLowerCase();
+  const nums = t.match(/-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?/g) || [];
+  const hasConnector = /\bor\b|\band\b|,/.test(t);
+  return nums.length >= 2 && hasConnector;
+}
 async function diagnose(observation, context = {}) {
   // Only run diagnosis on answer attempts
   if (!observation.answer) {
@@ -125,6 +141,34 @@ async function diagnose(observation, context = {}) {
       };
       break;
     }
+  }
+
+  // ── Canonical-problem override for multi-root final answers ──
+  // The recent-message scan above can latch onto an INTERMEDIATE the tutor
+  // wrote (e.g. a factored form "(3x+7)(x-1)=0"), whose parse yields a bogus
+  // problem with no usable roots — so a correct final answer like
+  // "x = -7/3 or 1" is graded wrong and the tutor regresses ("what's the first
+  // step?"). When the student states a root-SET answer and the PINNED board
+  // problem solves to multiple roots, grade against those: the pin is the
+  // canonical problem the student is actually answering. Tightly gated
+  // (root-set answer + multi-root pin) so single-value sub-step answers are
+  // never affected.
+  if (context.pinnedProblemTex && statesRootSet(rawText)) {
+    try {
+      const pinned = parseCleanProblem(context.pinnedProblemTex);
+      const pinnedRoots = pinned?.solution?.success && Array.isArray(pinned.solution.roots)
+        ? pinned.solution.roots
+        : null;
+      if (pinnedRoots && pinnedRoots.length > 1) {
+        problemInfo = {
+          problemType: pinned.problem.type,
+          correctAnswer: pinned.solution.answer,
+          roots: pinnedRoots,
+          steps: [],
+          content: context.pinnedProblemTex,
+        };
+      }
+    } catch (_) { /* fall through to the scan result */ }
   }
 
   // ── Step 2: Verify the answer ──

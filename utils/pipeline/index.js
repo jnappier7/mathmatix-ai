@@ -131,6 +131,7 @@ async function runPipeline(message, ctx) {
     activeSkill: ctx.activeSkill || null,
     user: ctx.user,
     lastProblemState: ctx.conversation?.lastProblemState || null,
+    pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
     llmVerificationPromise,
   });
 
