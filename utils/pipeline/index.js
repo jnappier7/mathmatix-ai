@@ -47,6 +47,7 @@ const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
 const { applyVisualGate } = require('../visualGate');
+const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
@@ -569,6 +570,8 @@ async function runPipeline(message, ctx) {
         masteryScore: null,
       };
       const gatedCommands = [];
+      const decisionDocs = [];
+      const turnIndex = Array.isArray(ctx.conversation?.messages) ? ctx.conversation.messages.length : null;
       for (const cmd of verified.boardCommands) {
         if (cmd.action !== 'graph' && cmd.action !== 'image') {
           gatedCommands.push(cmd);
@@ -591,11 +594,27 @@ async function runPipeline(message, ctx) {
             riskLevel: record.riskLevel,
           });
         }
+        // Capture every decision (allow/block/transform) for the corpus —
+        // positive examples matter for training too.
+        decisionDocs.push(buildDecisionDoc({
+          record,
+          activeProblem,
+          learningState,
+          mode: visualGateMode,
+          userId: ctx.user?._id || null,
+          conversationId: ctx.conversation?._id || null,
+          turnIndex,
+        }));
         // In shadow/audit_only/off the gate returns the command unchanged, so
         // this is a no-op for render; only live modes drop/transform.
         if (gated) gatedCommands.push(gated);
       }
       verified.boardCommands = gatedCommands;
+
+      // Persist the corpus (guarded; never throws). Skip in 'off' mode.
+      if (visualGateMode !== 'off' && decisionDocs.length > 0) {
+        await persistVisualDecisions(decisionDocs);
+      }
     } catch (gateErr) {
       // The gate must never break a response.
       boardLogger.error('Visual gate failed (non-fatal)', { error: gateErr.message });
