@@ -424,12 +424,23 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // I_DO worked-example board: when the engine's move is WORKED_EXAMPLE, the
+  // tutor is demonstrating on a teaching example that is NOT the student's
+  // graded problem, so the board may carry the full worked steps — the same
+  // basis on which worked steps on PARALLEL problems are allowed under the #1
+  // rule. Gated behind a default-off flag pending live verification: a phase/
+  // move mislabel must never silently relax the guard, so it requires BOTH the
+  // explicit flag AND an explicit WORKED_EXAMPLE decision. Off → fully strict.
+  const workedExampleBoard = process.env.WORKED_EXAMPLE_BOARD === 'true'
+    && decision?.action === ACTIONS.WORKED_EXAMPLE;
+
   if (rawLlmBoardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({
       commands: rawLlmBoardCommands,
       userMessage: message,
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      workedExample: workedExampleBoard,
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
