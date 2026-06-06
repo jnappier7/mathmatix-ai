@@ -587,6 +587,10 @@ async function runPipeline(message, ctx) {
           tutorMessage: verified.text,
           user: ctx.user || null,
           mode: visualGateMode,
+          // Leak enforcement runs deterministically in live modes; the LLM
+          // value judge is a separate opt-in (default off) so it can't suppress
+          // useful visuals until it's been validated against shadow data.
+          enableValueJudge: process.env.VISUAL_GATE_VALUE_JUDGE === 'on',
         });
         if (record.decision !== 'allow') {
           boardLogger.info('Visual gate decision', {

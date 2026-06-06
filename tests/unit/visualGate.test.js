@@ -154,15 +154,41 @@ describe('visualGate — orchestrator + modes', () => {
     expect(graphRevealedValues(command.fn).sort()).not.toEqual([2, 3]);
   });
 
-  it('live_control blocks a safe-but-decorative visual via the value judge', async () => {
+  it('live_control blocks a safe-but-decorative visual when the value judge is enabled', async () => {
     const { command, record } = await applyVisualGate({
       command: { action: 'image', query: 'cool math background' },
+      activeProblem: quadratic,
+      mode: MODES.LIVE_CONTROL,
+      enableValueJudge: true,
+      valueJudge: rejectJudge,
+    });
+    expect(record.decision).toBe('block');
+    expect(record.reasonCode).toBe('DECORATIVE_OR_LOW_VALUE');
+    expect(command).toBeNull();
+  });
+
+  it('value judge is OFF by default: a safe-but-decorative visual is allowed (no LLM in the loop)', async () => {
+    let judgeCalled = false;
+    const spyJudge = async () => { judgeCalled = true; return rejectJudge(); };
+    const { command, record } = await applyVisualGate({
+      command: { action: 'image', query: 'cool math background' },
+      activeProblem: quadratic,
+      mode: MODES.LIVE_CONTROL, // enforcement on, but enableValueJudge omitted
+      valueJudge: spyJudge,
+    });
+    expect(judgeCalled).toBe(false);
+    expect(record.decision).toBe('allow');
+    expect(command).not.toBeNull();
+  });
+
+  it('leak enforcement still fires in live_control even with the value judge off', async () => {
+    const { command, record } = await applyVisualGate({
+      command: { action: 'graph', fn: 'x^2 - 5x + 6' }, // exact leak
       activeProblem: quadratic,
       mode: MODES.LIVE_CONTROL,
       valueJudge: rejectJudge,
     });
     expect(record.decision).toBe('block');
-    expect(record.reasonCode).toBe('DECORATIVE_OR_LOW_VALUE');
     expect(command).toBeNull();
   });
 

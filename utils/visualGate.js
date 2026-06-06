@@ -400,6 +400,10 @@ async function defaultValueJudge(command, ctx) {
  * @param {string} [params.tutorMessage]
  * @param {object} [params.user] - for transform dedup
  * @param {string} [params.mode=MODES.SHADOW]
+ * @param {boolean} [params.enableValueJudge=false] - gate the LLM value judge
+ *   separately from leak enforcement. Off by default so turning on leak
+ *   protection (deterministic, trusted) never forces the unvalidated LLM
+ *   decorative-judge on at the same time, and adds no LLM latency.
  * @param {function} [params.valueJudge] - injectable; defaults to the LLM judge
  * @returns {Promise<{ command: object|null, record: object }>}
  */
@@ -410,6 +414,7 @@ async function applyVisualGate({
   tutorMessage = null,
   user = null,
   mode = MODES.SHADOW,
+  enableValueJudge = false,
   valueJudge = defaultValueJudge,
 }) {
   // Out of scope -> untouched.
@@ -432,8 +437,11 @@ async function applyVisualGate({
     intended = replacement ? 'transform' : 'block';
   } else {
     // Safe — does it earn its place? Only spend an LLM call when a mode could
-    // act on the verdict (skip in shadow to keep shadow cheap/observational).
-    const judgeable = mode === MODES.LIVE_CONTROL || mode === MODES.LIVE_EXPERIMENTAL;
+    // act on the verdict (skip in shadow to keep shadow cheap/observational)
+    // AND the value judge is explicitly enabled. With it off, every safe visual
+    // is allowed — leak enforcement runs without the LLM in the loop.
+    const judgeable = enableValueJudge
+      && (mode === MODES.LIVE_CONTROL || mode === MODES.LIVE_EXPERIMENTAL);
     if (judgeable) {
       value = await valueJudge(command, { activeProblem, learningState, tutorMessage });
       intended = value.earns_place ? 'allow' : 'block';
