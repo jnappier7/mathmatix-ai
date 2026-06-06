@@ -551,9 +551,12 @@ async function runPipeline(message, ctx) {
   // whose roots hit the known correctAnswer. Audit-first: VISUAL_GATE_MODE
   // defaults to 'shadow' (evaluate + log, never change what renders), matching
   // the structured-tutor rollout convention.
-  if (verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+  // Read the mode once. `off` is a complete, zero-cost bypass (true kill
+  // switch): the whole stage is skipped, no evaluation, no writes.
+  const visualGateMode = process.env.VISUAL_GATE_MODE || 'shadow';
+  if (visualGateMode !== 'off'
+      && verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
     try {
-      const visualGateMode = process.env.VISUAL_GATE_MODE || 'shadow';
       const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
       const activeProblem = {
         problemText: pinnedTex,
@@ -611,9 +614,12 @@ async function runPipeline(message, ctx) {
       }
       verified.boardCommands = gatedCommands;
 
-      // Persist the corpus (guarded; never throws). Skip in 'off' mode.
-      if (visualGateMode !== 'off' && decisionDocs.length > 0) {
-        await persistVisualDecisions(decisionDocs);
+      // Persist the corpus FIRE-AND-FORGET — a logging write must never sit in
+      // the critical path of a tutoring response (no await, so it can't delay
+      // or hang the turn). persistVisualDecisions is internally guarded and
+      // never rejects, so there's no floating-rejection risk.
+      if (decisionDocs.length > 0) {
+        persistVisualDecisions(decisionDocs);
       }
     } catch (gateErr) {
       // The gate must never break a response.
