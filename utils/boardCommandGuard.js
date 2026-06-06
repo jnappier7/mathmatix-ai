@@ -173,6 +173,7 @@ function enforcePedagogyRule({
     userMessage,
     recentUserMessages = [],
     lastBoardActionInConversation = null,
+    workedExample = false,
 } = {}) {
     const allowed = [];
     const dropped = [];
@@ -205,6 +206,7 @@ function enforcePedagogyRule({
             combinedText,
             runningLastAction,
             nextAction,
+            workedExample,
         });
 
         if (decision.allowed) {
@@ -226,9 +228,23 @@ function evaluate(command, ctx) {
         return { allowed: true };
     }
 
+    // WORKED-EXAMPLE RELAXATION (ctx.workedExample):
+    // In the I_DO phase the tutor DEMONSTRATES on a teaching example that is
+    // NOT the student's graded problem ("teacher models with 2-3 examples").
+    // Showing the full steps of an example is teaching, not cheating — the same
+    // reason worked steps on PARALLEL problems are allowed under the #1 rule.
+    // So apply/resolve/verify may carry tutor-authored steps here without the
+    // student-text-match. We still require the field to be present (a malformed
+    // command is still dropped), and this ONLY applies when the caller has
+    // established an I_DO worked-example context (see runPipeline). Everywhere
+    // else — homework help, WE_DO, YOU_DO — the strict student-mirror rule
+    // stands, so the student's own problem is never solved for them.
     if (action === 'apply') {
         if (!command.op) {
             return { allowed: false, reason: 'apply_missing_op' };
+        }
+        if (ctx.workedExample) {
+            return { allowed: true, reason: 'worked_example_step' };
         }
         if (opMatchesStudentText(command.op, ctx.combinedText)) {
             return { allowed: true };
@@ -240,6 +256,9 @@ function evaluate(command, ctx) {
         if (!command.tex) {
             return { allowed: false, reason: 'resolve_missing_tex' };
         }
+        if (ctx.workedExample) {
+            return { allowed: true, reason: 'worked_example_step' };
+        }
         if (texMatchesStudentText(command.tex, ctx.combinedText)) {
             return { allowed: true };
         }
@@ -249,6 +268,9 @@ function evaluate(command, ctx) {
     if (action === 'verify') {
         if (!command.tex) {
             return { allowed: false, reason: 'verify_missing_tex' };
+        }
+        if (ctx.workedExample) {
+            return { allowed: true, reason: 'worked_example_step' };
         }
         if (texMatchesStudentText(command.tex, ctx.combinedText)) {
             return { allowed: true };

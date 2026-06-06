@@ -45,7 +45,7 @@ const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
 const { applyVisualGate } = require('../visualGate');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
@@ -133,6 +133,7 @@ async function runPipeline(message, ctx) {
     activeSkill: ctx.activeSkill || null,
     user: ctx.user,
     lastProblemState: ctx.conversation?.lastProblemState || null,
+    pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
     llmVerificationPromise,
   });
 
@@ -425,12 +426,23 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // I_DO worked-example board: when the engine's move is WORKED_EXAMPLE, the
+  // tutor is demonstrating on a teaching example that is NOT the student's
+  // graded problem, so the board may carry the full worked steps — the same
+  // basis on which worked steps on PARALLEL problems are allowed under the #1
+  // rule. Gated behind a default-off flag pending live verification: a phase/
+  // move mislabel must never silently relax the guard, so it requires BOTH the
+  // explicit flag AND an explicit WORKED_EXAMPLE decision. Off → fully strict.
+  const workedExampleBoard = process.env.WORKED_EXAMPLE_BOARD === 'true'
+    && decision?.action === ACTIONS.WORKED_EXAMPLE;
+
   if (rawLlmBoardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({
       commands: rawLlmBoardCommands,
       userMessage: message,
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      workedExample: workedExampleBoard,
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
@@ -532,6 +544,24 @@ async function runPipeline(message, ctx) {
 
   const merged = mergeWithLlmCommands(llmBoardCommands, guardedSynth);
   verified.boardCommands = merged.all;
+
+  // Drop a redundant re-pose of the already-pinned problem. The LLM tends to
+  // re-emit a pose after the student says "use the board" (it apologizes and
+  // re-poses the same problem) — that both duplicates the PROBLEM card and
+  // resets the solve cycle, orphaning the student's in-progress work and their
+  // final answer. Keep the pin; drop the echo.
+  {
+    const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+    const { kept, dropped } = dropRedundantPoses(verified.boardCommands, pinnedTex);
+    if (dropped.length > 0) {
+      verified.boardCommands = kept;
+      boardLogger.info('Dropped redundant pose(s)', {
+        count: dropped.length,
+        tex: dropped.map(c => c.tex),
+        pinnedTex,
+      });
+    }
+  }
 
   if (merged.added.length > 0) {
     boardLogger.info('Synthesized board commands', {
