@@ -168,12 +168,40 @@ function texHasBlank(tex) {
  *
  * @returns {{ allowed: Array, dropped: Array<{command, reason}> }}
  */
+// Symmetric tex match — does either string contain the other (normalized)?
+function texMatchesEither(a, b) {
+    return texMatchesStudentText(a, b) || texMatchesStudentText(b, a);
+}
+
+// WORKED-EXAMPLE LEAK BACKSTOP.
+// The worked-example relaxation trusts the model to demonstrate on a PARALLEL
+// problem, never the student's own. This is the deterministic safety net for
+// when it doesn't: a worked-example step that matches the student's pinned
+// problem expression OR its known answer is the model solving the graded
+// problem under cover of "example" — block it regardless of the relaxation, so
+// WORKED_EXAMPLE_BOARD is safe to enable even if the model occasionally slips.
+function revealsPinnedProblem(text, ctx) {
+    if (!text) return false;
+    if (ctx.pinnedProblemTex) {
+        if (texMatchesEither(text, ctx.pinnedProblemTex)) return true;
+        // Also match the bare expression (the pinned problem minus a trailing
+        // "= 0"), so a step/op that names the student's expression is caught
+        // even when it omits the "= 0" — e.g. op "factor 3x^2 + 4x - 7".
+        const expr = String(ctx.pinnedProblemTex).replace(/\s*=\s*0\s*$/, '');
+        if (expr !== ctx.pinnedProblemTex && texMatchesEither(text, expr)) return true;
+    }
+    if (ctx.pinnedAnswer && texMatchesEither(text, ctx.pinnedAnswer)) return true;
+    return false;
+}
+
 function enforcePedagogyRule({
     commands,
     userMessage,
     recentUserMessages = [],
     lastBoardActionInConversation = null,
     workedExample = false,
+    pinnedProblemTex = null,
+    pinnedAnswer = null,
 } = {}) {
     const allowed = [];
     const dropped = [];
@@ -207,6 +235,8 @@ function enforcePedagogyRule({
             runningLastAction,
             nextAction,
             workedExample,
+            pinnedProblemTex,
+            pinnedAnswer,
         });
 
         if (decision.allowed) {
@@ -244,6 +274,9 @@ function evaluate(command, ctx) {
             return { allowed: false, reason: 'apply_missing_op' };
         }
         if (ctx.workedExample) {
+            if (revealsPinnedProblem(command.op, ctx)) {
+                return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+            }
             return { allowed: true, reason: 'worked_example_step' };
         }
         if (opMatchesStudentText(command.op, ctx.combinedText)) {
@@ -257,6 +290,9 @@ function evaluate(command, ctx) {
             return { allowed: false, reason: 'resolve_missing_tex' };
         }
         if (ctx.workedExample) {
+            if (revealsPinnedProblem(command.tex, ctx)) {
+                return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+            }
             return { allowed: true, reason: 'worked_example_step' };
         }
         if (texMatchesStudentText(command.tex, ctx.combinedText)) {
@@ -270,6 +306,9 @@ function evaluate(command, ctx) {
             return { allowed: false, reason: 'verify_missing_tex' };
         }
         if (ctx.workedExample) {
+            if (revealsPinnedProblem(command.tex, ctx)) {
+                return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+            }
             return { allowed: true, reason: 'worked_example_step' };
         }
         if (texMatchesStudentText(command.tex, ctx.combinedText)) {
