@@ -1637,7 +1637,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const parentUser = await loadParentUser();
     if (parentUser) {
-        loadChildren();
+        // Must await: the real-time polling bootstrap below reads children.length
+        // synchronously, so without awaiting, children is still [] and the
+        // "LIVE NOW" indicator + session notifications never start on load.
+        await loadChildren();
         loadParentSettings();
         loadParentCourses();
     }
