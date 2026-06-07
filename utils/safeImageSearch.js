@@ -151,7 +151,11 @@ async function searchEducationalImages(query, opts = {}) {
 
   const maxResults = Math.min(Math.max(opts.maxResults || 3, 1), 5);
 
-  // Build site restriction from whitelist
+  // Enforce the education whitelist at SEARCH time via q-operators. The dedicated
+  // siteSearch param only accepts ONE domain, so we fold the whitelist into q as
+  // `(site:a OR site:b ...)`. This keeps results inside the whitelist instead of
+  // relying solely on the CSE console config, and ensures the post-filter below
+  // has whitelisted results to keep rather than silently emptying the board.
   const siteRestriction = ALLOWED_DOMAINS.map(d => `site:${d}`).join(' OR ');
 
   try {
@@ -159,15 +163,16 @@ async function searchEducationalImages(query, opts = {}) {
       params: {
         key: apiKey,
         cx: searchEngineId,
-        q: sanitized,
+        q: `${sanitized} (${siteRestriction})`,
         searchType: 'image',
-        safe: 'active',           // SafeSearch ENFORCED
+        safe: 'active',           // SafeSearch ENFORCED (child safety) — never disabled
         num: maxResults,
-        imgType: 'clipart',               // Prefer diagrams/illustrations
+        // imgType is intentionally NOT pinned to 'clipart' — that dropped most
+        // legitimate math diagrams/figures and was a top cause of empty boards.
+        // Safety stays enforced by SafeSearch + the domain whitelist + the
+        // open-license filter below.
         imgSize: 'medium',
-        rights: 'cc_publicdomain|cc_attribute|cc_sharealike', // Prefer open-license
-        // Note: siteSearch only accepts a single domain; site restrictions
-        // should be configured in the Custom Search Engine console instead.
+        rights: 'cc_publicdomain|cc_attribute|cc_sharealike', // open-license only (IP compliance)
       },
       timeout: 5000,
       // No cookies, no user tracking
@@ -204,15 +209,25 @@ async function searchEducationalImages(query, opts = {}) {
     // Audit log (no PII)
     console.log(`[SafeImageSearch] Query: "${sanitized}" → ${results.length} results (user: ${opts.userId ? 'authenticated' : 'unknown'})`);
 
+    // If the whitelist/license filters emptied the CSE results, fall back to
+    // Wikimedia Commons (in-whitelist, CC-licensed, own safety filters) so the
+    // board isn't left blank after the tutor promised a visual.
+    if (results.length === 0) {
+      console.log('[SafeImageSearch] CSE returned no whitelisted results; falling back to Wikimedia Commons');
+      return searchWikimediaCommons(query, opts);
+    }
+
     return { results, query: sanitized, cached: false };
 
   } catch (error) {
+    // A CSE quota/outage should degrade to the compliant Wikimedia source,
+    // not blank the board.
     if (error.response?.status === 429) {
-      console.warn('[SafeImageSearch] Google CSE rate limit exceeded');
-      return { results: [], query: sanitized, cached: false, error: 'Rate limit exceeded' };
+      console.warn('[SafeImageSearch] Google CSE rate limit exceeded; falling back to Wikimedia Commons');
+    } else {
+      console.error('[SafeImageSearch] Search failed:', error.message, '— falling back to Wikimedia Commons');
     }
-    console.error('[SafeImageSearch] Search failed:', error.message);
-    return { results: [], query: sanitized, cached: false, error: 'Search failed' };
+    return searchWikimediaCommons(query, opts);
   }
 }
 
