@@ -10,6 +10,18 @@ const signupMessage = document.getElementById("signup-message");
 const passwordInput = document.getElementById("password");
 const confirmPasswordInput = document.getElementById("confirm-password");
 
+// Prefill when arriving from a kid's "add a parent" invite email
+// (signup.html?role=parent&parentInvite=<token>&email=<addr>): preselect the
+// parent role + email so the parent just sets a password and is auto-linked.
+const inviteParams = new URLSearchParams(window.location.search);
+const parentInviteToken = inviteParams.get("parentInvite") || "";
+if (parentInviteToken) {
+  if (roleSelect) roleSelect.value = "parent";
+  const invitedEmail = inviteParams.get("email");
+  const emailField = document.getElementById("email");
+  if (invitedEmail && emailField) emailField.value = invitedEmail;
+}
+
 // Update which code field is visible based on role + checkbox state
 function updateCodeFields() {
   const isChecked = hasCodeCheckbox.checked;
@@ -87,6 +99,7 @@ signupForm.addEventListener("submit", async function (event) {
 
     const formData = new FormData(signupForm);
     const data = Object.fromEntries(formData.entries());
+    if (parentInviteToken) data.parentInviteToken = parentInviteToken;
 
     signupMessage.style.display = 'none';
 

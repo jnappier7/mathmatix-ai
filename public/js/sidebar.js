@@ -826,9 +826,51 @@ class Sidebar {
     }
 }
 
+// Wire the "invite a parent by email" action in the Share Progress drawer.
+function wireParentInvite() {
+    const btn = document.getElementById('drawer-invite-parent-btn');
+    const input = document.getElementById('drawer-invite-parent-email');
+    const status = document.getElementById('drawer-invite-parent-status');
+    if (!btn || !input) return;
+
+    const setStatus = (msg, ok) => {
+        if (!status) return;
+        status.style.display = 'block';
+        status.style.color = ok ? '#0d9488' : '#c0392b';
+        status.textContent = msg;
+    };
+
+    btn.addEventListener('click', async () => {
+        const email = (input.value || '').trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            setStatus('Please enter a valid email address.', false);
+            return;
+        }
+        btn.disabled = true;
+        setStatus('Sending…', true);
+        try {
+            const fetchFn = window.csrfFetch || window.fetch;
+            const res = await fetchFn('/api/student/invite-parent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ parentEmail: email }),
+                credentials: 'include'
+            });
+            const data = await res.json().catch(() => ({}));
+            setStatus(data.message || (res.ok ? 'Invite sent!' : 'Could not send invite.'), res.ok);
+            if (res.ok) input.value = '';
+        } catch (e) {
+            setStatus('Network error — please try again.', false);
+        } finally {
+            btn.disabled = false;
+        }
+    });
+}
+
 // Auto-initialize
 document.addEventListener('DOMContentLoaded', () => {
     window.sidebar = new Sidebar();
+    wireParentInvite();
 });
 
 console.log('📂 Sidebar module loaded');

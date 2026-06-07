@@ -1217,6 +1217,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <p style="font-size: 0.85rem; color: var(--clr-text-dim, #666); margin-bottom: 8px;" data-i18n="chat.shareCode">Share this code with a parent or teacher.</p>
         <div id="drawer-student-link-code-value" class="drawer-link-code" title="Click to copy"></div>
         <p style="font-size: 0.8rem; color: var(--clr-text-dim, #666); margin-top: 8px; line-height: 1.4;" data-i18n="chat.shareCodeSteps">To follow your progress, your parent creates a free account at mathmatix.ai, opens the Parent Dashboard, chooses &ldquo;Link to Existing Student,&rdquo; and enters this code.</p>
+        <div style="margin-top: 14px;">
+          <label for="drawer-invite-parent-email" style="font-size: 0.8rem; color: var(--clr-text-dim, #666); display:block; margin-bottom: 4px;">Or just enter a parent&rsquo;s email &mdash; we&rsquo;ll send them the steps:</label>
+          <div style="display:flex; gap:6px;">
+            <input type="email" id="drawer-invite-parent-email" placeholder="parent@email.com" autocomplete="off" style="flex:1; min-width:0; padding:8px; border:1px solid #ddd; border-radius:6px; font-size:0.85rem;" />
+            <button id="drawer-invite-parent-btn" class="btn btn-primary" style="padding:8px 14px; font-size:0.85rem; white-space:nowrap;">Send invite</button>
+          </div>
+          <p id="drawer-invite-parent-status" style="font-size:0.8rem; margin-top:6px; display:none;"></p>
+        </div>
       </div>
     </div>
   </div>
