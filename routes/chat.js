@@ -1653,6 +1653,33 @@ router.post('/deduct-hint-xp', isAuthenticated, async (req, res) => {
 // Track session time - receives heartbeat updates from frontend
 // Accumulates precise seconds and derives minutes for display
 // Optimized: uses req.user from Passport (no extra findById) and atomic $inc updates
+// PATCH /api/chat/reaction
+// Persist an emoji reaction on a message in the user's active conversation.
+// (Frontend: public/js/script.js addReaction → was 404ing, no route existed.)
+router.patch('/reaction', isAuthenticated, async (req, res) => {
+    const { messageIndex, reaction } = req.body;
+    if (typeof messageIndex !== 'number' || messageIndex < 0) {
+        return res.status(400).json({ success: false, message: 'Valid messageIndex is required.' });
+    }
+    try {
+        const convoId = req.user.activeConversationId;
+        if (!convoId) {
+            return res.status(404).json({ success: false, message: 'No active conversation.' });
+        }
+        // Scope by userId so a user can only react on their own conversation.
+        const convo = await Conversation.findOne({ _id: convoId, userId: req.user._id });
+        if (!convo || !Array.isArray(convo.messages) || messageIndex >= convo.messages.length) {
+            return res.status(404).json({ success: false, message: 'Message not found.' });
+        }
+        convo.messages[messageIndex].reaction = reaction || null;
+        await convo.save();
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error saving reaction:', error);
+        res.status(500).json({ success: false, message: 'Could not save reaction.' });
+    }
+});
+
 router.post('/track-time', isAuthenticated, async (req, res) => {
     try {
         const { activeSeconds } = req.body;

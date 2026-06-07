@@ -429,8 +429,11 @@ router.post('/cancel', isAuthenticated, async (req, res) => {
     user.cancellationDate = new Date();
     await user.save();
 
-    const accessUntilDate = subscription.current_period_end
-      ? new Date(subscription.current_period_end * 1000)
+    // current_period_end moved to the subscription *item* in the pinned Stripe
+    // API version; fall back to it so the "access until" date still renders.
+    const periodEndUnix = subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end;
+    const accessUntilDate = periodEndUnix
+      ? new Date(periodEndUnix * 1000)
       : null;
     const accessUntilStr = accessUntilDate
       ? accessUntilDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -601,8 +604,8 @@ router.get('/subscription-details', isAuthenticated, async (req, res) => {
       tier: user.subscriptionTier,
       status: subscription.status,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      currentPeriodEnd: subscription.current_period_end
-        ? new Date(subscription.current_period_end * 1000).toISOString()
+      currentPeriodEnd: (subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end)
+        ? new Date((subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end) * 1000).toISOString()
         : null,
       startDate: user.subscriptionStartDate,
       cancellationReason: user.cancellationReason,
