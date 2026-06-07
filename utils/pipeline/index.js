@@ -443,6 +443,11 @@ async function runPipeline(message, ctx) {
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
       workedExample: workedExampleBoard,
+      // Backstop: even in worked-example mode, never let a step that reveals the
+      // student's OWN pinned problem / answer through (model "demonstrating" on
+      // the graded problem instead of a parallel one).
+      pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+      pinnedAnswer: diagnosis.correctAnswer || null,
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
