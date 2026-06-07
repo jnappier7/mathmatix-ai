@@ -282,9 +282,9 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
   // the API will reject the schema at call time; better to fail
   // loudly here than in production.
 
-  test('BOARD_ACTIONS lists the eight supported actions', () => {
+  test('BOARD_ACTIONS lists the supported actions', () => {
     expect(BOARD_ACTIONS).toEqual([
-      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold',
+      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram',
     ]);
   });
 

@@ -41,7 +41,12 @@
 
 'use strict';
 
-const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold'];
+// NOTE: 'diagram' (deterministic JSXGraph geometry, gated behind DIAGRAM_BOARD)
+// is recognized so the verb + guard + client renderer can be exercised, but the
+// strict structured-output JSON fields (diagram_type / diagram_params) are added
+// alongside the prompt wiring in a follow-up — the model isn't told to emit it
+// yet. Flag-off, so this is inert in production until enabled.
+const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram'];
 
 // The kind of turn Maya is serving. The model self-declares this
 // on every structured response. Server-side audit (utils/turnTypeAudit.js)
