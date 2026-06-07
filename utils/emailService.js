@@ -119,6 +119,49 @@ async function sendParentalConsentRequest(parentEmail, studentName, consentToken
 }
 
 /**
+ * Student-initiated parent invite. The kid enters a parent's email; the parent
+ * gets a link to create a free parent account that auto-links to the child.
+ * @param {String} parentEmail - Parent's email address
+ * @param {String} studentName - Child's first name
+ * @param {String} signupUrl - Signup link carrying the invite token
+ */
+async function sendParentInvite(parentEmail, studentName, signupUrl) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping parent invite');
+    return { success: false, error: 'Email not configured' };
+  }
+  try {
+    const emailConfig = getEmailConfig();
+    const safeName = studentName || 'Your child';
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: parentEmail,
+      subject: `${safeName} invited you to follow their math progress on Mathmatix`,
+      html: `
+        <div style="font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
+          <h2 style="color:#0d9488;">${safeName} wants to share their math progress with you</h2>
+          <p>${safeName} is learning math with Maya, their AI tutor on Mathmatix, and invited you to follow along.</p>
+          <p>Create a free parent account and you'll be linked to ${safeName} automatically — no codes to enter. You'll see what they're working on, where they're improving, and get weekly progress reports.</p>
+          <p style="text-align:center; margin: 28px 0;">
+            <a href="${signupUrl}" style="background:#0d9488; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">Create your free parent account</a>
+          </p>
+          <p style="font-size: 0.85rem; color:#666;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${signupUrl}">${signupUrl}</a></p>
+          <p style="font-size: 0.8rem; color:#999;">If you weren't expecting this, you can ignore this email — no account will be created.</p>
+        </div>
+      `
+    };
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Parent invite sent to ${parentEmail}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending parent invite:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Send parental consent request email for teen students (13-17)
  * Unlike under-13, this is a lighter-touch flow — the email explains what
  * the student wants to use, sells the benefits, and clearly describes
@@ -1569,6 +1612,7 @@ function getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl
 
 module.exports = {
   sendParentWeeklyReport,
+  sendParentInvite,
   sendParentalConsentRequest,
   sendTeenConsentRequest,
   sendPasswordResetEmail,

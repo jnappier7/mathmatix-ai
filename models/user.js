@@ -602,6 +602,15 @@ const userSchema = new Schema({
   /* Parent linking (multi-parent support) */
   parentIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 
+  /* Student-initiated parent invite (kid submits a parent email → parent is
+     emailed a signup link with this token → on signup they auto-link to this
+     student). Token cleared once consumed. */
+  parentInvite: {
+    email:  { type: String, default: null },
+    token:  { type: String, default: null },
+    sentAt: { type: Date,   default: null }
+  },
+
   /* Gamification */
   xp:        { type: Number, default: 0, min: 0 },
   level:     { type: Number, default: 1, min: 1 },
