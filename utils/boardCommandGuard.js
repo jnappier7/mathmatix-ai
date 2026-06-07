@@ -320,6 +320,19 @@ function evaluate(command, ctx) {
         return { allowed: true };
     }
 
+    // Deterministic geometry diagram (JSXGraph). Like graph/image it's a
+    // teaching aid, not a transcription of the student's steps — so the
+    // student-text rule doesn't apply here. Leak-safety for the student's OWN
+    // problem is handled by the diagram spec's redact mode (omits the unknown's
+    // value) under the visual gate, not by dropping the card. We only validate
+    // that a known type is present.
+    if (action === 'diagram') {
+        if (!command.diagramType) {
+            return { allowed: false, reason: 'diagram_missing_type' };
+        }
+        return { allowed: true };
+    }
+
     if (action === 'image') {
         if (!command.query) {
             return { allowed: false, reason: 'image_missing_query' };

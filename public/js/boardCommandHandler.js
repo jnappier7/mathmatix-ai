@@ -73,6 +73,12 @@
                 case 'image':
                     if (command.query) W.boardImage(command.query, command.caption || '');
                     break;
+                case 'diagram':
+                    // Deterministic JSXGraph geometry (DIAGRAM_BOARD, flag-off).
+                    if (command.diagramType && typeof W.boardDiagram === 'function') {
+                        W.boardDiagram(command);
+                    }
+                    break;
                 default:
                     console.warn('[BoardCommandHandler] Unknown action', command.action);
             }
