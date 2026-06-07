@@ -75,3 +75,35 @@ services:
         sync: false
 
     autoDeploy: true
+
+  # ── Weekly parent progress-report digest (scheduled) ──────────────────────
+  # Runs the standalone digest daily at 13:00 UTC (~8am ET). Per-parent cadence
+  # (weekly→Sundays, daily, biweekly, monthly) is enforced in shouldSendReport();
+  # the lastWeeklyReportSentAt idempotency guard prevents duplicate emails on a
+  # cron retry or accidental double-run.
+  # NOTE: the env vars below are sync:false — set them on THIS cron service in
+  # the Render dashboard (Render can copy from the web service, or use an env group).
+  - type: cron
+    name: mathmatix-weekly-digest
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    schedule: "0 13 * * *"
+    dockerCommand: node scripts/weeklyDigest.js
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_REPLY_TO
+        sync: false

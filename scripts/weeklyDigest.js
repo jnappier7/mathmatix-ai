@@ -22,6 +22,11 @@ const { calculateRetrievability } = require('../utils/fsrsScheduler');
 // Constants
 const BATCH_SIZE = 50; // Process parents in batches
 const DELAY_BETWEEN_EMAILS = 1000; // 1 second delay between emails to avoid rate limits
+// Idempotency window: skip a parent who already received a report within this
+// many hours. Prevents duplicate emails from a cron retry or an accidental
+// double-run on the same day, while never blocking the next scheduled send
+// (daily ≥24h later, weekly ≥7d later).
+const DEDUP_WINDOW_MS = 20 * 60 * 60 * 1000; // 20 hours
 
 /**
  * Determine if a parent should receive a report today
@@ -283,6 +288,15 @@ async function processBatch(parents) {
                 continue;
             }
 
+            // Idempotency: skip if this parent already got a report very recently
+            // (cron retry / accidental double-run on the same day).
+            if (parent.lastWeeklyReportSentAt &&
+                (Date.now() - new Date(parent.lastWeeklyReportSentAt).getTime()) < DEDUP_WINDOW_MS) {
+                results.skipped++;
+                continue;
+            }
+
+            let sentForParent = false;
             for (const childId of parent.children) {
                 const studentData = await calculateStudentProgress(childId);
                 if (!studentData) {
@@ -296,6 +310,7 @@ async function processBatch(parents) {
                 if (result.success) {
                     console.log(`  ✅ Sent report for ${studentData.studentName} to ${parent.email}`);
                     results.sent++;
+                    sentForParent = true;
                 } else {
                     console.log(`  ❌ Failed to send report to ${parent.email}: ${result.error}`);
                     results.failed++;
@@ -304,6 +319,11 @@ async function processBatch(parents) {
 
                 // Delay between emails
                 await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_EMAILS));
+            }
+
+            // Stamp the dedup guard once at least one report went out.
+            if (sentForParent) {
+                await User.findByIdAndUpdate(parent._id, { lastWeeklyReportSentAt: new Date() }).catch(() => {});
             }
         } catch (error) {
             console.error(`  ❌ Error processing parent ${parent.email}:`, error.message);

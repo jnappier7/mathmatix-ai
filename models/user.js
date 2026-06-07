@@ -703,6 +703,7 @@ const userSchema = new Schema({
 
   /* Parent-specific fields */
   reportFrequency:   { type: String, enum: ['daily','weekly','biweekly','monthly'], default: 'weekly' },
+  lastWeeklyReportSentAt: { type: Date, default: null },   // idempotency guard for the digest cron (prevents duplicate progress emails on retry/double-run)
   goalViewPreference:{ type: String, enum: ['progress','gaps','goals'], default: 'progress' },
   parentTone:        { type: String, trim: true },
   parentLanguage:    { type: String, trim: true, default: 'English' },
