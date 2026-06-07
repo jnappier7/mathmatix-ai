@@ -120,12 +120,14 @@ async function sendParentalConsentRequest(parentEmail, studentName, consentToken
 
 /**
  * Student-initiated parent invite. The kid enters a parent's email; the parent
- * gets a link to create a free parent account that auto-links to the child.
+ * gets a link to either create a free parent account (new) or confirm the link
+ * (existing account). Either way they end up linked to the child.
  * @param {String} parentEmail - Parent's email address
  * @param {String} studentName - Child's first name
- * @param {String} signupUrl - Signup link carrying the invite token
+ * @param {String} actionUrl - Signup link (new) or accept-invite link (existing)
+ * @param {Boolean} existingAccount - true if a parent account already exists for this email
  */
-async function sendParentInvite(parentEmail, studentName, signupUrl) {
+async function sendParentInvite(parentEmail, studentName, actionUrl, existingAccount = false) {
   const transport = initializeTransporter();
   if (!transport) {
     console.warn('Email not configured - skipping parent invite');
@@ -134,6 +136,13 @@ async function sendParentInvite(parentEmail, studentName, signupUrl) {
   try {
     const emailConfig = getEmailConfig();
     const safeName = studentName || 'Your child';
+    const cta = existingAccount ? 'Log in &amp; confirm' : 'Create your free parent account';
+    const blurb = existingAccount
+      ? `You already have a Mathmatix parent account. Log in and confirm to start following ${safeName} — you'll see what they're working on and get weekly progress reports.`
+      : `Create a free parent account and you'll be linked to ${safeName} automatically — no codes to enter. You'll see what they're working on, where they're improving, and get weekly progress reports.`;
+    const footnote = existingAccount
+      ? `If you weren't expecting this, you can ignore this email.`
+      : `If you weren't expecting this, you can ignore this email — no account will be created.`;
     const mailOptions = {
       from: getFromAddress(),
       replyTo: emailConfig.replyTo,
@@ -143,12 +152,12 @@ async function sendParentInvite(parentEmail, studentName, signupUrl) {
         <div style="font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
           <h2 style="color:#0d9488;">${safeName} wants to share their math progress with you</h2>
           <p>${safeName} is learning math with Maya, their AI tutor on Mathmatix, and invited you to follow along.</p>
-          <p>Create a free parent account and you'll be linked to ${safeName} automatically — no codes to enter. You'll see what they're working on, where they're improving, and get weekly progress reports.</p>
+          <p>${blurb}</p>
           <p style="text-align:center; margin: 28px 0;">
-            <a href="${signupUrl}" style="background:#0d9488; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">Create your free parent account</a>
+            <a href="${actionUrl}" style="background:#0d9488; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">${cta}</a>
           </p>
-          <p style="font-size: 0.85rem; color:#666;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${signupUrl}">${signupUrl}</a></p>
-          <p style="font-size: 0.8rem; color:#999;">If you weren't expecting this, you can ignore this email — no account will be created.</p>
+          <p style="font-size: 0.85rem; color:#666;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${actionUrl}">${actionUrl}</a></p>
+          <p style="font-size: 0.8rem; color:#999;">${footnote}</p>
         </div>
       `
     };
