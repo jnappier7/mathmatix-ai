@@ -399,6 +399,11 @@ window.I18N_TRANSLATIONS = {
     French: 'Partagez ce code avec un parent ou un enseignant.',
     German: 'Teilen Sie diesen Code mit einem Elternteil oder Lehrer.'
   },
+  'chat.shareCodeSteps': {
+    // English-only; i18n.js falls back to English for languages not listed.
+    // TODO(i18n): translate + match each locale's "Link to Existing Student" button label.
+    English: 'To follow your progress, your parent creates a free account at mathmatix.ai, opens the Parent Dashboard, chooses "Link to Existing Student," and enters this code.'
+  },
   'chat.stop': {
     English: 'Stop', Spanish: 'Detener', Russian: 'Стоп', Chinese: '停止',
     Vietnamese: 'Dừng', Arabic: 'إيقاف', Somali: 'Jooji', French: 'Arrêter', German: 'Stopp'

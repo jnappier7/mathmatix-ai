@@ -83,7 +83,7 @@ router.post('/validate-code', async (req, res) => {
 });
 
 router.post('/', ensureNotAuthenticated, signupValidation, handleValidationErrors, async (req, res, next) => {
-    const { firstName, lastName, email, password, role, enrollmentCode, inviteCode, parentInviteCode, dateOfBirth, termsAccepted } = req.body;
+    const { firstName, lastName, email, password, role, enrollmentCode, inviteCode, parentInviteCode, parentInviteToken, dateOfBirth, termsAccepted } = req.body;
 
     // --- 1. Basic Validation ---
     if (!firstName || !lastName || !email || !password || !role) {
@@ -302,6 +302,33 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             } else {
                 console.warn(`WARN: Student ${newUser.username} signed up with invalid, expired, or already used parent invite code: ${parentInviteCode}.`);
                 // Student account is still created, but linking failed. Parent can link later.
+            }
+        }
+
+        // --- 5c. Handle student-initiated parent invite ---
+        // A parent who signed up via the kid's "add a parent" email carries a
+        // parentInviteToken; auto-link them to that student (and grant consent).
+        if (role === 'parent' && parentInviteToken) {
+            const invitedStudent = await User.findOne({
+                'parentInvite.token': parentInviteToken,
+                role: 'student'
+            });
+            if (invitedStudent) {
+                newUser.children = newUser.children || [];
+                if (!newUser.children.some(childId => childId.equals(invitedStudent._id))) {
+                    newUser.children.push(invitedStudent._id);
+                }
+                invitedStudent.parentIds = invitedStudent.parentIds || [];
+                if (!invitedStudent.parentIds.some(pid => pid.equals(newUser._id))) {
+                    invitedStudent.parentIds.push(newUser._id);
+                }
+                invitedStudent.hasParentalConsent = true;
+                invitedStudent.parentInvite = { email: null, token: null, sentAt: null }; // consume the invite
+                await newUser.save();
+                await invitedStudent.save();
+                console.log(`LOG: Parent ${newUser.username} auto-linked to student ${invitedStudent.username} via parent invite token.`);
+            } else {
+                console.warn(`WARN: Parent ${newUser.username} signed up with an invalid or already-used parent invite token.`);
             }
         }
 
