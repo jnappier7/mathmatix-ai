@@ -45,7 +45,7 @@ const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, detectBoardReference } = require('./boardSynthesizer');
 const { applyVisualGate } = require('../visualGate');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
@@ -569,6 +569,34 @@ async function runPipeline(message, ctx) {
       actions: merged.added.map(c => c.action),
       llmEmitted: llmBoardCommands.length,
     });
+  }
+
+  // ── Stage 5c.0a: VISUAL-PROMISE BACKFILL ──
+  // The tutor sometimes narrates a visual it never put on the board ("Here's a
+  // visual representation of the inscribed angle theorem!") — the board then
+  // silently contradicts the chat, the worst kind of phantom. `decide` calls
+  // these continue_conversation, so turn_type can't catch them; we detect the
+  // broken PROMISE in the tutor's own words and backfill an image. Runs BEFORE
+  // the visual gate below so the backfilled image is gated like any other.
+  // Conservative: fires only when no graph/image already survived AND a concept
+  // is derivable — otherwise the board is left as-is (no garbage search).
+  if (!verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+    const fallbackImage = synthesizeFallbackImage({
+      tutorResponse: verified.text,
+      activeSkill: ctx.activeSkill || null,
+    });
+    if (fallbackImage) {
+      const imgGuard = enforcePedagogyRule({
+        commands: [fallbackImage],
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      });
+      if (imgGuard.allowed.length > 0) {
+        verified.boardCommands = mergeWithLlmCommands(verified.boardCommands, imgGuard.allowed).all;
+        boardLogger.info('Visual-promise backfill added image', { query: fallbackImage.query });
+      }
+    }
   }
 
   // ── Stage 5c.0b: VISUAL GATE (conceptual-visual safety) ──

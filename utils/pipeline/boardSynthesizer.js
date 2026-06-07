@@ -800,13 +800,64 @@ function synthesizeFallbackPose({ tutorResponse, studentMessage } = {}) {
   return null;
 }
 
+// The tutor sometimes NARRATES a visual it never put on the board ("Here's a
+// visual representation of the inscribed angle theorem!") — the board then
+// silently contradicts the chat. `decide` classifies these as
+// `continue_conversation`, so turn_type can't catch them; we detect the broken
+// PROMISE in the tutor's own words instead.
+const VISUAL_PROMISE_RE = /\b(?:here'?s|here is|take a look|i'?ve\s+(?:drawn|placed|put|added|created|made)|let me show|this\s+(?:diagram|picture|image|visual|graph|figure)|below is|above is|as you can see)\b/i;
+const VISUAL_NOUN_RE = /\b(?:visual|picture|image|diagram|illustration|representation|graph|sketch|figure)\b/i;
+
+function detectVisualPromise(text) {
+  if (!text || typeof text !== 'string') return false;
+  return VISUAL_PROMISE_RE.test(text) && VISUAL_NOUN_RE.test(text);
+}
+
+// Pull the concept the tutor said the visual is OF, e.g.
+// "a visual representation of the inscribed angle theorem" -> "inscribed angle theorem".
+function extractVisualConcept(text) {
+  if (!text || typeof text !== 'string') return null;
+  // Connectors are deliberately limited to OF-style ones. "for" is excluded —
+  // "a picture for you" means a recipient, not a subject, and would extract
+  // garbage ("you").
+  const m = text.match(/\b(?:visual|picture|image|diagram|illustration|representation|graph|sketch|figure)\s+(?:of|showing|that shows|depicting|illustrating)\s+(?:the\s+|a\s+|an\s+)?([^.!?,;\n]{3,60})/i);
+  if (!m || !m[1]) return null;
+  let concept = m[1].trim().replace(/\s+/g, ' ').replace(/[`*_${}\\]/g, '').trim();
+  // Drop trailing filler that isn't part of the concept name.
+  concept = concept.replace(/\s+\b(?:here|now|below|above|too|as well|today|for you|to you)\b\s*$/i, '').trim();
+  return concept.length >= 3 ? concept : null;
+}
+
+/**
+ * Backfill an `image` card when the tutor PROMISED a visual but none was
+ * emitted. Conservative: fires only on an explicit promise AND a derivable
+ * concept (from the tutor's own sentence, else the active skill). Returns null
+ * when no query can be formed — better an empty board than a garbage search.
+ *
+ * @param {object} params
+ * @param {string} params.tutorResponse
+ * @param {object} [params.activeSkill] - { name }
+ * @returns {{action:'image', query:string, caption:string}|null}
+ */
+function synthesizeFallbackImage({ tutorResponse, activeSkill } = {}) {
+  if (!detectVisualPromise(tutorResponse)) return null;
+  let concept = extractVisualConcept(tutorResponse);
+  if (!concept && activeSkill && activeSkill.name) concept = String(activeSkill.name).trim();
+  if (!concept || concept.length < 3) return null;
+  const query = VISUAL_NOUN_RE.test(concept) ? concept : `${concept} diagram`;
+  return { action: 'image', query, caption: concept };
+}
+
 module.exports = {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
   dropRedundantPoses,
   synthesizeFallbackPose,
+  synthesizeFallbackImage,
   detectBoardReference,
   // Exposed for tests
+  _detectVisualPromise: detectVisualPromise,
+  _extractVisualConcept: extractVisualConcept,
   _detectAppliedOperation: detectAppliedOperation,
   _detectIntermediateEquation: detectIntermediateEquation,
   _detectIntermediateExpression: detectIntermediateExpression,
