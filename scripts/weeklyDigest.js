@@ -206,6 +206,11 @@ async function calculateStudentProgress(studentId) {
         mastery: { mastered: masteredCount, practicing: practicingCount, learning: learningCount },
         currentStreak,
         insights,
+        // True if the student did anything worth reporting this week. The digest
+        // skips sending when this is false, so parents aren't emailed a
+        // "your child did nothing" report every week for an inactive kid.
+        hadActivity: stats.sessionCount > 0 || masteryGained > 0 ||
+                     achievements.length > 0 || growthChecks.length > 0,
     };
 }
 
@@ -301,6 +306,15 @@ async function processBatch(parents) {
                 const studentData = await calculateStudentProgress(childId);
                 if (!studentData) {
                     console.log(`  ⚠️ Student ${childId} not found, skipping`);
+                    continue;
+                }
+
+                // Don't email about a child who did nothing this week — that reads as
+                // spam and gets parents to unsubscribe. Deliberate re-engagement is the
+                // reactivation campaign's job, not the weekly digest's.
+                if (!studentData.hadActivity) {
+                    console.log(`  ⏭️ ${studentData.studentName}: no activity this week — skipping email`);
+                    results.skipped++;
                     continue;
                 }
 
