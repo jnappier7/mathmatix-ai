@@ -114,3 +114,25 @@ services:
         sync: false
       - key: EMAIL_REPLY_TO
         sync: false
+
+  # ── Conversation archival (scheduled) ─────────────────────────────────────
+  # Runs the standalone archival job daily at 04:30 UTC (low-traffic, offset
+  # from the digest). It summarizes conversations idle >24h, collapses their
+  # message history to that summary, and marks them inactive. Naturally
+  # idempotent: it only matches isActive:true and flips them to false, so a
+  # retry or double-run won't reprocess already-archived conversations.
+  # Needs OPENAI_API_KEY for the final summary (summaryService → llmGateway).
+  # NOTE: the env vars below are sync:false — set them on THIS cron service in
+  # the Render dashboard (Render can copy from the web service, or use an env group).
+  - type: cron
+    name: mathmatix-archive-conversations
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    schedule: "30 4 * * *"
+    dockerCommand: node scripts/archiveOldConversations.js
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
