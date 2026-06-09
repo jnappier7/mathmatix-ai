@@ -180,6 +180,55 @@ config (±1, red/yellow) + summon wiring — not a build.*
 ```
 Flow: `-7 + 10` → 7 red + 10 yellow → cancel 7 zero pairs → 3 yellow → **+3**.
 
+### `function_transformations` (the universal-parent model — highest leverage)
+
+*One model covers the **whole transformations unit**. `a·f(x−h)+k` is
+parent-agnostic — `a` stretches/flips, `h` shifts left/right, `k` shifts up/down,
+for **any** parent `f`. Swap the parent (x², |x|, x³, √x, …) and the SAME rules
+hold — which is exactly the concept. Subsumes the standalone quadratic.*
+
+```jsonc
+{
+  "model": "function_transformations",
+  "title": "a · f(x − h) + k",
+  "params": { "parent": "quadratic", "a": 1, "h": 0, "k": 0 },
+  "parents": {                                          // swappable library, extensible
+    "quadratic":   { "fn": "x^2",     "anchor": "vertex",     "label": "x²"  },
+    "absolute":    { "fn": "abs(x)",  "anchor": "vertex",     "label": "|x|" },
+    "cubic":       { "fn": "x^3",     "anchor": "inflection", "label": "x³"  },
+    "square_root": { "fn": "sqrt(x)", "anchor": "endpoint",   "label": "√x", "domain": [0, null] }
+    // later: reciprocal 1/x, exponential bˣ, sine — same model, more entries
+  },
+  "controls": [
+    { "type": "choice", "param": "parent", "label": "parent" },                       // pick f
+    { "type": "slider", "param": "a", "range": [-3,3], "step": 0.25, "ticks": false },
+    { "type": "slider", "param": "h", "range": [-6,6], "step": 0.5,  "ticks": true },
+    { "type": "slider", "param": "k", "range": [-6,6], "step": 0.5,  "ticks": true }
+  ],
+  "elements": [
+    { "id": "plane",  "type": "plane",    "x": [-10,10], "y": [-10,10], "grid": true, "axisLabels": true },
+    { "id": "parent", "type": "function", "fn": "{parent.fn}", "role": "reference", "always": true }, // ALWAYS faint; switches with parent
+    { "id": "curve",  "type": "function", "fn": "a*{parent.fn @ (x-h)} + k" },
+    { "id": "anchor", "type": "point",    "at": ["h","k"], "draggable": true, "binds": ["h","k"] },   // the parent's key point
+    { "id": "eq",     "type": "readout",  "text": "{parent.equation}", "format": "smartFraction", "at": "top" }
+  ],
+  "reveal":  ["plane", "parent", "curve", "anchor", "eq"],
+  "drag":    ["anchor"],
+  "prompt":  "Drag the key point and slide a/h/k. Now switch the parent — do the SAME rules still work?"
+}
+```
+
+Invariant: `(h,k)` is *always* the parent's key point (vertex / inflection /
+endpoint), so the same draggable anchor + sliders + faint parent work for every
+function — **zero per-parent custom work.** The faint parent is **always shown**
+(not a toggle) and switches with the selection, so the transform always reads as a
+change *from the current original.*
+
+**Vocabulary additions (still no new primitives — just attributes):**
+`choice` control (pick from a set) · `parents` library (named `fn`+`anchor`+`domain`) ·
+`role:"reference"` + `always:true` (faint, fixed comparison element) ·
+`point.binds:[p,p]` (a draggable point binding a *pair* of params).
+
 ---
 
 ## Build catalog — prioritized, deduped, mapped to the vocabulary
@@ -192,7 +241,7 @@ long-tail / generate candidate.
 |---|---|---|---|---|
 | **Slope-intercept line** | PhET Graphing Lines | slide m/b, drag intercept | plane, slider, function, point, readout | **C** ✓ designed |
 | Two-point line | PhET / GeoGebra | drag 2 points, slope readout updates | plane, point, line, readout | **C** |
-| Function transformations | GeoGebra | sliders a/h/k shift/stretch a parabola | plane, slider, function, readout | **C** |
+| **Function transformations** (`function_transformations`, universal parent) | GeoGebra | choose parent (x²/\|x\|/x³/√x…), slide a/h/k, drag the key point; faint parent always shown | plane, choice, slider, function(reference), point(pair-bind), readout | **C** — *one model = the whole unit* |
 | Number line | PhET Number Line | drag/place points, integers & operations | plane(1-D), point, region, readout | **C** |
 | Fraction / area model | PhET Fractions, Area Model | partition bars/areas, build fractions | region/bar, readout | **C** |
 | **Integer counters** (zero pairs) | PhET / algebra tiles | type `-7+10`, drag red onto yellow to cancel | token, input, rule(annihilate), readout | **C** *(already built — configure `algebra-tiles.js`)* |
