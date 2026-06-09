@@ -412,16 +412,23 @@
   }
 
   // ---- Drawer (mobile) --------------------------------------------------
-  // The backdrop is a body-level sibling of the drawer so it can outrank
-  // #mpc-topbar — the drawer itself is trapped inside #app-layout-wrapper's
-  // mobile stacking context, so the backdrop is what actually wins the
-  // z-fight against the floating top chrome.
+  // The backdrop is inserted as the drawer's immediate sibling so the two
+  // share a single stacking context: the backdrop dims the chat behind it
+  // and the drawer sits cleanly on top (see workspace.css z-index pairing).
+  //
+  // It used to live at the body level to outrank #mpc-topbar, but that put
+  // it ABOVE #app-layout-wrapper — which traps the drawer in its own mobile
+  // stacking context — so the backdrop ended up painting over the drawer it
+  // was meant to sit behind. The topbar is hidden via .cr-ws-drawer-open
+  // while the drawer is open, so the body-level placement is no longer needed.
   function ensureBackdrop() {
     if (WS.backdrop) return WS.backdrop;
     var b = el('div', 'cr-ws-backdrop');
     b.setAttribute('aria-hidden', 'true');
     b.addEventListener('click', closeWorkspace);
-    document.body.appendChild(b);
+    // Sibling of the drawer (same parent) so z-index ordering is direct.
+    var parent = (WS.el && WS.el.parentNode) || document.body;
+    parent.insertBefore(b, WS.el || null);
     WS.backdrop = b;
     return b;
   }

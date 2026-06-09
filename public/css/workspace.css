@@ -217,9 +217,11 @@
   }
 
   /* Dimmed backdrop. Acts as the tap-to-close target and visually anchors
-     the drawer as a modal surface over the chat poster. Lives at the body
-     level (see workspace.js) so it can sit above #mpc-topbar (z-index 30)
-     and clear the wrapper's mobile stacking context. */
+     the drawer as a modal surface over the chat poster. Inserted as the
+     drawer's sibling (see workspace.js) so it shares the drawer's stacking
+     context: it sits just BELOW the drawer (z-index 900) and above the chat
+     content behind it. The topbar is hidden via .cr-ws-drawer-open while the
+     drawer is open, so the backdrop no longer needs to outrank it. */
   .cr-ws-backdrop {
     display: block;
     position: fixed;
@@ -230,7 +232,7 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--cr-transition);
-    z-index: 1700;
+    z-index: 899;
   }
   .cr-ws-backdrop.is-open {
     opacity: 1;
