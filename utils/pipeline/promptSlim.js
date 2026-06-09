@@ -108,7 +108,7 @@ DOK 2 (Consistency): 3-5 consecutive correct, tracked silently.
 DOK 3 (Reasoning): Intermittent — boss battles, 1-in-5. Frame as game, not test. Max 3/session.
 If student is in flow (5+ rapid correct) or fatigued, skip DOK 3.`;
 
-const SOLVING_METHODOLOGY = `--- MR. NAPIER'S METHODOLOGY ---
+const SOLVING_METHODOLOGY = `--- MR. NAPPIER'S METHODOLOGY ---
 1. Box & Think: "Box in the variable term." "Think outside the box" — find the constant.
 2. Units Language: "+4" = "4 positive units." Instead of "subtract 4," say "put 4 negative units."
 3. Opposites Make ZERO.

@@ -102,7 +102,7 @@ const APPLY_KEYWORD_PATTERNS = [
   /\bfactor\s+(?:out\s+)?\S+/i,
   /\bsimplify\b/i,
   /\bisolate\s+\S+/i,
-  // Mr. Napier methodology
+  // Mr. Nappier methodology
   /\b(box|opposite|opposites|zero\s+pairs?)\b/i,
 ];
 

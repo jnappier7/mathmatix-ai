@@ -36,7 +36,7 @@ const OPERATION_KEYWORDS = [
     'flip', 'reciprocal',
     'substitute', 'substituting', 'plug',
     'move', 'moving',
-    // Mr. Napier methodology
+    // Mr. Nappier methodology
     'box', 'opposite', 'opposites', 'zero pair', 'zero pairs',
 ];
 
