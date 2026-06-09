@@ -1,3 +1,10 @@
+# ⚠️ NOT THE LIVE DEPLOY. As of 2026-06, production runs on a MANUALLY-created
+# Render service `mathmatix-ai-v2` (Docker, Oregon) — not from this blueprint.
+# The `mathmatix-ai` service below matches an OLD Node service that's been
+# suspended since ~2025-09. Editing this file does NOT change prod. The weekly
+# digest cron at the bottom is likewise a reference spec — it's run in prod as a
+# separately, manually-created Render Cron Job (command: node scripts/weeklyDigest.js).
+# Kept as documentation / for if the deploy is ever moved back onto a blueprint.
 services:
   - type: web
     name: mathmatix-ai

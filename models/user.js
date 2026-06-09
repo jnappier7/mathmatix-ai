@@ -675,6 +675,7 @@ const userSchema = new Schema({
   /* Timestamps */
   lastLogin:  { type: Date },
   createdAt:  { type: Date, default: Date.now },
+  lastReactivationAt: { type: Date, default: null },  // last one-off reactivation/campaign email about this student (double-send guard)
 
   /* Intervention alert tracking (for teacher notifications) */
   lastInterventionAlert: {

@@ -186,9 +186,12 @@ router.post('/invite-parent', isAuthenticated, isStudent, async (req, res) => {
         await student.save();
 
         const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
-        const signupUrl = `${baseUrl}/signup.html?role=parent&parentInvite=${token}&email=${encodeURIComponent(email)}`;
+        // Existing parent account → confirm-link into the dashboard; new parent → signup link.
+        const actionUrl = existingParent
+            ? `${baseUrl}/parent-dashboard.html?acceptInvite=${token}`
+            : `${baseUrl}/signup.html?role=parent&parentInvite=${token}&email=${encodeURIComponent(email)}`;
         const { sendParentInvite } = require('../utils/emailService');
-        const result = await sendParentInvite(email, student.firstName, signupUrl);
+        const result = await sendParentInvite(email, student.firstName, actionUrl, !!existingParent);
 
         if (!result.success) {
             return res.json({ success: true, emailed: false, message: "Invite saved, but the email couldn't be sent right now. You can also share your code with your parent." });
