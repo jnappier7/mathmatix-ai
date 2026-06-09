@@ -225,15 +225,28 @@
         .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
         .then(function (data) {
           var first = data && data.results && data.results[0];
-          if (!first || !first.url) {
+          if (!first || (!first.thumbnail && !first.url)) {
             imgHost.textContent = 'No image found for "' + step.query + '".';
             return;
           }
           imgHost.innerHTML = '';
           var img = el('img', 'cr-ws-board-card-image-img');
-          img.src = first.url;
+          // Prefer the cached thumbnail (e.g. Google's gstatic copy / Wikimedia
+          // thumb): it loads reliably cross-origin, whereas the source `url`
+          // frequently hotlink-blocks and renders as a broken-image glyph.
+          img.src = first.thumbnail || first.url;
           img.alt = first.title || step.query;
           img.loading = 'lazy';
+          // If even the chosen source fails, try the other one, then degrade to
+          // text instead of a broken image.
+          img.onerror = function () {
+            if (first.url && img.src !== first.url) {
+              img.onerror = function () { imgHost.textContent = 'Couldn’t load that diagram.'; };
+              img.src = first.url;
+            } else {
+              imgHost.textContent = 'Couldn’t load that diagram.';
+            }
+          };
           imgHost.appendChild(img);
         })
         .catch(function () {
