@@ -1878,6 +1878,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         <div class="dashboard-panel">
           <h2 class="dashboard-panel-header">
+            <i class="fas fa-filter"></i> Conversion Funnel
+          </h2>
+          <p>Signup-cohort lifecycle: signup → activation → paid → churn.</p>
+          <button id="openFunnelBtn" class="btn btn-secondary main-action-btn">
+            <i class="fas fa-chart-line"></i> View Funnel
+          </button>
+          <div id="funnelStatsPreview" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+            <div style="margin-bottom: 5px;"><strong>Signups (90d):</strong> <span id="funnelPreviewSignups">-</span></div>
+            <div style="margin-bottom: 5px;"><strong>Activation:</strong> <span id="funnelPreviewActivation">-</span></div>
+            <div><strong>Paid conversion:</strong> <span id="funnelPreviewPaid">-</span></div>
+          </div>
+        </div>
+
+        <div class="dashboard-panel">
+          <h2 class="dashboard-panel-header">
             <i class="fas fa-envelope"></i> Bulk Email
           </h2>
           <p>Send emails to students, parents, teachers, or classes.</p>
@@ -2384,6 +2399,94 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </thead>
             <tbody id="surveyResponsesTableBody">
               <tr><td colspan="11" style="text-align: center;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conversion Funnel Modal -->
+  <div id="funnelModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+      <button class="modal-close-button" id="closeFunnelBtn">&times;</button>
+      <h2><i class="fas fa-filter"></i> Conversion Funnel</h2>
+      <p style="color: #666; margin-bottom: 20px;">
+        <i class="fas fa-chart-line"></i> Of students who signed up in the window, how many activated → paid → stayed.
+        <button id="refreshFunnelBtn" class="btn btn-secondary" style="float: right;">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </p>
+
+      <!-- Controls -->
+      <div class="modal-section">
+        <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
+          <div class="modal-form-group" style="margin-bottom: 0;">
+            <label for="funnelRole">Role</label>
+            <select id="funnelRole">
+              <option value="student" selected>Students</option>
+              <option value="parent">Parents</option>
+              <option value="teacher">Teachers</option>
+            </select>
+          </div>
+          <div class="modal-form-group" style="margin-bottom: 0;">
+            <label for="funnelRange">Signup window</label>
+            <select id="funnelRange">
+              <option value="30">Last 30 days</option>
+              <option value="90" selected>Last 90 days</option>
+              <option value="365">Last 365 days</option>
+              <option value="all">All time</option>
+            </select>
+          </div>
+        </div>
+        <p id="funnelWindowLabel" style="color: #888; font-size: 0.85em; margin-top: 8px;"></p>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="modal-section">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+          <div class="stat-card">
+            <div class="stat-label">Signups</div>
+            <div class="stat-value" id="funnelSignups">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Activation Rate</div>
+            <div class="stat-value" id="funnelActivationRate">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Paid Conversion</div>
+            <div class="stat-value" id="funnelPaidRate">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Churn Rate</div>
+            <div class="stat-value" id="funnelChurnRate">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Funnel Chart -->
+      <div class="modal-section">
+        <h3>Funnel</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; position: relative; height: 300px;">
+          <canvas id="funnelChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Stages Table -->
+      <div class="modal-section">
+        <h3>Stages</h3>
+        <div class="table-scroll-container" style="max-height: 400px;">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Count</th>
+                <th>% of previous</th>
+                <th>% of signups</th>
+              </tr>
+            </thead>
+            <tbody id="funnelTableBody">
+              <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -3381,7 +3484,7 @@ Jane,Doe,jane.doe@school.org,7th Grade</code>
   <script src="/js/role-switcher.js"></script>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
-  <script src="/js/admin-dashboard.js?v=2.2"></script>
+  <script src="/js/admin-dashboard.js?v=2.3"></script>
   <script src="/js/teacher-transcripts.js"></script>
   <script src="/js/admin-transcript-flags.js"></script>
   <script src="/js/admin-bulk-email.js"></script>

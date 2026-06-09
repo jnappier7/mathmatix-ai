@@ -3268,5 +3268,136 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // ============================================================
+    // Conversion Funnel (signup-cohort) — modal + sidebar preview
+    // ============================================================
+    let funnelChartInstance = null;
+
+    // Build the query string from the modal controls. A day-count range is
+    // converted to an explicit createdAt window; 'all' drops the window.
+    function funnelQueryString() {
+        const role = document.getElementById('funnelRole')?.value || 'student';
+        const range = document.getElementById('funnelRange')?.value || '90';
+        const params = new URLSearchParams({ role });
+        if (range === 'all') {
+            params.set('all', 'true');
+        } else {
+            const days = parseInt(range, 10) || 90;
+            const end = new Date();
+            const start = new Date(end.getTime() - days * 24 * 60 * 60 * 1000);
+            params.set('startDate', start.toISOString());
+            params.set('endDate', end.toISOString());
+        }
+        return params.toString();
+    }
+
+    async function loadFunnelData() {
+        const tbody = document.getElementById('funnelTableBody');
+        try {
+            const response = await fetch(`/api/admin/funnel?${funnelQueryString()}`, { credentials: 'include' });
+            if (!response.ok) throw new Error('Failed to fetch funnel');
+            const data = await response.json();
+            const s = data.summary || {};
+
+            document.getElementById('funnelSignups').textContent = s.signups ?? 0;
+            document.getElementById('funnelActivationRate').textContent = `${s.activationRate ?? 0}%`;
+            document.getElementById('funnelPaidRate').textContent = `${s.paidConversionRate ?? 0}%`;
+            document.getElementById('funnelChurnRate').textContent = `${s.churnRate ?? 0}%`;
+
+            const label = document.getElementById('funnelWindowLabel');
+            if (label) {
+                label.textContent = data.filters?.allTime
+                    ? 'Window: all signups ever (by signup date)'
+                    : `Window: ${new Date(data.filters.startDate).toLocaleDateString()} – ${new Date(data.filters.endDate).toLocaleDateString()} (by signup date)`;
+            }
+
+            renderFunnelTable(data.funnel || []);
+            renderFunnelChart(data.funnel || []);
+        } catch (err) {
+            console.error('Error loading funnel data:', err);
+            if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#e74c3c;">Failed to load funnel data</td></tr>';
+        }
+    }
+
+    function renderFunnelTable(funnel) {
+        const tbody = document.getElementById('funnelTableBody');
+        if (!tbody) return;
+        if (!funnel.length) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#999;">No data</td></tr>';
+            return;
+        }
+        tbody.innerHTML = funnel.map((stage, i) => `
+            <tr>
+                <td><strong>${stage.stage}</strong></td>
+                <td style="text-align:center; font-weight:600;">${stage.count}</td>
+                <td style="text-align:center;">${i === 0 ? '—' : stage.pctOfPrevious + '%'}</td>
+                <td style="text-align:center;">${stage.pctOfTotal}%</td>
+            </tr>
+        `).join('');
+    }
+
+    function renderFunnelChart(funnel) {
+        const canvas = document.getElementById('funnelChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+        // Destroy a prior instance so re-opening the modal doesn't leak charts.
+        if (funnelChartInstance) { funnelChartInstance.destroy(); funnelChartInstance = null; }
+        funnelChartInstance = new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: funnel.map(s => s.stage),
+                datasets: [{ label: 'Users', data: funnel.map(s => s.count), backgroundColor: '#7b1fa2' }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+
+    async function openFunnelModal() {
+        const modal = document.getElementById('funnelModal');
+        if (!modal) return;
+        modal.classList.add('is-visible');
+        await loadFunnelData();
+    }
+
+    function closeFunnelModal() {
+        const modal = document.getElementById('funnelModal');
+        if (modal) modal.classList.remove('is-visible');
+    }
+
+    const openFunnelBtn = document.getElementById('openFunnelBtn');
+    if (openFunnelBtn) openFunnelBtn.addEventListener('click', openFunnelModal);
+    const closeFunnelBtn = document.getElementById('closeFunnelBtn');
+    if (closeFunnelBtn) closeFunnelBtn.addEventListener('click', closeFunnelModal);
+    const refreshFunnelBtn = document.getElementById('refreshFunnelBtn');
+    if (refreshFunnelBtn) refreshFunnelBtn.addEventListener('click', loadFunnelData);
+    document.getElementById('funnelRole')?.addEventListener('change', loadFunnelData);
+    document.getElementById('funnelRange')?.addEventListener('change', loadFunnelData);
+
+    const funnelModalEl = document.getElementById('funnelModal');
+    if (funnelModalEl) {
+        funnelModalEl.addEventListener('click', (e) => {
+            if (e.target === funnelModalEl) closeFunnelModal();
+        });
+    }
+
+    // Sidebar preview (last 90 days, students) — best-effort, non-blocking.
+    (async () => {
+        try {
+            const r = await fetch('/api/admin/funnel?role=student', { credentials: 'include' });
+            if (!r.ok) return;
+            const d = await r.json();
+            const s = d.summary || {};
+            const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+            set('funnelPreviewSignups', s.signups ?? 0);
+            set('funnelPreviewActivation', `${s.activationRate ?? 0}%`);
+            set('funnelPreviewPaid', `${s.paidConversionRate ?? 0}%`);
+        } catch (_) { /* preview is best-effort */ }
+    })();
+
     console.log('[Admin Dashboard] 3x UX enhancements loaded: Audit Trail, Real-time Polling, Bulk Operations');
 });
