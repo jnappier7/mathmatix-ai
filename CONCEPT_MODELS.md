@@ -36,7 +36,46 @@ is literally PhET "Graphing Lines."
 
 ---
 
+## Summoned with intent, not tabs (the workspace UX)
+
+Tools are **not a tab bar** the student navigates (Board | Graph | Tiles | Calc =
+a passive, decontextualized tool drawer). The board is the canvas, and a
+manipulative **appears on it the moment it teaches something, framed by intent.**
+
+Two trigger paths, one mechanism — both resolve to the same board command
+(`{action:'model', model:'…', prompt:'…'}`):
+- **Tutor summons it** → arrives *with intent* (a framing prompt: "let's use
+  counters — type −7+10, then make zero pairs"). Driven by the `decide` move.
+- **Student asks** → "can I use the counters?" / "show me a graph" → pops up
+  on demand (an NL request recognized as a tool-summon). Honored directly; the
+  tutor may add a light frame.
+
+**Discoverability** (since there's no tab bar): the tutor offers tools at natural
+moments + a single minimal affordance (a ⊕ / suggestion chip, not a drawer) +
+NL requests are recognized. Same answer as the voice-first "where does it live"
+question — surface it through the conversation, not a persistent drawer.
+
+This is the difference between *"here are some math tools"* (a calculator app)
+and *"a tutor who reaches for the right manipulative at the right moment"* (a
+real teacher at a whiteboard). It also fixes two observed bugs by construction:
+"graph went to chat, not the board" and "Tiles is a launcher tab" — everything
+is summoned **onto the board, with a reason attached.**
+
+The spec already carries this: `trigger` = *when it pops up*, `prompt` = *the
+teaching intention*.
+
+---
+
 ## The architecture
+
+**Two rendering engines, one spec.** Concept models span two substrates — and we
+own both. The declarative spec is unified; it dispatches by family/`engine`:
+- **Continuous** — graphs, geometry, functions → **JSXGraph** (plane, point,
+  circle, angle, function; drag-with-dependency). *New; building via the
+  slope-intercept model.*
+- **Discrete manipulatives** — counters, algebra tiles, base-ten, fraction
+  pieces → the **token engine = `public/js/algebra-tiles.js`** (drag,
+  auto-cancellation/zero-pairs, expression parsing). ***Already built.***
 
 **Two-way param binding (the keystone).** A named `param` is the single source of
 truth; sliders, draggable points, the function, and readouts all read/write it.
@@ -71,9 +110,12 @@ Build once; every concept composes from these.
 | `transform` | `apply:reflect\|rotate\|translate\|dilate`, `of:[ids]`, `over/about/by` | produces an image set |
 | `region` / `bar` | for fraction/area/number-line models | |
 | `readout` | `bind` or `text:"…{param}…"`, `format` | live text; `format:"smartFraction"` |
+| `token` *(token engine)* | `value`, `color`, `label` | discrete draggable chip (counter / tile) |
+| `input` *(token engine)* | `expression`, `placeholder` | parse a typed expression → spawn tokens |
+| `rule` *(token engine)* | `when:'overlap-opposite'`, `do:'annihilate'` | interaction rule (zero-pair cancel, group, snap) |
 
 Behavior layer: `params` · `reveal:[ids]` (animation order) · `drag:[ids]` ·
-`highlight` (chat-driven pulse) · `prompt` · `trigger`.
+`highlight` (chat-driven pulse) · `prompt` · `trigger` · `engine` (which renderer).
 
 ---
 
@@ -114,6 +156,30 @@ define the line; slope = rise/run readout *derived from the points*. Teaches slo
 as "rise/run between two points" (the geometric origin) vs the slider's algebraic
 "m is a knob." Same primitives.
 
+### `integer_counters` (token engine — *configure, don't build*)
+
+*Two-color chips for integer arithmetic (zero pairs). **Already shipped** as the
+unit-tile subset of `algebra-tiles.js` (drag + auto-cancellation + expression
+parsing + ±1 tiles). The "zero pairs / opposites" pedagogy is already first-class
+in the board guard (Mr. Nappier methodology). Remaining work is an "integers-only"
+config (±1, red/yellow) + summon wiring — not a build.*
+
+```jsonc
+{
+  "model": "integer_counters",
+  "engine": "tokens",                       // → algebra-tiles.js, not JSXGraph
+  "input": { "expression": true, "placeholder": "-7 + 10" },
+  "tokens": [
+    { "value":  1, "color": "yellow", "label": "+" },
+    { "value": -1, "color": "red",    "label": "-" }
+  ],
+  "rules":   [ { "when": "overlap-opposite", "do": "annihilate" } ],   // zero pair
+  "readout": { "text": "Sum: {net}", "format": "signedInt" },
+  "prompt":  "Type an expression -> drag a red onto a yellow to cancel -> what's left?"
+}
+```
+Flow: `-7 + 10` → 7 red + 10 yellow → cancel 7 zero pairs → 3 yellow → **+3**.
+
 ---
 
 ## Build catalog — prioritized, deduped, mapped to the vocabulary
@@ -129,6 +195,7 @@ long-tail / generate candidate.
 | Function transformations | GeoGebra | sliders a/h/k shift/stretch a parabola | plane, slider, function, readout | **C** |
 | Number line | PhET Number Line | drag/place points, integers & operations | plane(1-D), point, region, readout | **C** |
 | Fraction / area model | PhET Fractions, Area Model | partition bars/areas, build fractions | region/bar, readout | **C** |
+| **Integer counters** (zero pairs) | PhET / algebra tiles | type `-7+10`, drag red onto yellow to cancel | token, input, rule(annihilate), readout | **C** *(already built — configure `algebra-tiles.js`)* |
 
 ### Tier 2 — curate (adds the geometry primitives)
 | Model | Source | What the student does | Primitives | |
