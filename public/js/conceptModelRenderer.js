@@ -151,11 +151,16 @@
     if (spec.derived) Object.keys(spec.derived).forEach(function (n) {
       compiledDerived[n] = CMS.compileExpr(spec.derived[n]);
     });
+    // Parent library (named pure functions of x) for the universal-parent model.
+    var compiledParents = {}; // parentKey -> {eval}
+    if (spec.parents) Object.keys(spec.parents).forEach(function (key) {
+      compiledParents[key] = CMS.compileExpr(spec.parents[key].fn);
+    });
 
     function scope() {
       var s = {};
       Object.keys(P).forEach(function (k) { s[k] = P[k]; });
-      // derived read params (and earlier derived) — evaluate in declared order.
+      // derived read numeric params (and earlier derived) — evaluate in order.
       Object.keys(compiledDerived).forEach(function (n) { s[n] = compiledDerived[n].eval(s); });
       return s;
     }
@@ -268,9 +273,29 @@
     spec.elements.forEach(function (e) {
       if (e.type === 'function') {
         var c = compiledFns[e.id];
-        board.create('functiongraph', [function (x) {
-          var s = scope(); s.x = x; return c.eval(s);
-        }], { strokeColor: '#5B3DF6', strokeWidth: 3, fixed: true, highlight: false });
+        // `compose` evaluates the SELECTED parent at a shifted argument and
+        // exposes it to the outer fn as a placeholder var (a*P + k where P is the
+        // parent of (x-h)). Generic — no per-parent code.
+        var composers = [];
+        if (e.compose) Object.keys(e.compose).forEach(function (ph) {
+          composers.push({ ph: ph, sel: e.compose[ph].parent, argFn: CMS.compileExpr(e.compose[ph].arg) });
+        });
+        var evalCurve = function (x) {
+          var s = scope(); s.x = x;
+          for (var ci = 0; ci < composers.length; ci++) {
+            var cm = composers[ci];
+            var pf = compiledParents[P[cm.sel]];
+            s[cm.ph] = pf ? pf.eval({ x: cm.argFn.eval(s) }) : NaN;
+          }
+          return c.eval(s);
+        };
+        var isRef = e.role === 'reference';
+        board.create('functiongraph', [evalCurve], {
+          strokeColor: isRef ? '#b9b2e6' : '#5B3DF6',
+          strokeWidth: isRef ? 2 : 3,
+          dash: isRef ? 2 : 0,
+          fixed: true, highlight: false
+        });
       } else if (e.type === 'line' || e.type === 'segment' || e.type === 'ray') {
         var a = jpoints[e.through[0]], b2 = jpoints[e.through[1]];
         if (a && b2) {
@@ -290,35 +315,63 @@
       }
     });
 
-    // ── controls (HTML range sliders bound to params) ────────────────────────
-    var sliderInputs = {}; // param -> { input, valueEl }
+    // ── controls (sliders for numeric params, choice for selectors) ──────────
+    var sliderInputs = {};  // param -> { input, valueEl }
+    var choiceGroups = {};  // param -> [ { key, btn } ]
     (spec.controls || []).forEach(function (c) {
-      if (c.type !== 'slider') return; // `choice` lands with function_transformations
-      var wrap = el('div', 'cr-cm-slider');
-      var label = el('label', 'cr-cm-slider-label');
-      label.textContent = c.label || c.param;
-      var valueEl = el('span', 'cr-cm-slider-value');
-      label.appendChild(valueEl);
+      if (c.type === 'slider') {
+        var wrap = el('div', 'cr-cm-slider');
+        var label = el('label', 'cr-cm-slider-label');
+        label.textContent = c.label || c.param;
+        var valueEl = el('span', 'cr-cm-slider-value');
+        label.appendChild(valueEl);
 
-      var input = document.createElement('input');
-      input.type = 'range';
-      input.className = 'cr-cm-slider-input';
-      input.min = c.range[0]; input.max = c.range[1];
-      input.step = c.step || 'any';
-      input.value = P[c.param];
-      input.setAttribute('aria-label', (c.label || c.param) + ' control');
+        var input = document.createElement('input');
+        input.type = 'range';
+        input.className = 'cr-cm-slider-input';
+        input.min = c.range[0]; input.max = c.range[1];
+        input.step = c.step || 'any';
+        input.value = P[c.param];
+        input.setAttribute('aria-label', (c.label || c.param) + ' control');
 
-      input.addEventListener('input', function () {
-        P[c.param] = round4(parseFloat(input.value));
-        pushParamsToPoints();
-        pushParamsToControls();
-        redraw();
-      });
+        input.addEventListener('input', function () {
+          P[c.param] = round4(parseFloat(input.value));
+          pushParamsToPoints();
+          pushParamsToControls();
+          redraw();
+        });
 
-      wrap.appendChild(label);
-      wrap.appendChild(input);
-      controlsRow.appendChild(wrap);
-      sliderInputs[c.param] = { input: input, valueEl: valueEl };
+        wrap.appendChild(label);
+        wrap.appendChild(input);
+        controlsRow.appendChild(wrap);
+        sliderInputs[c.param] = { input: input, valueEl: valueEl };
+      } else if (c.type === 'choice') {
+        // Segmented selector: pick the parent f. Options come from the spec or
+        // default to the parents-library keys; the button label is the parent's
+        // display label.
+        var crow = el('div', 'cr-cm-choice');
+        var clabel = el('span', 'cr-cm-slider-label');
+        clabel.textContent = c.label || c.param;
+        crow.appendChild(clabel);
+        var group = el('div', 'cr-cm-choice-group');
+        var options = Array.isArray(c.options) ? c.options : Object.keys(spec.parents || {});
+        choiceGroups[c.param] = [];
+        options.forEach(function (key) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'cr-cm-choice-btn';
+          btn.textContent = (spec.parents && spec.parents[key] && spec.parents[key].label) || key;
+          btn.addEventListener('click', function () {
+            P[c.param] = key;
+            pushParamsToControls();
+            redraw();
+          });
+          group.appendChild(btn);
+          choiceGroups[c.param].push({ key: key, btn: btn });
+        });
+        crow.appendChild(group);
+        controlsRow.appendChild(crow);
+      }
     });
 
     // ── sync helpers (the binding glue) ──────────────────────────────────────
@@ -327,6 +380,13 @@
         var si = sliderInputs[param];
         si.input.value = P[param];
         si.valueEl.textContent = ' = ' + toPlainNumber(P[param]);
+      });
+      Object.keys(choiceGroups).forEach(function (param) {
+        choiceGroups[param].forEach(function (opt) {
+          var on = opt.key === P[param];
+          opt.btn.classList.toggle('is-active', on);
+          opt.btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
       });
     }
     function pushParamsToPoints() {
@@ -343,9 +403,16 @@
       readouts.forEach(function (r) {
         var fmt = r.element.format;
         var tex = String(r.element.text || '').replace(/\{([a-zA-Z_][a-zA-Z_0-9.]*)\}/g, function (_, key) {
-          var base = key.split('.')[0];
-          var val = s[base];
-          if (typeof val !== 'number') return '?';
+          var parts = key.split('.');
+          // {selector.field} → look the field up on the chosen parent (e.g.
+          // {parent.label} → the selected parent's display label).
+          if (parts.length > 1) {
+            var entry = spec.parents && spec.parents[P[parts[0]]];
+            var field = entry && entry[parts[1]];
+            return field == null ? '?' : String(field);
+          }
+          var val = s[parts[0]];
+          if (typeof val !== 'number') return typeof val === 'string' ? val : '?';
           return fmt === 'smartFraction' ? toFractionTex(val) : toPlainNumber(val);
         });
         // Collapse "+ -" / "+ \frac{-…" into a clean minus so "y = 2x + -3"

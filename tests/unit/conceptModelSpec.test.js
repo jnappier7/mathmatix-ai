@@ -121,7 +121,7 @@ describe('conceptModelSpec — validator (generated specs cannot render broken)'
     s.elements.push({ id: 'dot', type: 'point', at: [0, 'b'], draggable: true, binds: 'q' });
     const r = validateModelSpec(s);
     expect(r.valid).toBe(false);
-    expect(r.errors.join(' ')).toMatch(/binds unknown param "q"/);
+    expect(r.errors.join(' ')).toMatch(/binds unknown numeric param "q"/);
   });
 
   it('rejects a point whose `at` names an undeclared param', () => {
@@ -184,5 +184,92 @@ describe('conceptModelSpec — validator (generated specs cannot render broken)'
     expect(validateModelSpec(null).valid).toBe(false);
     expect(validateModelSpec({}).valid).toBe(false);
     expect(validateModelSpec({ model: 'x', params: {}, elements: [] }).valid).toBe(false);
+  });
+});
+
+describe('conceptModelSpec — function_transformations vocabulary (selector / parents / choice / compose)', () => {
+  it('the universal-parent model is in the catalog and validates', () => {
+    expect(MODELS).toContain('function_transformations');
+    const r = validateModelSpec(getModel('function_transformations'));
+    expect(r.errors).toEqual([]);
+    expect(r.valid).toBe(true);
+  });
+
+  it('composes the SELECTED parent at a shifted argument, correct by construction', () => {
+    // curve = a * f(x - h) + k. With f = x^2, a=2, h=1, k=3 at x=2:
+    //   f(2-1) = 1^2 = 1 → 2*1 + 3 = 5
+    const spec = getModel('function_transformations');
+    const parentFn = compileExpr(spec.parents.quadratic.fn);    // x^2
+    const argFn = compileExpr(spec.elements[2].compose.P.arg);  // x - h
+    const outerFn = compileExpr(spec.elements[2].fn);           // a*P + k
+    const P = { a: 2, h: 1, k: 3 };
+    const argVal = argFn.eval({ x: 2, h: P.h });
+    const Pval = parentFn.eval({ x: argVal });
+    expect(outerFn.eval({ a: P.a, k: P.k, P: Pval })).toBe(5);
+  });
+
+  it('preserves identifier case so placeholder P is distinct from param p', () => {
+    const c = compileExpr('a*P + k');
+    expect(c.vars.sort()).toEqual(['P', 'a', 'k']); // P kept uppercase
+  });
+
+  function tbase() {
+    return {
+      model: 't',
+      params: { parent: 'quadratic', a: 1 },
+      parents: { quadratic: { fn: 'x^2', label: 'x²' }, cubic: { fn: 'x^3', label: 'x³' } },
+      controls: [{ type: 'choice', param: 'parent', label: 'f' }],
+      elements: [
+        { id: 'plane', type: 'plane', x: [-10, 10], y: [-10, 10] },
+        { id: 'curve', type: 'function', fn: 'a*P', compose: { P: { parent: 'parent', arg: 'x' } } },
+        { id: 'eq', type: 'readout', text: 'f = {parent.label}' },
+      ],
+    };
+  }
+
+  it('accepts a well-formed selector/choice/compose spec', () => {
+    expect(validateModelSpec(tbase()).valid).toBe(true);
+  });
+
+  it('rejects a selector default that is not a parent', () => {
+    const s = tbase();
+    s.params.parent = 'octic';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/is not a parent/);
+  });
+
+  it('rejects a choice bound to a numeric (non-selector) param', () => {
+    const s = tbase();
+    s.controls[0].param = 'a';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/must drive a selector param/);
+  });
+
+  it('rejects a slider bound to a selector param', () => {
+    const s = tbase();
+    s.controls.push({ type: 'slider', param: 'parent', range: [0, 1] });
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/must drive a numeric param/);
+  });
+
+  it('rejects a parent fn that uses anything other than x', () => {
+    const s = tbase();
+    s.parents.quadratic.fn = 'a*x^2';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/may only use x/);
+  });
+
+  it('rejects compose whose parent is not a selector', () => {
+    const s = tbase();
+    s.elements[1].compose.P.parent = 'a';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/compose parent "a" is not a selector/);
+  });
+
+  it('rejects a function reading the placeholder without declaring compose', () => {
+    const s = tbase();
+    delete s.elements[1].compose;
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/references unknown name "P"/);
+  });
+
+  it('rejects a {selector.field} token whose base is not a selector', () => {
+    const s = tbase();
+    s.elements[2].text = 'f = {a.label}';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/needs a selector before the dot/);
   });
 });
