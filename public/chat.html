@@ -2283,6 +2283,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <link rel="stylesheet" href="/css/algebra-tiles.css">
   <script src="/js/algebra-tiles.js"></script>
   <div id="algebraTilesContainer"></div>
+  <!-- Concept models: pure spec/validator + JSXGraph renderer for the WorkBoard
+       `model` verb. Inert until a `model` board command is emitted (CONCEPT_MODELS,
+       see CONCEPT_MODELS.md). Loaded before workspace.js, which references them. -->
+  <script src="/js/conceptModelSpec.js"></script>
+  <script defer src="/js/conceptModelRenderer.js"></script>
   <!-- Interactive math workspace (chat right slot) — after the tools it can launch -->
   <script src="/js/workspace.js"></script>
   <!-- Phase B: executes server-emitted <BOARD> commands against the embedded WorkBoard -->

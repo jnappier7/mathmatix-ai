@@ -25,7 +25,7 @@
 
 'use strict';
 
-const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold']);
+const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'model']);
 
 // Matches a single <BOARD …/> or <BOARD …>…</BOARD> tag. The `g` flag
 // lets us iterate multiple occurrences in one response. The inner
@@ -106,6 +106,16 @@ function parseBoardTags(aiResponseText) {
             if (!query) continue;
             command.query = query;
             if (captionAttr) command.caption = captionAttr;
+        }
+        if (action === 'model') {
+            // Interactive concept model, e.g.
+            //   <BOARD action="model" model="slope_intercept_line"
+            //          prompt="Slide m up — what happens?" />
+            const modelName = extractAttr(attrString, 'model') || innerTrim || null;
+            if (!modelName) continue;
+            command.model = modelName;
+            const promptAttr = extractAttr(attrString, 'prompt');
+            if (promptAttr) command.prompt = promptAttr;
         }
         boardCommands.push(command);
     }

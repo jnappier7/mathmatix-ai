@@ -46,7 +46,12 @@
 // strict structured-output JSON fields (diagram_type / diagram_params) are added
 // alongside the prompt wiring in a follow-up — the model isn't told to emit it
 // yet. Flag-off, so this is inert in production until enabled.
-const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram'];
+// NOTE: 'model' (interactive JSXGraph concept models, gated behind
+// CONCEPT_MODELS) is recognized so the verb + guard + client renderer can be
+// exercised end-to-end, but the strict structured-output JSON fields aren't
+// added to the schema yet — the model isn't told to emit it. Flag-off, inert in
+// production until enabled (see CONCEPT_MODELS.md, Build order).
+const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model'];
 
 // The kind of turn Maya is serving. The model self-declares this
 // on every structured response. Server-side audit (utils/turnTypeAudit.js)
@@ -162,7 +167,7 @@ function normalizeBoardCommand(cmd) {
   if (!BOARD_ACTIONS.includes(cmd.action)) return null;
 
   const out = { action: cmd.action };
-  const FIELDS = ['tex', 'op', 'check', 'fn', 'query', 'caption'];
+  const FIELDS = ['tex', 'op', 'check', 'fn', 'query', 'caption', 'model', 'prompt'];
   for (const field of FIELDS) {
     const v = cmd[field];
     if (typeof v === 'string' && v.length > 0) {
