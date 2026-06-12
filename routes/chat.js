@@ -1964,6 +1964,23 @@ async function handleGreetingRequest(req, res, userId) {
                 const contTutor = TUTOR_CONFIG[contTutorKey];
                 await Conversation.findByIdAndUpdate(activeConversation._id, { lastActivity: new Date() });
 
+                // Recent tail to paint into the chat transcript so the just-finished
+                // voice exchange shows up as bubbles (continuity is visible, not just
+                // implicit). The "[Voice session ... just ended]" marker is an
+                // LLM-facing recap — strip it so it never renders as a student bubble.
+                const visibleMessages = activeConversation.messages
+                    .slice(-50)
+                    .filter(m => !(
+                        m.role === 'assistant'
+                        && typeof m.content === 'string'
+                        && m.content.startsWith('[Voice session')
+                    ))
+                    .map(m => ({
+                        role: m.role,
+                        content: m.content,
+                        workCheckId: m.workCheckId || null,
+                    }));
+
                 const useStreaming = req.query.stream === 'true';
                 if (useStreaming) {
                     res.setHeader('Content-Type', 'text/event-stream');
@@ -1971,12 +1988,14 @@ async function handleGreetingRequest(req, res, userId) {
                     res.setHeader('Connection', 'keep-alive');
                     res.setHeader('X-Accel-Buffering', 'no');
                     res.flushHeaders();
-                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true })}\n\n`);
+                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
                     return res.end();
                 }
                 return res.json({
                     text: '',
                     continued: true,
+                    conversationId: activeConversation._id,
+                    messages: visibleMessages,
                     voiceId: contTutor.voiceId,
                     isGreeting: true,
                     userXp: user.xp || 0,

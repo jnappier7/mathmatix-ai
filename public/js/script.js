@@ -615,6 +615,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             showThinkingIndicator(false);
 
+            // Continuation from the voice tutor: instead of a fresh greeting, the
+            // server returns the in-progress conversation. Paint its recent tail
+            // (chat + voice turns, interleaved) into the transcript so the just-
+            // finished voice exchange is visible, then stop — no new greeting.
+            if (data.continued && Array.isArray(data.messages)) {
+                if (data.messages.length > 0 && typeof window.updateChatForSession === 'function') {
+                    window.updateChatForSession(
+                        { _id: data.conversationId, conversationType: 'general' },
+                        data.messages
+                    );
+                }
+                return;
+            }
+
             if (data.text) {
                 appendMessage(data.text, "ai");
                 if (data.inlineCta) attachInlineCtaToLatestMessage(data.inlineCta);
