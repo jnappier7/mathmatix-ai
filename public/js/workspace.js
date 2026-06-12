@@ -252,6 +252,26 @@
         .catch(function () {
           imgHost.textContent = 'Image unavailable.';
         });
+    } else if (step.type === 'model') {
+      // Concept model — an interactive, manipulable model of a math idea
+      // (slope-intercept line, two-point line, …). Correct by construction:
+      // the student drags something and the relationship holds. Rendered by
+      // ConceptModelRenderer (JSXGraph) from a validated ConceptModelSpec.
+      // This is a teaching aid, never the student's own worked solution.
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--model');
+      var modelHost = el('div', 'cr-ws-board-card-model-host');
+      card.appendChild(modelHost);
+      requestAnimationFrame(function () {
+        if (!window.ConceptModelRenderer) {
+          modelHost.textContent = 'Concept-model engine still loading.';
+          return;
+        }
+        try {
+          window.ConceptModelRenderer.renderModel(modelHost, step.model, { prompt: step.prompt });
+        } catch (e) {
+          modelHost.textContent = "Couldn't build that model.";
+        }
+      });
     } else if (step.type === 'scaffold') {
       // Hint card — shows the next step's structure with empty \boxed{}
       // slots the student fills in. Distinct look + an eyebrow so it reads
@@ -610,6 +630,30 @@
       this.showTool('board');
       var step = { type: 'image', query: query };
       if (caption) step.caption = String(caption).trim();
+      pushBoardStep(step);
+      return true;
+    },
+
+    /**
+     * Drop an interactive concept model onto the board (slope-intercept line,
+     * two-point line, …). The student manipulates it and the relationship holds,
+     * correct by construction (see CONCEPT_MODELS.md). A teaching aid, summoned
+     * with intent — the optional prompt frames WHY it appeared ("slide m up —
+     * what happens?").
+     * @param {string|object} model    curated model name OR a full validated spec
+     * @param {string} [prompt]        teaching intention shown above the model
+     */
+    boardModel: function (model, prompt) {
+      // Accept either (model, prompt) or a command object { model, prompt }.
+      if (model && typeof model === 'object' && model.action) {
+        prompt = model.prompt;
+        model = model.model;
+      }
+      if (!model) return false;
+      openWorkspace();
+      this.showTool('board');
+      var step = { type: 'model', model: model };
+      if (prompt) step.prompt = String(prompt).trim();
       pushBoardStep(step);
       return true;
     },

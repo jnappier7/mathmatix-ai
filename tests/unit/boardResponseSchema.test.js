@@ -271,7 +271,13 @@ describe('boardResponseSchema — buildStructuredResponseInstructions (Phase 4)'
   });
 
   test('documents each board action shape', () => {
+    // `diagram` and `model` are recognized end-to-end (verb + guard + client
+    // renderer) but intentionally NOT yet described to the model in the prompt —
+    // they're gated behind DIAGRAM_BOARD / CONCEPT_MODELS and the structured
+    // fields land alongside the prompt wiring in a follow-up. Exclude them here.
+    const NOT_YET_PROMPTED = new Set(['diagram', 'model']);
     for (const action of BOARD_ACTIONS) {
+      if (NOT_YET_PROMPTED.has(action)) continue;
       expect(instructions).toContain(action);
     }
   });
@@ -284,7 +290,7 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
 
   test('BOARD_ACTIONS lists the supported actions', () => {
     expect(BOARD_ACTIONS).toEqual([
-      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram',
+      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model',
     ]);
   });
 

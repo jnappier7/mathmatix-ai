@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept Models — browser verification</title>
+  <meta name="robots" content="noindex" />
+
+  <!-- KaTeX for the smart-fraction readouts (the app's vendored copy). -->
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+  <script src="/vendor/katex/katex.min.js"></script>
+
+  <style>
+    :root {
+      --cr-accent: #5B3DF6;
+      --cr-accent-grad: linear-gradient(135deg, #8B7BFF, #5B3DF6);
+      --cr-text: #1c1530;
+      --cr-text-dim: #6b6580;
+      --cr-bg-1: #f5f3ff;
+      --cr-bg-2: #ffffff;
+      --cr-bg-panel: #ffffff;
+      --cr-bg-deep: #faf9ff;
+      --cr-border: #e3def5;
+      --cr-pill-bg: #efeaff;
+      --cr-radius-sm: 8px;
+      --cr-radius-md: 12px;
+      --cr-radius-lg: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0; padding: 24px;
+      background: var(--cr-bg-1); color: var(--cr-text);
+    }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    p.sub { margin: 0 0 24px; color: var(--cr-text-dim); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+    .demo-card {
+      background: var(--cr-bg-panel);
+      border: 1px solid var(--cr-border);
+      border-radius: var(--cr-radius-lg);
+      padding: 16px;
+      box-shadow: 0 4px 16px rgba(91, 61, 246, 0.06);
+    }
+    .demo-card h2 { font-size: 15px; margin: 0 0 12px; color: var(--cr-accent); }
+    .host { min-height: 120px; }
+
+    /* ── concept-model renderer styles (mirrors public/css/workspace.css) ── */
+    .cr-cm { display: flex; flex-direction: column; gap: 8px; }
+    .cr-cm-prompt {
+      font-size: 13px; line-height: 1.45; color: var(--cr-accent);
+      background: var(--cr-pill-bg); border-left: 3px solid var(--cr-accent);
+      border-radius: var(--cr-radius-sm); padding: 8px 10px;
+    }
+    .cr-cm-readouts { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; min-height: 22px; }
+    .cr-cm-readout { font-size: 15px; color: var(--cr-text); }
+    .cr-cm-board {
+      width: 100%; height: 300px; border-radius: var(--cr-radius-sm);
+      background: var(--cr-bg-deep); overflow: hidden; touch-action: none;
+    }
+    .cr-cm-controls { display: flex; flex-direction: column; gap: 8px; padding: 2px 4px 0; }
+    .cr-cm-slider { display: flex; align-items: center; gap: 10px; }
+    .cr-cm-slider-label { flex: 0 0 auto; min-width: 46px; font-size: 13px; font-weight: 700; color: var(--cr-text); font-style: italic; }
+    .cr-cm-slider-value { font-weight: 600; font-style: normal; color: var(--cr-accent); }
+    .cr-cm-slider-input { flex: 1 1 auto; accent-color: var(--cr-accent); cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Concept Models — browser verification</h1>
+  <p class="sub">
+    Build-order step 1 (renderer + vocabulary engine) and step 2 (validator) from
+    <code>CONCEPT_MODELS.md</code>. Drag the points / move the sliders — the params
+    are the single source of truth, so every element stays in sync. Any measured
+    quantity (the slope readout, the curve) is computed live by the engine.
+  </p>
+
+  <div class="grid">
+    <div class="demo-card">
+      <h2>slope_intercept_line — PhET "Graphing Lines"</h2>
+      <div class="host" id="host-sil"></div>
+    </div>
+    <div class="demo-card">
+      <h2>two_point_line — slope as rise/run, measured live</h2>
+      <div class="host" id="host-tpl"></div>
+    </div>
+  </div>
+
+  <script src="/js/conceptModelSpec.js"></script>
+  <script src="/js/conceptModelRenderer.js"></script>
+  <script>
+    function boot() {
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-sil'), 'slope_intercept_line'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-tpl'), 'two_point_line'
+      );
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+  </script>
+</body>
+</html>

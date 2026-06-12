@@ -21,7 +21,7 @@
     'use strict';
 
     var STAGGER_MS = 250;
-    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true, scaffold: true };
+    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true, scaffold: true, model: true };
 
     function getWorkspace() {
         return typeof window !== 'undefined' ? window.MathWorkspace : null;
@@ -77,6 +77,14 @@
                     // Deterministic JSXGraph geometry (DIAGRAM_BOARD, flag-off).
                     if (command.diagramType && typeof W.boardDiagram === 'function') {
                         W.boardDiagram(command);
+                    }
+                    break;
+                case 'model':
+                    // Interactive concept model (CONCEPT_MODELS, flag-off). The
+                    // student manipulates it and the relationship holds, correct
+                    // by construction. Inert until a caller emits `model`.
+                    if (command.model && typeof W.boardModel === 'function') {
+                        W.boardModel(command);
                     }
                     break;
                 default:

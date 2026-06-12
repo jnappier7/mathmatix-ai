@@ -379,6 +379,19 @@ function evaluate(command, ctx) {
         return { allowed: true };
     }
 
+    // Interactive concept model (JSXGraph, gated behind CONCEPT_MODELS). Like
+    // graph/diagram it's a teaching aid summoned with intent, not a transcription
+    // of the student's steps — and it's correct by construction (the engine
+    // measures; the spec never asserts a value), so it cannot leak the student's
+    // answer. The #1-rule student-text match doesn't apply; we only validate that
+    // a model name is present.
+    if (action === 'model') {
+        if (!command.model) {
+            return { allowed: false, reason: 'model_missing_name' };
+        }
+        return { allowed: true };
+    }
+
     return { allowed: false, reason: 'unknown_action' };
 }
 
