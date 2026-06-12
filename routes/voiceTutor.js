@@ -22,6 +22,7 @@ const { createVoiceSession } = require('../utils/voiceSession');
 const voiceMetrics = require('../utils/voiceMetrics');
 const orchestrator = require('../utils/orchestrator');
 const { loadOrCreatePlan, resolveCurrentTarget } = require('../utils/tutorPlanManager');
+const { loadActiveHistory, appendToActiveConversation } = require('../utils/activeConversation');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -605,8 +606,10 @@ router.post('/process-text', isAuthenticated, conditionalVtUpload, conditionalVt
       }
     }
 
-    // Save the user-facing text (without giant base64 image blobs) to history
-    await saveToHistory(userId, combinedText, aiRaw);
+    // Save the user-facing text (without giant base64 image blobs) to history.
+    // Persist the clean spoken text — NOT the raw JSON/<math> blob — so the
+    // shared chat<->voice conversation stays readable for the text tutor.
+    await saveToHistory(userId, combinedText, spoken);
 
     res.json({
       response: spoken,
@@ -724,8 +727,9 @@ router.post('/process-orchestrated', isAuthenticated, async (req, res) => {
       dispatcher,
     );
 
-    // Persist the assistant turn to history (same shape as /process)
-    saveToHistory(userId, userMessage, aiRaw).catch(err => {
+    // Persist the assistant turn to history (same shape as /process).
+    // Store the clean spoken text, not the raw JSON blob.
+    saveToHistory(userId, userMessage, spoken).catch(err => {
       logger.warn('orchestrated: persist failed', { error: err.message });
     });
 
@@ -858,17 +862,10 @@ async function generateResponse(userId, userMessage, preloadedUser, opts = {}) {
   const selectedTutorId = user.selectedTutorId || 'default';
   const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
 
-  // Get conversation history (last 12 messages for voice context)
-  const conversation = await Conversation.findOne({ userId })
-    .sort({ updatedAt: -1 })
-    .select({ messages: { $slice: -12 } })
-    .lean();
-  const history = (conversation?.messages || [])
-    .filter(msg => msg.content && msg.content.trim().length > 0)
-    .map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'assistant',
-      content: msg.content
-    }));
+  // Get conversation history (last 12 messages for voice context) from the
+  // SAME active conversation chat uses, so voice picks up the text session's
+  // context and vice versa.
+  const history = await loadActiveHistory(user, 12);
 
   const systemPrompt = await generateSystemPrompt(user, tutorProfile);
 
@@ -1103,8 +1100,9 @@ function extractMathFromSpokenText(text) {
  */
 async function getLastMathSteps(userId) {
   try {
-    const conversation = await Conversation.findOne({ userId })
-      .sort({ updatedAt: -1 })
+    const u = await User.findById(userId).select('activeConversationId').lean();
+    if (!u?.activeConversationId) return [];
+    const conversation = await Conversation.findById(u.activeConversationId)
       .select({ messages: { $slice: -12 } })
       .lean();
     if (!conversation?.messages) return [];
@@ -1136,23 +1134,17 @@ async function getLastMathSteps(userId) {
 }
 
 async function saveToHistory(userId, userMessage, aiResponse) {
-  const messagesToPush = [];
-  if (userMessage) {
-    messagesToPush.push({ role: 'user', content: userMessage.trim(), timestamp: new Date() });
-  }
-  if (aiResponse) {
-    messagesToPush.push({ role: 'assistant', content: aiResponse.trim(), timestamp: new Date() });
-  }
-  if (messagesToPush.length > 0) {
-    await Conversation.findOneAndUpdate(
-      { userId },
-      {
-        $push: { messages: { $each: messagesToPush } },
-        $set: { updatedAt: new Date() }
-      },
-      { upsert: true }
-    );
-  }
+  // Persist to the SAME active conversation chat uses so voice turns are
+  // visible when the student switches back to text. `user` may be passed
+  // (lean) to avoid a refetch; otherwise resolve activeConversationId by id.
+  const user = (userId && userId.activeConversationId !== undefined)
+    ? userId
+    : await User.findById(userId).select('activeConversationId').lean();
+  if (!user) return;
+  await appendToActiveConversation(user, [
+    { role: 'user', content: userMessage },
+    { role: 'assistant', content: aiResponse },
+  ]);
 }
 
 // ═══════════════════════════════════════
@@ -1219,14 +1211,11 @@ router.post('/end-session', isAuthenticated, async (req, res) => {
       'The student is back in chat now — pick up naturally from here.]',
     ].filter(Boolean).join('\n\n');
 
-    await Conversation.findOneAndUpdate(
-      { userId },
-      {
-        $push: { messages: { role: 'assistant', content: marker, timestamp: new Date() } },
-        $set: { updatedAt: new Date() },
-      },
-      { upsert: true }
-    );
+    // Write the continuity marker into the SAME active conversation the chat
+    // tutor reads, so it can pick up where the voice session left off.
+    await appendToActiveConversation(req.user, [
+      { role: 'assistant', content: marker },
+    ]);
 
     res.json({
       summary: {

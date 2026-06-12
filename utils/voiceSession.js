@@ -5,7 +5,6 @@
 // interrupt handling and per-turn metrics.
 
 const User = require('../models/user');
-const Conversation = require('../models/conversation');
 const TUTOR_CONFIG = require('./tutorConfig');
 const { generateSystemPrompt } = require('./prompt');
 const { callLLM, callLLMStream } = require('./llmGateway');
@@ -18,6 +17,7 @@ const metrics = require('./voiceMetrics');
 const orchestrator = require('./orchestrator');
 const { Dispatcher } = require('./orchestrator/dispatcher');
 const { loadOrCreatePlan, resolveCurrentTarget } = require('./tutorPlanManager');
+const { loadActiveHistory, appendToActiveConversation } = require('./activeConversation');
 const logger = require('./logger').child({ module: 'voiceSession' });
 
 const VOICE_MODEL = process.env.VOICE_LLM_MODEL || 'gpt-4o-mini';
@@ -169,14 +169,10 @@ class VoiceSession {
 
         this.systemPrompt = await generateSystemPrompt(this.user, this.tutorProfile);
 
-        // Load recent conversation for context
-        const conv = await Conversation.findOne({ userId: this.user._id })
-            .sort({ updatedAt: -1 })
-            .select({ messages: { $slice: -HISTORY_DEPTH } })
-            .lean();
-        this.history = (conv?.messages || [])
-            .filter(m => m.content && m.content.trim().length > 0)
-            .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
+        // Load recent conversation for context from the SAME active conversation
+        // chat uses (user.activeConversationId), so a student who was just typing
+        // continues seamlessly into voice.
+        this.history = await loadActiveHistory(this.user, HISTORY_DEPTH);
 
         // Persistent Cartesia pool — one WS per session, context_id per turn.
         // Saves ~50–100ms handshake on every turn vs opening a fresh WS.
@@ -1091,15 +1087,14 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
     }
 
     async _persistTurn(userMessage, aiContent) {
-        const messagesToPush = [];
-        if (userMessage) messagesToPush.push({ role: 'user', content: userMessage.trim(), timestamp: new Date() });
-        if (aiContent) messagesToPush.push({ role: 'assistant', content: aiContent.trim(), timestamp: new Date() });
-        if (!messagesToPush.length) return;
-        await Conversation.findOneAndUpdate(
-            { userId: this.user._id },
-            { $push: { messages: { $each: messagesToPush } }, $set: { updatedAt: new Date() } },
-            { upsert: true }
-        );
+        // Persist to the SAME active conversation chat uses so the turn shows up
+        // when the student switches back to text. resolveActiveConversationId
+        // (inside the helper) also updates this.user.activeConversationId in
+        // place, so a long-lived session keeps targeting the right document.
+        await appendToActiveConversation(this.user, [
+            { role: 'user', content: userMessage },
+            { role: 'assistant', content: aiContent },
+        ]);
     }
 
     shutdown(reason = 'shutdown') {
