@@ -1944,6 +1944,48 @@ async function handleGreetingRequest(req, res, userId) {
             await user.save();
         }
 
+        // ── Continuation: returning to chat from the voice tutor ──
+        // The voice tutor's end-session writes a "[Voice session ... just ended]"
+        // continuity marker into this same conversation (see voiceTutor.js). When
+        // the student lands back on chat.html the greeting fires again — but this
+        // is a continuation of an in-progress session, not a new visit, so a fresh
+        // greeting would feel like "a new conversation began". Detect the marker
+        // and stay silent: the tutor already has the full session context, the
+        // student just keeps going.
+        if (activeConversation.messages && activeConversation.messages.length > 0) {
+            const lastMsg = activeConversation.messages[activeConversation.messages.length - 1];
+            const cameBackFromVoice = lastMsg
+                && lastMsg.role === 'assistant'
+                && typeof lastMsg.content === 'string'
+                && lastMsg.content.startsWith('[Voice session');
+
+            if (cameBackFromVoice) {
+                const contTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+                const contTutor = TUTOR_CONFIG[contTutorKey];
+                await Conversation.findByIdAndUpdate(activeConversation._id, { lastActivity: new Date() });
+
+                const useStreaming = req.query.stream === 'true';
+                if (useStreaming) {
+                    res.setHeader('Content-Type', 'text/event-stream');
+                    res.setHeader('Cache-Control', 'no-cache');
+                    res.setHeader('Connection', 'keep-alive');
+                    res.setHeader('X-Accel-Buffering', 'no');
+                    res.flushHeaders();
+                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true })}\n\n`);
+                    return res.end();
+                }
+                return res.json({
+                    text: '',
+                    continued: true,
+                    voiceId: contTutor.voiceId,
+                    isGreeting: true,
+                    userXp: user.xp || 0,
+                    userLevel: user.level || 1,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
+                });
+            }
+        }
+
         // Replay the just-sent greeting on a quick page refresh so the same
         // greeting isn't generated and saved twice. Only replay when the last
         // message is still the greeting (no user reply yet) and was created
