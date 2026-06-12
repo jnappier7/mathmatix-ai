@@ -229,6 +229,105 @@ change *from the current original.*
 `role:"reference"` + `always:true` (faint, fixed comparison element) ·
 `point.binds:[p,p]` (a draggable point binding a *pair* of params).
 
+### `equation_tiles` (token engine — solving equations)
+
+*The tile sibling of the balance. Renders the **Mr. Nappier methodology** the
+prompts already describe: "adds opposite tiles to both sides, cancels zero pairs,
+then divides." Mostly a configure of `algebra-tiles.js` + a two-zone `=` layout +
+the cross-the-`=` sign-flip.*
+
+```jsonc
+{
+  "model": "equation_tiles", "engine": "tokens",
+  "input": { "expression": true, "placeholder": "2x + 3 = 7" },
+  "zones": ["left", "right"], "separator": "=",
+  "tokens": [
+    { "label": "x", "kind": "var", "sign": 1 }, { "label": "−x", "kind": "var", "sign": -1 },
+    { "label": "+1", "kind": "unit", "sign": 1 }, { "label": "−1", "kind": "unit", "sign": -1 }
+  ],
+  "rules": [
+    { "id": "stay-equal",  "invariant": "left == right" },                          // 1
+    { "id": "zero-pair",   "when": "overlap-opposite",       "do": "annihilate" },  // 2 + 5
+    { "id": "cross-the-=", "when": "drag-across-separator",  "do": "flip-sign" },   // 3
+    { "id": "both-sides",  "when": "add-tile",               "require": "mirror-other-side" } // 4
+  ],
+  "goal": "isolate-x",
+  "readout": { "text": "{equation}", "format": "smartFraction" },
+  "prompt": "Get x by itself. Move a tile across the = (sign flips!) or add the same to both sides. Cancel zero pairs."
+}
+```
+Jason's rules: (1) stay equal · (2/5) opposites make zero (same side) · (3) cross
+the `=` → sign flips · (4) same on both sides.
+
+### `area_model_factor` (token engine — multiply & factor)
+
+*Algebra tiles laid out as an area rectangle. Forward = the box method (the four
+regions ARE the expansion); backward = factoring as a packing puzzle — arrange the
+pieces into a complete rectangle and its sides are the factors. `algebra-tiles.js`
+already factors.*
+
+```jsonc
+{
+  "model": "area_model_factor", "engine": "tokens", "modes": ["multiply", "factor"],
+  "input": { "expression": true, "placeholder": "(x+3)(x+2)   or   x^2 + 5x + 6" },
+  "rectangle": { "width": "x + p", "height": "x + q", "cells": ["x·x", "q·x", "p·x", "p·q"] },
+  "controls": [
+    { "type": "slider", "param": "p", "label": "width (x+?)",  "range": [-5,5], "step": 1 },
+    { "type": "slider", "param": "q", "label": "height (x+?)", "range": [-5,5], "step": 1 }
+  ],
+  "rules":   [ { "mode": "factor", "goal": "complete-rectangle", "win": "sides == factors" } ],
+  "readout": { "text": "(x + {p})(x + {q}) = x² + {p+q}x + {p·q}", "format": "smartFraction" },
+  "prompt":  "Multiply: set the two factors → the four areas add to the answer. Factor: pack the pieces into a rectangle → its sides are the factors."
+}
+```
+
+### `triangle_inequality` (JSXGraph — the first GEOMETRY model)
+
+*"If the two short sides can't reach across the base, no triangle." The apex is the
+**intersection of two reach-circles** (radius a at P, radius b at Q) — it exists
+exactly when `a+b>c` and `|a−b|<c`, so the geometry decides; the model can't lie.
+Shrink a/b and watch the arcs pull apart → the sides dangle without meeting.*
+
+```jsonc
+{
+  "model": "triangle_inequality",
+  "params": { "a": 4, "b": 3, "c": 6 },
+  "controls": [
+    { "type": "slider", "param": "a", "label": "side a", "range": [1,10], "step": 0.5 },
+    { "type": "slider", "param": "b", "label": "side b", "range": [1,10], "step": 0.5 },
+    { "type": "slider", "param": "c", "label": "base c", "range": [1,10], "step": 0.5 }
+  ],
+  "elements": [
+    { "id": "P", "type": "point", "at": [0,0] }, { "id": "Q", "type": "point", "at": ["c",0] },
+    { "id": "base",   "type": "segment", "from": "P", "to": "Q" },
+    { "id": "reachA", "type": "circle", "center": "P", "radius": "a", "role": "reference" },
+    { "id": "reachB", "type": "circle", "center": "Q", "radius": "b", "role": "reference" },
+    { "id": "apex",   "type": "intersection", "of": ["reachA","reachB"] },   // exists iff sides reach
+    { "id": "sideA",  "type": "segment", "from": "P", "to": "apex" },
+    { "id": "sideB",  "type": "segment", "from": "Q", "to": "apex" },
+    { "id": "check",  "type": "readout", "text": "a + b = {a+b}  vs  c = {c}  →  {reaches? '✓ triangle' : '✗ too short'}" }
+  ],
+  "prompt": "Shrink a and b — when do they get too short to reach across c? That gap is the triangle inequality."
+}
+```
+Forges the geometry primitives: `point`, `segment`, `circle`, and **`intersection`**
+(the meet point of two elements; it simply doesn't exist when they don't cross → the gap).
+
+### `volume` (stub — to design; first 3-D substrate)
+
+*Named, not yet designed. Likely the 3-D analog of the area model — a rectangular
+prism (l×w×h) tiled with unit cubes → `V = lwh` (parallel to rectangle = L×W).
+JSXGraph is 2-D, so this is the first model that wants a **third rendering engine**
+(true 3-D, or an isometric 2½-D view). Design next.*
+
+### The token half is mostly *configure, not build*
+
+`integer_counters` + `equation_tiles` + `area_model_factor` are all configurations
+of `algebra-tiles.js` — which already does drag, zero-pairs, expression-parsing,
+AND factoring. So the **discrete half is largely shipped.** The real new
+construction is the **JSXGraph continuous/geometry engine** (graphing models +
+`triangle_inequality`), plus a future **3-D substrate** for `volume`.
+
 ---
 
 ## Build catalog — prioritized, deduped, mapped to the vocabulary
@@ -245,6 +344,8 @@ long-tail / generate candidate.
 | Number line | PhET Number Line | drag/place points, integers & operations | plane(1-D), point, region, readout | **C** |
 | Fraction / area model | PhET Fractions, Area Model | partition bars/areas, build fractions | region/bar, readout | **C** |
 | **Integer counters** (zero pairs) | PhET / algebra tiles | type `-7+10`, drag red onto yellow to cancel | token, input, rule(annihilate), readout | **C** *(already built — configure `algebra-tiles.js`)* |
+| **Equation tiles** (`equation_tiles`) | algebra tiles / scale | solve `2x+3=7`: zero-pairs, cross-the-`=` flips sign, both sides | token, zones/`=`, rule(flip-sign, mirror), readout | **C** *(configure `algebra-tiles.js`)* |
+| **Area model — multiply/factor** (`area_model_factor`) | PhET Area Model Algebra | box-method expand `(x+3)(x+2)`; pack pieces to factor | token, rectangle/cells, modes, readout | **C** *(configure `algebra-tiles.js`)* |
 
 ### Tier 2 — curate (adds the geometry primitives)
 | Model | Source | What the student does | Primitives | |
@@ -253,6 +354,8 @@ long-tail / generate candidate.
 | Triangle similarity / congruence | GeoGebra | resize one triangle; angles equal, sides proportional | polygon, transform(dilate), angle, readout | **C** |
 | Transformations (translate/rotate/reflect/dilate) | GeoGebra | transform a shape, watch image | polygon, transform, line/point | **C** |
 | Pythagorean theorem | GeoGebra | resize right triangle; a²+b²=c² holds | polygon, region(squares), readout | **C** |
+| **Triangle inequality** (`triangle_inequality`) | GeoGebra | shrink a/b; reach-circles pull apart → "too short, no triangle" | point, segment, circle, **intersection**, readout | **C** *(first geometry model)* |
+| **Volume — rectangular prism** (`volume`, stub) | PhET / GeoGebra | drag l/w/h; unit cubes fill → V = lwh | (needs 3-D / isometric substrate) | **C** *(to design — first 3-D)* |
 | Angle relationships (vertical/linear/parallel-cut) | GeoGebra | drag a transversal; angle pairs update | line, angle(measure), readout | **C** |
 | Graphing quadratics | PhET Graphing Quadratics | sliders a/b/c, vertex/roots readout | plane, slider, function, readout | **C** |
 
