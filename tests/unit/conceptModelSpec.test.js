@@ -306,9 +306,19 @@ describe('conceptModelSpec — geometry (measure, never assert)', () => {
     expect(sum).toBeCloseTo(180, 4);
   });
 
-  it('both geometry models validate', () => {
+  it('a linear pair sums to 180°, by construction (at the catalog coords)', () => {
+    const s = getModel('linear_pair_angles');
+    const at = {};
+    s.elements.filter((e) => e.type === 'point').forEach((p) => { at[p.id] = p.at; });
+    const ang1 = measureAngle(at.O, at.A, at.B);
+    const ang2 = measureAngle(at.O, at.A2, at.B);
+    expect(ang1 + ang2).toBeCloseTo(180, 6);
+  });
+
+  it('the geometry models validate', () => {
     expect(validateModelSpec(getModel('inscribed_angle')).errors).toEqual([]);
     expect(validateModelSpec(getModel('triangle_angle_sum')).errors).toEqual([]);
+    expect(validateModelSpec(getModel('linear_pair_angles')).errors).toEqual([]);
   });
 
   function gbase() {

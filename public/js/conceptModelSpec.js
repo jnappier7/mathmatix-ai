@@ -351,6 +351,37 @@
       reveal: ['plane', 'tri', 'A', 'B', 'C', 'angA', 'angB', 'angC', 'out'],
       drag: ['A', 'B', 'C'],
       prompt: 'Drag any corner. The three angles change — but watch the sum.'
+    },
+
+    // A straight line A—O—A′ with a ray O—B. The two adjacent angles (a linear
+    // pair) are measured live and always sum to 180°. Reuses the geometry
+    // vocabulary — no new primitives.
+    linear_pair_angles: {
+      model: 'linear_pair_angles',
+      title: 'Linear pair: angles on a line sum to 180°',
+      params: {},
+      controls: [],
+      measures: {
+        ang1: { type: 'angle', at: 'O', rays: ['A', 'B'] },
+        ang2: { type: 'angle', at: 'O', rays: ['A2', 'B'] }
+      },
+      derived: { sum: 'ang1 + ang2' },
+      elements: [
+        { id: 'plane', type: 'plane', x: [-7, 7], y: [-3, 7], grid: false, axisLabels: false },
+        { id: 'circ', type: 'circle', center: [0, 0], radius: 5, role: 'reference' },
+        { id: 'O', type: 'point', at: [0, 0], label: 'O' },
+        { id: 'A', type: 'point', at: [5, 0], label: 'A' },        // straight line A—O—A′
+        { id: 'A2', type: 'point', at: [-5, 0], label: 'A′' },
+        { id: 'B', type: 'point', at: [3, 4], on: 'circle:circ', draggable: true, label: 'B' },
+        { id: 'lineA', type: 'segment', through: ['A', 'A2'] },
+        { id: 'rayB', type: 'segment', through: ['O', 'B'] },
+        { id: 'ang1', type: 'angle', at: 'O', rays: ['A', 'B'], measure: true },
+        { id: 'ang2', type: 'angle', at: 'O', rays: ['A2', 'B'], measure: true },
+        { id: 'out', type: 'readout', text: '{ang1}° + {ang2}° = {sum}°', at: 'top' }
+      ],
+      reveal: ['plane', 'circ', 'O', 'A', 'A2', 'B', 'lineA', 'rayB', 'ang1', 'ang2', 'out'],
+      drag: ['B'],
+      prompt: 'Drag B along the arc. The two angles on the line always add to 180° — a linear pair.'
     }
   };
 
