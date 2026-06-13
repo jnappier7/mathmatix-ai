@@ -108,8 +108,16 @@ const BOARD_COMMAND_SCHEMA = {
       type: ['string', 'null'],
       description: 'Short caption rendered under a graph or image. Null for other actions.',
     },
+    model: {
+      type: ['string', 'null'],
+      description: 'Concept-model name for an interactive model card (e.g. "slope_intercept_line"). Required for the "model" action. Null otherwise.',
+    },
+    prompt: {
+      type: ['string', 'null'],
+      description: 'Short teaching intention shown above a concept model (e.g. "Slide m up — what happens?"). Optional on the "model" action; null for other actions.',
+    },
   },
-  required: ['action', 'tex', 'op', 'check', 'fn', 'query', 'caption'],
+  required: ['action', 'tex', 'op', 'check', 'fn', 'query', 'caption', 'model', 'prompt'],
   additionalProperties: false,
 };
 

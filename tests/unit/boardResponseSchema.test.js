@@ -271,10 +271,10 @@ describe('boardResponseSchema — buildStructuredResponseInstructions (Phase 4)'
   });
 
   test('documents each board action shape', () => {
-    // `diagram` and `model` are recognized end-to-end (verb + guard + client
-    // renderer) but intentionally NOT yet described to the model in the prompt —
-    // they're gated behind DIAGRAM_BOARD / CONCEPT_MODELS and the structured
-    // fields land alongside the prompt wiring in a follow-up. Exclude them here.
+    // `diagram` is recognized end-to-end but not yet described in any prompt.
+    // `model` IS taught to the tutor, but in its own flag-gated builder
+    // (utils/conceptModelPrompt.js), not in this structured block. Both are
+    // therefore absent from buildStructuredResponseInstructions() by design.
     const NOT_YET_PROMPTED = new Set(['diagram', 'model']);
     for (const action of BOARD_ACTIONS) {
       if (NOT_YET_PROMPTED.has(action)) continue;
