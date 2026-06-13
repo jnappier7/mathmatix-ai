@@ -52,6 +52,15 @@
     cot: function (v) { return 1 / Math.tan(v); }
   };
 
+  // Binary-op combiners. These take (l, r) as PARAMETERS so each call gets a
+  // fresh closure — critical inside the parser's left-associative while-loops,
+  // where a shared `var l = left` binding would make a 3+ term expression's
+  // closures reference themselves and recurse infinitely.
+  function fAdd(l, r) { return function (s) { return l(s) + r(s); }; }
+  function fSub(l, r) { return function (s) { return l(s) - r(s); }; }
+  function fMul(l, r) { return function (s) { return l(s) * r(s); }; }
+  function fDiv(l, r) { return function (s) { var d = r(s); return d === 0 ? NaN : l(s) / d; }; }
+
   function tokenize(expr) {
     var tokens = [];
     var i = 0;
@@ -105,8 +114,7 @@
       var left = parseTerm();
       while (peek() && (peek().value === '+' || peek().value === '-')) {
         var op = consume().value; var right = parseTerm();
-        var l = left, r = right;
-        left = op === '+' ? function (s) { return l(s) + r(s); } : function (s) { return l(s) - r(s); };
+        left = op === '+' ? fAdd(left, right) : fSub(left, right);
       }
       return left;
     }
@@ -114,10 +122,7 @@
       var left = parseUnary();
       while (peek() && (peek().value === '*' || peek().value === '/')) {
         var op = consume().value; var right = parseUnary();
-        var l = left, r = right;
-        left = op === '*'
-          ? function (s) { return l(s) * r(s); }
-          : function (s) { var d = r(s); return d === 0 ? NaN : l(s) / d; };
+        left = op === '*' ? fMul(left, right) : fDiv(left, right);
       }
       return left;
     }
@@ -139,8 +144,7 @@
       while (peek()) {
         var t = peek();
         if (t.type === 'num' || t.type === 'id' || t.value === '(' || t.value === '|') {
-          var right = parseAtom(); var l = left, r = right;
-          left = function (s) { return l(s) * r(s); };
+          left = fMul(left, parseAtom());
         } else break;
       }
       return left;
@@ -281,6 +285,72 @@
       reveal: ['plane', 'parentCurve', 'curve', 'anchor', 'eq'],
       drag: ['anchor'],
       prompt: 'Drag the key point and slide a/h/k. Now switch the parent — do the SAME rules still work?'
+    },
+
+    // First geometry model — folds in the diagramSpec.js inscribed-angle work as
+    // a LIVE interactive (Tier 2). A and C are fixed on the circle and define the
+    // arc; B is a draggable glider on the major arc. The inscribed angle ∠ABC and
+    // the central angle ∠AOC are MEASURED live by the engine from the point
+    // positions (never asserted). Two theorems fall out, correct by construction:
+    // the inscribed angle is invariant as B moves, and it is always half the
+    // central angle on the same arc.
+    inscribed_angle: {
+      model: 'inscribed_angle',
+      title: 'Inscribed Angle Theorem',
+      params: {},
+      controls: [],
+      measures: {
+        inscribed: { type: 'angle', at: 'B', rays: ['A', 'C'] },
+        central:   { type: 'angle', at: 'O', rays: ['A', 'C'] }
+      },
+      elements: [
+        { id: 'plane', type: 'plane', x: [-7, 7], y: [-7, 7], grid: false, axisLabels: false },
+        { id: 'circ', type: 'circle', center: [0, 0], radius: 5, role: 'reference' },
+        { id: 'O', type: 'point', at: [0, 0], label: 'O' },                 // center (fixed)
+        { id: 'A', type: 'point', at: [-4.3301, 2.5], label: 'A' },         // fixed arc endpoints
+        { id: 'C', type: 'point', at: [4.3301, 2.5], label: 'C' },
+        { id: 'B', type: 'point', at: [0, -5], on: 'circle:circ', draggable: true, label: 'B' },
+        { id: 'segOA', type: 'segment', through: ['O', 'A'], role: 'reference' },
+        { id: 'segOC', type: 'segment', through: ['O', 'C'], role: 'reference' },
+        { id: 'segBA', type: 'segment', through: ['B', 'A'] },
+        { id: 'segBC', type: 'segment', through: ['B', 'C'] },
+        { id: 'angB', type: 'angle', at: 'B', rays: ['A', 'C'], measure: true },
+        { id: 'angO', type: 'angle', at: 'O', rays: ['A', 'C'], measure: true },
+        { id: 'out', type: 'readout', text: 'inscribed = {inscribed}°   ·   central = {central}°', at: 'top' }
+      ],
+      reveal: ['plane', 'circ', 'O', 'A', 'C', 'B', 'segOA', 'segOC', 'segBA', 'segBC', 'angB', 'angO', 'out'],
+      drag: ['B'],
+      prompt: 'Drag B around the arc. The inscribed angle never changes — and it is always half the central angle.'
+    },
+
+    // Drag any vertex; the three interior angles are measured live and ALWAYS
+    // sum to 180°. Reuses the geometry vocabulary (polygon + angle measures +
+    // a derived sum) with no new primitives.
+    triangle_angle_sum: {
+      model: 'triangle_angle_sum',
+      title: 'Angles of a triangle sum to 180°',
+      params: {},
+      controls: [],
+      measures: {
+        angA: { type: 'angle', at: 'A', rays: ['B', 'C'] },
+        angB: { type: 'angle', at: 'B', rays: ['A', 'C'] },
+        angC: { type: 'angle', at: 'C', rays: ['A', 'B'] }
+      },
+      derived: { sum: 'angA + angB + angC' },
+      elements: [
+        { id: 'plane', type: 'plane', x: [-8, 8], y: [-6, 6], grid: true, axisLabels: false },
+        { id: 'A', type: 'point', at: [-4, -2], draggable: true, label: 'A' },
+        { id: 'B', type: 'point', at: [4, -2], draggable: true, label: 'B' },
+        { id: 'C', type: 'point', at: [1, 4], draggable: true, label: 'C' },
+        { id: 'tri', type: 'polygon', vertices: ['A', 'B', 'C'], fill: true },
+        { id: 'angA', type: 'angle', at: 'A', rays: ['B', 'C'], measure: true },
+        { id: 'angB', type: 'angle', at: 'B', rays: ['A', 'C'], measure: true },
+        { id: 'angC', type: 'angle', at: 'C', rays: ['A', 'B'], measure: true },
+        { id: 'out', type: 'readout', text: '{angA}° + {angB}° + {angC}° = {sum}°', at: 'top' }
+      ],
+      reveal: ['plane', 'tri', 'A', 'B', 'C', 'angA', 'angB', 'angC', 'out'],
+      drag: ['A', 'B', 'C'],
+      prompt: 'Drag any corner. The three angles change — but watch the sum.'
     }
   };
 
@@ -292,8 +362,12 @@
   // real elements. A spec that passes can be rendered without surprises; a spec
   // that fails is rejected before it reaches the engine.
 
-  var ELEMENT_TYPES = { plane: 1, function: 1, point: 1, line: 1, segment: 1, ray: 1, readout: 1 };
+  var ELEMENT_TYPES = {
+    plane: 1, function: 1, point: 1, line: 1, segment: 1, ray: 1, readout: 1,
+    circle: 1, polygon: 1, angle: 1
+  };
   var CONTROL_TYPES = { slider: 1, choice: 1 };
+  var MEASURE_TYPES = { angle: 1 };
 
   function isPlainObject(o) { return o && typeof o === 'object' && !Array.isArray(o); }
 
@@ -303,6 +377,23 @@
     var out = []; var re = /\{([a-zA-Z_][a-zA-Z_0-9.]*)\}/g; var m;
     while ((m = re.exec(text))) out.push(m[1]);
     return out;
+  }
+
+  // ─── Geometry measurement (pure, so the engine MEASURES, never asserts) ───
+  // The non-reflex angle at vertex `at` subtended by points `p` and `q`, in
+  // degrees. All three are [x, y]. This is the correctness core of the geometry
+  // models: the spec says "measure angle A-B-C", the engine computes it from the
+  // live point positions — a curated OR generated geometry spec cannot show a
+  // wrong angle. Returns NaN for a degenerate (zero-length) ray.
+  function measureAngle(at, p, q) {
+    if (!at || !p || !q) return NaN;
+    var v1x = p[0] - at[0], v1y = p[1] - at[1];
+    var v2x = q[0] - at[0], v2y = q[1] - at[1];
+    var m1 = Math.hypot(v1x, v1y), m2 = Math.hypot(v2x, v2y);
+    if (m1 === 0 || m2 === 0) return NaN;
+    var c = (v1x * v2x + v1y * v2y) / (m1 * m2);
+    c = Math.max(-1, Math.min(1, c)); // clamp FP drift outside acos domain
+    return Math.acos(c) * 180 / Math.PI;
   }
 
   /**
@@ -363,19 +454,39 @@
       }
     });
 
-    // derived names are computed from numeric params (and earlier derived);
-    // readable by readouts and functions, not user-controlled.
+    // measures are quantities the engine reads off the LIVE geometry (an angle
+    // between three points) — never params, never asserted. Collected before
+    // `derived` so a derived value (e.g. a triangle's angle sum) may read them;
+    // their point refs are validated in the deferred pass (after ids exist).
+    var measureSet = {};
+    if (spec.measures != null) {
+      if (!isPlainObject(spec.measures)) {
+        errors.push('spec.measures must be an object when present');
+      } else {
+        Object.keys(spec.measures).forEach(function (name) {
+          if (paramSet[name]) errors.push('measure "' + name + '" collides with a param of the same name');
+          var def = spec.measures[name];
+          if (!isPlainObject(def) || !MEASURE_TYPES[def.type]) {
+            errors.push('measure "' + name + '" needs a known type (' + Object.keys(MEASURE_TYPES).join(', ') + ')');
+          }
+          measureSet[name] = true;
+        });
+      }
+    }
+
+    // derived names are computed from numeric params, measures, and earlier
+    // derived; readable by readouts and functions, not user-controlled.
     var derivedSet = {};
     if (spec.derived != null) {
       if (!isPlainObject(spec.derived)) {
         errors.push('spec.derived must be an object when present');
       } else {
         Object.keys(spec.derived).forEach(function (name) {
-          if (paramSet[name]) errors.push('derived "' + name + '" collides with a param of the same name');
+          if (paramSet[name] || measureSet[name]) errors.push('derived "' + name + '" collides with a param/measure name');
           try {
             var c = compileExpr(spec.derived[name]);
             c.vars.forEach(function (v) {
-              if (!numericSet[v] && !derivedSet[v]) {
+              if (!numericSet[v] && !measureSet[v] && !derivedSet[v]) {
                 errors.push('derived "' + name + '" references unknown name "' + v + '"');
               }
             });
@@ -387,14 +498,16 @@
       }
     }
 
-    // math-readable: what a function/derived/point-coord expression may read.
+    // math-readable: what a function/point-coord expression may read.
     var mathSet = {};
     Object.keys(numericSet).forEach(function (k) { mathSet[k] = true; });
     Object.keys(derivedSet).forEach(function (k) { mathSet[k] = true; });
-    // name-resolvable: what a readout token may reference (math names + selectors).
+
+    // name-resolvable: what a readout token may reference (math + selectors + measures).
     var nameSet = {};
     Object.keys(mathSet).forEach(function (k) { nameSet[k] = true; });
     Object.keys(selectorSet).forEach(function (k) { nameSet[k] = true; });
+    Object.keys(measureSet).forEach(function (k) { nameSet[k] = true; });
 
     // controls
     if (spec.controls != null) {
@@ -506,6 +619,38 @@
           }
         }
 
+        if (el.type === 'circle') {
+          if (!Array.isArray(el.center) || el.center.length !== 2) {
+            errors.push('circle "' + el.id + '" needs center:[x,y]');
+          } else {
+            el.center.forEach(function (coord) {
+              if (typeof coord === 'string' && !mathSet[coord]) {
+                errors.push('circle "' + el.id + '" center references unknown name "' + coord + '"');
+              } else if (typeof coord !== 'string' && typeof coord !== 'number') {
+                errors.push('circle "' + el.id + '" center must be numbers or param names');
+              }
+            });
+          }
+          if (typeof el.radius === 'string') {
+            if (!mathSet[el.radius]) errors.push('circle "' + el.id + '" radius references unknown name "' + el.radius + '"');
+          } else if (!(typeof el.radius === 'number' && el.radius > 0)) {
+            errors.push('circle "' + el.id + '" needs a positive radius (number or param)');
+          }
+        }
+
+        if (el.type === 'polygon') {
+          if (!Array.isArray(el.vertices) || el.vertices.length < 3) {
+            errors.push('polygon "' + el.id + '" needs vertices:[idA, idB, idC, …] (3+)');
+          }
+        }
+
+        if (el.type === 'angle') {
+          if (typeof el.at !== 'string') errors.push('angle "' + el.id + '" needs at: <point id>');
+          if (!Array.isArray(el.rays) || el.rays.length !== 2) {
+            errors.push('angle "' + el.id + '" needs rays:[idA, idB]');
+          }
+        }
+
         if (el.type === 'readout') {
           readoutTokens(el.text).forEach(function (tok) {
             var parts = tok.split('.');
@@ -521,14 +666,43 @@
         }
       });
 
-      // line/segment/ray endpoints must reference real point ids — deferred
-      // until all ids are collected so order doesn't matter.
+      // Cross-element references (point/circle ids) — deferred until all ids are
+      // collected so element order doesn't matter.
+      var isPoint = function (ref) { return ids[ref] && ids[ref].type === 'point'; };
       spec.elements.forEach(function (el) {
         if ((el.type === 'line' || el.type === 'segment' || el.type === 'ray') && Array.isArray(el.through)) {
           el.through.forEach(function (ref) {
-            if (!ids[ref]) errors.push(el.type + ' "' + el.id + '" references unknown point "' + ref + '"');
+            if (!isPoint(ref)) errors.push(el.type + ' "' + el.id + '" references unknown point "' + ref + '"');
           });
         }
+        if (el.type === 'polygon' && Array.isArray(el.vertices)) {
+          el.vertices.forEach(function (ref) {
+            if (!isPoint(ref)) errors.push('polygon "' + el.id + '" references unknown point "' + ref + '"');
+          });
+        }
+        if (el.type === 'angle') {
+          if (el.at && !isPoint(el.at)) errors.push('angle "' + el.id + '" vertex "' + el.at + '" is not a point');
+          if (Array.isArray(el.rays)) el.rays.forEach(function (ref) {
+            if (!isPoint(ref)) errors.push('angle "' + el.id + '" ray "' + ref + '" is not a point');
+          });
+        }
+        // A point constrained on a circle: on:"circle:<id>".
+        if (el.type === 'point' && typeof el.on === 'string' && el.on.indexOf('circle:') === 0) {
+          var cid = el.on.slice('circle:'.length);
+          if (!ids[cid] || ids[cid].type !== 'circle') {
+            errors.push('point "' + el.id + '" on references unknown circle "' + cid + '"');
+          }
+        }
+      });
+
+      // measure point refs (deferred for the same reason).
+      Object.keys(measureSet).forEach(function (name) {
+        var def = spec.measures[name];
+        if (!isPlainObject(def)) return;
+        if (def.at && !isPoint(def.at)) errors.push('measure "' + name + '" vertex "' + def.at + '" is not a point');
+        if (Array.isArray(def.rays)) def.rays.forEach(function (ref) {
+          if (!isPoint(ref)) errors.push('measure "' + name + '" ray "' + ref + '" is not a point');
+        });
       });
     }
 
@@ -556,6 +730,7 @@
     validateModelSpec: validateModelSpec,
     getModel: getModel,
     readoutTokens: readoutTokens,
+    measureAngle: measureAngle,
     MODELS: Object.keys(CURATED)
   };
 });

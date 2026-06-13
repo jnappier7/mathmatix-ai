@@ -157,10 +157,33 @@
       compiledParents[key] = CMS.compileExpr(spec.parents[key].fn);
     });
 
+    // JSXGraph point objects, filled when elements are created below. Declared
+    // up here so measureValues()/scope() can close over the live objects.
+    var jpoints = {};
+
+    // Quantities the engine MEASURES off the live geometry (never asserted) —
+    // e.g. the angle between three live points. Read by readouts and derived.
+    function measureValues() {
+      var out = {};
+      if (!spec.measures) return out;
+      Object.keys(spec.measures).forEach(function (name) {
+        var def = spec.measures[name];
+        if (def.type === 'angle') {
+          var at = jpoints[def.at], p = jpoints[def.rays[0]], q = jpoints[def.rays[1]];
+          out[name] = (at && p && q)
+            ? CMS.measureAngle([at.X(), at.Y()], [p.X(), p.Y()], [q.X(), q.Y()])
+            : NaN;
+        }
+      });
+      return out;
+    }
+
     function scope() {
       var s = {};
       Object.keys(P).forEach(function (k) { s[k] = P[k]; });
-      // derived read numeric params (and earlier derived) — evaluate in order.
+      var mv = measureValues();
+      Object.keys(mv).forEach(function (k) { s[k] = mv[k]; });
+      // derived read params/measures (and earlier derived) — evaluate in order.
       Object.keys(compiledDerived).forEach(function (n) { s[n] = compiledDerived[n].eval(s); });
       return s;
     }
@@ -220,7 +243,7 @@
       zoom: { enabled: false }
     });
 
-    var jpoints = {};    // elementId -> JSXGraph point
+    var jcircles = {};   // elementId -> JSXGraph circle
     var bindMap = {};    // elementId -> { xParam, yParam }
     var readouts = [];   // { el, element }
 
@@ -239,20 +262,34 @@
       });
       return map;
     }
+    function hasBinds(e) { var m = bindMap[e.id]; return m && (m.xParam || m.yParam); }
 
-    // First pass: points (lines reference them by id).
+    // Pre-pass: circles (a point may glide on one).
+    spec.elements.forEach(function (e) {
+      if (e.type !== 'circle') return;
+      var isRef = e.role === 'reference';
+      jcircles[e.id] = board.create('circle', [
+        [resolveCoord(e.center[0]), resolveCoord(e.center[1])], resolveCoord(e.radius)
+      ], {
+        strokeColor: isRef ? '#b9b2e6' : '#5B3DF6',
+        strokeWidth: 2, fixed: true, highlight: false, fillOpacity: 0
+      });
+    });
+
+    // First pass: points (lines/polygons/angles reference them by id).
     spec.elements.forEach(function (e) {
       if (e.type !== 'point') return;
       var x0 = resolveCoord(e.at[0]);
       var y0 = resolveCoord(e.at[1]);
       var attrs = {
         name: e.label || '', size: 3, fixed: !e.draggable,
-        strokeColor: '#5B3DF6', fillColor: '#8B7BFF',
+        strokeColor: '#5B3DF6', fillColor: e.draggable ? '#8B7BFF' : '#5B3DF6',
         withLabel: !!e.label, label: { offset: [8, 8] }
       };
-      var pt;
+      var pt, onCircle = typeof e.on === 'string' && e.on.indexOf('circle:') === 0;
       if (e.on === 'yAxis') pt = board.create('glider', [0, y0, board.defaultAxes.y], attrs);
       else if (e.on === 'xAxis') pt = board.create('glider', [x0, 0, board.defaultAxes.x], attrs);
+      else if (onCircle) pt = board.create('glider', [x0, y0, jcircles[e.on.slice(7)]], attrs);
       else pt = board.create('point', [x0, y0], attrs);
       jpoints[e.id] = pt;
       bindMap[e.id] = computeBindMap(e);
@@ -260,16 +297,21 @@
       if (e.draggable) {
         pt.on('drag', function () {
           var m = bindMap[e.id];
-          if (m.xParam) P[m.xParam] = snapParam(m.xParam, pt.X());
-          if (m.yParam) P[m.yParam] = snapParam(m.yParam, pt.Y());
-          pushParamsToControls();
-          pushParamsToPoints();   // land on the snapped grid value
+          // Param-bound point: write the (snapped) position back to its params and
+          // resync the controls. Free/constrained geometry point: its position IS
+          // the state — just redraw so the live measures update.
+          if (m.xParam || m.yParam) {
+            if (m.xParam) P[m.xParam] = snapParam(m.xParam, pt.X());
+            if (m.yParam) P[m.yParam] = snapParam(m.yParam, pt.Y());
+            pushParamsToControls();
+            pushParamsToPoints();   // land on the snapped grid value
+          }
           redraw();
         });
       }
     });
 
-    // Second pass: functions, lines, readouts.
+    // Second pass: functions, lines, polygons, angles, readouts.
     spec.elements.forEach(function (e) {
       if (e.type === 'function') {
         var c = compiledFns[e.id];
@@ -299,12 +341,35 @@
       } else if (e.type === 'line' || e.type === 'segment' || e.type === 'ray') {
         var a = jpoints[e.through[0]], b2 = jpoints[e.through[1]];
         if (a && b2) {
+          var isRefLine = e.role === 'reference';
           var straight = e.type === 'segment'
             ? { straightFirst: false, straightLast: false }
             : e.type === 'ray' ? { straightFirst: false, straightLast: true } : {};
           board.create('line', [a, b2], Object.assign({
-            strokeColor: '#5B3DF6', strokeWidth: 3, fixed: true, highlight: false
+            strokeColor: isRefLine ? '#a9a2d6' : '#5B3DF6',
+            strokeWidth: isRefLine ? 1.5 : 2.5,
+            dash: isRefLine ? 2 : 0,
+            fixed: true, highlight: false
           }, straight));
+        }
+      } else if (e.type === 'polygon') {
+        var verts = e.vertices.map(function (id) { return jpoints[id]; }).filter(Boolean);
+        if (verts.length >= 3) {
+          board.create('polygon', verts, {
+            fillColor: '#8B7BFF', fillOpacity: e.fill === false ? 0 : 0.12,
+            borders: { strokeColor: '#5B3DF6', strokeWidth: 2.5, highlight: false },
+            vertices: { visible: false }, // the point elements own the vertices
+            fixed: true, highlight: false
+          });
+        }
+      } else if (e.type === 'angle') {
+        var av = jpoints[e.at], r0 = jpoints[e.rays[0]], r1 = jpoints[e.rays[1]];
+        if (av && r0 && r1) {
+          // JSXGraph marks the angle at the MIDDLE point: [rayA, vertex, rayB].
+          board.create('angle', [r0, av, r1], {
+            radius: 0.8, type: 'sector', fillColor: '#8B7BFF', fillOpacity: 0.35,
+            strokeColor: '#5B3DF6', withLabel: false, fixed: true, highlight: false
+          });
         }
       } else if (e.type === 'readout') {
         var host = el('div', 'cr-cm-readout');
@@ -390,8 +455,11 @@
       });
     }
     function pushParamsToPoints() {
+      // Only param-bound points are positioned FROM params. Free / circle-glider
+      // geometry points own their own position (the source of truth there is the
+      // board, read back via measures) — never yank them to their initial `at`.
       spec.elements.forEach(function (e) {
-        if (e.type !== 'point' || !e.draggable) return;
+        if (e.type !== 'point' || !e.draggable || !hasBinds(e)) return;
         var pt = jpoints[e.id]; if (!pt) return;
         var x = resolveCoord(e.at[0]);
         var y = resolveCoord(e.at[1]);
