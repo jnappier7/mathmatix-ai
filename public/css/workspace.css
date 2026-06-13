@@ -687,6 +687,25 @@
   accent-color: var(--cr-accent);
   cursor: pointer;
 }
+.cr-cm-choice { display: flex; align-items: center; gap: 10px; }
+.cr-cm-choice-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.cr-cm-choice-btn {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  color: var(--cr-text-dim);
+  background: var(--cr-bg-2, var(--cr-bg-panel));
+  border: 1px solid var(--cr-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--cr-transition-fast), color var(--cr-transition-fast), border-color var(--cr-transition-fast);
+}
+.cr-cm-choice-btn:hover { color: var(--cr-text); border-color: var(--cr-accent); }
+.cr-cm-choice-btn.is-active {
+  color: #fff;
+  background: var(--cr-accent-grad);
+  border-color: transparent;
+}
 
 /* Shared caption styling for graph + image cards. */
 .cr-ws-board-card-caption {

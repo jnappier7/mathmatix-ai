@@ -63,6 +63,14 @@
     .cr-cm-slider-label { flex: 0 0 auto; min-width: 46px; font-size: 13px; font-weight: 700; color: var(--cr-text); font-style: italic; }
     .cr-cm-slider-value { font-weight: 600; font-style: normal; color: var(--cr-accent); }
     .cr-cm-slider-input { flex: 1 1 auto; accent-color: var(--cr-accent); cursor: pointer; }
+    .cr-cm-choice { display: flex; align-items: center; gap: 10px; }
+    .cr-cm-choice-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cr-cm-choice-btn {
+      font-size: 13px; font-weight: 600; padding: 5px 12px; color: var(--cr-text-dim);
+      background: var(--cr-bg-2); border: 1px solid var(--cr-border); border-radius: 999px; cursor: pointer;
+    }
+    .cr-cm-choice-btn:hover { color: var(--cr-text); border-color: var(--cr-accent); }
+    .cr-cm-choice-btn.is-active { color: #fff; background: var(--cr-accent-grad); border-color: transparent; }
   </style>
 </head>
 <body>
@@ -83,6 +91,10 @@
       <h2>two_point_line — slope as rise/run, measured live</h2>
       <div class="host" id="host-tpl"></div>
     </div>
+    <div class="demo-card">
+      <h2>function_transformations — a·f(x−h)+k, swap the parent</h2>
+      <div class="host" id="host-ft"></div>
+    </div>
   </div>
 
   <script src="/js/conceptModelSpec.js"></script>
@@ -94,6 +106,9 @@
       );
       window.ConceptModelRenderer.renderModel(
         document.getElementById('host-tpl'), 'two_point_line'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-ft'), 'function_transformations'
       );
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

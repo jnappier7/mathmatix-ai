@@ -153,12 +153,17 @@
       if (t.type === 'num') { consume(); var val = t.value; return function () { return val; }; }
       if (t.type === 'id') {
         consume();
-        var name = t.value.toLowerCase();
-        if (Object.prototype.hasOwnProperty.call(KNOWN_CONSTS, name) && !(peek() && peek().value === '(')) {
-          var cval = KNOWN_CONSTS[name]; return function () { return cval; };
+        // Functions/constants match case-insensitively (SIN == sin, PI == pi),
+        // but VARIABLE names preserve case — so a param/placeholder named `P` is
+        // distinct from `p`, and `s[name]` lookups in the renderer line up
+        // exactly with the declared param keys.
+        var raw = t.value;
+        var lower = raw.toLowerCase();
+        if (Object.prototype.hasOwnProperty.call(KNOWN_CONSTS, lower) && !(peek() && peek().value === '(')) {
+          var cval = KNOWN_CONSTS[lower]; return function () { return cval; };
         }
-        if (Object.prototype.hasOwnProperty.call(FN_MAP, name)) {
-          var fn = FN_MAP[name];
+        if (Object.prototype.hasOwnProperty.call(FN_MAP, lower)) {
+          var fn = FN_MAP[lower];
           if (peek() && peek().value === '(') {
             consume('('); var args = [parseExpr()];
             while (peek() && peek().value === ',') { consume(','); args.push(parseExpr()); }
@@ -168,9 +173,9 @@
           return function (s) { return fn(s.x); };
         }
         // Otherwise it's a scope variable (the graphing var x, or a param/derived).
-        if (name !== 'x') vars[name] = true;
+        if (lower !== 'x') vars[raw] = true;
         return function (s) {
-          var v = s ? s[name] : undefined;
+          var v = s ? s[raw] : undefined;
           return typeof v === 'number' ? v : NaN;
         };
       }
@@ -229,6 +234,53 @@
       reveal: ['plane', 'line', 'p1', 'p2', 'slopeOut'],
       drag: ['p1', 'p2'],
       prompt: 'Drag A and B. Watch the slope — it is rise over run between the two points.'
+    },
+
+    // The universal-parent model — highest leverage in the catalog. `a·f(x−h)+k`
+    // is parent-agnostic: `a` stretches/flips, `h` shifts left/right, `k` shifts
+    // up/down, for ANY parent f. Swap the parent (x², |x|, x³, √x) and the SAME
+    // rules hold — which is exactly the concept. One model = the whole
+    // transformations unit (subsumes the standalone quadratic). The faint parent
+    // is ALWAYS shown so the transform reads as a change from the original.
+    //
+    // New vocabulary it forges (no new primitives, just attributes):
+    //   • a string-valued "selector" param + a `choice` control to pick it
+    //   • a `parents` library (named fn + anchor + label + optional domain)
+    //   • `compose` on a function: evaluate the SELECTED parent at a shifted
+    //     argument, exposed to the outer fn as a placeholder (so a*P + k means
+    //     "a times the parent of (x-h), plus k") — generic, no per-parent code
+    //   • `role:"reference"` + `always:true` (the faint, fixed comparison curve)
+    //   • a point that binds a PAIR of params (the draggable key point ↔ h,k)
+    //   • `{selector.field}` readout tokens (resolve to the parent's label, …)
+    function_transformations: {
+      model: 'function_transformations',
+      title: 'a · f(x − h) + k',
+      params: { parent: 'quadratic', a: 1, h: 0, k: 0 },
+      parents: {
+        quadratic:   { fn: 'x^2',     anchor: 'vertex',     label: 'x²' },
+        absolute:    { fn: 'abs(x)',  anchor: 'vertex',     label: '|x|' },
+        cubic:       { fn: 'x^3',     anchor: 'inflection', label: 'x³' },
+        square_root: { fn: 'sqrt(x)', anchor: 'endpoint',   label: '√x', domain: [0, null] }
+      },
+      controls: [
+        { type: 'choice', param: 'parent', label: 'parent' },
+        { type: 'slider', param: 'a', label: 'a', range: [-3, 3], step: 0.25, ticks: false },
+        { type: 'slider', param: 'h', label: 'h', range: [-6, 6], step: 0.5, ticks: true },
+        { type: 'slider', param: 'k', label: 'k', range: [-6, 6], step: 0.5, ticks: true }
+      ],
+      elements: [
+        { id: 'plane', type: 'plane', x: [-10, 10], y: [-10, 10], grid: true, axisLabels: true },
+        // The faint parent f(x), always shown; switches with the selection.
+        { id: 'parentCurve', type: 'function', fn: 'P', compose: { P: { parent: 'parent', arg: 'x' } }, role: 'reference', always: true },
+        // The transform a·f(x−h)+k of the SELECTED parent.
+        { id: 'curve', type: 'function', fn: 'a*P + k', compose: { P: { parent: 'parent', arg: 'x - h' } } },
+        // The parent's key point (vertex / inflection / endpoint) lives at (h,k).
+        { id: 'anchor', type: 'point', at: ['h', 'k'], draggable: true, binds: ['h', 'k'] },
+        { id: 'eq', type: 'readout', text: 'f = {parent.label}   ·   a = {a},  h = {h},  k = {k}', at: 'top' }
+      ],
+      reveal: ['plane', 'parentCurve', 'curve', 'anchor', 'eq'],
+      drag: ['anchor'],
+      prompt: 'Drag the key point and slide a/h/k. Now switch the parent — do the SAME rules still work?'
     }
   };
 
@@ -264,15 +316,55 @@
     if (typeof spec.model !== 'string' || !spec.model) errors.push('spec.model must be a non-empty string');
     if (!isPlainObject(spec.params)) errors.push('spec.params must be an object');
 
+    // Params come in two flavours:
+    //   • numeric  — a quantity the math reads (m, b, a, h, k). Slider-driven.
+    //   • selector — a STRING key naming a choice (e.g. parent: "quadratic").
+    //     Choice-driven; not a math quantity, so it can't appear inside an fn,
+    //     but it can be read by `{selector.field}` readout tokens and used by a
+    //     function's `compose` to pick which parent to evaluate.
     var paramNames = isPlainObject(spec.params) ? Object.keys(spec.params) : [];
-    var paramSet = {};
+    var paramSet = {};      // all params (numeric + selector)
+    var numericSet = {};    // numeric params only — the math-readable ones
+    var selectorSet = {};   // string-valued selector params
     paramNames.forEach(function (p) {
       paramSet[p] = true;
-      if (typeof spec.params[p] !== 'number') errors.push('param "' + p + '" must have a numeric default');
+      var d = spec.params[p];
+      if (typeof d === 'number') numericSet[p] = true;
+      else if (typeof d === 'string') selectorSet[p] = true;
+      else errors.push('param "' + p + '" must default to a number or a selector string');
     });
 
-    // derived names are computed from params (and earlier derived); they're
-    // readable by readouts and the function curve but are not user-controlled.
+    // parents library — named pure functions of x (the swappable f). Each entry
+    // is { fn, label?, anchor?, domain? }; the fn may only read x / constants.
+    var parentSet = {};
+    if (spec.parents != null) {
+      if (!isPlainObject(spec.parents)) {
+        errors.push('spec.parents must be an object when present');
+      } else {
+        Object.keys(spec.parents).forEach(function (key) {
+          parentSet[key] = true;
+          var entry = spec.parents[key];
+          if (!isPlainObject(entry)) { errors.push('parent "' + key + '" must be an object'); return; }
+          try {
+            var pc = compileExpr(entry.fn);
+            pc.vars.forEach(function (v) {
+              errors.push('parent "' + key + '" fn may only use x; references "' + v + '"');
+            });
+          } catch (e) {
+            errors.push('parent "' + key + '" fn does not compile: ' + e.message);
+          }
+        });
+      }
+    }
+    // A selector's default must name a real parent (when a parents library exists).
+    Object.keys(selectorSet).forEach(function (s) {
+      if (spec.parents && !parentSet[spec.params[s]]) {
+        errors.push('selector "' + s + '" default "' + spec.params[s] + '" is not a parent');
+      }
+    });
+
+    // derived names are computed from numeric params (and earlier derived);
+    // readable by readouts and functions, not user-controlled.
     var derivedSet = {};
     if (spec.derived != null) {
       if (!isPlainObject(spec.derived)) {
@@ -283,7 +375,7 @@
           try {
             var c = compileExpr(spec.derived[name]);
             c.vars.forEach(function (v) {
-              if (!paramSet[v] && !derivedSet[v]) {
+              if (!numericSet[v] && !derivedSet[v]) {
                 errors.push('derived "' + name + '" references unknown name "' + v + '"');
               }
             });
@@ -294,9 +386,15 @@
         });
       }
     }
-    var readableSet = {};
-    Object.keys(paramSet).forEach(function (k) { readableSet[k] = true; });
-    Object.keys(derivedSet).forEach(function (k) { readableSet[k] = true; });
+
+    // math-readable: what a function/derived/point-coord expression may read.
+    var mathSet = {};
+    Object.keys(numericSet).forEach(function (k) { mathSet[k] = true; });
+    Object.keys(derivedSet).forEach(function (k) { mathSet[k] = true; });
+    // name-resolvable: what a readout token may reference (math names + selectors).
+    var nameSet = {};
+    Object.keys(mathSet).forEach(function (k) { nameSet[k] = true; });
+    Object.keys(selectorSet).forEach(function (k) { nameSet[k] = true; });
 
     // controls
     if (spec.controls != null) {
@@ -308,6 +406,7 @@
           if (!CONTROL_TYPES[c.type]) errors.push('control[' + i + '] has unknown type "' + c.type + '"');
           if (!paramSet[c.param]) errors.push('control[' + i + '] binds unknown param "' + c.param + '"');
           if (c.type === 'slider') {
+            if (!numericSet[c.param]) errors.push('slider for "' + c.param + '" must drive a numeric param');
             if (!Array.isArray(c.range) || c.range.length !== 2 ||
               typeof c.range[0] !== 'number' || typeof c.range[1] !== 'number' || c.range[0] >= c.range[1]) {
               errors.push('slider for "' + c.param + '" needs range [lo, hi] with lo < hi');
@@ -315,6 +414,14 @@
             if (c.step != null && !(typeof c.step === 'number' && c.step > 0)) {
               errors.push('slider for "' + c.param + '" has a non-positive step');
             }
+          }
+          if (c.type === 'choice') {
+            if (!selectorSet[c.param]) errors.push('choice for "' + c.param + '" must drive a selector param');
+            var opts = Array.isArray(c.options) ? c.options : Object.keys(parentSet);
+            if (!opts.length) errors.push('choice for "' + c.param + '" has no options');
+            opts.forEach(function (o) {
+              if (spec.parents && !parentSet[o]) errors.push('choice option "' + o + '" is not a parent');
+            });
           }
         });
       }
@@ -333,10 +440,40 @@
         if (!ELEMENT_TYPES[el.type]) errors.push('element "' + (el.id || i) + '" has unknown type "' + el.type + '"');
 
         if (el.type === 'function') {
+          // `compose` lets the fn call the SELECTED parent at a shifted argument,
+          // exposing the result as a placeholder var. Validate the placeholders
+          // first, then allow the outer fn to read them.
+          var fnReadable = {};
+          Object.keys(mathSet).forEach(function (k) { fnReadable[k] = true; });
+          if (el.compose != null) {
+            if (!isPlainObject(el.compose)) {
+              errors.push('function "' + el.id + '" compose must be an object');
+            } else {
+              Object.keys(el.compose).forEach(function (ph) {
+                var spec2 = el.compose[ph];
+                if (!isPlainObject(spec2) || !spec2.parent) {
+                  errors.push('function "' + el.id + '" compose."' + ph + '" needs { parent, arg }');
+                  return;
+                }
+                if (!selectorSet[spec2.parent]) {
+                  errors.push('function "' + el.id + '" compose parent "' + spec2.parent + '" is not a selector');
+                }
+                try {
+                  var ac = compileExpr(spec2.arg);
+                  ac.vars.forEach(function (v) {
+                    if (!mathSet[v]) errors.push('function "' + el.id + '" compose arg references unknown name "' + v + '"');
+                  });
+                } catch (e) {
+                  errors.push('function "' + el.id + '" compose arg does not compile: ' + e.message);
+                }
+                fnReadable[ph] = true;
+              });
+            }
+          }
           try {
             var cf = compileExpr(el.fn);
             cf.vars.forEach(function (v) {
-              if (!readableSet[v]) errors.push('function "' + el.id + '" references unknown name "' + v + '"');
+              if (!fnReadable[v]) errors.push('function "' + el.id + '" references unknown name "' + v + '"');
             });
           } catch (e) {
             errors.push('function "' + el.id + '" does not compile: ' + e.message);
@@ -348,7 +485,7 @@
             errors.push('point "' + el.id + '" needs at:[x,y]');
           } else {
             el.at.forEach(function (coord) {
-              if (typeof coord === 'string' && !readableSet[coord]) {
+              if (typeof coord === 'string' && !mathSet[coord]) {
                 errors.push('point "' + el.id + '" at references unknown name "' + coord + '"');
               } else if (typeof coord !== 'string' && typeof coord !== 'number') {
                 errors.push('point "' + el.id + '" at coordinate must be a number or param name');
@@ -358,7 +495,7 @@
           if (el.binds != null) {
             var binds = Array.isArray(el.binds) ? el.binds : [el.binds];
             binds.forEach(function (p) {
-              if (!paramSet[p]) errors.push('point "' + el.id + '" binds unknown param "' + p + '"');
+              if (!numericSet[p]) errors.push('point "' + el.id + '" binds unknown numeric param "' + p + '"');
             });
           }
         }
@@ -371,8 +508,15 @@
 
         if (el.type === 'readout') {
           readoutTokens(el.text).forEach(function (tok) {
-            var base = tok.split('.')[0];
-            if (!readableSet[base]) errors.push('readout "' + el.id + '" references unknown name "' + tok + '"');
+            var parts = tok.split('.');
+            var base = parts[0];
+            if (parts.length > 1) {
+              // "{selector.field}" — the base must be a selector param; the field
+              // resolves against the chosen parent (e.g. {parent.label}).
+              if (!selectorSet[base]) errors.push('readout "' + el.id + '" token "' + tok + '" needs a selector before the dot');
+            } else if (!nameSet[base]) {
+              errors.push('readout "' + el.id + '" references unknown name "' + tok + '"');
+            }
           });
         }
       });
