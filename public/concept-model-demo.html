@@ -95,6 +95,18 @@
       <h2>function_transformations — a·f(x−h)+k, swap the parent</h2>
       <div class="host" id="host-ft"></div>
     </div>
+    <div class="demo-card">
+      <h2>inscribed_angle — drag B; inscribed stays half the central (measured live)</h2>
+      <div class="host" id="host-ia"></div>
+    </div>
+    <div class="demo-card">
+      <h2>triangle_angle_sum — drag a corner; the three angles always sum to 180°</h2>
+      <div class="host" id="host-tas"></div>
+    </div>
+    <div class="demo-card">
+      <h2>linear_pair_angles — drag B; the two angles on the line always sum to 180°</h2>
+      <div class="host" id="host-lpa"></div>
+    </div>
   </div>
 
   <script src="/js/conceptModelSpec.js"></script>
@@ -109,6 +121,15 @@
       );
       window.ConceptModelRenderer.renderModel(
         document.getElementById('host-ft'), 'function_transformations'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-ia'), 'inscribed_angle'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-tas'), 'triangle_angle_sum'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-lpa'), 'linear_pair_angles'
       );
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
