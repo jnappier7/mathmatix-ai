@@ -290,7 +290,7 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
 
   test('BOARD_ACTIONS lists the supported actions', () => {
     expect(BOARD_ACTIONS).toEqual([
-      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model',
+      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example',
     ]);
   });
 
@@ -326,7 +326,7 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
     expect(BOARD_RESPONSE_SCHEMA.required).toContain('turn_type');
   });
 
-  test('TURN_TYPES has the eight expected values', () => {
+  test('TURN_TYPES has the nine expected values', () => {
     expect(TURN_TYPES).toEqual([
       'problem_introduction',
       'step_acknowledgment',
@@ -336,6 +336,7 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
       'scaffold',
       'redirect',
       'small_talk',
+      'worked_example',
     ]);
   });
 

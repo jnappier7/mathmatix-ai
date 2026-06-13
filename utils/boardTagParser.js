@@ -25,7 +25,7 @@
 
 'use strict';
 
-const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'model']);
+const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'model', 'example']);
 
 // Matches a single <BOARD …/> or <BOARD …>…</BOARD> tag. The `g` flag
 // lets us iterate multiple occurrences in one response. The inner
@@ -82,10 +82,14 @@ function parseBoardTags(aiResponseText) {
         const innerTrim = innerBody ? innerBody.trim() : '';
 
         const command = { action };
-        if (action === 'pose' || action === 'resolve' || action === 'verify' || action === 'scaffold') {
+        if (action === 'pose' || action === 'resolve' || action === 'verify' || action === 'scaffold' || action === 'example') {
             const tex = texAttr || innerTrim || null;
             if (!tex) continue; // require tex for these actions
             command.tex = tex;
+        }
+        if (action === 'example' && captionAttr) {
+            // Optional short step label, e.g. caption="Trig substitution".
+            command.caption = captionAttr;
         }
         if (action === 'apply') {
             const op = opAttr || innerTrim || null;

@@ -281,6 +281,20 @@
       var sMath = el('div', 'cr-ws-board-card-math');
       card.appendChild(sMath);
       renderTex(sMath, widenScaffoldBlanks(step.tex));
+    } else if (step.type === 'worked') {
+      // Read-only worked-example step — one line of a derivation the tutor is
+      // teaching (NOT the student's own problem). A distinct accent + a
+      // "Worked example" eyebrow (CSS ::before) so it reads as "I'm showing
+      // you", never as the student's stated work. No interaction handlers.
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--worked');
+      var wMath = el('div', 'cr-ws-board-card-math');
+      card.appendChild(wMath);
+      renderTex(wMath, step.tex);
+      if (step.label) {
+        var wCap = el('div', 'cr-ws-board-card-caption');
+        wCap.textContent = step.label;
+        card.appendChild(wCap);
+      }
     } else {
       // Equation card — pose / resolve / verify all share the same shape;
       // verify gets a badge + an expanded check line.
@@ -582,6 +596,24 @@
       openWorkspace();
       this.showTool('board');
       pushBoardStep({ type: 'scaffold', tex: tex });
+      return true;
+    },
+
+    /**
+     * Drop a read-only worked-example step into the board timeline. One line of
+     * a derivation the tutor is TEACHING (not the student's own problem); the
+     * board renders it with a "Worked example" eyebrow and no interaction.
+     * @param {string} tex     LaTeX of the derivation step
+     * @param {string} [label] optional short step label, e.g. "Trig substitution"
+     */
+    boardExample: function (tex, label) {
+      tex = (tex == null ? '' : String(tex)).trim();
+      if (!tex) return false;
+      openWorkspace();
+      this.showTool('board');
+      var step = { type: 'worked', tex: tex };
+      if (label) step.label = String(label).trim();
+      pushBoardStep(step);
       return true;
     },
 
