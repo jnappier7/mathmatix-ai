@@ -51,7 +51,14 @@
 // exercised end-to-end, but the strict structured-output JSON fields aren't
 // added to the schema yet — the model isn't told to emit it. Flag-off, inert in
 // production until enabled (see CONCEPT_MODELS.md, Build order).
-const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model'];
+// 'example' is a READ-ONLY worked-example step — one card per step of a
+// derivation the tutor is teaching (NOT the student's graded problem). Unlike
+// pose/resolve/verify (which mirror the STUDENT's stated work and are guarded
+// to the student's text), example cards carry the tutor's own derivation and
+// are only admitted in teaching mode (WORKED_EXAMPLE_BOARD + an "I-do" decision
+// action), still re-checked against the student's pinned problem/answer so a
+// "worked example" can never become a cover for solving the graded problem.
+const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example'];
 
 // The kind of turn Maya is serving. The model self-declares this
 // on every structured response. Server-side audit (utils/turnTypeAudit.js)
@@ -74,6 +81,7 @@ const TURN_TYPES = [
   'scaffold',              // tutor lowers difficulty, hints, or breaks into sub-question
   'redirect',              // off-topic redirect back to math
   'small_talk',            // greeting, closing, off-task chitchat
+  'worked_example',        // tutor demonstrates/derives on a teaching example — example cards expected
 ];
 
 const BOARD_COMMAND_SCHEMA = {
@@ -86,7 +94,7 @@ const BOARD_COMMAND_SCHEMA = {
     },
     tex: {
       type: ['string', 'null'],
-      description: 'LaTeX expression. Required for pose, resolve, verify, and scaffold. For scaffold it MUST contain at least one empty slot the student fills, written as \\boxed{} (e.g. "x^2 + 4x + \\boxed{} = 12 + \\boxed{}"). Null for apply, clear, graph, image.',
+      description: 'LaTeX expression. Required for pose, resolve, verify, scaffold, and example. For scaffold it MUST contain at least one empty slot the student fills, written as \\boxed{} (e.g. "x^2 + 4x + \\boxed{} = 12 + \\boxed{}"). For example it is one step of the tutor\'s derivation. Null for apply, clear, graph, image.',
     },
     op: {
       type: ['string', 'null'],
@@ -106,7 +114,7 @@ const BOARD_COMMAND_SCHEMA = {
     },
     caption: {
       type: ['string', 'null'],
-      description: 'Short caption rendered under a graph or image. Null for other actions.',
+      description: 'Short caption rendered under a graph or image. For an example card it is an OPTIONAL short label for the step (e.g. "Trig substitution"). Null for other actions.',
     },
     model: {
       type: ['string', 'null'],
@@ -127,7 +135,7 @@ const BOARD_RESPONSE_SCHEMA = {
     turn_type: {
       type: 'string',
       enum: TURN_TYPES,
-      description: 'What kind of turn this is. "problem_introduction" when you put a new problem in front of the student (board_commands MUST include a pose). "step_acknowledgment" when responding to a step they took in an open problem. "verification" when they stated a final answer (board_commands SHOULD include verify). "concept_reference" when they asked about a concept and you are showing reference content (board_commands MAY include image). "feedback" for praise or correction without advancing. "scaffold" when lowering difficulty / hinting. "redirect" when steering back to math. "small_talk" for greetings, closings, off-task chitchat.',
+      description: 'What kind of turn this is. "problem_introduction" when you put a new problem in front of the student (board_commands MUST include a pose). "step_acknowledgment" when responding to a step they took in an open problem. "verification" when they stated a final answer (board_commands SHOULD include verify). "concept_reference" when they asked about a concept and you are showing reference content (board_commands MAY include image). "feedback" for praise or correction without advancing. "scaffold" when lowering difficulty / hinting. "worked_example" when you DEMONSTRATE or DERIVE on a teaching example that is NOT the student\'s graded problem (board_commands SHOULD include example cards, one per step). "redirect" when steering back to math. "small_talk" for greetings, closings, off-task chitchat.',
     },
     chat_message: {
       type: 'string',
@@ -261,6 +269,7 @@ Your reply is a structured object, not free text. You fill three fields:
   • concept_reference — the student asked about a concept and you're showing reference content. board_commands SHOULD include an image or graph card.
   • feedback — praise or correction that does NOT advance the work. board_commands SHOULD be empty (an image/graph reference aid is fine; a pose/apply/resolve/verify here usually means you mislabeled the turn).
   • scaffold — you lowered difficulty, hinted, or broke the problem into a sub-question. Pair it with a scaffold card when a visual hint helps (see below); never an apply/resolve/verify that does the step for them.
+  • worked_example — you are DEMONSTRATING or DERIVING on a teaching example (a parallel problem with DIFFERENT numbers, or a general concept derivation) — NOT the student's graded problem. board_commands SHOULD mirror your derivation as ordered example cards, one per step. This is the one place you may write the full worked steps on the board, BECAUSE the work is yours on a teaching example, not the student's graded problem — never put the student's own problem or its answer in an example card.
   • redirect — steering an off-topic student back to math. Usually no cards.
   • small_talk — greeting, closing, or off-task chitchat. board_commands empty.
 
@@ -273,6 +282,7 @@ CARD SHAPE (fields not used for an action are null):
 - graph:   { action: "graph", fn: "x^2 - 4", caption: "Where it crosses zero" } — reference plot in the board timeline.
 - image:   { action: "image", query: "unit circle labeled", caption: "Reference" } — reference diagram from the safe whitelist.
 - scaffold:{ action: "scaffold", tex: "x^2 + 4x + \\boxed{} = 12 + \\boxed{}" } — show the NEXT step's structure on the student's own problem with the new terms left as empty \\boxed{} slots for THEM to fill. This is the one card you may put on the student's own problem without them stating it first, BECAUSE the blanks reveal nothing — they're a hint, not the answer. Every scaffold MUST contain at least one \\boxed{} blank; never fill the boxes in yourself (that would be handing over the answer). Use it when a student is stuck and a partially-drawn step would unstick them.
+- example: { action: "example", tex: "\\int x^2\\,dx = \\tfrac{1}{3}x^3 + C", caption: "Power rule" } — ONE step of a derivation YOU are teaching (worked_example turns only). Emit them in order, one card per step; caption is an optional short label. These carry your full worked steps, which is allowed ONLY because the work is yours on a teaching example — never put the student's graded problem or its answer in an example card.
 
 If the student references the board ("show me on the board", "draw it", "use the board"), you MUST include a relevant card (pose for an equation, graph for a function, image for a geometry concept). An empty board while a problem is on screen is the worst-case defect.`;
 }

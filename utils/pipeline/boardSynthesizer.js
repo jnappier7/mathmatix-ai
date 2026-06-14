@@ -669,7 +669,10 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   // Order by canonical sequence — the frontend renders in array
   // order, so pose-first / verify-last produces the cleanest
   // animation when both LLM and synthesizer fire in the same turn.
-  const ORDER = { clear: 0, pose: 1, scaffold: 2, apply: 3, resolve: 4, verify: 5, graph: 6, image: 7 };
+  // `example` cards (read-only derivation steps) sit right after scaffold and
+  // before the solve-cycle cards. Multiple examples share one rank; Array.sort
+  // is stable, so their emission order — the order of the derivation — is kept.
+  const ORDER = { clear: 0, pose: 1, scaffold: 2, example: 3, apply: 4, resolve: 5, verify: 6, graph: 7, image: 8 };
   const all = [...llm, ...added].sort((a, b) => {
     const ai = ORDER[a.action] ?? 99;
     const bi = ORDER[b.action] ?? 99;
@@ -848,12 +851,64 @@ function synthesizeFallbackImage({ tutorResponse, activeSkill } = {}) {
   return { action: 'image', query, caption: concept };
 }
 
+// ---------------------------------------------------------------------------
+// Worked-example step extraction (hybrid backfill)
+//
+// When the tutor DERIVES something (area of a circle via integration, deriving
+// the quadratic formula), the steps live as display-math in the chat bubble and
+// never reach the board. The structured path SHOULD emit `example` cards, but
+// compliance is unreliable — so when a teaching turn carries a multi-step
+// derivation and no example card survived, we mirror the tutor's own math spans
+// onto the board deterministically. This is the worked-example analogue of
+// synthesizeFallbackImage: ground truth is the tutor's literal LaTeX, so there
+// is no guessing about the math.
+// ---------------------------------------------------------------------------
+
+// Capture the inner LaTeX of a display- or inline-math span. Fenced display
+// forms ($$…$$, \[…\]) come first; \(…\) inline last. Bare single-$ is
+// deliberately NOT matched — it false-positives on currency ("$5 and $10").
+const MATH_SPAN_RE = /\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)/g;
+
+// A span is "math enough" to mirror only if it carries a relation or a
+// recognizable operator/function. A stray variable in prose (\(x\)) is skipped,
+// so inline references don't pollute the derivation.
+const MATH_SIGNAL_RE = /[=<>]|\\(?:int|frac|sqrt|sum|lim|cdot|times|div|pi|theta|sin|cos|tan|log|ln|infty)\b|\d\s*[+\-*/^]\s*\d/;
+
+/**
+ * Extract a tutor derivation's steps as ordered, read-only `example` cards.
+ * Conservative: returns [] unless at least two DISTINCT math steps are found —
+ * a lone equation isn't a derivation worth mirroring, and emitting a half-board
+ * is worse than emitting nothing (same bar as synthesizeFallbackImage).
+ *
+ * @param {object} params
+ * @param {string} params.tutorResponse - the tutor's visible reply (LaTeX intact)
+ * @returns {Array<{action:'example', tex:string}>}
+ */
+function synthesizeWorkedExampleSteps({ tutorResponse } = {}) {
+  if (!tutorResponse || typeof tutorResponse !== 'string') return [];
+  const steps = [];
+  const seen = new Set();
+  const re = new RegExp(MATH_SPAN_RE.source, MATH_SPAN_RE.flags);
+  let m;
+  while ((m = re.exec(tutorResponse)) !== null) {
+    const raw = (m[1] || m[2] || m[3] || '').replace(/\s+/g, ' ').trim();
+    if (!raw || raw.length > 240) continue;     // empty or runaway capture
+    if (!MATH_SIGNAL_RE.test(raw)) continue;     // prose / lone symbol — skip
+    const key = raw.replace(/\s+/g, '');
+    if (seen.has(key)) continue;                 // drop exact repeats
+    seen.add(key);
+    steps.push({ action: 'example', tex: raw });
+  }
+  return steps.length >= 2 ? steps : [];
+}
+
 module.exports = {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
   dropRedundantPoses,
   synthesizeFallbackPose,
   synthesizeFallbackImage,
+  synthesizeWorkedExampleSteps,
   detectBoardReference,
   // Exposed for tests
   _detectVisualPromise: detectVisualPromise,

@@ -185,6 +185,26 @@ describe('boardTagParser', () => {
     });
   });
 
+  describe('example (worked-example step)', () => {
+    it('extracts an example with tex', () => {
+      const input = '<BOARD action="example" tex="\\int x^2\\,dx = \\tfrac{1}{3}x^3 + C" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'example', tex: '\\int x^2\\,dx = \\tfrac{1}{3}x^3 + C' },
+      ]);
+    });
+
+    it('keeps an optional caption as the step label', () => {
+      const input = '<BOARD action="example" tex="A = \\pi r^2" caption="Final result" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'example', tex: 'A = \\pi r^2', caption: 'Final result' },
+      ]);
+    });
+
+    it('drops an example with no tex', () => {
+      expect(parseBoardTags('<BOARD action="example" />').boardCommands).toEqual([]);
+    });
+  });
+
   describe('hasBoardTags', () => {
     it('returns true when a tag is present', () => {
       expect(hasBoardTags('<BOARD action="pose" tex="x=1"/>')).toBe(true);
