@@ -676,10 +676,14 @@
      * @param {string} [prompt]        teaching intention shown above the model
      */
     boardModel: function (model, prompt) {
-      // Accept either (model, prompt) or a command object { model, prompt }.
+      // Accept either (model, prompt) or a command object { model, prompt, spec }.
+      // A generated command carries `spec` (a full, already-validated spec object
+      // from the long-tail path); it wins over the curated `model` name. The
+      // renderer takes a curated name OR a spec object, so either flows straight
+      // through.
       if (model && typeof model === 'object' && model.action) {
         prompt = model.prompt;
-        model = model.model;
+        model = model.spec || model.model;
       }
       if (!model) return false;
       openWorkspace();

@@ -28,6 +28,7 @@ const {
 } = require('../boardResponseSchema');
 const {
   isConceptModelsEnabled,
+  isConceptModelsGenerativeEnabled,
   buildConceptModelInstructions,
 } = require('../conceptModelPrompt');
 
@@ -365,7 +366,10 @@ function assemblePrompt(decision, promptContext) {
   // summon it. Emits the right syntax for the active path (tag vs structured).
   // Flag off → no-op, so the prompt is byte-for-byte today's.
   if (isConceptModelsEnabled()) {
-    fullSystemPrompt += '\n\n' + buildConceptModelInstructions(isStructuredModeEnabled());
+    fullSystemPrompt += '\n\n' + buildConceptModelInstructions(
+      isStructuredModeEnabled(),
+      { generative: isConceptModelsGenerativeEnabled() }
+    );
   }
 
   // Inject phase-specific prompt if available

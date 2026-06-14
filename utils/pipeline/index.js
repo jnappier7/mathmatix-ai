@@ -43,6 +43,7 @@ const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrad
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
+const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
@@ -461,6 +462,24 @@ async function runPipeline(message, ctx) {
   const noPinnedProblem = !(ctx.conversation?.boardProblem?.tex);
   const workedExampleBoard = process.env.WORKED_EXAMPLE_BOARD === 'true'
     && (isTeachingMove(decision) || noPinnedProblem);
+
+  // Generative long-tail gate (CONCEPT_MODELS.md step 4). A `model` command may
+  // carry a brand-new spec the LLM authored (JSON) instead of a curated catalog
+  // name. Validate it HERE, before the pedagogy guard and before render: parse +
+  // bound + structurally validate, so a spec whose ids/params/refs don't resolve
+  // is dropped ("can pick a weird layout but cannot display wrong math"). Curated
+  // names are checked against the catalog. No-op for non-model commands.
+  if (rawLlmBoardCommands.length > 0) {
+    const resolvedModels = resolveModelCommands(rawLlmBoardCommands);
+    rawLlmBoardCommands = resolvedModels.commands;
+    for (const { command, reason, errors } of resolvedModels.dropped) {
+      boardLogger.warn('Concept-model command dropped', {
+        reason,
+        model: command.model || null,
+        errors: errors || null,
+      });
+    }
+  }
 
   if (rawLlmBoardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({

@@ -88,6 +88,31 @@ describe('boardResponseSchema — normalizeBoardCommand', () => {
     })).toEqual({ action: 'scaffold', tex: 'x^2 + 4x + \\boxed{} = 12 + \\boxed{}' });
   });
 
+  test('keeps the model name on a curated concept-model command', () => {
+    expect(normalizeBoardCommand({
+      action: 'model',
+      tex: null, op: null, check: null, fn: null, query: null, caption: null,
+      model: 'slope_intercept_line',
+      spec: null,
+      prompt: 'Slide m up — what happens?',
+    })).toEqual({
+      action: 'model',
+      model: 'slope_intercept_line',
+      prompt: 'Slide m up — what happens?',
+    });
+  });
+
+  test('keeps the spec JSON string on a generated concept-model command', () => {
+    const spec = '{ "model": "cosine_wave", "params": { "a": 1 } }';
+    expect(normalizeBoardCommand({
+      action: 'model',
+      tex: null, op: null, check: null, fn: null, query: null, caption: null,
+      model: null,
+      spec,
+      prompt: 'Slide a',
+    })).toEqual({ action: 'model', spec, prompt: 'Slide a' });
+  });
+
   test('empty-string field is treated as null and dropped', () => {
     expect(normalizeBoardCommand({
       action: 'apply',
