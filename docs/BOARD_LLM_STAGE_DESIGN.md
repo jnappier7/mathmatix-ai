@@ -137,6 +137,25 @@ for quality/alignment, not safety.)
   drop if it lets us trim board protocol out of the (expensive, Opus) tutor
   prompt.
 
+## As built (`utils/pipeline/boardLlm.js`)
+
+- **Model:** the stack is OpenAI-only, so the design's "Haiku" maps to the app's
+  fast model, **`gpt-4o-mini`** (temp 0, 8s timeout, via `callLLMStructured` from
+  `llmGateway` — the same path the visual gate's value judge uses).
+- **Stage:** lives just before the pedagogy guard in
+  [utils/pipeline/index.js](../utils/pipeline/index.js). In `live` it becomes the
+  source of `rawLlmBoardCommands`; in `shadow` it logs only. Fails to **empty**
+  (not fail-open) so the deterministic synthesizer fallback fills the board.
+- **`allowedBoardActions`** is derived from `BOARD_ACTIONS` (minus the flag-off
+  `diagram`/`model`), with `confirm_correct → {verify, clear}` and the skip-set
+  (`redirect_to_math`, `acknowledge_frustration`, `elicit_first`, `exit_ramp`)
+  → no call.
+- **Branch independence:** built off `main`, so it ships with main's board
+  vocabulary. The worked-example `example` card lives on
+  `feat/workboard-worked-example-mirror`; because the action whitelist is derived
+  from `BOARD_ACTIONS`, `example` flows into the translator automatically once
+  that branch merges (it's already gated teaching-only in `allowedBoardActionsFor`).
+
 ## Rollout
 
 Mirror the visual gate's discipline — `BOARD_LLM_MODE`:

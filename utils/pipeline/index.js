@@ -46,6 +46,7 @@ const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, detectBoardReference } = require('./boardSynthesizer');
+const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
@@ -435,6 +436,44 @@ async function runPipeline(message, ctx) {
   // explicit flag AND an explicit WORKED_EXAMPLE decision. Off → fully strict.
   const workedExampleBoard = process.env.WORKED_EXAMPLE_BOARD === 'true'
     && decision?.action === ACTIONS.WORKED_EXAMPLE;
+
+  // ── Stage 5b.0: BOARD LLM (advisory board-card source) ──
+  // A second, focused call that translates the tutor's FINAL message into board
+  // cards (see docs/BOARD_LLM_STAGE_DESIGN.md). The tutor model is unreliable at
+  // transcribing its own teaching into board commands; this stage does that one
+  // job with a short, single-purpose prompt. ADVISORY ONLY: in `live` it becomes
+  // the SOURCE of rawLlmBoardCommands, then flows through the exact same guard →
+  // synthesizer-merge → visual gate below — the guard owns final authority. In
+  // `shadow` it runs and logs but does not change what renders. Default `off` →
+  // no call, no latency, behavior byte-identical to today. The deterministic
+  // synthesizer downstream remains the fallback when this yields nothing.
+  const boardLlmMode = getBoardLlmMode();
+  if (boardLlmMode !== 'off') {
+    try {
+      const proposal = await proposeBoardCommands({
+        chatText: verified.text,
+        moveType: decision?.action || null,
+        pinnedProblem: ctx.conversation?.boardProblem?.tex || null,
+        teachingMode: workedExampleBoard,
+        currentSkill: ctx.activeSkill?.name || null,
+      });
+      boardLogger.info('Board LLM proposal', {
+        mode: boardLlmMode,
+        status: proposal.record.status,
+        proposed: proposal.commands.map(c => c.action),
+        currentSource: rawLlmBoardCommands.map(c => c.action),
+      });
+      // Live: the board LLM is the primary source. If it yields nothing (skip /
+      // error / empty), keep whatever the tutor emitted so the board never goes
+      // dark on its account — the synthesizer fallback still runs below.
+      if (boardLlmMode === 'live' && proposal.commands.length > 0) {
+        rawLlmBoardCommands = proposal.commands;
+      }
+    } catch (boardLlmErr) {
+      // The advisory stage must never break a response.
+      boardLogger.error('Board LLM stage failed (non-fatal)', { error: boardLlmErr.message });
+    }
+  }
 
   if (rawLlmBoardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({
