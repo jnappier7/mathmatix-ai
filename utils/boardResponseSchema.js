@@ -118,14 +118,18 @@ const BOARD_COMMAND_SCHEMA = {
     },
     model: {
       type: ['string', 'null'],
-      description: 'Concept-model name for an interactive model card (e.g. "slope_intercept_line"). Required for the "model" action. Null otherwise.',
+      description: 'Concept-model name for an interactive model card from the CURATED catalog (e.g. "slope_intercept_line"). Use this OR spec for the "model" action. Null otherwise.',
+    },
+    spec: {
+      type: ['string', 'null'],
+      description: 'A complete concept-model spec, as a JSON STRING, for the GENERATED long-tail path: a model NO curated name covers, authored by you in the fixed vocabulary. It is validated before it can render — a spec whose ids/params/refs do not resolve is dropped. Prefer a curated model name when one fits; use spec only when none do. Null otherwise.',
     },
     prompt: {
       type: ['string', 'null'],
       description: 'Short teaching intention shown above a concept model (e.g. "Slide m up — what happens?"). Optional on the "model" action; null for other actions.',
     },
   },
-  required: ['action', 'tex', 'op', 'check', 'fn', 'query', 'caption', 'model', 'prompt'],
+  required: ['action', 'tex', 'op', 'check', 'fn', 'query', 'caption', 'model', 'spec', 'prompt'],
   additionalProperties: false,
 };
 
@@ -183,7 +187,7 @@ function normalizeBoardCommand(cmd) {
   if (!BOARD_ACTIONS.includes(cmd.action)) return null;
 
   const out = { action: cmd.action };
-  const FIELDS = ['tex', 'op', 'check', 'fn', 'query', 'caption', 'model', 'prompt'];
+  const FIELDS = ['tex', 'op', 'check', 'fn', 'query', 'caption', 'model', 'spec', 'prompt'];
   for (const field of FIELDS) {
     const v = cmd[field];
     if (typeof v === 'string' && v.length > 0) {

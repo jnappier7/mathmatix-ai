@@ -205,6 +205,38 @@ describe('boardTagParser', () => {
     });
   });
 
+  describe('model (concept model)', () => {
+    it('extracts a curated model name + prompt', () => {
+      const input = '<BOARD action="model" model="slope_intercept_line" prompt="Slide m up" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'model', model: 'slope_intercept_line', prompt: 'Slide m up' },
+      ]);
+    });
+
+    it('treats a JSON open/close body as a generated spec (long-tail)', () => {
+      const spec = '{ "model": "cosine_wave", "params": { "a": 1 } }';
+      const input = `<BOARD action="model" prompt="Slide a">${spec}</BOARD>`;
+      const cmds = parseBoardTags(input).boardCommands;
+      expect(cmds).toHaveLength(1);
+      expect(cmds[0].action).toBe('model');
+      expect(cmds[0].spec).toBe(spec);
+      expect(cmds[0].prompt).toBe('Slide a');
+      // The raw JSON body is NOT mistaken for a curated name.
+      expect(cmds[0].model).toBeUndefined();
+    });
+
+    it('still treats a non-JSON body as a curated name', () => {
+      const input = '<BOARD action="model">two_point_line</BOARD>';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'model', model: 'two_point_line' },
+      ]);
+    });
+
+    it('drops a model tag with neither a name nor a spec', () => {
+      expect(parseBoardTags('<BOARD action="model" prompt="hi" />').boardCommands).toEqual([]);
+    });
+  });
+
   describe('hasBoardTags', () => {
     it('returns true when a tag is present', () => {
       expect(hasBoardTags('<BOARD action="pose" tex="x=1"/>')).toBe(true);

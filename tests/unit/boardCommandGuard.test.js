@@ -189,6 +189,37 @@ describe('boardCommandGuard', () => {
     });
   });
 
+  describe('model (concept model, summoned with intent)', () => {
+    it('is allowed for a curated model name', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'model', model: 'slope_intercept_line', prompt: 'Slide m' }],
+        userMessage: 'how does slope work',
+      });
+      expect(allowed).toHaveLength(1);
+      expect(dropped).toHaveLength(0);
+    });
+
+    it('is allowed for a generated spec (no curated name)', () => {
+      // The spec's structural validity is enforced upstream (conceptModelCommand);
+      // the guard only needs an identity to admit the card.
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'model', spec: { model: 'cosine_wave' }, prompt: 'Slide a' }],
+        userMessage: 'show me a cosine wave',
+      });
+      expect(allowed).toHaveLength(1);
+      expect(dropped).toHaveLength(0);
+    });
+
+    it('is dropped when it carries neither a name nor a spec', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'model', prompt: 'play with this' }],
+        userMessage: 'show me',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('model_missing_name');
+    });
+  });
+
   describe('scaffold (fill-in-the-blank hint)', () => {
     it('is allowed on the student\'s own problem when it carries a blank', () => {
       // The scaffold sits on the student's OWN equation but reveals nothing —

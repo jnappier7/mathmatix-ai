@@ -112,12 +112,24 @@ function parseBoardTags(aiResponseText) {
             if (captionAttr) command.caption = captionAttr;
         }
         if (action === 'model') {
-            // Interactive concept model, e.g.
-            //   <BOARD action="model" model="slope_intercept_line"
-            //          prompt="Slide m up — what happens?" />
-            const modelName = extractAttr(attrString, 'model') || innerTrim || null;
-            if (!modelName) continue;
-            command.model = modelName;
+            // Interactive concept model. Two shapes:
+            //   CURATED  — a catalog name:
+            //     <BOARD action="model" model="slope_intercept_line"
+            //            prompt="Slide m up — what happens?" />
+            //   GENERATED — a full spec authored by the tutor in the fixed
+            //     vocabulary, carried as JSON in the open/close body (or a `spec`
+            //     attribute). The generative long-tail (CONCEPT_MODELS.md step 4):
+            //     <BOARD action="model" prompt="…">{ "model":"…", "params":{…}, … }</BOARD>
+            //   The JSON is validated downstream (utils/conceptModelCommand.js)
+            //   before it can render — the parser stays permissive and just
+            //   carries the raw string. The body counts as a spec only when it
+            //   looks like a JSON object, so a bare name in the body still works.
+            const looksLikeJson = innerTrim && innerTrim.charAt(0) === '{';
+            const specRaw = extractAttr(attrString, 'spec') || (looksLikeJson ? innerTrim : null);
+            const modelName = extractAttr(attrString, 'model') || (specRaw ? null : innerTrim) || null;
+            if (!specRaw && !modelName) continue;
+            if (specRaw) command.spec = specRaw;
+            if (modelName) command.model = modelName;
             const promptAttr = extractAttr(attrString, 'prompt');
             if (promptAttr) command.prompt = promptAttr;
         }

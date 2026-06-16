@@ -404,10 +404,12 @@ function evaluate(command, ctx) {
     // graph/diagram it's a teaching aid summoned with intent, not a transcription
     // of the student's steps — and it's correct by construction (the engine
     // measures; the spec never asserts a value), so it cannot leak the student's
-    // answer. The #1-rule student-text match doesn't apply; we only validate that
-    // a model name is present.
+    // answer. The #1-rule student-text match doesn't apply; we only require an
+    // identity: a curated catalog name OR a generated spec (the long-tail path).
+    // The spec's structural validity is enforced separately, before the guard, by
+    // utils/conceptModelCommand.js.
     if (action === 'model') {
-        if (!command.model) {
+        if (!command.model && !command.spec) {
             return { allowed: false, reason: 'model_missing_name' };
         }
         return { allowed: true };
