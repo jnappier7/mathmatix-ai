@@ -317,6 +317,27 @@ function evaluate(command, ctx) {
         return { allowed: false, reason: 'verify_tex_not_in_student_message' };
     }
 
+    // Worked-example derivation step (read-only). Unlike apply/resolve/verify,
+    // an `example` card has NO student-mirror fallback: it carries the tutor's
+    // own derivation, so it is admitted ONLY in teaching mode (ctx.workedExample,
+    // established by runPipeline from an I-do decision + WORKED_EXAMPLE_BOARD).
+    // Outside teaching mode it is always dropped — the strict default is
+    // unchanged. Even in teaching mode, the pinned-problem backstop stands: a
+    // step that names the student's graded problem or its answer is the model
+    // solving the homework under cover of "example", and is blocked.
+    if (action === 'example') {
+        if (!command.tex) {
+            return { allowed: false, reason: 'example_missing_tex' };
+        }
+        if (!ctx.workedExample) {
+            return { allowed: false, reason: 'example_outside_worked_example_mode' };
+        }
+        if (revealsPinnedProblem(command.tex, ctx)) {
+            return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+        }
+        return { allowed: true, reason: 'worked_example_step' };
+    }
+
     if (action === 'clear') {
         if (hasStartOverIntent(ctx.currentText)) {
             return { allowed: true };
@@ -383,10 +404,12 @@ function evaluate(command, ctx) {
     // graph/diagram it's a teaching aid summoned with intent, not a transcription
     // of the student's steps — and it's correct by construction (the engine
     // measures; the spec never asserts a value), so it cannot leak the student's
-    // answer. The #1-rule student-text match doesn't apply; we only validate that
-    // a model name is present.
+    // answer. The #1-rule student-text match doesn't apply; we only require an
+    // identity: a curated catalog name OR a generated spec (the long-tail path).
+    // The spec's structural validity is enforced separately, before the guard, by
+    // utils/conceptModelCommand.js.
     if (action === 'model') {
-        if (!command.model) {
+        if (!command.model && !command.spec) {
             return { allowed: false, reason: 'model_missing_name' };
         }
         return { allowed: true };

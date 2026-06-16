@@ -76,10 +76,12 @@
 <body>
   <h1>Concept Models — browser verification</h1>
   <p class="sub">
-    Build-order step 1 (renderer + vocabulary engine) and step 2 (validator) from
-    <code>CONCEPT_MODELS.md</code>. Drag the points / move the sliders — the params
-    are the single source of truth, so every element stays in sync. Any measured
-    quantity (the slope readout, the curve) is computed live by the engine.
+    Build-order steps 1–4 from <code>CONCEPT_MODELS.md</code> — renderer + vocabulary
+    engine, validator, the curated catalog, and the generative long-tail (the last
+    card is an LLM-shaped spec, validated then rendered). Drag the points / move the
+    sliders — the params are the single source of truth, so every element stays in
+    sync. Any measured quantity (the slope readout, an angle, the curve) is computed
+    live by the engine.
   </p>
 
   <div class="grid">
@@ -95,6 +97,22 @@
       <h2>function_transformations — a·f(x−h)+k, swap the parent</h2>
       <div class="host" id="host-ft"></div>
     </div>
+    <div class="demo-card">
+      <h2>inscribed_angle — drag B; inscribed stays half the central (measured live)</h2>
+      <div class="host" id="host-ia"></div>
+    </div>
+    <div class="demo-card">
+      <h2>triangle_angle_sum — drag a corner; the three angles always sum to 180°</h2>
+      <div class="host" id="host-tas"></div>
+    </div>
+    <div class="demo-card">
+      <h2>linear_pair_angles — drag B; the two angles on the line always sum to 180°</h2>
+      <div class="host" id="host-lpa"></div>
+    </div>
+    <div class="demo-card">
+      <h2>GENERATED spec (long-tail) — an LLM-authored model, validated then rendered</h2>
+      <div class="host" id="host-gen"></div>
+    </div>
   </div>
 
   <script src="/js/conceptModelSpec.js"></script>
@@ -109,6 +127,39 @@
       );
       window.ConceptModelRenderer.renderModel(
         document.getElementById('host-ft'), 'function_transformations'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-ia'), 'inscribed_angle'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-tas'), 'triangle_angle_sum'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-lpa'), 'linear_pair_angles'
+      );
+
+      // The generative long-tail: a spec NOT in the curated catalog, exactly as
+      // the tutor would author it (CONCEPT_MODELS.md step 4). renderModel takes a
+      // full spec object, re-validates it, and draws it — proof the engine renders
+      // a generated model and its readout is measured live (a·cos(bx)).
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-gen'),
+        {
+          model: 'cosine_wave',
+          title: 'y = a·cos(bx)',
+          params: { a: 2, b: 1 },
+          controls: [
+            { type: 'slider', param: 'a', label: 'a', range: [-3, 3], step: 0.25 },
+            { type: 'slider', param: 'b', label: 'b', range: [0.25, 4], step: 0.25 }
+          ],
+          elements: [
+            { id: 'plane', type: 'plane', x: [-7, 7], y: [-4, 4], grid: true, axisLabels: true },
+            { id: 'curve', type: 'function', fn: 'a*cos(b*x)' },
+            { id: 'out', type: 'readout', text: 'y = {a}·cos({b}x)', at: 'top' }
+          ],
+          reveal: ['plane', 'curve', 'out'],
+          prompt: 'Slide a (height) and b (how tight the waves are) — what changes?'
+        }
       );
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

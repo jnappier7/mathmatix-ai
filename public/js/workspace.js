@@ -281,6 +281,20 @@
       var sMath = el('div', 'cr-ws-board-card-math');
       card.appendChild(sMath);
       renderTex(sMath, widenScaffoldBlanks(step.tex));
+    } else if (step.type === 'worked') {
+      // Read-only worked-example step — one line of a derivation the tutor is
+      // teaching (NOT the student's own problem). A distinct accent + a
+      // "Worked example" eyebrow (CSS ::before) so it reads as "I'm showing
+      // you", never as the student's stated work. No interaction handlers.
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--worked');
+      var wMath = el('div', 'cr-ws-board-card-math');
+      card.appendChild(wMath);
+      renderTex(wMath, step.tex);
+      if (step.label) {
+        var wCap = el('div', 'cr-ws-board-card-caption');
+        wCap.textContent = step.label;
+        card.appendChild(wCap);
+      }
     } else {
       // Equation card — pose / resolve / verify all share the same shape;
       // verify gets a badge + an expanded check line.
@@ -586,6 +600,24 @@
     },
 
     /**
+     * Drop a read-only worked-example step into the board timeline. One line of
+     * a derivation the tutor is TEACHING (not the student's own problem); the
+     * board renders it with a "Worked example" eyebrow and no interaction.
+     * @param {string} tex     LaTeX of the derivation step
+     * @param {string} [label] optional short step label, e.g. "Trig substitution"
+     */
+    boardExample: function (tex, label) {
+      tex = (tex == null ? '' : String(tex)).trim();
+      if (!tex) return false;
+      openWorkspace();
+      this.showTool('board');
+      var step = { type: 'worked', tex: tex };
+      if (label) step.label = String(label).trim();
+      pushBoardStep(step);
+      return true;
+    },
+
+    /**
      * Confirm a verified solution the student proved.
      * @param {string} tex    LaTeX of the solution, e.g. "x = 8"
      * @param {string} check  LaTeX of the verification, e.g. "2(8) + 4 = 20"
@@ -644,10 +676,14 @@
      * @param {string} [prompt]        teaching intention shown above the model
      */
     boardModel: function (model, prompt) {
-      // Accept either (model, prompt) or a command object { model, prompt }.
+      // Accept either (model, prompt) or a command object { model, prompt, spec }.
+      // A generated command carries `spec` (a full, already-validated spec object
+      // from the long-tail path); it wins over the curated `model` name. The
+      // renderer takes a curated name OR a spec object, so either flows straight
+      // through.
       if (model && typeof model === 'object' && model.action) {
         prompt = model.prompt;
-        model = model.model;
+        model = model.spec || model.model;
       }
       if (!model) return false;
       openWorkspace();

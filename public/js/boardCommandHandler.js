@@ -21,7 +21,7 @@
     'use strict';
 
     var STAGGER_MS = 250;
-    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true, scaffold: true, model: true };
+    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true, scaffold: true, model: true, example: true };
 
     function getWorkspace() {
         return typeof window !== 'undefined' ? window.MathWorkspace : null;
@@ -72,6 +72,11 @@
                     break;
                 case 'image':
                     if (command.query) W.boardImage(command.query, command.caption || '');
+                    break;
+                case 'example':
+                    // Read-only worked-example derivation step. caption is an
+                    // optional short label (e.g. "Trig substitution").
+                    if (command.tex) W.boardExample(command.tex, command.caption || '');
                     break;
                 case 'diagram':
                     // Deterministic JSXGraph geometry (DIAGRAM_BOARD, flag-off).

@@ -43,9 +43,10 @@ const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrad
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
+const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
@@ -54,6 +55,23 @@ const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
 const turnTypeLogger = log.child({ service: 'turn-type-audit' });
+
+// The "I-do" decision actions — the tutor is directly teaching/demonstrating on
+// a teaching example, not the student's graded problem. These are the moves
+// where worked-example steps belong on the board (see workedExampleBoard).
+// Deliberately excludes the "we-do"/"you-do" practice moves (guided_practice,
+// independent_practice) and strengthen_challenge, where the student works and
+// the strict student-mirror rule must stand.
+const TEACHING_ACTIONS = new Set([
+  ACTIONS.WORKED_EXAMPLE,
+  ACTIONS.DIRECT_INSTRUCTION,
+  ACTIONS.PREREQUISITE_BRIDGE,
+  ACTIONS.LEVERAGE_BRIDGE,
+]);
+
+function isTeachingMove(decision) {
+  return !!decision && TEACHING_ACTIONS.has(decision.action);
+}
 
 /**
  * Run the full tutoring pipeline.
@@ -427,15 +445,42 @@ async function runPipeline(message, ctx) {
     }
   }
 
-  // I_DO worked-example board: when the engine's move is WORKED_EXAMPLE, the
-  // tutor is demonstrating on a teaching example that is NOT the student's
-  // graded problem, so the board may carry the full worked steps — the same
-  // basis on which worked steps on PARALLEL problems are allowed under the #1
-  // rule. Gated behind a default-off flag pending live verification: a phase/
-  // move mislabel must never silently relax the guard, so it requires BOTH the
-  // explicit flag AND an explicit WORKED_EXAMPLE decision. Off → fully strict.
+  // Worked-example board: when the tutor is TEACHING — demonstrating or deriving
+  // on a teaching example that is NOT the student's graded problem — the board
+  // may carry the full worked steps, the same basis on which worked steps on
+  // PARALLEL problems are allowed under the #1 rule. This relaxes apply/resolve/
+  // verify off the student-text match AND admits read-only `example` cards.
+  //
+  // Triggers on any "I-do" decision action (worked_example, direct_instruction,
+  // prerequisite_bridge, leverage_bridge) OR when there is no pinned problem at
+  // all — a free conceptual derivation ("why does the integral give area?") has
+  // no graded answer to protect, so mirroring its steps can't leak anything.
+  // Gated behind a default-off flag: a phase/move mislabel must never silently
+  // relax the guard, so it requires BOTH the explicit flag AND a teaching
+  // context. Off → fully strict (byte-identical to today). In every case the
+  // pinnedProblem/pinnedAnswer backstop below still blocks a "worked example"
+  // that is secretly the student's own problem.
+  const noPinnedProblem = !(ctx.conversation?.boardProblem?.tex);
   const workedExampleBoard = process.env.WORKED_EXAMPLE_BOARD === 'true'
-    && decision?.action === ACTIONS.WORKED_EXAMPLE;
+    && (isTeachingMove(decision) || noPinnedProblem);
+
+  // Generative long-tail gate (CONCEPT_MODELS.md step 4). A `model` command may
+  // carry a brand-new spec the LLM authored (JSON) instead of a curated catalog
+  // name. Validate it HERE, before the pedagogy guard and before render: parse +
+  // bound + structurally validate, so a spec whose ids/params/refs don't resolve
+  // is dropped ("can pick a weird layout but cannot display wrong math"). Curated
+  // names are checked against the catalog. No-op for non-model commands.
+  if (rawLlmBoardCommands.length > 0) {
+    const resolvedModels = resolveModelCommands(rawLlmBoardCommands);
+    rawLlmBoardCommands = resolvedModels.commands;
+    for (const { command, reason, errors } of resolvedModels.dropped) {
+      boardLogger.warn('Concept-model command dropped', {
+        reason,
+        model: command.model || null,
+        errors: errors || null,
+      });
+    }
+  }
 
   // ── Stage 5b.0: BOARD LLM (advisory board-card source) ──
   // A second, focused call that translates the tutor's FINAL message into board
@@ -613,6 +658,37 @@ async function runPipeline(message, ctx) {
       actions: merged.added.map(c => c.action),
       llmEmitted: llmBoardCommands.length,
     });
+  }
+
+  // ── Stage 5c.0a0: WORKED-EXAMPLE STEP BACKFILL (hybrid) ──
+  // The structured path SHOULD emit `example` cards when the tutor derives
+  // something, but compliance is unreliable (the same reason pose/verify get
+  // synthesized). When this is a teaching turn (workedExampleBoard) and the
+  // tutor's reply carries a multi-step derivation yet no example card survived,
+  // mirror the tutor's own math spans onto the board. The LLM wins when it did
+  // emit examples — we only backfill the gap. Routed through the same guard, so
+  // the pinned-problem backstop applies to every backfilled step too.
+  if (workedExampleBoard
+      && !verified.boardCommands.some(c => c.action === 'example')) {
+    const workedSteps = synthesizeWorkedExampleSteps({ tutorResponse: verified.text });
+    if (workedSteps.length > 0) {
+      const workedGuard = enforcePedagogyRule({
+        commands: workedSteps,
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+        workedExample: workedExampleBoard,
+        pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+        pinnedAnswer: diagnosis.correctAnswer || null,
+      });
+      if (workedGuard.allowed.length > 0) {
+        verified.boardCommands = mergeWithLlmCommands(verified.boardCommands, workedGuard.allowed).all;
+        boardLogger.info('Worked-example step backfill added cards', {
+          count: workedGuard.allowed.length,
+          dropped: workedGuard.dropped.length,
+        });
+      }
+    }
   }
 
   // ── Stage 5c.0a: VISUAL-PROMISE BACKFILL ──
@@ -848,8 +924,14 @@ async function runPipeline(message, ctx) {
     }
   }
 
-  if (verified.boardCommands.length > 0 && ctx.conversation) {
-    const lastEmitted = verified.boardCommands[verified.boardCommands.length - 1].action;
+  // Read-only `example` cards are teaching aids, not moves in the student's
+  // solve cycle — they must not advance lastBoardAction (which gates clear-after-
+  // verify and the synthesizer's cycle-closed logic) or touch the pin. Track
+  // state on the solve-cycle cards only; a turn that emitted ONLY example cards
+  // leaves conversation state exactly as it was.
+  const cycleCards = verified.boardCommands.filter(c => c.action !== 'example');
+  if (cycleCards.length > 0 && ctx.conversation) {
+    const lastEmitted = cycleCards[cycleCards.length - 1].action;
     ctx.conversation.lastBoardAction = lastEmitted;
 
     // Pin / unpin the canonical board problem so future turns anchor to
@@ -857,7 +939,7 @@ async function runPipeline(message, ctx) {
     // stale problem on the board). A pose — including an auto-advance
     // clear+pose or a turn-type backfill — sets the pin; a verify/clear
     // that ends the cycle drops it.
-    const poseCard = [...verified.boardCommands].reverse().find(c => c.action === 'pose');
+    const poseCard = [...cycleCards].reverse().find(c => c.action === 'pose');
     if (poseCard && poseCard.tex) {
       ctx.conversation.boardProblem = { tex: poseCard.tex, posedAt: new Date() };
       ctx.conversation.markModified?.('boardProblem');

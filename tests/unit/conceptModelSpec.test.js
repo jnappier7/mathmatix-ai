@@ -3,6 +3,7 @@ const {
   validateModelSpec,
   getModel,
   readoutTokens,
+  measureAngle,
   MODELS,
 } = require('../../public/js/conceptModelSpec');
 
@@ -271,5 +272,111 @@ describe('conceptModelSpec — function_transformations vocabulary (selector / p
     const s = tbase();
     s.elements[2].text = 'f = {a.label}';
     expect(validateModelSpec(s).errors.join(' ')).toMatch(/needs a selector before the dot/);
+  });
+});
+
+describe('conceptModelSpec — geometry (measure, never assert)', () => {
+  it('measureAngle computes the non-reflex angle at a vertex', () => {
+    expect(measureAngle([0, 0], [1, 0], [0, 1])).toBeCloseTo(90, 6);
+    expect(measureAngle([0, 0], [1, 0], [-1, 0])).toBeCloseTo(180, 6);
+    expect(measureAngle([0, 0], [1, 0], [1, 1])).toBeCloseTo(45, 6);
+    expect(measureAngle([0, 0], [0, 0], [1, 1])).toBeNaN(); // degenerate ray
+  });
+
+  it('inscribed_angle is half the central angle, by construction (at the catalog coords)', () => {
+    const s = getModel('inscribed_angle');
+    const at = {};
+    s.elements.filter((e) => e.type === 'point').forEach((p) => { at[p.id] = p.at; });
+    const central = measureAngle(at.O, at.A, at.C);
+    const inscribed = measureAngle(at.B, at.A, at.C);
+    // Catalog coords are rounded to 4 dp, so allow ~0.01° slack on the absolutes;
+    // the half-angle relationship is the real invariant.
+    expect(central).toBeCloseTo(120, 2);
+    expect(inscribed).toBeCloseTo(60, 2);
+    expect(inscribed).toBeCloseTo(central / 2, 3);
+  });
+
+  it('triangle interior angles sum to 180°, by construction (at the catalog coords)', () => {
+    const s = getModel('triangle_angle_sum');
+    const at = {};
+    s.elements.filter((e) => e.type === 'point').forEach((p) => { at[p.id] = p.at; });
+    const sum = measureAngle(at.A, at.B, at.C) +
+                measureAngle(at.B, at.A, at.C) +
+                measureAngle(at.C, at.A, at.B);
+    expect(sum).toBeCloseTo(180, 4);
+  });
+
+  it('a linear pair sums to 180°, by construction (at the catalog coords)', () => {
+    const s = getModel('linear_pair_angles');
+    const at = {};
+    s.elements.filter((e) => e.type === 'point').forEach((p) => { at[p.id] = p.at; });
+    const ang1 = measureAngle(at.O, at.A, at.B);
+    const ang2 = measureAngle(at.O, at.A2, at.B);
+    expect(ang1 + ang2).toBeCloseTo(180, 6);
+  });
+
+  it('the geometry models validate', () => {
+    expect(validateModelSpec(getModel('inscribed_angle')).errors).toEqual([]);
+    expect(validateModelSpec(getModel('triangle_angle_sum')).errors).toEqual([]);
+    expect(validateModelSpec(getModel('linear_pair_angles')).errors).toEqual([]);
+  });
+
+  function gbase() {
+    return {
+      model: 'g',
+      params: {},
+      measures: { ang: { type: 'angle', at: 'B', rays: ['A', 'C'] } },
+      elements: [
+        { id: 'plane', type: 'plane', x: [-5, 5], y: [-5, 5] },
+        { id: 'A', type: 'point', at: [-2, 0], draggable: true },
+        { id: 'B', type: 'point', at: [0, 0], draggable: true },
+        { id: 'C', type: 'point', at: [2, 0], draggable: true },
+        { id: 'tri', type: 'polygon', vertices: ['A', 'B', 'C'] },
+        { id: 'angB', type: 'angle', at: 'B', rays: ['A', 'C'], measure: true },
+        { id: 'out', type: 'readout', text: 'angle = {ang}' },
+      ],
+    };
+  }
+
+  it('accepts a well-formed geometry spec', () => {
+    expect(validateModelSpec(gbase()).valid).toBe(true);
+  });
+
+  it('rejects a measure referencing a non-existent point', () => {
+    const s = gbase();
+    s.measures.ang.rays = ['A', 'Z'];
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/measure "ang" ray "Z" is not a point/);
+  });
+
+  it('rejects an angle whose vertex is not a point', () => {
+    const s = gbase();
+    s.elements.find((e) => e.id === 'angB').at = 'tri';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/vertex "tri" is not a point/);
+  });
+
+  it('rejects a polygon with fewer than three vertices', () => {
+    const s = gbase();
+    s.elements.find((e) => e.id === 'tri').vertices = ['A', 'B'];
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/needs vertices/);
+  });
+
+  it('rejects a circle with a non-positive radius', () => {
+    const s = gbase();
+    s.elements.push({ id: 'c', type: 'circle', center: [0, 0], radius: 0 });
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/positive radius/);
+  });
+
+  it('rejects a point gliding on a non-existent circle', () => {
+    const s = gbase();
+    s.elements.find((e) => e.id === 'B').on = 'circle:ghost';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/on references unknown circle "ghost"/);
+  });
+
+  it('lets a derived value read a measure (e.g. an angle sum)', () => {
+    const s = gbase();
+    s.measures.ang2 = { type: 'angle', at: 'A', rays: ['B', 'C'] };
+    s.derived = { total: 'ang + ang2' };
+    s.elements.find((e) => e.id === 'out').text = 'sum = {total}';
+    expect(validateModelSpec(s).valid).toBe(true);
   });
 });
