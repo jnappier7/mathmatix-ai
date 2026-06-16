@@ -628,11 +628,15 @@
           if (!Array.isArray(el.at) || el.at.length !== 2) {
             errors.push('point "' + el.id + '" needs at:[x,y]');
           } else {
+            // Coords resolve live from the param object (P) in the renderer, so a
+            // string coord must be a NUMERIC param — not a derived/measure (those
+            // aren't in P, so they'd render as NaN). Tighter than mathSet on
+            // purpose: keep the validator from passing a spec the renderer breaks.
             el.at.forEach(function (coord) {
-              if (typeof coord === 'string' && !mathSet[coord]) {
-                errors.push('point "' + el.id + '" at references unknown name "' + coord + '"');
+              if (typeof coord === 'string' && !numericSet[coord]) {
+                errors.push('point "' + el.id + '" at references unknown numeric param "' + coord + '"');
               } else if (typeof coord !== 'string' && typeof coord !== 'number') {
-                errors.push('point "' + el.id + '" at coordinate must be a number or param name');
+                errors.push('point "' + el.id + '" at coordinate must be a number or numeric param');
               }
             });
           }
@@ -654,18 +658,20 @@
           if (!Array.isArray(el.center) || el.center.length !== 2) {
             errors.push('circle "' + el.id + '" needs center:[x,y]');
           } else {
+            // Same as point coords: numeric params or literals only (renderer
+            // resolves these from the live param object, not derived/measures).
             el.center.forEach(function (coord) {
-              if (typeof coord === 'string' && !mathSet[coord]) {
-                errors.push('circle "' + el.id + '" center references unknown name "' + coord + '"');
+              if (typeof coord === 'string' && !numericSet[coord]) {
+                errors.push('circle "' + el.id + '" center references unknown numeric param "' + coord + '"');
               } else if (typeof coord !== 'string' && typeof coord !== 'number') {
-                errors.push('circle "' + el.id + '" center must be numbers or param names');
+                errors.push('circle "' + el.id + '" center must be numbers or numeric params');
               }
             });
           }
           if (typeof el.radius === 'string') {
-            if (!mathSet[el.radius]) errors.push('circle "' + el.id + '" radius references unknown name "' + el.radius + '"');
+            if (!numericSet[el.radius]) errors.push('circle "' + el.id + '" radius references unknown numeric param "' + el.radius + '"');
           } else if (!(typeof el.radius === 'number' && el.radius > 0)) {
-            errors.push('circle "' + el.id + '" needs a positive radius (number or param)');
+            errors.push('circle "' + el.id + '" needs a positive radius (number or numeric param)');
           }
         }
 

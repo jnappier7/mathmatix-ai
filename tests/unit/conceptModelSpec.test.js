@@ -130,7 +130,19 @@ describe('conceptModelSpec — validator (generated specs cannot render broken)'
     s.elements.push({ id: 'dot', type: 'point', at: ['zzz', 'b'] });
     const r = validateModelSpec(s);
     expect(r.valid).toBe(false);
-    expect(r.errors.join(' ')).toMatch(/at references unknown name "zzz"/);
+    expect(r.errors.join(' ')).toMatch(/at references unknown numeric param "zzz"/);
+  });
+
+  it('rejects a coordinate that names a DERIVED value (renderer resolves only params)', () => {
+    // A derived name isn't in the live param object, so a point/circle placed at
+    // it would render NaN. The validator must reject it rather than pass a spec
+    // the renderer breaks — the "validate before render" guarantee.
+    const s = base();
+    s.derived = { mid: 'm + b' };
+    s.elements.push({ id: 'dot', type: 'point', at: ['mid', 0] });
+    const r = validateModelSpec(s);
+    expect(r.valid).toBe(false);
+    expect(r.errors.join(' ')).toMatch(/at references unknown numeric param "mid"/);
   });
 
   it('rejects a line referencing a non-existent point', () => {

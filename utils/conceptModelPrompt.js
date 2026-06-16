@@ -64,6 +64,58 @@ function modelCatalogLines() {
 }
 
 /**
+ * Worked examples shown to the tutor in the generative section. Defined as real
+ * objects (not hand-written JSON text) so that (a) what the LLM sees is ALWAYS
+ * valid JSON — JSON.stringify can't emit the `//` comments that would make a
+ * copied spec unparseable — and (b) a unit test can run them through the very
+ * validator that gates generated output, so the examples can't silently rot.
+ *
+ * Two cases on purpose: a function/graph model, and a GEOMETRY model — the harder
+ * case, where the `angle` element draws the arc while a separate `measures` entry
+ * supplies the live number a readout shows.
+ */
+const GENERATIVE_EXAMPLES = {
+  // Function/graph: params drive a curve, readout echoes them.
+  fn: {
+    model: 'cosine_wave',
+    title: 'y = a·cos(bx)',
+    params: { a: 2, b: 1 },
+    controls: [
+      { type: 'slider', param: 'a', label: 'a', range: [-3, 3], step: 0.25 },
+      { type: 'slider', param: 'b', label: 'b', range: [0.25, 4], step: 0.25 },
+    ],
+    elements: [
+      { id: 'plane', type: 'plane', x: [-7, 7], y: [-4, 4], grid: true, axisLabels: true },
+      { id: 'curve', type: 'function', fn: 'a*cos(b*x)' },
+      { id: 'out', type: 'readout', text: 'y = {a}·cos({b}x)', at: 'top' },
+    ],
+    reveal: ['plane', 'curve', 'out'],
+    prompt: 'Slide a and b — how does the wave change?',
+  },
+  // Geometry: the `angle` element DRAWS the arc; the `measures` entry MEASURES the
+  // number; the readout shows the measured value. Three distinct things.
+  geometry: {
+    model: 'angle_at_a_point',
+    title: 'Measuring an angle',
+    params: {},
+    measures: { ang: { type: 'angle', at: 'O', rays: ['A', 'B'] } },
+    elements: [
+      { id: 'plane', type: 'plane', x: [-7, 7], y: [-7, 7], grid: false, axisLabels: false },
+      { id: 'O', type: 'point', at: [0, 0], label: 'O' },
+      { id: 'A', type: 'point', at: [5, 0], label: 'A' },
+      { id: 'B', type: 'point', at: [3, 4], draggable: true, label: 'B' },
+      { id: 'rayA', type: 'segment', through: ['O', 'A'] },
+      { id: 'rayB', type: 'segment', through: ['O', 'B'] },
+      { id: 'arc', type: 'angle', at: 'O', rays: ['A', 'B'], measure: true },
+      { id: 'out', type: 'readout', text: 'angle = {ang}°', at: 'top' },
+    ],
+    reveal: ['plane', 'O', 'A', 'B', 'rayA', 'rayB', 'arc', 'out'],
+    drag: ['B'],
+    prompt: 'Drag B — the angle is measured live, never typed.',
+  },
+};
+
+/**
  * The GENERATED long-tail authoring section. Teaches the tutor to write a
  * brand-new spec in the fixed vocabulary when NO curated model fits. The spec is
  * validated before it can render (every id/param/ref must resolve, and any
@@ -78,35 +130,29 @@ function buildGenerativeSection(structured) {
     ? 'Put the WHOLE spec, as a JSON string, in the spec field: { action: "model", spec: "{ ...spec JSON... }", prompt: "Slide a and b — how does the wave change?" }'
     : 'Put the WHOLE spec JSON inside the tag body: <BOARD action="model" prompt="Slide a and b — how does the wave change?">{ ...spec JSON... }</BOARD>';
 
+  const fnExample = JSON.stringify(GENERATIVE_EXAMPLES.fn, null, 2);
+  const geoExample = JSON.stringify(GENERATIVE_EXAMPLES.geometry, null, 2);
+
   return `
 GENERATIVE LONG-TAIL — author a NEW model when none above fits:
 Only when no curated model matches the concept, you may write your OWN spec in this vocabulary. It is validated before it renders: every id/param/reference must resolve, and any MEASURED quantity is computed live by the engine — so you literally cannot make it show wrong math. Prefer a curated model whenever one fits; reach for this only for the long tail.
 
 ${emit}
+The spec is strict JSON — no comments, no trailing commas. Emit only the JSON object.
 
-Spec shape (JSON):
-{
-  "model": "snake_case_name",
-  "title": "Short title",
-  "params":  { "a": 1, "b": 1 },                       // numeric knobs (single source of truth)
-  "controls":[ { "type":"slider", "param":"a", "label":"a", "range":[-3,3], "step":0.25 } ],
-  "derived": { "name": "expr of params" },             // optional: computed, never asserted
-  "elements":[
-    { "id":"plane", "type":"plane", "x":[-10,10], "y":[-10,10], "grid":true, "axisLabels":true },
-    { "id":"curve", "type":"function", "fn":"a*cos(b*x)" },
-    { "id":"out",   "type":"readout", "text":"y = {a}·cos({b}x)", "at":"top" }
-  ],
-  "reveal": ["plane","curve","out"],
-  "prompt": "Slide a and b — how does the wave change?"
-}
+Example — a function/graph model:
+${fnExample}
+
+Example — a geometry model (note how the angle is shown):
+${geoExample}
 
 Vocabulary you may use:
-- elements: plane, function (fn: an expression of x + numeric params, e.g. "a*x^2 + b"), point (at:[x,y] with draggable/binds to a param), line/segment/ray (through:[ptId,ptId]), circle (center:[x,y], radius), polygon (vertices:[ptIds]), angle (at: ptId, rays:[ptId,ptId], measure:true), readout (text with {param}/{derived}/{measure} tokens).
+- elements: plane, function (fn: an expression of x + numeric params, e.g. "a*x^2 + b"), point (at:[x,y] of NUMBERS or numeric-param names; draggable; binds a param), line/segment/ray (through:[ptId,ptId]), circle (center:[x,y], radius), polygon (vertices:[ptIds]), angle (at: ptId, rays:[ptId,ptId]) — DRAWS the arc, readout (text with {param}/{derived}/{measure} tokens).
 - controls: slider (numeric param; needs range:[lo,hi]).
-- measures: read a quantity off the LIVE geometry, e.g. "ang": { "type":"angle", "at":"B", "rays":["A","C"] } — then a readout/derived can use {ang}. THIS is how you show an angle correctly: measure it, never type a number.
+- measures: a quantity read off the LIVE geometry — currently ANGLES ONLY: "ang": { "type":"angle", "at":"B", "rays":["A","C"] }. A readout/derived then uses {ang}. To SHOW an angle you need BOTH: an angle element (draws the arc) AND a measures entry (supplies the number) — the angle element alone shows no value. (Lengths/areas aren't measurable yet, so don't build a model that needs them.)
 - derived: a value computed from params/measures, e.g. "sum": "ang1 + ang2".
 
-Hard rules: every "through"/"vertices"/"rays"/"at"(angle) must name a point id you defined; every name in an fn/derived/readout must be a declared param, derived, or measure; numeric params only inside fn; give sliders a valid range. NEVER write a measured value as a literal — declare a measure and let the engine compute it. Keep it to one focused model. Like every concept model, it's a manipulable idea, never the student's graded answer.`;
+Hard rules: every "through"/"vertices"/"rays"/"at"(angle) must name a point id you defined; every name in an fn/derived/readout must be a declared param, derived, or measure; point/circle coordinates must be NUMBERS or numeric-param names (not derived/measures); numeric params only inside fn; give sliders a valid range. NEVER write a measured value as a literal — declare a measure and let the engine compute it. Keep it to one focused model. Like every concept model, it's a manipulable idea, never the student's graded answer.`;
 }
 
 /**
@@ -146,6 +192,7 @@ module.exports = {
   isConceptModelsGenerativeEnabled,
   buildConceptModelInstructions,
   buildGenerativeSection,
+  GENERATIVE_EXAMPLES,
   modelCatalogLines,
   SUMMON_WHEN,
 };

@@ -2,6 +2,7 @@ const {
   isConceptModelsEnabled,
   isConceptModelsGenerativeEnabled,
   buildConceptModelInstructions,
+  GENERATIVE_EXAMPLES,
   modelCatalogLines,
 } = require('../../utils/conceptModelPrompt');
 const { MODELS, validateModelSpec } = require('../../public/js/conceptModelSpec');
@@ -98,22 +99,32 @@ describe('conceptModelPrompt — instruction text', () => {
     expect(structured).toMatch(/spec/);
   });
 
-  it("the generative section's worked example is itself a valid spec", () => {
-    // The example we hand the LLM must pass the very validator that gates its
-    // output — otherwise we'd be teaching a shape we'd then reject.
-    const example = {
-      model: 'cosine_wave',
-      title: 'y = a·cos(bx)',
-      params: { a: 1, b: 1 },
-      controls: [{ type: 'slider', param: 'a', label: 'a', range: [-3, 3], step: 0.25 }],
-      elements: [
-        { id: 'plane', type: 'plane', x: [-10, 10], y: [-10, 10], grid: true, axisLabels: true },
-        { id: 'curve', type: 'function', fn: 'a*cos(b*x)' },
-        { id: 'out', type: 'readout', text: 'y = {a}cos({b}x)', at: 'top' },
-      ],
-      reveal: ['plane', 'curve', 'out'],
-      prompt: 'Slide a and b — how does the wave change?',
-    };
-    expect(validateModelSpec(example).valid).toBe(true);
+  it('every example the LLM is shown is itself a valid spec', () => {
+    // The examples we hand the LLM must pass the very validator that gates its
+    // output — otherwise we'd be teaching a shape we'd then reject. Validate the
+    // EXPORTED objects (the actual source of the shown JSON), so an example can't
+    // drift out of validity unnoticed.
+    Object.keys(GENERATIVE_EXAMPLES).forEach((key) => {
+      const result = validateModelSpec(GENERATIVE_EXAMPLES[key]);
+      expect(result.errors).toEqual([]);
+      expect(result.valid).toBe(true);
+    });
+  });
+
+  it('the shown examples are emitted as strict, parseable JSON (no comments)', () => {
+    // Regression for the foot-gun where the template carried `//` comments that
+    // would make a copied spec unparseable. The JSON blocks must round-trip and
+    // re-validate.
+    const text = buildConceptModelInstructions(false, { generative: true });
+    expect(text).not.toMatch(/^\s*\/\//m);            // no comment lines
+    const fnJson = JSON.stringify(GENERATIVE_EXAMPLES.fn, null, 2);
+    expect(text).toContain(fnJson);                   // the literal JSON is present
+    expect(validateModelSpec(JSON.parse(fnJson)).valid).toBe(true);
+  });
+
+  it('documents that measures are angle-only and coords take numbers/params', () => {
+    const text = buildConceptModelInstructions(false, { generative: true });
+    expect(text).toMatch(/ANGLES ONLY/);
+    expect(text.toLowerCase()).toContain('draws the arc');
   });
 });
