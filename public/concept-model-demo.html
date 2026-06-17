@@ -47,6 +47,7 @@
 
     /* ── concept-model renderer styles (mirrors public/css/workspace.css) ── */
     .cr-cm { display: flex; flex-direction: column; gap: 8px; }
+    .cr-cm-title { font-size: 14px; font-weight: 700; color: var(--cr-text); text-align: center; }
     .cr-cm-prompt {
       font-size: 13px; line-height: 1.45; color: var(--cr-accent);
       background: var(--cr-pill-bg); border-left: 3px solid var(--cr-accent);
@@ -113,6 +114,10 @@
       <h2>GENERATED spec (long-tail) — an LLM-authored model, validated then rendered</h2>
       <div class="host" id="host-gen"></div>
     </div>
+    <div class="demo-card">
+      <h2>GENERATED — length &amp; area measures (drag a vertex; side and area update live)</h2>
+      <div class="host" id="host-gen2"></div>
+    </div>
   </div>
 
   <script src="/js/conceptModelSpec.js"></script>
@@ -159,6 +164,32 @@
           ],
           reveal: ['plane', 'curve', 'out'],
           prompt: 'Slide a (height) and b (how tight the waves are) — what changes?'
+        }
+      );
+
+      // A second generated model exercising length + area measures: the side AB
+      // and the triangle's area are MEASURED off the live vertices, never typed.
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-gen2'),
+        {
+          model: 'right_triangle_measures',
+          title: 'Right triangle — side & area',
+          params: {},
+          measures: {
+            side: { type: 'length', between: ['A', 'B'] },
+            region: { type: 'area', of: ['A', 'B', 'C'] }
+          },
+          elements: [
+            { id: 'plane', type: 'plane', x: [-2, 8], y: [-2, 6], grid: true, axisLabels: true },
+            { id: 'A', type: 'point', at: [0, 0], draggable: true, label: 'A' },
+            { id: 'B', type: 'point', at: [4, 0], draggable: true, label: 'B' },
+            { id: 'C', type: 'point', at: [0, 3], draggable: true, label: 'C' },
+            { id: 'tri', type: 'polygon', vertices: ['A', 'B', 'C'], fill: true },
+            { id: 'out', type: 'readout', text: 'AB = {side}   ·   area = {region}', at: 'top' }
+          ],
+          reveal: ['plane', 'A', 'B', 'C', 'tri', 'out'],
+          drag: ['A', 'B', 'C'],
+          prompt: 'Drag a vertex — the side length and area are measured live.'
         }
       );
     }

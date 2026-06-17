@@ -173,6 +173,16 @@
           out[name] = (at && p && q)
             ? CMS.measureAngle([at.X(), at.Y()], [p.X(), p.Y()], [q.X(), q.Y()])
             : NaN;
+        } else if (def.type === 'length') {
+          var la = jpoints[def.between[0]], lb = jpoints[def.between[1]];
+          out[name] = (la && lb)
+            ? CMS.measureDistance([la.X(), la.Y()], [lb.X(), lb.Y()])
+            : NaN;
+        } else if (def.type === 'area') {
+          var pts = def.of.map(function (id) { return jpoints[id]; });
+          out[name] = pts.every(Boolean)
+            ? CMS.measureArea(pts.map(function (pt) { return [pt.X(), pt.Y()]; }))
+            : NaN;
         }
       });
       return out;
@@ -206,8 +216,14 @@
       return round4(v);
     }
 
-    // ── DOM scaffold: prompt frame · readout row · board · controls row ──────
+    // ── DOM scaffold: title · prompt frame · readout row · board · controls ──
     var root = el('div', 'cr-cm');
+
+    if (spec.title) {
+      var titleEl = el('div', 'cr-cm-title');
+      titleEl.textContent = spec.title;
+      root.appendChild(titleEl);
+    }
 
     var promptText = opts.prompt || spec.prompt;
     if (promptText) {
@@ -244,6 +260,7 @@
     });
 
     var jcircles = {};   // elementId -> JSXGraph circle
+    var jobjects = {};   // elementId -> JSXGraph object (any) — for staged reveal
     var bindMap = {};    // elementId -> { xParam, yParam }
     var readouts = [];   // { el, element }
 
@@ -274,6 +291,7 @@
         strokeColor: isRef ? '#b9b2e6' : '#5B3DF6',
         strokeWidth: 2, fixed: true, highlight: false, fillOpacity: 0
       });
+      jobjects[e.id] = jcircles[e.id];
     });
 
     // First pass: points (lines/polygons/angles reference them by id).
@@ -292,6 +310,7 @@
       else if (onCircle) pt = board.create('glider', [x0, y0, jcircles[e.on.slice(7)]], attrs);
       else pt = board.create('point', [x0, y0], attrs);
       jpoints[e.id] = pt;
+      jobjects[e.id] = pt;
       bindMap[e.id] = computeBindMap(e);
 
       if (e.draggable) {
@@ -332,7 +351,7 @@
           return c.eval(s);
         };
         var isRef = e.role === 'reference';
-        board.create('functiongraph', [evalCurve], {
+        jobjects[e.id] = board.create('functiongraph', [evalCurve], {
           strokeColor: isRef ? '#b9b2e6' : '#5B3DF6',
           strokeWidth: isRef ? 2 : 3,
           dash: isRef ? 2 : 0,
@@ -345,7 +364,7 @@
           var straight = e.type === 'segment'
             ? { straightFirst: false, straightLast: false }
             : e.type === 'ray' ? { straightFirst: false, straightLast: true } : {};
-          board.create('line', [a, b2], Object.assign({
+          jobjects[e.id] = board.create('line', [a, b2], Object.assign({
             strokeColor: isRefLine ? '#a9a2d6' : '#5B3DF6',
             strokeWidth: isRefLine ? 1.5 : 2.5,
             dash: isRefLine ? 2 : 0,
@@ -355,7 +374,7 @@
       } else if (e.type === 'polygon') {
         var verts = e.vertices.map(function (id) { return jpoints[id]; }).filter(Boolean);
         if (verts.length >= 3) {
-          board.create('polygon', verts, {
+          jobjects[e.id] = board.create('polygon', verts, {
             fillColor: '#8B7BFF', fillOpacity: e.fill === false ? 0 : 0.12,
             borders: { strokeColor: '#5B3DF6', strokeWidth: 2.5, highlight: false },
             vertices: { visible: false }, // the point elements own the vertices
@@ -366,7 +385,7 @@
         var av = jpoints[e.at], r0 = jpoints[e.rays[0]], r1 = jpoints[e.rays[1]];
         if (av && r0 && r1) {
           // JSXGraph marks the angle at the MIDDLE point: [rayA, vertex, rayB].
-          board.create('angle', [r0, av, r1], {
+          jobjects[e.id] = board.create('angle', [r0, av, r1], {
             radius: 0.8, type: 'sector', fillColor: '#8B7BFF', fillOpacity: 0.35,
             strokeColor: '#5B3DF6', withLabel: false, fixed: true, highlight: false
           });
@@ -498,6 +517,32 @@
     pushParamsToControls();
     renderReadouts();
     board.update();
+
+    // Staged reveal (CONCEPT_MODELS.md: `reveal` = animation order). Bring the
+    // board objects in one at a time, in the spec's order, as a light entrance —
+    // a real teacher draws the figure piece by piece, not all at once. Only the
+    // board objects animate (readouts/axes are always present); ids not in
+    // `jobjects` (e.g. the plane, or a readout) are skipped. Honors
+    // prefers-reduced-motion by showing everything immediately.
+    var reduceMotion = typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var revealOrder = (spec.reveal || []).filter(function (id) { return jobjects[id]; });
+    if (revealOrder.length > 1 && !reduceMotion) {
+      var STAGGER_MS = 90;
+      revealOrder.forEach(function (id) { setVisible(jobjects[id], false); });
+      board.update();
+      revealOrder.forEach(function (id, i) {
+        setTimeout(function () {
+          setVisible(jobjects[id], true);
+          board.update();
+        }, (i + 1) * STAGGER_MS);
+      });
+    }
+  }
+
+  // Toggle a JSXGraph object's visibility (no-op for anything without the API).
+  function setVisible(obj, vis) {
+    if (obj && typeof obj.setAttribute === 'function') obj.setAttribute({ visible: vis });
   }
 
   if (typeof window !== 'undefined') {

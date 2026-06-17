@@ -122,9 +122,10 @@ describe('conceptModelPrompt — instruction text', () => {
     expect(validateModelSpec(JSON.parse(fnJson)).valid).toBe(true);
   });
 
-  it('documents that measures are angle-only and coords take numbers/params', () => {
+  it('documents the angle/length/area measures and the arc-vs-measure split', () => {
     const text = buildConceptModelInstructions(false, { generative: true });
-    expect(text).toMatch(/ANGLES ONLY/);
+    expect(text).toMatch(/"type":"length"/);
+    expect(text).toMatch(/"type":"area"/);
     expect(text.toLowerCase()).toContain('draws the arc');
   });
 });

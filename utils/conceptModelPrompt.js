@@ -149,7 +149,11 @@ ${geoExample}
 Vocabulary you may use:
 - elements: plane, function (fn: an expression of x + numeric params, e.g. "a*x^2 + b"), point (at:[x,y] of NUMBERS or numeric-param names; draggable; binds a param), line/segment/ray (through:[ptId,ptId]), circle (center:[x,y], radius), polygon (vertices:[ptIds]), angle (at: ptId, rays:[ptId,ptId]) — DRAWS the arc, readout (text with {param}/{derived}/{measure} tokens).
 - controls: slider (numeric param; needs range:[lo,hi]).
-- measures: a quantity read off the LIVE geometry — currently ANGLES ONLY: "ang": { "type":"angle", "at":"B", "rays":["A","C"] }. A readout/derived then uses {ang}. To SHOW an angle you need BOTH: an angle element (draws the arc) AND a measures entry (supplies the number) — the angle element alone shows no value. (Lengths/areas aren't measurable yet, so don't build a model that needs them.)
+- measures: a quantity read off the LIVE geometry — angle, length, or area:
+    angle:  { "type":"angle",  "at":"B", "rays":["A","C"] }   (degrees at vertex B)
+    length: { "type":"length", "between":["A","B"] }          (distance from A to B)
+    area:   { "type":"area",   "of":["A","B","C"] }           (polygon through the points)
+  A readout/derived then uses {name}. To SHOW an angle you need BOTH an angle element (draws the arc) AND a measures entry (supplies the number) — the angle element alone shows no value.
 - derived: a value computed from params/measures, e.g. "sum": "ang1 + ang2".
 
 Hard rules: every "through"/"vertices"/"rays"/"at"(angle) must name a point id you defined; every name in an fn/derived/readout must be a declared param, derived, or measure; point/circle coordinates must be NUMBERS or numeric-param names (not derived/measures); numeric params only inside fn; give sliders a valid range. NEVER write a measured value as a literal — declare a measure and let the engine compute it. Keep it to one focused model. Like every concept model, it's a manipulable idea, never the student's graded answer.`;

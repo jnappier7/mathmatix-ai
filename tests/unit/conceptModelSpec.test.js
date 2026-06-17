@@ -4,6 +4,8 @@ const {
   getModel,
   readoutTokens,
   measureAngle,
+  measureDistance,
+  measureArea,
   MODELS,
 } = require('../../public/js/conceptModelSpec');
 
@@ -295,6 +297,20 @@ describe('conceptModelSpec — geometry (measure, never assert)', () => {
     expect(measureAngle([0, 0], [0, 0], [1, 1])).toBeNaN(); // degenerate ray
   });
 
+  it('measureDistance computes the segment length (3-4-5)', () => {
+    expect(measureDistance([0, 0], [3, 4])).toBeCloseTo(5, 9);
+    expect(measureDistance([1, 1], [1, 1])).toBe(0);
+    expect(measureDistance(null, [1, 1])).toBeNaN();
+  });
+
+  it('measureArea computes polygon area via shoelace, winding-agnostic', () => {
+    const square = [[0, 0], [2, 0], [2, 2], [0, 2]];
+    expect(measureArea(square)).toBeCloseTo(4, 9);
+    expect(measureArea([...square].reverse())).toBeCloseTo(4, 9); // CW == CCW
+    expect(measureArea([[0, 0], [4, 0], [0, 3]])).toBeCloseTo(6, 9); // right triangle
+    expect(measureArea([[0, 0], [1, 1]])).toBeNaN(); // fewer than 3 points
+  });
+
   it('inscribed_angle is half the central angle, by construction (at the catalog coords)', () => {
     const s = getModel('inscribed_angle');
     const at = {};
@@ -358,6 +374,26 @@ describe('conceptModelSpec — geometry (measure, never assert)', () => {
     const s = gbase();
     s.measures.ang.rays = ['A', 'Z'];
     expect(validateModelSpec(s).errors.join(' ')).toMatch(/measure "ang" ray "Z" is not a point/);
+  });
+
+  it('accepts length and area measures and lets a readout read them', () => {
+    const s = gbase();
+    s.measures.side = { type: 'length', between: ['A', 'B'] };
+    s.measures.region = { type: 'area', of: ['A', 'B', 'C'] };
+    s.elements.find((e) => e.id === 'out').text = '{ang}° · {side} · {region}';
+    expect(validateModelSpec(s).errors).toEqual([]);
+  });
+
+  it('rejects a length measure missing its endpoints', () => {
+    const s = gbase();
+    s.measures.side = { type: 'length', between: ['A'] };
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/measure "side" \(length\) needs between/);
+  });
+
+  it('rejects an area measure whose vertex is not a point', () => {
+    const s = gbase();
+    s.measures.region = { type: 'area', of: ['A', 'B', 'Z'] };
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/measure "region" vertex "Z" is not a point/);
   });
 
   it('rejects an angle whose vertex is not a point', () => {

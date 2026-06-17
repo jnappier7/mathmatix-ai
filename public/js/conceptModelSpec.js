@@ -398,7 +398,9 @@
     circle: 1, polygon: 1, angle: 1
   };
   var CONTROL_TYPES = { slider: 1, choice: 1 };
-  var MEASURE_TYPES = { angle: 1 };
+  // Quantities the engine can MEASURE off the live geometry. Each needs its own
+  // point refs (validated below) and a pure measurement fn (used by the renderer).
+  var MEASURE_TYPES = { angle: 1, length: 1, area: 1 };
 
   function isPlainObject(o) { return o && typeof o === 'object' && !Array.isArray(o); }
 
@@ -425,6 +427,29 @@
     var c = (v1x * v2x + v1y * v2y) / (m1 * m2);
     c = Math.max(-1, Math.min(1, c)); // clamp FP drift outside acos domain
     return Math.acos(c) * 180 / Math.PI;
+  }
+
+  // The distance between two points [x,y]. The length analog of measureAngle:
+  // the spec says "measure the segment A-B", the engine reads it off the live
+  // positions — so a side length / radius / perimeter term is never asserted.
+  function measureDistance(a, b) {
+    if (!a || !b) return NaN;
+    return Math.hypot(b[0] - a[0], b[1] - a[1]);
+  }
+
+  // The (unsigned) area of the polygon through `points` ([x,y] each), via the
+  // shoelace formula. Absolute value so vertex winding (CW/CCW) doesn't flip the
+  // sign — a generated area readout reads the same regardless of order. NaN for
+  // fewer than three points.
+  function measureArea(points) {
+    if (!Array.isArray(points) || points.length < 3) return NaN;
+    var sum = 0;
+    for (var i = 0; i < points.length; i++) {
+      var p = points[i], q = points[(i + 1) % points.length];
+      if (!p || !q) return NaN;
+      sum += p[0] * q[1] - q[0] * p[1];
+    }
+    return Math.abs(sum) / 2;
   }
 
   /**
@@ -499,6 +524,18 @@
           var def = spec.measures[name];
           if (!isPlainObject(def) || !MEASURE_TYPES[def.type]) {
             errors.push('measure "' + name + '" needs a known type (' + Object.keys(MEASURE_TYPES).join(', ') + ')');
+          } else if (def.type === 'angle') {
+            if (typeof def.at !== 'string' || !Array.isArray(def.rays) || def.rays.length !== 2) {
+              errors.push('measure "' + name + '" (angle) needs at:<point> and rays:[ptA, ptB]');
+            }
+          } else if (def.type === 'length') {
+            if (!Array.isArray(def.between) || def.between.length !== 2) {
+              errors.push('measure "' + name + '" (length) needs between:[ptA, ptB]');
+            }
+          } else if (def.type === 'area') {
+            if (!Array.isArray(def.of) || def.of.length < 3) {
+              errors.push('measure "' + name + '" (area) needs of:[ptA, ptB, ptC, …]');
+            }
           }
           measureSet[name] = true;
         });
@@ -740,6 +777,12 @@
         if (Array.isArray(def.rays)) def.rays.forEach(function (ref) {
           if (!isPoint(ref)) errors.push('measure "' + name + '" ray "' + ref + '" is not a point');
         });
+        if (Array.isArray(def.between)) def.between.forEach(function (ref) {
+          if (!isPoint(ref)) errors.push('measure "' + name + '" endpoint "' + ref + '" is not a point');
+        });
+        if (Array.isArray(def.of)) def.of.forEach(function (ref) {
+          if (!isPoint(ref)) errors.push('measure "' + name + '" vertex "' + ref + '" is not a point');
+        });
       });
     }
 
@@ -768,6 +811,8 @@
     getModel: getModel,
     readoutTokens: readoutTokens,
     measureAngle: measureAngle,
+    measureDistance: measureDistance,
+    measureArea: measureArea,
     MODELS: Object.keys(CURATED)
   };
 });

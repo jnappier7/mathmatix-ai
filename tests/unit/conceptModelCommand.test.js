@@ -102,6 +102,36 @@ describe('conceptModelCommand — resolveModelCommands (generative long-tail gat
     expect(dropped[0].reason).toBe('model_missing_spec_and_name');
   });
 
+  it('strips a Markdown code fence the LLM wrapped around the spec', () => {
+    const fenced = '```json\n' + JSON.stringify(validGeneratedSpec()) + '\n```';
+    const { commands, dropped } = resolveModelCommands([{ action: 'model', spec: fenced }]);
+    expect(dropped).toHaveLength(0);
+    expect(commands).toHaveLength(1);
+    expect(commands[0].spec.model).toBe('cosine_wave');
+  });
+
+  it('falls back to a curated name when the generated spec is invalid', () => {
+    // A dropped spec would leave the tutor referencing a model that never appears.
+    // If the command also names a real curated model, render that instead.
+    const { commands, dropped, fallbacks } = resolveModelCommands([
+      { action: 'model', spec: '{ not valid json', model: 'slope_intercept_line', prompt: 'here' },
+    ]);
+    expect(dropped).toHaveLength(0);
+    expect(commands).toHaveLength(1);
+    expect(commands[0].model).toBe('slope_intercept_line');
+    expect(commands[0].spec).toBeUndefined();        // the bad spec is dropped
+    expect(commands[0].prompt).toBe('here');         // framing preserved
+    expect(fallbacks[0].reason).toBe('model_spec_unparseable');
+  });
+
+  it('drops (no fallback) when the spec is invalid and the curated name is bogus', () => {
+    const { commands, dropped } = resolveModelCommands([
+      { action: 'model', spec: '{ not valid json', model: 'not_a_real_model' },
+    ]);
+    expect(commands).toHaveLength(0);
+    expect(dropped[0].reason).toBe('model_spec_unparseable');
+  });
+
   it('leaves non-model commands untouched and in order', () => {
     const cmds = [
       { action: 'pose', tex: '2x + 4 = 20' },
@@ -114,6 +144,6 @@ describe('conceptModelCommand — resolveModelCommands (generative long-tail gat
   });
 
   it('returns empty for a non-array input', () => {
-    expect(resolveModelCommands(null)).toEqual({ commands: [], dropped: [] });
+    expect(resolveModelCommands(null)).toEqual({ commands: [], dropped: [], fallbacks: [] });
   });
 });

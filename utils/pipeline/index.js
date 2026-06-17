@@ -480,6 +480,13 @@ async function runPipeline(message, ctx) {
         errors: errors || null,
       });
     }
+    // Generated spec rejected but a curated name carried the card instead.
+    for (const { command, reason } of resolvedModels.fallbacks) {
+      boardLogger.warn('Concept-model spec rejected; fell back to curated model', {
+        reason,
+        model: command.model || null,
+      });
+    }
   }
 
   // ── Stage 5b.0: BOARD LLM (advisory board-card source) ──
