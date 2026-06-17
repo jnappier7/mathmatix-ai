@@ -570,7 +570,7 @@ function detectManipulativeContext(opts = {}) {
 // DYNAMIC PROMPT BUILDER — per-student, per-request context
 // ============================================================================
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null, activeWorksheet = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -690,6 +690,22 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
   // Upload context
   if (uploadContext) {
     parts.push(`--- UPLOADED CONTENT ---\n${typeof uploadContext === 'string' ? uploadContext : JSON.stringify(uploadContext)}`);
+  }
+
+  // Active worksheet — the document the student is working from THIS session,
+  // pinned to the conversation and injected at FULL length every turn. Without
+  // this the worksheet text lived only in the upload-turn message (buried in
+  // history) and a truncated 1500-char "recent uploads" excerpt, so the tutor
+  // would "forget" later problems and ask the student to re-type them
+  // ("#3 on the quiz" → "what does it say?"). Mirrors the teacher-resource
+  // block: full content + reference-by-number + never ask to re-share.
+  if (activeWorksheet && activeWorksheet.text) {
+    parts.push(
+      `--- ACTIVE WORKSHEET: "${activeWorksheet.filename || 'uploaded file'}" ---\n` +
+      `${firstName} is working from this uploaded worksheet right now. You have its FULL content below.\n\n` +
+      `${activeWorksheet.text}\n\n` +
+      `USE IT: When ${firstName} says "number 3", "the next one", or "#2 on the quiz", find that problem in the worksheet above and work from it directly — NEVER ask "what does it say?" or have them re-type it. Refer to problems by their number as written. You still teach Socratically (Rule 1 — having the problem does NOT mean revealing the answer).`
+    );
   }
 
   // Conversation context
