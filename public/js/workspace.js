@@ -134,7 +134,7 @@
         blank.setAttribute('inputmode', 'text');
         blank.autocomplete = 'off';
         blank.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') { e.preventDefault(); submit(); }
+          if (e.key === 'Enter') { e.preventDefault(); check(); }
         });
         blank.addEventListener('input', function () { blank.classList.remove('is-missing'); });
         row.appendChild(blank);
@@ -144,13 +144,13 @@
     card.appendChild(row);
 
     var actions = el('div', 'cr-ws-scaffold-actions');
-    var submitBtn = el('button', 'cr-ws-scaffold-submit');
-    submitBtn.type = 'button';
-    submitBtn.textContent = 'Submit';
-    actions.appendChild(submitBtn);
+    var checkBtn = el('button', 'cr-ws-scaffold-submit');
+    checkBtn.type = 'button';
+    checkBtn.textContent = 'Check';
+    actions.appendChild(checkBtn);
     card.appendChild(actions);
 
-    function submit() {
+    function check() {
       // Every blank must be filled — an empty blank isn't an answer.
       var missing = false;
       inputs.forEach(function (inp) {
@@ -158,8 +158,7 @@
       });
       if (missing) { var first = inputs.filter(function (i) { return !i.value.trim(); })[0]; if (first) first.focus(); return; }
 
-      // Reassemble the line with the typed values in place of the blanks, then
-      // send it as the student's message.
+      // Reassemble the line with the typed values in place of the blanks.
       var assembled = '';
       segments.forEach(function (seg, i) {
         assembled += seg;
@@ -167,17 +166,26 @@
       });
       assembled = assembled.replace(/\s+/g, ' ').trim();
 
-      var sent = submitAsStudent(assembled);
+      // Send the completed line as a SILENT message: the tutor reacts to what the
+      // student filled in (the verdict lands in chat / on the board), but no
+      // student bubble is painted, so it reads as "the tutor responded to my
+      // card", not as a typed message. Falls back to a visible send if the chat's
+      // silent channel isn't present (e.g. the board open outside the chat page).
+      var sent = (typeof window.sendSilentMessage === 'function')
+        ? window.sendSilentMessage(assembled)
+        : submitAsStudent(assembled);
       if (sent) {
-        // Lock the card so it reads as done (and can't be re-submitted).
+        // Immediate visual feedback: lock the filled answers in and mark the card
+        // checked. The tutor's reply (chat + any verify/resolve card) is the
+        // actual right/wrong verdict — the card carries no answer key.
         card.classList.add('cr-ws-board-card--scaffold-done');
         inputs.forEach(function (inp) { inp.disabled = true; });
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sent';
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Checked ✓';
       }
     }
 
-    submitBtn.addEventListener('click', submit);
+    checkBtn.addEventListener('click', check);
     return true;
   }
 

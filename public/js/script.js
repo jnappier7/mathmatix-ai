@@ -2201,20 +2201,27 @@ document.addEventListener("DOMContentLoaded", () => {
      * Queue a message for processing
      * Shows the message immediately as "queued" and processes when ready
      */
-    function queueMessage(messageText, files, responseTime) {
+    function queueMessage(messageText, files, responseTime, opts) {
+        opts = opts || {};
         const queuedMessage = {
             id: ++messageQueue.currentMessageId,
             text: messageText,
             files: files ? [...files] : [],
             responseTime: responseTime,
+            // SILENT: send the turn to the tutor and render its reply, but never
+            // paint a student bubble for it. Used by the WorkBoard's fill-in cards
+            // (a scaffold the student completes + Checks): the tutor reacts to the
+            // card's content without it looking like a typed chat message.
+            silent: !!opts.silent,
             timestamp: Date.now()
         };
 
         messageQueue.queue.push(queuedMessage);
         console.log(`[MessageQueue] Message queued (ID: ${queuedMessage.id}, Queue length: ${messageQueue.queue.length})`);
 
-        // Show queued message in UI with "queued" indicator if we're already processing
-        if (messageQueue.isProcessing && messageText) {
+        // Show queued message in UI with "queued" indicator if we're already
+        // processing — never for a silent turn (it has no bubble at all).
+        if (messageQueue.isProcessing && messageText && !queuedMessage.silent) {
             appendQueuedMessage(messageText, queuedMessage.id);
         }
 
@@ -2223,6 +2230,16 @@ document.addEventListener("DOMContentLoaded", () => {
             processMessageQueue();
         }
     }
+
+    // Public: send a turn to the tutor WITHOUT rendering a student bubble. The
+    // full pipeline still runs (the tutor reacts, board commands apply), so a
+    // WorkBoard card can let the student act and have the tutor respond to it.
+    window.sendSilentMessage = function (text) {
+        text = (text == null ? '' : String(text)).trim();
+        if (!text) return false;
+        queueMessage(text, [], null, { silent: true });
+        return true;
+    };
 
     /**
      * Display a queued message in the chat with a visual indicator
@@ -2314,9 +2331,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const responseTime = queuedMsg.responseTime;
         const queuedFiles = queuedMsg.files;
 
-        // Only append if not already shown as queued
+        // Only append if not already shown as queued. A SILENT turn never paints
+        // a student bubble — the tutor reacts to it (e.g. a filled-in WorkBoard
+        // card) without it looking like a typed message.
         const queuedElement = document.querySelector(`[data-queue-id="${queuedMsg.id}"]`);
-        if (!queuedElement && messageText) {
+        if (queuedMsg.silent) {
+            if (queuedElement) queuedElement.remove();
+        } else if (!queuedElement && messageText) {
             appendMessage(messageText, "user");
         } else if (queuedElement && messageText) {
             // Replace queued message with proper user message
