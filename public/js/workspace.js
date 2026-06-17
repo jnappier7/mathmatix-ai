@@ -120,6 +120,7 @@
 
     var row = el('div', 'cr-ws-scaffold-fill');
     var inputs = [];
+    var lastFocused = null; // which blank the tap-strip inserts into
     segments.forEach(function (seg, i) {
       if (seg && seg.trim()) {
         var frag = el('span', 'cr-ws-scaffold-seg');
@@ -144,11 +145,43 @@
             checkBtn.textContent = 'Check';
           }
         });
+        blank.addEventListener('focus', function () { lastFocused = blank; });
         row.appendChild(blank);
         inputs.push(blank);
       }
     });
     card.appendChild(row);
+
+    // Tap-strip — the math symbols a phone keyboard hides two layers deep, one
+    // tap away. Inserts at the focused blank's cursor (pointerdown + preventDefault
+    // keeps focus in the input). Hidden once the card locks (see CSS).
+    var keys = el('div', 'cr-ws-scaffold-keys');
+    [['(', '('], [')', ')'], ['xⁿ', '^'], ['x²', '²'], ['√', '√'],
+     ['±', '±'], ['∕', '/'], ['π', 'π']].forEach(function (k) {
+      var kb = el('button', 'cr-ws-scaffold-key');
+      kb.type = 'button';
+      kb.textContent = k[0];
+      kb.setAttribute('aria-label', 'insert ' + k[1]);
+      kb.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); // don't blur the blank
+        insertIntoBlank(k[1]);
+      });
+      keys.appendChild(kb);
+    });
+    card.appendChild(keys);
+
+    function insertIntoBlank(text) {
+      var inp = lastFocused || inputs[0];
+      if (!inp || inp.disabled) return;
+      inp.focus();
+      var s = inp.selectionStart, e = inp.selectionEnd;
+      if (typeof s === 'number' && typeof inp.setRangeText === 'function') {
+        inp.setRangeText(text, s, e, 'end');
+      } else {
+        inp.value += text;
+      }
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 
     var actions = el('div', 'cr-ws-scaffold-actions');
     var checkBtn = el('button', 'cr-ws-scaffold-submit');
