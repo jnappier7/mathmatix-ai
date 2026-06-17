@@ -136,7 +136,14 @@
         blank.addEventListener('keydown', function (e) {
           if (e.key === 'Enter') { e.preventDefault(); check(); }
         });
-        blank.addEventListener('input', function () { blank.classList.remove('is-missing'); });
+        blank.addEventListener('input', function () {
+          blank.classList.remove('is-missing');
+          // Editing after a "Try again" clears the retry state and re-arms Check.
+          if (card.classList.contains('cr-ws-board-card--scaffold-retry')) {
+            card.classList.remove('cr-ws-board-card--scaffold-retry');
+            checkBtn.textContent = 'Check';
+          }
+        });
         row.appendChild(blank);
         inputs.push(blank);
       }
@@ -175,13 +182,47 @@
         ? window.sendSilentMessage(assembled)
         : submitAsStudent(assembled);
       if (sent) {
-        // Immediate visual feedback: lock the filled answers in and mark the card
-        // checked. The tutor's reply (chat + any verify/resolve card) is the
-        // actual right/wrong verdict — the card carries no answer key.
-        card.classList.add('cr-ws-board-card--scaffold-done');
+        // Lock the answers in and show a pending "Checking…" state. The verdict
+        // settles IN PLACE when the tutor's reaction card lands (see
+        // resolvePendingScaffold) — green if it confirms the line, amber to retry.
+        card.classList.remove('cr-ws-board-card--scaffold-retry');
+        card.classList.add('cr-ws-board-card--scaffold-checking');
         inputs.forEach(function (inp) { inp.disabled = true; });
         checkBtn.disabled = true;
+        checkBtn.textContent = 'Checking…';
+        var pending = {
+          line: normalizeLine(assembled),
+          settle: settleVerdict
+        };
+        // Safety net: if the tutor's reply carries no resolvable board card,
+        // don't hang on "Checking…" — settle to a neutral checked state.
+        pending.timer = setTimeout(function () {
+          if (WS.board.pendingScaffold === pending) {
+            settleVerdict('neutral');
+            WS.board.pendingScaffold = null;
+          }
+        }, 12000);
+        WS.board.pendingScaffold = pending;
+      }
+    }
+
+    // Apply the verdict to this card in place.
+    function settleVerdict(verdict) {
+      card.classList.remove('cr-ws-board-card--scaffold-checking');
+      if (verdict === 'correct') {
+        card.classList.add('cr-ws-board-card--scaffold-correct');
+        checkBtn.textContent = 'Correct ✓';
+        checkBtn.disabled = true;
+      } else if (verdict === 'retry') {
+        card.classList.add('cr-ws-board-card--scaffold-retry');
+        checkBtn.textContent = 'Try again';
+        checkBtn.disabled = false;
+        inputs.forEach(function (inp) { inp.disabled = false; });
+      } else {
+        // Neutral: sent and acknowledged, but no structured verdict to show.
+        card.classList.add('cr-ws-board-card--scaffold-done');
         checkBtn.textContent = 'Checked ✓';
+        checkBtn.disabled = true;
       }
     }
 
@@ -489,7 +530,42 @@
     }
   }
 
+  // Normalize a math line for comparison: drop whitespace, $ delimiters, braces,
+  // and LaTeX spacing macros so "x^2 + 4x + 4 = 12 + 4" matches a resolve card's
+  // tex regardless of formatting.
+  function normalizeLine(s) {
+    return String(s || '')
+      .replace(/\\(?:left|right|,|;|:|!|quad|qquad)/g, '')
+      .replace(/\\\(|\\\)|\\\[|\\\]/g, '')
+      .replace(/[\s${}]/g, '')
+      .toLowerCase();
+  }
+
+  // In-place verdict for a Checked scaffold card. The tutor reacts to the silent
+  // Check with board commands; the FIRST relevant one is the verdict, read
+  // structurally (never by parsing prose):
+  //   • verify, or a resolve that matches the student's line  → CORRECT (green)
+  //   • a fresh scaffold (the tutor re-hints)                 → TRY AGAIN (amber)
+  //   • anything else / nothing                               → stays neutral
+  // Called from pushBoardStep, the single point every new card flows through.
+  function resolvePendingScaffold(step) {
+    var p = WS.board.pendingScaffold;
+    if (!p || !step) return;
+    var verdict = null;
+    if (step.type === 'verify') verdict = 'correct';
+    else if (step.type === 'resolve' && normalizeLine(step.tex) === p.line) verdict = 'correct';
+    else if (step.type === 'scaffold') verdict = 'retry';
+    if (verdict) {
+      if (p.timer) clearTimeout(p.timer);
+      p.settle(verdict);
+      WS.board.pendingScaffold = null;
+    }
+  }
+
   function pushBoardStep(step) {
+    // Settle a pending scaffold Check before this new card lands (the new card IS
+    // the tutor's reaction, so the verdict reads off its type).
+    resolvePendingScaffold(step);
     WS.board.steps.push(step);
     // If the user is currently looking at a different tab, the cards
     // will materialize when they return — no need to switch them.
