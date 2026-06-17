@@ -65,6 +65,122 @@
     );
   }
 
+  // Matches an EMPTY scaffold blank: a \boxed{} whose contents are only LaTeX
+  // spacing macros, or a \square glyph. Mirrors the blanks the pedagogy guard
+  // recognizes (utils/boardCommandGuard.js texHasBlank). No capture groups, so
+  // String.split() drops the delimiters and yields the segments between blanks.
+  var SCAFFOLD_BLANK_RE = /\\boxed\s*\{\s*(?:\\(?:[;,:! ]|quad|qquad)\s*)*\}|\\square\b/g;
+
+  // KaTeX inline fragment (so math segments sit on one line beside the inputs).
+  function renderTexInline(target, tex) {
+    if (!target) return;
+    if (window.katex && typeof window.katex.render === 'function') {
+      try {
+        window.katex.render(String(tex || ''), target, {
+          throwOnError: false, displayMode: false, output: 'html'
+        });
+        return;
+      } catch (_) { /* fall through */ }
+    }
+    target.textContent = String(tex || '');
+  }
+
+  // Submit text AS THE STUDENT — a visible chat message, exactly as if they'd
+  // typed it and hit Send. This is deliberate: the tutor only ever knows what the
+  // student SAYS, never what's on a card. A silent/background message would make
+  // it look like the tutor can read the board itself, which it can't — so the
+  // filled-in line flows through the normal input + send path and shows up as the
+  // student's own bubble. Mirrors the GraphTool submit (script.js).
+  function submitAsStudent(text) {
+    text = String(text || '').trim();
+    if (!text) return false;
+    var input = document.getElementById('user-input');
+    var sendBtn = document.getElementById('send-button') || document.querySelector('.send-button');
+    if (input && sendBtn) {
+      if (input.isContentEditable) input.textContent = text;
+      else input.value = text;
+      // Let any input-listeners (send-button enable, autosize) react first.
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      sendBtn.click();
+      return true;
+    }
+    if (typeof window.sendMessage === 'function') { window.sendMessage(text); return true; }
+    return false;
+  }
+
+  // Build an interactive scaffold card body: the LaTeX renders around editable
+  // blanks the student fills in, then submits as their own line (see
+  // submitAsStudent). Returns true if at least one blank was wired; false when
+  // there's no recognizable blank (caller falls back to the static render).
+  function buildScaffoldFill(card, tex) {
+    if (!tex || typeof tex !== 'string') return false;
+    SCAFFOLD_BLANK_RE.lastIndex = 0;
+    var segments = tex.split(SCAFFOLD_BLANK_RE);
+    if (segments.length < 2) return false; // no blank → not fillable
+
+    var row = el('div', 'cr-ws-scaffold-fill');
+    var inputs = [];
+    segments.forEach(function (seg, i) {
+      if (seg && seg.trim()) {
+        var frag = el('span', 'cr-ws-scaffold-seg');
+        renderTexInline(frag, seg);
+        row.appendChild(frag);
+      }
+      if (i < segments.length - 1) {
+        var blank = document.createElement('input');
+        blank.type = 'text';
+        blank.className = 'cr-ws-scaffold-input';
+        blank.setAttribute('aria-label', 'fill in the blank ' + (i + 1));
+        blank.setAttribute('inputmode', 'text');
+        blank.autocomplete = 'off';
+        blank.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); submit(); }
+        });
+        blank.addEventListener('input', function () { blank.classList.remove('is-missing'); });
+        row.appendChild(blank);
+        inputs.push(blank);
+      }
+    });
+    card.appendChild(row);
+
+    var actions = el('div', 'cr-ws-scaffold-actions');
+    var submitBtn = el('button', 'cr-ws-scaffold-submit');
+    submitBtn.type = 'button';
+    submitBtn.textContent = 'Submit';
+    actions.appendChild(submitBtn);
+    card.appendChild(actions);
+
+    function submit() {
+      // Every blank must be filled — an empty blank isn't an answer.
+      var missing = false;
+      inputs.forEach(function (inp) {
+        if (!inp.value.trim()) { inp.classList.add('is-missing'); missing = true; }
+      });
+      if (missing) { var first = inputs.filter(function (i) { return !i.value.trim(); })[0]; if (first) first.focus(); return; }
+
+      // Reassemble the line with the typed values in place of the blanks, then
+      // send it as the student's message.
+      var assembled = '';
+      segments.forEach(function (seg, i) {
+        assembled += seg;
+        if (i < segments.length - 1) assembled += ' ' + inputs[i].value.trim() + ' ';
+      });
+      assembled = assembled.replace(/\s+/g, ' ').trim();
+
+      var sent = submitAsStudent(assembled);
+      if (sent) {
+        // Lock the card so it reads as done (and can't be re-submitted).
+        card.classList.add('cr-ws-board-card--scaffold-done');
+        inputs.forEach(function (inp) { inp.disabled = true; });
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sent';
+      }
+    }
+
+    submitBtn.addEventListener('click', submit);
+    return true;
+  }
+
   // ---- Launcher tools (open an existing floating surface) --------------
   // Board used to be a launcher into the floating whiteboard; it's now
   // the embedded home base (see renderBoard below). Tiles + Calc stay
@@ -276,11 +392,17 @@
       // Hint card — shows the next step's structure with empty \boxed{}
       // slots the student fills in. Distinct look + an eyebrow so it reads
       // as "your move", not as a finished step. Blanks reveal nothing, so
-      // this is the one card allowed on the student's own problem.
+      // this is the one card allowed on the student's own problem. The blanks
+      // are EDITABLE: the student types in them and submits the completed line
+      // as their own chat message (buildScaffoldFill). If no blank is found
+      // (shouldn't happen — the guard requires one), fall back to a static
+      // render so the card still shows.
       card = el('div', 'cr-ws-board-card cr-ws-board-card--scaffold');
-      var sMath = el('div', 'cr-ws-board-card-math');
-      card.appendChild(sMath);
-      renderTex(sMath, widenScaffoldBlanks(step.tex));
+      if (!buildScaffoldFill(card, step.tex)) {
+        var sMath = el('div', 'cr-ws-board-card-math');
+        card.appendChild(sMath);
+        renderTex(sMath, widenScaffoldBlanks(step.tex));
+      }
     } else if (step.type === 'worked') {
       // Read-only worked-example step — one line of a derivation the tutor is
       // teaching (NOT the student's own problem). A distinct accent + a

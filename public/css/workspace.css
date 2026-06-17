@@ -530,6 +530,58 @@
   background: rgba(255, 184, 77, 0.10);
 }
 
+/* Interactive fill-in: math segments flow on one line beside editable blanks. */
+.cr-ws-scaffold-fill {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 6px 4px;   /* top padding clears the "YOUR TURN" eyebrow */
+  font-size: 1.15em;
+}
+.cr-ws-scaffold-seg { white-space: nowrap; }
+.cr-ws-scaffold-seg .katex { font-size: 1em; }
+.cr-ws-scaffold-input {
+  width: 3.2em;
+  min-width: 3.2em;
+  text-align: center;
+  font-size: 0.95em;
+  font-family: 'KaTeX_Main', 'Times New Roman', serif;
+  padding: 3px 4px;
+  color: var(--cr-text);
+  background: rgba(255, 184, 77, 0.10);
+  border: 2px dashed rgba(224, 150, 43, 0.85);
+  border-radius: 6px;
+  outline: none;
+}
+.cr-ws-scaffold-input:focus {
+  border-style: solid;
+  border-color: #E0962B;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(224, 150, 43, 0.18);
+}
+.cr-ws-scaffold-input.is-missing {
+  border-color: #e0556e;
+  background: #fff2f4;
+}
+.cr-ws-scaffold-actions { display: flex; justify-content: center; padding: 2px 0 4px; }
+.cr-ws-scaffold-submit {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 18px;
+  color: #fff;
+  background: linear-gradient(135deg, #FFB84D, #E0962B);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.cr-ws-scaffold-submit:hover { filter: brightness(1.05); }
+.cr-ws-scaffold-submit:disabled { background: #cfc7b8; cursor: default; filter: none; }
+/* Once submitted, settle the card so it reads as done. */
+.cr-ws-board-card--scaffold-done { border-style: solid; opacity: 0.85; }
+.cr-ws-board-card--scaffold-done .cr-ws-scaffold-input { border-style: solid; opacity: 0.7; }
+
 /* Worked example — a read-only step of a derivation the TUTOR is teaching, not
    the student's own work. A calm instructional blue (distinct from the student's
    purple work, the green SOLVED, and the amber scaffold) plus a "WORKED EXAMPLE"
