@@ -247,6 +247,16 @@
   // The board never previews a step the student hasn't said. Callers
   // are responsible for honoring this; the rule will be backstopped by
   // a server-side guard in the next phase.
+  function makeBoardEmpty() {
+    return el('div', 'cr-ws-empty cr-ws-board-empty',
+      '<div class="cr-ws-board-empty-ico" aria-hidden="true">' +
+        '<i class="fas fa-pen-ruler"></i></div>' +
+      '<h5 class="cr-ws-board-empty-title">Ready to work it out?</h5>' +
+      '<p class="cr-ws-board-empty-body">' +
+        'Your steps will land here as you and your tutor work through ' +
+        'the problem together.</p>');
+  }
+
   function renderBoard(body) {
     var head = el('div', 'cr-ws-board-head');
     head.innerHTML =
@@ -258,14 +268,7 @@
     var stack = el('div', 'cr-ws-board-stack');
     body.appendChild(stack);
 
-    var empty = el('div', 'cr-ws-empty cr-ws-board-empty',
-      '<div class="cr-ws-board-empty-ico" aria-hidden="true">' +
-        '<i class="fas fa-pen-ruler"></i></div>' +
-      '<h5 class="cr-ws-board-empty-title">Ready to work it out?</h5>' +
-      '<p class="cr-ws-board-empty-body">' +
-        'Your steps will land here as you and your tutor work through ' +
-        'the problem together.</p>');
-    if (WS.board.steps.length === 0) stack.appendChild(empty);
+    if (WS.board.steps.length === 0) stack.appendChild(makeBoardEmpty());
 
     // Rebuild any persisted steps (e.g. when re-entering the tab).
     WS.board.steps.forEach(function (step) { appendStepCard(stack, step, /*animate*/ false); });
@@ -273,9 +276,24 @@
     head.querySelector('.cr-ws-board-clear').addEventListener('click', function () {
       WS.board.steps = [];
       var s = WS.body && WS.body.querySelector('.cr-ws-board-stack');
-      if (s) s.innerHTML = '';
-      if (s) s.appendChild(empty.cloneNode(true));
+      if (s) { s.innerHTML = ''; s.appendChild(makeBoardEmpty()); }
     });
+  }
+
+  // Remove a single card — both its DOM and its entry in WS.board.steps (matched
+  // by object reference, so it stays gone when the tab is rebuilt). If it was the
+  // last card, the empty-state hint comes back.
+  function dismissCard(card, step) {
+    var i = WS.board.steps.indexOf(step);
+    if (i !== -1) WS.board.steps.splice(i, 1);
+    var stack = card.parentNode;
+    card.classList.add('cr-ws-board-card--leaving');
+    setTimeout(function () {
+      card.remove();
+      if (stack && WS.board.steps.length === 0 && !stack.querySelector('.cr-ws-board-empty')) {
+        stack.appendChild(makeBoardEmpty());
+      }
+    }, 220);
   }
 
   function teardownBoard() {
@@ -449,6 +467,17 @@
     }
 
     if (animate) card.classList.add('cr-ws-board-card--enter');
+    // Per-card dismiss (×, top-right) — lets the student clear a single card
+    // without wiping the whole board. Removes the step from state too.
+    var dismiss = el('button', 'cr-ws-board-card-dismiss', '&times;');
+    dismiss.type = 'button';
+    dismiss.setAttribute('aria-label', 'Remove this card');
+    dismiss.title = 'Remove';
+    dismiss.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dismissCard(card, step);
+    });
+    card.appendChild(dismiss);
     stack.appendChild(card);
     // Scroll the new card into view (smooth so the eye follows the work).
     try { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) { /* old browser */ }
