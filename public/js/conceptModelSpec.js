@@ -382,6 +382,25 @@
       reveal: ['plane', 'circ', 'O', 'A', 'A2', 'B', 'lineA', 'rayB', 'ang1', 'ang2', 'out'],
       drag: ['B'],
       prompt: 'Drag B along the arc. The two angles on the line always add to 180° — a linear pair.'
+    },
+
+    // First DISCRETE model (engine:"tokens", not JSXGraph). Two-color counters
+    // for integer arithmetic: type an expression -> chips appear (yellow = +1,
+    // red = −1) -> drag a red onto a yellow to make a zero pair -> what's left is
+    // the answer. The Sum is MEASURED from the chips on the mat (never asserted)
+    // and is invariant as zero pairs cancel — that invariance is the lesson.
+    integer_counters: {
+      model: 'integer_counters',
+      engine: 'tokens',
+      title: 'Integer counters — zero pairs',
+      input: { expression: true, placeholder: '-7 + 10' },
+      tokens: [
+        { value: 1, color: 'yellow', label: '+' },
+        { value: -1, color: 'red', label: '−' }
+      ],
+      rules: [{ when: 'overlap-opposite', do: 'annihilate' }],
+      readout: { text: 'Sum: {net}', format: 'signedInt' },
+      prompt: 'Type an expression, then drag a red onto a yellow to cancel — what is left?'
     }
   };
 
@@ -452,6 +471,84 @@
     return Math.abs(sum) / 2;
   }
 
+  // ─── Discrete / token engine (the second substrate) ─────────────────────
+  // Integer counters & algebra tiles: discrete draggable CHIPS the student
+  // arranges, with zero-pair cancellation. The "measure, never assert" property
+  // holds here too — the net (the sum of the chips on the mat) is COMPUTED from
+  // what's present, never typed. This module owns the pure logic + validation;
+  // the inline chip renderer is public/js/conceptModelTokenRenderer.js.
+
+  var TOKEN_RULE_WHEN = { 'overlap-opposite': 1 };
+  var TOKEN_RULE_DO = { annihilate: 1 };
+  var MAX_TOKENS = 60; // cap chips spawned from one expression (UI + DoS guard)
+
+  // Expand an integer add/subtract expression into chip counts:
+  // "-7 + 10" -> { positives: 10, negatives: 7, net: 3 }. Returns null for
+  // anything that isn't a sum/difference of integers (the only thing integer
+  // counters model). `net` is the live measured quantity a {net} readout shows —
+  // and it is INVARIANT under zero-pair cancellation, which is the whole lesson.
+  function expandIntegerExpression(str) {
+    if (typeof str !== 'string') return null;
+    var s = str.replace(/[−–—]/g, '-').replace(/\s+/g, '');
+    if (!/^[+-]?\d+([+-]\d+)*$/.test(s)) return null;
+    var terms = s.match(/[+-]?\d+/g).map(Number);
+    var positives = 0, negatives = 0;
+    terms.forEach(function (t) { if (t >= 0) positives += t; else negatives += -t; });
+    return { positives: positives, negatives: negatives, net: positives - negatives, terms: terms };
+  }
+
+  // Validate a token-engine spec (engine:"tokens"). Different shape from the
+  // JSXGraph path: chip TYPES (value + color), an optional expression input,
+  // optional interaction rules (zero-pair cancel), and a readout that may show
+  // the live {net}.
+  function validateTokenSpec(spec) {
+    var errors = [];
+    if (typeof spec.model !== 'string' || !spec.model) errors.push('spec.model must be a non-empty string');
+
+    if (!Array.isArray(spec.tokens) || spec.tokens.length === 0) {
+      errors.push('token spec needs a non-empty tokens array');
+    } else {
+      spec.tokens.forEach(function (t, i) {
+        if (!isPlainObject(t)) { errors.push('token[' + i + '] must be an object'); return; }
+        if (typeof t.value !== 'number') errors.push('token[' + i + '] needs a numeric value');
+        if (typeof t.color !== 'string' || !t.color) errors.push('token[' + i + '] needs a color');
+      });
+    }
+
+    if (spec.input != null) {
+      if (!isPlainObject(spec.input)) errors.push('token spec input must be an object');
+      else if (spec.input.placeholder != null && typeof spec.input.placeholder !== 'string') {
+        errors.push('token input placeholder must be a string');
+      }
+    }
+
+    if (spec.rules != null) {
+      if (!Array.isArray(spec.rules)) {
+        errors.push('token spec rules must be an array');
+      } else {
+        spec.rules.forEach(function (r, i) {
+          if (!isPlainObject(r)) { errors.push('rule[' + i + '] must be an object'); return; }
+          if (!TOKEN_RULE_WHEN[r.when]) errors.push('rule[' + i + '] has unknown when "' + r.when + '"');
+          if (!TOKEN_RULE_DO[r.do]) errors.push('rule[' + i + '] has unknown do "' + r.do + '"');
+        });
+      }
+    }
+
+    if (spec.readout != null) {
+      if (!isPlainObject(spec.readout)) {
+        errors.push('token spec readout must be an object');
+      } else if (typeof spec.readout.text !== 'string') {
+        errors.push('token readout needs text');
+      } else {
+        readoutTokens(spec.readout.text).forEach(function (tok) {
+          if (tok !== 'net') errors.push('token readout references unknown name "' + tok + '" (only {net})');
+        });
+      }
+    }
+
+    return { valid: errors.length === 0, errors: errors };
+  }
+
   /**
    * Validate a concept-model spec.
    * @param {object} spec
@@ -460,6 +557,9 @@
   function validateModelSpec(spec) {
     var errors = [];
     if (!isPlainObject(spec)) return { valid: false, errors: ['spec must be an object'] };
+    // The discrete/token substrate has a different shape (chips, not a plane of
+    // elements), so it validates on its own path.
+    if (spec.engine === 'tokens') return validateTokenSpec(spec);
     if (typeof spec.model !== 'string' || !spec.model) errors.push('spec.model must be a non-empty string');
     if (!isPlainObject(spec.params)) errors.push('spec.params must be an object');
 
@@ -813,6 +913,8 @@
     measureAngle: measureAngle,
     measureDistance: measureDistance,
     measureArea: measureArea,
+    expandIntegerExpression: expandIntegerExpression,
+    MAX_TOKENS: MAX_TOKENS,
     MODELS: Object.keys(CURATED)
   };
 });

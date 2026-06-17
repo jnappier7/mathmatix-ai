@@ -52,6 +52,7 @@ const SUMMON_WHEN = {
   inscribed_angle: 'the inscribed angle theorem — drag B, the inscribed angle stays half the central',
   triangle_angle_sum: 'the triangle angle sum — drag a vertex, the three angles re-measure and always total 180°',
   linear_pair_angles: 'a linear pair / supplementary angles on a line (the two angles total 180°)',
+  integer_counters: 'integer arithmetic with zero pairs — type an expression like −7+10, drag a red onto a yellow to cancel, see what is left (a discrete chip model)',
 };
 
 /** "  • name — blurb" lines for every curated model, from the catalog. */
