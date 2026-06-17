@@ -137,6 +137,16 @@ const RX_FINAL_SOLUTION = /(?:^|\s)([a-z])\s*=\s*(-?\d+(?:\.\d+)?(?:\/\d+)?)(?=$
 // "3(7) - 5 = 16", "4(6) + 3 = 27". Both sides arithmetic.
 const RX_SUBSTITUTION_CHECK = /(?:^|\s)((?:-?\d+(?:\.\d+)?[\s+\-*/().^]*){2,})\s*=\s*(-?\d+(?:\.\d+)?)(?=$|[\s.,!?])/;
 
+// Bare arithmetic answer — the WHOLE message is a number, decimal,
+// fraction, or mixed number, with no variable and no "=". This is the
+// final answer for a problem that has no variable to anchor on
+// (fraction multiplication, mixed-number arithmetic, "evaluate …").
+// "x = 8" answers go through detectFinalSolution; this fills the gap that
+// left arithmetic problems with no verify card. Trailing "!"/"." allowed
+// ("8!", "4/15."). The math engine (diagnosis.isCorrect) is the truth
+// gate, so this only needs to recognize the shape, not judge it.
+const RX_BARE_FINAL_ANSWER = /^(-?\d+(?:\.\d+)?(?:\s+\d+\/\d+|\/\d+)?)\s*[!.]*$/;
+
 function detectIntermediateEquation(studentText) {
   if (!studentText || typeof studentText !== 'string') return null;
   const t = studentText.trim();
@@ -201,6 +211,30 @@ function detectFinalSolution(studentText) {
   const m = t.match(RX_FINAL_SOLUTION);
   if (!m) return null;
   return { variable: m[1], value: m[2], tex: `${m[1]} = ${m[2]}` };
+}
+
+// A bare arithmetic final answer ("8", "8!", "3/20", "2 1/2"). Returns the
+// answer string (no trailing punctuation) or null. Kept strict — the whole
+// message must BE the answer — so problem references like "number 2" or
+// "#3" never match. Correctness is judged upstream by the math engine.
+function detectBareFinalAnswer(studentText) {
+  if (!studentText || typeof studentText !== 'string') return null;
+  const t = studentText.trim();
+  if (t.length === 0 || t.length > 24) return null;
+  if (/[?]$/.test(t)) return null;
+  const m = t.match(RX_BARE_FINAL_ANSWER);
+  if (!m) return null;
+  return m[1].trim();
+}
+
+// Render a bare answer as KaTeX so the verify card matches the board's
+// fraction styling: "4/15" → "\frac{4}{15}", "2 1/2" → "2\frac{1}{2}".
+function bareAnswerToTex(ans) {
+  let m = ans.match(/^(-?\d+)\s+(\d+)\/(\d+)$/); // mixed number
+  if (m) return `${m[1]}\\frac{${m[2]}}{${m[3]}}`;
+  m = ans.match(/^(-?\d+)\/(\d+)$/);             // simple fraction
+  if (m) return `\\frac{${m[1]}}{${m[2]}}`;
+  return ans;
 }
 
 function detectSubstitutionCheck(studentText) {
@@ -604,14 +638,27 @@ function synthesizeBoardCommands({
   //       engine confirms correct (isCorrect === true). The tutor's
   //       prose is NOT consulted — if the engine says right, the
   //       board reflects truth even when the tutor hedges.
-  //   (b) student stated a substitution check ("3(7) - 5 = 16")
+  //   (b) student stated a BARE arithmetic answer ("8", "4/15") with no
+  //       variable to anchor on AND the math engine confirms it. We render
+  //       "pinnedProblem = answer" using the open problem as the left side,
+  //       so fraction/arithmetic problems get the same completed-work card
+  //       that solve-for-x problems get via (a). Without this, the verify
+  //       card could only ever fire on "x = …" form, so arithmetic finals
+  //       never rendered.
+  //   (c) student stated a substitution check ("3(7) - 5 = 16")
   //       AND the prior board action shows we're verifying a known
   //       solution. Tutor must affirm (no math engine in the loop
   //       for arbitrary substitution math).
   const finalSol = detectFinalSolution(studentMessage);
+  const bareFinal = finalSol ? null : detectBareFinalAnswer(studentMessage);
   if (finalSol && diagnosis?.isCorrect === true) {
     const card = { action: 'verify', tex: finalSol.tex };
     cards.push(card);
+  } else if (bareFinal && pinnedProblem && diagnosis?.isCorrect === true) {
+    // Strip a trailing period/space the pose tex may carry so the "= answer"
+    // reads cleanly.
+    const problemTex = String(pinnedProblem).replace(/[\s.]+$/, '');
+    cards.push({ action: 'verify', tex: `${problemTex} = ${bareAnswerToTex(bareFinal)}` });
   } else {
     const subCheck = detectSubstitutionCheck(studentMessage);
     if (subCheck && tutorAffirms(tutorResponse)) {
@@ -917,6 +964,8 @@ module.exports = {
   _detectIntermediateEquation: detectIntermediateEquation,
   _detectIntermediateExpression: detectIntermediateExpression,
   _detectFinalSolution: detectFinalSolution,
+  _detectBareFinalAnswer: detectBareFinalAnswer,
+  _bareAnswerToTex: bareAnswerToTex,
   _detectSubstitutionCheck: detectSubstitutionCheck,
   _detectPosedProblem: detectPosedProblem,
   _looksLikeProblemStatement: looksLikeProblemStatement,
