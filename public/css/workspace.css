@@ -399,6 +399,39 @@
   position: relative;
 }
 
+/* Per-card dismiss (×) — top-right, clear of every eyebrow (all sit top-left). */
+.cr-ws-board-card-dismiss {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--cr-text-muted, #8a8f98);
+  font-size: 18px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.15s var(--cr-ease), background 0.15s var(--cr-ease), color 0.15s var(--cr-ease);
+  z-index: 2;
+}
+.cr-ws-board-card-dismiss:hover {
+  opacity: 1;
+  color: #e0556e;
+  background: rgba(224, 85, 110, 0.12);
+}
+.cr-ws-board-card:hover .cr-ws-board-card-dismiss { opacity: 0.7; }
+/* Leaving: fade + slide out before the node is removed. */
+.cr-ws-board-card--leaving {
+  opacity: 0;
+  transform: translateX(10px) scale(0.97);
+  pointer-events: none;
+}
+
 /* Slide-in entry — class is added then removed on the next frame so the
    transition runs. The from-state is opacity 0 + translateY 6px. */
 .cr-ws-board-card--enter {
@@ -528,6 +561,124 @@
   border-color: rgba(224, 150, 43, 0.85) !important;
   border-style: dashed !important;
   background: rgba(255, 184, 77, 0.10);
+}
+
+/* Interactive fill-in: math segments flow on one line beside editable blanks. */
+.cr-ws-scaffold-fill {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 6px 4px;   /* top padding clears the "YOUR TURN" eyebrow */
+  font-size: 1.15em;
+}
+.cr-ws-scaffold-seg { white-space: nowrap; }
+.cr-ws-scaffold-seg .katex { font-size: 1em; }
+.cr-ws-scaffold-input {
+  width: 3.2em;
+  min-width: 3.2em;
+  text-align: center;
+  font-size: 0.95em;
+  font-family: 'KaTeX_Main', 'Times New Roman', serif;
+  padding: 3px 4px;
+  color: var(--cr-text);
+  background: rgba(255, 184, 77, 0.10);
+  border: 2px dashed rgba(224, 150, 43, 0.85);
+  border-radius: 6px;
+  outline: none;
+}
+.cr-ws-scaffold-input:focus {
+  border-style: solid;
+  border-color: #E0962B;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(224, 150, 43, 0.18);
+}
+.cr-ws-scaffold-input.is-missing {
+  border-color: #e0556e;
+  background: #fff2f4;
+}
+
+/* Tap-strip of math symbols — one tap instead of digging through a phone
+   keyboard. Hidden once the card locks (checking / correct / done). */
+.cr-ws-scaffold-keys {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  padding: 2px 6px 6px;
+}
+.cr-ws-scaffold-key {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  font-size: 15px;
+  font-family: 'KaTeX_Main', 'Times New Roman', serif;
+  color: var(--cr-text);
+  background: var(--cr-bg-subtle, #f4f5f7);
+  border: 1px solid var(--cr-border);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s var(--cr-ease), border-color 0.12s var(--cr-ease);
+}
+.cr-ws-scaffold-key:hover { background: rgba(224, 150, 43, 0.12); border-color: rgba(224, 150, 43, 0.6); }
+.cr-ws-scaffold-key:active { background: rgba(224, 150, 43, 0.22); }
+.cr-ws-board-card--scaffold-checking .cr-ws-scaffold-keys,
+.cr-ws-board-card--scaffold-correct .cr-ws-scaffold-keys,
+.cr-ws-board-card--scaffold-done .cr-ws-scaffold-keys { display: none; }
+
+.cr-ws-scaffold-actions { display: flex; justify-content: center; padding: 2px 0 4px; }
+.cr-ws-scaffold-submit {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 18px;
+  color: #fff;
+  background: linear-gradient(135deg, #FFB84D, #E0962B);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.cr-ws-scaffold-submit:hover { filter: brightness(1.05); }
+.cr-ws-scaffold-submit:disabled { background: #cfc7b8; cursor: default; filter: none; }
+/* Once submitted, settle the card so it reads as done. */
+.cr-ws-board-card--scaffold-done { border-style: solid; opacity: 0.85; }
+.cr-ws-board-card--scaffold-done .cr-ws-scaffold-input { border-style: solid; opacity: 0.7; }
+
+/* In-place verdict states (set when the tutor's reaction card lands). */
+/* Pending — a soft pulse while we wait for the tutor's reaction. */
+.cr-ws-board-card--scaffold-checking { border-style: solid; }
+.cr-ws-board-card--scaffold-checking .cr-ws-scaffold-input { border-style: solid; opacity: 0.8; }
+.cr-ws-board-card--scaffold-checking .cr-ws-scaffold-submit {
+  background: #cfc7b8;
+  animation: cr-ws-scaffold-pulse 1.1s ease-in-out infinite;
+}
+@keyframes cr-ws-scaffold-pulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+/* Correct — green confirm. */
+.cr-ws-board-card--scaffold-correct {
+  border-style: solid;
+  border-color: rgba(60, 184, 120, 0.7);
+  background: linear-gradient(180deg, rgba(60, 184, 120, 0.12) 0%, var(--cr-bg-panel) 100%);
+}
+.cr-ws-board-card--scaffold-correct .cr-ws-scaffold-input {
+  border-style: solid;
+  border-color: rgba(60, 184, 120, 0.8);
+  background: rgba(60, 184, 120, 0.10);
+}
+.cr-ws-board-card--scaffold-correct .cr-ws-scaffold-submit:disabled {
+  background: linear-gradient(135deg, #57c98a, #2fa86a);
+  color: #fff;
+  opacity: 1;
+}
+
+/* Try again — amber nudge; inputs re-enabled so the student can fix them. */
+.cr-ws-board-card--scaffold-retry {
+  border-style: solid;
+  border-color: rgba(224, 150, 43, 0.85);
+}
+.cr-ws-board-card--scaffold-retry .cr-ws-scaffold-input {
+  border-color: #e0962b;
+  background: #fff7ec;
 }
 
 /* Worked example — a read-only step of a derivation the TUTOR is teaching, not

@@ -65,6 +65,204 @@
     );
   }
 
+  // Matches an EMPTY scaffold blank: a \boxed{} whose contents are only LaTeX
+  // spacing macros, or a \square glyph. Mirrors the blanks the pedagogy guard
+  // recognizes (utils/boardCommandGuard.js texHasBlank). No capture groups, so
+  // String.split() drops the delimiters and yields the segments between blanks.
+  var SCAFFOLD_BLANK_RE = /\\boxed\s*\{\s*(?:\\(?:[;,:! ]|quad|qquad)\s*)*\}|\\square\b/g;
+
+  // KaTeX inline fragment (so math segments sit on one line beside the inputs).
+  function renderTexInline(target, tex) {
+    if (!target) return;
+    if (window.katex && typeof window.katex.render === 'function') {
+      try {
+        window.katex.render(String(tex || ''), target, {
+          throwOnError: false, displayMode: false, output: 'html'
+        });
+        return;
+      } catch (_) { /* fall through */ }
+    }
+    target.textContent = String(tex || '');
+  }
+
+  // Submit text AS THE STUDENT — a visible chat message, exactly as if they'd
+  // typed it and hit Send. This is deliberate: the tutor only ever knows what the
+  // student SAYS, never what's on a card. A silent/background message would make
+  // it look like the tutor can read the board itself, which it can't — so the
+  // filled-in line flows through the normal input + send path and shows up as the
+  // student's own bubble. Mirrors the GraphTool submit (script.js).
+  function submitAsStudent(text) {
+    text = String(text || '').trim();
+    if (!text) return false;
+    var input = document.getElementById('user-input');
+    var sendBtn = document.getElementById('send-button') || document.querySelector('.send-button');
+    if (input && sendBtn) {
+      if (input.isContentEditable) input.textContent = text;
+      else input.value = text;
+      // Let any input-listeners (send-button enable, autosize) react first.
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      sendBtn.click();
+      return true;
+    }
+    if (typeof window.sendMessage === 'function') { window.sendMessage(text); return true; }
+    return false;
+  }
+
+  // Build an interactive scaffold card body: the LaTeX renders around editable
+  // blanks the student fills in, then submits as their own line (see
+  // submitAsStudent). Returns true if at least one blank was wired; false when
+  // there's no recognizable blank (caller falls back to the static render).
+  function buildScaffoldFill(card, tex) {
+    if (!tex || typeof tex !== 'string') return false;
+    SCAFFOLD_BLANK_RE.lastIndex = 0;
+    var segments = tex.split(SCAFFOLD_BLANK_RE);
+    if (segments.length < 2) return false; // no blank → not fillable
+
+    var row = el('div', 'cr-ws-scaffold-fill');
+    var inputs = [];
+    var lastFocused = null; // which blank the tap-strip inserts into
+    segments.forEach(function (seg, i) {
+      if (seg && seg.trim()) {
+        var frag = el('span', 'cr-ws-scaffold-seg');
+        renderTexInline(frag, seg);
+        row.appendChild(frag);
+      }
+      if (i < segments.length - 1) {
+        var blank = document.createElement('input');
+        blank.type = 'text';
+        blank.className = 'cr-ws-scaffold-input';
+        blank.setAttribute('aria-label', 'fill in the blank ' + (i + 1));
+        blank.setAttribute('inputmode', 'text');
+        blank.autocomplete = 'off';
+        blank.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); check(); }
+        });
+        blank.addEventListener('input', function () {
+          blank.classList.remove('is-missing');
+          // Editing after a "Try again" clears the retry state and re-arms Check.
+          if (card.classList.contains('cr-ws-board-card--scaffold-retry')) {
+            card.classList.remove('cr-ws-board-card--scaffold-retry');
+            checkBtn.textContent = 'Check';
+          }
+        });
+        blank.addEventListener('focus', function () { lastFocused = blank; });
+        row.appendChild(blank);
+        inputs.push(blank);
+      }
+    });
+    card.appendChild(row);
+
+    // Tap-strip — the math symbols a phone keyboard hides two layers deep, one
+    // tap away. Inserts at the focused blank's cursor (pointerdown + preventDefault
+    // keeps focus in the input). Hidden once the card locks (see CSS).
+    var keys = el('div', 'cr-ws-scaffold-keys');
+    [['(', '('], [')', ')'], ['xⁿ', '^'], ['x²', '²'], ['√', '√'],
+     ['±', '±'], ['∕', '/'], ['π', 'π']].forEach(function (k) {
+      var kb = el('button', 'cr-ws-scaffold-key');
+      kb.type = 'button';
+      kb.textContent = k[0];
+      kb.setAttribute('aria-label', 'insert ' + k[1]);
+      kb.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); // don't blur the blank
+        insertIntoBlank(k[1]);
+      });
+      keys.appendChild(kb);
+    });
+    card.appendChild(keys);
+
+    function insertIntoBlank(text) {
+      var inp = lastFocused || inputs[0];
+      if (!inp || inp.disabled) return;
+      inp.focus();
+      var s = inp.selectionStart, e = inp.selectionEnd;
+      if (typeof s === 'number' && typeof inp.setRangeText === 'function') {
+        inp.setRangeText(text, s, e, 'end');
+      } else {
+        inp.value += text;
+      }
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    var actions = el('div', 'cr-ws-scaffold-actions');
+    var checkBtn = el('button', 'cr-ws-scaffold-submit');
+    checkBtn.type = 'button';
+    checkBtn.textContent = 'Check';
+    actions.appendChild(checkBtn);
+    card.appendChild(actions);
+
+    function check() {
+      // Every blank must be filled — an empty blank isn't an answer.
+      var missing = false;
+      inputs.forEach(function (inp) {
+        if (!inp.value.trim()) { inp.classList.add('is-missing'); missing = true; }
+      });
+      if (missing) { var first = inputs.filter(function (i) { return !i.value.trim(); })[0]; if (first) first.focus(); return; }
+
+      // Reassemble the line with the typed values in place of the blanks.
+      var assembled = '';
+      segments.forEach(function (seg, i) {
+        assembled += seg;
+        if (i < segments.length - 1) assembled += ' ' + inputs[i].value.trim() + ' ';
+      });
+      assembled = assembled.replace(/\s+/g, ' ').trim();
+
+      // Send the completed line as a SILENT message: the tutor reacts to what the
+      // student filled in (the verdict lands in chat / on the board), but no
+      // student bubble is painted, so it reads as "the tutor responded to my
+      // card", not as a typed message. Falls back to a visible send if the chat's
+      // silent channel isn't present (e.g. the board open outside the chat page).
+      var sent = (typeof window.sendSilentMessage === 'function')
+        ? window.sendSilentMessage(assembled)
+        : submitAsStudent(assembled);
+      if (sent) {
+        // Lock the answers in and show a pending "Checking…" state. The verdict
+        // settles IN PLACE when the tutor's reaction card lands (see
+        // resolvePendingScaffold) — green if it confirms the line, amber to retry.
+        card.classList.remove('cr-ws-board-card--scaffold-retry');
+        card.classList.add('cr-ws-board-card--scaffold-checking');
+        inputs.forEach(function (inp) { inp.disabled = true; });
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Checking…';
+        var pending = {
+          line: normalizeLine(assembled),
+          settle: settleVerdict
+        };
+        // Safety net: if the tutor's reply carries no resolvable board card,
+        // don't hang on "Checking…" — settle to a neutral checked state.
+        pending.timer = setTimeout(function () {
+          if (WS.board.pendingScaffold === pending) {
+            settleVerdict('neutral');
+            WS.board.pendingScaffold = null;
+          }
+        }, 12000);
+        WS.board.pendingScaffold = pending;
+      }
+    }
+
+    // Apply the verdict to this card in place.
+    function settleVerdict(verdict) {
+      card.classList.remove('cr-ws-board-card--scaffold-checking');
+      if (verdict === 'correct') {
+        card.classList.add('cr-ws-board-card--scaffold-correct');
+        checkBtn.textContent = 'Correct ✓';
+        checkBtn.disabled = true;
+      } else if (verdict === 'retry') {
+        card.classList.add('cr-ws-board-card--scaffold-retry');
+        checkBtn.textContent = 'Try again';
+        checkBtn.disabled = false;
+        inputs.forEach(function (inp) { inp.disabled = false; });
+      } else {
+        // Neutral: sent and acknowledged, but no structured verdict to show.
+        card.classList.add('cr-ws-board-card--scaffold-done');
+        checkBtn.textContent = 'Checked ✓';
+        checkBtn.disabled = true;
+      }
+    }
+
+    checkBtn.addEventListener('click', check);
+    return true;
+  }
+
   // ---- Launcher tools (open an existing floating surface) --------------
   // Board used to be a launcher into the floating whiteboard; it's now
   // the embedded home base (see renderBoard below). Tiles + Calc stay
@@ -123,6 +321,16 @@
   // The board never previews a step the student hasn't said. Callers
   // are responsible for honoring this; the rule will be backstopped by
   // a server-side guard in the next phase.
+  function makeBoardEmpty() {
+    return el('div', 'cr-ws-empty cr-ws-board-empty',
+      '<div class="cr-ws-board-empty-ico" aria-hidden="true">' +
+        '<i class="fas fa-pen-ruler"></i></div>' +
+      '<h5 class="cr-ws-board-empty-title">Ready to work it out?</h5>' +
+      '<p class="cr-ws-board-empty-body">' +
+        'Your steps will land here as you and your tutor work through ' +
+        'the problem together.</p>');
+  }
+
   function renderBoard(body) {
     var head = el('div', 'cr-ws-board-head');
     head.innerHTML =
@@ -134,14 +342,7 @@
     var stack = el('div', 'cr-ws-board-stack');
     body.appendChild(stack);
 
-    var empty = el('div', 'cr-ws-empty cr-ws-board-empty',
-      '<div class="cr-ws-board-empty-ico" aria-hidden="true">' +
-        '<i class="fas fa-pen-ruler"></i></div>' +
-      '<h5 class="cr-ws-board-empty-title">Ready to work it out?</h5>' +
-      '<p class="cr-ws-board-empty-body">' +
-        'Your steps will land here as you and your tutor work through ' +
-        'the problem together.</p>');
-    if (WS.board.steps.length === 0) stack.appendChild(empty);
+    if (WS.board.steps.length === 0) stack.appendChild(makeBoardEmpty());
 
     // Rebuild any persisted steps (e.g. when re-entering the tab).
     WS.board.steps.forEach(function (step) { appendStepCard(stack, step, /*animate*/ false); });
@@ -149,9 +350,24 @@
     head.querySelector('.cr-ws-board-clear').addEventListener('click', function () {
       WS.board.steps = [];
       var s = WS.body && WS.body.querySelector('.cr-ws-board-stack');
-      if (s) s.innerHTML = '';
-      if (s) s.appendChild(empty.cloneNode(true));
+      if (s) { s.innerHTML = ''; s.appendChild(makeBoardEmpty()); }
     });
+  }
+
+  // Remove a single card — both its DOM and its entry in WS.board.steps (matched
+  // by object reference, so it stays gone when the tab is rebuilt). If it was the
+  // last card, the empty-state hint comes back.
+  function dismissCard(card, step) {
+    var i = WS.board.steps.indexOf(step);
+    if (i !== -1) WS.board.steps.splice(i, 1);
+    var stack = card.parentNode;
+    card.classList.add('cr-ws-board-card--leaving');
+    setTimeout(function () {
+      card.remove();
+      if (stack && WS.board.steps.length === 0 && !stack.querySelector('.cr-ws-board-empty')) {
+        stack.appendChild(makeBoardEmpty());
+      }
+    }, 220);
   }
 
   function teardownBoard() {
@@ -276,11 +492,17 @@
       // Hint card — shows the next step's structure with empty \boxed{}
       // slots the student fills in. Distinct look + an eyebrow so it reads
       // as "your move", not as a finished step. Blanks reveal nothing, so
-      // this is the one card allowed on the student's own problem.
+      // this is the one card allowed on the student's own problem. The blanks
+      // are EDITABLE: the student types in them and submits the completed line
+      // as their own chat message (buildScaffoldFill). If no blank is found
+      // (shouldn't happen — the guard requires one), fall back to a static
+      // render so the card still shows.
       card = el('div', 'cr-ws-board-card cr-ws-board-card--scaffold');
-      var sMath = el('div', 'cr-ws-board-card-math');
-      card.appendChild(sMath);
-      renderTex(sMath, widenScaffoldBlanks(step.tex));
+      if (!buildScaffoldFill(card, step.tex)) {
+        var sMath = el('div', 'cr-ws-board-card-math');
+        card.appendChild(sMath);
+        renderTex(sMath, widenScaffoldBlanks(step.tex));
+      }
     } else if (step.type === 'worked') {
       // Read-only worked-example step — one line of a derivation the tutor is
       // teaching (NOT the student's own problem). A distinct accent + a
@@ -319,6 +541,17 @@
     }
 
     if (animate) card.classList.add('cr-ws-board-card--enter');
+    // Per-card dismiss (×, top-right) — lets the student clear a single card
+    // without wiping the whole board. Removes the step from state too.
+    var dismiss = el('button', 'cr-ws-board-card-dismiss', '&times;');
+    dismiss.type = 'button';
+    dismiss.setAttribute('aria-label', 'Remove this card');
+    dismiss.title = 'Remove';
+    dismiss.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dismissCard(card, step);
+    });
+    card.appendChild(dismiss);
     stack.appendChild(card);
     // Scroll the new card into view (smooth so the eye follows the work).
     try { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) { /* old browser */ }
@@ -330,7 +563,42 @@
     }
   }
 
+  // Normalize a math line for comparison: drop whitespace, $ delimiters, braces,
+  // and LaTeX spacing macros so "x^2 + 4x + 4 = 12 + 4" matches a resolve card's
+  // tex regardless of formatting.
+  function normalizeLine(s) {
+    return String(s || '')
+      .replace(/\\(?:left|right|,|;|:|!|quad|qquad)/g, '')
+      .replace(/\\\(|\\\)|\\\[|\\\]/g, '')
+      .replace(/[\s${}]/g, '')
+      .toLowerCase();
+  }
+
+  // In-place verdict for a Checked scaffold card. The tutor reacts to the silent
+  // Check with board commands; the FIRST relevant one is the verdict, read
+  // structurally (never by parsing prose):
+  //   • verify, or a resolve that matches the student's line  → CORRECT (green)
+  //   • a fresh scaffold (the tutor re-hints)                 → TRY AGAIN (amber)
+  //   • anything else / nothing                               → stays neutral
+  // Called from pushBoardStep, the single point every new card flows through.
+  function resolvePendingScaffold(step) {
+    var p = WS.board.pendingScaffold;
+    if (!p || !step) return;
+    var verdict = null;
+    if (step.type === 'verify') verdict = 'correct';
+    else if (step.type === 'resolve' && normalizeLine(step.tex) === p.line) verdict = 'correct';
+    else if (step.type === 'scaffold') verdict = 'retry';
+    if (verdict) {
+      if (p.timer) clearTimeout(p.timer);
+      p.settle(verdict);
+      WS.board.pendingScaffold = null;
+    }
+  }
+
   function pushBoardStep(step) {
+    // Settle a pending scaffold Check before this new card lands (the new card IS
+    // the tutor's reaction, so the verdict reads off its type).
+    resolvePendingScaffold(step);
     WS.board.steps.push(step);
     // If the user is currently looking at a different tab, the cards
     // will materialize when they return — no need to switch them.
