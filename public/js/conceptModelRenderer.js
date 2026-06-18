@@ -119,6 +119,24 @@
       return Promise.resolve(false);
     }
 
+    // Dispatch by substrate (CONCEPT_MODELS.md: "two rendering engines, one
+    // spec"). Discrete/token models are inline chips — no JSXGraph, no plane — so
+    // they go to the token renderer instead of the JSXGraph build below.
+    if (spec.engine === 'tokens') {
+      if (!window.ConceptModelTokenRenderer) {
+        container.textContent = 'Concept-model token engine unavailable.';
+        return Promise.resolve(false);
+      }
+      try {
+        window.ConceptModelTokenRenderer.render(container, spec, opts);
+        return Promise.resolve(true);
+      } catch (e) {
+        if (window.console) console.error('[ConceptModel] token render failed', e);
+        container.textContent = 'Concept-model token engine error.';
+        return Promise.resolve(false);
+      }
+    }
+
     return loadJSXGraph().then(function () {
       try {
         build(container, spec, opts);

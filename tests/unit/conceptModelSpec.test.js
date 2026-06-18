@@ -6,6 +6,7 @@ const {
   measureAngle,
   measureDistance,
   measureArea,
+  expandIntegerExpression,
   MODELS,
 } = require('../../public/js/conceptModelSpec');
 
@@ -426,5 +427,76 @@ describe('conceptModelSpec — geometry (measure, never assert)', () => {
     s.derived = { total: 'ang + ang2' };
     s.elements.find((e) => e.id === 'out').text = 'sum = {total}';
     expect(validateModelSpec(s).valid).toBe(true);
+  });
+});
+
+describe('conceptModelSpec — token engine (discrete chips, zero pairs)', () => {
+  it('expandIntegerExpression splits an expression into chip counts + net', () => {
+    expect(expandIntegerExpression('-7 + 10')).toEqual({ positives: 10, negatives: 7, net: 3, terms: [-7, 10] });
+    expect(expandIntegerExpression('5 - 8')).toEqual({ positives: 5, negatives: 8, net: -3, terms: [5, -8] });
+    expect(expandIntegerExpression('+6')).toEqual({ positives: 6, negatives: 0, net: 6, terms: [6] });
+  });
+
+  it('net is invariant under zero-pair cancellation (the lesson)', () => {
+    // -7 + 10 → 10 yellow, 7 red, net +3. Cancelling all 7 pairs leaves 3 yellow,
+    // still +3 — removing a +1 and a −1 together never changes the sum.
+    const e = expandIntegerExpression('-7 + 10');
+    const afterCancel = (e.positives - 7) - (e.negatives - 7);
+    expect(afterCancel).toBe(e.net);
+  });
+
+  it('returns null for anything that is not integer add/subtract', () => {
+    expect(expandIntegerExpression('2 * 3')).toBeNull();
+    expect(expandIntegerExpression('x + 1')).toBeNull();
+    expect(expandIntegerExpression('3.5 + 1')).toBeNull();
+    expect(expandIntegerExpression('')).toBeNull();
+    expect(expandIntegerExpression(null)).toBeNull();
+  });
+
+  it('normalizes a unicode minus', () => {
+    expect(expandIntegerExpression('−7 + 10').net).toBe(3); // − (U+2212)
+  });
+
+  function tbase() {
+    return {
+      model: 'counters',
+      engine: 'tokens',
+      input: { expression: true, placeholder: '-7 + 10' },
+      tokens: [
+        { value: 1, color: 'yellow', label: '+' },
+        { value: -1, color: 'red', label: '−' },
+      ],
+      rules: [{ when: 'overlap-opposite', do: 'annihilate' }],
+      readout: { text: 'Sum: {net}', format: 'signedInt' },
+    };
+  }
+
+  it('validates a well-formed token spec on its own path', () => {
+    expect(validateModelSpec(tbase()).errors).toEqual([]);
+  });
+
+  it('the curated integer_counters validates and is in the catalog', () => {
+    expect(MODELS).toContain('integer_counters');
+    expect(validateModelSpec(getModel('integer_counters')).errors).toEqual([]);
+  });
+
+  it('rejects a token spec with no tokens', () => {
+    const s = tbase(); s.tokens = [];
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/non-empty tokens array/);
+  });
+
+  it('rejects a token whose value is not numeric', () => {
+    const s = tbase(); s.tokens[0].value = 'one';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/token\[0\] needs a numeric value/);
+  });
+
+  it('rejects an unknown interaction rule', () => {
+    const s = tbase(); s.rules[0].do = 'explode';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/unknown do "explode"/);
+  });
+
+  it('rejects a readout that references anything but {net}', () => {
+    const s = tbase(); s.readout.text = 'Sum: {total}';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/unknown name "total" \(only \{net\}\)/);
   });
 });
