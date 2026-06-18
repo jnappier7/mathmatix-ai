@@ -569,11 +569,31 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 .catch(err => { logger.error('Error fetching error patterns', { error: err.message }); return null; })
         );
 
-        // 7. Math verification (runs in parallel with everything else)
+        // 7. Active worksheet — the doc pinned to THIS conversation, re-injected
+        //    at full length every turn so "#3 on the quiz" resolves without the
+        //    student re-typing it. On the upload turn we skip the query and use
+        //    the freshly extracted text instead (the StudentUpload save is
+        //    fire-and-forget and may not have landed yet).
+        contextPromises.push(
+            hasUploadedFiles
+                ? Promise.resolve(null)
+                : StudentUpload.findOne({
+                        userId: user._id,
+                        conversationId: activeConversation._id,
+                        fileType: 'pdf',
+                        extractedText: { $nin: [null, ''] },
+                    })
+                    .sort({ uploadedAt: -1 })
+                    .select('originalFilename extractedText')
+                    .lean()
+                    .catch(err => { logger.error('Error fetching active worksheet', { error: err.message }); return null; })
+        );
+
+        // 8. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns] = await Promise.all(contextPromises);
+        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns, activeWorksheetDoc] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -628,6 +648,29 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
             uploadContext = { count: recentUploads.length, summary: uploadsSummary };
             logger.debug('Injected recent uploads into AI context', { count: recentUploads.length });
+        }
+
+        // Pin the active worksheet (full text) for every-turn injection. On the
+        // upload turn the text is in memory (uploadPdfTexts); on later turns it
+        // comes from the conversation-scoped StudentUpload fetched above. This is
+        // distinct from the truncated cross-session "recent uploads" excerpt —
+        // it's the doc the student is actively working from, kept salient so the
+        // tutor never asks them to re-share a problem it already has.
+        let activeWorksheet = null;
+        const WORKSHEET_MAX_CHARS = 12000;
+        if (uploadPdfTexts.length > 0) {
+            const w = uploadPdfTexts[uploadPdfTexts.length - 1];
+            if (w && w.text && w.text.trim()) {
+                activeWorksheet = { filename: w.filename, text: w.text };
+            }
+        } else if (activeWorksheetDoc && activeWorksheetDoc.extractedText) {
+            activeWorksheet = { filename: activeWorksheetDoc.originalFilename, text: activeWorksheetDoc.extractedText };
+        }
+        if (activeWorksheet && activeWorksheet.text.length > WORKSHEET_MAX_CHARS) {
+            activeWorksheet.text = activeWorksheet.text.slice(0, WORKSHEET_MAX_CHARS) + '\n[... worksheet truncated — ask which section if the relevant problem may be below]';
+        }
+        if (activeWorksheet) {
+            logger.debug('Pinned active worksheet to prompt', { filename: activeWorksheet.filename, chars: activeWorksheet.text.length, source: uploadPdfTexts.length > 0 ? 'current-upload' : 'conversation-pin' });
         }
 
         // Log parallel fetch performance
@@ -825,12 +868,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     };
                 }
             } else {
-                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
+                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
             }
         }
 
         if (!systemPrompt) {
-            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
+            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
         }
 
         // ── Inject step-context reminder into last user message ──
