@@ -299,6 +299,103 @@ describe('boardSynthesizer — full turns', () => {
   });
 });
 
+describe('boardSynthesizer — arithmetic final answers (no variable)', () => {
+  const {
+    _detectBareFinalAnswer,
+    _bareAnswerToTex,
+  } = require('../../utils/pipeline/boardSynthesizer');
+
+  describe('_detectBareFinalAnswer', () => {
+    test('recognizes bare integer answers, with or without "!"', () => {
+      expect(_detectBareFinalAnswer('8')).toBe('8');
+      expect(_detectBareFinalAnswer('8!')).toBe('8');
+      expect(_detectBareFinalAnswer('  8 . ')).toBe('8');
+    });
+    test('recognizes fractions and mixed numbers', () => {
+      expect(_detectBareFinalAnswer('4/15')).toBe('4/15');
+      expect(_detectBareFinalAnswer('3/20.')).toBe('3/20');
+      expect(_detectBareFinalAnswer('2 1/2')).toBe('2 1/2');
+      expect(_detectBareFinalAnswer('-4/15')).toBe('-4/15');
+    });
+    test('does NOT match problem references or prose', () => {
+      expect(_detectBareFinalAnswer('number 2')).toBeNull();
+      expect(_detectBareFinalAnswer('#3')).toBeNull();
+      expect(_detectBareFinalAnswer('is it 8?')).toBeNull();
+      expect(_detectBareFinalAnswer('x = 8')).toBeNull();
+      expect(_detectBareFinalAnswer('the answer is 8')).toBeNull();
+      expect(_detectBareFinalAnswer('')).toBeNull();
+    });
+  });
+
+  describe('_bareAnswerToTex', () => {
+    test('fractions and mixed numbers become \\frac', () => {
+      expect(_bareAnswerToTex('4/15')).toBe('\\frac{4}{15}');
+      expect(_bareAnswerToTex('2 1/2')).toBe('2\\frac{1}{2}');
+      expect(_bareAnswerToTex('8')).toBe('8');
+    });
+  });
+
+  test('bare correct answer + pinned problem → verify "problem = answer"', () => {
+    // The transcript-3 scenario: student answers "8!" to a mixed-number
+    // multiply, the math engine confirms, but there is no variable so the
+    // old detectFinalSolution path could never fire.
+    const cards = synthesizeBoardCommands({
+      studentMessage: '8!',
+      tutorResponse: 'Exactly! Nice work.',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '8', correctAnswer: '8' },
+      observation: { messageType: 'answer_attempt', answer: { value: '8' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '3\\frac{1}{2} \\times 2\\frac{2}{7}',
+    });
+    expect(cards).toHaveLength(1);
+    expect(cards[0]).toEqual({
+      action: 'verify',
+      tex: '3\\frac{1}{2} \\times 2\\frac{2}{7} = 8',
+    });
+  });
+
+  test('bare fraction answer renders as \\frac on the verify card', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '4/15',
+      tutorResponse: 'Yes!',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '4/15', correctAnswer: '4/15' },
+      observation: { messageType: 'answer_attempt', answer: { value: '4/15' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '\\frac{6}{21} \\times \\frac{14}{15}.',
+    });
+    expect(cards[0]).toEqual({
+      action: 'verify',
+      tex: '\\frac{6}{21} \\times \\frac{14}{15} = \\frac{4}{15}',
+    });
+  });
+
+  test('WRONG bare answer (math engine vetoes) → no verify card', () => {
+    // The transcript-2 scenario: tutor prose affirmed "15/4" but the engine
+    // knows the answer is 4/15. The board must stay truthful.
+    const cards = synthesizeBoardCommands({
+      studentMessage: '15/4',
+      tutorResponse: 'Exactly! You nailed it.',
+      diagnosis: { type: 'answer_attempt', isCorrect: false, answer: '15/4', correctAnswer: '4/15' },
+      observation: { messageType: 'answer_attempt', answer: { value: '15/4' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '\\frac{6}{21} \\times \\frac{14}{15}',
+    });
+    expect(cards.some(c => c.action === 'verify')).toBe(false);
+  });
+
+  test('bare answer with NO pinned problem → no verify (nothing to anchor)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '8',
+      tutorResponse: 'Right!',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '8', correctAnswer: '8' },
+      observation: { messageType: 'answer_attempt', answer: { value: '8' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: null,
+    });
+    expect(cards.some(c => c.action === 'verify')).toBe(false);
+  });
+});
+
 describe('boardSynthesizer — guard rails', () => {
   test('does NOT re-pose when cycle is open (lastBoardAction=pose)', () => {
     const cards = synthesizeBoardCommands({
