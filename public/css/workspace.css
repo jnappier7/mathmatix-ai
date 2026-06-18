@@ -681,6 +681,42 @@
   background: #fff7ec;
 }
 
+/* ---- Mobile inline mirror: board cards surfaced in the chat thread ----
+   On phones the board is a hidden drawer, so each card is mirrored into the
+   chat stream (see appendBoardMirror). These wrappers center a real
+   .cr-ws-board-card (reusing all its variant styling) within the message flow. */
+.cr-ws-chat-mirror {
+  display: flex;
+  justify-content: center;
+  margin: 8px auto;
+  padding: 0 8px;
+}
+.cr-ws-chat-mirror .cr-ws-board-card {
+  width: 100%;
+  max-width: 520px;
+}
+/* Tap-chip for interactive/heavy cards (scaffold, graph, image, model). */
+.cr-ws-mirror-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 520px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  color: var(--cr-text);
+  background: var(--cr-bg-panel);
+  border: 1px dashed var(--cr-accent, #7b61ff);
+  border-radius: var(--cr-radius-md);
+  cursor: pointer;
+}
+.cr-ws-mirror-chip > span:first-of-type { flex: 1; }
+.cr-ws-mirror-chip-go { color: var(--cr-accent, #7b61ff); font-weight: 700; white-space: nowrap; }
+.cr-ws-mirror-chip i { color: var(--cr-accent, #7b61ff); }
+.cr-ws-mirror-chip:hover { background: var(--cr-pill-bg); }
+
 /* Worked example — a read-only step of a derivation the TUTOR is teaching, not
    the student's own work. A calm instructional blue (distinct from the student's
    purple work, the green SOLVED, and the amber scaffold) plus a "WORKED EXAMPLE"

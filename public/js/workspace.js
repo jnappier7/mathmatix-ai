@@ -606,6 +606,78 @@
       var stack = WS.body.querySelector('.cr-ws-board-stack');
       appendStepCard(stack, step, /*animate*/ true);
     }
+    // On phones the board is a hidden drawer, so the running work is out of
+    // sight. Mirror each card straight into the chat thread, where the student
+    // already is — no drawer to open. (No-op on wider screens; see appendBoardMirror.)
+    appendBoardMirror(step);
+  }
+
+  // True on phone-width screens, where the board lives behind the FAB drawer.
+  function isMobileChat() {
+    return typeof window !== 'undefined' && typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  function openBoardDrawer() {
+    openWorkspace();
+    if (window.MathWorkspace) window.MathWorkspace.showTool('board');
+  }
+
+  // Drop a compact reflection of a board card into the chat thread (phones only).
+  // Read-only math cards render in full so the student can follow the work inline;
+  // interactive/heavy cards (scaffold, graph, image, model) render as a chip that
+  // opens the drawer, where the real interaction/space lives.
+  function appendBoardMirror(step) {
+    if (!isMobileChat() || !step) return;
+    var chat = document.getElementById('chat-messages-container');
+    if (!chat) return;
+
+    var t = step.type;
+    var wrap = el('div', 'cr-ws-chat-mirror');
+    var INLINE = { pose: 1, resolve: 1, verify: 1, apply: 1, worked: 1 };
+    var HEAVY_LABEL = { graph: 'Graph', image: 'Diagram', model: 'Interactive model', diagram: 'Diagram', scaffold: 'Your turn — fill the blanks' };
+
+    if (INLINE[t]) {
+      var variant = 'cr-ws-board-card--' + t;
+      var card = el('div', 'cr-ws-board-card ' + variant);
+      if (t === 'apply') {
+        card.innerHTML =
+          '<span class="cr-ws-board-apply-arrow" aria-hidden="true">↓</span>' +
+          '<span class="cr-ws-board-apply-op"></span>';
+        card.querySelector('.cr-ws-board-apply-op').textContent = step.op || '';
+      } else {
+        var math = el('div', 'cr-ws-board-card-math');
+        card.appendChild(math);
+        renderTex(math, step.tex);
+        if (t === 'verify' && step.check) {
+          var checkRow = el('div', 'cr-ws-board-card-check');
+          checkRow.innerHTML =
+            '<i class="fas fa-check-circle" aria-hidden="true"></i> ' +
+            '<span class="cr-ws-board-card-check-math"></span>';
+          card.appendChild(checkRow);
+          renderTex(checkRow.querySelector('.cr-ws-board-card-check-math'), step.check);
+        }
+        if (t === 'worked' && step.label) {
+          var wcap = el('div', 'cr-ws-board-card-caption');
+          wcap.textContent = step.label;
+          card.appendChild(wcap);
+        }
+      }
+      wrap.appendChild(card);
+    } else {
+      // scaffold / graph / image / model / diagram → tap-chip to the drawer.
+      var chip = el('button', 'cr-ws-mirror-chip');
+      chip.type = 'button';
+      var label = HEAVY_LABEL[t] || 'Open board';
+      chip.innerHTML = '<i class="fas fa-up-right-from-square" aria-hidden="true"></i> ' +
+        '<span></span> <span class="cr-ws-mirror-chip-go">Open ↗</span>';
+      chip.querySelector('span').textContent = label;
+      chip.addEventListener('click', openBoardDrawer);
+      wrap.appendChild(chip);
+    }
+
+    chat.appendChild(wrap);
+    try { wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) { /* old browser */ }
   }
 
   // ---- Graph tool (live embed) -----------------------------------------
@@ -818,12 +890,12 @@
     boardPose: function (tex, opts) {
       tex = (tex == null ? '' : String(tex)).trim();
       if (!tex) return false;
-      openWorkspace();
-      // Switching only if the user isn't actively in another tab. For
-      // now we DO switch — Board is the natural home and a fresh pose
-      // is a new conversation move. Revisit if telemetry shows focus
-      // stealing is annoying.
-      this.showTool('board');
+      // Desktop: reveal + focus the board. Phones: stay in chat — the pose
+      // mirrors into the thread (appendBoardMirror); the drawer is one tap away.
+      if (!isMobileChat()) {
+        openWorkspace();
+        this.showTool('board');
+      }
       pushBoardStep({ type: 'pose', tex: tex, opts: opts || null });
       return true;
     },
@@ -861,8 +933,10 @@
     boardScaffold: function (tex) {
       tex = (tex == null ? '' : String(tex)).trim();
       if (!tex) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       pushBoardStep({ type: 'scaffold', tex: tex });
       return true;
     },
@@ -877,8 +951,10 @@
     boardExample: function (tex, label) {
       tex = (tex == null ? '' : String(tex)).trim();
       if (!tex) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'worked', tex: tex };
       if (label) step.label = String(label).trim();
       pushBoardStep(step);
@@ -909,8 +985,10 @@
     boardGraph: function (fn, caption) {
       fn = (fn == null ? '' : String(fn)).trim();
       if (!fn) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'graph', fn: fn };
       if (caption) step.caption = String(caption).trim();
       pushBoardStep(step);
@@ -926,8 +1004,10 @@
     boardImage: function (query, caption) {
       query = (query == null ? '' : String(query)).trim();
       if (!query) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'image', query: query };
       if (caption) step.caption = String(caption).trim();
       pushBoardStep(step);
@@ -954,8 +1034,10 @@
         model = model.spec || model.model;
       }
       if (!model) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'model', model: model };
       if (prompt) step.prompt = String(prompt).trim();
       pushBoardStep(step);
