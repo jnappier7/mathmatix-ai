@@ -4,6 +4,9 @@ const {
   getModel,
   readoutTokens,
   measureAngle,
+  measureDistance,
+  measureArea,
+  expandIntegerExpression,
   MODELS,
 } = require('../../public/js/conceptModelSpec');
 
@@ -130,7 +133,19 @@ describe('conceptModelSpec — validator (generated specs cannot render broken)'
     s.elements.push({ id: 'dot', type: 'point', at: ['zzz', 'b'] });
     const r = validateModelSpec(s);
     expect(r.valid).toBe(false);
-    expect(r.errors.join(' ')).toMatch(/at references unknown name "zzz"/);
+    expect(r.errors.join(' ')).toMatch(/at references unknown numeric param "zzz"/);
+  });
+
+  it('rejects a coordinate that names a DERIVED value (renderer resolves only params)', () => {
+    // A derived name isn't in the live param object, so a point/circle placed at
+    // it would render NaN. The validator must reject it rather than pass a spec
+    // the renderer breaks — the "validate before render" guarantee.
+    const s = base();
+    s.derived = { mid: 'm + b' };
+    s.elements.push({ id: 'dot', type: 'point', at: ['mid', 0] });
+    const r = validateModelSpec(s);
+    expect(r.valid).toBe(false);
+    expect(r.errors.join(' ')).toMatch(/at references unknown numeric param "mid"/);
   });
 
   it('rejects a line referencing a non-existent point', () => {
@@ -283,6 +298,20 @@ describe('conceptModelSpec — geometry (measure, never assert)', () => {
     expect(measureAngle([0, 0], [0, 0], [1, 1])).toBeNaN(); // degenerate ray
   });
 
+  it('measureDistance computes the segment length (3-4-5)', () => {
+    expect(measureDistance([0, 0], [3, 4])).toBeCloseTo(5, 9);
+    expect(measureDistance([1, 1], [1, 1])).toBe(0);
+    expect(measureDistance(null, [1, 1])).toBeNaN();
+  });
+
+  it('measureArea computes polygon area via shoelace, winding-agnostic', () => {
+    const square = [[0, 0], [2, 0], [2, 2], [0, 2]];
+    expect(measureArea(square)).toBeCloseTo(4, 9);
+    expect(measureArea([...square].reverse())).toBeCloseTo(4, 9); // CW == CCW
+    expect(measureArea([[0, 0], [4, 0], [0, 3]])).toBeCloseTo(6, 9); // right triangle
+    expect(measureArea([[0, 0], [1, 1]])).toBeNaN(); // fewer than 3 points
+  });
+
   it('inscribed_angle is half the central angle, by construction (at the catalog coords)', () => {
     const s = getModel('inscribed_angle');
     const at = {};
@@ -348,6 +377,26 @@ describe('conceptModelSpec — geometry (measure, never assert)', () => {
     expect(validateModelSpec(s).errors.join(' ')).toMatch(/measure "ang" ray "Z" is not a point/);
   });
 
+  it('accepts length and area measures and lets a readout read them', () => {
+    const s = gbase();
+    s.measures.side = { type: 'length', between: ['A', 'B'] };
+    s.measures.region = { type: 'area', of: ['A', 'B', 'C'] };
+    s.elements.find((e) => e.id === 'out').text = '{ang}° · {side} · {region}';
+    expect(validateModelSpec(s).errors).toEqual([]);
+  });
+
+  it('rejects a length measure missing its endpoints', () => {
+    const s = gbase();
+    s.measures.side = { type: 'length', between: ['A'] };
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/measure "side" \(length\) needs between/);
+  });
+
+  it('rejects an area measure whose vertex is not a point', () => {
+    const s = gbase();
+    s.measures.region = { type: 'area', of: ['A', 'B', 'Z'] };
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/measure "region" vertex "Z" is not a point/);
+  });
+
   it('rejects an angle whose vertex is not a point', () => {
     const s = gbase();
     s.elements.find((e) => e.id === 'angB').at = 'tri';
@@ -378,5 +427,76 @@ describe('conceptModelSpec — geometry (measure, never assert)', () => {
     s.derived = { total: 'ang + ang2' };
     s.elements.find((e) => e.id === 'out').text = 'sum = {total}';
     expect(validateModelSpec(s).valid).toBe(true);
+  });
+});
+
+describe('conceptModelSpec — token engine (discrete chips, zero pairs)', () => {
+  it('expandIntegerExpression splits an expression into chip counts + net', () => {
+    expect(expandIntegerExpression('-7 + 10')).toEqual({ positives: 10, negatives: 7, net: 3, terms: [-7, 10] });
+    expect(expandIntegerExpression('5 - 8')).toEqual({ positives: 5, negatives: 8, net: -3, terms: [5, -8] });
+    expect(expandIntegerExpression('+6')).toEqual({ positives: 6, negatives: 0, net: 6, terms: [6] });
+  });
+
+  it('net is invariant under zero-pair cancellation (the lesson)', () => {
+    // -7 + 10 → 10 yellow, 7 red, net +3. Cancelling all 7 pairs leaves 3 yellow,
+    // still +3 — removing a +1 and a −1 together never changes the sum.
+    const e = expandIntegerExpression('-7 + 10');
+    const afterCancel = (e.positives - 7) - (e.negatives - 7);
+    expect(afterCancel).toBe(e.net);
+  });
+
+  it('returns null for anything that is not integer add/subtract', () => {
+    expect(expandIntegerExpression('2 * 3')).toBeNull();
+    expect(expandIntegerExpression('x + 1')).toBeNull();
+    expect(expandIntegerExpression('3.5 + 1')).toBeNull();
+    expect(expandIntegerExpression('')).toBeNull();
+    expect(expandIntegerExpression(null)).toBeNull();
+  });
+
+  it('normalizes a unicode minus', () => {
+    expect(expandIntegerExpression('−7 + 10').net).toBe(3); // − (U+2212)
+  });
+
+  function tbase() {
+    return {
+      model: 'counters',
+      engine: 'tokens',
+      input: { expression: true, placeholder: '-7 + 10' },
+      tokens: [
+        { value: 1, color: 'yellow', label: '+' },
+        { value: -1, color: 'red', label: '−' },
+      ],
+      rules: [{ when: 'overlap-opposite', do: 'annihilate' }],
+      readout: { text: 'Sum: {net}', format: 'signedInt' },
+    };
+  }
+
+  it('validates a well-formed token spec on its own path', () => {
+    expect(validateModelSpec(tbase()).errors).toEqual([]);
+  });
+
+  it('the curated integer_counters validates and is in the catalog', () => {
+    expect(MODELS).toContain('integer_counters');
+    expect(validateModelSpec(getModel('integer_counters')).errors).toEqual([]);
+  });
+
+  it('rejects a token spec with no tokens', () => {
+    const s = tbase(); s.tokens = [];
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/non-empty tokens array/);
+  });
+
+  it('rejects a token whose value is not numeric', () => {
+    const s = tbase(); s.tokens[0].value = 'one';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/token\[0\] needs a numeric value/);
+  });
+
+  it('rejects an unknown interaction rule', () => {
+    const s = tbase(); s.rules[0].do = 'explode';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/unknown do "explode"/);
+  });
+
+  it('rejects a readout that references anything but {net}', () => {
+    const s = tbase(); s.readout.text = 'Sum: {total}';
+    expect(validateModelSpec(s).errors.join(' ')).toMatch(/unknown name "total" \(only \{net\}\)/);
   });
 });

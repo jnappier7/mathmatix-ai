@@ -382,6 +382,25 @@
       reveal: ['plane', 'circ', 'O', 'A', 'A2', 'B', 'lineA', 'rayB', 'ang1', 'ang2', 'out'],
       drag: ['B'],
       prompt: 'Drag B along the arc. The two angles on the line always add to 180° — a linear pair.'
+    },
+
+    // First DISCRETE model (engine:"tokens", not JSXGraph). Two-color counters
+    // for integer arithmetic: type an expression -> chips appear (yellow = +1,
+    // red = −1) -> drag a red onto a yellow to make a zero pair -> what's left is
+    // the answer. The Sum is MEASURED from the chips on the mat (never asserted)
+    // and is invariant as zero pairs cancel — that invariance is the lesson.
+    integer_counters: {
+      model: 'integer_counters',
+      engine: 'tokens',
+      title: 'Integer counters — zero pairs',
+      input: { expression: true, placeholder: '-7 + 10' },
+      tokens: [
+        { value: 1, color: 'yellow', label: '+' },
+        { value: -1, color: 'red', label: '−' }
+      ],
+      rules: [{ when: 'overlap-opposite', do: 'annihilate' }],
+      readout: { text: 'Sum: {net}', format: 'signedInt' },
+      prompt: 'Type an expression, then drag a red onto a yellow to cancel — what is left?'
     }
   };
 
@@ -398,7 +417,9 @@
     circle: 1, polygon: 1, angle: 1
   };
   var CONTROL_TYPES = { slider: 1, choice: 1 };
-  var MEASURE_TYPES = { angle: 1 };
+  // Quantities the engine can MEASURE off the live geometry. Each needs its own
+  // point refs (validated below) and a pure measurement fn (used by the renderer).
+  var MEASURE_TYPES = { angle: 1, length: 1, area: 1 };
 
   function isPlainObject(o) { return o && typeof o === 'object' && !Array.isArray(o); }
 
@@ -427,6 +448,107 @@
     return Math.acos(c) * 180 / Math.PI;
   }
 
+  // The distance between two points [x,y]. The length analog of measureAngle:
+  // the spec says "measure the segment A-B", the engine reads it off the live
+  // positions — so a side length / radius / perimeter term is never asserted.
+  function measureDistance(a, b) {
+    if (!a || !b) return NaN;
+    return Math.hypot(b[0] - a[0], b[1] - a[1]);
+  }
+
+  // The (unsigned) area of the polygon through `points` ([x,y] each), via the
+  // shoelace formula. Absolute value so vertex winding (CW/CCW) doesn't flip the
+  // sign — a generated area readout reads the same regardless of order. NaN for
+  // fewer than three points.
+  function measureArea(points) {
+    if (!Array.isArray(points) || points.length < 3) return NaN;
+    var sum = 0;
+    for (var i = 0; i < points.length; i++) {
+      var p = points[i], q = points[(i + 1) % points.length];
+      if (!p || !q) return NaN;
+      sum += p[0] * q[1] - q[0] * p[1];
+    }
+    return Math.abs(sum) / 2;
+  }
+
+  // ─── Discrete / token engine (the second substrate) ─────────────────────
+  // Integer counters & algebra tiles: discrete draggable CHIPS the student
+  // arranges, with zero-pair cancellation. The "measure, never assert" property
+  // holds here too — the net (the sum of the chips on the mat) is COMPUTED from
+  // what's present, never typed. This module owns the pure logic + validation;
+  // the inline chip renderer is public/js/conceptModelTokenRenderer.js.
+
+  var TOKEN_RULE_WHEN = { 'overlap-opposite': 1 };
+  var TOKEN_RULE_DO = { annihilate: 1 };
+  var MAX_TOKENS = 60; // cap chips spawned from one expression (UI + DoS guard)
+
+  // Expand an integer add/subtract expression into chip counts:
+  // "-7 + 10" -> { positives: 10, negatives: 7, net: 3 }. Returns null for
+  // anything that isn't a sum/difference of integers (the only thing integer
+  // counters model). `net` is the live measured quantity a {net} readout shows —
+  // and it is INVARIANT under zero-pair cancellation, which is the whole lesson.
+  function expandIntegerExpression(str) {
+    if (typeof str !== 'string') return null;
+    var s = str.replace(/[−–—]/g, '-').replace(/\s+/g, '');
+    if (!/^[+-]?\d+([+-]\d+)*$/.test(s)) return null;
+    var terms = s.match(/[+-]?\d+/g).map(Number);
+    var positives = 0, negatives = 0;
+    terms.forEach(function (t) { if (t >= 0) positives += t; else negatives += -t; });
+    return { positives: positives, negatives: negatives, net: positives - negatives, terms: terms };
+  }
+
+  // Validate a token-engine spec (engine:"tokens"). Different shape from the
+  // JSXGraph path: chip TYPES (value + color), an optional expression input,
+  // optional interaction rules (zero-pair cancel), and a readout that may show
+  // the live {net}.
+  function validateTokenSpec(spec) {
+    var errors = [];
+    if (typeof spec.model !== 'string' || !spec.model) errors.push('spec.model must be a non-empty string');
+
+    if (!Array.isArray(spec.tokens) || spec.tokens.length === 0) {
+      errors.push('token spec needs a non-empty tokens array');
+    } else {
+      spec.tokens.forEach(function (t, i) {
+        if (!isPlainObject(t)) { errors.push('token[' + i + '] must be an object'); return; }
+        if (typeof t.value !== 'number') errors.push('token[' + i + '] needs a numeric value');
+        if (typeof t.color !== 'string' || !t.color) errors.push('token[' + i + '] needs a color');
+      });
+    }
+
+    if (spec.input != null) {
+      if (!isPlainObject(spec.input)) errors.push('token spec input must be an object');
+      else if (spec.input.placeholder != null && typeof spec.input.placeholder !== 'string') {
+        errors.push('token input placeholder must be a string');
+      }
+    }
+
+    if (spec.rules != null) {
+      if (!Array.isArray(spec.rules)) {
+        errors.push('token spec rules must be an array');
+      } else {
+        spec.rules.forEach(function (r, i) {
+          if (!isPlainObject(r)) { errors.push('rule[' + i + '] must be an object'); return; }
+          if (!TOKEN_RULE_WHEN[r.when]) errors.push('rule[' + i + '] has unknown when "' + r.when + '"');
+          if (!TOKEN_RULE_DO[r.do]) errors.push('rule[' + i + '] has unknown do "' + r.do + '"');
+        });
+      }
+    }
+
+    if (spec.readout != null) {
+      if (!isPlainObject(spec.readout)) {
+        errors.push('token spec readout must be an object');
+      } else if (typeof spec.readout.text !== 'string') {
+        errors.push('token readout needs text');
+      } else {
+        readoutTokens(spec.readout.text).forEach(function (tok) {
+          if (tok !== 'net') errors.push('token readout references unknown name "' + tok + '" (only {net})');
+        });
+      }
+    }
+
+    return { valid: errors.length === 0, errors: errors };
+  }
+
   /**
    * Validate a concept-model spec.
    * @param {object} spec
@@ -435,6 +557,9 @@
   function validateModelSpec(spec) {
     var errors = [];
     if (!isPlainObject(spec)) return { valid: false, errors: ['spec must be an object'] };
+    // The discrete/token substrate has a different shape (chips, not a plane of
+    // elements), so it validates on its own path.
+    if (spec.engine === 'tokens') return validateTokenSpec(spec);
     if (typeof spec.model !== 'string' || !spec.model) errors.push('spec.model must be a non-empty string');
     if (!isPlainObject(spec.params)) errors.push('spec.params must be an object');
 
@@ -499,6 +624,18 @@
           var def = spec.measures[name];
           if (!isPlainObject(def) || !MEASURE_TYPES[def.type]) {
             errors.push('measure "' + name + '" needs a known type (' + Object.keys(MEASURE_TYPES).join(', ') + ')');
+          } else if (def.type === 'angle') {
+            if (typeof def.at !== 'string' || !Array.isArray(def.rays) || def.rays.length !== 2) {
+              errors.push('measure "' + name + '" (angle) needs at:<point> and rays:[ptA, ptB]');
+            }
+          } else if (def.type === 'length') {
+            if (!Array.isArray(def.between) || def.between.length !== 2) {
+              errors.push('measure "' + name + '" (length) needs between:[ptA, ptB]');
+            }
+          } else if (def.type === 'area') {
+            if (!Array.isArray(def.of) || def.of.length < 3) {
+              errors.push('measure "' + name + '" (area) needs of:[ptA, ptB, ptC, …]');
+            }
           }
           measureSet[name] = true;
         });
@@ -628,11 +765,15 @@
           if (!Array.isArray(el.at) || el.at.length !== 2) {
             errors.push('point "' + el.id + '" needs at:[x,y]');
           } else {
+            // Coords resolve live from the param object (P) in the renderer, so a
+            // string coord must be a NUMERIC param — not a derived/measure (those
+            // aren't in P, so they'd render as NaN). Tighter than mathSet on
+            // purpose: keep the validator from passing a spec the renderer breaks.
             el.at.forEach(function (coord) {
-              if (typeof coord === 'string' && !mathSet[coord]) {
-                errors.push('point "' + el.id + '" at references unknown name "' + coord + '"');
+              if (typeof coord === 'string' && !numericSet[coord]) {
+                errors.push('point "' + el.id + '" at references unknown numeric param "' + coord + '"');
               } else if (typeof coord !== 'string' && typeof coord !== 'number') {
-                errors.push('point "' + el.id + '" at coordinate must be a number or param name');
+                errors.push('point "' + el.id + '" at coordinate must be a number or numeric param');
               }
             });
           }
@@ -654,18 +795,20 @@
           if (!Array.isArray(el.center) || el.center.length !== 2) {
             errors.push('circle "' + el.id + '" needs center:[x,y]');
           } else {
+            // Same as point coords: numeric params or literals only (renderer
+            // resolves these from the live param object, not derived/measures).
             el.center.forEach(function (coord) {
-              if (typeof coord === 'string' && !mathSet[coord]) {
-                errors.push('circle "' + el.id + '" center references unknown name "' + coord + '"');
+              if (typeof coord === 'string' && !numericSet[coord]) {
+                errors.push('circle "' + el.id + '" center references unknown numeric param "' + coord + '"');
               } else if (typeof coord !== 'string' && typeof coord !== 'number') {
-                errors.push('circle "' + el.id + '" center must be numbers or param names');
+                errors.push('circle "' + el.id + '" center must be numbers or numeric params');
               }
             });
           }
           if (typeof el.radius === 'string') {
-            if (!mathSet[el.radius]) errors.push('circle "' + el.id + '" radius references unknown name "' + el.radius + '"');
+            if (!numericSet[el.radius]) errors.push('circle "' + el.id + '" radius references unknown numeric param "' + el.radius + '"');
           } else if (!(typeof el.radius === 'number' && el.radius > 0)) {
-            errors.push('circle "' + el.id + '" needs a positive radius (number or param)');
+            errors.push('circle "' + el.id + '" needs a positive radius (number or numeric param)');
           }
         }
 
@@ -734,6 +877,12 @@
         if (Array.isArray(def.rays)) def.rays.forEach(function (ref) {
           if (!isPoint(ref)) errors.push('measure "' + name + '" ray "' + ref + '" is not a point');
         });
+        if (Array.isArray(def.between)) def.between.forEach(function (ref) {
+          if (!isPoint(ref)) errors.push('measure "' + name + '" endpoint "' + ref + '" is not a point');
+        });
+        if (Array.isArray(def.of)) def.of.forEach(function (ref) {
+          if (!isPoint(ref)) errors.push('measure "' + name + '" vertex "' + ref + '" is not a point');
+        });
       });
     }
 
@@ -762,6 +911,10 @@
     getModel: getModel,
     readoutTokens: readoutTokens,
     measureAngle: measureAngle,
+    measureDistance: measureDistance,
+    measureArea: measureArea,
+    expandIntegerExpression: expandIntegerExpression,
+    MAX_TOKENS: MAX_TOKENS,
     MODELS: Object.keys(CURATED)
   };
 });

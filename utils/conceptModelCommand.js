@@ -75,40 +75,71 @@ function boundsErrors(spec) {
  *   On success the returned command has `spec` replaced by the PARSED + validated
  *   object (generated path) or is passed through unchanged (curated path).
  */
-function resolveOne(cmd) {
-  // GENERATED — a JSON spec string. Parse, bound, validate.
-  if (typeof cmd.spec === 'string' && cmd.spec.trim()) {
-    if (cmd.spec.length > LIMITS.specChars) {
-      return { dropped: 'model_spec_too_large' };
-    }
-    let parsed;
+// Strip a Markdown code fence (```json … ``` or ``` … ```) that an LLM sometimes
+// wraps around the JSON spec. A common, harmless mistake that would otherwise
+// fail JSON.parse and drop the whole model — peel it before parsing.
+function stripCodeFences(s) {
+  const t = String(s).trim();
+  const m = t.match(/^```[a-zA-Z0-9]*\s*([\s\S]*?)\s*```$/);
+  return m ? m[1].trim() : t;
+}
+
+// A curated catalog name on this command that we can fall back to. Returns the
+// name or null.
+function curatedNameOf(cmd) {
+  return (typeof cmd.model === 'string' && ConceptModelSpec.MODELS.indexOf(cmd.model) !== -1)
+    ? cmd.model
+    : null;
+}
+
+// Validate a spec payload (a JSON string or an already-parsed object) and return
+// either { spec } (the parsed, validated object) or { reason, errors }.
+function validateSpecPayload(rawSpec) {
+  let parsed;
+  if (typeof rawSpec === 'string') {
+    const text = stripCodeFences(rawSpec);
+    if (text.length > LIMITS.specChars) return { reason: 'model_spec_too_large' };
     try {
-      parsed = JSON.parse(cmd.spec);
+      parsed = JSON.parse(text);
     } catch (e) {
-      return { dropped: 'model_spec_unparseable', errors: [e.message] };
+      return { reason: 'model_spec_unparseable', errors: [e.message] };
     }
-    const bounds = boundsErrors(parsed);
-    if (bounds.length) return { dropped: 'model_spec_exceeds_limits', errors: bounds };
-    const check = ConceptModelSpec.validateModelSpec(parsed);
-    if (!check.valid) return { dropped: 'model_spec_invalid', errors: check.errors };
-
-    const out = Object.assign({}, cmd, { spec: parsed });
-    // Surface the spec's own name as the command's model name when the command
-    // didn't carry a separate one — handy for logging / downstream identity.
-    if (!out.model && typeof parsed.model === 'string') out.model = parsed.model;
-    return { command: out };
+  } else {
+    parsed = rawSpec; // already an object (renderer-shaped input or a test)
   }
+  const bounds = boundsErrors(parsed);
+  if (bounds.length) return { reason: 'model_spec_exceeds_limits', errors: bounds };
+  const check = ConceptModelSpec.validateModelSpec(parsed);
+  if (!check.valid) return { reason: 'model_spec_invalid', errors: check.errors };
+  return { spec: parsed };
+}
 
-  // GENERATED — a spec the parser already turned into an object (renderer-shaped
-  // input, or a test). Validate it the same way.
-  if (cmd.spec && typeof cmd.spec === 'object') {
-    const bounds = boundsErrors(cmd.spec);
-    if (bounds.length) return { dropped: 'model_spec_exceeds_limits', errors: bounds };
-    const check = ConceptModelSpec.validateModelSpec(cmd.spec);
-    if (!check.valid) return { dropped: 'model_spec_invalid', errors: check.errors };
-    const out = Object.assign({}, cmd);
-    if (!out.model && typeof cmd.spec.model === 'string') out.model = cmd.spec.model;
-    return { command: out };
+function resolveOne(cmd) {
+  const hasSpec = (typeof cmd.spec === 'string' && cmd.spec.trim()) ||
+    (cmd.spec && typeof cmd.spec === 'object');
+
+  // GENERATED — a spec the tutor authored. Parse + bound + validate.
+  if (hasSpec) {
+    const r = validateSpecPayload(cmd.spec);
+    if (r.spec) {
+      const out = Object.assign({}, cmd, { spec: r.spec });
+      // Surface the spec's own name when the command didn't carry one — handy for
+      // logging / downstream identity.
+      if (!out.model && typeof r.spec.model === 'string') out.model = r.spec.model;
+      return { command: out };
+    }
+    // The generated spec didn't hold up. If the command ALSO names a real curated
+    // model, fall back to it rather than dropping the card entirely — the tutor's
+    // chat may already reference "this model", so a curated stand-in beats a
+    // dangling reference. Otherwise drop with the reason.
+    const fallback = curatedNameOf(cmd);
+    if (fallback) {
+      const out = Object.assign({}, cmd);
+      delete out.spec;
+      out.model = fallback;
+      return { command: out, fallback: r.reason };
+    }
+    return { dropped: r.reason, errors: r.errors };
   }
 
   // CURATED — a catalog name. Must resolve to a real model.
@@ -128,19 +159,26 @@ function resolveOne(cmd) {
  * commands pass through untouched and in order.
  *
  * @param {Array<object>} commands
- * @returns {{ commands: Array<object>, dropped: Array<{command:object, reason:string, errors?:string[]}> }}
+ * @returns {{ commands: Array<object>, dropped: Array<{command,reason,errors?}>, fallbacks: Array<{command,reason}> }}
+ *   `fallbacks` are commands whose generated spec failed but that fell back to a
+ *   curated name (rendered, but worth logging that the spec was rejected).
  */
 function resolveModelCommands(commands) {
   const out = [];
   const dropped = [];
-  if (!Array.isArray(commands)) return { commands: out, dropped };
+  const fallbacks = [];
+  if (!Array.isArray(commands)) return { commands: out, dropped, fallbacks };
   for (const cmd of commands) {
     if (!cmd || cmd.action !== 'model') { out.push(cmd); continue; }
     const r = resolveOne(cmd);
-    if (r.command) out.push(r.command);
-    else dropped.push({ command: cmd, reason: r.dropped, errors: r.errors });
+    if (r.command) {
+      out.push(r.command);
+      if (r.fallback) fallbacks.push({ command: r.command, reason: r.fallback });
+    } else {
+      dropped.push({ command: cmd, reason: r.dropped, errors: r.errors });
+    }
   }
-  return { commands: out, dropped };
+  return { commands: out, dropped, fallbacks };
 }
 
 module.exports = {

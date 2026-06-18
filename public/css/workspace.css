@@ -802,8 +802,14 @@
   color: var(--cr-text-dim);
   font-size: 12px;
 }
-/* Renderer-owned layout (prompt frame · readouts · board · controls). */
+/* Renderer-owned layout (title · prompt frame · readouts · board · controls). */
 .cr-cm { display: flex; flex-direction: column; gap: 8px; }
+.cr-cm-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cr-text);
+  text-align: center;
+}
 .cr-cm-prompt {
   font-size: 13px;
   line-height: 1.45;
@@ -880,6 +886,47 @@
   background: var(--cr-accent-grad);
   border-color: transparent;
 }
+
+/* ── token (discrete chip) engine — integer counters / algebra tiles ── */
+.cr-cm-mat {
+  position: relative;
+  width: 100%;
+  min-height: 220px;
+  border-radius: var(--cr-radius-sm);
+  background: var(--cr-bg-deep);
+  border: 1px solid var(--cr-border);
+  overflow: hidden;
+  touch-action: none;
+}
+.cr-cm-chip {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  box-shadow: 0 2px 5px rgba(28, 21, 48, 0.18);
+  transition: box-shadow 0.12s ease;
+}
+.cr-cm-chip.is-dragging { cursor: grabbing; box-shadow: 0 5px 12px rgba(28, 21, 48, 0.32); z-index: 5; }
+.cr-cm-token-input { display: flex; gap: 8px; align-items: center; padding: 2px 4px 0; }
+.cr-cm-token-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 7px 10px;
+  font-size: 14px;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-sm);
+  background: var(--cr-bg-2);
+  color: var(--cr-text);
+}
+.cr-cm-token-field:focus { outline: none; border-color: var(--cr-accent); }
+.cr-cm-token-field.is-invalid { border-color: #e0556e; background: #fff2f4; }
 
 /* Shared caption styling for graph + image cards. */
 .cr-ws-board-card-caption {
