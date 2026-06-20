@@ -27,12 +27,52 @@
         return typeof window !== 'undefined' ? window.MathWorkspace : null;
     }
 
+    // Scrub a LaTeX/text field of leaked JSON structure. Upstream a fallback
+    // parser can capture a board_commands array boundary into a field — e.g.
+    // tex = "3x = 21},{" — which then renders as a red KaTeX error. A real math
+    // expression never contains an UNescaped  } , {  or  " , "  (LaTeX braces are
+    // \{ \}), so cut at that boundary and drop the residue.
+    function cleanField(s) {
+        if (typeof s !== 'string') return s;
+        // Stray wrapping JSON quotes.
+        s = s.replace(/^\s*["']+|["']+\s*$/g, '');
+        // Truncate at a JSON object/array boundary that leaked in.
+        var cut = s.search(/[}\]"]\s*,\s*["{[]/);
+        if (cut !== -1) s = s.slice(0, cut + 1);
+        s = s.trim();
+        // Drop a trailing unbalanced } (residue from the cut). LaTeX braces pair
+        // up; a lone trailing close is junk. Count unescaped braces only.
+        var opens = (s.match(/(?:^|[^\\])\{/g) || []).length;
+        var closes = (s.match(/(?:^|[^\\])\}/g) || []).length;
+        while (closes > opens && /\}\s*$/.test(s)) {
+            s = s.replace(/\}\s*$/, '').trim();
+            closes--;
+        }
+        return s;
+    }
+
+    function sanitizeCommand(command) {
+        if (!command || typeof command !== 'object') return command;
+        var out = command;
+        ['tex', 'check', 'op', 'caption'].forEach(function (k) {
+            if (typeof command[k] === 'string') {
+                var cleaned = cleanField(command[k]);
+                if (cleaned !== command[k]) {
+                    if (out === command) out = Object.assign({}, command);
+                    out[k] = cleaned;
+                }
+            }
+        });
+        return out;
+    }
+
     function executeOne(command) {
         var W = getWorkspace();
         if (!W) {
             console.warn('[BoardCommandHandler] MathWorkspace not available; dropping command', command);
             return;
         }
+        command = sanitizeCommand(command);
         try {
             switch (command.action) {
                 case 'pose':

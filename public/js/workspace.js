@@ -41,17 +41,22 @@
   // (very early in page life) or the expression doesn't parse.
   function renderTex(target, tex) {
     if (!target) return;
+    var s = String(tex || '');
     if (window.katex && typeof window.katex.render === 'function') {
       try {
-        window.katex.render(String(tex || ''), target, {
+        window.katex.render(s, target, {
           throwOnError: false,
           displayMode: true,
           output: 'html'
         });
-        return;
+        // With throwOnError:false KaTeX doesn't throw on bad input — it paints
+        // the unparseable part in a red .katex-error span. Treat that as a
+        // failure and degrade to plain text, so a malformed command never shows
+        // a scary red string (or leaked JSON like "3x = 21},{") on the board.
+        if (!target.querySelector('.katex-error')) return;
       } catch (_) { /* fall through to text */ }
     }
-    target.textContent = String(tex || '');
+    target.textContent = s;
   }
 
   // Give empty \boxed{} scaffold slots a visible width so they read as

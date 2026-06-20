@@ -694,7 +694,12 @@
 .cr-ws-chat-mirror .cr-ws-board-card {
   width: 100%;
   max-width: 520px;
+  /* The chat thread can sit over a busy poster/tutor background — keep the
+     mirrored card fully opaque with a clear shadow so the math always reads. */
+  background: var(--cr-bg-panel);
+  box-shadow: 0 2px 12px rgba(7, 9, 15, 0.28);
 }
+.cr-ws-chat-mirror .cr-ws-board-card-math { color: var(--cr-text); }
 /* Tap-chip for interactive/heavy cards (scaffold, graph, image, model). */
 .cr-ws-mirror-chip {
   display: inline-flex;
