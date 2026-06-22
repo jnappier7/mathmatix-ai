@@ -212,6 +212,19 @@ body.cr-mode #app-layout-wrapper { background: var(--cr-bg-0); }
   box-sizing: border-box;
 }
 
+/* Feature flag (MM_FEATURES.boardPanel=false → html.mm-board-hidden): hide the
+   visual math board until it's polished. Students keep chat with the tutor's
+   work mirrored inline as cards (see appendBoardMirror in workspace.js). The
+   stage drops to a 2-column hero | chat grid and every board surface is hidden.
+   Remove the flag in chat.html to restore the panel. */
+html.mm-board-hidden .cr-stage {
+  grid-template-columns: var(--cr-hero-w) minmax(0, 1fr);
+}
+html.mm-board-hidden .cr-workspace,
+html.mm-board-hidden .cr-ws-fab,
+html.mm-board-hidden .cr-ws-backdrop,
+html.mm-board-hidden #mathmatix-whiteboard-panel { display: none !important; }
+
 @media (max-width: 1200px) {
   /* Workspace leaves grid flow here (becomes a drawer — see workspace.css). */
   .cr-stage { grid-template-columns: 260px minmax(0, 1fr); }

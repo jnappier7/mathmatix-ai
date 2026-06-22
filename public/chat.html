@@ -17,6 +17,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="MATHMATIX" />
   <title>M∆THM∆TIΧ AI Chat</title>
+  <!-- Feature flags. The visual math board (right-column workspace, whiteboard,
+       graph/tiles/calc tools) is hidden until it's polished; students keep chat
+       with the tutor's work mirrored inline as cards. To bring the board back,
+       set boardPanel: true (or delete this block). -->
+  <script>
+    window.MM_FEATURES = Object.assign({ boardPanel: false }, window.MM_FEATURES || {});
+    if (window.MM_FEATURES.boardPanel === false) {
+      document.documentElement.classList.add('mm-board-hidden');
+    }
+  </script>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/file-upload.css" />
   <link rel="stylesheet" href="/css/calculator.css" />
