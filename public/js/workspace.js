@@ -37,6 +37,14 @@
     return n;
   }
 
+  // Feature flag: the visual board panel is hidden until it's polished
+  // (set window.MM_FEATURES.boardPanel = false in chat.html). When off, the
+  // panel/FAB/drawer never mount; the tutor's work still reaches the student
+  // as inline mirror cards in the chat thread (see appendBoardMirror).
+  function boardPanelEnabled() {
+    return !(window.MM_FEATURES && window.MM_FEATURES.boardPanel === false);
+  }
+
   // KaTeX renderer with a safe text fallback if KaTeX hasn't loaded yet
   // (very early in page life) or the expression doesn't parse.
   function renderTex(target, tex) {
@@ -633,7 +641,11 @@
   // interactive/heavy cards (scaffold, graph, image, model) render as a chip that
   // opens the drawer, where the real interaction/space lives.
   function appendBoardMirror(step) {
-    if (!isMobileChat() || !step) return;
+    // Mirror inline when the board lives behind the phone drawer, OR whenever
+    // the board panel is hidden by feature flag — in that mode the chat thread
+    // is the only place the tutor's work can surface, on every screen size.
+    var boardHidden = !boardPanelEnabled();
+    if ((!isMobileChat() && !boardHidden) || !step) return;
     var chat = document.getElementById('chat-messages-container');
     if (!chat) return;
 
@@ -671,6 +683,9 @@
       wrap.appendChild(card);
     } else {
       // scaffold / graph / image / model / diagram → tap-chip to the drawer.
+      // With the board hidden there's no drawer to open, so drop these heavy
+      // cards rather than surfacing a dead chip.
+      if (boardHidden) return;
       var chip = el('button', 'cr-ws-mirror-chip');
       chip.type = 'button';
       var label = HEAVY_LABEL[t] || 'Open board';
@@ -775,6 +790,9 @@
   };
 
   function switchTool(key) {
+    // Board hidden by feature flag → nothing to render into; callers (incl. the
+    // public API) become no-ops while inline mirroring carries the work.
+    if (!boardPanelEnabled()) return;
     if (!TOOLS[key] || WS.current === key) return;
     var prev = WS.current && TOOLS[WS.current];
     if (prev && prev.teardown) prev.teardown();
@@ -812,7 +830,7 @@
     return b;
   }
   function openWorkspace() {
-    if (!WS.el) return;
+    if (!WS.el || !boardPanelEnabled()) return;
     WS.el.classList.add('is-open');
     ensureBackdrop().classList.add('is-open');
     document.body.classList.add('cr-ws-drawer-open');
@@ -1066,6 +1084,11 @@
     WS.el = document.getElementById('cr-workspace');
     WS.body = document.getElementById('cr-ws-body');
     if (!WS.el || !WS.body) return;
+
+    // Board hidden by feature flag: skip the panel/FAB wiring entirely. The
+    // public board API still mirrors each step into the chat thread, so the
+    // student sees the tutor's work inline (see appendBoardMirror).
+    if (!boardPanelEnabled()) return;
 
     WS.el.querySelectorAll('.cr-ws-tab').forEach(function (tab) {
       tab.addEventListener('click', function () {
