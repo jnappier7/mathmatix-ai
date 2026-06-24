@@ -332,6 +332,21 @@ class Sidebar {
         }
     }
 
+    // Force the Tools section open (idempotent). Used when something inside
+    // Tools needs to be visible — e.g. the glowing "Starting Point" button the
+    // greeting points new students to. Without this it stays hidden inside the
+    // collapsed-by-default section and the greeting refers to a button nobody
+    // can see.
+    expandTools() {
+        const toolsContent = document.getElementById('sidebar-tools');
+        const toolsToggle = document.querySelector('.tools-toggle');
+        if (!toolsContent || !toolsToggle) return;
+
+        this.toolsExpanded = true;
+        toolsContent.classList.add('expanded');
+        toolsToggle.classList.add('expanded');
+    }
+
     async loadSessions() {
         try {
             const response = await window.csrfFetch('/api/conversations', {
