@@ -14,6 +14,7 @@
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
     "test:golden": "jest --testPathPattern=tests/golden",
+    "test:critical": "jest --config jest.critical.config.js",
     "seed:test": "node scripts/seedTestData.js",
     "seed:playground": "node scripts/seedPlaygroundAccounts.js",
     "seed:playground:clear": "node scripts/seedPlaygroundAccounts.js --clear",

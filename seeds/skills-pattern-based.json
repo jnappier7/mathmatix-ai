@@ -7174,5 +7174,650 @@
       "fluencyType": "conceptual",
       "toleranceFactor": 4
     }
+  },
+  {
+    "skillId": "one-step-equations-addition",
+    "displayName": "One-Step Equations (Addition/Subtraction)",
+    "description": "Solve one-step equations using inverse addition or subtraction, e.g. x + 7 = 12",
+    "category": "equations",
+    "course": "Grade 6 Math",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": [
+      "missing-addend"
+    ],
+    "enables": [
+      "one-step-equations-multiplication",
+      "two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.7",
+      "6.EE.5"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Inverse operations undo each other",
+        "Keep the equation balanced — do the same to both sides",
+        "Isolate the variable"
+      ],
+      "commonMistakes": [
+        "Operating on only one side",
+        "Adding instead of subtracting the constant",
+        "Sign errors"
+      ],
+      "teachingTips": [
+        "Use a balance-scale model",
+        "Check by substituting back",
+        "Annotate each step: '-7 on both sides'"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "one-step-equations-multiplication",
+    "displayName": "One-Step Equations (Multiplication/Division)",
+    "description": "Solve one-step equations using inverse multiplication or division, e.g. 3x = 12",
+    "category": "equations",
+    "course": "Grade 6 Math",
+    "quarter": 2,
+    "unit": "Equivalence Pattern - Tier 2",
+    "prerequisites": [
+      "one-step-equations-addition"
+    ],
+    "enables": [
+      "two-step-equations"
+    ],
+    "standardsAlignment": [
+      "6.EE.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Divide both sides by the coefficient",
+        "Multiplication and division are inverses",
+        "Balance both sides"
+      ],
+      "commonMistakes": [
+        "Subtracting the coefficient instead of dividing",
+        "Dividing only one side",
+        "Slips with fractions or decimals"
+      ],
+      "teachingTips": [
+        "Think 'undo times-by with divide-by'",
+        "Check by substitution",
+        "Watch coefficients of 1 and negatives"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "unit-rates",
+    "displayName": "Unit Rates",
+    "description": "Compute and compare unit rates such as miles per hour or price per item",
+    "category": "ratios-proportions",
+    "course": "Grade 6-7 Math",
+    "quarter": 1,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "ratios"
+    ],
+    "enables": [
+      "proportions",
+      "slope-intercept-form"
+    ],
+    "standardsAlignment": [
+      "6.RP.2",
+      "6.RP.3b",
+      "7.RP.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "A unit rate has a denominator of 1",
+        "Divide to find the per-one amount",
+        "Compare rates by their unit values"
+      ],
+      "commonMistakes": [
+        "Inverting the rate",
+        "Dropping the units",
+        "Comparing rates that are not normalized"
+      ],
+      "teachingTips": [
+        "Ask 'how much for exactly one?'",
+        "Keep units attached throughout",
+        "Use a rate table"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "proportions",
+    "displayName": "Solving Proportions",
+    "description": "Set up and solve proportions a/b = c/d using cross-products or scaling",
+    "category": "ratios-proportions",
+    "course": "Grade 7 Math",
+    "quarter": 1,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "unit-rates"
+    ],
+    "enables": [
+      "percent-problems",
+      "similar-figures"
+    ],
+    "standardsAlignment": [
+      "7.RP.2",
+      "7.RP.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "A proportion states two ratios are equal",
+        "Cross-products of a true proportion are equal",
+        "A scale factor relates the two ratios"
+      ],
+      "commonMistakes": [
+        "Cross-multiplying incorrectly",
+        "Mismatching units across the two ratios",
+        "Adding instead of scaling"
+      ],
+      "teachingTips": [
+        "Label the units in each ratio",
+        "Set up the proportion before solving",
+        "Check the answer's reasonableness"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "percent-problems",
+    "displayName": "Percent Problems",
+    "description": "Find a percent of a number, the whole, or the percent using proportions or equations",
+    "category": "percent",
+    "course": "Grade 7 Math",
+    "quarter": 2,
+    "unit": "Scaling Pattern - Tier 2",
+    "prerequisites": [
+      "proportions"
+    ],
+    "enables": [
+      "percent-change",
+      "simple-interest"
+    ],
+    "standardsAlignment": [
+      "7.RP.3",
+      "6.RP.3c"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Percent means per 100",
+        "part / whole = percent / 100",
+        "Translate the words into an equation"
+      ],
+      "commonMistakes": [
+        "Confusing the part and the whole",
+        "Forgetting to convert percent to a decimal",
+        "Mixing up percent-of and percent-change"
+      ],
+      "teachingTips": [
+        "Set up part/whole = %/100",
+        "Estimate with benchmarks (10%, 25%, 50%)",
+        "Check that the result is reasonable"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "order-of-operations",
+    "displayName": "Order of Operations",
+    "description": "Evaluate numerical expressions using the order-of-operations (PEMDAS/GEMDAS) conventions",
+    "category": "expressions",
+    "course": "Grade 5-6 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [
+      "multiplication-division"
+    ],
+    "enables": [
+      "numerical-expressions-exponents",
+      "evaluate-expressions"
+    ],
+    "standardsAlignment": [
+      "5.OA.1",
+      "6.EE.1",
+      "6.EE.2c"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Grouping symbols first, then exponents",
+        "Multiply/divide left to right, then add/subtract left to right",
+        "Operations of equal rank go left to right"
+      ],
+      "commonMistakes": [
+        "Always adding before multiplying",
+        "Working strictly left to right regardless of rank",
+        "Mishandling nested grouping symbols"
+      ],
+      "teachingTips": [
+        "Underline the next operation to perform",
+        "Rewrite the expression one step at a time",
+        "GEMDAS reminds you all grouping symbols come first"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2
+    }
+  },
+  {
+    "skillId": "numerical-expressions-exponents",
+    "displayName": "Exponents in Numerical Expressions",
+    "description": "Evaluate numerical expressions that contain whole-number exponents",
+    "category": "expressions",
+    "course": "Grade 6 Math",
+    "quarter": 1,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [
+      "order-of-operations"
+    ],
+    "enables": [
+      "properties-of-exponents"
+    ],
+    "standardsAlignment": [
+      "6.EE.1"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "An exponent is repeated multiplication",
+        "Evaluate powers before multiplication and division",
+        "Distinguish the base from the exponent"
+      ],
+      "commonMistakes": [
+        "Multiplying the base by the exponent (3^2 = 6)",
+        "Ignoring the priority of exponents",
+        "Confusing (-a)^n with -a^n"
+      ],
+      "teachingTips": [
+        "Expand the power while learning",
+        "Watch parentheses around negatives",
+        "Connect squares/cubes to area and volume"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 40,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "factoring-gcf",
+    "displayName": "Factoring Out the GCF",
+    "description": "Factor the greatest common factor from numerical and algebraic expressions",
+    "category": "expressions",
+    "course": "Grade 6 Math / Algebra 1",
+    "quarter": 3,
+    "unit": "Structure Pattern - Tier 2",
+    "prerequisites": [
+      "numerical-expressions-exponents"
+    ],
+    "enables": [
+      "factoring-trinomials",
+      "difference-of-squares"
+    ],
+    "standardsAlignment": [
+      "6.NS.4",
+      "A-SSE.3a"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "The GCF is the largest factor shared by every term",
+        "Divide each term by the GCF",
+        "Factoring out is the inverse of distributing"
+      ],
+      "commonMistakes": [
+        "Missing the variable part of the GCF",
+        "Taking a common factor that isn't the greatest",
+        "Sign errors when factoring out a negative"
+      ],
+      "teachingTips": [
+        "Use prime factorization to find the GCF",
+        "Check by re-distributing",
+        "Factor variables to their lowest shared power"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "slope-intercept-form",
+    "displayName": "Slope-Intercept Form",
+    "description": "Write, interpret, and use linear equations in y = mx + b form",
+    "category": "linear-functions",
+    "course": "Grade 8 Math / Algebra 1",
+    "quarter": 3,
+    "unit": "Change Pattern - Tier 2",
+    "prerequisites": [
+      "unit-rates"
+    ],
+    "enables": [
+      "graphing-linear-equations",
+      "systems-of-equations"
+    ],
+    "standardsAlignment": [
+      "8.EE.6",
+      "8.F.3",
+      "8.F.4"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "m is the slope (rate of change); b is the y-intercept",
+        "Slope = rise / run",
+        "b is the value of y when x = 0"
+      ],
+      "commonMistakes": [
+        "Swapping the slope and the intercept",
+        "Sign errors in the slope",
+        "Reading run/rise instead of rise/run"
+      ],
+      "teachingTips": [
+        "Plot b first, then step with the slope",
+        "Connect slope to a unit rate",
+        "Interpret m and b in the context of the problem"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 60,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "graphing-linear-equations",
+    "displayName": "Graphing Linear Equations",
+    "description": "Graph lines from slope-intercept form, point-slope form, or a table of values",
+    "category": "graphing",
+    "course": "Grade 8 Math / Algebra 1",
+    "quarter": 3,
+    "unit": "Space Pattern - Tier 2",
+    "prerequisites": [
+      "slope-intercept-form"
+    ],
+    "enables": [
+      "systems-of-equations",
+      "graphing-inequalities"
+    ],
+    "standardsAlignment": [
+      "8.EE.5",
+      "8.F.3",
+      "A-REI.10"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Every solution of the equation is a point on the line",
+        "Plot the intercept, then apply the slope",
+        "A table of values also generates points"
+      ],
+      "commonMistakes": [
+        "Plotting (y, x) instead of (x, y)",
+        "Miscounting the slope steps",
+        "Not extending or labeling the line"
+      ],
+      "teachingTips": [
+        "Plot at least three points",
+        "Use the intercept-plus-slope method",
+        "Verify a point by substitution"
+      ]
+    },
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "integer-addition",
+    "displayName": "Integer Addition",
+    "description": "Add positive and negative integers using number lines and the rules of signs",
+    "category": "number-sense",
+    "course": "Grade 7 Math",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": [
+      "addition"
+    ],
+    "enables": [
+      "integer-subtraction",
+      "rational-number-operations"
+    ],
+    "standardsAlignment": [
+      "7.NS.1",
+      "7.NS.1b"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Same signs: add the magnitudes and keep the sign",
+        "Different signs: subtract and take the larger magnitude's sign",
+        "Model the sum as movement on a number line"
+      ],
+      "commonMistakes": [
+        "Ignoring the signs",
+        "Always subtracting",
+        "Sign of the final result"
+      ],
+      "teachingTips": [
+        "Use a number-line or two-color-chip model",
+        "Think in terms of gains and losses",
+        "Watch for double negatives"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "integer-subtraction",
+    "displayName": "Integer Subtraction",
+    "description": "Subtract integers by adding the opposite",
+    "category": "number-sense",
+    "course": "Grade 7 Math",
+    "quarter": 1,
+    "unit": "Change Pattern - Tier 1",
+    "prerequisites": [
+      "integer-addition"
+    ],
+    "enables": [
+      "rational-number-operations"
+    ],
+    "standardsAlignment": [
+      "7.NS.1",
+      "7.NS.1c"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Subtracting is adding the opposite: a - b = a + (-b)",
+        "Keep-change-change",
+        "Subtraction is the distance between two numbers"
+      ],
+      "commonMistakes": [
+        "Changing only the operation or only the sign, not both",
+        "General sign confusion",
+        "Assuming a - b equals b - a"
+      ],
+      "teachingTips": [
+        "Rewrite the subtraction as addition first",
+        "Use a number line",
+        "Check with the gains-and-losses model"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "procedural",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "probability-basics",
+    "displayName": "Basic Probability",
+    "description": "Find the probability of a simple event as a fraction, decimal, or percent",
+    "category": "probability",
+    "course": "Grade 7 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [
+      "fractions"
+    ],
+    "enables": [
+      "compound-probability",
+      "experimental-probability"
+    ],
+    "standardsAlignment": [
+      "7.SP.5",
+      "7.SP.7"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "P(event) = favorable outcomes / total outcomes",
+        "Probabilities range from 0 to 1",
+        "In a fair model, outcomes are equally likely"
+      ],
+      "commonMistakes": [
+        "Counting the outcomes incorrectly",
+        "Reporting a probability greater than 1",
+        "Confusing favorable with total outcomes"
+      ],
+      "teachingTips": [
+        "List the sample space",
+        "Express the answer as a fraction, decimal, and percent",
+        "0 means impossible, 1 means certain"
+      ]
+    },
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "statistics-probability",
+    "displayName": "Representing & Interpreting Data",
+    "description": "Organize and interpret data with tables and plots and describe likelihood",
+    "category": "statistics",
+    "course": "Grade 6 Math",
+    "quarter": 4,
+    "unit": "Uncertainty Pattern - Tier 1",
+    "prerequisites": [
+      "counting"
+    ],
+    "enables": [
+      "probability-basics",
+      "measures-of-center"
+    ],
+    "standardsAlignment": [
+      "6.SP.4",
+      "6.SP.5",
+      "3.MD.3"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "Data can be shown in tables, dot plots, and bar graphs",
+        "Read frequencies and compare categories",
+        "Likelihood words: certain, likely, unlikely, impossible"
+      ],
+      "commonMistakes": [
+        "Misreading the scale",
+        "Confusing a frequency with a data value",
+        "Ignoring the key or legend"
+      ],
+      "teachingTips": [
+        "Always read the axis labels and scale first",
+        "Compare bars or dots by height/count",
+        "Summarize in words what the data shows"
+      ]
+    },
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 45,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
+  },
+  {
+    "skillId": "inverse-functions",
+    "displayName": "Inverse Functions",
+    "description": "Find and verify inverse functions and understand that inverses undo each other",
+    "category": "functions",
+    "course": "Algebra 2",
+    "quarter": 2,
+    "unit": "Structure Pattern - Tier 3",
+    "prerequisites": [
+      "functions"
+    ],
+    "enables": [
+      "logarithmic-functions",
+      "exponential-functions"
+    ],
+    "standardsAlignment": [
+      "F-BF.4",
+      "F-BF.4a"
+    ],
+    "teachingGuidance": {
+      "coreConcepts": [
+        "An inverse undoes what the original function does",
+        "Swap x and y, then solve for y",
+        "Composition check: f(f⁻¹(x)) = x"
+      ],
+      "commonMistakes": [
+        "Confusing the inverse with the reciprocal 1/f",
+        "Forgetting to swap x and y",
+        "Ignoring domain restrictions"
+      ],
+      "teachingTips": [
+        "Swap and solve for the inverse",
+        "Verify by composing the two functions",
+        "Reflect the graph over the line y = x"
+      ]
+    },
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3
+    }
   }
 ]
