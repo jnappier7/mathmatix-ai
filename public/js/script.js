@@ -1513,7 +1513,13 @@ document.addEventListener("DOMContentLoaded", () => {
             autoStartGhostTimer(text);
         }
 
-        if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled) {
+        // In voice mode the voice engine already speaks every reply (the WS
+        // streams TTS; the legacy path plays its own audio). Skipping the
+        // chat's hands-free autoplay here is essential — otherwise the reply
+        // plays twice, overlapping itself in a "round". voice-controller.js
+        // appends AI turns via appendMessage(), which is what reaches this.
+        if (sender === 'ai' && currentUser?.preferences?.handsFreeModeEnabled
+            && !document.body.classList.contains('cr-voice')) {
             if (currentUser.preferences.autoplayTtsHandsFree && window.TUTOR_CONFIG) {
                  const playButtonForAutoplay = bubble.querySelector('.play-audio-btn');
                  if (playButtonForAutoplay) {
