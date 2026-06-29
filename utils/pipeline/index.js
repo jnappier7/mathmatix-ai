@@ -23,7 +23,8 @@ const { generate, assemblePrompt } = require('./generate');
 const { verify } = require('./verify');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { persist } = require('./persist');
-const { llmVerifyAnswer, pickProblemContext } = require('./llmVerifier');
+const { verifyWithEscalation, pickProblemContext } = require('./llmVerifier');
+const verifyMetrics = require('../verifyMetrics');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
@@ -120,23 +121,34 @@ async function runPipeline(message, ctx) {
   let llmVerificationPromise = null;
   if (observation.messageType === MESSAGE_TYPES.ANSWER_ATTEMPT && observation.answer?.value) {
     const problemText = pickProblemContext(
-      recentAssistantMessages.map(msg => ({ content: msg.content }))
+      recentAssistantMessages.map(msg => ({ content: msg.content, problemInfo: msg.problemInfo || null }))
     );
     if (problemText) {
-      llmVerificationPromise = llmVerifyAnswer(problemText, observation.answer.value)
+      const verifyStart = Date.now();
+      llmVerificationPromise = verifyWithEscalation(problemText, observation.answer.value)
         .then(verdict => {
+          const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;
           if (verdict.isCorrect !== null) {
-            console.log(`[Pipeline] LLMVerify: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+            console.log(`[Pipeline] LLMVerify: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer}, ${tier})`);
           } else if (verdict.error) {
-            console.log(`[Pipeline] LLMVerify: unverifiable (${verdict.error})`);
+            console.log(`[Pipeline] LLMVerify: unverifiable (${verdict.error}, ${tier})`);
           } else {
-            console.log(`[Pipeline] LLMVerify: low-confidence (${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+            console.log(`[Pipeline] LLMVerify: low-confidence (${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer}, ${tier})`);
           }
+          verifyMetrics.recordVerification({
+            verdict,
+            escalated: verdict.escalated,
+            escalationResolved: verdict.escalationResolved,
+            tier: verdict.tier,
+            latencyMs: Date.now() - verifyStart,
+          });
           return verdict;
         })
         .catch(err => {
           console.error('[Pipeline] LLMVerify promise rejected:', err.message);
-          return { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
+          const verdict = { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
+          verifyMetrics.recordVerification({ verdict, latencyMs: Date.now() - verifyStart });
+          return verdict;
         });
     }
   }
