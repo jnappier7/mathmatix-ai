@@ -577,7 +577,9 @@ body.cr-mode .message {
   max-width: min(72%, 640px);
   padding: 12px 16px;
   border-radius: 16px;
-  font-size: 14.5px;
+  /* Honor the pinch/Ctrl-scroll font scale on desktop too (mobile applies it
+     via mobile-poster-chat.css; this is the desktop equivalent). */
+  font-size: calc(14.5px * var(--chat-font-scale, 1));
   line-height: 1.55;
   border: 1px solid var(--cr-border);
   position: relative;
