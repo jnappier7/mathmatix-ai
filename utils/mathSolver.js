@@ -28,7 +28,12 @@ function detectMathProblem(message) {
         .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
         .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
         .replace(/⁹/g, '^9').replace(/⁻/g, '^-').replace(/⁺/g, '^+')
-        .replace(/ⁿ/g, '^n');
+        .replace(/ⁿ/g, '^n')
+        // Normalize multiplication dots — cdot (⋅, U+22C5), middot (·), bullet (∙ •) —
+        // to "*". These come from LaTeX \cdot rendering and MathLive input. Nothing
+        // downstream recognized them as operators, so "4 ⋅ 2" was treated as non-math
+        // and "16/4 ⋅ 2" lost its "⋅ 2" entirely (see arithmetic-chain detection below).
+        .replace(/[⋅·∙•]/g, '*');
 
     // Reassign so all downstream code (40+ regex matches and sub-function calls)
     // automatically operates on the normalized string.
@@ -446,6 +451,21 @@ function detectMathProblem(message) {
             rightNum: parseInt(fractionMatch[4]),
             rightDen: parseInt(fractionMatch[5])
         };
+    }
+
+    // Pattern: Multi-operation arithmetic CHAIN like "16/4*2", "2+3*4", "16 ÷ 4 ⋅ 2".
+    // These have 3+ operands (2+ operators). Both the single-pair arithmeticPattern
+    // above AND the last-resort embeddedArithmeticPattern below capture only the FIRST
+    // operator pair ("16/4" → 4), producing a confidently WRONG answer that then poisons
+    // answer grading: the bogus 4 gets pinned as the problem's correctAnswer, so a
+    // student's correct final "8" is graded INCORRECT against it. Route the WHOLE
+    // expression to solveEvaluation, which honors operator precedence and left-to-right
+    // associativity (so 16/4*2 = (16/4)*2 = 8, NOT 16/(4*2) = 2). Placed AFTER the
+    // two-operand and fraction-pair patterns so those keep their dedicated handling;
+    // requires 2+ operators so it only ever catches genuine multi-operand chains.
+    const chainForm = message.replace(/\s+/g, '').replace(/×/g, '*').replace(/÷/g, '/');
+    if (/^-?\d+\.?\d*(?:[+\-*/^]\d+\.?\d*){2,}$/.test(chainForm)) {
+        return { type: 'evaluation', expression: chainForm };
     }
 
     // Pattern: Percentage "what is 15% of 200"
@@ -2275,6 +2295,32 @@ function greatestCommonDivisor(a, b) {
 }
 
 /**
+ * Safely evaluate a pure-arithmetic string to a number, honoring operator
+ * precedence (so "16/4*2" = 8, not 1642). Returns null for anything that
+ * isn't a clean numeric expression with at least one operator — plain
+ * numbers, units, commas, or algebra fall back to the caller's own parsing.
+ */
+function evalArithmeticString(str) {
+    if (typeof str !== 'string') return null;
+    let s = str
+        .replace(/[⋅·∙•×]/g, '*')   // multiplication dots / sign → *
+        .replace(/÷/g, '/')          // division sign → /
+        .replace(/\s+/g, '');
+    // Require at least one operator (so plain "8" stays on the caller's path)
+    // and ONLY safe arithmetic characters (no letters, commas, currency, units).
+    if (!/[+\-*/^]/.test(s)) return null;
+    if (!/^[-+*/^().\d]+$/.test(s)) return null;
+    s = s.replace(/(\d+\.?\d*)\^(\d+\.?\d*)/g, 'Math.pow($1,$2)');
+    if (!/^[\d+\-*/().,Mathpow]+$/.test(s)) return null;
+    try {
+        const r = Function('"use strict"; return (' + s + ')')();
+        return (typeof r === 'number' && isFinite(r)) ? r : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+/**
  * Verify if a student's answer matches the correct answer
  * @param {string|number} studentAnswer - Student's provided answer
  * @param {string|number} correctAnswer - Correct answer from solver
@@ -2297,8 +2343,14 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     // falsely matches "3x^2-3" stripped to "32-3" → 32.
     const hasLetters = /[a-zA-Z]/.test(studentStr) || /[a-zA-Z]/.test(correctStr);
     if (!hasLetters) {
-        const studentNum = parseFloat(studentStr.replace(/[^\d.\-]/g, ''));
-        const correctNum = parseFloat(correctStr.replace(/[^\d.\-]/g, ''));
+        // Evaluate each side as an arithmetic expression FIRST so an expression-form
+        // answer ("16/4 ⋅ 2") is compared by its value (8), not by its stripped digits
+        // ("1642"). Falls back to digit-strip parsing for plain numbers that carry
+        // units/commas/currency ("1,000", "$8").
+        const studentEval = evalArithmeticString(studentStr);
+        const correctEval = evalArithmeticString(correctStr);
+        const studentNum = studentEval !== null ? studentEval : parseFloat(studentStr.replace(/[^\d.\-]/g, ''));
+        const correctNum = correctEval !== null ? correctEval : parseFloat(correctStr.replace(/[^\d.\-]/g, ''));
 
         if (!isNaN(studentNum) && !isNaN(correctNum)) {
             if (Math.abs(studentNum - correctNum) <= tolerance) {
