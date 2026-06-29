@@ -113,6 +113,7 @@ const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
+const { desktopRouter: phoneLinkRoutes, phoneRouter: phoneUploadRoutes } = require('../routes/phoneLink');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
 const notificationsRoutes = require('../routes/notifications');
 const onboardingRoutes = require('../routes/onboarding');
@@ -204,6 +205,11 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/demo', demoRoutes);
   app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
   app.use('/api/stats', publicStatsRoutes);
+  // Anonymous phone image upload (authorized by capability token + PIN,
+  // CSRF-exempt, rate-limited). MUST be registered before the bare
+  // `app.use('/api', isAuthenticated, ...)` catch-alls below, or that
+  // middleware would 401 the unauthenticated phone before it reaches here.
+  app.use('/api/phone-upload', phoneUploadRoutes);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
   app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes);
@@ -242,6 +248,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes);
   app.use('/api/browser-lock', isAuthenticated, browserLockRoutes);
   app.use('/api/practice-pack', isAuthenticated, practicePackRoutes);
+  // "Scan with your phone" desktop endpoints (session-authed). The public
+  // phone-upload counterpart is registered earlier, before the /api auth
+  // catch-alls (see the Public API routes block above).
+  app.use('/api/phone-link', isAuthenticated, phoneLinkRoutes);
   app.use('/api/impersonation', isAuthenticated, impersonationRoutes);
   app.use('/api/transcript-flags', isAuthenticated, transcriptFlagsRoutes);
   app.use('/api/notifications', isAuthenticated, notificationsRoutes);
@@ -599,6 +609,9 @@ function registerHtmlRoutes(app) {
   app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   app.get('/pricing.html', sendHtml('pricing.html'));
+  // Phone upload landing page — public; the page itself is inert until a valid
+  // token + PIN are supplied, and all enforcement is server-side.
+  app.get('/phone-upload', sendHtml('phone-upload.html'));
   // Protected HTML routes
   app.get('/affiliate.html', isAuthenticated, sendHtml('affiliate.html'));
   app.get('/role-picker.html', isAuthenticated, sendHtml('role-picker.html'));

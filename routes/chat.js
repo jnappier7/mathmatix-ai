@@ -7,6 +7,7 @@ const logger = log.child({ service: 'chat-service' });
 const { isAuthenticated } = require('../middleware/auth');
 const { promptInjectionFilter } = require('../middleware/promptInjection');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const Curriculum = require('../models/curriculum');
@@ -542,11 +543,23 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             logger.info('Files prepared for AI', { imageCount: uploadImageContents.length, pdfCount: uploadPdfTexts.length });
         }
 
+        // Pre-generate a StudentUpload _id per uploaded file so we can record the
+        // attachment on the user message NOW, then save the StudentUpload with that
+        // same _id in the deferred/fire-and-forget block below. This lets the
+        // transcript re-render the file on history reload (and click back to it)
+        // via /api/student/uploads/:id/file — not just show it in the compose tray.
+        const attachmentMeta = uploadedFiles.map((file) => ({
+            uploadId: new mongoose.Types.ObjectId(),
+            fileType: file.mimetype === 'application/pdf' ? 'pdf' : 'image',
+            mimeType: file.mimetype
+        }));
+
         activeConversation.messages.push({
             role: 'user',
             content: combinedMessage,
             timestamp: new Date(),
-            responseTime: responseTime || null
+            responseTime: responseTime || null,
+            ...(attachmentMeta.length > 0 ? { attachments: attachmentMeta } : {})
         });
 
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
@@ -1249,7 +1262,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 const uploadsDir = path.join(__dirname, '../uploads');
                 try { await fs.mkdir(uploadsDir, { recursive: true }); } catch(e) {}
 
-                for (const file of uploadedFiles) {
+                for (let index = 0; index < uploadedFiles.length; index++) {
+                    const file = uploadedFiles[index];
                     try {
                         const timestamp = Date.now();
                         const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -1267,6 +1281,9 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                         }
 
                         const studentUpload = new StudentUpload({
+                            // Reuse the _id we stamped onto the user message's
+                            // attachments above so the transcript reference resolves.
+                            _id: attachmentMeta[index].uploadId,
                             userId: user._id,
                             originalFilename: file.originalname,
                             storedFilename,

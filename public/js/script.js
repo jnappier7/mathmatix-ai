@@ -1194,8 +1194,85 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 	
-    function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
-        if (!text && !graphData) return;
+    // ── Transcript attachments (uploaded images / PDFs) ─────────────────
+    // Inject styles once for inline attachment thumbnails + the image lightbox.
+    function ensureAttachmentStyles() {
+        if (document.getElementById('msg-attachment-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'msg-attachment-styles';
+        style.textContent = ''
+            + '.msg-attachments{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}'
+            + '.msg-attachment-img{max-width:220px;max-height:220px;border-radius:10px;cursor:zoom-in;'
+            + 'border:1px solid rgba(0,0,0,.08);object-fit:cover;display:block;}'
+            + '.msg-attachment-pdf{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;'
+            + 'border-radius:10px;background:rgba(18,179,179,.12);color:#0d7a7a;text-decoration:none;'
+            + 'font-weight:600;font-size:.9rem;}'
+            + '.msg-attachment-pdf i{font-size:1.1rem;}'
+            + '.img-lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:11000;'
+            + 'display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;}'
+            + '.img-lightbox-overlay img{max-width:96vw;max-height:92vh;border-radius:8px;'
+            + 'box-shadow:0 10px 50px rgba(0,0,0,.5);}'
+            + '.img-lightbox-close{position:absolute;top:16px;right:22px;font-size:2.2rem;color:#fff;'
+            + 'background:none;border:none;cursor:pointer;line-height:1;}';
+        document.head.appendChild(style);
+    }
+
+    // Open an uploaded image full-size. Click anywhere or press Esc to close.
+    function openImageLightbox(src) {
+        ensureAttachmentStyles();
+        const overlay = document.createElement('div');
+        overlay.className = 'img-lightbox-overlay';
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Uploaded image (full size)';
+        const close = document.createElement('button');
+        close.className = 'img-lightbox-close';
+        close.setAttribute('aria-label', 'Close');
+        close.innerHTML = '&times;';
+        overlay.appendChild(img);
+        overlay.appendChild(close);
+        function dismiss() { overlay.remove(); document.removeEventListener('keydown', onKey); }
+        function onKey(e) { if (e.key === 'Escape') dismiss(); }
+        overlay.addEventListener('click', dismiss);
+        document.addEventListener('keydown', onKey);
+        document.body.appendChild(overlay);
+    }
+    window.openImageLightbox = openImageLightbox;
+
+    // Build the attachment row for a message bubble.
+    // `attachments` is an array of { url, fileType } where fileType is 'image'|'pdf'.
+    function buildAttachmentsEl(attachments) {
+        if (!attachments || !attachments.length) return null;
+        ensureAttachmentStyles();
+        const wrap = document.createElement('div');
+        wrap.className = 'msg-attachments';
+        attachments.forEach(att => {
+            if (!att || !att.url) return;
+            if (att.fileType === 'pdf') {
+                const chip = document.createElement('a');
+                chip.className = 'msg-attachment-pdf';
+                chip.href = att.url;
+                chip.target = '_blank';
+                chip.rel = 'noopener';
+                chip.innerHTML = '<i class="fas fa-file-pdf"></i><span>PDF</span>';
+                wrap.appendChild(chip);
+            } else {
+                const img = document.createElement('img');
+                img.className = 'msg-attachment-img';
+                img.src = att.url;
+                img.alt = 'Uploaded image';
+                img.loading = 'lazy';
+                img.addEventListener('click', () => openImageLightbox(att.url));
+                // If a persisted image can't be served (e.g. retention sweep), drop it quietly.
+                img.addEventListener('error', () => img.remove());
+                wrap.appendChild(img);
+            }
+        });
+        return wrap.children.length ? wrap : null;
+    }
+
+    function appendMessage(text, sender, graphData = null, isMasteryQuiz = false, attachments = null) {
+        if (!text && !graphData && !(attachments && attachments.length)) return;
 
         if (!chatBox) return;
 
@@ -1252,6 +1329,10 @@ document.addEventListener("DOMContentLoaded", () => {
             textNode.innerHTML = renderMarkdownMath(text);
         }
         bubble.appendChild(textNode);
+
+        // Render uploaded-file attachments (images open full-size on click).
+        const attachmentsEl = buildAttachmentsEl(attachments);
+        if (attachmentsEl) bubble.appendChild(attachmentsEl);
 
         // Handle Visual Step Breadcrumbs: [STEPS]...[/STEPS] with animated reveal
         if (sender === 'ai' && text && text.includes('[STEPS]')) {
@@ -2331,18 +2412,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const responseTime = queuedMsg.responseTime;
         const queuedFiles = queuedMsg.files;
 
-        // Only append if not already shown as queued. A SILENT turn never paints
-        // a student bubble — the tutor reacts to it (e.g. a filled-in WorkBoard
-        // card) without it looking like a typed message.
+        // Show the student's uploaded files inline in their own bubble, straight
+        // from the local File objects (no server round-trip). On a later history
+        // reload these re-render from the persisted StudentUpload reference.
+        const localAttachments = (queuedFiles || []).map(f => ({
+            url: URL.createObjectURL(f),
+            fileType: f.type === 'application/pdf' ? 'pdf' : 'image'
+        }));
+
+        // A SILENT turn never paints a student bubble — the tutor reacts to it
+        // (e.g. a filled-in WorkBoard card) without it looking like a typed
+        // message. Otherwise replace any "queued" placeholder and render the
+        // real user message, including image-only sends (text empty, file attached).
         const queuedElement = document.querySelector(`[data-queue-id="${queuedMsg.id}"]`);
-        if (queuedMsg.silent) {
-            if (queuedElement) queuedElement.remove();
-        } else if (!queuedElement && messageText) {
-            appendMessage(messageText, "user");
-        } else if (queuedElement && messageText) {
-            // Replace queued message with proper user message
-            queuedElement.remove();
-            appendMessage(messageText, "user");
+        if (queuedElement) queuedElement.remove();
+        if (!queuedMsg.silent && (messageText || localAttachments.length)) {
+            appendMessage(messageText || '', "user", null, false, localAttachments);
         }
 
         showThinkingIndicator(true);
@@ -5011,7 +5096,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
                 const sender = msg.role === 'user' ? 'user' : 'ai';
-                appendMessage(msg.content, sender);
+                // Re-render uploaded attachments from their persisted reference;
+                // the bytes are served on demand (auth + ownership enforced).
+                const histAttachments = (msg.attachments || []).map(a => ({
+                    url: `/api/student/uploads/${a.uploadId}/file`,
+                    fileType: a.fileType
+                }));
+                appendMessage(msg.content, sender, null, false, histAttachments);
             });
 
             // Scroll to bottom
