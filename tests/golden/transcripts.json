@@ -1,0 +1,97 @@
+{
+  "_README": "Golden transcripts for the tutoring pipeline. Each entry asserts real, current behavior of the deterministic stages (observe + decide). Add a case by copying an existing block — no test code required. See ./README.md. Fields: name, message, context?, expectMessageType?, decide{from,messageType?,answer?,streaks?,diagnosis?,expectAction?,expectActionOneOf?}?, safety?[]. Global safety invariants run on every decide case automatically.",
+
+  "classification": [
+    { "name": "variable assignment is an answer attempt", "message": "x = 7", "expectMessageType": "answer_attempt" },
+    { "name": "answer phrase is an answer attempt", "message": "the answer is 12", "expectMessageType": "answer_attempt" },
+    { "name": "idk is recognized", "message": "idk", "expectMessageType": "idk" },
+    { "name": "quitting reads as frustration", "message": "this is stupid I quit", "expectMessageType": "frustration" },
+    { "name": "explicit help ask", "message": "can you help me?", "expectMessageType": "help_request" },
+    { "name": "how-do-I is a help request", "message": "how do I start?", "expectMessageType": "help_request" },
+    { "name": "non-math trivia is an off-topic question", "message": "what is the capital of France?", "expectMessageType": "question" },
+    { "name": "bare yes is affirmative", "message": "yes", "expectMessageType": "affirmative" },
+    { "name": "skip request", "message": "skip this one", "expectMessageType": "skip_request" },
+    { "name": "process narration is a progress report", "message": "first I divided both sides by 2", "expectMessageType": "progress_report" }
+  ],
+
+  "decisions": [
+    {
+      "name": "correct answer is confirmed",
+      "message": "x = 7",
+      "decide": {
+        "from": "synthesize", "messageType": "answer_attempt", "answer": { "value": "7" },
+        "diagnosis": { "type": "correct", "isCorrect": true, "answer": "7", "correctAnswer": "7", "misconception": null },
+        "expectAction": "confirm_correct"
+      }
+    },
+    {
+      "name": "incorrect answer is guided, never confirmed",
+      "message": "x = 5",
+      "decide": {
+        "from": "synthesize", "messageType": "answer_attempt", "answer": { "value": "5" },
+        "diagnosis": { "type": "incorrect", "isCorrect": false, "answer": "5", "correctAnswer": "7", "misconception": null },
+        "expectAction": "guide_incorrect"
+      }
+    },
+    {
+      "name": "incorrect + known misconception is re-taught",
+      "message": "3x + 2 (got 3x+2 from 3(x+2))",
+      "decide": {
+        "from": "synthesize", "messageType": "answer_attempt", "answer": { "value": "3x+2" },
+        "diagnosis": { "type": "incorrect", "isCorrect": false, "answer": "3x+2", "correctAnswer": "3x+6", "misconception": { "name": "Partial Distribution", "fix": "Distribute to all terms" } },
+        "expectAction": "reteach_misconception"
+      }
+    },
+    {
+      "name": "repeated wrongs escalate to a worked example",
+      "message": "x = 5",
+      "decide": {
+        "from": "synthesize", "messageType": "answer_attempt", "answer": { "value": "5" },
+        "streaks": { "idkCount": 0, "giveUpCount": 0, "recentWrongCount": 4 },
+        "diagnosis": { "type": "incorrect", "isCorrect": false, "answer": "5", "correctAnswer": "7", "misconception": null },
+        "expectAction": "worked_example"
+      }
+    },
+    {
+      "name": "UNVERIFIABLE answer is never auto-confirmed — hands off with a self-verify directive",
+      "message": "x = 7",
+      "decide": {
+        "from": "synthesize", "messageType": "answer_attempt", "answer": { "value": "7" },
+        "diagnosis": { "type": "unverifiable", "isCorrect": null, "answer": "7", "correctAnswer": null, "misconception": null },
+        "expectAction": "continue_conversation"
+      },
+      "safety": ["no_autoconfirm_unverified"]
+    },
+    {
+      "name": "partial multi-root answer is acknowledged, not marked wrong",
+      "message": "x = 3",
+      "decide": {
+        "from": "synthesize", "messageType": "answer_attempt", "answer": { "value": "3" },
+        "diagnosis": { "type": "correct_partial", "isCorrect": null, "answer": "3", "correctAnswer": "3,2", "misconception": null, "multiRoot": { "remainingCount": 1 } },
+        "expectAction": "acknowledge_progress"
+      }
+    },
+    {
+      "name": "give-up triggers an exit ramp that never reveals the answer",
+      "message": "I give up",
+      "decide": { "from": "observe", "expectAction": "exit_ramp" },
+      "safety": ["giveup_no_reveal"]
+    },
+    {
+      "name": "idk scaffolds down rather than answering",
+      "message": "idk",
+      "decide": { "from": "observe", "expectAction": "scaffold_down" }
+    },
+    {
+      "name": "off-topic redirects back to math",
+      "message": "what is the capital of France?",
+      "context": { "onTask": true },
+      "decide": { "from": "synthesize", "messageType": "off_task", "diagnosis": { "type": "no_answer" }, "expectAction": "redirect_to_math" }
+    },
+    {
+      "name": "help request offers a hint, not the solution",
+      "message": "can you help me?",
+      "decide": { "from": "observe", "expectAction": "hint" }
+    }
+  ]
+}
