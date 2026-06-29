@@ -30,7 +30,7 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
-const { detectGrowthCheckAcceptance } = require('../utils/growthCheckIntent');
+const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -415,6 +415,61 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             }
             // Not eligible (no baseline, or just did one) — let the normal
             // pipeline handle it so the AI can explain why naturally.
+        }
+
+        // ── STARTING POINT LAUNCH INTERCEPT ──
+        // Mirror of the Growth Check intercept above. The greeting (and the
+        // mid-session struggle re-mention in utils/prompt.js) offer the
+        // Starting Point — the full initial IRT placement assessment served by
+        // the FloatingScreener. Without this intercept the LLM would try to
+        // improvise placement questions in the chat bubble. When the student
+        // explicitly accepts ("let's do the starting point", "take my
+        // assessment") AND still needs one, short-circuit and tell the client
+        // to open the structured UI — works on desktop and mobile alike,
+        // without relying on the sidebar button.
+        if (!hasFiles && !isMasteryMode && detectStartingPointAcceptance(effectiveMessage)) {
+            const needsStartingPoint = !user.assessmentCompleted
+                || (user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) <= new Date());
+
+            if (needsStartingPoint) {
+                const tutorReply = "Awesome — opening your Starting Point now. It's not a test you can fail; just answer what you can and I'll take it from there.";
+                activeConversation.messages.push({ role: 'user', content: effectiveMessage });
+                activeConversation.messages.push({ role: 'assistant', content: tutorReply });
+                activeConversation.lastActivity = new Date();
+                try {
+                    await activeConversation.save();
+                } catch (saveErr) {
+                    logger.warn('Starting Point intercept conversation save failed', { error: saveErr.message });
+                }
+
+                // Mark as offered so the AI doesn't keep re-pitching it.
+                if (!user.startingPointOffered) {
+                    User.findByIdAndUpdate(userId, {
+                        startingPointOffered: true,
+                        startingPointOfferedAt: new Date()
+                    }).catch(err => logger.warn('Starting Point offered flag update failed', { error: err.message }));
+                }
+
+                logger.info('Starting Point acceptance intercepted', { userId });
+
+                const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+                const userXpInCurrentLevel = Math.max(0, (user.xp || 0) - xpForLevelStart);
+                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.voiceId || 'default';
+
+                return res.json({
+                    text: tutorReply,
+                    userXp: userXpInCurrentLevel,
+                    userLevel: user.level,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
+                    specialXpAwarded: "",
+                    voiceId: tutorVoice,
+                    newlyUnlockedTutors: [],
+                    drawingSequence: null,
+                    launchAssessment: 'starting-point',
+                });
+            }
+            // Already has a current Starting Point — let the normal pipeline
+            // handle it so the AI can respond naturally.
         }
 
         // ── FILE UPLOAD PROCESSING (consolidated from chatWithFile.js) ──
@@ -2255,8 +2310,11 @@ async function handleGreetingRequest(req, res, userId) {
         let maxTokens = 150;
         let openerResult = null;
         // Optional inline call-to-action button attached to the greeting
-        // bubble. Set when the student is overdue for a Growth Check so the
-        // client can render a one-tap launcher inside the message.
+        // bubble. Set when a new student should be offered the Starting Point,
+        // or when a returning student is overdue for a Growth Check, so the
+        // client can render a one-tap launcher inside the message instead of
+        // pointing at the sidebar button (hidden on desktop, off-canvas on
+        // mobile).
         let greetingInlineCta = null;
 
         if (isCourseGreeting && courseContext) {
@@ -2375,11 +2433,20 @@ If they're new, introduce yourself IN CHARACTER — just be yourself, not formal
 End with something they can respond to. ${warmUpInstruction}`;
             }
 
-            // Add Starting Point offer (only on first session, never again)
+            // Add Starting Point offer (only on first session, never again).
+            // We render a tappable button right below the greeting (works on
+            // desktop AND mobile) instead of pointing at the sidebar button,
+            // which is hidden inside a collapsed section on desktop and
+            // off-canvas on mobile.
             if (shouldOfferStartingPoint) {
+                greetingInlineCta = {
+                    type: 'launch-starting-point',
+                    label: 'Find My Starting Point',
+                    emoji: '🎯',
+                };
                 greetingInstruction += `
 
-This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar — but do it in YOUR voice, not as a product announcement. The idea is: "There's a quick thing in the sidebar that helps me figure out where you're at — it's not a test, just helps me know what to focus on. No rush." Keep it one sentence, super low-pressure. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
+This is the student's first session. A button labeled "${greetingInlineCta.label}" is rendered right below your greeting — they tap it to begin. After your greeting, casually invite them to tap it, in YOUR voice, not as a product announcement. The idea is: "there's a quick thing right below this — it's not a test, just helps me figure out where you're at so I know what to focus on. No rush." Keep it ONE sentence, super low-pressure, and reference the button below. Do NOT say it's "in the sidebar" or "on the left", and do NOT invent your own questions or pretend to start it inline. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
             }
 
             // Re-engage students who are sitting on an overdue growth check.
