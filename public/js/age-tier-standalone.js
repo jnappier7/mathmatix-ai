@@ -48,7 +48,7 @@
         }
         document.body.classList.add(tierClass);
 
-        // Expose voice defaults for non-module scripts (e.g., voice-tutor-session.js)
+        // Expose voice defaults for non-module scripts (e.g., voice-controller.js)
         window._ageTierVoiceDefaults = TIER_VOICE_DEFAULTS[tier] || TIER_VOICE_DEFAULTS['9plus'];
 
         console.log('[AgeTier] Applied tier "' + tier + '" (grade: ' + (gradeLevel || 'unknown') + ')');

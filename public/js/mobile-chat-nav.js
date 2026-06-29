@@ -213,7 +213,11 @@
                 + '</div>';
 
             wireAction('mp-action-voice', function () {
-                window.location.href = '/voice-tutor.html';
+                // Voice is an in-place mode of the chat page now — toggle it
+                // rather than navigating to the retired voice-tutor page.
+                if (window.voiceMode && typeof window.voiceMode.toggle === 'function') {
+                    window.voiceMode.toggle();
+                }
             });
         }
 

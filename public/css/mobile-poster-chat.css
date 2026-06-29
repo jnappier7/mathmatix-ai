@@ -511,3 +511,94 @@
   body.cr-mode .cr-tutor-hero,
   body.cr-mode .mpc-scrim { will-change: auto; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   VOICE MODE on mobile (body.cr-voice)
+
+   The poster IS the voice surface on a phone, so we don't navigate
+   anywhere — we restage what's already here:
+     - the text composer is swapped for a control dock;
+     - the floating orb (#voice-chat-container, hidden by default at
+       line ~160) is restaged as the dock's centre mic — it already owns
+       the full tap-to-talk + state machine (voice-controller.js), so we
+       reuse it rather than build a second one;
+     - the orb's status label (#voice-status) sits under it;
+     - .cr-tutor-glow becomes a reactive halo over the tutor, driven by
+       --voice-amp (written by chat-voice-meter.js from the live TTS);
+     - #mpc-voice-end (injected by voice-mode.js) is the way out.
+   Mute is intentionally absent for now — a real one has to cover both the
+   streaming and legacy playback paths; tracked as a follow-up.
+   ════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* composer → gone; the dock replaces it */
+  body.cr-mode.cr-voice .imessage-compose-bar { display: none !important; }
+
+  /* restage the orb as the centred mic (beats the line ~160 hide via the
+     extra .cr-voice class; !important beats the orb's inline position) */
+  body.cr-mode.cr-voice #voice-chat-container {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 30px) !important;
+    transform: translateX(-50%) !important;
+    z-index: 6 !important;
+    margin: 0 !important;
+  }
+  body.cr-mode.cr-voice #voice-status {
+    display: block !important;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7fe0c6;
+    text-align: center;
+  }
+
+  /* reactive halo over the tutor. Kept as a child of the hero (absolute,
+     not fixed) so it stays inside the poster's stacking context — below
+     the chat (z2) so it never washes the message text. Screen blend adds
+     teal light onto the tutor as he speaks. */
+  body.cr-mode.cr-voice .cr-tutor-glow {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 24%;
+    bottom: auto;
+    width: 92vw;
+    height: 92vw;
+    transform: translate(-50%, -50%) scale(calc(0.85 + var(--voice-amp, 0) * 0.5));
+    background: radial-gradient(circle,
+        rgba(29, 158, 117, 0.60) 0%,
+        rgba(29, 158, 117, 0.22) 44%,
+        rgba(29, 158, 117, 0) 70%);
+    opacity: calc(0.14 + var(--voice-amp, 0) * 0.7);
+    z-index: 1;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    filter: blur(10px);
+  }
+
+  /* End control — flanks the mic on the right */
+  #mpc-voice-end {
+    position: fixed;
+    right: 30px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 42px);
+    z-index: 7;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(226, 75, 74, 0.16);
+    border: 0.5px solid rgba(226, 75, 74, 0.5);
+    color: #ff7676;
+    font-size: 17px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  body.cr-mode.cr-voice #mpc-voice-end { display: flex; }
+}

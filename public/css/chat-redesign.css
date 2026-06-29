@@ -95,8 +95,8 @@ body.cr-mode #tour-prompt > div {
    recognized "press mic to talk" pattern. The header pill .cr-voice-toggle
    (added by voice-mode.js as "Talk to <Tutor>") is hidden in cr-mode
    because the label reads as a brand/nav CTA rather than a voice control.
-   The composer's #voice-mode-btn is unchanged — it links to /voice-tutor.html
-   for the separate immersive (premium) experience.
+   The composer's #voice-mode-btn now toggles voice in place (voice-mode.js);
+   there is no separate immersive page anymore.
 
    The orb's inline `bottom: 30px; right: 30px` (from voice-controller.js)
    placed it ON TOP of the right workspace column and its wordy status
@@ -119,16 +119,14 @@ body.cr-mode #voice-status { display: none !important; }
     right: 30px !important;
   }
 }
-/* Floating voice orb (#voice-chat-container) is the legacy entry into
-   in-page voice mode. Redundant with the header "Talk to <Tutor>" pill
-   (.cr-voice-toggle), which triggers the same body.cr-voice toggle.
-   The orb also overlapped the workspace column and its "Click to start
-   voice chat" label bled into the footer. Hide it in cr-mode; voice mode
-   is still reachable from the header. The composer's #voice-mode-btn is
-   a separate link to /voice-tutor.html (immersive tutor page) and stays.
-   Re-show it when cr-voice is active — voice-controller.js paints the
-   listening orb on this container, and it shouldn't disappear once the
-   user has actually entered the voice experience. */
+/* Floating voice orb (#voice-chat-container) is shown only once voice mode
+   is active — voice-controller.js paints the listening orb on this
+   container, so it must not disappear mid-session. Voice is entered from
+   the composer headset (#voice-mode-btn) or the sidebar "Voice Tutor"
+   button (both call voice-mode.js's toggle); the orb itself isn't the
+   entry. Hidden otherwise because its inline corner position overlapped the
+   workspace column and the "Click to start voice chat" label bled into the
+   footer. */
 body.cr-mode:not(.cr-voice) #voice-chat-container { display: none !important; }
 
 /* Composer icon tooltips — pure CSS, sourced from data-tip on each
@@ -349,6 +347,39 @@ html.mm-board-hidden #mathmatix-whiteboard-panel { display: none !important; }
   z-index: 1;
   filter: drop-shadow(0 12px 24px rgba(0,0,0,0.45));
   pointer-events: none;
+}
+
+/* ----- Voice-reactive glow -----
+   A halo of light behind the tutor that breathes in sync with his voice.
+   chat-voice-meter.js writes --voice-amp (0..1, the RMS of the live TTS
+   playback) onto .cr-tutor-hero each frame; the scale + opacity track it,
+   so the portrait "lights up" as he speaks and settles to a faint resting
+   halo when silent. Above the backdrop (z:0), behind the portrait (z:1).
+   Purple here to match the brand accent; voice-mode.css recolours it teal
+   when the page is in voice mode. */
+.cr-tutor-glow {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  width: 80%;
+  aspect-ratio: 1 / 1;
+  transform: translateX(-50%) scale(calc(0.84 + var(--voice-amp, 0) * 0.55));
+  background: radial-gradient(circle,
+      rgba(139, 123, 255, 0.55) 0%,
+      rgba(139, 123, 255, 0.26) 40%,
+      rgba(139, 123, 255, 0) 68%);
+  border-radius: 50%;
+  opacity: calc(0.10 + var(--voice-amp, 0) * 0.72);
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(7px);
+  will-change: transform, opacity;
+  transition: transform 90ms linear, opacity 110ms linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* meter skips --voice-amp under reduced motion, so the glow rests at its
+     faint baseline; kill the transition too so nothing animates. */
+  .cr-tutor-glow { transition: none; }
 }
 
 /* In-place level-up celebration. Overlays the portrait in the same hero box
@@ -637,12 +668,12 @@ body.cr-mode .imessage-send-btn:hover {
   filter: brightness(1.1);
 }
 
-/* Voice-mode entry — bright purple anchor in the composer row that
-   navigates to /voice-tutor.html. Modeled on ChatGPT's prominent
-   voice-mode button: distinct from the inline #mic-button (which
-   dictates into the text input), this one switches surface entirely.
-   The voice paywall fires server-side on the WS upgrade if the user
-   lacks entitlement (utils/voiceUpgrade.js, PR #985). */
+/* Voice-mode entry — bright purple anchor in the composer row that toggles
+   voice mode in place (voice-mode.js). Distinct from the inline #mic-button
+   (which dictates into the text input): this one flips the whole page into
+   voice mode rather than navigating away. The voice paywall fires
+   server-side on the WS upgrade if the user lacks entitlement
+   (utils/voiceUpgrade.js). */
 .imessage-voice-btn {
   display: inline-flex;
   align-items: center;
