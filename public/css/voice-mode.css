@@ -50,28 +50,57 @@ body.cr-voice .cr-voice-toggle {
   body.cr-voice #chat-messages-container { font-size: 13px; }
 }
 
-/* ---- Voice presence: the tutor hero gains a listening aura ---- */
+/* ---- Voice presence: the tutor hero reads as "live" ----
+   The pulse is carried by the voice-synced glow behind the portrait
+   (.cr-tutor-glow, defined in chat-redesign.css). In voice mode we just
+   recolour that glow teal and add a steady teal rim on the panel — no
+   second competing animation. */
 body.cr-voice .cr-tutor-hero {
-  animation: cr-voice-aura 3.6s var(--cr-ease) infinite;
+  box-shadow: 0 0 0 1px rgba(18, 179, 179, 0.55), 0 0 48px -14px rgba(18, 179, 179, 0.6);
 }
-@keyframes cr-voice-aura {
-  0%, 100% { box-shadow: 0 0 0 1px rgba(139, 123, 255, 0.45), 0 0 34px -12px rgba(139, 123, 255, 0.5); }
-  50%      { box-shadow: 0 0 0 1px rgba(139, 123, 255, 0.85), 0 0 58px -6px rgba(139, 123, 255, 0.8); }
+body.cr-voice .cr-tutor-glow {
+  background: radial-gradient(circle,
+      rgba(18, 179, 179, 0.60) 0%,
+      rgba(18, 179, 179, 0.28) 40%,
+      rgba(18, 179, 179, 0) 68%);
+  opacity: calc(0.16 + var(--voice-amp, 0) * 0.78);
 }
 /* The live badge waveform is the heartbeat of voice mode — lift it. */
 body.cr-voice .cr-live-badge { transform: scale(1.06); }
 
-/* ---- Re-stage the voice orb from corner float to centred control ----
-   voice-controller.js positions the orb with inline styles, so the
-   properties it sets (right, bottom) need !important to be overridden. */
-body.cr-voice #voice-chat-container {
-  left: 50%;
-  right: auto !important;
-  bottom: 26px !important;
-  transform: translateX(-50%);
-  /* The orb is the voice control here — show it even if the ambient
-     corner orb is switched off in settings. */
-  display: flex !important;
+/* Desktop voice emphasis. Gated ≥769px because phones use a different
+   surface entirely (the full-screen "poster" layout) — mobile voice mode
+   is built in mobile-poster-chat.css, where the composer is fully replaced
+   by a control dock rather than just receding. Without this gate, the
+   composer here would collapse on mobile while the orb stays hidden by the
+   poster's rules, leaving no mic at all. */
+@media (min-width: 769px) {
+  /* ---- Composer recedes: the centred orb is the mic now ----
+     Drop the tool rail + send button; keep the text field as a quiet
+     "type if you prefer" fallback. The headset button (#voice-mode-btn)
+     stays as the way back out — it toggles the mode — and reads as "end". */
+  body.cr-voice .imessage-tool-btns,
+  body.cr-voice #send-button {
+    display: none;
+  }
+  body.cr-voice .imessage-input-row { opacity: 0.8; }
+  body.cr-voice .imessage-voice-btn {
+    background: rgba(226, 75, 74, 0.14);
+    color: #e24b4a;
+  }
+
+  /* ---- Re-stage the voice orb from corner float to centred control ----
+     voice-controller.js positions the orb with inline styles, so the
+     properties it sets (right, bottom) need !important to be overridden. */
+  body.cr-voice #voice-chat-container {
+    left: 50%;
+    right: auto !important;
+    bottom: 26px !important;
+    transform: translateX(-50%);
+    /* The orb is the voice control here — show it even if the ambient
+       corner orb is switched off in settings. */
+    display: flex !important;
+  }
 }
 
 /* ---- Trim chrome that competes with the voice experience ---- */
