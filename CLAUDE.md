@@ -144,7 +144,10 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
 
 1. **observe** — classify the message (answer attempt / question / confusion / off-topic / …).
 2. **diagnose** — verify the student's answer two ways in parallel: deterministic `utils/mathSolver.js`
-   (~30% of topics, fast/exact) **and** an LLM verifier (`pipeline/llmVerifier.js`, `gpt-4o-mini`) for the rest.
+   (~30% of topics, fast/exact) **and** an LLM verifier (`pipeline/llmVerifier.js`). The verifier is
+   **tiered**: `gpt-4o-mini` first, escalating to `gpt-4o` when it can't resolve (low confidence / parse
+   fail) instead of silently giving up. Outcomes (incl. the `unverifiableRate`) are tracked in
+   `utils/verifyMetrics.js`, surfaced on `GET /api/admin/structured-tutor-metrics`.
 3. **decide** — pick an instructional action (scaffold, direct-instruction, worked-example,
    prerequisite-bridge, guided/independent practice, verify, redirect, …) using BKT state, lesson phase, mood.
 4. **generate** — build the system prompt + history, call the LLM (streamed via SSE), emit board/visual commands.

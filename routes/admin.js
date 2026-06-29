@@ -1430,6 +1430,7 @@ router.get('/health-check', isAdmin, (req, res) => {
 router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
   const os = require('os');
   const structuredMetrics = require('../utils/structuredTutorMetrics');
+  const verifyMetrics = require('../utils/verifyMetrics');
   const { isStructuredModeEnabled } = require('../utils/boardResponseSchema');
   res.json({
     flagEnabled: isStructuredModeEnabled(),
@@ -1445,6 +1446,13 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
     },
     aggregate: structuredMetrics.aggregate(),
     recent: structuredMetrics.snapshot(50),
+    // Answer-verifier health: the unverifiableRate is the headline — the share
+    // of answer attempts the engine couldn't give a usable verdict on — plus how
+    // often escalation to the stronger judge rescues those cases.
+    verify: {
+      aggregate: verifyMetrics.aggregate(),
+      recent: verifyMetrics.snapshot(50),
+    },
   });
 });
 

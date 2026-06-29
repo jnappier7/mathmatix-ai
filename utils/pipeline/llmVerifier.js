@@ -38,6 +38,12 @@ const CONFIDENCE_THRESHOLD = 0.6;
 const MAX_PROBLEM_CHARS = 2000;
 const MAX_ANSWER_CHARS = 500;
 
+// Stronger judge for the minority of attempts the fast model can't resolve.
+// gpt-4o is already used for vision grading, so it stays within the OpenAI-only
+// contract. Escalation only fires on uncertain cases, so the cost/latency hit is
+// bounded to a small fraction of answer attempts.
+const ESCALATION_MODEL = 'gpt-4o';
+
 /**
  * Run two-step LLM verification on a student's answer.
  *
@@ -180,6 +186,53 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
 }
 
 /**
+ * Verify an answer with a fast model, escalating to a stronger judge when the
+ * fast model can't resolve it.
+ *
+ * Tier 1 (gpt-4o-mini) handles the common cases cheaply. When it returns no
+ * usable verdict — low confidence, a parse failure, or an upstream error — we
+ * escalate to Tier 2 (gpt-4o) rather than silently giving up, which is where the
+ * tutor would otherwise be left to judge correctness itself (the false
+ * affirm/reject risk). Missing-input cases never escalate (nothing to verify).
+ *
+ * Runs in parallel with the main tutor response, so the added latency lands
+ * inside the generate window for the small share of turns that escalate.
+ *
+ * @param {string} problemText
+ * @param {string} studentAnswer
+ * @param {Object} [options] - forwarded to llmVerifyAnswer (model, confidenceThreshold)
+ * @returns {Promise<Object>} verdict augmented with:
+ *   - tier {string}: the model that produced the final verdict
+ *   - escalated {boolean}: whether the stronger judge was invoked
+ *   - escalationResolved {boolean}: whether escalation produced a usable verdict
+ */
+async function verifyWithEscalation(problemText, studentAnswer, options = {}) {
+  const tier1Model = options.model || VERIFIER_MODEL;
+  const first = await llmVerifyAnswer(problemText, studentAnswer, options);
+
+  // Tier 1 resolved it — done.
+  if (first.isCorrect !== null) {
+    return { ...first, tier: tier1Model, escalated: false, escalationResolved: false };
+  }
+  // Nothing to verify — don't burn a stronger call on missing input.
+  if (first.error === 'missing_input') {
+    return { ...first, tier: tier1Model, escalated: false, escalationResolved: false };
+  }
+
+  // Tier 2: stronger judge for the hard/uncertain cases.
+  const second = await llmVerifyAnswer(problemText, studentAnswer, {
+    ...options,
+    model: ESCALATION_MODEL,
+  });
+  return {
+    ...second,
+    tier: ESCALATION_MODEL,
+    escalated: true,
+    escalationResolved: second.isCorrect !== null,
+  };
+}
+
+/**
  * Choose the assistant message that actually POSED the problem the student is
  * answering — not merely the most recent message, which is frequently a
  * pleasantry or follow-up ("Nice — ready for the next one?"). Verifying an
@@ -227,7 +280,9 @@ function pickProblemContext(recentAssistantMessages) {
 
 module.exports = {
   llmVerifyAnswer,
+  verifyWithEscalation,
   pickProblemContext,
   VERIFIER_MODEL,
+  ESCALATION_MODEL,
   CONFIDENCE_THRESHOLD,
 };
