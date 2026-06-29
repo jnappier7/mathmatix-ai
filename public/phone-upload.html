@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Send a Photo · MATHMATIX</title>
+  <style>
+    :root {
+      --navy: #1a1a2e;
+      --teal: #12B3B3;
+      --bg: #f4f6fb;
+      --err: #d64545;
+      --ok: #1f9d57;
+      --muted: #6b7280;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--navy);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 18px calc(24px + env(safe-area-inset-bottom));
+    }
+    .card {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(26, 26, 46, 0.08);
+      padding: 24px 20px;
+      margin-top: 8px;
+    }
+    h1 { font-size: 1.35rem; margin: 0 0 4px; }
+    .sub { color: var(--muted); font-size: 0.92rem; margin: 0 0 20px; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; margin: 18px 0 8px; }
+    .pin-input {
+      width: 100%;
+      font-size: 1.6rem;
+      letter-spacing: 0.5em;
+      text-align: center;
+      padding: 14px;
+      border: 2px solid #e2e6ef;
+      border-radius: 12px;
+      outline: none;
+    }
+    .pin-input:focus { border-color: var(--teal); }
+    .photo-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px;
+      border: 2px dashed #cdd4e4;
+      border-radius: 14px;
+      background: #fafbff;
+      color: var(--navy);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .photo-btn:active { background: #f0f3ff; }
+    #fileInput { display: none; }
+    #preview {
+      width: 100%;
+      margin-top: 14px;
+      border-radius: 12px;
+      display: none;
+      max-height: 340px;
+      object-fit: contain;
+      background: #000;
+    }
+    .send-btn {
+      width: 100%;
+      margin-top: 22px;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .send-btn:disabled { background: #b9c2d0; cursor: not-allowed; }
+    .msg { margin-top: 16px; font-size: 0.95rem; text-align: center; min-height: 1.2em; }
+    .msg.err { color: var(--err); }
+    .msg.ok { color: var(--ok); font-weight: 600; }
+    .done { text-align: center; padding: 30px 10px; }
+    .done .check {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--ok); color: #fff; font-size: 2rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .brand { color: var(--teal); font-weight: 800; letter-spacing: 0.04em; }
+    .hidden { display: none !important; }
+    .spinner {
+      width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.5);
+      border-top-color: #fff; border-radius: 50%; display: inline-block;
+      animation: spin 0.7s linear infinite; vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card" id="formCard">
+    <h1>Send a photo to your <span class="brand">MATHMATIX</span> session</h1>
+    <p class="sub">Enter the 4-digit code shown on your computer, then take or choose a photo of your work.</p>
+
+    <label for="pinInput">Code from your computer</label>
+    <input id="pinInput" class="pin-input" type="text" inputmode="numeric" pattern="[0-9]*"
+           maxlength="4" autocomplete="one-time-code" placeholder="••••" />
+
+    <label>Your photo</label>
+    <button type="button" class="photo-btn" id="pickBtn">
+      📷 Take or choose a photo
+    </button>
+    <input id="fileInput" type="file" accept="image/*" capture="environment" />
+    <img id="preview" alt="Preview of your photo" />
+
+    <button class="send-btn" id="sendBtn" disabled>Send to my computer</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="card done hidden" id="doneCard">
+    <div class="check">✓</div>
+    <h1>Photo sent!</h1>
+    <p class="sub">Head back to your computer — your photo is in your chat. You can close this page.</p>
+  </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var token = params.get('t');
+
+      var pinInput = document.getElementById('pinInput');
+      var pickBtn = document.getElementById('pickBtn');
+      var fileInput = document.getElementById('fileInput');
+      var preview = document.getElementById('preview');
+      var sendBtn = document.getElementById('sendBtn');
+      var msg = document.getElementById('msg');
+      var formCard = document.getElementById('formCard');
+      var doneCard = document.getElementById('doneCard');
+
+      var chosenFile = null;
+
+      function setMsg(text, kind) {
+        msg.textContent = text || '';
+        msg.className = 'msg' + (kind ? ' ' + kind : '');
+      }
+
+      if (!token) {
+        setMsg('This link is invalid. Please scan the QR code from your computer again.', 'err');
+        pinInput.disabled = true;
+        pickBtn.disabled = true;
+        return;
+      }
+
+      function refreshSendState() {
+        var pinOk = /^[0-9]{4}$/.test(pinInput.value);
+        sendBtn.disabled = !(pinOk && chosenFile);
+      }
+
+      pinInput.addEventListener('input', function () {
+        pinInput.value = pinInput.value.replace(/[^0-9]/g, '').slice(0, 4);
+        refreshSendState();
+      });
+
+      pickBtn.addEventListener('click', function () { fileInput.click(); });
+
+      fileInput.addEventListener('change', function () {
+        chosenFile = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+        if (chosenFile) {
+          preview.src = URL.createObjectURL(chosenFile);
+          preview.style.display = 'block';
+          pickBtn.textContent = '📷 Choose a different photo';
+          setMsg('');
+        }
+        refreshSendState();
+      });
+
+      sendBtn.addEventListener('click', function () {
+        if (sendBtn.disabled) return;
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<span class="spinner"></span> Sending…';
+        setMsg('');
+
+        var fd = new FormData();
+        fd.append('pin', pinInput.value);
+        fd.append('file', chosenFile);
+
+        fetch('/api/phone-upload/' + encodeURIComponent(token), {
+          method: 'POST',
+          body: fd
+        })
+          .then(function (res) {
+            return res.json().then(function (body) { return { status: res.status, body: body }; });
+          })
+          .then(function (r) {
+            if (r.status >= 200 && r.status < 300 && r.body && r.body.success) {
+              formCard.classList.add('hidden');
+              doneCard.classList.remove('hidden');
+              return;
+            }
+            var serverMsg = (r.body && r.body.message) || 'Upload failed. Please try again.';
+            setMsg(serverMsg, 'err');
+            // Terminal failures (expired/used/locked) shouldn't invite a retry.
+            if (r.status === 410 || r.status === 409 || r.status === 423) {
+              sendBtn.classList.add('hidden');
+              pinInput.disabled = true;
+              pickBtn.disabled = true;
+            } else {
+              sendBtn.innerHTML = 'Send to my computer';
+              refreshSendState();
+            }
+          })
+          .catch(function () {
+            setMsg('Network error. Check your connection and try again.', 'err');
+            sendBtn.innerHTML = 'Send to my computer';
+            refreshSendState();
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

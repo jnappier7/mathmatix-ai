@@ -112,6 +112,7 @@ const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
+const { desktopRouter: phoneLinkRoutes, phoneRouter: phoneUploadRoutes } = require('../routes/phoneLink');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
 const notificationsRoutes = require('../routes/notifications');
 const onboardingRoutes = require('../routes/onboarding');
@@ -241,6 +242,11 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes);
   app.use('/api/browser-lock', isAuthenticated, browserLockRoutes);
   app.use('/api/practice-pack', isAuthenticated, practicePackRoutes);
+  // "Scan with your phone": desktop endpoints are session-authed; the phone
+  // upload endpoint is public (authorized by capability token + PIN) and
+  // CSRF-exempt (see middleware/csrf.js).
+  app.use('/api/phone-link', isAuthenticated, phoneLinkRoutes);
+  app.use('/api/phone-upload', phoneUploadRoutes);
   app.use('/api/impersonation', isAuthenticated, impersonationRoutes);
   app.use('/api/transcript-flags', isAuthenticated, transcriptFlagsRoutes);
   app.use('/api/notifications', isAuthenticated, notificationsRoutes);
@@ -576,6 +582,9 @@ function registerHtmlRoutes(app) {
   app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   app.get('/pricing.html', sendHtml('pricing.html'));
+  // Phone upload landing page — public; the page itself is inert until a valid
+  // token + PIN are supplied, and all enforcement is server-side.
+  app.get('/phone-upload', sendHtml('phone-upload.html'));
   // Protected HTML routes
   app.get('/affiliate.html', isAuthenticated, sendHtml('affiliate.html'));
   app.get('/role-picker.html', isAuthenticated, sendHtml('role-picker.html'));

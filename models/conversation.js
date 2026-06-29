@@ -27,6 +27,18 @@ const messageSchema = new Schema({
     // The frontend renders these messages as rich work-check cards rather than
     // plain bubbles; the LLM still sees the human-readable summary in `content`.
     workCheckId: { type: Schema.Types.ObjectId, ref: 'GradingResult', default: null },
+    // Uploaded files attached to a user message (image/PDF). Stored so the
+    // transcript can re-render the attachment on history reload and let the
+    // student click back to it — not just show it in the compose preview.
+    // We intentionally store only the StudentUpload reference + type, NOT the
+    // filename (StudentUpload encrypts originalFilename as sensitive). The
+    // image bytes are served on demand via /api/student/uploads/:id/file.
+    attachments: [{
+        uploadId: { type: Schema.Types.ObjectId, ref: 'StudentUpload' },
+        fileType: { type: String }, // 'image' | 'pdf'
+        mimeType: { type: String },
+        _id: false
+    }],
 }, { _id: false });
 
 const conversationSchema = new Schema({
