@@ -15,11 +15,31 @@ jest.mock('../../utils/logger', () => ({
 const { bumpDailyStreak } = require('../../utils/gamificationEvents');
 
 function daysAgo(n) {
+    // UTC-anchored to match the production day-boundary diff (UTC fallback for
+    // users with no timezone). Local setDate/setHours would drift a day whenever
+    // the process TZ's calendar date differs from UTC.
     const d = new Date();
-    d.setDate(d.getDate() - n);
-    d.setHours(12, 0, 0, 0);
+    d.setUTCDate(d.getUTCDate() - n);
+    d.setUTCHours(12, 0, 0, 0);
     return d;
 }
+
+// Freeze "now" to a fixed instant so the suite is deterministic regardless of
+// when (wall-clock) it runs. Combined with the UTC-anchored daysAgo above, the
+// streak math is identical under any process timezone — previously this suite
+// failed nondeterministically under parallel runs when it landed in a worker
+// during the window where process-local date trailed UTC. super(FIXED_NOW)
+// (not a returned RealDate) keeps `new Date()` an instanceof Date.
+const RealDate = Date;
+const FIXED_NOW = RealDate.UTC(2026, 5, 17, 17, 0, 0); // Wed 2026-06-17 17:00 UTC
+class FixedDate extends RealDate {
+    constructor(...args) {
+        if (args.length === 0) { super(FIXED_NOW); } else { super(...args); }
+    }
+    static now() { return FIXED_NOW; }
+}
+beforeEach(() => { global.Date = FixedDate; });
+afterEach(() => { global.Date = RealDate; });
 
 describe('bumpDailyStreak', () => {
 

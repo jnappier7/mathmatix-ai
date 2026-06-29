@@ -14,6 +14,7 @@
 //   <BOARD action="clear" />
 //   <BOARD action="graph"   fn="x^2 - 4" caption="The parabola" />
 //   <BOARD action="image"   query="unit circle labeled" caption="Reference" />
+//   <BOARD action="scaffold" tex="x^2 + 4x + \boxed{\;\;} = 12 + \boxed{\;\;}" />
 //
 // Both self-closing (<BOARD … />) and open/close (<BOARD …>…</BOARD>)
 // forms are accepted. Attributes accept both single and double quotes.
@@ -24,7 +25,7 @@
 
 'use strict';
 
-const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image']);
+const VALID_ACTIONS = new Set(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'model', 'example']);
 
 // Matches a single <BOARD …/> or <BOARD …>…</BOARD> tag. The `g` flag
 // lets us iterate multiple occurrences in one response. The inner
@@ -81,10 +82,14 @@ function parseBoardTags(aiResponseText) {
         const innerTrim = innerBody ? innerBody.trim() : '';
 
         const command = { action };
-        if (action === 'pose' || action === 'resolve' || action === 'verify') {
+        if (action === 'pose' || action === 'resolve' || action === 'verify' || action === 'scaffold' || action === 'example') {
             const tex = texAttr || innerTrim || null;
             if (!tex) continue; // require tex for these actions
             command.tex = tex;
+        }
+        if (action === 'example' && captionAttr) {
+            // Optional short step label, e.g. caption="Trig substitution".
+            command.caption = captionAttr;
         }
         if (action === 'apply') {
             const op = opAttr || innerTrim || null;
@@ -105,6 +110,28 @@ function parseBoardTags(aiResponseText) {
             if (!query) continue;
             command.query = query;
             if (captionAttr) command.caption = captionAttr;
+        }
+        if (action === 'model') {
+            // Interactive concept model. Two shapes:
+            //   CURATED  — a catalog name:
+            //     <BOARD action="model" model="slope_intercept_line"
+            //            prompt="Slide m up — what happens?" />
+            //   GENERATED — a full spec authored by the tutor in the fixed
+            //     vocabulary, carried as JSON in the open/close body (or a `spec`
+            //     attribute). The generative long-tail (CONCEPT_MODELS.md step 4):
+            //     <BOARD action="model" prompt="…">{ "model":"…", "params":{…}, … }</BOARD>
+            //   The JSON is validated downstream (utils/conceptModelCommand.js)
+            //   before it can render — the parser stays permissive and just
+            //   carries the raw string. The body counts as a spec only when it
+            //   looks like a JSON object, so a bare name in the body still works.
+            const looksLikeJson = innerTrim && innerTrim.charAt(0) === '{';
+            const specRaw = extractAttr(attrString, 'spec') || (looksLikeJson ? innerTrim : null);
+            const modelName = extractAttr(attrString, 'model') || (specRaw ? null : innerTrim) || null;
+            if (!specRaw && !modelName) continue;
+            if (specRaw) command.spec = specRaw;
+            if (modelName) command.model = modelName;
+            const promptAttr = extractAttr(attrString, 'prompt');
+            if (promptAttr) command.prompt = promptAttr;
         }
         boardCommands.push(command);
     }

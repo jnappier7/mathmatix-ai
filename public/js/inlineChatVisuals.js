@@ -2842,6 +2842,12 @@ class InlineChatVisuals {
         let match;
 
         while ((match = termRegex.exec(expr)) !== null) {
+            // Guard against zero-width matches. termRegex's groups are ALL
+            // optional, so it matches the empty string at any position it can't
+            // consume (e.g. the "=" in "2x^2-5x=7"). On a zero-width match
+            // lastIndex doesn't advance, so a bare `continue` spins forever and
+            // freezes the page. Bump lastIndex past it before continuing.
+            if (match.index === termRegex.lastIndex) { termRegex.lastIndex++; }
             if (!match[0]) continue;
             const sign = match[1] === '-' ? -1 : 1;
             const coeffStr = match[2];

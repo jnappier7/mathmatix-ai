@@ -20,8 +20,8 @@ function rgba(c, a) {
 /**
  * Draw a radial bar waveform to a 2D canvas.
  *
- * Lifted from voice-tutor-session.js so chat and voice-tutor can render
- * from the same code. Tuning (bars, radius, color) is overridable.
+ * Shared radial-bar renderer for the voice presence orb. Tuning (bars,
+ * radius, color) is overridable.
  *
  * @param {HTMLCanvasElement} canvas
  * @param {Uint8Array} freqData  result of analyser.getByteFrequencyData

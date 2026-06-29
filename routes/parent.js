@@ -114,6 +114,50 @@ router.post('/link-to-student', isAuthenticated, isParent, async (req, res) => {
     }
 });
 
+// Route for an EXISTING parent account to accept a student-initiated invite
+// (the kid entered this parent's email → parent clicks the email link while
+// logged in → lands on the dashboard with ?acceptInvite=<token>).
+router.post('/accept-invite', isAuthenticated, isParent, async (req, res) => {
+    const token = (req.body.token || '').trim();
+    if (!token) {
+        return res.status(400).json({ success: false, message: "Invite token is required." });
+    }
+    try {
+        const parent = await User.findById(req.user._id);
+        if (!parent) {
+            return res.status(404).json({ success: false, message: "Parent not found." });
+        }
+        const student = await User.findOne({ 'parentInvite.token': token, role: 'student' });
+        if (!student) {
+            return res.status(400).json({ success: false, message: "This invite link is invalid or has already been used." });
+        }
+        // Security: only the invited email may accept — prevents linking to an
+        // arbitrary student by replaying/guessing a token.
+        if (!student.parentInvite.email ||
+            student.parentInvite.email.toLowerCase() !== (parent.email || '').toLowerCase()) {
+            return res.status(403).json({ success: false, message: "This invite was sent to a different email address." });
+        }
+
+        parent.children = parent.children || [];
+        if (!parent.children.some(childId => childId.equals(student._id))) {
+            parent.children.push(student._id);
+        }
+        student.parentIds = student.parentIds || [];
+        if (!student.parentIds.some(pid => pid.equals(parent._id))) {
+            student.parentIds.push(parent._id);
+        }
+        student.hasParentalConsent = true;
+        student.parentInvite = { email: null, token: null, sentAt: null }; // consume
+
+        await parent.save();
+        await student.save();
+        res.status(200).json({ success: true, message: `You're now following ${student.firstName}'s progress!`, childName: student.firstName });
+    } catch (error) {
+        console.error("ERROR: Failed to accept parent invite:", error);
+        res.status(500).json({ success: false, message: "Could not accept the invite." });
+    }
+});
+
 // Route to get a parent's children
 router.get('/children', isAuthenticated, isParent, async (req, res) => {
     const parentId = req.user._id;

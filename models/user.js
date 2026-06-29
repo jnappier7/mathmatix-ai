@@ -602,6 +602,15 @@ const userSchema = new Schema({
   /* Parent linking (multi-parent support) */
   parentIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 
+  /* Student-initiated parent invite (kid submits a parent email → parent is
+     emailed a signup link with this token → on signup they auto-link to this
+     student). Token cleared once consumed. */
+  parentInvite: {
+    email:  { type: String, default: null },
+    token:  { type: String, default: null },
+    sentAt: { type: Date,   default: null }
+  },
+
   /* Gamification */
   xp:        { type: Number, default: 0, min: 0 },
   level:     { type: Number, default: 1, min: 1 },
@@ -630,7 +639,8 @@ const userSchema = new Schema({
   // Only counts time while AI is generating a response - not reading/thinking/idle time
   totalAISeconds:  { type: Number, default: 0 },
   weeklyAISeconds: { type: Number, default: 0 },
-  lastWeeklyReset: { type: Date, default: Date.now },
+  lastWeeklyReset: { type: Date, default: Date.now },   // anchors WEEKLY engagement-metric reset (weeklyActive*)
+  lastAIQuotaReset: { type: Date, default: Date.now },  // anchors MONTHLY free-AI-minute quota reset (weeklyAISeconds)
 
   /* Conversations */
   activeConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
@@ -665,6 +675,7 @@ const userSchema = new Schema({
   /* Timestamps */
   lastLogin:  { type: Date },
   createdAt:  { type: Date, default: Date.now },
+  lastReactivationAt: { type: Date, default: null },  // last one-off reactivation/campaign email about this student (double-send guard)
 
   /* Intervention alert tracking (for teacher notifications) */
   lastInterventionAlert: {
@@ -702,6 +713,7 @@ const userSchema = new Schema({
 
   /* Parent-specific fields */
   reportFrequency:   { type: String, enum: ['daily','weekly','biweekly','monthly'], default: 'weekly' },
+  lastWeeklyReportSentAt: { type: Date, default: null },   // idempotency guard for the digest cron (prevents duplicate progress emails on retry/double-run)
   goalViewPreference:{ type: String, enum: ['progress','gaps','goals'], default: 'progress' },
   parentTone:        { type: String, trim: true },
   parentLanguage:    { type: String, trim: true, default: 'English' },

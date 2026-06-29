@@ -1,3 +1,10 @@
+# ⚠️ NOT THE LIVE DEPLOY. As of 2026-06, production runs on a MANUALLY-created
+# Render service `mathmatix-ai-v2` (Docker, Oregon) — not from this blueprint.
+# The `mathmatix-ai` service below matches an OLD Node service that's been
+# suspended since ~2025-09. Editing this file does NOT change prod. The weekly
+# digest cron at the bottom is likewise a reference spec — it's run in prod as a
+# separately, manually-created Render Cron Job (command: node scripts/weeklyDigest.js).
+# Kept as documentation / for if the deploy is ever moved back onto a blueprint.
 services:
   - type: web
     name: mathmatix-ai
@@ -46,4 +53,86 @@ services:
       - key: MATHPIX_APP_KEY
         sync: false
 
+      # ── Tutoring feature flags (dashboard-managed; toggled in Render UI) ──
+      # These are declared sync:false on purpose: they're rolled out by toggling
+      # in the Render dashboard, and a pinned blueprint `value:` would REVERT a
+      # dashboard change on the next sync. sync:false documents the flag in git
+      # without fighting the dashboard. When unset, code defaults apply (below).
+      # A flag only does something once its CODE is on main and deployed.
+      #
+      # VISUAL_GATE_MODE — blocks graph/image board commands that would reveal the
+      # answer to the student's OWN problem. Code default when unset: live_control
+      # (enforcing). Options: live_control | live_experimental | shadow |
+      # audit_only | off. Corpus at GET /api/admin/visual-gate-decisions.
+      - key: VISUAL_GATE_MODE
+        sync: false
+      # VISUAL_GATE_VALUE_JUDGE — decorative-visual LLM filter. Code default off.
+      # Prompt UNVALIDATED; set to literal 'on' only after reviewing shadow data.
+      - key: VISUAL_GATE_VALUE_JUDGE
+        sync: false
+      # STRUCTURED_TUTOR_RESPONSE — guarantees a board_commands array every turn.
+      # Code default off; set 'true' (or '1') to enable. (Enabled via dashboard.)
+      - key: STRUCTURED_TUTOR_RESPONSE
+        sync: false
+      # WORKED_EXAMPLE_BOARD — lets the tutor demonstrate full steps on a PARALLEL
+      # example (relaxes the #1 guard, double-gated on a WORKED_EXAMPLE move). Code
+      # default off. REQUIRES fix/board-turn-state merged + deployed AND a live
+      # check that WORKED_EXAMPLE never works the student's own problem; then 'true'.
+      - key: WORKED_EXAMPLE_BOARD
+        sync: false
+
     autoDeploy: true
+
+  # ── Weekly parent progress-report digest (scheduled) ──────────────────────
+  # Runs the standalone digest daily at 13:00 UTC (~8am ET). Per-parent cadence
+  # (weekly→Sundays, daily, biweekly, monthly) is enforced in shouldSendReport();
+  # the lastWeeklyReportSentAt idempotency guard prevents duplicate emails on a
+  # cron retry or accidental double-run.
+  # NOTE: the env vars below are sync:false — set them on THIS cron service in
+  # the Render dashboard (Render can copy from the web service, or use an env group).
+  - type: cron
+    name: mathmatix-weekly-digest
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    schedule: "0 13 * * *"
+    dockerCommand: node scripts/weeklyDigest.js
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_REPLY_TO
+        sync: false
+
+  # ── Conversation archival (scheduled) ─────────────────────────────────────
+  # Runs the standalone archival job daily at 04:30 UTC (low-traffic, offset
+  # from the digest). It summarizes conversations idle >24h, collapses their
+  # message history to that summary, and marks them inactive. Naturally
+  # idempotent: it only matches isActive:true and flips them to false, so a
+  # retry or double-run won't reprocess already-archived conversations.
+  # Needs OPENAI_API_KEY for the final summary (summaryService → llmGateway).
+  # NOTE: the env vars below are sync:false — set them on THIS cron service in
+  # the Render dashboard (Render can copy from the web service, or use an env group).
+  - type: cron
+    name: mathmatix-archive-conversations
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: oregon
+    schedule: "30 4 * * *"
+    dockerCommand: node scripts/archiveOldConversations.js
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false

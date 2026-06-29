@@ -92,6 +92,7 @@ async function persist(params) {
     problemAnswered: false,
     wasCorrect: false,
     wasSkipped: false,
+    problemPartial: false,
     leveledUp: false,
     tutorsUnlocked: [],
     avatarBuilderUnlocked: false,
@@ -101,7 +102,13 @@ async function persist(params) {
 
   // ── 1. Process problem result ──
   // Prefer structured diagnosis over tag-based detection
-  if (diagnosis && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
+  if (diagnosis && diagnosis.type === 'correct_partial') {
+    // Correct-but-incomplete multi-root answer: the problem is still in
+    // progress. Do NOT count it as a completed attempt and do NOT record it as
+    // 'incorrect' — that would poison recentWrongCount and trigger a false
+    // difficulty downgrade. Progress is tracked via lastProblemState below.
+    results.problemPartial = true;
+  } else if (diagnosis && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
     results.problemAnswered = true;
     results.wasCorrect = diagnosis.isCorrect === true;
   } else if (extracted.problemResult) {
@@ -196,6 +203,9 @@ async function persist(params) {
       conversation.messages[lastIdx].problemInfo = {
         type: problemType,
         correctAnswer,
+        ...(Array.isArray(mathResult.solution.roots) && mathResult.solution.roots.length > 1
+          ? { roots: mathResult.solution.roots }
+          : {}),
       };
 
       // Record this AI-generated problem in the user's recent-problems history
@@ -245,8 +255,26 @@ async function persist(params) {
   }
 
   // ── 7b. Persist last problem state for session continuity ──
-  if (results.problemAnswered && !results.wasCorrect) {
-    // Student is still working on this problem — save state for resume
+  if (results.problemPartial && diagnosis.multiRoot) {
+    // Correct-but-incomplete multi-root answer: accumulate which roots the
+    // student has supplied so far so the next turn knows what's still missing.
+    // This is NOT a failed attempt, so attemptCount is left unchanged.
+    const existingState = conversation.lastProblemState || {};
+    conversation.lastProblemState = {
+      problemText: existingState.problemText || (diagnosis.problemInfo?.content
+        ? diagnosis.problemInfo.content.substring(0, 200) : null),
+      attemptCount: existingState.attemptCount || 0,
+      lastAttempt: diagnosis.answer,
+      misconception: existingState.misconception || null,
+      foundRoots: diagnosis.multiRoot.foundRoots,
+      totalRoots: diagnosis.multiRoot.totalCount,
+      updatedAt: new Date(),
+    };
+    conversation.markModified?.('lastProblemState');
+  } else if (results.problemAnswered && !results.wasCorrect) {
+    // Student is still working on this problem — save state for resume.
+    // Preserve any roots already found so a wrong guess mid-set doesn't wipe
+    // the student's prior correct roots.
     const existingState = conversation.lastProblemState || {};
     conversation.lastProblemState = {
       problemText: existingState.problemText || (diagnosis.problemInfo?.content
@@ -254,6 +282,8 @@ async function persist(params) {
       attemptCount: (existingState.attemptCount || 0) + 1,
       lastAttempt: diagnosis.answer,
       misconception: diagnosis.misconception?.name || null,
+      ...(Array.isArray(existingState.foundRoots) ? { foundRoots: existingState.foundRoots } : {}),
+      ...(existingState.totalRoots ? { totalRoots: existingState.totalRoots } : {}),
       updatedAt: new Date(),
     };
     conversation.markModified?.('lastProblemState');

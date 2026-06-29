@@ -47,6 +47,38 @@
 const { parseCleanProblem } = require('../mathSolver');
 
 // ---------------------------------------------------------------------------
+// Board reference — student explicitly asks to use the work board
+// ---------------------------------------------------------------------------
+
+// Tight, false-alarm-averse patterns: the student is literally pointing at the
+// board ("show me on the work board", "put it on the board", "draw it"). We
+// deliberately require the word "board"/"workspace" or an explicit "draw it" —
+// bare "on board" is excluded because it collides with the agreement idiom
+// ("I'm on board with that"). Used only as a backstop when no board command
+// survived the turn, so a false positive's worst case is re-posing the
+// already-pinned problem.
+const BOARD_REFERENCE_PATTERNS = [
+  /\bwork\s?board\b/i,
+  /\bwhite\s?board\b/i,
+  /\bworkspace\b/i,
+  /\bthe\s+board\b/i,
+  /\bdraw\s+(?:it|that|this)\b/i,
+  /\bshow\s+me\s+on\b/i,
+];
+
+/**
+ * True if the student's message explicitly references the work board /
+ * workspace or asks the tutor to draw the problem out.
+ *
+ * @param {string} text
+ * @returns {boolean}
+ */
+function detectBoardReference(text) {
+  if (!text || typeof text !== 'string') return false;
+  return BOARD_REFERENCE_PATTERNS.some(p => p.test(text));
+}
+
+// ---------------------------------------------------------------------------
 // Detectors — operations, intermediate equations, final answers
 // ---------------------------------------------------------------------------
 
@@ -70,7 +102,7 @@ const APPLY_KEYWORD_PATTERNS = [
   /\bfactor\s+(?:out\s+)?\S+/i,
   /\bsimplify\b/i,
   /\bisolate\s+\S+/i,
-  // Mr. Napier methodology
+  // Mr. Nappier methodology
   /\b(box|opposite|opposites|zero\s+pairs?)\b/i,
 ];
 
@@ -105,6 +137,16 @@ const RX_FINAL_SOLUTION = /(?:^|\s)([a-z])\s*=\s*(-?\d+(?:\.\d+)?(?:\/\d+)?)(?=$
 // "3(7) - 5 = 16", "4(6) + 3 = 27". Both sides arithmetic.
 const RX_SUBSTITUTION_CHECK = /(?:^|\s)((?:-?\d+(?:\.\d+)?[\s+\-*/().^]*){2,})\s*=\s*(-?\d+(?:\.\d+)?)(?=$|[\s.,!?])/;
 
+// Bare arithmetic answer — the WHOLE message is a number, decimal,
+// fraction, or mixed number, with no variable and no "=". This is the
+// final answer for a problem that has no variable to anchor on
+// (fraction multiplication, mixed-number arithmetic, "evaluate …").
+// "x = 8" answers go through detectFinalSolution; this fills the gap that
+// left arithmetic problems with no verify card. Trailing "!"/"." allowed
+// ("8!", "4/15."). The math engine (diagnosis.isCorrect) is the truth
+// gate, so this only needs to recognize the shape, not judge it.
+const RX_BARE_FINAL_ANSWER = /^(-?\d+(?:\.\d+)?(?:\s+\d+\/\d+|\/\d+)?)\s*[!.]*$/;
+
 function detectIntermediateEquation(studentText) {
   if (!studentText || typeof studentText !== 'string') return null;
   const t = studentText.trim();
@@ -129,6 +171,36 @@ function detectIntermediateEquation(studentText) {
   return `${lhs} = ${rhs}`;
 }
 
+// Detect a bare algebraic EXPRESSION the student stated as a rewrite step —
+// factoring, regrouping, simplifying — which carries no "=" and is therefore
+// missed by the equation/final/substitution detectors. Without this, an entire
+// class of problems (factoring, simplification) leaves the board frozen at the
+// pose while the whole solve happens in chat.
+//
+// Deliberately conservative so a sentence can NEVER land on the board: the
+// message must be essentially pure math — a single-letter variable, real
+// expression structure (exponent/grouping/multi-term), a digit, and crucially
+// NO multi-letter word (any run of 2+ letters is prose, not a variable). The
+// caller still gates on an open cycle + tutor affirmation, and the pedagogy
+// guard still requires the tex to trace to the student's own text.
+function detectIntermediateExpression(studentText) {
+  if (!studentText || typeof studentText !== 'string') return null;
+  const t = studentText.trim();
+  if (t.length === 0 || t.length > 120) return null;
+  if (/[?]$/.test(t)) return null;
+  if (t.includes('=')) return null;            // equations handled elsewhere
+  if (/[a-z]{2,}/i.test(t)) return null;       // any 2+ letter run = prose word
+  if (!/[a-z]/i.test(t)) return null;          // must contain a variable
+  if (!/\d/.test(t)) return null;              // and a number
+  if (!/[+\-*/^()]/.test(t)) return null;      // and operator/exponent/grouping
+  // Require real multi-term/grouped structure — not a lone term like "3x^2".
+  const hasGroup = /[()]/.test(t);
+  const termOps = (t.match(/[+\-]/g) || []).length;
+  if (!hasGroup && termOps < 2) return null;
+
+  return t.replace(/\s+/g, ' ').trim();
+}
+
 function detectFinalSolution(studentText) {
   if (!studentText || typeof studentText !== 'string') return null;
   const t = studentText.trim();
@@ -139,6 +211,30 @@ function detectFinalSolution(studentText) {
   const m = t.match(RX_FINAL_SOLUTION);
   if (!m) return null;
   return { variable: m[1], value: m[2], tex: `${m[1]} = ${m[2]}` };
+}
+
+// A bare arithmetic final answer ("8", "8!", "3/20", "2 1/2"). Returns the
+// answer string (no trailing punctuation) or null. Kept strict — the whole
+// message must BE the answer — so problem references like "number 2" or
+// "#3" never match. Correctness is judged upstream by the math engine.
+function detectBareFinalAnswer(studentText) {
+  if (!studentText || typeof studentText !== 'string') return null;
+  const t = studentText.trim();
+  if (t.length === 0 || t.length > 24) return null;
+  if (/[?]$/.test(t)) return null;
+  const m = t.match(RX_BARE_FINAL_ANSWER);
+  if (!m) return null;
+  return m[1].trim();
+}
+
+// Render a bare answer as KaTeX so the verify card matches the board's
+// fraction styling: "4/15" → "\frac{4}{15}", "2 1/2" → "2\frac{1}{2}".
+function bareAnswerToTex(ans) {
+  let m = ans.match(/^(-?\d+)\s+(\d+)\/(\d+)$/); // mixed number
+  if (m) return `${m[1]}\\frac{${m[2]}}{${m[3]}}`;
+  m = ans.match(/^(-?\d+)\/(\d+)$/);             // simple fraction
+  if (m) return `\\frac{${m[1]}}{${m[2]}}`;
+  return ans;
 }
 
 function detectSubstitutionCheck(studentText) {
@@ -207,6 +303,31 @@ function tutorAffirms(tutorResponse) {
 // dependencies).
 // ---------------------------------------------------------------------------
 
+// Reconstruct a quadratic's tex from mathSolver's coefficient shape
+// { a, bSign, b, cSign, c }. Drops unit coefficients (1x² → x²,
+// 1x → x) and zero terms so the card reads the way a student writes it.
+function quadraticTex(p, withEquals) {
+  const a = p.a;
+  let head;
+  if (a === 1) head = 'x^2';
+  else if (a === -1) head = '-x^2';
+  else head = `${a}x^2`;
+
+  let mid = '';
+  if (p.b !== undefined && p.b !== 0) {
+    const coeff = p.b === 1 ? '' : `${p.b}`;
+    mid = ` ${p.bSign || '+'} ${coeff}x`;
+  }
+
+  let tail = '';
+  if (p.c !== undefined && p.c !== 0) {
+    tail = ` ${p.cSign || '+'} ${p.c}`;
+  }
+
+  const expr = `${head}${mid}${tail}`.trim();
+  return withEquals ? `${expr} = 0` : expr;
+}
+
 function canonicalProblemTex(problem) {
   if (!problem) return null;
   switch (problem.type) {
@@ -220,10 +341,16 @@ function canonicalProblemTex(problem) {
       }
       return problem.equation || problem.expression || null;
     case 'quadratic_equation':
+      // mathSolver returns { a, bSign, b, cSign, c } for quadratics —
+      // no `equation`/`expression` field — so reconstruct the trinomial.
+      if (problem.a !== undefined) return quadraticTex(problem, /*withEquals*/ true);
       return problem.equation || problem.expression || null;
     case 'expand_polynomial':
     case 'factor_quadratic':
     case 'factor_diff_of_squares':
+      // Same coefficient shape, but a factoring/expansion task shows the
+      // bare trinomial (no "= 0").
+      if (problem.a !== undefined) return quadraticTex(problem, /*withEquals*/ false);
       return problem.expression || null;
     case 'evaluation':
       // The evaluation type is mathSolver's catch-all when text like
@@ -271,6 +398,31 @@ function detectPosedProblem(text) {
   return { tex, problem: result.problem, correctAnswer: String(result.solution.answer) };
 }
 
+// A fresh problem *statement* is a single ask — one equation/expression,
+// optionally prefixed with a command verb. A worked-solution message
+// (multiple equation lines, or a stated "x = …" answer) is the student's
+// scratch work, NOT a new problem to pin on the board. This guard is what
+// stops an intermediate derivation line from being posed as the PROBLEM.
+function looksLikeProblemStatement(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.trim();
+  // A stated solution ("x = 2 or -6", "y= -3") is the end of work, never
+  // a new problem. Require the variable isolated on one side so a real
+  // problem like "2x = 10" isn't misread as an answer.
+  if (/(^|[\s,(])[a-z]\s*=\s*-?\d/i.test(t)) return false;
+  // Two or more equation/expression lines = a derivation, not a fresh ask.
+  const eqLines = t.split(/\n+/).map(l => l.trim())
+    .filter(l => /=/.test(l) || /[+\-*/^]/.test(l));
+  if (eqLines.length >= 2) return false;
+  return true;
+}
+
+// Explicit "I'm starting a new problem" verbs. Required before we'll
+// REPLACE a problem already pinned on the board — an intermediate
+// equation like "3x = 21" carries no cue and must never be mistaken for
+// a new problem to re-pose.
+const NEW_PROBLEM_CUE = /\b(solve|factor|simplify|expand|evaluate|graph|compute|calculate|find|what\s+is|new\s+problem|next\s+problem|another\s+(?:one|problem))\b/i;
+
 // ---------------------------------------------------------------------------
 // Geometry pose fallback — when parseCleanProblem can't see a problem.
 //
@@ -298,6 +450,12 @@ const GEOMETRY_VOCAB = /\b(triangles?|circles?|angles?|radius|diameter|circumfer
 // concept explanations stay off the board.
 const PROBLEM_CUE = /\b(question\s*:|here'?s\s+(?:a|one|another)|try\s+(?:this|one|the\s+following)|let'?s\s+try|what\s+(?:is|are|'?s)\b|find\s+(?:the|how|out)\b|calculate\b|determine\b|convert\b|how\s+(?:many|long|wide|much|tall|far)\b|solve\s+for\b)/i;
 
+// Conversational offers Maya makes at the end of a concept explanation
+// ("What would you like to explore next?", "Do you want to try one?").
+// These end in '?' but are NOT posed problems — quoting them onto the
+// board surfaces the prose recap before them as a fake PROBLEM card.
+const OFFER_QUESTION = /\b(would you like|do you want|wanna|want to (?:try|explore|do|practice|work|tackle|see|learn|review|start|continue|keep)|shall we|should we|are you ready|ready to|what would you like|which would you|how does that (?:sound|look)|sound good|let me know|ready for)\b/i;
+
 function extractProblemSentence(text) {
   // Prefer an explicit "Question:" marker — covers Maya's review-mode
   // formatting ("Question: Triangle ABC is congruent to …").
@@ -307,8 +465,9 @@ function extractProblemSentence(text) {
 
   // Split into sentence units. The lookbehind keeps the terminator
   // on the preceding sentence so we can find the one ending in '?'.
+  // Skip offer questions — they're tutor next-step prompts, not problems.
   const sentences = body.split(/(?<=[.!?])\s+/).filter(s => s.trim());
-  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s));
+  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s) && !OFFER_QUESTION.test(s));
   if (qIdx === -1) return null;
 
   // Include up to two preceding setup sentences (the parameters) so
@@ -392,6 +551,7 @@ function synthesizeBoardCommands({
   diagnosis,
   observation,
   lastBoardAction = null,
+  pinnedProblem = null,
   recentAssistantMessages: _recentAssistantMessages = [], // eslint-disable-line no-unused-vars
 } = {}) {
   const cards = [];
@@ -401,16 +561,34 @@ function synthesizeBoardCommands({
     || lastBoardAction === 'clear';
 
   // ── 1. POSE ──
-  // A new problem can appear on either side of the turn:
-  //   - student bare-drops "solve 3x-5=16"
-  //   - tutor offers "Try 4x+3=27"
-  // The math engine is the source of truth: if it parses a problem
-  // out of the text AND there's no active problem on the board, emit
-  // pose.
-  if (cycleIsClosed) {
-    // Prefer the student's message — if they introduced the problem,
-    // the canonical text matches what they typed. Fall back to tutor.
+  // A problem reaches the board one of two ways:
+  //   • the board is empty → pose the problem the student bare-dropped
+  //     ("solve 3x-5=16") or the tutor offered ("Try 4x+3=27");
+  //   • a problem is already pinned but the student explicitly starts a
+  //     DIFFERENT one → clear the old board and pose the new one.
+  // `pinnedProblem` (conversation.boardProblem.tex) is the source of
+  // truth for "what's on the board". Without it the synthesizer used to
+  // re-parse whatever equation appeared in the turn and latch onto
+  // intermediate scratch work (or leave a stale problem pinned).
+  if (pinnedProblem) {
+    // Replace only on an explicit, different new problem statement. An
+    // intermediate equation ("3x = 21") carries no NEW_PROBLEM_CUE and
+    // must not be mistaken for a fresh problem; a clear+pose resets the
+    // board to the new one.
+    const fresh = detectPosedProblem(studentMessage);
+    if (fresh
+        && NEW_PROBLEM_CUE.test(studentMessage)
+        && looksLikeProblemStatement(studentMessage)
+        && normalizeForCompare(fresh.tex) !== normalizeForCompare(pinnedProblem)) {
+      cards.push({ action: 'clear' });
+      cards.push({ action: 'pose', tex: fresh.tex });
+    }
+  } else if (cycleIsClosed) {
+    // Empty board. Prefer the student's message — if they introduced
+    // the problem, the canonical text matches what they typed — but
+    // never pose from the student's own worked solution.
     let posed = detectPosedProblem(studentMessage);
+    if (posed && !looksLikeProblemStatement(studentMessage)) posed = null;
     if (!posed) posed = detectPosedProblem(tutorResponse);
     // Geometry word problems don't parse as algebra; quote the
     // tutor's question sentence verbatim so the board reflects the
@@ -460,14 +638,27 @@ function synthesizeBoardCommands({
   //       engine confirms correct (isCorrect === true). The tutor's
   //       prose is NOT consulted — if the engine says right, the
   //       board reflects truth even when the tutor hedges.
-  //   (b) student stated a substitution check ("3(7) - 5 = 16")
+  //   (b) student stated a BARE arithmetic answer ("8", "4/15") with no
+  //       variable to anchor on AND the math engine confirms it. We render
+  //       "pinnedProblem = answer" using the open problem as the left side,
+  //       so fraction/arithmetic problems get the same completed-work card
+  //       that solve-for-x problems get via (a). Without this, the verify
+  //       card could only ever fire on "x = …" form, so arithmetic finals
+  //       never rendered.
+  //   (c) student stated a substitution check ("3(7) - 5 = 16")
   //       AND the prior board action shows we're verifying a known
   //       solution. Tutor must affirm (no math engine in the loop
   //       for arbitrary substitution math).
   const finalSol = detectFinalSolution(studentMessage);
+  const bareFinal = finalSol ? null : detectBareFinalAnswer(studentMessage);
   if (finalSol && diagnosis?.isCorrect === true) {
     const card = { action: 'verify', tex: finalSol.tex };
     cards.push(card);
+  } else if (bareFinal && pinnedProblem && diagnosis?.isCorrect === true) {
+    // Strip a trailing period/space the pose tex may carry so the "= answer"
+    // reads cleanly.
+    const problemTex = String(pinnedProblem).replace(/[\s.]+$/, '');
+    cards.push({ action: 'verify', tex: `${problemTex} = ${bareAnswerToTex(bareFinal)}` });
   } else {
     const subCheck = detectSubstitutionCheck(studentMessage);
     if (subCheck && tutorAffirms(tutorResponse)) {
@@ -486,6 +677,14 @@ function synthesizeBoardCommands({
     const eq = detectIntermediateEquation(studentMessage);
     if (eq && tutorAffirms(tutorResponse)) {
       cards.push({ action: 'resolve', tex: eq });
+    } else {
+      // No equation form — but the student may have stated an expression
+      // rewrite (a factoring/regrouping step). Post that as the resolve so the
+      // board tracks factoring/simplification problems, not just solve-for-x.
+      const expr = detectIntermediateExpression(studentMessage);
+      if (expr && tutorAffirms(tutorResponse)) {
+        cards.push({ action: 'resolve', tex: expr });
+      }
     }
   }
 
@@ -517,7 +716,10 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   // Order by canonical sequence — the frontend renders in array
   // order, so pose-first / verify-last produces the cleanest
   // animation when both LLM and synthesizer fire in the same turn.
-  const ORDER = { pose: 0, apply: 1, resolve: 2, verify: 3, clear: 4, graph: 5, image: 6 };
+  // `example` cards (read-only derivation steps) sit right after scaffold and
+  // before the solve-cycle cards. Multiple examples share one rank; Array.sort
+  // is stable, so their emission order — the order of the derivation — is kept.
+  const ORDER = { clear: 0, pose: 1, scaffold: 2, example: 3, apply: 4, resolve: 5, verify: 6, graph: 7, image: 8 };
   const all = [...llm, ...added].sort((a, b) => {
     const ai = ORDER[a.action] ?? 99;
     const bi = ORDER[b.action] ?? 99;
@@ -525,6 +727,41 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   });
 
   return { added, kept: llm, all };
+}
+
+/**
+ * Drop redundant pose cards. The LLM sometimes re-poses a problem that's
+ * already pinned on the board — most often after the student says something
+ * like "use the board", where the model apologizes and re-emits a pose for the
+ * SAME problem. That creates a duplicate PROBLEM card and, worse, a re-pose
+ * resets the solve cycle and re-pins the problem, orphaning the student's
+ * in-progress work and their final answer (the board-regression bug).
+ *
+ * Keeps at most one pose per problem and never a pose that just restates what's
+ * already pinned. A genuinely NEW problem (different normalized tex) is kept —
+ * the synthesizer pairs it with a `clear`, so the board still resets cleanly.
+ *
+ * @param {Array} commands - merged board commands for this turn
+ * @param {string|null} pinnedTex - conversation.boardProblem.tex (current pin)
+ * @returns {{ kept: Array, dropped: Array }}
+ */
+function dropRedundantPoses(commands, pinnedTex) {
+  const list = Array.isArray(commands) ? commands : [];
+  const pinKey = pinnedTex ? normalizeForCompare(pinnedTex) : null;
+  const seen = new Set();
+  const kept = [];
+  const dropped = [];
+  for (const c of list) {
+    if (!c || c.action !== 'pose') { kept.push(c); continue; }
+    const key = normalizeForCompare(c.tex || '');
+    if ((pinKey && key === pinKey) || seen.has(key)) {
+      dropped.push(c);
+      continue;
+    }
+    seen.add(key);
+    kept.push(c);
+  }
+  return { kept, dropped };
 }
 
 // ---------------------------------------------------------------------------
@@ -563,7 +800,9 @@ function extractPosableSentence(text) {
   const sentences = sample.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
   if (sentences.length === 0) return null;
 
-  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s));
+  // Offer questions ("want to try one?") are tutor next-step prompts,
+  // not problems — don't anchor a pose on them.
+  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s) && !OFFER_QUESTION.test(s));
   let chunk;
   if (qIdx !== -1) {
     chunk = sentences.slice(Math.max(0, qIdx - 2), qIdx + 1).join(' ').trim();
@@ -611,16 +850,125 @@ function synthesizeFallbackPose({ tutorResponse, studentMessage } = {}) {
   return null;
 }
 
+// The tutor sometimes NARRATES a visual it never put on the board ("Here's a
+// visual representation of the inscribed angle theorem!") — the board then
+// silently contradicts the chat. `decide` classifies these as
+// `continue_conversation`, so turn_type can't catch them; we detect the broken
+// PROMISE in the tutor's own words instead.
+const VISUAL_PROMISE_RE = /\b(?:here'?s|here is|take a look|i'?ve\s+(?:drawn|placed|put|added|created|made)|let me show|this\s+(?:diagram|picture|image|visual|graph|figure)|below is|above is|as you can see)\b/i;
+const VISUAL_NOUN_RE = /\b(?:visual|picture|image|diagram|illustration|representation|graph|sketch|figure)\b/i;
+
+function detectVisualPromise(text) {
+  if (!text || typeof text !== 'string') return false;
+  return VISUAL_PROMISE_RE.test(text) && VISUAL_NOUN_RE.test(text);
+}
+
+// Pull the concept the tutor said the visual is OF, e.g.
+// "a visual representation of the inscribed angle theorem" -> "inscribed angle theorem".
+function extractVisualConcept(text) {
+  if (!text || typeof text !== 'string') return null;
+  // Connectors are deliberately limited to OF-style ones. "for" is excluded —
+  // "a picture for you" means a recipient, not a subject, and would extract
+  // garbage ("you").
+  const m = text.match(/\b(?:visual|picture|image|diagram|illustration|representation|graph|sketch|figure)\s+(?:of|showing|that shows|depicting|illustrating)\s+(?:the\s+|a\s+|an\s+)?([^.!?,;\n]{3,60})/i);
+  if (!m || !m[1]) return null;
+  let concept = m[1].trim().replace(/\s+/g, ' ').replace(/[`*_${}\\]/g, '').trim();
+  // Drop trailing filler that isn't part of the concept name.
+  concept = concept.replace(/\s+\b(?:here|now|below|above|too|as well|today|for you|to you)\b\s*$/i, '').trim();
+  return concept.length >= 3 ? concept : null;
+}
+
+/**
+ * Backfill an `image` card when the tutor PROMISED a visual but none was
+ * emitted. Conservative: fires only on an explicit promise AND a derivable
+ * concept (from the tutor's own sentence, else the active skill). Returns null
+ * when no query can be formed — better an empty board than a garbage search.
+ *
+ * @param {object} params
+ * @param {string} params.tutorResponse
+ * @param {object} [params.activeSkill] - { name }
+ * @returns {{action:'image', query:string, caption:string}|null}
+ */
+function synthesizeFallbackImage({ tutorResponse, activeSkill } = {}) {
+  if (!detectVisualPromise(tutorResponse)) return null;
+  let concept = extractVisualConcept(tutorResponse);
+  if (!concept && activeSkill && activeSkill.name) concept = String(activeSkill.name).trim();
+  if (!concept || concept.length < 3) return null;
+  const query = VISUAL_NOUN_RE.test(concept) ? concept : `${concept} diagram`;
+  return { action: 'image', query, caption: concept };
+}
+
+// ---------------------------------------------------------------------------
+// Worked-example step extraction (hybrid backfill)
+//
+// When the tutor DERIVES something (area of a circle via integration, deriving
+// the quadratic formula), the steps live as display-math in the chat bubble and
+// never reach the board. The structured path SHOULD emit `example` cards, but
+// compliance is unreliable — so when a teaching turn carries a multi-step
+// derivation and no example card survived, we mirror the tutor's own math spans
+// onto the board deterministically. This is the worked-example analogue of
+// synthesizeFallbackImage: ground truth is the tutor's literal LaTeX, so there
+// is no guessing about the math.
+// ---------------------------------------------------------------------------
+
+// Capture the inner LaTeX of a display- or inline-math span. Fenced display
+// forms ($$…$$, \[…\]) come first; \(…\) inline last. Bare single-$ is
+// deliberately NOT matched — it false-positives on currency ("$5 and $10").
+const MATH_SPAN_RE = /\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)/g;
+
+// A span is "math enough" to mirror only if it carries a relation or a
+// recognizable operator/function. A stray variable in prose (\(x\)) is skipped,
+// so inline references don't pollute the derivation.
+const MATH_SIGNAL_RE = /[=<>]|\\(?:int|frac|sqrt|sum|lim|cdot|times|div|pi|theta|sin|cos|tan|log|ln|infty)\b|\d\s*[+\-*/^]\s*\d/;
+
+/**
+ * Extract a tutor derivation's steps as ordered, read-only `example` cards.
+ * Conservative: returns [] unless at least two DISTINCT math steps are found —
+ * a lone equation isn't a derivation worth mirroring, and emitting a half-board
+ * is worse than emitting nothing (same bar as synthesizeFallbackImage).
+ *
+ * @param {object} params
+ * @param {string} params.tutorResponse - the tutor's visible reply (LaTeX intact)
+ * @returns {Array<{action:'example', tex:string}>}
+ */
+function synthesizeWorkedExampleSteps({ tutorResponse } = {}) {
+  if (!tutorResponse || typeof tutorResponse !== 'string') return [];
+  const steps = [];
+  const seen = new Set();
+  const re = new RegExp(MATH_SPAN_RE.source, MATH_SPAN_RE.flags);
+  let m;
+  while ((m = re.exec(tutorResponse)) !== null) {
+    const raw = (m[1] || m[2] || m[3] || '').replace(/\s+/g, ' ').trim();
+    if (!raw || raw.length > 240) continue;     // empty or runaway capture
+    if (!MATH_SIGNAL_RE.test(raw)) continue;     // prose / lone symbol — skip
+    const key = raw.replace(/\s+/g, '');
+    if (seen.has(key)) continue;                 // drop exact repeats
+    seen.add(key);
+    steps.push({ action: 'example', tex: raw });
+  }
+  return steps.length >= 2 ? steps : [];
+}
+
 module.exports = {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
+  dropRedundantPoses,
   synthesizeFallbackPose,
+  synthesizeFallbackImage,
+  synthesizeWorkedExampleSteps,
+  detectBoardReference,
   // Exposed for tests
+  _detectVisualPromise: detectVisualPromise,
+  _extractVisualConcept: extractVisualConcept,
   _detectAppliedOperation: detectAppliedOperation,
   _detectIntermediateEquation: detectIntermediateEquation,
+  _detectIntermediateExpression: detectIntermediateExpression,
   _detectFinalSolution: detectFinalSolution,
+  _detectBareFinalAnswer: detectBareFinalAnswer,
+  _bareAnswerToTex: bareAnswerToTex,
   _detectSubstitutionCheck: detectSubstitutionCheck,
   _detectPosedProblem: detectPosedProblem,
+  _looksLikeProblemStatement: looksLikeProblemStatement,
   _detectGeometryProblem: detectGeometryProblem,
   _extractProblemSentence: extractProblemSentence,
   _extractPosableSentence: extractPosableSentence,

@@ -615,6 +615,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             showThinkingIndicator(false);
 
+            // Continuation from the voice tutor: instead of a fresh greeting, the
+            // server returns the in-progress conversation. Paint its recent tail
+            // (chat + voice turns, interleaved) into the transcript so the just-
+            // finished voice exchange is visible, then stop — no new greeting.
+            if (data.continued && Array.isArray(data.messages)) {
+                if (data.messages.length > 0 && typeof window.updateChatForSession === 'function') {
+                    window.updateChatForSession(
+                        { _id: data.conversationId, conversationType: 'general' },
+                        data.messages
+                    );
+                }
+                return;
+            }
+
             if (data.text) {
                 appendMessage(data.text, "ai");
                 if (data.inlineCta) attachInlineCtaToLatestMessage(data.inlineCta);
@@ -2268,20 +2282,27 @@ document.addEventListener("DOMContentLoaded", () => {
      * Queue a message for processing
      * Shows the message immediately as "queued" and processes when ready
      */
-    function queueMessage(messageText, files, responseTime) {
+    function queueMessage(messageText, files, responseTime, opts) {
+        opts = opts || {};
         const queuedMessage = {
             id: ++messageQueue.currentMessageId,
             text: messageText,
             files: files ? [...files] : [],
             responseTime: responseTime,
+            // SILENT: send the turn to the tutor and render its reply, but never
+            // paint a student bubble for it. Used by the WorkBoard's fill-in cards
+            // (a scaffold the student completes + Checks): the tutor reacts to the
+            // card's content without it looking like a typed chat message.
+            silent: !!opts.silent,
             timestamp: Date.now()
         };
 
         messageQueue.queue.push(queuedMessage);
         console.log(`[MessageQueue] Message queued (ID: ${queuedMessage.id}, Queue length: ${messageQueue.queue.length})`);
 
-        // Show queued message in UI with "queued" indicator if we're already processing
-        if (messageQueue.isProcessing && messageText) {
+        // Show queued message in UI with "queued" indicator if we're already
+        // processing — never for a silent turn (it has no bubble at all).
+        if (messageQueue.isProcessing && messageText && !queuedMessage.silent) {
             appendQueuedMessage(messageText, queuedMessage.id);
         }
 
@@ -2290,6 +2311,16 @@ document.addEventListener("DOMContentLoaded", () => {
             processMessageQueue();
         }
     }
+
+    // Public: send a turn to the tutor WITHOUT rendering a student bubble. The
+    // full pipeline still runs (the tutor reacts, board commands apply), so a
+    // WorkBoard card can let the student act and have the tutor respond to it.
+    window.sendSilentMessage = function (text) {
+        text = (text == null ? '' : String(text)).trim();
+        if (!text) return false;
+        queueMessage(text, [], null, { silent: true });
+        return true;
+    };
 
     /**
      * Display a queued message in the chat with a visual indicator
@@ -2389,11 +2420,13 @@ document.addEventListener("DOMContentLoaded", () => {
             fileType: f.type === 'application/pdf' ? 'pdf' : 'image'
         }));
 
-        // Replace any "queued" placeholder, then render the real user message.
-        // Render when there's text OR an attachment (image-only sends count).
+        // A SILENT turn never paints a student bubble — the tutor reacts to it
+        // (e.g. a filled-in WorkBoard card) without it looking like a typed
+        // message. Otherwise replace any "queued" placeholder and render the
+        // real user message, including image-only sends (text empty, file attached).
         const queuedElement = document.querySelector(`[data-queue-id="${queuedMsg.id}"]`);
         if (queuedElement) queuedElement.remove();
-        if (messageText || localAttachments.length) {
+        if (!queuedMsg.silent && (messageText || localAttachments.length)) {
             appendMessage(messageText || '', "user", null, false, localAttachments);
         }
 

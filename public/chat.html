@@ -17,6 +17,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="MATHMATIX" />
   <title>M∆THM∆TIΧ AI Chat</title>
+  <!-- Feature flags. The visual math board (right-column workspace, whiteboard,
+       graph/tiles/calc tools) is hidden until it's polished; students keep chat
+       with the tutor's work mirrored inline as cards. To bring the board back,
+       set boardPanel: true (or delete this block). -->
+  <script>
+    window.MM_FEATURES = Object.assign({ boardPanel: false }, window.MM_FEATURES || {});
+    if (window.MM_FEATURES.boardPanel === false) {
+      document.documentElement.classList.add('mm-board-hidden');
+    }
+  </script>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/file-upload.css" />
   <link rel="stylesheet" href="/css/calculator.css" />
@@ -343,7 +353,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <i class="fas fa-print"></i>
           <span>Practice Pack</span>
         </button>
-        <a href="/voice-tutor.html" id="sidebar-voice-tutor-btn" class="sidebar-tool-btn special" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px; position: relative;">
+        <a href="#" id="sidebar-voice-tutor-btn" class="sidebar-tool-btn special" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px; position: relative;">
           <i class="fas fa-headset"></i>
           <span>Voice Tutor</span>
           <i class="fas fa-lock" id="voice-tutor-lock" style="display:none; font-size:10px; margin-left:auto; opacity:0.8;"></i>
@@ -405,6 +415,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Tutor hero panel (left) — portrait + backdrop swap per tutor -->
       <aside class="cr-tutor-hero" aria-hidden="true">
         <div class="cr-tutor-backdrop"></div>
+        <!-- Voice-reactive glow: pulses in sync with the tutor's TTS via
+             --voice-amp (written by chat-voice-meter.js). Sits above the
+             backdrop, behind the portrait. -->
+        <div class="cr-tutor-glow" aria-hidden="true"></div>
         <img id="cr-tutor-portrait" class="cr-tutor-portrait" alt="" />
         <video id="cr-tutor-celebration-video" class="cr-tutor-celebration-video" muted playsinline preload="auto" aria-hidden="true"></video>
         <script>
@@ -930,12 +944,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <math-field id="math-keyboard-field" class="math-keyboard-field" virtual-keyboard-mode="off" math-virtual-keyboard-policy="manual"></math-field>
           <button id="mk-done-btn" class="mk-done-btn" title="Insert equation and return to text">Done</button>
         </div>
-        <!-- Enter immersive voice tutor — plain anchor, no JS needed.
-             The actual paywall fires when voice-tutor's WS upgrade is
-             attempted (utils/voiceUpgrade.js / PR #985). Icon is a
-             headset so it reads as "voice call with tutor" rather than
-             "another dictation mic" (the toolbar already has a mic). -->
-        <a href="/voice-tutor.html" id="voice-mode-btn" class="imessage-voice-btn" title="Talk to your tutor" aria-label="Switch to voice tutor">
+        <!-- Toggle in-place voice mode (voice-mode.js). Voice is a mode of
+             this chat page now, not a separate page — same session, same
+             conversation. The paywall still fires server-side on the WS
+             upgrade (utils/voiceUpgrade.js). Icon is a headset so it reads
+             as "voice call with tutor" rather than "another dictation mic"
+             (the toolbar already has a mic). href is "#" as a harmless
+             no-JS fallback; the click handler preventDefaults. -->
+        <a href="#" id="voice-mode-btn" class="imessage-voice-btn" title="Talk to your tutor" aria-label="Switch to voice tutor">
           <i class="fas fa-headset"></i>
         </a>
         <button id="send-button" class="imessage-send-btn" title="Send" aria-label="Send message">
@@ -1216,6 +1232,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h4><i class="fas fa-link"></i> <span data-i18n="nav.shareProgress">Share Progress</span></h4>
         <p style="font-size: 0.85rem; color: var(--clr-text-dim, #666); margin-bottom: 8px;" data-i18n="chat.shareCode">Share this code with a parent or teacher.</p>
         <div id="drawer-student-link-code-value" class="drawer-link-code" title="Click to copy"></div>
+        <p style="font-size: 0.8rem; color: var(--clr-text-dim, #666); margin-top: 8px; line-height: 1.4;" data-i18n="chat.shareCodeSteps">To follow your progress, your parent creates a free account at mathmatix.ai, opens the Parent Dashboard, chooses &ldquo;Link to Existing Student,&rdquo; and enters this code.</p>
+        <div style="margin-top: 14px;">
+          <label for="drawer-invite-parent-email" style="font-size: 0.8rem; color: var(--clr-text-dim, #666); display:block; margin-bottom: 4px;">Or just enter a parent&rsquo;s email &mdash; we&rsquo;ll send them the steps:</label>
+          <div style="display:flex; gap:6px;">
+            <input type="email" id="drawer-invite-parent-email" placeholder="parent@email.com" autocomplete="off" style="flex:1; min-width:0; padding:8px; border:1px solid #ddd; border-radius:6px; font-size:0.85rem;" />
+            <button id="drawer-invite-parent-btn" class="btn btn-primary" style="padding:8px 14px; font-size:0.85rem; white-space:nowrap;">Send invite</button>
+          </div>
+          <p id="drawer-invite-parent-status" style="font-size:0.8rem; margin-top:6px; display:none;"></p>
+        </div>
       </div>
     </div>
   </div>
@@ -2274,6 +2299,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <link rel="stylesheet" href="/css/algebra-tiles.css">
   <script src="/js/algebra-tiles.js"></script>
   <div id="algebraTilesContainer"></div>
+  <!-- Concept models: pure spec/validator + JSXGraph renderer for the WorkBoard
+       `model` verb. Inert until a `model` board command is emitted (CONCEPT_MODELS,
+       see CONCEPT_MODELS.md). Loaded before workspace.js, which references them. -->
+  <script src="/js/conceptModelSpec.js"></script>
+  <script defer src="/js/conceptModelRenderer.js"></script>
+  <script defer src="/js/conceptModelTokenRenderer.js"></script>
   <!-- Interactive math workspace (chat right slot) — after the tools it can launch -->
   <script src="/js/workspace.js"></script>
   <!-- Phase B: executes server-emitted <BOARD> commands against the embedded WorkBoard -->

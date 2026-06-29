@@ -1430,6 +1430,7 @@ router.get('/health-check', isAdmin, (req, res) => {
 router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
   const os = require('os');
   const structuredMetrics = require('../utils/structuredTutorMetrics');
+  const verifyMetrics = require('../utils/verifyMetrics');
   const { isStructuredModeEnabled } = require('../utils/boardResponseSchema');
   res.json({
     flagEnabled: isStructuredModeEnabled(),
@@ -1445,7 +1446,55 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
     },
     aggregate: structuredMetrics.aggregate(),
     recent: structuredMetrics.snapshot(50),
+    // Answer-verifier health: the unverifiableRate is the headline — the share
+    // of answer attempts the engine couldn't give a usable verdict on — plus how
+    // often escalation to the stronger judge rescues those cases.
+    verify: {
+      aggregate: verifyMetrics.aggregate(),
+      recent: verifyMetrics.snapshot(50),
+    },
   });
+});
+
+/**
+ * @route   GET /api/admin/visual-gate-decisions
+ * @desc    Observability for the Visual Gate (VISUAL_GATE_MODE). Aggregates the
+ *          VisualDecision corpus — decision/reasonCode/risk/mode/action
+ *          distributions plus recent samples — so the shadow-mode behavior is
+ *          visible before any enforcement is flipped on. Backed by the Mongo
+ *          collection (TTL-bounded to 180 days), so it survives restarts.
+ * @access  Private (Admin)
+ */
+router.get('/visual-gate-decisions', isAdmin, async (req, res) => {
+  try {
+    const VisualDecision = require('../models/visualDecision');
+    const limit = Math.min(parseInt(req.query.limit, 10) || 50, 200);
+
+    const [total, byDecision, byReason, byRisk, byMode, byAction, recent] = await Promise.all([
+      VisualDecision.countDocuments({}),
+      VisualDecision.aggregate([{ $group: { _id: '$decision', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$reasonCode', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$riskLevel', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$mode', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.aggregate([{ $group: { _id: '$action', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+      VisualDecision.find({}).sort({ createdAt: -1 }).limit(limit).lean(),
+    ]);
+
+    const asMap = (rows) => rows.reduce((m, r) => { m[r._id == null ? 'null' : r._id] = r.count; return m; }, {});
+
+    res.json({
+      configuredMode: process.env.VISUAL_GATE_MODE || 'shadow',
+      total,
+      byDecision: asMap(byDecision),
+      byReasonCode: asMap(byReason),
+      byRiskLevel: asMap(byRisk),
+      byMode: asMap(byMode),
+      byAction: asMap(byAction),
+      recent,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 /**
@@ -1800,6 +1849,129 @@ router.get('/reports/summaries', isAdmin, async (req, res) => {
   } catch (err) {
     console.error('Error fetching user summaries:', err);
     res.status(500).json({ message: 'Server error fetching user summaries.' });
+  }
+});
+
+/**
+ * @route   GET /api/admin/funnel
+ * @desc    Signup-cohort conversion funnel: signup → activation → paid → retained/churn
+ * @access  Private (Admin)
+ *
+ * Cohort basis: users whose `createdAt` falls in [startDate, endDate] (default: the
+ * last 90 days; pass ?all=true for all-time). Of that cohort we count how many reached
+ * each later lifecycle stage. Every stage is a plain User field — no event pipeline.
+ *
+ * Query params:
+ *   startDate, endDate  ISO dates bounding the signup window (ignored when all=true)
+ *   all                 'true' | '1' → ignore the date window, count all signups ever
+ *   role                'student' (default) | 'parent' | 'teacher'
+ */
+router.get('/funnel', isAdmin, async (req, res) => {
+  try {
+    const VALID_ROLES = ['student', 'parent', 'teacher'];
+    const role = VALID_ROLES.includes(req.query.role) ? req.query.role : 'student';
+
+    // --- Resolve the signup-date window (the cohort) ---
+    const allTime = req.query.all === 'true' || req.query.all === '1';
+    let startDate = null;
+    let endDate = null;
+    if (!allTime) {
+      endDate = req.query.endDate ? new Date(req.query.endDate) : new Date();
+      if (isNaN(endDate.getTime())) endDate = new Date();
+      startDate = req.query.startDate
+        ? new Date(req.query.startDate)
+        : new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000); // default: last 90 days
+      if (isNaN(startDate.getTime())) {
+        startDate = new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000);
+      }
+    }
+
+    const match = { role };
+    if (!allTime) match.createdAt = { $gte: startDate, $lte: endDate };
+
+    // --- One aggregation: cohort size + how many reached each stage ---
+    // Activation = did real tutoring at least once (totalActiveTutoringMinutes > 0).
+    // "Paid"     = ever subscribed (subscriptionStartDate set).
+    // "Retained" = ever paid AND still on a paid tier now.
+    // "Saw pricing" is auto-set once just after signup, so it tends toward 100% — it's
+    // a diagnostic stage, not a real conversion gate. Missing/undefined fields resolve
+    // to null/false in these $cond checks, so legacy docs are counted as not-reached.
+    const [agg] = await User.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: null,
+          signups:    { $sum: 1 },
+          activated:  { $sum: { $cond: [{ $gt: ['$totalActiveTutoringMinutes', 0] }, 1, 0] } },
+          sawPricing: { $sum: { $cond: ['$hasSeenPricing', 1, 0] } },
+          everPaid:   { $sum: { $cond: [{ $ne: ['$subscriptionStartDate', null] }, 1, 0] } },
+          retained:   {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $ne: ['$subscriptionStartDate', null] },
+                    { $ne: ['$subscriptionTier', 'free'] }
+                  ]
+                },
+                1,
+                0
+              ]
+            }
+          }
+        }
+      }
+    ]);
+
+    const signups    = agg?.signups    || 0;
+    const activated  = agg?.activated  || 0;
+    const sawPricing = agg?.sawPricing || 0;
+    const everPaid   = agg?.everPaid   || 0;
+    const retained   = agg?.retained   || 0;
+    const churned    = Math.max(everPaid - retained, 0);
+
+    // Percentage helper — 1 decimal, 0 (not NaN) when the denominator is 0.
+    const pct = (num, den) => (den > 0 ? Math.round((num / den) * 1000) / 10 : 0);
+
+    const orderedCounts = [
+      { stage: 'Signed up', count: signups },
+      { stage: 'Activated (did tutoring)', count: activated },
+      { stage: 'Saw pricing', count: sawPricing },
+      { stage: 'Paid', count: everPaid },
+      { stage: 'Retained (still paying)', count: retained }
+    ];
+    const funnel = orderedCounts.map((s, i) => ({
+      stage: s.stage,
+      count: s.count,
+      pctOfTotal: pct(s.count, signups),
+      pctOfPrevious: i === 0 ? null : pct(s.count, orderedCounts[i - 1].count)
+    }));
+
+    res.json({
+      filters: {
+        basis: 'signup-cohort',
+        role,
+        allTime,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate ? endDate.toISOString() : null
+      },
+      summary: {
+        signups,
+        activated,
+        sawPricing,
+        everPaid,
+        retained,
+        churned,
+        activationRate: pct(activated, signups),
+        paidConversionRate: pct(everPaid, signups),
+        churnRate: pct(churned, everPaid)
+      },
+      funnel,
+      generatedAt: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('Error generating funnel report:', err);
+    res.status(500).json({ message: 'Server error generating funnel report.' });
   }
 });
 

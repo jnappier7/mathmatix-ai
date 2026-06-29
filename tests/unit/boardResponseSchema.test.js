@@ -76,6 +76,43 @@ describe('boardResponseSchema — normalizeBoardCommand', () => {
     });
   });
 
+  test('keeps tex on a scaffold command', () => {
+    expect(normalizeBoardCommand({
+      action: 'scaffold',
+      tex: 'x^2 + 4x + \\boxed{} = 12 + \\boxed{}',
+      op: null,
+      check: null,
+      fn: null,
+      query: null,
+      caption: null,
+    })).toEqual({ action: 'scaffold', tex: 'x^2 + 4x + \\boxed{} = 12 + \\boxed{}' });
+  });
+
+  test('keeps the model name on a curated concept-model command', () => {
+    expect(normalizeBoardCommand({
+      action: 'model',
+      tex: null, op: null, check: null, fn: null, query: null, caption: null,
+      model: 'slope_intercept_line',
+      spec: null,
+      prompt: 'Slide m up — what happens?',
+    })).toEqual({
+      action: 'model',
+      model: 'slope_intercept_line',
+      prompt: 'Slide m up — what happens?',
+    });
+  });
+
+  test('keeps the spec JSON string on a generated concept-model command', () => {
+    const spec = '{ "model": "cosine_wave", "params": { "a": 1 } }';
+    expect(normalizeBoardCommand({
+      action: 'model',
+      tex: null, op: null, check: null, fn: null, query: null, caption: null,
+      model: null,
+      spec,
+      prompt: 'Slide a',
+    })).toEqual({ action: 'model', spec, prompt: 'Slide a' });
+  });
+
   test('empty-string field is treated as null and dropped', () => {
     expect(normalizeBoardCommand({
       action: 'apply',
@@ -259,7 +296,13 @@ describe('boardResponseSchema — buildStructuredResponseInstructions (Phase 4)'
   });
 
   test('documents each board action shape', () => {
+    // `diagram` is recognized end-to-end but not yet described in any prompt.
+    // `model` IS taught to the tutor, but in its own flag-gated builder
+    // (utils/conceptModelPrompt.js), not in this structured block. Both are
+    // therefore absent from buildStructuredResponseInstructions() by design.
+    const NOT_YET_PROMPTED = new Set(['diagram', 'model']);
     for (const action of BOARD_ACTIONS) {
+      if (NOT_YET_PROMPTED.has(action)) continue;
       expect(instructions).toContain(action);
     }
   });
@@ -270,9 +313,9 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
   // the API will reject the schema at call time; better to fail
   // loudly here than in production.
 
-  test('BOARD_ACTIONS lists the seven supported actions', () => {
+  test('BOARD_ACTIONS lists the supported actions', () => {
     expect(BOARD_ACTIONS).toEqual([
-      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image',
+      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example',
     ]);
   });
 
@@ -308,7 +351,7 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
     expect(BOARD_RESPONSE_SCHEMA.required).toContain('turn_type');
   });
 
-  test('TURN_TYPES has the eight expected values', () => {
+  test('TURN_TYPES has the nine expected values', () => {
     expect(TURN_TYPES).toEqual([
       'problem_introduction',
       'step_acknowledgment',
@@ -318,6 +361,7 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
       'scaffold',
       'redirect',
       'small_talk',
+      'worked_example',
     ]);
   });
 

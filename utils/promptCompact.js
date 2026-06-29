@@ -238,6 +238,12 @@ RULE 9 — CONCEPT FIRST. Teach understanding before procedures. Build from Conc
 RULE 10 — WRONG STEPS. When a student gives a wrong intermediate step, don't hand them the correction. Ask a question that exposes WHY it's wrong. Let THEM arrive at the fix.
 HUMAN WRONG-ANSWER RESPONSES: Engage with the SPECIFIC error the student made — name the exact step that went wrong, or ask about the exact reasoning that led them there. Show genuine curiosity about how they arrived at their answer. A real tutor doesn't have a stock "wrong answer" phrase — they react differently every time because every wrong answer is wrong in a different way.
 
+--- ORDER OF OPERATIONS (KNOW THIS COLD) ---
+Multiply and Divide are EQUAL priority — do them left to right. Add and Subtract are EQUAL priority — do them left to right. "M comes before D" / "A comes before S" is a MISCONCEPTION (PEMDAS's letter order causes it). If a student says it, do NOT half-agree ("you're right that M comes before D, but…") — that affirms the wrong idea. Name it and correct it directly and kindly: within the M/D step (and the S/A step) the operations are tied, so whichever appears FIRST reading left to right goes first.
+- MNEMONIC: use the one your class prefers — see TEACHER'S CLASS AI SETTINGS below; the default is GEMS (Grouping → Exponents → Multiply/Divide → Subtract/Add), which helpfully GROUPS the tied operations. Don't introduce PEMDAS to a class that uses GEMS, and don't override a teacher-specified mnemonic.
+- Canonical example: \\( 16 \\div 4 \\times 2 = 4 \\times 2 = 8 \\), NOT \\( 16 \\div 8 = 2 \\). Division is leftmost, so it happens first. Multiply does not "win" just because M comes before D in the mnemonic.
+- DON'T LET THE ARGUMENT DERAIL THE MATH. Once the student's arithmetic is right (e.g. they say \\( 4 \\times 2 = 8 \\)), CONFIRM it — \\( 8 \\) is correct. Never tell a student their correct result is wrong while you're discussing the ordering rule (see RULE 2). Settle the left-to-right principle, then move on.
+
 --- ANTI-GAMING ---
 When students use buzzwords ("balance the equation," "inverse operation," "common denominator") without understanding, use a counter-example probe: "What would happen if we did the OPPOSITE?" Buzzword alone ≠ mastery. Buzzword + correct consequence prediction = full credit.
 
@@ -439,7 +445,7 @@ SOLVING equations step-by-step (animated demo):
 [TILES_SOLVE:equation] — full animated solving walkthrough: setup → add opposites → cancel zero pairs → isolate x
 [TILES_SOLVE:equation:guided] — pauses between steps so student can follow (DEFAULT)
 [TILES_SOLVE:equation:full] — auto-plays all steps faster
-The solver uses Mr. Napier's methodology: adds opposite tiles to both sides, cancels zero pairs, then divides.
+The solver uses Mr. Nappier's methodology: adds opposite tiles to both sides, cancels zero pairs, then divides.
 
 FACTORING with tiles (visual rectangle method):
 [TILES_FACTOR:expression] — demonstrates factoring by arranging tiles into a rectangle
@@ -460,7 +466,7 @@ Examples:
 - "What is factoring?" → [TILES_FACTOR:x^2+3x+2] "Factoring is like building a rectangle from tiles. The dimensions tell us the factors: \\( (x+1)(x+2) \\)!"
 When teaching solving: ALWAYS use tile language. "+3" = "3 positive unit tiles." "Subtract 3" = "add 3 negative tiles." "Cancel" = "zero pairs." Students can interact with the tiles after your demo.
 
---- MR. NAPIER'S SOLVING METHODOLOGY (use with algebra tiles) ---
+--- MR. NAPPIER'S SOLVING METHODOLOGY (use with algebra tiles) ---
 1. Box & Think: "Box in the variable term." Then "think outside the box" — identify the constant.
 2. Units Language: "+4" = "4 positive units." Instead of "subtract 4," say "put 4 negative units."
 3. Opposites Make ZERO: Reinforce why when adding/subtracting. Use [COUNTERS] or [TILES_SOLVE] to show this.
@@ -570,7 +576,7 @@ function detectManipulativeContext(opts = {}) {
 // DYNAMIC PROMPT BUILDER — per-student, per-request context
 // ============================================================================
 
-function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null) {
+function generateSystemPrompt(userProfile, tutorProfile, childProfile = null, currentRole = 'student', curriculumContext = null, uploadContext = null, masteryContext = null, likedMessages = [], fluencyContext = null, conversationContext = null, teacherAISettings = null, gradingContext = null, errorPatterns = null, resourceContext = null, studentMessage = null, recentMessages = null, activeWorksheet = null) {
   const {
     firstName, lastName, gradeLevel, mathCourse, tonePreference, parentTone,
     learningStyle, interests, iepPlan, preferences, preferredLanguage
@@ -692,6 +698,22 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     parts.push(`--- UPLOADED CONTENT ---\n${typeof uploadContext === 'string' ? uploadContext : JSON.stringify(uploadContext)}`);
   }
 
+  // Active worksheet — the document the student is working from THIS session,
+  // pinned to the conversation and injected at FULL length every turn. Without
+  // this the worksheet text lived only in the upload-turn message (buried in
+  // history) and a truncated 1500-char "recent uploads" excerpt, so the tutor
+  // would "forget" later problems and ask the student to re-type them
+  // ("#3 on the quiz" → "what does it say?"). Mirrors the teacher-resource
+  // block: full content + reference-by-number + never ask to re-share.
+  if (activeWorksheet && activeWorksheet.text) {
+    parts.push(
+      `--- ACTIVE WORKSHEET: "${activeWorksheet.filename || 'uploaded file'}" ---\n` +
+      `${firstName} is working from this uploaded worksheet right now. You have its FULL content below.\n\n` +
+      `${activeWorksheet.text}\n\n` +
+      `USE IT: When ${firstName} says "number 3", "the next one", or "#2 on the quiz", find that problem in the worksheet above and work from it directly — NEVER ask "what does it say?" or have them re-type it. Refer to problems by their number as written. You still teach Socratically (Rule 1 — having the problem does NOT mean revealing the answer).`
+    );
+  }
+
   // Conversation context
   if (conversationContext) {
     const convParts = [];
@@ -738,13 +760,58 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
     parts.push(`--- RESOURCES ---\n${typeof resourceContext === 'string' ? resourceContext : JSON.stringify(resourceContext)}`);
   }
 
-  // Teacher AI settings
+  // Teacher AI settings — honor the teacher's classAISettings (the object chat.js
+  // passes in via `teacher.classAISettings`). NOTE: the 2026-02 compact migration
+  // read fields that don't exist on that schema (maxHintsPerProblem / allowCalculator
+  // / customInstructions), so EVERY real teacher setting was silently dropped —
+  // including vocabularyPreferences.orderOfOperations, which DEFAULTS to 'GEMS'. That
+  // regression made the tutor revert to PEMDAS. Read the real fields here.
   if (teacherAISettings) {
-    const settings = [];
-    if (teacherAISettings.maxHintsPerProblem) settings.push(`Max hints/problem: ${teacherAISettings.maxHintsPerProblem}`);
-    if (teacherAISettings.allowCalculator !== undefined) settings.push(`Calculator: ${teacherAISettings.allowCalculator ? 'allowed' : 'not allowed'}`);
-    if (teacherAISettings.customInstructions) settings.push(`Teacher note: ${teacherAISettings.customInstructions}`);
-    if (settings.length) parts.push(`--- TEACHER SETTINGS ---\n${settings.join('\n')}`);
+    const ts = [];
+
+    const calc = teacherAISettings.calculatorAccess;
+    if (calc === 'never') ts.push('Calculator: NOT allowed — encourage mental/written math.');
+    else if (calc === 'always') ts.push('Calculator: allowed freely.');
+    else if (calc === 'skill-based') ts.push('Calculator: allow for complex arithmetic, encourage mental math on basics.');
+    if (teacherAISettings.calculatorNote) ts.push(`Calculator note: "${teacherAISettings.calculatorNote}"`);
+
+    const scaffold = teacherAISettings.scaffoldingLevel;
+    if (scaffold) {
+      const s = scaffold <= 2 ? 'Minimal hints — let them struggle productively.'
+        : scaffold === 3 ? 'Balanced — guide with questions, hint when stuck.'
+        : 'High support — smaller steps, more guidance.';
+      ts.push(`Scaffolding (${scaffold}/5): ${s}`);
+    }
+
+    const ooo = teacherAISettings.vocabularyPreferences?.orderOfOperations;
+    if (ooo && ooo !== 'teacher-custom') {
+      ts.push(`Order-of-operations mnemonic: use ${ooo} (not other mnemonics). This is the class standard — use it consistently.`);
+    }
+    const customVocab = teacherAISettings.vocabularyPreferences?.customVocabulary;
+    if (customVocab?.length) ts.push(`Preferred terms: ${customVocab.join('; ')}`);
+
+    const sa = teacherAISettings.solutionApproaches;
+    if (sa) {
+      if (sa.equationSolving && sa.equationSolving !== 'any') ts.push(`Equations: use the "${sa.equationSolving.replace(/-/g, ' ')}" approach.`);
+      if (sa.fractionOperations && sa.fractionOperations !== 'any') ts.push(`Fractions: use the "${sa.fractionOperations.replace(/-/g, ' ')}" method.`);
+      if (sa.wordProblems && sa.wordProblems !== 'any') ts.push(`Word problems: use the "${sa.wordProblems}" strategy.`);
+      if (sa.customApproaches) ts.push(`Preferred methods: ${sa.customApproaches}`);
+    }
+
+    const man = teacherAISettings.manipulatives;
+    if (man) {
+      if (man.allowed === false) ts.push('Manipulatives: avoid — favor abstract/symbolic work.');
+      else if (man.preferred?.length) ts.push(`Preferred manipulatives: ${man.preferred.join(', ')}.`);
+    }
+
+    const ct = teacherAISettings.currentTeaching;
+    if (ct?.topic) ts.push(`Class is currently learning "${ct.topic}"${ct.approach ? ` (approach: ${ct.approach})` : ''}${ct.pacing ? ` (pacing: ${ct.pacing})` : ''}. Align with it.`);
+
+    const enc = teacherAISettings.responseStyle?.encouragementLevel;
+    if (enc === 'minimal') ts.push('Encouragement: minimal — focus on the work, not praise.');
+    else if (enc === 'high') ts.push('Encouragement: high — celebrate wins, motivate through challenges.');
+
+    if (ts.length) parts.push(`--- TEACHER'S CLASS AI SETTINGS ---\n${ts.join('\n')}`);
   }
 
   // Mastery mode context

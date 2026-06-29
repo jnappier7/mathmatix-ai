@@ -23,7 +23,8 @@ const { generate, assemblePrompt } = require('./generate');
 const { verify } = require('./verify');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { persist } = require('./persist');
-const { llmVerifyAnswer, pickProblemContext } = require('./llmVerifier');
+const { verifyWithEscalation, pickProblemContext } = require('./llmVerifier');
+const verifyMetrics = require('../verifyMetrics');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
@@ -43,14 +44,35 @@ const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrad
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
+const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, synthesizeFallbackPose } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
+const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
+const { applyVisualGate } = require('../visualGate');
+const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
 const log = require('../logger');
 const boardLogger = log.child({ service: 'board-tag-protocol' });
 const turnTypeLogger = log.child({ service: 'turn-type-audit' });
+
+// The "I-do" decision actions — the tutor is directly teaching/demonstrating on
+// a teaching example, not the student's graded problem. These are the moves
+// where worked-example steps belong on the board (see workedExampleBoard).
+// Deliberately excludes the "we-do"/"you-do" practice moves (guided_practice,
+// independent_practice) and strengthen_challenge, where the student works and
+// the strict student-mirror rule must stand.
+const TEACHING_ACTIONS = new Set([
+  ACTIONS.WORKED_EXAMPLE,
+  ACTIONS.DIRECT_INSTRUCTION,
+  ACTIONS.PREREQUISITE_BRIDGE,
+  ACTIONS.LEVERAGE_BRIDGE,
+]);
+
+function isTeachingMove(decision) {
+  return !!decision && TEACHING_ACTIONS.has(decision.action);
+}
 
 /**
  * Run the full tutoring pipeline.
@@ -99,23 +121,34 @@ async function runPipeline(message, ctx) {
   let llmVerificationPromise = null;
   if (observation.messageType === MESSAGE_TYPES.ANSWER_ATTEMPT && observation.answer?.value) {
     const problemText = pickProblemContext(
-      recentAssistantMessages.map(msg => ({ content: msg.content }))
+      recentAssistantMessages.map(msg => ({ content: msg.content, problemInfo: msg.problemInfo || null }))
     );
     if (problemText) {
-      llmVerificationPromise = llmVerifyAnswer(problemText, observation.answer.value)
+      const verifyStart = Date.now();
+      llmVerificationPromise = verifyWithEscalation(problemText, observation.answer.value)
         .then(verdict => {
+          const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;
           if (verdict.isCorrect !== null) {
-            console.log(`[Pipeline] LLMVerify: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+            console.log(`[Pipeline] LLMVerify: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer}, ${tier})`);
           } else if (verdict.error) {
-            console.log(`[Pipeline] LLMVerify: unverifiable (${verdict.error})`);
+            console.log(`[Pipeline] LLMVerify: unverifiable (${verdict.error}, ${tier})`);
           } else {
-            console.log(`[Pipeline] LLMVerify: low-confidence (${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+            console.log(`[Pipeline] LLMVerify: low-confidence (${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer}, ${tier})`);
           }
+          verifyMetrics.recordVerification({
+            verdict,
+            escalated: verdict.escalated,
+            escalationResolved: verdict.escalationResolved,
+            tier: verdict.tier,
+            latencyMs: Date.now() - verifyStart,
+          });
           return verdict;
         })
         .catch(err => {
           console.error('[Pipeline] LLMVerify promise rejected:', err.message);
-          return { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
+          const verdict = { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
+          verifyMetrics.recordVerification({ verdict, latencyMs: Date.now() - verifyStart });
+          return verdict;
         });
     }
   }
@@ -130,6 +163,8 @@ async function runPipeline(message, ctx) {
     recentUserMessages: recentUserMessages.map(msg => ({ content: msg.content })),
     activeSkill: ctx.activeSkill || null,
     user: ctx.user,
+    lastProblemState: ctx.conversation?.lastProblemState || null,
+    pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
     llmVerificationPromise,
   });
 
@@ -422,12 +457,100 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // Worked-example board: when the tutor is TEACHING — demonstrating or deriving
+  // on a teaching example that is NOT the student's graded problem — the board
+  // may carry the full worked steps, the same basis on which worked steps on
+  // PARALLEL problems are allowed under the #1 rule. This relaxes apply/resolve/
+  // verify off the student-text match AND admits read-only `example` cards.
+  //
+  // Triggers on any "I-do" decision action (worked_example, direct_instruction,
+  // prerequisite_bridge, leverage_bridge) OR when there is no pinned problem at
+  // all — a free conceptual derivation ("why does the integral give area?") has
+  // no graded answer to protect, so mirroring its steps can't leak anything.
+  // Gated behind a default-off flag: a phase/move mislabel must never silently
+  // relax the guard, so it requires BOTH the explicit flag AND a teaching
+  // context. Off → fully strict (byte-identical to today). In every case the
+  // pinnedProblem/pinnedAnswer backstop below still blocks a "worked example"
+  // that is secretly the student's own problem.
+  const noPinnedProblem = !(ctx.conversation?.boardProblem?.tex);
+  const workedExampleBoard = process.env.WORKED_EXAMPLE_BOARD === 'true'
+    && (isTeachingMove(decision) || noPinnedProblem);
+
+  // Generative long-tail gate (CONCEPT_MODELS.md step 4). A `model` command may
+  // carry a brand-new spec the LLM authored (JSON) instead of a curated catalog
+  // name. Validate it HERE, before the pedagogy guard and before render: parse +
+  // bound + structurally validate, so a spec whose ids/params/refs don't resolve
+  // is dropped ("can pick a weird layout but cannot display wrong math"). Curated
+  // names are checked against the catalog. No-op for non-model commands.
+  if (rawLlmBoardCommands.length > 0) {
+    const resolvedModels = resolveModelCommands(rawLlmBoardCommands);
+    rawLlmBoardCommands = resolvedModels.commands;
+    for (const { command, reason, errors } of resolvedModels.dropped) {
+      boardLogger.warn('Concept-model command dropped', {
+        reason,
+        model: command.model || null,
+        errors: errors || null,
+      });
+    }
+    // Generated spec rejected but a curated name carried the card instead.
+    for (const { command, reason } of resolvedModels.fallbacks) {
+      boardLogger.warn('Concept-model spec rejected; fell back to curated model', {
+        reason,
+        model: command.model || null,
+      });
+    }
+  }
+
+  // ── Stage 5b.0: BOARD LLM (advisory board-card source) ──
+  // A second, focused call that translates the tutor's FINAL message into board
+  // cards (see docs/BOARD_LLM_STAGE_DESIGN.md). The tutor model is unreliable at
+  // transcribing its own teaching into board commands; this stage does that one
+  // job with a short, single-purpose prompt. ADVISORY ONLY: in `live` it becomes
+  // the SOURCE of rawLlmBoardCommands, then flows through the exact same guard →
+  // synthesizer-merge → visual gate below — the guard owns final authority. In
+  // `shadow` it runs and logs but does not change what renders. Default `off` →
+  // no call, no latency, behavior byte-identical to today. The deterministic
+  // synthesizer downstream remains the fallback when this yields nothing.
+  const boardLlmMode = getBoardLlmMode();
+  if (boardLlmMode !== 'off') {
+    try {
+      const proposal = await proposeBoardCommands({
+        chatText: verified.text,
+        moveType: decision?.action || null,
+        pinnedProblem: ctx.conversation?.boardProblem?.tex || null,
+        teachingMode: workedExampleBoard,
+        currentSkill: ctx.activeSkill?.name || null,
+      });
+      boardLogger.info('Board LLM proposal', {
+        mode: boardLlmMode,
+        status: proposal.record.status,
+        proposed: proposal.commands.map(c => c.action),
+        currentSource: rawLlmBoardCommands.map(c => c.action),
+      });
+      // Live: the board LLM is the primary source. If it yields nothing (skip /
+      // error / empty), keep whatever the tutor emitted so the board never goes
+      // dark on its account — the synthesizer fallback still runs below.
+      if (boardLlmMode === 'live' && proposal.commands.length > 0) {
+        rawLlmBoardCommands = proposal.commands;
+      }
+    } catch (boardLlmErr) {
+      // The advisory stage must never break a response.
+      boardLogger.error('Board LLM stage failed (non-fatal)', { error: boardLlmErr.message });
+    }
+  }
+
   if (rawLlmBoardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({
       commands: rawLlmBoardCommands,
       userMessage: message,
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      workedExample: workedExampleBoard,
+      // Backstop: even in worked-example mode, never let a step that reveals the
+      // student's OWN pinned problem / answer through (model "demonstrating" on
+      // the graded problem instead of a parallel one).
+      pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+      pinnedAnswer: diagnosis.correctAnswer || null,
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
@@ -494,6 +617,7 @@ async function runPipeline(message, ctx) {
       diagnosis,
       observation,
       lastBoardAction: ctx.conversation?.lastBoardAction || null,
+      pinnedProblem: ctx.conversation?.boardProblem?.tex || null,
       recentAssistantMessages,
     });
   } catch (synthErr) {
@@ -529,12 +653,182 @@ async function runPipeline(message, ctx) {
   const merged = mergeWithLlmCommands(llmBoardCommands, guardedSynth);
   verified.boardCommands = merged.all;
 
+  // Drop a redundant re-pose of the already-pinned problem. The LLM tends to
+  // re-emit a pose after the student says "use the board" (it apologizes and
+  // re-poses the same problem) — that both duplicates the PROBLEM card and
+  // resets the solve cycle, orphaning the student's in-progress work and their
+  // final answer. Keep the pin; drop the echo.
+  {
+    const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+    const { kept, dropped } = dropRedundantPoses(verified.boardCommands, pinnedTex);
+    if (dropped.length > 0) {
+      verified.boardCommands = kept;
+      boardLogger.info('Dropped redundant pose(s)', {
+        count: dropped.length,
+        tex: dropped.map(c => c.tex),
+        pinnedTex,
+      });
+    }
+  }
+
   if (merged.added.length > 0) {
     boardLogger.info('Synthesized board commands', {
       count: merged.added.length,
       actions: merged.added.map(c => c.action),
       llmEmitted: llmBoardCommands.length,
     });
+  }
+
+  // ── Stage 5c.0a0: WORKED-EXAMPLE STEP BACKFILL (hybrid) ──
+  // The structured path SHOULD emit `example` cards when the tutor derives
+  // something, but compliance is unreliable (the same reason pose/verify get
+  // synthesized). When this is a teaching turn (workedExampleBoard) and the
+  // tutor's reply carries a multi-step derivation yet no example card survived,
+  // mirror the tutor's own math spans onto the board. The LLM wins when it did
+  // emit examples — we only backfill the gap. Routed through the same guard, so
+  // the pinned-problem backstop applies to every backfilled step too.
+  if (workedExampleBoard
+      && !verified.boardCommands.some(c => c.action === 'example')) {
+    const workedSteps = synthesizeWorkedExampleSteps({ tutorResponse: verified.text });
+    if (workedSteps.length > 0) {
+      const workedGuard = enforcePedagogyRule({
+        commands: workedSteps,
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+        workedExample: workedExampleBoard,
+        pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+        pinnedAnswer: diagnosis.correctAnswer || null,
+      });
+      if (workedGuard.allowed.length > 0) {
+        verified.boardCommands = mergeWithLlmCommands(verified.boardCommands, workedGuard.allowed).all;
+        boardLogger.info('Worked-example step backfill added cards', {
+          count: workedGuard.allowed.length,
+          dropped: workedGuard.dropped.length,
+        });
+      }
+    }
+  }
+
+  // ── Stage 5c.0a: VISUAL-PROMISE BACKFILL ──
+  // The tutor sometimes narrates a visual it never put on the board ("Here's a
+  // visual representation of the inscribed angle theorem!") — the board then
+  // silently contradicts the chat, the worst kind of phantom. `decide` calls
+  // these continue_conversation, so turn_type can't catch them; we detect the
+  // broken PROMISE in the tutor's own words and backfill an image. Runs BEFORE
+  // the visual gate below so the backfilled image is gated like any other.
+  // Conservative: fires only when no graph/image already survived AND a concept
+  // is derivable — otherwise the board is left as-is (no garbage search).
+  if (!verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+    const fallbackImage = synthesizeFallbackImage({
+      tutorResponse: verified.text,
+      activeSkill: ctx.activeSkill || null,
+    });
+    if (fallbackImage) {
+      const imgGuard = enforcePedagogyRule({
+        commands: [fallbackImage],
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      });
+      if (imgGuard.allowed.length > 0) {
+        verified.boardCommands = mergeWithLlmCommands(verified.boardCommands, imgGuard.allowed).all;
+        boardLogger.info('Visual-promise backfill added image', { query: fallbackImage.query });
+      }
+    }
+  }
+
+  // ── Stage 5c.0b: VISUAL GATE (conceptual-visual safety) ──
+  // graph/image commands bypass the pedagogy guard's student-text rule by
+  // design (they're teaching aids, not echoes of the student's work). That
+  // leaves one hole the guard structurally can't close: a graph/image of the
+  // student's OWN unsolved problem leaks the answer geometrically (a parabola
+  // crossing at x=2 and x=3 *is* the roots). The visual gate computes what each
+  // graph would reveal (mathSolver: solve fn=0) and blocks/transforms anything
+  // whose roots hit the known correctAnswer. Defaults to 'live_control' —
+  // enforcement ON, deterministic leak-block only (the LLM value judge is a
+  // separate opt-in, VISUAL_GATE_VALUE_JUDGE, default off). Fail-safe by design:
+  // this protects the #1 anti-cheat rule, so the secure posture is the default.
+  // Set VISUAL_GATE_MODE=shadow to log-without-enforcing, or =off to bypass.
+  //
+  // Read the mode once. `off` is a complete, zero-cost bypass (true kill
+  // switch): the whole stage is skipped, no evaluation, no writes.
+  const visualGateMode = process.env.VISUAL_GATE_MODE || 'live_control';
+  if (visualGateMode !== 'off'
+      && verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+    try {
+      const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+      const activeProblem = {
+        problemText: pinnedTex,
+        normalizedExpression: pinnedTex,
+        correctAnswer: diagnosis.correctAnswer || null,
+        problemType: diagnosis.problemType || null,
+        status: diagnosis.isCorrect === true
+          ? 'solved'
+          : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
+      };
+      const learningState = {
+        concept: ctx.activeSkill?.name || null,
+        misconception: diagnosis.misconception?.name || null,
+        masteryScore: null,
+      };
+      const gatedCommands = [];
+      const decisionDocs = [];
+      const turnIndex = Array.isArray(ctx.conversation?.messages) ? ctx.conversation.messages.length : null;
+      for (const cmd of verified.boardCommands) {
+        if (cmd.action !== 'graph' && cmd.action !== 'image') {
+          gatedCommands.push(cmd);
+          continue;
+        }
+        const { command: gated, record } = await applyVisualGate({
+          command: cmd,
+          activeProblem,
+          learningState,
+          tutorMessage: verified.text,
+          user: ctx.user || null,
+          mode: visualGateMode,
+          // Leak enforcement runs deterministically in live modes; the LLM
+          // value judge is a separate opt-in (default off) so it can't suppress
+          // useful visuals until it's been validated against shadow data.
+          enableValueJudge: process.env.VISUAL_GATE_VALUE_JUDGE === 'on',
+        });
+        if (record.decision !== 'allow') {
+          boardLogger.info('Visual gate decision', {
+            mode: visualGateMode,
+            action: record.action,
+            decision: record.decision,
+            reasonCode: record.reasonCode,
+            riskLevel: record.riskLevel,
+          });
+        }
+        // Capture every decision (allow/block/transform) for the corpus —
+        // positive examples matter for training too.
+        decisionDocs.push(buildDecisionDoc({
+          record,
+          activeProblem,
+          learningState,
+          mode: visualGateMode,
+          userId: ctx.user?._id || null,
+          conversationId: ctx.conversation?._id || null,
+          turnIndex,
+        }));
+        // In shadow/audit_only/off the gate returns the command unchanged, so
+        // this is a no-op for render; only live modes drop/transform.
+        if (gated) gatedCommands.push(gated);
+      }
+      verified.boardCommands = gatedCommands;
+
+      // Persist the corpus FIRE-AND-FORGET — a logging write must never sit in
+      // the critical path of a tutoring response (no await, so it can't delay
+      // or hang the turn). persistVisualDecisions is internally guarded and
+      // never rejects, so there's no floating-rejection risk.
+      if (decisionDocs.length > 0) {
+        persistVisualDecisions(decisionDocs);
+      }
+    } catch (gateErr) {
+      // The gate must never break a response.
+      boardLogger.error('Visual gate failed (non-fatal)', { error: gateErr.message });
+    }
   }
 
   // ── Stage 5c.1: TURN-TYPE BACKFILL (Phase 5) ──
@@ -610,9 +904,68 @@ async function runPipeline(message, ctx) {
     }
   }
 
-  if (verified.boardCommands.length > 0 && ctx.conversation) {
-    const lastEmitted = verified.boardCommands[verified.boardCommands.length - 1].action;
+  // ── Stage 5c.3: BOARD-REFERENCE BACKSTOP ──
+  // The LLM is supposed to emit a board card when the student points at the
+  // work board ("show me on the board"), but tag compliance is unreliable and
+  // the deterministic synthesizer only fires on a posable problem statement —
+  // neither covers a student referencing a problem that's already in play. When
+  // the student explicitly references the board yet nothing survived the turn,
+  // re-pose the pinned problem so the board isn't left empty. Unlike the
+  // turn-type backfill this is NOT gated on the structured flag — it runs on
+  // all production traffic. Conservative by construction: tight reference
+  // detection + fires only on an empty board + poses ground-truth tex (the pin,
+  // else a verbatim tutor sentence). Worst case on a false positive is
+  // re-drawing the current problem.
+  if (verified.boardCommands.length === 0
+      && ctx.conversation
+      && detectBoardReference(message)) {
+    const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+    const backstopPose = pinnedTex
+      ? { action: 'pose', tex: pinnedTex }
+      : synthesizeFallbackPose({ tutorResponse: verified.text, studentMessage: message });
+
+    if (backstopPose) {
+      const backstopGuard = enforcePedagogyRule({
+        commands: [backstopPose],
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      });
+      if (backstopGuard.allowed.length > 0) {
+        verified.boardCommands = backstopGuard.allowed;
+        boardLogger.info('Board-reference backstop posed problem', {
+          source: pinnedTex ? 'pin' : 'fallback',
+          tex: backstopPose.tex,
+        });
+      }
+    } else {
+      boardLogger.warn('Board referenced but nothing posable; board left empty', {});
+    }
+  }
+
+  // Read-only `example` cards are teaching aids, not moves in the student's
+  // solve cycle — they must not advance lastBoardAction (which gates clear-after-
+  // verify and the synthesizer's cycle-closed logic) or touch the pin. Track
+  // state on the solve-cycle cards only; a turn that emitted ONLY example cards
+  // leaves conversation state exactly as it was.
+  const cycleCards = verified.boardCommands.filter(c => c.action !== 'example');
+  if (cycleCards.length > 0 && ctx.conversation) {
+    const lastEmitted = cycleCards[cycleCards.length - 1].action;
     ctx.conversation.lastBoardAction = lastEmitted;
+
+    // Pin / unpin the canonical board problem so future turns anchor to
+    // it instead of re-parsing intermediate scratch work (or leaving a
+    // stale problem on the board). A pose — including an auto-advance
+    // clear+pose or a turn-type backfill — sets the pin; a verify/clear
+    // that ends the cycle drops it.
+    const poseCard = [...cycleCards].reverse().find(c => c.action === 'pose');
+    if (poseCard && poseCard.tex) {
+      ctx.conversation.boardProblem = { tex: poseCard.tex, posedAt: new Date() };
+      ctx.conversation.markModified?.('boardProblem');
+    } else if (lastEmitted === 'verify' || lastEmitted === 'clear') {
+      ctx.conversation.boardProblem = null;
+      ctx.conversation.markModified?.('boardProblem');
+    }
   }
 
   // ── Stage 5d: XP CEREMONY TAGS (Phase C) ──

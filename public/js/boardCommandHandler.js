@@ -21,10 +21,49 @@
     'use strict';
 
     var STAGGER_MS = 250;
-    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true };
+    var STAGGER_ACTIONS = { apply: true, resolve: true, verify: true, graph: true, image: true, scaffold: true, model: true, example: true };
 
     function getWorkspace() {
         return typeof window !== 'undefined' ? window.MathWorkspace : null;
+    }
+
+    // Scrub a LaTeX/text field of leaked JSON structure. Upstream a fallback
+    // parser can capture a board_commands array boundary into a field — e.g.
+    // tex = "3x = 21},{" — which then renders as a red KaTeX error. A real math
+    // expression never contains an UNescaped  } , {  or  " , "  (LaTeX braces are
+    // \{ \}), so cut at that boundary and drop the residue.
+    function cleanField(s) {
+        if (typeof s !== 'string') return s;
+        // Stray wrapping JSON quotes.
+        s = s.replace(/^\s*["']+|["']+\s*$/g, '');
+        // Truncate at a JSON object/array boundary that leaked in.
+        var cut = s.search(/[}\]"]\s*,\s*["{[]/);
+        if (cut !== -1) s = s.slice(0, cut + 1);
+        s = s.trim();
+        // Drop a trailing unbalanced } (residue from the cut). LaTeX braces pair
+        // up; a lone trailing close is junk. Count unescaped braces only.
+        var opens = (s.match(/(?:^|[^\\])\{/g) || []).length;
+        var closes = (s.match(/(?:^|[^\\])\}/g) || []).length;
+        while (closes > opens && /\}\s*$/.test(s)) {
+            s = s.replace(/\}\s*$/, '').trim();
+            closes--;
+        }
+        return s;
+    }
+
+    function sanitizeCommand(command) {
+        if (!command || typeof command !== 'object') return command;
+        var out = command;
+        ['tex', 'check', 'op', 'caption'].forEach(function (k) {
+            if (typeof command[k] === 'string') {
+                var cleaned = cleanField(command[k]);
+                if (cleaned !== command[k]) {
+                    if (out === command) out = Object.assign({}, command);
+                    out[k] = cleaned;
+                }
+            }
+        });
+        return out;
     }
 
     function executeOne(command) {
@@ -33,6 +72,7 @@
             console.warn('[BoardCommandHandler] MathWorkspace not available; dropping command', command);
             return;
         }
+        command = sanitizeCommand(command);
         try {
             switch (command.action) {
                 case 'pose':
@@ -43,6 +83,9 @@
                     break;
                 case 'resolve':
                     if (command.tex) W.boardResolve(command.tex);
+                    break;
+                case 'scaffold':
+                    if (command.tex) W.boardScaffold(command.tex);
                     break;
                 case 'verify':
                     if (command.tex) {
@@ -69,6 +112,25 @@
                     break;
                 case 'image':
                     if (command.query) W.boardImage(command.query, command.caption || '');
+                    break;
+                case 'example':
+                    // Read-only worked-example derivation step. caption is an
+                    // optional short label (e.g. "Trig substitution").
+                    if (command.tex) W.boardExample(command.tex, command.caption || '');
+                    break;
+                case 'diagram':
+                    // Deterministic JSXGraph geometry (DIAGRAM_BOARD, flag-off).
+                    if (command.diagramType && typeof W.boardDiagram === 'function') {
+                        W.boardDiagram(command);
+                    }
+                    break;
+                case 'model':
+                    // Interactive concept model (CONCEPT_MODELS, flag-off). The
+                    // student manipulates it and the relationship holds, correct
+                    // by construction. Inert until a caller emits `model`.
+                    if (command.model && typeof W.boardModel === 'function') {
+                        W.boardModel(command);
+                    }
                     break;
                 default:
                     console.warn('[BoardCommandHandler] Unknown action', command.action);

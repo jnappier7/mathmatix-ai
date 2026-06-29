@@ -161,6 +161,48 @@ router.post('/link-to-parent', isAuthenticated, isStudent, async (req, res) => {
     }
 });
 
+// POST /api/student/invite-parent
+// Student submits a parent's email; we email the parent a signup link that
+// auto-links them to this student on account creation (see routes/signup.js).
+// Captures the parent relationship without the kid having to share a code.
+router.post('/invite-parent', isAuthenticated, isStudent, async (req, res) => {
+    const email = (req.body.parentEmail || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ success: false, message: 'Please enter a valid parent email address.' });
+    }
+    try {
+        const student = await User.findById(req.user._id);
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'Student not found.' });
+        }
+        // No-op if a parent with this email is already linked to this student.
+        const existingParent = await User.findOne({ email, role: 'parent' });
+        if (existingParent && (student.parentIds || []).some(pid => pid.equals(existingParent._id))) {
+            return res.status(400).json({ success: false, message: 'That parent is already linked to your account.' });
+        }
+
+        const token = crypto.randomBytes(24).toString('hex');
+        student.parentInvite = { email, token, sentAt: new Date() };
+        await student.save();
+
+        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        // Existing parent account → confirm-link into the dashboard; new parent → signup link.
+        const actionUrl = existingParent
+            ? `${baseUrl}/parent-dashboard.html?acceptInvite=${token}`
+            : `${baseUrl}/signup.html?role=parent&parentInvite=${token}&email=${encodeURIComponent(email)}`;
+        const { sendParentInvite } = require('../utils/emailService');
+        const result = await sendParentInvite(email, student.firstName, actionUrl, !!existingParent);
+
+        if (!result.success) {
+            return res.json({ success: true, emailed: false, message: "Invite saved, but the email couldn't be sent right now. You can also share your code with your parent." });
+        }
+        res.json({ success: true, emailed: true, message: `Invite sent to ${email}. They'll get a link to set up a free parent account.` });
+    } catch (error) {
+        console.error('ERROR: Failed to invite parent:', error);
+        res.status(500).json({ success: false, message: 'Could not send the parent invite.' });
+    }
+});
+
 // GET /api/student/progress
 // Returns student's learning progress (mastered, learning, ready skills)
 router.get('/progress', isAuthenticated, isStudent, async (req, res) => {

@@ -5,13 +5,13 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
-const Conversation = require('../models/conversation');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { callLLM } = require("../utils/llmGateway");
 const { verify: pipelineVerify } = require("../utils/pipeline");
 const { openai } = require('../utils/openaiClient');
 const { processAIResponse } = require('../utils/chatBoardParser');
 const { cleanTextForTTS } = require('../utils/mathTTS');
+const { loadActiveHistory, appendToActiveConversation } = require('../utils/activeConversation');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for voice responses
 
@@ -144,8 +144,11 @@ router.post('/process', isAuthenticated, async (req, res) => {
             'Vietnamese': 'vi', 'Arabic': 'ar', 'Somali': 'so', 'French': 'fr', 'German': 'de'
         };
 
-        // ── Run Whisper + full user data + conversation history in parallel ──
-        const [transcription, user, conversation] = await Promise.all([
+        // ── Run Whisper + full user data in parallel ──
+        // Conversation history is loaded after `user` resolves so it reads the
+        // SAME active conversation chat uses (user.activeConversationId) rather
+        // than "the most recent doc" — keeping chat <-> voice continuous.
+        const [transcription, user] = await Promise.all([
             openai.audio.transcriptions.create({
                 file: fs.createReadStream(tempAudioPath),
                 model: 'whisper-1',
@@ -154,10 +157,6 @@ router.post('/process', isAuthenticated, async (req, res) => {
                 if (fs.existsSync(tempAudioPath)) fs.unlinkSync(tempAudioPath);
             }),
             User.findById(userId).lean(),
-            Conversation.findOne({ userId })
-                .sort({ updatedAt: -1 })
-                .select({ messages: { $slice: -10 } })
-                .lean()
         ]);
 
         const step1Time = Date.now() - startTime;
@@ -187,12 +186,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
         const selectedTutorId = user.selectedTutorId || 'default';
         const tutorProfile = TUTOR_CONFIG[selectedTutorId] || TUTOR_CONFIG['default'];
 
-        const conversationHistory = (conversation?.messages || [])
-            .filter(msg => msg.content && msg.content.trim().length > 0)
-            .map(msg => ({
-                role: msg.role === 'user' ? 'user' : 'assistant',
-                content: msg.content
-            }));
+        const conversationHistory = await loadActiveHistory(user, 10);
 
         // Add board context to system prompt if available
         let boardContextPrompt = '';
@@ -316,19 +310,12 @@ router.post('/process', isAuthenticated, async (req, res) => {
                     return null;
                 }
             })(),
-            // Save to conversation history
-            (async () => {
-                const messagesToPush = [];
-                if (userMessage) messagesToPush.push({ role: 'user', content: userMessage.trim(), timestamp: new Date() });
-                if (aiResponseText) messagesToPush.push({ role: 'assistant', content: aiResponseText.trim(), timestamp: new Date() });
-                if (messagesToPush.length > 0) {
-                    await Conversation.findOneAndUpdate(
-                        { userId },
-                        { $push: { messages: { $each: messagesToPush } }, $set: { updatedAt: new Date() } },
-                        { upsert: true }
-                    );
-                }
-            })()
+            // Save to conversation history — same active conversation chat uses,
+            // so the turn is visible when the student switches back to text.
+            appendToActiveConversation(user, [
+                { role: 'user', content: userMessage },
+                { role: 'assistant', content: aiResponseText },
+            ])
         ]);
 
         const totalTime = Date.now() - startTime;

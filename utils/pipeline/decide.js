@@ -293,6 +293,23 @@ function decideCore(observation, diagnosis, context) {
 
   // ── Answer attempts — correctness-driven decisions ──
   if (msgType === MESSAGE_TYPES.ANSWER_ATTEMPT && diagnosis.type !== 'no_answer') {
+    // ── Correct but incomplete: a multi-root problem with one root still missing ──
+    // The student named a CORRECT root but hasn't supplied the whole solution
+    // set yet. Affirm it and ask for the rest — never treat this as wrong, never
+    // downgrade difficulty, never reveal the missing root (#1 anti-cheat rule).
+    if (diagnosis.type === 'correct_partial') {
+      const remaining = diagnosis.multiRoot?.remainingCount || 1;
+      const total = diagnosis.multiRoot?.totalCount || 2;
+      decision.action = ACTIONS.ACKNOWLEDGE_PROGRESS;
+      decision.directives.push(
+        `CORRECT BUT INCOMPLETE: The student named a correct solution. This problem has ${total} solutions and ${remaining} ${remaining === 1 ? 'is' : 'are'} still missing.`,
+        'Affirm the correct value enthusiastically — they got a real root, not a wrong answer.',
+        `Then prompt them for the remaining solution(s). Do NOT state or hint at the missing value — ask them to find it.`,
+        'Do NOT reset the problem, do NOT offer an easier one, do NOT re-teach. They are succeeding.'
+      );
+      return decision;
+    }
+
     if (diagnosis.isCorrect) {
       decision.action = ACTIONS.CONFIRM_CORRECT;
       decision.directives.push(

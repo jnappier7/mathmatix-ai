@@ -1637,9 +1637,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const parentUser = await loadParentUser();
     if (parentUser) {
-        loadChildren();
+        // Must await: the real-time polling bootstrap below reads children.length
+        // synchronously, so without awaiting, children is still [] and the
+        // "LIVE NOW" indicator + session notifications never start on load.
+        await loadChildren();
         loadParentSettings();
         loadParentCourses();
+
+        // If we arrived from a student's invite email (?acceptInvite=<token>),
+        // link this parent to that child, then refresh the dashboard.
+        const acceptToken = new URLSearchParams(window.location.search).get('acceptInvite');
+        if (acceptToken) {
+            try {
+                const res = await csrfFetch('/api/parent/accept-invite', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: acceptToken }),
+                    credentials: 'include'
+                });
+                const data = await res.json().catch(() => ({}));
+                alert(data.message || (res.ok ? "You're now following your child's progress!" : "Couldn't accept this invite."));
+                window.history.replaceState({}, '', window.location.pathname);
+                if (res.ok) await loadChildren();
+            } catch (e) {
+                console.error('Accept invite failed:', e);
+            }
+        }
     }
 
     // ============================================

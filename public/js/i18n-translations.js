@@ -399,6 +399,20 @@ window.I18N_TRANSLATIONS = {
     French: 'Partagez ce code avec un parent ou un enseignant.',
     German: 'Teilen Sie diesen Code mit einem Elternteil oder Lehrer.'
   },
+  'chat.shareCodeSteps': {
+    // The Parent Dashboard UI (parent-dashboard.html) is English-only, so the
+    // "Link to Existing Student" button label is intentionally left in English
+    // in every locale to match exactly what the parent sees and clicks.
+    English: 'To follow your progress, your parent creates a free account at mathmatix.ai, opens the Parent Dashboard, chooses "Link to Existing Student," and enters this code.',
+    Spanish: 'Para seguir tu progreso, tu padre o madre crea una cuenta gratuita en mathmatix.ai, abre el Panel para Padres, elige "Link to Existing Student" y escribe este código.',
+    Russian: 'Чтобы следить за твоими успехами, твой родитель создаёт бесплатный аккаунт на mathmatix.ai, открывает родительскую панель, выбирает «Link to Existing Student» и вводит этот код.',
+    Chinese: '为了跟踪你的学习进度，你的家长在 mathmatix.ai 上创建一个免费账户，打开家长面板，选择"Link to Existing Student"，然后输入此代码。',
+    Vietnamese: 'Để theo dõi tiến độ của bạn, phụ huynh của bạn tạo một tài khoản miễn phí tại mathmatix.ai, mở Bảng điều khiển Phụ huynh, chọn "Link to Existing Student" và nhập mã này.',
+    Arabic: 'لمتابعة تقدّمك، يُنشئ أحد والديك حساباً مجانياً على mathmatix.ai، ويفتح لوحة تحكم الوالدين، ويختار "Link to Existing Student"، ثم يُدخل هذا الرمز.',
+    Somali: 'Si loola socdo horumarkaaga, waalidkaaga wuxuu ka abuuraa akoon bilaash ah mathmatix.ai, wuxuu furaa Dashboard-ka Waalidka, wuxuu doortaa "Link to Existing Student," kadibna wuxuu galiyaa koodhkan.',
+    French: 'Pour suivre tes progrès, ton parent crée un compte gratuit sur mathmatix.ai, ouvre le tableau de bord parental, choisit « Link to Existing Student » et saisit ce code.',
+    German: 'Um deinen Fortschritt zu verfolgen, erstellt dein Elternteil ein kostenloses Konto auf mathmatix.ai, öffnet das Eltern-Dashboard, wählt „Link to Existing Student" und gibt diesen Code ein.'
+  },
   'chat.stop': {
     English: 'Stop', Spanish: 'Detener', Russian: 'Стоп', Chinese: '停止',
     Vietnamese: 'Dừng', Arabic: 'إيقاف', Somali: 'Jooji', French: 'Arrêter', German: 'Stopp'

@@ -162,7 +162,7 @@ const conversationSchema = new Schema({
     // commands have been emitted yet.
     lastBoardAction: {
         type: String,
-        enum: ['pose', 'apply', 'resolve', 'verify', 'clear', null],
+        enum: ['pose', 'apply', 'resolve', 'verify', 'clear', 'scaffold', null],
         default: null,
     },
     alerts: [{
@@ -201,6 +201,16 @@ const conversationSchema = new Schema({
     // Last problem state: persisted so returning students can resume mid-problem.
     // Contains problemText, attemptCount, lastAttempt, and misconception if detected.
     lastProblemState: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
+    // Canonical problem currently pinned on the WorkBoard PROBLEM card.
+    // { tex, posedAt }. Set when a problem is posed, cleared on verify/clear.
+    // The board synthesizer reads this so it never re-parses an
+    // intermediate scratch line (or a stale earlier problem) as the
+    // PROBLEM — the pin is the single source of truth for "what's on the
+    // board". Null when the board has no active problem.
+    boardProblem: {
         type: Schema.Types.Mixed,
         default: null
     },

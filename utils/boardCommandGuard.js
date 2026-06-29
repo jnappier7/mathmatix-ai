@@ -36,7 +36,7 @@ const OPERATION_KEYWORDS = [
     'flip', 'reciprocal',
     'substitute', 'substituting', 'plug',
     'move', 'moving',
-    // Mr. Napier methodology
+    // Mr. Nappier methodology
     'box', 'opposite', 'opposites', 'zero pair', 'zero pairs',
 ];
 
@@ -131,6 +131,27 @@ function hasStartOverIntent(text) {
 }
 
 /**
+ * True if a scaffold's tex contains at least one *empty* slot for the
+ * student to fill. This is the anti-cheat property for scaffold cards:
+ * scaffolding shows structure with holes; a "scaffold" with every term
+ * filled in is just an answer dump on the student's own problem and must
+ * be rejected. Recognized blanks:
+ *   - an empty (or whitespace/spacing-only) \boxed{...}  e.g. \boxed{}, \boxed{\;\;}
+ *   - \square                                            the open-box glyph
+ *   - a run of 3+ underscores                            e.g. _____ or \_\_\_
+ */
+function texHasBlank(tex) {
+    if (!tex || typeof tex !== 'string') return false;
+    // \boxed{...} whose contents are only LaTeX spacing macros / whitespace.
+    const EMPTY_BOXED = /\\boxed\s*\{\s*(?:\\(?:[;,:!\s]|quad|qquad|phantom\s*\{[^}]*\}|hspace\s*\{[^}]*\}|,|;)\s*)*\}/;
+    if (EMPTY_BOXED.test(tex)) return true;
+    if (/\\square\b/.test(tex)) return true;
+    if (/_{3,}/.test(tex)) return true;          // raw underscores
+    if (/(?:\\_){3,}/.test(tex)) return true;    // escaped underscores
+    return false;
+}
+
+/**
  * Enforce the #1-rule guard on a parsed list of board commands.
  *
  * @param {Object}   input
@@ -147,11 +168,82 @@ function hasStartOverIntent(text) {
  *
  * @returns {{ allowed: Array, dropped: Array<{command, reason}> }}
  */
+// Symmetric tex match — does either string contain the other (normalized)?
+function texMatchesEither(a, b) {
+    return texMatchesStudentText(a, b) || texMatchesStudentText(b, a);
+}
+
+// WORKED-EXAMPLE LEAK BACKSTOP.
+// The worked-example relaxation trusts the model to demonstrate on a PARALLEL
+// problem, never the student's own. This is the deterministic safety net for
+// when it doesn't: a worked-example step that matches the student's pinned
+// problem expression OR its known answer is the model solving the graded
+// problem under cover of "example" — block it regardless of the relaxation, so
+// WORKED_EXAMPLE_BOARD is safe to enable even if the model occasionally slips.
+function revealsPinnedProblem(text, ctx) {
+    if (!text) return false;
+    if (ctx.pinnedProblemTex) {
+        if (texMatchesEither(text, ctx.pinnedProblemTex)) return true;
+        // Also match the bare expression (the pinned problem minus a trailing
+        // "= 0"), so a step/op that names the student's expression is caught
+        // even when it omits the "= 0" — e.g. op "factor 3x^2 + 4x - 7".
+        const expr = String(ctx.pinnedProblemTex).replace(/\s*=\s*0\s*$/, '');
+        if (expr !== ctx.pinnedProblemTex && texMatchesEither(text, expr)) return true;
+    }
+    if (ctx.pinnedAnswer && texMatchesEither(text, ctx.pinnedAnswer)) return true;
+    return false;
+}
+
+// Scrub a LaTeX/text field of leaked JSON structure. A fallback parser upstream
+// can capture a board_commands array boundary into a field — e.g. tex = "3x = 21},{"
+// — which would then render as a red KaTeX error on the board. A real math
+// expression never contains an UNescaped  } , {  or  " , "  (LaTeX braces are
+// \{ \}), so cut at that boundary and drop the residue. Mirrors the client-side
+// guard in public/js/boardCommandHandler.js (defense in depth).
+function cleanField(s) {
+    if (typeof s !== 'string') return s;
+    // Stray wrapping JSON quotes.
+    s = s.replace(/^\s*["']+|["']+\s*$/g, '');
+    // Truncate at a leaked JSON object/array boundary.
+    const cut = s.search(/[}\]"]\s*,\s*["{[]/);
+    if (cut !== -1) s = s.slice(0, cut + 1);
+    s = s.trim();
+    // Drop a trailing unbalanced } left over from the cut (LaTeX braces pair up;
+    // a lone trailing close is residue). Count unescaped braces only.
+    const opens = (s.match(/(?:^|[^\\])\{/g) || []).length;
+    let closes = (s.match(/(?:^|[^\\])\}/g) || []).length;
+    while (closes > opens && /\}\s*$/.test(s)) {
+        s = s.replace(/\}\s*$/, '').trim();
+        closes--;
+    }
+    return s;
+}
+
+// Return a copy of the command with its math/text fields scrubbed. Cheap no-op
+// (returns the same ref) when nothing needed cleaning.
+function sanitizeCommand(command) {
+    if (!command || typeof command !== 'object') return command;
+    let out = command;
+    for (const k of ['tex', 'check', 'op', 'caption']) {
+        if (typeof command[k] === 'string') {
+            const cleaned = cleanField(command[k]);
+            if (cleaned !== command[k]) {
+                if (out === command) out = { ...command };
+                out[k] = cleaned;
+            }
+        }
+    }
+    return out;
+}
+
 function enforcePedagogyRule({
     commands,
     userMessage,
     recentUserMessages = [],
     lastBoardActionInConversation = null,
+    workedExample = false,
+    pinnedProblemTex = null,
+    pinnedAnswer = null,
 } = {}) {
     const allowed = [];
     const dropped = [];
@@ -176,11 +268,29 @@ function enforcePedagogyRule({
     // is judged against the student's message, not the in-batch pose.
     let runningLastAction = lastBoardActionInConversation;
 
-    for (const command of commands) {
+    for (let i = 0; i < commands.length; i++) {
+        const original = commands[i];
+        // Scrub leaked JSON/garbage out of the math fields FIRST, so the clean
+        // command is what we judge, allow, and pass downstream (board + stored
+        // history + voice all get the cleaned tex).
+        const command = sanitizeCommand(original);
+        // If a tex that was present scrubbed away to nothing, it was pure garbage
+        // — drop it rather than paint a blank/wrong card ("cannot display wrong
+        // math", the board's #1 guarantee).
+        if (typeof original.tex === 'string' && original.tex.trim() && !(command.tex || '').trim()) {
+            dropped.push({ command: original, reason: 'malformed_tex' });
+            runningLastAction = original.action;
+            continue;
+        }
+        const nextAction = commands[i + 1] ? commands[i + 1].action : null;
         const decision = evaluate(command, {
             currentText,
             combinedText,
             runningLastAction,
+            nextAction,
+            workedExample,
+            pinnedProblemTex,
+            pinnedAnswer,
         });
 
         if (decision.allowed) {
@@ -202,9 +312,26 @@ function evaluate(command, ctx) {
         return { allowed: true };
     }
 
+    // WORKED-EXAMPLE RELAXATION (ctx.workedExample):
+    // In the I_DO phase the tutor DEMONSTRATES on a teaching example that is
+    // NOT the student's graded problem ("teacher models with 2-3 examples").
+    // Showing the full steps of an example is teaching, not cheating — the same
+    // reason worked steps on PARALLEL problems are allowed under the #1 rule.
+    // So apply/resolve/verify may carry tutor-authored steps here without the
+    // student-text-match. We still require the field to be present (a malformed
+    // command is still dropped), and this ONLY applies when the caller has
+    // established an I_DO worked-example context (see runPipeline). Everywhere
+    // else — homework help, WE_DO, YOU_DO — the strict student-mirror rule
+    // stands, so the student's own problem is never solved for them.
     if (action === 'apply') {
         if (!command.op) {
             return { allowed: false, reason: 'apply_missing_op' };
+        }
+        if (ctx.workedExample) {
+            if (revealsPinnedProblem(command.op, ctx)) {
+                return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+            }
+            return { allowed: true, reason: 'worked_example_step' };
         }
         if (opMatchesStudentText(command.op, ctx.combinedText)) {
             return { allowed: true };
@@ -216,6 +343,12 @@ function evaluate(command, ctx) {
         if (!command.tex) {
             return { allowed: false, reason: 'resolve_missing_tex' };
         }
+        if (ctx.workedExample) {
+            if (revealsPinnedProblem(command.tex, ctx)) {
+                return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+            }
+            return { allowed: true, reason: 'worked_example_step' };
+        }
         if (texMatchesStudentText(command.tex, ctx.combinedText)) {
             return { allowed: true };
         }
@@ -226,10 +359,37 @@ function evaluate(command, ctx) {
         if (!command.tex) {
             return { allowed: false, reason: 'verify_missing_tex' };
         }
+        if (ctx.workedExample) {
+            if (revealsPinnedProblem(command.tex, ctx)) {
+                return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+            }
+            return { allowed: true, reason: 'worked_example_step' };
+        }
         if (texMatchesStudentText(command.tex, ctx.combinedText)) {
             return { allowed: true };
         }
         return { allowed: false, reason: 'verify_tex_not_in_student_message' };
+    }
+
+    // Worked-example derivation step (read-only). Unlike apply/resolve/verify,
+    // an `example` card has NO student-mirror fallback: it carries the tutor's
+    // own derivation, so it is admitted ONLY in teaching mode (ctx.workedExample,
+    // established by runPipeline from an I-do decision + WORKED_EXAMPLE_BOARD).
+    // Outside teaching mode it is always dropped — the strict default is
+    // unchanged. Even in teaching mode, the pinned-problem backstop stands: a
+    // step that names the student's graded problem or its answer is the model
+    // solving the homework under cover of "example", and is blocked.
+    if (action === 'example') {
+        if (!command.tex) {
+            return { allowed: false, reason: 'example_missing_tex' };
+        }
+        if (!ctx.workedExample) {
+            return { allowed: false, reason: 'example_outside_worked_example_mode' };
+        }
+        if (revealsPinnedProblem(command.tex, ctx)) {
+            return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+        }
+        return { allowed: true, reason: 'worked_example_step' };
     }
 
     if (action === 'clear') {
@@ -239,7 +399,29 @@ function evaluate(command, ctx) {
         if (ctx.runningLastAction === 'verify') {
             return { allowed: true };
         }
+        // A clear immediately followed by a pose is a board reset for a
+        // new problem (auto-advance). The pose itself is always allowed,
+        // so the reset that precedes it is too.
+        if (ctx.nextAction === 'pose') {
+            return { allowed: true };
+        }
         return { allowed: false, reason: 'clear_without_start_over_or_completed_problem' };
+    }
+
+    // Scaffold: the tutor shows the next step's STRUCTURE with empty slots
+    // for the student to fill (e.g. "x^2 + 4x + \boxed{} = 12 + \boxed{}").
+    // A blank reveals nothing, so this does not violate the #1 rule even on
+    // the student's own problem — it's a hint, not the answer. But we DO
+    // require a real blank: a "scaffold" with everything filled in is an
+    // answer dump wearing the wrong label, so reject it.
+    if (action === 'scaffold') {
+        if (!command.tex) {
+            return { allowed: false, reason: 'scaffold_missing_tex' };
+        }
+        if (!texHasBlank(command.tex)) {
+            return { allowed: false, reason: 'scaffold_has_no_blank' };
+        }
+        return { allowed: true };
     }
 
     // Tutor-emitted reference content: graph/image cards are teaching aids,
@@ -252,9 +434,37 @@ function evaluate(command, ctx) {
         return { allowed: true };
     }
 
+    // Deterministic geometry diagram (JSXGraph). Like graph/image it's a
+    // teaching aid, not a transcription of the student's steps — so the
+    // student-text rule doesn't apply here. Leak-safety for the student's OWN
+    // problem is handled by the diagram spec's redact mode (omits the unknown's
+    // value) under the visual gate, not by dropping the card. We only validate
+    // that a known type is present.
+    if (action === 'diagram') {
+        if (!command.diagramType) {
+            return { allowed: false, reason: 'diagram_missing_type' };
+        }
+        return { allowed: true };
+    }
+
     if (action === 'image') {
         if (!command.query) {
             return { allowed: false, reason: 'image_missing_query' };
+        }
+        return { allowed: true };
+    }
+
+    // Interactive concept model (JSXGraph, gated behind CONCEPT_MODELS). Like
+    // graph/diagram it's a teaching aid summoned with intent, not a transcription
+    // of the student's steps — and it's correct by construction (the engine
+    // measures; the spec never asserts a value), so it cannot leak the student's
+    // answer. The #1-rule student-text match doesn't apply; we only require an
+    // identity: a curated catalog name OR a generated spec (the long-tail path).
+    // The spec's structural validity is enforced separately, before the guard, by
+    // utils/conceptModelCommand.js.
+    if (action === 'model') {
+        if (!command.model && !command.spec) {
+            return { allowed: false, reason: 'model_missing_name' };
         }
         return { allowed: true };
     }
@@ -269,4 +479,7 @@ module.exports = {
     texMatchesStudentText,
     opMatchesStudentText,
     hasStartOverIntent,
+    texHasBlank,
+    cleanField,
+    sanitizeCommand,
 };

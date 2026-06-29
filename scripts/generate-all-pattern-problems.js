@@ -663,12 +663,25 @@ function generateMultiplicationBasics(difficulty) {
 }
 
 function generatePlaceValue(difficulty) {
-  const num = difficulty < -1 ? randomInt(10, 99) :
-               difficulty < 0 ? randomInt(100, 999) :
-               randomInt(1000, 9999);
+  // Pick a number AND a target digit whose value is UNIQUE within that number,
+  // so "what place is the digit X?" has exactly one correct answer. Numbers
+  // like 277 or 565 repeat the queried digit, which puts it in two places at
+  // once (tens AND ones) — an ambiguous question with no single right answer.
+  let num, numStr, digitIndex;
+  do {
+    num = difficulty < -1 ? randomInt(10, 99) :
+          difficulty < 0 ? randomInt(100, 999) :
+          randomInt(1000, 9999);
+    numStr = String(num);
+    const uniqueIndices = numStr.split('').map((_, i) => i).filter(
+      i => numStr.split('').filter(c => c === numStr[i]).length === 1
+    );
+    // Skip numbers with no unique digit at all (e.g. 44, 4444); retry.
+    digitIndex = uniqueIndices.length
+      ? uniqueIndices[randomInt(0, uniqueIndices.length - 1)]
+      : -1;
+  } while (digitIndex === -1);
 
-  const numStr = String(num);
-  const digitIndex = randomInt(0, numStr.length - 1);
   const digit = numStr[digitIndex];
 
   const placeNames = ['ones', 'tens', 'hundreds', 'thousands'];

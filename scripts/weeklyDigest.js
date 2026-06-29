@@ -22,6 +22,11 @@ const { calculateRetrievability } = require('../utils/fsrsScheduler');
 // Constants
 const BATCH_SIZE = 50; // Process parents in batches
 const DELAY_BETWEEN_EMAILS = 1000; // 1 second delay between emails to avoid rate limits
+// Idempotency window: skip a parent who already received a report within this
+// many hours. Prevents duplicate emails from a cron retry or an accidental
+// double-run on the same day, while never blocking the next scheduled send
+// (daily ≥24h later, weekly ≥7d later).
+const DEDUP_WINDOW_MS = 20 * 60 * 60 * 1000; // 20 hours
 
 /**
  * Determine if a parent should receive a report today
@@ -201,6 +206,11 @@ async function calculateStudentProgress(studentId) {
         mastery: { mastered: masteredCount, practicing: practicingCount, learning: learningCount },
         currentStreak,
         insights,
+        // True if the student did anything worth reporting this week. The digest
+        // skips sending when this is false, so parents aren't emailed a
+        // "your child did nothing" report every week for an inactive kid.
+        hadActivity: stats.sessionCount > 0 || masteryGained > 0 ||
+                     achievements.length > 0 || growthChecks.length > 0,
     };
 }
 
@@ -283,10 +293,28 @@ async function processBatch(parents) {
                 continue;
             }
 
+            // Idempotency: skip if this parent already got a report very recently
+            // (cron retry / accidental double-run on the same day).
+            if (parent.lastWeeklyReportSentAt &&
+                (Date.now() - new Date(parent.lastWeeklyReportSentAt).getTime()) < DEDUP_WINDOW_MS) {
+                results.skipped++;
+                continue;
+            }
+
+            let sentForParent = false;
             for (const childId of parent.children) {
                 const studentData = await calculateStudentProgress(childId);
                 if (!studentData) {
                     console.log(`  ⚠️ Student ${childId} not found, skipping`);
+                    continue;
+                }
+
+                // Don't email about a child who did nothing this week — that reads as
+                // spam and gets parents to unsubscribe. Deliberate re-engagement is the
+                // reactivation campaign's job, not the weekly digest's.
+                if (!studentData.hadActivity) {
+                    console.log(`  ⏭️ ${studentData.studentName}: no activity this week — skipping email`);
+                    results.skipped++;
                     continue;
                 }
 
@@ -296,6 +324,7 @@ async function processBatch(parents) {
                 if (result.success) {
                     console.log(`  ✅ Sent report for ${studentData.studentName} to ${parent.email}`);
                     results.sent++;
+                    sentForParent = true;
                 } else {
                     console.log(`  ❌ Failed to send report to ${parent.email}: ${result.error}`);
                     results.failed++;
@@ -304,6 +333,11 @@ async function processBatch(parents) {
 
                 // Delay between emails
                 await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_EMAILS));
+            }
+
+            // Stamp the dedup guard once at least one report went out.
+            if (sentForParent) {
+                await User.findByIdAndUpdate(parent._id, { lastWeeklyReportSentAt: new Date() }).catch(() => {});
             }
         } catch (error) {
             console.error(`  ❌ Error processing parent ${parent.email}:`, error.message);

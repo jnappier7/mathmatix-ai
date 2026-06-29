@@ -10,7 +10,7 @@
  * @module pipeline/diagnose
  */
 
-const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
+const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSolver');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 
 /**
@@ -37,8 +37,24 @@ function stripLatexDelimiters(text) {
  * @param {Array}  context.recentAssistantMessages - Last few AI messages (to find the posed problem)
  * @param {Object} context.activeSkill - Current skill being practiced { skillId, displayName, teachingGuidance }
  * @param {Object} context.user - The user document (for misconception history)
+ * @param {string} [context.pinnedProblemTex] - The canonical board problem (conversation.boardProblem.tex)
  * @returns {Object} Diagnosis result
  */
+
+/**
+ * Does the student's text state a SET of roots (a final answer to a
+ * multi-root problem) rather than a single value? Requires 2+ numeric
+ * candidates joined by a connector ("or" / "and" / comma), e.g.
+ * "x = -7/3 or 1", "3 and 2". Used to gate the canonical-problem override
+ * so single-value sub-step answers are never affected.
+ */
+function statesRootSet(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.toLowerCase();
+  const nums = t.match(/-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?/g) || [];
+  const hasConnector = /\bor\b|\band\b|,/.test(t);
+  return nums.length >= 2 && hasConnector;
+}
 async function diagnose(observation, context = {}) {
   // Only run diagnosis on answer attempts
   if (!observation.answer) {
@@ -98,6 +114,7 @@ async function diagnose(observation, context = {}) {
       problemInfo = {
         problemType: msg.problemInfo.type,
         correctAnswer: msg.problemInfo.correctAnswer,
+        roots: Array.isArray(msg.problemInfo.roots) ? msg.problemInfo.roots : null,
         steps: [],
         content: msg.content,
       };
@@ -118,6 +135,7 @@ async function diagnose(observation, context = {}) {
       problemInfo = {
         problemType: result.problem.type,
         correctAnswer: result.solution.answer,
+        roots: Array.isArray(result.solution.roots) ? result.solution.roots : null,
         steps: result.solution.steps || [],
         content: msg.content,
       };
@@ -125,12 +143,54 @@ async function diagnose(observation, context = {}) {
     }
   }
 
+  // ── Canonical-problem override for multi-root final answers ──
+  // The recent-message scan above can latch onto an INTERMEDIATE the tutor
+  // wrote (e.g. a factored form "(3x+7)(x-1)=0"), whose parse yields a bogus
+  // problem with no usable roots — so a correct final answer like
+  // "x = -7/3 or 1" is graded wrong and the tutor regresses ("what's the first
+  // step?"). When the student states a root-SET answer and the PINNED board
+  // problem solves to multiple roots, grade against those: the pin is the
+  // canonical problem the student is actually answering. Tightly gated
+  // (root-set answer + multi-root pin) so single-value sub-step answers are
+  // never affected.
+  if (context.pinnedProblemTex && statesRootSet(rawText)) {
+    try {
+      const pinned = parseCleanProblem(context.pinnedProblemTex);
+      const pinnedRoots = pinned?.solution?.success && Array.isArray(pinned.solution.roots)
+        ? pinned.solution.roots
+        : null;
+      if (pinnedRoots && pinnedRoots.length > 1) {
+        problemInfo = {
+          problemType: pinned.problem.type,
+          correctAnswer: pinned.solution.answer,
+          roots: pinnedRoots,
+          steps: [],
+          content: context.pinnedProblemTex,
+        };
+      }
+    } catch (_) { /* fall through to the scan result */ }
+  }
+
   // ── Step 2: Verify the answer ──
   let isCorrect = null;
   let correctAnswer = null;
   let verificationSource = null;
+  let multiRoot = null;
 
-  if (problemInfo) {
+  // ── Step 2a: Multi-root solution sets ──
+  // A quadratic / absolute-value problem has more than one root. The student
+  // may name them one at a time across turns ("3", then "2") or together
+  // ("3 and 2"). We grade by membership in the known root set rather than
+  // string-comparing to "x = 3 or x = 2", and we accumulate which roots have
+  // been supplied so naming one correct root is "correct but incomplete" — NOT
+  // wrong. The cycle closes (fully correct) only once the student has supplied
+  // every root themselves, so no unsaid answer is ever revealed.
+  if (problemInfo && Array.isArray(problemInfo.roots) && problemInfo.roots.length > 1) {
+    multiRoot = gradeRootSet(rawText, problemInfo.roots, context.lastProblemState);
+    isCorrect = multiRoot.isCorrect; // true (complete) | false (named nothing in set) | null (partial)
+    correctAnswer = problemInfo.correctAnswer;
+    verificationSource = 'root_set';
+  } else if (problemInfo) {
     const verification = verifyAnswer(studentAnswer, problemInfo.correctAnswer);
     isCorrect = verification.isCorrect;
     correctAnswer = problemInfo.correctAnswer;
@@ -156,7 +216,7 @@ async function diagnose(observation, context = {}) {
   // LLM verdict fired at the start of the pipeline. Only trust high-confidence
   // verdicts — low-confidence stays unverifiable and the existing "compute
   // the answer yourself before responding" directives handle it.
-  if (isCorrect === null && context.llmVerificationPromise) {
+  if (isCorrect === null && multiRoot === null && context.llmVerificationPromise) {
     try {
       const verdict = await context.llmVerificationPromise;
       if (verdict && verdict.isCorrect !== null) {
@@ -235,8 +295,17 @@ async function diagnose(observation, context = {}) {
   const demonstratedReasoning = isCorrect === true && observation.demonstratedReasoning === true;
   const hasExplanation = observation.answer?.hasExplanation === true;
 
+  // A partial multi-root answer is "correct but incomplete" — its own type so
+  // the decide stage affirms + asks for the rest, never the wrong-answer ladder.
+  let type;
+  if (multiRoot && multiRoot.partial) {
+    type = 'correct_partial';
+  } else {
+    type = isCorrect === null ? 'unverifiable' : (isCorrect ? 'correct' : 'incorrect');
+  }
+
   return {
-    type: isCorrect === null ? 'unverifiable' : (isCorrect ? 'correct' : 'incorrect'),
+    type,
     isCorrect,
     answer: studentAnswer,
     correctAnswer,
@@ -244,11 +313,72 @@ async function diagnose(observation, context = {}) {
     evidence,
     demonstratedReasoning,  // true = student gave correct answer + valid reasoning
     hasExplanation,         // true = answer was embedded in explanatory text
-    verificationSource,     // 'solver' | 'arithmetic_override' | 'llm' | null
+    verificationSource,     // 'solver' | 'arithmetic_override' | 'llm' | 'root_set' | null
+    // Multi-root progress — present only while a solution set is being filled in.
+    // foundRoots feeds the persist stage's cross-turn accumulator. rootsRemaining
+    // is a COUNT only — never the unsaid root value (#1 anti-cheat rule).
+    multiRoot: multiRoot ? {
+      foundRoots: multiRoot.foundRoots,
+      totalCount: multiRoot.totalCount,
+      remainingCount: multiRoot.remainingCount,
+      matchedThisTurn: multiRoot.matchedThisTurn,
+    } : null,
     problemInfo: problemInfo ? {
       type: problemInfo.problemType,
       correctAnswer: problemInfo.correctAnswer,
+      roots: problemInfo.roots || null,
     } : null,
+  };
+}
+
+/**
+ * Grade a student message against a known multi-root solution set, accumulating
+ * which roots have been supplied across turns.
+ *
+ * @param {string} rawText - the student's raw message
+ * @param {number[]} roots - the full solution set, e.g. [3, 2]
+ * @param {Object|null} lastProblemState - persisted state; may carry foundRoots[]
+ * @returns {{
+ *   isCorrect: (true|false|null), partial: boolean, foundRoots: number[],
+ *   matchedThisTurn: number[], remainingCount: number, totalCount: number
+ * }}
+ *   isCorrect: true = all roots now supplied; false = named nothing in the set;
+ *   null = named a correct root but the set is still incomplete (partial).
+ */
+function gradeRootSet(rawText, roots, lastProblemState) {
+  const TOL = 0.01;
+  const priorFound = Array.isArray(lastProblemState?.foundRoots)
+    ? lastProblemState.foundRoots
+    : [];
+  const matchedThisTurn = matchRootsInText(rawText, roots, TOL);
+
+  // Union prior + this-turn matches, deduped within tolerance and kept in root order.
+  const foundRoots = [];
+  for (const root of roots) {
+    const named = priorFound.some(f => Math.abs(f - root) <= TOL)
+      || matchedThisTurn.some(m => Math.abs(m - root) <= TOL);
+    if (named) foundRoots.push(root);
+  }
+  const remainingCount = roots.length - foundRoots.length;
+
+  let isCorrect;
+  let partial = false;
+  if (matchedThisTurn.length === 0) {
+    isCorrect = false;              // named no root in the set this turn
+  } else if (remainingCount === 0) {
+    isCorrect = true;               // every root supplied (possibly across turns)
+  } else {
+    isCorrect = null;               // correct root named, set still incomplete
+    partial = true;
+  }
+
+  return {
+    isCorrect,
+    partial,
+    foundRoots,
+    matchedThisTurn,
+    remainingCount,
+    totalCount: roots.length,
   };
 }
 
@@ -282,6 +412,7 @@ function hasLibraryMisconceptions(skillId) {
 
 module.exports = {
   diagnose,
+  gradeRootSet,
   estimateIndependence,
   hasLibraryMisconceptions,
 };

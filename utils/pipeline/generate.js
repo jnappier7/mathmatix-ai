@@ -26,6 +26,11 @@ const {
   isStructuredModeEnabled,
   buildStructuredResponseInstructions,
 } = require('../boardResponseSchema');
+const {
+  isConceptModelsEnabled,
+  isConceptModelsGenerativeEnabled,
+  buildConceptModelInstructions,
+} = require('../conceptModelPrompt');
 
 // Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
 // replacement / narration paths). Streaming chunks use the stateful
@@ -354,6 +359,17 @@ function assemblePrompt(decision, promptContext) {
   // Flag off → this is a no-op and the prompt is byte-for-byte today's.
   if (isStructuredModeEnabled()) {
     fullSystemPrompt += '\n\n' + buildStructuredResponseInstructions();
+  }
+
+  // ── Concept models (CONCEPT_MODELS.md, "Summoned with intent") ──
+  // Teach the tutor that the interactive `model` board verb exists and when to
+  // summon it. Emits the right syntax for the active path (tag vs structured).
+  // Flag off → no-op, so the prompt is byte-for-byte today's.
+  if (isConceptModelsEnabled()) {
+    fullSystemPrompt += '\n\n' + buildConceptModelInstructions(
+      isStructuredModeEnabled(),
+      { generative: isConceptModelsGenerativeEnabled() }
+    );
   }
 
   // Inject phase-specific prompt if available

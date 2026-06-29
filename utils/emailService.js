@@ -119,6 +119,151 @@ async function sendParentalConsentRequest(parentEmail, studentName, consentToken
 }
 
 /**
+ * Student-initiated parent invite. The kid enters a parent's email; the parent
+ * gets a link to either create a free parent account (new) or confirm the link
+ * (existing account). Either way they end up linked to the child.
+ * @param {String} parentEmail - Parent's email address
+ * @param {String} studentName - Child's first name
+ * @param {String} actionUrl - Signup link (new) or accept-invite link (existing)
+ * @param {Boolean} existingAccount - true if a parent account already exists for this email
+ */
+async function sendParentInvite(parentEmail, studentName, actionUrl, existingAccount = false) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping parent invite');
+    return { success: false, error: 'Email not configured' };
+  }
+  try {
+    const emailConfig = getEmailConfig();
+    const safeName = studentName || 'Your child';
+    const cta = existingAccount ? 'Log in &amp; confirm' : 'Create your free parent account';
+    const blurb = existingAccount
+      ? `You already have a Mathmatix parent account. Log in and confirm to start following ${safeName} — you'll see what they're working on and get weekly progress reports.`
+      : `Create a free parent account and you'll be linked to ${safeName} automatically — no codes to enter. You'll see what they're working on, where they're improving, and get weekly progress reports.`;
+    const footnote = existingAccount
+      ? `If you weren't expecting this, you can ignore this email.`
+      : `If you weren't expecting this, you can ignore this email — no account will be created.`;
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: parentEmail,
+      subject: `${safeName} invited you to follow their math progress on Mathmatix`,
+      html: `
+        <div style="font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
+          <h2 style="color:#0d9488;">${safeName} wants to share their math progress with you</h2>
+          <p>${safeName} is learning math with Maya, their AI tutor on Mathmatix, and invited you to follow along.</p>
+          <p>${blurb}</p>
+          <p style="text-align:center; margin: 28px 0;">
+            <a href="${actionUrl}" style="background:#0d9488; color:#fff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">${cta}</a>
+          </p>
+          <p style="font-size: 0.85rem; color:#666;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${actionUrl}">${actionUrl}</a></p>
+          <p style="font-size: 0.8rem; color:#999;">${footnote}</p>
+        </div>
+      `
+    };
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Parent invite sent to ${parentEmail}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending parent invite:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Shared CAN-SPAM footer for one-off campaign emails. mailingAddress is REQUIRED
+// for legal compliance; the campaign script refuses to send without it.
+function campaignFooter(data) {
+  const unsub = `mailto:${getEmailConfig().replyTo}?subject=unsubscribe`;
+  return `
+    <hr style="border:none;border-top:1px solid #eee;margin:28px 0 12px;">
+    <p style="font-size:0.75rem;color:#999;line-height:1.5;">
+      You're receiving this because ${data.childFirstName} uses Mathmatix.
+      <a href="${unsub}" style="color:#999;">Unsubscribe</a>.<br>
+      ${data.mailingAddress || ''}
+    </p>`;
+}
+
+/**
+ * Summer-slide reactivation — PARENT version (carries the historical-progress
+ * welcome + the upgrade). data: { parentFirstName, childFirstName, tutorName,
+ * skillsMastered, minutesThisYear, longestStreak, baseUrl, mailingAddress }
+ */
+async function sendReactivationParentEmail(parentEmail, data) {
+  const transport = initializeTransporter();
+  if (!transport) return { success: false, error: 'Email not configured' };
+  try {
+    const child = data.childFirstName || 'your child';
+    const tutor = data.tutorName || 'their tutor at Mathmatix';
+    const streakLine = data.longestStreak > 0
+      ? `<li>🔥 <strong>${data.longestStreak}-day</strong> best streak</li>` : '';
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: getEmailConfig().replyTo,
+      to: parentEmail,
+      subject: `Don't let ${child} lose the math they earned this year`,
+      html: `
+        <div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a;">
+          <p>Hi ${data.parentFirstName || 'there'},</p>
+          <p>This year, ${child} put in real work with ${tutor}, their tutor on Mathmatix:</p>
+          <ul style="line-height:1.8;">
+            <li>🧠 <strong>${data.skillsMastered || 0} skills mastered</strong></li>
+            <li>⏱️ <strong>${data.minutesThisYear || 0} minutes</strong> of focused practice</li>
+            ${streakLine}
+          </ul>
+          <p>That's worth protecting. Here's the hard part: <strong>most kids lose about two months of math over the summer</strong>, and it compounds year after year. The ones who hold their ground just keep it warm with a little practice.</p>
+          <p>${child} doesn't need a summer program or a $50/hour tutor. <strong>${tutor} is here all summer</strong> — patient, available any time, and already knows exactly where ${child} left off. Fifteen minutes a week is enough to keep this year's gains.</p>
+          <p style="text-align:center;margin:28px 0;">
+            <a href="${data.baseUrl}/parent-dashboard.html" style="background:#0d9488;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block;">Keep ${child}'s math sharp →</a>
+          </p>
+          <p>Want the full toolkit — unlimited tutoring, voice sessions, and your parent dashboard? <a href="${data.baseUrl}/pricing.html">Mathmatix+ is $9.95/month</a> — less than 15 minutes of a private tutor, for a whole month of help.</p>
+          <p>Thanks for letting us be part of ${child}'s learning,<br><strong>Jason</strong> — founder &amp; math teacher, Mathmatix</p>
+          ${campaignFooter(data)}
+        </div>`
+    };
+    const info = await transport.sendMail(mailOptions);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending reactivation (parent):', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Summer-slide reactivation — KID version (re-engage + nudge them to add a
+ * parent). NON-commercial by design (COPPA: no pricing/upgrade to minors).
+ */
+async function sendReactivationKidEmail(studentEmail, data) {
+  const transport = initializeTransporter();
+  if (!transport) return { success: false, error: 'Email not configured' };
+  try {
+    const child = data.childFirstName || 'there';
+    const tutor = data.tutorName || 'Your tutor at Mathmatix';
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: getEmailConfig().replyTo,
+      to: studentEmail,
+      subject: `${tutor} misses you, ${child} 👋`,
+      html: `
+        <div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a;">
+          <p>Hey ${child}!</p>
+          <p>Summer's the secret weapon — keep math warm now and next year is <em>way</em> easier. ${tutor}'s ready whenever you are, and even 15 minutes a week keeps everything you learned locked in.</p>
+          <p style="text-align:center;margin:28px 0;">
+            <a href="${data.baseUrl}/chat.html" style="background:#0d9488;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block;">Jump back in →</a>
+          </p>
+          <p style="font-size:0.9rem;color:#555;">P.S. Want a grown-up to see how awesome you're doing? In <strong>Settings → Share Progress</strong>, pop in a parent's email and we'll send them the rest. 🎉</p>
+          <p>Keep being great,<br>The Mathmatix team</p>
+          ${campaignFooter(data)}
+        </div>`
+    };
+    const info = await transport.sendMail(mailOptions);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending reactivation (kid):', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Send parental consent request email for teen students (13-17)
  * Unlike under-13, this is a lighter-touch flow — the email explains what
  * the student wants to use, sells the benefits, and clearly describes
@@ -1522,7 +1667,7 @@ function getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl
       </div>
 
       <p style="margin: 0 0 15px 0; color: #555; font-size: 16px; line-height: 1.6;">
-        After ${accessUntilDate}, the account will switch to our free plan (30 AI minutes per week).
+        After ${accessUntilDate}, the account will switch to our free plan (30 AI minutes per month).
       </p>
 
       <h3 style="margin: 25px 0 12px 0; color: #2c3e50; font-size: 18px;">Changed your mind?</h3>
@@ -1569,6 +1714,9 @@ function getCancellationConfirmationTemplate(firstName, accessUntilDate, baseUrl
 
 module.exports = {
   sendParentWeeklyReport,
+  sendParentInvite,
+  sendReactivationParentEmail,
+  sendReactivationKidEmail,
   sendParentalConsentRequest,
   sendTeenConsentRequest,
   sendPasswordResetEmail,

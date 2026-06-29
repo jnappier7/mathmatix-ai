@@ -31,7 +31,7 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
-const { detectGrowthCheckAcceptance } = require('../utils/growthCheckIntent');
+const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -418,6 +418,61 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             // pipeline handle it so the AI can explain why naturally.
         }
 
+        // ── STARTING POINT LAUNCH INTERCEPT ──
+        // Mirror of the Growth Check intercept above. The greeting (and the
+        // mid-session struggle re-mention in utils/prompt.js) offer the
+        // Starting Point — the full initial IRT placement assessment served by
+        // the FloatingScreener. Without this intercept the LLM would try to
+        // improvise placement questions in the chat bubble. When the student
+        // explicitly accepts ("let's do the starting point", "take my
+        // assessment") AND still needs one, short-circuit and tell the client
+        // to open the structured UI — works on desktop and mobile alike,
+        // without relying on the sidebar button.
+        if (!hasFiles && !isMasteryMode && detectStartingPointAcceptance(effectiveMessage)) {
+            const needsStartingPoint = !user.assessmentCompleted
+                || (user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) <= new Date());
+
+            if (needsStartingPoint) {
+                const tutorReply = "Awesome — opening your Starting Point now. It's not a test you can fail; just answer what you can and I'll take it from there.";
+                activeConversation.messages.push({ role: 'user', content: effectiveMessage });
+                activeConversation.messages.push({ role: 'assistant', content: tutorReply });
+                activeConversation.lastActivity = new Date();
+                try {
+                    await activeConversation.save();
+                } catch (saveErr) {
+                    logger.warn('Starting Point intercept conversation save failed', { error: saveErr.message });
+                }
+
+                // Mark as offered so the AI doesn't keep re-pitching it.
+                if (!user.startingPointOffered) {
+                    User.findByIdAndUpdate(userId, {
+                        startingPointOffered: true,
+                        startingPointOfferedAt: new Date()
+                    }).catch(err => logger.warn('Starting Point offered flag update failed', { error: err.message }));
+                }
+
+                logger.info('Starting Point acceptance intercepted', { userId });
+
+                const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+                const userXpInCurrentLevel = Math.max(0, (user.xp || 0) - xpForLevelStart);
+                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.voiceId || 'default';
+
+                return res.json({
+                    text: tutorReply,
+                    userXp: userXpInCurrentLevel,
+                    userLevel: user.level,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
+                    specialXpAwarded: "",
+                    voiceId: tutorVoice,
+                    newlyUnlockedTutors: [],
+                    drawingSequence: null,
+                    launchAssessment: 'starting-point',
+                });
+            }
+            // Already has a current Starting Point — let the normal pipeline
+            // handle it so the AI can respond naturally.
+        }
+
         // ── FILE UPLOAD PROCESSING (consolidated from chatWithFile.js) ──
         // When files are uploaded via multipart/form-data, process them here
         // so all chat goes through one pipeline with one set of guards.
@@ -582,11 +637,31 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 .catch(err => { logger.error('Error fetching error patterns', { error: err.message }); return null; })
         );
 
-        // 7. Math verification (runs in parallel with everything else)
+        // 7. Active worksheet — the doc pinned to THIS conversation, re-injected
+        //    at full length every turn so "#3 on the quiz" resolves without the
+        //    student re-typing it. On the upload turn we skip the query and use
+        //    the freshly extracted text instead (the StudentUpload save is
+        //    fire-and-forget and may not have landed yet).
+        contextPromises.push(
+            hasUploadedFiles
+                ? Promise.resolve(null)
+                : StudentUpload.findOne({
+                        userId: user._id,
+                        conversationId: activeConversation._id,
+                        fileType: 'pdf',
+                        extractedText: { $nin: [null, ''] },
+                    })
+                    .sort({ uploadedAt: -1 })
+                    .select('originalFilename extractedText')
+                    .lean()
+                    .catch(err => { logger.error('Error fetching active worksheet', { error: err.message }); return null; })
+        );
+
+        // 8. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns] = await Promise.all(contextPromises);
+        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns, activeWorksheetDoc] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -641,6 +716,29 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
             uploadContext = { count: recentUploads.length, summary: uploadsSummary };
             logger.debug('Injected recent uploads into AI context', { count: recentUploads.length });
+        }
+
+        // Pin the active worksheet (full text) for every-turn injection. On the
+        // upload turn the text is in memory (uploadPdfTexts); on later turns it
+        // comes from the conversation-scoped StudentUpload fetched above. This is
+        // distinct from the truncated cross-session "recent uploads" excerpt —
+        // it's the doc the student is actively working from, kept salient so the
+        // tutor never asks them to re-share a problem it already has.
+        let activeWorksheet = null;
+        const WORKSHEET_MAX_CHARS = 12000;
+        if (uploadPdfTexts.length > 0) {
+            const w = uploadPdfTexts[uploadPdfTexts.length - 1];
+            if (w && w.text && w.text.trim()) {
+                activeWorksheet = { filename: w.filename, text: w.text };
+            }
+        } else if (activeWorksheetDoc && activeWorksheetDoc.extractedText) {
+            activeWorksheet = { filename: activeWorksheetDoc.originalFilename, text: activeWorksheetDoc.extractedText };
+        }
+        if (activeWorksheet && activeWorksheet.text.length > WORKSHEET_MAX_CHARS) {
+            activeWorksheet.text = activeWorksheet.text.slice(0, WORKSHEET_MAX_CHARS) + '\n[... worksheet truncated — ask which section if the relevant problem may be below]';
+        }
+        if (activeWorksheet) {
+            logger.debug('Pinned active worksheet to prompt', { filename: activeWorksheet.filename, chars: activeWorksheet.text.length, source: uploadPdfTexts.length > 0 ? 'current-upload' : 'conversation-pin' });
         }
 
         // Log parallel fetch performance
@@ -838,12 +936,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     };
                 }
             } else {
-                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
+                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
             }
         }
 
         if (!systemPrompt) {
-            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
+            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
         }
 
         // ── Inject step-context reminder into last user message ──
@@ -1670,6 +1768,33 @@ router.post('/deduct-hint-xp', isAuthenticated, async (req, res) => {
 // Track session time - receives heartbeat updates from frontend
 // Accumulates precise seconds and derives minutes for display
 // Optimized: uses req.user from Passport (no extra findById) and atomic $inc updates
+// PATCH /api/chat/reaction
+// Persist an emoji reaction on a message in the user's active conversation.
+// (Frontend: public/js/script.js addReaction → was 404ing, no route existed.)
+router.patch('/reaction', isAuthenticated, async (req, res) => {
+    const { messageIndex, reaction } = req.body;
+    if (typeof messageIndex !== 'number' || messageIndex < 0) {
+        return res.status(400).json({ success: false, message: 'Valid messageIndex is required.' });
+    }
+    try {
+        const convoId = req.user.activeConversationId;
+        if (!convoId) {
+            return res.status(404).json({ success: false, message: 'No active conversation.' });
+        }
+        // Scope by userId so a user can only react on their own conversation.
+        const convo = await Conversation.findOne({ _id: convoId, userId: req.user._id });
+        if (!convo || !Array.isArray(convo.messages) || messageIndex >= convo.messages.length) {
+            return res.status(404).json({ success: false, message: 'Message not found.' });
+        }
+        convo.messages[messageIndex].reaction = reaction || null;
+        await convo.save();
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error saving reaction:', error);
+        res.status(500).json({ success: false, message: 'Could not save reaction.' });
+    }
+});
+
 router.post('/track-time', isAuthenticated, async (req, res) => {
     try {
         const { activeSeconds } = req.body;
@@ -1934,6 +2059,67 @@ async function handleGreetingRequest(req, res, userId) {
             await user.save();
         }
 
+        // ── Continuation: returning to chat from the voice tutor ──
+        // The voice tutor's end-session writes a "[Voice session ... just ended]"
+        // continuity marker into this same conversation (see voiceTutor.js). When
+        // the student lands back on chat.html the greeting fires again — but this
+        // is a continuation of an in-progress session, not a new visit, so a fresh
+        // greeting would feel like "a new conversation began". Detect the marker
+        // and stay silent: the tutor already has the full session context, the
+        // student just keeps going.
+        if (activeConversation.messages && activeConversation.messages.length > 0) {
+            const lastMsg = activeConversation.messages[activeConversation.messages.length - 1];
+            const cameBackFromVoice = lastMsg
+                && lastMsg.role === 'assistant'
+                && typeof lastMsg.content === 'string'
+                && lastMsg.content.startsWith('[Voice session');
+
+            if (cameBackFromVoice) {
+                const contTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+                const contTutor = TUTOR_CONFIG[contTutorKey];
+                await Conversation.findByIdAndUpdate(activeConversation._id, { lastActivity: new Date() });
+
+                // Recent tail to paint into the chat transcript so the just-finished
+                // voice exchange shows up as bubbles (continuity is visible, not just
+                // implicit). The "[Voice session ... just ended]" marker is an
+                // LLM-facing recap — strip it so it never renders as a student bubble.
+                const visibleMessages = activeConversation.messages
+                    .slice(-50)
+                    .filter(m => !(
+                        m.role === 'assistant'
+                        && typeof m.content === 'string'
+                        && m.content.startsWith('[Voice session')
+                    ))
+                    .map(m => ({
+                        role: m.role,
+                        content: m.content,
+                        workCheckId: m.workCheckId || null,
+                    }));
+
+                const useStreaming = req.query.stream === 'true';
+                if (useStreaming) {
+                    res.setHeader('Content-Type', 'text/event-stream');
+                    res.setHeader('Cache-Control', 'no-cache');
+                    res.setHeader('Connection', 'keep-alive');
+                    res.setHeader('X-Accel-Buffering', 'no');
+                    res.flushHeaders();
+                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
+                    return res.end();
+                }
+                return res.json({
+                    text: '',
+                    continued: true,
+                    conversationId: activeConversation._id,
+                    messages: visibleMessages,
+                    voiceId: contTutor.voiceId,
+                    isGreeting: true,
+                    userXp: user.xp || 0,
+                    userLevel: user.level || 1,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
+                });
+            }
+        }
+
         // Replay the just-sent greeting on a quick page refresh so the same
         // greeting isn't generated and saved twice. Only replay when the last
         // message is still the greeting (no user reply yet) and was created
@@ -2141,8 +2327,11 @@ async function handleGreetingRequest(req, res, userId) {
         let maxTokens = 150;
         let openerResult = null;
         // Optional inline call-to-action button attached to the greeting
-        // bubble. Set when the student is overdue for a Growth Check so the
-        // client can render a one-tap launcher inside the message.
+        // bubble. Set when a new student should be offered the Starting Point,
+        // or when a returning student is overdue for a Growth Check, so the
+        // client can render a one-tap launcher inside the message instead of
+        // pointing at the sidebar button (hidden on desktop, off-canvas on
+        // mobile).
         let greetingInlineCta = null;
 
         if (isCourseGreeting && courseContext) {
@@ -2261,11 +2450,20 @@ If they're new, introduce yourself IN CHARACTER — just be yourself, not formal
 End with something they can respond to. ${warmUpInstruction}`;
             }
 
-            // Add Starting Point offer (only on first session, never again)
+            // Add Starting Point offer (only on first session, never again).
+            // We render a tappable button right below the greeting (works on
+            // desktop AND mobile) instead of pointing at the sidebar button,
+            // which is hidden inside a collapsed section on desktop and
+            // off-canvas on mobile.
             if (shouldOfferStartingPoint) {
+                greetingInlineCta = {
+                    type: 'launch-starting-point',
+                    label: 'Find My Starting Point',
+                    emoji: '🎯',
+                };
                 greetingInstruction += `
 
-This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar — but do it in YOUR voice, not as a product announcement. The idea is: "There's a quick thing in the sidebar that helps me figure out where you're at — it's not a test, just helps me know what to focus on. No rush." Keep it one sentence, super low-pressure. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
+This is the student's first session. A button labeled "${greetingInlineCta.label}" is rendered right below your greeting — they tap it to begin. After your greeting, casually invite them to tap it, in YOUR voice, not as a product announcement. The idea is: "there's a quick thing right below this — it's not a test, just helps me figure out where you're at so I know what to focus on. No rush." Keep it ONE sentence, super low-pressure, and reference the button below. Do NOT say it's "in the sidebar" or "on the left", and do NOT invent your own questions or pretend to start it inline. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
             }
 
             // Re-engage students who are sitting on an overdue growth check.

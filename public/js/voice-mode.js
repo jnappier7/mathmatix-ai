@@ -72,10 +72,24 @@
     } catch (_) { /* observer unsupported — label stays at initial paint */ }
   }
 
+  // The composer's headset button (#voice-mode-btn) is the primary entry
+  // into voice — it toggles voice in place (no separate page). It reads
+  // "talk" when idle and "end" once voice mode is on.
+  function paintComposerEntry() {
+    var b = document.getElementById('voice-mode-btn');
+    if (!b) return;
+    var on = isOn();
+    var label = on ? 'End voice mode' : 'Talk to your tutor';
+    b.title = label;
+    b.setAttribute('aria-label', label);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
   function enter() {
     if (isOn()) return;
     document.body.classList.add('cr-voice');
     paintButton();
+    paintComposerEntry();
 
     // Kick off the voice engine. The click that called enter() is a
     // user gesture, so getUserMedia inside startListening() is allowed.
@@ -91,6 +105,7 @@
     if (!isOn()) return;
     document.body.classList.remove('cr-voice');
     paintButton();
+    paintComposerEntry();
 
     var vc = window.voiceController;
     if (vc) {
@@ -101,17 +116,57 @@
 
   function toggle() { if (isOn()) { exit(); } else { enter(); } }
 
-  function init() {
-    var host = document.querySelector('.cr-header-extras');
-    if (!host) return;
+  // Expose a tiny API so other surfaces (mobile nav, etc.) can open voice
+  // without knowing the internals. There is no separate voice page anymore.
+  window.voiceMode = { toggle: toggle, enter: enter, exit: exit, isOn: isOn };
 
-    btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'cr-voice-toggle';
-    btn.addEventListener('click', toggle);
-    host.insertBefore(btn, host.firstChild);
-    paintButton();
-    watchTutorName();
+  // Wire a voice entry button to the in-place toggle. If this is the
+  // paywall-locked sidebar entry (its lock icon is showing), stand down and
+  // let script.js's upgrade-prompt handler take the click instead.
+  function bindEntry(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function (e) {
+      var lock = document.getElementById('voice-tutor-lock');
+      if (lock && getComputedStyle(lock).display !== 'none') return;
+      e.preventDefault();
+      toggle();
+    });
+  }
+
+  function init() {
+    // Every voice entry toggles voice in place — there's no separate voice
+    // page now. The composer headset is the primary entry; the sidebar
+    // "Voice Tutor" button is a second, paywall-gated one.
+    bindEntry('voice-mode-btn');
+    bindEntry('sidebar-voice-tutor-btn');
+    paintComposerEntry();
+
+    // Mobile control dock: on phones the composer is swapped for a dock
+    // (mobile-poster-chat.css). The orb is the mic; this is the way out.
+    // CSS shows it only when body.cr-voice on mobile, so it's harmless to
+    // create unconditionally here.
+    if (!document.getElementById('mpc-voice-end')) {
+      var endBtn = document.createElement('button');
+      endBtn.type = 'button';
+      endBtn.id = 'mpc-voice-end';
+      endBtn.title = 'End voice';
+      endBtn.setAttribute('aria-label', 'End voice');
+      endBtn.innerHTML = '<i class="fas fa-phone-slash" aria-hidden="true"></i>';
+      endBtn.addEventListener('click', exit);
+      document.body.appendChild(endBtn);
+    }
+
+    var host = document.querySelector('.cr-header-extras');
+    if (host) {
+      btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cr-voice-toggle';
+      btn.addEventListener('click', toggle);
+      host.insertBefore(btn, host.firstChild);
+      paintButton();
+      watchTutorName();
+    }
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && isOn()) exit();

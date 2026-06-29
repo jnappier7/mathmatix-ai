@@ -15,11 +15,13 @@ const {
   synthesizeBoardCommands,
   mergeWithLlmCommands,
   synthesizeFallbackPose,
+  detectBoardReference,
   _detectAppliedOperation,
   _detectIntermediateEquation,
   _detectFinalSolution,
   _detectSubstitutionCheck,
   _detectPosedProblem,
+  _looksLikeProblemStatement,
   _detectGeometryProblem,
   _extractProblemSentence,
   _extractPosableSentence,
@@ -118,6 +120,18 @@ describe('boardSynthesizer — detectors', () => {
       const r = _detectPosedProblem('Solve 4x+3=27');
       expect(r).not.toBeNull();
       expect(r.tex).toMatch(/4x.*3.*27/);
+    });
+
+    test('renders a quadratic equation (was null before the coeff-shape fix)', () => {
+      const r = _detectPosedProblem('solve 2x^2+4x-6=0');
+      expect(r).not.toBeNull();
+      expect(r.tex).toBe('2x^2 + 4x - 6 = 0');
+    });
+
+    test('renders a factoring task as the bare trinomial (no "= 0")', () => {
+      const r = _detectPosedProblem('factor x^2-7x+10');
+      expect(r).not.toBeNull();
+      expect(r.tex).toBe('x^2 - 7x + 10');
     });
   });
 
@@ -285,6 +299,103 @@ describe('boardSynthesizer — full turns', () => {
   });
 });
 
+describe('boardSynthesizer — arithmetic final answers (no variable)', () => {
+  const {
+    _detectBareFinalAnswer,
+    _bareAnswerToTex,
+  } = require('../../utils/pipeline/boardSynthesizer');
+
+  describe('_detectBareFinalAnswer', () => {
+    test('recognizes bare integer answers, with or without "!"', () => {
+      expect(_detectBareFinalAnswer('8')).toBe('8');
+      expect(_detectBareFinalAnswer('8!')).toBe('8');
+      expect(_detectBareFinalAnswer('  8 . ')).toBe('8');
+    });
+    test('recognizes fractions and mixed numbers', () => {
+      expect(_detectBareFinalAnswer('4/15')).toBe('4/15');
+      expect(_detectBareFinalAnswer('3/20.')).toBe('3/20');
+      expect(_detectBareFinalAnswer('2 1/2')).toBe('2 1/2');
+      expect(_detectBareFinalAnswer('-4/15')).toBe('-4/15');
+    });
+    test('does NOT match problem references or prose', () => {
+      expect(_detectBareFinalAnswer('number 2')).toBeNull();
+      expect(_detectBareFinalAnswer('#3')).toBeNull();
+      expect(_detectBareFinalAnswer('is it 8?')).toBeNull();
+      expect(_detectBareFinalAnswer('x = 8')).toBeNull();
+      expect(_detectBareFinalAnswer('the answer is 8')).toBeNull();
+      expect(_detectBareFinalAnswer('')).toBeNull();
+    });
+  });
+
+  describe('_bareAnswerToTex', () => {
+    test('fractions and mixed numbers become \\frac', () => {
+      expect(_bareAnswerToTex('4/15')).toBe('\\frac{4}{15}');
+      expect(_bareAnswerToTex('2 1/2')).toBe('2\\frac{1}{2}');
+      expect(_bareAnswerToTex('8')).toBe('8');
+    });
+  });
+
+  test('bare correct answer + pinned problem → verify "problem = answer"', () => {
+    // The transcript-3 scenario: student answers "8!" to a mixed-number
+    // multiply, the math engine confirms, but there is no variable so the
+    // old detectFinalSolution path could never fire.
+    const cards = synthesizeBoardCommands({
+      studentMessage: '8!',
+      tutorResponse: 'Exactly! Nice work.',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '8', correctAnswer: '8' },
+      observation: { messageType: 'answer_attempt', answer: { value: '8' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '3\\frac{1}{2} \\times 2\\frac{2}{7}',
+    });
+    expect(cards).toHaveLength(1);
+    expect(cards[0]).toEqual({
+      action: 'verify',
+      tex: '3\\frac{1}{2} \\times 2\\frac{2}{7} = 8',
+    });
+  });
+
+  test('bare fraction answer renders as \\frac on the verify card', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '4/15',
+      tutorResponse: 'Yes!',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '4/15', correctAnswer: '4/15' },
+      observation: { messageType: 'answer_attempt', answer: { value: '4/15' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '\\frac{6}{21} \\times \\frac{14}{15}.',
+    });
+    expect(cards[0]).toEqual({
+      action: 'verify',
+      tex: '\\frac{6}{21} \\times \\frac{14}{15} = \\frac{4}{15}',
+    });
+  });
+
+  test('WRONG bare answer (math engine vetoes) → no verify card', () => {
+    // The transcript-2 scenario: tutor prose affirmed "15/4" but the engine
+    // knows the answer is 4/15. The board must stay truthful.
+    const cards = synthesizeBoardCommands({
+      studentMessage: '15/4',
+      tutorResponse: 'Exactly! You nailed it.',
+      diagnosis: { type: 'answer_attempt', isCorrect: false, answer: '15/4', correctAnswer: '4/15' },
+      observation: { messageType: 'answer_attempt', answer: { value: '15/4' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '\\frac{6}{21} \\times \\frac{14}{15}',
+    });
+    expect(cards.some(c => c.action === 'verify')).toBe(false);
+  });
+
+  test('bare answer with NO pinned problem → no verify (nothing to anchor)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '8',
+      tutorResponse: 'Right!',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '8', correctAnswer: '8' },
+      observation: { messageType: 'answer_attempt', answer: { value: '8' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: null,
+    });
+    expect(cards.some(c => c.action === 'verify')).toBe(false);
+  });
+});
+
 describe('boardSynthesizer — guard rails', () => {
   test('does NOT re-pose when cycle is open (lastBoardAction=pose)', () => {
     const cards = synthesizeBoardCommands({
@@ -417,6 +528,17 @@ describe('boardSynthesizer — geometry pose fallback', () => {
         'Solve for x: 2x + 4 = 20. What is x?'
       )).toBeNull();
     });
+
+    test('rejects a concept explanation that ends in an offer question', () => {
+      // Regression: student asked "can you show that on the board?" and
+      // Maya replied with a unit-circle explanation ending in offers.
+      // The trailing "What … would you like to explore?" / "do you want
+      // to find …" are NOT posed problems — they must not quote the
+      // prose recap onto the board as a PROBLEM card.
+      expect(_detectGeometryProblem(
+        "Here's the unit circle! You can see the angles in both degrees and radians, along with the corresponding sine and cosine values. For example, at 0 radians, the coordinates are (1, 0), which means cos(0) = 1 and sin(0) = 0. What angle would you like to explore next? Or do you want to find the sine and cosine for a specific angle?"
+      )).toBeNull();
+    });
   });
 
   describe('_extractProblemSentence', () => {
@@ -443,6 +565,20 @@ describe('boardSynthesizer — geometry pose fallback', () => {
 
     test('rejects very short sentences', () => {
       expect(_extractProblemSentence('What?')).toBeNull();
+    });
+
+    test('skips conversational offer questions', () => {
+      // Only offer questions end in '?', so there is no real problem.
+      expect(_extractProblemSentence(
+        'You can see the angles in both degrees and radians. What would you like to explore next? Or do you want to try one?'
+      )).toBeNull();
+    });
+
+    test('picks the real problem question even when an offer question follows', () => {
+      const s = _extractProblemSentence(
+        'A circle has a radius of 8 units. What is the area of the circle? Want to try another one?'
+      );
+      expect(s).toMatch(/area of the circle\?$/);
     });
   });
 
@@ -653,5 +789,142 @@ describe('boardSynthesizer — Phase 5 backfill', () => {
       expect(synthesizeFallbackPose({})).toBeNull();
       expect(synthesizeFallbackPose()).toBeNull();
     });
+  });
+
+  describe('detectBoardReference', () => {
+    test.each([
+      'show me on the work board',
+      'can you put it on the board?',
+      'draw it out for me',
+      'draw that please',
+      'show me on the whiteboard',
+      'use the workspace',
+      'show me on the board',
+    ])('fires on board reference: "%s"', (msg) => {
+      expect(detectBoardReference(msg)).toBe(true);
+    });
+
+    test.each([
+      "i'm on board with that plan",       // agreement idiom, not the board
+      'can you explain the next step?',
+      'i think the answer is 5',
+      'what does congruent mean?',
+      'yeah that makes sense',
+    ])('does not fire on: "%s"', (msg) => {
+      expect(detectBoardReference(msg)).toBe(false);
+    });
+
+    test('safe on empty / non-string input', () => {
+      expect(detectBoardReference('')).toBe(false);
+      expect(detectBoardReference(null)).toBe(false);
+      expect(detectBoardReference(undefined)).toBe(false);
+    });
+  });
+});
+
+describe('boardSynthesizer — pinned problem anchor', () => {
+  // Regression coverage for the two WorkBoard PROBLEM bugs:
+  //   • Screenshot 1: an intermediate scratch line ("x(x+6)-2(x+6)=0")
+  //     overwrote the PROBLEM card.
+  //   • Screenshot 2: a stale earlier problem ("(x+3)(x+2)") stayed
+  //     pinned while the student worked a different one.
+  // The fix pins the canonical problem and passes it back in as
+  // `pinnedProblem`; pose decisions key on that, not on whatever
+  // equation happens to appear in the turn.
+
+  describe('_looksLikeProblemStatement', () => {
+    test('accepts a single fresh equation', () => {
+      expect(_looksLikeProblemStatement('2x^2+4x-6=0')).toBe(true);
+    });
+    test('accepts a command-prefixed problem', () => {
+      expect(_looksLikeProblemStatement('factor x^2-7x+10')).toBe(true);
+    });
+    test('rejects a stated solution "x=2 or -6"', () => {
+      expect(_looksLikeProblemStatement('x=2 or -6')).toBe(false);
+    });
+    test('rejects multi-line worked scratch (screenshot 1)', () => {
+      expect(_looksLikeProblemStatement(
+        'x^2 +6x-2x-12=0\nx(x+6)-2(x+6)=0\n(x-2)(x+6)=0\nx=2 or -6'
+      )).toBe(false);
+    });
+    test('does not misread "2x = 10" as an answer', () => {
+      expect(_looksLikeProblemStatement('solve 2x = 10')).toBe(true);
+    });
+  });
+
+  test('no pin + worked scratch dropped on a closed cycle → no pose (screenshot 1 closed-cycle guard)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'x^2 +6x-2x-12=0\nx(x+6)-2(x+6)=0\n(x-2)(x+6)=0\nx=2 or -6',
+      tutorResponse: "Let's double-check those factors together.",
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'verify', // cycle closed
+      pinnedProblem: null,
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+  });
+
+  test('pinned problem holds while student posts intermediate work → no re-pose (screenshot 1)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'x(x+6)-2(x+6)=0',
+      tutorResponse: 'Good grouping! What comes next?',
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'apply',
+      pinnedProblem: '2x^2 + 4x - 6 = 0',
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+    expect(cards.some(c => c.action === 'clear')).toBe(false);
+  });
+
+  test('pinned problem + intermediate equation "3x=21" → resolve, never a re-pose', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '3x=21',
+      tutorResponse: 'Great job! Now what?',
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'apply',
+      pinnedProblem: '3x - 5 = 16',
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+    expect(cards).toEqual([{ action: 'resolve', tex: '3x = 21' }]);
+  });
+
+  test('student explicitly starts a DIFFERENT problem → clear + pose (auto-advance, fixes screenshot 2)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'factor x^2-7x+10',
+      tutorResponse: "Sure! Let's factor that one.",
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'resolve',          // old cycle still open
+      pinnedProblem: '(x+3)(x+2)',          // stale pin from a prior problem
+    });
+    const actions = cards.map(c => c.action);
+    expect(actions).toContain('clear');
+    expect(actions).toContain('pose');
+    // clear must precede pose so the board resets before the new problem
+    expect(actions.indexOf('clear')).toBeLessThan(actions.indexOf('pose'));
+    const pose = cards.find(c => c.action === 'pose');
+    expect(pose.tex).toMatch(/7x.*10/);
+  });
+
+  test('re-stating the SAME pinned problem does not re-pose', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: 'solve 3x-5=16',
+      tutorResponse: "We're already on it!",
+      diagnosis: { type: 'no_answer', isCorrect: null },
+      observation: { messageType: 'general_math' },
+      lastBoardAction: 'apply',
+      pinnedProblem: '3x - 5 = 16',
+    });
+    expect(cards.some(c => c.action === 'pose')).toBe(false);
+  });
+
+  test('merge keeps clear before pose for an auto-advance pair', () => {
+    const { all } = mergeWithLlmCommands([], [
+      { action: 'pose', tex: 'x^2 - 7x + 10' },
+      { action: 'clear' },
+    ]);
+    expect(all.map(c => c.action)).toEqual(['clear', 'pose']);
   });
 });

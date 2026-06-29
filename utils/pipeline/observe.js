@@ -436,7 +436,23 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
   const hasUnicodeMath = /[²³⁴√∫Σπ]/.test(t);
   const hasSolveVerb = /^(solve|factor|simplify|evaluate|compute|graph|find)\s+/i.test(t);
 
-  const hasMathSignals = hasEquation || hasLatexMath || hasVariableTerms || hasUnicodeMath || hasSolveVerb;
+  // Bare arithmetic / fraction COMPUTATION drops — a student handing over a
+  // numeric problem to carry out, with no attempt: "12⅔ - 4¼", "1/2 + 1/4",
+  // "16/4 - 2", "3.5 × 4". Without this, only equations (=), variable terms,
+  // \frac LaTeX, or the limited [²³⁴√∫Σπ] set counted — so a Unicode or ASCII
+  // fraction drop slipped through and the tutor solved it end-to-end.
+  // A lone value/answer ("3/4", "38/3", "8") is NOT a drop, so we require an
+  // explicit +, -, ×, ÷, ·, or * operator between terms (a single "/" denotes
+  // one fraction value, not an operation to perform).
+  const hasVulgarFraction = /[¼-¾⅐-⅞]/.test(t); // ¼ ½ ¾ ⅓ ⅔ ⅕ …
+  const hasArithmeticOp =
+    /\d\s*[-+×÷⋅·*]\s*[\d(¼-¾⅐-⅞]/.test(t) ||   // 4 - 2, 16 ÷ 4, 1/2 + 1/4
+    /[¼-¾⅐-⅞]\s*[-+×÷⋅·*/]\s*\d/.test(t);        // ⅔ - 4  (mixed-number op)
+  const hasArithmeticComputation =
+    hasArithmeticOp || (hasVulgarFraction && /[-+×÷⋅·*/]/.test(t));
+
+  const hasMathSignals = hasEquation || hasLatexMath || hasVariableTerms ||
+    hasUnicodeMath || hasSolveVerb || hasArithmeticComputation;
   if (!hasMathSignals) return false;
 
   // Attempt / reasoning / stuck indicators disqualify — the student has engaged.

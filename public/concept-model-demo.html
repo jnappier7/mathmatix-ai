@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concept Models — browser verification</title>
+  <meta name="robots" content="noindex" />
+
+  <!-- KaTeX for the smart-fraction readouts (the app's vendored copy). -->
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+  <script src="/vendor/katex/katex.min.js"></script>
+
+  <style>
+    :root {
+      --cr-accent: #5B3DF6;
+      --cr-accent-grad: linear-gradient(135deg, #8B7BFF, #5B3DF6);
+      --cr-text: #1c1530;
+      --cr-text-dim: #6b6580;
+      --cr-bg-1: #f5f3ff;
+      --cr-bg-2: #ffffff;
+      --cr-bg-panel: #ffffff;
+      --cr-bg-deep: #faf9ff;
+      --cr-border: #e3def5;
+      --cr-pill-bg: #efeaff;
+      --cr-radius-sm: 8px;
+      --cr-radius-md: 12px;
+      --cr-radius-lg: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0; padding: 24px;
+      background: var(--cr-bg-1); color: var(--cr-text);
+    }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    p.sub { margin: 0 0 24px; color: var(--cr-text-dim); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+    .demo-card {
+      background: var(--cr-bg-panel);
+      border: 1px solid var(--cr-border);
+      border-radius: var(--cr-radius-lg);
+      padding: 16px;
+      box-shadow: 0 4px 16px rgba(91, 61, 246, 0.06);
+    }
+    .demo-card h2 { font-size: 15px; margin: 0 0 12px; color: var(--cr-accent); }
+    .host { min-height: 120px; }
+
+    /* ── concept-model renderer styles (mirrors public/css/workspace.css) ── */
+    .cr-cm { display: flex; flex-direction: column; gap: 8px; }
+    .cr-cm-title { font-size: 14px; font-weight: 700; color: var(--cr-text); text-align: center; }
+    .cr-cm-prompt {
+      font-size: 13px; line-height: 1.45; color: var(--cr-accent);
+      background: var(--cr-pill-bg); border-left: 3px solid var(--cr-accent);
+      border-radius: var(--cr-radius-sm); padding: 8px 10px;
+    }
+    .cr-cm-readouts { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; min-height: 22px; }
+    .cr-cm-readout { font-size: 15px; color: var(--cr-text); }
+    .cr-cm-board {
+      width: 100%; height: 300px; border-radius: var(--cr-radius-sm);
+      background: var(--cr-bg-deep); overflow: hidden; touch-action: none;
+    }
+    .cr-cm-controls { display: flex; flex-direction: column; gap: 8px; padding: 2px 4px 0; }
+    .cr-cm-slider { display: flex; align-items: center; gap: 10px; }
+    .cr-cm-slider-label { flex: 0 0 auto; min-width: 46px; font-size: 13px; font-weight: 700; color: var(--cr-text); font-style: italic; }
+    .cr-cm-slider-value { font-weight: 600; font-style: normal; color: var(--cr-accent); }
+    .cr-cm-slider-input { flex: 1 1 auto; accent-color: var(--cr-accent); cursor: pointer; }
+    .cr-cm-choice { display: flex; align-items: center; gap: 10px; }
+    .cr-cm-choice-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cr-cm-choice-btn {
+      font-size: 13px; font-weight: 600; padding: 5px 12px; color: var(--cr-text-dim);
+      background: var(--cr-bg-2); border: 1px solid var(--cr-border); border-radius: 999px; cursor: pointer;
+    }
+    .cr-cm-choice-btn:hover { color: var(--cr-text); border-color: var(--cr-accent); }
+    .cr-cm-choice-btn.is-active { color: #fff; background: var(--cr-accent-grad); border-color: transparent; }
+    /* token (discrete chip) engine */
+    .cr-cm-mat { position: relative; width: 100%; min-height: 220px; border-radius: var(--cr-radius-sm); background: var(--cr-bg-deep); border: 1px solid var(--cr-border); overflow: hidden; touch-action: none; }
+    .cr-cm-chip { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid; font-weight: 800; font-size: 16px; cursor: grab; user-select: none; touch-action: none; box-shadow: 0 2px 5px rgba(28,21,48,0.18); }
+    .cr-cm-chip.is-dragging { cursor: grabbing; box-shadow: 0 5px 12px rgba(28,21,48,0.32); z-index: 5; }
+    .cr-cm-token-input { display: flex; gap: 8px; align-items: center; padding: 2px 4px 0; }
+    .cr-cm-token-field { flex: 1 1 auto; min-width: 0; padding: 7px 10px; font-size: 14px; border: 1px solid var(--cr-border); border-radius: var(--cr-radius-sm); background: var(--cr-bg-2); color: var(--cr-text); }
+    .cr-cm-token-field.is-invalid { border-color: #e0556e; background: #fff2f4; }
+  </style>
+</head>
+<body>
+  <h1>Concept Models — browser verification</h1>
+  <p class="sub">
+    Build-order steps 1–4 from <code>CONCEPT_MODELS.md</code> — renderer + vocabulary
+    engine, validator, the curated catalog, and the generative long-tail (the last
+    card is an LLM-shaped spec, validated then rendered). Drag the points / move the
+    sliders — the params are the single source of truth, so every element stays in
+    sync. Any measured quantity (the slope readout, an angle, the curve) is computed
+    live by the engine.
+  </p>
+
+  <div class="grid">
+    <div class="demo-card">
+      <h2>slope_intercept_line — PhET "Graphing Lines"</h2>
+      <div class="host" id="host-sil"></div>
+    </div>
+    <div class="demo-card">
+      <h2>two_point_line — slope as rise/run, measured live</h2>
+      <div class="host" id="host-tpl"></div>
+    </div>
+    <div class="demo-card">
+      <h2>function_transformations — a·f(x−h)+k, swap the parent</h2>
+      <div class="host" id="host-ft"></div>
+    </div>
+    <div class="demo-card">
+      <h2>inscribed_angle — drag B; inscribed stays half the central (measured live)</h2>
+      <div class="host" id="host-ia"></div>
+    </div>
+    <div class="demo-card">
+      <h2>triangle_angle_sum — drag a corner; the three angles always sum to 180°</h2>
+      <div class="host" id="host-tas"></div>
+    </div>
+    <div class="demo-card">
+      <h2>linear_pair_angles — drag B; the two angles on the line always sum to 180°</h2>
+      <div class="host" id="host-lpa"></div>
+    </div>
+    <div class="demo-card">
+      <h2>GENERATED spec (long-tail) — an LLM-authored model, validated then rendered</h2>
+      <div class="host" id="host-gen"></div>
+    </div>
+    <div class="demo-card">
+      <h2>GENERATED — length &amp; area measures (drag a vertex; side and area update live)</h2>
+      <div class="host" id="host-gen2"></div>
+    </div>
+    <div class="demo-card">
+      <h2>integer_counters — DISCRETE token engine (type −7+10; drag a red onto a yellow to cancel)</h2>
+      <div class="host" id="host-ic"></div>
+    </div>
+  </div>
+
+  <script src="/js/conceptModelSpec.js"></script>
+  <script src="/js/conceptModelRenderer.js"></script>
+  <script src="/js/conceptModelTokenRenderer.js"></script>
+  <script>
+    function boot() {
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-sil'), 'slope_intercept_line'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-tpl'), 'two_point_line'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-ft'), 'function_transformations'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-ia'), 'inscribed_angle'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-tas'), 'triangle_angle_sum'
+      );
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-lpa'), 'linear_pair_angles'
+      );
+
+      // The generative long-tail: a spec NOT in the curated catalog, exactly as
+      // the tutor would author it (CONCEPT_MODELS.md step 4). renderModel takes a
+      // full spec object, re-validates it, and draws it — proof the engine renders
+      // a generated model and its readout is measured live (a·cos(bx)).
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-gen'),
+        {
+          model: 'cosine_wave',
+          title: 'y = a·cos(bx)',
+          params: { a: 2, b: 1 },
+          controls: [
+            { type: 'slider', param: 'a', label: 'a', range: [-3, 3], step: 0.25 },
+            { type: 'slider', param: 'b', label: 'b', range: [0.25, 4], step: 0.25 }
+          ],
+          elements: [
+            { id: 'plane', type: 'plane', x: [-7, 7], y: [-4, 4], grid: true, axisLabels: true },
+            { id: 'curve', type: 'function', fn: 'a*cos(b*x)' },
+            { id: 'out', type: 'readout', text: 'y = {a}·cos({b}x)', at: 'top' }
+          ],
+          reveal: ['plane', 'curve', 'out'],
+          prompt: 'Slide a (height) and b (how tight the waves are) — what changes?'
+        }
+      );
+
+      // A second generated model exercising length + area measures: the side AB
+      // and the triangle's area are MEASURED off the live vertices, never typed.
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-gen2'),
+        {
+          model: 'right_triangle_measures',
+          title: 'Right triangle — side & area',
+          params: {},
+          measures: {
+            side: { type: 'length', between: ['A', 'B'] },
+            region: { type: 'area', of: ['A', 'B', 'C'] }
+          },
+          elements: [
+            { id: 'plane', type: 'plane', x: [-2, 8], y: [-2, 6], grid: true, axisLabels: true },
+            { id: 'A', type: 'point', at: [0, 0], draggable: true, label: 'A' },
+            { id: 'B', type: 'point', at: [4, 0], draggable: true, label: 'B' },
+            { id: 'C', type: 'point', at: [0, 3], draggable: true, label: 'C' },
+            { id: 'tri', type: 'polygon', vertices: ['A', 'B', 'C'], fill: true },
+            { id: 'out', type: 'readout', text: 'AB = {side}   ·   area = {region}', at: 'top' }
+          ],
+          reveal: ['plane', 'A', 'B', 'C', 'tri', 'out'],
+          drag: ['A', 'B', 'C'],
+          prompt: 'Drag a vertex — the side length and area are measured live.'
+        }
+      );
+
+      // The discrete substrate: a curated token model (engine:"tokens"). Dispatched
+      // to ConceptModelTokenRenderer — inline chips, not the algebra-tiles modal.
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-ic'), 'integer_counters'
+      );
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+  </script>
+</body>
+</html>

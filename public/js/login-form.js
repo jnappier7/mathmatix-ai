@@ -7,6 +7,17 @@ if (new Date() >= new Date('2026-03-14T04:00:00Z')) {
 const loginForm = document.getElementById('loginForm');
 const loginMessage = document.getElementById('login-message');
 
+// Surface OAuth provider outages (e.g. an expired Microsoft client secret) as a
+// friendly notice instead of leaving the user on a raw 500 from the callback.
+(function showOAuthError() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('error') !== 'oauth_unavailable') return;
+  const providerNames = { microsoft: 'Microsoft', google: 'Google', clever: 'Clever' };
+  const provider = providerNames[params.get('provider')] || 'That';
+  loginMessage.textContent = `${provider} sign-in is temporarily unavailable. Please try another sign-in method.`;
+  loginMessage.style.display = 'block';
+})();
+
 loginForm.addEventListener('submit', async function(event) {
   event.preventDefault();
 

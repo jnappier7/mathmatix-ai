@@ -146,6 +146,10 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
   const correctValue = this.answer?.value ?? this.answer;
   const equivalents = this.answer?.equivalents || [];
 
+  // Extra acceptable answers discovered during multiple-choice handling
+  // (e.g. the correct option's text, so a typed value can match a letter answer)
+  const extraAcceptable = [];
+
   // MULTIPLE CHOICE: Handle first since user sends letters (A, B, C, D)
   if (this.answerType === 'multiple-choice') {
     const userUpper = userStr.toUpperCase();
@@ -197,14 +201,34 @@ problemSchema.methods.checkAnswer = function(userAnswer) {
       }
     }
 
-    // If we have correctOption but user didn't match, it's wrong
-    if (this.correctOption) {
+    // At this point the user did NOT match by option letter. Distinguish two
+    // cases:
+    //
+    //  1. They submitted an explicit A–F option letter that simply isn't the
+    //     correct one → genuinely wrong. Return false and do NOT fall through
+    //     to numeric matching (a stray letter must never match a number).
+    //
+    //  2. They typed a free-form VALUE instead of a letter (e.g. "35"). This is
+    //     normal in the chat-rendered screener, which shows the question text
+    //     but not the A–D labels. Don't reject it outright — fall through to the
+    //     value comparison below, after adding the correct option's text to the
+    //     set of acceptable answers so the typed value can match.
+    if (/^[A-F]$/.test(userUpper)) {
       return false;
+    }
+
+    if (this.correctOption && this.options && this.options.length > 0) {
+      const correctIdx = this.correctOption.toUpperCase().charCodeAt(0) - 65;
+      const correctOpt = this.options[correctIdx];
+      const correctOptText = correctOpt?.text ?? correctOpt;
+      if (correctOptText != null && String(correctOptText).trim() !== '') {
+        extraAcceptable.push(String(correctOptText));
+      }
     }
   }
 
   // Build list of all acceptable answers for non-MC or fallback
-  const acceptableAnswers = [String(correctValue), ...equivalents];
+  const acceptableAnswers = [String(correctValue), ...equivalents, ...extraAcceptable];
 
   // Check against all acceptable answers
   for (const acceptable of acceptableAnswers) {
