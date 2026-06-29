@@ -202,16 +202,23 @@
             lastTap = currentTime;
         });
 
-        // Desktop: Ctrl + Scroll Wheel support
+        // Desktop: trackpad pinch + Ctrl/⌘ + scroll wheel.
+        // Both arrive as a wheel event with ctrlKey set (a macOS trackpad pinch
+        // is synthesized as ctrl+wheel). deltaY magnitude reflects pinch
+        // intensity on a trackpad — many small events — and notch size on a
+        // mouse — few large events. So scale BY the magnitude (continuous,
+        // tracks the fingers) instead of a fixed step, but clamp per event so a
+        // single mouse notch can't jump too far.
         chatContainer.addEventListener('wheel', function(e) {
             if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
 
-                // Calculate scale change
-                const delta = e.deltaY > 0 ? -0.1 : 0.1;
-                const newScale = currentScale + delta;
+                // Normalize line/page delta modes to roughly pixel scale.
+                const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1;
+                const delta = Math.max(-30, Math.min(30, e.deltaY * unit));
 
-                applyFontScale(newScale);
+                // deltaY > 0 (pinch in / scroll down) shrinks text.
+                applyFontScale(currentScale - delta * 0.004);
             }
         }, { passive: false });
 
