@@ -180,26 +180,46 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
 }
 
 /**
- * Choose the assistant message that posed the problem the student is answering.
- * Walks the recent assistant messages in reverse order; prefers messages with
- * stored problemInfo metadata, then falls back to the most recent message.
+ * Choose the assistant message that actually POSED the problem the student is
+ * answering — not merely the most recent message, which is frequently a
+ * pleasantry or follow-up ("Nice — ready for the next one?"). Verifying an
+ * answer against the wrong text produces spurious correct/incorrect verdicts,
+ * so we rank messages by how problem-like they are, newest-first within each
+ * tier, and take the first hit:
+ *
+ *   1. Carries stored problemInfo metadata — the persist stage recorded a posed
+ *      problem (with a correctAnswer) on this message. The most reliable signal.
+ *   2. Contains math-looking content — LaTeX delimiters/macros, or a digit next
+ *      to a math operator. A problem statement even without metadata.
+ *   3. Contains a question mark — a question, possibly the problem.
+ *   4. Fallback: the most recent non-empty message (the prior behavior, kept so
+ *      we never return null where we previously found something).
  *
  * Pure helper — safe to call from any stage.
  *
- * @param {Array} recentAssistantMessages - Ordered oldest → newest.
- * @returns {string|null} The problem text, or null if none found.
+ * @param {Array<{content?: string, problemInfo?: Object|null}>} recentAssistantMessages
+ *   Ordered oldest → newest.
+ * @returns {string|null} The chosen problem text, or null if none found.
  */
 function pickProblemContext(recentAssistantMessages) {
   if (!Array.isArray(recentAssistantMessages) || recentAssistantMessages.length === 0) {
     return null;
   }
-  // Prefer the most recent message that actually contains a question mark or
-  // math-looking content. Fall back to the most recent one.
-  for (let i = recentAssistantMessages.length - 1; i >= 0; i--) {
-    const msg = recentAssistantMessages[i];
-    const content = msg?.content;
-    if (typeof content === 'string' && content.trim().length > 0) {
-      return content;
+
+  const hasContent = (m) => typeof m?.content === 'string' && m.content.trim().length > 0;
+  const hasProblemInfo = (m) => hasContent(m) && m.problemInfo && m.problemInfo.correctAnswer != null;
+  const looksMathy = (m) => hasContent(m) && (
+    /\\\(|\\\[|\\frac|\$/.test(m.content) ||                 // LaTeX delimiters / macros
+    /\d\s*[+\-*/=×÷^]|[+\-*/=×÷^]\s*\d/.test(m.content)      // a digit adjacent to an operator
+  );
+  const hasQuestion = (m) => hasContent(m) && m.content.includes('?');
+
+  // Newest-first scan within each tier; first match wins.
+  for (const tier of [hasProblemInfo, looksMathy, hasQuestion, hasContent]) {
+    for (let i = recentAssistantMessages.length - 1; i >= 0; i--) {
+      if (tier(recentAssistantMessages[i])) {
+        return recentAssistantMessages[i].content;
+      }
     }
   }
   return null;

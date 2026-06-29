@@ -18,8 +18,15 @@
  * See tests/golden/README.md.
  */
 
+// llmVerifier (imported below for pickProblemContext) pulls the LLM gateway in at
+// module load. Mock it so this suite stays hermetic and key-free — pickProblemContext
+// itself is a pure function and makes no LLM calls.
+jest.mock('../../utils/llmGateway', () => ({ callLLM: jest.fn() }));
+jest.mock('../../utils/openaiClient', () => ({ chat: { completions: { create: jest.fn() } } }));
+
 const { observe, MESSAGE_TYPES } = require('../../utils/pipeline/observe');
 const { decide, ACTIONS } = require('../../utils/pipeline/decide');
+const { pickProblemContext } = require('../../utils/pipeline/llmVerifier');
 const fixtures = require('./transcripts.json');
 
 // ── Build a synthesized observation (mirrors the shape observe() emits, the way
@@ -133,10 +140,25 @@ describe('Golden transcripts: decide() actions + safety invariants', () => {
   }
 });
 
+// ── Problem-context selection ──
+// The LLM verifier must check the student's answer against the message that POSED
+// the problem — not the last pleasantry/follow-up. Verifying against the wrong text
+// yields spurious verdicts. pickProblemContext is a pure function, so we assert it
+// directly (no LLM call).
+describe('Golden transcripts: pickProblemContext picks the real problem', () => {
+  for (const fx of fixtures.problemContext || []) {
+    test(fx.name, () => {
+      const picked = pickProblemContext(fx.messages);
+      expect(picked).toBe(fx.expectPicked);
+    });
+  }
+});
+
 // ── Meta: the suite must actually be exercising cases (guards an empty/parse-broken fixture file) ──
 describe('Golden transcripts: suite integrity', () => {
   test('fixtures loaded and non-trivial', () => {
     expect((fixtures.classification || []).length).toBeGreaterThan(3);
     expect((fixtures.decisions || []).length).toBeGreaterThan(3);
+    expect((fixtures.problemContext || []).length).toBeGreaterThan(2);
   });
 });

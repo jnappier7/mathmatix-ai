@@ -60,6 +60,29 @@ Edit **`transcripts.json`**. Copy an existing block and change the values.
   `scaffold_down`, `exit_ramp`, `redirect_to_math`, `acknowledge_frustration`,
   `acknowledge_progress`, `continue_conversation`, …).
 
+### Problem-context case — "verify against the actual problem, not the last pleasantry"
+
+The LLM answer-verifier (`utils/pipeline/llmVerifier.js`) must check a student's answer
+against the message that *posed the problem*, not whatever the tutor said most recently
+(often "Nice — ready for the next one?"). `pickProblemContext` is a pure function, so these
+fixtures call it directly and assert which message it selects.
+
+```json
+{
+  "name": "picks the math problem over a trailing pleasantry",
+  "messages": [
+    { "content": "Solve 2x + 3 = 13 for x." },
+    { "content": "Take your time — what do you think?" }
+  ],
+  "expectPicked": "Solve 2x + 3 = 13 for x."
+}
+```
+
+Each message may carry `problemInfo` (the metadata the persist stage stores on a posed
+problem); a message with `problemInfo.correctAnswer` is the strongest signal and wins over a
+more recent math-looking hint. Set `expectPicked` to the chosen `content`, or `null` for an
+empty history.
+
 ## Safety invariants
 
 These run automatically and are the reason this suite matters. They assert *properties*,

@@ -93,5 +93,45 @@
       "message": "can you help me?",
       "decide": { "from": "observe", "expectAction": "hint" }
     }
+  ],
+
+  "problemContext": [
+    {
+      "name": "picks the math problem over a trailing pleasantry",
+      "messages": [
+        { "content": "Solve 2x + 3 = 13 for x." },
+        { "content": "Take your time — what do you think?" }
+      ],
+      "expectPicked": "Solve 2x + 3 = 13 for x."
+    },
+    {
+      "name": "prefers the problem tagged with stored metadata over a later mathy hint",
+      "messages": [
+        { "content": "A train travels 60 miles in 2 hours. What is its speed?", "problemInfo": { "correctAnswer": "30 mph" } },
+        { "content": "Remember, speed = distance / time." }
+      ],
+      "expectPicked": "A train travels 60 miles in 2 hours. What is its speed?"
+    },
+    {
+      "name": "ignores the pleasantry and finds the LaTeX problem above it",
+      "messages": [
+        { "content": "Find the derivative of \\(x^2\\)." },
+        { "content": "Awesome hustle — ready for the next one?" }
+      ],
+      "expectPicked": "Find the derivative of \\(x^2\\)."
+    },
+    {
+      "name": "falls back to most recent non-empty when nothing looks like a problem",
+      "messages": [
+        { "content": "" },
+        { "content": "Great effort, keep it going!" }
+      ],
+      "expectPicked": "Great effort, keep it going!"
+    },
+    {
+      "name": "returns null for empty history",
+      "messages": [],
+      "expectPicked": null
+    }
   ]
 }

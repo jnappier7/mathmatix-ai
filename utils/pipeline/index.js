@@ -120,7 +120,7 @@ async function runPipeline(message, ctx) {
   let llmVerificationPromise = null;
   if (observation.messageType === MESSAGE_TYPES.ANSWER_ATTEMPT && observation.answer?.value) {
     const problemText = pickProblemContext(
-      recentAssistantMessages.map(msg => ({ content: msg.content }))
+      recentAssistantMessages.map(msg => ({ content: msg.content, problemInfo: msg.problemInfo || null }))
     );
     if (problemText) {
       llmVerificationPromise = llmVerifyAnswer(problemText, observation.answer.value)
