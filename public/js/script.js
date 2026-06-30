@@ -1017,21 +1017,20 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     } else {
-      // Image preview card with inline "Check my work" action
+      // Image: the card stays a plain thumbnail. The smart action chooser
+      // (hint + chips) is rendered in a full-width bar above the compose row
+      // — NOT inside this narrow thumbnail cell, which clipped it. See
+      // decorateSmartCard → the suggestion bar.
       card.style.padding = '0'; // Remove padding for images
       const reader = new FileReader();
       reader.onload = (e) => {
         card.innerHTML = `
           <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">×</button>
           <img src="${e.target.result}" class="file-card-preview" alt="${escapeHtml(file.name)}" title="${escapeHtml(file.name)}"/>
-          <div class="file-card-smart" data-file-id="${file.uploadId}">
-            <div class="fcs-loading"><i class="fas fa-spinner fa-spin"></i> Reading your math…</div>
-          </div>
         `;
-        // Unified upload: classify the image, then offer a one-tap chip with the
-        // likely action pre-selected. The student still confirms, so a wrong
-        // guess is cheap. Falls back to a neutral two-chip chooser on any error.
-        decorateSmartCard(file, card);
+        // Classify the image, then surface the suggested one-tap action in the
+        // suggestion bar above the input. Falls back to a neutral chooser.
+        decorateSmartCard(file);
       };
       reader.readAsDataURL(file);
     }
@@ -1056,7 +1055,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const card = document.querySelector(`[data-file-id="${fileId}"]`);
     if (card) {
       card.style.animation = 'fileCardExit 0.3s ease-out';
-      setTimeout(() => card.remove(), 300);
+      setTimeout(() => {
+        card.remove();
+        // Drop the suggestion bar once no image cards remain to act on.
+        const container = document.getElementById('file-grid-container');
+        if (!container || !container.querySelector('.file-card-preview')) {
+          clearSuggestBar();
+        }
+      }, 300);
     }
   };
 
@@ -1067,6 +1073,7 @@ document.addEventListener("DOMContentLoaded", () => {
     attachedFiles = [];
     const container = document.getElementById('file-grid-container');
     if (container) container.innerHTML = '';
+    clearSuggestBar();
   }
 
   /**
@@ -1116,13 +1123,10 @@ document.addEventListener("DOMContentLoaded", () => {
   window.runWorkCheckFromChat = async function(file) {
     if (!file) return;
     const card = document.querySelector(`[data-file-id="${file.uploadId}"]`);
-    // Loading state lives on the smart action area (chips) now. Stash its
-    // markup so we can restore the chips if the check fails.
-    const smart = card?.querySelector('.file-card-smart');
-    const smartHtml = smart ? smart.innerHTML : null;
-    if (smart) {
-      smart.innerHTML = '<div class="fcs-loading"><i class="fas fa-spinner fa-spin"></i> Checking your work…</div>';
-    }
+    // Loading + restore live on the suggestion bar (the chooser moved there).
+    const bar = document.getElementById('smart-suggest-bar');
+    const barHtml = bar ? bar.innerHTML : null;
+    if (bar) bar.innerHTML = '<span class="ssb-hint"><i class="fas fa-spinner fa-spin"></i> Checking your work…</span>';
 
     try {
       const formData = new FormData();
@@ -1148,6 +1152,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Remove the file from the attach queue so it doesn't get double-sent.
       attachedFiles = attachedFiles.filter(f => f.uploadId !== file.uploadId);
       if (card) card.remove();
+      clearSuggestBar();
 
       // Render the breakdown inline (same content as the modal) and surface
       // the tutor greeting. Reuses the show-your-work instance so the modal
@@ -1162,33 +1167,52 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error('[runWorkCheckFromChat] error:', err);
       if (typeof showToast === 'function') showToast(err.message || 'Could not check your work right now.', 4000);
-      // Restore the action chips so the student can retry or pick another path.
-      if (smart && smartHtml != null) {
-        smart.innerHTML = smartHtml;
-        bindSmartActions(smart, file);
+      // Restore the suggestion bar so the student can retry or pick another path.
+      if (bar && barHtml != null) {
+        bar.innerHTML = barHtml;
+        bindSmartActions(bar, file);
       }
     }
   };
 
   /**
-   * Unified upload: classify an attached image and render a one-tap action
-   * chooser on its card, with the likely action pre-selected.
+   * Suggestion bar — a full-width strip ABOVE the compose row that surfaces the
+   * classifier's suggested one-tap action for an attached image. It lives above
+   * the input, NOT inside the narrow thumbnail file-card, so it can never be
+   * clipped by the file grid.
    *
-   * Both primary chips ("Check my work", "Help me with this") now feed the ONE
-   * chat conversation — the tutor sees the image (and keeps seeing it across
-   * turns via the active-worksheet vision pin), so work-checking is just part
-   * of the coherent session. The classifier only pre-selects which framing is
-   * likely. A subordinate "scored breakdown" link remains for the opt-in
-   * gamified grade-work path (per-problem score + XP + badges).
-   *
-   * Never blocks: if classification fails or the feature is off, we show a
-   * neutral two-chip chooser so both paths stay one tap away.
+   * Both primary chips ("Check my work", "Help me with this") feed the ONE chat
+   * conversation — the tutor sees the image (and keeps seeing it across turns
+   * via the active-worksheet vision pin). The classifier only pre-selects which
+   * framing is likely. A subordinate "scored breakdown" runs the opt-in gamified
+   * grade-work path (per-problem score + XP + badges).
    */
-  async function decorateSmartCard(file, card) {
-    const smart = card.querySelector('.file-card-smart');
-    if (!smart) return;
+  function getSuggestBar() {
+    let bar = document.getElementById('smart-suggest-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'smart-suggest-bar';
+      bar.className = 'smart-suggest-bar';
+      const compose = document.querySelector('.imessage-compose-bar');
+      if (!compose || !compose.parentNode) return null;
+      compose.parentNode.insertBefore(bar, compose);
+    }
+    return bar;
+  }
 
+  function clearSuggestBar() {
+    document.getElementById('smart-suggest-bar')?.remove();
+  }
+
+  function isFileAttached(file) {
+    return attachedFiles.some(f => f.uploadId === file.uploadId);
+  }
+
+  async function decorateSmartCard(file) {
     const smartEnabled = !(window.MM_FEATURES && window.MM_FEATURES.smartUpload === false);
+
+    const bar = getSuggestBar();
+    if (bar) bar.innerHTML = '<span class="ssb-hint"><i class="fas fa-spinner fa-spin"></i> Reading your math…</span>';
 
     let cls = null;
     if (smartEnabled) {
@@ -1206,8 +1230,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Card may have been removed (e.g. user deleted it) while we waited.
-    if (!card.isConnected) return;
+    // File may have been removed while we waited — don't show a stale bar.
+    if (!isFileAttached(file)) { clearSuggestBar(); return; }
+
+    renderSuggestBar(file, cls);
+  }
+
+  function renderSuggestBar(file, cls) {
+    const bar = getSuggestBar();
+    if (!bar) return;
 
     const intent = cls && cls.intent ? cls.intent : 'ambiguous';
     const reason = cls && cls.reason ? String(cls.reason) : '';
@@ -1218,37 +1249,35 @@ document.addEventListener("DOMContentLoaded", () => {
       ? (reason ? `Looks like you've worked this — ${reason}.` : 'Looks like you’ve worked this out.')
       : suggestHelp
         ? 'Looks like a fresh problem.'
-        : 'What would you like to do?';
+        : 'What would you like to do with this?';
 
-    smart.innerHTML = `
-      <div class="fcs-hint">${escapeHtml(hint)}</div>
-      <div class="fcs-chips">
+    bar.innerHTML = `
+      <span class="ssb-hint">${escapeHtml(hint)}</span>
+      <div class="ssb-actions">
         <button class="fcs-chip fcs-check${suggestCheck ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor to check your work">
           <i class="fas fa-clipboard-check"></i> Check my work${suggestCheck ? ' <span class="fcs-tag">Suggested</span>' : ''}
         </button>
         <button class="fcs-chip fcs-help${suggestHelp ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor for help">
           <i class="fas fa-comments"></i> Help me with this${suggestHelp ? ' <span class="fcs-tag">Suggested</span>' : ''}
         </button>
+        <button class="fcs-scored" type="button" title="Get a per-problem scored breakdown with XP and badges">
+          <i class="fas fa-clipboard-list"></i> Scored breakdown
+        </button>
       </div>
-      <button class="fcs-scored" type="button" title="Get a per-problem scored breakdown with XP and badges">
-        <i class="fas fa-clipboard-list"></i> Get a scored breakdown
-      </button>
     `;
 
-    bindSmartActions(smart, file);
+    bindSmartActions(bar, file);
   }
 
   /**
-   * Bind the smart-card actions. Both primary chips now feed ONE conversation
-   * (the tutor sees the image via the active-worksheet vision pin), so checking
-   * work and getting help are the same coherent session — just different
-   * framings. The scored breakdown is opt-in enrichment that still uses the
-   * dedicated grade-work pipeline (per-problem score + XP + Unplugged badges).
+   * Bind the suggestion-bar actions. Both primary chips feed ONE conversation
+   * (the tutor sees the image via the active-worksheet vision pin). The scored
+   * breakdown is opt-in enrichment using the dedicated grade-work pipeline.
    */
-  function bindSmartActions(smart, file) {
-    smart.querySelector('.fcs-check')?.addEventListener('click', () => sendForCheck());
-    smart.querySelector('.fcs-help')?.addEventListener('click', () => sendForHelp());
-    smart.querySelector('.fcs-scored')?.addEventListener('click', () => runWorkCheckFromChat(file));
+  function bindSmartActions(scope, file) {
+    scope.querySelector('.fcs-check')?.addEventListener('click', () => sendForCheck());
+    scope.querySelector('.fcs-help')?.addEventListener('click', () => sendForHelp());
+    scope.querySelector('.fcs-scored')?.addEventListener('click', () => runWorkCheckFromChat(file));
   }
 
   /**
@@ -1266,6 +1295,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const sendBtn = document.getElementById('send-button');
     if (sendBtn && !sendBtn.disabled) sendBtn.click();
+    // Action taken — the suggestion bar's job is done.
+    clearSuggestBar();
   }
 
   function sendForCheck() {

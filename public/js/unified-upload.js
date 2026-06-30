@@ -34,17 +34,19 @@
       + '.uu-item-sub{display:block;font-size:.74rem;color:#8a90a2;margin-top:1px;}'
       + '.uu-item-text{display:flex;flex-direction:column;line-height:1.15;}'
       + '@keyframes uu-pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}'
-      // Smart action chooser on the file card (rendered by script.js)
-      + '.file-card-smart{padding:8px 10px;display:flex;flex-direction:column;gap:7px;}'
-      + '.fcs-loading{font-size:.8rem;color:#8a90a2;display:flex;align-items:center;gap:7px;}'
-      + '.fcs-hint{font-size:.78rem;color:#6b7280;line-height:1.25;}'
-      // Stack vertically — file cards are narrow, so side-by-side chips clip the
-      // "Suggested" tag. Full-width chips stay legible at any card size.
-      + '.fcs-chips{display:flex;flex-direction:column;gap:6px;}'
-      + '.fcs-chip{display:inline-flex;align-items:center;justify-content:center;min-width:0;'
+      // Suggestion bar — full-width strip above the compose row (rendered by
+      // script.js). Lives outside the thumbnail grid, so it never gets clipped.
+      + '.smart-suggest-bar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;'
+      + 'padding:9px 13px;margin:8px 10px 0;border-radius:12px;'
+      + 'background:rgba(18,179,179,.07);border:1px solid rgba(18,179,179,.22);'
+      + 'animation:uu-pop .14s ease-out;}'
+      + '.ssb-hint{flex:1 1 180px;min-width:140px;font-size:.84rem;color:#374151;line-height:1.3;'
+      + 'display:flex;align-items:center;gap:7px;}'
+      + '.ssb-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}'
+      + '.fcs-chip{display:inline-flex;align-items:center;justify-content:center;'
       + 'gap:5px;border:1px solid #d7dbe6;background:#fff;color:#1a1a2e;border-radius:9px;'
-      + 'padding:8px 8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;'
-      + 'white-space:nowrap;overflow:hidden;transition:background .12s,border-color .12s,box-shadow .12s;}'
+      + 'padding:8px 12px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;'
+      + 'white-space:nowrap;transition:background .12s,border-color .12s,box-shadow .12s;}'
       + '.fcs-chip:hover{background:#f1f3f9;}'
       + '.fcs-chip.fcs-suggested{background:linear-gradient(135deg,#12B3B3,#0e9a9a);'
       + 'border-color:transparent;color:#fff;box-shadow:0 3px 10px rgba(18,179,179,.32);}'

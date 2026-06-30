@@ -14,6 +14,7 @@ const pdfOcr = require('../utils/pdfOcr');
 const { checkUnpluggedBadges } = require('../utils/unpluggedBadges');
 const Conversation = require('../models/conversation');
 const StudentUpload = require('../models/studentUpload');
+const { downscaleToDataUrl } = require('../utils/activeWorksheetImage');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 // ============================================================================
@@ -567,6 +568,10 @@ router.post('/',
                         const storedFilename = `${user._id}_${Date.now()}_${sanitized}`;
                         const destPath = path.join(uploadsDir, storedFilename);
                         fs.copyFileSync(file.path, destPath);
+                        // Durable downscaled copy so the tutor keeps SEEING this
+                        // sheet across turns even if the on-disk file is later
+                        // gone (ephemeral disk). Best-effort.
+                        const imageData = await downscaleToDataUrl(fs.readFileSync(file.path));
                         await StudentUpload.create({
                             userId: user._id,
                             originalFilename: file.originalname || sanitized,
@@ -575,6 +580,7 @@ router.post('/',
                             fileType: 'image',
                             mimeType: file.mimetype,
                             fileSize: file.size,
+                            imageData,
                             conversationId: conversation._id
                         });
                         console.log('[gradeWork] Pinned graded image to conversation for follow-up');

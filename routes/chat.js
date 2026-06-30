@@ -59,7 +59,16 @@ const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { applyWorksheetGuard } = require('../utils/worksheetGuard');
 const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
-const { isImageStillActive, buildImageDataUrl } = require('../utils/activeWorksheetImage');
+const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl } = require('../utils/activeWorksheetImage');
+
+// When a student shares their work and asks to be checked, nudge the tutor to
+// engage the ACTUAL steps and the specific error — not fall back to generic
+// "what was your first step?" coaching. Still never reveals the answer.
+const CHECK_WORK_GUIDANCE = "\n\n[CHECK MY WORK: The student shared their OWN worked solution (shown in the image) and asked you to check it. Actually READ their steps. If it's correct, name specifically what they did right. If there's a mistake, point them to the SPECIFIC step where it goes wrong with ONE guiding question — name that step. Do NOT ask them to re-explain the problem from scratch, do NOT ignore a mistake you can see, and do NOT simply give the answer.]";
+function isCheckWorkIntent(text) {
+    if (!text || typeof text !== 'string') return false;
+    return /\b(check (my|the|this)|on the right track|did i (do|get|solve)|is (this|my answer|that) (right|correct)|am i (right|correct|on track))\b/i.test(text);
+}
 
 // Multer disk storage for file uploads (prevents server crashes vs memoryStorage)
 const upload = multer({
@@ -673,7 +682,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                         fileType: 'image',
                     })
                     .sort({ uploadedAt: -1 })
-                    .select('filePath mimeType uploadedAt fileType')
+                    .select('filePath mimeType uploadedAt fileType imageData')
                     .lean()
                     .catch(err => { logger.error('Error fetching active worksheet image', { error: err.message }); return null; })
         );
@@ -769,11 +778,28 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         // we silently fall back to text-only continuity.
         let activeWorksheetImageUrl = null;
         const worksheetVisionEnabled = process.env.UNIFIED_WORKSHEET_VISION !== 'false';
-        if (worksheetVisionEnabled && !hasUploadedFiles && isImageStillActive(activeWorksheetImageDoc)) {
-            activeWorksheetImageUrl = await buildImageDataUrl(activeWorksheetImageDoc);
-            if (activeWorksheetImageUrl) {
-                logger.debug('Pinned active worksheet image for vision re-injection', { uploadedAt: activeWorksheetImageDoc.uploadedAt });
+        if (worksheetVisionEnabled && !hasUploadedFiles) {
+            // Explicit step-by-step logging so a live test pinpoints exactly
+            // where re-threading fails (no doc / expired / file gone).
+            const active = isImageStillActive(activeWorksheetImageDoc);
+            if (!activeWorksheetImageDoc) {
+                // Common case (most turns have no worksheet) — keep it quiet.
+                logger.debug('[worksheetVision] no active image doc for conversation');
+            } else if (!active) {
+                logger.info('[worksheetVision] active image doc found but outside TTL — not re-threading', { uploadedAt: activeWorksheetImageDoc.uploadedAt });
+            } else {
+                activeWorksheetImageUrl = await buildImageDataUrl(activeWorksheetImageDoc);
+                logger.info('[worksheetVision] active image doc in TTL', {
+                    uploadedAt: activeWorksheetImageDoc.uploadedAt,
+                    source: activeWorksheetImageDoc.imageData ? 'durable-db' : 'disk',
+                    loaded: !!activeWorksheetImageUrl,
+                });
+                if (!activeWorksheetImageUrl) {
+                    logger.warn('[worksheetVision] could not load active worksheet image (durable copy missing AND on-disk file unreadable)', { filePath: activeWorksheetImageDoc.filePath });
+                }
             }
+        } else if (worksheetVisionEnabled && hasUploadedFiles) {
+            logger.debug('[worksheetVision] fresh upload this turn — image already in context, skipping re-thread');
         }
 
         // Log parallel fetch performance
@@ -1014,16 +1040,17 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         if (hasUploadedFiles && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
+                const checkSuffix = isCheckWorkIntent(combinedMessage) ? CHECK_WORK_GUIDANCE : '';
                 const guardedText = applyWorksheetGuard(typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage);
                 if (uploadImageContents.length > 0) {
                     // Multimodal: text + images for vision API
                     lastMsg.content = [
-                        { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
+                        { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}` },
                         ...uploadImageContents
                     ];
                 } else {
                     // PDF-only: just use the guarded text
-                    lastMsg.content = `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}`;
+                    lastMsg.content = `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}`;
                 }
             }
         } else if (activeWorksheetImageUrl && formattedMessagesForLLM.length > 0) {
@@ -1034,10 +1061,11 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             // partially-worked sheet doesn't leak answers.
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
+                const checkSuffix = isCheckWorkIntent(combinedMessage) ? CHECK_WORK_GUIDANCE : '';
                 const baseText = typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage;
                 const guardedText = applyWorksheetGuard(baseText);
                 lastMsg.content = [
-                    { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
+                    { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}` },
                     { type: "image_url", image_url: { url: activeWorksheetImageUrl, detail: "high" } }
                 ];
                 logger.debug('Re-threaded active worksheet image into follow-up turn');
@@ -1331,6 +1359,10 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             extractedText = pdfMatch?.text || '';
                         }
 
+                        // Durable downscaled copy for cross-turn vision re-thread
+                        // (survives ephemeral-disk loss). Best-effort.
+                        const imageData = fileType === 'image' ? await downscaleToDataUrl(fileBuffer) : null;
+
                         const studentUpload = new StudentUpload({
                             // Reuse the _id we stamped onto the user message's
                             // attachments above so the transcript reference resolves.
@@ -1343,6 +1375,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             mimeType: file.mimetype,
                             fileSize: file.size,
                             extractedText: extractedText.substring(0, 10000),
+                            imageData,
                             conversationId: activeConversation._id
                         });
                         await studentUpload.save();
