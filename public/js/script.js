@@ -1024,14 +1024,14 @@ document.addEventListener("DOMContentLoaded", () => {
         card.innerHTML = `
           <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">×</button>
           <img src="${e.target.result}" class="file-card-preview" alt="${escapeHtml(file.name)}" title="${escapeHtml(file.name)}"/>
-          <button class="file-card-check-work" data-file-id="${file.uploadId}" title="Have my tutor check this work">
-            <i class="fas fa-clipboard-check"></i> Check my work
-          </button>
+          <div class="file-card-smart" data-file-id="${file.uploadId}">
+            <div class="fcs-loading"><i class="fas fa-spinner fa-spin"></i> Reading your math…</div>
+          </div>
         `;
-        const checkBtn = card.querySelector('.file-card-check-work');
-        if (checkBtn) {
-          checkBtn.addEventListener('click', () => runWorkCheckFromChat(file));
-        }
+        // Unified upload: classify the image, then offer a one-tap chip with the
+        // likely action pre-selected. The student still confirms, so a wrong
+        // guess is cheap. Falls back to a neutral two-chip chooser on any error.
+        decorateSmartCard(file, card);
       };
       reader.readAsDataURL(file);
     }
@@ -1116,10 +1116,12 @@ document.addEventListener("DOMContentLoaded", () => {
   window.runWorkCheckFromChat = async function(file) {
     if (!file) return;
     const card = document.querySelector(`[data-file-id="${file.uploadId}"]`);
-    const checkBtn = card?.querySelector('.file-card-check-work');
-    if (checkBtn) {
-      checkBtn.disabled = true;
-      checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking…';
+    // Loading state lives on the smart action area (chips) now. Stash its
+    // markup so we can restore the chips if the check fails.
+    const smart = card?.querySelector('.file-card-smart');
+    const smartHtml = smart ? smart.innerHTML : null;
+    if (smart) {
+      smart.innerHTML = '<div class="fcs-loading"><i class="fas fa-spinner fa-spin"></i> Checking your work…</div>';
     }
 
     try {
@@ -1160,12 +1162,119 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error('[runWorkCheckFromChat] error:', err);
       if (typeof showToast === 'function') showToast(err.message || 'Could not check your work right now.', 4000);
-      if (checkBtn) {
-        checkBtn.disabled = false;
-        checkBtn.innerHTML = '<i class="fas fa-clipboard-check"></i> Check my work';
+      // Restore the action chips so the student can retry or pick another path.
+      if (smart && smartHtml != null) {
+        smart.innerHTML = smartHtml;
+        bindSmartActions(smart, file);
       }
     }
   };
+
+  /**
+   * Unified upload: classify an attached image and render a one-tap action
+   * chooser on its card, with the likely action pre-selected.
+   *
+   * Both primary chips ("Check my work", "Help me with this") now feed the ONE
+   * chat conversation — the tutor sees the image (and keeps seeing it across
+   * turns via the active-worksheet vision pin), so work-checking is just part
+   * of the coherent session. The classifier only pre-selects which framing is
+   * likely. A subordinate "scored breakdown" link remains for the opt-in
+   * gamified grade-work path (per-problem score + XP + badges).
+   *
+   * Never blocks: if classification fails or the feature is off, we show a
+   * neutral two-chip chooser so both paths stay one tap away.
+   */
+  async function decorateSmartCard(file, card) {
+    const smart = card.querySelector('.file-card-smart');
+    if (!smart) return;
+
+    const smartEnabled = !(window.MM_FEATURES && window.MM_FEATURES.smartUpload === false);
+
+    let cls = null;
+    if (smartEnabled) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const resp = await csrfFetch('/api/upload/classify', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        if (resp.ok) cls = await resp.json();
+      } catch (err) {
+        console.debug('[smartUpload] classify failed, using neutral chooser:', err && err.message);
+      }
+    }
+
+    // Card may have been removed (e.g. user deleted it) while we waited.
+    if (!card.isConnected) return;
+
+    const intent = cls && cls.intent ? cls.intent : 'ambiguous';
+    const reason = cls && cls.reason ? String(cls.reason) : '';
+    const suggestCheck = intent === 'check_work';
+    const suggestHelp = intent === 'get_help';
+
+    const hint = suggestCheck
+      ? (reason ? `Looks like you've worked this — ${reason}.` : 'Looks like you’ve worked this out.')
+      : suggestHelp
+        ? 'Looks like a fresh problem.'
+        : 'What would you like to do?';
+
+    smart.innerHTML = `
+      <div class="fcs-hint">${escapeHtml(hint)}</div>
+      <div class="fcs-chips">
+        <button class="fcs-chip fcs-check${suggestCheck ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor to check your work">
+          <i class="fas fa-clipboard-check"></i> Check my work${suggestCheck ? ' <span class="fcs-tag">Suggested</span>' : ''}
+        </button>
+        <button class="fcs-chip fcs-help${suggestHelp ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor for help">
+          <i class="fas fa-comments"></i> Help me with this${suggestHelp ? ' <span class="fcs-tag">Suggested</span>' : ''}
+        </button>
+      </div>
+      <button class="fcs-scored" type="button" title="Get a per-problem scored breakdown with XP and badges">
+        <i class="fas fa-clipboard-list"></i> Get a scored breakdown
+      </button>
+    `;
+
+    bindSmartActions(smart, file);
+  }
+
+  /**
+   * Bind the smart-card actions. Both primary chips now feed ONE conversation
+   * (the tutor sees the image via the active-worksheet vision pin), so checking
+   * work and getting help are the same coherent session — just different
+   * framings. The scored breakdown is opt-in enrichment that still uses the
+   * dedicated grade-work pipeline (per-problem score + XP + Unplugged badges).
+   */
+  function bindSmartActions(smart, file) {
+    smart.querySelector('.fcs-check')?.addEventListener('click', () => sendForCheck());
+    smart.querySelector('.fcs-help')?.addEventListener('click', () => sendForHelp());
+    smart.querySelector('.fcs-scored')?.addEventListener('click', () => runWorkCheckFromChat(file));
+  }
+
+  /**
+   * Send the already-attached image through the normal chat pipeline with a
+   * default framing message (the file is in attachedFiles from handleFileUpload).
+   * "Check my work" and "Help me" differ only by the message — both land in the
+   * one conversation where the tutor can see the work and discuss it across
+   * turns ("am I on track?", "check #7").
+   */
+  function sendAttachedWithDefault(defaultMsg) {
+    const userInput = document.getElementById('user-input');
+    if (userInput && !userInput.textContent.trim()) {
+      userInput.textContent = defaultMsg;
+      userInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    const sendBtn = document.getElementById('send-button');
+    if (sendBtn && !sendBtn.disabled) sendBtn.click();
+  }
+
+  function sendForCheck() {
+    sendAttachedWithDefault("Can you check my work and tell me if I'm on the right track?");
+  }
+
+  function sendForHelp() {
+    sendAttachedWithDefault('Can you help me with this?');
+  }
 
   /**
    * Escape HTML to prevent XSS

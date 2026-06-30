@@ -60,6 +60,7 @@ const voiceRoutes = require('../routes/voice');
 const voiceTestRoutes = require('../routes/voice-test');
 const voiceTutorRoutes = require('../routes/voiceTutor');
 const uploadRoutes = require('../routes/upload');
+const uploadClassifyRoutes = require('../routes/uploadClassify');
 // chatWithFile: REMOVED — file uploads consolidated into /api/chat
 const welcomeRoutes = require('../routes/welcome');
 const rapportBuildingRoutes = require('../routes/rapportBuilding');
@@ -191,6 +192,12 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
+  // Unified-upload classifier: cheap "is this worked or blank?" check that
+  // pre-selects the right one-tap action on the upload card. Mounted BEFORE
+  // /api/upload (more specific path first) and intentionally NOT premium-gated
+  // so the suggestion works for every signed-in student — the paywall stays on
+  // the grade/tutoring action the chip actually triggers.
+  app.use('/api/upload/classify', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, uploadClassifyRoutes);
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
   // chatWithFile route REMOVED — file uploads consolidated into /api/chat
   app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, welcomeRoutes);

@@ -59,6 +59,7 @@ const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { applyWorksheetGuard } = require('../utils/worksheetGuard');
 const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
+const { isImageStillActive, buildImageDataUrl } = require('../utils/activeWorksheetImage');
 
 // Multer disk storage for file uploads (prevents server crashes vs memoryStorage)
 const upload = multer({
@@ -657,11 +658,31 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     .catch(err => { logger.error('Error fetching active worksheet', { error: err.message }); return null; })
         );
 
+        // 7b. Active worksheet IMAGE — the most recent image uploaded in THIS
+        //     conversation. Re-threaded as vision on follow-up turns (within a
+        //     TTL) so the tutor keeps SEEING the work, not just a text gloss —
+        //     this is what makes upload + "show your work" one conversation.
+        //     Skipped on the upload turn itself (the fresh image is already in
+        //     context). Only plaintext fields are selected (no decryption).
+        contextPromises.push(
+            hasUploadedFiles
+                ? Promise.resolve(null)
+                : StudentUpload.findOne({
+                        userId: user._id,
+                        conversationId: activeConversation._id,
+                        fileType: 'image',
+                    })
+                    .sort({ uploadedAt: -1 })
+                    .select('filePath mimeType uploadedAt fileType')
+                    .lean()
+                    .catch(err => { logger.error('Error fetching active worksheet image', { error: err.message }); return null; })
+        );
+
         // 8. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns, activeWorksheetDoc] = await Promise.all(contextPromises);
+        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns, activeWorksheetDoc, activeWorksheetImageDoc] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -739,6 +760,20 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         }
         if (activeWorksheet) {
             logger.debug('Pinned active worksheet to prompt', { filename: activeWorksheet.filename, chars: activeWorksheet.text.length, source: uploadPdfTexts.length > 0 ? 'current-upload' : 'conversation-pin' });
+        }
+
+        // Pin the active worksheet IMAGE for vision re-injection on follow-up
+        // turns (within its TTL). Loading the bytes is a single small disk read;
+        // gated by a flag so it can be disabled if the per-turn vision cost ever
+        // needs trimming. Best-effort — a missing/oversized file yields null and
+        // we silently fall back to text-only continuity.
+        let activeWorksheetImageUrl = null;
+        const worksheetVisionEnabled = process.env.UNIFIED_WORKSHEET_VISION !== 'false';
+        if (worksheetVisionEnabled && !hasUploadedFiles && isImageStillActive(activeWorksheetImageDoc)) {
+            activeWorksheetImageUrl = await buildImageDataUrl(activeWorksheetImageDoc);
+            if (activeWorksheetImageUrl) {
+                logger.debug('Pinned active worksheet image for vision re-injection', { uploadedAt: activeWorksheetImageDoc.uploadedAt });
+            }
         }
 
         // Log parallel fetch performance
@@ -990,6 +1025,22 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     // PDF-only: just use the guarded text
                     lastMsg.content = `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}`;
                 }
+            }
+        } else if (activeWorksheetImageUrl && formattedMessagesForLLM.length > 0) {
+            // Follow-up turn with an active worksheet IMAGE — re-thread it as
+            // vision so the tutor still SEES the work ("am I on track?",
+            // "check #7") instead of only remembering a text gloss. Mirrors the
+            // fresh-upload branch above; the worksheet guard still applies so a
+            // partially-worked sheet doesn't leak answers.
+            const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+            if (lastMsg?.role === 'user') {
+                const baseText = typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage;
+                const guardedText = applyWorksheetGuard(baseText);
+                lastMsg.content = [
+                    { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
+                    { type: "image_url", image_url: { url: activeWorksheetImageUrl, detail: "high" } }
+                ];
+                logger.debug('Re-threaded active worksheet image into follow-up turn');
             }
         } else if ((hasRecentUpload || hasUploadedFiles) && formattedMessagesForLLM.length > 0) {
             // Follow-up messages after a recent upload — inject worksheet guard

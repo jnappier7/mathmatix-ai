@@ -7,7 +7,8 @@ class ShowYourWorkManager {
     constructor() {
         // Modal shell
         this.modal = document.getElementById('show-your-work-modal');
-        this.openBtn = document.getElementById('camera-button');
+        // (camera-button is now owned by unified-upload.js — this modal is
+        // opened programmatically as the "full view" of a result, see init().)
         this.closeBtn = document.getElementById('close-show-your-work-modal');
 
         // Sections (capture → preview → loading → results)
@@ -51,7 +52,11 @@ class ShowYourWorkManager {
     init() {
         if (!this.modal) return;
 
-        this.openBtn?.addEventListener('click', () => this.openModal());
+        // NOTE: the camera button no longer opens this modal directly. The
+        // unified-upload entry (unified-upload.js) owns the capture menu and
+        // routes images to the smart upload card. This modal is now opened
+        // programmatically as the "full view" of a work-check result, and via
+        // the inline card's "Open full view" button — not as a front door.
         this.closeBtn?.addEventListener('click', () => this.closeModal());
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) this.closeModal();
