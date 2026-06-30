@@ -74,32 +74,60 @@ body.cr-voice .cr-live-badge { transform: scale(1.06); }
    by a control dock rather than just receding. Without this gate, the
    composer here would collapse on mobile while the orb stays hidden by the
    poster's rules, leaving no mic at all. */
+/* End control, injected once by voice-mode.js and appended to <body>.
+   Hidden by default at every width (so it's never a stray button); each
+   breakpoint's voice-mode rules position and reveal it. */
+#mpc-voice-end {
+  position: fixed;
+  z-index: 7;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(226, 75, 74, 0.16);
+  border: 0.5px solid rgba(226, 75, 74, 0.5);
+  color: #ff7676;
+  font-size: 17px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 @media (min-width: 769px) {
-  /* ---- Composer recedes: the centred orb is the mic now ----
-     Drop the tool rail + send button; keep the text field as a quiet
-     "type if you prefer" fallback. The headset button (#voice-mode-btn)
-     stays as the way back out — it toggles the mode — and reads as "end". */
-  body.cr-voice .imessage-tool-btns,
-  body.cr-voice #send-button {
-    display: none;
-  }
-  body.cr-voice .imessage-input-row { opacity: 0.8; }
-  body.cr-voice .imessage-voice-btn {
-    background: rgba(226, 75, 74, 0.14);
-    color: #e24b4a;
+  /* ---- Composer → control dock (matches mobile) ----
+     Hide the text composer AND the fixed footer so the mic has clean
+     space, then centre the orb as the dock's mic with its status label
+     beneath and the End control beside it. (Previously this only dimmed
+     the composer and dropped the orb at bottom:26px, so the orb collided
+     with the text input and the fixed footer.) */
+  body.cr-voice .imessage-compose-bar,
+  body.cr-voice footer {
+    display: none !important;
   }
 
-  /* ---- Re-stage the voice orb from corner float to centred control ----
-     voice-controller.js positions the orb with inline styles, so the
-     properties it sets (right, bottom) need !important to be overridden. */
   body.cr-voice #voice-chat-container {
-    left: 50%;
+    left: 50% !important;
     right: auto !important;
-    bottom: 26px !important;
-    transform: translateX(-50%);
-    /* The orb is the voice control here — show it even if the ambient
-       corner orb is switched off in settings. */
+    top: auto !important;
+    bottom: 34px !important;
+    transform: translateX(-50%) !important;
     display: flex !important;
+    flex-direction: column;
+    align-items: center;
+  }
+  body.cr-voice #voice-status {
+    display: block !important;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #12b3b3;
+    text-align: center;
+  }
+  body.cr-voice #mpc-voice-end {
+    display: flex;
+    left: 50%;
+    margin-left: 66px;
+    bottom: 50px;
   }
 }
 
