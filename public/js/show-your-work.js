@@ -7,7 +7,8 @@ class ShowYourWorkManager {
     constructor() {
         // Modal shell
         this.modal = document.getElementById('show-your-work-modal');
-        this.openBtn = document.getElementById('camera-button');
+        // (camera-button is now owned by unified-upload.js — this modal is
+        // opened programmatically as the "full view" of a result, see init().)
         this.closeBtn = document.getElementById('close-show-your-work-modal');
 
         // Sections (capture → preview → loading → results)
