@@ -50,7 +50,14 @@
       + 'border-color:transparent;color:#fff;box-shadow:0 3px 10px rgba(18,179,179,.32);}'
       + '.fcs-chip.fcs-suggested:hover{filter:brightness(1.04);background:linear-gradient(135deg,#12B3B3,#0e9a9a);}'
       + '.fcs-tag{flex:0 0 auto;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;'
-      + 'background:rgba(255,255,255,.28);padding:2px 5px;border-radius:6px;}';
+      + 'background:rgba(255,255,255,.28);padding:2px 5px;border-radius:6px;}'
+      // Subordinate opt-in: the gamified scored breakdown, visually quieter than
+      // the two primary conversational chips.
+      + '.fcs-scored{display:inline-flex;align-items:center;justify-content:center;gap:5px;'
+      + 'background:none;border:none;color:#8a90a2;font-size:.72rem;font-weight:600;cursor:pointer;'
+      + 'font-family:inherit;padding:2px 4px;margin-top:1px;text-decoration:underline;'
+      + 'text-underline-offset:2px;}'
+      + '.fcs-scored:hover{color:#12B3B3;}';
     var style = document.createElement('style');
     style.id = 'unified-upload-styles';
     style.textContent = css;

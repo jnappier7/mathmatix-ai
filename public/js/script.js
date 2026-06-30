@@ -1160,11 +1160,10 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error('[runWorkCheckFromChat] error:', err);
       if (typeof showToast === 'function') showToast(err.message || 'Could not check your work right now.', 4000);
-      // Restore the action chips so the student can retry or choose "Help me".
+      // Restore the action chips so the student can retry or pick another path.
       if (smart && smartHtml != null) {
         smart.innerHTML = smartHtml;
-        smart.querySelector('.fcs-check')?.addEventListener('click', () => runWorkCheckFromChat(file));
-        smart.querySelector('.fcs-help')?.addEventListener('click', () => sendForHelp(file));
+        bindSmartActions(smart, file);
       }
     }
   };
@@ -1173,10 +1172,12 @@ document.addEventListener("DOMContentLoaded", () => {
    * Unified upload: classify an attached image and render a one-tap action
    * chooser on its card, with the likely action pre-selected.
    *
-   * Two outcomes share the same destination today (the file-card already
-   * supports both): "Check my work" → /api/grade-work via runWorkCheckFromChat,
-   * and "Help me with this" → the normal chat send. This just makes the choice
-   * smart instead of forcing the student to pre-decide at two separate buttons.
+   * Both primary chips ("Check my work", "Help me with this") now feed the ONE
+   * chat conversation — the tutor sees the image (and keeps seeing it across
+   * turns via the active-worksheet vision pin), so work-checking is just part
+   * of the coherent session. The classifier only pre-selects which framing is
+   * likely. A subordinate "scored breakdown" link remains for the opt-in
+   * gamified grade-work path (per-problem score + XP + badges).
    *
    * Never blocks: if classification fails or the feature is off, we show a
    * neutral two-chip chooser so both paths stay one tap away.
@@ -1220,32 +1221,57 @@ document.addEventListener("DOMContentLoaded", () => {
     smart.innerHTML = `
       <div class="fcs-hint">${escapeHtml(hint)}</div>
       <div class="fcs-chips">
-        <button class="fcs-chip fcs-check${suggestCheck ? ' fcs-suggested' : ''}" type="button" title="Have my tutor check this work">
+        <button class="fcs-chip fcs-check${suggestCheck ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor to check your work">
           <i class="fas fa-clipboard-check"></i> Check my work${suggestCheck ? ' <span class="fcs-tag">Suggested</span>' : ''}
         </button>
         <button class="fcs-chip fcs-help${suggestHelp ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor for help">
           <i class="fas fa-comments"></i> Help me with this${suggestHelp ? ' <span class="fcs-tag">Suggested</span>' : ''}
         </button>
       </div>
+      <button class="fcs-scored" type="button" title="Get a per-problem scored breakdown with XP and badges">
+        <i class="fas fa-clipboard-list"></i> Get a scored breakdown
+      </button>
     `;
 
-    smart.querySelector('.fcs-check')?.addEventListener('click', () => runWorkCheckFromChat(file));
-    smart.querySelector('.fcs-help')?.addEventListener('click', () => sendForHelp(file));
+    bindSmartActions(smart, file);
   }
 
   /**
-   * "Help me with this" path — send the already-attached image through the
-   * normal chat pipeline. The file is in attachedFiles; this just supplies a
-   * default question when the student hasn't typed one and fires send.
+   * Bind the smart-card actions. Both primary chips now feed ONE conversation
+   * (the tutor sees the image via the active-worksheet vision pin), so checking
+   * work and getting help are the same coherent session — just different
+   * framings. The scored breakdown is opt-in enrichment that still uses the
+   * dedicated grade-work pipeline (per-problem score + XP + Unplugged badges).
    */
-  function sendForHelp(file) {
+  function bindSmartActions(smart, file) {
+    smart.querySelector('.fcs-check')?.addEventListener('click', () => sendForCheck());
+    smart.querySelector('.fcs-help')?.addEventListener('click', () => sendForHelp());
+    smart.querySelector('.fcs-scored')?.addEventListener('click', () => runWorkCheckFromChat(file));
+  }
+
+  /**
+   * Send the already-attached image through the normal chat pipeline with a
+   * default framing message (the file is in attachedFiles from handleFileUpload).
+   * "Check my work" and "Help me" differ only by the message — both land in the
+   * one conversation where the tutor can see the work and discuss it across
+   * turns ("am I on track?", "check #7").
+   */
+  function sendAttachedWithDefault(defaultMsg) {
     const userInput = document.getElementById('user-input');
     if (userInput && !userInput.textContent.trim()) {
-      userInput.textContent = 'Can you help me with this?';
+      userInput.textContent = defaultMsg;
       userInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
     const sendBtn = document.getElementById('send-button');
     if (sendBtn && !sendBtn.disabled) sendBtn.click();
+  }
+
+  function sendForCheck() {
+    sendAttachedWithDefault("Can you check my work and tell me if I'm on the right track?");
+  }
+
+  function sendForHelp() {
+    sendAttachedWithDefault('Can you help me with this?');
   }
 
   /**
