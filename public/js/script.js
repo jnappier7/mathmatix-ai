@@ -725,13 +725,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const _marked = window.marked;
         const _DOMPurify = window.DOMPurify;
 
+        // Protect LaTeX from markdown using the shared delimiter scanner.
+        // It auto-closes a stray/unbalanced delimiter at the next paragraph
+        // break, so one missing `\]` can never swallow an entire explanation
+        // into a single space-stripped KaTeX block. See mathDelimiters.js.
+        const _protect = window.MathDelimiters && window.MathDelimiters.protectMathBlocks;
+
         if (!_marked || !_marked.parse) {
             console.warn('[renderMarkdownMath] marked not available, falling back to plain text');
             // Even without markdown, try to render KaTeX math
             let fallback = text;
-            if (window.katex) {
-                fallback = fallback.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => renderKatex(math, true));
-                fallback = fallback.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => renderKatex(math, false));
+            if (window.katex && _protect) {
+                const { text: protectedText, blocks } = _protect(fallback, (i) => `@@LATEX_BLOCK_${i}@@`);
+                fallback = protectedText;
+                blocks.forEach((block, index) => {
+                    fallback = fallback.replace(`@@LATEX_BLOCK_${index}@@`, renderKatex(block.math, block.display));
+                });
             }
             return _DOMPurify ? _DOMPurify.sanitize(fallback) : fallback;
         }
@@ -739,21 +748,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let processedText = text;
 
         // Protect LaTeX blocks from markdown parsing
-        const latexBlocks = [];
-
-        // Display math \[...\]
-        processedText = processedText.replace(/\\\[([\s\S]*?)\\\]/g, (match, math) => {
-            const index = latexBlocks.length;
-            latexBlocks.push({ math, display: true });
-            return `@@LATEX_BLOCK_${index}@@`;
-        });
-
-        // Inline math \(...\)
-        processedText = processedText.replace(/\\\(([\s\S]*?)\\\)/g, (match, math) => {
-            const index = latexBlocks.length;
-            latexBlocks.push({ math, display: false });
-            return `@@LATEX_BLOCK_${index}@@`;
-        });
+        let latexBlocks = [];
+        if (_protect) {
+            const result = _protect(processedText, (i) => `@@LATEX_BLOCK_${i}@@`);
+            processedText = result.text;
+            latexBlocks = result.blocks;
+        } else {
+            console.warn('[renderMarkdownMath] MathDelimiters not loaded — math left unrendered');
+        }
 
         // Protect inline visual HTML (SVG containers from inlineChatVisuals)
         // Uses div-depth counting to reliably match the full container,
