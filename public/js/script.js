@@ -1015,8 +1015,14 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     } else {
-      // Image preview card with inline "Check my work" action
+      // Image preview card with the inline smart action chooser.
       card.style.padding = '0'; // Remove padding for images
+      // The smart card (hint + chips) needs real width — break it out of the
+      // narrow thumbnail grid (the has-chat-nav layout squeezes file cards into
+      // ~90px columns, which clips the chooser). These classes are styled in
+      // unified-upload.js; cleaned up in removeFile/clearAllFiles.
+      card.classList.add('file-card-smart-host');
+      container.classList.add('file-grid-has-smart');
       const reader = new FileReader();
       reader.onload = (e) => {
         card.innerHTML = `
@@ -1054,7 +1060,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const card = document.querySelector(`[data-file-id="${fileId}"]`);
     if (card) {
       card.style.animation = 'fileCardExit 0.3s ease-out';
-      setTimeout(() => card.remove(), 300);
+      setTimeout(() => {
+        card.remove();
+        // Drop the grid breakout class once no smart-host cards remain.
+        const container = document.getElementById('file-grid-container');
+        if (container && !container.querySelector('.file-card-smart-host')) {
+          container.classList.remove('file-grid-has-smart');
+        }
+      }, 300);
     }
   };
 
@@ -1064,7 +1077,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function clearAllFiles() {
     attachedFiles = [];
     const container = document.getElementById('file-grid-container');
-    if (container) container.innerHTML = '';
+    if (container) {
+      container.innerHTML = '';
+      container.classList.remove('file-grid-has-smart');
+    }
   }
 
   /**

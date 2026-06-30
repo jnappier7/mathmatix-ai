@@ -34,6 +34,16 @@
       + '.uu-item-sub{display:block;font-size:.74rem;color:#8a90a2;margin-top:1px;}'
       + '.uu-item-text{display:flex;flex-direction:column;line-height:1.15;}'
       + '@keyframes uu-pop{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}'
+      // Break the smart card out of the narrow thumbnail grid. The has-chat-nav
+      // layout squeezes file cards into ~90px columns (grid-template-columns
+      // minmax(90px,1fr)) with a 200px max-height, which clips the chooser on
+      // every side. A smart-host card spans the full grid width, sizes to its
+      // content, and lets overflow show. Classes added in createFileCard.
+      + '.file-grid-container.file-grid-has-smart{max-height:none !important;}'
+      + '.file-card.file-card-smart-host{grid-column:1 / -1;width:auto;max-width:340px;'
+      + 'height:auto !important;max-height:none !important;overflow:visible;}'
+      + '.file-card.file-card-smart-host .file-card-preview{width:100%;height:auto;'
+      + 'max-height:170px;object-fit:contain;background:#f3f4f8;display:block;border-radius:12px 12px 0 0;}'
       // Smart action chooser on the file card (rendered by script.js)
       + '.file-card-smart{padding:8px 10px;display:flex;flex-direction:column;gap:7px;}'
       + '.fcs-loading{font-size:.8rem;color:#8a90a2;display:flex;align-items:center;gap:7px;}'
