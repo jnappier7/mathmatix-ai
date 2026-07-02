@@ -1531,6 +1531,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 ...pipelineResult.xpBreakdown,
                 leveledUp: pipelineResult.leveledUp,
             },
+            coins: user.wallet?.coins ?? 0,
+            coinsAwarded: pipelineResult.coinsAwarded || 0,
             aiTimeUsed: pipelineResult.aiTimeUsed,
             freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
             courseProgress: courseProgressUpdate || null,

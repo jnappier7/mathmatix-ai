@@ -168,6 +168,18 @@ const BRAND_CONFIG = {
         },
     },
 
+    // 12. Coin Economy (earned soft currency for cosmetics)
+    // Coins drip from completion + consistency events (NOT per-turn, to avoid a
+    // grind vector). All awards route through utils/coinEngine.awardCoins, which
+    // enforces the daily cap. See docs/COSMETICS_SHOP_DESIGN.md.
+    coinRewards: {
+        dailyCap: 500,            // max coins earnable per UTC day (anti-abuse)
+        levelUp: 20,              // per level gained
+        questComplete: 15,        // per daily quest completed
+        challengeComplete: 75,    // per weekly challenge completed (wiring TBD)
+        masteryBadge: 100         // per mastery badge earned (wiring TBD)
+    },
+
     digestEmailSchedule: "Sunday 7 AM ET", //
     digestEmailProvider: "SendGrid", //
 

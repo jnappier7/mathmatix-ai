@@ -3108,6 +3108,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Coins wallet: reflect the server balance locally so the status
+            // card's Coins slot shows live without a reload.
+            if (data.coins !== undefined) {
+                if (!currentUser.wallet) currentUser.wallet = {};
+                currentUser.wallet.coins = data.coins;
+            }
+
             // Combo meter: advance/cool off the verified problem result (D1).
             // null on neutral turns → the combo holds. No XP is attached (v1).
             try { comboRegisterTurn(data.problemResult); } catch (e) { console.warn('Combo meter failed', e); }

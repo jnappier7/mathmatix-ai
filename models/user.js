@@ -630,6 +630,16 @@ const userSchema = new Schema({
     }]
   },
 
+  /* Cosmetics economy — Coins are an EARNED soft currency (never real money,
+     never XP). Spent only on cosmetics; zero effect on tutoring/grading/XP.
+     Server-authoritative: only utils/coinEngine.awardCoins mutates this. */
+  wallet: {
+    coins:          { type: Number, default: 0, min: 0 },  // spendable balance
+    lifetimeEarned: { type: Number, default: 0 },          // analytics; never spent down
+    dailyEarned:    { type: Number, default: 0 },          // anti-abuse daily cap counter
+    lastCoinReset:  { type: Date, default: Date.now }       // anchors the daily reset
+  },
+
   totalActiveTutoringMinutes:  { type: Number, default: 0 },
   weeklyActiveTutoringMinutes: { type: Number, default: 0 },
   // Precise time tracking in seconds (minutes are derived from these)
