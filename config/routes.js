@@ -68,6 +68,7 @@ const { router: memoryRouter } = require('../routes/memory');
 const guidedLessonRoutes = require('../routes/guidedLesson');
 const summaryGeneratorRouter = require('../routes/summary_generator');
 const avatarRoutes = require('../routes/avatar');
+const cosmeticsRoutes = require('../routes/cosmetics');
 const curriculumRoutes = require('../routes/curriculum');
 const assessmentRoutes = require('../routes/assessment');
 const screenerRoutes = require('../routes/screener');
@@ -206,6 +207,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/summary', isAuthenticated, summaryGeneratorRouter);
   app.use('/api/avatars', isAuthenticated, avatarRoutes);
   app.use('/api/avatar', isAuthenticated, avatarRoutes);
+  app.use('/api/cosmetics', isAuthenticated, cosmeticsRoutes);
 
   // Public API routes (no auth required)
   app.use('/api/waitlist', waitlistRoutes);

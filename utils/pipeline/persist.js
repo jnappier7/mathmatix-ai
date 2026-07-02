@@ -358,6 +358,7 @@ async function persist(params) {
   results.leveledUp = xpResult.leveledUp;
   results.tutorsUnlocked = xpResult.tutorsUnlocked;
   results.avatarBuilderUnlocked = xpResult.avatarBuilderUnlocked;
+  results.coinsAwarded = xpResult.coinsAwarded || 0;
 
   // Badge progress + mastery completion check
   if (user.masteryProgress?.activeBadge && results.problemAnswered) {

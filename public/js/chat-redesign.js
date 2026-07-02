@@ -414,8 +414,13 @@
     const btn = document.getElementById('cr-progress-btn');
     if (!btn) return;
     btn.addEventListener('click', function () {
-      // Open the existing right drawer (Progress & Profile)
-      document.getElementById('right-drawer-toggle')?.click();
+      // Open the Personal Status Card modal (works on all viewports). Falls back
+      // to the legacy mobile drawer if the module hasn't loaded yet.
+      if (typeof window.openStatusCard === 'function') {
+        window.openStatusCard();
+      } else {
+        document.getElementById('right-drawer-toggle')?.click();
+      }
     });
   }
 

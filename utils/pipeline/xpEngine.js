@@ -102,9 +102,24 @@ function applyXpToUser(user, breakdown) {
 
   // Level up check
   let leveledUp = false;
+  let levelsGained = 0;
   while (user.xp >= BRAND_CONFIG.cumulativeXpForLevel((user.level || 1) + 1)) {
     user.level += 1;
     leveledUp = true;
+    levelsGained += 1;
+  }
+
+  // Coins for leveling up (earned soft currency; server-authoritative, capped).
+  let coinsAwarded = 0;
+  if (levelsGained > 0) {
+    try {
+      const { awardCoins } = require('../coinEngine');
+      const perLevel = (BRAND_CONFIG.coinRewards && BRAND_CONFIG.coinRewards.levelUp) || 0;
+      coinsAwarded = awardCoins(user, perLevel * levelsGained, 'level_up').awarded;
+    } catch (err) {
+      // Non-blocking: coin failures must never break XP/leveling.
+      console.error('[xpEngine] coin award failed:', err.message);
+    }
   }
 
   // Tutor unlocks (variable ratio with behavior triggers)
@@ -124,7 +139,7 @@ function applyXpToUser(user, breakdown) {
     avatarBuilderUnlocked = true;
   }
 
-  return { leveledUp, tutorsUnlocked, avatarBuilderUnlocked };
+  return { leveledUp, tutorsUnlocked, avatarBuilderUnlocked, coinsAwarded };
 }
 
 module.exports = { computeXpBreakdown, applyXpToUser, HINT_REGEX };
