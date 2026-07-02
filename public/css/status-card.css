@@ -1,0 +1,116 @@
+/* status-card.css — Personal Status Card modal.
+ * Opens from the header Progress button on all viewports (replaces the dead
+ * mobile-drawer hack). Brand tokens: teal #12B3B3, hot pink #FF3B7F, gold #FFC24B.
+ */
+
+.sc-modal { position: fixed; inset: 0; z-index: 3000; }
+.sc-modal[hidden] { display: none; }
+
+.sc-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(15, 26, 36, 0.55);
+  opacity: 0; transition: opacity 200ms ease;
+}
+.sc-modal.sc-open .sc-backdrop { opacity: 1; }
+
+.sc-card {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -48%) scale(0.96);
+  opacity: 0;
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  padding: 22px;
+  font-family: Inter, sans-serif;
+  transition: transform 220ms cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 200ms ease;
+}
+.sc-modal.sc-open .sc-card { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
+.sc-close {
+  position: absolute; top: 12px; right: 14px;
+  border: none; background: transparent;
+  font-size: 1.6rem; line-height: 1; color: #5b6876; cursor: pointer;
+}
+.sc-close:hover { color: #18202b; }
+
+/* Hero: avatar ring + identity */
+.sc-hero { display: flex; align-items: center; gap: 16px; }
+.sc-avatar-wrap { position: relative; width: 60px; height: 60px; flex: 0 0 60px; }
+.sc-ring { position: absolute; inset: 0; width: 60px; height: 60px; }
+.sc-ring-track { fill: none; stroke: rgba(18, 179, 179, 0.18); stroke-width: 4; }
+.sc-ring-fill { fill: none; stroke: #12b3b3; stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 500ms ease; }
+.sc-avatar {
+  position: absolute; top: 7px; left: 7px; width: 46px; height: 46px;
+  border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.sc-avatar-img { width: 100%; height: 100%; object-fit: cover; }
+.sc-avatar-initial { color: #fff; font-weight: 700; font-size: 1.3rem; }
+.sc-level-badge {
+  position: absolute; bottom: -3px; right: -3px;
+  min-width: 22px; height: 22px; padding: 0 5px;
+  border-radius: 999px; background: #ff3b7f; color: #fff;
+  font-size: 0.72rem; font-weight: 800; line-height: 22px; text-align: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+.sc-identity { flex: 1; min-width: 0; }
+.sc-name { font-size: 1.15rem; font-weight: 800; color: #18202b; }
+.sc-rank { font-size: 0.85rem; font-weight: 700; color: #12b3b3; margin-top: 1px; }
+.sc-lab-cta {
+  display: inline-block; margin-top: 6px;
+  font-size: 0.78rem; font-weight: 700; color: #ff3b7f; text-decoration: none;
+}
+.sc-lab-cta:hover { text-decoration: underline; }
+
+/* Stat row */
+.sc-stats {
+  display: flex; gap: 8px; margin: 18px 0 10px;
+}
+.sc-stat {
+  flex: 1; text-align: center;
+  background: #f5f8fa; border-radius: 12px; padding: 10px 6px;
+}
+.sc-stat-val { display: block; font-size: 1.15rem; font-weight: 800; color: #18202b; }
+.sc-stat-label { display: block; font-size: 0.68rem; color: #5b6876; margin-top: 2px; }
+
+.sc-progress-row { margin-bottom: 16px; }
+.sc-progress-bar { height: 8px; border-radius: 999px; background: rgba(18, 179, 179, 0.15); overflow: hidden; }
+.sc-progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #12b3b3, #16c86d); transition: width 500ms ease; }
+
+/* Tutor message */
+.sc-tutor {
+  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, rgba(18,179,179,0.08), rgba(255,59,127,0.06));
+  border-radius: 14px; padding: 10px 12px; margin-bottom: 16px;
+}
+.sc-tutor[hidden] { display: none; }
+.sc-tutor-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: 0 0 40px; background: #e6eef0; }
+.sc-tutor-bubble { font-size: 0.85rem; line-height: 1.35; }
+.sc-tutor-name { font-weight: 800; color: #12b3b3; margin-right: 6px; }
+.sc-tutor-text { color: #18202b; }
+
+/* Quests */
+.sc-quests-head { font-size: 0.9rem; font-weight: 800; color: #18202b; margin-bottom: 8px; }
+.sc-quests { display: flex; flex-direction: column; gap: 10px; }
+.sc-quest { background: #f5f8fa; border-radius: 12px; padding: 10px 12px; }
+.sc-quest.is-complete { background: rgba(22, 200, 109, 0.12); }
+.sc-quest-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.sc-quest-name { font-size: 0.86rem; font-weight: 700; color: #18202b; }
+.sc-quest-reward { font-size: 0.74rem; font-weight: 800; color: #12b3b3; white-space: nowrap; }
+.sc-quest-bar { height: 6px; border-radius: 999px; background: rgba(0,0,0,0.06); overflow: hidden; margin: 6px 0 3px; }
+.sc-quest-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #12b3b3, #16c86d); }
+.sc-quest-count { font-size: 0.72rem; color: #5b6876; text-align: right; }
+.sc-quests-empty { font-size: 0.82rem; color: #5b6876; text-align: center; padding: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-backdrop, .sc-card, .sc-ring-fill, .sc-progress-fill { transition: none; }
+}
+
+@media (max-width: 480px) {
+  .sc-card { padding: 18px; border-radius: 16px; }
+  .sc-stat-val { font-size: 1rem; }
+}

@@ -8,6 +8,7 @@ import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbea
 import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js';
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
+import './modules/statusCard.js'; // registers window.openStatusCard (Progress button)
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
