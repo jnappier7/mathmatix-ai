@@ -6,6 +6,8 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
 import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js';
+import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
+import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
@@ -135,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
             _speechSilenceTimer = setTimeout(() => {
                 // No new speech for 3s — auto-stop and keep text
                 if (isRecognizing) {
-                    try { recognition.stop(); } catch (_) {}
+                    try { recognition.stop(); } catch {}
                 }
             }, SPEECH_AUTO_STOP_MS);
 
@@ -396,6 +398,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function setupChatUI() {
         updateGamificationDisplay();
+        // Identity chip (level ring + rank title) in the chat header.
+        try { initIdentityChip(currentUser); } catch (e) { console.warn('Identity chip init failed', e); }
     }
 
     
@@ -2621,7 +2625,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Auto-detect the user's IANA timezone so the streak day-boundary
             // math respects the student's local day, not server UTC.
             let clientTimezone = null;
-            try { clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) {}
+            try { clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch {}
 
             // Bound the request with an AbortController so a silently-dead
             // SSE connection (proxy closed the socket mid-stream) can't park
@@ -2759,7 +2763,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (!streamAbort) return;
                     streamIdleTimer = setTimeout(() => {
                         console.warn(`[Stream] No bytes received in ${STREAM_IDLE_MS}ms — aborting`);
-                        try { streamAbort.abort(); } catch (_) { /* already aborted */ }
+                        try { streamAbort.abort(); } catch { /* already aborted */ }
                     }, STREAM_IDLE_MS);
                 }
                 resetStreamIdleTimer();
@@ -3076,17 +3080,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, 2000); // Delay so it doesn't overlap with level-up celebration
             }
 
+            // Reconcile the Tier-3 behavior earned this turn into the local user
+            // so the identity chip's rank title advances live (the /user payload
+            // won't refresh until reload). Mirrors the server increment in
+            // xpEngine.applyXpToUser → xpLadderStats.tier3Behaviors.
+            if (data.xpLadder?.tier3 > 0 && data.xpLadder.tier3Behavior) {
+                if (!currentUser.xpLadderStats) currentUser.xpLadderStats = { tier3Behaviors: [] };
+                if (!Array.isArray(currentUser.xpLadderStats.tier3Behaviors)) currentUser.xpLadderStats.tier3Behaviors = [];
+                const behaviors = currentUser.xpLadderStats.tier3Behaviors;
+                const existing = behaviors.find(b => b.behavior === data.xpLadder.tier3Behavior);
+                if (existing) existing.count = (existing.count || 0) + 1;
+                else behaviors.push({ behavior: data.xpLadder.tier3Behavior, count: 1 });
+            }
+
             if (data.userXp !== undefined) {
                 currentUser.level = data.userLevel;
                 currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
                 currentUser.xpForNextLevel = data.xpNeeded;
                 updateGamificationDisplay();
+                // Identity chip: refresh level ring + rank title from the fresh XP state.
+                try { updateIdentityChip(currentUser); } catch (e) { console.warn('Identity chip update failed', e); }
 
                 // Show unlock proximity teaser (after level-up or when close)
                 if (data.xpLadder?.leveledUp) {
                     setTimeout(() => showUnlockProximityTeaser(currentUser), 5000);
                 }
             }
+
+            // Combo meter: advance/cool off the verified problem result (D1).
+            // null on neutral turns → the combo holds. No XP is attached (v1).
+            try { comboRegisterTurn(data.problemResult); } catch (e) { console.warn('Combo meter failed', e); }
 
             // Session stats tracker update
             if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
@@ -3676,7 +3699,7 @@ document.addEventListener("DOMContentLoaded", () => {
             parent.removeChild(textNode);
 
             if (typeof renderMathInElement === 'function') {
-                try { renderMathInElement(mathSpan); } catch (_) {}
+                try { renderMathInElement(mathSpan); } catch {}
             }
 
             // Restore cursor just after the trigger character
@@ -3984,7 +4007,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Install our custom MathLive layouts (advanced structures).
             installMathLiveLayouts();
             if (window.mathVirtualKeyboard) {
-                try { window.mathVirtualKeyboard.visible = true; } catch (_) {}
+                try { window.mathVirtualKeyboard.visible = true; } catch {}
             }
         } else if (isMobileView()) {
             // Legacy mobile bottom-sheet path (kept as fallback).
@@ -4155,7 +4178,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         // Hide MathLive's virtual keyboard (it was opened by fullscreen mode)
         if (window.mathVirtualKeyboard) {
-            try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
+            try { window.mathVirtualKeyboard.visible = false; } catch {}
         }
         // Tear down fullscreen state on close
         if (inlineEquationPalette && inlineEquationPalette.classList.contains('eq-fullscreen')) {
@@ -5213,6 +5236,9 @@ document.addEventListener("DOMContentLoaded", () => {
             messageIndexCounter = 0; // Reset message counter
             updateChatWatermark(); // Mark chat as empty for watermark
         }
+
+        // Combo meter resets on conversation switch (session boundary).
+        try { resetCombo(); } catch { /* non-blocking */ }
 
         // Display session header if it's a topic-based conversation
         if (conversation.conversationType === 'topic' && conversation.topic) {

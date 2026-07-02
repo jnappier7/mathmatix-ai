@@ -150,6 +150,24 @@ const BRAND_CONFIG = {
         ]
     },
 
+    // 11. Rank Title Ladder (identity layer)
+    // Human-readable titles derived from cumulative Tier-3 behavior counts
+    // (user.xpLadderStats.tier3Behaviors). Each behavior has three aspirational
+    // tiers unlocked at the thresholds below. This is the CANONICAL source of
+    // truth; the client mirrors it in public/js/modules/rankTitles.js — keep the
+    // two in sync if you edit either.
+    rankTitleLadder: {
+        thresholds: [5, 15, 40], // counts required for tier 1 / 2 / 3
+        behaviors: {
+            caught_own_error:    ['Error Spotter', 'Error Hunter', 'Error Hunter II'],
+            explained_reasoning: ['Explainer', 'Reasoner', 'Master Reasoner'],
+            persistence:         ['Grinder', 'Unshakeable', 'Relentless'],
+            taught_back:         ['Study Buddy', 'Tutor-in-Training', 'The Professor'],
+            strategy_selection:  ['Planner', 'Strategist', 'Grandmaster'],
+            transfer:            ['Connector', 'Pattern Seer', 'Polymath'],
+        },
+    },
+
     digestEmailSchedule: "Sunday 7 AM ET", //
     digestEmailProvider: "SendGrid", //
 
