@@ -15,6 +15,7 @@
 
 import { triggerConfetti } from './helpers.js';
 import { computeEarnedTitles, highestTitle } from './rankTitles.js';
+import { resolveAvatarUrl } from './avatarResolver.js';
 
 const RING_R = 16;
 const RING_C = 2 * Math.PI * RING_R; // circumference
@@ -28,7 +29,7 @@ function lsGet(k) { try { return localStorage.getItem(k); } catch { return null;
 function lsSet(k, v) { try { localStorage.setItem(k, v); } catch { /* ignore */ } }
 
 function avatarMarkup(user) {
-    const url = user?.avatar?.dicebearUrl;
+    const url = resolveAvatarUrl(user);
     if (url) return `<img class="identity-avatar-img" src="${url}" alt="My avatar" />`;
     const initial = (user?.firstName || '?').charAt(0);
     return `<span class="identity-avatar-initial" aria-hidden="true">${initial}</span>`;
