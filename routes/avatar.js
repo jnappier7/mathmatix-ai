@@ -292,6 +292,40 @@ router.post('/gallery/:index/select', isAuthenticated, async (req, res) => {
     }
 });
 
+/**
+ * POST /api/avatar/select-character
+ * Select a catalog creature/character avatar (coexists with DiceBear).
+ * Level-gated per utils/avatarCatalog.js. Pass avatarId 'default' or null to
+ * clear back to the DiceBear avatar.
+ */
+router.post('/select-character', isAuthenticated, async (req, res) => {
+    try {
+        const { avatarId } = req.body || {};
+        const user = await User.findById(req.user._id);
+        if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
+
+        // Clear selection → fall back to DiceBear.
+        if (!avatarId || avatarId === 'default') {
+            user.selectedAvatarId = null;
+            await user.save();
+            return res.json({ success: true, selectedAvatarId: null });
+        }
+
+        const { canSelectAvatar } = require('../utils/avatarCatalog');
+        const check = canSelectAvatar(user, avatarId);
+        if (!check.ok) {
+            return res.status(400).json({ success: false, error: check.reason });
+        }
+
+        user.selectedAvatarId = avatarId;
+        await user.save();
+        res.json({ success: true, selectedAvatarId: avatarId });
+    } catch (error) {
+        console.error('ERROR: Failed to select character avatar:', error.message);
+        res.status(500).json({ success: false, message: 'Server error selecting avatar.' });
+    }
+});
+
 // ============ DYNAMIC PARAMETER ROUTES ============
 // NOTE: Dynamic parameter routes MUST come AFTER all static routes
 

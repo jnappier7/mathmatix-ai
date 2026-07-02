@@ -13,6 +13,7 @@
 //     CTA deep-links to the existing avatar builder.
 
 import { highestTitle } from './rankTitles.js';
+import { resolveAvatarUrl } from './avatarResolver.js';
 
 const MODAL_ID = 'status-card-modal';
 
@@ -22,7 +23,7 @@ function ringDash(progress) {
 }
 
 function avatarMarkup(user) {
-    const url = user?.avatar?.dicebearUrl;
+    const url = resolveAvatarUrl(user);
     if (url) return `<img class="sc-avatar-img" src="${url}" alt="Your avatar" />`;
     const initial = (user?.firstName || '?').charAt(0);
     return `<span class="sc-avatar-initial" aria-hidden="true">${initial}</span>`;
@@ -96,7 +97,7 @@ function buildModal() {
           <div class="sc-identity">
             <div class="sc-name"></div>
             <div class="sc-rank"></div>
-            <a class="sc-lab-cta" href="/avatar-builder.html">🎨 Design in the Creation Lab</a>
+            <a class="sc-lab-cta" href="/pick-avatar.html">🎨 Design in the Creation Lab</a>
           </div>
         </div>
 

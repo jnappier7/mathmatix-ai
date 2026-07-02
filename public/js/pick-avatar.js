@@ -93,6 +93,48 @@ document.addEventListener('DOMContentLoaded', () => {
         '<p class="avatar-card-description">Your default look</p>';
       avatarSelectionGrid.appendChild(defaultCard);
     }
+
+    // Catalog avatars (creatures/characters) — coexist with DiceBear. Free ones
+    // unlock at level 1; creatures unlock by level as a progression reward.
+    renderCatalogAvatars(esc);
+  }
+
+  /* Render the selectable creature/character catalog with level gating. */
+  function renderCatalogAvatars(esc) {
+    const cfg = window.AVATAR_CONFIG || {};
+    const level = currentUser.level || 1;
+    const groupOrder = { creature: 0, character: 1, sports: 2, style: 3 };
+    const items = Object.values(cfg).sort((a, b) =>
+      (groupOrder[a.group] - groupOrder[b.group]) ||
+      (a.unlockLevel - b.unlockLevel) ||
+      a.name.localeCompare(b.name)
+    );
+
+    items.forEach(item => {
+      const unlocked = level >= item.unlockLevel;
+      const card = document.createElement('div');
+      card.classList.add('avatar-card', unlocked ? 'unlocked' : 'locked');
+      card.dataset.avatarId = item.id;
+      card.dataset.catalog = '1';
+      if (currentUser.selectedAvatarId === item.id && unlocked) {
+        card.classList.add('selected');
+        selectedAvatarId = item.id;
+        completeSelectionBtn.disabled = false;
+      }
+      const desc = unlocked
+        ? (item.rarity === 'common' ? 'Ready to wear' : esc(item.rarity))
+        : ('🔒 Unlocks at Level ' + item.unlockLevel);
+      card.innerHTML =
+        '<div class="avatar-card-image"><img src="/images/avatars/' + esc(item.image) + '" alt="' + esc(item.name) + '" loading="lazy"></div>' +
+        '<h4 class="avatar-card-name">' + esc(item.name) + '</h4>' +
+        '<p class="avatar-card-description">' + desc + '</p>';
+      avatarSelectionGrid.appendChild(card);
+    });
+  }
+
+  /* Is this id one of the catalog creatures/characters? */
+  function isCatalogId(id) {
+    return !!(window.AVATAR_CONFIG && window.AVATAR_CONFIG[id]);
   }
 
   /* -------- INTERACTION HANDLERS -------- */
@@ -117,12 +159,21 @@ document.addEventListener('DOMContentLoaded', () => {
     completeSelectionBtn.disabled = true;
     completeSelectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving\u2026';
     try {
-      const res = await csrfFetch('/api/user/settings', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ selectedAvatarId }),
-        credentials: 'include'
-      });
+      // Catalog creatures/characters go through the level-gated endpoint; DiceBear
+      // selections (custom / gallery-N / dicebear-default) use the settings PATCH.
+      const res = isCatalogId(selectedAvatarId)
+        ? await csrfFetch('/api/avatar/select-character', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ avatarId: selectedAvatarId }),
+            credentials: 'include'
+          })
+        : await csrfFetch('/api/user/settings', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ selectedAvatarId }),
+            credentials: 'include'
+          });
       if (!res.ok) throw new Error(await res.text());
       window.location.href = '/chat.html';
     } catch (err) {
