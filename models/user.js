@@ -640,6 +640,16 @@ const userSchema = new Schema({
     lastCoinReset:  { type: Date, default: Date.now }       // anchors the daily reset
   },
 
+  /* Cosmetics ownership + equipped loadout (see utils/cosmeticsCatalog.js).
+     Purely visual; nothing here affects tutoring/grading/XP. */
+  ownedCosmetics:    { type: [String], default: [] },       // catalog item ids owned
+  equippedCosmetics: {
+    theme:      { type: String, default: 'default' },
+    board:      { type: String, default: 'default' },
+    calculator: { type: String, default: 'default' },
+    header:     { type: String, default: 'default' }
+  },
+
   totalActiveTutoringMinutes:  { type: Number, default: 0 },
   weeklyActiveTutoringMinutes: { type: Number, default: 0 },
   // Precise time tracking in seconds (minutes are derived from these)
