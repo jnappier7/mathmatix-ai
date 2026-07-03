@@ -40,19 +40,19 @@ const STYLE_IDS = ['concrete', 'wood', 'nature', 'graffiti'];
 
 // Premium human "student" presets — polished bespoke characters in the tutors'
 // art style (the glow-up target). Free (level 1). Art files live under
-// public/images/avatars/students/; add a preset by (1) dropping the transparent
-// PNG there and (2) adding a row here + in the client mirror. The picker
-// auto-hides any preset whose art isn't present yet, so it's safe to list a
-// preset before its file lands.
+// public/images/students/ (absolute paths below); add a preset by (1) dropping
+// the transparent PNG there and (2) adding a row here + in the client mirror.
+// The picker auto-hides any preset whose art isn't present yet, so it's safe to
+// list a preset before its file lands.
 const STUDENT_PRESETS = [
-    { id: 'student.navy',     name: 'Navy Hoodie',     image: 'students/navy.png' },
-    { id: 'student.blue',     name: 'Blue Hoodie',     image: 'students/blue.png' },
-    { id: 'student.charcoal', name: 'Charcoal Hoodie', image: 'students/charcoal.png' },
-    { id: 'student.lavender', name: 'Lavender Hoodie', image: 'students/lavender.png' },
-    { id: 'student.pink',     name: 'Pink Tee',        image: 'students/pink.png' },
-    { id: 'student.green',    name: 'Green Tee',       image: 'students/green.png' },
-    { id: 'student.cream',    name: 'Cream Sweater',   image: 'students/cream.png' },
-    { id: 'student.gold',     name: 'Gold Hoodie',     image: 'students/gold.png' },
+    { id: 'student.navy',     name: 'Navy Hoodie',     image: '/images/students/navy.png' },
+    { id: 'student.blue',     name: 'Blue Hoodie',     image: '/images/students/blue.png' },
+    { id: 'student.charcoal', name: 'Charcoal Hoodie', image: '/images/students/charcoal.png' },
+    { id: 'student.lavender', name: 'Lavender Hoodie', image: '/images/students/lavender.png' },
+    { id: 'student.pink',     name: 'Pink Tee',        image: '/images/students/pink.png' },
+    { id: 'student.forrest',  name: 'Forest Tee',      image: '/images/students/forrest.png' },
+    { id: 'student.yellow',   name: 'Yellow Hoodie',   image: '/images/students/yellow.png' },
+    { id: 'student.gold',     name: 'Gold Hoodie',     image: '/images/students/gold.png' },
 ];
 
 const CATALOG = {};

@@ -124,8 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const desc = unlocked
         ? (item.rarity === 'common' ? 'Ready to wear' : esc(item.rarity))
         : ('🔒 Unlocks at Level ' + item.unlockLevel);
+      // Absolute image paths (student presets under /images/students/) are used
+      // as-is; bare filenames resolve against the creature art dir.
+      const imgSrc = item.image.charAt(0) === '/' ? item.image : '/images/avatars/' + item.image;
       card.innerHTML =
-        '<div class="avatar-card-image"><img src="/images/avatars/' + esc(item.image) + '" alt="' + esc(item.name) + '" loading="lazy"></div>' +
+        '<div class="avatar-card-image"><img src="' + esc(imgSrc) + '" alt="' + esc(item.name) + '" loading="lazy"></div>' +
         '<h4 class="avatar-card-name">' + esc(item.name) + '</h4>' +
         '<p class="avatar-card-description">' + desc + '</p>';
       // Auto-hide a preset whose art file isn't in the repo yet (avoids broken
