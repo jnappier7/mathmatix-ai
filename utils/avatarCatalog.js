@@ -48,6 +48,10 @@ const STUDENT_PRESETS = [
     { id: 'student.navy',     name: 'Navy Hoodie',     image: 'students/navy.png' },
     { id: 'student.charcoal', name: 'Charcoal Hoodie', image: 'students/charcoal.png' },
     { id: 'student.lavender', name: 'Lavender Hoodie', image: 'students/lavender.png' },
+    { id: 'student.pink',     name: 'Pink Tee',        image: 'students/pink.png' },
+    { id: 'student.green',    name: 'Green Tee',       image: 'students/green.png' },
+    { id: 'student.cream',    name: 'Cream Sweater',   image: 'students/cream.png' },
+    { id: 'student.gold',     name: 'Gold Hoodie',     image: 'students/gold.png' },
 ];
 
 const CATALOG = {};
