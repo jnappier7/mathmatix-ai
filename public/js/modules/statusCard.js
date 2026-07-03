@@ -98,6 +98,7 @@ function buildModal() {
             <div class="sc-name"></div>
             <div class="sc-rank"></div>
             <a class="sc-lab-cta" href="/pick-avatar.html">🎨 Design in the Creation Lab</a>
+            <button type="button" class="sc-shop-cta">🛍️ Open Shop</button>
           </div>
         </div>
 
@@ -126,6 +127,10 @@ function buildModal() {
     document.body.appendChild(modal);
     modal.querySelectorAll('[data-sc-close]').forEach(el =>
         el.addEventListener('click', closeStatusCard));
+    modal.querySelector('.sc-shop-cta')?.addEventListener('click', () => {
+        closeStatusCard();
+        if (typeof window.openShop === 'function') window.openShop();
+    });
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !modal.hidden) closeStatusCard();
     });
