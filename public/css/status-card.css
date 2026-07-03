@@ -65,6 +65,13 @@
   font-size: 0.78rem; font-weight: 700; color: #ff3b7f; text-decoration: none;
 }
 .sc-lab-cta:hover { text-decoration: underline; }
+.sc-shop-cta {
+  display: inline-block; margin-top: 6px; margin-left: 12px;
+  border: none; background: transparent; padding: 0; cursor: pointer;
+  font-size: 0.78rem; font-weight: 700; color: #12b3b3;
+  font-family: Inter, sans-serif;
+}
+.sc-shop-cta:hover { text-decoration: underline; }
 
 /* Stat row */
 .sc-stats {

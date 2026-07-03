@@ -9,6 +9,9 @@ import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, upda
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
 import './modules/statusCard.js'; // registers window.openStatusCard (Progress button)
+import './modules/shop.js'; // registers window.openShop (cosmetics shop)
+import { resolveAvatarUrl } from './modules/avatarResolver.js';
+import { applyCosmetics } from './modules/cosmeticsApply.js';
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
@@ -401,6 +404,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateGamificationDisplay();
         // Identity chip (level ring + rank title) in the chat header.
         try { initIdentityChip(currentUser); } catch (e) { console.warn('Identity chip init failed', e); }
+        // Apply any equipped cosmetics (no-op until the student equips something).
+        try { applyCosmetics(currentUser); } catch (e) { console.warn('Apply cosmetics failed', e); }
     }
 
     
@@ -1443,9 +1448,10 @@ document.addEventListener("DOMContentLoaded", () => {
             avatar.className = "message-avatar";
 
             // DiceBear avatar or initial fallback
-            if (currentUser.avatar?.dicebearUrl) {
+            const myAvatarUrl = resolveAvatarUrl(currentUser);
+            if (myAvatarUrl) {
                 const avatarImg = document.createElement('img');
-                avatarImg.src = currentUser.avatar.dicebearUrl;
+                avatarImg.src = myAvatarUrl;
                 avatarImg.alt = 'My Avatar';
                 avatar.innerHTML = '';
                 avatar.appendChild(avatarImg);
@@ -2491,9 +2497,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const avatar = document.createElement("div");
             avatar.className = "message-avatar";
 
-            if (currentUser.avatar?.dicebearUrl) {
+            const myAvatarUrl = resolveAvatarUrl(currentUser);
+            if (myAvatarUrl) {
                 const avatarImg = document.createElement('img');
-                avatarImg.src = currentUser.avatar.dicebearUrl;
+                avatarImg.src = myAvatarUrl;
                 avatarImg.alt = 'My Avatar';
                 avatar.innerHTML = '';
                 avatar.appendChild(avatarImg);
