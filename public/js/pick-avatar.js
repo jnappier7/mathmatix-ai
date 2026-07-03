@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderCatalogAvatars(esc) {
     const cfg = window.AVATAR_CONFIG || {};
     const level = currentUser.level || 1;
-    const groupOrder = { creature: 0, character: 1, sports: 2, style: 3 };
+    const groupOrder = { student: 0, creature: 1, character: 2, sports: 3, style: 4 };
     const items = Object.values(cfg).sort((a, b) =>
       (groupOrder[a.group] - groupOrder[b.group]) ||
       (a.unlockLevel - b.unlockLevel) ||
@@ -128,6 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
         '<div class="avatar-card-image"><img src="/images/avatars/' + esc(item.image) + '" alt="' + esc(item.name) + '" loading="lazy"></div>' +
         '<h4 class="avatar-card-name">' + esc(item.name) + '</h4>' +
         '<p class="avatar-card-description">' + desc + '</p>';
+      // Auto-hide a preset whose art file isn't in the repo yet (avoids broken
+      // image cards — relevant for the student presets pending art).
+      const img = card.querySelector('img');
+      if (img) img.addEventListener('error', () => card.remove());
       avatarSelectionGrid.appendChild(card);
     });
   }
