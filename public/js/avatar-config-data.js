@@ -28,6 +28,7 @@
   // public/images/avatars/students/ yet.
   var STUDENT_PRESETS = [
     { id: 'student.navy',     name: 'Navy Hoodie',     image: 'students/navy.png' },
+    { id: 'student.blue',     name: 'Blue Hoodie',     image: 'students/blue.png' },
     { id: 'student.charcoal', name: 'Charcoal Hoodie', image: 'students/charcoal.png' },
     { id: 'student.lavender', name: 'Lavender Hoodie', image: 'students/lavender.png' },
     { id: 'student.pink',     name: 'Pink Tee',        image: 'students/pink.png' },

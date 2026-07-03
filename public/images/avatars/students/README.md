@@ -16,7 +16,8 @@ for the catalog to list a preset before its art lands.
 
 | Catalog id         | File            | Character | Notes |
 |--------------------|-----------------|-----------|-------|
-| `student.navy`     | `navy.png`      | Jayden    | navy hoodie, khaki cargos, "M" sneakers |
+| `student.navy`     | `navy.png`      | (hero)    | navy hoodie, curly brown hair, khaki cargos, "M" sneakers |
+| `student.blue`     | `blue.png`      | Jayden    | blue hoodie, black spiky hair, black joggers |
 | `student.charcoal` | `charcoal.png`  | Jordan    | charcoal hoodie, black joggers — **redo shoes (currently Jordan-1 look-alikes → use original design)** |
 | `student.lavender` | `lavender.png`  | Emily     | lavender hoodie, jeans |
 | `student.pink`     | `pink.png`      | Aaliyah   | pink tee, denim cargos |
