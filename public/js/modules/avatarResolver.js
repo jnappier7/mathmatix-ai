@@ -17,7 +17,12 @@ export function resolveAvatarUrl(user) {
     if (!user) return null;
     const cfg = (typeof window !== 'undefined' && window.AVATAR_CONFIG) || {};
     const id = user.selectedAvatarId;
-    if (id && cfg[id]) return `/images/avatars/${cfg[id].image}`;
+    if (id && cfg[id]) {
+        const img = cfg[id].image;
+        // Absolute paths (e.g. student presets under /images/students/) are used
+        // as-is; bare filenames resolve against the creature art dir.
+        return img.charAt(0) === '/' ? img : `/images/avatars/${img}`;
+    }
     if (user.avatar && user.avatar.dicebearUrl) return user.avatar.dicebearUrl;
     return null;
 }

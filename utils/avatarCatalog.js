@@ -38,7 +38,27 @@ const SPORTS_IDS = ['swimmer', 'gymnast', 'golfer', 'tennis', 'wrestler', 'runne
     'equestrian', 'yoga'];
 const STYLE_IDS = ['concrete', 'wood', 'nature', 'graffiti'];
 
+// Premium human "student" presets — polished bespoke characters in the tutors'
+// art style (the glow-up target). Free (level 1). Art files live under
+// public/images/students/ (absolute paths below); add a preset by (1) dropping
+// the transparent PNG there and (2) adding a row here + in the client mirror.
+// The picker auto-hides any preset whose art isn't present yet, so it's safe to
+// list a preset before its file lands.
+const STUDENT_PRESETS = [
+    { id: 'student.navy',     name: 'Navy Hoodie',     image: '/images/students/navy.png' },
+    { id: 'student.blue',     name: 'Blue Hoodie',     image: '/images/students/blue.png' },
+    { id: 'student.charcoal', name: 'Charcoal Hoodie', image: '/images/students/charcoal.png' },
+    { id: 'student.lavender', name: 'Lavender Hoodie', image: '/images/students/lavender.png' },
+    { id: 'student.pink',     name: 'Pink Tee',        image: '/images/students/pink.png' },
+    { id: 'student.forrest',  name: 'Forest Tee',      image: '/images/students/forrest.png' },
+    { id: 'student.yellow',   name: 'Yellow Hoodie',   image: '/images/students/yellow.png' },
+    { id: 'student.gold',     name: 'Gold Hoodie',     image: '/images/students/gold.png' },
+];
+
 const CATALOG = {};
+STUDENT_PRESETS.forEach(p => {
+    CATALOG[p.id] = { id: p.id, name: p.name, image: p.image, group: 'student', rarity: 'common', unlockLevel: 1 };
+});
 CREATURE_TIERS.forEach(tier => tier.ids.forEach(id => {
     CATALOG[id] = { id, name: titleCase(id), image: `${id}.png`, group: 'creature', rarity: tier.rarity, unlockLevel: tier.level };
 }));

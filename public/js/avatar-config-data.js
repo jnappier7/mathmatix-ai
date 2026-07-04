@@ -23,7 +23,24 @@
     'equestrian', 'yoga'];
   var STYLE_IDS = ['concrete', 'wood', 'nature', 'graffiti'];
 
+  // Premium human "student" presets — see utils/avatarCatalog.js (canonical).
+  // The picker auto-hides any preset whose art isn't in
+  // public/images/avatars/students/ yet.
+  var STUDENT_PRESETS = [
+    { id: 'student.navy',     name: 'Navy Hoodie',     image: '/images/students/navy.png' },
+    { id: 'student.blue',     name: 'Blue Hoodie',     image: '/images/students/blue.png' },
+    { id: 'student.charcoal', name: 'Charcoal Hoodie', image: '/images/students/charcoal.png' },
+    { id: 'student.lavender', name: 'Lavender Hoodie', image: '/images/students/lavender.png' },
+    { id: 'student.pink',     name: 'Pink Tee',        image: '/images/students/pink.png' },
+    { id: 'student.forrest',  name: 'Forest Tee',      image: '/images/students/forrest.png' },
+    { id: 'student.yellow',   name: 'Yellow Hoodie',   image: '/images/students/yellow.png' },
+    { id: 'student.gold',     name: 'Gold Hoodie',     image: '/images/students/gold.png' }
+  ];
+
   var cfg = {};
+  STUDENT_PRESETS.forEach(function (p) {
+    cfg[p.id] = { id: p.id, name: p.name, image: p.image, group: 'student', rarity: 'common', unlockLevel: 1 };
+  });
   CREATURE_TIERS.forEach(function (t) {
     t.ids.forEach(function (id) {
       cfg[id] = { id: id, name: titleCase(id), image: id + '.png', group: 'creature', rarity: t.rarity, unlockLevel: t.level };
