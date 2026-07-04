@@ -99,40 +99,31 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCatalogAvatars(esc);
   }
 
-  /* Render the selectable creature/character catalog with level gating. */
+  /* Render the human student preset avatars as a character-select lineup.
+     Creatures/characters/sports/styles are intentionally retired from the
+     picker — students get the polished full-body characters only. */
   function renderCatalogAvatars(esc) {
     const cfg = window.AVATAR_CONFIG || {};
-    const level = currentUser.level || 1;
-    const groupOrder = { student: 0, creature: 1, character: 2, sports: 3, style: 4 };
-    const items = Object.values(cfg).sort((a, b) =>
-      (groupOrder[a.group] - groupOrder[b.group]) ||
-      (a.unlockLevel - b.unlockLevel) ||
-      a.name.localeCompare(b.name)
-    );
+    const items = Object.values(cfg)
+      .filter(item => item.group === 'student')
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     items.forEach(item => {
-      const unlocked = level >= item.unlockLevel;
       const card = document.createElement('div');
-      card.classList.add('avatar-card', unlocked ? 'unlocked' : 'locked');
+      card.classList.add('avatar-card', 'student-avatar-card', 'unlocked');
       card.dataset.avatarId = item.id;
       card.dataset.catalog = '1';
-      if (currentUser.selectedAvatarId === item.id && unlocked) {
+      if (currentUser.selectedAvatarId === item.id) {
         card.classList.add('selected');
         selectedAvatarId = item.id;
         completeSelectionBtn.disabled = false;
       }
-      const desc = unlocked
-        ? (item.rarity === 'common' ? 'Ready to wear' : esc(item.rarity))
-        : ('🔒 Unlocks at Level ' + item.unlockLevel);
-      // Absolute image paths (student presets under /images/students/) are used
-      // as-is; bare filenames resolve against the creature art dir.
+      // Student presets use absolute image paths (/images/students/…).
       const imgSrc = item.image.charAt(0) === '/' ? item.image : '/images/avatars/' + item.image;
       card.innerHTML =
         '<div class="avatar-card-image"><img src="' + esc(imgSrc) + '" alt="' + esc(item.name) + '" loading="lazy"></div>' +
-        '<h4 class="avatar-card-name">' + esc(item.name) + '</h4>' +
-        '<p class="avatar-card-description">' + desc + '</p>';
-      // Auto-hide a preset whose art file isn't in the repo yet (avoids broken
-      // image cards — relevant for the student presets pending art).
+        '<h4 class="avatar-card-name">' + esc(item.name) + '</h4>';
+      // Auto-hide a preset whose art file isn't present (defensive).
       const img = card.querySelector('img');
       if (img) img.addEventListener('error', () => card.remove());
       avatarSelectionGrid.appendChild(card);
