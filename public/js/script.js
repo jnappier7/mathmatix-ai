@@ -261,6 +261,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!userRes.ok) throw new Error('Not authenticated');
             const data = await userRes.json();
             currentUser = data.user;
+            // Expose the loaded user globally so modules that read window.currentUser
+            // (status card modal, identity chip, resume card, guided path, shop) see
+            // real data on chat.html. Same object reference, so the in-place XP/level
+            // updates after each chat turn stay live without re-mirroring.
+            window.currentUser = currentUser;
             if (!currentUser) throw new Error('User not found');
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
@@ -3567,6 +3572,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             if (data.success && data.user) {
                 currentUser = data.user;
+                // Settings save returns a fresh user object — re-mirror to the global
+                // so window.currentUser consumers don't hold the stale reference.
+                window.currentUser = currentUser;
                 console.log("LOG: Settings saved, local user updated.");
             }
         } catch (error) { console.error("Error saving settings:", error); }
