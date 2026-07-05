@@ -38,35 +38,36 @@
   gap: clamp(16px, 2.5vw, 32px);
   align-items: stretch;
 }
-.tp-stage { flex: 1.5 1 0; min-width: 0; }
-.tp-panel-wrap { flex: 1 1 0; min-width: 260px; }
+.tp-stage { flex: 1.85 1 0; min-width: 0; }
+.tp-panel-wrap { flex: 1 1 0; min-width: 250px; }
 
-/* ---- Stage: full-body figures standing together ---- */
+/* ---- Stage: full-body figures standing together as one crew ---- */
 .tp-roster {
   position: relative;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: clamp(2px, 0.8vw, 12px);
-  min-height: 300px;
-  padding: 16px 10px 0;
+  gap: 0;
+  height: clamp(320px, 46vh, 430px);
+  padding: 14px 6px 0;
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #ffffff 0%, #eef4f6 100%);
   overflow: hidden;
 }
 
-/* Figures are sized by WIDTH (equal columns) so their natural height shows the
-   true relative proportions — every art file shares one canvas, so equal width
-   => equal scale => Nappier tallest, Maya shortest, feet on one line. */
+/* Sized by HEIGHT so they're big and fill the stage; a negative margin overlaps
+   neighbours shoulder-to-shoulder for the "family portrait" look. Every art
+   file shares one 961x1637 canvas => equal height => true relative proportions
+   (Nappier tallest, Maya shortest) with feet on one line. */
 .tp-figure {
   position: relative;
   appearance: none;
   background: none;
   border: none;
   cursor: pointer;
-  flex: 1 1 0;
-  max-width: 190px;
-  min-width: 0;
+  flex: 0 0 auto;
+  height: 100%;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -75,19 +76,25 @@
   font-family: inherit;
   transition: transform 0.18s ease;
 }
+.tp-figure + .tp-figure { margin-left: clamp(-56px, -3.4vw, -18px); }
+.tp-figure:hover { z-index: 2; }
+.tp-figure.selected { z-index: 3; }
 
 .tp-figure-img {
   position: relative;
-  width: 100%;
-  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 /* soft ground shadow, nudged up to meet the feet (figures carry a little
    transparent padding below the shoes in the source art). */
 .tp-figure-img::after {
   content: '';
   position: absolute;
-  bottom: 14px;
-  width: 70%;
+  bottom: 12px;
+  width: 74%;
   height: 14px;
   background: radial-gradient(ellipse at center, rgba(15, 26, 36, 0.20), rgba(15, 26, 36, 0) 70%);
   border-radius: 50%;
@@ -97,8 +104,8 @@
   position: relative;
   z-index: 1;
   display: block;
-  width: 100%;
-  height: auto;
+  height: 100%;
+  width: auto;
   object-position: bottom center;
   filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.16));
   transition: filter 0.18s ease, opacity 0.18s ease;
@@ -262,14 +269,14 @@
   .tp-stage, .tp-panel-wrap { flex: 1 1 auto; min-width: 0; }
   .tp-roster {
     justify-content: flex-start;
+    gap: 8px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
   }
-  .tp-figure { flex: 0 0 40%; max-width: none; scroll-snap-align: center; }
+  /* No overlap when the figures scroll horizontally on small screens. */
+  .tp-figure { scroll-snap-align: center; }
+  .tp-figure + .tp-figure { margin-left: 0; }
   .tp-panel { height: auto; }
-}
-@media (max-width: 520px) {
-  .tp-figure { flex-basis: 56%; }
 }
