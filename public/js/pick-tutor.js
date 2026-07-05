@@ -211,13 +211,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderLocked() {
     if (!lockedShelf) return;
     if (!lockedTutors.length) { lockedShelf.style.display = 'none'; return; }
+    // Hint shows on hover (title) to keep the shelf compact and above the fold.
     lockedShelf.innerHTML =
       '<p class="tp-locked-title"><i class="fas fa-star"></i> Special releases — unlock as you learn</p>' +
       '<div class="tp-locked-row">' +
         lockedTutors.map(t =>
           '<div class="tp-lock" title="' + esc(t.unlockHint || 'Keep learning to unlock') + '">' +
             '<div class="tp-lock-badge"><i class="fas fa-lock"></i></div>' +
-            '<div class="tp-lock-hint">' + esc(t.unlockHint || 'Locked') + '</div>' +
           '</div>').join('') +
       '</div>';
   }
