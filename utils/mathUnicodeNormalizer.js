@@ -5,97 +5,145 @@
  * fractions, LaTeX commands) to their ASCII equivalents so downstream regex
  * patterns can match without per-site normalization.
  *
- * Used by visualCommandEnforcer, observe pipeline, and anywhere else that
- * extracts math expressions from AI/student text.
+ * Used by visualCommandEnforcer, mathSolver, the observe pipeline, and anywhere
+ * else that extracts or grades math expressions from AI/student text.
  *
  * @module mathUnicodeNormalizer
  */
 
 // ── Superscript digits ──
 const SUPERSCRIPT_MAP = {
-  '\u2070': '^0', // ⁰
-  '\u00B9': '^1', // ¹
-  '\u00B2': '^2', // ²
-  '\u00B3': '^3', // ³
-  '\u2074': '^4', // ⁴
-  '\u2075': '^5', // ⁵
-  '\u2076': '^6', // ⁶
-  '\u2077': '^7', // ⁷
-  '\u2078': '^8', // ⁸
-  '\u2079': '^9', // ⁹
-  '\u207B': '-',  // ⁻ (superscript minus)
-  '\u207A': '+',  // ⁺ (superscript plus)
-  '\u207F': '^n', // ⁿ
+  '⁰': '^0', // ⁰
+  '¹': '^1', // ¹
+  '²': '^2', // ²
+  '³': '^3', // ³
+  '⁴': '^4', // ⁴
+  '⁵': '^5', // ⁵
+  '⁶': '^6', // ⁶
+  '⁷': '^7', // ⁷
+  '⁸': '^8', // ⁸
+  '⁹': '^9', // ⁹
+  '⁻': '-',  // ⁻ (superscript minus)
+  '⁺': '+',  // ⁺ (superscript plus)
+  'ⁿ': '^n', // ⁿ
 };
 
 // ── Subscript digits ──
 const SUBSCRIPT_MAP = {
-  '\u2080': '0', // ₀
-  '\u2081': '1', // ₁
-  '\u2082': '2', // ₂
-  '\u2083': '3', // ₃
-  '\u2084': '4', // ₄
-  '\u2085': '5', // ₅
-  '\u2086': '6', // ₆
-  '\u2087': '7', // ₇
-  '\u2088': '8', // ₈
-  '\u2089': '9', // ₉
+  '₀': '0', // ₀
+  '₁': '1', // ₁
+  '₂': '2', // ₂
+  '₃': '3', // ₃
+  '₄': '4', // ₄
+  '₅': '5', // ₅
+  '₆': '6', // ₆
+  '₇': '7', // ₇
+  '₈': '8', // ₈
+  '₉': '9', // ₉
 };
 
-// ── Unicode operator replacements ──
+// ── Unicode operator/sign replacements ──
+// Single source of truth for mapping Unicode math operators and signs to their
+// ASCII equivalents. This is the map that has repeatedly bitten the regex-based
+// math engine: MathLive / LaTeX / mobile keyboards emit these glyphs instead of
+// ASCII, and any one that is MISSING here silently corrupts detection or grading
+// (the U+2212 minus dropped a negative sign; the U+22C5 dot dropped a whole
+// factor). Keep it EXHAUSTIVE — adding a variant here fixes every call site at once.
+//
+// Deliberately EXCLUDES the en dash (U+2013) and em dash (U+2014): those are
+// PROSE punctuation, not a math minus, and rewriting them corrupts sentences
+// like "$...$ — what's your next step?".
 const OPERATOR_MAP = {
-  '\u2212': '-',  // − (minus sign)
-  '\u00D7': '*',  // × (multiplication)
-  '\u00F7': '/',  // ÷ (division)
-  '\u22C5': '*',  // ⋅ (dot operator)
-  '\u2022': '*',  // • (bullet, sometimes used as multiplication)
-  '\u00B7': '*',  // · (middle dot)
-  '\u2264': '<=', // ≤
-  '\u2265': '>=', // ≥
-  '\u2260': '!=', // ≠
-  '\u2248': '~=', // ≈
-  '\u221A': 'sqrt', // √
+  // Minus / hyphen-minus
+  '−': '-',    // − minus sign
+  '－': '-',    // － fullwidth hyphen-minus
+  '﹣': '-',    // ﹣ small hyphen-minus
+  // Multiplication
+  '×': '*',    // × multiplication sign
+  '⋅': '*',    // ⋅ dot operator
+  '·': '*',    // · middle dot
+  '∙': '*',    // ∙ bullet operator
+  '•': '*',    // • bullet
+  '∗': '*',    // ∗ asterisk operator
+  '＊': '*',    // ＊ fullwidth asterisk
+  // Division
+  '÷': '/',    // ÷ division sign
+  '∕': '/',    // ∕ division slash
+  '⁄': '/',    // ⁄ fraction slash
+  '／': '/',    // ／ fullwidth solidus
+  // Plus / equals
+  '＋': '+',    // ＋ fullwidth plus
+  '＝': '=',    // ＝ fullwidth equals
+  // Comparison + roots
+  '≤': '<=',   // ≤
+  '≥': '>=',   // ≥
+  '≠': '!=',   // ≠
+  '≈': '~=',   // ≈
+  '√': 'sqrt', // √
 };
 
 // ── Unicode fraction replacements ──
 const FRACTION_MAP = {
-  '\u00BD': '(1/2)', // ½
-  '\u2153': '(1/3)', // ⅓
-  '\u2154': '(2/3)', // ⅔
-  '\u00BC': '(1/4)', // ¼
-  '\u00BE': '(3/4)', // ¾
-  '\u2155': '(1/5)', // ⅕
-  '\u2156': '(2/5)', // ⅖
-  '\u2157': '(3/5)', // ⅗
-  '\u2158': '(4/5)', // ⅘
-  '\u2159': '(1/6)', // ⅙
-  '\u215A': '(5/6)', // ⅚
-  '\u2150': '(1/7)', // ⅐
-  '\u215B': '(1/8)', // ⅛
-  '\u215C': '(3/8)', // ⅜
-  '\u215D': '(5/8)', // ⅝
-  '\u215E': '(7/8)', // ⅞
-  '\u2151': '(1/9)', // ⅑
-  '\u2152': '(1/10)', // ⅒
+  '½': '(1/2)', // ½
+  '⅓': '(1/3)', // ⅓
+  '⅔': '(2/3)', // ⅔
+  '¼': '(1/4)', // ¼
+  '¾': '(3/4)', // ¾
+  '⅕': '(1/5)', // ⅕
+  '⅖': '(2/5)', // ⅖
+  '⅗': '(3/5)', // ⅗
+  '⅘': '(4/5)', // ⅘
+  '⅙': '(1/6)', // ⅙
+  '⅚': '(5/6)', // ⅚
+  '⅐': '(1/7)', // ⅐
+  '⅛': '(1/8)', // ⅛
+  '⅜': '(3/8)', // ⅜
+  '⅝': '(5/8)', // ⅝
+  '⅞': '(7/8)', // ⅞
+  '⅑': '(1/9)', // ⅑
+  '⅒': '(1/10)', // ⅒
 };
 
 // ── Greek letters commonly used in math ──
 const GREEK_MAP = {
-  '\u03C0': 'pi',    // π
-  '\u03B8': 'theta', // θ
-  '\u03B1': 'alpha', // α
-  '\u03B2': 'beta',  // β
-  '\u03B3': 'gamma', // γ
-  '\u03B4': 'delta', // δ
-  '\u03BB': 'lambda', // λ
-  '\u03C3': 'sigma', // σ
-  '\u03C4': 'tau',   // τ
-  '\u221E': 'Infinity', // ∞
+  'π': 'pi',    // π
+  'θ': 'theta', // θ
+  'α': 'alpha', // α
+  'β': 'beta',  // β
+  'γ': 'gamma', // γ
+  'δ': 'delta', // δ
+  'λ': 'lambda', // λ
+  'σ': 'sigma', // σ
+  'τ': 'tau',   // τ
+  '∞': 'Infinity', // ∞
 };
 
 // Build a single regex that matches any character we need to replace
 const ALL_CHARS = Object.assign({}, SUPERSCRIPT_MAP, SUBSCRIPT_MAP, OPERATOR_MAP, FRACTION_MAP, GREEK_MAP);
 const UNICODE_REGEX = new RegExp('[' + Object.keys(ALL_CHARS).join('') + ']', 'g');
+
+// Operator-only regex, for callers (like the regex-based math engine) that want
+// to normalize operators/signs WITHOUT rewriting fractions/superscripts/Greek —
+// e.g. mathSolver handles vulgar fractions its own way and must not receive
+// "(1/2)" in place of "½".
+const OPERATOR_REGEX = new RegExp('[' + Object.keys(OPERATOR_MAP).join('') + ']', 'g');
+
+/**
+ * Normalize ONLY Unicode math operators and signs to ASCII (minus, ×, ÷, dots,
+ * comparison operators, √, and their fullwidth/variant forms). Leaves
+ * fractions, superscripts, Greek letters, and all other text untouched.
+ *
+ * This is the focused entry point for the regex-based math engine — apply it at
+ * every point that parses or grades an expression so no Unicode operator variant
+ * can slip through. Idempotent and safe on any string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function normalizeMathOperators(str) {
+  if (!str || typeof str !== 'string') return str || '';
+  return str.replace(OPERATOR_REGEX, ch => OPERATOR_MAP[ch] || ch);
+}
 
 /**
  * Normalize Unicode math characters to ASCII equivalents.
@@ -127,4 +175,4 @@ function normalizeMathUnicode(str) {
   return result;
 }
 
-module.exports = { normalizeMathUnicode };
+module.exports = { normalizeMathUnicode, normalizeMathOperators, OPERATOR_MAP };

@@ -10,6 +10,8 @@
  * @module mathSolver
  */
 
+const { normalizeMathOperators } = require('./mathUnicodeNormalizer');
+
 /**
  * Detect if a message contains a math problem
  * @param {string} message - User message
@@ -20,30 +22,20 @@ function detectMathProblem(message) {
         return null;
     }
 
-    // Normalize Unicode superscripts/subscripts BEFORE any pattern matching.
-    // AI messages and MathLive input often use ² ³ ⁴ etc. instead of ^2 ^3 ^4.
-    // Without this, "3²" won't match the exponent pattern expecting "3^2".
-    let normalized = message
+    // Normalize BEFORE any pattern matching. Two concerns:
+    //  1. Unicode operators/signs (−, ×, ÷, ⋅, fullwidth forms, …) → ASCII, via the
+    //     shared normalizeMathOperators() — the single source of truth. MathLive/
+    //     LaTeX emit these glyphs, and a missing one silently corrupts detection or
+    //     grading (the U+2212 minus dropped a negative; the U+22C5 dot dropped a
+    //     factor). It deliberately leaves vulgar fractions (½) and superscripts
+    //     alone, which this engine handles its own way below.
+    //  2. Superscripts (² ³ ⁴ …) → ^2 ^3, so "3²" matches the exponent patterns.
+    let normalized = normalizeMathOperators(message)
         .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
         .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
         .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
         .replace(/⁹/g, '^9').replace(/⁻/g, '^-').replace(/⁺/g, '^+')
-        .replace(/ⁿ/g, '^n')
-        // Normalize multiplication dots — cdot (⋅, U+22C5), middot (·), bullet (∙ •) —
-        // to "*". These come from LaTeX \cdot rendering and MathLive input. Nothing
-        // downstream recognized them as operators, so "4 ⋅ 2" was treated as non-math
-        // and "16/4 ⋅ 2" lost its "⋅ 2" entirely (see arithmetic-chain detection below).
-        .replace(/[⋅·∙•]/g, '*')
-        // Normalize the Unicode MINUS SIGN (−, U+2212) and the fullwidth/small
-        // hyphen-minus (U+FF0D, U+FE63) to ASCII "-". MathLive/LaTeX render
-        // subtraction and negatives with U+2212, not the ASCII hyphen. Without this,
-        // "−34+6" parsed as "34+6" = 40 (dropping the negative) and "3x−6=2x−34" was
-        // not detected as an equation at all — so a correct negative answer got
-        // graded wrong. NOTE: deliberately excludes en/em dashes (– —) — those are
-        // PROSE punctuation, and rewriting them corrupts sentences like "$…$ — next?".
-        // (A shared normalizeMathUnicode() exists but also rewrites fractions/Greek;
-        // we keep a minimal inline pass for this regex pipeline.)
-        .replace(/[−－﹣]/g, '-');
+        .replace(/ⁿ/g, '^n');
 
     // Reassign so all downstream code (40+ regex matches and sub-function calls)
     // automatically operates on the normalized string.
@@ -473,7 +465,7 @@ function detectMathProblem(message) {
     // associativity (so 16/4*2 = (16/4)*2 = 8, NOT 16/(4*2) = 2). Placed AFTER the
     // two-operand and fraction-pair patterns so those keep their dedicated handling;
     // requires 2+ operators so it only ever catches genuine multi-operand chains.
-    const chainForm = message.replace(/\s+/g, '').replace(/×/g, '*').replace(/÷/g, '/');
+    const chainForm = message.replace(/\s+/g, ''); // operators already ASCII-normalized above
     if (/^-?\d+\.?\d*(?:[+\-*/^]\d+\.?\d*){2,}$/.test(chainForm)) {
         return { type: 'evaluation', expression: chainForm };
     }
@@ -2239,10 +2231,9 @@ function solveVolume(problem) {
 function solveEvaluation(problem) {
     const { expression } = problem;
 
-    // Clean the expression — convert word operators BEFORE stripping non-math chars
-    let cleaned = expression
-        .replace(/×/g, '*')
-        .replace(/÷/g, '/')
+    // Clean the expression — normalize Unicode operators (shared source of truth),
+    // then convert word operators BEFORE stripping non-math chars.
+    let cleaned = normalizeMathOperators(expression)
         // "x" between numbers with spaces = multiplication (e.g., "2.75 x 5")
         .replace(/(\d)\s+x\s+(\d)/gi, '$1*$2')
         .replace(/\btimes\b/gi, '*')
@@ -2312,11 +2303,9 @@ function greatestCommonDivisor(a, b) {
  */
 function evalArithmeticString(str) {
     if (typeof str !== 'string') return null;
-    let s = str
-        .replace(/[⋅·∙•×]/g, '*')   // multiplication dots / sign → *
-        .replace(/÷/g, '/')          // division sign → /
-        .replace(/[−－﹣]/g, '-')     // Unicode minus sign (U+2212) etc. → ASCII "-"
-        .replace(/\s+/g, '');
+    // Normalize Unicode operators/signs via the shared source of truth, then strip
+    // whitespace, so "16/4 ⋅ 2" and "−34+6" evaluate by value rather than as garbage.
+    let s = normalizeMathOperators(str).replace(/\s+/g, '');
     // Require at least one operator (so plain "8" stays on the caller's path)
     // and ONLY safe arithmetic characters (no letters, commas, currency, units).
     if (!/[+\-*/^]/.test(s)) return null;
@@ -2339,12 +2328,12 @@ function evalArithmeticString(str) {
  * @returns {Object} Verification result
  */
 function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
-    // Normalize answers. Convert the Unicode MINUS SIGN (−, U+2212) and dash
-    // variants to ASCII "-" so a student's "−28" (as MathLive/LaTeX renders it)
-    // is not stripped to a positive "28" and rejected against a correct "-28".
-    const normDash = (v) => String(v).trim().toLowerCase().replace(/[−－﹣]/g, '-');
-    const studentStr = normDash(studentAnswer);
-    const correctStr = normDash(correctAnswer);
+    // Normalize answers through the shared operator/sign map so a student's "−28"
+    // (Unicode minus, as MathLive/LaTeX render it) is not stripped to a positive
+    // "28" and rejected against a correct "-28" — and likewise for ×, ÷, dots, etc.
+    const norm = (v) => normalizeMathOperators(String(v).trim().toLowerCase());
+    const studentStr = norm(studentAnswer);
+    const correctStr = norm(correctAnswer);
 
     // Exact match
     if (studentStr === correctStr) {
