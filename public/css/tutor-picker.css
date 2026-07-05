@@ -1,0 +1,282 @@
+/* tutor-picker.css — character-select redesign for the tutor picker.
+ *
+ * Full-body tutors stand together on a light "stage" (ground shadows + a
+ * teal outline-glow on the chosen one), paired with a detail panel that shows
+ * the selected coach's name, catchphrase, bio, a voice preview and the CTA.
+ *
+ * Mirrors avatar-picker.css primitives so the two onboarding steps read as one
+ * system. Loaded AFTER style.css, and uses its own `.tp-*` classes so it never
+ * collides with the legacy `.tutor-card` rules (which this page no longer uses;
+ * those blocks in style.css are now dead for pick-tutor and can be pruned).
+ *
+ * The four art files share an identical 961x1637 canvas with a common foot
+ * baseline, so equal CSS height => correct relative heights + aligned feet.
+ */
+
+.tp-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem var(--page-horizontal-padding) 3rem;
+}
+
+.tp-shell {
+  width: 100%;
+  max-width: var(--content-max-width);
+}
+
+.tp-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+.tp-header .section-title { margin-bottom: 0.35rem; }
+.tp-header .subtitle { margin: 0 auto; max-width: 48ch; }
+
+/* ---- Two-pane: roster stage + detail panel ---- */
+.tp-layout {
+  display: flex;
+  gap: clamp(16px, 2.5vw, 32px);
+  align-items: stretch;
+}
+.tp-stage { flex: 1.85 1 0; min-width: 0; }
+.tp-panel-wrap { flex: 1 1 0; min-width: 250px; }
+
+/* ---- Stage: full-body figures standing together as one crew ---- */
+.tp-roster {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  height: clamp(320px, 46vh, 430px);
+  padding: 14px 6px 0;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #ffffff 0%, #eef4f6 100%);
+  overflow: hidden;
+}
+
+/* Sized by HEIGHT so they're big and fill the stage; a negative margin overlaps
+   neighbours shoulder-to-shoulder for the "family portrait" look. Every art
+   file shares one 961x1637 canvas => equal height => true relative proportions
+   (Nappier tallest, Maya shortest) with feet on one line. */
+.tp-figure {
+  position: relative;
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex: 0 0 auto;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  font-family: inherit;
+  transition: transform 0.18s ease;
+}
+.tp-figure + .tp-figure { margin-left: clamp(-56px, -3.4vw, -18px); }
+.tp-figure:hover { z-index: 2; }
+.tp-figure.selected { z-index: 3; }
+
+.tp-figure-img {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+/* soft ground shadow, nudged up to meet the feet (figures carry a little
+   transparent padding below the shoes in the source art). */
+.tp-figure-img::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  width: 74%;
+  height: 14px;
+  background: radial-gradient(ellipse at center, rgba(15, 26, 36, 0.20), rgba(15, 26, 36, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+.tp-figure-img img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 100%;
+  width: auto;
+  object-position: bottom center;
+  filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.16));
+  transition: filter 0.18s ease, opacity 0.18s ease;
+}
+.tp-figure-name {
+  margin-top: 6px;
+  font-weight: 700;
+  font-size: clamp(0.72rem, 1.3vw, 0.95rem);
+  color: var(--clr-text-dim);
+  white-space: nowrap;
+  transition: color 0.18s ease;
+  z-index: 2;
+}
+
+/* De-emphasize the not-chosen tutors so the pick pops. */
+.tp-figure:not(.selected) img { opacity: 0.66; }
+.tp-figure:not(.selected):hover { transform: translateY(-4px); }
+.tp-figure:not(.selected):hover img { opacity: 0.92; }
+
+/* The chosen tutor: lift + teal outline-glow + bold teal name. */
+.tp-figure.selected { transform: translateY(-6px); }
+.tp-figure.selected img {
+  filter:
+    drop-shadow(2px 0 0 var(--clr-primary-teal))
+    drop-shadow(-2px 0 0 var(--clr-primary-teal))
+    drop-shadow(0 2px 0 var(--clr-primary-teal))
+    drop-shadow(0 -2px 0 var(--clr-primary-teal))
+    drop-shadow(0 0 14px rgba(var(--clr-primary-teal-rgb), 0.55))
+    drop-shadow(0 8px 6px rgba(0, 0, 0, 0.18));
+}
+.tp-figure.selected .tp-figure-name { color: var(--clr-primary-teal); }
+
+.tp-figure:focus-visible { outline: none; }
+.tp-figure:focus-visible .tp-figure-name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Detail panel (light teal, airy — see "lighten the site" direction) ---- */
+.tp-panel {
+  height: 100%;
+  background: var(--clr-primary-teal-light);
+  border-radius: var(--radius-lg);
+  padding: clamp(18px, 2vw, 28px);
+  display: flex;
+  flex-direction: column;
+}
+.tp-name {
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-weight: 800;
+  color: var(--clr-text);
+  margin: 0 0 0.25rem;
+}
+.tp-catch {
+  color: var(--clr-accent-hotpink);
+  font-weight: 600;
+  font-style: italic;
+  margin: 0 0 1rem;
+}
+.tp-bio {
+  color: var(--clr-text);
+  line-height: var(--line-height-relaxed);
+  margin: 0 0 1rem;
+  text-align: left;
+}
+.tp-spec {
+  font-size: 0.9rem;
+  color: var(--clr-text-dim);
+  margin: 0 0 1.25rem;
+  text-align: left;
+}
+.tp-spec strong { color: var(--clr-primary-teal-dark); font-weight: 700; }
+
+.tp-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.tp-hear {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-full);
+  background: #fff;
+  color: var(--clr-primary-teal-dark);
+  border: 1.5px solid rgba(var(--clr-primary-teal-rgb), 0.35);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+.tp-hear:hover { background: rgba(var(--clr-primary-teal-rgb), 0.08); border-color: var(--clr-primary-teal); }
+.tp-hear:disabled { opacity: 0.7; cursor: default; }
+
+.tp-choose {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--clr-accent-hotpink);
+  color: #fff;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+}
+.tp-choose:hover { background: #e42f6f; }
+.tp-choose:active { transform: translateY(1px); }
+.tp-choose:disabled { opacity: 0.6; cursor: default; }
+
+/* ---- Locked "special release" shelf ---- */
+.tp-locked { margin-top: 2.25rem; text-align: center; }
+.tp-locked-title {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clr-text-dim);
+  margin-bottom: 0.85rem;
+  font-weight: 700;
+}
+.tp-locked-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(10px, 1.5vw, 18px);
+}
+.tp-lock {
+  width: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+.tp-lock-badge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: repeating-linear-gradient(135deg, #e7edf1, #e7edf1 6px, #dfe6ea 6px, #dfe6ea 12px);
+  border: 2px dashed #cdd7de;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9aa7b1;
+  font-size: 1.2rem;
+}
+.tp-lock-hint { font-size: 0.7rem; color: var(--clr-text-dim); line-height: 1.3; }
+
+.tp-backbar { margin-top: 1.5rem; text-align: center; }
+
+/* ---- Responsive: stack the panel under a scrollable character strip ---- */
+@media (max-width: 860px) {
+  .tp-layout { flex-direction: column; }
+  .tp-stage, .tp-panel-wrap { flex: 1 1 auto; min-width: 0; }
+  .tp-roster {
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* No overlap when the figures scroll horizontally on small screens. */
+  .tp-figure { scroll-snap-align: center; }
+  .tp-figure + .tp-figure { margin-left: 0; }
+  .tp-panel { height: auto; }
+}
