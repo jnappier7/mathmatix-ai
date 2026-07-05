@@ -48,7 +48,7 @@
   align-items: flex-end;
   justify-content: center;
   gap: 0;
-  height: clamp(320px, 46vh, 430px);
+  min-height: 320px;
   padding: 14px 6px 0;
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #ffffff 0%, #eef4f6 100%);
@@ -64,9 +64,10 @@
   appearance: none;
   background: none;
   border: none;
+  box-shadow: none;
+  outline: none;
   cursor: pointer;
   flex: 0 0 auto;
-  height: 100%;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -76,17 +77,15 @@
   font-family: inherit;
   transition: transform 0.18s ease;
 }
-.tp-figure + .tp-figure { margin-left: clamp(-56px, -3.4vw, -18px); }
+/* Strong overlap: the source PNGs carry wide transparent side-padding, so the
+   figures only stand shoulder-to-shoulder once that padding is pulled through. */
+.tp-figure + .tp-figure { margin-left: clamp(-120px, -8vw, -64px); }
 .tp-figure:hover { z-index: 2; }
 .tp-figure.selected { z-index: 3; }
 
 .tp-figure-img {
   position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  display: block;
 }
 /* soft ground shadow, nudged up to meet the feet (figures carry a little
    transparent padding below the shoes in the source art). */
@@ -104,7 +103,7 @@
   position: relative;
   z-index: 1;
   display: block;
-  height: 100%;
+  height: clamp(290px, 42vh, 400px);
   width: auto;
   object-position: bottom center;
   filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.16));
