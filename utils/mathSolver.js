@@ -33,7 +33,17 @@ function detectMathProblem(message) {
         // to "*". These come from LaTeX \cdot rendering and MathLive input. Nothing
         // downstream recognized them as operators, so "4 ⋅ 2" was treated as non-math
         // and "16/4 ⋅ 2" lost its "⋅ 2" entirely (see arithmetic-chain detection below).
-        .replace(/[⋅·∙•]/g, '*');
+        .replace(/[⋅·∙•]/g, '*')
+        // Normalize the Unicode MINUS SIGN (−, U+2212) and the fullwidth/small
+        // hyphen-minus (U+FF0D, U+FE63) to ASCII "-". MathLive/LaTeX render
+        // subtraction and negatives with U+2212, not the ASCII hyphen. Without this,
+        // "−34+6" parsed as "34+6" = 40 (dropping the negative) and "3x−6=2x−34" was
+        // not detected as an equation at all — so a correct negative answer got
+        // graded wrong. NOTE: deliberately excludes en/em dashes (– —) — those are
+        // PROSE punctuation, and rewriting them corrupts sentences like "$…$ — next?".
+        // (A shared normalizeMathUnicode() exists but also rewrites fractions/Greek;
+        // we keep a minimal inline pass for this regex pipeline.)
+        .replace(/[−－﹣]/g, '-');
 
     // Reassign so all downstream code (40+ regex matches and sub-function calls)
     // automatically operates on the normalized string.
@@ -2305,6 +2315,7 @@ function evalArithmeticString(str) {
     let s = str
         .replace(/[⋅·∙•×]/g, '*')   // multiplication dots / sign → *
         .replace(/÷/g, '/')          // division sign → /
+        .replace(/[−－﹣]/g, '-')     // Unicode minus sign (U+2212) etc. → ASCII "-"
         .replace(/\s+/g, '');
     // Require at least one operator (so plain "8" stays on the caller's path)
     // and ONLY safe arithmetic characters (no letters, commas, currency, units).
@@ -2328,9 +2339,12 @@ function evalArithmeticString(str) {
  * @returns {Object} Verification result
  */
 function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
-    // Normalize answers
-    const studentStr = String(studentAnswer).trim().toLowerCase();
-    const correctStr = String(correctAnswer).trim().toLowerCase();
+    // Normalize answers. Convert the Unicode MINUS SIGN (−, U+2212) and dash
+    // variants to ASCII "-" so a student's "−28" (as MathLive/LaTeX renders it)
+    // is not stripped to a positive "28" and rejected against a correct "-28".
+    const normDash = (v) => String(v).trim().toLowerCase().replace(/[−－﹣]/g, '-');
+    const studentStr = normDash(studentAnswer);
+    const correctStr = normDash(correctAnswer);
 
     // Exact match
     if (studentStr === correctStr) {
