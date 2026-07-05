@@ -17,18 +17,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem var(--page-horizontal-padding) 3rem;
+  justify-content: center;   /* center the block so it fits between header/footer */
+  flex: 1 1 auto;
+  gap: clamp(0.4rem, 1.1vh, 0.9rem);
+  padding: clamp(0.6rem, 1.4vh, 1.25rem) var(--page-horizontal-padding);
 }
 
 .tp-shell {
   width: 100%;
   max-width: var(--content-max-width);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1.4vh, 1.1rem);
 }
 
 .tp-header {
   text-align: center;
-  margin-bottom: 1.75rem;
 }
+/* id selectors to beat the legacy `.pick-tutor-main h1.section-title` rule */
+#selection-title.section-title { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.15; margin: 0; }
+#selection-subtitle.subtitle { font-size: 0.95rem; max-width: 66ch; margin: 0.3rem auto 0; }
 .tp-header .section-title { margin-bottom: 0.35rem; }
 .tp-header .subtitle { margin: 0 auto; max-width: 48ch; }
 
@@ -48,8 +56,8 @@
   align-items: flex-end;
   justify-content: center;
   gap: 0;
-  min-height: 320px;
-  padding: 14px 6px 0;
+  min-height: 200px;
+  padding: 10px 6px 0;
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #ffffff 0%, #eef4f6 100%);
   overflow: hidden;
@@ -77,9 +85,10 @@
   font-family: inherit;
   transition: transform 0.18s ease;
 }
-/* Strong overlap: the source PNGs carry wide transparent side-padding, so the
-   figures only stand shoulder-to-shoulder once that padding is pulled through. */
-.tp-figure + .tp-figure { margin-left: clamp(-120px, -8vw, -64px); }
+/* Overlap: the source PNGs carry wide transparent side-padding, so the figures
+   only stand shoulder-to-shoulder once that padding is pulled through — but not
+   so far that the name labels beneath collide. */
+.tp-figure + .tp-figure { margin-left: clamp(-90px, -5.5vw, -48px); }
 .tp-figure:hover { z-index: 2; }
 .tp-figure.selected { z-index: 3; }
 
@@ -103,7 +112,7 @@
   position: relative;
   z-index: 1;
   display: block;
-  height: clamp(290px, 42vh, 400px);
+  height: clamp(195px, 37vh, 350px);
   width: auto;
   object-position: bottom center;
   filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.16));
@@ -148,32 +157,37 @@
   height: 100%;
   background: var(--clr-primary-teal-light);
   border-radius: var(--radius-lg);
-  padding: clamp(18px, 2vw, 28px);
+  padding: clamp(14px, 1.6vw, 22px);
   display: flex;
   flex-direction: column;
 }
 .tp-name {
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
   font-weight: 800;
   color: var(--clr-text);
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.2rem;
 }
 .tp-catch {
   color: var(--clr-accent-hotpink);
   font-weight: 600;
   font-style: italic;
-  margin: 0 0 1rem;
+  margin: 0 0 0.5rem;
 }
 .tp-bio {
   color: var(--clr-text);
-  line-height: var(--line-height-relaxed);
-  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin: 0 0 0.6rem;
   text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .tp-spec {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--clr-text-dim);
-  margin: 0 0 1.25rem;
+  margin: 0 0 0.6rem;
   text-align: left;
 }
 .tp-spec strong { color: var(--clr-primary-teal-dark); font-weight: 700; }
@@ -182,14 +196,14 @@
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 .tp-hear {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.55rem 1rem;
+  padding: 0.45rem 0.9rem;
   border-radius: var(--radius-full);
   background: #fff;
   color: var(--clr-primary-teal-dark);
@@ -208,9 +222,9 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 700;
-  padding: 0.9rem 1rem;
+  padding: 0.7rem 1rem;
   border-radius: var(--radius-md);
   background: var(--clr-accent-hotpink);
   color: #fff;
@@ -224,13 +238,13 @@
 .tp-choose:disabled { opacity: 0.6; cursor: default; }
 
 /* ---- Locked "special release" shelf ---- */
-.tp-locked { margin-top: 2.25rem; text-align: center; }
+.tp-locked { text-align: center; }
 .tp-locked-title {
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--clr-text-dim);
-  margin-bottom: 0.85rem;
+  margin-bottom: clamp(0.4rem, 1vh, 0.85rem);
   font-weight: 700;
 }
 .tp-locked-row {
@@ -240,15 +254,15 @@
   gap: clamp(10px, 1.5vw, 18px);
 }
 .tp-lock {
-  width: 92px;
+  width: 86px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
 }
 .tp-lock-badge {
-  width: 60px;
-  height: 60px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: repeating-linear-gradient(135deg, #e7edf1, #e7edf1 6px, #dfe6ea 6px, #dfe6ea 12px);
   border: 2px dashed #cdd7de;
