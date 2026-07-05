@@ -11,6 +11,7 @@
  */
 
 const { normalizeMathOperators } = require('./mathUnicodeNormalizer');
+const { evalExpression, expressionValue } = require('./rationalEvaluator');
 
 /**
  * Detect if a message contains a math problem
@@ -467,18 +468,20 @@ function detectMathProblem(message) {
         };
     }
 
-    // Pattern: Multi-operation arithmetic CHAIN like "16/4*2", "2+3*4", "16 ÷ 4 ⋅ 2".
-    // These have 3+ operands (2+ operators). Both the single-pair arithmeticPattern
-    // above AND the last-resort embeddedArithmeticPattern below capture only the FIRST
-    // operator pair ("16/4" → 4), producing a confidently WRONG answer that then poisons
-    // answer grading: the bogus 4 gets pinned as the problem's correctAnswer, so a
-    // student's correct final "8" is graded INCORRECT against it. Route the WHOLE
-    // expression to solveEvaluation, which honors operator precedence and left-to-right
-    // associativity (so 16/4*2 = (16/4)*2 = 8, NOT 16/(4*2) = 2). Placed AFTER the
-    // two-operand and fraction-pair patterns so those keep their dedicated handling;
-    // requires 2+ operators so it only ever catches genuine multi-operand chains.
+    // Pattern: any WHOLE pure-numeric expression — multi-operand chains ("16/4*2",
+    // "2+3*4", "16 ÷ 4 ⋅ 2") and parenthesised expressions ("(2+3)*4"). The
+    // single-pair arithmeticPattern above and the last-resort embeddedArithmeticPattern
+    // below would capture only the FIRST operator pair ("16/4" → 4 / "2+3" → 5),
+    // producing a confidently WRONG answer that then poisons grading. Hand the whole
+    // thing to the exact-rational engine (correct precedence + parentheses, no
+    // floating drift). Placed AFTER the two-operand and fraction-pair patterns so those
+    // keep their dedicated types; fires only when the expression has parentheses OR
+    // 2+ operators, so simple two-operand arithmetic is left alone.
     const chainForm = message.replace(/\s+/g, ''); // operators already ASCII-normalized above
-    if (/^-?\d+\.?\d*(?:[+\-*/^]\d+\.?\d*){2,}$/.test(chainForm)) {
+    const isPureNumericExpr = /^[\d.+\-*/^()]+$/.test(chainForm) && /[+\-*/^]/.test(chainForm);
+    const hasParens = /[()]/.test(chainForm);
+    const hasTwoPlusOps = /^-?\d+\.?\d*(?:[+\-*/^]\d+\.?\d*){2,}$/.test(chainForm);
+    if (isPureNumericExpr && (hasParens || hasTwoPlusOps) && evalExpression(chainForm) !== null) {
         return { type: 'evaluation', expression: chainForm };
     }
 
@@ -648,36 +651,18 @@ function solveProblem(problem) {
 /**
  * Solve basic arithmetic
  */
+// Thin adapter over the single exact-rational engine. Two-operand arithmetic is
+// decimal-domain (7/2 → "3.5"), matching the original formatNumber behavior.
 function solveArithmetic(problem) {
     const { left, operator, right } = problem;
-    let answer;
-
-    switch (operator) {
-        case '+':
-            answer = left + right;
-            break;
-        case '-':
-            answer = left - right;
-            break;
-        case '*':
-        case '×':
-            answer = left * right;
-            break;
-        case '/':
-        case '÷':
-            if (right === 0) {
-                return { success: false, error: 'Division by zero' };
-            }
-            answer = left / right;
-            break;
-        default:
-            return { success: false, error: 'Unknown operator' };
-    }
-
+    const op = operator === '×' ? '*' : operator === '÷' ? '/' : operator;
+    if ((op === '/') && Number(right) === 0) return { success: false, error: 'Division by zero' };
+    const r = evalExpression(`${left} ${op} ${right}`, 'decimal');
+    if (!r) return { success: false, error: 'Unknown operator' };
     return {
         success: true,
-        answer: formatNumber(answer),
-        steps: [`${left} ${operator} ${right} = ${formatNumber(answer)}`]
+        answer: r.answer,
+        steps: [`${left} ${operator} ${right} = ${r.answer}`],
     };
 }
 
@@ -1348,64 +1333,22 @@ function formatBinomialProduct(a, p, b, q) {
     return `${formatTerm(a, p)}${formatTerm(b, q)}`;
 }
 
-// ── Mixed-number support ────────────────────────────────────────────────────
-// Vulgar-fraction glyph → [numerator, denominator]. mathSolver keeps its own map
-// (the shared operator normalizer deliberately leaves vulgar fractions alone so the
-// engine can treat "12⅔" as an operand rather than a "(2/3)" substring).
-const VULGAR_FRACTIONS = {
-    '½': [1, 2], '⅓': [1, 3], '⅔': [2, 3], '¼': [1, 4], '¾': [3, 4],
-    '⅕': [1, 5], '⅖': [2, 5], '⅗': [3, 5], '⅘': [4, 5], '⅙': [1, 6],
-    '⅚': [5, 6], '⅐': [1, 7], '⅛': [1, 8], '⅜': [3, 8], '⅝': [5, 8],
-    '⅞': [7, 8], '⅑': [1, 9], '⅒': [1, 10],
-};
-const VULGAR_CLASS = Object.keys(VULGAR_FRACTIONS).join('');
+// ── Mixed-number support (detection only — the exact-rational engine does the math) ──
+const VULGAR_CLASS = '½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒';
 
-/**
- * Parse a single operand into an improper fraction {num, den} (den > 0), or null.
- * Handles "12 2/3" (mixed), "12⅔"/"⅔" (vulgar), "2/3" (fraction), "5" (integer),
- * each with an optional leading "-".
- */
-function parseOperandToImproper(tok) {
-    if (tok == null) return null;
-    let t = String(tok).trim();
-    if (!t) return null;
-    let sign = 1;
-    if (t[0] === '-') { sign = -1; t = t.slice(1).trim(); }
-    let m;
-    if ((m = t.match(new RegExp(`^(\\d+)\\s*([${VULGAR_CLASS}])$`)))) {         // "12⅔"
-        const [n, d] = VULGAR_FRACTIONS[m[2]];
-        return { num: sign * (parseInt(m[1], 10) * d + n), den: d };
-    }
-    if ((m = t.match(new RegExp(`^([${VULGAR_CLASS}])$`)))) {                    // "⅔"
-        const [n, d] = VULGAR_FRACTIONS[m[1]];
-        return { num: sign * n, den: d };
-    }
-    if ((m = t.match(/^(\d+)\s+(\d+)\s*\/\s*(\d+)$/))) {                         // "12 2/3"
-        const d = parseInt(m[3], 10); if (!d) return null;
-        return { num: sign * (parseInt(m[1], 10) * d + parseInt(m[2], 10)), den: d };
-    }
-    if ((m = t.match(/^(\d+)\s*\/\s*(\d+)$/))) {                                 // "2/3"
-        const d = parseInt(m[2], 10); if (!d) return null;
-        return { num: sign * parseInt(m[1], 10), den: d };
-    }
-    if ((m = t.match(/^(\d+)$/))) {                                             // "5"
-        return { num: sign * parseInt(m[1], 10), den: 1 };
-    }
-    return null;
-}
-
-// Genuine mixed number ("12 2/3") or a vulgar fraction ("⅔") — used to gate
-// detection so plain fraction/integer arithmetic keeps its dedicated handlers.
+// Genuine mixed number ("12 2/3") or a vulgar fraction ("⅔") — gates detection so
+// plain fraction/integer arithmetic keeps its own handlers.
 function isMixedOrVulgar(tok) {
     const t = String(tok);
     return /\d+\s+\d+\s*\/\s*\d+/.test(t) || new RegExp(`[${VULGAR_CLASS}]`).test(t);
 }
 
 /**
- * Detect a two-operand mixed-number expression: "12 2/3 - 4 1/4", "12⅔ - 4¼",
- * "2 1/2 + 3". Returns a problem object or null. Requires at least one operand to
- * be a genuine mixed number / vulgar fraction so proper-fraction and integer
- * arithmetic defer to their own handlers.
+ * Detect a two-operand mixed-number expression ("12 2/3 - 4 1/4", "12⅔ - 4¼",
+ * "2 1/2 + 3"). Returns a problem carrying the raw expression (the exact-rational
+ * engine evaluates it), or null. Requires at least one operand to be a genuine
+ * mixed number / vulgar fraction so proper-fraction and integer arithmetic defer
+ * to their own handlers.
  */
 function detectMixedNumberArithmetic(text) {
     if (!text || typeof text !== 'string') return null;
@@ -1413,120 +1356,30 @@ function detectMixedNumberArithmetic(text) {
     const OP = `\\d+\\s+\\d+\\s*/\\s*\\d+|\\d*\\s*[${VULGAR_CLASS}]|\\d+\\s*/\\s*\\d+|\\d+`;
     const m = t.match(new RegExp(`^(${OP})\\s*([+\\-*/])\\s*(${OP})\\s*$`));
     if (!m) return null;
-    const [, leftRaw, operator, rightRaw] = m;
-    if (!isMixedOrVulgar(leftRaw) && !isMixedOrVulgar(rightRaw)) return null;
-    const left = parseOperandToImproper(leftRaw);
-    const right = parseOperandToImproper(rightRaw);
-    if (!left || !right) return null;
-    return { type: 'mixed_number_arithmetic', left, operator, right, raw: t };
+    if (!isMixedOrVulgar(m[1]) && !isMixedOrVulgar(m[3])) return null;
+    return { type: 'mixed_number_arithmetic', expression: t };
 }
 
-/**
- * Format an improper fraction as a simplified string: whole number, proper
- * fraction, or mixed number (e.g. 101/12 → "8 5/12", -101/12 → "-8 5/12").
- */
-function formatRational(num, den) {
-    if (den === 0) return 'undefined';
-    const g = greatestCommonDivisor(Math.abs(num), Math.abs(den)) || 1;
-    num /= g; den /= g;
-    if (den < 0) { num = -num; den = -den; }
-    if (den === 1) return `${num}`;
-    if (Math.abs(num) < den) return `${num}/${den}`;
-    const sign = num < 0 ? '-' : '';
-    const whole = Math.floor(Math.abs(num) / den);
-    const rem = Math.abs(num) % den;
-    return rem === 0 ? `${sign}${whole}` : `${sign}${whole} ${rem}/${den}`;
-}
-
-/**
- * Numeric value of a mixed number / fraction / vulgar fraction / decimal string,
- * or null. Used by verifyAnswer so "8 5/12", "101/12", and "8.4167" grade equal.
- */
-function rationalOrDecimalValue(str) {
-    if (typeof str !== 'string') return null;
-    const t = str.trim();
-    if (!t || /[a-z]/i.test(t)) return null;
-    const frac = parseOperandToImproper(t);
-    if (frac && frac.den) return frac.num / frac.den;
-    if (/^-?\d+(\.\d+)?$/.test(t)) return parseFloat(t);
-    return null;
-}
-
-/**
- * Solve mixed-number arithmetic by converting both operands to improper fractions.
- */
+// Mixed-number arithmetic → exact-rational engine, formatted as a mixed number.
 function solveMixedNumberArithmetic(problem) {
-    const { left, operator, right } = problem;
-    let num, den;
-    switch (operator) {
-        case '+': num = left.num * right.den + right.num * left.den; den = left.den * right.den; break;
-        case '-': num = left.num * right.den - right.num * left.den; den = left.den * right.den; break;
-        case '*': num = left.num * right.num; den = left.den * right.den; break;
-        case '/':
-            if (right.num === 0) return { success: false, error: 'Division by zero' };
-            num = left.num * right.den; den = left.den * right.num; break;
-        default: return { success: false, error: 'Unknown operator' };
-    }
-    const answer = formatRational(num, den);
-    return {
-        success: true,
-        answer,
-        steps: [
-            `${formatRational(left.num, left.den)} ${operator} ${formatRational(right.num, right.den)}`,
-            `= ${answer}`,
-        ],
-    };
+    const r = evalExpression(problem.expression, 'mixed');
+    if (!r) return { success: false, error: 'Could not evaluate' };
+    return { success: true, answer: r.answer, steps: [`${problem.expression} = ${r.answer}`] };
 }
 
 /**
  * Solve fraction arithmetic
  */
+// Thin adapter over the exact-rational engine; fraction domain (result kept as a
+// reduced proper/improper fraction, e.g. "3/4", "3/2", or a whole number).
 function solveFractionArithmetic(problem) {
     const { leftNum, leftDen, operator, rightNum, rightDen } = problem;
-
-    let resultNum, resultDen;
-
-    switch (operator) {
-        case '+':
-            resultNum = leftNum * rightDen + rightNum * leftDen;
-            resultDen = leftDen * rightDen;
-            break;
-        case '-':
-            resultNum = leftNum * rightDen - rightNum * leftDen;
-            resultDen = leftDen * rightDen;
-            break;
-        case '*':
-            resultNum = leftNum * rightNum;
-            resultDen = leftDen * rightDen;
-            break;
-        case '/':
-            resultNum = leftNum * rightDen;
-            resultDen = leftDen * rightNum;
-            break;
-        default:
-            return { success: false, error: 'Unknown operator' };
-    }
-
-    // Simplify fraction
-    const gcd = greatestCommonDivisor(Math.abs(resultNum), Math.abs(resultDen));
-    resultNum = resultNum / gcd;
-    resultDen = resultDen / gcd;
-
-    // Handle negative denominator
-    if (resultDen < 0) {
-        resultNum = -resultNum;
-        resultDen = -resultDen;
-    }
-
-    const answer = resultDen === 1 ? `${resultNum}` : `${resultNum}/${resultDen}`;
-
+    const r = evalExpression(`(${leftNum}/${leftDen}) ${operator} (${rightNum}/${rightDen})`, 'fraction');
+    if (!r) return { success: false, error: 'Unknown operator' };
     return {
         success: true,
-        answer,
-        steps: [
-            `${leftNum}/${leftDen} ${operator} ${rightNum}/${rightDen}`,
-            `= ${answer}`
-        ]
+        answer: r.answer,
+        steps: [`${leftNum}/${leftDen} ${operator} ${rightNum}/${rightDen}`, `= ${r.answer}`],
     };
 }
 
@@ -2373,45 +2226,28 @@ function solveVolume(problem) {
 }
 
 function solveEvaluation(problem) {
-    const { expression } = problem;
+    const { expression, evalMode } = problem;
 
-    // Clean the expression — normalize Unicode operators (shared source of truth),
-    // then convert word operators BEFORE stripping non-math chars.
-    let cleaned = normalizeMathOperators(expression)
-        // "x" between numbers with spaces = multiplication (e.g., "2.75 x 5")
+    // Convert word operators and "2.75 x 5" style, then hand the whole expression
+    // to the single exact-rational engine (which normalizes Unicode operators,
+    // honors precedence/parentheses, and keeps exact fractions — no Function()/eval,
+    // no floating-point drift). Domain (decimal/fraction/mixed) is auto-detected
+    // unless the caller pins evalMode.
+    const worded = String(expression)
         .replace(/(\d)\s+x\s+(\d)/gi, '$1*$2')
         .replace(/\btimes\b/gi, '*')
         .replace(/\bmultiplied\s+by\b/gi, '*')
         .replace(/\bdivided\s+by\b/gi, '/')
         .replace(/\bplus\b/gi, '+')
-        .replace(/\bminus\b/gi, '-')
-        .replace(/\s+/g, '')
-        .replace(/[^\d+\-*/().^]/g, '');
+        .replace(/\bminus\b/gi, '-');
 
-    // Handle exponents
-    cleaned = cleaned.replace(/(\d+\.?\d*)\^(\d+\.?\d*)/g, 'Math.pow($1,$2)');
-
-    // Safety check - only allow numbers and operators
-    if (!/^[\d+\-*/().Math,pow\s]+$/.test(cleaned)) {
-        return { success: false, error: 'Expression contains invalid characters' };
-    }
-
-    try {
-        // Using Function instead of eval for slightly better safety
-        const result = Function('"use strict"; return (' + cleaned + ')')();
-
-        if (typeof result !== 'number' || !isFinite(result)) {
-            return { success: false, error: 'Invalid result' };
-        }
-
-        return {
-            success: true,
-            answer: formatNumber(result),
-            steps: [`${expression} = ${formatNumber(result)}`]
-        };
-    } catch (error) {
-        return { success: false, error: 'Could not evaluate expression' };
-    }
+    const r = evalExpression(worded, evalMode);
+    if (!r) return { success: false, error: 'Could not evaluate expression' };
+    return {
+        success: true,
+        answer: r.answer,
+        steps: [`${expression} = ${r.answer}`],
+    };
 }
 
 /**
@@ -2440,31 +2276,6 @@ function greatestCommonDivisor(a, b) {
 }
 
 /**
- * Safely evaluate a pure-arithmetic string to a number, honoring operator
- * precedence (so "16/4*2" = 8, not 1642). Returns null for anything that
- * isn't a clean numeric expression with at least one operator — plain
- * numbers, units, commas, or algebra fall back to the caller's own parsing.
- */
-function evalArithmeticString(str) {
-    if (typeof str !== 'string') return null;
-    // Normalize Unicode operators/signs via the shared source of truth, then strip
-    // whitespace, so "16/4 ⋅ 2" and "−34+6" evaluate by value rather than as garbage.
-    let s = normalizeMathOperators(str).replace(/\s+/g, '');
-    // Require at least one operator (so plain "8" stays on the caller's path)
-    // and ONLY safe arithmetic characters (no letters, commas, currency, units).
-    if (!/[+\-*/^]/.test(s)) return null;
-    if (!/^[-+*/^().\d]+$/.test(s)) return null;
-    s = s.replace(/(\d+\.?\d*)\^(\d+\.?\d*)/g, 'Math.pow($1,$2)');
-    if (!/^[\d+\-*/().,Mathpow]+$/.test(s)) return null;
-    try {
-        const r = Function('"use strict"; return (' + s + ')')();
-        return (typeof r === 'number' && isFinite(r)) ? r : null;
-    } catch (e) {
-        return null;
-    }
-}
-
-/**
  * Verify if a student's answer matches the correct answer
  * @param {string|number} studentAnswer - Student's provided answer
  * @param {string|number} correctAnswer - Correct answer from solver
@@ -2490,12 +2301,13 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     // falsely matches "3x^2-3" stripped to "32-3" → 32.
     const hasLetters = /[a-zA-Z]/.test(studentStr) || /[a-zA-Z]/.test(correctStr);
     if (!hasLetters) {
-        // Evaluate each side as an arithmetic expression FIRST so an expression-form
-        // answer ("16/4 ⋅ 2") is compared by its value (8), not by its stripped digits
-        // ("1642"). Falls back to digit-strip parsing for plain numbers that carry
+        // Evaluate each side through the single exact-rational engine, so any
+        // equivalent numeric form grades equal by VALUE: expressions ("16/4 ⋅ 2" = 8),
+        // fractions, mixed numbers ("8 5/12" == "101/12" == "8.4167"), and decimals.
+        // Falls back to digit-strip parsing for plain numbers that carry
         // units/commas/currency ("1,000", "$8").
-        const studentEval = evalArithmeticString(studentStr);
-        const correctEval = evalArithmeticString(correctStr);
+        const studentEval = expressionValue(studentStr);
+        const correctEval = expressionValue(correctStr);
         const studentNum = studentEval !== null ? studentEval : parseFloat(studentStr.replace(/[^\d.\-]/g, ''));
         const correctNum = correctEval !== null ? correctEval : parseFloat(correctStr.replace(/[^\d.\-]/g, ''));
 
@@ -2531,15 +2343,6 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
         }
     }
 
-    // Mixed-number equivalence: "8 5/12" == "101/12" == "8.4167" all grade equal,
-    // so a student who leaves the answer improper (or as a decimal) still gets credit.
-    if (!hasLetters) {
-        const sVal = rationalOrDecimalValue(studentStr);
-        const cVal = rationalOrDecimalValue(correctStr);
-        if (sVal !== null && cVal !== null && Math.abs(sVal - cVal) <= tolerance) {
-            return { isCorrect: true, exact: false, equivalentForm: true };
-        }
-    }
 
     // System of equations answer: "x = 3, y = 2" vs "y = 2, x = 3"
     const studentVars = parseVariableAssignments(studentStr);
