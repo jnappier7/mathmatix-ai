@@ -61,16 +61,18 @@ describe('parseCleanProblem — prose-wrapped tutor poses (the Bug B regression)
     expect(String(r.solution.answer)).toBe('7');
   });
 
-  test('the same prose-wrapped text via raw processMathMessage returns the bogus 331 (regression-guard control)', () => {
-    // This is the bug behavior parseCleanProblem exists to fix.
-    // If this stops being 331, mathSolver's matcher changed and the
-    // parseCleanProblem guard may not be needed anymore.
+  test('raw processMathMessage no longer fabricates a bogus answer from prose (exact engine refuses)', () => {
+    // HISTORY: the old Function()-based evaluation catch-all stripped the letters
+    // out of "Here's another equation for you to solve: Solve 4x+3=27." and
+    // evaluated the leftover digits to a bogus "331", which then poisoned grading.
+    // The exact-rational engine refuses to evaluate a prose-laden string (it can't
+    // tokenize letters), so no fake answer is produced. parseCleanProblem is still
+    // the right front door — this just confirms the raw path is no longer a hazard.
     const r = processMathMessage(
       "Here's another equation for you to solve: Solve 4x+3=27."
     );
-    expect(r.hasMath).toBe(true);
-    expect(r.problem.type).toBe('evaluation');
-    expect(String(r.solution.answer)).toBe('331');
+    const fabricated = r.hasMath && r.solution && r.solution.success && r.solution.answer === '331';
+    expect(fabricated).toBe(false);
   });
 });
 
