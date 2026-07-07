@@ -69,14 +69,9 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js3.d7f153fb.js",
+      "src": "/dist/js/chat-js3.6635f3ec.js",
       "files": [
-        "/js/whiteboard.js",
-        "/js/whiteboard-handwriting.js",
-        "/js/whiteboard-phase2.js",
-        "/js/whiteboard-math-procedures.js",
         "/js/chat-board-integration.js",
-        "/js/floating-calculator.js",
         "/js/floating-screener.js",
         "/js/floating-checkpoint.js",
         "/js/sidebar.js",
@@ -85,11 +80,9 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js4.c847f120.js",
+      "src": "/dist/js/chat-js4.c195e962.js",
       "files": [
-        "/js/graphTool.js",
         "/js/diagram-display.js",
-        "/js/graphTitleSync.js",
         "/js/inlineChatVisuals.js"
       ]
     },

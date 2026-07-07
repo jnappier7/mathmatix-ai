@@ -31,6 +31,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
+
+    // Visual-board tool scripts (fabric + whiteboard/graph/calc) are ~680KB and
+    // only needed when the board is enabled — which it is not by default. Load
+    // them lazily. window.loadBoardTools() injects them once, in order, and
+    // resolves when ready; it's invoked eagerly only when boardPanel is on, and
+    // is also available for on-demand use (e.g. an "open workspace" button).
+    window.loadBoardTools = (function () {
+      var promise = null;
+      var SCRIPTS = [
+        'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js',
+        '/js/whiteboard.js',
+        '/js/whiteboard-handwriting.js',
+        '/js/whiteboard-phase2.js',
+        '/js/whiteboard-math-procedures.js',
+        '/js/floating-calculator.js',
+        '/js/graphTool.js',
+        '/js/graphTitleSync.js'
+      ];
+      function inject(src) {
+        return new Promise(function (res, rej) {
+          var s = document.createElement('script');
+          s.src = src; s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      }
+      return function loadBoardTools() {
+        if (!promise) {
+          promise = SCRIPTS.reduce(function (p, src) {
+            return p.then(function () { return inject(src); });
+          }, Promise.resolve());
+        }
+        return promise;
+      };
+    })();
+    if (window.MM_FEATURES.boardPanel === true) window.loadBoardTools();
   </script>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/dist/css/chat-css0.11b0dff1.css" />
@@ -66,7 +101,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
   <!-- Fabric.js for intelligent whiteboard (Phase 0 wire-up) -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
   <!-- MathGraph: self-contained canvas graphing engine (replaces function-plot CDN) -->
   <script defer src="/js/mathGraph.js"></script>
@@ -2263,12 +2297,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/dist/js/chat-js2.eeaf2aeb.js"></script>
 <!-- Voice as a layout mode of the chat stage -->
   <script src="/js/voice-mode.js"></script>
-  <!-- Intelligent Whiteboard stack (Phase 0 wire-up — order matters: core → enhancements → integration) -->
-  <script src="/dist/js/chat-js3.d7f153fb.js"></script>
+  <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
+       below) — only needed when the visual board is enabled (boardPanel:true). -->
+  <script src="/dist/js/chat-js3.6635f3ec.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
-  <script src="/dist/js/chat-js4.c847f120.js"></script>
+  <script src="/dist/js/chat-js4.c195e962.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
-  <script src="/js/algebra-tiles.js"></script>
+  <!-- algebra-tiles.js lazy-loads itself on demand (inlineChatVisuals
+       openAlgebraTilesWorkspace) — no static tag needed. -->
   <div id="algebraTilesContainer"></div>
   <!-- Concept models: pure spec/validator + JSXGraph renderer for the WorkBoard
        `model` verb. Inert until a `model` board command is emitted (CONCEPT_MODELS,
@@ -2316,6 +2352,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- Intelligent Whiteboard init (Phase 0 wire-up) -->
 <script>
   (function initMathmatixWhiteboard() {
+    // The whiteboard tool is lazy-loaded (loadBoardTools) and only present when
+    // the board is enabled. Skip the poll entirely when it's off, otherwise it
+    // spins for 10s and warns for nothing.
+    if (!(window.MM_FEATURES && window.MM_FEATURES.boardPanel === true)) return;
     const start = Date.now();
     const tryInit = setInterval(() => {
       if (typeof MathmatixWhiteboard !== 'undefined' && typeof fabric !== 'undefined') {
