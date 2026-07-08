@@ -116,6 +116,15 @@ function configureMiddleware(app) {
     },
   }));
 
+  // Built bundles (scripts/buildChatBundles.js) — content-hashed filenames, so
+  // the bytes for a given URL never change: cache hard and forever.
+  app.use('/dist', express.static(path.join(publicDir, 'dist'), {
+    index: false,
+    setHeaders: (res) => {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); // 1 year
+    },
+  }));
+
   app.use((req, res, next) => {
     // Skip HTML files — they need CSP nonce injection via the full middleware pipeline
     if (req.method === 'GET' && /\.html?$/i.test(req.path)) return next();

@@ -11,6 +11,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <meta name="theme-color" content="#12B3B3" />
+  <!-- Warm up connections to third-party origins used below (marked/dompurify,
+       fabric, font-awesome, GTM) so their TLS handshake overlaps HTML parse. -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -26,35 +31,47 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
+
+    // Visual-board tool scripts (fabric + whiteboard/graph/calc) are ~680KB and
+    // only needed when the board is enabled — which it is not by default. Load
+    // them lazily. window.loadBoardTools() injects them once, in order, and
+    // resolves when ready; it's invoked eagerly only when boardPanel is on, and
+    // is also available for on-demand use (e.g. an "open workspace" button).
+    window.loadBoardTools = (function () {
+      var promise = null;
+      var SCRIPTS = [
+        'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js',
+        '/js/whiteboard.js',
+        '/js/whiteboard-handwriting.js',
+        '/js/whiteboard-phase2.js',
+        '/js/whiteboard-math-procedures.js',
+        '/js/floating-calculator.js',
+        '/js/graphTool.js',
+        '/js/graphTitleSync.js'
+      ];
+      function inject(src) {
+        return new Promise(function (res, rej) {
+          var s = document.createElement('script');
+          s.src = src; s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      }
+      return function loadBoardTools() {
+        if (!promise) {
+          promise = SCRIPTS.reduce(function (p, src) {
+            return p.then(function () { return inject(src); });
+          }, Promise.resolve());
+        }
+        return promise;
+      };
+    })();
+    if (window.MM_FEATURES.boardPanel === true) window.loadBoardTools();
   </script>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/css/file-upload.css" />
-  <link rel="stylesheet" href="/css/calculator.css" />
-  <link rel="stylesheet" href="/css/responsive-resources.css" />
-  <link rel="stylesheet" href="/css/mobile-fixes.css" />
-  <link rel="stylesheet" href="/css/ghostTimer.css" />
-  <link rel="stylesheet" href="/css/browser-lock.css" />
-  <link rel="stylesheet" href="/css/badgeProgress.css" />
-  <link rel="stylesheet" href="/css/sidebar-layout.css" />
-  <link rel="stylesheet" href="/css/dark-mode.css" />
-  <link rel="stylesheet" href="/css/ux-enhancements.css" />
-  <link rel="stylesheet" href="/css/lessonTracker.css" />
-  <link rel="stylesheet" href="/css/tour-survey.css" />
-  <link rel="stylesheet" href="/css/impersonation-banner.css" />
-  <link rel="stylesheet" href="/css/iep-accommodations.css" />
-  <link rel="stylesheet" href="/css/age-adaptive.css" />
-  <link rel="stylesheet" href="/css/floating-screener.css" />
-  <link rel="stylesheet" href="/css/resume-card.css" />
-  <link rel="stylesheet" href="/css/mobile-ux-overhaul.css" />
-  <link rel="stylesheet" href="/css/floating-checkpoint.css" />
-  <link rel="stylesheet" href="/css/show-your-work.css" />
-  <link rel="stylesheet" href="/css/courseCatalog.css" />
-  <link rel="stylesheet" href="/css/graphTool.css" />
-  <link rel="stylesheet" href="/css/mathGraph.css" />
-  <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
-  <link rel="stylesheet" href="/css/mobile-redesign.css" />
-  <link rel="stylesheet" href="/css/mathmatix-keyboard.css" />
-  <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
+  <link rel="stylesheet" href="/dist/css/chat-css0.11b0dff1.css" />
+<!-- returning-user-modal removed — returning users now get an AI welcome directly -->
+  <link rel="stylesheet" href="/dist/css/chat-css1.dae1c280.css" />
+<!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
   <link rel="stylesheet" href="/css/chat-redesign.css" />
@@ -63,9 +80,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Personal status card modal (Progress button) -->
   <link rel="stylesheet" href="/css/status-card.css" />
   <!-- Cosmetics: equipped skins + shop modal -->
-  <link rel="stylesheet" href="/css/cosmetics.css" />
-  <link rel="stylesheet" href="/css/shop.css" />
-  <!-- Interactive math workspace (chat right slot) -->
+  <link rel="stylesheet" href="/dist/css/chat-css2.20673ca0.css" />
+<!-- Interactive math workspace (chat right slot) -->
   <link rel="stylesheet" href="/css/workspace.css" />
   <!-- Voice mode (layout mode of the chat stage) -->
   <link rel="stylesheet" href="/css/voice-mode.css" />
@@ -85,7 +101,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script defer src="/vendor/mathlive/mathlive.min.js"></script>
   <!-- Fabric.js for intelligent whiteboard (Phase 0 wire-up) -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
   <!-- MathGraph: self-contained canvas graphing engine (replaces function-plot CDN) -->
   <script defer src="/js/mathGraph.js"></script>
@@ -130,6 +145,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/demo-mode.css" />
   <!-- Mobile poster-chat hybrid (phones only; loaded last to win the cascade) -->
   <link rel="stylesheet" href="/css/mobile-poster-chat.css" />
+  <!-- Mobile light "companion" re-skin (phones only; must load AFTER poster-chat) -->
+  <link rel="stylesheet" href="/css/mobile-light-theme.css" />
+  <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
+  <link rel="stylesheet" href="/css/mobile-companion-home.css" />
   <script defer src="/js/i18n-translations.js"></script>
   <script defer src="/js/i18n.js"></script>
 </head>
@@ -148,7 +167,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
 
     <a href="/chat.html" class="header-logo-container" style="text-decoration: none; cursor: pointer;" title="Home" aria-label="Home">
-      <img src="/images/mathmatix-ai-logo.png" alt="Mathmatix Logo" class="main-logo-hero" />
+      <img src="/images/mathmatix-ai-logoheader.png" alt="Mathmatix AI" class="main-logo-hero" />
     </a>
     <nav class="landing-nav" aria-label="Chat controls">
       <!-- Redesigned header extras (streak / progress / avatar) -->
@@ -2270,43 +2289,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Load CSRF and storage utilities FIRST -->
   <script src="/js/csrf.js"></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
-  <script src="/js/impersonationBanner.js"></script>
-  <script src="/js/storage-utils.js"></script>
-  <script src="/js/sanitize-util.js"></script>
-  <!-- LaTeX delimiter scanner (sets window.MathDelimiters) — must load before script.js -->
-  <script src="/js/mathDelimiters.js"></script>
-  <script src="/js/logout.js"></script>
-  <script src="/js/role-switcher.js"></script>
-  <script src="/js/auto-logout.js"></script>
+  <script src="/dist/js/chat-js0.95d0ddca.js"></script>
+<!-- LaTeX delimiter scanner (sets window.MathDelimiters) — must load before script.js -->
+  <script src="/dist/js/chat-js1.b97aead7.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
-  <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
+<!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
   <script defer src="/js/chat-redesign.js"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
-  <script src="/js/voice-stream-client.js?v=3"></script>
-  <script src="/js/voice-controller.js"></script>
-  <!-- Voice as a layout mode of the chat stage -->
+  <script src="/dist/js/chat-js2.eeaf2aeb.js"></script>
+<!-- Voice as a layout mode of the chat stage -->
   <script src="/js/voice-mode.js"></script>
-  <!-- Intelligent Whiteboard stack (Phase 0 wire-up — order matters: core → enhancements → integration) -->
-  <script src="/js/whiteboard.js"></script>
-  <script src="/js/whiteboard-handwriting.js"></script>
-  <script src="/js/whiteboard-phase2.js"></script>
-  <script src="/js/whiteboard-math-procedures.js"></script>
-  <script src="/js/chat-board-integration.js"></script>
-  <script src="/js/floating-calculator.js"></script>
-  <script src="/js/floating-screener.js"></script>
-  <script src="/js/floating-checkpoint.js"></script>
-  <script src="/js/sidebar.js"></script>
-  <script src="/js/courseCatalog.js"></script>
-  <script src="/js/lessonTracker.js"></script>
-  <!-- returningUserModal.js removed — no longer used -->
-  <script src="/js/graphTool.js"></script>
-  <script src="/js/diagram-display.js"></script>
-  <script src="/js/graphTitleSync.js"></script>
-  <script src="/js/inlineChatVisuals.js"></script>
-  <link rel="stylesheet" href="/css/algebra-tiles.css">
-  <script src="/js/algebra-tiles.js"></script>
+  <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
+       below) — only needed when the visual board is enabled (boardPanel:true). -->
+  <script src="/dist/js/chat-js3.6635f3ec.js"></script>
+<!-- returningUserModal.js removed — no longer used -->
+  <script src="/dist/js/chat-js4.c195e962.js"></script>
+<link rel="stylesheet" href="/css/algebra-tiles.css">
+  <!-- algebra-tiles.js lazy-loads itself on demand (inlineChatVisuals
+       openAlgebraTilesWorkspace) — no static tag needed. -->
   <div id="algebraTilesContainer"></div>
   <!-- Concept models: pure spec/validator + JSXGraph renderer for the WorkBoard
        `model` verb. Inert until a `model` board command is emitted (CONCEPT_MODELS,
@@ -2321,32 +2323,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Phase C: executes server-emitted <XP> ceremony commands (confetti + caption) -->
   <script src="/js/xpTagHandler.js"></script>
   <!-- Phase D: executes server-emitted <GRAPH>/<TILES> tab-switch commands -->
-  <script src="/js/visualTabTagHandler.js"></script>
-  <script src="/js/dailyQuests.js"></script>
-  <script src="/js/weeklyChallenges.js"></script>
-  <script src="/js/engagement-widgets.js"></script>
-  <!-- PDF.js library for PDF preview and rendering -->
+  <script src="/dist/js/chat-js5.1f62385f.js"></script>
+<!-- PDF.js library for PDF preview and rendering -->
   <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
   <script type="module">
     import * as pdfjsLib from '/pdfjs-viewer/build/pdf.mjs';
     pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdfjs-viewer/build/pdf.worker.mjs';
     window.pdfjsLib = pdfjsLib;
   </script>
-  <script src="/js/debug-buttons.js"></script>
-  <script src="/js/orientation-fix.js"></script>
-  <script src="/js/mobile-touch-fix.js"></script>
-  <script src="/js/mobile-drawer.js"></script>
-  <script src="/js/mobile-more-tools.js"></script>
-  <!-- mobile-chat-nav.js (4-tab bottom nav) retired — replaced by the poster-chat hybrid -->
-  <script src="/js/mobile-poster-chat.js"></script>
-  <script src="/js/inlineEquationBox.js"></script>
-  <script src="/js/mathmatixKeyboard.js"></script>
-  <script src="/js/auto-expand-textarea.js"></script>
-  <script src="/js/chat-pinch-zoom.js"></script>
-  <script src="/js/file-upload.js"></script>
-  <script src="/js/phone-link.js"></script>
-  <script src="/js/theme-toggle.js"></script>
-  <script>
+  <script src="/dist/js/chat-js6.43429f6a.js"></script>
+<!-- mobile-chat-nav.js (4-tab bottom nav) retired — replaced by the poster-chat hybrid -->
+  <script src="/dist/js/chat-js7.faa7a00a.js"></script>
+<script>
     // Wire up the dark mode toggle button in the header
     (function() {
       const btn = document.getElementById('theme-toggle-btn');
@@ -2361,29 +2349,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       updateIcon();
     })();
   </script>
-  <script src="/js/student-resources.js"></script>
-  <script src="/js/settings.js"></script>
-  <script src="/js/show-your-work.js"></script>
-  <script src="/js/unified-upload.js"></script>
-  <script src="/js/ghostTimer.js"></script>
-  <script src="/js/badgeProgress.js"></script>
-  <script src="/js/mobile-stats-bar.js"></script>
-  <script src="/js/resume-card.js"></script>
-  <script src="/js/script.js" type="module"></script>
+  <script src="/dist/js/chat-js8.910bc9c0.js"></script>
+<script src="/js/script.js" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
-<script src="/js/sessionManager.js"></script>
-<script src="/js/feedback.js"></script>
-<script src="/js/tour.js"></script>
-<script src="/js/survey.js"></script>
-<script src="/js/student-announcements.js"></script>
-<script src="/js/guided-tour.js"></script>
-<script src="/js/ux-enhancements.js"></script>
-<script src="/js/demo-banner.js"></script>
-<script src="/js/browser-lock.js"></script>
-
+  <script src="/dist/js/chat-js9.bc0be9a3.js"></script>
+  <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
+  <script defer src="/js/mobile-companion-home.js"></script>
 <!-- Intelligent Whiteboard init (Phase 0 wire-up) -->
 <script>
   (function initMathmatixWhiteboard() {
+    // The whiteboard tool is lazy-loaded (loadBoardTools) and only present when
+    // the board is enabled. Skip the poll entirely when it's off, otherwise it
+    // spins for 10s and warns for nothing.
+    if (!(window.MM_FEATURES && window.MM_FEATURES.boardPanel === true)) return;
     const start = Date.now();
     const tryInit = setInterval(() => {
       if (typeof MathmatixWhiteboard !== 'undefined' && typeof fabric !== 'undefined') {
