@@ -63,11 +63,52 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
  * @param {Object} options - Additional options like temperature, max_tokens.
  * @returns {Promise<Object>} The completion object from the AI.
  */
+// Classify an error as transient (worth failing over to the other provider)
+// vs terminal (surface it). Content refusals are HTTP 200 in the adapter and
+// do NOT throw, so they never reach here — refusals never trigger fallback.
+// 4xx other than 429 (bad request, auth, not-found) are terminal on purpose:
+// failing them over would mask real bugs/misconfig instead of surfacing them.
+function isTransientError(err) {
+    const status = err?.status ?? err?.response?.status;
+    if (status === 429) return true;
+    if (typeof status === 'number' && status >= 500) return true;
+    if (typeof status === 'number' && status >= 400) return false;
+    const text = `${err?.name || ''} ${err?.code || ''} ${err?.message || ''}`;
+    return /timeout|timed out|ETIMEDOUT|ECONNRESET|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|socket hang up|network|connection/i.test(text);
+}
+
+// Stream from Claude; if it errors BEFORE emitting any chunk, transparently
+// fall back to the OpenAI fallback model. A post-first-token failure re-throws
+// (the pipeline's own non-stream fallback handles mid-stream failures — we
+// can't cross-provider restart without double-emitting).
+async function* claudeStreamWithFallback(model, messages, options) {
+    let emitted = false;
+    try {
+        const stream = await require('./anthropicClient').callLLMStream(model, messages, options);
+        for await (const chunk of stream) { emitted = true; yield chunk; }
+        return;
+    } catch (err) {
+        if (emitted || !isTransientError(err)) throw err;
+        const fb = process.env.TUTOR_FALLBACK_MODEL || 'gpt-4o-mini';
+        console.warn(`[LLM fallback] ${model} → ${fb} (stream): ${err.status || ''} ${err.message}`);
+        const oaStream = await callLLMStream(fb, messages, options); // fb is OpenAI → native path
+        for await (const chunk of oaStream) yield chunk;
+    }
+}
+
 async function callLLM(model, messages, options = {}) {
-    // Provider dispatch: claude-* models route to the Anthropic adapter,
-    // which returns an OpenAI-shaped completion so callers don't change.
+    // Provider dispatch: claude-* models route to the Anthropic adapter. On a
+    // *transient* Claude failure, fall through to OpenAI with the fallback
+    // model. Refusals (HTTP 200) don't throw, so they never fall back.
     if (require('./anthropicClient').isClaudeModel(model)) {
-        return require('./anthropicClient').callLLM(model, messages, options);
+        try {
+            return await require('./anthropicClient').callLLM(model, messages, options);
+        } catch (err) {
+            if (!isTransientError(err)) throw err;
+            const fb = process.env.TUTOR_FALLBACK_MODEL || 'gpt-4o-mini';
+            console.warn(`[LLM fallback] ${model} → ${fb} (callLLM): ${err.status || ''} ${err.message}`);
+            model = fb;
+        }
     }
     try {
         console.log(`LOG: Calling OpenAI model (${model})`);
@@ -160,7 +201,14 @@ async function callLLM(model, messages, options = {}) {
  */
 async function callLLMStructured(model, messages, responseFormat, options = {}) {
     if (require('./anthropicClient').isClaudeModel(model)) {
-        return require('./anthropicClient').callLLMStructured(model, messages, responseFormat, options);
+        try {
+            return await require('./anthropicClient').callLLMStructured(model, messages, responseFormat, options);
+        } catch (err) {
+            if (!isTransientError(err)) throw err;
+            const fb = process.env.TUTOR_FALLBACK_MODEL || 'gpt-4o-mini';
+            console.warn(`[LLM fallback] ${model} → ${fb} (callLLMStructured): ${err.status || ''} ${err.message}`);
+            model = fb;
+        }
     }
     if (!responseFormat || typeof responseFormat !== 'object') {
         throw new Error('callLLMStructured: responseFormat is required');
@@ -199,10 +247,10 @@ async function callLLMStructured(model, messages, responseFormat, options = {}) 
  * @returns {Promise<Stream>} The stream object
  */
 async function callLLMStream(model, messages, options = {}) {
-    // Provider dispatch: claude-* models return an async-iterable of
-    // OpenAI-shaped chunks from the Anthropic adapter.
+    // Provider dispatch: claude-* models stream via the Anthropic adapter,
+    // wrapped so a pre-first-token transient failure fails over to OpenAI.
     if (require('./anthropicClient').isClaudeModel(model)) {
-        return require('./anthropicClient').callLLMStream(model, messages, options);
+        return claudeStreamWithFallback(model, messages, options);
     }
     try {
         console.log(`LOG: Calling OpenAI streaming (${model})`);
@@ -358,6 +406,7 @@ module.exports = {
     openai,
     retryWithExponentialBackoff,
     DEFAULT_CHAT_TIMEOUT_MS,
+    isTransientError,
     callLLM,
     callLLMStructured,
     callLLMStream,
