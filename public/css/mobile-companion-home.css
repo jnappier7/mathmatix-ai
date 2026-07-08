@@ -86,4 +86,36 @@
   .mch-nav .mch-me { width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #7C6BFF, #14B8A6); color: #fff;
     display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+
+  /* ============================================================
+     ACTIVE-SCREEN framed tutor (companion mode only).
+     Converts the full-bleed poster into a bounded card pinned at the
+     top; the chat thread scrolls on the light backdrop below it. Only
+     while a conversation is open (.mpc-has-messages) and the flag is on
+     (body.mch-on) — otherwise the poster-chat is untouched.
+     ============================================================ */
+  body.mch-on.cr-mode.mpc-has-messages .cr-tutor-hero {
+    position: fixed !important;
+    inset: auto !important;
+    top: calc(env(safe-area-inset-top, 0px) + 58px) !important;
+    left: 14px !important;
+    right: 14px !important;
+    width: auto !important;
+    height: 28vh !important;
+    min-height: 190px !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(124,107,255,.16) !important;
+    box-shadow: 0 8px 26px rgba(60,50,120,.14) !important;
+  }
+  /* soft bottom fade inside the frame instead of the full readability scrim */
+  body.mch-on.cr-mode.mpc-has-messages .mpc-scrim {
+    background: linear-gradient(180deg,
+      rgba(var(--mlt-scrim-rgb, 245,243,251), 0) 55%,
+      rgba(var(--mlt-scrim-rgb, 245,243,251), .5) 100%) !important;
+  }
+  /* start the message list below the framed tutor */
+  body.mch-on.cr-mode.mpc-has-messages #chat-messages-container {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 58px + 28vh + 16px) !important;
+  }
 }

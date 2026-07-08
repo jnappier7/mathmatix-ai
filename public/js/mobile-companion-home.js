@@ -118,7 +118,12 @@
     obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
 
-  function boot() { try { build(); } catch (e) { if (window.console) console.warn('[companion-home]', e); } }
+  function boot() {
+    // Tag the body so the active-screen restyle (framed tutor) applies even
+    // when a conversation is already open and build() early-returns.
+    document.body.classList.add('mch-on');
+    try { build(); } catch (e) { if (window.console) console.warn('[companion-home]', e); }
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
