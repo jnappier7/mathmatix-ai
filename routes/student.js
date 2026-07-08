@@ -11,6 +11,7 @@ const GradingResult = require('../models/gradingResult');
 const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import isStudent middleware
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 const mongoose = require('mongoose');
+const { computeWeeklyAccuracy } = require('../utils/weeklyAccuracy');
 
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
@@ -384,9 +385,6 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
         ]);
         const gradeWorkStats = gradeWorkAgg[0] || { totalProblems: 0, totalCorrect: 0 };
 
-        const totalGradedProblems = weeklyConvStats.totalProblems + gradeWorkStats.totalProblems;
-        const totalGradedCorrect = weeklyConvStats.totalCorrect + gradeWorkStats.totalCorrect;
-
         const weeklyXp = (student.xpHistory || [])
             .filter(e => e.date && new Date(e.date) >= oneWeekAgo)
             .reduce((sum, e) => sum + (e.amount || 0), 0);
@@ -395,17 +393,16 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
             .filter(([, d]) => d.status === 'mastered' && d.masteredDate && new Date(d.masteredDate) >= oneWeekAgo)
             .length;
 
-        // A percentage on a tiny sample is noise — a single graded turn swings it
-        // 20+ points, so we only surface an accuracy % once there are enough
-        // attempts. Below the threshold the client shows the raw "correct / attempts"
-        // fraction instead (honest at low n). problemsCorrect is included so it can.
-        const MIN_ACCURACY_SAMPLE = 5;
+        // computeWeeklyAccuracy combines both correctness sources and gates the
+        // percentage on a minimum sample (see utils/weeklyAccuracy.js). Below the
+        // threshold accuracy is null and the client shows a raw fraction instead.
         const weeklyStats = {
-            problemsSolved: totalGradedProblems,
-            problemsCorrect: totalGradedCorrect,
-            accuracy: totalGradedProblems >= MIN_ACCURACY_SAMPLE
-                ? Math.round((totalGradedCorrect / totalGradedProblems) * 100)
-                : null,
+            ...computeWeeklyAccuracy({
+                convProblems: weeklyConvStats.totalProblems,
+                convCorrect: weeklyConvStats.totalCorrect,
+                gwProblems: gradeWorkStats.totalProblems,
+                gwCorrect: gradeWorkStats.totalCorrect,
+            }),
             xpEarned: weeklyXp,
             skillsMastered: skillsMasteredThisWeek
         };
