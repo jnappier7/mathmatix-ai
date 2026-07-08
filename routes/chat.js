@@ -2109,6 +2109,17 @@ router.get('/resume-context', isAuthenticated, async (req, res) => {
     }
 });
 
+// A conversation is an IN-PROGRESS session (not a fresh visit) once the student
+// has sent at least one message in it. A greeting request against such a
+// conversation is a re-mount/refocus within the session, not a new arrival, so
+// the tutor should continue rather than inject a duplicate greeting. Pure +
+// exported for unit testing.
+function isInProgressSession(conversation) {
+    return !!(conversation
+        && Array.isArray(conversation.messages)
+        && conversation.messages.some(m => m && m.role === 'user'));
+}
+
 // ========== GREETING HANDLER: AI-initiated conversation ==========
 // Builds a context-rich "ghost message" the user doesn't see,
 // but the AI responds to naturally - creating the illusion of AI initiating
@@ -2204,6 +2215,54 @@ async function handleGreetingRequest(req, res, userId) {
                     xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
                 });
             }
+        }
+
+        // In-progress session: if this reused conversation already has a real
+        // student↔tutor exchange, a greeting request is a page re-mount / tab
+        // refocus / navigation WITHIN the same session — not a new visit. The
+        // 2-minute replay guard below only covers the case where the greeting is
+        // still the last message; between 2 and 30 minutes (the reuse window), or
+        // once the student has replied, a fresh greeting would be generated and
+        // appended into the MIDDLE of the live thread — the duplicate "Hey Jason!"
+        // (and stale prior context) seen in production. Continue instead: replay
+        // the recent messages, no new greeting. A genuinely new session is a fresh
+        // conversation with no user messages (the 30-min reuse window rolls to one
+        // after a gap), so first greetings are unaffected.
+        if (isInProgressSession(activeConversation)) {
+            const contTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+            const contTutor = TUTOR_CONFIG[contTutorKey];
+            await Conversation.findByIdAndUpdate(activeConversation._id, { lastActivity: new Date() });
+
+            const visibleMessages = activeConversation.messages
+                .slice(-50)
+                .filter(m => !(
+                    m.role === 'assistant'
+                    && typeof m.content === 'string'
+                    && m.content.startsWith('[Voice session')
+                ))
+                .map(m => ({ role: m.role, content: m.content, workCheckId: m.workCheckId || null }));
+
+            const useStreaming = req.query.stream === 'true';
+            if (useStreaming) {
+                res.setHeader('Content-Type', 'text/event-stream');
+                res.setHeader('Cache-Control', 'no-cache');
+                res.setHeader('Connection', 'keep-alive');
+                res.setHeader('X-Accel-Buffering', 'no');
+                res.flushHeaders();
+                res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
+                return res.end();
+            }
+            return res.json({
+                text: '',
+                continued: true,
+                conversationId: activeConversation._id,
+                messages: visibleMessages,
+                voiceId: contTutor.voiceId,
+                isGreeting: true,
+                userXp: user.xp || 0,
+                userLevel: user.level || 1,
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
+            });
         }
 
         // Replay the just-sent greeting on a quick page refresh so the same
@@ -2789,3 +2848,5 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
 }
 
 module.exports = router;
+// Exported for unit testing the duplicate-greeting guard.
+module.exports.isInProgressSession = isInProgressSession;
