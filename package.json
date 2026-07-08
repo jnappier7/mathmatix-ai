@@ -15,6 +15,8 @@
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
     "test:golden": "jest --testPathPattern=tests/golden",
+    "test:eval": "jest --testPathPattern=tests/eval",
+    "test:eval:live": "RUN_LLM_EVAL=1 jest --testPathPattern=tests/eval/liveEval",
     "test:critical": "jest --config jest.critical.config.js",
     "seed:test": "node scripts/seedTestData.js",
     "seed:playground": "node scripts/seedPlaygroundAccounts.js",
