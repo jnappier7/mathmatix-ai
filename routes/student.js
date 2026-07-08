@@ -7,6 +7,7 @@ const path = require('path');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const StudentUpload = require('../models/studentUpload');
+const GradingResult = require('../models/gradingResult');
 const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import isStudent middleware
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 const mongoose = require('mongoose');
@@ -367,6 +368,25 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
         ]);
         const weeklyConvStats = weeklyAgg[0] || { totalProblems: 0, totalCorrect: 0 };
 
+        // Fold in "Show Your Work" grading — the cleanest correctness signal we have
+        // (structured, per-problem right/wrong), which the chat pipeline path never
+        // saw. Only first attempts (previousAttemptId null; also matches legacy docs
+        // missing the field) so resubmissions of the same worksheet don't double-count.
+        const gradeWorkAgg = await GradingResult.aggregate([
+            { $match: { userId: studentObjectId, previousAttemptId: null, createdAt: { $gte: oneWeekAgo } } },
+            {
+                $group: {
+                    _id: null,
+                    totalProblems: { $sum: { $ifNull: ['$problemCount', 0] } },
+                    totalCorrect: { $sum: { $ifNull: ['$correctCount', 0] } }
+                }
+            }
+        ]);
+        const gradeWorkStats = gradeWorkAgg[0] || { totalProblems: 0, totalCorrect: 0 };
+
+        const totalGradedProblems = weeklyConvStats.totalProblems + gradeWorkStats.totalProblems;
+        const totalGradedCorrect = weeklyConvStats.totalCorrect + gradeWorkStats.totalCorrect;
+
         const weeklyXp = (student.xpHistory || [])
             .filter(e => e.date && new Date(e.date) >= oneWeekAgo)
             .reduce((sum, e) => sum + (e.amount || 0), 0);
@@ -381,10 +401,10 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
         // fraction instead (honest at low n). problemsCorrect is included so it can.
         const MIN_ACCURACY_SAMPLE = 5;
         const weeklyStats = {
-            problemsSolved: weeklyConvStats.totalProblems,
-            problemsCorrect: weeklyConvStats.totalCorrect,
-            accuracy: weeklyConvStats.totalProblems >= MIN_ACCURACY_SAMPLE
-                ? Math.round((weeklyConvStats.totalCorrect / weeklyConvStats.totalProblems) * 100)
+            problemsSolved: totalGradedProblems,
+            problemsCorrect: totalGradedCorrect,
+            accuracy: totalGradedProblems >= MIN_ACCURACY_SAMPLE
+                ? Math.round((totalGradedCorrect / totalGradedProblems) * 100)
                 : null,
             xpEarned: weeklyXp,
             skillsMastered: skillsMasteredThisWeek
