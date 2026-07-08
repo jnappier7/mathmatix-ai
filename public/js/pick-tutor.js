@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return d.innerHTML;
   }
   function tutorById(id) { return allTutors.find(t => t.id === id); }
-  function fullBodySrc(id) { return '/images/tutor_avatars/' + id + '-fullBody.png'; }
+  function fullBodyBase(id) { return '/images/tutor_avatars/' + id + '-fullBody'; }
 
   /* -------- MODE -------- */
   function applyMode() {
@@ -98,7 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.setAttribute('aria-pressed', t.id === selectedTutorId ? 'true' : 'false');
       btn.setAttribute('aria-label', t.name);
       btn.innerHTML =
-        '<span class="tp-figure-img"><img src="' + fullBodySrc(t.id) + '" alt="' + esc(t.name) + '" loading="lazy"></span>' +
+        '<span class="tp-figure-img"><picture>' +
+          '<source srcset="' + fullBodyBase(t.id) + '.webp" type="image/webp">' +
+          '<img src="' + fullBodyBase(t.id) + '.png" alt="' + esc(t.name) + '" loading="lazy">' +
+        '</picture></span>' +
         '<span class="tp-figure-name">' + esc(t.name) + '</span>';
       roster.appendChild(btn);
     });
