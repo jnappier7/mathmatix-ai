@@ -160,58 +160,18 @@ function calculateProblemStats(messages) {
 
     let attempted = 0;
     let correct = 0;
-    let hasStructuredData = false;
-
-    // First pass: count messages with structured problemResult field
+    // Count only messages carrying a structured `problemResult` tag written by the
+    // grading pipeline. A prior keyword-detection fallback (removed) scanned the
+    // tutor's coaching text and counted supportive phrasing — "let's take a look",
+    // "almost", "not quite" — as incorrect attempts, fabricating problems that were
+    // never answered, inflating the denominator, and depressing accuracy. When a
+    // conversation has no structured grades, report zero rather than guess.
     aiMessages.forEach(msg => {
         if (msg.problemResult) {
-            hasStructuredData = true;
             attempted++;
             if (msg.problemResult === 'correct') {
                 correct++;
             }
-        }
-    });
-
-    // If we found structured data, use those counts
-    if (hasStructuredData) {
-        return { attempted, correct };
-    }
-
-    // FALLBACK: Use keyword detection for older conversations without structured data
-    // This is less accurate but maintains backward compatibility
-    aiMessages.forEach(msg => {
-        if (!msg.content || typeof msg.content !== 'string') return;
-        const content = msg.content.toLowerCase();
-
-        // More specific patterns to reduce false positives
-        const correctPatterns = [
-            /\bthat['']?s (exactly )?right\b/,
-            /\bcorrect[!.]/,
-            /\bgreat job[!.]/,
-            /\bperfect[!.]/,
-            /\bwell done[!.]/,
-            /\bexactly[!.]/,
-            /\bnice work[!.]/
-        ];
-
-        const incorrectPatterns = [
-            /\bnot quite\b/,
-            /\btry again\b/,
-            /\balmost\b/,
-            /\bincorrect\b/,
-            /\bnot exactly\b/,
-            /\blet['']?s (try|look|think)/
-        ];
-
-        const isCorrect = correctPatterns.some(pattern => pattern.test(content));
-        const isIncorrect = incorrectPatterns.some(pattern => pattern.test(content));
-
-        if (isCorrect && !isIncorrect) {
-            attempted++;
-            correct++;
-        } else if (isIncorrect && !isCorrect) {
-            attempted++;
         }
     });
 

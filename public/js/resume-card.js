@@ -75,7 +75,11 @@
       items.push(`<div class="rc-stat"><span class="rc-stat-val">${stats.problemsSolved}</span><span class="rc-stat-label">problems</span></div>`);
     }
     if (stats.accuracy != null) {
+      // Enough attempts for a percentage to be meaningful.
       items.push(`<div class="rc-stat"><span class="rc-stat-val">${stats.accuracy}%</span><span class="rc-stat-label">accuracy</span></div>`);
+    } else if (stats.problemsCorrect != null && stats.problemsSolved > 0) {
+      // Small sample: a % here would be noise, so show the raw fraction instead.
+      items.push(`<div class="rc-stat"><span class="rc-stat-val">${stats.problemsCorrect}/${stats.problemsSolved}</span><span class="rc-stat-label">correct</span></div>`);
     }
     if (stats.xpEarned != null && stats.xpEarned > 0) {
       items.push(`<div class="rc-stat"><span class="rc-stat-val">+${stats.xpEarned}</span><span class="rc-stat-label">XP this week</span></div>`);
