@@ -357,13 +357,16 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
         const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         const studentObjectId = new mongoose.Types.ObjectId(student._id);
 
+        // Prefer the first-try counters (one slot per problem, retries excluded).
+        // Legacy conversations predate these fields, so fall back to the older
+        // per-attempt counters until they age out of the 7-day window.
         const weeklyAgg = await Conversation.aggregate([
             { $match: { userId: studentObjectId, lastActivity: { $gte: oneWeekAgo } } },
             {
                 $group: {
                     _id: null,
-                    totalProblems: { $sum: { $ifNull: ['$problemsAttempted', 0] } },
-                    totalCorrect: { $sum: { $ifNull: ['$problemsCorrect', 0] } }
+                    totalProblems: { $sum: { $ifNull: ['$firstTryAttempted', { $ifNull: ['$problemsAttempted', 0] }] } },
+                    totalCorrect: { $sum: { $ifNull: ['$firstTryCorrect', { $ifNull: ['$problemsCorrect', 0] }] } }
                 }
             }
         ]);

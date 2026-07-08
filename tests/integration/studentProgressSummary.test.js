@@ -113,4 +113,17 @@ describe('GET /api/student/progress/summary — weekly accuracy', () => {
     const pipeline = GradingResult.aggregate.mock.calls[0][0];
     expect(pipeline[0].$match).toHaveProperty('previousAttemptId', null);
   });
+
+  test('chat aggregation prefers the first-try counter over per-attempt counters', async () => {
+    setSources({ conv: [{ totalProblems: 3, totalCorrect: 3 }], grade: [] });
+
+    await supertest(buildApp()).get('/api/student/progress/summary');
+
+    // The $group must read firstTryAttempted/firstTryCorrect (with a legacy
+    // fallback), not the raw per-attempt counters.
+    const pipeline = Conversation.aggregate.mock.calls[0][0];
+    const groupJson = JSON.stringify(pipeline.find(s => s.$group).$group);
+    expect(groupJson).toContain('firstTryAttempted');
+    expect(groupJson).toContain('firstTryCorrect');
+  });
 });
