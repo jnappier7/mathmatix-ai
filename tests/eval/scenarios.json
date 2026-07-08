@@ -96,6 +96,21 @@
           "judge": ["rejectedCorrectAnswer"]
         }
       ]
+    },
+
+    {
+      "name": "multi-root answer 'x=2 and x=3' is correct, not doubted",
+      "focus": "(x-2)(x-3)=0",
+      "focusTerms": ["(x-2)(x-3)", "x^2-5x+6", "factor"],
+      "answer": "x = 2 or x = 3",
+      "turns": [
+        { "assistant": "Set each factor equal to zero. What are the solutions?" },
+        {
+          "student": "x=2 and x=3",
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer"]
+        }
+      ]
     }
   ]
 }

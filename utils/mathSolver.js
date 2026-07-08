@@ -109,6 +109,27 @@ function detectMathProblem(message) {
     const systemResult = detectSystem(message);
     if (systemResult) return systemResult;
 
+    // Pattern: Factored equation set to zero — "(x-2)(x-3)=0", "(2x+1)(x-3)=0".
+    // Each factor's root is where it equals zero (root = -constant/coeff). Detect
+    // BEFORE general_linear, which would otherwise mis-parse the product as a linear
+    // expression, lose the roots, and cause a correct answer like "x=2 and x=3" to be
+    // graded wrong.
+    {
+        const compact = message.replace(/\s+/g, '').replace(/−/g, '-');
+        if (/^(?:-?\d+)?(?:\(-?\d*x[+\-]\d+\)){2,}=0$/i.test(compact)) {
+            const parsed = parseFactoredForm(compact.replace(/=0$/, ''));
+            if (parsed && parsed.binomials.length >= 2) {
+                const roots = [];
+                for (const b of parsed.binomials) {
+                    if (b.coeff !== 0) roots.push(-b.constant / b.coeff);
+                }
+                if (roots.length >= 2) {
+                    return { type: 'factored_equation', roots };
+                }
+            }
+        }
+    }
+
     // Pattern: General linear equation — handles multi-step, distribution, and variables on both sides
     // Matches anything with "x" and "=" that isn't a quadratic (no x² / x^2)
     // Examples: "2x + 3 = 7", "3(x+2) - 5 = 16", "3x + 5 = x + 13", "-2(x-4) + 3x = 10"
@@ -592,6 +613,8 @@ function solveProblem(problem) {
                 return solveSystem(problem);
             case 'quadratic_equation':
                 return solveQuadratic(problem);
+            case 'factored_equation':
+                return solveFactoredEquation(problem);
             case 'slope':
                 return solveSlope(problem);
             case 'expand_polynomial':
@@ -1015,6 +1038,19 @@ function solveSlope(problem) {
             `slope = ${rise} / ${run}`,
             `slope = ${answer}`,
         ],
+    };
+}
+
+// Solve a factored equation like "(x-2)(x-3)=0" — roots are already computed in
+// detection. Output shape mirrors solveQuadratic (roots[] + "x = a or x = b").
+function solveFactoredEquation(problem) {
+    const roots = problem.roots.map((r) => (Number.isInteger(r) ? r : parseFloat(r.toFixed(4))));
+    const answer = 'x = ' + roots.join(' or x = ');
+    return {
+        success: true,
+        answer,
+        roots,
+        steps: roots.map((r) => `Set a factor equal to zero → x = ${r}`),
     };
 }
 
@@ -2344,6 +2380,17 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     }
 
 
+    // Root-set answer: "x=2 and x=3" vs "x=2 or x=3" vs "x = 3, x = 2". A quadratic /
+    // factored solution names a SET of roots; grade by unordered set membership so the
+    // student isn't marked wrong for saying "and" vs "or", or a different order. Gated
+    // by a set shape (and / or / multiple "x=") so single values are never affected.
+    const studentRoots = parseRootSet(studentStr);
+    const correctRoots = parseRootSet(correctStr);
+    if (studentRoots && correctRoots && studentRoots.length === correctRoots.length &&
+        correctRoots.every((cr) => studentRoots.some((sr) => Math.abs(sr - cr) <= tolerance))) {
+        return { isCorrect: true, exact: false, equivalentForm: true };
+    }
+
     // System of equations answer: "x = 3, y = 2" vs "y = 2, x = 3"
     const studentVars = parseVariableAssignments(studentStr);
     const correctVars = parseVariableAssignments(correctStr);
@@ -2523,6 +2570,39 @@ function canonicalizePolynomial(terms) {
             if (!a.variable && b.variable) return 1;
             return (a.variable || '').localeCompare(b.variable || '');
         });
+}
+
+/**
+ * Parse a SET of roots from an answer like "x=2 and x=3", "x=2 or x=3",
+ * "x = 3, x = 2", "x = -7/3 or 1". Returns an array of distinct numeric roots,
+ * or null when the string isn't a root set (needs an "and"/"or" join or 2+ "x="
+ * so single values, points, and lone fractions are never treated as root sets).
+ */
+function parseRootSet(str) {
+    if (!str) return null;
+    const s = String(str).replace(/−/g, '-').toLowerCase();
+    const setShape = /\b(and|or)\b/.test(s) || /(x\s*=[^=]*){2,}/.test(s);
+    if (!setShape) return null;
+
+    const candidates = [];
+    const fracRegex = /(-?\d+)\s*\/\s*(\d+)/g;
+    let m;
+    while ((m = fracRegex.exec(s)) !== null) {
+        const den = parseFloat(m[2]);
+        if (den !== 0) candidates.push(parseFloat(m[1]) / den);
+    }
+    const stripped = s.replace(fracRegex, ' ');
+    const numRegex = /-?\d+\.?\d*/g;
+    while ((m = numRegex.exec(stripped)) !== null) {
+        const v = parseFloat(m[0]);
+        if (!isNaN(v)) candidates.push(v);
+    }
+
+    const distinct = [];
+    for (const c of candidates) {
+        if (!distinct.some((d) => Math.abs(d - c) <= 1e-9)) distinct.push(c);
+    }
+    return distinct.length >= 2 ? distinct : null;
 }
 
 /**
