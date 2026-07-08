@@ -1,0 +1,254 @@
+// utils/anthropicClient.js — Anthropic (Claude) adapter for the LLM gateway.
+//
+// This module is a DROP-IN for openaiClient's callLLM / callLLMStream /
+// callLLMStructured. It normalizes Claude's request/response/stream shapes
+// into the exact OpenAI shapes the rest of the app already consumes, so the
+// tutor pipeline (generate.js), the structuredChatStreamExtractor, and every
+// route stay provider-agnostic. openaiClient dispatches here when the model
+// id starts with "claude".
+//
+// Deliberately does NOT import openaiClient (no cycle). Only depends on the
+// Anthropic SDK. Vision grading is intentionally not routed here — it calls
+// the OpenAI SDK directly in llmGateway and stays on OpenAI.
+
+const Anthropic = require('@anthropic-ai/sdk');
+
+// Match the ANTHROPIC_API_KEY_PROD / _DEV convention documented in
+// .env.example, with the legacy ANTHROPIC_API_KEY as a fallback.
+function resolveApiKey() {
+  const isProd = process.env.NODE_ENV === 'production';
+  return (
+    (isProd ? process.env.ANTHROPIC_API_KEY_PROD : process.env.ANTHROPIC_API_KEY_DEV) ||
+    process.env.ANTHROPIC_API_KEY ||
+    null
+  );
+}
+
+let _client = null;
+function client() {
+  if (_client) return _client;
+  const apiKey = resolveApiKey();
+  if (!apiKey) {
+    throw new Error(
+      'anthropicClient: no API key. Set ANTHROPIC_API_KEY_DEV / _PROD (or ANTHROPIC_API_KEY).'
+    );
+  }
+  _client = new Anthropic({ apiKey });
+  return _client;
+}
+
+const DEFAULT_MAX_TOKENS = 1500;
+
+// Anthropic requires minor-facing API products to run a child-safety system
+// prompt (see the "Responsible Use ... Guidelines for Organizations Serving
+// Minors" help-center article). Mathmatix serves K-12 students, so we prepend
+// this to every Claude request. It is provider-scoped on purpose — the OpenAI
+// path is unchanged.
+//
+// ⚠️ REPLACE with Anthropic's official/updated child-safety prompt text from
+// their guidelines page before relying on this for compliance; the wording
+// below captures the intent but is not a substitute for their published copy.
+const CHILD_SAFETY_PROMPT = [
+  'You are assisting in an educational math-tutoring product used by children and teenagers.',
+  'Keep all content strictly age-appropriate and educational. Never produce sexual, violent, self-harm, hateful, or otherwise harmful content, and never solicit personal or identifying information from the student.',
+  'You are an AI tutor, not a human; if asked, say so plainly. If a student expresses distress or describes being in danger, respond with care and direct them to a trusted adult or appropriate help resource rather than attempting to counsel them yourself.',
+  'Stay on the topic of math learning.',
+].join(' ');
+
+function isClaudeModel(model) {
+  return typeof model === 'string' && model.toLowerCase().startsWith('claude');
+}
+
+// ── Message translation ─────────────────────────────────────────────
+// OpenAI carries the system prompt as a role:"system" message in the array.
+// Claude takes it as a top-level `system` string. Pull all system messages
+// out, concatenate them, and pass the rest through. Merge consecutive
+// same-role turns (Claude is stricter about alternation than OpenAI).
+function splitSystemAndMessages(messages) {
+  const systemParts = [];
+  const convo = [];
+  for (const m of messages || []) {
+    if (!m || !m.role) continue;
+    if (m.role === 'system') {
+      systemParts.push(typeof m.content === 'string' ? m.content : JSON.stringify(m.content));
+      continue;
+    }
+    const role = m.role === 'assistant' ? 'assistant' : 'user';
+    const content = typeof m.content === 'string' ? m.content : m.content;
+    const last = convo[convo.length - 1];
+    if (last && last.role === role && typeof last.content === 'string' && typeof content === 'string') {
+      last.content += `\n\n${content}`;
+    } else {
+      convo.push({ role, content });
+    }
+  }
+  // Claude requires the first message to be a user turn.
+  if (convo.length > 0 && convo[0].role !== 'user') {
+    convo.unshift({ role: 'user', content: '(continuing)' });
+  }
+  return { system: systemParts.join('\n\n'), messages: convo };
+}
+
+// ── Structured output translation ───────────────────────────────────
+// Claude's structured-output JSON Schema does not support numeric/length
+// constraints. Strip the unsupported keywords recursively so the schema
+// is accepted; the app validates semantics downstream anyway.
+const UNSUPPORTED_SCHEMA_KEYS = new Set([
+  'minLength', 'maxLength', 'minimum', 'maximum',
+  'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf',
+  'minItems', 'maxItems', 'uniqueItems', 'minProperties', 'maxProperties',
+]);
+
+function sanitizeSchema(node) {
+  if (Array.isArray(node)) return node.map(sanitizeSchema);
+  if (!node || typeof node !== 'object') return node;
+  const out = {};
+  for (const [k, v] of Object.entries(node)) {
+    if (UNSUPPORTED_SCHEMA_KEYS.has(k)) continue;
+    out[k] = sanitizeSchema(v);
+  }
+  return out;
+}
+
+// OpenAI response_format { type:'json_schema', json_schema:{ schema } }
+// → Claude output_config { format:{ type:'json_schema', schema } }
+function toClaudeOutputConfig(responseFormat) {
+  const schema = responseFormat?.json_schema?.schema;
+  if (!schema) return null;
+  return { format: { type: 'json_schema', schema: sanitizeSchema(schema) } };
+}
+
+function mapStopReason(claudeStop) {
+  // Normalize to the OpenAI finish_reason vocabulary callers may check.
+  switch (claudeStop) {
+    case 'end_turn':
+    case 'stop_sequence':
+      return 'stop';
+    case 'max_tokens':
+      return 'length';
+    case 'tool_use':
+      return 'tool_calls';
+    case 'refusal':
+      return 'content_filter';
+    default:
+      return claudeStop || 'stop';
+  }
+}
+
+function extractText(contentBlocks) {
+  return (contentBlocks || [])
+    .filter((b) => b && b.type === 'text' && typeof b.text === 'string')
+    .map((b) => b.text)
+    .join('');
+}
+
+// Build the Claude request body shared by stream and non-stream paths.
+// Notes:
+//  - temperature is intentionally omitted — Sonnet 5 rejects non-default
+//    sampling params.
+//  - thinking is disabled to keep latency low and the stream a pure text
+//    stream (so structured JSON deltas aren't interleaved with thinking
+//    blocks). Revisit if we want reasoning depth later.
+function buildBody(model, messages, options) {
+  const { system, messages: claudeMessages } = splitSystemAndMessages(messages);
+  const body = {
+    model,
+    max_tokens: options.max_tokens || DEFAULT_MAX_TOKENS,
+    messages: claudeMessages,
+    thinking: { type: 'disabled' },
+  };
+  // Child-safety prompt leads; the app's tutor system prompt follows.
+  body.system = system ? `${CHILD_SAFETY_PROMPT}\n\n${system}` : CHILD_SAFETY_PROMPT;
+  if (options.response_format) {
+    const oc = toClaudeOutputConfig(options.response_format);
+    if (oc) body.output_config = oc;
+  }
+  return body;
+}
+
+function requestOptions(options) {
+  const ro = { maxRetries: 0 };
+  if (options.timeoutMs) ro.timeout = options.timeoutMs;
+  if (options.signal) ro.signal = options.signal;
+  return ro;
+}
+
+// ── callLLM (non-streaming) — OpenAI-shaped completion ──────────────
+async function callLLM(model, messages, options = {}) {
+  console.log(`LOG: Calling Anthropic model (${model})`);
+  const body = buildBody(model, messages, options);
+  const msg = await client().messages.create(body, requestOptions(options));
+  return {
+    id: msg.id,
+    model: msg.model,
+    choices: [
+      {
+        index: 0,
+        message: { role: 'assistant', content: extractText(msg.content) },
+        finish_reason: mapStopReason(msg.stop_reason),
+      },
+    ],
+    usage: msg.usage
+      ? {
+          prompt_tokens: msg.usage.input_tokens,
+          completion_tokens: msg.usage.output_tokens,
+          total_tokens: (msg.usage.input_tokens || 0) + (msg.usage.output_tokens || 0),
+        }
+      : undefined,
+  };
+}
+
+// ── callLLMStructured — parsed JSON, same contract as openaiClient ──
+async function callLLMStructured(model, messages, responseFormat, options = {}) {
+  if (!responseFormat || typeof responseFormat !== 'object') {
+    throw new Error('callLLMStructured: responseFormat is required');
+  }
+  const completion = await callLLM(model, messages, { ...options, response_format: responseFormat });
+  const content = completion?.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || content.length === 0) {
+    const finishReason = completion?.choices?.[0]?.finish_reason || 'unknown';
+    throw new Error(`callLLMStructured(anthropic): empty content (finish_reason=${finishReason})`);
+  }
+  try {
+    return JSON.parse(content);
+  } catch (parseErr) {
+    const preview = content.slice(0, 200).replace(/\n/g, '\\n');
+    throw new Error(`callLLMStructured(anthropic): JSON.parse failed (${parseErr.message}). Preview: ${preview}`);
+  }
+}
+
+// ── callLLMStream — async-iterable of OpenAI-shaped chunks ──────────
+// Downstream code reads chunk.choices[0].delta.content (a string) and the
+// final chunk's finish_reason. We map Claude text deltas to that shape.
+async function callLLMStream(model, messages, options = {}) {
+  console.log(`LOG: Calling Anthropic streaming (${model})`);
+  const body = buildBody(model, messages, options);
+  const claudeStream = client().messages.stream(body, requestOptions(options));
+
+  async function* openAiShapedChunks() {
+    let finish = 'stop';
+    for await (const event of claudeStream) {
+      if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+        yield { choices: [{ index: 0, delta: { content: event.delta.text }, finish_reason: null }] };
+      } else if (event.type === 'message_delta' && event.delta?.stop_reason) {
+        finish = mapStopReason(event.delta.stop_reason);
+      }
+    }
+    // Terminal chunk carrying finish_reason (mirrors OpenAI's last chunk).
+    yield { choices: [{ index: 0, delta: {}, finish_reason: finish }] };
+  }
+
+  return openAiShapedChunks();
+}
+
+module.exports = {
+  isClaudeModel,
+  callLLM,
+  callLLMStructured,
+  callLLMStream,
+  // exposed for unit tests
+  splitSystemAndMessages,
+  sanitizeSchema,
+  toClaudeOutputConfig,
+  mapStopReason,
+};
