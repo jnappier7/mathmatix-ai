@@ -1,0 +1,89 @@
+/* ============================================================
+   mobile-companion-home.css
+   The "Companion" HOME screen — action-first idle state for phones.
+   Framed tutor + greeting bubble + three action cards + bottom nav.
+
+   Additive & flag-gated: the overlay (#mch-home) is only injected by
+   mobile-companion-home.js when the companion-home flag is on, and it
+   only renders on phones. Nothing here touches the existing poster-chat
+   or desktop. Reuses the mobile light palette tokens where present.
+   ============================================================ */
+
+@media (max-width: 768px) {
+  #mch-home {
+    position: fixed; inset: 0; z-index: 6;
+    display: flex; flex-direction: column;
+    background: var(--mlt-bg, #F5F3FB);
+    color: var(--mlt-ink, #232741);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  #mch-home[hidden] { display: none !important; }
+
+  .mch-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: calc(env(safe-area-inset-top,0px) + 14px) 18px 10px;
+  }
+  .mch-learn { display: flex; align-items: center; gap: 9px; }
+  .mch-learn .mch-dot { width: 9px; height: 9px; border-radius: 50%;
+    background: var(--mlt-accent-2, #14B8A6); box-shadow: 0 0 8px rgba(20,184,166,.8); flex: 0 0 auto; }
+  .mch-learn small { display: block; font-size: 12px; color: var(--mlt-ink-dim, #6C7386); font-weight: 600; line-height: 1.1; }
+  .mch-learn b { font-size: 16px; line-height: 1.15; }
+  .mch-menu {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid var(--mlt-line, rgba(35,39,65,.10));
+    background: var(--mlt-surface, #fff); box-shadow: 0 3px 12px rgba(60,50,120,.10);
+    font-size: 17px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--mlt-ink, #232741);
+  }
+
+  .mch-body { flex: 1; display: flex; flex-direction: column; padding: 4px 16px 0; gap: 14px; overflow: hidden; }
+
+  .mch-frame {
+    position: relative; height: 42vh; min-height: 260px;
+    border-radius: 26px; overflow: hidden;
+    box-shadow: 0 8px 26px rgba(60,50,120,.14);
+    border: 1px solid rgba(124,107,255,.16); background: #e8ead0;
+  }
+  .mch-frame .mch-backdrop { position: absolute; inset: 0; background-size: cover; background-position: center 12%; }
+  .mch-frame .mch-portrait { position: absolute; left: 50%; top: 0; transform: translateX(-50%);
+    height: 100%; width: auto; object-fit: cover; object-position: center top; }
+  .mch-frame .mch-glow { position: absolute; inset: 0; box-shadow: inset 0 -40px 46px rgba(245,243,251,.55); }
+
+  .mch-greet {
+    background: var(--mlt-surface, #fff); border: 1px solid var(--mlt-line, rgba(35,39,65,.10));
+    border-radius: 20px; padding: 14px 16px; box-shadow: 0 3px 12px rgba(60,50,120,.10);
+  }
+  .mch-greet b { font-size: 16px; }
+  .mch-greet p { margin: 4px 0 0; color: var(--mlt-ink-dim, #6C7386); font-size: 14px; }
+
+  .mch-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .mch-action {
+    border: none; border-radius: 20px; padding: 16px 10px 14px; color: #fff; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 9px; text-align: center;
+    box-shadow: 0 3px 12px rgba(60,50,120,.10);
+  }
+  .mch-action .mch-ico { width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,.22);
+    display: flex; align-items: center; justify-content: center; font-size: 21px; }
+  .mch-action b { font-size: 14px; line-height: 1.15; }
+  .mch-action span { font-size: 11px; opacity: .85; font-weight: 500; }
+  .mch-action.mch-cam  { background: linear-gradient(160deg, #7C6BFF, #6C5CE7); }
+  .mch-action.mch-talk { background: linear-gradient(160deg, #1FC9B4, #14B8A6); }
+  .mch-action.mch-type { background: linear-gradient(160deg, #6FA2F5, #5B8DEF); }
+  .mch-action:active { transform: scale(.97); }
+
+  .mch-nav {
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 10px 12px calc(env(safe-area-inset-bottom,0px) + 12px);
+    background: var(--mlt-surface, #fff); border-top: 1px solid var(--mlt-line, rgba(35,39,65,.10));
+  }
+  .mch-nav button {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    font-size: 11px; color: var(--mlt-ink-dim, #6C7386); font-weight: 600;
+    background: none; border: none; cursor: pointer;
+  }
+  .mch-nav button .mch-ni { font-size: 19px; }
+  .mch-nav button.on { color: #7C6BFF; }
+  .mch-nav .mch-me { width: 26px; height: 26px; border-radius: 50%;
+    background: linear-gradient(135deg, #7C6BFF, #14B8A6); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+}
