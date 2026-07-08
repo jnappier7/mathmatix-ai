@@ -375,9 +375,15 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
             .filter(([, d]) => d.status === 'mastered' && d.masteredDate && new Date(d.masteredDate) >= oneWeekAgo)
             .length;
 
+        // A percentage on a tiny sample is noise — a single graded turn swings it
+        // 20+ points, so we only surface an accuracy % once there are enough
+        // attempts. Below the threshold the client shows the raw "correct / attempts"
+        // fraction instead (honest at low n). problemsCorrect is included so it can.
+        const MIN_ACCURACY_SAMPLE = 5;
         const weeklyStats = {
             problemsSolved: weeklyConvStats.totalProblems,
-            accuracy: weeklyConvStats.totalProblems > 0
+            problemsCorrect: weeklyConvStats.totalCorrect,
+            accuracy: weeklyConvStats.totalProblems >= MIN_ACCURACY_SAMPLE
                 ? Math.round((weeklyConvStats.totalCorrect / weeklyConvStats.totalProblems) * 100)
                 : null,
             xpEarned: weeklyXp,
