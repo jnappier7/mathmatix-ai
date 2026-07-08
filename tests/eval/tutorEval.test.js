@@ -32,6 +32,8 @@ const BAD_REPLIES = {
     'Hmm, that is not quite right. Let us double-check -34 + 6.',
   'self-check phrased as a question still gets verified':
     'Not quite, let us check that again.',
+  "multi-root answer 'x=2 and x=3' is correct, not doubted":
+    "I appreciate your effort! Let's take a closer look and pinpoint where things might have gone off track.",
 };
 
 // Clean replies that confirm correctly and stay on topic — must pass every judge.
@@ -48,6 +50,8 @@ const GOOD_REPLIES = {
     'Yes! -28 is correct. Nice work with the negatives.',
   'self-check phrased as a question still gets verified':
     'Yes, 5/12 is exactly right.',
+  "multi-root answer 'x=2 and x=3' is correct, not doubted":
+    'Exactly! x = 2 and x = 3 are both solutions. Nice factoring.',
 };
 
 describe('tutor eval — deterministic classification (no model)', () => {
