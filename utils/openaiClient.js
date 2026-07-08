@@ -64,6 +64,11 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
  * @returns {Promise<Object>} The completion object from the AI.
  */
 async function callLLM(model, messages, options = {}) {
+    // Provider dispatch: claude-* models route to the Anthropic adapter,
+    // which returns an OpenAI-shaped completion so callers don't change.
+    if (require('./anthropicClient').isClaudeModel(model)) {
+        return require('./anthropicClient').callLLM(model, messages, options);
+    }
     try {
         console.log(`LOG: Calling OpenAI model (${model})`);
 
@@ -154,6 +159,9 @@ async function callLLM(model, messages, options = {}) {
  * @returns {Promise<Object>} Parsed JSON content.
  */
 async function callLLMStructured(model, messages, responseFormat, options = {}) {
+    if (require('./anthropicClient').isClaudeModel(model)) {
+        return require('./anthropicClient').callLLMStructured(model, messages, responseFormat, options);
+    }
     if (!responseFormat || typeof responseFormat !== 'object') {
         throw new Error('callLLMStructured: responseFormat is required');
     }
@@ -191,6 +199,11 @@ async function callLLMStructured(model, messages, responseFormat, options = {}) 
  * @returns {Promise<Stream>} The stream object
  */
 async function callLLMStream(model, messages, options = {}) {
+    // Provider dispatch: claude-* models return an async-iterable of
+    // OpenAI-shaped chunks from the Anthropic adapter.
+    if (require('./anthropicClient').isClaudeModel(model)) {
+        return require('./anthropicClient').callLLMStream(model, messages, options);
+    }
     try {
         console.log(`LOG: Calling OpenAI streaming (${model})`);
 

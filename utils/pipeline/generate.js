@@ -40,7 +40,12 @@ function stripBoardTagsForStream(text) {
   return parseBoardTags(text).cleanedText;
 }
 
-const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
+// Primary teaching model. Env-overridable so the tutor can be pointed at a
+// higher-quality model (e.g. TUTOR_MODEL=claude-sonnet-5) without a code
+// change. Defaults to gpt-4o-mini so this is a no-op until the env is set —
+// important because main auto-deploys. claude-* values route through the
+// Anthropic adapter in utils/openaiClient.js.
+const PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini';
 
 /** Visual tool calling is opt-in until the frontend/backend are both deployed. */
 const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
