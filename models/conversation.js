@@ -148,6 +148,17 @@ const conversationSchema = new Schema({
         type: Number,
         default: 0
     },
+    // First-try metric: counts each PROBLEM once, scored on the first attempt
+    // (retries of an in-progress problem don't open a new slot; skips are
+    // excluded). This is the honest accuracy denominator. Intentionally NO
+    // default — legacy conversations leave it undefined so the progress
+    // aggregation can fall back to problemsAttempted until they age out.
+    firstTryAttempted: {
+        type: Number
+    },
+    firstTryCorrect: {
+        type: Number
+    },
     strugglingWith: {
         type: String,
         default: null // e.g., "negative numbers", "isolating variables"
