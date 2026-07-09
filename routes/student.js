@@ -12,6 +12,8 @@ const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import 
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 const mongoose = require('mongoose');
 const { computeWeeklyAccuracy } = require('../utils/weeklyAccuracy');
+const { deriveProgressCardState } = require('../utils/progressCardState');
+const { getReviewSummary } = require('../utils/smartReviewQueue');
 
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
@@ -410,6 +412,13 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
             skillsMastered: skillsMasteredThisWeek
         };
 
+        // Review-due count (FSRS) powers the card's "N skills ready to review" CTA.
+        const reviewDue = getReviewSummary(student).dueNow;
+
+        // Server-derived lifecycle state so the card's framing stays honest and
+        // the client stays dumb (see utils/progressCardState.js).
+        const cardState = deriveProgressCardState({ currentLearning, recentMastery, weeklyStats });
+
         res.json({
             assessmentCompleted: true,
             recentMastery,
@@ -418,6 +427,8 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
             streak,
             dailyQuests,
             weeklyStats,
+            reviewDue,
+            cardState,
             recentWins: recentWins.map(w => ({
                 description: w.description,
                 date: w.date
