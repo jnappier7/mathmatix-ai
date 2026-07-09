@@ -114,6 +114,17 @@ describe('GET /api/student/progress/summary — weekly accuracy', () => {
     expect(pipeline[0].$match).toHaveProperty('previousAttemptId', null);
   });
 
+  test('returns a lifecycle cardState and a review-due count', async () => {
+    setSources({ conv: [], grade: [] }); // no activity
+
+    const res = await supertest(buildApp()).get('/api/student/progress/summary');
+
+    expect(res.status).toBe(200);
+    // No skill in progress and nothing done → the first-session invitation state.
+    expect(res.body.cardState).toBe('first_session');
+    expect(res.body.reviewDue).toBe(0);
+  });
+
   test('chat aggregation prefers the first-try counter over per-attempt counters', async () => {
     setSources({ conv: [{ totalProblems: 3, totalCorrect: 3 }], grade: [] });
 
