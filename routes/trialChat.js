@@ -1,7 +1,9 @@
 // routes/trialChat.js
 // Anonymous trial chat — 4 free turns (1 greeting + 3 student), no auth required.
 // Lets landing page visitors experience a real tutor conversation
-// before signing up. Uses server-side IP+session turn tracking.
+// before signing up. Turn gate is durable per browser via the Mongo-backed
+// session (survives refresh + multiple instances); IP rate-limit is a separate
+// abuse backstop.
 //
 // Runs through the SAME tutoring pipeline as authenticated chat
 // (observe → diagnose → decide → generate → verify) with skipPersist=true
@@ -20,40 +22,27 @@ const MAX_TURNS = 4; // 1 greeting + 3 student messages
 const MAX_MESSAGE_LENGTH = 500;
 const UNLOCKED_TUTOR_IDS = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].unlocked);
 
-// Server-side turn tracking by IP — prevents client-side history manipulation.
-// Keyed by IP, stores { count, resetAt }. Entries expire after 1 hour.
-const turnTracker = new Map();
-const TURN_TRACKER_TTL = 60 * 60 * 1000; // 1 hour
-
-function getServerTurnCount(ip) {
-  const entry = turnTracker.get(ip);
-  if (!entry || Date.now() > entry.resetAt) return 0;
-  return entry.count;
+// Durable per-browser turn tracking via the Mongo-backed session.
+//
+// This deliberately replaces the old in-memory, IP-keyed Map. That map had two
+// fatal flaws: (1) it lived in a single process, so under Render horizontal
+// scaling a refresh could round-robin to another instance with a fresh count —
+// letting students farm unlimited free tutoring by hitting F5; and (2) IP-only
+// keying meant a whole school behind one NAT shared just MAX_TURNS/hour.
+//
+// The session is stored in Mongo (connect-mongo), so the counter survives
+// refreshes AND is shared across every instance, and it's scoped per browser
+// (session cookie) rather than per IP — fair to shared networks, durable to F5.
+// Clearing cookies / incognito still resets it; that residual is intentional
+// (soft gate + a strong signup incentive, not a hard lockout).
+function getTrialTurns(req) {
+  return (req.session && req.session.trialTurns) || 0;
 }
 
-const TURN_TRACKER_MAX_SIZE = 50000;
-
-function incrementServerTurnCount(ip) {
-  const existing = turnTracker.get(ip);
-  if (!existing || Date.now() > existing.resetAt) {
-    // Evict oldest entries if map is too large (prevent memory exhaustion)
-    if (turnTracker.size >= TURN_TRACKER_MAX_SIZE) {
-      const oldest = turnTracker.keys().next().value;
-      turnTracker.delete(oldest);
-    }
-    turnTracker.set(ip, { count: 1, resetAt: Date.now() + TURN_TRACKER_TTL });
-  } else {
-    existing.count += 1;
-  }
+function bumpTrialTurns(req) {
+  if (!req.session) return; // no session (shouldn't happen post-middleware) — fail open
+  req.session.trialTurns = (req.session.trialTurns || 0) + 1;
 }
-
-// Periodic cleanup of expired entries to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of turnTracker) {
-    if (now > entry.resetAt) turnTracker.delete(ip);
-  }
-}, 10 * 60 * 1000); // Every 10 minutes
 
 // Aggressive rate limit for anonymous endpoint — IP-based
 const trialLimiter = rateLimit({
@@ -147,7 +136,7 @@ router.post('/greet', trialLimiter, async (req, res) => {
     }
 
     // Check gate — greet counts as a turn
-    const serverTurns = getServerTurnCount(req.ip);
+    const serverTurns = getTrialTurns(req);
     if (serverTurns >= MAX_TURNS) {
       return res.json({ greeting: null, gated: true });
     }
@@ -187,9 +176,9 @@ RULES:
     const greeting = completion.choices[0].message.content;
 
     // Count this as a turn
-    incrementServerTurnCount(req.ip);
+    bumpTrialTurns(req);
 
-    res.json({ greeting });
+    res.json({ greeting, turnsRemaining: Math.max(0, MAX_TURNS - (serverTurns + 1)) });
 
   } catch (error) {
     console.error('[Trial Chat] Greeting error:', error.message);
@@ -231,8 +220,9 @@ router.post('/', trialLimiter, async (req, res) => {
       return res.status(400).json({ error: `Message too long. Max ${MAX_MESSAGE_LENGTH} characters.` });
     }
 
-    // Server-side turn counting — prevents client-side history manipulation
-    const serverTurns = getServerTurnCount(req.ip);
+    // Server-side turn counting — durable per browser (session), prevents both
+    // client-side history manipulation and refresh-to-reset farming.
+    const serverTurns = getTrialTurns(req);
     if (serverTurns >= MAX_TURNS) {
       return res.json({
         reply: null,
@@ -322,12 +312,13 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     console.log(`[Trial Pipeline] ${pipelineResult._pipeline.messageType} → ${pipelineResult._pipeline.action} (flags: ${pipelineResult._pipeline.flags.join(', ') || 'none'})`);
 
     // Increment server-side turn count AFTER successful response
-    incrementServerTurnCount(req.ip);
+    bumpTrialTurns(req);
     const newTurnCount = serverTurns + 1;
 
     res.json({
       reply,
       turnCount: newTurnCount,
+      turnsRemaining: Math.max(0, MAX_TURNS - newTurnCount),
       gated: newTurnCount >= MAX_TURNS
     });
 

@@ -129,11 +129,13 @@
   };
 
   // Personalized soft-gate messages — written in each tutor's voice
+  // Framed around what a refresh THROWS AWAY: this conversation, the tutor
+  // remembering you, and starting over. Signup = keep it; refresh = lose it.
   var GATE_MESSAGES = {
-    'mr-nappier': "We're starting to see a pattern here — you're getting it! Make a free account so we can keep going.",
-    'bob':        "Math you believe it? We're on a roll! Sign up free so I can keep helping you.",
-    'maya':       "Okay we're lowkey getting somewhere! Sign up (it's free) so we can keep working together.",
-    'ms-maria':   "¡Muy bien! We're making great progress paso por paso. Create a free account to continue."
+    'mr-nappier': "We're just starting to see the pattern click — I don't want to lose that. Make a free account and I'll save our work and remember exactly where we are next time.",
+    'bob':        "Math you believe how far we got?! Sign up free so I can save this conversation and pick up right where we left off — no starting over.",
+    'maya':       "Okay we're lowkey cooking 🔥 Sign up (it's free) so this convo saves and I actually remember you next time — instead of starting from scratch.",
+    'ms-maria':   "¡Vamos muy bien, paso por paso! Create a free account so I can save our progress and remember you — we'll continue right where we stopped."
   };
 
   // DOM refs
