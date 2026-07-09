@@ -384,12 +384,37 @@ function getStaticConceptImage(concept) {
   return null;
 }
 
+// Hosts we'll proxy image BYTES from (see the /proxy route in routes/imageSearch.js).
+// Superset of ALLOWED_DOMAINS plus the thumbnail CDNs the search results point at
+// (Google CSE thumbnails live on gstatic; some cached copies on googleusercontent).
+const PROXYABLE_IMAGE_HOSTS = ALLOWED_DOMAINS.concat(['gstatic.com', 'googleusercontent.com']);
+
+/**
+ * Whether a URL is safe for the server-side image proxy to fetch. Defends the
+ * proxy against SSRF: only http(s), never an obvious internal host, and the
+ * hostname must match (or be a subdomain of) a known educational / thumbnail
+ * host. Relative URLs (our own /images/...) return false — the client serves
+ * those directly and never needs the proxy.
+ * @param {string} raw
+ * @returns {boolean}
+ */
+function isProxyableImageUrl(raw) {
+  let u;
+  try { u = new URL(String(raw)); } catch (_) { return false; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return false;
+  const host = u.hostname.toLowerCase();
+  // Belt-and-suspenders against the allowlist below: refuse obvious internal names.
+  if (/^(localhost$|127\.|10\.|192\.168\.|169\.254\.|0\.|::1|\[)/.test(host)) return false;
+  return PROXYABLE_IMAGE_HOSTS.some(d => host === d || host.endsWith('.' + d));
+}
+
 module.exports = {
   searchEducationalImages,
   searchWikimediaCommons,
   sanitizeQuery,
   isValidCategory,
   getStaticConceptImage,
+  isProxyableImageUrl,
   ALLOWED_DOMAINS,
   VALID_CATEGORIES
 };

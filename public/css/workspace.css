@@ -531,6 +531,26 @@
   }
 }
 
+/* Attention pulse — a gentle accent halo drawing the eye to a card (e.g. the
+   current line the tutor is talking through). Added/removed by
+   MathWorkspace.boardHighlight; accent-purple, distinct from the gold
+   clean-solution pulse so the two never read as the same event. */
+.cr-ws-board-card--attention {
+  animation: cr-ws-attention-pulse 1.4s var(--cr-ease, ease-out) 1;
+}
+@keyframes cr-ws-attention-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(139, 123, 255, 0.0),
+                     0 8px 22px rgba(0, 0, 0, 0.30); }
+  35%  { box-shadow: 0 0 0 10px rgba(139, 123, 255, 0.0),
+                     0 0 22px 3px rgba(139, 123, 255, 0.50),
+                     0 8px 22px rgba(0, 0, 0, 0.30); }
+  100% { box-shadow: 0 0 0 0 rgba(139, 123, 255, 0.0),
+                     0 8px 22px rgba(0, 0, 0, 0.30); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cr-ws-board-card--attention { animation: none; }
+}
+
 /* Scaffold — a hint card: the next step's structure with empty \boxed{}
    slots for the student to fill. Dashed amber presence + a "your turn"
    eyebrow so it reads as an invitation, not a finished step. The blanks

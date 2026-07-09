@@ -45,11 +45,28 @@
     return !(window.MM_FEATURES && window.MM_FEATURES.boardPanel === false);
   }
 
+  // A board expression is meant to be math (LaTeX). Occasionally the tutor emits
+  // a plain-English sentence (e.g. a word-problem prompt) where a LaTeX string is
+  // expected; KaTeX then renders every letter as an italic variable and drops the
+  // spaces ("Iftwotriangleshave..."). Detect obvious prose so we render it as
+  // readable text instead. Conservative on purpose: a real LaTeX command, or fewer
+  // than three English words, keeps the string on the math path (so "2x + 4 = 20"
+  // and "y = mx + b" still render as math).
+  function looksLikeProse(s) {
+    s = String(s || '');
+    if (/\\[a-zA-Z]+/.test(s)) return false;      // has a LaTeX command -> math
+    var words = s.match(/[A-Za-z]{2,}/g) || [];    // 2+ letter word tokens
+    return words.length >= 3;                       // a sentence, not an expression
+  }
+
   // KaTeX renderer with a safe text fallback if KaTeX hasn't loaded yet
   // (very early in page life) or the expression doesn't parse.
   function renderTex(target, tex) {
     if (!target) return;
     var s = String(tex || '');
+    // Prose (a word-problem statement, not an expression) -> render as text so the
+    // words and spaces survive instead of KaTeX mangling them into run-on italics.
+    if (looksLikeProse(s)) { target.textContent = s; return; }
     if (window.katex && typeof window.katex.render === 'function') {
       try {
         window.katex.render(s, target, {
@@ -460,18 +477,25 @@
           }
           imgHost.innerHTML = '';
           var img = el('img', 'cr-ws-board-card-image-img');
-          // Prefer the cached thumbnail (e.g. Google's gstatic copy / Wikimedia
-          // thumb): it loads reliably cross-origin, whereas the source `url`
-          // frequently hotlink-blocks and renders as a broken-image glyph.
-          img.src = first.thumbnail || first.url;
+          // Route remote images through our same-origin proxy: third-party hosts
+          // frequently hotlink-block a bare <img> and render as a broken glyph.
+          // Local concept images (/images/...) are already same-origin — serve
+          // them as-is.
+          function srcFor(u) {
+            return /^https?:\/\//i.test(u)
+              ? '/api/images/proxy?url=' + encodeURIComponent(u)
+              : u;
+          }
+          // Prefer the cached thumbnail (Google gstatic / Wikimedia thumb); fall
+          // back to the source url, then degrade to text instead of a broken image.
+          var triedUrl = false;
+          img.src = srcFor(first.thumbnail || first.url);
           img.alt = first.title || step.query;
           img.loading = 'lazy';
-          // If even the chosen source fails, try the other one, then degrade to
-          // text instead of a broken image.
           img.onerror = function () {
-            if (first.url && img.src !== first.url) {
-              img.onerror = function () { imgHost.textContent = 'Couldn’t load that diagram.'; };
-              img.src = first.url;
+            if (!triedUrl && first.url && first.url !== (first.thumbnail || first.url)) {
+              triedUrl = true;
+              img.src = srcFor(first.url);
             } else {
               imgHost.textContent = 'Couldn’t load that diagram.';
             }
@@ -906,6 +930,31 @@
     // student has stated.
 
     /**
+     * Briefly pulse a board card to direct the student's attention (e.g. as the
+     * tutor starts talking through the current line). Presentational only — it
+     * highlights an EXISTING card and reveals nothing new, so it's safe on the
+     * student's own problem. Token-level "circle the 2" attention is a follow-up
+     * that needs the term-addressable canvas. No-op when the board isn't visible.
+     * @param {object} [opts] { index } — which card (default: the most recent).
+     * @returns {boolean} whether a card was pulsed.
+     */
+    boardHighlight: function (opts) {
+      if (!WS.body) return false;
+      var stack = WS.body.querySelector('.cr-ws-board-stack');
+      if (!stack) return false;
+      var cards = stack.querySelectorAll('.cr-ws-board-card');
+      if (!cards.length) return false;
+      var i = (opts && typeof opts.index === 'number') ? opts.index : cards.length - 1;
+      var card = cards[i];
+      if (!card) return false;
+      card.classList.remove('cr-ws-board-card--attention'); // restart if already pulsing
+      void card.offsetWidth;                                 // reflow so re-adding re-triggers
+      card.classList.add('cr-ws-board-card--attention');
+      setTimeout(function () { card.classList.remove('cr-ws-board-card--attention'); }, 1500);
+      return true;
+    },
+
+    /**
      * Render the starting problem as the top card.
      * @param {string} tex  LaTeX expression, e.g. "2x + 4 = 20"
      * @param {object} [opts] reserved for future caption/parallel marks
@@ -920,6 +969,13 @@
         this.showTool('board');
       }
       pushBoardStep({ type: 'pose', tex: tex, opts: opts || null });
+      // Direct the eye to the problem first (vision: "the board softly
+      // highlights"). One gentle pulse after the enter animation settles;
+      // no-op on mobile (drawer) and under prefers-reduced-motion.
+      if (!isMobileChat()) {
+        var self = this;
+        setTimeout(function () { self.boardHighlight(); }, 420);
+      }
       return true;
     },
 
