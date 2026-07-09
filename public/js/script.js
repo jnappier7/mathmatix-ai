@@ -3349,6 +3349,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
 
+                // Thinking Streak — consecutive turns that earned reasoning (tier-3
+                // behavior) XP. Rewards SUSTAINED REASONING, not correctness: a
+                // tier-2-only (correct, no reasoning credit) turn is neutral, while a
+                // turn that earns no performance/behavior XP breaks the streak. No XP
+                // number is shown here — the streak is a callout only, so the display
+                // never diverges from the server-authoritative XP totals.
+                if (xp.tier3 > 0) {
+                    window.__thinkingStreak = (window.__thinkingStreak || 0) + 1;
+                    if (window.__thinkingStreak >= 2) {
+                        triggerXpAnimation(`🔥 Thinking Streak x${window.__thinkingStreak}`, false, true);
+                    }
+                } else if (xp.tier2 === 0) {
+                    window.__thinkingStreak = 0;
+                }
+
                 // Inline XP attribution chip — show "+N XP — reason" in the chat message
                 if (xp.total > 0) {
                     const messageElements = document.querySelectorAll('.message.ai');

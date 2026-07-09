@@ -4,13 +4,15 @@
 // ============================================
 
 const express = require('express');
+const axios = require('axios');
 const router = express.Router();
 const rateLimit = require('express-rate-limit');
 const {
   searchEducationalImages,
   sanitizeQuery,
   getStaticConceptImage,
-  isValidCategory
+  isValidCategory,
+  isProxyableImageUrl
 } = require('../utils/safeImageSearch');
 
 // ── Strict rate limiter: 10 image searches per student per 15 minutes ──
@@ -126,6 +128,62 @@ router.get('/concept/:concept', (req, res) => {
   }
 
   return res.status(404).json({ error: 'No image available for this concept' });
+});
+
+// ── Image proxy limiter: generous vs search (one hit per board diagram) ──
+const imageProxyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 60,
+  keyGenerator: (req) => req.user?._id?.toString() || req.ip,
+  message: { error: 'Too many image requests. Try again in a few minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+/**
+ * GET /api/images/proxy?url=<encoded>
+ *
+ * Streams a whitelisted educational image from our own origin. Third-party
+ * hosts frequently hotlink-block a browser <img> (no matching Referer) so board
+ * diagrams render as a broken glyph; fetching server-side with a browser-like
+ * User-Agent and re-serving same-origin fixes that. SSRF is contained by
+ * isProxyableImageUrl (host allowlist + internal-host block) and no redirects.
+ */
+router.get('/proxy', imageProxyLimiter, async (req, res) => {
+  const url = req.query.url;
+  if (!url || typeof url !== 'string') {
+    return res.status(400).json({ error: 'Image url is required' });
+  }
+  if (!isProxyableImageUrl(url)) {
+    return res.status(400).json({ error: 'Image url not allowed' });
+  }
+
+  try {
+    const upstream = await axios.get(url, {
+      responseType: 'arraybuffer',
+      timeout: 8000,
+      maxContentLength: 8 * 1024 * 1024, // 8MB cap
+      maxRedirects: 0,                   // allowlisted hosts serve directly; blocks redirect-to-internal SSRF
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; MathmatixBot/1.0; +https://www.mathmatix.ai)',
+        'Accept': 'image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8',
+      },
+      validateStatus: (s) => s >= 200 && s < 300,
+    });
+
+    const type = String(upstream.headers['content-type'] || '');
+    if (!type.startsWith('image/')) {
+      return res.status(415).json({ error: 'Not an image' });
+    }
+
+    res.set('Content-Type', type);
+    res.set('Cache-Control', 'public, max-age=86400'); // diagrams are stable; cache a day
+    res.set('Cross-Origin-Resource-Policy', 'same-origin');
+    return res.send(Buffer.from(upstream.data));
+  } catch (error) {
+    console.error('[ImageProxy] fetch failed:', error.message);
+    return res.status(502).json({ error: 'Image unavailable' });
+  }
 });
 
 module.exports = router;
