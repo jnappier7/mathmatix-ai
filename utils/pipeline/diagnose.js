@@ -55,6 +55,23 @@ function statesRootSet(text) {
   const hasConnector = /\bor\b|\band\b|,/.test(t);
   return nums.length >= 2 && hasConnector;
 }
+
+/**
+ * Should the self-contained arithmetic check be trusted to override a solver
+ * "wrong" verdict? Only when the stated arithmetic's RESULT is actually the
+ * student's answer — e.g. "13-8 is 5" where the answer is 5. A true but
+ * incidental calculation buried in a longer explanation ("...and 4×2 is 8...")
+ * must NOT flip a genuinely wrong final answer to "correct".
+ *
+ * @param {number|null} arithmeticResult  the result of the matched arithmetic, or null
+ * @param {string|number} studentAnswer   the extracted answer value
+ * @returns {boolean}
+ */
+function arithmeticMatchesAnswer(arithmeticResult, studentAnswer) {
+  if (arithmeticResult === null || arithmeticResult === undefined) return false;
+  const answerNum = Number(String(studentAnswer).trim());
+  return Number.isFinite(answerNum) && Math.abs(arithmeticResult - answerNum) < 0.001;
+}
 async function diagnose(observation, context = {}) {
   // Only run diagnosis on answer attempts
   if (!observation.answer) {
@@ -82,7 +99,9 @@ async function diagnose(observation, context = {}) {
   const arithmeticMatch = rawText.match(
     /(-?\d+\.?\d*)\s*([+\-*/×÷])\s*(-?\d+\.?\d*)\s+(?:is|=|equals)\s+(-?\d+\.?\d*)/i
   );
-  let studentArithmeticIsCorrect = false;
+  // Non-null once the student states a provably-correct arithmetic fact; holds
+  // that fact's result so we can check it's actually the answer (see override).
+  let arithmeticResult = null;
   if (arithmeticMatch) {
     const [, a, op, b, result] = arithmeticMatch;
     const numA = parseFloat(a);
@@ -96,7 +115,7 @@ async function diagnose(observation, context = {}) {
       case '/': case '÷': expected = numB !== 0 ? numA / numB : NaN; break;
     }
     if (expected !== undefined && Math.abs(expected - numResult) < 0.001) {
-      studentArithmeticIsCorrect = true;
+      arithmeticResult = numResult;
     }
   }
 
@@ -201,7 +220,11 @@ async function diagnose(observation, context = {}) {
   // solver-based verification says wrong, trust the student's math.
   // The solver likely misinterpreted the posed problem (e.g. "x-8" without
   // substitution context).
-  if (isCorrect === false && studentArithmeticIsCorrect) {
+  //
+  // Gated to when the arithmetic RESULT is actually the student's answer — a
+  // true but incidental calculation inside a longer explanation must not flip a
+  // genuinely wrong final answer to "correct" (a false-correct source).
+  if (isCorrect === false && arithmeticMatchesAnswer(arithmeticResult, studentAnswer)) {
     console.log(`[Diagnose] Arithmetic override: student's "${rawText}" is mathematically correct — overriding solver mismatch`);
     isCorrect = true;
     correctAnswer = studentAnswer;
@@ -415,4 +438,5 @@ module.exports = {
   gradeRootSet,
   estimateIndependence,
   hasLibraryMisconceptions,
+  arithmeticMatchesAnswer,
 };
