@@ -2390,3 +2390,167 @@
 [data-theme="dark"] .lp-celebration-overlay {
   background: rgba(15, 23, 42, 0.95);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   LIVE HERO COMPOSER — activation-first entry (feat/landing-activation)
+   The student's first action is getting real help on their own problem,
+   not browsing a tutor gallery or watching a scripted demo.
+   ══════════════════════════════════════════════════════════════ */
+.lp-hero-composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 640px;
+  margin: 1.75rem auto 0;
+  background: var(--clr-bg-light, #fff);
+  border: 2px solid rgba(18, 179, 179, 0.35);
+  border-radius: 999px;
+  padding: 6px 6px 6px 20px;
+  box-shadow: 0 8px 30px rgba(18, 179, 179, 0.12), 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.lp-hero-composer:focus-within {
+  border-color: var(--clr-primary-teal, #12b3b3);
+  box-shadow: 0 10px 36px rgba(18, 179, 179, 0.2), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.lp-hero-composer-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1.05rem;
+  font-family: inherit;
+  color: var(--clr-text);
+  padding: 12px 4px;
+}
+.lp-hero-composer-input::placeholder { color: var(--clr-text-dim); opacity: 0.85; }
+.lp-hero-composer-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--clr-primary-teal, #12b3b3), #0fa0a0);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: inherit;
+  padding: 12px 22px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: transform 0.1s, filter 0.2s;
+}
+.lp-hero-composer-send:hover { filter: brightness(1.07); }
+.lp-hero-composer-send:active { transform: scale(0.97); }
+
+/* One-tap example problems */
+.lp-hero-examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 660px;
+  margin: 1rem auto 0;
+}
+.lp-hero-examples-label { font-size: 0.85rem; color: var(--clr-text-dim); font-weight: 500; }
+.lp-hero-example {
+  background: rgba(18, 179, 179, 0.06);
+  border: 1px solid rgba(18, 179, 179, 0.2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  color: var(--clr-primary-teal);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.lp-hero-example:hover { background: rgba(18, 179, 179, 0.14); border-color: var(--clr-primary-teal); }
+
+/* Tutor choice — subordinate to the action */
+.lp-hero-tutor-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 1.75rem auto 0;
+}
+.lp-hero-tutor-label { font-size: 0.85rem; color: var(--clr-text-dim); font-weight: 600; }
+.lp-hero-tutor-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.lp-hero-tutor-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--clr-bg-light, #fff);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  padding: 5px 12px 5px 5px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.lp-hero-tutor-chip img {
+  width: 34px; height: 34px; border-radius: 50%;
+  object-fit: cover; object-position: top;
+  border: 2px solid #f0f2f5;
+}
+.lp-hero-tutor-name { font-size: 0.85rem; font-weight: 600; color: var(--clr-text); }
+.lp-hero-tutor-chip:hover { border-color: rgba(18, 179, 179, 0.4); transform: translateY(-1px); }
+.lp-hero-tutor-chip.is-selected {
+  border-color: var(--clr-primary-teal, #12b3b3);
+  box-shadow: 0 0 0 3px rgba(18, 179, 179, 0.14);
+}
+.lp-hero-tutor-chip.is-selected img { border-color: var(--clr-primary-teal, #12b3b3); }
+.lp-hero-tutor-hear {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%;
+  color: var(--clr-accent-hotpink, #ff3b7f);
+  background: rgba(255, 59, 127, 0.08);
+  font-size: 0.72rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.lp-hero-tutor-hear:hover { background: rgba(255, 59, 127, 0.16); transform: scale(1.08); }
+
+/* Demo section pill — deliberately NOT the green "live" dot, so the recorded
+   example reads as an example and never competes with the live hero. */
+.lp-preview-example-pill {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+  color: var(--cr-text-dim, #AEB4C6);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Dark theme */
+[data-theme="dark"] .lp-hero-composer {
+  background: #1e293b;
+  border-color: rgba(18, 179, 179, 0.45);
+}
+[data-theme="dark"] .lp-hero-composer-input { color: #e2e8f0; }
+[data-theme="dark"] .lp-hero-example {
+  background: rgba(18, 179, 179, 0.1);
+  border-color: rgba(18, 179, 179, 0.25);
+}
+[data-theme="dark"] .lp-hero-tutor-chip {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-theme="dark"] .lp-hero-tutor-name { color: #e2e8f0; }
+
+/* Mobile — stack the composer, let the send button breathe */
+@media (max-width: 600px) {
+  .lp-hero-composer {
+    flex-direction: column;
+    border-radius: 20px;
+    padding: 10px;
+    gap: 10px;
+  }
+  .lp-hero-composer-input { width: 100%; text-align: center; padding: 8px 4px; }
+  .lp-hero-composer-send { width: 100%; justify-content: center; padding: 12px; }
+  .lp-hero-tutor-name { display: none; }
+  .lp-hero-tutor-chip { padding: 4px; }
+}

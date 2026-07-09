@@ -163,31 +163,64 @@
   var trialMathBar     = document.getElementById('lp-trial-math-bar');
 
   // State
-  var selectedTutorId = null;
+  var selectedTutorId = 'mr-nappier'; // Pre-selected so the hero composer works on first keystroke
+  var pendingFirstMessage = null;     // Problem typed in the hero, auto-sent once the session greets
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
   var clientTurnCount = 0; // Client-side backup gate (defense-in-depth)
   var MAX_CLIENT_TURNS = 4; // 1 greeting + 3 student messages
   var isSending = false;
   var trialTtsAudio = null; // Currently playing TTS audio
 
-  /* ── Phase 1: Tutor Card Click → Celebration ─────── */
-  var tutorCards = document.querySelectorAll('.lp-tutor-card');
+  /* ── Phase 1: Live hero composer → real trial session ─────── */
 
-  tutorCards.forEach(function (card) {
-    // "Hear Me" voice preview button
-    var hearBtn = card.querySelector('.lp-tutor-card-hear');
+  // Tutor chips: choose a tutor (subordinate to typing a problem). A chip's
+  // "hear" affordance previews the voice without selecting-and-launching.
+  var tutorChips = document.querySelectorAll('.lp-hero-tutor-chip');
+  tutorChips.forEach(function (chip) {
+    var hearBtn = chip.querySelector('.lp-hero-tutor-hear');
     if (hearBtn) {
-      hearBtn.addEventListener('click', function (e) {
-        e.stopPropagation(); // Don't trigger card selection
-        var tutorId = card.getAttribute('data-tutor');
-        playVoicePreview(tutorId, hearBtn);
+      var doHear = function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        playVoicePreview(chip.getAttribute('data-tutor'), hearBtn);
+      };
+      hearBtn.addEventListener('click', doHear);
+      hearBtn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') doHear(e);
       });
     }
 
-    // Card click → select tutor
-    card.addEventListener('click', function () {
-      var tutorId = card.getAttribute('data-tutor');
-      selectTutor(tutorId);
+    chip.addEventListener('click', function () {
+      selectedTutorId = chip.getAttribute('data-tutor');
+      tutorChips.forEach(function (c) { c.classList.remove('is-selected'); });
+      chip.classList.add('is-selected');
+    });
+  });
+
+  // Kicks off the real trial session with the student's own problem as the
+  // first message. Reuses the exact selectTutor → greet → send flow; we just
+  // skip the celebration video so the answer arrives fast, and queue the
+  // typed problem to auto-send once the greeting lands.
+  function startTrialWith(text) {
+    text = (text || '').trim();
+    if (!text) return;
+    pendingFirstMessage = text;
+    selectTutor(selectedTutorId, { skipCelebration: true });
+  }
+
+  var heroComposer = document.getElementById('lp-hero-composer');
+  var heroInput    = document.getElementById('lp-hero-input');
+  if (heroComposer && heroInput) {
+    heroComposer.addEventListener('submit', function (e) {
+      e.preventDefault();
+      startTrialWith(heroInput.value);
+    });
+  }
+
+  var heroExamples = document.querySelectorAll('.lp-hero-example');
+  heroExamples.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      startTrialWith(btn.getAttribute('data-prompt'));
     });
   });
 
@@ -229,13 +262,25 @@
   }
 
   /* ── Phase 2: Celebration ────────────────────────── */
-  function selectTutor(tutorId) {
+  function selectTutor(tutorId, opts) {
     selectedTutorId = tutorId;
     chatHistory = [];
     clientTurnCount = 0;
 
     var meta = TUTOR_META[tutorId];
     if (!meta) return;
+
+    // Hide the pick/composer UI on every path into the session.
+    heroPick.style.display = 'none';
+    if (trustBar) trustBar.style.display = 'none';
+
+    // Type-first path: the student already gave us a problem — skip the
+    // celebration video and drop them straight into help.
+    if (opts && opts.skipCelebration) {
+      celebration.style.display = 'none';
+      showTrialChat();
+      return;
+    }
 
     // Set celebration content
     celebrationTitle.textContent = meta.name.toUpperCase() + '!';
@@ -331,6 +376,7 @@
       trialInput.focus();
 
       saveTrialState();
+      flushPendingFirstMessage();
     })
     .catch(function () {
       trialTyping.style.display = 'none';
@@ -339,6 +385,7 @@
       trialSend.disabled = false;
       trialInput.disabled = false;
       trialInput.focus();
+      flushPendingFirstMessage();
     });
 
     // Persist tutor selection for session carryover
@@ -376,6 +423,16 @@
       sendTrialMessage();
     }
   });
+
+  // If the student typed a problem in the hero, send it as their first turn
+  // once the greeting has loaded and the input is live.
+  function flushPendingFirstMessage() {
+    if (!pendingFirstMessage) return;
+    var msg = pendingFirstMessage;
+    pendingFirstMessage = null;
+    trialInput.value = msg;
+    sendTrialMessage();
+  }
 
   function sendTrialMessage() {
     if (isSending) return;
