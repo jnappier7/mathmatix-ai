@@ -20,6 +20,10 @@ const { callLLM } = require('../utils/llmGateway');
 
 const MAX_TURNS = 4; // 1 greeting + 3 student messages
 const MAX_MESSAGE_LENGTH = 500;
+// Board op types the lightweight trial notebook renders. The pipeline emits more
+// (graph/image/model) but those need the workspace/JSXGraph libs the landing page
+// doesn't load — skipped in the trial for now. All are already Visual-Gated.
+const TRIAL_BOARD_ACTIONS = new Set(['pose', 'apply', 'resolve', 'scaffold', 'verify']);
 const UNLOCKED_TUTOR_IDS = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].unlocked);
 
 // Durable per-browser turn tracking via the Mongo-backed session.
@@ -83,7 +87,7 @@ function buildTrialUserProfile() {
  * Build in-memory conversation and user stand-ins for the pipeline.
  * These satisfy the pipeline's interface without touching MongoDB.
  */
-function buildTrialPipelineContext(sanitizedHistory) {
+function buildTrialPipelineContext(sanitizedHistory, boardPin) {
   const now = new Date();
 
   // Build message array in the format the pipeline expects
@@ -100,6 +104,11 @@ function buildTrialPipelineContext(sanitizedHistory) {
     startDate: now,
     problemsAttempted: 0,
     problemsCorrect: 0,
+    // The board guard pins every decision against conversation.boardProblem.tex.
+    // The trial is stateless per request, so we restore the pin the pipeline set
+    // on a previous turn (held server-side in the session — never client-supplied,
+    // so it can't be tampered into relaxing the guard). null on the first turn.
+    boardProblem: boardPin ? { tex: boardPin, posedAt: now } : null,
   };
 
   // Minimal user stand-in
@@ -286,7 +295,9 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     // Include the current user message so the pipeline and LLM can see it
     // (mirrors chat.js which pushes to activeConversation.messages before building formattedMessages)
     const historyWithCurrentMessage = [...sanitizedHistory, { role: 'user', content: sanitizedMessage }];
-    const { conversation, user } = buildTrialPipelineContext(historyWithCurrentMessage);
+    // Restore the board pin the pipeline set on a previous turn (server-held).
+    const priorBoardPin = (req.session && req.session.trialBoardPin) || null;
+    const { conversation, user } = buildTrialPipelineContext(historyWithCurrentMessage, priorBoardPin);
 
     // Format messages for LLM (same format as chat.js — includes current user message)
     const formattedMessages = historyWithCurrentMessage.map(m => ({ role: m.role, content: m.content }));
@@ -311,12 +322,25 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
 
     console.log(`[Trial Pipeline] ${pipelineResult._pipeline.messageType} → ${pipelineResult._pipeline.action} (flags: ${pipelineResult._pipeline.flags.join(', ') || 'none'})`);
 
+    // Persist the board pin the pipeline just set (pose → pin, else null) so the
+    // guard has the same canonical problem on the next turn. Server-side only.
+    if (req.session) req.session.trialBoardPin = conversation.boardProblem?.tex || null;
+
+    // Surface the ALREADY-GATED board commands the pipeline produced. These have
+    // passed the full boardCommandGuard + Visual Gate chain inside runPipeline —
+    // we do NOT re-generate or relax anything, only forward the text/math ops the
+    // lightweight trial notebook can render. graph/image/model are skipped here
+    // (they need workspace libs the landing page doesn't load) — follow-up.
+    const board = (pipelineResult.boardCommands || [])
+      .filter(c => c && TRIAL_BOARD_ACTIONS.has(c.action));
+
     // Increment server-side turn count AFTER successful response
     bumpTrialTurns(req);
     const newTurnCount = serverTurns + 1;
 
     res.json({
       reply,
+      board,
       turnCount: newTurnCount,
       turnsRemaining: Math.max(0, MAX_TURNS - newTurnCount),
       gated: newTurnCount >= MAX_TURNS

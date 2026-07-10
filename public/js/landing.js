@@ -151,6 +151,7 @@
   var celebrationSub   = document.getElementById('lp-celebration-subtitle');
 
   var trialMessages    = document.getElementById('lp-trial-messages');
+  var trialNotebook    = document.getElementById('lp-trial-notebook');
   var trialTyping      = document.getElementById('lp-trial-typing');
   var trialInput       = document.getElementById('lp-trial-input');
   var trialSend        = document.getElementById('lp-trial-send');
@@ -333,6 +334,7 @@
 
     // Reset chat UI
     trialMessages.innerHTML = '';
+    if (trialNotebook) { trialNotebook.innerHTML = ''; trialNotebook.style.display = 'none'; nbLastPose = null; }
     trialInput.value = '';
     trialSuggestions.style.display = 'none'; // Hide suggestions until greeting loads
     trialInputArea.style.display = '';
@@ -489,6 +491,12 @@
       // Update history and client-side turn counter
       chatHistory.push({ role: 'user', content: text });
       clientTurnCount++;
+
+      // Write the tutor's earned steps onto the living board. These are already
+      // server-gated (only steps the student stated) — we just render them.
+      if (Array.isArray(data.board) && data.board.length) {
+        renderTrialBoard(data.board);
+      }
 
       if (data.reply) {
         chatHistory.push({ role: 'assistant', content: data.reply });
@@ -668,6 +676,64 @@
   }
 
   /* ── Chat Bubble Renderer ────────────────────────── */
+  /* ── Living board renderer ─────────────────────────────
+     Renders the server's ALREADY-GATED board commands as a notebook that
+     "writes" the tutor's earned steps. Anti-cheat is enforced server-side
+     (only steps the student has stated ever arrive here) — this is display
+     only; it never decides what may be shown. */
+  var nbLastPose = null; // normalized pinned problem, to dedup re-poses across turns
+
+  function nbEscape(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function nbLine(cls, html) {
+    var row = document.createElement('div');
+    row.className = 'lp-nb-line ' + cls + ' lp-nb-writing';
+    row.innerHTML = html;
+    trialNotebook.appendChild(row);
+    requestAnimationFrame(function () { row.classList.add('lp-nb-shown'); });
+    return row;
+  }
+
+  function appendNotebookStep(op) {
+    if (!op || !op.action) return;
+    switch (op.action) {
+      case 'pose': {
+        var tex = (op.tex || '').trim();
+        if (!tex) return;
+        var norm = tex.replace(/\s+/g, '');
+        if (norm === nbLastPose) return;            // same problem re-posed → skip
+        if (nbLastPose !== null) trialNotebook.innerHTML = ''; // new problem → fresh page
+        nbLastPose = norm;
+        nbLine('lp-nb-pose', renderTrialKatex(tex, false));
+        break;
+      }
+      case 'apply':
+        if (op.op) nbLine('lp-nb-op', '<span class="lp-nb-arrow">→</span> ' + nbEscape(op.op));
+        break;
+      case 'resolve':
+        if (op.tex) nbLine('lp-nb-step', renderTrialKatex(op.tex.trim(), false));
+        break;
+      case 'scaffold':
+        if (op.tex) nbLine('lp-nb-scaffold', renderTrialKatex(op.tex.trim(), false));
+        break;
+      case 'verify':
+        if (op.tex) nbLine('lp-nb-verify', '<span class="lp-nb-check">✓</span> ' + renderTrialKatex(op.tex.trim(), false));
+        break;
+      // graph/image/model are skipped server-side for the trial notebook.
+    }
+  }
+
+  function renderTrialBoard(ops) {
+    if (!trialNotebook) return;
+    ops.forEach(appendNotebookStep);
+    if (trialNotebook.children.length) trialNotebook.style.display = '';
+    trialNotebook.scrollTop = trialNotebook.scrollHeight;
+  }
+
   function appendTrialBubble(text, isUser) {
     var meta = TUTOR_META[selectedTutorId];
 
