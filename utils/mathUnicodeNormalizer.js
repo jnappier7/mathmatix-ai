@@ -175,4 +175,43 @@ function normalizeMathUnicode(str) {
   return result;
 }
 
-module.exports = { normalizeMathUnicode, normalizeMathOperators, OPERATOR_MAP };
+// Spoken number words → digits. Scoped to the range that shows up in K-12 answers
+// dictated through speech-to-text ("negative six" → "-6"). Deliberately small and
+// integer-only: STT emits these forms, and a wider map (or fractional words like
+// "half") risks converting incidental prose or producing ugly repeating decimals.
+const SPOKEN_NUMBER_WORDS = {
+  zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
+  nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15,
+  sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30,
+  forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90, hundred: 100,
+};
+
+/**
+ * Normalize SPOKEN math to signed digits so speech-to-text (and typed word) answers
+ * grade correctly: "negative six" / "minus 6" / "neg six" → "-6". Two conversions:
+ *   1. A LEADING unary sign word (negative / neg / minus) becomes "-". Only leading,
+ *      so a binary "5 minus 6" is left untouched (that's subtraction, not a sign).
+ *   2. Standalone spoken number words become digits ("six" → "6").
+ * Numerals and symbols pass through unchanged. Idempotent and safe on any string.
+ *
+ * WHY: Deepgram/Whisper transcribe a spoken "negative six" as words, not "-6". Without
+ * this, verifyAnswer("negative 6", -6) is false and the pipeline grades a correct answer
+ * wrong — the same trust-killing failure as a dropped Unicode minus, on the voice surface.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function normalizeSpokenNumbers(str) {
+  if (!str || typeof str !== 'string') return str || '';
+  // Leading unary sign word → "-". "neg"/"negative" are always unary; "minus" only
+  // when it opens the string (a whole answer), never mid-expression.
+  let s = str.replace(/^\s*(?:negative|neg|minus)\s+/i, '-');
+  // Standalone spoken number words → digits.
+  s = s.replace(/\b[a-z]+\b/gi, (w) => {
+    const v = SPOKEN_NUMBER_WORDS[w.toLowerCase()];
+    return v != null ? String(v) : w;
+  });
+  return s;
+}
+
+module.exports = { normalizeMathUnicode, normalizeMathOperators, normalizeSpokenNumbers, OPERATOR_MAP };

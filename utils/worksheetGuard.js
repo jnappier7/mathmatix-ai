@@ -44,6 +44,29 @@ ACT LIKE A HUMAN TUTOR SITTING NEXT TO THEM. Here's what a real tutor would do:
 [END SYSTEM INSTRUCTION]`;
 
 /**
+ * Detect when a student is asking the tutor to CHECK work they already did
+ * (as opposed to asking for help starting a problem). When true, the tutor
+ * should actually read the student's own steps/answers off their uploaded
+ * work and check them — naming what's right or pointing to the specific
+ * wrong step — instead of falling back to generic "what's your first step?"
+ * scaffolding or (worse) deflecting with "I can't see your work."
+ *
+ * Kept deliberately inclusive across the natural phrasings students use
+ * ("can you check to make sure it's correct", "did I get this right?",
+ * "are these correct?", "is it right?"). Over-triggering is low-risk: the
+ * CHECK_WORK guidance still never reveals answers and still guides
+ * Socratically — it only changes the tutor from "re-explain from scratch"
+ * to "read what they did and respond to it."
+ *
+ * @param {string} text - The student's message
+ * @returns {boolean}
+ */
+function isCheckWorkIntent(text) {
+    if (!text || typeof text !== 'string') return false;
+    return /\b(check\s+(this|these|my|the|it|them|mine|answers?|work)|check\s+to\s+(make|see)|can\s+you\s+check|did\s+i\s+(do|get|solve|set\s+up)|is\s+(this|that|it|my\s+answer|my\s+work)\s+(right|correct|ok|okay)|are\s+(these|those|my\s+answers?)\s+(right|correct|ok|okay)|make\s+sure\s+(it|this|that)(?:'?s|\s+is)?\s+(right|correct)|am\s+i\s+(right|correct|on\s+track|doing\s+(?:this|it)\s+right)|on\s+the\s+right\s+track)\b/i.test(text);
+}
+
+/**
  * Heuristic to detect if uploaded content looks like a multi-problem worksheet.
  * Returns a confidence score (0-1) so the guard can be calibrated.
  *
@@ -475,6 +498,7 @@ function detectParallelExampleIntroduction(text) {
 module.exports = {
     WORKSHEET_GUARD_INSTRUCTION,
     applyWorksheetGuard,
+    isCheckWorkIntent,
     detectWorksheetSignals,
     detectBlankWork,
     stripCorrectAnswers,

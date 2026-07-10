@@ -24,6 +24,7 @@ const {
   detectAnswerKeyResponse,
   filterAnswerKeyResponse,
   detectParallelExampleIntroduction,
+  isCheckWorkIntent,
 } = require('../../utils/worksheetGuard');
 
 describe('detectAnswerAnnouncement', () => {
@@ -343,5 +344,56 @@ describe('detectParallelExampleIntroduction', () => {
     expect(detectParallelExampleIntroduction('')).toBe(false);
     expect(detectParallelExampleIntroduction(undefined)).toBe(false);
     expect(detectParallelExampleIntroduction(123)).toBe(false);
+  });
+});
+
+describe('isCheckWorkIntent', () => {
+  // Origin: a student uploaded a worked "Review of Equations" worksheet and
+  // opened with "Can you check to make sure it is correct first?" — a canonical
+  // check-my-work request that the previous narrow regex missed, so the tutor
+  // never got the CHECK_WORK guidance and fell back to generic scaffolding.
+
+  test('flags "Can you check to make sure it is correct first?"', () => {
+    expect(isCheckWorkIntent('Can you check to make sure it is correct first?')).toBe(true);
+  });
+
+  test('flags "What answer did I get?"', () => {
+    expect(isCheckWorkIntent('What answer did I get?')).toBe(true);
+  });
+
+  test('flags common check-my-work phrasings', () => {
+    for (const t of [
+      'check my work',
+      'can you check these?',
+      'is this right?',
+      'is it correct',
+      'are these correct?',
+      'did I do this right?',
+      'am I on the right track',
+      'make sure it is right',
+      'did I solve this correctly? (is my answer right)',
+    ]) {
+      expect(isCheckWorkIntent(t)).toBe(true);
+    }
+  });
+
+  // Negative: normal help/scaffolding requests must NOT trigger check-work mode.
+  test('does NOT flag requests to start or get help with a problem', () => {
+    for (const t of [
+      '1, 4, and 13',
+      "What's the first step?",
+      'I need help with number 5',
+      'can you solve it',
+      'I have no idea how to start',
+    ]) {
+      expect(isCheckWorkIntent(t)).toBe(false);
+    }
+  });
+
+  test('handles empty / non-string input', () => {
+    expect(isCheckWorkIntent(null)).toBe(false);
+    expect(isCheckWorkIntent('')).toBe(false);
+    expect(isCheckWorkIntent(undefined)).toBe(false);
+    expect(isCheckWorkIntent(123)).toBe(false);
   });
 });

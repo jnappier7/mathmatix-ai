@@ -17,9 +17,26 @@ const { sanitizeForAI } = require('../middleware/promptInjection');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { runPipeline } = require('../utils/pipeline');
 const { callLLM } = require('../utils/llmGateway');
+const { samplePoints } = require('../utils/trialGraphPoints');
 
 const MAX_TURNS = 4; // 1 greeting + 3 student messages
 const MAX_MESSAGE_LENGTH = 500;
+// Board op types the lightweight trial notebook renders. `graph` is rendered from
+// server-computed points (see below); image/model still need workspace libs the
+// landing page doesn't load, so they're skipped. All are already Visual-Gated.
+const TRIAL_BOARD_ACTIONS = new Set(['pose', 'apply', 'resolve', 'scaffold', 'verify', 'graph']);
+
+// Engagement XP for the trial. Rewards THINKING, not correctness — an answer
+// attempt earns whether right or wrong; showing work earns the bonus. Off-task /
+// disengaged / gaming turns earn nothing (mirrors the streak/anti-gaming posture).
+const XP_NO_AWARD = new Set(['off_task', 'greeting', 'skip_request', 'give_up', 'parroting', 'evasive_affirmative']);
+function computeTrialXp(messageType) {
+  const mt = messageType || '';
+  if (XP_NO_AWARD.has(mt)) return { points: 0, reason: null };
+  if (mt === 'answer_attempt' || mt === 'check_my_work') return { points: 15, reason: 'for showing your work' };
+  if (mt === 'question' || mt === 'help_request') return { points: 8, reason: 'for asking a good question' };
+  return { points: 8, reason: 'for working through it' };
+}
 const UNLOCKED_TUTOR_IDS = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].unlocked);
 
 // Durable per-browser turn tracking via the Mongo-backed session.
@@ -116,7 +133,7 @@ function stripVisualDirectives(text) {
  * Build in-memory conversation and user stand-ins for the pipeline.
  * These satisfy the pipeline's interface without touching MongoDB.
  */
-function buildTrialPipelineContext(sanitizedHistory) {
+function buildTrialPipelineContext(sanitizedHistory, boardPin) {
   const now = new Date();
 
   // Build message array in the format the pipeline expects
@@ -133,6 +150,11 @@ function buildTrialPipelineContext(sanitizedHistory) {
     startDate: now,
     problemsAttempted: 0,
     problemsCorrect: 0,
+    // The board guard pins every decision against conversation.boardProblem.tex.
+    // The trial is stateless per request, so we restore the pin the pipeline set
+    // on a previous turn (held server-side in the session — never client-supplied,
+    // so it can't be tampered into relaxing the guard). null on the first turn.
+    boardProblem: boardPin ? { tex: boardPin, posedAt: now } : null,
   };
 
   // Minimal user stand-in
@@ -319,7 +341,9 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     // Include the current user message so the pipeline and LLM can see it
     // (mirrors chat.js which pushes to activeConversation.messages before building formattedMessages)
     const historyWithCurrentMessage = [...sanitizedHistory, { role: 'user', content: sanitizedMessage }];
-    const { conversation, user } = buildTrialPipelineContext(historyWithCurrentMessage);
+    // Restore the board pin the pipeline set on a previous turn (server-held).
+    const priorBoardPin = (req.session && req.session.trialBoardPin) || null;
+    const { conversation, user } = buildTrialPipelineContext(historyWithCurrentMessage, priorBoardPin);
 
     // Format messages for LLM (same format as chat.js — includes current user message)
     const formattedMessages = historyWithCurrentMessage.map(m => ({ role: m.role, content: m.content }));
@@ -346,12 +370,46 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
 
     console.log(`[Trial Pipeline] ${pipelineResult._pipeline.messageType} → ${pipelineResult._pipeline.action} (flags: ${pipelineResult._pipeline.flags.join(', ') || 'none'})`);
 
+    // Persist the board pin the pipeline just set (pose → pin, else null) so the
+    // guard has the same canonical problem on the next turn. Server-side only.
+    if (req.session) req.session.trialBoardPin = conversation.boardProblem?.tex || null;
+
+    // Surface the ALREADY-GATED board commands the pipeline produced. These have
+    // passed the full boardCommandGuard + Visual Gate chain inside runPipeline —
+    // we do NOT re-generate or relax anything, only forward the text/math ops the
+    // lightweight trial notebook can render. graph/image/model are skipped here
+    // (they need workspace libs the landing page doesn't load) — follow-up.
+    const board = (pipelineResult.boardCommands || [])
+      .filter(c => c && TRIAL_BOARD_ACTIONS.has(c.action))
+      .map(c => {
+        // For graph cards, evaluate the function server-side with the vetted
+        // rational engine and ship points. If it isn't plottable (unsupported
+        // function, all-asymptote), drop it — never render a guessed curve.
+        if (c.action === 'graph') {
+          const g = samplePoints(c.fn);
+          return g ? { action: 'graph', fn: c.fn, caption: c.caption || null, ...g } : null;
+        }
+        return c;
+      })
+      .filter(Boolean);
+
+    // Engagement XP for the turn — rewards THINKING, never correctness (an answer
+    // attempt earns whether right or wrong; showing work earns a bonus). Off-task
+    // / gaming turns earn nothing. Accumulated server-side in the session.
+    const xpAward = computeTrialXp(pipelineResult._pipeline && pipelineResult._pipeline.messageType);
+    if (req.session && xpAward.points) {
+      req.session.trialXp = (req.session.trialXp || 0) + xpAward.points;
+    }
+    const xpTotal = (req.session && req.session.trialXp) || xpAward.points;
+
     // Increment server-side turn count AFTER successful response
     bumpTrialTurns(req);
     const newTurnCount = serverTurns + 1;
 
     res.json({
       reply,
+      board,
+      xp: { awarded: xpAward.points, reason: xpAward.reason, total: xpTotal },
       turnCount: newTurnCount,
       turnsRemaining: Math.max(0, MAX_TURNS - newTurnCount),
       gated: newTurnCount >= MAX_TURNS
@@ -491,3 +549,4 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
 
 module.exports = router;
 module.exports.stripVisualDirectives = stripVisualDirectives; // exported for tests
+module.exports.computeTrialXp = computeTrialXp; // exported for tests
