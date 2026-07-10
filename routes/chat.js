@@ -57,18 +57,16 @@ const fsSync = require('fs');
 const sharp = require('sharp');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
-const { applyWorksheetGuard } = require('../utils/worksheetGuard');
-const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
+const { applyWorksheetGuard, isCheckWorkIntent } = require('../utils/worksheetGuard');
+const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
 const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl } = require('../utils/activeWorksheetImage');
 
 // When a student shares their work and asks to be checked, nudge the tutor to
 // engage the ACTUAL steps and the specific error — not fall back to generic
 // "what was your first step?" coaching. Still never reveals the answer.
+// `isCheckWorkIntent` lives in utils/worksheetGuard.js (imported below) so it
+// can be unit-tested alongside the other worksheet/answer-key detectors.
 const CHECK_WORK_GUIDANCE = "\n\n[CHECK MY WORK: The student shared their OWN worked solution (shown in the image) and asked you to check it. Actually READ their steps. If it's correct, name specifically what they did right. If there's a mistake, point them to the SPECIFIC step where it goes wrong with ONE guiding question — name that step. Do NOT ask them to re-explain the problem from scratch, do NOT ignore a mistake you can see, and do NOT simply give the answer.]";
-function isCheckWorkIntent(text) {
-    if (!text || typeof text !== 'string') return false;
-    return /\b(check (my|the|this)|on the right track|did i (do|get|solve)|is (this|my answer|that) (right|correct)|am i (right|correct|on track))\b/i.test(text);
-}
 
 // Multer disk storage for file uploads (prevents server crashes vs memoryStorage)
 const upload = multer({
@@ -1064,8 +1062,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 const checkSuffix = isCheckWorkIntent(combinedMessage) ? CHECK_WORK_GUIDANCE : '';
                 const baseText = typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage;
                 const guardedText = applyWorksheetGuard(baseText);
+                // Use the FOLLOW-UP reminder (not UPLOAD_CONTEXT_REMINDER): the
+                // student didn't attach anything this turn, and the image is
+                // re-attached BELOW. The fresh-upload wording ("uploaded with
+                // this message", image "above") reads as false here and makes
+                // the model deflect with "I can't see your work right now."
                 lastMsg.content = [
-                    { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}` },
+                    { type: "text", text: `${WORKSHEET_REATTACH_REMINDER}\n\n${guardedText}${checkSuffix}` },
                     { type: "image_url", image_url: { url: activeWorksheetImageUrl, detail: "high" } }
                 ];
                 logger.debug('Re-threaded active worksheet image into follow-up turn');
