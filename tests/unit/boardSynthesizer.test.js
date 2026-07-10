@@ -270,7 +270,7 @@ describe('boardSynthesizer — full turns', () => {
     expect(cards[0]).toEqual({ action: 'verify', tex: 'x = 6' });
   });
 
-  test('Substitution check turn: student "4(6) + 3 = 27" + tutor affirms → verify card', () => {
+  test('Substitution check turn: student "4(6) + 3 = 27" (implicit multiplication) poses + verifies', () => {
     const cards = synthesizeBoardCommands({
       studentMessage: '4(6) + 3 = 27',
       tutorResponse: 'Yes! Exactly! So your solution x = 6 is correct!',
@@ -278,12 +278,16 @@ describe('boardSynthesizer — full turns', () => {
       observation: { messageType: 'general_math' },
       lastBoardAction: 'verify',
     });
-    // lastBoardAction === 'verify' means cycle is closed — pose
-    // would fire if a new problem is in the text, but here it's
-    // just a substitution check, no new problem to parse.
-    // Without an open cycle, apply/resolve/verify are suppressed.
-    // Substitution check only fires within an open cycle.
-    expect(cards).toHaveLength(0);
+    // The student's substitution check "4(6) + 3 = 27" is a complete, TRUE numeric
+    // equation, so it poses + verifies like any other parseable numeric statement
+    // ("24 + 3 = 27", "4*6 + 3 = 27" behave identically here). This case previously
+    // returned 0 cards ONLY because the engine couldn't evaluate the implicit
+    // multiplication "4(6)" — a bug (students write substitutions this way). Now that
+    // the exact engine handles implicit multiplication, it's consistent with its siblings.
+    expect(cards).toEqual([
+      { action: 'pose', tex: '4(6) + 3' },
+      { action: 'verify', tex: '4(6) + 3 = 27' },
+    ]);
   });
 
   test('Substitution check during open cycle: student "3(7) - 5 = 16" + tutor affirms', () => {

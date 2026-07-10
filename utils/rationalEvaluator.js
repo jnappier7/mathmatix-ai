@@ -56,7 +56,17 @@ function preprocess(expr) {
   return expr
     .replace(new RegExp(`(\\d+)\\s*([${VC}])`, 'g'), (_, w, g) => { const [n, d] = VULGAR[g]; return `(${w}+${n}/${d})`; })
     .replace(new RegExp(`[${VC}]`, 'g'), (g) => { const [n, d] = VULGAR[g]; return `(${n}/${d})`; })
-    .replace(/(\d+)\s+(\d+\s*\/\s*\d+)/g, '($1+$2)');
+    .replace(/(\d+)\s+(\d+\s*\/\s*\d+)/g, '($1+$2)')
+    // Implicit multiplication: a value abutting a parenthesis means multiply.
+    // Students write derivative/substitution work this way — "f'(2) = 2(2) - 5" —
+    // and without this the exact engine returns null, so a correct "-1" can't be
+    // verified deterministically and falls back to the (fallible) LLM grader.
+    //   "2(2)" → "2*(2)",  ")(" → ")*(",  "(2)3" → "(2)*3"
+    // Runs AFTER the fraction/mixed rewrites so the parens they introduce (e.g.
+    // "(12+2/3)") get the same treatment. Letters never reach the engine (tokenize
+    // rejects them), so function-call forms like "f(2)" are unaffected.
+    .replace(/(\d|\))\s*\(/g, '$1*(')
+    .replace(/\)\s*(\d|\.)/g, ')*$1');
 }
 
 function tokenize(s) {
