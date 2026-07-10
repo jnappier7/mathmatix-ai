@@ -58,7 +58,7 @@ const sharp = require('sharp');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { applyWorksheetGuard } = require('../utils/worksheetGuard');
-const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
+const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
 const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl } = require('../utils/activeWorksheetImage');
 
 // When a student shares their work and asks to be checked, nudge the tutor to
@@ -1064,8 +1064,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 const checkSuffix = isCheckWorkIntent(combinedMessage) ? CHECK_WORK_GUIDANCE : '';
                 const baseText = typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage;
                 const guardedText = applyWorksheetGuard(baseText);
+                // Use the FOLLOW-UP reminder (not UPLOAD_CONTEXT_REMINDER): the
+                // student didn't attach anything this turn, and the image is
+                // re-attached BELOW. The fresh-upload wording ("uploaded with
+                // this message", image "above") reads as false here and makes
+                // the model deflect with "I can't see your work right now."
                 lastMsg.content = [
-                    { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}` },
+                    { type: "text", text: `${WORKSHEET_REATTACH_REMINDER}\n\n${guardedText}${checkSuffix}` },
                     { type: "image_url", image_url: { url: activeWorksheetImageUrl, detail: "high" } }
                 ];
                 logger.debug('Re-threaded active worksheet image into follow-up turn');

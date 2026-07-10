@@ -44,6 +44,21 @@ const UPLOAD_CONTEXT_REMINDER = `[SYSTEM: The student has uploaded file(s) with 
 
 
 // ============================================================================
+// 2b. WORKSHEET RE-ATTACH REMINDER — for FOLLOW-UP turns (image re-threaded)
+// ============================================================================
+// On a follow-up turn ("check #4", "what answer did I get?"), the student did
+// NOT attach anything this turn — the system re-attaches the worksheet they
+// uploaded EARLIER so the tutor can still see it. UPLOAD_CONTEXT_REMINDER is
+// worded for the upload turn ("uploaded with this message", image "above"),
+// which reads as false here: the image is placed BELOW this text, and a
+// literal-minded model concludes "you didn't upload anything right now" and
+// deflects with "I can't see your work right now." This variant states the
+// situation accurately for a follow-up so the model actually reads the image.
+
+const WORKSHEET_REATTACH_REMINDER = `[SYSTEM: This is the worksheet/work the student uploaded EARLIER in this conversation. It is re-attached below so you can still see it — the student did not need to send it again. You CAN see this image. Read it directly, including any answers or work the student wrote on it, and respond to what's actually there. NEVER say you "can't see it right now," NEVER claim nothing was uploaded, and NEVER ask them to re-upload, re-type, or read their own answer aloud when it is visible on the sheet.]`;
+
+
+// ============================================================================
 // 3. VISUAL TOOLS SECTION — full tool documentation for the system prompt
 // ============================================================================
 
@@ -211,6 +226,7 @@ This student identifies as a VISUAL LEARNER. Lean toward visuals more often, but
 module.exports = {
   CAPABILITY_IDENTITY,
   UPLOAD_CONTEXT_REMINDER,
+  WORKSHEET_REATTACH_REMINDER,
   VISUAL_TOOLS_SECTION,
   IMAGE_SEARCH_SECTION,
   STUDENT_UPLOAD_SECTION,
