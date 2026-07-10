@@ -19,7 +19,7 @@ jest.mock('../../utils/pipeline', () => ({
         { action: 'graph', fn: 'y=3x+7', caption: 'line' }, // forwarded WITH server points
         { action: 'image', query: 'triangle' },             // must be filtered out
       ],
-      _pipeline: { messageType: 'ANSWER_ATTEMPT', action: 'scaffold', flags: [] },
+      _pipeline: { messageType: 'answer_attempt', action: 'scaffold', flags: [] },
     };
   }),
 }));
@@ -79,6 +79,17 @@ describe('trial living-board wiring', () => {
 
     expect(mockPinsSeen[0]).toBeNull();          // no pin on the first turn
     expect(mockPinsSeen[1]).toBe('3x + 7 = 22'); // restored from the session on turn 2
+  });
+
+  test('awards engagement XP and accumulates it server-side across turns', async () => {
+    const app = buildApp();
+    const hdr = { 'x-test-browser': 'xp' };
+
+    const t1 = await send(app, hdr); // answer_attempt → 15
+    expect(t1.body.xp).toMatchObject({ awarded: 15, total: 15 });
+
+    const t2 = await send(app, hdr);
+    expect(t2.body.xp.total).toBe(30); // accumulates in the session, not reset per turn
   });
 
   test('the pin is per-browser (a different session starts unpinned)', async () => {

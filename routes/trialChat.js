@@ -25,6 +25,18 @@ const MAX_MESSAGE_LENGTH = 500;
 // server-computed points (see below); image/model still need workspace libs the
 // landing page doesn't load, so they're skipped. All are already Visual-Gated.
 const TRIAL_BOARD_ACTIONS = new Set(['pose', 'apply', 'resolve', 'scaffold', 'verify', 'graph']);
+
+// Engagement XP for the trial. Rewards THINKING, not correctness — an answer
+// attempt earns whether right or wrong; showing work earns the bonus. Off-task /
+// disengaged / gaming turns earn nothing (mirrors the streak/anti-gaming posture).
+const XP_NO_AWARD = new Set(['off_task', 'greeting', 'skip_request', 'give_up', 'parroting', 'evasive_affirmative']);
+function computeTrialXp(messageType) {
+  const mt = messageType || '';
+  if (XP_NO_AWARD.has(mt)) return { points: 0, reason: null };
+  if (mt === 'answer_attempt' || mt === 'check_my_work') return { points: 15, reason: 'for showing your work' };
+  if (mt === 'question' || mt === 'help_request') return { points: 8, reason: 'for asking a good question' };
+  return { points: 8, reason: 'for working through it' };
+}
 const UNLOCKED_TUTOR_IDS = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].unlocked);
 
 // Durable per-browser turn tracking via the Mongo-backed session.
@@ -381,6 +393,15 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
       })
       .filter(Boolean);
 
+    // Engagement XP for the turn — rewards THINKING, never correctness (an answer
+    // attempt earns whether right or wrong; showing work earns a bonus). Off-task
+    // / gaming turns earn nothing. Accumulated server-side in the session.
+    const xpAward = computeTrialXp(pipelineResult._pipeline && pipelineResult._pipeline.messageType);
+    if (req.session && xpAward.points) {
+      req.session.trialXp = (req.session.trialXp || 0) + xpAward.points;
+    }
+    const xpTotal = (req.session && req.session.trialXp) || xpAward.points;
+
     // Increment server-side turn count AFTER successful response
     bumpTrialTurns(req);
     const newTurnCount = serverTurns + 1;
@@ -388,6 +409,7 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     res.json({
       reply,
       board,
+      xp: { awarded: xpAward.points, reason: xpAward.reason, total: xpTotal },
       turnCount: newTurnCount,
       turnsRemaining: Math.max(0, MAX_TURNS - newTurnCount),
       gated: newTurnCount >= MAX_TURNS
@@ -527,3 +549,4 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
 
 module.exports = router;
 module.exports.stripVisualDirectives = stripVisualDirectives; // exported for tests
+module.exports.computeTrialXp = computeTrialXp; // exported for tests

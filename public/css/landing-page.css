@@ -2629,3 +2629,43 @@
 }
 [data-theme="dark"] .lp-nb-graph-svg { background: #0b1220; border-color: #24324a; }
 [data-theme="dark"] .lp-nb-axis { stroke: #3b4a63; }
+
+/* ── Trial engagement XP (header pill + popup + gate hook) ── */
+.lp-trial-xp {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: auto; margin-right: 10px;
+  padding: 4px 10px; border-radius: 999px;
+  background: rgba(255, 194, 75, 0.14); border: 1px solid rgba(255, 194, 75, 0.5);
+  color: #9a6b12; font-weight: 800; font-size: 0.8rem; white-space: nowrap;
+}
+.lp-trial-xp-bolt { filter: drop-shadow(0 0 4px rgba(255, 160, 40, 0.5)); }
+.lp-xp-pulse { animation: lpXpPulse 0.5s ease; }
+@keyframes lpXpPulse {
+  0% { transform: scale(1); } 40% { transform: scale(1.15); box-shadow: 0 0 0 4px rgba(255,194,75,0.25); } 100% { transform: scale(1); }
+}
+.lp-trial-xp-pop {
+  position: absolute; top: -6px; right: 0; transform: translateY(4px);
+  white-space: nowrap; font-size: 0.8rem; font-weight: 800; color: var(--clr-success-green, #2ECC71);
+  background: #fff; border: 1px solid rgba(46,204,113,0.4); border-radius: 999px;
+  padding: 3px 9px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); opacity: 0; pointer-events: none;
+}
+.lp-trial-xp-pop.go { animation: lpXpFloat 1.5s ease forwards; }
+.lp-xp-reason { font-weight: 600; color: var(--clr-text-dim, #5b6472); font-size: 0.72rem; }
+@keyframes lpXpFloat {
+  0% { opacity: 0; transform: translateY(4px) scale(0.9); }
+  15% { opacity: 1; transform: translateY(0) scale(1); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-28px) scale(1); }
+}
+.lp-trial-gate-xp {
+  font-size: 0.92rem; font-weight: 600; color: #9a6b12;
+  background: rgba(255, 194, 75, 0.14); border: 1px solid rgba(255, 194, 75, 0.4);
+  border-radius: 10px; padding: 8px 12px; margin-bottom: 10px;
+}
+.lp-trial-gate-xp strong { color: #7a5410; }
+.lp-trial-gate-bolt { filter: drop-shadow(0 0 4px rgba(255,160,40,0.5)); }
+[data-theme="dark"] .lp-trial-xp { color: #ffd98a; background: rgba(255,194,75,0.12); }
+[data-theme="dark"] .lp-trial-xp-pop { background: #0f172a; }
+[data-theme="dark"] .lp-trial-gate-xp { color: #ffd98a; }
+@media (max-width: 600px) { .lp-xp-reason { display: none; } }

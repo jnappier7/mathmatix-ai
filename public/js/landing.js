@@ -164,10 +164,13 @@
   var trialTutorName   = document.getElementById('lp-trial-tutor-name');
   var trialMathToggle  = document.getElementById('lp-trial-math-toggle');
   var trialMathBar     = document.getElementById('lp-trial-math-bar');
+  var trialXpEl        = document.getElementById('lp-trial-xp');
+  var trialXpTotalEl   = document.getElementById('lp-trial-xp-total');
 
   // State
   var selectedTutorId = 'mr-nappier'; // Pre-selected so the hero composer works on first keystroke
   var pendingFirstMessage = null;     // Problem typed in the hero, auto-sent once the session greets
+  var trialXpTotal = 0;               // engagement XP earned this session (server-authoritative)
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
   var clientTurnCount = 0; // Client-side backup gate (defense-in-depth)
   var MAX_CLIENT_TURNS = 4; // 1 greeting + 3 student messages
@@ -335,6 +338,7 @@
     // Reset chat UI
     trialMessages.innerHTML = '';
     if (trialNotebook) { trialNotebook.innerHTML = ''; trialNotebook.style.display = 'none'; nbLastPose = null; }
+    trialXpTotal = 0; if (trialXpTotalEl) trialXpTotalEl.textContent = '0';
     trialInput.value = '';
     trialSuggestions.style.display = 'none'; // Hide suggestions until greeting loads
     trialInputArea.style.display = '';
@@ -497,6 +501,9 @@
       if (Array.isArray(data.board) && data.board.length) {
         renderTrialBoard(data.board);
       }
+
+      // Engagement XP earned this turn (server-decided).
+      if (data.xp) bumpTrialXp(data.xp);
 
       if (data.reply) {
         chatHistory.push({ role: 'assistant', content: data.reply });
@@ -763,6 +770,41 @@
     trialNotebook.scrollTop = trialNotebook.scrollHeight;
   }
 
+  /* ── Engagement XP (a conversion hook) ──────────────────
+     XP rewards THINKING, not correct answers (server decides the amount).
+     Shows a floating +N popup + a count-up on the header pill; the running
+     total becomes the "you earned N XP — sign up to keep going" gate line. */
+  function animateXpCount(el, from, to, dur) {
+    var start = null, done = false;
+    function finish() { if (!done) { done = true; el.textContent = String(to); } }
+    function step(ts) {
+      if (done) return;
+      if (start === null) start = ts;
+      var t = Math.min(1, (ts - start) / dur);
+      el.textContent = String(Math.round(from + (to - from) * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) requestAnimationFrame(step); else finish();
+    }
+    requestAnimationFrame(step);
+    // Fallback: rAF is throttled in background tabs — guarantee the final value.
+    setTimeout(finish, dur + 200);
+  }
+
+  function bumpTrialXp(xp) {
+    if (!xp || !trialXpTotalEl) return;
+    var prev = trialXpTotal;
+    trialXpTotal = (typeof xp.total === 'number') ? xp.total : prev + (xp.awarded || 0);
+    animateXpCount(trialXpTotalEl, prev, trialXpTotal, 600);
+    if (xp.awarded > 0 && trialXpEl) {
+      trialXpEl.classList.remove('lp-xp-pulse'); void trialXpEl.offsetWidth; trialXpEl.classList.add('lp-xp-pulse');
+      var pop = document.createElement('div');
+      pop.className = 'lp-trial-xp-pop';
+      pop.innerHTML = '+' + xp.awarded + ' XP' + (xp.reason ? ' <span class="lp-xp-reason">' + nbEscape(xp.reason) + '</span>' : '');
+      trialXpEl.appendChild(pop);
+      requestAnimationFrame(function () { pop.classList.add('go'); });
+      setTimeout(function () { if (pop.parentNode) pop.parentNode.removeChild(pop); }, 1500);
+    }
+  }
+
   function appendTrialBubble(text, isUser) {
     var meta = TUTOR_META[selectedTutorId];
 
@@ -845,6 +887,19 @@
     if (trialMathBar) { trialMathBar.classList.remove('visible'); }
     if (trialMathToggle) { trialMathToggle.classList.remove('active'); }
     trialGate.style.display = '';
+
+    // Conversion hook: surface the XP earned this session above the message.
+    if (trialXpTotal > 0 && trialGateMsg && trialGateMsg.parentNode) {
+      var xpBanner = document.getElementById('lp-trial-gate-xp');
+      if (!xpBanner) {
+        xpBanner = document.createElement('div');
+        xpBanner.id = 'lp-trial-gate-xp';
+        xpBanner.className = 'lp-trial-gate-xp';
+        trialGateMsg.parentNode.insertBefore(xpBanner, trialGateMsg);
+      }
+      xpBanner.innerHTML = '<span class="lp-trial-gate-bolt" aria-hidden="true">⚡</span> You earned <strong>' +
+        trialXpTotal + ' XP</strong> this session — keep it going.';
+    }
 
     // Set tutor-voice gate message
     var msg = GATE_MESSAGES[selectedTutorId] || "We're making great progress! Sign up free to keep going.";
