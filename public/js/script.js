@@ -331,6 +331,23 @@ document.addEventListener("DOMContentLoaded", () => {
             })();
 
             if (trialState && trialState.history && trialState.history.length > 0) {
+                // Persist the trial conversation server-side FIRST, so the tutor
+                // actually has it as context on the next turn — not just a visual
+                // replay. Fails soft: if seeding errors, we still show the UI
+                // (same behavior as before, just without model-side memory).
+                try {
+                    await csrfFetch('/api/conversations/seed-trial', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tutorId: trialState.tutorId,
+                            history: trialState.history
+                        })
+                    });
+                } catch (seedErr) {
+                    console.warn('Trial seed failed; continuing with UI-only replay', seedErr);
+                }
+
                 // Inject trial messages into the chat UI
                 trialState.history.forEach(function(msg) {
                     appendMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');

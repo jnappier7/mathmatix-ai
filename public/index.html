@@ -137,66 +137,72 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <!-- PHASE 1: Pick a tutor -->
       <div class="lp-hero-pick" id="lp-hero-pick">
         <div class="lp-hero-pick-inner">
-          <p class="lp-hero-eyebrow">AI Math Tutor &bull; Step-by-Step Help &bull; No Signup Required</p>
-          <h1>Who do you want to work with today?</h1>
-          <p class="lp-hero-sub">Pick a tutor and try a real math session &mdash; no signup needed.</p>
-          <div class="lp-tutor-grid" id="lp-tutor-grid">
-            <!-- Mr. Nappier -->
-            <button class="lp-tutor-card" data-tutor="mr-nappier">
-              <picture>
-                <source srcset="/images/tutor_avatars/mr-nappier.avif" type="image/avif">
-                <source srcset="/images/tutor_avatars/mr-nappier.webp" type="image/webp">
-                <img src="/images/tutor_avatars/mr-nappier.png" alt="Mr. Nappier" class="lp-tutor-card-img" loading="eager" />
-              </picture>
-              <div class="lp-tutor-card-info">
-                <h3>Mr. Nappier</h3>
-                <p class="lp-tutor-card-catch">Math is about patterns &mdash; once you see them, it&rsquo;s easy.</p>
-                <p class="lp-tutor-card-spec">Arithmetic, Pre-Algebra, Algebra 1</p>
-              </div>
-              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
+          <p class="lp-hero-eyebrow">AI Math Tutor &bull; Real Step-by-Step Help &bull; No Signup</p>
+          <h1>Stuck on a math problem? Get real help right now.</h1>
+          <p class="lp-hero-sub">Type your problem below and a real AI tutor walks you through it &mdash; step by step, free, no signup. <strong>This is the actual tutor, not a demo.</strong></p>
+
+          <!-- LIVE COMPOSER — the hero action. Fires straight into the real /api/trial-chat session. -->
+          <form class="lp-hero-composer" id="lp-hero-composer" autocomplete="off">
+            <input type="text" id="lp-hero-input" class="lp-hero-composer-input"
+              placeholder="Type any math problem…  e.g.  2(x − 3) = 10"
+              aria-label="Type your math problem" maxlength="500"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+              data-form-type="other" data-1p-ignore data-lpignore="true" />
+            <button type="submit" class="lp-hero-composer-send" id="lp-hero-send">
+              <span>Get help</span><i class="fas fa-arrow-right"></i>
             </button>
-            <!-- Bob -->
-            <button class="lp-tutor-card" data-tutor="bob">
-              <picture>
-                <source srcset="/images/tutor_avatars/bob.avif" type="image/avif">
-                <source srcset="/images/tutor_avatars/bob.webp" type="image/webp">
-                <img src="/images/tutor_avatars/bob.png" alt="Bob" class="lp-tutor-card-img" loading="eager" />
-              </picture>
-              <div class="lp-tutor-card-info">
-                <h3>Bob</h3>
-                <p class="lp-tutor-card-catch">Bringing math concepts to life!</p>
-                <p class="lp-tutor-card-spec">Geometry, Pre-Calculus, Problem-Solving</p>
-              </div>
-              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
-            </button>
-            <!-- Maya -->
-            <button class="lp-tutor-card" data-tutor="maya">
-              <picture>
-                <source srcset="/images/tutor_avatars/maya.avif" type="image/avif">
-                <source srcset="/images/tutor_avatars/maya.webp" type="image/webp">
-                <img src="/images/tutor_avatars/maya.png" alt="Maya" class="lp-tutor-card-img" loading="eager" />
-              </picture>
-              <div class="lp-tutor-card-info">
-                <h3>Maya</h3>
-                <p class="lp-tutor-card-catch">Learning math, your way!</p>
-                <p class="lp-tutor-card-spec">Elementary Math, Basic Algebra</p>
-              </div>
-              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
-            </button>
-            <!-- Ms. Maria -->
-            <button class="lp-tutor-card" data-tutor="ms-maria">
-              <picture>
-                <source srcset="/images/tutor_avatars/ms-maria.avif" type="image/avif">
-                <source srcset="/images/tutor_avatars/ms-maria.webp" type="image/webp">
-                <img src="/images/tutor_avatars/ms-maria.png" alt="Ms. Maria" class="lp-tutor-card-img" loading="eager" />
-              </picture>
-              <div class="lp-tutor-card-info">
-                <h3>Ms. Maria</h3>
-                <p class="lp-tutor-card-catch">Structured math, paso por paso!</p>
-                <p class="lp-tutor-card-spec">Bilingual, Algebra I &amp; II, Test Prep</p>
-              </div>
-              <span class="lp-tutor-card-hear"><i class="fas fa-volume-up"></i> Hear me</span>
-            </button>
+          </form>
+
+          <!-- One-tap examples that fire the same live session -->
+          <div class="lp-hero-examples">
+            <span class="lp-hero-examples-label">or try:</span>
+            <button class="lp-hero-example" data-prompt="Solve 2(x - 3) = 10">Solve 2(x &minus; 3) = 10</button>
+            <button class="lp-hero-example" data-prompt="How do I add 1/3 + 1/4?">Add 1/3 + 1/4</button>
+            <button class="lp-hero-example" data-prompt="Find the slope between (2,5) and (6,13)">Find the slope</button>
+            <button class="lp-hero-example" data-prompt="Factor x^2 + 5x + 6">Factor x&sup2; + 5x + 6</button>
+          </div>
+
+          <!-- Tutor choice — subordinate to the action, pre-selected so the composer works immediately. -->
+          <div class="lp-hero-tutor-strip">
+            <span class="lp-hero-tutor-label">Your tutor:</span>
+            <div class="lp-hero-tutor-chips" id="lp-hero-tutor-chips">
+              <button type="button" class="lp-hero-tutor-chip is-selected" data-tutor="mr-nappier">
+                <picture>
+                  <source srcset="/images/tutor_avatars/mr-nappier.avif" type="image/avif">
+                  <source srcset="/images/tutor_avatars/mr-nappier.webp" type="image/webp">
+                  <img src="/images/tutor_avatars/mr-nappier.png" alt="Mr. Nappier" loading="eager" />
+                </picture>
+                <span class="lp-hero-tutor-name">Mr. Nappier</span>
+                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
+              </button>
+              <button type="button" class="lp-hero-tutor-chip" data-tutor="bob">
+                <picture>
+                  <source srcset="/images/tutor_avatars/bob.avif" type="image/avif">
+                  <source srcset="/images/tutor_avatars/bob.webp" type="image/webp">
+                  <img src="/images/tutor_avatars/bob.png" alt="Bob" loading="eager" />
+                </picture>
+                <span class="lp-hero-tutor-name">Bob</span>
+                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
+              </button>
+              <button type="button" class="lp-hero-tutor-chip" data-tutor="maya">
+                <picture>
+                  <source srcset="/images/tutor_avatars/maya.avif" type="image/avif">
+                  <source srcset="/images/tutor_avatars/maya.webp" type="image/webp">
+                  <img src="/images/tutor_avatars/maya.png" alt="Maya" loading="eager" />
+                </picture>
+                <span class="lp-hero-tutor-name">Maya</span>
+                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
+              </button>
+              <button type="button" class="lp-hero-tutor-chip" data-tutor="ms-maria">
+                <picture>
+                  <source srcset="/images/tutor_avatars/ms-maria.avif" type="image/avif">
+                  <source srcset="/images/tutor_avatars/ms-maria.webp" type="image/webp">
+                  <img src="/images/tutor_avatars/ms-maria.png" alt="Ms. Maria" loading="eager" />
+                </picture>
+                <span class="lp-hero-tutor-name">Ms. Maria</span>
+                <span class="lp-hero-tutor-hear" role="button" tabindex="0" title="Hear my voice"><i class="fas fa-volume-up"></i></span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -314,15 +320,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <!-- ── Chat Preview (mirrors the real cr-mode chat) ────────── -->
     <section class="lp-chat-preview-section lp-reveal lp-section-alt">
       <div class="lp-inner">
-        <h2 class="lp-section-heading">See How a Session Works</h2>
-        <p class="lp-section-sub">Real conversations with our AI tutors. No scripts &mdash; every session is personalized.</p>
+        <h2 class="lp-section-heading">What a Real Session Looks Like</h2>
+        <p class="lp-section-sub">A recorded example of how our tutors teach &mdash; your <strong>live</strong> session is up top. Notice they never just hand over the answer.</p>
         <!-- Branded as a window into the actual product: dark navy panel,
-             "Live with [tutor]" pill, streak, hamburger — matches /chat.html. -->
+             "Example" pill (NOT "Live" — this is a scripted recording, and must
+             read as clearly distinct from the live composer in the hero). -->
         <div class="lp-hero-preview lp-preview-chat" aria-label="Example tutoring session">
           <div class="lp-preview-header">
-            <div class="lp-preview-live-pill">
-              <span class="lp-preview-live-dot" aria-hidden="true"></span>
-              <span>Live with <span id="lp-tutor-name">Mr. Nappier</span></span>
+            <div class="lp-preview-live-pill lp-preview-example-pill">
+              <span>Example with <span id="lp-tutor-name">Mr. Nappier</span></span>
             </div>
             <div class="lp-preview-header-right">
               <span class="lp-preview-streak-pill" title="Daily streak">
