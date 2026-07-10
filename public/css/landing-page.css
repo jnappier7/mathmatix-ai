@@ -2613,3 +2613,19 @@
 [data-theme="dark"] .lp-nb-pose,
 [data-theme="dark"] .lp-nb-step { color: #e2e8f0; }
 [data-theme="dark"] .lp-nb-scaffold { color: #94a3b8; }
+
+/* Graph card: server-computed points drawn as an inline SVG plot. */
+.lp-nb-graph { margin: 6px 0 4px; }
+.lp-nb-graph-svg {
+  display: block; width: 100%; max-width: 320px; height: auto;
+  background: #ffffff; border: 1px solid #e6ebf1; border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.lp-nb-curve { stroke: var(--clr-primary-teal, #12b3b3); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.lp-nb-axis { stroke: #c7d0da; stroke-width: 1; }
+.lp-nb-graph-cap {
+  font-family: 'Inter', sans-serif; font-size: 0.72rem; color: var(--clr-text-dim, #5b6472);
+  margin-top: 3px;
+}
+[data-theme="dark"] .lp-nb-graph-svg { background: #0b1220; border-color: #24324a; }
+[data-theme="dark"] .lp-nb-axis { stroke: #3b4a63; }

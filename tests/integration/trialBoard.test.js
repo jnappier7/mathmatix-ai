@@ -16,7 +16,7 @@ jest.mock('../../utils/pipeline', () => ({
       boardCommands: [
         { action: 'pose', tex: '3x + 7 = 22' },
         { action: 'scaffold', tex: 'x = \\boxed{}' },
-        { action: 'graph', fn: 'y=3x+7', caption: 'line' }, // must be filtered out
+        { action: 'graph', fn: 'y=3x+7', caption: 'line' }, // forwarded WITH server points
         { action: 'image', query: 'triangle' },             // must be filtered out
       ],
       _pipeline: { messageType: 'ANSWER_ATTEMPT', action: 'scaffold', flags: [] },
@@ -53,16 +53,21 @@ const send = (app, hdr) => request(app).post('/api/trial-chat').set(hdr).send({ 
 beforeEach(() => { mockPinsSeen.length = 0; });
 
 describe('trial living-board wiring', () => {
-  test('forwards board commands filtered to the notebook-renderable ops', async () => {
+  test('forwards notebook-renderable ops; graph gets server points; image dropped', async () => {
     const app = buildApp();
     const res = await send(app, { 'x-test-browser': 'a' });
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body.board)).toBe(true);
     const actions = res.body.board.map(c => c.action);
-    expect(actions).toEqual(['pose', 'scaffold']);       // graph + image dropped
-    expect(actions).not.toContain('graph');
+    expect(actions).toEqual(['pose', 'scaffold', 'graph']); // image dropped
     expect(actions).not.toContain('image');
+
+    // The graph card carries server-computed points (client never parses math).
+    const graph = res.body.board.find(c => c.action === 'graph');
+    expect(Array.isArray(graph.points)).toBe(true);
+    expect(graph.points.length).toBeGreaterThan(2);
+    expect(typeof graph.yMin).toBe('number');
   });
 
   test('carries the board pin across turns via the session (not the client body)', async () => {

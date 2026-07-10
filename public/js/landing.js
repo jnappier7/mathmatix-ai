@@ -723,8 +723,37 @@
       case 'verify':
         if (op.tex) nbLine('lp-nb-verify', '<span class="lp-nb-check">✓</span> ' + renderTrialKatex(op.tex.trim(), false));
         break;
-      // graph/image/model are skipped server-side for the trial notebook.
+      case 'graph':
+        if (op.points && op.points.length) {
+          var card = nbLine('lp-nb-graph', nbGraphSVG(op) +
+            (op.caption ? '<div class="lp-nb-graph-cap">' + nbEscape(op.caption) + '</div>' : ''));
+          card.classList.remove('lp-nb-writing'); // draw the plot in, don't wipe it
+          card.classList.add('lp-nb-shown');
+        }
+        break;
+      // image/model still need workspace libs the landing page doesn't load.
     }
+  }
+
+  // Draw the server-computed plot points as a small SVG. The client only connects
+  // dots — every y was evaluated server-side by the vetted rational engine.
+  function nbGraphSVG(g) {
+    var W = 300, H = 175, pad = 10;
+    var xMin = g.xMin, xMax = g.xMax, yMin = g.yMin, yMax = g.yMax;
+    var yPad = (yMax - yMin) * 0.12 || 1; yMin -= yPad; yMax += yPad;
+    var xr = (xMax - xMin) || 1, yr = (yMax - yMin) || 1;
+    function sx(x) { return (pad + (x - xMin) / xr * (W - 2 * pad)).toFixed(1); }
+    function sy(y) { return (H - pad - (y - yMin) / yr * (H - 2 * pad)).toFixed(1); }
+    var d = '', pen = false;
+    g.points.forEach(function (p) {
+      if (!p) { pen = false; return; }
+      d += (pen ? 'L' : 'M') + sx(p[0]) + ' ' + sy(p[1]) + ' '; pen = true;
+    });
+    var axes = '';
+    if (yMin <= 0 && yMax >= 0) axes += '<line x1="' + pad + '" y1="' + sy(0) + '" x2="' + (W - pad) + '" y2="' + sy(0) + '" class="lp-nb-axis"/>';
+    if (xMin <= 0 && xMax >= 0) axes += '<line x1="' + sx(0) + '" y1="' + pad + '" x2="' + sx(0) + '" y2="' + (H - pad) + '" class="lp-nb-axis"/>';
+    return '<svg class="lp-nb-graph-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" aria-label="Graph">' +
+      axes + '<path d="' + d.trim() + '" class="lp-nb-curve" fill="none"/></svg>';
   }
 
   function renderTrialBoard(ops) {

@@ -17,13 +17,14 @@ const { sanitizeForAI } = require('../middleware/promptInjection');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { runPipeline } = require('../utils/pipeline');
 const { callLLM } = require('../utils/llmGateway');
+const { samplePoints } = require('../utils/trialGraphPoints');
 
 const MAX_TURNS = 4; // 1 greeting + 3 student messages
 const MAX_MESSAGE_LENGTH = 500;
-// Board op types the lightweight trial notebook renders. The pipeline emits more
-// (graph/image/model) but those need the workspace/JSXGraph libs the landing page
-// doesn't load — skipped in the trial for now. All are already Visual-Gated.
-const TRIAL_BOARD_ACTIONS = new Set(['pose', 'apply', 'resolve', 'scaffold', 'verify']);
+// Board op types the lightweight trial notebook renders. `graph` is rendered from
+// server-computed points (see below); image/model still need workspace libs the
+// landing page doesn't load, so they're skipped. All are already Visual-Gated.
+const TRIAL_BOARD_ACTIONS = new Set(['pose', 'apply', 'resolve', 'scaffold', 'verify', 'graph']);
 const UNLOCKED_TUTOR_IDS = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].unlocked);
 
 // Durable per-browser turn tracking via the Mongo-backed session.
@@ -367,7 +368,18 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     // lightweight trial notebook can render. graph/image/model are skipped here
     // (they need workspace libs the landing page doesn't load) — follow-up.
     const board = (pipelineResult.boardCommands || [])
-      .filter(c => c && TRIAL_BOARD_ACTIONS.has(c.action));
+      .filter(c => c && TRIAL_BOARD_ACTIONS.has(c.action))
+      .map(c => {
+        // For graph cards, evaluate the function server-side with the vetted
+        // rational engine and ship points. If it isn't plottable (unsupported
+        // function, all-asymptote), drop it — never render a guessed curve.
+        if (c.action === 'graph') {
+          const g = samplePoints(c.fn);
+          return g ? { action: 'graph', fn: c.fn, caption: c.caption || null, ...g } : null;
+        }
+        return c;
+      })
+      .filter(Boolean);
 
     // Increment server-side turn count AFTER successful response
     bumpTrialTurns(req);
