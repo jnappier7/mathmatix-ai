@@ -10,7 +10,7 @@
  * @module mathSolver
  */
 
-const { normalizeMathOperators } = require('./mathUnicodeNormalizer');
+const { normalizeMathOperators, normalizeSpokenNumbers } = require('./mathUnicodeNormalizer');
 const { evalExpression, expressionValue } = require('./rationalEvaluator');
 
 /**
@@ -2362,7 +2362,9 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     // Normalize answers through the shared operator/sign map so a student's "−28"
     // (Unicode minus, as MathLive/LaTeX render it) is not stripped to a positive
     // "28" and rejected against a correct "-28" — and likewise for ×, ÷, dots, etc.
-    const norm = (v) => normalizeMathOperators(String(v).trim().toLowerCase());
+    // normalizeSpokenNumbers first turns speech-to-text answers into signed digits
+    // ("negative six" → "-6") so a correct spoken answer isn't graded wrong.
+    const norm = (v) => normalizeMathOperators(normalizeSpokenNumbers(String(v).trim().toLowerCase()));
     const studentStr = norm(studentAnswer);
     const correctStr = norm(correctAnswer);
 
