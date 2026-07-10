@@ -14,6 +14,38 @@ const { normalizeMathOperators } = require('./mathUnicodeNormalizer');
 const { evalExpression, expressionValue } = require('./rationalEvaluator');
 
 /**
+ * Isolate the first clean, contiguous numeric arithmetic expression embedded in a
+ * string and return it verbatim (or null if there isn't one).
+ *
+ * This is the single "pull the math out of a sentence" primitive. Rather than
+ * re-parse operands into {left, operator, right} — a lossy round-trip that
+ * historically kept dropping signs ("-34+6" → 34+6 = 40) — it hands the isolated
+ * slice to the exact-rational engine, which is the correctness guarantee: signs,
+ * precedence, and parentheses are handled exactly, and an invalid slice yields null
+ * so callers DEFER rather than emit a confidently-wrong answer.
+ *
+ * Boundaries (?<![\w.^]) / (?![\w.^]) prevent gluing onto letters or exponents, so
+ * "8x" (coefficient) and "x^2 + 8" (algebraic term) are not treated as arithmetic.
+ * A binary operator is required, so a bare number is not a "computation".
+ * Operators/signs are assumed already ASCII-normalized (× → *, − → -, …).
+ *
+ * @param {string} text
+ * @returns {string|null} the isolated expression (e.g. "-34+6"), or null
+ */
+function isolateNumericExpression(text) {
+    if (!text) return null;
+    const rx = /(?<![\w.^])-?\d[\d\s.+\-*/^()]*\d(?![\w.^])/g;
+    let m;
+    while ((m = rx.exec(text)) !== null) {
+        const expr = m[0].trim();
+        if (!/\d\s*[-+*/^]/.test(expr)) continue;    // no binary operator → not a computation
+        if (evalExpression(expr) === null) continue; // exact engine rejects → defer, never guess
+        return expr;
+    }
+    return null;
+}
+
+/**
  * Detect if a message contains a math problem
  * @param {string} message - User message
  * @returns {Object|null} Detected problem info or null
@@ -395,6 +427,11 @@ function detectMathProblem(message) {
         // solveEvaluation would strip the vulgar fractions and compute garbage.
         const mixedSub = detectMixedNumberArithmetic(expr);
         if (mixedSub) return mixedSub;
+        // Prefer a cleanly-isolated numeric slice ("what is 2+3*4 here" → "2+3*4")
+        // over grabbing the whole tail with its trailing prose — the latter would be
+        // distrusted downstream and the computation lost.
+        const isoExpr = isolateNumericExpression(expr);
+        if (isoExpr) return { type: 'evaluation', expression: isoExpr, evalMode: 'decimal' };
         return { type: 'evaluation', expression: expr };
     }
 
@@ -538,26 +575,23 @@ function detectMathProblem(message) {
         };
     }
 
-    // Last resort: scan for any embedded arithmetic with symbolic operators (e.g. "So 3 × 12 is what?")
-    // The left operand captures an OPTIONAL leading minus so a negative first term keeps its
-    // sign: "compute -34+6" must yield left=-34 (→ -28), not left=34 (→ 40). Dropping the sign
-    // here computed a confidently-wrong answer that then graded a correct student reply ("-28")
-    // as incorrect.
-    // Lookbehind: reject when the left operand follows a word char, dot, or ^ — so the leading
-    // minus is only consumed as a unary sign, never glued onto a preceding value ("5-34" still
-    // reads as 5 minus 34, not left=-34), and the operand isn't part of an exponent or algebraic
-    // term like "x^2 + 8" → "2 + 8" (NOT standalone arithmetic).
-    // Lookahead: reject when the right operand is immediately followed by a letter or ^
-    // (it's a coefficient like "8x", not a standalone number).
-    const embeddedArithmeticPattern = /(?<![\w.\^])(-?\d+\.?\d*)\s*([×÷+\-*/])\s*(\d+\.?\d*)(?![a-zA-Z\^])/;
-    const embeddedMatch = message.match(embeddedArithmeticPattern);
-    if (embeddedMatch) {
-        return {
-            type: 'arithmetic',
-            left: parseFloat(embeddedMatch[1]),
-            operator: embeddedMatch[2],
-            right: parseFloat(embeddedMatch[3])
-        };
+    // Last resort: an arithmetic expression embedded in prose ("So what's -34 + 6?",
+    // "-34+6=?", "3 × 12 is what?"). This path historically decomposed the match into
+    // {left, operator, right} and re-parsed each operand — a lossy round-trip that kept
+    // dropping the leading sign ("-34+6" read as 34+6 = 40) and could only ever see ONE
+    // operator pair. Both are exactly the "tutor rejected a correct answer" class of bug.
+    //
+    // Instead, isolate the maximal contiguous numeric expression and hand it WHOLE to the
+    // exact-rational engine (the same evalExpression that solveEvaluation uses). evalExpression
+    // is the correctness guarantee: signs, precedence, and parentheses are handled exactly,
+    // and if the isolated slice isn't valid arithmetic it returns null and we defer — so this
+    // path can never again emit a confidently-wrong answer. This finishes the migration noted
+    // in rationalEvaluator.js's header (it was meant to replace this "embedded last-resort regex").
+    //
+    // (see isolateNumericExpression for the boundary/operator/defer rules).
+    const embeddedExpr = isolateNumericExpression(message);
+    if (embeddedExpr) {
+        return { type: 'evaluation', expression: embeddedExpr, evalMode: 'decimal' };
     }
 
     return null;
@@ -3657,8 +3691,19 @@ function _isTrustedProblem(problem, source) {
     // whatever the matcher grabbed — often prose. Only trust it when
     // the source text reads like a math expression, not a sentence.
     if (problem.type === 'evaluation') {
-        if (PROSE_WORD_RX.test(source)) return false;
-        if (problem.expression && PROSE_WORD_RX.test(problem.expression)) return false;
+        // Trust an evaluation whose ISOLATED expression is a pure numeric computation
+        // (digits/operators/parens only, with a binary operator) even when the surrounding
+        // source is a sentence — we extracted exactly the math, so the prose around it is
+        // irrelevant. This lets prose-embedded arithmetic ("what's -34 + 6?") grade
+        // deterministically instead of being thrown away. Only fall back to the prose sniff
+        // when the expression itself still carries words (the older "what is …" catch-all,
+        // whose `expression` can be raw prose).
+        const expr = String(problem.expression || '');
+        const isPureNumericExpr = /^[\s\d.+\-*/^()]+$/.test(expr) && /\d\s*[-+*/^]/.test(expr);
+        if (!isPureNumericExpr) {
+            if (PROSE_WORD_RX.test(source)) return false;
+            if (problem.expression && PROSE_WORD_RX.test(problem.expression)) return false;
+        }
     }
     return true;
 }
