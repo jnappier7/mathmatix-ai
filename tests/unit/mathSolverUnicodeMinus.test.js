@@ -15,7 +15,7 @@
  * to ASCII "-" in detection and in verifyAnswer/evalArithmeticString. En/em dashes
  * (– —) are deliberately NOT normalized — they are prose punctuation.
  */
-const { processMathMessage, verifyAnswer } = require('../../utils/mathSolver');
+const { processMathMessage, verifyAnswer, parseCleanProblem } = require('../../utils/mathSolver');
 
 const MINUS = '−'; // − MINUS SIGN
 
@@ -41,6 +41,45 @@ describe('Unicode minus (U+2212) — arithmetic and equations', () => {
     const r = processMathMessage(`x${MINUS}6=${MINUS}34`);
     expect(r.hasMath).toBe(true);
     expect(String(r.solution.answer)).toBe('-28');
+  });
+});
+
+// SECOND-ORDER REGRESSION (same real session): the earlier fix corrected the BARE
+// form "−34+6", but a leading-negative arithmetic step EMBEDDED in tutor prose — or
+// followed by "=?" — still fell through to the last-resort embedded-arithmetic matcher,
+// whose left-operand capture dropped the sign. So the tutor posed "compute −34+6 on the
+// right side?", the pipeline computed the expected answer as 40, and graded the student's
+// correct "−28" INCORRECT — the exact trust-killing loop, one layer deeper. The fix lets
+// the last-resort matcher capture a leading unary minus (guarded so "5−34" is unchanged).
+describe('leading-negative arithmetic keeps its sign in prose / with "=?"', () => {
+  it('evaluates "−34+6=?" to -28 (not 40)', () => {
+    expect(String(processMathMessage(`${MINUS}34+6=?`).solution.answer)).toBe('-28');
+    expect(String(processMathMessage('-34+6=?').solution.answer)).toBe('-28');
+  });
+
+  it('evaluates a leading negative embedded in prose to -28', () => {
+    const r = parseCleanProblem(
+      `So what do you get when you compute ${MINUS}34+6 on the right side?`
+    );
+    expect(r.hasMath).toBe(true);
+    expect(String(r.solution.answer)).toBe('-28');
+  });
+
+  it('the pipeline verdict now confirms the student\'s "−28" is correct', () => {
+    const posed = parseCleanProblem(`compute ${MINUS}34+6 on the right side?`);
+    expect(verifyAnswer(`${MINUS}28`, posed.solution.answer).isCorrect).toBe(true);
+  });
+
+  it('does NOT turn a binary minus into a leading sign ("5-34" stays 5 − 34 = -29)', () => {
+    // The leading-sign capture must only fire on a genuine unary minus, never on a
+    // subtraction that follows a value — otherwise "5-34" would misread as left=-34.
+    expect(String(processMathMessage('result is 5-34 here').solution.answer)).toBe('-29');
+    expect(String(processMathMessage('20-8=?').solution.answer)).toBe('12');
+  });
+
+  it('leaves "x^2 + 8" as a non-arithmetic expression (no false "2 + 8")', () => {
+    const r = processMathMessage('x^2 + 8 here');
+    expect(r.problem && r.problem.type).not.toBe('arithmetic');
   });
 });
 

@@ -539,11 +539,17 @@ function detectMathProblem(message) {
     }
 
     // Last resort: scan for any embedded arithmetic with symbolic operators (e.g. "So 3 × 12 is what?")
-    // Lookbehind: reject when the left operand follows ^ or a letter (it's an exponent
-    // or part of an algebraic term like "x^2 + 8" → "2 + 8" is NOT standalone arithmetic).
+    // The left operand captures an OPTIONAL leading minus so a negative first term keeps its
+    // sign: "compute -34+6" must yield left=-34 (→ -28), not left=34 (→ 40). Dropping the sign
+    // here computed a confidently-wrong answer that then graded a correct student reply ("-28")
+    // as incorrect.
+    // Lookbehind: reject when the left operand follows a word char, dot, or ^ — so the leading
+    // minus is only consumed as a unary sign, never glued onto a preceding value ("5-34" still
+    // reads as 5 minus 34, not left=-34), and the operand isn't part of an exponent or algebraic
+    // term like "x^2 + 8" → "2 + 8" (NOT standalone arithmetic).
     // Lookahead: reject when the right operand is immediately followed by a letter or ^
     // (it's a coefficient like "8x", not a standalone number).
-    const embeddedArithmeticPattern = /(?<![a-zA-Z\^])(\d+\.?\d*)\s*([×÷+\-*/])\s*(\d+\.?\d*)(?![a-zA-Z\^])/;
+    const embeddedArithmeticPattern = /(?<![\w.\^])(-?\d+\.?\d*)\s*([×÷+\-*/])\s*(\d+\.?\d*)(?![a-zA-Z\^])/;
     const embeddedMatch = message.match(embeddedArithmeticPattern);
     if (embeddedMatch) {
         return {
