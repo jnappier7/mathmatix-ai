@@ -29,6 +29,7 @@ module.exports = {
     '<rootDir>/tests/unit/verifyMetrics.test.js',
     '<rootDir>/tests/unit/irt.test.js',
     '<rootDir>/tests/unit/knowledgeTracer.test.js',
+    '<rootDir>/tests/unit/diagnoseArithmeticGuard.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
     '<rootDir>/tests/golden/goldenTranscripts.test.js',
   ],
