@@ -9,6 +9,8 @@
  * @module pipeline/observe
  */
 
+const { normalizeSpokenNumbers } = require('../mathUnicodeNormalizer');
+
 // ── Message categories ──
 const MESSAGE_TYPES = {
   ANSWER_ATTEMPT: 'answer_attempt',
@@ -111,25 +113,29 @@ const PATTERNS = {
  * Returns { value, raw } or null if not an answer attempt.
  */
 function extractAnswer(message) {
-  const text = message.trim();
+  const raw = message.trim();
+  // Normalize speech-to-text negatives/number-words to signed digits BEFORE matching,
+  // so a spoken "negative six" is recognized as the answer -6 (the numeric PATTERNS
+  // only understand digits). `raw` keeps the original text for downstream use.
+  const text = normalizeSpokenNumbers(raw);
 
   // For short, direct answers (< 100 chars): try all patterns
   if (text.length <= 100) {
     let match;
-    if ((match = text.match(PATTERNS.varAssignment))) return { value: match[1], raw: text };
-    if ((match = text.match(PATTERNS.justNumber))) return { value: match[1], raw: text };
-    if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw: text };
-    if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw: text };
-    if ((match = text.match(PATTERNS.algebraicExpr))) return { value: match[1].replace(/\s/g, ''), raw: text };
-    if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw: text };
-    if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw: text };
+    if ((match = text.match(PATTERNS.varAssignment))) return { value: match[1], raw };
+    if ((match = text.match(PATTERNS.justNumber))) return { value: match[1], raw };
+    if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw };
+    if ((match = text.match(PATTERNS.algebraicExpr))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw };
   }
 
   // Proposed / self-check answer ("…right? 10/24", "is it 5/12?") — cue-gated and
   // end-anchored, so it's safe to try regardless of message length.
   {
     const match = text.match(PATTERNS.proposedAnswer);
-    if (match) return { value: (match[1] || match[2]).replace(/\s/g, ''), raw: text, proposed: true };
+    if (match) return { value: (match[1] || match[2]).replace(/\s/g, ''), raw, proposed: true };
   }
 
   // For longer messages: try to extract answer embedded in explanation

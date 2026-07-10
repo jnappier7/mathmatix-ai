@@ -83,6 +83,45 @@ describe('leading-negative arithmetic keeps its sign in prose / with "=?"', () =
   });
 });
 
+// ROOT-CAUSE FIX (finishing the migration): the two sign bugs above were both patches
+// on a matcher that re-parsed prose-embedded arithmetic into {left, operator, right} and
+// rebuilt a string — a lossy round-trip that kept dropping signs and could only ever see
+// ONE operator pair. The real fix isolates the arithmetic substring and hands it WHOLE to
+// the exact-rational engine (as rationalEvaluator.js's header always intended). That kills
+// the whole class: any sign, any number of operators, correct precedence — or, when the
+// slice isn't clean arithmetic, NO answer at all rather than a confident wrong one.
+describe('prose-embedded arithmetic goes through the exact evaluator (no operand re-parse)', () => {
+  it('handles multi-operand chains the old single-pair matcher could not', () => {
+    // Old path saw only "-34+6" and stopped; exact engine evaluates the whole chain.
+    expect(String(parseCleanProblem('compute -34+6-2 on the right side').solution.answer)).toBe('-30');
+  });
+
+  it('respects operator precedence in prose ("2+3*4" = 14, not 20)', () => {
+    expect(String(parseCleanProblem('so what is 2+3*4 here').solution.answer)).toBe('14');
+  });
+
+  it('keeps the sign on a negative RIGHT operand ("6+-34" = -28)', () => {
+    expect(String(parseCleanProblem('the answer to 6+-34 please').solution.answer)).toBe('-28');
+  });
+
+  it('now grades a bare "what is -34 + 6" phrasing (previously undetected)', () => {
+    expect(String(parseCleanProblem('what is -34 + 6').solution.answer)).toBe('-28');
+  });
+
+  it('SAFETY: an ambiguous slice defers (never a confidently-wrong answer)', () => {
+    // "8x" is a coefficient, "x^2 + 8" an algebraic term — the guards keep the exact
+    // engine from ever inventing "8", so these produce no arithmetic verdict at all.
+    expect(parseCleanProblem('the term 8x sits here').hasMath).toBe(false);
+    const r = parseCleanProblem('x^2 + 8 over here');
+    expect(r.hasMath && r.problem.type === 'arithmetic').toBeFalsy();
+  });
+
+  it('leaves bare two-operand arithmetic as the arithmetic type (unchanged)', () => {
+    expect(processMathMessage('15 + 27').problem.type).toBe('arithmetic');
+    expect(String(processMathMessage('15 + 27').solution.answer)).toBe('42');
+  });
+});
+
 describe('Unicode minus (U+2212) — verifyAnswer accepts the correct negative', () => {
   it('accepts a student "−28" against a correct "-28"', () => {
     expect(verifyAnswer(`${MINUS}28`, '-28').isCorrect).toBe(true);
