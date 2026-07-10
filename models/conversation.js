@@ -30,13 +30,25 @@ const messageSchema = new Schema({
     // Uploaded files attached to a user message (image/PDF). Stored so the
     // transcript can re-render the attachment on history reload and let the
     // student click back to it — not just show it in the compose preview.
-    // We intentionally store only the StudentUpload reference + type, NOT the
-    // filename (StudentUpload encrypts originalFilename as sensitive). The
-    // image bytes are served on demand via /api/student/uploads/:id/file.
+    // We intentionally store only the StudentUpload reference + type for the
+    // CLIENT, NOT the filename (StudentUpload encrypts originalFilename as
+    // sensitive). The image bytes are served on demand via
+    // /api/student/uploads/:id/file.
+    //
+    // `extractedText` (PDF OCR) and `imageData` (downscaled data-URL) are
+    // SERVER-ONLY worksheet-continuity fields: they make the conversation
+    // document itself the reliable source of truth for "the worksheet we're
+    // working from," so the tutor can re-pin it every turn without an
+    // out-of-band StudentUpload lookup (which is written fire-and-forget and
+    // can lose the race with a fast follow-up turn). They are stripped from
+    // client responses (see routes/conversations.js) — never send them to the
+    // browser.
     attachments: [{
         uploadId: { type: Schema.Types.ObjectId, ref: 'StudentUpload' },
         fileType: { type: String }, // 'image' | 'pdf'
         mimeType: { type: String },
+        extractedText: { type: String }, // server-only: PDF OCR text for cross-turn pin
+        imageData: { type: String },     // server-only: downscaled data-URL for cross-turn vision
         _id: false
     }],
 }, { _id: false });

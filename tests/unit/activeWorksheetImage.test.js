@@ -5,6 +5,7 @@ const {
   isImageStillActive,
   buildImageDataUrl,
   downscaleToDataUrl,
+  findWorksheetInMessages,
   ACTIVE_IMAGE_TTL_MINUTES,
   MAX_IMAGE_BYTES,
 } = require('../../utils/activeWorksheetImage');
@@ -123,5 +124,55 @@ maybe('activeWorksheetImage — downscaleToDataUrl', () => {
     expect(await downscaleToDataUrl(null)).toBeNull();
     expect(await downscaleToDataUrl(Buffer.alloc(0))).toBeNull();
     expect(await downscaleToDataUrl(Buffer.from('not an image'))).toBeNull();
+  });
+});
+
+describe('activeWorksheetImage — findWorksheetInMessages', () => {
+  const dataUrl = 'data:image/jpeg;base64,ABC123';
+  const userMsg = (over = {}) => ({ role: 'user', timestamp: minsAgo(5), attachments: [], ...over });
+
+  it('returns nulls for non-array / empty input', () => {
+    expect(findWorksheetInMessages(null, NOW)).toEqual({ text: null, imageDataUrl: null });
+    expect(findWorksheetInMessages([], NOW)).toEqual({ text: null, imageDataUrl: null });
+  });
+
+  it('finds the PDF extractedText regardless of age (text has no TTL)', () => {
+    const messages = [
+      userMsg({ timestamp: minsAgo(ACTIVE_IMAGE_TTL_MINUTES + 500), attachments: [{ fileType: 'pdf', extractedText: 'worksheet body' }] }),
+      { role: 'assistant', content: 'ok' },
+      userMsg({ attachments: [], content: 'ok lets work through it' }),
+    ];
+    expect(findWorksheetInMessages(messages, NOW).text).toBe('worksheet body');
+  });
+
+  it('re-threads an image within the TTL but not one past it', () => {
+    const fresh = [userMsg({ timestamp: minsAgo(10), attachments: [{ fileType: 'image', imageData: dataUrl }] })];
+    expect(findWorksheetInMessages(fresh, NOW).imageDataUrl).toBe(dataUrl);
+
+    const stale = [userMsg({ timestamp: minsAgo(ACTIVE_IMAGE_TTL_MINUTES + 1), attachments: [{ fileType: 'image', imageData: dataUrl }] })];
+    expect(findWorksheetInMessages(stale, NOW).imageDataUrl).toBeNull();
+  });
+
+  it('picks the NEWEST attachment of each type independently', () => {
+    const messages = [
+      userMsg({ timestamp: minsAgo(30), attachments: [{ fileType: 'pdf', extractedText: 'old pdf' }] }),
+      userMsg({ timestamp: minsAgo(20), attachments: [{ fileType: 'image', imageData: 'data:image/jpeg;base64,OLD' }] }),
+      userMsg({ timestamp: minsAgo(10), attachments: [{ fileType: 'pdf', extractedText: 'new pdf' }] }),
+      userMsg({ timestamp: minsAgo(5), attachments: [{ fileType: 'image', imageData: dataUrl }] }),
+    ];
+    expect(findWorksheetInMessages(messages, NOW)).toEqual({ text: 'new pdf', imageDataUrl: dataUrl });
+  });
+
+  it('ignores assistant messages and image data missing the data: prefix', () => {
+    const messages = [
+      { role: 'assistant', attachments: [{ fileType: 'pdf', extractedText: 'from assistant — ignore' }] },
+      userMsg({ attachments: [{ fileType: 'image', imageData: 'garbage-not-a-data-url' }] }),
+    ];
+    expect(findWorksheetInMessages(messages, NOW)).toEqual({ text: null, imageDataUrl: null });
+  });
+
+  it('ignores empty/whitespace extractedText', () => {
+    const messages = [userMsg({ attachments: [{ fileType: 'pdf', extractedText: '   ' }] })];
+    expect(findWorksheetInMessages(messages, NOW).text).toBeNull();
   });
 });

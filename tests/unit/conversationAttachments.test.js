@@ -48,6 +48,37 @@ describe('Conversation message attachments', () => {
     expect(doc.messages[0].attachments).toHaveLength(0);
   });
 
+  test('persists server-only worksheet-continuity fields on an attachment', () => {
+    const doc = newConversation({
+      role: 'user',
+      content: 'here is the worksheet',
+      attachments: [{
+        uploadId: new mongoose.Types.ObjectId(),
+        fileType: 'pdf',
+        mimeType: 'application/pdf',
+        extractedText: 'Problem 1: 2+2. Problem 2: 3x=9.',
+        imageData: null,
+      }]
+    });
+    const att = doc.messages[0].attachments[0];
+    expect(att.extractedText).toContain('Problem 1');
+    expect(doc.validateSync()).toBeUndefined();
+  });
+
+  test('stores a downscaled image data-URL for cross-turn vision', () => {
+    const doc = newConversation({
+      role: 'user',
+      content: 'photo of my work',
+      attachments: [{
+        uploadId: new mongoose.Types.ObjectId(),
+        fileType: 'image',
+        mimeType: 'image/jpeg',
+        imageData: 'data:image/jpeg;base64,ABC123',
+      }]
+    });
+    expect(doc.messages[0].attachments[0].imageData).toMatch(/^data:image\/jpeg;base64,/);
+  });
+
   test('stores multiple attachments in order', () => {
     const doc = newConversation({
       role: 'user',

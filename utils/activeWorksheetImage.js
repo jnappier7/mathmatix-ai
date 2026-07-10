@@ -89,10 +89,56 @@ async function buildImageDataUrl(doc) {
     }
 }
 
+/**
+ * Find the active worksheet's continuity data on the conversation's OWN
+ * messages. This is the RELIABLE source: the extracted text / downscaled image
+ * are committed with the conversation on the upload turn and reloaded on every
+ * later turn — unlike the out-of-band StudentUpload doc, which is written
+ * fire-and-forget and can lose the race with a fast follow-up ("ok, let's work
+ * through it") that arrives before the save lands.
+ *
+ * Scans newest→oldest and returns, independently:
+ *   - text: the newest PDF attachment's extractedText (no TTL — text is cheap)
+ *   - imageDataUrl: the newest image attachment's imageData, but only if the
+ *     message is still within the TTL window (per-turn vision is costly)
+ * Pure — no IO — so it's cheap to unit test.
+ *
+ * @param {Array} messages  activeConversation.messages (subdocs or plain objects)
+ * @param {number} nowMs
+ * @param {number} ttlMinutes  recency window for the image (text is unbounded)
+ * @returns {{ text: string|null, imageDataUrl: string|null }}
+ */
+function findWorksheetInMessages(messages, nowMs = Date.now(), ttlMinutes = ACTIVE_IMAGE_TTL_MINUTES) {
+    const out = { text: null, imageDataUrl: null };
+    if (!Array.isArray(messages)) return out;
+    for (let i = messages.length - 1; i >= 0; i--) {
+        const msg = messages[i];
+        if (!msg || msg.role !== 'user' || !Array.isArray(msg.attachments) || msg.attachments.length === 0) continue;
+        const ts = msg.timestamp ? new Date(msg.timestamp).getTime() : NaN;
+        const ageMinutes = Number.isNaN(ts) ? Infinity : (nowMs - ts) / 60000;
+        for (const att of msg.attachments) {
+            if (!att) continue;
+            if (out.text === null && att.fileType === 'pdf' && typeof att.extractedText === 'string' && att.extractedText.trim()) {
+                out.text = att.extractedText;
+            }
+            if (out.imageDataUrl === null
+                && att.fileType === 'image'
+                && typeof att.imageData === 'string'
+                && att.imageData.startsWith('data:')
+                && ageMinutes >= 0 && ageMinutes <= ttlMinutes) {
+                out.imageDataUrl = att.imageData;
+            }
+        }
+        if (out.text !== null && out.imageDataUrl !== null) break;
+    }
+    return out;
+}
+
 module.exports = {
     isImageStillActive,
     buildImageDataUrl,
     downscaleToDataUrl,
+    findWorksheetInMessages,
     ACTIVE_IMAGE_TTL_MINUTES,
     MAX_IMAGE_BYTES,
 };
