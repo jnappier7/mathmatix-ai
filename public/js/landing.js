@@ -151,6 +151,7 @@
   var celebrationSub   = document.getElementById('lp-celebration-subtitle');
 
   var trialMessages    = document.getElementById('lp-trial-messages');
+  var trialNotebook    = document.getElementById('lp-trial-notebook');
   var trialTyping      = document.getElementById('lp-trial-typing');
   var trialInput       = document.getElementById('lp-trial-input');
   var trialSend        = document.getElementById('lp-trial-send');
@@ -163,10 +164,13 @@
   var trialTutorName   = document.getElementById('lp-trial-tutor-name');
   var trialMathToggle  = document.getElementById('lp-trial-math-toggle');
   var trialMathBar     = document.getElementById('lp-trial-math-bar');
+  var trialXpEl        = document.getElementById('lp-trial-xp');
+  var trialXpTotalEl   = document.getElementById('lp-trial-xp-total');
 
   // State
   var selectedTutorId = 'mr-nappier'; // Pre-selected so the hero composer works on first keystroke
   var pendingFirstMessage = null;     // Problem typed in the hero, auto-sent once the session greets
+  var trialXpTotal = 0;               // engagement XP earned this session (server-authoritative)
   var chatHistory = []; // { role: 'user'|'assistant', content: string }
   var clientTurnCount = 0; // Client-side backup gate (defense-in-depth)
   var MAX_CLIENT_TURNS = 4; // 1 greeting + 3 student messages
@@ -333,6 +337,8 @@
 
     // Reset chat UI
     trialMessages.innerHTML = '';
+    if (trialNotebook) { trialNotebook.innerHTML = ''; trialNotebook.style.display = 'none'; nbLastPose = null; }
+    trialXpTotal = 0; if (trialXpTotalEl) trialXpTotalEl.textContent = '0';
     trialInput.value = '';
     trialSuggestions.style.display = 'none'; // Hide suggestions until greeting loads
     trialInputArea.style.display = '';
@@ -489,6 +495,15 @@
       // Update history and client-side turn counter
       chatHistory.push({ role: 'user', content: text });
       clientTurnCount++;
+
+      // Write the tutor's earned steps onto the living board. These are already
+      // server-gated (only steps the student stated) — we just render them.
+      if (Array.isArray(data.board) && data.board.length) {
+        renderTrialBoard(data.board);
+      }
+
+      // Engagement XP earned this turn (server-decided).
+      if (data.xp) bumpTrialXp(data.xp);
 
       if (data.reply) {
         chatHistory.push({ role: 'assistant', content: data.reply });
@@ -668,6 +683,128 @@
   }
 
   /* ── Chat Bubble Renderer ────────────────────────── */
+  /* ── Living board renderer ─────────────────────────────
+     Renders the server's ALREADY-GATED board commands as a notebook that
+     "writes" the tutor's earned steps. Anti-cheat is enforced server-side
+     (only steps the student has stated ever arrive here) — this is display
+     only; it never decides what may be shown. */
+  var nbLastPose = null; // normalized pinned problem, to dedup re-poses across turns
+
+  function nbEscape(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function nbLine(cls, html) {
+    var row = document.createElement('div');
+    row.className = 'lp-nb-line ' + cls + ' lp-nb-writing';
+    row.innerHTML = html;
+    trialNotebook.appendChild(row);
+    requestAnimationFrame(function () { row.classList.add('lp-nb-shown'); });
+    return row;
+  }
+
+  function appendNotebookStep(op) {
+    if (!op || !op.action) return;
+    switch (op.action) {
+      case 'pose': {
+        var tex = (op.tex || '').trim();
+        if (!tex) return;
+        var norm = tex.replace(/\s+/g, '');
+        if (norm === nbLastPose) return;            // same problem re-posed → skip
+        if (nbLastPose !== null) trialNotebook.innerHTML = ''; // new problem → fresh page
+        nbLastPose = norm;
+        nbLine('lp-nb-pose', renderTrialKatex(tex, false));
+        break;
+      }
+      case 'apply':
+        if (op.op) nbLine('lp-nb-op', '<span class="lp-nb-arrow">→</span> ' + nbEscape(op.op));
+        break;
+      case 'resolve':
+        if (op.tex) nbLine('lp-nb-step', renderTrialKatex(op.tex.trim(), false));
+        break;
+      case 'scaffold':
+        if (op.tex) nbLine('lp-nb-scaffold', renderTrialKatex(op.tex.trim(), false));
+        break;
+      case 'verify':
+        if (op.tex) nbLine('lp-nb-verify', '<span class="lp-nb-check">✓</span> ' + renderTrialKatex(op.tex.trim(), false));
+        break;
+      case 'graph':
+        if (op.points && op.points.length) {
+          var card = nbLine('lp-nb-graph', nbGraphSVG(op) +
+            (op.caption ? '<div class="lp-nb-graph-cap">' + nbEscape(op.caption) + '</div>' : ''));
+          card.classList.remove('lp-nb-writing'); // draw the plot in, don't wipe it
+          card.classList.add('lp-nb-shown');
+        }
+        break;
+      // image/model still need workspace libs the landing page doesn't load.
+    }
+  }
+
+  // Draw the server-computed plot points as a small SVG. The client only connects
+  // dots — every y was evaluated server-side by the vetted rational engine.
+  function nbGraphSVG(g) {
+    var W = 300, H = 175, pad = 10;
+    var xMin = g.xMin, xMax = g.xMax, yMin = g.yMin, yMax = g.yMax;
+    var yPad = (yMax - yMin) * 0.12 || 1; yMin -= yPad; yMax += yPad;
+    var xr = (xMax - xMin) || 1, yr = (yMax - yMin) || 1;
+    function sx(x) { return (pad + (x - xMin) / xr * (W - 2 * pad)).toFixed(1); }
+    function sy(y) { return (H - pad - (y - yMin) / yr * (H - 2 * pad)).toFixed(1); }
+    var d = '', pen = false;
+    g.points.forEach(function (p) {
+      if (!p) { pen = false; return; }
+      d += (pen ? 'L' : 'M') + sx(p[0]) + ' ' + sy(p[1]) + ' '; pen = true;
+    });
+    var axes = '';
+    if (yMin <= 0 && yMax >= 0) axes += '<line x1="' + pad + '" y1="' + sy(0) + '" x2="' + (W - pad) + '" y2="' + sy(0) + '" class="lp-nb-axis"/>';
+    if (xMin <= 0 && xMax >= 0) axes += '<line x1="' + sx(0) + '" y1="' + pad + '" x2="' + sx(0) + '" y2="' + (H - pad) + '" class="lp-nb-axis"/>';
+    return '<svg class="lp-nb-graph-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" aria-label="Graph">' +
+      axes + '<path d="' + d.trim() + '" class="lp-nb-curve" fill="none"/></svg>';
+  }
+
+  function renderTrialBoard(ops) {
+    if (!trialNotebook) return;
+    ops.forEach(appendNotebookStep);
+    if (trialNotebook.children.length) trialNotebook.style.display = '';
+    trialNotebook.scrollTop = trialNotebook.scrollHeight;
+  }
+
+  /* ── Engagement XP (a conversion hook) ──────────────────
+     XP rewards THINKING, not correct answers (server decides the amount).
+     Shows a floating +N popup + a count-up on the header pill; the running
+     total becomes the "you earned N XP — sign up to keep going" gate line. */
+  function animateXpCount(el, from, to, dur) {
+    var start = null, done = false;
+    function finish() { if (!done) { done = true; el.textContent = String(to); } }
+    function step(ts) {
+      if (done) return;
+      if (start === null) start = ts;
+      var t = Math.min(1, (ts - start) / dur);
+      el.textContent = String(Math.round(from + (to - from) * (1 - Math.pow(1 - t, 3))));
+      if (t < 1) requestAnimationFrame(step); else finish();
+    }
+    requestAnimationFrame(step);
+    // Fallback: rAF is throttled in background tabs — guarantee the final value.
+    setTimeout(finish, dur + 200);
+  }
+
+  function bumpTrialXp(xp) {
+    if (!xp || !trialXpTotalEl) return;
+    var prev = trialXpTotal;
+    trialXpTotal = (typeof xp.total === 'number') ? xp.total : prev + (xp.awarded || 0);
+    animateXpCount(trialXpTotalEl, prev, trialXpTotal, 600);
+    if (xp.awarded > 0 && trialXpEl) {
+      trialXpEl.classList.remove('lp-xp-pulse'); void trialXpEl.offsetWidth; trialXpEl.classList.add('lp-xp-pulse');
+      var pop = document.createElement('div');
+      pop.className = 'lp-trial-xp-pop';
+      pop.innerHTML = '+' + xp.awarded + ' XP' + (xp.reason ? ' <span class="lp-xp-reason">' + nbEscape(xp.reason) + '</span>' : '');
+      trialXpEl.appendChild(pop);
+      requestAnimationFrame(function () { pop.classList.add('go'); });
+      setTimeout(function () { if (pop.parentNode) pop.parentNode.removeChild(pop); }, 1500);
+    }
+  }
+
   function appendTrialBubble(text, isUser) {
     var meta = TUTOR_META[selectedTutorId];
 
@@ -750,6 +887,19 @@
     if (trialMathBar) { trialMathBar.classList.remove('visible'); }
     if (trialMathToggle) { trialMathToggle.classList.remove('active'); }
     trialGate.style.display = '';
+
+    // Conversion hook: surface the XP earned this session above the message.
+    if (trialXpTotal > 0 && trialGateMsg && trialGateMsg.parentNode) {
+      var xpBanner = document.getElementById('lp-trial-gate-xp');
+      if (!xpBanner) {
+        xpBanner = document.createElement('div');
+        xpBanner.id = 'lp-trial-gate-xp';
+        xpBanner.className = 'lp-trial-gate-xp';
+        trialGateMsg.parentNode.insertBefore(xpBanner, trialGateMsg);
+      }
+      xpBanner.innerHTML = '<span class="lp-trial-gate-bolt" aria-hidden="true">⚡</span> You earned <strong>' +
+        trialXpTotal + ' XP</strong> this session — keep it going.';
+    }
 
     // Set tutor-voice gate message
     var msg = GATE_MESSAGES[selectedTutorId] || "We're making great progress! Sign up free to keep going.";

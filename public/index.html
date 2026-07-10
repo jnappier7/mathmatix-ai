@@ -76,7 +76,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/mobile-fixes.css" />
@@ -86,11 +86,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script defer src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/landing.js?v=2" defer></script>
+  <script src="/js/landing.js?v=3" defer></script>
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
   <!-- Chat design tokens (--cr-*) so the chat preview block can mirror the real product. -->
   <link rel="stylesheet" href="/css/design-system.css" />
-  <link rel="stylesheet" href="/css/landing-page.css?v=2" />
+  <link rel="stylesheet" href="/css/landing-page.css?v=3" />
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
@@ -229,8 +229,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               <img id="lp-trial-tutor-img" src="" alt="" class="lp-trial-tutor-avatar" />
               <span id="lp-trial-tutor-name"></span>
             </div>
+            <!-- Engagement XP earned this session (ephemeral; a conversion hook). -->
+            <span class="lp-trial-xp" id="lp-trial-xp" title="XP earned this session">
+              <span class="lp-trial-xp-bolt" aria-hidden="true">⚡</span><span id="lp-trial-xp-total">0</span> XP
+            </span>
             <a href="/signup.html" class="btn btn-primary btn-sm lp-trial-signup-btn">Sign Up Free</a>
           </div>
+          <!-- Living board: the tutor's earned steps write here (server-gated,
+               only steps the student has stated). Hidden until the first step. -->
+          <div class="lp-trial-notebook" id="lp-trial-notebook" style="display:none;" aria-label="Tutoring workspace"></div>
           <div class="lp-trial-messages" id="lp-trial-messages"></div>
           <div class="lp-trial-typing" id="lp-trial-typing" style="display:none;">
             <div class="lp-typing-dot"></div>
