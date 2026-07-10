@@ -80,6 +80,39 @@ function buildTrialUserProfile() {
 }
 
 /**
+ * Strip inline visual DIRECTIVES ([FUNCTION_GRAPH:...], [SLIDER_GRAPH:...], etc.)
+ * from a trial reply. The authenticated chat renders these via inlineChatVisuals.js,
+ * but the lightweight trial client doesn't load that system — so an unstripped tag
+ * leaks into the bubble as raw text (e.g. `[FUNCTION_GRAPH:fn=2x-5,...]`).
+ *
+ * Uses a bracket-depth scan (handles nested brackets in params) but only treats
+ * `[UPPERCASE…]` as a directive and NEVER when preceded by a backslash, so LaTeX
+ * display math (`\[ ... \]`) is preserved.
+ */
+function stripVisualDirectives(text) {
+  if (!text || typeof text !== 'string') return text || '';
+  let out = '';
+  let i = 0;
+  while (i < text.length) {
+    const directiveOpen = text[i] === '[' && text[i - 1] !== '\\'
+      && i + 1 < text.length && /[A-Z]/.test(text[i + 1]);
+    if (directiveOpen) {
+      let depth = 1;
+      let j = i + 1;
+      while (j < text.length && depth > 0) {
+        if (text[j] === '[') depth++;
+        else if (text[j] === ']') depth--;
+        j++;
+      }
+      if (depth === 0) { i = j; continue; } // skip the whole [ ... ]
+    }
+    out += text[i];
+    i++;
+  }
+  return out.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/**
  * Build in-memory conversation and user stand-ins for the pipeline.
  * These satisfy the pipeline's interface without touching MongoDB.
  */
@@ -307,7 +340,9 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
       skipPersist: true,
     });
 
-    const reply = pipelineResult.text;
+    // Strip inline visual directives the trial client can't render (they'd leak
+    // as raw `[FUNCTION_GRAPH:...]` text). Fall back if the reply was only a tag.
+    const reply = stripVisualDirectives(pipelineResult.text) || "Let's take a look at this together — what's the first step you'd try?";
 
     console.log(`[Trial Pipeline] ${pipelineResult._pipeline.messageType} → ${pipelineResult._pipeline.action} (flags: ${pipelineResult._pipeline.flags.join(', ') || 'none'})`);
 
@@ -455,3 +490,4 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.stripVisualDirectives = stripVisualDirectives; // exported for tests
