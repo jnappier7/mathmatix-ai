@@ -2927,6 +2927,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Final safety net: remove any visual command tag NO renderer handled
+            // (e.g. [DIAGRAM:...] when diagram-display isn't loaded), so the student
+            // never sees raw bracket gibberish. Narrow whitelist — never touches
+            // interval notation like [0, 3] or LaTeX.
+            if (window.StripVisualTags) {
+                try {
+                    aiText = window.StripVisualTags.stripUnrenderedVisualTags(aiText);
+                } catch (error) {
+                    console.error('[StripVisualTags] Error stripping leftover tags:', error);
+                }
+            }
+
             // Only append if we didn't already stream the message into the DOM
             if (!wasStreamed) {
                 appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
