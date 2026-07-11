@@ -83,7 +83,7 @@
   const TRI2 = ['D', 'E', 'F'];
   // Base scalene triangle (all sides visibly different, so ticks are meaningful).
   const BASE = { A: [1, 3], B: [0, 0], C: [4, 0] };
-  const SHIFT = 6.5; // horizontal gap; DEF = ABC translated (A→D, B→E, C→F).
+  const SHIFT = 5.5; // horizontal gap; DEF = ABC translated (A→D, B→E, C→F).
 
   function triangleOf(v) {
     if (TRI1.indexOf(v) !== -1) return TRI1;

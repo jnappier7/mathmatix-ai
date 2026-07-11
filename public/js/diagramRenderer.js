@@ -87,12 +87,23 @@
         ], { strokeColor: '#e0447a', strokeWidth: 2, fixed: true });
       }
     });
-    // Angle congruence arcs: `arcs` concentric arcs at the vertex.
+    // Angle congruence arcs: `arcs` concentric arcs at the vertex. Two fixes vs
+    // a naive angle(): (1) small radius so it reads as an arc, not a disk; (2)
+    // order the rays so JSXGraph draws the INTERIOR angle — its CCW sweep from
+    // the first ray must be <180°, else it fills the reflex angle (a near-disk).
     (spec.angleMarks || []).forEach(function (m) {
+      var V = spec.points[m.at];
+      var P = spec.points[m.rays[0]];
+      var Q = spec.points[m.rays[1]];
+      var aP = Math.atan2(P[1] - V[1], P[0] - V[0]);
+      var aQ = Math.atan2(Q[1] - V[1], Q[0] - V[0]);
+      var sweep = ((aQ - aP) * 180 / Math.PI + 360) % 360;
+      var first = m.rays[0], last = m.rays[1];
+      if (sweep > 180) { first = m.rays[1]; last = m.rays[0]; }
       for (var i = 0; i < m.arcs; i++) {
-        board.create('angle', [pts[m.rays[0]], pts[m.at], pts[m.rays[1]]], {
-          radius: 0.6 + i * 0.18, fillColor: '#f0a', fillOpacity: 0.2,
-          strokeColor: '#e0447a', name: '', fixed: true,
+        board.create('angle', [pts[first], pts[m.at], pts[last]], {
+          radius: 0.32 + i * 0.13, fillColor: '#f0a', fillOpacity: 0.15,
+          strokeColor: '#e0447a', strokeWidth: 2, name: '', fixed: true, highlight: false,
         });
       }
     });
