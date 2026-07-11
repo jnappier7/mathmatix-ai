@@ -55,7 +55,55 @@
     board.create('angle', [A, O, C], { name: spec.angles.central.label, radius: 1.4, fillColor: '#f0a', fixed: true });
   }
 
-  var DRAWERS = { inscribed_angle: drawInscribedAngle };
+  // Two congruent triangles with tick/arc marks on corresponding parts. All the
+  // geometry (points, tick positions, angle rays) is precomputed in the spec;
+  // this drawer only paints it.
+  function drawCongruentTriangles(board, spec) {
+    var pts = {};
+    Object.keys(spec.points).forEach(function (name) {
+      pts[name] = board.create('point', spec.points[name], {
+        name: name, size: 1, fixed: true, label: { offset: [6, 6] },
+      });
+    });
+    (spec.triangles || []).forEach(function (tri) {
+      board.create('polygon', [pts[tri[0]], pts[tri[1]], pts[tri[2]]], {
+        fillColor: '#667eea', fillOpacity: 0.08,
+        borders: { strokeColor: '#667eea', strokeWidth: 2 },
+        vertices: { visible: false }, hasInnerPoints: false, fixed: true,
+      });
+    });
+    // Side congruence ticks: `ticks` short dashes across the side midpoint,
+    // spaced along the side and drawn perpendicular to it.
+    (spec.sideMarks || []).forEach(function (m) {
+      var along = m.along || [m.perp[1], -m.perp[0]];
+      var half = 0.18, gap = 0.16;
+      for (var i = 0; i < m.ticks; i++) {
+        var off = (i - (m.ticks - 1) / 2) * gap;
+        var cx = m.mid[0] + off * along[0];
+        var cy = m.mid[1] + off * along[1];
+        board.create('segment', [
+          [cx - half * m.perp[0], cy - half * m.perp[1]],
+          [cx + half * m.perp[0], cy + half * m.perp[1]],
+        ], { strokeColor: '#e0447a', strokeWidth: 2, fixed: true });
+      }
+    });
+    // Angle congruence arcs: `arcs` concentric arcs at the vertex.
+    (spec.angleMarks || []).forEach(function (m) {
+      for (var i = 0; i < m.arcs; i++) {
+        board.create('angle', [pts[m.rays[0]], pts[m.at], pts[m.rays[1]]], {
+          radius: 0.6 + i * 0.18, fillColor: '#f0a', fillOpacity: 0.2,
+          strokeColor: '#e0447a', name: '', fixed: true,
+        });
+      }
+    });
+    (spec.rightAngleMarks || []).forEach(function (m) {
+      board.create('angle', [pts[m.rays[0]], pts[m.at], pts[m.rays[1]]], {
+        type: 'square', fillColor: '#bbb', fillOpacity: 0.4, name: '', fixed: true,
+      });
+    });
+  }
+
+  var DRAWERS = { inscribed_angle: drawInscribedAngle, congruent_triangles: drawCongruentTriangles };
 
   /**
    * Render a diagram board command into `container`.
@@ -77,9 +125,17 @@
         // Deterministic-ish id from the spec; avoids Math.random for testability.
         container.id = 'jxg-' + spec.type + '-' + (container.dataset.cardIndex || Date.now());
       }
-      var r = spec.radius * 1.4;
+      // Bounding box: prefer an explicit extent (e.g. congruent_triangles);
+      // fall back to a radius-derived square (inscribed_angle).
+      var bb;
+      if (spec.extent) {
+        bb = [spec.extent.xMin, spec.extent.yMax, spec.extent.xMax, spec.extent.yMin];
+      } else {
+        var r = spec.radius * 1.4;
+        bb = [-r, r, r, -r];
+      }
       var board = window.JXG.JSXGraph.initBoard(container.id, {
-        boundingbox: [-r, r, r, -r],
+        boundingbox: bb,
         axis: false, grid: false, showCopyright: false, showNavigation: false,
         keepAspectRatio: true, pan: { enabled: false }, zoom: { enabled: false },
       });
