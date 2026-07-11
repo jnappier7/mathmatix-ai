@@ -59,7 +59,7 @@ const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { applyWorksheetGuard, isCheckWorkIntent } = require('../utils/worksheetGuard');
 const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
-const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl } = require('../utils/activeWorksheetImage');
+const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl, findWorksheetInMessages } = require('../utils/activeWorksheetImage');
 const { verifyStudentWork } = require('../utils/pipeline/checkWorkVerifier');
 
 // When a student shares their work and asks to be checked, nudge the tutor to
@@ -509,6 +509,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         let uploadImageContents = [];
         let uploadPdfTexts = [];
         let combinedMessage = effectiveMessage.trim();
+        // Per-file worksheet-continuity payload, index-aligned with uploadedFiles,
+        // folded onto the message's `attachments` below so the conversation doc is
+        // a self-sufficient source of truth on later turns (no raced out-of-band
+        // StudentUpload lookup). PDFs carry OCR text; images carry a downscaled
+        // data-URL. Cap the persisted text so a huge worksheet can't bloat the doc.
+        const WORKSHEET_ATTACHMENT_TEXT_CAP = 12000;
+        const attachmentContinuity = [];
 
         if (hasUploadedFiles) {
             logger.info('Processing uploaded files', { userId, fileCount: uploadedFiles.length });
@@ -533,20 +540,27 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             logger.warn('EXIF strip failed', { error: stripErr.message });
                         }
                         const base64 = fileBuffer.toString('base64');
+                        // Compact durable copy persisted on the message for cross-turn
+                        // vision re-thread (survives ephemeral-disk loss). Best-effort.
+                        const durableDataUrl = await downscaleToDataUrl(fileBuffer);
                         return {
                             type: 'image',
-                            content: { type: "image_url", image_url: { url: `data:${file.mimetype};base64,${base64}`, detail: "high" } }
+                            content: { type: "image_url", image_url: { url: `data:${file.mimetype};base64,${base64}`, detail: "high" } },
+                            durableDataUrl
                         };
                     }
                 }));
 
-                for (const result of fileResults) {
+                fileResults.forEach((result, index) => {
                     if (result.type === 'pdf') {
                         uploadPdfTexts.push({ filename: result.filename, text: result.text });
+                        const text = (result.text || '').slice(0, WORKSHEET_ATTACHMENT_TEXT_CAP);
+                        attachmentContinuity[index] = text.trim() ? { extractedText: text } : {};
                     } else {
                         uploadImageContents.push(result.content);
+                        attachmentContinuity[index] = result.durableDataUrl ? { imageData: result.durableDataUrl } : {};
                     }
-                }
+                });
             } catch (processingError) {
                 logger.error('File processing error', { error: processingError.message });
                 uploadedFiles.forEach(f => { if (f.path) try { fsSync.unlinkSync(f.path); } catch(e) {} });
@@ -576,10 +590,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         // same _id in the deferred/fire-and-forget block below. This lets the
         // transcript re-render the file on history reload (and click back to it)
         // via /api/student/uploads/:id/file — not just show it in the compose tray.
-        const attachmentMeta = uploadedFiles.map((file) => ({
+        const attachmentMeta = uploadedFiles.map((file, index) => ({
             uploadId: new mongoose.Types.ObjectId(),
             fileType: file.mimetype === 'application/pdf' ? 'pdf' : 'image',
-            mimeType: file.mimetype
+            mimeType: file.mimetype,
+            // Server-only continuity payload (stripped before reaching the client).
+            ...(attachmentContinuity[index] || {})
         }));
 
         activeConversation.messages.push({
@@ -766,54 +782,77 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             logger.debug('Injected recent uploads into AI context', { count: recentUploads.length });
         }
 
+        // Reliable worksheet continuity, sourced from the conversation's OWN
+        // messages — committed with the conversation on the upload turn and
+        // reloaded every turn. Preferred over the out-of-band StudentUpload
+        // lookups (activeWorksheetDoc / activeWorksheetImageDoc), which are
+        // written fire-and-forget and can lose the race with a fast follow-up
+        // turn (the "I can see it" → "type it out" bug). Those lookups remain a
+        // fallback for conversations whose messages predate this field.
+        const msgWorksheet = findWorksheetInMessages(activeConversation.messages);
+
         // Pin the active worksheet (full text) for every-turn injection. On the
         // upload turn the text is in memory (uploadPdfTexts); on later turns it
-        // comes from the conversation-scoped StudentUpload fetched above. This is
-        // distinct from the truncated cross-session "recent uploads" excerpt —
-        // it's the doc the student is actively working from, kept salient so the
-        // tutor never asks them to re-share a problem it already has.
+        // comes from the message-embedded copy (reliable) or, failing that, the
+        // conversation-scoped StudentUpload. This is distinct from the truncated
+        // cross-session "recent uploads" excerpt — it's the doc the student is
+        // actively working from, kept salient so the tutor never asks them to
+        // re-share a problem it already has.
         let activeWorksheet = null;
+        let activeWorksheetSource = null;
         const WORKSHEET_MAX_CHARS = 12000;
         if (uploadPdfTexts.length > 0) {
             const w = uploadPdfTexts[uploadPdfTexts.length - 1];
             if (w && w.text && w.text.trim()) {
                 activeWorksheet = { filename: w.filename, text: w.text };
+                activeWorksheetSource = 'current-upload';
             }
+        } else if (msgWorksheet.text) {
+            activeWorksheet = { filename: (activeWorksheetDoc && activeWorksheetDoc.originalFilename) || 'your worksheet', text: msgWorksheet.text };
+            activeWorksheetSource = 'message-pin';
         } else if (activeWorksheetDoc && activeWorksheetDoc.extractedText) {
             activeWorksheet = { filename: activeWorksheetDoc.originalFilename, text: activeWorksheetDoc.extractedText };
+            activeWorksheetSource = 'studentupload-fallback';
         }
         if (activeWorksheet && activeWorksheet.text.length > WORKSHEET_MAX_CHARS) {
             activeWorksheet.text = activeWorksheet.text.slice(0, WORKSHEET_MAX_CHARS) + '\n[... worksheet truncated — ask which section if the relevant problem may be below]';
         }
         if (activeWorksheet) {
-            logger.debug('Pinned active worksheet to prompt', { filename: activeWorksheet.filename, chars: activeWorksheet.text.length, source: uploadPdfTexts.length > 0 ? 'current-upload' : 'conversation-pin' });
+            logger.debug('Pinned active worksheet to prompt', { filename: activeWorksheet.filename, chars: activeWorksheet.text.length, source: activeWorksheetSource });
         }
 
         // Pin the active worksheet IMAGE for vision re-injection on follow-up
-        // turns (within its TTL). Loading the bytes is a single small disk read;
-        // gated by a flag so it can be disabled if the per-turn vision cost ever
-        // needs trimming. Best-effort — a missing/oversized file yields null and
-        // we silently fall back to text-only continuity.
+        // turns (within its TTL). Prefer the message-embedded downscaled copy
+        // (reliable, race-free); fall back to the out-of-band StudentUpload doc
+        // for older conversations. Gated by a flag so the per-turn vision cost
+        // can be disabled. Best-effort — a missing copy yields null and we
+        // silently fall back to text-only continuity.
         let activeWorksheetImageUrl = null;
         const worksheetVisionEnabled = process.env.UNIFIED_WORKSHEET_VISION !== 'false';
         if (worksheetVisionEnabled && !hasUploadedFiles) {
-            // Explicit step-by-step logging so a live test pinpoints exactly
-            // where re-threading fails (no doc / expired / file gone).
-            const active = isImageStillActive(activeWorksheetImageDoc);
-            if (!activeWorksheetImageDoc) {
-                // Common case (most turns have no worksheet) — keep it quiet.
-                logger.debug('[worksheetVision] no active image doc for conversation');
-            } else if (!active) {
-                logger.info('[worksheetVision] active image doc found but outside TTL — not re-threading', { uploadedAt: activeWorksheetImageDoc.uploadedAt });
+            if (msgWorksheet.imageDataUrl) {
+                activeWorksheetImageUrl = msgWorksheet.imageDataUrl;
+                logger.info('[worksheetVision] re-threading worksheet image from conversation message (reliable source)');
             } else {
-                activeWorksheetImageUrl = await buildImageDataUrl(activeWorksheetImageDoc);
-                logger.info('[worksheetVision] active image doc in TTL', {
-                    uploadedAt: activeWorksheetImageDoc.uploadedAt,
-                    source: activeWorksheetImageDoc.imageData ? 'durable-db' : 'disk',
-                    loaded: !!activeWorksheetImageUrl,
-                });
-                if (!activeWorksheetImageUrl) {
-                    logger.warn('[worksheetVision] could not load active worksheet image (durable copy missing AND on-disk file unreadable)', { filePath: activeWorksheetImageDoc.filePath });
+                // Fallback for conversations whose messages predate the durable
+                // per-message image copy. Explicit step-by-step logging so a live
+                // test pinpoints exactly where re-threading fails.
+                const active = isImageStillActive(activeWorksheetImageDoc);
+                if (!activeWorksheetImageDoc) {
+                    // Common case (most turns have no worksheet) — keep it quiet.
+                    logger.debug('[worksheetVision] no active image doc for conversation');
+                } else if (!active) {
+                    logger.info('[worksheetVision] active image doc found but outside TTL — not re-threading', { uploadedAt: activeWorksheetImageDoc.uploadedAt });
+                } else {
+                    activeWorksheetImageUrl = await buildImageDataUrl(activeWorksheetImageDoc);
+                    logger.info('[worksheetVision] active image doc in TTL', {
+                        uploadedAt: activeWorksheetImageDoc.uploadedAt,
+                        source: activeWorksheetImageDoc.imageData ? 'durable-db' : 'disk',
+                        loaded: !!activeWorksheetImageUrl,
+                    });
+                    if (!activeWorksheetImageUrl) {
+                        logger.warn('[worksheetVision] could not load active worksheet image (durable copy missing AND on-disk file unreadable)', { filePath: activeWorksheetImageDoc.filePath });
+                    }
                 }
             }
         } else if (worksheetVisionEnabled && hasUploadedFiles) {

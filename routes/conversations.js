@@ -393,8 +393,21 @@ router.post('/:id/switch', isAuthenticated, validateObjectId('id'), async (req, 
     user.activeConversationId = conversationId;
     await user.save();
 
-    // Get recent messages (last 50)
-    const recentMessages = conversation.messages.slice(-50);
+    // Get recent messages (last 50). Strip the server-only worksheet-continuity
+    // fields (attachments[].extractedText / imageData) — the browser only needs
+    // the uploadId + type to re-render the file, and shipping the OCR text +
+    // base64 image would bloat the history payload (and re-regress chat load).
+    const recentMessages = conversation.messages.slice(-50).map(m => {
+      const obj = (m && typeof m.toObject === 'function') ? m.toObject() : { ...m };
+      if (Array.isArray(obj.attachments)) {
+        obj.attachments = obj.attachments.map(a => ({
+          uploadId: a.uploadId,
+          fileType: a.fileType,
+          mimeType: a.mimeType,
+        }));
+      }
+      return obj;
+    });
 
     res.json({
       conversation: {
