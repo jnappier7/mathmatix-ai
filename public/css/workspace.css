@@ -625,24 +625,28 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 5px;
-  padding: 2px 6px 6px;
+  gap: 7px;
+  padding: 2px 6px 8px;
 }
 .cr-ws-scaffold-key {
-  min-width: 30px;
-  height: 30px;
-  padding: 0 7px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 15px;
+  line-height: 1;
   font-family: 'KaTeX_Main', 'Times New Roman', serif;
   color: var(--cr-text);
   background: var(--cr-bg-subtle, #f4f5f7);
   border: 1px solid var(--cr-border);
-  border-radius: 7px;
+  border-radius: 9px;
   cursor: pointer;
-  transition: background 0.12s var(--cr-ease), border-color 0.12s var(--cr-ease);
+  transition: background 0.12s var(--cr-ease), border-color 0.12s var(--cr-ease), transform 0.06s var(--cr-ease);
 }
 .cr-ws-scaffold-key:hover { background: rgba(224, 150, 43, 0.12); border-color: rgba(224, 150, 43, 0.6); }
-.cr-ws-scaffold-key:active { background: rgba(224, 150, 43, 0.22); }
+.cr-ws-scaffold-key:active { background: rgba(224, 150, 43, 0.22); transform: scale(0.94); }
 .cr-ws-board-card--scaffold-checking .cr-ws-scaffold-keys,
 .cr-ws-board-card--scaffold-correct .cr-ws-scaffold-keys,
 .cr-ws-board-card--scaffold-done .cr-ws-scaffold-keys { display: none; }
