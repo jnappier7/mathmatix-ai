@@ -18,6 +18,18 @@ describe('rationalEvaluator — exact arithmetic', () => {
     expect(ans('-34+6')).toBe('-28');
   });
 
+  test('implicit multiplication (how students write substitutions: f\'(2) = 2(2) - 5)', () => {
+    expect(ans('2(2)-5')).toBe('-1');     // the real worksheet's f'(2) evaluation
+    expect(ans('2(2)')).toBe('4');
+    expect(ans('3(4)+1')).toBe('13');
+    expect(ans('(2)(3)')).toBe('6');      // )( between factors
+    expect(ans('2(3)(4)')).toBe('24');
+    expect(ans('(2)3')).toBe('6');        // ) before a value
+    expect(ans('-2(3)')).toBe('-6');      // unary sign + implicit mult
+    expect(ans('2(3+1)')).toBe('8');      // grouped sub-expression
+    expect(ans('2.5(4)')).toBe('10');     // decimal coefficient
+  });
+
   test('no floating-point error (the reason for BigInt rationals)', () => {
     expect(ans('0.1 + 0.2')).toBe('0.3');          // not 0.30000000000000004
     expect(ans('1/3 + 1/3 + 1/3')).toBe('1');       // not 0.9999...

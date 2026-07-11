@@ -60,13 +60,33 @@ const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecur
 const { applyWorksheetGuard, isCheckWorkIntent } = require('../utils/worksheetGuard');
 const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
 const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl, findWorksheetInMessages } = require('../utils/activeWorksheetImage');
+const { verifyStudentWork } = require('../utils/pipeline/checkWorkVerifier');
 
 // When a student shares their work and asks to be checked, nudge the tutor to
-// engage the ACTUAL steps and the specific error — not fall back to generic
-// "what was your first step?" coaching. Still never reveals the answer.
-// `isCheckWorkIntent` lives in utils/worksheetGuard.js (imported below) so it
-// can be unit-tested alongside the other worksheet/answer-key detectors.
-const CHECK_WORK_GUIDANCE = "\n\n[CHECK MY WORK: The student shared their OWN worked solution (shown in the image) and asked you to check it. Actually READ their steps. If it's correct, name specifically what they did right. If there's a mistake, point them to the SPECIFIC step where it goes wrong with ONE guiding question — name that step. Do NOT ask them to re-explain the problem from scratch, do NOT ignore a mistake you can see, and do NOT simply give the answer.]";
+// engage the ACTUAL steps — WITHOUT biasing toward finding an error. Telling a
+// correct student they made a mistake is worse than missing one, so the default
+// posture is "assume correct unless certain." Used when no independent verdict
+// is available (PDF work, or the verifier came back uncertain). Never reveals
+// the answer. `isCheckWorkIntent` lives in utils/worksheetGuard.js (imported
+// below) so it can be unit-tested alongside the other worksheet/answer-key
+// detectors.
+const CHECK_WORK_GUIDANCE = "\n\n[CHECK MY WORK: The student shared their OWN worked solution and asked you to check it. Actually READ their steps and re-derive the math yourself before judging. If it's correct, say so and name specifically what they did right — do NOT invent a mistake. Only point out an error if you are CERTAIN of the specific wrong step AND its corrected value; a correct negative result (e.g. 4−5=−1), an equivalent form (0.5=1/2), or multiple valid roots (x=2 or x=3) are NOT mistakes. If you're unsure whether something is wrong, ask a clarifying question rather than asserting an error. Do NOT ask them to re-explain the problem from scratch, and do NOT simply give the answer.]";
+
+// Build the check-work guidance from an independent verification verdict (see
+// utils/pipeline/checkWorkVerifier). When the verdict is trustworthy we hand
+// Maya ground truth so she affirms correct work instead of fabricating an error;
+// otherwise we fall back to the conservative CHECK_WORK_GUIDANCE above.
+function buildCheckWorkSuffix(verdict) {
+    if (!verdict || verdict.verdict === 'uncertain') return CHECK_WORK_GUIDANCE;
+    if (verdict.verdict === 'correct') {
+        const right = verdict.whatIsRight ? ` Specifically correct: ${verdict.whatIsRight}` : '';
+        return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED CORRECT: A separate check confirms the student's work is correct.${right} Affirm it warmly and name specifically what they did right. Do NOT invent or imply any mistake. You may offer an optional next step, but do not manufacture a problem.]`;
+    }
+    if (verdict.verdict === 'has_error') {
+        return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED ERROR: A separate check found a specific error at this step: "${verdict.errorStep}" (it should be ${verdict.correctedValue}). Guide the student to THAT step with ONE Socratic question. Do NOT reveal the corrected value outright — let them fix it. Affirm the steps that were correct.]`;
+    }
+    return CHECK_WORK_GUIDANCE;
+}
 
 // Multer disk storage for file uploads (prevents server crashes vs memoryStorage)
 const upload = multer({
@@ -839,6 +859,24 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             logger.debug('[worksheetVision] fresh upload this turn — image already in context, skipping re-thread');
         }
 
+        // ── Independent "check my work" verification ──
+        // The check-work upload flow produces NO deterministic grade (observe →
+        // answer=null → verifier/solver never fire), so the tutor freehand-grades
+        // the image with nothing cross-checking her — the source of false "you
+        // made a mistake" on correct work. Run one structured vision check and
+        // hand the verdict to the prompt as ground truth. Kicked off HERE (not at
+        // the suffix site) so the vision call overlaps history/prompt building.
+        // Fails safe to 'uncertain' → conservative guidance, never a fabricated error.
+        let checkWorkVerdictPromise = null;
+        const isCheckWork = isCheckWorkIntent(combinedMessage);
+        const checkWorkImages = (hasUploadedFiles && uploadImageContents.length > 0)
+            ? uploadImageContents
+            : (activeWorksheetImageUrl ? [{ type: 'image_url', image_url: { url: activeWorksheetImageUrl, detail: 'high' } }] : []);
+        if (isCheckWork && checkWorkImages.length > 0) {
+            checkWorkVerdictPromise = verifyStudentWork({ imageContents: checkWorkImages, studentText: message })
+                .catch(err => { logger.warn('[checkWorkVerify] failed', { error: err.message }); return null; });
+        }
+
         // Log parallel fetch performance
         const contextFetchTime = Date.now() - contextStartTime;
         logger.debug('Parallel context fetch completed', { durationMs: contextFetchTime });
@@ -1071,13 +1109,23 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 return daysAgo <= 1;
             });
 
+        // Resolve the independent check-work verdict (kicked off earlier) and
+        // build guidance that reflects it: verified-correct work is affirmed, not
+        // second-guessed; a verified error is pointed to specifically; anything
+        // uncertain falls back to conservative "assume correct unless certain."
+        const checkWorkVerdict = checkWorkVerdictPromise ? await checkWorkVerdictPromise : null;
+        if (checkWorkVerdict) {
+            logger.info('[checkWorkVerify] verdict', { verdict: checkWorkVerdict.verdict, confidence: checkWorkVerdict.confidence, hasError: !!checkWorkVerdict.errorStep });
+        }
+        const checkWorkSuffix = isCheckWork ? buildCheckWorkSuffix(checkWorkVerdict) : '';
+
         // ── File upload: vision message formatting + worksheet guard ──
         // When files are uploaded in THIS request, build multimodal content
         // for the last user message so the LLM sees the images.
         if (hasUploadedFiles && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
-                const checkSuffix = isCheckWorkIntent(combinedMessage) ? CHECK_WORK_GUIDANCE : '';
+                const checkSuffix = checkWorkSuffix;
                 const guardedText = applyWorksheetGuard(typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage);
                 if (uploadImageContents.length > 0) {
                     // Multimodal: text + images for vision API
@@ -1098,7 +1146,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             // partially-worked sheet doesn't leak answers.
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
-                const checkSuffix = isCheckWorkIntent(combinedMessage) ? CHECK_WORK_GUIDANCE : '';
+                const checkSuffix = checkWorkSuffix;
                 const baseText = typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage;
                 const guardedText = applyWorksheetGuard(baseText);
                 // Use the FOLLOW-UP reminder (not UPLOAD_CONTEXT_REMINDER): the

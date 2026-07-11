@@ -38,7 +38,10 @@ function isolateNumericExpression(text) {
     let m;
     while ((m = rx.exec(text)) !== null) {
         const expr = m[0].trim();
-        if (!/\d\s*[-+*/^]/.test(expr)) continue;    // no binary operator → not a computation
+        // Require an actual computation, not a bare number. A binary operator or a
+        // parenthesis (implicit multiplication, e.g. "2(2)-5") both qualify; a lone
+        // leading minus does not (strip it before checking).
+        if (!/[-+*/^()]/.test(expr.replace(/^-/, ''))) continue;
         if (evalExpression(expr) === null) continue; // exact engine rejects → defer, never guess
         return expr;
     }
@@ -3701,7 +3704,10 @@ function _isTrustedProblem(problem, source) {
         // when the expression itself still carries words (the older "what is …" catch-all,
         // whose `expression` can be raw prose).
         const expr = String(problem.expression || '');
-        const isPureNumericExpr = /^[\s\d.+\-*/^()]+$/.test(expr) && /\d\s*[-+*/^]/.test(expr);
+        // Pure numeric chars only, AND an actual computation — a binary operator or a
+        // parenthesis (implicit multiplication like "2(2)-5"), not a bare number. A lone
+        // leading minus doesn't count, so strip it before the operator check.
+        const isPureNumericExpr = /^[\s\d.+\-*/^()]+$/.test(expr) && /[-+*/^()]/.test(expr.replace(/^\s*-/, ''));
         if (!isPureNumericExpr) {
             if (PROSE_WORD_RX.test(source)) return false;
             if (problem.expression && PROSE_WORD_RX.test(problem.expression)) return false;
