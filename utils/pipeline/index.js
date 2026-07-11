@@ -50,6 +50,7 @@ const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
+const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
@@ -828,6 +829,77 @@ async function runPipeline(message, ctx) {
     } catch (gateErr) {
       // The gate must never break a response.
       boardLogger.error('Visual gate failed (non-fatal)', { error: gateErr.message });
+    }
+  }
+
+  // ── Stage 5c.0c: VISUAL GATE for LEGACY INLINE GRAPH TAGS ──
+  // The board gate above only sees <BOARD> graph/image commands. Legacy inline
+  // [FUNCTION_GRAPH:...]-family tags live in the tutor's chat text and otherwise
+  // reach the client ungated — the same leak the board gate closes (a graph of
+  // the student's own unsolved function reveals its roots), plus decorative/
+  // off-topic graphs (the "sin(x)/x" reflex) when the value judge is on. Route
+  // them through the SAME gate. Runs here in verify so the edit lands in
+  // pipelineResult.text — the authoritative text the client renders inline
+  // visuals from; worst case is a brief literal-tag flash mid-stream, never a
+  // rendered leak. Self-contained (doesn't touch the board block) and fail-safe:
+  // a gate error leaves the text untouched and never breaks the response.
+  if (visualGateMode !== 'off' && containsInlineGraphTag(verified.text)) {
+    try {
+      const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+      const activeProblem = {
+        problemText: pinnedTex,
+        normalizedExpression: pinnedTex,
+        correctAnswer: diagnosis.correctAnswer || null,
+        problemType: diagnosis.problemType || null,
+        status: diagnosis.isCorrect === true
+          ? 'solved'
+          : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
+      };
+      const learningState = {
+        concept: ctx.activeSkill?.name || null,
+        misconception: diagnosis.misconception?.name || null,
+        masteryScore: null,
+      };
+      const inlineResult = await gateInlineGraphTags({
+        text: verified.text,
+        activeProblem,
+        learningState,
+        user: ctx.user || null,
+        mode: visualGateMode,
+        // Same opt-in as the board path: leak-block runs deterministically in
+        // live modes; the decorative/relevance value judge is separate.
+        enableValueJudge: process.env.VISUAL_GATE_VALUE_JUDGE === 'on',
+      });
+      if (typeof inlineResult.text === 'string' && inlineResult.text !== verified.text) {
+        verified.text = inlineResult.text;
+      }
+      if (inlineResult.records.length) {
+        const turnIndex = Array.isArray(ctx.conversation?.messages) ? ctx.conversation.messages.length : null;
+        const decisionDocs = [];
+        for (const record of inlineResult.records) {
+          if (record.decision !== 'allow') {
+            boardLogger.info('Visual gate decision (inline graph)', {
+              mode: visualGateMode,
+              action: record.action,
+              decision: record.decision,
+              reasonCode: record.reasonCode,
+              riskLevel: record.riskLevel,
+            });
+          }
+          decisionDocs.push(buildDecisionDoc({
+            record,
+            activeProblem,
+            learningState,
+            mode: visualGateMode,
+            userId: ctx.user?._id || null,
+            conversationId: ctx.conversation?._id || null,
+            turnIndex,
+          }));
+        }
+        if (decisionDocs.length) persistVisualDecisions(decisionDocs);
+      }
+    } catch (gateErr) {
+      boardLogger.error('Inline visual gate failed (non-fatal)', { error: gateErr.message });
     }
   }
 
