@@ -505,6 +505,35 @@
         .catch(function () {
           imgHost.textContent = 'Image unavailable.';
         });
+    } else if (step.type === 'diagram') {
+      // Deterministic geometry (JSXGraph) from a validated DiagramSpec — a
+      // teaching aid, correct by construction (e.g. two congruent triangles with
+      // marked corresponding parts). Never the student's own worked solution;
+      // the spec's redact mode hides to-be-found values for the student's own
+      // problem. Mirrors the 'model' card below.
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--diagram');
+      var diagHost = el('div', 'cr-ws-board-card-diagram-host');
+      card.appendChild(diagHost);
+      if (step.caption) {
+        var diagCap = el('div', 'cr-ws-board-card-caption');
+        diagCap.textContent = step.caption;
+        card.appendChild(diagCap);
+      }
+      requestAnimationFrame(function () {
+        if (!window.DiagramRenderer) {
+          diagHost.textContent = 'Diagram engine still loading.';
+          return;
+        }
+        try {
+          window.DiagramRenderer.renderDiagram(
+            diagHost,
+            { diagramType: step.diagramType, diagramParams: step.diagramParams },
+            { redact: !!step.redact }
+          );
+        } catch (e) {
+          diagHost.textContent = "Couldn't build that diagram.";
+        }
+      });
     } else if (step.type === 'model') {
       // Concept model — an interactive, manipulable model of a math idea
       // (slope-intercept line, two-point line, …). Correct by construction:
@@ -1119,6 +1148,22 @@
       if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'model', model: model };
       if (prompt) step.prompt = String(prompt).trim();
+      pushBoardStep(step);
+      return true;
+    },
+
+    /**
+     * Drop a deterministic geometry diagram onto the board (inscribed angle,
+     * congruent triangles, …). Correct by construction — the spec computes the
+     * geometry; the renderer only draws it. A teaching aid summoned with intent.
+     * @param {object} command  { diagramType, diagramParams, redact?, caption? }
+     */
+    boardDiagram: function (command) {
+      if (!command || !command.diagramType) return false;
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
+      var step = { type: 'diagram', diagramType: command.diagramType, diagramParams: command.diagramParams || {} };
+      if (command.redact) step.redact = true;
+      if (command.caption) step.caption = String(command.caption).trim();
       pushBoardStep(step);
       return true;
     },

@@ -104,6 +104,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- MathGraph: self-contained canvas graphing engine (replaces function-plot CDN) -->
   <script defer src="/js/mathGraph.js"></script>
+  <!-- Final safety net: strips any inline visual tag no renderer handled -->
+  <script defer src="/js/stripVisualTags.js"></script>
   <!-- Non-core libs (lazy-loaded after first interaction) -->
   <!-- confetti: loaded on demand when celebration triggers -->
   <script>
@@ -2316,6 +2318,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/conceptModelSpec.js"></script>
   <script defer src="/js/conceptModelRenderer.js"></script>
   <script defer src="/js/conceptModelTokenRenderer.js"></script>
+  <!-- Deterministic geometry diagrams (JSXGraph); gated behind DIAGRAM_BOARD -->
+  <script src="/js/diagramSpec.js"></script>
+  <script defer src="/js/diagramRenderer.js"></script>
   <!-- Interactive math workspace (chat right slot) — after the tools it can launch -->
   <script src="/js/workspace.js?v=20260709"></script>
   <!-- Phase B: executes server-emitted <BOARD> commands against the embedded WorkBoard -->
