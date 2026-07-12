@@ -4,7 +4,13 @@
 // generates a final summary, replaces the message history with that summary,
 // and marks the conversation as inactive.
 
-require("dotenv").config({ path: '../.env' }); // Adjust path to .env if running from scripts/
+// Load .env for local runs. In production (Render) env vars are injected directly
+// and there is no .env file, so a missing dotenv module must not crash the cron.
+try {
+  require("dotenv").config();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
 const mongoose = require('mongoose');
 const Conversation = require('../models/conversation');
 const User = require('../models/user');
