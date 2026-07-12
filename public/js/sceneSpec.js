@@ -123,8 +123,51 @@
     return out;
   }
 
+  // --- field-level shape checks (the "schema") -----------------------------
+  function isId(v) { return typeof v === 'string' && v.length > 0; }
+  function isNum(v) { return typeof v === 'number' && Number.isFinite(v); }
+  function isPair(v) { return Array.isArray(v) && v.length === 2 && isNum(v[0]) && isNum(v[1]); }
+  function allIds(v, n) { return Array.isArray(v) && (n == null || v.length === n) && v.length > 0 && v.every(isId); }
+
+  function objShapeErrors(o) {
+    const e = [];
+    const id = o.id;
+    switch (o.type) {
+      case 'point': if (!isPair(o.at)) e.push(id + ': point needs at:[x,y]'); break;
+      case 'midpoint':
+      case 'intersection': if (!allIds(o.of, 2)) e.push(id + ': ' + o.type + ' needs of:[id,id]'); break;
+      case 'glider': if (!isId(o.on)) e.push(id + ': glider needs on:<curveId>'); if (!isPair(o.at)) e.push(id + ': glider needs at:[x,y]'); break;
+      case 'segment':
+      case 'line':
+      case 'ray': if (!isId(o.from) || !isId(o.to)) e.push(id + ': ' + o.type + ' needs from,to'); break;
+      case 'circle': if (!isId(o.center)) e.push(id + ': circle needs center'); if (!isId(o.through) && !isNum(o.radius)) e.push(id + ': circle needs through or radius'); break;
+      case 'polygon': if (!Array.isArray(o.points) || o.points.length < 3 || !o.points.every(isId)) e.push(id + ': polygon needs points:[id,id,id,…]'); break;
+      case 'parallel':
+      case 'perpendicular': if (!isId(o.through) || !isId(o.to)) e.push(id + ': ' + o.type + ' needs through,to'); break;
+    }
+    return e;
+  }
+
+  function markShapeErrors(m) {
+    const e = [];
+    switch (m.kind) {
+      case 'tick': if (!allIds(m.on, 2)) e.push('tick needs on:[id,id]'); if (m.count != null && !isNum(m.count)) e.push('tick count must be a number'); break;
+      case 'angle':
+      case 'right': if (!isId(m.at) || !isId(m.from) || !isId(m.to)) e.push(m.kind + ' needs at,from,to'); break;
+      case 'parallel': if (!allIds(m.on, 4)) e.push('parallel mark needs on:[p1,p2,p3,p4]'); break;
+      case 'label': if (!isId(m.on)) e.push('label needs on:<pointId>'); if (typeof m.text !== 'string') e.push('label needs text'); break;
+      case 'measure':
+        if (!(allIds(m.on, 1) || allIds(m.on, 2))) e.push('measure needs on:[id] or [id,id]');
+        if (m.value != null && !isNum(m.value)) e.push('measure value must be a number or null');
+        break;
+    }
+    return e;
+  }
+
   /**
    * Validate a scene and return a topological build order for its objects.
+   * Checks: known types, unique ids, per-type field shapes, references resolve,
+   * and no dependency cycles.
    * @param {{objects:Array, marks?:Array}} scene
    * @returns {{valid:boolean, errors:string[], order:string[]}}
    */
@@ -139,6 +182,7 @@
       if (!o || typeof o.id !== 'string' || !o.id) { errors.push('every object needs a string id'); continue; }
       if (byId.has(o.id)) errors.push('duplicate id: ' + o.id);
       if (!(o.type in DEPS)) errors.push('unknown object type: ' + o.type + ' (id ' + o.id + ')');
+      else objShapeErrors(o).forEach((msg) => errors.push(msg));
       byId.set(o.id, o);
     }
 
@@ -154,6 +198,7 @@
     // Marks reference objects too (no ordering impact — rendered last).
     for (const m of (scene.marks || [])) {
       if (!m || !(m.kind in MARK_REFS)) { errors.push('unknown mark kind: ' + (m && m.kind)); continue; }
+      markShapeErrors(m).forEach((msg) => errors.push(msg));
       for (const d of idsFrom(m, MARK_REFS[m.kind])) {
         if (!byId.has(d)) errors.push('mark "' + m.kind + '" references missing id: ' + d);
       }

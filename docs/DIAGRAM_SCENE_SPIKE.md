@@ -55,8 +55,13 @@ corresponding angles) hold **exactly** because JSXGraph computed the points.
    scene is blocked if it can't be. 19 unit tests + browser-verified redaction
    (right-triangle "find x": AB=6/BC=8 kept, x → ?). A structured scene can redact
    selectively; a raster can't — the reason to stay structured.
-2. **Model emission.** Strict JSON schema for scenes + prompt guidance, behind a flag
-   (mirror `DIAGRAM_BOARD` / the `conceptModelCommand.js` generated‑spec pattern).
+2. **Model emission.** Started: `validateScene` now enforces per-type FIELD shapes
+   (a real schema — rejects a `point` with no `at`, a `polygon` with <3 vertices, a
+   `measure` with a non-numeric value; 22 tests). First-draft authoring prompt in
+   `DIAGRAM_SCENE_PROMPT.md`. Remaining: the OpenAI structured-output `json_schema`
+   (strict mode needs the flatten-fields workaround for the heterogeneous object
+   array) + a flag + validate emission against a live model (mirror
+   `conceptModelCommand.js`).
 3. **Grow the relation vocabulary as needed:** `reflect/rotate/translate`,
    `angle_bisector`, `tangent`, `point_at_distance`, `arc`. Most K‑12 cases are
    covered by JSXGraph natives; only genuinely under/over‑constrained scenes need a
