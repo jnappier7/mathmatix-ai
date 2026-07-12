@@ -12,7 +12,13 @@
  * @module weeklyDigest
  */
 
-require('dotenv').config();
+// Load .env for local runs. In production (Render) env vars are injected directly
+// and there is no .env file, so a missing dotenv module must not crash the cron.
+try {
+  require('dotenv').config();
+} catch (err) {
+  if (err.code !== 'MODULE_NOT_FOUND') throw err;
+}
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
