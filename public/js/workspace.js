@@ -182,19 +182,29 @@
     });
     card.appendChild(row);
 
-    // Tap-strip — the math symbols a phone keyboard hides two layers deep, one
-    // tap away. Inserts at the focused blank's cursor (pointerdown + preventDefault
-    // keeps focus in the input). Hidden once the card locks (see CSS).
+    // Tap-strip — the few math symbols a phone keyboard buries, one tap away.
+    // Kept deliberately small and clearly labeled (each key has a plain-English
+    // tooltip, like the chat symbol strip). Numbers come from the student's own
+    // keyboard; this row is only the awkward-to-type glyphs. Dropped the
+    // duplicate exponent key and the rarely-needed π / ± to cut the clutter.
+    // Inserts at the focused blank's cursor (pointerdown + preventDefault keeps
+    // focus in the input). Hidden once the card locks (see CSS).
     var keys = el('div', 'cr-ws-scaffold-keys');
-    [['(', '('], [')', ')'], ['xⁿ', '^'], ['x²', '²'], ['√', '√'],
-     ['±', '±'], ['∕', '/'], ['π', 'π']].forEach(function (k) {
+    [{ glyph: '(',   insert: '(', tip: 'Open parenthesis' },
+     { glyph: ')',   insert: ')', tip: 'Close parenthesis' },
+     { glyph: '−',   insert: '-', tip: 'Negative / minus' },
+     { glyph: 'a/b', insert: '/', tip: 'Fraction bar' },
+     { glyph: 'xⁿ',  insert: '^', tip: 'Exponent — type the power next' },
+     { glyph: '√',   insert: '√', tip: 'Square root' }
+    ].forEach(function (k) {
       var kb = el('button', 'cr-ws-scaffold-key');
       kb.type = 'button';
-      kb.textContent = k[0];
-      kb.setAttribute('aria-label', 'insert ' + k[1]);
+      kb.textContent = k.glyph;
+      kb.title = k.tip;
+      kb.setAttribute('aria-label', k.tip);
       kb.addEventListener('pointerdown', function (e) {
         e.preventDefault(); // don't blur the blank
-        insertIntoBlank(k[1]);
+        insertIntoBlank(k.insert);
       });
       keys.appendChild(kb);
     });

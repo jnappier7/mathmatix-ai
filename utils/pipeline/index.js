@@ -842,8 +842,22 @@ async function runPipeline(message, ctx) {
   // see, so we backfill a verbatim pose. Naturally dark-flagged:
   // structuredTurnType is only populated when STRUCTURED_TUTOR_RESPONSE
   // is on, so flag-off traffic never reaches this branch.
+  // Trigger on the model's self-declared problem_introduction turn_type OR — when
+  // the board is still empty — the decide stage's own `present_problem` action.
+  // The model under-declares problem_introduction on conversational lead-ins, so
+  // the pose used to lag until the equation later parsed (often the student's own
+  // attempt), which reads as "the problem showed up after I'd solved it". The
+  // decide action is pipeline ground truth, not a model self-report; we only trust
+  // it to pose onto an EMPTY board (no pinned problem) so it can never re-pose a
+  // problem already in play or mistake an intermediate line for a new one.
+  const posePinnedTex = ctx.conversation?.boardProblem?.tex || null;
+  const problemIntroTurn = shouldBackfillProblemPose({
+    structuredTurnType: generatedResult.structuredTurnType,
+    decisionAction: decision?.action,
+    pinnedTex: posePinnedTex,
+  });
   let backfillOutcome = null;
-  if (generatedResult.structuredTurnType === 'problem_introduction'
+  if (problemIntroTurn
       && !verified.boardCommands.some(c => c.action === 'pose')) {
     const fallbackPose = synthesizeFallbackPose({
       tutorResponse: verified.text,
@@ -1582,8 +1596,32 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
   user.markModified('learningEngines');
 }
 
+/**
+ * Whether Stage 5c.1 should backfill a PROBLEM pose this turn. True when the
+ * turn genuinely introduces a problem but no pose survived upstream. Two
+ * independent signals:
+ *   • the model's self-declared `problem_introduction` turn_type, or
+ *   • — only onto an EMPTY board — the decide stage's `present_problem` action.
+ * The decide action is pipeline ground truth (not a model self-report), so it
+ * catches the model under-declaring its turn_type on a conversational lead-in,
+ * which is what made the pose lag behind the chat. Restricting the decide signal
+ * to an empty board (no pinned problem) means it can never re-pose a problem
+ * already in play or mistake an intermediate line for a new one.
+ *
+ * @param {object} p
+ * @param {string|null} p.structuredTurnType
+ * @param {string|null} p.decisionAction
+ * @param {string|null} p.pinnedTex
+ * @returns {boolean}
+ */
+function shouldBackfillProblemPose({ structuredTurnType, decisionAction, pinnedTex } = {}) {
+  if (structuredTurnType === 'problem_introduction') return true;
+  return decisionAction === 'present_problem' && !pinnedTex;
+}
+
 module.exports = {
   runPipeline,
+  shouldBackfillProblemPose,
   // Re-export for direct access when needed
   observe,
   diagnose,
