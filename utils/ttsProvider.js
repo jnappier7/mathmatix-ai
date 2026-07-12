@@ -86,32 +86,34 @@ function getFileExtension() {
  * Works for both providers.
  * @param {string} text - Cleaned text to synthesize
  * @param {string} voiceId - Provider-specific voice ID
+ * @param {string} [language='en'] - Provider language code (e.g. 'de')
  * @returns {Promise<Buffer>} Audio data
  */
-async function generateAudio(text, voiceId) {
-    return generateCartesiaAudio(text, voiceId);
+async function generateAudio(text, voiceId, language = 'en') {
+    return generateCartesiaAudio(text, voiceId, language);
 }
 
 /**
  * Generate TTS audio as a buffered response.
  * @param {string} text - Cleaned text to synthesize
  * @param {string} voiceId - Provider-specific voice ID
+ * @param {string} [language='en'] - Provider language code (e.g. 'de')
  * @returns {Promise<Object>} Axios response with arraybuffer
  */
-async function generateAudioStream(text, voiceId) {
-    return generateCartesiaAudioResponse(text, voiceId);
+async function generateAudioStream(text, voiceId, language = 'en') {
+    return generateCartesiaAudioResponse(text, voiceId, language);
 }
 
 // ============================================
 // CARTESIA IMPLEMENTATION
 // ============================================
 
-async function generateCartesiaAudio(text, voiceId) {
-    const response = await generateCartesiaAudioResponse(text, voiceId);
+async function generateCartesiaAudio(text, voiceId, language = 'en') {
+    const response = await generateCartesiaAudioResponse(text, voiceId, language);
     return Buffer.from(response.data);
 }
 
-async function generateCartesiaAudioResponse(text, voiceId) {
+async function generateCartesiaAudioResponse(text, voiceId, language = 'en') {
     return await retryWithExponentialBackoff(async () => {
         return await axios.post(
             `${CARTESIA_BASE_URL}/tts/bytes`,
@@ -122,7 +124,7 @@ async function generateCartesiaAudioResponse(text, voiceId) {
                     mode: "id",
                     id: voiceId
                 },
-                language: "en",
+                language,
                 output_format: {
                     container: "wav",
                     encoding: "pcm_s16le",
