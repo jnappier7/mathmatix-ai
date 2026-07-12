@@ -35,8 +35,13 @@ mongoose.connection.on('error', (err) => {
   logger.error('MongoDB connection error', err);
 });
 
-// Log slow queries in development
-if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+// Log queries only when explicitly opted in (local development, or MONGOOSE_DEBUG=true).
+// Opt-in rather than opt-out: an unset NODE_ENV on the host must not leak query logs
+// into production, and never enable in test.
+if (
+  process.env.NODE_ENV !== 'test' &&
+  (process.env.MONGOOSE_DEBUG === 'true' || process.env.NODE_ENV === 'development')
+) {
   mongoose.set('debug', (collectionName, method, query, doc, options) => {
     logger.debug(`Mongoose: ${collectionName}.${method}`, {
       query: JSON.stringify(query).substring(0, 200),
