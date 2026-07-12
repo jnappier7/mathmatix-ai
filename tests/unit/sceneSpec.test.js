@@ -70,6 +70,27 @@ describe('sceneSpec.validateScene', () => {
   });
 });
 
+describe('sceneSpec — field-level shape validation (the schema)', () => {
+  const bad = (obj) => validateScene({ objects: [obj] });
+  it('rejects malformed object fields', () => {
+    expect(bad({ id: 'A', type: 'point', at: [0] }).valid).toBe(false);          // at not a pair
+    expect(bad({ id: 'A', type: 'point' }).valid).toBe(false);                    // no at
+    expect(bad({ id: 'P', type: 'polygon', points: ['A', 'B'] }).valid).toBe(false); // <3 pts
+    expect(bad({ id: 'S', type: 'segment', from: 'A' }).valid).toBe(false);       // no to
+    expect(bad({ id: 'M', type: 'midpoint', of: ['A'] }).valid).toBe(false);      // needs 2
+  });
+  it('circle requires through OR radius', () => {
+    expect(validateScene({ objects: [{ id: 'O', type: 'point', at: [0, 0] }, { id: 'c', type: 'circle', center: 'O' }] }).valid).toBe(false);
+    expect(validateScene({ objects: [{ id: 'O', type: 'point', at: [0, 0] }, { id: 'c', type: 'circle', center: 'O', radius: 3 }] }).valid).toBe(true);
+  });
+  it('rejects malformed mark fields', () => {
+    const objs = [{ id: 'A', type: 'point', at: [0, 0] }, { id: 'B', type: 'point', at: [1, 0] }];
+    expect(validateScene({ objects: objs, marks: [{ kind: 'tick', on: ['A'], count: 1 }] }).valid).toBe(false); // tick needs 2
+    expect(validateScene({ objects: objs, marks: [{ kind: 'measure', on: ['A', 'B'], value: 'ten' }] }).valid).toBe(false); // value not number
+    expect(validateScene({ objects: objs, marks: [{ kind: 'measure', on: ['A', 'B'], value: 10 }] }).valid).toBe(true);
+  });
+});
+
 describe('sceneSpec — displayed values (redaction / extraction)', () => {
   const scene = {
     objects: [{ id: 'A', type: 'point', at: [0, 0] }, { id: 'B', type: 'point', at: [4, 0] }, { id: 'C', type: 'point', at: [4, 3] }],
