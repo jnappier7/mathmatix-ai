@@ -100,6 +100,18 @@
     else if (m.kind === 'right') { board.create('angle', [objs[m.from], objs[m.at], objs[m.to]], { type: 'square', fillColor: '#bbb', fillOpacity: 0.4, name: '', fixed: true }); }
     else if (m.kind === 'parallel') { drawParallelMark(board, xy(objs[m.on[0]]), xy(objs[m.on[1]])); drawParallelMark(board, xy(objs[m.on[2]]), xy(objs[m.on[3]])); }
     else if (m.kind === 'label' && objs[m.on] && objs[m.on].setName) { objs[m.on].setName(m.text); }
+    else if (m.kind === 'measure') {
+      var pts = (m.on || []).map(function (id) { return objs[id]; }).filter(Boolean);
+      if (!pts.length) return;
+      var cx, cy;
+      if (pts.length >= 2) { cx = (pts[0].X() + pts[1].X()) / 2; cy = (pts[0].Y() + pts[1].Y()) / 2; }
+      else { cx = pts[0].X(); cy = pts[0].Y(); }
+      var shown = (m.value === null || m.value === undefined) ? '?' : (m.value + (m.unit || ''));
+      var txt = (m.symbol ? m.symbol + ' = ' : '') + shown;
+      board.create('text', [cx + 0.15, cy + 0.3, txt], {
+        fontSize: 14, fixed: true, cssStyle: 'font-weight:600', strokeColor: m.redacted ? '#c0392b' : '#333',
+      });
+    }
   }
 
   function renderScene(container, scene, opts) {

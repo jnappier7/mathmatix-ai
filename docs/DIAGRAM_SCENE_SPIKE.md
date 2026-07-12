@@ -46,11 +46,15 @@ corresponding angles) hold **exactly** because JSXGraph computed the points.
 
 ## Recommended next steps (to productionize)
 
-1. **Safety gate on the SOLVED figure.** Extend `applyVisualGate` (utils/visualGate.js):
-   after solving, check the computed coordinates/labels don't reveal the pinned
-   problem's answer. Plus **redaction** — to‑be‑found labels render as `?` (a
-   structured scene can redact; a generated image can't — the reason to stay
-   structured).
+1. **Safety gate on the SOLVED figure — ✅ BUILT (2026-07-11).** `utils/sceneGate.js`
+   (mirrors `visualGate`: deterministic, transform-or-block, mode ladder) +
+   `sceneSpec.redactScene`/`extractSceneValues`. Scenes carry `measure` marks
+   (the value a figure displays = the leak vector). The gate: (a) `redactAll` for
+   the student's own problem hides `solve:true` unknowns → `x = ?`, **givens
+   stay**; (b) any displayed value equal to the known answer is redacted, or the
+   scene is blocked if it can't be. 19 unit tests + browser-verified redaction
+   (right-triangle "find x": AB=6/BC=8 kept, x → ?). A structured scene can redact
+   selectively; a raster can't — the reason to stay structured.
 2. **Model emission.** Strict JSON schema for scenes + prompt guidance, behind a flag
    (mirror `DIAGRAM_BOARD` / the `conceptModelCommand.js` generated‑spec pattern).
 3. **Grow the relation vocabulary as needed:** `reflect/rotate/translate`,

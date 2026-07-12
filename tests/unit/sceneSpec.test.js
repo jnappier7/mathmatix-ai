@@ -1,4 +1,4 @@
-const { validateScene } = require('../../public/js/sceneSpec');
+const { validateScene, extractSceneValues, redactScene } = require('../../public/js/sceneSpec');
 
 const midsegment = {
   objects: [
@@ -67,5 +67,45 @@ describe('sceneSpec.validateScene', () => {
     });
     expect(v.valid).toBe(true);
     expect(v.order.indexOf('l2')).toBeGreaterThan(v.order.indexOf('l1'));
+  });
+});
+
+describe('sceneSpec — displayed values (redaction / extraction)', () => {
+  const scene = {
+    objects: [{ id: 'A', type: 'point', at: [0, 0] }, { id: 'B', type: 'point', at: [4, 0] }, { id: 'C', type: 'point', at: [4, 3] }],
+    marks: [
+      { kind: 'measure', on: ['A', 'B'], symbol: 'AB', value: 6, unit: 'cm' },   // given
+      { kind: 'measure', on: ['A', 'C'], symbol: 'x', value: 10, solve: true },   // to-be-found
+      { kind: 'label', on: 'A', text: 'A' },
+    ],
+  };
+
+  it('extractSceneValues collects every displayed number', () => {
+    expect(extractSceneValues(scene).sort((a, b) => a - b)).toEqual([6, 10]);
+  });
+
+  it('redactSolve hides the unknown but KEEPS the given', () => {
+    const r = redactScene(scene, { redactSolve: true });
+    const ab = r.marks[0], x = r.marks[1];
+    expect(ab.value).toBe(6);       // given stays
+    expect(x.value).toBeNull();     // unknown hidden
+    expect(x.redacted).toBe(true);
+    expect(r.objects).toBe(scene.objects); // geometry untouched
+  });
+
+  it('answerValues hides any value matching the answer, regardless of solve', () => {
+    const r = redactScene(scene, { answerValues: [6] });
+    expect(r.marks[0].value).toBeNull(); // 6 matches → hidden even though it was a "given"
+    expect(r.marks[1].value).toBe(10);   // 10 doesn't match → stays
+  });
+
+  it('no opts → nothing hidden (givens are safe by default)', () => {
+    expect(redactScene(scene).marks[0].value).toBe(6);
+  });
+
+  it('is non-mutating', () => {
+    const copy = JSON.parse(JSON.stringify(scene));
+    redactScene(scene, { redactSolve: true, answerValues: [6, 10] });
+    expect(scene).toEqual(copy);
   });
 });

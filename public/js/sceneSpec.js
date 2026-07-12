@@ -39,12 +39,78 @@
   };
 
   const MARK_REFS = {
-    tick: ['on'],       // { on:segmentId, count }
+    tick: ['on'],       // { on:[ptId, ptId], count }
     angle: ['at', 'from', 'to'],
     right: ['at', 'from', 'to'],
-    parallel: ['on'],   // { on:[segId, segId] } chevrons
+    parallel: ['on'],   // { on:[p1,p2,p3,p4] } chevrons
     label: ['on'],      // { on:pointId, text }
+    // A displayed MEASUREMENT — a length/angle/coordinate value shown on the
+    // figure: { on:[ptId(s)], symbol:'x'|'AB'|'∠B', value:Number, unit?, solve? }.
+    // `value` is the LEAK VECTOR the scene gate inspects/redacts; `symbol` is safe.
+    measure: ['on'],
   };
+
+  const NUM_RE = /-?\d+(?:\.\d+)?/g;
+  function numbersIn(s) {
+    if (typeof s !== 'string') return [];
+    const m = s.match(NUM_RE);
+    return m ? m.map(Number).filter((n) => Number.isFinite(n)) : [];
+  }
+
+  /**
+   * Every numeric value the scene would DISPLAY to the student (measurement
+   * values + any digits in measure/label text). This is "what the figure
+   * reveals" — the scene gate compares it against the known answer.
+   * @param {object} scene
+   * @returns {number[]}
+   */
+  function extractSceneValues(scene) {
+    const out = [];
+    for (const m of (scene && scene.marks) || []) {
+      if (m.kind === 'measure') {
+        if (typeof m.value === 'number' && Number.isFinite(m.value)) out.push(m.value);
+        out.push.apply(out, numbersIn(m.symbol));
+      } else if (m.kind === 'label') {
+        out.push.apply(out, numbersIn(m.text));
+      }
+    }
+    return out;
+  }
+
+  /**
+   * Return a copy of the scene with the RIGHT values hidden (rendered as "?"),
+   * keeping geometry AND givens intact. Pure. Two independent triggers:
+   *   - opts.redactSolve: hide measures flagged `solve:true` — the to-be-found
+   *     unknowns when the figure depicts the student's own problem (givens stay,
+   *     so the picture is still useful).
+   *   - opts.answerValues: hide any measure/label value that equals a known
+   *     answer value — the deterministic leak net, regardless of `solve`.
+   * A structured scene can redact selectively; a raster/generated image can't,
+   * which is why the diagram engine is structured.
+   * @param {object} scene
+   * @param {{redactSolve?:boolean, answerValues?:number[]}} [opts]
+   * @returns {object}
+   */
+  function redactScene(scene, opts) {
+    if (!scene || !Array.isArray(scene.marks)) return scene;
+    opts = opts || {};
+    const redactSolve = !!opts.redactSolve;
+    const answerVals = Array.isArray(opts.answerValues) ? opts.answerValues : [];
+    const matchesAnswer = (v) => typeof v === 'number' && answerVals.some((a) => Math.abs(a - v) <= 1e-6);
+    const marks = scene.marks.map((m) => {
+      if (m.kind === 'measure') {
+        const hide = (redactSolve && m.solve === true) || matchesAnswer(m.value);
+        return hide ? Object.assign({}, m, { value: null, redacted: true }) : m;
+      }
+      if (m.kind === 'label' && typeof m.text === 'string' && answerVals.length && numbersIn(m.text).some(matchesAnswer)) {
+        // Blank only answer-matching numbers; leave given numbers readable.
+        const t = m.text.replace(NUM_RE, (d) => (matchesAnswer(Number(d)) ? '?' : d));
+        return Object.assign({}, m, { text: t });
+      }
+      return m;
+    });
+    return Object.assign({}, scene, { marks });
+  }
 
   function idsFrom(obj, fields) {
     const out = [];
@@ -120,5 +186,5 @@
     return { valid: errors.length === 0, errors, order };
   }
 
-  return { validateScene, DEPS, MARK_REFS };
+  return { validateScene, extractSceneValues, redactScene, DEPS, MARK_REFS };
 });
