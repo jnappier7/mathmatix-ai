@@ -495,6 +495,30 @@ function detectMathProblem(message) {
         };
     }
 
+    // Pattern: Combine like terms / simplify a variable expression with no '='.
+    // "simplify 5x+3x-2x" → 6x, "7y - 10y" → -3y, "combine like terms 2a+3a-a" → 4a.
+    // This skill previously matched NO pattern here, so the deterministic grader
+    // returned hasMath:false and grading fell through to the LLM verifier — which
+    // could reject a correct answer (e.g. mark "-3y" wrong for "7y-10y"). Binomial
+    // products (parentheses) stay with expand_polynomial and equations ('=') stay
+    // with their own solvers; this only claims a bare additive polynomial that
+    // actually has like terms to combine.
+    if (!/=/.test(message) && !/[()]/.test(message)) {
+        // Greedy strip up to the LAST "simplify"/"combine like terms" keyword so a
+        // prose-wrapped prompt ("Let's try one more: simplify 3y-9y") yields just
+        // the trailing expression. A bare expression (no keyword) is left untouched.
+        // parsePolynomial's 80%-consumption guard rejects anything still carrying
+        // prose, so a stray "simplify" elsewhere in a sentence can't create a
+        // bogus problem.
+        const exprOnly = message
+            .replace(/^.*\b(?:combine(?:\s+like\s+terms)?|simplify)\b\s*:?\s*/i, '')
+            .trim();
+        const poly = parsePolynomial(exprOnly);
+        if (poly && poly.terms.length >= 2 && hasLikeTermsToCombine(poly.terms)) {
+            return { type: 'combine_like_terms', expression: exprOnly, poly };
+        }
+    }
+
     // Pattern: Mixed-number arithmetic — "12 2/3 - 4 1/4", "12⅔ - 4¼", "2 1/2 + 3".
     // Must run BEFORE the arithmetic-chain detector, which would strip the space in
     // "12 2/3" to "122/3" and evaluate garbage. Requires at least one operand to be
@@ -662,6 +686,8 @@ function solveProblem(problem) {
                 return solveSlope(problem);
             case 'expand_polynomial':
                 return solveExpandPolynomial(problem);
+            case 'combine_like_terms':
+                return solveCombineLikeTerms(problem);
             case 'factor_quadratic':
                 return solveFactorQuadratic(problem);
             case 'factor_diff_of_squares':
@@ -1197,6 +1223,70 @@ function solveExpandPolynomial(problem) {
         answer,
         steps: [
             `Expand ${expression}`,
+            `= ${answer}`,
+        ],
+    };
+}
+
+/**
+ * True when the parsed terms contain at least two terms that share the same
+ * variable AND exponent — i.e. there is actually something to combine. Guards
+ * the combine_like_terms detector so an already-simplified or single-term
+ * expression falls through to other handlers instead of being "graded".
+ */
+function hasLikeTermsToCombine(terms) {
+    const seen = new Set();
+    for (const t of terms) {
+        const key = `${t.variable || '_const'}^${t.exp}`;
+        if (seen.has(key)) return true;
+        seen.add(key);
+    }
+    return false;
+}
+
+/**
+ * Format canonical polynomial terms ({coeff, variable, exp}) into a readable
+ * string, preserving the actual variable letter — unlike formatPolynomialTerms(),
+ * which is hardcoded to 'x'. [{-3,'y',1}] → "-3y", [{4,'x',2},{2,'x',1}] → "4x^2 + 2x".
+ */
+function formatCombinedPolynomial(terms) {
+    if (!terms || terms.length === 0) return '0';
+    let out = '';
+    terms.forEach((t, i) => {
+        const abs = Math.abs(t.coeff);
+        if (i === 0) {
+            if (t.coeff < 0) out += '-';
+        } else {
+            out += t.coeff < 0 ? ' - ' : ' + ';
+        }
+        const varPart = t.variable
+            ? (t.exp >= 2 ? `${t.variable}^${t.exp}` : t.variable)
+            : '';
+        if (!varPart) {
+            out += String(abs);
+        } else if (abs === 1) {
+            out += varPart;
+        } else {
+            out += `${abs}${varPart}`;
+        }
+    });
+    return out;
+}
+
+/**
+ * Combine like terms in a variable expression → simplified canonical form.
+ * "7y - 10y" → "-3y", "5x + 3x - 2x" → "6x", "2x + 3y + x" → "3x + 3y".
+ * Grading is exact: verifyAnswer() re-parses both sides as polynomials, so any
+ * equivalent form of the answer (spacing, term order, unicode minus) grades equal.
+ */
+function solveCombineLikeTerms(problem) {
+    const canon = canonicalizePolynomial(problem.poly.terms);
+    const answer = formatCombinedPolynomial(canon);
+    return {
+        success: true,
+        answer,
+        steps: [
+            `Combine like terms: ${problem.expression}`,
             `= ${answer}`,
         ],
     };
@@ -3672,7 +3762,10 @@ function processMathMessage(message) {
 // is found. Callers that need the raw catch-all (e.g. legacy chat.js
 // arithmetic checks) keep using processMathMessage directly.
 const PROSE_WORD_RX = /[a-z]{4,}/i;
-const MATH_CANDIDATE_VERB_RX = /\b(?:solve|try|find|evaluate|simplify|factor|graph|compute)\s+([^.?!\n]+?)(?=[.?!\n]|$)/gi;
+// The separator is [\s:]+ (not just \s+) so a colon-led prompt like
+// "Simplify: 7y-10y" — the natural way a tutor poses a problem — still yields
+// the bare expression "7y-10y" as a candidate.
+const MATH_CANDIDATE_VERB_RX = /\b(?:solve|try|find|evaluate|simplify|factor|graph|compute)[\s:]+([^.?!\n]+?)(?=[.?!\n]|$)/gi;
 const MATH_CANDIDATE_EQ_RX = /(?:^|[\s:>])(\(?-?\d*[a-z][a-z0-9\s+\-*/^().]*=\s*-?[a-z0-9\s+\-*/^()]+?)(?=[.?!\n]|$|\s{2})/gi;
 
 function _extractMathCandidates(text) {
@@ -3750,6 +3843,8 @@ module.exports = {
     solveQuadratic,
     solveAbsoluteValue,
     solveFactorQuadratic,
+    solveCombineLikeTerms,
+    hasLikeTermsToCombine,
     solveFractionArithmetic,
     solvePercentage,
     solveExponent,
