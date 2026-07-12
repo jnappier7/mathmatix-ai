@@ -6,6 +6,7 @@ const express = require("express");
 const router = express.Router();
 const ttsProvider = require("../utils/ttsProvider");
 const { cleanTextForTTS } = require("../utils/mathTTS");
+const { resolveLangCode } = require("../utils/languageCodes");
 
 router.post("/", async (req, res) => {
   const { text, voiceId } = req.body;
@@ -33,11 +34,15 @@ router.post("/", async (req, res) => {
   // Resolve voice ID for the active provider
   const resolvedVoiceId = ttsProvider.resolveVoiceId(voiceId || "2eFQnnNM32GDnZkCfkSm");
 
+  // Synthesize in the student's preferred language so non-English text (e.g.
+  // German) isn't read with English phonetics. Defaults to 'en'.
+  const language = resolveLangCode(req.user && req.user.preferredLanguage);
+
   // Clean text for TTS (remove markdown and LaTeX)
   const cleanedText = cleanTextForTTS(text);
 
   try {
-    const audioBuffer = await ttsProvider.generateAudio(cleanedText, resolvedVoiceId);
+    const audioBuffer = await ttsProvider.generateAudio(cleanedText, resolvedVoiceId, language);
     res.setHeader("Content-Type", ttsProvider.getContentType());
     res.send(audioBuffer);
 
