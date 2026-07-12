@@ -77,9 +77,12 @@ function configureMiddleware(app) {
       if (req.headers['x-forwarded-proto'] !== 'https') {
         return res.redirect(301, `https://${req.hostname}${req.originalUrl}`);
       }
-      if (req.hostname === 'www.mathmatix.ai') {
-        return res.redirect(301, `https://mathmatix.ai${req.originalUrl}`);
-      }
+      // NOTE: Do NOT redirect www → apex here. Render's edge already
+      // canonicalizes host by redirecting apex → www, and there is no dashboard
+      // toggle to reverse that direction. A www → apex redirect at the origin
+      // fights Render's apex → www edge redirect and produces an infinite
+      // loop (ERR_TOO_MANY_REDIRECTS). www is the canonical host; the origin
+      // only ever sees www, so no host canonicalization is needed here.
       next();
     });
   }
