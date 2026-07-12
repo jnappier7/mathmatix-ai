@@ -68,6 +68,9 @@ function makeValidator(name, rules, opts = {}) {
       }
 
       if (!present) {
+        // preserve an explicit null on a nullable field (e.g. VerifiedMove
+        // .mathematicallyValid = null means "validity N/A", NOT "unset")
+        if (input[field] === null && rule.nullable) { value[field] = null; continue; }
         if (rule.default !== undefined) value[field] = rule.default;
         else if (rule.required) errors.push(`${name}.${field}: required`);
         continue;
