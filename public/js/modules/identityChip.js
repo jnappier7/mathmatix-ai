@@ -100,13 +100,28 @@ function toggleTitlePopover(evt) {
         pop.innerHTML = `<div class="cr-title-empty">Earn rank titles by showing your thinking —
           catch your own mistakes, explain your reasoning, stick with hard problems.</div>`;
     } else {
+        // Plain-English phrase per Tier-3 behavior, so the "5×" count isn't a
+        // mystery number — it's how many times you've shown that behavior (QA P2).
+        const BEHAVIOR_PHRASE = {
+            caught_own_error: 'caught your own mistake',
+            explained_reasoning: 'explained your reasoning',
+            persistence: 'pushed through a hard problem',
+            taught_back: 'taught a concept back',
+            strategy_selection: 'picked the right strategy',
+            transfer: 'applied a concept somewhere new',
+        };
+        const times = (e) => {
+            const phrase = BEHAVIOR_PHRASE[e.behavior] || 'shown this';
+            return `You've ${phrase} ${e.count} time${e.count === 1 ? '' : 's'}`;
+        };
         const current = resolveDisplayTitle(user);
         pop.innerHTML = `<div class="cr-title-head">Choose your title</div>` +
+            `<div class="cr-title-sub">The number is how many times you've earned it.</div>` +
             earned.map(e => `
               <button type="button" class="cr-title-option${current && e.behavior === current.behavior ? ' is-active' : ''}"
-                      data-behavior="${e.behavior}" role="menuitemradio">
+                      data-behavior="${e.behavior}" role="menuitemradio" title="${times(e)}">
                 <span class="cr-title-name">${e.title}</span>
-                <span class="cr-title-meta">${e.count}×</span>
+                <span class="cr-title-meta" title="${times(e)}">${e.count}×</span>
               </button>`).join('');
     }
 

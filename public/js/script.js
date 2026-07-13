@@ -2781,10 +2781,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         showToast('Last message! Your free time is almost up.', 'warning');
                     } else if (remaining <= 120 && remaining > 30 && !window._warned2m) {
                         window._warned2m = true;
-                        showToast('About 2 minutes of AI time remaining this week.', 'warning');
+                        showToast('About 2 minutes of AI time remaining this month.', 'warning');
                     } else if (remaining <= 300 && remaining > 120 && !window._warned5m) {
                         window._warned5m = true;
-                        showToast('5 minutes of free AI time left this week.', 'info');
+                        showToast('5 minutes of free AI time left this month.', 'info');
                     }
                 }
             }
