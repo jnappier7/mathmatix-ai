@@ -46,6 +46,10 @@ if (!valid) return res.status(400).json({ errors });
 Every top-level object carries `schemaVersion` and a `migrate*()` hook so a future
 bump has one obvious home. v1 is the baseline.
 
-## Self-test
-`node shared/workspace/__selftest__.js` — asserts the client-can't-forge-validity
-guarantee and the round-trips. (Promoted to a jest suite in P1.)
+## Tests
+Jest suites under `tests/unit/workspace/` (promoted from the P0/P1 node
+self-tests): `contracts.test.js` asserts the client-can't-forge-validity
+guarantee and the round-trips; `algebraTileVerifier.test.js` the authoritative
+verdict; `studentMoveService.test.js` the service + the normalized-string
+ANSWER_ATTEMPT classification seam. Route plumbing lives in
+`tests/integration/studentMoves.test.js`.
