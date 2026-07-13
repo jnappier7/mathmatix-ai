@@ -3097,6 +3097,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Living Workspace preview (M-B): when the flag is on, mirror the
+            // SAME already-guarded board commands onto the new surface beside
+            // the old board. No-op when the flag is off. (QA: continue the
+            // workspace build — see /js/living-workspace/chat-workspace.js)
+            if (window.LWS_CHAT && window.LWS_CHAT.isOn() && Array.isArray(data.boardCommands)) {
+                try {
+                    window.LWS_CHAT.applyBoardCommands(data.boardCommands);
+                } catch (error) {
+                    console.error('[LWS_CHAT] applyBoardCommands failed:', error);
+                }
+            }
+
             // Phase C: execute server-emitted <XP> ceremony commands
             // (confetti + optional gold caption). Pipeline caps the batch
             // at 3 so a runaway model can't confetti-bomb the chat.
