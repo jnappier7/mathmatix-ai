@@ -1,7 +1,9 @@
 // routes/trialChat.js
 // Anonymous trial chat — 4 free turns (1 greeting + 3 student), no auth required.
 // Lets landing page visitors experience a real tutor conversation
-// before signing up. Uses server-side IP+session turn tracking.
+// before signing up. Turn gate is durable per browser via the Mongo-backed
+// session (survives refresh + multiple instances); IP rate-limit is a separate
+// abuse backstop.
 //
 // Runs through the SAME tutoring pipeline as authenticated chat
 // (observe → diagnose → decide → generate → verify) with skipPersist=true
@@ -15,45 +17,49 @@ const { sanitizeForAI } = require('../middleware/promptInjection');
 const { generateSystemPrompt } = require('../utils/prompt');
 const { runPipeline } = require('../utils/pipeline');
 const { callLLM } = require('../utils/llmGateway');
+const { samplePoints } = require('../utils/trialGraphPoints');
 
 const MAX_TURNS = 4; // 1 greeting + 3 student messages
 const MAX_MESSAGE_LENGTH = 500;
+// Board op types the lightweight trial notebook renders. `graph` is rendered from
+// server-computed points (see below); image/model still need workspace libs the
+// landing page doesn't load, so they're skipped. All are already Visual-Gated.
+const TRIAL_BOARD_ACTIONS = new Set(['pose', 'apply', 'resolve', 'scaffold', 'verify', 'graph']);
+
+// Engagement XP for the trial. Rewards THINKING, not correctness — an answer
+// attempt earns whether right or wrong; showing work earns the bonus. Off-task /
+// disengaged / gaming turns earn nothing (mirrors the streak/anti-gaming posture).
+const XP_NO_AWARD = new Set(['off_task', 'greeting', 'skip_request', 'give_up', 'parroting', 'evasive_affirmative']);
+function computeTrialXp(messageType) {
+  const mt = messageType || '';
+  if (XP_NO_AWARD.has(mt)) return { points: 0, reason: null };
+  if (mt === 'answer_attempt' || mt === 'check_my_work') return { points: 15, reason: 'for showing your work' };
+  if (mt === 'question' || mt === 'help_request') return { points: 8, reason: 'for asking a good question' };
+  return { points: 8, reason: 'for working through it' };
+}
 const UNLOCKED_TUTOR_IDS = Object.keys(TUTOR_CONFIG).filter(id => TUTOR_CONFIG[id].unlocked);
 
-// Server-side turn tracking by IP — prevents client-side history manipulation.
-// Keyed by IP, stores { count, resetAt }. Entries expire after 1 hour.
-const turnTracker = new Map();
-const TURN_TRACKER_TTL = 60 * 60 * 1000; // 1 hour
-
-function getServerTurnCount(ip) {
-  const entry = turnTracker.get(ip);
-  if (!entry || Date.now() > entry.resetAt) return 0;
-  return entry.count;
+// Durable per-browser turn tracking via the Mongo-backed session.
+//
+// This deliberately replaces the old in-memory, IP-keyed Map. That map had two
+// fatal flaws: (1) it lived in a single process, so under Render horizontal
+// scaling a refresh could round-robin to another instance with a fresh count —
+// letting students farm unlimited free tutoring by hitting F5; and (2) IP-only
+// keying meant a whole school behind one NAT shared just MAX_TURNS/hour.
+//
+// The session is stored in Mongo (connect-mongo), so the counter survives
+// refreshes AND is shared across every instance, and it's scoped per browser
+// (session cookie) rather than per IP — fair to shared networks, durable to F5.
+// Clearing cookies / incognito still resets it; that residual is intentional
+// (soft gate + a strong signup incentive, not a hard lockout).
+function getTrialTurns(req) {
+  return (req.session && req.session.trialTurns) || 0;
 }
 
-const TURN_TRACKER_MAX_SIZE = 50000;
-
-function incrementServerTurnCount(ip) {
-  const existing = turnTracker.get(ip);
-  if (!existing || Date.now() > existing.resetAt) {
-    // Evict oldest entries if map is too large (prevent memory exhaustion)
-    if (turnTracker.size >= TURN_TRACKER_MAX_SIZE) {
-      const oldest = turnTracker.keys().next().value;
-      turnTracker.delete(oldest);
-    }
-    turnTracker.set(ip, { count: 1, resetAt: Date.now() + TURN_TRACKER_TTL });
-  } else {
-    existing.count += 1;
-  }
+function bumpTrialTurns(req) {
+  if (!req.session) return; // no session (shouldn't happen post-middleware) — fail open
+  req.session.trialTurns = (req.session.trialTurns || 0) + 1;
 }
-
-// Periodic cleanup of expired entries to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of turnTracker) {
-    if (now > entry.resetAt) turnTracker.delete(ip);
-  }
-}, 10 * 60 * 1000); // Every 10 minutes
 
 // Aggressive rate limit for anonymous endpoint — IP-based
 const trialLimiter = rateLimit({
@@ -91,10 +97,43 @@ function buildTrialUserProfile() {
 }
 
 /**
+ * Strip inline visual DIRECTIVES ([FUNCTION_GRAPH:...], [SLIDER_GRAPH:...], etc.)
+ * from a trial reply. The authenticated chat renders these via inlineChatVisuals.js,
+ * but the lightweight trial client doesn't load that system — so an unstripped tag
+ * leaks into the bubble as raw text (e.g. `[FUNCTION_GRAPH:fn=2x-5,...]`).
+ *
+ * Uses a bracket-depth scan (handles nested brackets in params) but only treats
+ * `[UPPERCASE…]` as a directive and NEVER when preceded by a backslash, so LaTeX
+ * display math (`\[ ... \]`) is preserved.
+ */
+function stripVisualDirectives(text) {
+  if (!text || typeof text !== 'string') return text || '';
+  let out = '';
+  let i = 0;
+  while (i < text.length) {
+    const directiveOpen = text[i] === '[' && text[i - 1] !== '\\'
+      && i + 1 < text.length && /[A-Z]/.test(text[i + 1]);
+    if (directiveOpen) {
+      let depth = 1;
+      let j = i + 1;
+      while (j < text.length && depth > 0) {
+        if (text[j] === '[') depth++;
+        else if (text[j] === ']') depth--;
+        j++;
+      }
+      if (depth === 0) { i = j; continue; } // skip the whole [ ... ]
+    }
+    out += text[i];
+    i++;
+  }
+  return out.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/**
  * Build in-memory conversation and user stand-ins for the pipeline.
  * These satisfy the pipeline's interface without touching MongoDB.
  */
-function buildTrialPipelineContext(sanitizedHistory) {
+function buildTrialPipelineContext(sanitizedHistory, boardPin) {
   const now = new Date();
 
   // Build message array in the format the pipeline expects
@@ -111,6 +150,11 @@ function buildTrialPipelineContext(sanitizedHistory) {
     startDate: now,
     problemsAttempted: 0,
     problemsCorrect: 0,
+    // The board guard pins every decision against conversation.boardProblem.tex.
+    // The trial is stateless per request, so we restore the pin the pipeline set
+    // on a previous turn (held server-side in the session — never client-supplied,
+    // so it can't be tampered into relaxing the guard). null on the first turn.
+    boardProblem: boardPin ? { tex: boardPin, posedAt: now } : null,
   };
 
   // Minimal user stand-in
@@ -147,7 +191,7 @@ router.post('/greet', trialLimiter, async (req, res) => {
     }
 
     // Check gate — greet counts as a turn
-    const serverTurns = getServerTurnCount(req.ip);
+    const serverTurns = getTrialTurns(req);
     if (serverTurns >= MAX_TURNS) {
       return res.json({ greeting: null, gated: true });
     }
@@ -187,9 +231,9 @@ RULES:
     const greeting = completion.choices[0].message.content;
 
     // Count this as a turn
-    incrementServerTurnCount(req.ip);
+    bumpTrialTurns(req);
 
-    res.json({ greeting });
+    res.json({ greeting, turnsRemaining: Math.max(0, MAX_TURNS - (serverTurns + 1)) });
 
   } catch (error) {
     console.error('[Trial Chat] Greeting error:', error.message);
@@ -231,8 +275,9 @@ router.post('/', trialLimiter, async (req, res) => {
       return res.status(400).json({ error: `Message too long. Max ${MAX_MESSAGE_LENGTH} characters.` });
     }
 
-    // Server-side turn counting — prevents client-side history manipulation
-    const serverTurns = getServerTurnCount(req.ip);
+    // Server-side turn counting — durable per browser (session), prevents both
+    // client-side history manipulation and refresh-to-reset farming.
+    const serverTurns = getTrialTurns(req);
     if (serverTurns >= MAX_TURNS) {
       return res.json({
         reply: null,
@@ -296,7 +341,9 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     // Include the current user message so the pipeline and LLM can see it
     // (mirrors chat.js which pushes to activeConversation.messages before building formattedMessages)
     const historyWithCurrentMessage = [...sanitizedHistory, { role: 'user', content: sanitizedMessage }];
-    const { conversation, user } = buildTrialPipelineContext(historyWithCurrentMessage);
+    // Restore the board pin the pipeline set on a previous turn (server-held).
+    const priorBoardPin = (req.session && req.session.trialBoardPin) || null;
+    const { conversation, user } = buildTrialPipelineContext(historyWithCurrentMessage, priorBoardPin);
 
     // Format messages for LLM (same format as chat.js — includes current user message)
     const formattedMessages = historyWithCurrentMessage.map(m => ({ role: m.role, content: m.content }));
@@ -317,17 +364,54 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
       skipPersist: true,
     });
 
-    const reply = pipelineResult.text;
+    // Strip inline visual directives the trial client can't render (they'd leak
+    // as raw `[FUNCTION_GRAPH:...]` text). Fall back if the reply was only a tag.
+    const reply = stripVisualDirectives(pipelineResult.text) || "Let's take a look at this together — what's the first step you'd try?";
 
     console.log(`[Trial Pipeline] ${pipelineResult._pipeline.messageType} → ${pipelineResult._pipeline.action} (flags: ${pipelineResult._pipeline.flags.join(', ') || 'none'})`);
 
+    // Persist the board pin the pipeline just set (pose → pin, else null) so the
+    // guard has the same canonical problem on the next turn. Server-side only.
+    if (req.session) req.session.trialBoardPin = conversation.boardProblem?.tex || null;
+
+    // Surface the ALREADY-GATED board commands the pipeline produced. These have
+    // passed the full boardCommandGuard + Visual Gate chain inside runPipeline —
+    // we do NOT re-generate or relax anything, only forward the text/math ops the
+    // lightweight trial notebook can render. graph/image/model are skipped here
+    // (they need workspace libs the landing page doesn't load) — follow-up.
+    const board = (pipelineResult.boardCommands || [])
+      .filter(c => c && TRIAL_BOARD_ACTIONS.has(c.action))
+      .map(c => {
+        // For graph cards, evaluate the function server-side with the vetted
+        // rational engine and ship points. If it isn't plottable (unsupported
+        // function, all-asymptote), drop it — never render a guessed curve.
+        if (c.action === 'graph') {
+          const g = samplePoints(c.fn);
+          return g ? { action: 'graph', fn: c.fn, caption: c.caption || null, ...g } : null;
+        }
+        return c;
+      })
+      .filter(Boolean);
+
+    // Engagement XP for the turn — rewards THINKING, never correctness (an answer
+    // attempt earns whether right or wrong; showing work earns a bonus). Off-task
+    // / gaming turns earn nothing. Accumulated server-side in the session.
+    const xpAward = computeTrialXp(pipelineResult._pipeline && pipelineResult._pipeline.messageType);
+    if (req.session && xpAward.points) {
+      req.session.trialXp = (req.session.trialXp || 0) + xpAward.points;
+    }
+    const xpTotal = (req.session && req.session.trialXp) || xpAward.points;
+
     // Increment server-side turn count AFTER successful response
-    incrementServerTurnCount(req.ip);
+    bumpTrialTurns(req);
     const newTurnCount = serverTurns + 1;
 
     res.json({
       reply,
+      board,
+      xp: { awarded: xpAward.points, reason: xpAward.reason, total: xpTotal },
       turnCount: newTurnCount,
+      turnsRemaining: Math.max(0, MAX_TURNS - newTurnCount),
       gated: newTurnCount >= MAX_TURNS
     });
 
@@ -464,3 +548,5 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.stripVisualDirectives = stripVisualDirectives; // exported for tests
+module.exports.computeTrialXp = computeTrialXp; // exported for tests

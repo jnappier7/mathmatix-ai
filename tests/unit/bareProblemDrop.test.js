@@ -134,6 +134,47 @@ describe('detectBareProblemDrop', () => {
     expect(detectBareProblemDrop('4x-5=22', typeGeneralMath, noAnswer, [])).toBe(true);
     expect(detectBareProblemDrop('4x-5=22', typeGeneralMath, noAnswer, undefined)).toBe(true);
   });
+
+  // ── Bare ARITHMETIC / fraction computation drops ──
+  // Origin: a session where a student dropped "12⅔ - 4¼" with no attempt and the
+  // tutor solved it (converted both mixed numbers to improper fractions). Only
+  // equations / variables / \frac LaTeX counted as math signals, so a Unicode or
+  // ASCII fraction computation slipped past the gate.
+
+  test('flags "12⅔ - 4¼" — bare mixed-number subtraction (Unicode vulgar fractions)', () => {
+    expect(detectBareProblemDrop('12⅔ - 4¼', typeGeneralMath, noAnswer)).toBe(true);
+  });
+
+  test('flags "12 2/3 - 4 1/4" — bare mixed-number subtraction (ASCII)', () => {
+    expect(detectBareProblemDrop('12 2/3 - 4 1/4', typeGeneralMath, noAnswer)).toBe(true);
+  });
+
+  test('flags "1/2 + 1/4" — bare fraction addition', () => {
+    expect(detectBareProblemDrop('1/2 + 1/4', typeGeneralMath, noAnswer)).toBe(true);
+  });
+
+  test('flags "16/4 - 2" and "3.5 × 4" — bare multi-operand arithmetic', () => {
+    expect(detectBareProblemDrop('16/4 - 2', typeGeneralMath, noAnswer)).toBe(true);
+    expect(detectBareProblemDrop('3.5 × 4', typeGeneralMath, noAnswer)).toBe(true);
+  });
+
+  test('does NOT flag a lone fraction/number value — it is an answer, not a drop', () => {
+    // A single "/" denotes one fraction value (e.g. a conversion result), not an
+    // operation to carry out — these must stay un-flagged so student answers work.
+    expect(detectBareProblemDrop('3/4', typeGeneralMath, noAnswer)).toBe(false);
+    expect(detectBareProblemDrop('38/3', typeGeneralMath, noAnswer)).toBe(false);
+    expect(detectBareProblemDrop('⅔', typeGeneralMath, noAnswer)).toBe(false);
+  });
+
+  test('does NOT flag an arithmetic expression that carries reasoning or a stuck indicator', () => {
+    expect(detectBareProblemDrop('I got 1/2 + 1/4 = 3/4', typeGeneralMath, noAnswer)).toBe(false);
+    expect(detectBareProblemDrop("I'm stuck on 16/4 - 2", typeGeneralMath, noAnswer)).toBe(false);
+  });
+
+  test('does NOT flag a fraction reply when the tutor just asked for the next step', () => {
+    const recent = [{ content: "What's the first step you want to take?" }];
+    expect(detectBareProblemDrop('1/2 + 1/4', typeGeneralMath, noAnswer, recent)).toBe(false);
+  });
 });
 
 // ============================================================================

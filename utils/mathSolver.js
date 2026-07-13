@@ -10,6 +10,44 @@
  * @module mathSolver
  */
 
+const { normalizeMathOperators, normalizeSpokenNumbers } = require('./mathUnicodeNormalizer');
+const { evalExpression, expressionValue } = require('./rationalEvaluator');
+
+/**
+ * Isolate the first clean, contiguous numeric arithmetic expression embedded in a
+ * string and return it verbatim (or null if there isn't one).
+ *
+ * This is the single "pull the math out of a sentence" primitive. Rather than
+ * re-parse operands into {left, operator, right} — a lossy round-trip that
+ * historically kept dropping signs ("-34+6" → 34+6 = 40) — it hands the isolated
+ * slice to the exact-rational engine, which is the correctness guarantee: signs,
+ * precedence, and parentheses are handled exactly, and an invalid slice yields null
+ * so callers DEFER rather than emit a confidently-wrong answer.
+ *
+ * Boundaries (?<![\w.^]) / (?![\w.^]) prevent gluing onto letters or exponents, so
+ * "8x" (coefficient) and "x^2 + 8" (algebraic term) are not treated as arithmetic.
+ * A binary operator is required, so a bare number is not a "computation".
+ * Operators/signs are assumed already ASCII-normalized (× → *, − → -, …).
+ *
+ * @param {string} text
+ * @returns {string|null} the isolated expression (e.g. "-34+6"), or null
+ */
+function isolateNumericExpression(text) {
+    if (!text) return null;
+    const rx = /(?<![\w.^])-?\d[\d\s.+\-*/^()]*\d(?![\w.^])/g;
+    let m;
+    while ((m = rx.exec(text)) !== null) {
+        const expr = m[0].trim();
+        // Require an actual computation, not a bare number. A binary operator or a
+        // parenthesis (implicit multiplication, e.g. "2(2)-5") both qualify; a lone
+        // leading minus does not (strip it before checking).
+        if (!/[-+*/^()]/.test(expr.replace(/^-/, ''))) continue;
+        if (evalExpression(expr) === null) continue; // exact engine rejects → defer, never guess
+        return expr;
+    }
+    return null;
+}
+
 /**
  * Detect if a message contains a math problem
  * @param {string} message - User message
@@ -20,10 +58,15 @@ function detectMathProblem(message) {
         return null;
     }
 
-    // Normalize Unicode superscripts/subscripts BEFORE any pattern matching.
-    // AI messages and MathLive input often use ² ³ ⁴ etc. instead of ^2 ^3 ^4.
-    // Without this, "3²" won't match the exponent pattern expecting "3^2".
-    let normalized = message
+    // Normalize BEFORE any pattern matching. Two concerns:
+    //  1. Unicode operators/signs (−, ×, ÷, ⋅, fullwidth forms, …) → ASCII, via the
+    //     shared normalizeMathOperators() — the single source of truth. MathLive/
+    //     LaTeX emit these glyphs, and a missing one silently corrupts detection or
+    //     grading (the U+2212 minus dropped a negative; the U+22C5 dot dropped a
+    //     factor). It deliberately leaves vulgar fractions (½) and superscripts
+    //     alone, which this engine handles its own way below.
+    //  2. Superscripts (² ³ ⁴ …) → ^2 ^3, so "3²" matches the exponent patterns.
+    let normalized = normalizeMathOperators(message)
         .replace(/⁰/g, '^0').replace(/¹/g, '^1').replace(/²/g, '^2')
         .replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/⁵/g, '^5')
         .replace(/⁶/g, '^6').replace(/⁷/g, '^7').replace(/⁸/g, '^8')
@@ -100,6 +143,27 @@ function detectMathProblem(message) {
     // Must come BEFORE single equation detection
     const systemResult = detectSystem(message);
     if (systemResult) return systemResult;
+
+    // Pattern: Factored equation set to zero — "(x-2)(x-3)=0", "(2x+1)(x-3)=0".
+    // Each factor's root is where it equals zero (root = -constant/coeff). Detect
+    // BEFORE general_linear, which would otherwise mis-parse the product as a linear
+    // expression, lose the roots, and cause a correct answer like "x=2 and x=3" to be
+    // graded wrong.
+    {
+        const compact = message.replace(/\s+/g, '').replace(/−/g, '-');
+        if (/^(?:-?\d+)?(?:\(-?\d*x[+\-]\d+\)){2,}=0$/i.test(compact)) {
+            const parsed = parseFactoredForm(compact.replace(/=0$/, ''));
+            if (parsed && parsed.binomials.length >= 2) {
+                const roots = [];
+                for (const b of parsed.binomials) {
+                    if (b.coeff !== 0) roots.push(-b.constant / b.coeff);
+                }
+                if (roots.length >= 2) {
+                    return { type: 'factored_equation', roots };
+                }
+            }
+        }
+    }
 
     // Pattern: General linear equation — handles multi-step, distribution, and variables on both sides
     // Matches anything with "x" and "=" that isn't a quadratic (no x² / x^2)
@@ -362,6 +426,15 @@ function detectMathProblem(message) {
         const expr = whatIsMatch[1].trim();
         const subResult = detectNaturalLanguageArithmetic(expr);
         if (subResult) return subResult;
+        // "solve 12⅔ - 4¼" — route mixed numbers to the dedicated solver, else
+        // solveEvaluation would strip the vulgar fractions and compute garbage.
+        const mixedSub = detectMixedNumberArithmetic(expr);
+        if (mixedSub) return mixedSub;
+        // Prefer a cleanly-isolated numeric slice ("what is 2+3*4 here" → "2+3*4")
+        // over grabbing the whole tail with its trailing prose — the latter would be
+        // distrusted downstream and the computation lost.
+        const isoExpr = isolateNumericExpression(expr);
+        if (isoExpr) return { type: 'evaluation', expression: isoExpr, evalMode: 'decimal' };
         return { type: 'evaluation', expression: expr };
     }
 
@@ -422,6 +495,38 @@ function detectMathProblem(message) {
         };
     }
 
+    // Pattern: Combine like terms / simplify a variable expression with no '='.
+    // "simplify 5x+3x-2x" → 6x, "7y - 10y" → -3y, "combine like terms 2a+3a-a" → 4a.
+    // This skill previously matched NO pattern here, so the deterministic grader
+    // returned hasMath:false and grading fell through to the LLM verifier — which
+    // could reject a correct answer (e.g. mark "-3y" wrong for "7y-10y"). Binomial
+    // products (parentheses) stay with expand_polynomial and equations ('=') stay
+    // with their own solvers; this only claims a bare additive polynomial that
+    // actually has like terms to combine.
+    if (!/=/.test(message) && !/[()]/.test(message)) {
+        // Greedy strip up to the LAST "simplify"/"combine like terms" keyword so a
+        // prose-wrapped prompt ("Let's try one more: simplify 3y-9y") yields just
+        // the trailing expression. A bare expression (no keyword) is left untouched.
+        // parsePolynomial's 80%-consumption guard rejects anything still carrying
+        // prose, so a stray "simplify" elsewhere in a sentence can't create a
+        // bogus problem.
+        const exprOnly = message
+            .replace(/^.*\b(?:combine(?:\s+like\s+terms)?|simplify)\b\s*:?\s*/i, '')
+            .trim();
+        const poly = parsePolynomial(exprOnly);
+        if (poly && poly.terms.length >= 2 && hasLikeTermsToCombine(poly.terms)) {
+            return { type: 'combine_like_terms', expression: exprOnly, poly };
+        }
+    }
+
+    // Pattern: Mixed-number arithmetic — "12 2/3 - 4 1/4", "12⅔ - 4¼", "2 1/2 + 3".
+    // Must run BEFORE the arithmetic-chain detector, which would strip the space in
+    // "12 2/3" to "122/3" and evaluate garbage. Requires at least one operand to be
+    // a genuine mixed number or a vulgar fraction (½ etc.) so plain fraction/integer
+    // arithmetic keeps its dedicated handlers below.
+    const mixedProblem = detectMixedNumberArithmetic(message);
+    if (mixedProblem) return mixedProblem;
+
     // Pattern: Simple arithmetic "15 + 27" or "15+27"
     const arithmeticPattern = /^(-?\d+\.?\d*)\s*([+\-*/×÷])\s*(-?\d+\.?\d*)$/;
     const arithmeticMatch = message.match(arithmeticPattern);
@@ -446,6 +551,23 @@ function detectMathProblem(message) {
             rightNum: parseInt(fractionMatch[4]),
             rightDen: parseInt(fractionMatch[5])
         };
+    }
+
+    // Pattern: any WHOLE pure-numeric expression — multi-operand chains ("16/4*2",
+    // "2+3*4", "16 ÷ 4 ⋅ 2") and parenthesised expressions ("(2+3)*4"). The
+    // single-pair arithmeticPattern above and the last-resort embeddedArithmeticPattern
+    // below would capture only the FIRST operator pair ("16/4" → 4 / "2+3" → 5),
+    // producing a confidently WRONG answer that then poisons grading. Hand the whole
+    // thing to the exact-rational engine (correct precedence + parentheses, no
+    // floating drift). Placed AFTER the two-operand and fraction-pair patterns so those
+    // keep their dedicated types; fires only when the expression has parentheses OR
+    // 2+ operators, so simple two-operand arithmetic is left alone.
+    const chainForm = message.replace(/\s+/g, ''); // operators already ASCII-normalized above
+    const isPureNumericExpr = /^[\d.+\-*/^()]+$/.test(chainForm) && /[+\-*/^]/.test(chainForm);
+    const hasParens = /[()]/.test(chainForm);
+    const hasTwoPlusOps = /^-?\d+\.?\d*(?:[+\-*/^]\d+\.?\d*){2,}$/.test(chainForm);
+    if (isPureNumericExpr && (hasParens || hasTwoPlusOps) && evalExpression(chainForm) !== null) {
+        return { type: 'evaluation', expression: chainForm };
     }
 
     // Pattern: Percentage "what is 15% of 200"
@@ -480,20 +602,23 @@ function detectMathProblem(message) {
         };
     }
 
-    // Last resort: scan for any embedded arithmetic with symbolic operators (e.g. "So 3 × 12 is what?")
-    // Lookbehind: reject when the left operand follows ^ or a letter (it's an exponent
-    // or part of an algebraic term like "x^2 + 8" → "2 + 8" is NOT standalone arithmetic).
-    // Lookahead: reject when the right operand is immediately followed by a letter or ^
-    // (it's a coefficient like "8x", not a standalone number).
-    const embeddedArithmeticPattern = /(?<![a-zA-Z\^])(\d+\.?\d*)\s*([×÷+\-*/])\s*(\d+\.?\d*)(?![a-zA-Z\^])/;
-    const embeddedMatch = message.match(embeddedArithmeticPattern);
-    if (embeddedMatch) {
-        return {
-            type: 'arithmetic',
-            left: parseFloat(embeddedMatch[1]),
-            operator: embeddedMatch[2],
-            right: parseFloat(embeddedMatch[3])
-        };
+    // Last resort: an arithmetic expression embedded in prose ("So what's -34 + 6?",
+    // "-34+6=?", "3 × 12 is what?"). This path historically decomposed the match into
+    // {left, operator, right} and re-parsed each operand — a lossy round-trip that kept
+    // dropping the leading sign ("-34+6" read as 34+6 = 40) and could only ever see ONE
+    // operator pair. Both are exactly the "tutor rejected a correct answer" class of bug.
+    //
+    // Instead, isolate the maximal contiguous numeric expression and hand it WHOLE to the
+    // exact-rational engine (the same evalExpression that solveEvaluation uses). evalExpression
+    // is the correctness guarantee: signs, precedence, and parentheses are handled exactly,
+    // and if the isolated slice isn't valid arithmetic it returns null and we defer — so this
+    // path can never again emit a confidently-wrong answer. This finishes the migration noted
+    // in rationalEvaluator.js's header (it was meant to replace this "embedded last-resort regex").
+    //
+    // (see isolateNumericExpression for the boundary/operator/defer rules).
+    const embeddedExpr = isolateNumericExpression(message);
+    if (embeddedExpr) {
+        return { type: 'evaluation', expression: embeddedExpr, evalMode: 'decimal' };
     }
 
     return null;
@@ -555,16 +680,22 @@ function solveProblem(problem) {
                 return solveSystem(problem);
             case 'quadratic_equation':
                 return solveQuadratic(problem);
+            case 'factored_equation':
+                return solveFactoredEquation(problem);
             case 'slope':
                 return solveSlope(problem);
             case 'expand_polynomial':
                 return solveExpandPolynomial(problem);
+            case 'combine_like_terms':
+                return solveCombineLikeTerms(problem);
             case 'factor_quadratic':
                 return solveFactorQuadratic(problem);
             case 'factor_diff_of_squares':
                 return solveFactorDiffOfSquares(problem);
             case 'fraction_arithmetic':
                 return solveFractionArithmetic(problem);
+            case 'mixed_number_arithmetic':
+                return solveMixedNumberArithmetic(problem);
             case 'percentage':
                 return solvePercentage(problem);
             case 'exponent':
@@ -612,36 +743,18 @@ function solveProblem(problem) {
 /**
  * Solve basic arithmetic
  */
+// Thin adapter over the single exact-rational engine. Two-operand arithmetic is
+// decimal-domain (7/2 → "3.5"), matching the original formatNumber behavior.
 function solveArithmetic(problem) {
     const { left, operator, right } = problem;
-    let answer;
-
-    switch (operator) {
-        case '+':
-            answer = left + right;
-            break;
-        case '-':
-            answer = left - right;
-            break;
-        case '*':
-        case '×':
-            answer = left * right;
-            break;
-        case '/':
-        case '÷':
-            if (right === 0) {
-                return { success: false, error: 'Division by zero' };
-            }
-            answer = left / right;
-            break;
-        default:
-            return { success: false, error: 'Unknown operator' };
-    }
-
+    const op = operator === '×' ? '*' : operator === '÷' ? '/' : operator;
+    if ((op === '/') && Number(right) === 0) return { success: false, error: 'Division by zero' };
+    const r = evalExpression(`${left} ${op} ${right}`, 'decimal');
+    if (!r) return { success: false, error: 'Unknown operator' };
     return {
         success: true,
-        answer: formatNumber(answer),
-        steps: [`${left} ${operator} ${right} = ${formatNumber(answer)}`]
+        answer: r.answer,
+        steps: [`${left} ${operator} ${right} = ${r.answer}`],
     };
 }
 
@@ -997,6 +1110,19 @@ function solveSlope(problem) {
     };
 }
 
+// Solve a factored equation like "(x-2)(x-3)=0" — roots are already computed in
+// detection. Output shape mirrors solveQuadratic (roots[] + "x = a or x = b").
+function solveFactoredEquation(problem) {
+    const roots = problem.roots.map((r) => (Number.isInteger(r) ? r : parseFloat(r.toFixed(4))));
+    const answer = 'x = ' + roots.join(' or x = ');
+    return {
+        success: true,
+        answer,
+        roots,
+        steps: roots.map((r) => `Set a factor equal to zero → x = ${r}`),
+    };
+}
+
 function solveQuadratic(problem) {
     let { a, bSign, b, cSign, c } = problem;
 
@@ -1097,6 +1223,70 @@ function solveExpandPolynomial(problem) {
         answer,
         steps: [
             `Expand ${expression}`,
+            `= ${answer}`,
+        ],
+    };
+}
+
+/**
+ * True when the parsed terms contain at least two terms that share the same
+ * variable AND exponent — i.e. there is actually something to combine. Guards
+ * the combine_like_terms detector so an already-simplified or single-term
+ * expression falls through to other handlers instead of being "graded".
+ */
+function hasLikeTermsToCombine(terms) {
+    const seen = new Set();
+    for (const t of terms) {
+        const key = `${t.variable || '_const'}^${t.exp}`;
+        if (seen.has(key)) return true;
+        seen.add(key);
+    }
+    return false;
+}
+
+/**
+ * Format canonical polynomial terms ({coeff, variable, exp}) into a readable
+ * string, preserving the actual variable letter — unlike formatPolynomialTerms(),
+ * which is hardcoded to 'x'. [{-3,'y',1}] → "-3y", [{4,'x',2},{2,'x',1}] → "4x^2 + 2x".
+ */
+function formatCombinedPolynomial(terms) {
+    if (!terms || terms.length === 0) return '0';
+    let out = '';
+    terms.forEach((t, i) => {
+        const abs = Math.abs(t.coeff);
+        if (i === 0) {
+            if (t.coeff < 0) out += '-';
+        } else {
+            out += t.coeff < 0 ? ' - ' : ' + ';
+        }
+        const varPart = t.variable
+            ? (t.exp >= 2 ? `${t.variable}^${t.exp}` : t.variable)
+            : '';
+        if (!varPart) {
+            out += String(abs);
+        } else if (abs === 1) {
+            out += varPart;
+        } else {
+            out += `${abs}${varPart}`;
+        }
+    });
+    return out;
+}
+
+/**
+ * Combine like terms in a variable expression → simplified canonical form.
+ * "7y - 10y" → "-3y", "5x + 3x - 2x" → "6x", "2x + 3y + x" → "3x + 3y".
+ * Grading is exact: verifyAnswer() re-parses both sides as polynomials, so any
+ * equivalent form of the answer (spacing, term order, unicode minus) grades equal.
+ */
+function solveCombineLikeTerms(problem) {
+    const canon = canonicalizePolynomial(problem.poly.terms);
+    const answer = formatCombinedPolynomial(canon);
+    return {
+        success: true,
+        answer,
+        steps: [
+            `Combine like terms: ${problem.expression}`,
             `= ${answer}`,
         ],
     };
@@ -1312,55 +1502,53 @@ function formatBinomialProduct(a, p, b, q) {
     return `${formatTerm(a, p)}${formatTerm(b, q)}`;
 }
 
+// ── Mixed-number support (detection only — the exact-rational engine does the math) ──
+const VULGAR_CLASS = '½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒';
+
+// Genuine mixed number ("12 2/3") or a vulgar fraction ("⅔") — gates detection so
+// plain fraction/integer arithmetic keeps its own handlers.
+function isMixedOrVulgar(tok) {
+    const t = String(tok);
+    return /\d+\s+\d+\s*\/\s*\d+/.test(t) || new RegExp(`[${VULGAR_CLASS}]`).test(t);
+}
+
+/**
+ * Detect a two-operand mixed-number expression ("12 2/3 - 4 1/4", "12⅔ - 4¼",
+ * "2 1/2 + 3"). Returns a problem carrying the raw expression (the exact-rational
+ * engine evaluates it), or null. Requires at least one operand to be a genuine
+ * mixed number / vulgar fraction so proper-fraction and integer arithmetic defer
+ * to their own handlers.
+ */
+function detectMixedNumberArithmetic(text) {
+    if (!text || typeof text !== 'string') return null;
+    const t = text.trim();
+    const OP = `\\d+\\s+\\d+\\s*/\\s*\\d+|\\d*\\s*[${VULGAR_CLASS}]|\\d+\\s*/\\s*\\d+|\\d+`;
+    const m = t.match(new RegExp(`^(${OP})\\s*([+\\-*/])\\s*(${OP})\\s*$`));
+    if (!m) return null;
+    if (!isMixedOrVulgar(m[1]) && !isMixedOrVulgar(m[3])) return null;
+    return { type: 'mixed_number_arithmetic', expression: t };
+}
+
+// Mixed-number arithmetic → exact-rational engine, formatted as a mixed number.
+function solveMixedNumberArithmetic(problem) {
+    const r = evalExpression(problem.expression, 'mixed');
+    if (!r) return { success: false, error: 'Could not evaluate' };
+    return { success: true, answer: r.answer, steps: [`${problem.expression} = ${r.answer}`] };
+}
+
 /**
  * Solve fraction arithmetic
  */
+// Thin adapter over the exact-rational engine; fraction domain (result kept as a
+// reduced proper/improper fraction, e.g. "3/4", "3/2", or a whole number).
 function solveFractionArithmetic(problem) {
     const { leftNum, leftDen, operator, rightNum, rightDen } = problem;
-
-    let resultNum, resultDen;
-
-    switch (operator) {
-        case '+':
-            resultNum = leftNum * rightDen + rightNum * leftDen;
-            resultDen = leftDen * rightDen;
-            break;
-        case '-':
-            resultNum = leftNum * rightDen - rightNum * leftDen;
-            resultDen = leftDen * rightDen;
-            break;
-        case '*':
-            resultNum = leftNum * rightNum;
-            resultDen = leftDen * rightDen;
-            break;
-        case '/':
-            resultNum = leftNum * rightDen;
-            resultDen = leftDen * rightNum;
-            break;
-        default:
-            return { success: false, error: 'Unknown operator' };
-    }
-
-    // Simplify fraction
-    const gcd = greatestCommonDivisor(Math.abs(resultNum), Math.abs(resultDen));
-    resultNum = resultNum / gcd;
-    resultDen = resultDen / gcd;
-
-    // Handle negative denominator
-    if (resultDen < 0) {
-        resultNum = -resultNum;
-        resultDen = -resultDen;
-    }
-
-    const answer = resultDen === 1 ? `${resultNum}` : `${resultNum}/${resultDen}`;
-
+    const r = evalExpression(`(${leftNum}/${leftDen}) ${operator} (${rightNum}/${rightDen})`, 'fraction');
+    if (!r) return { success: false, error: 'Unknown operator' };
     return {
         success: true,
-        answer,
-        steps: [
-            `${leftNum}/${leftDen} ${operator} ${rightNum}/${rightDen}`,
-            `= ${answer}`
-        ]
+        answer: r.answer,
+        steps: [`${leftNum}/${leftDen} ${operator} ${rightNum}/${rightDen}`, `= ${r.answer}`],
     };
 }
 
@@ -2207,46 +2395,28 @@ function solveVolume(problem) {
 }
 
 function solveEvaluation(problem) {
-    const { expression } = problem;
+    const { expression, evalMode } = problem;
 
-    // Clean the expression — convert word operators BEFORE stripping non-math chars
-    let cleaned = expression
-        .replace(/×/g, '*')
-        .replace(/÷/g, '/')
-        // "x" between numbers with spaces = multiplication (e.g., "2.75 x 5")
+    // Convert word operators and "2.75 x 5" style, then hand the whole expression
+    // to the single exact-rational engine (which normalizes Unicode operators,
+    // honors precedence/parentheses, and keeps exact fractions — no Function()/eval,
+    // no floating-point drift). Domain (decimal/fraction/mixed) is auto-detected
+    // unless the caller pins evalMode.
+    const worded = String(expression)
         .replace(/(\d)\s+x\s+(\d)/gi, '$1*$2')
         .replace(/\btimes\b/gi, '*')
         .replace(/\bmultiplied\s+by\b/gi, '*')
         .replace(/\bdivided\s+by\b/gi, '/')
         .replace(/\bplus\b/gi, '+')
-        .replace(/\bminus\b/gi, '-')
-        .replace(/\s+/g, '')
-        .replace(/[^\d+\-*/().^]/g, '');
+        .replace(/\bminus\b/gi, '-');
 
-    // Handle exponents
-    cleaned = cleaned.replace(/(\d+\.?\d*)\^(\d+\.?\d*)/g, 'Math.pow($1,$2)');
-
-    // Safety check - only allow numbers and operators
-    if (!/^[\d+\-*/().Math,pow\s]+$/.test(cleaned)) {
-        return { success: false, error: 'Expression contains invalid characters' };
-    }
-
-    try {
-        // Using Function instead of eval for slightly better safety
-        const result = Function('"use strict"; return (' + cleaned + ')')();
-
-        if (typeof result !== 'number' || !isFinite(result)) {
-            return { success: false, error: 'Invalid result' };
-        }
-
-        return {
-            success: true,
-            answer: formatNumber(result),
-            steps: [`${expression} = ${formatNumber(result)}`]
-        };
-    } catch (error) {
-        return { success: false, error: 'Could not evaluate expression' };
-    }
+    const r = evalExpression(worded, evalMode);
+    if (!r) return { success: false, error: 'Could not evaluate expression' };
+    return {
+        success: true,
+        answer: r.answer,
+        steps: [`${expression} = ${r.answer}`],
+    };
 }
 
 /**
@@ -2282,9 +2452,14 @@ function greatestCommonDivisor(a, b) {
  * @returns {Object} Verification result
  */
 function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
-    // Normalize answers
-    const studentStr = String(studentAnswer).trim().toLowerCase();
-    const correctStr = String(correctAnswer).trim().toLowerCase();
+    // Normalize answers through the shared operator/sign map so a student's "−28"
+    // (Unicode minus, as MathLive/LaTeX render it) is not stripped to a positive
+    // "28" and rejected against a correct "-28" — and likewise for ×, ÷, dots, etc.
+    // normalizeSpokenNumbers first turns speech-to-text answers into signed digits
+    // ("negative six" → "-6") so a correct spoken answer isn't graded wrong.
+    const norm = (v) => normalizeMathOperators(normalizeSpokenNumbers(String(v).trim().toLowerCase()));
+    const studentStr = norm(studentAnswer);
+    const correctStr = norm(correctAnswer);
 
     // Exact match
     if (studentStr === correctStr) {
@@ -2297,8 +2472,15 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
     // falsely matches "3x^2-3" stripped to "32-3" → 32.
     const hasLetters = /[a-zA-Z]/.test(studentStr) || /[a-zA-Z]/.test(correctStr);
     if (!hasLetters) {
-        const studentNum = parseFloat(studentStr.replace(/[^\d.\-]/g, ''));
-        const correctNum = parseFloat(correctStr.replace(/[^\d.\-]/g, ''));
+        // Evaluate each side through the single exact-rational engine, so any
+        // equivalent numeric form grades equal by VALUE: expressions ("16/4 ⋅ 2" = 8),
+        // fractions, mixed numbers ("8 5/12" == "101/12" == "8.4167"), and decimals.
+        // Falls back to digit-strip parsing for plain numbers that carry
+        // units/commas/currency ("1,000", "$8").
+        const studentEval = expressionValue(studentStr);
+        const correctEval = expressionValue(correctStr);
+        const studentNum = studentEval !== null ? studentEval : parseFloat(studentStr.replace(/[^\d.\-]/g, ''));
+        const correctNum = correctEval !== null ? correctEval : parseFloat(correctStr.replace(/[^\d.\-]/g, ''));
 
         if (!isNaN(studentNum) && !isNaN(correctNum)) {
             if (Math.abs(studentNum - correctNum) <= tolerance) {
@@ -2330,6 +2512,18 @@ function verifyAnswer(studentAnswer, correctAnswer, tolerance = 0.01) {
                 return { isCorrect: true, exact: false, equivalentForm: true };
             }
         }
+    }
+
+
+    // Root-set answer: "x=2 and x=3" vs "x=2 or x=3" vs "x = 3, x = 2". A quadratic /
+    // factored solution names a SET of roots; grade by unordered set membership so the
+    // student isn't marked wrong for saying "and" vs "or", or a different order. Gated
+    // by a set shape (and / or / multiple "x=") so single values are never affected.
+    const studentRoots = parseRootSet(studentStr);
+    const correctRoots = parseRootSet(correctStr);
+    if (studentRoots && correctRoots && studentRoots.length === correctRoots.length &&
+        correctRoots.every((cr) => studentRoots.some((sr) => Math.abs(sr - cr) <= tolerance))) {
+        return { isCorrect: true, exact: false, equivalentForm: true };
     }
 
     // System of equations answer: "x = 3, y = 2" vs "y = 2, x = 3"
@@ -2511,6 +2705,39 @@ function canonicalizePolynomial(terms) {
             if (!a.variable && b.variable) return 1;
             return (a.variable || '').localeCompare(b.variable || '');
         });
+}
+
+/**
+ * Parse a SET of roots from an answer like "x=2 and x=3", "x=2 or x=3",
+ * "x = 3, x = 2", "x = -7/3 or 1". Returns an array of distinct numeric roots,
+ * or null when the string isn't a root set (needs an "and"/"or" join or 2+ "x="
+ * so single values, points, and lone fractions are never treated as root sets).
+ */
+function parseRootSet(str) {
+    if (!str) return null;
+    const s = String(str).replace(/−/g, '-').toLowerCase();
+    const setShape = /\b(and|or)\b/.test(s) || /(x\s*=[^=]*){2,}/.test(s);
+    if (!setShape) return null;
+
+    const candidates = [];
+    const fracRegex = /(-?\d+)\s*\/\s*(\d+)/g;
+    let m;
+    while ((m = fracRegex.exec(s)) !== null) {
+        const den = parseFloat(m[2]);
+        if (den !== 0) candidates.push(parseFloat(m[1]) / den);
+    }
+    const stripped = s.replace(fracRegex, ' ');
+    const numRegex = /-?\d+\.?\d*/g;
+    while ((m = numRegex.exec(stripped)) !== null) {
+        const v = parseFloat(m[0]);
+        if (!isNaN(v)) candidates.push(v);
+    }
+
+    const distinct = [];
+    for (const c of candidates) {
+        if (!distinct.some((d) => Math.abs(d - c) <= 1e-9)) distinct.push(c);
+    }
+    return distinct.length >= 2 ? distinct : null;
 }
 
 /**
@@ -3535,7 +3762,10 @@ function processMathMessage(message) {
 // is found. Callers that need the raw catch-all (e.g. legacy chat.js
 // arithmetic checks) keep using processMathMessage directly.
 const PROSE_WORD_RX = /[a-z]{4,}/i;
-const MATH_CANDIDATE_VERB_RX = /\b(?:solve|try|find|evaluate|simplify|factor|graph|compute)\s+([^.?!\n]+?)(?=[.?!\n]|$)/gi;
+// The separator is [\s:]+ (not just \s+) so a colon-led prompt like
+// "Simplify: 7y-10y" — the natural way a tutor poses a problem — still yields
+// the bare expression "7y-10y" as a candidate.
+const MATH_CANDIDATE_VERB_RX = /\b(?:solve|try|find|evaluate|simplify|factor|graph|compute)[\s:]+([^.?!\n]+?)(?=[.?!\n]|$)/gi;
 const MATH_CANDIDATE_EQ_RX = /(?:^|[\s:>])(\(?-?\d*[a-z][a-z0-9\s+\-*/^().]*=\s*-?[a-z0-9\s+\-*/^()]+?)(?=[.?!\n]|$|\s{2})/gi;
 
 function _extractMathCandidates(text) {
@@ -3559,8 +3789,22 @@ function _isTrustedProblem(problem, source) {
     // whatever the matcher grabbed — often prose. Only trust it when
     // the source text reads like a math expression, not a sentence.
     if (problem.type === 'evaluation') {
-        if (PROSE_WORD_RX.test(source)) return false;
-        if (problem.expression && PROSE_WORD_RX.test(problem.expression)) return false;
+        // Trust an evaluation whose ISOLATED expression is a pure numeric computation
+        // (digits/operators/parens only, with a binary operator) even when the surrounding
+        // source is a sentence — we extracted exactly the math, so the prose around it is
+        // irrelevant. This lets prose-embedded arithmetic ("what's -34 + 6?") grade
+        // deterministically instead of being thrown away. Only fall back to the prose sniff
+        // when the expression itself still carries words (the older "what is …" catch-all,
+        // whose `expression` can be raw prose).
+        const expr = String(problem.expression || '');
+        // Pure numeric chars only, AND an actual computation — a binary operator or a
+        // parenthesis (implicit multiplication like "2(2)-5"), not a bare number. A lone
+        // leading minus doesn't count, so strip it before the operator check.
+        const isPureNumericExpr = /^[\s\d.+\-*/^()]+$/.test(expr) && /[-+*/^()]/.test(expr.replace(/^\s*-/, ''));
+        if (!isPureNumericExpr) {
+            if (PROSE_WORD_RX.test(source)) return false;
+            if (problem.expression && PROSE_WORD_RX.test(problem.expression)) return false;
+        }
     }
     return true;
 }
@@ -3599,6 +3843,8 @@ module.exports = {
     solveQuadratic,
     solveAbsoluteValue,
     solveFactorQuadratic,
+    solveCombineLikeTerms,
+    hasLikeTermsToCombine,
     solveFractionArithmetic,
     solvePercentage,
     solveExponent,

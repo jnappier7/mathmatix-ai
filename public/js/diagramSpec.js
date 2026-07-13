@@ -24,7 +24,7 @@
   'use strict';
 
   const DEG = Math.PI / 180;
-  const TYPES = ['inscribed_angle'];
+  const TYPES = ['inscribed_angle', 'congruent_triangles'];
 
   function num(v, fallback) {
     const n = Number(v);
@@ -73,6 +73,126 @@
     };
   }
 
+  // --- congruent triangles -------------------------------------------------
+  // Two triangles that ARE congruent by construction (triangle DEF is triangle
+  // ABC under a rigid motion), with tick/arc marks on the caller-specified
+  // corresponding parts. The student decides WHICH postulate (SSS/SAS/ASA/AAS/
+  // HL) the marks prove — so the figure shows the GIVENS (marks) and never the
+  // answer (the postulate name is never printed; see caption).
+  const TRI1 = ['A', 'B', 'C'];
+  const TRI2 = ['D', 'E', 'F'];
+  // Base scalene triangle (all sides visibly different, so ticks are meaningful).
+  const BASE = { A: [1, 3], B: [0, 0], C: [4, 0] };
+  const SHIFT = 5.5; // horizontal gap; DEF = ABC translated (A→D, B→E, C→F).
+
+  function triangleOf(v) {
+    if (TRI1.indexOf(v) !== -1) return TRI1;
+    if (TRI2.indexOf(v) !== -1) return TRI2;
+    return null;
+  }
+
+  /** 'AB' -> ['A','B'] iff both letters name distinct vertices of ONE triangle. */
+  function sideEndpoints(name) {
+    if (typeof name !== 'string' || name.length !== 2) return null;
+    const p = name[0].toUpperCase();
+    const q = name[1].toUpperCase();
+    if (p === q) return null;
+    const t = triangleOf(p);
+    if (!t || triangleOf(q) !== t) return null;
+    return [p, q];
+  }
+
+  /**
+   * params: {
+   *   markedSides?:  [['AB','DE'], ['BC','EF'], ...]  // each group → group-index+1 ticks
+   *   markedAngles?: [['B','E'], ...]                 // each group → group-index+1 arcs
+   *   rightAngles?:  ['B', 'E']                        // square marks (HL)
+   * }
+   * Names are validated; an unknown side/vertex fails the whole spec (valid:false).
+   */
+  function buildCongruentTriangles(params, opts) {
+    params = params || {};
+    const errors = [];
+
+    const points = {
+      A: BASE.A.slice(), B: BASE.B.slice(), C: BASE.C.slice(),
+      D: [BASE.A[0] + SHIFT, BASE.A[1]],
+      E: [BASE.B[0] + SHIFT, BASE.B[1]],
+      F: [BASE.C[0] + SHIFT, BASE.C[1]],
+    };
+
+    const asGroups = (v) => (Array.isArray(v) ? v : []);
+
+    const sideMarks = [];
+    asGroups(params.markedSides).forEach((group, gi) => {
+      const names = Array.isArray(group) ? group : [group];
+      const ticks = gi + 1;
+      names.forEach((nm) => {
+        const seg = sideEndpoints(nm);
+        if (!seg) { errors.push('invalid side name: ' + nm); return; }
+        const P = points[seg[0]];
+        const Q = points[seg[1]];
+        const mid = [round((P[0] + Q[0]) / 2), round((P[1] + Q[1]) / 2)];
+        const dx = Q[0] - P[0];
+        const dy = Q[1] - P[1];
+        const len = Math.hypot(dx, dy) || 1;
+        sideMarks.push({
+          seg,
+          mid,
+          along: [round(dx / len), round(dy / len)],
+          perp: [round(-dy / len), round(dx / len)],
+          ticks,
+        });
+      });
+    });
+
+    const angleMarks = [];
+    asGroups(params.markedAngles).forEach((group, gi) => {
+      const names = Array.isArray(group) ? group : [group];
+      const arcs = gi + 1;
+      names.forEach((v) => {
+        const vv = typeof v === 'string' ? v.toUpperCase() : '';
+        const t = triangleOf(vv);
+        if (!t) { errors.push('invalid angle vertex: ' + v); return; }
+        angleMarks.push({ at: vv, rays: t.filter((x) => x !== vv), arcs });
+      });
+    });
+
+    const rightAngleMarks = [];
+    asGroups(params.rightAngles).forEach((v) => {
+      const vv = typeof v === 'string' ? v.toUpperCase() : '';
+      const t = triangleOf(vv);
+      if (!t) { errors.push('invalid right-angle vertex: ' + v); return; }
+      rightAngleMarks.push({ at: vv, rays: t.filter((x) => x !== vv) });
+    });
+
+    if (errors.length) return { valid: false, type: 'congruent_triangles', errors };
+
+    const xs = Object.keys(points).map((k) => points[k][0]);
+    const ys = Object.keys(points).map((k) => points[k][1]);
+    const pad = 1;
+    const extent = {
+      xMin: round(Math.min.apply(null, xs) - pad),
+      xMax: round(Math.max.apply(null, xs) + pad),
+      yMin: round(Math.min.apply(null, ys) - pad),
+      yMax: round(Math.max.apply(null, ys) + pad),
+    };
+
+    return {
+      valid: true,
+      type: 'congruent_triangles',
+      points,
+      triangles: [TRI1.slice(), TRI2.slice()],
+      sideMarks,
+      angleMarks,
+      rightAngleMarks,
+      extent,
+      // NEVER name the postulate — that IS the answer the student must find.
+      // (redact is irrelevant here: no numeric value is ever shown.)
+      caption: 'Which congruence postulate proves △ABC ≅ △DEF?',
+    };
+  }
+
   /**
    * Build a render-ready spec for a diagram { type, params }.
    * @returns {{valid:boolean, type:string, ...}} valid:false carries `errors`.
@@ -80,6 +200,7 @@
   function buildDiagramSpec(type, params, opts) {
     switch (type) {
       case 'inscribed_angle': return buildInscribedAngle(params, opts);
+      case 'congruent_triangles': return buildCongruentTriangles(params, opts);
       default: return { valid: false, type: type || null, errors: ['unknown diagram type: ' + type] };
     }
   }

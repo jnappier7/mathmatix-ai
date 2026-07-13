@@ -7,9 +7,13 @@ const path = require('path');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const StudentUpload = require('../models/studentUpload');
+const GradingResult = require('../models/gradingResult');
 const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import isStudent middleware
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 const mongoose = require('mongoose');
+const { computeWeeklyAccuracy } = require('../utils/weeklyAccuracy');
+const { deriveProgressCardState } = require('../utils/progressCardState');
+const { getReviewSummary } = require('../utils/smartReviewQueue');
 
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
@@ -355,17 +359,36 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
         const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         const studentObjectId = new mongoose.Types.ObjectId(student._id);
 
+        // Prefer the first-try counters (one slot per problem, retries excluded).
+        // Legacy conversations predate these fields, so fall back to the older
+        // per-attempt counters until they age out of the 7-day window.
         const weeklyAgg = await Conversation.aggregate([
             { $match: { userId: studentObjectId, lastActivity: { $gte: oneWeekAgo } } },
             {
                 $group: {
                     _id: null,
-                    totalProblems: { $sum: { $ifNull: ['$problemsAttempted', 0] } },
-                    totalCorrect: { $sum: { $ifNull: ['$problemsCorrect', 0] } }
+                    totalProblems: { $sum: { $ifNull: ['$firstTryAttempted', { $ifNull: ['$problemsAttempted', 0] }] } },
+                    totalCorrect: { $sum: { $ifNull: ['$firstTryCorrect', { $ifNull: ['$problemsCorrect', 0] }] } }
                 }
             }
         ]);
         const weeklyConvStats = weeklyAgg[0] || { totalProblems: 0, totalCorrect: 0 };
+
+        // Fold in "Show Your Work" grading — the cleanest correctness signal we have
+        // (structured, per-problem right/wrong), which the chat pipeline path never
+        // saw. Only first attempts (previousAttemptId null; also matches legacy docs
+        // missing the field) so resubmissions of the same worksheet don't double-count.
+        const gradeWorkAgg = await GradingResult.aggregate([
+            { $match: { userId: studentObjectId, previousAttemptId: null, createdAt: { $gte: oneWeekAgo } } },
+            {
+                $group: {
+                    _id: null,
+                    totalProblems: { $sum: { $ifNull: ['$problemCount', 0] } },
+                    totalCorrect: { $sum: { $ifNull: ['$correctCount', 0] } }
+                }
+            }
+        ]);
+        const gradeWorkStats = gradeWorkAgg[0] || { totalProblems: 0, totalCorrect: 0 };
 
         const weeklyXp = (student.xpHistory || [])
             .filter(e => e.date && new Date(e.date) >= oneWeekAgo)
@@ -375,14 +398,26 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
             .filter(([, d]) => d.status === 'mastered' && d.masteredDate && new Date(d.masteredDate) >= oneWeekAgo)
             .length;
 
+        // computeWeeklyAccuracy combines both correctness sources and gates the
+        // percentage on a minimum sample (see utils/weeklyAccuracy.js). Below the
+        // threshold accuracy is null and the client shows a raw fraction instead.
         const weeklyStats = {
-            problemsSolved: weeklyConvStats.totalProblems,
-            accuracy: weeklyConvStats.totalProblems > 0
-                ? Math.round((weeklyConvStats.totalCorrect / weeklyConvStats.totalProblems) * 100)
-                : null,
+            ...computeWeeklyAccuracy({
+                convProblems: weeklyConvStats.totalProblems,
+                convCorrect: weeklyConvStats.totalCorrect,
+                gwProblems: gradeWorkStats.totalProblems,
+                gwCorrect: gradeWorkStats.totalCorrect,
+            }),
             xpEarned: weeklyXp,
             skillsMastered: skillsMasteredThisWeek
         };
+
+        // Review-due count (FSRS) powers the card's "N skills ready to review" CTA.
+        const reviewDue = getReviewSummary(student).dueNow;
+
+        // Server-derived lifecycle state so the card's framing stays honest and
+        // the client stays dumb (see utils/progressCardState.js).
+        const cardState = deriveProgressCardState({ currentLearning, recentMastery, weeklyStats });
 
         res.json({
             assessmentCompleted: true,
@@ -392,6 +427,8 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
             streak,
             dailyQuests,
             weeklyStats,
+            reviewDue,
+            cardState,
             recentWins: recentWins.map(w => ({
                 description: w.description,
                 date: w.date

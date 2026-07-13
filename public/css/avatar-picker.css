@@ -1,0 +1,90 @@
+/* avatar-picker.css — character-select layout for the student preset avatars.
+ * Full-body figures on clean light cards with a soft ground shadow (retires the
+ * cropped-circle creature look). Loaded after avatar-builder.css so these win.
+ */
+
+.avatar-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(14px, 2vw, 24px);
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto 2rem;
+  align-items: stretch;
+}
+@media (max-width: 900px) { .avatar-selection-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) { .avatar-selection-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ---- Student character card ---- */
+.avatar-card.student-avatar-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(15, 26, 36, 0.08);
+  border: 2px solid transparent;
+  padding: 14px 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.avatar-card.student-avatar-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 34px rgba(15, 26, 36, 0.14);
+}
+.avatar-card.student-avatar-card.selected {
+  border-color: var(--clr-accent-hotpink, #ff3b7f);
+  box-shadow: 0 14px 34px rgba(255, 59, 127, 0.22);
+  transform: translateY(-6px);
+}
+
+/* Figure "standing in a space": full body, soft gradient floor, ground shadow. */
+.avatar-card.student-avatar-card .avatar-card-image {
+  position: relative;
+  width: 100%;
+  height: clamp(190px, 22vw, 250px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f7fafc 0%, #e9eef2 100%);
+  overflow: hidden;
+  margin: 0;
+}
+.avatar-card.student-avatar-card .avatar-card-image::after {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  width: 58%;
+  height: 14px;
+  background: radial-gradient(ellipse at center, rgba(15, 26, 36, 0.22), rgba(15, 26, 36, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+.avatar-card.student-avatar-card .avatar-card-image img {
+  position: relative;
+  z-index: 1;
+  height: 97%;
+  width: auto;
+  max-width: 94%;
+  object-fit: contain;
+  object-position: bottom center;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.16));
+}
+.avatar-card.student-avatar-card .avatar-card-name {
+  margin: 12px 0 0;
+  font-weight: 700;
+  color: var(--clr-text, #18202b);
+  font-size: clamp(0.85rem, 1.4vw, 1rem);
+  text-align: center;
+}
+
+/* Keep the "Create Your Own" card aligned in the same grid. */
+.avatar-selection-grid .avatar-card.create-custom {
+  border-radius: 18px;
+  justify-content: center;
+}

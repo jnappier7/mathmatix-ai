@@ -126,6 +126,18 @@ console.log(skill2); // Should return the skill object
 
 ## Skill Coverage Analysis
 
+> **Update (2026-06):** Two distinct metrics are easy to conflate here —
+> *skill definitions* (catalog entries in `seeds/skills-pattern-based.json`) vs.
+> *skills with generated problems* (rows in the `Problem` collection). The
+> `59/204` figure below tracked an early snapshot. Current **definition**
+> coverage: the 8 patterns' 102 milestones reference **225** distinct skillIds,
+> of which **190 are defined** (35 still missing — almost all Tier-4
+> college-level: linear algebra, calculus, inferential statistics). The
+> remaining gap and the *problem*-generation pass (which needs MongoDB + OpenAI
+> via `scripts/generate-all-pattern-problems.js`) are tracked separately. The
+> seed is structurally guarded by `tests/unit/patternSkillsSeed.test.js`, which
+> ratchets the missing-definition count so it can only go down.
+
 ### Skills Now Available (59/204 = 29%)
 
 The 59 skills created cover the most critical early-tier concepts:

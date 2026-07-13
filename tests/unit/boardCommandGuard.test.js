@@ -4,7 +4,59 @@ const {
   opMatchesStudentText,
   hasStartOverIntent,
   texHasBlank,
+  cleanField,
+  sanitizeCommand,
 } = require('../../utils/boardCommandGuard');
+
+describe('boardCommandGuard — tex sanitation (cannot display wrong math)', () => {
+  describe('cleanField', () => {
+    it('strips a leaked JSON array boundary from tex', () => {
+      expect(cleanField('3x = 21},{')).toBe('3x = 21');
+      expect(cleanField('3x - 5 = 16},{"action":"resolve"')).toBe('3x - 5 = 16');
+    });
+    it('strips stray wrapping JSON quotes', () => {
+      expect(cleanField('"x = 8"')).toBe('x = 8');
+    });
+    it('leaves valid LaTeX untouched', () => {
+      expect(cleanField('\\frac{1}{2} = 0.5')).toBe('\\frac{1}{2} = 0.5');
+      expect(cleanField('x^{2} + 4x + 4 = 16')).toBe('x^{2} + 4x + 4 = 16');
+      expect(cleanField('x = \\boxed{}')).toBe('x = \\boxed{}'); // scaffold blank survives
+      expect(cleanField('\\{1, 2\\}')).toBe('\\{1, 2\\}'); // escaped set braces, not JSON
+    });
+    it('drops a trailing unbalanced residue brace but keeps balanced ones', () => {
+      expect(cleanField('3x = 21}')).toBe('3x = 21');
+      expect(cleanField('\\frac{1}{2}')).toBe('\\frac{1}{2}');
+    });
+  });
+
+  describe('sanitizeCommand', () => {
+    it('cleans tex + check and returns the same ref when nothing changed', () => {
+      const clean = { action: 'verify', tex: 'x = 8', check: '2(8)+4=20' };
+      expect(sanitizeCommand(clean)).toBe(clean);
+      const dirty = sanitizeCommand({ action: 'resolve', tex: '3x = 21},{' });
+      expect(dirty.tex).toBe('3x = 21');
+    });
+  });
+
+  describe('enforcePedagogyRule', () => {
+    it('passes the CLEANED command downstream (pose with leaked JSON)', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'pose', tex: '3x - 5 = 16},{' }],
+        userMessage: 'help me solve 3x - 5 = 16',
+      });
+      expect(dropped).toHaveLength(0);
+      expect(allowed[0].tex).toBe('3x - 5 = 16');
+    });
+    it('drops a command whose tex scrubs away to nothing', () => {
+      const { allowed, dropped } = enforcePedagogyRule({
+        commands: [{ action: 'resolve', tex: '},{' }],
+        userMessage: '3x = 21',
+      });
+      expect(allowed).toHaveLength(0);
+      expect(dropped[0].reason).toBe('malformed_tex');
+    });
+  });
+});
 
 describe('boardCommandGuard', () => {
   describe('pose', () => {

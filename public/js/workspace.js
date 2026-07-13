@@ -37,21 +37,51 @@
     return n;
   }
 
+  // Feature flag: the visual board panel is hidden until it's polished
+  // (set window.MM_FEATURES.boardPanel = false in chat.html). When off, the
+  // panel/FAB/drawer never mount; the tutor's work still reaches the student
+  // as inline mirror cards in the chat thread (see appendBoardMirror).
+  function boardPanelEnabled() {
+    return !(window.MM_FEATURES && window.MM_FEATURES.boardPanel === false);
+  }
+
+  // A board expression is meant to be math (LaTeX). Occasionally the tutor emits
+  // a plain-English sentence (e.g. a word-problem prompt) where a LaTeX string is
+  // expected; KaTeX then renders every letter as an italic variable and drops the
+  // spaces ("Iftwotriangleshave..."). Detect obvious prose so we render it as
+  // readable text instead. Conservative on purpose: a real LaTeX command, or fewer
+  // than three English words, keeps the string on the math path (so "2x + 4 = 20"
+  // and "y = mx + b" still render as math).
+  function looksLikeProse(s) {
+    s = String(s || '');
+    if (/\\[a-zA-Z]+/.test(s)) return false;      // has a LaTeX command -> math
+    var words = s.match(/[A-Za-z]{2,}/g) || [];    // 2+ letter word tokens
+    return words.length >= 3;                       // a sentence, not an expression
+  }
+
   // KaTeX renderer with a safe text fallback if KaTeX hasn't loaded yet
   // (very early in page life) or the expression doesn't parse.
   function renderTex(target, tex) {
     if (!target) return;
+    var s = String(tex || '');
+    // Prose (a word-problem statement, not an expression) -> render as text so the
+    // words and spaces survive instead of KaTeX mangling them into run-on italics.
+    if (looksLikeProse(s)) { target.textContent = s; return; }
     if (window.katex && typeof window.katex.render === 'function') {
       try {
-        window.katex.render(String(tex || ''), target, {
+        window.katex.render(s, target, {
           throwOnError: false,
           displayMode: true,
           output: 'html'
         });
-        return;
+        // With throwOnError:false KaTeX doesn't throw on bad input — it paints
+        // the unparseable part in a red .katex-error span. Treat that as a
+        // failure and degrade to plain text, so a malformed command never shows
+        // a scary red string (or leaked JSON like "3x = 21},{") on the board.
+        if (!target.querySelector('.katex-error')) return;
       } catch (_) { /* fall through to text */ }
     }
-    target.textContent = String(tex || '');
+    target.textContent = s;
   }
 
   // Give empty \boxed{} scaffold slots a visible width so they read as
@@ -63,6 +93,214 @@
       /\\boxed\s*\{\s*(?:\\(?:[;,:! ]|quad|qquad)\s*)*\}/g,
       '\\boxed{\\phantom{00}}'
     );
+  }
+
+  // Matches an EMPTY scaffold blank: a \boxed{} whose contents are only LaTeX
+  // spacing macros, or a \square glyph. Mirrors the blanks the pedagogy guard
+  // recognizes (utils/boardCommandGuard.js texHasBlank). No capture groups, so
+  // String.split() drops the delimiters and yields the segments between blanks.
+  var SCAFFOLD_BLANK_RE = /\\boxed\s*\{\s*(?:\\(?:[;,:! ]|quad|qquad)\s*)*\}|\\square\b/g;
+
+  // KaTeX inline fragment (so math segments sit on one line beside the inputs).
+  function renderTexInline(target, tex) {
+    if (!target) return;
+    if (window.katex && typeof window.katex.render === 'function') {
+      try {
+        window.katex.render(String(tex || ''), target, {
+          throwOnError: false, displayMode: false, output: 'html'
+        });
+        return;
+      } catch (_) { /* fall through */ }
+    }
+    target.textContent = String(tex || '');
+  }
+
+  // Submit text AS THE STUDENT — a visible chat message, exactly as if they'd
+  // typed it and hit Send. This is deliberate: the tutor only ever knows what the
+  // student SAYS, never what's on a card. A silent/background message would make
+  // it look like the tutor can read the board itself, which it can't — so the
+  // filled-in line flows through the normal input + send path and shows up as the
+  // student's own bubble. Mirrors the GraphTool submit (script.js).
+  function submitAsStudent(text) {
+    text = String(text || '').trim();
+    if (!text) return false;
+    var input = document.getElementById('user-input');
+    var sendBtn = document.getElementById('send-button') || document.querySelector('.send-button');
+    if (input && sendBtn) {
+      if (input.isContentEditable) input.textContent = text;
+      else input.value = text;
+      // Let any input-listeners (send-button enable, autosize) react first.
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      sendBtn.click();
+      return true;
+    }
+    if (typeof window.sendMessage === 'function') { window.sendMessage(text); return true; }
+    return false;
+  }
+
+  // Build an interactive scaffold card body: the LaTeX renders around editable
+  // blanks the student fills in, then submits as their own line (see
+  // submitAsStudent). Returns true if at least one blank was wired; false when
+  // there's no recognizable blank (caller falls back to the static render).
+  function buildScaffoldFill(card, tex) {
+    if (!tex || typeof tex !== 'string') return false;
+    SCAFFOLD_BLANK_RE.lastIndex = 0;
+    var segments = tex.split(SCAFFOLD_BLANK_RE);
+    if (segments.length < 2) return false; // no blank → not fillable
+
+    var row = el('div', 'cr-ws-scaffold-fill');
+    var inputs = [];
+    var lastFocused = null; // which blank the tap-strip inserts into
+    segments.forEach(function (seg, i) {
+      if (seg && seg.trim()) {
+        var frag = el('span', 'cr-ws-scaffold-seg');
+        renderTexInline(frag, seg);
+        row.appendChild(frag);
+      }
+      if (i < segments.length - 1) {
+        var blank = document.createElement('input');
+        blank.type = 'text';
+        blank.className = 'cr-ws-scaffold-input';
+        blank.setAttribute('aria-label', 'fill in the blank ' + (i + 1));
+        blank.setAttribute('inputmode', 'text');
+        blank.autocomplete = 'off';
+        blank.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); check(); }
+        });
+        blank.addEventListener('input', function () {
+          blank.classList.remove('is-missing');
+          // Editing after a "Try again" clears the retry state and re-arms Check.
+          if (card.classList.contains('cr-ws-board-card--scaffold-retry')) {
+            card.classList.remove('cr-ws-board-card--scaffold-retry');
+            checkBtn.textContent = 'Check';
+          }
+        });
+        blank.addEventListener('focus', function () { lastFocused = blank; });
+        row.appendChild(blank);
+        inputs.push(blank);
+      }
+    });
+    card.appendChild(row);
+
+    // Tap-strip — the few math symbols a phone keyboard buries, one tap away.
+    // Kept deliberately small and clearly labeled (each key has a plain-English
+    // tooltip, like the chat symbol strip). Numbers come from the student's own
+    // keyboard; this row is only the awkward-to-type glyphs. Dropped the
+    // duplicate exponent key and the rarely-needed π / ± to cut the clutter.
+    // Inserts at the focused blank's cursor (pointerdown + preventDefault keeps
+    // focus in the input). Hidden once the card locks (see CSS).
+    var keys = el('div', 'cr-ws-scaffold-keys');
+    [{ glyph: '(',   insert: '(', tip: 'Open parenthesis' },
+     { glyph: ')',   insert: ')', tip: 'Close parenthesis' },
+     { glyph: '−',   insert: '-', tip: 'Negative / minus' },
+     { glyph: 'a/b', insert: '/', tip: 'Fraction bar' },
+     { glyph: 'xⁿ',  insert: '^', tip: 'Exponent — type the power next' },
+     { glyph: '√',   insert: '√', tip: 'Square root' }
+    ].forEach(function (k) {
+      var kb = el('button', 'cr-ws-scaffold-key');
+      kb.type = 'button';
+      kb.textContent = k.glyph;
+      kb.title = k.tip;
+      kb.setAttribute('aria-label', k.tip);
+      kb.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); // don't blur the blank
+        insertIntoBlank(k.insert);
+      });
+      keys.appendChild(kb);
+    });
+    card.appendChild(keys);
+
+    function insertIntoBlank(text) {
+      var inp = lastFocused || inputs[0];
+      if (!inp || inp.disabled) return;
+      inp.focus();
+      var s = inp.selectionStart, e = inp.selectionEnd;
+      if (typeof s === 'number' && typeof inp.setRangeText === 'function') {
+        inp.setRangeText(text, s, e, 'end');
+      } else {
+        inp.value += text;
+      }
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    var actions = el('div', 'cr-ws-scaffold-actions');
+    var checkBtn = el('button', 'cr-ws-scaffold-submit');
+    checkBtn.type = 'button';
+    checkBtn.textContent = 'Check';
+    actions.appendChild(checkBtn);
+    card.appendChild(actions);
+
+    function check() {
+      // Every blank must be filled — an empty blank isn't an answer.
+      var missing = false;
+      inputs.forEach(function (inp) {
+        if (!inp.value.trim()) { inp.classList.add('is-missing'); missing = true; }
+      });
+      if (missing) { var first = inputs.filter(function (i) { return !i.value.trim(); })[0]; if (first) first.focus(); return; }
+
+      // Reassemble the line with the typed values in place of the blanks.
+      var assembled = '';
+      segments.forEach(function (seg, i) {
+        assembled += seg;
+        if (i < segments.length - 1) assembled += ' ' + inputs[i].value.trim() + ' ';
+      });
+      assembled = assembled.replace(/\s+/g, ' ').trim();
+
+      // Send the completed line as a SILENT message: the tutor reacts to what the
+      // student filled in (the verdict lands in chat / on the board), but no
+      // student bubble is painted, so it reads as "the tutor responded to my
+      // card", not as a typed message. Falls back to a visible send if the chat's
+      // silent channel isn't present (e.g. the board open outside the chat page).
+      var sent = (typeof window.sendSilentMessage === 'function')
+        ? window.sendSilentMessage(assembled)
+        : submitAsStudent(assembled);
+      if (sent) {
+        // Lock the answers in and show a pending "Checking…" state. The verdict
+        // settles IN PLACE when the tutor's reaction card lands (see
+        // resolvePendingScaffold) — green if it confirms the line, amber to retry.
+        card.classList.remove('cr-ws-board-card--scaffold-retry');
+        card.classList.add('cr-ws-board-card--scaffold-checking');
+        inputs.forEach(function (inp) { inp.disabled = true; });
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Checking…';
+        var pending = {
+          line: normalizeLine(assembled),
+          settle: settleVerdict
+        };
+        // Safety net: if the tutor's reply carries no resolvable board card,
+        // don't hang on "Checking…" — settle to a neutral checked state.
+        pending.timer = setTimeout(function () {
+          if (WS.board.pendingScaffold === pending) {
+            settleVerdict('neutral');
+            WS.board.pendingScaffold = null;
+          }
+        }, 12000);
+        WS.board.pendingScaffold = pending;
+      }
+    }
+
+    // Apply the verdict to this card in place.
+    function settleVerdict(verdict) {
+      card.classList.remove('cr-ws-board-card--scaffold-checking');
+      if (verdict === 'correct') {
+        card.classList.add('cr-ws-board-card--scaffold-correct');
+        checkBtn.textContent = 'Correct ✓';
+        checkBtn.disabled = true;
+      } else if (verdict === 'retry') {
+        card.classList.add('cr-ws-board-card--scaffold-retry');
+        checkBtn.textContent = 'Try again';
+        checkBtn.disabled = false;
+        inputs.forEach(function (inp) { inp.disabled = false; });
+      } else {
+        // Neutral: sent and acknowledged, but no structured verdict to show.
+        card.classList.add('cr-ws-board-card--scaffold-done');
+        checkBtn.textContent = 'Checked ✓';
+        checkBtn.disabled = true;
+      }
+    }
+
+    checkBtn.addEventListener('click', check);
+    return true;
   }
 
   // ---- Launcher tools (open an existing floating surface) --------------
@@ -123,6 +361,16 @@
   // The board never previews a step the student hasn't said. Callers
   // are responsible for honoring this; the rule will be backstopped by
   // a server-side guard in the next phase.
+  function makeBoardEmpty() {
+    return el('div', 'cr-ws-empty cr-ws-board-empty',
+      '<div class="cr-ws-board-empty-ico" aria-hidden="true">' +
+        '<i class="fas fa-pen-ruler"></i></div>' +
+      '<h5 class="cr-ws-board-empty-title">Ready to work it out?</h5>' +
+      '<p class="cr-ws-board-empty-body">' +
+        'Your steps will land here as you and your tutor work through ' +
+        'the problem together.</p>');
+  }
+
   function renderBoard(body) {
     var head = el('div', 'cr-ws-board-head');
     head.innerHTML =
@@ -134,14 +382,7 @@
     var stack = el('div', 'cr-ws-board-stack');
     body.appendChild(stack);
 
-    var empty = el('div', 'cr-ws-empty cr-ws-board-empty',
-      '<div class="cr-ws-board-empty-ico" aria-hidden="true">' +
-        '<i class="fas fa-pen-ruler"></i></div>' +
-      '<h5 class="cr-ws-board-empty-title">Ready to work it out?</h5>' +
-      '<p class="cr-ws-board-empty-body">' +
-        'Your steps will land here as you and your tutor work through ' +
-        'the problem together.</p>');
-    if (WS.board.steps.length === 0) stack.appendChild(empty);
+    if (WS.board.steps.length === 0) stack.appendChild(makeBoardEmpty());
 
     // Rebuild any persisted steps (e.g. when re-entering the tab).
     WS.board.steps.forEach(function (step) { appendStepCard(stack, step, /*animate*/ false); });
@@ -149,9 +390,24 @@
     head.querySelector('.cr-ws-board-clear').addEventListener('click', function () {
       WS.board.steps = [];
       var s = WS.body && WS.body.querySelector('.cr-ws-board-stack');
-      if (s) s.innerHTML = '';
-      if (s) s.appendChild(empty.cloneNode(true));
+      if (s) { s.innerHTML = ''; s.appendChild(makeBoardEmpty()); }
     });
+  }
+
+  // Remove a single card — both its DOM and its entry in WS.board.steps (matched
+  // by object reference, so it stays gone when the tab is rebuilt). If it was the
+  // last card, the empty-state hint comes back.
+  function dismissCard(card, step) {
+    var i = WS.board.steps.indexOf(step);
+    if (i !== -1) WS.board.steps.splice(i, 1);
+    var stack = card.parentNode;
+    card.classList.add('cr-ws-board-card--leaving');
+    setTimeout(function () {
+      card.remove();
+      if (stack && WS.board.steps.length === 0 && !stack.querySelector('.cr-ws-board-empty')) {
+        stack.appendChild(makeBoardEmpty());
+      }
+    }, 220);
   }
 
   function teardownBoard() {
@@ -231,18 +487,25 @@
           }
           imgHost.innerHTML = '';
           var img = el('img', 'cr-ws-board-card-image-img');
-          // Prefer the cached thumbnail (e.g. Google's gstatic copy / Wikimedia
-          // thumb): it loads reliably cross-origin, whereas the source `url`
-          // frequently hotlink-blocks and renders as a broken-image glyph.
-          img.src = first.thumbnail || first.url;
+          // Route remote images through our same-origin proxy: third-party hosts
+          // frequently hotlink-block a bare <img> and render as a broken glyph.
+          // Local concept images (/images/...) are already same-origin — serve
+          // them as-is.
+          function srcFor(u) {
+            return /^https?:\/\//i.test(u)
+              ? '/api/images/proxy?url=' + encodeURIComponent(u)
+              : u;
+          }
+          // Prefer the cached thumbnail (Google gstatic / Wikimedia thumb); fall
+          // back to the source url, then degrade to text instead of a broken image.
+          var triedUrl = false;
+          img.src = srcFor(first.thumbnail || first.url);
           img.alt = first.title || step.query;
           img.loading = 'lazy';
-          // If even the chosen source fails, try the other one, then degrade to
-          // text instead of a broken image.
           img.onerror = function () {
-            if (first.url && img.src !== first.url) {
-              img.onerror = function () { imgHost.textContent = 'Couldn’t load that diagram.'; };
-              img.src = first.url;
+            if (!triedUrl && first.url && first.url !== (first.thumbnail || first.url)) {
+              triedUrl = true;
+              img.src = srcFor(first.url);
             } else {
               imgHost.textContent = 'Couldn’t load that diagram.';
             }
@@ -252,6 +515,35 @@
         .catch(function () {
           imgHost.textContent = 'Image unavailable.';
         });
+    } else if (step.type === 'diagram') {
+      // Deterministic geometry (JSXGraph) from a validated DiagramSpec — a
+      // teaching aid, correct by construction (e.g. two congruent triangles with
+      // marked corresponding parts). Never the student's own worked solution;
+      // the spec's redact mode hides to-be-found values for the student's own
+      // problem. Mirrors the 'model' card below.
+      card = el('div', 'cr-ws-board-card cr-ws-board-card--diagram');
+      var diagHost = el('div', 'cr-ws-board-card-diagram-host');
+      card.appendChild(diagHost);
+      if (step.caption) {
+        var diagCap = el('div', 'cr-ws-board-card-caption');
+        diagCap.textContent = step.caption;
+        card.appendChild(diagCap);
+      }
+      requestAnimationFrame(function () {
+        if (!window.DiagramRenderer) {
+          diagHost.textContent = 'Diagram engine still loading.';
+          return;
+        }
+        try {
+          window.DiagramRenderer.renderDiagram(
+            diagHost,
+            { diagramType: step.diagramType, diagramParams: step.diagramParams },
+            { redact: !!step.redact }
+          );
+        } catch (e) {
+          diagHost.textContent = "Couldn't build that diagram.";
+        }
+      });
     } else if (step.type === 'model') {
       // Concept model — an interactive, manipulable model of a math idea
       // (slope-intercept line, two-point line, …). Correct by construction:
@@ -276,11 +568,17 @@
       // Hint card — shows the next step's structure with empty \boxed{}
       // slots the student fills in. Distinct look + an eyebrow so it reads
       // as "your move", not as a finished step. Blanks reveal nothing, so
-      // this is the one card allowed on the student's own problem.
+      // this is the one card allowed on the student's own problem. The blanks
+      // are EDITABLE: the student types in them and submits the completed line
+      // as their own chat message (buildScaffoldFill). If no blank is found
+      // (shouldn't happen — the guard requires one), fall back to a static
+      // render so the card still shows.
       card = el('div', 'cr-ws-board-card cr-ws-board-card--scaffold');
-      var sMath = el('div', 'cr-ws-board-card-math');
-      card.appendChild(sMath);
-      renderTex(sMath, widenScaffoldBlanks(step.tex));
+      if (!buildScaffoldFill(card, step.tex)) {
+        var sMath = el('div', 'cr-ws-board-card-math');
+        card.appendChild(sMath);
+        renderTex(sMath, widenScaffoldBlanks(step.tex));
+      }
     } else if (step.type === 'worked') {
       // Read-only worked-example step — one line of a derivation the tutor is
       // teaching (NOT the student's own problem). A distinct accent + a
@@ -319,6 +617,17 @@
     }
 
     if (animate) card.classList.add('cr-ws-board-card--enter');
+    // Per-card dismiss (×, top-right) — lets the student clear a single card
+    // without wiping the whole board. Removes the step from state too.
+    var dismiss = el('button', 'cr-ws-board-card-dismiss', '&times;');
+    dismiss.type = 'button';
+    dismiss.setAttribute('aria-label', 'Remove this card');
+    dismiss.title = 'Remove';
+    dismiss.addEventListener('click', function (e) {
+      e.stopPropagation();
+      dismissCard(card, step);
+    });
+    card.appendChild(dismiss);
     stack.appendChild(card);
     // Scroll the new card into view (smooth so the eye follows the work).
     try { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) { /* old browser */ }
@@ -330,7 +639,42 @@
     }
   }
 
+  // Normalize a math line for comparison: drop whitespace, $ delimiters, braces,
+  // and LaTeX spacing macros so "x^2 + 4x + 4 = 12 + 4" matches a resolve card's
+  // tex regardless of formatting.
+  function normalizeLine(s) {
+    return String(s || '')
+      .replace(/\\(?:left|right|,|;|:|!|quad|qquad)/g, '')
+      .replace(/\\\(|\\\)|\\\[|\\\]/g, '')
+      .replace(/[\s${}]/g, '')
+      .toLowerCase();
+  }
+
+  // In-place verdict for a Checked scaffold card. The tutor reacts to the silent
+  // Check with board commands; the FIRST relevant one is the verdict, read
+  // structurally (never by parsing prose):
+  //   • verify, or a resolve that matches the student's line  → CORRECT (green)
+  //   • a fresh scaffold (the tutor re-hints)                 → TRY AGAIN (amber)
+  //   • anything else / nothing                               → stays neutral
+  // Called from pushBoardStep, the single point every new card flows through.
+  function resolvePendingScaffold(step) {
+    var p = WS.board.pendingScaffold;
+    if (!p || !step) return;
+    var verdict = null;
+    if (step.type === 'verify') verdict = 'correct';
+    else if (step.type === 'resolve' && normalizeLine(step.tex) === p.line) verdict = 'correct';
+    else if (step.type === 'scaffold') verdict = 'retry';
+    if (verdict) {
+      if (p.timer) clearTimeout(p.timer);
+      p.settle(verdict);
+      WS.board.pendingScaffold = null;
+    }
+  }
+
   function pushBoardStep(step) {
+    // Settle a pending scaffold Check before this new card lands (the new card IS
+    // the tutor's reaction, so the verdict reads off its type).
+    resolvePendingScaffold(step);
     WS.board.steps.push(step);
     // If the user is currently looking at a different tab, the cards
     // will materialize when they return — no need to switch them.
@@ -338,6 +682,85 @@
       var stack = WS.body.querySelector('.cr-ws-board-stack');
       appendStepCard(stack, step, /*animate*/ true);
     }
+    // On phones the board is a hidden drawer, so the running work is out of
+    // sight. Mirror each card straight into the chat thread, where the student
+    // already is — no drawer to open. (No-op on wider screens; see appendBoardMirror.)
+    appendBoardMirror(step);
+  }
+
+  // True on phone-width screens, where the board lives behind the FAB drawer.
+  function isMobileChat() {
+    return typeof window !== 'undefined' && typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  function openBoardDrawer() {
+    openWorkspace();
+    if (window.MathWorkspace) window.MathWorkspace.showTool('board');
+  }
+
+  // Drop a compact reflection of a board card into the chat thread (phones only).
+  // Read-only math cards render in full so the student can follow the work inline;
+  // interactive/heavy cards (scaffold, graph, image, model) render as a chip that
+  // opens the drawer, where the real interaction/space lives.
+  function appendBoardMirror(step) {
+    // Mirror inline when the board lives behind the phone drawer, OR whenever
+    // the board panel is hidden by feature flag — in that mode the chat thread
+    // is the only place the tutor's work can surface, on every screen size.
+    var boardHidden = !boardPanelEnabled();
+    if ((!isMobileChat() && !boardHidden) || !step) return;
+    var chat = document.getElementById('chat-messages-container');
+    if (!chat) return;
+
+    var t = step.type;
+    var wrap = el('div', 'cr-ws-chat-mirror');
+    var INLINE = { pose: 1, resolve: 1, verify: 1, apply: 1, worked: 1 };
+    var HEAVY_LABEL = { graph: 'Graph', image: 'Diagram', model: 'Interactive model', diagram: 'Diagram', scaffold: 'Your turn — fill the blanks' };
+
+    if (INLINE[t]) {
+      var variant = 'cr-ws-board-card--' + t;
+      var card = el('div', 'cr-ws-board-card ' + variant);
+      if (t === 'apply') {
+        card.innerHTML =
+          '<span class="cr-ws-board-apply-arrow" aria-hidden="true">↓</span>' +
+          '<span class="cr-ws-board-apply-op"></span>';
+        card.querySelector('.cr-ws-board-apply-op').textContent = step.op || '';
+      } else {
+        var math = el('div', 'cr-ws-board-card-math');
+        card.appendChild(math);
+        renderTex(math, step.tex);
+        if (t === 'verify' && step.check) {
+          var checkRow = el('div', 'cr-ws-board-card-check');
+          checkRow.innerHTML =
+            '<i class="fas fa-check-circle" aria-hidden="true"></i> ' +
+            '<span class="cr-ws-board-card-check-math"></span>';
+          card.appendChild(checkRow);
+          renderTex(checkRow.querySelector('.cr-ws-board-card-check-math'), step.check);
+        }
+        if (t === 'worked' && step.label) {
+          var wcap = el('div', 'cr-ws-board-card-caption');
+          wcap.textContent = step.label;
+          card.appendChild(wcap);
+        }
+      }
+      wrap.appendChild(card);
+    } else {
+      // scaffold / graph / image / model / diagram → tap-chip to the drawer.
+      // With the board hidden there's no drawer to open, so drop these heavy
+      // cards rather than surfacing a dead chip.
+      if (boardHidden) return;
+      var chip = el('button', 'cr-ws-mirror-chip');
+      chip.type = 'button';
+      var label = HEAVY_LABEL[t] || 'Open board';
+      chip.innerHTML = '<i class="fas fa-up-right-from-square" aria-hidden="true"></i> ' +
+        '<span></span> <span class="cr-ws-mirror-chip-go">Open ↗</span>';
+      chip.querySelector('span').textContent = label;
+      chip.addEventListener('click', openBoardDrawer);
+      wrap.appendChild(chip);
+    }
+
+    chat.appendChild(wrap);
+    try { wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) { /* old browser */ }
   }
 
   // ---- Graph tool (live embed) -----------------------------------------
@@ -430,6 +853,9 @@
   };
 
   function switchTool(key) {
+    // Board hidden by feature flag → nothing to render into; callers (incl. the
+    // public API) become no-ops while inline mirroring carries the work.
+    if (!boardPanelEnabled()) return;
     if (!TOOLS[key] || WS.current === key) return;
     var prev = WS.current && TOOLS[WS.current];
     if (prev && prev.teardown) prev.teardown();
@@ -467,7 +893,7 @@
     return b;
   }
   function openWorkspace() {
-    if (!WS.el) return;
+    if (!WS.el || !boardPanelEnabled()) return;
     WS.el.classList.add('is-open');
     ensureBackdrop().classList.add('is-open');
     document.body.classList.add('cr-ws-drawer-open');
@@ -543,6 +969,31 @@
     // student has stated.
 
     /**
+     * Briefly pulse a board card to direct the student's attention (e.g. as the
+     * tutor starts talking through the current line). Presentational only — it
+     * highlights an EXISTING card and reveals nothing new, so it's safe on the
+     * student's own problem. Token-level "circle the 2" attention is a follow-up
+     * that needs the term-addressable canvas. No-op when the board isn't visible.
+     * @param {object} [opts] { index } — which card (default: the most recent).
+     * @returns {boolean} whether a card was pulsed.
+     */
+    boardHighlight: function (opts) {
+      if (!WS.body) return false;
+      var stack = WS.body.querySelector('.cr-ws-board-stack');
+      if (!stack) return false;
+      var cards = stack.querySelectorAll('.cr-ws-board-card');
+      if (!cards.length) return false;
+      var i = (opts && typeof opts.index === 'number') ? opts.index : cards.length - 1;
+      var card = cards[i];
+      if (!card) return false;
+      card.classList.remove('cr-ws-board-card--attention'); // restart if already pulsing
+      void card.offsetWidth;                                 // reflow so re-adding re-triggers
+      card.classList.add('cr-ws-board-card--attention');
+      setTimeout(function () { card.classList.remove('cr-ws-board-card--attention'); }, 1500);
+      return true;
+    },
+
+    /**
      * Render the starting problem as the top card.
      * @param {string} tex  LaTeX expression, e.g. "2x + 4 = 20"
      * @param {object} [opts] reserved for future caption/parallel marks
@@ -550,13 +1001,20 @@
     boardPose: function (tex, opts) {
       tex = (tex == null ? '' : String(tex)).trim();
       if (!tex) return false;
-      openWorkspace();
-      // Switching only if the user isn't actively in another tab. For
-      // now we DO switch — Board is the natural home and a fresh pose
-      // is a new conversation move. Revisit if telemetry shows focus
-      // stealing is annoying.
-      this.showTool('board');
+      // Desktop: reveal + focus the board. Phones: stay in chat — the pose
+      // mirrors into the thread (appendBoardMirror); the drawer is one tap away.
+      if (!isMobileChat()) {
+        openWorkspace();
+        this.showTool('board');
+      }
       pushBoardStep({ type: 'pose', tex: tex, opts: opts || null });
+      // Direct the eye to the problem first (vision: "the board softly
+      // highlights"). One gentle pulse after the enter animation settles;
+      // no-op on mobile (drawer) and under prefers-reduced-motion.
+      if (!isMobileChat()) {
+        var self = this;
+        setTimeout(function () { self.boardHighlight(); }, 420);
+      }
       return true;
     },
 
@@ -593,8 +1051,10 @@
     boardScaffold: function (tex) {
       tex = (tex == null ? '' : String(tex)).trim();
       if (!tex) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       pushBoardStep({ type: 'scaffold', tex: tex });
       return true;
     },
@@ -609,8 +1069,10 @@
     boardExample: function (tex, label) {
       tex = (tex == null ? '' : String(tex)).trim();
       if (!tex) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'worked', tex: tex };
       if (label) step.label = String(label).trim();
       pushBoardStep(step);
@@ -641,8 +1103,10 @@
     boardGraph: function (fn, caption) {
       fn = (fn == null ? '' : String(fn)).trim();
       if (!fn) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'graph', fn: fn };
       if (caption) step.caption = String(caption).trim();
       pushBoardStep(step);
@@ -658,8 +1122,10 @@
     boardImage: function (query, caption) {
       query = (query == null ? '' : String(query)).trim();
       if (!query) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'image', query: query };
       if (caption) step.caption = String(caption).trim();
       pushBoardStep(step);
@@ -686,10 +1152,28 @@
         model = model.spec || model.model;
       }
       if (!model) return false;
-      openWorkspace();
-      this.showTool('board');
+      // On phones, don't auto-pop the drawer — the card surfaces inline in the
+      // chat thread instead (see appendBoardMirror). The drawer stays one tap
+      // away (FAB / mirror chip) for the full board.
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
       var step = { type: 'model', model: model };
       if (prompt) step.prompt = String(prompt).trim();
+      pushBoardStep(step);
+      return true;
+    },
+
+    /**
+     * Drop a deterministic geometry diagram onto the board (inscribed angle,
+     * congruent triangles, …). Correct by construction — the spec computes the
+     * geometry; the renderer only draws it. A teaching aid summoned with intent.
+     * @param {object} command  { diagramType, diagramParams, redact?, caption? }
+     */
+    boardDiagram: function (command) {
+      if (!command || !command.diagramType) return false;
+      if (!isMobileChat()) { openWorkspace(); this.showTool('board'); }
+      var step = { type: 'diagram', diagramType: command.diagramType, diagramParams: command.diagramParams || {} };
+      if (command.redact) step.redact = true;
+      if (command.caption) step.caption = String(command.caption).trim();
       pushBoardStep(step);
       return true;
     },
@@ -711,6 +1195,11 @@
     WS.el = document.getElementById('cr-workspace');
     WS.body = document.getElementById('cr-ws-body');
     if (!WS.el || !WS.body) return;
+
+    // Board hidden by feature flag: skip the panel/FAB wiring entirely. The
+    // public board API still mirrors each step into the chat thread, so the
+    // student sees the tutor's work inline (see appendBoardMirror).
+    if (!boardPanelEnabled()) return;
 
     WS.el.querySelectorAll('.cr-ws-tab').forEach(function (tab) {
       tab.addEventListener('click', function () {

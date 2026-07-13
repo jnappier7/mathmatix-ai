@@ -680,39 +680,6 @@
     position: relative;
 }
 
-.file-card-check-work {
-    position: absolute;
-    bottom: 6px;
-    left: 6px;
-    right: 6px;
-    background: rgba(139, 92, 246, 0.95);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    opacity: 0;
-    transition: opacity 0.15s, background 0.15s;
-    z-index: 2;
-}
-
-.file-card:hover .file-card-check-work,
-.file-card-check-work:focus,
-.file-card-check-work:disabled {
-    opacity: 1;
-}
-
-.file-card-check-work:hover {
-    background: #7c3aed;
-}
-
-.file-card-check-work:disabled {
-    background: #a78bfa;
-    cursor: wait;
-}
+/* The old hover-only ".file-card-check-work" overlay button was removed when
+   the unified-upload smart card replaced it with always-visible action chips
+   (.fcs-* in unified-upload.js). Its styles are intentionally gone. */

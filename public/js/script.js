@@ -6,6 +6,12 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
 import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js';
+import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
+import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
+import './modules/statusCard.js'; // registers window.openStatusCard (Progress button)
+import './modules/shop.js'; // registers window.openShop (cosmetics shop)
+import { resolveAvatarUrl } from './modules/avatarResolver.js';
+import { applyCosmetics } from './modules/cosmeticsApply.js';
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
@@ -135,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             _speechSilenceTimer = setTimeout(() => {
                 // No new speech for 3s — auto-stop and keep text
                 if (isRecognizing) {
-                    try { recognition.stop(); } catch (_) {}
+                    try { recognition.stop(); } catch {}
                 }
             }, SPEECH_AUTO_STOP_MS);
 
@@ -255,6 +261,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!userRes.ok) throw new Error('Not authenticated');
             const data = await userRes.json();
             currentUser = data.user;
+            // Expose the loaded user globally so modules that read window.currentUser
+            // (status card modal, identity chip, resume card, guided path, shop) see
+            // real data on chat.html. Same object reference, so the in-place XP/level
+            // updates after each chat turn stay live without re-mirroring.
+            window.currentUser = currentUser;
             if (!currentUser) throw new Error('User not found');
             if (currentUser.needsProfileCompletion) return window.location.href = "/complete-profile.html";
             if (!currentUser.selectedTutorId && currentUser.role === 'student') return window.location.href = '/pick-tutor.html';
@@ -320,6 +331,23 @@ document.addEventListener("DOMContentLoaded", () => {
             })();
 
             if (trialState && trialState.history && trialState.history.length > 0) {
+                // Persist the trial conversation server-side FIRST, so the tutor
+                // actually has it as context on the next turn — not just a visual
+                // replay. Fails soft: if seeding errors, we still show the UI
+                // (same behavior as before, just without model-side memory).
+                try {
+                    await csrfFetch('/api/conversations/seed-trial', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tutorId: trialState.tutorId,
+                            history: trialState.history
+                        })
+                    });
+                } catch (seedErr) {
+                    console.warn('Trial seed failed; continuing with UI-only replay', seedErr);
+                }
+
                 // Inject trial messages into the chat UI
                 trialState.history.forEach(function(msg) {
                     appendMessage(msg.content, msg.role === 'user' ? 'user' : 'ai');
@@ -396,6 +424,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function setupChatUI() {
         updateGamificationDisplay();
+        // Identity chip (level ring + rank title) in the chat header.
+        try { initIdentityChip(currentUser); } catch (e) { console.warn('Identity chip init failed', e); }
+        // Apply any equipped cosmetics (no-op until the student equips something).
+        try { applyCosmetics(currentUser); } catch (e) { console.warn('Apply cosmetics failed', e); }
     }
 
     
@@ -725,13 +757,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const _marked = window.marked;
         const _DOMPurify = window.DOMPurify;
 
+        // Protect LaTeX from markdown using the shared delimiter scanner.
+        // It auto-closes a stray/unbalanced delimiter at the next paragraph
+        // break, so one missing `\]` can never swallow an entire explanation
+        // into a single space-stripped KaTeX block. See mathDelimiters.js.
+        const _protect = window.MathDelimiters && window.MathDelimiters.protectMathBlocks;
+
         if (!_marked || !_marked.parse) {
             console.warn('[renderMarkdownMath] marked not available, falling back to plain text');
             // Even without markdown, try to render KaTeX math
             let fallback = text;
-            if (window.katex) {
-                fallback = fallback.replace(/\\\[([\s\S]*?)\\\]/g, (_, math) => renderKatex(math, true));
-                fallback = fallback.replace(/\\\(([\s\S]*?)\\\)/g, (_, math) => renderKatex(math, false));
+            if (window.katex && _protect) {
+                const { text: protectedText, blocks } = _protect(fallback, (i) => `@@LATEX_BLOCK_${i}@@`);
+                fallback = protectedText;
+                blocks.forEach((block, index) => {
+                    fallback = fallback.replace(`@@LATEX_BLOCK_${index}@@`, renderKatex(block.math, block.display));
+                });
             }
             return _DOMPurify ? _DOMPurify.sanitize(fallback) : fallback;
         }
@@ -739,21 +780,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let processedText = text;
 
         // Protect LaTeX blocks from markdown parsing
-        const latexBlocks = [];
-
-        // Display math \[...\]
-        processedText = processedText.replace(/\\\[([\s\S]*?)\\\]/g, (match, math) => {
-            const index = latexBlocks.length;
-            latexBlocks.push({ math, display: true });
-            return `@@LATEX_BLOCK_${index}@@`;
-        });
-
-        // Inline math \(...\)
-        processedText = processedText.replace(/\\\(([\s\S]*?)\\\)/g, (match, math) => {
-            const index = latexBlocks.length;
-            latexBlocks.push({ math, display: false });
-            return `@@LATEX_BLOCK_${index}@@`;
-        });
+        let latexBlocks = [];
+        if (_protect) {
+            const result = _protect(processedText, (i) => `@@LATEX_BLOCK_${i}@@`);
+            processedText = result.text;
+            latexBlocks = result.blocks;
+        } else {
+            console.warn('[renderMarkdownMath] MathDelimiters not loaded — math left unrendered');
+        }
 
         // Protect inline visual HTML (SVG containers from inlineChatVisuals)
         // Uses div-depth counting to reliably match the full container,
@@ -1015,21 +1049,20 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
     } else {
-      // Image preview card with inline "Check my work" action
+      // Image: the card stays a plain thumbnail. The smart action chooser
+      // (hint + chips) is rendered in a full-width bar above the compose row
+      // — NOT inside this narrow thumbnail cell, which clipped it. See
+      // decorateSmartCard → the suggestion bar.
       card.style.padding = '0'; // Remove padding for images
       const reader = new FileReader();
       reader.onload = (e) => {
         card.innerHTML = `
           <button class="file-card-remove" onclick="removeFile('${file.uploadId}')" title="Remove">×</button>
           <img src="${e.target.result}" class="file-card-preview" alt="${escapeHtml(file.name)}" title="${escapeHtml(file.name)}"/>
-          <button class="file-card-check-work" data-file-id="${file.uploadId}" title="Have my tutor check this work">
-            <i class="fas fa-clipboard-check"></i> Check my work
-          </button>
         `;
-        const checkBtn = card.querySelector('.file-card-check-work');
-        if (checkBtn) {
-          checkBtn.addEventListener('click', () => runWorkCheckFromChat(file));
-        }
+        // Classify the image, then surface the suggested one-tap action in the
+        // suggestion bar above the input. Falls back to a neutral chooser.
+        decorateSmartCard(file);
       };
       reader.readAsDataURL(file);
     }
@@ -1054,7 +1087,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const card = document.querySelector(`[data-file-id="${fileId}"]`);
     if (card) {
       card.style.animation = 'fileCardExit 0.3s ease-out';
-      setTimeout(() => card.remove(), 300);
+      setTimeout(() => {
+        card.remove();
+        // Drop the suggestion bar once no image cards remain to act on.
+        const container = document.getElementById('file-grid-container');
+        if (!container || !container.querySelector('.file-card-preview')) {
+          clearSuggestBar();
+        }
+      }, 300);
     }
   };
 
@@ -1065,6 +1105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     attachedFiles = [];
     const container = document.getElementById('file-grid-container');
     if (container) container.innerHTML = '';
+    clearSuggestBar();
   }
 
   /**
@@ -1114,11 +1155,10 @@ document.addEventListener("DOMContentLoaded", () => {
   window.runWorkCheckFromChat = async function(file) {
     if (!file) return;
     const card = document.querySelector(`[data-file-id="${file.uploadId}"]`);
-    const checkBtn = card?.querySelector('.file-card-check-work');
-    if (checkBtn) {
-      checkBtn.disabled = true;
-      checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking…';
-    }
+    // Loading + restore live on the suggestion bar (the chooser moved there).
+    const bar = document.getElementById('smart-suggest-bar');
+    const barHtml = bar ? bar.innerHTML : null;
+    if (bar) bar.innerHTML = '<span class="ssb-hint"><i class="fas fa-spinner fa-spin"></i> Checking your work…</span>';
 
     try {
       const formData = new FormData();
@@ -1144,6 +1184,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Remove the file from the attach queue so it doesn't get double-sent.
       attachedFiles = attachedFiles.filter(f => f.uploadId !== file.uploadId);
       if (card) card.remove();
+      clearSuggestBar();
 
       // Render the breakdown inline (same content as the modal) and surface
       // the tutor greeting. Reuses the show-your-work instance so the modal
@@ -1158,12 +1199,145 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       console.error('[runWorkCheckFromChat] error:', err);
       if (typeof showToast === 'function') showToast(err.message || 'Could not check your work right now.', 4000);
-      if (checkBtn) {
-        checkBtn.disabled = false;
-        checkBtn.innerHTML = '<i class="fas fa-clipboard-check"></i> Check my work';
+      // Restore the suggestion bar so the student can retry or pick another path.
+      if (bar && barHtml != null) {
+        bar.innerHTML = barHtml;
+        bindSmartActions(bar, file);
       }
     }
   };
+
+  /**
+   * Suggestion bar — a full-width strip ABOVE the compose row that surfaces the
+   * classifier's suggested one-tap action for an attached image. It lives above
+   * the input, NOT inside the narrow thumbnail file-card, so it can never be
+   * clipped by the file grid.
+   *
+   * Both primary chips ("Check my work", "Help me with this") feed the ONE chat
+   * conversation — the tutor sees the image (and keeps seeing it across turns
+   * via the active-worksheet vision pin). The classifier only pre-selects which
+   * framing is likely. A subordinate "scored breakdown" runs the opt-in gamified
+   * grade-work path (per-problem score + XP + badges).
+   */
+  function getSuggestBar() {
+    let bar = document.getElementById('smart-suggest-bar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'smart-suggest-bar';
+      bar.className = 'smart-suggest-bar';
+      const compose = document.querySelector('.imessage-compose-bar');
+      if (!compose || !compose.parentNode) return null;
+      compose.parentNode.insertBefore(bar, compose);
+    }
+    return bar;
+  }
+
+  function clearSuggestBar() {
+    document.getElementById('smart-suggest-bar')?.remove();
+  }
+
+  function isFileAttached(file) {
+    return attachedFiles.some(f => f.uploadId === file.uploadId);
+  }
+
+  async function decorateSmartCard(file) {
+    const smartEnabled = !(window.MM_FEATURES && window.MM_FEATURES.smartUpload === false);
+
+    const bar = getSuggestBar();
+    if (bar) bar.innerHTML = '<span class="ssb-hint"><i class="fas fa-spinner fa-spin"></i> Reading your math…</span>';
+
+    let cls = null;
+    if (smartEnabled) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const resp = await csrfFetch('/api/upload/classify', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        if (resp.ok) cls = await resp.json();
+      } catch (err) {
+        console.debug('[smartUpload] classify failed, using neutral chooser:', err && err.message);
+      }
+    }
+
+    // File may have been removed while we waited — don't show a stale bar.
+    if (!isFileAttached(file)) { clearSuggestBar(); return; }
+
+    renderSuggestBar(file, cls);
+  }
+
+  function renderSuggestBar(file, cls) {
+    const bar = getSuggestBar();
+    if (!bar) return;
+
+    const intent = cls && cls.intent ? cls.intent : 'ambiguous';
+    const reason = cls && cls.reason ? String(cls.reason) : '';
+    const suggestCheck = intent === 'check_work';
+    const suggestHelp = intent === 'get_help';
+
+    const hint = suggestCheck
+      ? (reason ? `Looks like you've worked this — ${reason}.` : 'Looks like you’ve worked this out.')
+      : suggestHelp
+        ? 'Looks like a fresh problem.'
+        : 'What would you like to do with this?';
+
+    bar.innerHTML = `
+      <span class="ssb-hint">${escapeHtml(hint)}</span>
+      <div class="ssb-actions">
+        <button class="fcs-chip fcs-check${suggestCheck ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor to check your work">
+          <i class="fas fa-clipboard-check"></i> Check my work${suggestCheck ? ' <span class="fcs-tag">Suggested</span>' : ''}
+        </button>
+        <button class="fcs-chip fcs-help${suggestHelp ? ' fcs-suggested' : ''}" type="button" title="Send to your tutor for help">
+          <i class="fas fa-comments"></i> Help me with this${suggestHelp ? ' <span class="fcs-tag">Suggested</span>' : ''}
+        </button>
+        <button class="fcs-scored" type="button" title="Get a per-problem scored breakdown with XP and badges">
+          <i class="fas fa-clipboard-list"></i> Scored breakdown
+        </button>
+      </div>
+    `;
+
+    bindSmartActions(bar, file);
+  }
+
+  /**
+   * Bind the suggestion-bar actions. Both primary chips feed ONE conversation
+   * (the tutor sees the image via the active-worksheet vision pin). The scored
+   * breakdown is opt-in enrichment using the dedicated grade-work pipeline.
+   */
+  function bindSmartActions(scope, file) {
+    scope.querySelector('.fcs-check')?.addEventListener('click', () => sendForCheck());
+    scope.querySelector('.fcs-help')?.addEventListener('click', () => sendForHelp());
+    scope.querySelector('.fcs-scored')?.addEventListener('click', () => runWorkCheckFromChat(file));
+  }
+
+  /**
+   * Send the already-attached image through the normal chat pipeline with a
+   * default framing message (the file is in attachedFiles from handleFileUpload).
+   * "Check my work" and "Help me" differ only by the message — both land in the
+   * one conversation where the tutor can see the work and discuss it across
+   * turns ("am I on track?", "check #7").
+   */
+  function sendAttachedWithDefault(defaultMsg) {
+    const userInput = document.getElementById('user-input');
+    if (userInput && !userInput.textContent.trim()) {
+      userInput.textContent = defaultMsg;
+      userInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    const sendBtn = document.getElementById('send-button');
+    if (sendBtn && !sendBtn.disabled) sendBtn.click();
+    // Action taken — the suggestion bar's job is done.
+    clearSuggestBar();
+  }
+
+  function sendForCheck() {
+    sendAttachedWithDefault("Can you check my work and tell me if I'm on the right track?");
+  }
+
+  function sendForHelp() {
+    sendAttachedWithDefault('Can you help me with this?');
+  }
 
   /**
    * Escape HTML to prevent XSS
@@ -1194,8 +1368,85 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 	
-    function appendMessage(text, sender, graphData = null, isMasteryQuiz = false) {
-        if (!text && !graphData) return;
+    // ── Transcript attachments (uploaded images / PDFs) ─────────────────
+    // Inject styles once for inline attachment thumbnails + the image lightbox.
+    function ensureAttachmentStyles() {
+        if (document.getElementById('msg-attachment-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'msg-attachment-styles';
+        style.textContent = ''
+            + '.msg-attachments{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}'
+            + '.msg-attachment-img{max-width:220px;max-height:220px;border-radius:10px;cursor:zoom-in;'
+            + 'border:1px solid rgba(0,0,0,.08);object-fit:cover;display:block;}'
+            + '.msg-attachment-pdf{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;'
+            + 'border-radius:10px;background:rgba(18,179,179,.12);color:#0d7a7a;text-decoration:none;'
+            + 'font-weight:600;font-size:.9rem;}'
+            + '.msg-attachment-pdf i{font-size:1.1rem;}'
+            + '.img-lightbox-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:11000;'
+            + 'display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out;}'
+            + '.img-lightbox-overlay img{max-width:96vw;max-height:92vh;border-radius:8px;'
+            + 'box-shadow:0 10px 50px rgba(0,0,0,.5);}'
+            + '.img-lightbox-close{position:absolute;top:16px;right:22px;font-size:2.2rem;color:#fff;'
+            + 'background:none;border:none;cursor:pointer;line-height:1;}';
+        document.head.appendChild(style);
+    }
+
+    // Open an uploaded image full-size. Click anywhere or press Esc to close.
+    function openImageLightbox(src) {
+        ensureAttachmentStyles();
+        const overlay = document.createElement('div');
+        overlay.className = 'img-lightbox-overlay';
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Uploaded image (full size)';
+        const close = document.createElement('button');
+        close.className = 'img-lightbox-close';
+        close.setAttribute('aria-label', 'Close');
+        close.innerHTML = '&times;';
+        overlay.appendChild(img);
+        overlay.appendChild(close);
+        function dismiss() { overlay.remove(); document.removeEventListener('keydown', onKey); }
+        function onKey(e) { if (e.key === 'Escape') dismiss(); }
+        overlay.addEventListener('click', dismiss);
+        document.addEventListener('keydown', onKey);
+        document.body.appendChild(overlay);
+    }
+    window.openImageLightbox = openImageLightbox;
+
+    // Build the attachment row for a message bubble.
+    // `attachments` is an array of { url, fileType } where fileType is 'image'|'pdf'.
+    function buildAttachmentsEl(attachments) {
+        if (!attachments || !attachments.length) return null;
+        ensureAttachmentStyles();
+        const wrap = document.createElement('div');
+        wrap.className = 'msg-attachments';
+        attachments.forEach(att => {
+            if (!att || !att.url) return;
+            if (att.fileType === 'pdf') {
+                const chip = document.createElement('a');
+                chip.className = 'msg-attachment-pdf';
+                chip.href = att.url;
+                chip.target = '_blank';
+                chip.rel = 'noopener';
+                chip.innerHTML = '<i class="fas fa-file-pdf"></i><span>PDF</span>';
+                wrap.appendChild(chip);
+            } else {
+                const img = document.createElement('img');
+                img.className = 'msg-attachment-img';
+                img.src = att.url;
+                img.alt = 'Uploaded image';
+                img.loading = 'lazy';
+                img.addEventListener('click', () => openImageLightbox(att.url));
+                // If a persisted image can't be served (e.g. retention sweep), drop it quietly.
+                img.addEventListener('error', () => img.remove());
+                wrap.appendChild(img);
+            }
+        });
+        return wrap.children.length ? wrap : null;
+    }
+
+    function appendMessage(text, sender, graphData = null, isMasteryQuiz = false, attachments = null) {
+        if (!text && !graphData && !(attachments && attachments.length)) return;
 
         if (!chatBox) return;
 
@@ -1219,9 +1470,10 @@ document.addEventListener("DOMContentLoaded", () => {
             avatar.className = "message-avatar";
 
             // DiceBear avatar or initial fallback
-            if (currentUser.avatar?.dicebearUrl) {
+            const myAvatarUrl = resolveAvatarUrl(currentUser);
+            if (myAvatarUrl) {
                 const avatarImg = document.createElement('img');
-                avatarImg.src = currentUser.avatar.dicebearUrl;
+                avatarImg.src = myAvatarUrl;
                 avatarImg.alt = 'My Avatar';
                 avatar.innerHTML = '';
                 avatar.appendChild(avatarImg);
@@ -1252,6 +1504,10 @@ document.addEventListener("DOMContentLoaded", () => {
             textNode.innerHTML = renderMarkdownMath(text);
         }
         bubble.appendChild(textNode);
+
+        // Render uploaded-file attachments (images open full-size on click).
+        const attachmentsEl = buildAttachmentsEl(attachments);
+        if (attachmentsEl) bubble.appendChild(attachmentsEl);
 
         // Handle Visual Step Breadcrumbs: [STEPS]...[/STEPS] with animated reveal
         if (sender === 'ai' && text && text.includes('[STEPS]')) {
@@ -2207,20 +2463,27 @@ document.addEventListener("DOMContentLoaded", () => {
      * Queue a message for processing
      * Shows the message immediately as "queued" and processes when ready
      */
-    function queueMessage(messageText, files, responseTime) {
+    function queueMessage(messageText, files, responseTime, opts) {
+        opts = opts || {};
         const queuedMessage = {
             id: ++messageQueue.currentMessageId,
             text: messageText,
             files: files ? [...files] : [],
             responseTime: responseTime,
+            // SILENT: send the turn to the tutor and render its reply, but never
+            // paint a student bubble for it. Used by the WorkBoard's fill-in cards
+            // (a scaffold the student completes + Checks): the tutor reacts to the
+            // card's content without it looking like a typed chat message.
+            silent: !!opts.silent,
             timestamp: Date.now()
         };
 
         messageQueue.queue.push(queuedMessage);
         console.log(`[MessageQueue] Message queued (ID: ${queuedMessage.id}, Queue length: ${messageQueue.queue.length})`);
 
-        // Show queued message in UI with "queued" indicator if we're already processing
-        if (messageQueue.isProcessing && messageText) {
+        // Show queued message in UI with "queued" indicator if we're already
+        // processing — never for a silent turn (it has no bubble at all).
+        if (messageQueue.isProcessing && messageText && !queuedMessage.silent) {
             appendQueuedMessage(messageText, queuedMessage.id);
         }
 
@@ -2229,6 +2492,16 @@ document.addEventListener("DOMContentLoaded", () => {
             processMessageQueue();
         }
     }
+
+    // Public: send a turn to the tutor WITHOUT rendering a student bubble. The
+    // full pipeline still runs (the tutor reacts, board commands apply), so a
+    // WorkBoard card can let the student act and have the tutor respond to it.
+    window.sendSilentMessage = function (text) {
+        text = (text == null ? '' : String(text)).trim();
+        if (!text) return false;
+        queueMessage(text, [], null, { silent: true });
+        return true;
+    };
 
     /**
      * Display a queued message in the chat with a visual indicator
@@ -2246,9 +2519,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const avatar = document.createElement("div");
             avatar.className = "message-avatar";
 
-            if (currentUser.avatar?.dicebearUrl) {
+            const myAvatarUrl = resolveAvatarUrl(currentUser);
+            if (myAvatarUrl) {
                 const avatarImg = document.createElement('img');
-                avatarImg.src = currentUser.avatar.dicebearUrl;
+                avatarImg.src = myAvatarUrl;
                 avatarImg.alt = 'My Avatar';
                 avatar.innerHTML = '';
                 avatar.appendChild(avatarImg);
@@ -2320,14 +2594,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const responseTime = queuedMsg.responseTime;
         const queuedFiles = queuedMsg.files;
 
-        // Only append if not already shown as queued
+        // Show the student's uploaded files inline in their own bubble, straight
+        // from the local File objects (no server round-trip). On a later history
+        // reload these re-render from the persisted StudentUpload reference.
+        const localAttachments = (queuedFiles || []).map(f => ({
+            url: URL.createObjectURL(f),
+            fileType: f.type === 'application/pdf' ? 'pdf' : 'image'
+        }));
+
+        // A SILENT turn never paints a student bubble — the tutor reacts to it
+        // (e.g. a filled-in WorkBoard card) without it looking like a typed
+        // message. Otherwise replace any "queued" placeholder and render the
+        // real user message, including image-only sends (text empty, file attached).
         const queuedElement = document.querySelector(`[data-queue-id="${queuedMsg.id}"]`);
-        if (!queuedElement && messageText) {
-            appendMessage(messageText, "user");
-        } else if (queuedElement && messageText) {
-            // Replace queued message with proper user message
-            queuedElement.remove();
-            appendMessage(messageText, "user");
+        if (queuedElement) queuedElement.remove();
+        if (!queuedMsg.silent && (messageText || localAttachments.length)) {
+            appendMessage(messageText || '', "user", null, false, localAttachments);
         }
 
         showThinkingIndicator(true);
@@ -2373,7 +2655,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Auto-detect the user's IANA timezone so the streak day-boundary
             // math respects the student's local day, not server UTC.
             let clientTimezone = null;
-            try { clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (_) {}
+            try { clientTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch {}
 
             // Bound the request with an AbortController so a silently-dead
             // SSE connection (proxy closed the socket mid-stream) can't park
@@ -2511,7 +2793,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (!streamAbort) return;
                     streamIdleTimer = setTimeout(() => {
                         console.warn(`[Stream] No bytes received in ${STREAM_IDLE_MS}ms — aborting`);
-                        try { streamAbort.abort(); } catch (_) { /* already aborted */ }
+                        try { streamAbort.abort(); } catch { /* already aborted */ }
                     }, STREAM_IDLE_MS);
                 }
                 resetStreamIdleTimer();
@@ -2642,6 +2924,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     hasInlineVisuals = visualResult.hasVisuals;
                 } catch (error) {
                     console.error('[InlineChatVisuals] Error processing visuals:', error);
+                }
+            }
+
+            // Final safety net: remove any visual command tag NO renderer handled
+            // (e.g. [DIAGRAM:...] when diagram-display isn't loaded), so the student
+            // never sees raw bracket gibberish. Narrow whitelist — never touches
+            // interval notation like [0, 3] or LaTeX.
+            if (window.StripVisualTags) {
+                try {
+                    aiText = window.StripVisualTags.stripUnrenderedVisualTags(aiText);
+                } catch (error) {
+                    console.error('[StripVisualTags] Error stripping leftover tags:', error);
                 }
             }
 
@@ -2828,17 +3122,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, 2000); // Delay so it doesn't overlap with level-up celebration
             }
 
+            // Reconcile the Tier-3 behavior earned this turn into the local user
+            // so the identity chip's rank title advances live (the /user payload
+            // won't refresh until reload). Mirrors the server increment in
+            // xpEngine.applyXpToUser → xpLadderStats.tier3Behaviors.
+            if (data.xpLadder?.tier3 > 0 && data.xpLadder.tier3Behavior) {
+                if (!currentUser.xpLadderStats) currentUser.xpLadderStats = { tier3Behaviors: [] };
+                if (!Array.isArray(currentUser.xpLadderStats.tier3Behaviors)) currentUser.xpLadderStats.tier3Behaviors = [];
+                const behaviors = currentUser.xpLadderStats.tier3Behaviors;
+                const existing = behaviors.find(b => b.behavior === data.xpLadder.tier3Behavior);
+                if (existing) existing.count = (existing.count || 0) + 1;
+                else behaviors.push({ behavior: data.xpLadder.tier3Behavior, count: 1 });
+            }
+
             if (data.userXp !== undefined) {
                 currentUser.level = data.userLevel;
                 currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
                 currentUser.xpForNextLevel = data.xpNeeded;
                 updateGamificationDisplay();
+                // Identity chip: refresh level ring + rank title from the fresh XP state.
+                try { updateIdentityChip(currentUser); } catch (e) { console.warn('Identity chip update failed', e); }
 
                 // Show unlock proximity teaser (after level-up or when close)
                 if (data.xpLadder?.leveledUp) {
                     setTimeout(() => showUnlockProximityTeaser(currentUser), 5000);
                 }
             }
+
+            // Coins wallet: reflect the server balance locally so the status
+            // card's Coins slot shows live without a reload.
+            if (data.coins !== undefined) {
+                if (!currentUser.wallet) currentUser.wallet = {};
+                currentUser.wallet.coins = data.coins;
+            }
+
+            // Combo meter: advance/cool off the verified problem result (D1).
+            // null on neutral turns → the combo holds. No XP is attached (v1).
+            try { comboRegisterTurn(data.problemResult); } catch (e) { console.warn('Combo meter failed', e); }
 
             // Session stats tracker update
             if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
@@ -3056,6 +3376,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (typeof window.showXpNotification === 'function') {
                         window.showXpNotification(xp.tier2, tier2Label);
                     }
+                }
+
+                // Thinking Streak — consecutive turns that earned reasoning (tier-3
+                // behavior) XP. Rewards SUSTAINED REASONING, not correctness: a
+                // tier-2-only (correct, no reasoning credit) turn is neutral, while a
+                // turn that earns no performance/behavior XP breaks the streak. No XP
+                // number is shown here — the streak is a callout only, so the display
+                // never diverges from the server-authoritative XP totals.
+                if (xp.tier3 > 0) {
+                    window.__thinkingStreak = (window.__thinkingStreak || 0) + 1;
+                    if (window.__thinkingStreak >= 2) {
+                        triggerXpAnimation(`🔥 Thinking Streak x${window.__thinkingStreak}`, false, true);
+                    }
+                } else if (xp.tier2 === 0) {
+                    window.__thinkingStreak = 0;
                 }
 
                 // Inline XP attribution chip — show "+N XP — reason" in the chat message
@@ -3281,6 +3616,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
             if (data.success && data.user) {
                 currentUser = data.user;
+                // Settings save returns a fresh user object — re-mirror to the global
+                // so window.currentUser consumers don't hold the stale reference.
+                window.currentUser = currentUser;
                 console.log("LOG: Settings saved, local user updated.");
             }
         } catch (error) { console.error("Error saving settings:", error); }
@@ -3428,7 +3766,7 @@ document.addEventListener("DOMContentLoaded", () => {
             parent.removeChild(textNode);
 
             if (typeof renderMathInElement === 'function') {
-                try { renderMathInElement(mathSpan); } catch (_) {}
+                try { renderMathInElement(mathSpan); } catch {}
             }
 
             // Restore cursor just after the trigger character
@@ -3736,7 +4074,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Install our custom MathLive layouts (advanced structures).
             installMathLiveLayouts();
             if (window.mathVirtualKeyboard) {
-                try { window.mathVirtualKeyboard.visible = true; } catch (_) {}
+                try { window.mathVirtualKeyboard.visible = true; } catch {}
             }
         } else if (isMobileView()) {
             // Legacy mobile bottom-sheet path (kept as fallback).
@@ -3907,7 +4245,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         // Hide MathLive's virtual keyboard (it was opened by fullscreen mode)
         if (window.mathVirtualKeyboard) {
-            try { window.mathVirtualKeyboard.visible = false; } catch (_) {}
+            try { window.mathVirtualKeyboard.visible = false; } catch {}
         }
         // Tear down fullscreen state on close
         if (inlineEquationPalette && inlineEquationPalette.classList.contains('eq-fullscreen')) {
@@ -4966,6 +5304,9 @@ document.addEventListener("DOMContentLoaded", () => {
             updateChatWatermark(); // Mark chat as empty for watermark
         }
 
+        // Combo meter resets on conversation switch (session boundary).
+        try { resetCombo(); } catch { /* non-blocking */ }
+
         // Display session header if it's a topic-based conversation
         if (conversation.conversationType === 'topic' && conversation.topic) {
             const headerDiv = document.createElement('div');
@@ -4996,7 +5337,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
                 const sender = msg.role === 'user' ? 'user' : 'ai';
-                appendMessage(msg.content, sender);
+                // Re-render uploaded attachments from their persisted reference;
+                // the bytes are served on demand (auth + ownership enforced).
+                const histAttachments = (msg.attachments || []).map(a => ({
+                    url: `/api/student/uploads/${a.uploadId}/file`,
+                    fileType: a.fileType
+                }));
+                appendMessage(msg.content, sender, null, false, histAttachments);
             });
 
             // Scroll to bottom

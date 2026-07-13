@@ -80,6 +80,33 @@ function extractCanonicalProblemText(problem) {
   }
 }
 
+/**
+ * Decide whether the current graded answer is a RETRY of the problem already in
+ * progress (so it should not be counted as a new first-try problem).
+ *
+ * lastProblemState holds the in-progress problem: attemptCount bumps on each
+ * wrong try and the state is cleared on a correct answer. A retry therefore
+ * requires a prior wrong attempt (attemptCount >= 1). To avoid mis-counting the
+ * case where a student abandons a wrong problem and moves to a new one (stale
+ * state), we also require the problem text to match when both are available;
+ * when it can't be compared, we defer to the in-progress flag.
+ *
+ * @param {Object|null} lastProblemState
+ * @param {Object} diagnosis
+ * @returns {boolean}
+ */
+function isSameProblemRetry(lastProblemState, diagnosis) {
+  if (!lastProblemState || (lastProblemState.attemptCount || 0) < 1) return false;
+  const prev = String(lastProblemState.problemText || '').trim().toLowerCase();
+  const curr = String(diagnosis?.problemInfo?.content || '').trim().toLowerCase();
+  if (prev && curr) {
+    const a = prev.slice(0, 60);
+    const b = curr.slice(0, 60);
+    return prev.includes(b) || curr.includes(a);
+  }
+  return true;
+}
+
 async function persist(params) {
   const {
     user, conversation, extracted, diagnosis, observation,
@@ -242,6 +269,19 @@ async function persist(params) {
     if (results.wasCorrect) {
       conversation.problemsCorrect = (conversation.problemsCorrect || 0) + 1;
     }
+
+    // First-try metric — the honest accuracy signal. Count each PROBLEM once,
+    // scored on the first attempt. lastProblemState still reflects the PRIOR
+    // turn here (it's updated below), so if it holds this same problem with a
+    // prior wrong attempt, this turn is a retry and must not open a new slot.
+    // Skips aren't a genuine attempt, so they're excluded entirely.
+    if (!results.wasSkipped && !isSameProblemRetry(conversation.lastProblemState, diagnosis)) {
+      conversation.firstTryAttempted = (conversation.firstTryAttempted || 0) + 1;
+      if (results.wasCorrect) {
+        conversation.firstTryCorrect = (conversation.firstTryCorrect || 0) + 1;
+      }
+    }
+
     const lastIdx = conversation.messages.length - 1;
     if (lastIdx >= 0) {
       conversation.messages[lastIdx].problemResult =
@@ -358,6 +398,7 @@ async function persist(params) {
   results.leveledUp = xpResult.leveledUp;
   results.tutorsUnlocked = xpResult.tutorsUnlocked;
   results.avatarBuilderUnlocked = xpResult.avatarBuilderUnlocked;
+  results.coinsAwarded = xpResult.coinsAwarded || 0;
 
   // Badge progress + mastery completion check
   if (user.masteryProgress?.activeBadge && results.problemAnswered) {
@@ -717,4 +758,5 @@ module.exports = {
   updateSkillMastery,
   processIepGoalUpdate,
   updateBadgeProgress,
+  isSameProblemRetry,
 };

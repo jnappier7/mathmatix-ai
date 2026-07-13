@@ -1,0 +1,42 @@
+/* cosmetics.css — equipped-cosmetic skins, keyed off body attributes set by
+ * modules/cosmeticsApply.js. Purely visual and opt-in per user (nothing applies
+ * until a cosmetic is equipped).
+ *
+ * v1 ships two working token THEMES (accent-forward, contrast-safe — they tint
+ * accents/panels and leave base bg/text intact so legibility is preserved without
+ * a visual audit). Board/calculator/header pattern skins are attribute hooks only
+ * for now; they need art (cheetah/camo/etc.) before they render — see
+ * COSMETICS_SHOP_DESIGN.md.
+ *
+ * ⚠️ Needs a visual + contrast pass in a live session before promoting.
+ */
+
+/* ---- Theme: Sunset (warm) ---- */
+body[data-theme-skin="theme.sunset"] {
+  --cr-accent: #ff7a3b;
+  --cr-accent-strong: #ff5a1f;
+  --cr-accent-grad: linear-gradient(135deg, #ff7a3b, #ff3b7f);
+  --cr-panel-grad-from: #fff4ee;
+  --cr-panel-grad-to: #ffe6d8;
+  --cr-pill-bg: rgba(255, 122, 59, 0.12);
+  --cr-pill-bg-hover: rgba(255, 122, 59, 0.2);
+}
+
+/* ---- Theme: Neon Night (cool, deeper panels) ---- */
+body[data-theme-skin="theme.neon"] {
+  --cr-accent: #00e5ff;
+  --cr-accent-strong: #00b8d4;
+  --cr-accent-grad: linear-gradient(135deg, #00e5ff, #7c4dff);
+  --cr-panel-grad-from: #141a24;
+  --cr-panel-grad-to: #0e131b;
+  --cr-pill-bg: rgba(0, 229, 255, 0.14);
+  --cr-pill-bg-hover: rgba(0, 229, 255, 0.24);
+}
+
+/* ---- Pattern skins: attribute hooks only until art ships ----
+ * body[data-skin-calculator="calc.hotpink"] .calculator { ... }
+ * body[data-skin-header="header.camo"] .landing-header { ... }
+ * body[data-skin-board="board.cheetah"] .board-frame { ... }
+ * Intentionally empty for now — equipping sets the attribute but renders no
+ * change until the art/skins are designed (patterns on chrome, never behind math).
+ */

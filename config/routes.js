@@ -60,6 +60,7 @@ const voiceRoutes = require('../routes/voice');
 const voiceTestRoutes = require('../routes/voice-test');
 const voiceTutorRoutes = require('../routes/voiceTutor');
 const uploadRoutes = require('../routes/upload');
+const uploadClassifyRoutes = require('../routes/uploadClassify');
 // chatWithFile: REMOVED — file uploads consolidated into /api/chat
 const welcomeRoutes = require('../routes/welcome');
 const rapportBuildingRoutes = require('../routes/rapportBuilding');
@@ -67,6 +68,7 @@ const { router: memoryRouter } = require('../routes/memory');
 const guidedLessonRoutes = require('../routes/guidedLesson');
 const summaryGeneratorRouter = require('../routes/summary_generator');
 const avatarRoutes = require('../routes/avatar');
+const cosmeticsRoutes = require('../routes/cosmetics');
 const curriculumRoutes = require('../routes/curriculum');
 const assessmentRoutes = require('../routes/assessment');
 const screenerRoutes = require('../routes/screener');
@@ -113,6 +115,7 @@ const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
+const { desktopRouter: phoneLinkRoutes, phoneRouter: phoneUploadRoutes } = require('../routes/phoneLink');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
 const notificationsRoutes = require('../routes/notifications');
 const onboardingRoutes = require('../routes/onboarding');
@@ -190,6 +193,12 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
   // These routes accept base64 image data — larger JSON body limit
   const largeJsonParser = express.json({ limit: '10mb' });
+  // Unified-upload classifier: cheap "is this worked or blank?" check that
+  // pre-selects the right one-tap action on the upload card. Mounted BEFORE
+  // /api/upload (more specific path first) and intentionally NOT premium-gated
+  // so the suggestion works for every signed-in student — the paywall stays on
+  // the grade/tutoring action the chip actually triggers.
+  app.use('/api/upload/classify', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, uploadClassifyRoutes);
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
   // chatWithFile route REMOVED — file uploads consolidated into /api/chat
   app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, welcomeRoutes);
@@ -198,12 +207,18 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/summary', isAuthenticated, summaryGeneratorRouter);
   app.use('/api/avatars', isAuthenticated, avatarRoutes);
   app.use('/api/avatar', isAuthenticated, avatarRoutes);
+  app.use('/api/cosmetics', isAuthenticated, cosmeticsRoutes);
 
   // Public API routes (no auth required)
   app.use('/api/waitlist', waitlistRoutes);
   app.use('/api/demo', demoRoutes);
   app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
   app.use('/api/stats', publicStatsRoutes);
+  // Anonymous phone image upload (authorized by capability token + PIN,
+  // CSRF-exempt, rate-limited). MUST be registered before the bare
+  // `app.use('/api', isAuthenticated, ...)` catch-alls below, or that
+  // middleware would 401 the unauthenticated phone before it reaches here.
+  app.use('/api/phone-upload', phoneUploadRoutes);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
   app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes);
@@ -242,6 +257,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes);
   app.use('/api/browser-lock', isAuthenticated, browserLockRoutes);
   app.use('/api/practice-pack', isAuthenticated, practicePackRoutes);
+  // "Scan with your phone" desktop endpoints (session-authed). The public
+  // phone-upload counterpart is registered earlier, before the /api auth
+  // catch-alls (see the Public API routes block above).
+  app.use('/api/phone-link', isAuthenticated, phoneLinkRoutes);
   app.use('/api/impersonation', isAuthenticated, impersonationRoutes);
   app.use('/api/transcript-flags', isAuthenticated, transcriptFlagsRoutes);
   app.use('/api/notifications', isAuthenticated, notificationsRoutes);
@@ -599,6 +618,9 @@ function registerHtmlRoutes(app) {
   app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
   app.get('/pricing.html', sendHtml('pricing.html'));
+  // Phone upload landing page — public; the page itself is inert until a valid
+  // token + PIN are supplied, and all enforcement is server-side.
+  app.get('/phone-upload', sendHtml('phone-upload.html'));
   // Protected HTML routes
   app.get('/affiliate.html', isAuthenticated, sendHtml('affiliate.html'));
   app.get('/role-picker.html', isAuthenticated, sendHtml('role-picker.html'));

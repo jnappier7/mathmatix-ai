@@ -7,6 +7,7 @@ const logger = log.child({ service: 'chat-service' });
 const { isAuthenticated } = require('../middleware/auth');
 const { promptInjectionFilter } = require('../middleware/promptInjection');
 const { sendSafetyConcernAlert } = require('../utils/emailService');
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const Curriculum = require('../models/curriculum');
@@ -30,7 +31,7 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
-const { detectGrowthCheckAcceptance } = require('../utils/growthCheckIntent');
+const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -56,8 +57,36 @@ const fsSync = require('fs');
 const sharp = require('sharp');
 const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
-const { applyWorksheetGuard } = require('../utils/worksheetGuard');
-const { UPLOAD_CONTEXT_REMINDER } = require('../utils/visualCapabilities');
+const { applyWorksheetGuard, isCheckWorkIntent } = require('../utils/worksheetGuard');
+const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
+const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl, findWorksheetInMessages } = require('../utils/activeWorksheetImage');
+const { verifyStudentWork } = require('../utils/pipeline/checkWorkVerifier');
+
+// When a student shares their work and asks to be checked, nudge the tutor to
+// engage the ACTUAL steps — WITHOUT biasing toward finding an error. Telling a
+// correct student they made a mistake is worse than missing one, so the default
+// posture is "assume correct unless certain." Used when no independent verdict
+// is available (PDF work, or the verifier came back uncertain). Never reveals
+// the answer. `isCheckWorkIntent` lives in utils/worksheetGuard.js (imported
+// below) so it can be unit-tested alongside the other worksheet/answer-key
+// detectors.
+const CHECK_WORK_GUIDANCE = "\n\n[CHECK MY WORK: The student shared their OWN worked solution and asked you to check it. Actually READ their steps and re-derive the math yourself before judging. If it's correct, say so and name specifically what they did right — do NOT invent a mistake. Only point out an error if you are CERTAIN of the specific wrong step AND its corrected value; a correct negative result (e.g. 4−5=−1), an equivalent form (0.5=1/2), or multiple valid roots (x=2 or x=3) are NOT mistakes. If you're unsure whether something is wrong, ask a clarifying question rather than asserting an error. Do NOT ask them to re-explain the problem from scratch, and do NOT simply give the answer.]";
+
+// Build the check-work guidance from an independent verification verdict (see
+// utils/pipeline/checkWorkVerifier). When the verdict is trustworthy we hand
+// Maya ground truth so she affirms correct work instead of fabricating an error;
+// otherwise we fall back to the conservative CHECK_WORK_GUIDANCE above.
+function buildCheckWorkSuffix(verdict) {
+    if (!verdict || verdict.verdict === 'uncertain') return CHECK_WORK_GUIDANCE;
+    if (verdict.verdict === 'correct') {
+        const right = verdict.whatIsRight ? ` Specifically correct: ${verdict.whatIsRight}` : '';
+        return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED CORRECT: A separate check confirms the student's work is correct.${right} Affirm it warmly and name specifically what they did right. Do NOT invent or imply any mistake. You may offer an optional next step, but do not manufacture a problem.]`;
+    }
+    if (verdict.verdict === 'has_error') {
+        return `\n\n[CHECK MY WORK — INDEPENDENTLY VERIFIED ERROR: A separate check found a specific error at this step: "${verdict.errorStep}" (it should be ${verdict.correctedValue}). Guide the student to THAT step with ONE Socratic question. Do NOT reveal the corrected value outright — let them fix it. Affirm the steps that were correct.]`;
+    }
+    return CHECK_WORK_GUIDANCE;
+}
 
 // Multer disk storage for file uploads (prevents server crashes vs memoryStorage)
 const upload = multer({
@@ -417,6 +446,61 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             // pipeline handle it so the AI can explain why naturally.
         }
 
+        // ── STARTING POINT LAUNCH INTERCEPT ──
+        // Mirror of the Growth Check intercept above. The greeting (and the
+        // mid-session struggle re-mention in utils/prompt.js) offer the
+        // Starting Point — the full initial IRT placement assessment served by
+        // the FloatingScreener. Without this intercept the LLM would try to
+        // improvise placement questions in the chat bubble. When the student
+        // explicitly accepts ("let's do the starting point", "take my
+        // assessment") AND still needs one, short-circuit and tell the client
+        // to open the structured UI — works on desktop and mobile alike,
+        // without relying on the sidebar button.
+        if (!hasFiles && !isMasteryMode && detectStartingPointAcceptance(effectiveMessage)) {
+            const needsStartingPoint = !user.assessmentCompleted
+                || (user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) <= new Date());
+
+            if (needsStartingPoint) {
+                const tutorReply = "Awesome — opening your Starting Point now. It's not a test you can fail; just answer what you can and I'll take it from there.";
+                activeConversation.messages.push({ role: 'user', content: effectiveMessage });
+                activeConversation.messages.push({ role: 'assistant', content: tutorReply });
+                activeConversation.lastActivity = new Date();
+                try {
+                    await activeConversation.save();
+                } catch (saveErr) {
+                    logger.warn('Starting Point intercept conversation save failed', { error: saveErr.message });
+                }
+
+                // Mark as offered so the AI doesn't keep re-pitching it.
+                if (!user.startingPointOffered) {
+                    User.findByIdAndUpdate(userId, {
+                        startingPointOffered: true,
+                        startingPointOfferedAt: new Date()
+                    }).catch(err => logger.warn('Starting Point offered flag update failed', { error: err.message }));
+                }
+
+                logger.info('Starting Point acceptance intercepted', { userId });
+
+                const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
+                const userXpInCurrentLevel = Math.max(0, (user.xp || 0) - xpForLevelStart);
+                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.voiceId || 'default';
+
+                return res.json({
+                    text: tutorReply,
+                    userXp: userXpInCurrentLevel,
+                    userLevel: user.level,
+                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
+                    specialXpAwarded: "",
+                    voiceId: tutorVoice,
+                    newlyUnlockedTutors: [],
+                    drawingSequence: null,
+                    launchAssessment: 'starting-point',
+                });
+            }
+            // Already has a current Starting Point — let the normal pipeline
+            // handle it so the AI can respond naturally.
+        }
+
         // ── FILE UPLOAD PROCESSING (consolidated from chatWithFile.js) ──
         // When files are uploaded via multipart/form-data, process them here
         // so all chat goes through one pipeline with one set of guards.
@@ -425,6 +509,13 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         let uploadImageContents = [];
         let uploadPdfTexts = [];
         let combinedMessage = effectiveMessage.trim();
+        // Per-file worksheet-continuity payload, index-aligned with uploadedFiles,
+        // folded onto the message's `attachments` below so the conversation doc is
+        // a self-sufficient source of truth on later turns (no raced out-of-band
+        // StudentUpload lookup). PDFs carry OCR text; images carry a downscaled
+        // data-URL. Cap the persisted text so a huge worksheet can't bloat the doc.
+        const WORKSHEET_ATTACHMENT_TEXT_CAP = 12000;
+        const attachmentContinuity = [];
 
         if (hasUploadedFiles) {
             logger.info('Processing uploaded files', { userId, fileCount: uploadedFiles.length });
@@ -449,20 +540,27 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             logger.warn('EXIF strip failed', { error: stripErr.message });
                         }
                         const base64 = fileBuffer.toString('base64');
+                        // Compact durable copy persisted on the message for cross-turn
+                        // vision re-thread (survives ephemeral-disk loss). Best-effort.
+                        const durableDataUrl = await downscaleToDataUrl(fileBuffer);
                         return {
                             type: 'image',
-                            content: { type: "image_url", image_url: { url: `data:${file.mimetype};base64,${base64}`, detail: "high" } }
+                            content: { type: "image_url", image_url: { url: `data:${file.mimetype};base64,${base64}`, detail: "high" } },
+                            durableDataUrl
                         };
                     }
                 }));
 
-                for (const result of fileResults) {
+                fileResults.forEach((result, index) => {
                     if (result.type === 'pdf') {
                         uploadPdfTexts.push({ filename: result.filename, text: result.text });
+                        const text = (result.text || '').slice(0, WORKSHEET_ATTACHMENT_TEXT_CAP);
+                        attachmentContinuity[index] = text.trim() ? { extractedText: text } : {};
                     } else {
                         uploadImageContents.push(result.content);
+                        attachmentContinuity[index] = result.durableDataUrl ? { imageData: result.durableDataUrl } : {};
                     }
-                }
+                });
             } catch (processingError) {
                 logger.error('File processing error', { error: processingError.message });
                 uploadedFiles.forEach(f => { if (f.path) try { fsSync.unlinkSync(f.path); } catch(e) {} });
@@ -487,11 +585,25 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             logger.info('Files prepared for AI', { imageCount: uploadImageContents.length, pdfCount: uploadPdfTexts.length });
         }
 
+        // Pre-generate a StudentUpload _id per uploaded file so we can record the
+        // attachment on the user message NOW, then save the StudentUpload with that
+        // same _id in the deferred/fire-and-forget block below. This lets the
+        // transcript re-render the file on history reload (and click back to it)
+        // via /api/student/uploads/:id/file — not just show it in the compose tray.
+        const attachmentMeta = uploadedFiles.map((file, index) => ({
+            uploadId: new mongoose.Types.ObjectId(),
+            fileType: file.mimetype === 'application/pdf' ? 'pdf' : 'image',
+            mimeType: file.mimetype,
+            // Server-only continuity payload (stripped before reaching the client).
+            ...(attachmentContinuity[index] || {})
+        }));
+
         activeConversation.messages.push({
             role: 'user',
             content: combinedMessage,
             timestamp: new Date(),
-            responseTime: responseTime || null
+            responseTime: responseTime || null,
+            ...(attachmentMeta.length > 0 ? { attachments: attachmentMeta } : {})
         });
 
         const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
@@ -569,11 +681,51 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 .catch(err => { logger.error('Error fetching error patterns', { error: err.message }); return null; })
         );
 
-        // 7. Math verification (runs in parallel with everything else)
+        // 7. Active worksheet — the doc pinned to THIS conversation, re-injected
+        //    at full length every turn so "#3 on the quiz" resolves without the
+        //    student re-typing it. On the upload turn we skip the query and use
+        //    the freshly extracted text instead (the StudentUpload save is
+        //    fire-and-forget and may not have landed yet).
+        contextPromises.push(
+            hasUploadedFiles
+                ? Promise.resolve(null)
+                : StudentUpload.findOne({
+                        userId: user._id,
+                        conversationId: activeConversation._id,
+                        fileType: 'pdf',
+                        extractedText: { $nin: [null, ''] },
+                    })
+                    .sort({ uploadedAt: -1 })
+                    .select('originalFilename extractedText')
+                    .lean()
+                    .catch(err => { logger.error('Error fetching active worksheet', { error: err.message }); return null; })
+        );
+
+        // 7b. Active worksheet IMAGE — the most recent image uploaded in THIS
+        //     conversation. Re-threaded as vision on follow-up turns (within a
+        //     TTL) so the tutor keeps SEEING the work, not just a text gloss —
+        //     this is what makes upload + "show your work" one conversation.
+        //     Skipped on the upload turn itself (the fresh image is already in
+        //     context). Only plaintext fields are selected (no decryption).
+        contextPromises.push(
+            hasUploadedFiles
+                ? Promise.resolve(null)
+                : StudentUpload.findOne({
+                        userId: user._id,
+                        conversationId: activeConversation._id,
+                        fileType: 'image',
+                    })
+                    .sort({ uploadedAt: -1 })
+                    .select('filePath mimeType uploadedAt fileType imageData')
+                    .lean()
+                    .catch(err => { logger.error('Error fetching active worksheet image', { error: err.message }); return null; })
+        );
+
+        // 8. Math verification (runs in parallel with everything else)
         const mathResult = processMathMessage(message);
 
         // Execute all fetches in parallel
-        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns] = await Promise.all(contextPromises);
+        let [curriculumContext, teacherAISettings, resourceContext, recentUploads, recentGradingResults, errorPatterns, activeWorksheetDoc, activeWorksheetImageDoc] = await Promise.all(contextPromises);
 
         // Log teacher settings if loaded
         if (teacherAISettings) {
@@ -628,6 +780,101 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
 
             uploadContext = { count: recentUploads.length, summary: uploadsSummary };
             logger.debug('Injected recent uploads into AI context', { count: recentUploads.length });
+        }
+
+        // Reliable worksheet continuity, sourced from the conversation's OWN
+        // messages — committed with the conversation on the upload turn and
+        // reloaded every turn. Preferred over the out-of-band StudentUpload
+        // lookups (activeWorksheetDoc / activeWorksheetImageDoc), which are
+        // written fire-and-forget and can lose the race with a fast follow-up
+        // turn (the "I can see it" → "type it out" bug). Those lookups remain a
+        // fallback for conversations whose messages predate this field.
+        const msgWorksheet = findWorksheetInMessages(activeConversation.messages);
+
+        // Pin the active worksheet (full text) for every-turn injection. On the
+        // upload turn the text is in memory (uploadPdfTexts); on later turns it
+        // comes from the message-embedded copy (reliable) or, failing that, the
+        // conversation-scoped StudentUpload. This is distinct from the truncated
+        // cross-session "recent uploads" excerpt — it's the doc the student is
+        // actively working from, kept salient so the tutor never asks them to
+        // re-share a problem it already has.
+        let activeWorksheet = null;
+        let activeWorksheetSource = null;
+        const WORKSHEET_MAX_CHARS = 12000;
+        if (uploadPdfTexts.length > 0) {
+            const w = uploadPdfTexts[uploadPdfTexts.length - 1];
+            if (w && w.text && w.text.trim()) {
+                activeWorksheet = { filename: w.filename, text: w.text };
+                activeWorksheetSource = 'current-upload';
+            }
+        } else if (msgWorksheet.text) {
+            activeWorksheet = { filename: (activeWorksheetDoc && activeWorksheetDoc.originalFilename) || 'your worksheet', text: msgWorksheet.text };
+            activeWorksheetSource = 'message-pin';
+        } else if (activeWorksheetDoc && activeWorksheetDoc.extractedText) {
+            activeWorksheet = { filename: activeWorksheetDoc.originalFilename, text: activeWorksheetDoc.extractedText };
+            activeWorksheetSource = 'studentupload-fallback';
+        }
+        if (activeWorksheet && activeWorksheet.text.length > WORKSHEET_MAX_CHARS) {
+            activeWorksheet.text = activeWorksheet.text.slice(0, WORKSHEET_MAX_CHARS) + '\n[... worksheet truncated — ask which section if the relevant problem may be below]';
+        }
+        if (activeWorksheet) {
+            logger.debug('Pinned active worksheet to prompt', { filename: activeWorksheet.filename, chars: activeWorksheet.text.length, source: activeWorksheetSource });
+        }
+
+        // Pin the active worksheet IMAGE for vision re-injection on follow-up
+        // turns (within its TTL). Prefer the message-embedded downscaled copy
+        // (reliable, race-free); fall back to the out-of-band StudentUpload doc
+        // for older conversations. Gated by a flag so the per-turn vision cost
+        // can be disabled. Best-effort — a missing copy yields null and we
+        // silently fall back to text-only continuity.
+        let activeWorksheetImageUrl = null;
+        const worksheetVisionEnabled = process.env.UNIFIED_WORKSHEET_VISION !== 'false';
+        if (worksheetVisionEnabled && !hasUploadedFiles) {
+            if (msgWorksheet.imageDataUrl) {
+                activeWorksheetImageUrl = msgWorksheet.imageDataUrl;
+                logger.info('[worksheetVision] re-threading worksheet image from conversation message (reliable source)');
+            } else {
+                // Fallback for conversations whose messages predate the durable
+                // per-message image copy. Explicit step-by-step logging so a live
+                // test pinpoints exactly where re-threading fails.
+                const active = isImageStillActive(activeWorksheetImageDoc);
+                if (!activeWorksheetImageDoc) {
+                    // Common case (most turns have no worksheet) — keep it quiet.
+                    logger.debug('[worksheetVision] no active image doc for conversation');
+                } else if (!active) {
+                    logger.info('[worksheetVision] active image doc found but outside TTL — not re-threading', { uploadedAt: activeWorksheetImageDoc.uploadedAt });
+                } else {
+                    activeWorksheetImageUrl = await buildImageDataUrl(activeWorksheetImageDoc);
+                    logger.info('[worksheetVision] active image doc in TTL', {
+                        uploadedAt: activeWorksheetImageDoc.uploadedAt,
+                        source: activeWorksheetImageDoc.imageData ? 'durable-db' : 'disk',
+                        loaded: !!activeWorksheetImageUrl,
+                    });
+                    if (!activeWorksheetImageUrl) {
+                        logger.warn('[worksheetVision] could not load active worksheet image (durable copy missing AND on-disk file unreadable)', { filePath: activeWorksheetImageDoc.filePath });
+                    }
+                }
+            }
+        } else if (worksheetVisionEnabled && hasUploadedFiles) {
+            logger.debug('[worksheetVision] fresh upload this turn — image already in context, skipping re-thread');
+        }
+
+        // ── Independent "check my work" verification ──
+        // The check-work upload flow produces NO deterministic grade (observe →
+        // answer=null → verifier/solver never fire), so the tutor freehand-grades
+        // the image with nothing cross-checking her — the source of false "you
+        // made a mistake" on correct work. Run one structured vision check and
+        // hand the verdict to the prompt as ground truth. Kicked off HERE (not at
+        // the suffix site) so the vision call overlaps history/prompt building.
+        // Fails safe to 'uncertain' → conservative guidance, never a fabricated error.
+        let checkWorkVerdictPromise = null;
+        const isCheckWork = isCheckWorkIntent(combinedMessage);
+        const checkWorkImages = (hasUploadedFiles && uploadImageContents.length > 0)
+            ? uploadImageContents
+            : (activeWorksheetImageUrl ? [{ type: 'image_url', image_url: { url: activeWorksheetImageUrl, detail: 'high' } }] : []);
+        if (isCheckWork && checkWorkImages.length > 0) {
+            checkWorkVerdictPromise = verifyStudentWork({ imageContents: checkWorkImages, studentText: message })
+                .catch(err => { logger.warn('[checkWorkVerify] failed', { error: err.message }); return null; });
         }
 
         // Log parallel fetch performance
@@ -825,12 +1072,12 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                     };
                 }
             } else {
-                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
+                systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
             }
         }
 
         if (!systemPrompt) {
-            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM);
+            systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
         }
 
         // ── Inject step-context reminder into last user message ──
@@ -862,23 +1109,56 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 return daysAgo <= 1;
             });
 
+        // Resolve the independent check-work verdict (kicked off earlier) and
+        // build guidance that reflects it: verified-correct work is affirmed, not
+        // second-guessed; a verified error is pointed to specifically; anything
+        // uncertain falls back to conservative "assume correct unless certain."
+        const checkWorkVerdict = checkWorkVerdictPromise ? await checkWorkVerdictPromise : null;
+        if (checkWorkVerdict) {
+            logger.info('[checkWorkVerify] verdict', { verdict: checkWorkVerdict.verdict, confidence: checkWorkVerdict.confidence, hasError: !!checkWorkVerdict.errorStep });
+        }
+        const checkWorkSuffix = isCheckWork ? buildCheckWorkSuffix(checkWorkVerdict) : '';
+
         // ── File upload: vision message formatting + worksheet guard ──
         // When files are uploaded in THIS request, build multimodal content
         // for the last user message so the LLM sees the images.
         if (hasUploadedFiles && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
+                const checkSuffix = checkWorkSuffix;
                 const guardedText = applyWorksheetGuard(typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage);
                 if (uploadImageContents.length > 0) {
                     // Multimodal: text + images for vision API
                     lastMsg.content = [
-                        { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}` },
+                        { type: "text", text: `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}` },
                         ...uploadImageContents
                     ];
                 } else {
                     // PDF-only: just use the guarded text
-                    lastMsg.content = `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}`;
+                    lastMsg.content = `${UPLOAD_CONTEXT_REMINDER}\n\n${guardedText}${checkSuffix}`;
                 }
+            }
+        } else if (activeWorksheetImageUrl && formattedMessagesForLLM.length > 0) {
+            // Follow-up turn with an active worksheet IMAGE — re-thread it as
+            // vision so the tutor still SEES the work ("am I on track?",
+            // "check #7") instead of only remembering a text gloss. Mirrors the
+            // fresh-upload branch above; the worksheet guard still applies so a
+            // partially-worked sheet doesn't leak answers.
+            const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
+            if (lastMsg?.role === 'user') {
+                const checkSuffix = checkWorkSuffix;
+                const baseText = typeof lastMsg.content === 'string' ? lastMsg.content : combinedMessage;
+                const guardedText = applyWorksheetGuard(baseText);
+                // Use the FOLLOW-UP reminder (not UPLOAD_CONTEXT_REMINDER): the
+                // student didn't attach anything this turn, and the image is
+                // re-attached BELOW. The fresh-upload wording ("uploaded with
+                // this message", image "above") reads as false here and makes
+                // the model deflect with "I can't see your work right now."
+                lastMsg.content = [
+                    { type: "text", text: `${WORKSHEET_REATTACH_REMINDER}\n\n${guardedText}${checkSuffix}` },
+                    { type: "image_url", image_url: { url: activeWorksheetImageUrl, detail: "high" } }
+                ];
+                logger.debug('Re-threaded active worksheet image into follow-up turn');
             }
         } else if ((hasRecentUpload || hasUploadedFiles) && formattedMessagesForLLM.length > 0) {
             // Follow-up messages after a recent upload — inject worksheet guard
@@ -1151,7 +1431,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 const uploadsDir = path.join(__dirname, '../uploads');
                 try { await fs.mkdir(uploadsDir, { recursive: true }); } catch(e) {}
 
-                for (const file of uploadedFiles) {
+                for (let index = 0; index < uploadedFiles.length; index++) {
+                    const file = uploadedFiles[index];
                     try {
                         const timestamp = Date.now();
                         const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -1168,7 +1449,14 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             extractedText = pdfMatch?.text || '';
                         }
 
+                        // Durable downscaled copy for cross-turn vision re-thread
+                        // (survives ephemeral-disk loss). Best-effort.
+                        const imageData = fileType === 'image' ? await downscaleToDataUrl(fileBuffer) : null;
+
                         const studentUpload = new StudentUpload({
+                            // Reuse the _id we stamped onto the user message's
+                            // attachments above so the transcript reference resolves.
+                            _id: attachmentMeta[index].uploadId,
                             userId: user._id,
                             originalFilename: file.originalname,
                             storedFilename,
@@ -1177,6 +1465,7 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                             mimeType: file.mimetype,
                             fileSize: file.size,
                             extractedText: extractedText.substring(0, 10000),
+                            imageData,
                             conversationId: activeConversation._id
                         });
                         await studentUpload.save();
@@ -1332,6 +1621,8 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
                 ...pipelineResult.xpBreakdown,
                 leveledUp: pipelineResult.leveledUp,
             },
+            coins: user.wallet?.coins ?? 0,
+            coinsAwarded: pipelineResult.coinsAwarded || 0,
             aiTimeUsed: pipelineResult.aiTimeUsed,
             freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
             courseProgress: courseProgressUpdate || null,
@@ -1908,6 +2199,17 @@ router.get('/resume-context', isAuthenticated, async (req, res) => {
     }
 });
 
+// A conversation is an IN-PROGRESS session (not a fresh visit) once the student
+// has sent at least one message in it. A greeting request against such a
+// conversation is a re-mount/refocus within the session, not a new arrival, so
+// the tutor should continue rather than inject a duplicate greeting. Pure +
+// exported for unit testing.
+function isInProgressSession(conversation) {
+    return !!(conversation
+        && Array.isArray(conversation.messages)
+        && conversation.messages.some(m => m && m.role === 'user'));
+}
+
 // ========== GREETING HANDLER: AI-initiated conversation ==========
 // Builds a context-rich "ghost message" the user doesn't see,
 // but the AI responds to naturally - creating the illusion of AI initiating
@@ -2003,6 +2305,54 @@ async function handleGreetingRequest(req, res, userId) {
                     xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
                 });
             }
+        }
+
+        // In-progress session: if this reused conversation already has a real
+        // student↔tutor exchange, a greeting request is a page re-mount / tab
+        // refocus / navigation WITHIN the same session — not a new visit. The
+        // 2-minute replay guard below only covers the case where the greeting is
+        // still the last message; between 2 and 30 minutes (the reuse window), or
+        // once the student has replied, a fresh greeting would be generated and
+        // appended into the MIDDLE of the live thread — the duplicate "Hey Jason!"
+        // (and stale prior context) seen in production. Continue instead: replay
+        // the recent messages, no new greeting. A genuinely new session is a fresh
+        // conversation with no user messages (the 30-min reuse window rolls to one
+        // after a gap), so first greetings are unaffected.
+        if (isInProgressSession(activeConversation)) {
+            const contTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId] ? user.selectedTutorId : "default";
+            const contTutor = TUTOR_CONFIG[contTutorKey];
+            await Conversation.findByIdAndUpdate(activeConversation._id, { lastActivity: new Date() });
+
+            const visibleMessages = activeConversation.messages
+                .slice(-50)
+                .filter(m => !(
+                    m.role === 'assistant'
+                    && typeof m.content === 'string'
+                    && m.content.startsWith('[Voice session')
+                ))
+                .map(m => ({ role: m.role, content: m.content, workCheckId: m.workCheckId || null }));
+
+            const useStreaming = req.query.stream === 'true';
+            if (useStreaming) {
+                res.setHeader('Content-Type', 'text/event-stream');
+                res.setHeader('Cache-Control', 'no-cache');
+                res.setHeader('Connection', 'keep-alive');
+                res.setHeader('X-Accel-Buffering', 'no');
+                res.flushHeaders();
+                res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
+                return res.end();
+            }
+            return res.json({
+                text: '',
+                continued: true,
+                conversationId: activeConversation._id,
+                messages: visibleMessages,
+                voiceId: contTutor.voiceId,
+                isGreeting: true,
+                userXp: user.xp || 0,
+                userLevel: user.level || 1,
+                xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
+            });
         }
 
         // Replay the just-sent greeting on a quick page refresh so the same
@@ -2212,8 +2562,11 @@ async function handleGreetingRequest(req, res, userId) {
         let maxTokens = 150;
         let openerResult = null;
         // Optional inline call-to-action button attached to the greeting
-        // bubble. Set when the student is overdue for a Growth Check so the
-        // client can render a one-tap launcher inside the message.
+        // bubble. Set when a new student should be offered the Starting Point,
+        // or when a returning student is overdue for a Growth Check, so the
+        // client can render a one-tap launcher inside the message instead of
+        // pointing at the sidebar button (hidden on desktop, off-canvas on
+        // mobile).
         let greetingInlineCta = null;
 
         if (isCourseGreeting && courseContext) {
@@ -2332,11 +2685,20 @@ If they're new, introduce yourself IN CHARACTER — just be yourself, not formal
 End with something they can respond to. ${warmUpInstruction}`;
             }
 
-            // Add Starting Point offer (only on first session, never again)
+            // Add Starting Point offer (only on first session, never again).
+            // We render a tappable button right below the greeting (works on
+            // desktop AND mobile) instead of pointing at the sidebar button,
+            // which is hidden inside a collapsed section on desktop and
+            // off-canvas on mobile.
             if (shouldOfferStartingPoint) {
+                greetingInlineCta = {
+                    type: 'launch-starting-point',
+                    label: 'Find My Starting Point',
+                    emoji: '🎯',
+                };
                 greetingInstruction += `
 
-This is the student's first session. After your greeting, casually mention the "Starting Point" button in the sidebar — but do it in YOUR voice, not as a product announcement. The idea is: "There's a quick thing in the sidebar that helps me figure out where you're at — it's not a test, just helps me know what to focus on. No rush." Keep it one sentence, super low-pressure. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
+This is the student's first session. A button labeled "${greetingInlineCta.label}" is rendered right below your greeting — they tap it to begin. After your greeting, casually invite them to tap it, in YOUR voice, not as a product announcement. The idea is: "there's a quick thing right below this — it's not a test, just helps me figure out where you're at so I know what to focus on. No rush." Keep it ONE sentence, super low-pressure, and reference the button below. Do NOT say it's "in the sidebar" or "on the left", and do NOT invent your own questions or pretend to start it inline. The student should feel like YOU are asking to get to know them, not like the app is onboarding them.`;
             }
 
             // Re-engage students who are sitting on an overdue growth check.
@@ -2576,3 +2938,5 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
 }
 
 module.exports = router;
+// Exported for unit testing the duplicate-greeting guard.
+module.exports.isInProgressSession = isInProgressSession;

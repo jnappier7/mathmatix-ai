@@ -9,6 +9,8 @@
  * @module pipeline/observe
  */
 
+const { normalizeSpokenNumbers } = require('../mathUnicodeNormalizer');
+
 // ── Message categories ──
 const MESSAGE_TYPES = {
   ANSWER_ATTEMPT: 'answer_attempt',
@@ -44,6 +46,13 @@ const PATTERNS = {
   fraction: /^(-?\d+\s*\/\s*\d+)$/,
   varAssignment: /^[a-z]\s*=\s*(-?\d+\.?\d*(?:\/\d+)?)/i,
   answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  // Proposed / self-check answer: a number or fraction the student offers for
+  // confirmation — "…right? 10/24", "isn't that equal to 10/24?", "is it 5/12?",
+  // "10/24, right?", "so it's 5". Anchored to the END and gated by a confirmation
+  // cue so it doesn't fire on genuine questions ("what is 10/24?"). This is a
+  // "check my answer" attempt: the value is theirs, so verifying it (and confirming
+  // when correct) is safe and does not leak.
+  proposedAnswer: /\b(?:right|correct|is\s*it|isn'?t\s*it|is\s*that|isn'?t\s*that|equals?|equal\s*to|so\s*it'?s|so\s*is\s*it|would\s*it\s*be|would\s*that\s*be|maybe\s*it'?s)[\s:=?()'"]{0,4}(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[?.!]*$|\b(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[,.]?\s*(?:right|correct)\b\s*[?.!]*$/i,
   // Algebraic expression answers: 3x^2-3, x+2, -2x+5, 2x^2+3x-1
   algebraicExpr: /^(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)\s*$/i,
   // "3 times 12 is 36", "36 divided by 2 is 18" — student states a full arithmetic result
@@ -104,18 +113,29 @@ const PATTERNS = {
  * Returns { value, raw } or null if not an answer attempt.
  */
 function extractAnswer(message) {
-  const text = message.trim();
+  const raw = message.trim();
+  // Normalize speech-to-text negatives/number-words to signed digits BEFORE matching,
+  // so a spoken "negative six" is recognized as the answer -6 (the numeric PATTERNS
+  // only understand digits). `raw` keeps the original text for downstream use.
+  const text = normalizeSpokenNumbers(raw);
 
   // For short, direct answers (< 100 chars): try all patterns
   if (text.length <= 100) {
     let match;
-    if ((match = text.match(PATTERNS.varAssignment))) return { value: match[1], raw: text };
-    if ((match = text.match(PATTERNS.justNumber))) return { value: match[1], raw: text };
-    if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw: text };
-    if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw: text };
-    if ((match = text.match(PATTERNS.algebraicExpr))) return { value: match[1].replace(/\s/g, ''), raw: text };
-    if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw: text };
-    if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw: text };
+    if ((match = text.match(PATTERNS.varAssignment))) return { value: match[1], raw };
+    if ((match = text.match(PATTERNS.justNumber))) return { value: match[1], raw };
+    if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw };
+    if ((match = text.match(PATTERNS.algebraicExpr))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw };
+  }
+
+  // Proposed / self-check answer ("…right? 10/24", "is it 5/12?") — cue-gated and
+  // end-anchored, so it's safe to try regardless of message length.
+  {
+    const match = text.match(PATTERNS.proposedAnswer);
+    if (match) return { value: (match[1] || match[2]).replace(/\s/g, ''), raw, proposed: true };
   }
 
   // For longer messages: try to extract answer embedded in explanation
@@ -436,7 +456,23 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
   const hasUnicodeMath = /[²³⁴√∫Σπ]/.test(t);
   const hasSolveVerb = /^(solve|factor|simplify|evaluate|compute|graph|find)\s+/i.test(t);
 
-  const hasMathSignals = hasEquation || hasLatexMath || hasVariableTerms || hasUnicodeMath || hasSolveVerb;
+  // Bare arithmetic / fraction COMPUTATION drops — a student handing over a
+  // numeric problem to carry out, with no attempt: "12⅔ - 4¼", "1/2 + 1/4",
+  // "16/4 - 2", "3.5 × 4". Without this, only equations (=), variable terms,
+  // \frac LaTeX, or the limited [²³⁴√∫Σπ] set counted — so a Unicode or ASCII
+  // fraction drop slipped through and the tutor solved it end-to-end.
+  // A lone value/answer ("3/4", "38/3", "8") is NOT a drop, so we require an
+  // explicit +, -, ×, ÷, ·, or * operator between terms (a single "/" denotes
+  // one fraction value, not an operation to perform).
+  const hasVulgarFraction = /[¼-¾⅐-⅞]/.test(t); // ¼ ½ ¾ ⅓ ⅔ ⅕ …
+  const hasArithmeticOp =
+    /\d\s*[-+×÷⋅·*]\s*[\d(¼-¾⅐-⅞]/.test(t) ||   // 4 - 2, 16 ÷ 4, 1/2 + 1/4
+    /[¼-¾⅐-⅞]\s*[-+×÷⋅·*/]\s*\d/.test(t);        // ⅔ - 4  (mixed-number op)
+  const hasArithmeticComputation =
+    hasArithmeticOp || (hasVulgarFraction && /[-+×÷⋅·*/]/.test(t));
+
+  const hasMathSignals = hasEquation || hasLatexMath || hasVariableTerms ||
+    hasUnicodeMath || hasSolveVerb || hasArithmeticComputation;
   if (!hasMathSignals) return false;
 
   // Attempt / reasoning / stuck indicators disqualify — the student has engaged.
@@ -511,7 +547,10 @@ function observe(message, context = {}) {
     messageType = MESSAGE_TYPES.HELP_REQUEST;
   } else if (PATTERNS.offTask.test(lower)) {
     messageType = MESSAGE_TYPES.OFF_TASK;
-  } else if (PATTERNS.question.test(lower)) {
+  } else if (PATTERNS.question.test(lower) && !PATTERNS.proposedAnswer.test(text)) {
+    // A question word normally means "asking", EXCEPT when the student is
+    // self-checking a concrete answer ("is it 5/12?", "would it be 3/4?") — that's
+    // an answer attempt, so let it fall through to extraction and get verified.
     messageType = MESSAGE_TYPES.QUESTION;
   } else if (PATTERNS.checkMyWork.test(lower) && context.hasRecentUpload) {
     messageType = MESSAGE_TYPES.CHECK_MY_WORK;

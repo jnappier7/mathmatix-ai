@@ -27,6 +27,30 @@ const messageSchema = new Schema({
     // The frontend renders these messages as rich work-check cards rather than
     // plain bubbles; the LLM still sees the human-readable summary in `content`.
     workCheckId: { type: Schema.Types.ObjectId, ref: 'GradingResult', default: null },
+    // Uploaded files attached to a user message (image/PDF). Stored so the
+    // transcript can re-render the attachment on history reload and let the
+    // student click back to it — not just show it in the compose preview.
+    // We intentionally store only the StudentUpload reference + type for the
+    // CLIENT, NOT the filename (StudentUpload encrypts originalFilename as
+    // sensitive). The image bytes are served on demand via
+    // /api/student/uploads/:id/file.
+    //
+    // `extractedText` (PDF OCR) and `imageData` (downscaled data-URL) are
+    // SERVER-ONLY worksheet-continuity fields: they make the conversation
+    // document itself the reliable source of truth for "the worksheet we're
+    // working from," so the tutor can re-pin it every turn without an
+    // out-of-band StudentUpload lookup (which is written fire-and-forget and
+    // can lose the race with a fast follow-up turn). They are stripped from
+    // client responses (see routes/conversations.js) — never send them to the
+    // browser.
+    attachments: [{
+        uploadId: { type: Schema.Types.ObjectId, ref: 'StudentUpload' },
+        fileType: { type: String }, // 'image' | 'pdf'
+        mimeType: { type: String },
+        extractedText: { type: String }, // server-only: PDF OCR text for cross-turn pin
+        imageData: { type: String },     // server-only: downscaled data-URL for cross-turn vision
+        _id: false
+    }],
 }, { _id: false });
 
 const conversationSchema = new Schema({
@@ -135,6 +159,17 @@ const conversationSchema = new Schema({
     problemsCorrect: {
         type: Number,
         default: 0
+    },
+    // First-try metric: counts each PROBLEM once, scored on the first attempt
+    // (retries of an in-progress problem don't open a new slot; skips are
+    // excluded). This is the honest accuracy denominator. Intentionally NO
+    // default — legacy conversations leave it undefined so the progress
+    // aggregation can fall back to problemsAttempted until they age out.
+    firstTryAttempted: {
+        type: Number
+    },
+    firstTryCorrect: {
+        type: Number
     },
     strugglingWith: {
         type: String,

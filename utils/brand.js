@@ -150,6 +150,36 @@ const BRAND_CONFIG = {
         ]
     },
 
+    // 11. Rank Title Ladder (identity layer)
+    // Human-readable titles derived from cumulative Tier-3 behavior counts
+    // (user.xpLadderStats.tier3Behaviors). Each behavior has three aspirational
+    // tiers unlocked at the thresholds below. This is the CANONICAL source of
+    // truth; the client mirrors it in public/js/modules/rankTitles.js — keep the
+    // two in sync if you edit either.
+    rankTitleLadder: {
+        thresholds: [5, 15, 40], // counts required for tier 1 / 2 / 3
+        behaviors: {
+            caught_own_error:    ['Error Spotter', 'Error Hunter', 'Error Hunter II'],
+            explained_reasoning: ['Explainer', 'Reasoner', 'Master Reasoner'],
+            persistence:         ['Grinder', 'Unshakeable', 'Relentless'],
+            taught_back:         ['Study Buddy', 'Tutor-in-Training', 'The Professor'],
+            strategy_selection:  ['Planner', 'Strategist', 'Grandmaster'],
+            transfer:            ['Connector', 'Pattern Seer', 'Polymath'],
+        },
+    },
+
+    // 12. Coin Economy (earned soft currency for cosmetics)
+    // Coins drip from completion + consistency events (NOT per-turn, to avoid a
+    // grind vector). All awards route through utils/coinEngine.awardCoins, which
+    // enforces the daily cap. See docs/COSMETICS_SHOP_DESIGN.md.
+    coinRewards: {
+        dailyCap: 500,            // max coins earnable per UTC day (anti-abuse)
+        levelUp: 20,              // per level gained
+        questComplete: 15,        // per daily quest completed
+        challengeComplete: 75,    // per weekly challenge completed (wiring TBD)
+        masteryBadge: 100         // per mastery badge earned (wiring TBD)
+    },
+
     digestEmailSchedule: "Sunday 7 AM ET", //
     digestEmailProvider: "SendGrid", //
 

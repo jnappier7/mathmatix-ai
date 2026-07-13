@@ -33,6 +33,7 @@ const CSRF_EXEMPT_PREFIXES = [
   '/api/waitlist',     // Public waitlist signup
   '/api/demo',         // Public demo endpoints
   '/api/bio',          // Public bio tutor — no user session to protect
+  '/api/phone-upload', // Anonymous phone image upload — authorized by capability token + PIN, rate-limited
 ];
 
 /**

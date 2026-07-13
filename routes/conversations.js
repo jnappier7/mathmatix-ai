@@ -296,6 +296,80 @@ router.post('/', isAuthenticated, async (req, res) => {
 });
 
 /**
+ * POST /api/conversations/seed-trial
+ * Body: { tutorId?: string, history: [{ role, content }] }
+ *
+ * Carries an anonymous landing-page trial conversation into the freshly
+ * signed-up user's FIRST real session, so the tutor actually has that context
+ * on the next turn — not just a visual replay in the UI. Makes the gate's
+ * "I'll remember exactly where we are" promise true.
+ *
+ * Idempotency/safety: only seeds when the user has no active conversation with
+ * real content yet (i.e. immediately post-signup); never clobbers an in-progress
+ * session. Fails soft — the caller degrades to UI-only replay.
+ */
+const MAX_TRIAL_SEED_MESSAGES = 12; // greeting + up to 3 exchanges, with headroom
+
+router.post('/seed-trial', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { tutorId, history } = req.body;
+
+    if (!Array.isArray(history) || history.length === 0) {
+      return res.status(400).json({ message: 'No trial history to seed.' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found.' });
+
+    // Don't overwrite a session the user already started.
+    if (user.activeConversationId) {
+      const existing = await Conversation.findById(user.activeConversationId);
+      if (existing && existing.isActive && Array.isArray(existing.messages) && existing.messages.length > 0) {
+        return res.json({ seeded: false, reason: 'active-conversation-exists', conversationId: existing._id });
+      }
+    }
+
+    const cleanTutorId = (typeof tutorId === 'string' && tutorId.length <= 40) ? tutorId : null;
+    const messages = history
+      .filter(m => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.trim())
+      .slice(-MAX_TRIAL_SEED_MESSAGES)
+      .map(m => ({
+        role: m.role,
+        content: m.content.slice(0, 2000),
+        tutorId: m.role === 'assistant' ? cleanTutorId : null,
+      }));
+
+    if (messages.length === 0) {
+      return res.status(400).json({ message: 'No valid trial messages to seed.' });
+    }
+
+    const conversation = new Conversation({
+      userId,
+      conversationType: 'general',
+      conversationName: 'Continued from your trial',
+      messages,
+      isActive: true,
+      isMastery: false,
+      lastActivity: new Date(),
+    });
+    await conversation.save();
+
+    user.activeConversationId = conversation._id;
+    await user.save();
+
+    logger.info('Seeded conversation from trial history', {
+      userId, conversationId: conversation._id, count: messages.length
+    });
+
+    res.json({ seeded: true, conversationId: conversation._id, messageCount: messages.length });
+  } catch (error) {
+    logger.error('Failed to seed trial conversation', { error });
+    res.status(500).json({ message: 'Failed to seed trial conversation' });
+  }
+});
+
+/**
  * POST /api/conversations/:id/switch
  * Switch to a specific conversation
  */
@@ -319,8 +393,21 @@ router.post('/:id/switch', isAuthenticated, validateObjectId('id'), async (req, 
     user.activeConversationId = conversationId;
     await user.save();
 
-    // Get recent messages (last 50)
-    const recentMessages = conversation.messages.slice(-50);
+    // Get recent messages (last 50). Strip the server-only worksheet-continuity
+    // fields (attachments[].extractedText / imageData) — the browser only needs
+    // the uploadId + type to re-render the file, and shipping the OCR text +
+    // base64 image would bloat the history payload (and re-regress chat load).
+    const recentMessages = conversation.messages.slice(-50).map(m => {
+      const obj = (m && typeof m.toObject === 'function') ? m.toObject() : { ...m };
+      if (Array.isArray(obj.attachments)) {
+        obj.attachments = obj.attachments.map(a => ({
+          uploadId: a.uploadId,
+          fileType: a.fileType,
+          mimeType: a.mimeType,
+        }));
+      }
+      return obj;
+    });
 
     res.json({
       conversation: {

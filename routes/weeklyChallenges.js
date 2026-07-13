@@ -353,9 +353,22 @@ router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
         // Award XP
         user.xp = (user.xp || 0) + challenge.xpReward;
 
+        // Award Coins (earned soft currency; server-authoritative, daily-capped).
+        // Non-blocking — a coin failure must never break challenge completion.
+        let coinsEarned = 0;
+        try {
+          const { awardCoins } = require('../utils/coinEngine');
+          const BRAND = require('../utils/brand');
+          const perChallenge = (BRAND.coinRewards && BRAND.coinRewards.challengeComplete) || 0;
+          coinsEarned = awardCoins(user, perChallenge, 'challenge_complete').awarded;
+        } catch (coinErr) {
+          console.error('[weeklyChallenges] coin award failed:', coinErr.message);
+        }
+
         completedChallenges.push({
           ...challenge,
-          xpEarned: challenge.xpReward
+          xpEarned: challenge.xpReward,
+          coinsEarned
         });
       }
     });

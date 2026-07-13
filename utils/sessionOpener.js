@@ -168,10 +168,11 @@ function buildOpener(strategy, ctx) {
     case STRATEGIES.CONTINUITY: {
       const { unfinished, lastTopic, lastProblemState } = strategy.data;
       const directives = [
-        `The student left off mid-session last time. You remember where you were — act like it.`,
-        `What was unfinished: "${unfinished}"`,
-        `Greet them like you'd greet a student who walked back into your room after lunch — casual, warm, and aware. Reference the specific unfinished work so they know you remember. Not a formal recap.`,
-        `If they want to do something else, roll with it. No guilt about the unfinished stuff.`,
+        `The student left off mid-session last time. You remember exactly where you were — and you're genuinely glad they're back.`,
+        `What was unfinished: "${unfinished}"${lastTopic ? ` (topic: ${lastTopic})` : ''}`,
+        `Open by naming last time's work warmly and specifically, the way a tutor who was actually into it would — something in the spirit of "Last time we were deep in ${lastTopic || 'that stuff'} and you were cookin'." If it genuinely went well, let that energy show; if it was more of a grind, keep the warmth but drop the hype. Never invent praise.`,
+        `Then hand the choice to THEM, out loud: do they want to pick that back up, or start on something new today? Frame both as equally great options — you're offering the unfinished work, not herding them back to it.`,
+        `No guilt and no pressure about the unfinished stuff. If they'd rather do something else, you're all in on that instead.`,
       ];
       // If there's a saved problem state, tell the AI about it
       if (lastProblemState && lastProblemState.problemText) {

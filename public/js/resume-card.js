@@ -67,53 +67,97 @@
       </div>`;
   }
 
-  // Build weekly stats strip
-  function weeklyStatsHTML(stats) {
-    if (!stats) return '';
-    const items = [];
-    if (stats.problemsSolved != null && stats.problemsSolved > 0) {
-      items.push(`<div class="rc-stat"><span class="rc-stat-val">${stats.problemsSolved}</span><span class="rc-stat-label">problems</span></div>`);
-    }
-    if (stats.accuracy != null) {
-      items.push(`<div class="rc-stat"><span class="rc-stat-val">${stats.accuracy}%</span><span class="rc-stat-label">accuracy</span></div>`);
-    }
-    if (stats.xpEarned != null && stats.xpEarned > 0) {
-      items.push(`<div class="rc-stat"><span class="rc-stat-val">+${stats.xpEarned}</span><span class="rc-stat-label">XP this week</span></div>`);
-    }
-    if (stats.skillsMastered != null && stats.skillsMastered > 0) {
-      items.push(`<div class="rc-stat"><span class="rc-stat-val">${stats.skillsMastered}</span><span class="rc-stat-label">mastered</span></div>`);
-    }
-    if (items.length === 0) return '';
-    return `<div class="rc-stats-strip">${items.join('')}</div>`;
+  // Escape text going into innerHTML
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
   }
 
-  // Build learning progress section
-  function learningHTML(summary) {
+  // A CTA that types a prompt to the tutor and sends it (wired in wireCtaClicks)
+  function ctaButton(label, prompt, kind) {
+    const cls = kind === 'alt' ? 'rc-hero-alt' : 'rc-hero-cta';
+    const arrow = kind === 'alt' ? '' : '<span class="rc-hero-arrow">→</span>';
+    return `<button class="${cls}" data-rc-prompt="${esc(prompt)}">${esc(label)}${arrow}</button>`;
+  }
+
+  // Progress bar toward mastery of a skill
+  function masteryBar(displayName, pct, labelText) {
+    const p = Math.max(0, Math.min(100, Math.round(pct || 0)));
+    const state = p >= 100 ? 'mastered' : (p >= 50 ? 'halfway to mastery' : 'building it up');
+    return `
+      <div class="rc-hero-label">${esc(labelText || 'Working toward mastery')}</div>
+      <div class="rc-hero-skill">${esc(displayName)}</div>
+      <div class="rc-hero-track"><div class="rc-hero-fill" style="width: ${p}%"></div></div>
+      <div class="rc-hero-progrow"><span>${state}</span><span>${p}%</span></div>`;
+  }
+
+  // State-aware hero — leads with the ONE thing that matters and ends with a
+  // single next step. Framing is honest per lifecycle state: effort and growth,
+  // never a verdict number. Driven by summary.cardState from the server.
+  function heroHTML(summary) {
     if (!summary) return '';
+    const learning = summary.currentLearning;
+    const stats = summary.weeklyStats || {};
+    const reviewDue = summary.reviewDue || 0;
+
+    // FIRST SESSION — an invitation, never a wall of zeros.
+    if (summary.cardState === 'first_session') {
+      return `
+        <div class="rc-hero">
+          <div class="rc-hero-label">Your journey starts here</div>
+          <div class="rc-hero-skill">A quick warm-up</div>
+          <div class="rc-hero-copy">A few short problems so we can find the right place to start. No grades, no pressure.</div>
+          ${ctaButton('Start the warm-up', "I'm ready for a warm-up.")}
+        </div>`;
+    }
+
+    // MASTERY — celebrate, then open the next door.
+    if (summary.cardState === 'mastery') {
+      const mastered = summary.recentMastery;
+      const next = summary.nextReady;
+      return `
+        <div class="rc-hero">
+          <div class="rc-hero-badge">★ skill mastered</div>
+          ${masteryBar(mastered ? mastered.displayName : 'Your skill', 100, 'You just mastered')}
+          <div class="rc-hero-copy">Ready for something new.</div>
+          ${next
+            ? ctaButton(`Start ${next.displayName}`, `I'm ready to start ${next.displayName}.`)
+            : ctaButton('Start something new', 'What should I work on next?')}
+        </div>`;
+    }
+
+    // STRUGGLING — name the persistence, no percentage, gentler on-ramp.
+    if (summary.cardState === 'struggling') {
+      const solved = stats.problemsSolved || 0;
+      return `
+        <div class="rc-hero">
+          ${learning ? masteryBar(learning.displayName, learning.progress, 'Working toward mastery') : ''}
+          <div class="rc-hero-effort">You worked through <strong>${solved} tricky problem${solved === 1 ? '' : 's'}</strong> and didn't quit.</div>
+          ${ctaButton('Review the tricky part together', 'Can we review the part I keep getting stuck on?')}
+          ${ctaButton('or try an easier warm-up', 'Can we try an easier warm-up first?', 'alt')}
+        </div>`;
+    }
+
+    // PROGRESS (default) — mastery bar + honest week + continue.
+    const wins = stats.problemsCorrect || 0;
+    const practiced = stats.problemsSolved || 0;
+    const weekBlock = practiced > 0
+      ? `<div class="rc-hero-week"><strong>${wins} first-try win${wins === 1 ? '' : 's'}</strong> · ${practiced} practiced this week</div>`
+      : '';
     const parts = [];
-
-    if (summary.currentLearning) {
-      const pct = summary.currentLearning.progress || 0;
-      parts.push(`
-        <div class="rc-learning-item">
-          <div class="rc-learning-header">
-            <span class="rc-learning-status">📖 Currently learning</span>
-            <span class="rc-learning-pct">${pct}%</span>
-          </div>
-          <div class="rc-learning-name">${summary.currentLearning.displayName}</div>
-          <div class="rc-learning-track"><div class="rc-learning-fill" style="width: ${pct}%"></div></div>
-        </div>`);
+    if (learning) {
+      parts.push(masteryBar(learning.displayName, learning.progress, 'Working toward mastery'));
+      parts.push(weekBlock);
+      parts.push(ctaButton(`Continue ${learning.displayName}`, `Let's keep working on ${learning.displayName}.`));
+    } else {
+      parts.push(weekBlock);
+      parts.push(ctaButton('Keep practicing', "Let's practice."));
     }
-
-    if (summary.recentMastery) {
-      parts.push(`
-        <div class="rc-learning-item rc-mastery-item">
-          <span class="rc-mastery-badge">⭐</span>
-          <span>Recently mastered <strong>${summary.recentMastery.displayName}</strong></span>
-        </div>`);
+    if (reviewDue > 0) {
+      parts.push(ctaButton(`${reviewDue} skill${reviewDue === 1 ? '' : 's'} ready to review`, "Let's review what I've learned.", 'alt'));
     }
-
-    return parts.length > 0 ? `<div class="rc-learning">${parts.join('')}</div>` : '';
+    return `<div class="rc-hero">${parts.join('')}</div>`;
   }
 
   // Build recent session buttons
@@ -165,13 +209,13 @@
     const firstName = user?.firstName || user?.name?.split(' ')[0] || '';
     const greeting = `${getTimeGreeting()}${firstName ? ', ' + firstName : ''}!`;
 
-    // Only show card if there's meaningful content
-    const hasStreak = summary?.streak > 0;
+    // Show the card whenever we have a lifecycle hero to render (any assessed
+    // student — including the brand-new, no-activity first-session state), or
+    // when there are sessions to resume.
+    const hasHero = !!summary?.cardState;
     const hasSessions = returning?.isReturningUser && (returning.courses?.length > 0 || returning.recentSessions?.length > 0);
-    const hasLearning = summary?.currentLearning || summary?.recentMastery;
-    const hasStats = summary?.weeklyStats && (summary.weeklyStats.problemsSolved > 0 || summary.weeklyStats.xpEarned > 0);
 
-    if (!hasSessions && !hasLearning && !hasStats && !hasStreak) return null;
+    if (!hasHero && !hasSessions) return null;
 
     const html = `
       <div id="${CARD_ID}" class="rc-card" role="region" aria-label="Welcome back">
@@ -180,12 +224,11 @@
           <button class="rc-dismiss" id="rc-dismiss-btn" aria-label="Dismiss">&times;</button>
         </div>
         <div class="rc-body">
+          ${heroHTML(summary)}
           <div class="rc-top-row">
             ${streakHTML(summary?.streak)}
             ${xpBarHTML(user)}
           </div>
-          ${weeklyStatsHTML(summary?.weeklyStats)}
-          ${learningHTML(summary)}
           ${sessionsHTML(returning)}
         </div>
       </div>`;
@@ -250,6 +293,7 @@
       const dismissBtn = document.getElementById('rc-dismiss-btn');
       if (dismissBtn) dismissBtn.addEventListener('click', dismissCard);
       wireSessionClicks();
+      wireCtaClicks();
 
       // Card stays until the user dismisses it or taps a session.
       // No auto-dismiss — let them read at their own pace.
@@ -259,6 +303,31 @@
     }
   }
 
+  // A CTA types its prompt into the chat and sends it, as if the student typed
+  // it — reusing the chat's own input + send button (no private API).
+  function wireCtaClicks() {
+    const card = document.getElementById(CARD_ID);
+    if (!card) return;
+    card.querySelectorAll('[data-rc-prompt]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const prompt = btn.getAttribute('data-rc-prompt') || '';
+        dismissCard();
+        const input = document.getElementById('user-input');
+        if (input) {
+          input.textContent = prompt;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        const sendBtn = document.getElementById('send-button');
+        if (sendBtn && !sendBtn.disabled) sendBtn.click();
+      });
+    });
+  }
+
   // Expose globally so initializeApp can call it
-  window.showResumeCard = showResumeCard;
+  if (typeof window !== 'undefined') window.showResumeCard = showResumeCard;
+
+  // Testable surface (no-op in the browser)
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { heroHTML };
+  }
 })();

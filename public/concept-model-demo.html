@@ -47,6 +47,7 @@
 
     /* ── concept-model renderer styles (mirrors public/css/workspace.css) ── */
     .cr-cm { display: flex; flex-direction: column; gap: 8px; }
+    .cr-cm-title { font-size: 14px; font-weight: 700; color: var(--cr-text); text-align: center; }
     .cr-cm-prompt {
       font-size: 13px; line-height: 1.45; color: var(--cr-accent);
       background: var(--cr-pill-bg); border-left: 3px solid var(--cr-accent);
@@ -71,6 +72,13 @@
     }
     .cr-cm-choice-btn:hover { color: var(--cr-text); border-color: var(--cr-accent); }
     .cr-cm-choice-btn.is-active { color: #fff; background: var(--cr-accent-grad); border-color: transparent; }
+    /* token (discrete chip) engine */
+    .cr-cm-mat { position: relative; width: 100%; min-height: 220px; border-radius: var(--cr-radius-sm); background: var(--cr-bg-deep); border: 1px solid var(--cr-border); overflow: hidden; touch-action: none; }
+    .cr-cm-chip { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 2px solid; font-weight: 800; font-size: 16px; cursor: grab; user-select: none; touch-action: none; box-shadow: 0 2px 5px rgba(28,21,48,0.18); }
+    .cr-cm-chip.is-dragging { cursor: grabbing; box-shadow: 0 5px 12px rgba(28,21,48,0.32); z-index: 5; }
+    .cr-cm-token-input { display: flex; gap: 8px; align-items: center; padding: 2px 4px 0; }
+    .cr-cm-token-field { flex: 1 1 auto; min-width: 0; padding: 7px 10px; font-size: 14px; border: 1px solid var(--cr-border); border-radius: var(--cr-radius-sm); background: var(--cr-bg-2); color: var(--cr-text); }
+    .cr-cm-token-field.is-invalid { border-color: #e0556e; background: #fff2f4; }
   </style>
 </head>
 <body>
@@ -113,10 +121,19 @@
       <h2>GENERATED spec (long-tail) — an LLM-authored model, validated then rendered</h2>
       <div class="host" id="host-gen"></div>
     </div>
+    <div class="demo-card">
+      <h2>GENERATED — length &amp; area measures (drag a vertex; side and area update live)</h2>
+      <div class="host" id="host-gen2"></div>
+    </div>
+    <div class="demo-card">
+      <h2>integer_counters — DISCRETE token engine (type −7+10; drag a red onto a yellow to cancel)</h2>
+      <div class="host" id="host-ic"></div>
+    </div>
   </div>
 
   <script src="/js/conceptModelSpec.js"></script>
   <script src="/js/conceptModelRenderer.js"></script>
+  <script src="/js/conceptModelTokenRenderer.js"></script>
   <script>
     function boot() {
       window.ConceptModelRenderer.renderModel(
@@ -160,6 +177,38 @@
           reveal: ['plane', 'curve', 'out'],
           prompt: 'Slide a (height) and b (how tight the waves are) — what changes?'
         }
+      );
+
+      // A second generated model exercising length + area measures: the side AB
+      // and the triangle's area are MEASURED off the live vertices, never typed.
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-gen2'),
+        {
+          model: 'right_triangle_measures',
+          title: 'Right triangle — side & area',
+          params: {},
+          measures: {
+            side: { type: 'length', between: ['A', 'B'] },
+            region: { type: 'area', of: ['A', 'B', 'C'] }
+          },
+          elements: [
+            { id: 'plane', type: 'plane', x: [-2, 8], y: [-2, 6], grid: true, axisLabels: true },
+            { id: 'A', type: 'point', at: [0, 0], draggable: true, label: 'A' },
+            { id: 'B', type: 'point', at: [4, 0], draggable: true, label: 'B' },
+            { id: 'C', type: 'point', at: [0, 3], draggable: true, label: 'C' },
+            { id: 'tri', type: 'polygon', vertices: ['A', 'B', 'C'], fill: true },
+            { id: 'out', type: 'readout', text: 'AB = {side}   ·   area = {region}', at: 'top' }
+          ],
+          reveal: ['plane', 'A', 'B', 'C', 'tri', 'out'],
+          drag: ['A', 'B', 'C'],
+          prompt: 'Drag a vertex — the side length and area are measured live.'
+        }
+      );
+
+      // The discrete substrate: a curated token model (engine:"tokens"). Dispatched
+      // to ConceptModelTokenRenderer — inline chips, not the algebra-tiles modal.
+      window.ConceptModelRenderer.renderModel(
+        document.getElementById('host-ic'), 'integer_counters'
       );
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

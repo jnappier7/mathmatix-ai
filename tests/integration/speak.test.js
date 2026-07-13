@@ -76,6 +76,22 @@ describe('POST /api/speak', () => {
     expect(r.status).toBe(500);
   });
 
+  test('passes the student preferred language code through to the provider', async () => {
+    ttsProvider.generateAudio.mockResolvedValue(Buffer.from('a'));
+    await supertest(makeApp({ _id: 'u1', preferredLanguage: 'German' }))
+      .post('/api/speak')
+      .send({ text: 'Guten Tag' });
+    expect(ttsProvider.generateAudio).toHaveBeenCalledWith('cleaned:Guten Tag', expect.any(String), 'de');
+  });
+
+  test('defaults to English when no preferred language is set', async () => {
+    ttsProvider.generateAudio.mockResolvedValue(Buffer.from('a'));
+    await supertest(makeApp({ _id: 'u1' }))
+      .post('/api/speak')
+      .send({ text: 'hello' });
+    expect(ttsProvider.generateAudio).toHaveBeenCalledWith('cleaned:hello', expect.any(String), 'en');
+  });
+
   test('uses requested voiceId when provided, default otherwise', async () => {
     ttsProvider.generateAudio.mockResolvedValue(Buffer.from('a'));
     await supertest(makeApp({ _id: 'u1' })).post('/api/speak').send({ text: 'hi', voiceId: 'voice-9' });

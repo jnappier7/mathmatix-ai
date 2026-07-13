@@ -48,6 +48,51 @@ describe('Problem.methods.checkAnswer — multiple choice', () => {
     });
     expect(checkAnswer.call(p, 'A')).toBe(true);
   });
+
+  // Regression: the chat-rendered screener shows the question text but not the
+  // A–D labels, so students type the VALUE ("35") instead of a letter. These
+  // must be graded against the correct option's text, not rejected outright.
+  test('typed value matches the correct option text (value, not letter)', () => {
+    const p = bind('35', {
+      answerType: 'multiple-choice',
+      correctOption: 'B',
+      options: [{ text: '40' }, { text: '35' }, { text: '30' }, { text: '45' }]
+    });
+    expect(checkAnswer.call(p, '35')).toBe(true);    // typed the right value
+    expect(checkAnswer.call(p, '35 ')).toBe(true);   // trailing whitespace
+    expect(checkAnswer.call(p, '30')).toBe(false);   // a distractor's value
+  });
+
+  test('typed value matches when answer.value stores the option LETTER', () => {
+    const p = bind('B', {
+      answerType: 'multiple-choice',
+      correctOption: 'B',
+      options: [{ text: '40' }, { text: '35' }, { text: '30' }, { text: '45' }]
+    });
+    expect(checkAnswer.call(p, '35')).toBe(true);    // value resolved from option B
+    expect(checkAnswer.call(p, 'B')).toBe(true);     // letter still works
+    expect(checkAnswer.call(p, 'C')).toBe(false);    // wrong letter still wrong
+  });
+
+  test('numeric tolerance applies to typed MC values ("36 units" → 36)', () => {
+    const p = bind('36', {
+      answerType: 'multiple-choice',
+      correctOption: 'A',
+      options: [{ text: '36' }, { text: '20' }, { text: '13' }, { text: '40' }]
+    });
+    expect(checkAnswer.call(p, '36 units squared')).toBe(true);
+  });
+
+  test('a wrong option letter never falls through to numeric matching', () => {
+    // answer value is "5"; option D happens to also be a number. Submitting a
+    // non-correct letter must stay wrong and not accidentally match by value.
+    const p = bind('5', {
+      answerType: 'multiple-choice',
+      correctOption: 'A',
+      options: [{ text: '5' }, { text: '6' }, { text: '7' }, { text: '8' }]
+    });
+    expect(checkAnswer.call(p, 'D')).toBe(false);
+  });
 });
 
 describe('Problem.methods.checkAnswer — numeric/text', () => {

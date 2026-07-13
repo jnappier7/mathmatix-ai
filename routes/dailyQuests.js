@@ -448,9 +448,22 @@ router.post('/daily-quests/update', isAuthenticated, async (req, res) => {
         const xpEarned = Math.round(quest.xpReward * quest.bonusMultiplier);
         user.xp = (user.xp || 0) + xpEarned;
 
+        // Award Coins (earned soft currency; server-authoritative, daily-capped).
+        // Non-blocking — a coin failure must never break quest completion.
+        let coinsEarned = 0;
+        try {
+          const { awardCoins } = require('../utils/coinEngine');
+          const BRAND = require('../utils/brand');
+          const perQuest = (BRAND.coinRewards && BRAND.coinRewards.questComplete) || 0;
+          coinsEarned = awardCoins(user, perQuest, 'quest_complete').awarded;
+        } catch (coinErr) {
+          console.error('[dailyQuests] coin award failed:', coinErr.message);
+        }
+
         completedQuests.push({
           ...quest,
-          xpEarned
+          xpEarned,
+          coinsEarned
         });
       }
     });

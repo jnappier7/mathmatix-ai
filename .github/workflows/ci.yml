@@ -30,6 +30,30 @@ jobs:
         env:
           NODE_ENV: test
 
+  coverage-critical:
+    # Per-file coverage ratchet on the highest-stakes logic (grading math, IRT,
+    # knowledge tracing, the tutoring pipeline's decide/diagnose/verify stages).
+    # Kept separate from `test` so it never perturbs the global coverage
+    # threshold. See jest.critical.config.js — raise floors as coverage improves,
+    # never lower them to make a red build green.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Critical-path coverage gate
+        run: npm run test:critical
+        env:
+          NODE_ENV: test
+
   lint:
     runs-on: ubuntu-latest
     steps:

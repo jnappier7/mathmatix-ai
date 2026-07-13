@@ -23,7 +23,8 @@ const { generate, assemblePrompt } = require('./generate');
 const { verify } = require('./verify');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { persist } = require('./persist');
-const { llmVerifyAnswer, pickProblemContext } = require('./llmVerifier');
+const { verifyWithEscalation, pickProblemContext } = require('./llmVerifier');
+const verifyMetrics = require('../verifyMetrics');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
@@ -49,6 +50,7 @@ const { parseVisualTabTags } = require('../visualTabTagParser');
 const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
+const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
@@ -120,23 +122,34 @@ async function runPipeline(message, ctx) {
   let llmVerificationPromise = null;
   if (observation.messageType === MESSAGE_TYPES.ANSWER_ATTEMPT && observation.answer?.value) {
     const problemText = pickProblemContext(
-      recentAssistantMessages.map(msg => ({ content: msg.content }))
+      recentAssistantMessages.map(msg => ({ content: msg.content, problemInfo: msg.problemInfo || null }))
     );
     if (problemText) {
-      llmVerificationPromise = llmVerifyAnswer(problemText, observation.answer.value)
+      const verifyStart = Date.now();
+      llmVerificationPromise = verifyWithEscalation(problemText, observation.answer.value)
         .then(verdict => {
+          const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;
           if (verdict.isCorrect !== null) {
-            console.log(`[Pipeline] LLMVerify: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+            console.log(`[Pipeline] LLMVerify: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer}, ${tier})`);
           } else if (verdict.error) {
-            console.log(`[Pipeline] LLMVerify: unverifiable (${verdict.error})`);
+            console.log(`[Pipeline] LLMVerify: unverifiable (${verdict.error}, ${tier})`);
           } else {
-            console.log(`[Pipeline] LLMVerify: low-confidence (${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer})`);
+            console.log(`[Pipeline] LLMVerify: low-confidence (${verdict.confidence.toFixed(2)}, modelAnswer: ${verdict.modelAnswer}, ${tier})`);
           }
+          verifyMetrics.recordVerification({
+            verdict,
+            escalated: verdict.escalated,
+            escalationResolved: verdict.escalationResolved,
+            tier: verdict.tier,
+            latencyMs: Date.now() - verifyStart,
+          });
           return verdict;
         })
         .catch(err => {
           console.error('[Pipeline] LLMVerify promise rejected:', err.message);
-          return { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
+          const verdict = { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
+          verifyMetrics.recordVerification({ verdict, latencyMs: Date.now() - verifyStart });
+          return verdict;
         });
     }
   }
@@ -480,6 +493,13 @@ async function runPipeline(message, ctx) {
         errors: errors || null,
       });
     }
+    // Generated spec rejected but a curated name carried the card instead.
+    for (const { command, reason } of resolvedModels.fallbacks) {
+      boardLogger.warn('Concept-model spec rejected; fell back to curated model', {
+        reason,
+        model: command.model || null,
+      });
+    }
   }
 
   // ── Stage 5b.0: BOARD LLM (advisory board-card source) ──
@@ -812,6 +832,77 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // ── Stage 5c.0c: VISUAL GATE for LEGACY INLINE GRAPH TAGS ──
+  // The board gate above only sees <BOARD> graph/image commands. Legacy inline
+  // [FUNCTION_GRAPH:...]-family tags live in the tutor's chat text and otherwise
+  // reach the client ungated — the same leak the board gate closes (a graph of
+  // the student's own unsolved function reveals its roots), plus decorative/
+  // off-topic graphs (the "sin(x)/x" reflex) when the value judge is on. Route
+  // them through the SAME gate. Runs here in verify so the edit lands in
+  // pipelineResult.text — the authoritative text the client renders inline
+  // visuals from; worst case is a brief literal-tag flash mid-stream, never a
+  // rendered leak. Self-contained (doesn't touch the board block) and fail-safe:
+  // a gate error leaves the text untouched and never breaks the response.
+  if (visualGateMode !== 'off' && containsInlineGraphTag(verified.text)) {
+    try {
+      const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+      const activeProblem = {
+        problemText: pinnedTex,
+        normalizedExpression: pinnedTex,
+        correctAnswer: diagnosis.correctAnswer || null,
+        problemType: diagnosis.problemType || null,
+        status: diagnosis.isCorrect === true
+          ? 'solved'
+          : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
+      };
+      const learningState = {
+        concept: ctx.activeSkill?.name || null,
+        misconception: diagnosis.misconception?.name || null,
+        masteryScore: null,
+      };
+      const inlineResult = await gateInlineGraphTags({
+        text: verified.text,
+        activeProblem,
+        learningState,
+        user: ctx.user || null,
+        mode: visualGateMode,
+        // Same opt-in as the board path: leak-block runs deterministically in
+        // live modes; the decorative/relevance value judge is separate.
+        enableValueJudge: process.env.VISUAL_GATE_VALUE_JUDGE === 'on',
+      });
+      if (typeof inlineResult.text === 'string' && inlineResult.text !== verified.text) {
+        verified.text = inlineResult.text;
+      }
+      if (inlineResult.records.length) {
+        const turnIndex = Array.isArray(ctx.conversation?.messages) ? ctx.conversation.messages.length : null;
+        const decisionDocs = [];
+        for (const record of inlineResult.records) {
+          if (record.decision !== 'allow') {
+            boardLogger.info('Visual gate decision (inline graph)', {
+              mode: visualGateMode,
+              action: record.action,
+              decision: record.decision,
+              reasonCode: record.reasonCode,
+              riskLevel: record.riskLevel,
+            });
+          }
+          decisionDocs.push(buildDecisionDoc({
+            record,
+            activeProblem,
+            learningState,
+            mode: visualGateMode,
+            userId: ctx.user?._id || null,
+            conversationId: ctx.conversation?._id || null,
+            turnIndex,
+          }));
+        }
+        if (decisionDocs.length) persistVisualDecisions(decisionDocs);
+      }
+    } catch (gateErr) {
+      boardLogger.error('Inline visual gate failed (non-fatal)', { error: gateErr.message });
+    }
+  }
+
   // ── Stage 5c.1: TURN-TYPE BACKFILL (Phase 5) ──
   // Phase 3 lit the audit signal; Phase 5 acts on the one hard bug it
   // detects. When the model self-declared turn_type=problem_introduction
@@ -823,8 +914,22 @@ async function runPipeline(message, ctx) {
   // see, so we backfill a verbatim pose. Naturally dark-flagged:
   // structuredTurnType is only populated when STRUCTURED_TUTOR_RESPONSE
   // is on, so flag-off traffic never reaches this branch.
+  // Trigger on the model's self-declared problem_introduction turn_type OR — when
+  // the board is still empty — the decide stage's own `present_problem` action.
+  // The model under-declares problem_introduction on conversational lead-ins, so
+  // the pose used to lag until the equation later parsed (often the student's own
+  // attempt), which reads as "the problem showed up after I'd solved it". The
+  // decide action is pipeline ground truth, not a model self-report; we only trust
+  // it to pose onto an EMPTY board (no pinned problem) so it can never re-pose a
+  // problem already in play or mistake an intermediate line for a new one.
+  const posePinnedTex = ctx.conversation?.boardProblem?.tex || null;
+  const problemIntroTurn = shouldBackfillProblemPose({
+    structuredTurnType: generatedResult.structuredTurnType,
+    decisionAction: decision?.action,
+    pinnedTex: posePinnedTex,
+  });
   let backfillOutcome = null;
-  if (generatedResult.structuredTurnType === 'problem_introduction'
+  if (problemIntroTurn
       && !verified.boardCommands.some(c => c.action === 'pose')) {
     const fallbackPose = synthesizeFallbackPose({
       tutorResponse: verified.text,
@@ -1563,8 +1668,32 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
   user.markModified('learningEngines');
 }
 
+/**
+ * Whether Stage 5c.1 should backfill a PROBLEM pose this turn. True when the
+ * turn genuinely introduces a problem but no pose survived upstream. Two
+ * independent signals:
+ *   • the model's self-declared `problem_introduction` turn_type, or
+ *   • — only onto an EMPTY board — the decide stage's `present_problem` action.
+ * The decide action is pipeline ground truth (not a model self-report), so it
+ * catches the model under-declaring its turn_type on a conversational lead-in,
+ * which is what made the pose lag behind the chat. Restricting the decide signal
+ * to an empty board (no pinned problem) means it can never re-pose a problem
+ * already in play or mistake an intermediate line for a new one.
+ *
+ * @param {object} p
+ * @param {string|null} p.structuredTurnType
+ * @param {string|null} p.decisionAction
+ * @param {string|null} p.pinnedTex
+ * @returns {boolean}
+ */
+function shouldBackfillProblemPose({ structuredTurnType, decisionAction, pinnedTex } = {}) {
+  if (structuredTurnType === 'problem_introduction') return true;
+  return decisionAction === 'present_problem' && !pinnedTex;
+}
+
 module.exports = {
   runPipeline,
+  shouldBackfillProblemPose,
   // Re-export for direct access when needed
   observe,
   diagnose,

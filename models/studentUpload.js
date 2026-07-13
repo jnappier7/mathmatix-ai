@@ -58,6 +58,18 @@ const studentUploadSchema = new Schema({
         default: null
     },
 
+    // Durable, downscaled copy of an uploaded IMAGE as a base64 data URL.
+    // The tutor re-shows the active worksheet across turns (utils/
+    // activeWorksheetImage); reading it from here instead of the local
+    // uploads/ disk keeps it working after a container restart or on a
+    // different instance, where the on-disk file may be gone. Downscaled at
+    // write time so it stays small. Unencrypted — consistent with the raw
+    // image file already stored unencrypted on disk.
+    imageData: {
+        type: String,
+        default: null
+    },
+
     // Metadata
     uploadedAt: {
         type: Date,

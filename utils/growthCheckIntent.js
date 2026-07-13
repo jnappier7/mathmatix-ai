@@ -25,6 +25,12 @@ const GROWTH_CHECK_RE = /\b(growth[\s-]*check)\b/i;
 const NEGATIVE_RE = /\b(no|not|don'?t|stop|cancel|later|skip|nope|nah)\b/i;
 const QUESTION_RE = /^(what|when|why|how|where|who|is\s+|are\s+|can\s+|do\s+(i|you|we))\b/i;
 
+// Starting Point = the full initial IRT placement assessment (distinct from
+// the shorter Growth Check). Same conservative philosophy: only an explicit
+// mention launches it, never a bare "yes".
+const STARTING_POINT_RE = /\b(starting[\s-]*point|placement[\s-]*test)\b/i;
+const TAKE_ASSESSMENT_RE = /\b(take|start|do|begin|launch)\s+(my|the|this|a)\s+(assessment|placement|screener)\b/i;
+
 /**
  * @param {string} message - The student's raw chat message
  * @returns {boolean} true when the student is asking to launch the
@@ -47,4 +53,26 @@ function detectGrowthCheckAcceptance(message) {
     return true;
 }
 
-module.exports = { detectGrowthCheckAcceptance };
+/**
+ * @param {string} message - The student's raw chat message
+ * @returns {boolean} true when the student is asking to launch the
+ *   structured Starting Point (initial placement) assessment
+ */
+function detectStartingPointAcceptance(message) {
+    if (!message || typeof message !== 'string') return false;
+    const trimmed = message.trim();
+    if (!trimmed) return false;
+
+    if (!STARTING_POINT_RE.test(trimmed) && !TAKE_ASSESSMENT_RE.test(trimmed)) return false;
+
+    // "I don't want to take the placement test", "skip the starting point", etc.
+    if (NEGATIVE_RE.test(trimmed)) return false;
+
+    // "what is the starting point?", "how does the placement test work?" —
+    // a question about the feature, not a request to launch it.
+    if (QUESTION_RE.test(trimmed)) return false;
+
+    return true;
+}
+
+module.exports = { detectGrowthCheckAcceptance, detectStartingPointAcceptance };

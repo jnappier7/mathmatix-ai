@@ -13,6 +13,8 @@ const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuar
 const pdfOcr = require('../utils/pdfOcr');
 const { checkUnpluggedBadges } = require('../utils/unpluggedBadges');
 const Conversation = require('../models/conversation');
+const StudentUpload = require('../models/studentUpload');
+const { downscaleToDataUrl } = require('../utils/activeWorksheetImage');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 // ============================================================================
@@ -549,6 +551,43 @@ router.post('/',
                 conversation.lastActivity = new Date();
                 await conversation.save();
                 console.log(`[gradeWork] Appended work-check + greeting to conversation ${conversation._id}`);
+
+                // Pin the graded IMAGE into the conversation so the tutor can keep
+                // SEEING it on follow-up turns (the chat pipeline re-threads the
+                // most recent conversation image as vision — utils/activeWorksheetImage).
+                // Without this, a scored-only check would leave the tutor with just
+                // the text gloss, not the actual work. We copy the temp upload into
+                // the persistent uploads/ dir (file.path is unlinked later) and tie
+                // the StudentUpload to this conversation. Image-only: that's what the
+                // active-worksheet vision pin reads. Best-effort — non-fatal.
+                if (isImage) {
+                    try {
+                        const uploadsDir = path.join(__dirname, '../uploads');
+                        fs.mkdirSync(uploadsDir, { recursive: true });
+                        const sanitized = (file.originalname || 'worksheet.jpg').replace(/[^a-zA-Z0-9.-]/g, '_');
+                        const storedFilename = `${user._id}_${Date.now()}_${sanitized}`;
+                        const destPath = path.join(uploadsDir, storedFilename);
+                        fs.copyFileSync(file.path, destPath);
+                        // Durable downscaled copy so the tutor keeps SEEING this
+                        // sheet across turns even if the on-disk file is later
+                        // gone (ephemeral disk). Best-effort.
+                        const imageData = await downscaleToDataUrl(fs.readFileSync(file.path));
+                        await StudentUpload.create({
+                            userId: user._id,
+                            originalFilename: file.originalname || sanitized,
+                            storedFilename,
+                            filePath: destPath,
+                            fileType: 'image',
+                            mimeType: file.mimetype,
+                            fileSize: file.size,
+                            imageData,
+                            conversationId: conversation._id
+                        });
+                        console.log('[gradeWork] Pinned graded image to conversation for follow-up');
+                    } catch (pinErr) {
+                        console.warn('[gradeWork] Could not pin graded image to conversation (non-fatal):', pinErr.message);
+                    }
+                }
             }
         } catch (convErr) {
             console.warn('[gradeWork] Could not interlace with chat (non-fatal):', convErr.message);

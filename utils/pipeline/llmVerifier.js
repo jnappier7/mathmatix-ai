@@ -38,6 +38,12 @@ const CONFIDENCE_THRESHOLD = 0.6;
 const MAX_PROBLEM_CHARS = 2000;
 const MAX_ANSWER_CHARS = 500;
 
+// Stronger judge for the minority of attempts the fast model can't resolve.
+// gpt-4o is already used for vision grading, so it stays within the OpenAI-only
+// contract. Escalation only fires on uncertain cases, so the cost/latency hit is
+// bounded to a small fraction of answer attempts.
+const ESCALATION_MODEL = 'gpt-4o';
+
 /**
  * Run two-step LLM verification on a student's answer.
  *
@@ -180,26 +186,93 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
 }
 
 /**
- * Choose the assistant message that posed the problem the student is answering.
- * Walks the recent assistant messages in reverse order; prefers messages with
- * stored problemInfo metadata, then falls back to the most recent message.
+ * Verify an answer with a fast model, escalating to a stronger judge when the
+ * fast model can't resolve it.
+ *
+ * Tier 1 (gpt-4o-mini) handles the common cases cheaply. When it returns no
+ * usable verdict — low confidence, a parse failure, or an upstream error — we
+ * escalate to Tier 2 (gpt-4o) rather than silently giving up, which is where the
+ * tutor would otherwise be left to judge correctness itself (the false
+ * affirm/reject risk). Missing-input cases never escalate (nothing to verify).
+ *
+ * Runs in parallel with the main tutor response, so the added latency lands
+ * inside the generate window for the small share of turns that escalate.
+ *
+ * @param {string} problemText
+ * @param {string} studentAnswer
+ * @param {Object} [options] - forwarded to llmVerifyAnswer (model, confidenceThreshold)
+ * @returns {Promise<Object>} verdict augmented with:
+ *   - tier {string}: the model that produced the final verdict
+ *   - escalated {boolean}: whether the stronger judge was invoked
+ *   - escalationResolved {boolean}: whether escalation produced a usable verdict
+ */
+async function verifyWithEscalation(problemText, studentAnswer, options = {}) {
+  const tier1Model = options.model || VERIFIER_MODEL;
+  const first = await llmVerifyAnswer(problemText, studentAnswer, options);
+
+  // Tier 1 resolved it — done.
+  if (first.isCorrect !== null) {
+    return { ...first, tier: tier1Model, escalated: false, escalationResolved: false };
+  }
+  // Nothing to verify — don't burn a stronger call on missing input.
+  if (first.error === 'missing_input') {
+    return { ...first, tier: tier1Model, escalated: false, escalationResolved: false };
+  }
+
+  // Tier 2: stronger judge for the hard/uncertain cases.
+  const second = await llmVerifyAnswer(problemText, studentAnswer, {
+    ...options,
+    model: ESCALATION_MODEL,
+  });
+  return {
+    ...second,
+    tier: ESCALATION_MODEL,
+    escalated: true,
+    escalationResolved: second.isCorrect !== null,
+  };
+}
+
+/**
+ * Choose the assistant message that actually POSED the problem the student is
+ * answering — not merely the most recent message, which is frequently a
+ * pleasantry or follow-up ("Nice — ready for the next one?"). Verifying an
+ * answer against the wrong text produces spurious correct/incorrect verdicts,
+ * so we rank messages by how problem-like they are, newest-first within each
+ * tier, and take the first hit:
+ *
+ *   1. Carries stored problemInfo metadata — the persist stage recorded a posed
+ *      problem (with a correctAnswer) on this message. The most reliable signal.
+ *   2. Contains math-looking content — LaTeX delimiters/macros, or a digit next
+ *      to a math operator. A problem statement even without metadata.
+ *   3. Contains a question mark — a question, possibly the problem.
+ *   4. Fallback: the most recent non-empty message (the prior behavior, kept so
+ *      we never return null where we previously found something).
  *
  * Pure helper — safe to call from any stage.
  *
- * @param {Array} recentAssistantMessages - Ordered oldest → newest.
- * @returns {string|null} The problem text, or null if none found.
+ * @param {Array<{content?: string, problemInfo?: Object|null}>} recentAssistantMessages
+ *   Ordered oldest → newest.
+ * @returns {string|null} The chosen problem text, or null if none found.
  */
 function pickProblemContext(recentAssistantMessages) {
   if (!Array.isArray(recentAssistantMessages) || recentAssistantMessages.length === 0) {
     return null;
   }
-  // Prefer the most recent message that actually contains a question mark or
-  // math-looking content. Fall back to the most recent one.
-  for (let i = recentAssistantMessages.length - 1; i >= 0; i--) {
-    const msg = recentAssistantMessages[i];
-    const content = msg?.content;
-    if (typeof content === 'string' && content.trim().length > 0) {
-      return content;
+
+  const hasContent = (m) => typeof m?.content === 'string' && m.content.trim().length > 0;
+  const hasProblemInfo = (m) => hasContent(m) && m.problemInfo && m.problemInfo.correctAnswer != null;
+  const looksMathy = (m) => hasContent(m) && (
+    /\\\(|\\\[|\\frac|\$/.test(m.content) ||                 // LaTeX delimiters / macros
+    /\d\s*[+\-*/=×÷^]|[+\-*/=×÷^]\s*\d/.test(m.content)      // a digit adjacent to an operator
+  );
+  const hasQuestion = (m) => hasContent(m) && m.content.includes('?');
+
+  // Newest-first scan within each tier; first match wins.
+  for (const tier of [hasProblemInfo, looksMathy, hasQuestion, hasContent]) {
+    for (let i = recentAssistantMessages.length - 1; i >= 0; i--) {
+      if (tier(recentAssistantMessages[i])) {
+        return recentAssistantMessages[i].content;
+      }
     }
   }
   return null;
@@ -207,7 +280,9 @@ function pickProblemContext(recentAssistantMessages) {
 
 module.exports = {
   llmVerifyAnswer,
+  verifyWithEscalation,
   pickProblemContext,
   VERIFIER_MODEL,
+  ESCALATION_MODEL,
   CONFIDENCE_THRESHOLD,
 };

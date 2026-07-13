@@ -194,6 +194,48 @@ function revealsPinnedProblem(text, ctx) {
     return false;
 }
 
+// Scrub a LaTeX/text field of leaked JSON structure. A fallback parser upstream
+// can capture a board_commands array boundary into a field — e.g. tex = "3x = 21},{"
+// — which would then render as a red KaTeX error on the board. A real math
+// expression never contains an UNescaped  } , {  or  " , "  (LaTeX braces are
+// \{ \}), so cut at that boundary and drop the residue. Mirrors the client-side
+// guard in public/js/boardCommandHandler.js (defense in depth).
+function cleanField(s) {
+    if (typeof s !== 'string') return s;
+    // Stray wrapping JSON quotes.
+    s = s.replace(/^\s*["']+|["']+\s*$/g, '');
+    // Truncate at a leaked JSON object/array boundary.
+    const cut = s.search(/[}\]"]\s*,\s*["{[]/);
+    if (cut !== -1) s = s.slice(0, cut + 1);
+    s = s.trim();
+    // Drop a trailing unbalanced } left over from the cut (LaTeX braces pair up;
+    // a lone trailing close is residue). Count unescaped braces only.
+    const opens = (s.match(/(?:^|[^\\])\{/g) || []).length;
+    let closes = (s.match(/(?:^|[^\\])\}/g) || []).length;
+    while (closes > opens && /\}\s*$/.test(s)) {
+        s = s.replace(/\}\s*$/, '').trim();
+        closes--;
+    }
+    return s;
+}
+
+// Return a copy of the command with its math/text fields scrubbed. Cheap no-op
+// (returns the same ref) when nothing needed cleaning.
+function sanitizeCommand(command) {
+    if (!command || typeof command !== 'object') return command;
+    let out = command;
+    for (const k of ['tex', 'check', 'op', 'caption']) {
+        if (typeof command[k] === 'string') {
+            const cleaned = cleanField(command[k]);
+            if (cleaned !== command[k]) {
+                if (out === command) out = { ...command };
+                out[k] = cleaned;
+            }
+        }
+    }
+    return out;
+}
+
 function enforcePedagogyRule({
     commands,
     userMessage,
@@ -227,7 +269,19 @@ function enforcePedagogyRule({
     let runningLastAction = lastBoardActionInConversation;
 
     for (let i = 0; i < commands.length; i++) {
-        const command = commands[i];
+        const original = commands[i];
+        // Scrub leaked JSON/garbage out of the math fields FIRST, so the clean
+        // command is what we judge, allow, and pass downstream (board + stored
+        // history + voice all get the cleaned tex).
+        const command = sanitizeCommand(original);
+        // If a tex that was present scrubbed away to nothing, it was pure garbage
+        // — drop it rather than paint a blank/wrong card ("cannot display wrong
+        // math", the board's #1 guarantee).
+        if (typeof original.tex === 'string' && original.tex.trim() && !(command.tex || '').trim()) {
+            dropped.push({ command: original, reason: 'malformed_tex' });
+            runningLastAction = original.action;
+            continue;
+        }
         const nextAction = commands[i + 1] ? commands[i + 1].action : null;
         const decision = evaluate(command, {
             currentText,
@@ -426,4 +480,6 @@ module.exports = {
     opMatchesStudentText,
     hasStartOverIntent,
     texHasBlank,
+    cleanField,
+    sanitizeCommand,
 };

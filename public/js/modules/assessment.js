@@ -169,6 +169,53 @@ ${data.problem.content}`;
     function createAssessmentAnswerInput(sessionId, problem) {
         const chatBox = getChatBox();
 
+        // Multiple-choice problems: render the options as clickable buttons so
+        // the student isn't forced to guess the answer's exact text. Without
+        // this, MC problems showed only the prompt and a blank box — students
+        // typed a value the grader then scored as wrong (see screener bug).
+        const options = Array.isArray(problem.options) ? problem.options : [];
+        if (problem.answerType === 'multiple-choice' && options.length > 0) {
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'assessment-mc-options';
+            optionsContainer.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin: 15px 0;
+            `;
+
+            const labels = ['A', 'B', 'C', 'D', 'E', 'F'];
+            options.forEach((opt, idx) => {
+                const label = opt.label || labels[idx];
+                const text = opt.text != null ? opt.text : opt;
+
+                const optBtn = document.createElement('button');
+                optBtn.textContent = `${label}. ${text}`;
+                optBtn.style.cssText = `
+                    text-align: left;
+                    padding: 12px 16px;
+                    background: #fff;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: border-color 0.15s, background 0.15s;
+                `;
+                optBtn.onmouseover = () => { optBtn.style.borderColor = '#667eea'; optBtn.style.background = '#f5f3ff'; };
+                optBtn.onmouseout = () => { optBtn.style.borderColor = '#e5e7eb'; optBtn.style.background = '#fff'; };
+                optBtn.onclick = async () => {
+                    optionsContainer.remove();
+                    // Submit the option letter; the server validates it server-side.
+                    await submitAssessmentAnswer(sessionId, problem.problemId, label, `${label}. ${text}`);
+                };
+                optionsContainer.appendChild(optBtn);
+            });
+
+            chatBox.appendChild(optionsContainer);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return;
+        }
+
         const inputContainer = document.createElement('div');
         inputContainer.className = 'assessment-answer-input';
         inputContainer.style.cssText = `
@@ -220,9 +267,9 @@ ${data.problem.content}`;
         input.focus();
     }
 
-    async function submitAssessmentAnswer(sessionId, problemId, answer) {
+    async function submitAssessmentAnswer(sessionId, problemId, answer, displayText) {
         try {
-            appendMessage(answer, "user");
+            appendMessage(displayText || answer, "user");
             showThinkingIndicator(true);
 
             const response = await csrfFetch('/api/screener/submit-answer', {

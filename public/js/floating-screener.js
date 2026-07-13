@@ -181,6 +181,11 @@ class FloatingScreener {
       if (spanEl) {
         spanEl.textContent = 'Starting Point';
       }
+
+      // The Tools section is collapsed by default, which hides this button.
+      // The greeting tells new students to use the Starting Point button "in
+      // the sidebar", so make sure it's actually visible there.
+      this.revealInSidebar();
     } else if (this.growthCheckDue) {
       // Growth check is available (every 3 months)
       this.sidebarBtn.style.display = '';
@@ -192,10 +197,28 @@ class FloatingScreener {
       if (spanEl) {
         spanEl.textContent = 'Growth Check';
       }
+
+      this.revealInSidebar();
     } else {
       // Assessment completed, not expired, growth check not due - hide the button
       this.sidebarBtn.style.display = 'none';
     }
+  }
+
+  // Make sure the sidebar's collapsible "Tools" section is open so the
+  // Starting Point / Growth Check button is actually visible. Prefer the
+  // Sidebar instance (keeps its internal state in sync); fall back to toggling
+  // the DOM classes directly in case the sidebar isn't ready yet.
+  revealInSidebar() {
+    if (window.sidebar && typeof window.sidebar.expandTools === 'function') {
+      window.sidebar.expandTools();
+      return;
+    }
+
+    const toolsContent = document.getElementById('sidebar-tools');
+    const toolsToggle = document.querySelector('.tools-toggle');
+    if (toolsContent) toolsContent.classList.add('expanded');
+    if (toolsToggle) toolsToggle.classList.add('expanded');
   }
 
   open() {

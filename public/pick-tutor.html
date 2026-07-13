@@ -12,6 +12,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meet Your Math Tutors! | M∆THM∆TIΧ AI</title>
   <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/css/tutor-picker.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 </head>
@@ -28,9 +29,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </nav>
   </header>
 
-  <main id="main-content" class="pick-tutor-main" style="min-height: calc(100vh - 140px); overflow-y: auto; padding-bottom: 3rem;">
-    <!-- Onboarding Stepper -->
-    <div class="onboarding-stepper" id="onboarding-stepper" style="margin-top: 2rem;">
+  <main id="main-content" class="pick-tutor-main tp-main">
+    <!-- Onboarding Stepper (hidden in switch mode by pick-tutor.js) -->
+    <div class="onboarding-stepper" id="onboarding-stepper">
       <div class="stepper-step completed">
         <div class="stepper-circle"></div>
         <span class="stepper-label">Profile</span>
@@ -42,27 +43,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <!-- TUTOR SELECTION -->
-    <section class="selection-section">
-      <h1 class="section-title" id="selection-title">Select Your Personal Math Coach.</h1>
-      <p class="subtitle" id="selection-subtitle">Your choice defines their voice and style. You can change your tutor anytime.</p>
-
-      <div id="tutor-selection-grid" class="tutor-selection-grid">
-        <p style="text-align: center; color: var(--clr-text-dim);">Loading tutors...</p>
+    <section class="tp-shell">
+      <div class="tp-header">
+        <h1 class="section-title" id="selection-title">Pick Your Tutor</h1>
+        <p class="subtitle" id="selection-subtitle">Your coach guides every session and stands with you. Switch anytime.</p>
       </div>
 
-      <!-- Voice preview is now inline on each tutor card -->
-    </section>
+      <div class="tp-layout">
+        <div class="tp-stage">
+          <div class="tp-roster" id="tutor-roster">
+            <p style="margin:auto; color: var(--clr-text-dim);">Loading tutors…</p>
+          </div>
+        </div>
+        <div class="tp-panel-wrap">
+          <aside class="tp-panel" id="tutor-detail" aria-live="polite"></aside>
+        </div>
+      </div>
 
-    <!-- NEXT BUTTON -->
-    <div class="tutor-actions-bar" style="margin-top: 3rem;">
-      <a href="/chat.html" id="back-to-chat-link" class="btn btn-tertiary" style="display:none;">
-        <i class="fas fa-arrow-left"></i> Back to Chat
-      </a>
-      <button id="complete-selection-btn" class="btn btn-select btn-large" disabled>
-        <i class="fas fa-arrow-right"></i> Choose a tutor
-      </button>
-    </div>
+      <!-- Locked "special release" slots (variable-ratio unlockables) -->
+      <div class="tp-locked" id="locked-shelf"></div>
+
+      <!-- Escape hatch shown only when switching tutors -->
+      <div class="tp-backbar" id="tp-backbar" style="display:none;">
+        <a href="/chat.html" class="btn btn-tertiary"><i class="fas fa-arrow-left"></i> Back to Chat</a>
+      </div>
+    </section>
   </main>
 
   <footer>

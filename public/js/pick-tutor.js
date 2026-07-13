@@ -1,50 +1,38 @@
 // public/js/pick-tutor.js  –  Tutor selection (onboarding + switching)
 //
-// One page, two modes:
-//   onboarding — the student has no tutor yet; show the step indicator
-//                and finish with "Start Learning".
-//   switching  — the student already has a tutor and came here to change
-//                it; hide the stepper, pre-select their current tutor,
-//                offer a "Back to Chat" escape, finish with "Switch to X".
-// Mode is derived from currentUser.selectedTutorId — no caller plumbing.
+// Character-select layout: full-body tutors stand together on the left; the
+// selected one drives a detail panel (name, catchphrase, bio, voice preview,
+// CTA) on the right. Locked "special release" tutors tease below.
+//
+// One page, two modes (derived from currentUser.selectedTutorId — no caller
+// plumbing):
+//   onboarding — no tutor yet; show the stepper, finish with "Choose X".
+//   switching  — already has a tutor; hide the stepper, pre-select the current
+//                tutor, offer a "Back to Chat" escape, finish with "Switch to X".
 document.addEventListener('DOMContentLoaded', () => {
-  let allTutors   = [];
-  let currentUser = null;
-  let isSwitching = false;
+  let allTutors      = [];
+  let lockedTutors   = [];
+  let currentUser    = null;
+  let isSwitching    = false;
   let selectedTutorId = null;
   let currentAudio    = null; // currently playing voice preview
   let currentAudioUrl = null; // object URL to revoke
 
-  const tutorSelectionGrid   = document.getElementById('tutor-selection-grid');
-  const completeSelectionBtn = document.getElementById('complete-selection-btn');
+  const roster     = document.getElementById('tutor-roster');
+  const panel      = document.getElementById('tutor-detail');
   const stepperEl  = document.getElementById('onboarding-stepper');
   const titleEl    = document.getElementById('selection-title');
   const subtitleEl = document.getElementById('selection-subtitle');
-  const backLink   = document.getElementById('back-to-chat-link');
+  const lockedShelf = document.getElementById('locked-shelf');
+  const backBar    = document.getElementById('tp-backbar');
 
   function esc(str) {
     const d = document.createElement('div');
     d.textContent = str || '';
     return d.innerHTML;
   }
-
-  function tutorName(id) {
-    const t = allTutors.find(x => x.id === id);
-    return t ? t.name : 'this tutor';
-  }
-
-  /* -------- PRIMARY BUTTON -------- */
-  function refreshPrimary() {
-    completeSelectionBtn.disabled = !selectedTutorId;
-    if (!selectedTutorId) {
-      completeSelectionBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Choose a tutor';
-    } else if (isSwitching) {
-      completeSelectionBtn.innerHTML =
-        '<i class="fas fa-check"></i> Switch to ' + esc(tutorName(selectedTutorId));
-    } else {
-      completeSelectionBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Start Learning';
-    }
-  }
+  function tutorById(id) { return allTutors.find(t => t.id === id); }
+  function fullBodyBase(id) { return '/images/tutor_avatars/' + id + '-fullBody'; }
 
   /* -------- MODE -------- */
   function applyMode() {
@@ -54,8 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (titleEl)    titleEl.textContent = 'Switch Your Tutor';
       if (subtitleEl) subtitleEl.textContent =
         'Pick a different coach whenever you like — your progress and XP stay with you.';
-      if (backLink)   backLink.style.display = '';
-      selectedTutorId = currentUser.selectedTutorId;
+      if (backBar)    backBar.style.display = '';
     }
   }
 
@@ -64,103 +51,120 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const userRes = await fetch('/user', { credentials: 'include' });
       if (!userRes.ok) return window.location.href = '/login.html';
+      currentUser = (await userRes.json()).user;
 
-      const userData = await userRes.json();
-      currentUser = userData.user;
+      const cfg = window.TUTOR_CONFIG;
+      if (!cfg) throw new Error('Tutor configuration not loaded.');
 
-      const tutorsData = window.TUTOR_CONFIG;
-      if (!tutorsData) throw new Error('Tutor configuration not loaded.');
-
-      // Only active tutors are selectable; inactive ones are held back
-      // as future "specials" (see `active` in tutorConfig.js).
-      allTutors = Object.keys(tutorsData)
-        .filter(key => key !== 'default' && tutorsData[key].active !== false)
-        .map(key => ({ id: key, ...tutorsData[key] }));
+      // Active tutors are selectable; inactive ones (active:false) are held
+      // back as future "specials" and shown as locked teasers.
+      allTutors = Object.keys(cfg)
+        .filter(k => k !== 'default' && cfg[k].active !== false)
+        .map(k => ({ id: k, ...cfg[k] }));
+      lockedTutors = Object.keys(cfg)
+        .filter(k => k !== 'default' && cfg[k].active === false)
+        .map(k => ({ id: k, ...cfg[k] }));
 
       applyMode();
 
-      // Coming straight from a trial chat — pre-select that tutor.
+      // Pre-select so the panel is populated on load: switching -> current
+      // tutor; trial chat -> that tutor; else the first active tutor.
       const trialTutor = new URLSearchParams(window.location.search).get('trial_tutor');
-      if (trialTutor && allTutors.some(t => t.id === trialTutor)) {
+      if (isSwitching && tutorById(currentUser.selectedTutorId)) {
+        selectedTutorId = currentUser.selectedTutorId;
+      } else if (trialTutor && tutorById(trialTutor)) {
         selectedTutorId = trialTutor;
+      } else {
+        selectedTutorId = allTutors[0] ? allTutors[0].id : null;
       }
 
-      renderTutors();
-      refreshPrimary();
+      renderRoster();
+      renderPanel();
+      renderLocked();
     } catch (err) {
       console.error('Error fetching initial data:', err);
-      tutorSelectionGrid.innerHTML = '<p>Error loading tutors. Please refresh.</p>';
+      roster.innerHTML = '<p style="margin:auto; color: var(--clr-text-dim);">Error loading tutors. Please refresh.</p>';
     }
   }
 
-  /* -------- UI RENDER -------- */
-  function renderTutors() {
-    if (!tutorSelectionGrid) return;
-    tutorSelectionGrid.innerHTML = '';
-
-    allTutors.forEach(tutor => {
-      const card = document.createElement('div');
-      card.classList.add('tutor-card', 'card-style-1', 'unlocked');
-      card.dataset.tutorId = tutor.id;
-      if (tutor.id === selectedTutorId) card.classList.add('selected');
-
-      card.innerHTML =
-        '<img src="/images/tutor_avatars/' + esc(tutor.image) + '" alt="' + esc(tutor.name) + '" class="tutor-card-image" loading="lazy">' +
-        '<h3 class="tutor-card-name">' + esc(tutor.name) + '</h3>' +
-        '<p class="tutor-card-tagline">' + esc(tutor.catchphrase || '') + '</p>' +
-        '<button class="tutor-card-hear-btn" data-tutor-id="' + esc(tutor.id) + '">' +
-          '<i class="fas fa-volume-up"></i> Hear me' +
-        '</button>' +
-        '<div class="tutor-card-details-overlay">' +
-          '<h4>About ' + esc(tutor.name) + ':</h4><p>' + esc(tutor.about || '') + '</p>' +
-          '<h4>Specializes In:</h4><p>' + esc(tutor.specialties || '') + '</p>' +
-        '</div>';
-      tutorSelectionGrid.appendChild(card);
+  /* -------- ROSTER (full-body figures) -------- */
+  function renderRoster() {
+    roster.innerHTML = '';
+    allTutors.forEach(t => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tp-figure' + (t.id === selectedTutorId ? ' selected' : '');
+      btn.dataset.tutorId = t.id;
+      btn.setAttribute('aria-pressed', t.id === selectedTutorId ? 'true' : 'false');
+      btn.setAttribute('aria-label', t.name);
+      btn.innerHTML =
+        '<span class="tp-figure-img"><picture>' +
+          '<source srcset="' + fullBodyBase(t.id) + '.webp" type="image/webp">' +
+          '<img src="' + fullBodyBase(t.id) + '.png" alt="' + esc(t.name) + '" loading="lazy">' +
+        '</picture></span>' +
+        '<span class="tp-figure-name">' + esc(t.name) + '</span>';
+      roster.appendChild(btn);
     });
   }
 
-  /* -------- CARD SELECTION -------- */
-  tutorSelectionGrid.addEventListener('click', e => {
-    if (e.target.closest('.tutor-card-hear-btn')) return; // handled below
+  /* -------- DETAIL PANEL -------- */
+  function renderPanel() {
+    const t = tutorById(selectedTutorId);
+    if (!t) { panel.innerHTML = ''; return; }
+    const cta = (isSwitching ? 'Switch to ' : 'Choose ') + t.name;
+    panel.innerHTML =
+      '<h2 class="tp-name">' + esc(t.name) + '</h2>' +
+      '<p class="tp-catch">“' + esc(t.catchphrase || '') + '”</p>' +
+      '<p class="tp-bio">' + esc(t.about || '') + '</p>' +
+      (t.specialties ? '<p class="tp-spec"><strong>Specializes in:</strong> ' + esc(t.specialties) + '</p>' : '') +
+      '<div class="tp-actions">' +
+        '<button type="button" class="tp-hear" id="tp-hear-btn"><i class="fas fa-volume-up"></i> Hear my voice</button>' +
+        '<button type="button" class="tp-choose" id="tp-choose-btn"><i class="fas fa-arrow-right"></i> ' + esc(cta) + '</button>' +
+      '</div>';
+  }
 
-    const card = e.target.closest('.tutor-card');
-    if (!card) return;
+  /* -------- SELECTION -------- */
+  function selectTutor(id) {
+    if (!id) return;
+    selectedTutorId = id;
+    document.querySelectorAll('.tp-figure').forEach(f => {
+      const on = f.dataset.tutorId === id;
+      f.classList.toggle('selected', on);
+      f.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    stopVoice();
+    renderPanel();
+  }
 
-    document.querySelectorAll('.tutor-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedTutorId = card.dataset.tutorId;
-    refreshPrimary();
+  roster.addEventListener('click', e => {
+    const fig = e.target.closest('.tp-figure');
+    if (fig) selectTutor(fig.dataset.tutorId);
   });
 
-  /* -------- INLINE VOICE PREVIEW -------- */
-  tutorSelectionGrid.addEventListener('click', async (e) => {
-    const hearBtn = e.target.closest('.tutor-card-hear-btn');
-    if (!hearBtn) return;
+  /* -------- VOICE PREVIEW -------- */
+  function stopVoice() {
+    if (!currentAudio) return;
+    currentAudio.pause();
+    if (currentAudioUrl) { URL.revokeObjectURL(currentAudioUrl); currentAudioUrl = null; }
+    currentAudio = null;
+  }
 
-    e.stopPropagation();
-    const tutorId = hearBtn.dataset.tutorId;
-    const tutor = allTutors.find(t => t.id === tutorId);
-    if (!tutor || !tutor.voiceId) return;
+  async function playVoice(btn) {
+    const t = tutorById(selectedTutorId);
+    if (!t || !t.voiceId) return;
+    stopVoice();
 
-    // Stop any currently playing preview
-    if (currentAudio) {
-      currentAudio.pause();
-      if (currentAudioUrl) { URL.revokeObjectURL(currentAudioUrl); currentAudioUrl = null; }
-      currentAudio = null;
-      document.querySelectorAll('.tutor-card-hear-btn').forEach(btn => {
-        btn.innerHTML = '<i class="fas fa-volume-up"></i> Hear me';
-        btn.disabled = false;
-      });
-    }
-
-    hearBtn.disabled = true;
-    hearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Playing…';
-
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Playing…';
+    const reset = () => {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-volume-up"></i> Hear my voice';
+    };
     try {
       const resp = await csrfFetch('/api/speak', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ text: tutor.voicePreview, voiceId: tutor.voiceId }),
+        body:    JSON.stringify({ text: t.voicePreview, voiceId: t.voiceId }),
         credentials: 'include'
       });
       if (!resp.ok) throw new Error(await resp.text());
@@ -169,26 +173,19 @@ document.addEventListener('DOMContentLoaded', () => {
       currentAudioUrl = url;
       currentAudio = new Audio(url);
       currentAudio.play();
-      currentAudio.onended = () => {
-        URL.revokeObjectURL(url);
-        currentAudioUrl = null;
-        hearBtn.disabled = false;
-        hearBtn.innerHTML = '<i class="fas fa-volume-up"></i> Hear me';
-        currentAudio = null;
-      };
+      currentAudio.onended = () => { stopVoice(); reset(); };
     } catch (err) {
       console.error(err);
-      hearBtn.disabled = false;
-      hearBtn.innerHTML = '<i class="fas fa-volume-up"></i> Hear me';
+      reset();
     }
-  });
+  }
 
   /* -------- COMPLETE SELECTION -------- */
-  completeSelectionBtn.addEventListener('click', async () => {
+  async function chooseTutor(btn) {
     if (!selectedTutorId) return;
-
-    completeSelectionBtn.disabled = true;
-    completeSelectionBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
+    stopVoice();
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…';
     try {
       const res = await csrfFetch('/api/user/settings', {
         method: 'PATCH',
@@ -200,10 +197,33 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = '/chat.html';
     } catch (err) {
       console.error(err);
-      completeSelectionBtn.disabled = false;
-      completeSelectionBtn.innerHTML = '<i class="fas fa-times"></i> Save Failed – Retry';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-times"></i> Save Failed – Retry';
     }
+  }
+
+  // Panel re-renders, so delegate its button clicks.
+  panel.addEventListener('click', e => {
+    const hear = e.target.closest('#tp-hear-btn');
+    if (hear) return playVoice(hear);
+    const choose = e.target.closest('#tp-choose-btn');
+    if (choose) return chooseTutor(choose);
   });
+
+  /* -------- LOCKED "SPECIAL RELEASE" SHELF -------- */
+  function renderLocked() {
+    if (!lockedShelf) return;
+    if (!lockedTutors.length) { lockedShelf.style.display = 'none'; return; }
+    // Hint shows on hover (title) to keep the shelf compact and above the fold.
+    lockedShelf.innerHTML =
+      '<p class="tp-locked-title"><i class="fas fa-star"></i> Special releases — unlock as you learn</p>' +
+      '<div class="tp-locked-row">' +
+        lockedTutors.map(t =>
+          '<div class="tp-lock" title="' + esc(t.unlockHint || 'Keep learning to unlock') + '">' +
+            '<div class="tp-lock-badge"><i class="fas fa-lock"></i></div>' +
+          '</div>').join('') +
+      '</div>';
+  }
 
   /* -------- KICKOFF -------- */
   fetchData();

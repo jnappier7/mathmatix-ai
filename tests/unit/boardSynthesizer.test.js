@@ -270,7 +270,7 @@ describe('boardSynthesizer — full turns', () => {
     expect(cards[0]).toEqual({ action: 'verify', tex: 'x = 6' });
   });
 
-  test('Substitution check turn: student "4(6) + 3 = 27" + tutor affirms → verify card', () => {
+  test('Substitution check turn: student "4(6) + 3 = 27" (implicit multiplication) poses + verifies', () => {
     const cards = synthesizeBoardCommands({
       studentMessage: '4(6) + 3 = 27',
       tutorResponse: 'Yes! Exactly! So your solution x = 6 is correct!',
@@ -278,12 +278,16 @@ describe('boardSynthesizer — full turns', () => {
       observation: { messageType: 'general_math' },
       lastBoardAction: 'verify',
     });
-    // lastBoardAction === 'verify' means cycle is closed — pose
-    // would fire if a new problem is in the text, but here it's
-    // just a substitution check, no new problem to parse.
-    // Without an open cycle, apply/resolve/verify are suppressed.
-    // Substitution check only fires within an open cycle.
-    expect(cards).toHaveLength(0);
+    // The student's substitution check "4(6) + 3 = 27" is a complete, TRUE numeric
+    // equation, so it poses + verifies like any other parseable numeric statement
+    // ("24 + 3 = 27", "4*6 + 3 = 27" behave identically here). This case previously
+    // returned 0 cards ONLY because the engine couldn't evaluate the implicit
+    // multiplication "4(6)" — a bug (students write substitutions this way). Now that
+    // the exact engine handles implicit multiplication, it's consistent with its siblings.
+    expect(cards).toEqual([
+      { action: 'pose', tex: '4(6) + 3' },
+      { action: 'verify', tex: '4(6) + 3 = 27' },
+    ]);
   });
 
   test('Substitution check during open cycle: student "3(7) - 5 = 16" + tutor affirms', () => {
@@ -296,6 +300,103 @@ describe('boardSynthesizer — full turns', () => {
     });
     expect(cards).toHaveLength(1);
     expect(cards[0]).toEqual({ action: 'verify', tex: '3(7) - 5 = 16' });
+  });
+});
+
+describe('boardSynthesizer — arithmetic final answers (no variable)', () => {
+  const {
+    _detectBareFinalAnswer,
+    _bareAnswerToTex,
+  } = require('../../utils/pipeline/boardSynthesizer');
+
+  describe('_detectBareFinalAnswer', () => {
+    test('recognizes bare integer answers, with or without "!"', () => {
+      expect(_detectBareFinalAnswer('8')).toBe('8');
+      expect(_detectBareFinalAnswer('8!')).toBe('8');
+      expect(_detectBareFinalAnswer('  8 . ')).toBe('8');
+    });
+    test('recognizes fractions and mixed numbers', () => {
+      expect(_detectBareFinalAnswer('4/15')).toBe('4/15');
+      expect(_detectBareFinalAnswer('3/20.')).toBe('3/20');
+      expect(_detectBareFinalAnswer('2 1/2')).toBe('2 1/2');
+      expect(_detectBareFinalAnswer('-4/15')).toBe('-4/15');
+    });
+    test('does NOT match problem references or prose', () => {
+      expect(_detectBareFinalAnswer('number 2')).toBeNull();
+      expect(_detectBareFinalAnswer('#3')).toBeNull();
+      expect(_detectBareFinalAnswer('is it 8?')).toBeNull();
+      expect(_detectBareFinalAnswer('x = 8')).toBeNull();
+      expect(_detectBareFinalAnswer('the answer is 8')).toBeNull();
+      expect(_detectBareFinalAnswer('')).toBeNull();
+    });
+  });
+
+  describe('_bareAnswerToTex', () => {
+    test('fractions and mixed numbers become \\frac', () => {
+      expect(_bareAnswerToTex('4/15')).toBe('\\frac{4}{15}');
+      expect(_bareAnswerToTex('2 1/2')).toBe('2\\frac{1}{2}');
+      expect(_bareAnswerToTex('8')).toBe('8');
+    });
+  });
+
+  test('bare correct answer + pinned problem → verify "problem = answer"', () => {
+    // The transcript-3 scenario: student answers "8!" to a mixed-number
+    // multiply, the math engine confirms, but there is no variable so the
+    // old detectFinalSolution path could never fire.
+    const cards = synthesizeBoardCommands({
+      studentMessage: '8!',
+      tutorResponse: 'Exactly! Nice work.',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '8', correctAnswer: '8' },
+      observation: { messageType: 'answer_attempt', answer: { value: '8' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '3\\frac{1}{2} \\times 2\\frac{2}{7}',
+    });
+    expect(cards).toHaveLength(1);
+    expect(cards[0]).toEqual({
+      action: 'verify',
+      tex: '3\\frac{1}{2} \\times 2\\frac{2}{7} = 8',
+    });
+  });
+
+  test('bare fraction answer renders as \\frac on the verify card', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '4/15',
+      tutorResponse: 'Yes!',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '4/15', correctAnswer: '4/15' },
+      observation: { messageType: 'answer_attempt', answer: { value: '4/15' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '\\frac{6}{21} \\times \\frac{14}{15}.',
+    });
+    expect(cards[0]).toEqual({
+      action: 'verify',
+      tex: '\\frac{6}{21} \\times \\frac{14}{15} = \\frac{4}{15}',
+    });
+  });
+
+  test('WRONG bare answer (math engine vetoes) → no verify card', () => {
+    // The transcript-2 scenario: tutor prose affirmed "15/4" but the engine
+    // knows the answer is 4/15. The board must stay truthful.
+    const cards = synthesizeBoardCommands({
+      studentMessage: '15/4',
+      tutorResponse: 'Exactly! You nailed it.',
+      diagnosis: { type: 'answer_attempt', isCorrect: false, answer: '15/4', correctAnswer: '4/15' },
+      observation: { messageType: 'answer_attempt', answer: { value: '15/4' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: '\\frac{6}{21} \\times \\frac{14}{15}',
+    });
+    expect(cards.some(c => c.action === 'verify')).toBe(false);
+  });
+
+  test('bare answer with NO pinned problem → no verify (nothing to anchor)', () => {
+    const cards = synthesizeBoardCommands({
+      studentMessage: '8',
+      tutorResponse: 'Right!',
+      diagnosis: { type: 'answer_attempt', isCorrect: true, answer: '8', correctAnswer: '8' },
+      observation: { messageType: 'answer_attempt', answer: { value: '8' } },
+      lastBoardAction: 'resolve',
+      pinnedProblem: null,
+    });
+    expect(cards.some(c => c.action === 'verify')).toBe(false);
   });
 });
 

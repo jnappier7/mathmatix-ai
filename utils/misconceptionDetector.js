@@ -71,6 +71,13 @@ const MISCONCEPTION_LIBRARY = {
             testQuestion: 'Use GEMS: 5 + 2 × 3'
         },
         {
+            id: 'multiply-before-divide',
+            name: 'Multiply Before Divide',
+            description: 'Student thinks multiplication always beats division (or addition always beats subtraction) because of the letter order in PEMDAS: 16 ÷ 4 × 2 = 16 ÷ 8 = 2',
+            fix: 'Use GEMS, not PEMDAS. Multiply and Divide are ONE equal-priority step — do them left to right. Same for Subtract and Add. M does not beat D, and A does not beat S. 16 ÷ 4 × 2 = 4 × 2 = 8, because division is leftmost.',
+            testQuestion: 'Equal priority, left to right: 24 ÷ 6 × 2'
+        },
+        {
             id: 'parentheses-ignored',
             name: 'Ignoring Parentheses',
             description: 'Student ignores parentheses',

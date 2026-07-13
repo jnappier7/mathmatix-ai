@@ -5,6 +5,7 @@ const {
   sanitizeQuery,
   isValidCategory,
   getStaticConceptImage,
+  isProxyableImageUrl,
   ALLOWED_DOMAINS,
   VALID_CATEGORIES
 } = require('../../utils/safeImageSearch');
@@ -136,5 +137,35 @@ describe('ALLOWED_DOMAINS', () => {
     expect(ALLOWED_DOMAINS).not.toContain('facebook.com');
     expect(ALLOWED_DOMAINS).not.toContain('youtube.com');
     expect(ALLOWED_DOMAINS).not.toContain('twitter.com');
+  });
+});
+
+describe('isProxyableImageUrl (SSRF guard for the image proxy)', () => {
+  test('allows whitelisted educational + thumbnail hosts', () => {
+    expect(isProxyableImageUrl('https://encrypted-tbn0.gstatic.com/images?q=tbn:abc')).toBe(true);
+    expect(isProxyableImageUrl('https://upload.wikimedia.org/wikipedia/commons/a/b/tri.png')).toBe(true);
+    expect(isProxyableImageUrl('https://en.wikipedia.org/x.png')).toBe(true);
+    expect(isProxyableImageUrl('https://khanacademy.org/img.png')).toBe(true);
+  });
+
+  test('blocks internal/metadata hosts (SSRF)', () => {
+    expect(isProxyableImageUrl('http://169.254.169.254/latest/meta-data/')).toBe(false);
+    expect(isProxyableImageUrl('http://localhost:3000/x.png')).toBe(false);
+    expect(isProxyableImageUrl('http://127.0.0.1/x.png')).toBe(false);
+    expect(isProxyableImageUrl('http://10.0.0.5/x.png')).toBe(false);
+    expect(isProxyableImageUrl('http://192.168.1.1/x.png')).toBe(false);
+  });
+
+  test('blocks non-http(s) schemes and off-allowlist hosts', () => {
+    expect(isProxyableImageUrl('file:///etc/passwd')).toBe(false);
+    expect(isProxyableImageUrl('https://evil.com/x.png')).toBe(false);
+    // subdomain-suffix spoof: gstatic.com is allowed, gstatic.com.evil.com is NOT
+    expect(isProxyableImageUrl('https://gstatic.com.evil.com/x')).toBe(false);
+  });
+
+  test('rejects relative/local URLs (served directly, never proxied)', () => {
+    expect(isProxyableImageUrl('/images/concepts/triangle-types.png')).toBe(false);
+    expect(isProxyableImageUrl('')).toBe(false);
+    expect(isProxyableImageUrl(null)).toBe(false);
   });
 });

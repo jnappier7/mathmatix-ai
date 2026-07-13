@@ -1,0 +1,116 @@
+{
+  "_comment": "LLM-in-the-loop eval scenarios. Each is a real production transcript this project failed on, encoded as a permanent regression case. `expect` assertions run DETERMINISTICALLY (real observe(), no API key). `judge` assertions score the tutor's ACTUAL reply and run only when a model is wired in (the mock model in tutorEval.test.js, or the real model in liveEval.test.js). ctx flags per turn feed the judges — see tests/eval/judges.js.",
+
+  "scenarios": [
+    {
+      "name": "fractions: butterfly answer 10/24 is correct (= 5/12), confirm then simplify",
+      "focus": "1/4 + 1/6",
+      "focusTerms": ["1/4", "1/6", "common denominator"],
+      "answer": "5/12",
+      "turns": [
+        { "assistant": "How would you add 1/4 + 1/6? What's the first step?" },
+        {
+          "student": "oh wait. add the denominators for the numerator and multiply em for the denominator, right? 10/24",
+          "expect": { "messageType": "answer_attempt", "answerValue": "10/24" },
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer", "assertedFalseEquivalence", "usedImpreciseTerm"]
+        },
+        {
+          "student": "but isn't that equal to 10/24?",
+          "expect": { "messageType": "answer_attempt", "answerValue": "10/24" },
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["assertedFalseEquivalence", "rejectedCorrectAnswer"]
+        }
+      ]
+    },
+
+    {
+      "name": "graph: don't lose the y=x^3 context",
+      "focus": "y=x^3",
+      "focusTerms": ["y=x^3", "x^3", "cubic", "inflection"],
+      "turns": [
+        { "student": "can you show me the graph of y=x^3" },
+        { "assistant": "Here's the graph of y=x^3. What do you observe about the behavior as x increases or decreases?" },
+        {
+          "student": "it also increases and decreases",
+          "ctx": { "hasFocus": true },
+          "judge": ["lostContext"]
+        }
+      ]
+    },
+
+    {
+      "name": "bare mixed-number drop is elicited, not solved",
+      "focus": null,
+      "answer": "8 5/12",
+      "turns": [
+        {
+          "student": "12 2/3 - 4 1/4",
+          "expect": { "isBareProblemDrop": true },
+          "ctx": { "shouldElicit": true, "answer": "8 5/12" },
+          "judge": ["solvedInsteadOfEliciting"]
+        }
+      ]
+    },
+
+    {
+      "name": "order of operations: 16/4 x 2 = 8 is correct; no PEMDAS 'M before D'",
+      "focus": "16/4 * 2",
+      "answer": "8",
+      "turns": [
+        { "assistant": "What's the first step to simplify 16/4 x 2?" },
+        {
+          "student": "8",
+          "expect": { "messageType": "answer_attempt", "answerValue": "8" },
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer", "badOrderOfOperations"]
+        }
+      ]
+    },
+
+    {
+      "name": "negative answer -28 is correct, not rejected",
+      "focus": "x - 6 = -34",
+      "answer": "-28",
+      "turns": [
+        { "assistant": "You have x - 6 = -34. What do you get when you add 6 to both sides?" },
+        {
+          "student": "-28",
+          "expect": { "messageType": "answer_attempt", "answerValue": "-28" },
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer"]
+        }
+      ]
+    },
+
+    {
+      "name": "self-check phrased as a question still gets verified",
+      "focus": "1/4 + 1/6",
+      "answer": "5/12",
+      "turns": [
+        { "assistant": "Convert both to twelfths and add. What do you get?" },
+        {
+          "student": "is it 5/12?",
+          "expect": { "messageType": "answer_attempt", "answerValue": "5/12" },
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer"]
+        }
+      ]
+    },
+
+    {
+      "name": "multi-root answer 'x=2 and x=3' is correct, not doubted",
+      "focus": "(x-2)(x-3)=0",
+      "focusTerms": ["(x-2)(x-3)", "x^2-5x+6", "factor"],
+      "answer": "x = 2 or x = 3",
+      "turns": [
+        { "assistant": "Set each factor equal to zero. What are the solutions?" },
+        {
+          "student": "x=2 and x=3",
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer"]
+        }
+      ]
+    }
+  ]
+}
