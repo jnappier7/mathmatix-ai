@@ -231,6 +231,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div id="signup-message" class="js-hidden"></div>
 
+      <!-- OAuth sign-up parity with login (QA P2). "Continue with" both
+           registers and signs in via the same passport route. -->
+      <div class="or-separator"><span data-i18n="login.or">OR</span></div>
+
+      <div class="social-login-buttons">
+        <a href="/auth/google" class="social-btn google-btn" data-i18n="login.continueGoogle">
+          <img src="/images/google-icon.png" alt="Google" />
+          Continue with Google
+        </a>
+        <a href="/auth/microsoft" class="social-btn microsoft-btn" data-i18n="login.continueMicrosoft">
+          <img src="/images/microsoft-icon.png" alt="Microsoft" />
+          Continue with Microsoft
+        </a>
+      </div>
+
       <p class="signup-link">
         <span data-i18n="signup.haveAccount">Already have an account?</span> <a href="/login.html" data-i18n="signup.logInHere">Log in here</a>
       </p>
