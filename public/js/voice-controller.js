@@ -94,10 +94,37 @@ class VoiceController {
     // STREAMING PIPELINE (Phase 2 — chat-page orb)
     // ============================================
 
+    // Best-effort client-side mirror of the server voice paywall
+    // (utils/voiceUpgrade.js → hasPremiumAccess). Read-only: the server still
+    // enforces. Returns false ONLY when we positively know the account is
+    // non-premium — if currentUser hasn't loaded yet we return true so we
+    // don't wrongly downgrade a premium user to the legacy path.
+    hasPremiumVoiceAccess() {
+        const u = window.currentUser;
+        if (!u) return true; // unknown → let the connect attempt / server decide
+        const roles = Array.isArray(u.roles) ? u.roles : [u.role || 'student'];
+        if (roles.some(r => r === 'teacher' || r === 'parent' || r === 'admin')) return true;
+        if (u.subscriptionTier === 'unlimited') return true;
+        if (u.schoolLicenseId) return true;
+        return false;
+    }
+
     async setupStreamingPipeline() {
         if (typeof window.VoiceStreamClient !== 'function') return;
         if (typeof window.AudioWorklet === 'undefined' &&
             !(window.AudioContext && AudioContext.prototype.audioWorklet)) {
+            return;
+        }
+
+        // The streaming WS enforces the same premium paywall as the HTTP routes
+        // (utils/voiceUpgrade.js → 402 Payment Required). A non-premium account
+        // would just get a handshake refusal that the browser surfaces as a
+        // contentless error Event — noisy and misleading in the console. Skip
+        // the doomed connect; the paywall intercept on the voice buttons
+        // (script.js gateVoiceTutorButton) owns the free-tier UX instead.
+        if (!this.hasPremiumVoiceAccess()) {
+            this.streamingUnavailable = true;
+            console.info('[Voice] streaming pipeline skipped — account not premium (upgrade prompt handled by voice buttons)');
             return;
         }
 
@@ -109,10 +136,19 @@ class VoiceController {
         try {
             await client.connect();
         } catch (err) {
-            console.warn('[Voice] WebSocket connect failed:', err?.message);
+            // A failed WS handshake surfaces as a bare error Event with no HTTP
+            // status (browsers hide it), so we can't distinguish 401/402/503/
+            // network here. This account already passed the paywall check
+            // above, so treat it as transient/config and degrade to the legacy
+            // push-to-talk path — which reports its own failures to the user.
+            this.streamingUnavailable = true;
+            console.warn('[Voice] streaming handshake refused; using legacy voice path', {
+                readyState: client && client.ws ? client.ws.readyState : 'n/a',
+            });
             return;
         }
 
+        this.streamingUnavailable = false;
         this.streamClient = client;
         this.useStreamingPipeline = true;
         console.log('[Voice] streaming pipeline active (chat-page orb)');
