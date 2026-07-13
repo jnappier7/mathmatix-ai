@@ -26,6 +26,7 @@ const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynam
 
 // NEW: Import refactored CAT modules
 const { gradeToTheta, thetaToGradeLevel, SESSION_DEFAULTS, getBroadCategory, getCategoryDifficulty } = require('../utils/catConfig');
+const { assessOptions } = require('../utils/distractorQuality');
 const { selectSkill, formatScoringLog } = require('../utils/skillSelector');
 const { calculateProgress } = require('../utils/catConvergence');
 const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
@@ -324,13 +325,30 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
         console.log(`[Screener Retry ${attempt}] Target d=${targetDifficulty.toFixed(2)} → "${selectedSkillId}" (d=${selectedSkill.difficulty.toFixed(2)}), blacklist=${(session.excludedSkills || []).length}`);
       }
 
-      // Try a real DB problem near target difficulty
-      problem = await Problem.findNearDifficulty(
-        selectedSkillId,
-        targetDifficulty,
-        recentProblemIds,
-        { preferMultipleChoice: true }
-      );
+      // Try a real DB problem near target difficulty. Skip any whose
+      // multiple-choice options are broken — placeholder "Wrong 1/2/3"
+      // distractors, blanks/duplicates, or wrong-type distractors that
+      // give the answer away (QA P0-3). Serving a broken question makes
+      // the placement unreliable, so we exclude and re-draw a bounded
+      // number of times before falling through to template generation.
+      const qualityExclusions = [...recentProblemIds];
+      for (let draw = 0; draw < 5; draw++) {
+        problem = await Problem.findNearDifficulty(
+          selectedSkillId,
+          targetDifficulty,
+          qualityExclusions,
+          { preferMultipleChoice: true }
+        );
+        if (!problem) break;
+        const quality = assessOptions(problem);
+        if (quality.ok) break;
+        console.warn(
+          `[Screener] Skipping problem ${problem.problemId} (${selectedSkillId}) — bad distractors: ` +
+          quality.issues.map((i) => i.code).join(', ')
+        );
+        qualityExclusions.push(problem.problemId);
+        problem = null;
+      }
 
       // Try template generation (templates are optimized for target difficulty)
       if (!problem) {
