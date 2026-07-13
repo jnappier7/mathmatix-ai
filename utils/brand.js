@@ -212,6 +212,41 @@ function cumulativeXpForLevel(level) {
     return total;
 }
 
+/**
+ * The correct level for a total XP: the highest level whose cumulative
+ * requirement the student has met. Single source of truth so a legacy or
+ * stale stored `level` can always be reconciled against actual XP.
+ */
+function levelForXp(xp) {
+    const total = Math.max(0, xp || 0);
+    let level = 1;
+    // cumulativeXpForLevel is strictly increasing (each step ≥ xpPerLevel),
+    // so this always terminates.
+    while (total >= cumulativeXpForLevel(level + 1)) level++;
+    return level;
+}
+
+/**
+ * Full XP-progress breakdown for a total XP. Derived from levelForXp, so
+ * xpForCurrentLevel is ALWAYS in [0, xpForNextLevel) — it can never exceed
+ * the threshold, which is the "577 / 140" broken-fraction bug (QA P1-6)
+ * caused by pairing a total-XP value with a stale level.
+ *
+ * @param {number} xp - total lifetime XP
+ * @returns {{ level:number, xpForCurrentLevel:number, xpForNextLevel:number }}
+ */
+function xpProgress(xp) {
+    const total = Math.max(0, xp || 0);
+    const level = levelForXp(total);
+    return {
+        level,
+        xpForCurrentLevel: Math.max(0, total - cumulativeXpForLevel(level)),
+        xpForNextLevel: xpRequiredForLevel(level),
+    };
+}
+
 module.exports = BRAND_CONFIG;
 module.exports.xpRequiredForLevel = xpRequiredForLevel;
 module.exports.cumulativeXpForLevel = cumulativeXpForLevel;
+module.exports.levelForXp = levelForXp;
+module.exports.xpProgress = xpProgress;
