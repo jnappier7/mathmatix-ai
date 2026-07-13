@@ -55,12 +55,12 @@ const elements = {
   questionCount: document.getElementById('question-count'),
   thetaDisplay: document.getElementById('theta-display'),
 
-  // Results
-  finalTheta: document.getElementById('final-theta'),
-  finalPercentile: document.getElementById('final-percentile'),
+  // Results — student-facing placement (QA P0-4). Raw theta/percentile/
+  // accuracy are internal analytics and no longer displayed to students.
+  finalGrade: document.getElementById('final-grade'),
+  finalGradeDesc: document.getElementById('final-grade-desc'),
   finalDuration: document.getElementById('final-duration'),
   finalQuestions: document.getElementById('final-questions'),
-  finalAccuracy: document.getElementById('final-accuracy'),
   masteredSkills: document.getElementById('mastered-skills'),
   learningSkills: document.getElementById('learning-skills'),
   frontierSkills: document.getElementById('frontier-skills')
@@ -738,26 +738,33 @@ function updateProgress(session) {
 
   elements.questionCount.textContent = progressText;
 
-  // Format theta display with SE (Standard Error)
-  const thetaValue = session.theta.toFixed(1);
-  const thetaLabel = getThetaLabel(session.theta);
-  const seDisplay = standardError < 10 ? `±${standardError.toFixed(2)}` : '';
-  elements.thetaDisplay.textContent = `θ=${thetaValue} ${seDisplay} (${thetaLabel})`;
-
-  // Update confidence badge (based on Standard Error, not arbitrary confidence)
-  let confidenceText = 'Calibrating...';
-
-  if (standardError === Infinity || standardError > 0.5) {
-    confidenceText = 'Searching...';
-  } else if (standardError <= 0.25) {
-    confidenceText = `High Confidence (SE=${standardError.toFixed(2)})`;
-  } else if (standardError <= 0.30) {
-    confidenceText = `Good Confidence (SE=${standardError.toFixed(2)})`;
-  } else {
-    confidenceText = `Moderate (SE=${standardError.toFixed(2)})`;
+  // QA P0-4: never show a raw θ / ±SE to the student. This "Confidence"
+  // readout reflects how settled the estimate is, in plain words — the
+  // grade/course placement is revealed on the results screen at the end.
+  let settledText;
+  if (standardError >= 0.45) settledText = 'Building baseline…';
+  else if (standardError >= 0.35) settledText = 'Homing in…';
+  else if (standardError >= 0.30) settledText = 'Getting confident…';
+  else settledText = 'Locking it in ✓';
+  if (elements.thetaDisplay) {
+    elements.thetaDisplay.textContent = settledText;
   }
 
-  elements.confidenceBadge.innerHTML = `<i class="fas fa-crosshairs"></i> ${confidenceText}`;
+  // Update confidence badge — plain words only, no raw SE (QA P0-4).
+  let confidenceText = 'Calibrating…';
+  if (standardError === Infinity || standardError > 0.5) {
+    confidenceText = 'Searching…';
+  } else if (standardError <= 0.25) {
+    confidenceText = 'High confidence';
+  } else if (standardError <= 0.30) {
+    confidenceText = 'Good confidence';
+  } else {
+    confidenceText = 'Moderate confidence';
+  }
+
+  if (elements.confidenceBadge) {
+    elements.confidenceBadge.innerHTML = `<i class="fas fa-crosshairs"></i> ${confidenceText}`;
+  }
 }
 
 /**
@@ -818,15 +825,26 @@ function showFeedback(correct, feedbackText) {
  * Display final results
  */
 function displayResults(report) {
-  // Main stats
-  elements.finalTheta.textContent = `θ = ${report.theta}`;
-  elements.finalPercentile.textContent = `${report.percentile}th percentile`;
+  // QA P0-4: show the student their actual starting point (grade / course
+  // + a friendly description), never a raw θ. `placement` is computed
+  // server-side via thetaToGradeLevel; fall back gracefully if absent.
+  const placement = report.placement || {};
+  if (elements.finalGrade) {
+    elements.finalGrade.textContent = placement.gradeLevel || 'Your level';
+  }
+  if (elements.finalGradeDesc) {
+    elements.finalGradeDesc.textContent =
+      placement.description || 'We\'ve mapped out where to begin.';
+  }
 
   const durationMinutes = Math.floor(report.duration / 60000);
   const durationSeconds = Math.floor((report.duration % 60000) / 1000);
-  elements.finalDuration.textContent = `${durationMinutes}m ${durationSeconds}s`;
-  elements.finalQuestions.textContent = `${report.questionsAnswered} questions`;
-  elements.finalAccuracy.textContent = `${report.accuracy}%`;
+  if (elements.finalDuration) {
+    elements.finalDuration.textContent = `${durationMinutes}m ${durationSeconds}s`;
+  }
+  if (elements.finalQuestions) {
+    elements.finalQuestions.textContent = `${report.questionsAnswered}`;
+  }
 
   // 🎖️ Display earned badges (Like ALEKS: show what they tested out of)
   if (report.earnedBadges && report.earnedBadges.length > 0) {
@@ -932,18 +950,6 @@ function parseAnswer(answer) {
 
   // Return as string (for expressions like "7k", "3x + 5", etc.)
   return trimmed;
-}
-
-/**
- * Get human-readable label for theta
- */
-function getThetaLabel(theta) {
-  if (theta < -2) return 'Grade 4-5';
-  if (theta < -1) return 'Grade 6';
-  if (theta < 0) return 'Grade 7';
-  if (theta < 1) return 'Grade 8-9';
-  if (theta < 2) return 'Grade 10-11';
-  return 'Grade 12+';
 }
 
 // ============================================================================
