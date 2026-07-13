@@ -1,0 +1,99 @@
+/* ============================================================
+   living-workspace.css — styles for the new workspace surface.
+   Scoped under .lws-root so it never bleeds into chat/board.
+   Grid colors are exposed as --lws-* custom properties the canvas
+   renderer reads via getComputedStyle.
+   ============================================================ */
+
+.lws-root {
+  --lws-grid-bg: #0f1422;
+  --lws-grid-minor: rgba(255, 255, 255, 0.05);
+  --lws-grid-major: rgba(255, 255, 255, 0.11);
+  --lws-grid-border: rgba(255, 255, 255, 0.22);
+  --lws-card-bg: #1b2238;
+  --lws-card-border: rgba(255, 255, 255, 0.14);
+  --lws-card-ink: #e6e9f2;
+  --lws-accent: #8b7bff;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  outline: none;
+  background: var(--lws-grid-bg);
+  color: var(--lws-card-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.lws-root:focus-visible { box-shadow: inset 0 0 0 2px var(--lws-accent); }
+
+@media (prefers-color-scheme: light) {
+  .lws-root {
+    --lws-grid-bg: #f5f7fb;
+    --lws-grid-minor: rgba(15, 23, 42, 0.06);
+    --lws-grid-major: rgba(15, 23, 42, 0.12);
+    --lws-grid-border: rgba(15, 23, 42, 0.20);
+    --lws-card-bg: #ffffff;
+    --lws-card-border: rgba(15, 23, 42, 0.14);
+    --lws-card-ink: #18202b;
+    --lws-accent: #6c5ce7;
+  }
+}
+
+.lws-grid { position: absolute; inset: 0; display: block; }
+.lws-overlay { position: absolute; inset: 0; pointer-events: none; }
+
+/* element hosts receive pointer events; the empty overlay does not,
+   so panning the substrate still works between elements. */
+.lws-el { pointer-events: auto; }
+
+/* ── equation card ── */
+.lws-eq-card {
+  min-width: 120px;
+  background: var(--lws-card-bg);
+  border: 1px solid var(--lws-card-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  user-select: none;
+}
+.lws-el.is-provisional .lws-eq-card {
+  border-color: var(--lws-accent);
+  border-style: dashed;
+}
+.lws-eq-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  cursor: grab;
+  background: rgba(139, 123, 255, 0.10);
+  border-bottom: 1px solid var(--lws-card-border);
+  font-size: 12px;
+}
+.lws-eq-header:active { cursor: grabbing; }
+.lws-eq-grip { opacity: 0.6; }
+.lws-eq-title { flex: 1; color: var(--lws-card-ink); opacity: 0.75; }
+.lws-eq-edit {
+  border: 0; background: transparent; color: var(--lws-accent);
+  cursor: pointer; font-size: 13px; padding: 2px 6px; border-radius: 6px;
+}
+.lws-eq-edit:hover { background: rgba(139, 123, 255, 0.18); }
+.lws-eq-body {
+  padding: 12px 14px;
+  cursor: text;
+  min-height: 24px;
+  color: var(--lws-card-ink);
+}
+.lws-eq-body .katex { font-size: 1.15em; }
+.lws-eq-input {
+  font-size: 15px; padding: 4px 6px; width: 180px;
+  border: 1px solid var(--lws-accent); border-radius: 6px;
+  background: var(--lws-card-bg); color: var(--lws-card-ink);
+}
+.lws-eq-body math-field { font-size: 18px; }
+
+/* screen-reader-only live region */
+.lws-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
