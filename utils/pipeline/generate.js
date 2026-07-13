@@ -20,7 +20,7 @@ const { stripInternalTags } = require('../internalTagSanitizer');
 const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
 const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
 const { createVisualTabTagStreamFilter } = require('../visualTabTagStreamFilter');
-const { createStructuredChatStreamExtractor } = require('../structuredChatStreamExtractor');
+const { createStructuredChatStreamExtractor, deEnvelope } = require('../structuredChatStreamExtractor');
 const {
   OPENAI_RESPONSE_FORMAT,
   normalizeStructuredResponse,
@@ -558,7 +558,12 @@ async function generate(assembled, options = {}) {
     };
   }
 
-  const text = message.content?.trim() || "I'm not sure how to respond.";
+  // deEnvelope guards the structured-mode fallthrough: when the structured
+  // call above throws and we land here, the prompt still asked for a JSON
+  // envelope, so message.content can be a raw `{ "chat_message": ... }` blob.
+  // Strip it to its chat text before it is returned (and later persisted).
+  // No-op for ordinary prose.
+  const text = deEnvelope(message.content?.trim() || "I'm not sure how to respond.");
   return { text, toolCalls: [], resolvedTools: null };
 }
 
@@ -753,7 +758,7 @@ async function generateStreaming(model, messages, llmOptions, res) {
     // so the client replaces the partial with the full response.
     // If nothing was streamed yet, send as a normal chunk.
     const completion = await callLLM(model, messages, llmOptions);
-    const text = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+    const text = deEnvelope(completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.");
 
     const safeText = stripBoardTagsForStream(text);
     if (fullResponse.length > 0) {
@@ -871,7 +876,14 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
     // show a half-sentence next to the full one.
     try {
       const completion = await callLLM(model, messages, llmOptions);
-      const text = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+      const rawText = completion.choices[0]?.message?.content?.trim() || "I'm not sure how to respond.";
+      // CRITICAL: this fallback re-uses `messages`, whose system prompt still
+      // instructs the model to emit the JSON envelope — but without
+      // response_format enforcement, so it comes back as a raw
+      // `{ "chat_message": ... }` blob. deEnvelope strips it to the chat text
+      // before it is streamed OR persisted; without this the whole envelope
+      // leaked into the student's bubble and saved to history (QA P0-1).
+      const text = deEnvelope(rawText);
       const safeText = stripBoardTagsForStream(text);
       if (!clientDisconnected) {
         if (extractedChatSoFar.length > 0) {

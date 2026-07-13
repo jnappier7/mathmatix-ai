@@ -151,30 +151,56 @@ describe('generateStreaming — structured branch', () => {
     expect(streamOptions.response_format).toBeUndefined();
   });
 
-  test('flag on, malformed JSON from stream → falls back to non-stream callLLM with replacement event', async () => {
+  test('flag on, single-backslash LaTeX in body → recovers gracefully, no fallback, no raw leak (QA P0-1)', async () => {
     process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
-    // Stream emits a partial chat_message then truncates before
-    // closing the JSON object. extractor.finalize() returns null
-    // and the catch block falls back.
+    // The model emits LaTeX with a single backslash (\3x), which makes the
+    // body invalid JSON. This is the exact production trigger. finalize()
+    // now recovers the chat text instead of stranding into the leaky
+    // fallback, so callLLM is never called and no envelope is streamed.
     callLLMStream.mockResolvedValue(makeStream([
-      '{"chat_message":"partial text never closes',
+      '{"chat_message":"Think of \\3x like 3 boxes","board_commands":[]}',
     ]));
+
+    const res = makeRes();
+    const result = await generate(buildAssembled(), { stream: true, res });
+
+    expect(callLLM).not.toHaveBeenCalled();
+    expect(result.text).toBe('Think of \\3x like 3 boxes');
+    // Recovered structured path → board_commands present (empty here).
+    expect(result.structuredBoardCommands).toEqual([]);
+
+    // Nothing raw was ever sent to the client.
+    const chunks = parseSseChunks(res.events);
+    for (const c of chunks) {
+      expect(c.content || '').not.toContain('board_commands');
+      expect(c.content || '').not.toContain('"chat_message"');
+    }
+  });
+
+  test('flag on, unrecoverable stream → fallback de-envelopes the blob (never leaks raw JSON)', async () => {
+    process.env.STRUCTURED_TUTOR_RESPONSE = 'true';
+    // Stream carries no chat_message at all, so finalize() returns null and
+    // the catch block falls back. The fallback re-uses the structured
+    // prompt, so callLLM returns a raw envelope — which deEnvelope MUST
+    // strip before it reaches the client or history.
+    callLLMStream.mockResolvedValue(makeStream(['garbage with no marker at all']));
     callLLM.mockResolvedValue({
-      choices: [{ message: { content: 'recovered full response' } }],
+      choices: [{ message: { content: '{"chat_message":"clean recovered text","board_commands":[],"turn_type":"feedback"}' } }],
     });
 
     const res = makeRes();
     const result = await generate(buildAssembled(), { stream: true, res });
 
-    const chunks = parseSseChunks(res.events);
-    // The partial 'partial text never closes' was emitted, then a
-    // replacement event with the recovered text.
-    const replacements = chunks.filter(c => c.type === 'replacement');
-    expect(replacements).toHaveLength(1);
-    expect(replacements[0].content).toBe('recovered full response');
+    // Persisted text is the chat text, not the raw envelope.
+    expect(result.text).toBe('clean recovered text');
+    expect(result.text).not.toContain('board_commands');
 
-    expect(result.text).toBe('recovered full response');
-    expect(result.structuredBoardCommands).toBeUndefined();
+    // Whatever reached the client is de-enveloped too.
+    const chunks = parseSseChunks(res.events);
+    const rendered = chunks.map(c => c.content || '').join('');
+    expect(rendered).toContain('clean recovered text');
+    expect(rendered).not.toContain('"chat_message"');
+    expect(rendered).not.toContain('board_commands');
   });
 
   test('flag on, callLLMStream throws → falls back to non-stream callLLM cleanly', async () => {
