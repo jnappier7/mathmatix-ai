@@ -191,7 +191,7 @@ router.get('/', async (req, res) => {
 
             const exampleQuestions = questionExamples.slice(0, 3).join(' or ');
 
-            userMessagePart = `Write a short, casual greeting for ${user.firstName}. Introduce yourself briefly, then ask ONE natural question like ${exampleQuestions}. Consider the time/day (${temporalContext}) but keep it natural - not forced. Sound like you're texting. 1-2 sentences max. Don't mention grade level or info you already know.`;
+            userMessagePart = `Write a short, casual greeting for ${user.firstName}. Introduce yourself in YOUR unmistakable voice — lead with your signature energy/style, NOT a generic "I'm ${tutorNameForPrompt}, your math tutor" job description. Then ask ONE natural question like ${exampleQuestions}. Consider the time/day (${temporalContext}) but keep it natural - not forced. Sound like you're texting. 1-2 sentences max. Don't mention grade level or info you already know.`;
         }
 
         // RAPPORT IN PROGRESS: Transition to math quickly
