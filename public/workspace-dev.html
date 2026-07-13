@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Living Workspace — dev harness</title>
+
+  <!-- vendored math libs (same-origin, CSP-safe) -->
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+  <link rel="stylesheet" href="/vendor/mathlive/mathlive-static.css" />
+  <link rel="stylesheet" href="/vendor/mathlive/mathlive-fonts.css" />
+  <link rel="stylesheet" href="/css/living-workspace.css" />
+  <script defer src="/vendor/katex/katex.min.js"></script>
+  <script defer src="/vendor/mathlive/mathlive.min.js"></script>
+
+  <!-- living-workspace: core (pure) then dom (glue). Order matters:
+       flags/a11y before shell/interaction that read them. -->
+  <script defer src="/js/living-workspace/core/flags.js"></script>
+  <script defer src="/js/living-workspace/core/viewport.js"></script>
+  <script defer src="/js/living-workspace/core/elementRegistry.js"></script>
+  <script defer src="/js/living-workspace/core/snapshotManager.js"></script>
+  <script defer src="/js/living-workspace/core/a11yCommands.js"></script>
+  <script defer src="/js/living-workspace/dom/gridRenderer.js"></script>
+  <script defer src="/js/living-workspace/dom/overlayManager.js"></script>
+  <script defer src="/js/living-workspace/dom/equationElement.js"></script>
+  <script defer src="/js/living-workspace/dom/interactionController.js"></script>
+  <script defer src="/js/living-workspace/dom/shell.js"></script>
+
+  <style>
+    html, body { margin: 0; height: 100%; background: #0b0f1a; color: #e6e9f2;
+      font-family: system-ui, sans-serif; }
+    #toolbar { position: fixed; z-index: 10; top: 8px; left: 8px; display: flex; gap: 6px;
+      flex-wrap: wrap; background: rgba(0,0,0,0.35); padding: 6px 8px; border-radius: 8px; }
+    #toolbar button { font-size: 12px; padding: 5px 9px; border-radius: 6px; border: 1px solid #3a3f55;
+      background: #1b2238; color: #e6e9f2; cursor: pointer; }
+    #toolbar button:hover { background: #26304d; }
+    #mountpoint { position: absolute; inset: 0; }
+    #status { position: fixed; bottom: 8px; left: 8px; z-index: 10; font-size: 11px;
+      color: #9aa3b8; background: rgba(0,0,0,0.35); padding: 4px 8px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <button id="btn-mount">Mount</button>
+    <button id="btn-unmount">Unmount</button>
+    <button id="btn-add">Add equation</button>
+    <button id="btn-provisional">Toggle provisional</button>
+    <button id="btn-reset">Reset view</button>
+    <button id="btn-save">Save snapshot</button>
+    <button id="btn-restore">Reload from snapshot</button>
+    <button id="btn-listeners">Log listener count</button>
+  </div>
+  <div id="mountpoint"></div>
+  <div id="status">not mounted</div>
+
+  <script defer src="/js/living-workspace/workspace-dev.js"></script>
+</body>
+</html>
