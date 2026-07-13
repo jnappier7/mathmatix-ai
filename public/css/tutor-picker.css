@@ -92,6 +92,32 @@
 .tp-figure:hover { z-index: 2; }
 .tp-figure.selected { z-index: 3; }
 
+/* --- Hit-area fix (QA P0-2) ---------------------------------------------
+   The figure art sits on a wide transparent canvas, and the figures are
+   pulled shoulder-to-shoulder by the negative margin above. If the whole
+   rectangle (button + transparent img padding) takes clicks, the later-
+   painted neighbour wins hit-testing over its transparent padding — you
+   click one tutor and select the one to its right (Maya was unreachable).
+   Make the art + button non-interactive, then restore a single hit target
+   confined to each figure's OWN body: the central ~54% column, which is
+   exactly the slice that never overlaps a neighbour. Labels sit below and
+   don't overlap, so they stay clickable. pointer-events does not affect
+   .closest() or event bubbling, so the delegated handler still resolves
+   the right figure. */
+.tp-figure,
+.tp-figure-img,
+.tp-figure-img img { pointer-events: none; }
+.tp-figure-name { pointer-events: auto; }
+.tp-figure-img::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 50%;
+  transform: translateX(-50%);
+  width: var(--tp-hit-width, 54%);
+  pointer-events: auto;
+  z-index: 3;
+}
+
 .tp-figure-img {
   position: relative;
   display: block;
@@ -292,4 +318,7 @@
   .tp-figure { scroll-snap-align: center; }
   .tp-figure + .tp-figure { margin-left: 0; }
   .tp-panel { height: auto; }
+  /* Without overlap there's nothing to steal clicks — let the whole
+     figure be tappable again (bigger touch target). */
+  .tp-figure-img::before { width: 100%; }
 }
