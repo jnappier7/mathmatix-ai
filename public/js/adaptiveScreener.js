@@ -699,9 +699,11 @@ function displayProblem(problem) {
 function updateProgressFromProblem(progress) {
   const { current, target, percentComplete } = progress;
 
-  // Update progress text
+  // Honest adaptive progress: the test length adapts, so show an
+  // APPROXIMATE soft target with a tilde rather than a hard "N / 15" that
+  // the test then blows past (QA P1-4). The "~" signals it can vary.
   if (elements.questionCount) {
-    elements.questionCount.textContent = `${current} / ${target}`;
+    elements.questionCount.textContent = `Question ${current} of ~${target}`;
   }
 
   // Students don't see theta/confidence for privacy
