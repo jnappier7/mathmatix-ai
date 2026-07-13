@@ -93,6 +93,26 @@ body.cr-voice .cr-live-badge { transform: scale(1.06); }
   cursor: pointer;
 }
 
+/* Show-your-work / upload control, injected once by voice-mode.js and
+   appended to <body>. Same shape as the End control but teal, and it flanks
+   the mic on the opposite side. Hidden by default at every width; each
+   breakpoint's voice-mode rules position and reveal it. */
+#mpc-voice-work {
+  position: fixed;
+  z-index: 7;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(18, 179, 179, 0.16);
+  border: 0.5px solid rgba(18, 179, 179, 0.5);
+  color: #12b3b3;
+  font-size: 17px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 @media (min-width: 769px) {
   /* ---- Composer → control dock (matches mobile) ----
      Hide the text composer AND the fixed footer so the mic has clean
@@ -127,6 +147,13 @@ body.cr-voice .cr-live-badge { transform: scale(1.06); }
     display: flex;
     left: 50%;
     margin-left: 66px;
+    bottom: 50px;
+  }
+  /* Mirror of the End control, on the left of the mic. */
+  body.cr-voice #mpc-voice-work {
+    display: flex;
+    left: 50%;
+    margin-left: -112px;
     bottom: 50px;
   }
 }

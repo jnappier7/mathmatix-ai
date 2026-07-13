@@ -601,4 +601,24 @@
     cursor: pointer;
   }
   body.cr-mode.cr-voice #mpc-voice-end { display: flex; }
+
+  /* Show-your-work / upload — flanks the mic on the left */
+  #mpc-voice-work {
+    position: fixed;
+    left: 30px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 42px);
+    z-index: 7;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(18, 179, 179, 0.16);
+    border: 0.5px solid rgba(18, 179, 179, 0.5);
+    color: #12b3b3;
+    font-size: 17px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  body.cr-mode.cr-voice #mpc-voice-work { display: flex; }
 }

@@ -116,6 +116,19 @@
 
   function toggle() { if (isOn()) { exit(); } else { enter(); } }
 
+  // Open the "show your work" flow. That modal is the unified upload entry —
+  // it offers both Take Photo and Upload Image/PDF — so proxying to the
+  // camera button keeps upload AND show-your-work reachable from voice mode,
+  // where the composer (and its paperclip/camera buttons) is hidden. The
+  // camera button lives inside the hidden compose bar, but .click() still
+  // fires its JS handler, and the modal overlays voice fine.
+  function openShowYourWork() {
+    var cam = document.getElementById('camera-button');
+    if (cam) { cam.click(); return; }
+    var attach = document.getElementById('attach-button');
+    if (attach) attach.click();
+  }
+
   // Expose a tiny API so other surfaces (mobile nav, etc.) can open voice
   // without knowing the internals. There is no separate voice page anymore.
   window.voiceMode = { toggle: toggle, enter: enter, exit: exit, isOn: isOn };
@@ -155,6 +168,22 @@
       endBtn.innerHTML = '<i class="fas fa-phone-slash" aria-hidden="true"></i>';
       endBtn.addEventListener('click', exit);
       document.body.appendChild(endBtn);
+    }
+
+    // Voice-mode "show your work / upload" control. The composer's paperclip
+    // and camera buttons are hidden in voice mode, so this flanks the mic as
+    // the way to snap or upload work without leaving the call. CSS reveals it
+    // only when body.cr-voice (mirrors #mpc-voice-end), so creating it
+    // unconditionally here is harmless.
+    if (!document.getElementById('mpc-voice-work')) {
+      var workBtn = document.createElement('button');
+      workBtn.type = 'button';
+      workBtn.id = 'mpc-voice-work';
+      workBtn.title = 'Show your work / upload';
+      workBtn.setAttribute('aria-label', 'Show your work or upload');
+      workBtn.innerHTML = '<i class="fas fa-camera-retro" aria-hidden="true"></i>';
+      workBtn.addEventListener('click', openShowYourWork);
+      document.body.appendChild(workBtn);
     }
 
     var host = document.querySelector('.cr-header-extras');
