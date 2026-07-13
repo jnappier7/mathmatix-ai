@@ -44,6 +44,7 @@ const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrad
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
 const { stripInternalTags, hasInternalTags } = require('../internalTagSanitizer');
+const { parseBoardJsonCommands } = require('../boardJsonParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
@@ -451,11 +452,27 @@ async function runPipeline(message, ctx) {
       && generatedResult.structuredBoardCommands.length > 0) {
     rawLlmBoardCommands = generatedResult.structuredBoardCommands;
   } else {
-    // Legacy path: parse tags out of verify.text.
+    // Legacy path: parse <BOARD/> tags out of verify.text.
     const boardParsed = parseBoardTags(verified.text);
     if (boardParsed.boardCommands.length > 0) {
       verified.text = boardParsed.cleanedText;
       rawLlmBoardCommands = boardParsed.boardCommands;
+    }
+
+    // Recovery: some models emit board commands as raw JSON instead of
+    // the <BOARD/> tag syntax. Parse those too so they (a) don't leak as
+    // visible text and (b) actually reach the board. They join
+    // rawLlmBoardCommands and flow through the identical concept-model
+    // resolve + pedagogy guard below, so the #1 anti-cheat rule vets them
+    // exactly like tag-form commands.
+    const jsonParsed = parseBoardJsonCommands(verified.text);
+    if (jsonParsed.boardCommands.length > 0) {
+      verified.text = jsonParsed.cleanedText;
+      rawLlmBoardCommands = rawLlmBoardCommands.concat(jsonParsed.boardCommands);
+      boardLogger.info('Recovered board commands emitted as raw JSON', {
+        count: jsonParsed.boardCommands.length,
+        actions: jsonParsed.boardCommands.map(c => c.action),
+      });
     }
   }
 
