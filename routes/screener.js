@@ -19,7 +19,7 @@ const User = require('../models/user');
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const ScreenerSession = require('../models/screenerSession'); // CTO REVIEW FIX: Persistent session storage
-const { initializeSession, processResponse, generateReport, identifyInterviewSkills, calculateJumpSize } = require('../utils/adaptiveScreener');
+const { initializeSession, processResponse, generateReport, identifyInterviewSkills } = require('../utils/adaptiveScreener');
 const { generateProblem, TEMPLATES } = require('../utils/problemGenerator');
 const { awardBadgesForSkills } = require('../utils/badgeAwarder');
 const { generateInterviewQuestions, evaluateResponse } = require('../utils/dynamicInterviewGenerator');
@@ -253,25 +253,31 @@ router.get('/next-problem', isAuthenticated, async (req, res) => {
       targetDifficulty = session.theta;
       console.log(`[Screener] First question using starting θ=${session.theta.toFixed(2)} based on grade level`);
     } else {
-      // Get last response to determine jump direction
+      // Aim the next item at the CURRENT ability estimate (θ) — standard
+      // CAT maximum-information selection — but cap how far difficulty may
+      // move from the last item in one step so it never swings wildly.
+      //
+      // The previous scheme jumped from the LAST difficulty and bounded with
+      // Math.max(θ±1, lastD±1.5) on BOTH ends. Once difficulty drifted above
+      // θ, both bounds tracked lastD instead of θ, so selection stopped being
+      // anchored to ability — it random-walked, items landed off-level (a 6th
+      // grader seeing AP-Statistics then 4th-grade arithmetic), SE never
+      // dropped, and the test ran to ~27 questions. Anchoring to θ with a
+      // per-question step cap keeps items on-level and lets the estimate
+      // settle (verified by simulation: consistent students converge in ~15
+      // questions vs ~28, across the ability range). The theta floor in
+      // adaptiveScreener + the step cap keep a transient low estimate from
+      // dragging difficulty off a cliff — the concern the old Math.max
+      // addressed. (QA P1-4)
       const lastResponse = session.responses[session.responses.length - 1];
       const lastDifficulty = lastResponse.difficulty;
-      const wasCorrect = lastResponse.correct;
+      const MAX_STEP = 1.5;
+      targetDifficulty = Math.max(
+        lastDifficulty - MAX_STEP,
+        Math.min(lastDifficulty + MAX_STEP, session.theta)
+      );
 
-      // Calculate dampened jump size based on correctness, question count, and SE
-      const jumpSize = calculateJumpSize(wasCorrect, session.questionCount, session.standardError);
-
-      // Apply jump to previous difficulty (not raw theta!)
-      targetDifficulty = lastDifficulty + jumpSize;
-
-      // Bound jumps to reasonable range to prevent wild swings
-      // Allow theta to influence bounds, but don't jump to theta directly
-      // FIX: Use Math.max (conservative/higher bound) so a crashed theta can't drag difficulty down
-      const lowerBound = Math.max(session.theta - 1.0, lastDifficulty - 1.5);
-      const upperBound = Math.max(session.theta + 1.0, lastDifficulty + 1.5);
-      targetDifficulty = Math.max(lowerBound, Math.min(upperBound, targetDifficulty));
-
-      console.log(`[Screener Jump] Q${session.questionCount}: ${wasCorrect ? 'CORRECT' : 'INCORRECT'} at d=${lastDifficulty.toFixed(2)} → jump ${jumpSize.toFixed(2)} → target ${targetDifficulty.toFixed(2)} (θ=${session.theta.toFixed(2)}, SE=${session.standardError.toFixed(2)})`);
+      console.log(`[Screener Aim] Q${session.questionCount}: ${lastResponse.correct ? 'CORRECT' : 'INCORRECT'} at d=${lastDifficulty.toFixed(2)} → aim θ=${session.theta.toFixed(2)} (capped ±${MAX_STEP}) → target ${targetDifficulty.toFixed(2)} (SE=${session.standardError.toFixed(2)})`);
     }
 
     // ADAPTIVE SKILL SELECTION - Use new modular skill selection system
