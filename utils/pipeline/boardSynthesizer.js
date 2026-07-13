@@ -515,7 +515,16 @@ function detectGeometryProblem(tutorText) {
 
 function normalizeForCompare(s) {
   if (!s || typeof s !== 'string') return '';
-  return s.toLowerCase().replace(/\s+/g, '').replace(/[\\${}()[\]]/g, '');
+  let out = s.toLowerCase();
+  // Canonicalize operator synonyms so equivalent cards dedupe (QA P1-2):
+  // "6 × 7", "6 \times 7", "6 * 7", "6 \cdot 7", "6 · 7" must all compare
+  // equal. Fold BEFORE stripping backslashes so \times / \cdot / \div match.
+  out = out
+    .replace(/\\times\b|\\cdot\b|×|·|∗|\*/g, '*')
+    .replace(/\\div\b|÷/g, '/');
+  // strip whitespace and LaTeX structural punctuation/backslashes (this also
+  // removes a trailing lone "\" artifact, so "6 \times 7 = 42 \" folds too)
+  return out.replace(/\s+/g, '').replace(/[\\${}()[\]]/g, '');
 }
 
 function commandsOverlap(a, b) {

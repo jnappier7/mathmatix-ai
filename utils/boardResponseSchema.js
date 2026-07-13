@@ -182,6 +182,21 @@ const OPENAI_RESPONSE_FORMAT = {
  * @returns {object|null} Compact command, or null if `action`
  *   is missing or not in the allowed enum.
  */
+// Fields whose value is LaTeX rendered on a card — sanitize before render.
+const TEX_FIELDS = new Set(['tex', 'check']);
+
+/**
+ * Strip trailing LaTeX line-continuation / dangling-backslash artifacts the
+ * model emits (e.g. "6 \times 7 = 42 \"), which otherwise render as raw junk
+ * on the card or make KaTeX throw and fall back to showing source (QA P1-2).
+ * Only removes trailing backslashes at the very end — command tokens like
+ * \times / \frac in the body are untouched (they render correctly).
+ */
+function sanitizeBoardTex(tex) {
+  if (typeof tex !== 'string') return tex;
+  return tex.trim().replace(/\\+\s*$/g, '').trim();
+}
+
 function normalizeBoardCommand(cmd) {
   if (!cmd || typeof cmd !== 'object') return null;
   if (!BOARD_ACTIONS.includes(cmd.action)) return null;
@@ -189,7 +204,8 @@ function normalizeBoardCommand(cmd) {
   const out = { action: cmd.action };
   const FIELDS = ['tex', 'op', 'check', 'fn', 'query', 'caption', 'model', 'spec', 'prompt'];
   for (const field of FIELDS) {
-    const v = cmd[field];
+    let v = cmd[field];
+    if (typeof v === 'string' && TEX_FIELDS.has(field)) v = sanitizeBoardTex(v);
     if (typeof v === 'string' && v.length > 0) {
       out[field] = v;
     }
@@ -298,6 +314,7 @@ module.exports = {
   BOARD_RESPONSE_SCHEMA,
   OPENAI_RESPONSE_FORMAT,
   normalizeBoardCommand,
+  sanitizeBoardTex,
   normalizeStructuredResponse,
   isStructuredModeEnabled,
   buildStructuredResponseInstructions,
