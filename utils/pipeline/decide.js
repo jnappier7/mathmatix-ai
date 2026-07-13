@@ -22,7 +22,7 @@ const {
   extractSignals,
 } = require('../phaseEvidenceEvaluator');
 
-const { MESSAGE_TYPES } = require('./observe');
+const { MESSAGE_TYPES, messageStatesProblem } = require('./observe');
 
 // ── Tutoring actions the engine can choose ──
 const ACTIONS = {
@@ -242,6 +242,30 @@ function decideCore(observation, diagnosis, context) {
 
   // ── Give-up / IDK streaks — exit ramp logic ──
   if (msgType === MESSAGE_TYPES.GIVE_UP || streaks.giveUpCount >= 1) {
+    // Special case (QA P1-1): the give-up carries its OWN fresh problem
+    // ("just give me the answer to 3x + 7 = 22") and there's no problem
+    // established yet. EXIT_RAMP tells the tutor to work a parallel problem
+    // then "try YOUR problem" — but there is no pinned problem to point at,
+    // so the tutor drops the equation and asks "what topic are you
+    // studying?". Instead, recognize the stated problem and guide the first
+    // step, warmly declining to just hand over the answer. HINT's prompt
+    // ("a hint, not the answer; a guiding sub-question") is exactly right.
+    const noEstablishedProblem =
+      !phaseState?.currentPhase &&
+      !activeSkill &&
+      (streaks.giveUpCount || 0) === 0 &&
+      (streaks.recentWrongCount || 0) === 0;
+    if (noEstablishedProblem && messageStatesProblem(observation.raw)) {
+      decision.action = ACTIONS.HINT;
+      decision.directives.push(
+        'The student stated a specific math problem and asked you to just give the answer. Do NOT give it.',
+        'Engage with THEIR exact problem — it is right there in their message. Do NOT ask "what topic are you studying?" and do NOT switch to a different problem.',
+        'Warmly decline to hand over the answer, then guide the very first step as a question (e.g. what operation undoes what is happening to the variable).',
+        'Keep it short — one or two sentences ending in a single concrete first-step question about THEIR problem.'
+      );
+      return decision;
+    }
+
     decision.action = ACTIONS.EXIT_RAMP;
     decision.directives.push(
       'NEVER reveal the answer.',
