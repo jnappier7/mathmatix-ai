@@ -495,6 +495,36 @@ function detectBareProblemDrop(text, messageType, hasAnswer, recentAssistantMess
 }
 
 /**
+ * Does this message state a concrete, solvable math problem? Unlike
+ * detectBareProblemDrop, this ignores messageType — it answers only
+ * "is there a specific problem in this text". Used to tell an
+ * answer-demand that carries its own problem ("just give me the answer
+ * to 3x + 7 = 22") apart from a bare answer-demand ("just give me the
+ * answer") so the tutor can guide the STATED problem instead of a
+ * generic redirect (QA P1-1). High precision on purpose.
+ *
+ * @param {string} text
+ * @returns {boolean}
+ */
+function messageStatesProblem(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.trim();
+  if (t.length === 0 || t.length > 200) return false;
+
+  const hasEquation = /=/.test(t) && /[a-z0-9]/i.test(t);
+  const hasSolveVerb =
+    /\b(solve|factor|simplify|evaluate|compute|graph|find|differentiate|integrate)\b/i.test(t) &&
+    /[a-z0-9²³⁴√]/i.test(t);
+  const hasVariableTerms =
+    /\b\d*[a-z](?:\^\d+|²|³|⁴)?\s*[+\-*/=]/i.test(t) ||
+    /[+\-*/=]\s*\d*[a-z]/i.test(t);
+  const hasUnicodeMath = /[²³⁴√∫Σπ]/.test(t);
+  const hasArithmeticOp = /\d\s*[-+×÷⋅·*]\s*\d/.test(t);
+
+  return hasEquation || hasSolveVerb || hasVariableTerms || hasUnicodeMath || hasArithmeticOp;
+}
+
+/**
  * Main observe function.
  * Classifies the message and extracts all deterministic signals.
  *
@@ -636,6 +666,7 @@ module.exports = {
   detectEvasiveAffirmative,
   detectProgressReport,
   detectBareProblemDrop,
+  messageStatesProblem,
   lastTutorAskedForNextStep,
   MESSAGE_TYPES,
   CONTEXT_SIGNALS,
