@@ -21,7 +21,7 @@
  */
 
 const { estimateAbility, estimateAbilityMAP, hasConverged, hasPlateaued, thetaToPercentile, calculateInformation } = require('./irt');
-const { gradeToTheta, SESSION_DEFAULTS, getBroadCategory, calculateJumpSize: configCalculateJumpSize } = require('./catConfig');
+const { gradeToTheta, thetaToGradeLevel, SESSION_DEFAULTS, getBroadCategory, calculateJumpSize: configCalculateJumpSize } = require('./catConfig');
 const { checkConvergence, calculateProgress, determineNextAction: convergenceDetermineNextAction } = require('./catConvergence');
 const { initializeCategoryTracking } = require('./skillSelector');
 
@@ -499,8 +499,20 @@ function generateReport(session) {
   // DEBUG: Log accuracy calculation
   console.log(`[Screener Report] Correct: ${correctCount}/${totalQuestions} = ${(accuracy * 100).toFixed(1)}%`);
 
+  // Student-facing placement: translate the raw IRT ability estimate
+  // into a grade/course level + a friendly description. The screener is
+  // called "Find My Starting Point" — the student must see an actual
+  // starting point, not a θ value (QA P0-4). Raw theta/percentile/
+  // accuracy stay in the report for teacher/parent analytics, but the
+  // student result screen renders `placement` instead.
+  const placement = thetaToGradeLevel(session.theta);
+
   return {
-    // Ability estimate
+    // Student-facing placement (grade/course + description)
+    placement,
+
+    // Ability estimate (internal / teacher-parent analytics — NOT shown
+    // raw to students)
     theta: session.theta,
     standardError: session.standardError,
     confidence: session.confidence,
