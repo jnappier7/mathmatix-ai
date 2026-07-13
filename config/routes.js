@@ -54,6 +54,7 @@ const adminRoutes = require('../routes/admin');
 const parentRoutes = require('../routes/parent');
 const leaderboardRoutes = require('../routes/leaderboard');
 const chatRoutes = require('../routes/chat');
+const studentMovesRoutes = require('../routes/studentMoves');
 const conversationsRoutes = require('../routes/conversations');
 const speakRoutes = require('../routes/speak');
 const voiceRoutes = require('../routes/voice');
@@ -186,6 +187,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/privacy', isAuthenticated, dataPrivacyRoutes);
   app.use('/api/consent', isAuthenticated, consentRoutes);
   app.use('/api/chat', isAuthenticated, aiEndpointLimiter, usageGate, chatRoutes);
+  // Living Workspace: gesture-derived student moves. Student-only, and it can
+  // delegate into the shared chat turn (?tutor=true), so it carries the SAME
+  // gates as /api/chat plus isStudent. See docs/BOARD_STUDENT_MOVES_INTEGRATION.md.
+  app.use('/api/student-moves', isAuthenticated, isStudent, aiEndpointLimiter, usageGate, studentMovesRoutes);
   app.use('/api/conversations', isAuthenticated, conversationsRoutes);
   app.use('/api/speak', isAuthenticated, speakRoutes);
   app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);

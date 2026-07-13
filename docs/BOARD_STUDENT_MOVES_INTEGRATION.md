@@ -1,8 +1,14 @@
-# `POST /api/student-moves` — integration plan (P1)
+# `POST /api/student-moves` — integration (P1) — ✅ LANDED 2026-07-12
 
 How the new student-move route reuses the EXISTING tutoring brain — no
 duplicated logic, one lock, anti-leak gate intact. Companion to
 `BOARD_LIVING_WORKSPACE_SPEC.md` §3.4.
+
+> **Status:** the seam is wired and tested on the live stack (branch
+> `feat/living-workspace-seam`). `runStudentTurn` is extracted from
+> `routes/chat.js`; `?tutor=true` delegates through it; the route is
+> registered in `config/routes.js`. The "recommended change" and "why it was
+> deferred" sections below are kept as the design record.
 
 ## What already ships on this branch (verified)
 - `shared/workspace/**` — the contracts (P0).
@@ -47,8 +53,30 @@ in `routes/chat.js` today:
    gate stays closed on `exploration` moves. Add integration tests alongside
    `tests/integration`.
 
-## Why the seam was deferred
-This worktree has no `node_modules`; the server can't boot and the chat integration
-tests can't run here. `routes/chat.js` is the app's most load-bearing file and main
-auto-deploys — extracting `runStudentTurn` must be verified live, not merged blind.
-The `?tutor=true` param currently returns **501** (loud, not a silent no-op) until this lands.
+## Live-stack findings (what the boot revealed)
+- **The bare equation does NOT classify as an answer.** Probing the real
+  `observe()`, `"2x + 3x = 5x"` → `GENERAL_MATH` **and** `isBareProblemDrop`,
+  i.e. it reads as a *fresh unsolved problem* and would trigger the anti-leak
+  ELICIT_FIRST path — the exact wrong reaction. `observe.extractAnswer` never
+  captures an algebraic result across an `=`.
+- **Fix:** `moveNormalizer` now emits TWO strings. `statedStep` stays the clean
+  equation (`"2x + 3x = 5x"`, the board-mirror/display form); `pipelineMessage`
+  is a first-person completed action — `"I combined 2x + 3x to get 5x"` — which
+  `observe` classifies `ANSWER_ATTEMPT` with the full algebraic result preserved
+  (`5x`, not truncated to `5`) and `isBareProblemDrop = false`. Verified for
+  valid, misconception, negative-coefficient, and other-variable moves.
+- **Delegation only for `attempt` moves.** `reposition`/`exploration` yield
+  `normalized: null`, so the route returns the verdict alone and never invokes
+  the pipeline — the anti-leak gate stays structurally closed on exploration
+  (the answer-injection site simply never runs).
+- **One round-trip.** `studentMoves` stashes the authoritative `VerifiedMove`
+  on `req.studentMove`; `runStudentTurn` merges it into the response so the
+  client gets both the tile verdict and the tutor reaction together.
+
+## Why the seam was deferred (historical)
+The prior worktree had no `node_modules`; the server couldn't boot and the chat
+integration tests couldn't run there. `routes/chat.js` is the app's most
+load-bearing file and main auto-deploys — extracting `runStudentTurn` had to be
+verified live, not merged blind. (Done now on an isolated worktree WITH
+`node_modules`.) Until it landed, `?tutor=true` returned **501** (loud, not a
+silent no-op).

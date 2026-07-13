@@ -221,7 +221,15 @@ function detectProblemContext(message) {
     return 'numeric'; // Default: most math interactions are numeric
 }
 
-router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, conditionalValidation, async (req, res) => {
+// The main student turn. Extracted from the inline POST handler so that
+// POST /api/student-moves (routes/studentMoves.js) can DELEGATE here and
+// reuse the exact same per-user lock (acquireUserLock) + tutoring pipeline
+// (runPipeline) instead of standing up a second, drift-prone copy. A tile
+// gesture arrives normalized to a stated step (req.body.message) and rides
+// this path identically to a typed message. No behavior change for /api/chat:
+// the router mounts this with the same middleware chain below.
+// See docs/BOARD_STUDENT_MOVES_INTEGRATION.md.
+async function runStudentTurn(req, res) {
     const { message, role, childId, responseTime, isGreeting, mastery } = req.body;
     const userId = req.user?._id;
 
@@ -1638,6 +1646,16 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
             _pipeline: pipelineResult._pipeline,
         };
 
+        // ── Student-move delegation payload ──
+        // When this turn was delegated from POST /api/student-moves, surface the
+        // server-authoritative tile verdict alongside the tutor's reaction so the
+        // board updates and the coaching land in ONE round-trip. Absent for a
+        // normal /api/chat turn (req.studentMove is undefined) → zero impact.
+        if (req.studentMove) {
+            responseData.verifiedMove = req.studentMove.verifiedMove;
+            responseData.normalized = req.studentMove.normalized;
+        }
+
         if (useStreaming) {
             if (sseKeepalive) sseKeepalive.stop();
             if (!clientDisconnected) {
@@ -1680,7 +1698,11 @@ router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, cond
         // Always release the per-user lock so the next message can proceed
         releaseLock();
     }
-});
+}
+
+// Mount the extracted handler on the chat router with its original middleware
+// chain — /api/chat behaves exactly as before.
+router.post('/', isAuthenticated, promptInjectionFilter, conditionalUpload, conditionalValidation, runStudentTurn);
 
 // Handle parent-teacher conference chat
 async function handleParentChat(req, res, parentId, childId, message) {
@@ -2940,3 +2962,6 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
 module.exports = router;
 // Exported for unit testing the duplicate-greeting guard.
 module.exports.isInProgressSession = isInProgressSession;
+// Exported so POST /api/student-moves can delegate a normalized tile move
+// through the SAME lock + pipeline (see docs/BOARD_STUDENT_MOVES_INTEGRATION.md).
+module.exports.runStudentTurn = runStudentTurn;

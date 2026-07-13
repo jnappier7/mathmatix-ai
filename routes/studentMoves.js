@@ -12,18 +12,20 @@
      app.use('/api/student-moves', isAuthenticated, isStudent,
              aiEndpointLimiter, usageGate, studentMovesRoutes);
 
-   STATUS: the deterministic verdict path is live. The tutor-reaction
-   path (delegating into the shared chat turn so it reuses the SAME
-   per-user lock + runPipeline) is gated behind a small chat.js
-   extraction — see the integration doc. Until that lands, request
-   the verdict alone (default) or ?tutor=true to opt into the
-   (not-yet-wired) reaction and get a 501 rather than a silent no-op.
+   STATUS: both paths are live.
+     • default            → returns the server-authoritative VerifiedMove alone.
+     • ?tutor=true        → ALSO runs the tutor reaction by delegating the
+                            normalized stated step into the shared chat turn
+                            (runStudentTurn), so it reuses the SAME per-user
+                            lock + runPipeline as a typed message. The tile
+                            verdict rides back in the same response.
    ============================================================ */
 
 const express = require('express');
 const router = express.Router();
 
 const { processStudentMove } = require('../services/workspace/studentMoveService');
+const { runStudentTurn } = require('./chat');
 
 // POST /api/student-moves
 router.post('/', async (req, res) => {
@@ -34,14 +36,25 @@ router.post('/', async (req, res) => {
       return res.status(result.status).json({ error: 'invalid_student_move', details: result.errors });
     }
 
-    // Opt-in tutor reaction is not wired yet — fail loud, never silent.
-    if (req.query.tutor === 'true') {
-      return res.status(501).json({
-        error: 'tutor_reaction_not_wired',
-        message: 'Delegation into the shared chat turn (lock + runPipeline) is pending the chat.js runStudentTurn extraction. See docs/BOARD_STUDENT_MOVES_INTEGRATION.md.',
-        verifiedMove: result.verifiedMove,
-        normalized: result.normalized,
-      });
+    // Opt-in tutor reaction: delegate into the SHARED chat turn.
+    // Only moves that carry a mathematical claim (mode: 'attempt', which is
+    // the only path that yields a normalized stated step) get a tutor
+    // reaction. reposition / exploration return normalized: null — they carry
+    // NO claim, so there is nothing to grade and, crucially, nothing that
+    // could leak an answer. Those fall through to the verdict-only response,
+    // which is how the anti-leak gate stays structurally closed on
+    // exploration: the pipeline (and its answer-injection site) never runs.
+    if (req.query.tutor === 'true' && result.normalized && result.normalized.pipelineMessage) {
+      // Rewrite the request as the canonical stated step and hand it to the
+      // extracted chat handler. It acquires acquireUserLock, builds the ctx,
+      // runs runPipeline, and writes the response — we NEVER hand-inject the
+      // correctAnswer; the move simply classifies as an ANSWER_ATTEMPT so the
+      // tutor reacts to the student's own step (see the integration doc).
+      req.body = { ...req.body, message: result.normalized.pipelineMessage };
+      // Surfaced back into the chat response so the client gets BOTH the
+      // authoritative tile verdict and the tutor's reaction in one round-trip.
+      req.studentMove = { verifiedMove: result.verifiedMove, normalized: result.normalized };
+      return runStudentTurn(req, res);
     }
 
     return res.status(200).json({
