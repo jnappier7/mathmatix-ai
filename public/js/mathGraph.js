@@ -566,23 +566,72 @@
         this._originalViewport = { ...this.viewport };
         return;
       }
+      // Sample each function, tracking the global envelope AND the
+      // "interesting" features: local extrema (turning points), the
+      // y-intercept, and whether the curve crosses the x-axis (roots).
+      //
+      // Why not just fit the global envelope: over a wide x-domain a
+      // curve's tails explode (x^2-4x+3 hits ~140 by x=±10), so fitting
+      // min→max crushes the vertex and intercepts into a sliver near the
+      // origin — the exact thing a student needs to see. When turning
+      // points exist we frame to the features instead (QA P1-3). Lines
+      // and monotonic curves have no turning points, so we keep the
+      // global envelope, which frames them fine.
       let min = Infinity, max = -Infinity;
+      const extremaYs = [];
+      let yIntercept = null;
+      let sawSignChange = false;
       const xR = this.viewport.xMax - this.viewport.xMin;
+      const STEPS = 500;
       for (const { evaluator } of this.functions) {
-        for (let i = 0; i <= 500; i++) {
-          const x = this.viewport.xMin + (i / 500) * xR;
-          try {
-            const y = evaluator(x);
-            if (isFinite(y) && Math.abs(y) < 1e6) {
-              if (y < min) min = y; if (y > max) max = y;
+        let prevY = null, prevSlope = null;
+        for (let i = 0; i <= STEPS; i++) {
+          const x = this.viewport.xMin + (i / STEPS) * xR;
+          let y;
+          try { y = evaluator(x); } catch (_) { prevY = null; prevSlope = null; continue; }
+          if (!isFinite(y) || Math.abs(y) >= 1e6) { prevY = null; prevSlope = null; continue; }
+          if (y < min) min = y;
+          if (y > max) max = y;
+          if (prevY !== null) {
+            const slope = y - prevY;
+            if (prevSlope !== null && prevSlope !== 0 && slope !== 0 &&
+                Math.sign(slope) !== Math.sign(prevSlope)) {
+              extremaYs.push(prevY); // slope flipped → prevY ≈ the turning point
             }
-          } catch (_) {}
+            if ((prevY < 0) !== (y < 0)) sawSignChange = true; // crossed the x-axis
+            prevSlope = slope;
+          }
+          prevY = y;
+        }
+        if (this.viewport.xMin <= 0 && this.viewport.xMax >= 0) {
+          try { const y0 = evaluator(0); if (isFinite(y0)) yIntercept = y0; } catch (_) {}
         }
       }
       if (!isFinite(min) || !isFinite(max)) { min = -10; max = 10; }
-      const pad = Math.max((max - min) * 0.15, 1);
-      this.viewport.yMin = this.viewport.yMin ?? (min - pad);
-      this.viewport.yMax = this.viewport.yMax ?? (max + pad);
+
+      let autoMin, autoMax;
+      if (extremaYs.length > 0) {
+        // Frame to the interesting features. Extrema anchor the window;
+        // include the y-intercept and the x-axis (when roots are present)
+        // so intercepts stay visible.
+        const anchors = extremaYs.slice();
+        if (yIntercept !== null) anchors.push(yIntercept);
+        if (sawSignChange) anchors.push(0);
+        let fMin = Math.min(...anchors);
+        let fMax = Math.max(...anchors);
+        if (fMax === fMin) { fMax += 1; fMin -= 1; }
+        const pad = Math.max((fMax - fMin) * 0.75, 2);
+        autoMin = fMin - pad;
+        autoMax = fMax + pad;
+      } else {
+        // No turning points (line / monotonic) — the global envelope is a
+        // sensible frame.
+        const pad = Math.max((max - min) * 0.15, 1);
+        autoMin = min - pad;
+        autoMax = max + pad;
+      }
+      this.viewport.yMin = this.viewport.yMin ?? autoMin;
+      this.viewport.yMax = this.viewport.yMax ?? autoMax;
       this._originalViewport = { ...this.viewport };
     }
 
