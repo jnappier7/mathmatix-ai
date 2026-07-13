@@ -16,6 +16,7 @@ const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCom
 const { buildSlimRules } = require('./promptSlim');
 const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTools');
 const { parseBoardTags } = require('../boardTagParser');
+const { stripInternalTags } = require('../internalTagSanitizer');
 const { createBoardTagStreamFilter } = require('../boardTagStreamFilter');
 const { createXpTagStreamFilter } = require('../xpTagStreamFilter');
 const { createVisualTabTagStreamFilter } = require('../visualTabTagStreamFilter');
@@ -37,7 +38,14 @@ const {
 // filter instead, because tags can fragment across chunks.
 function stripBoardTagsForStream(text) {
   if (!text) return text;
-  return parseBoardTags(text).cleanedText;
+  // Strip <BOARD/> tags, then scrub any internal scaffolding (echoed
+  // [ANSWER_PRE_CHECK: ...] directives, board commands mis-emitted as
+  // raw JSON). These paths — deterministic responses, tool narration,
+  // and the streaming-error fallback — write straight to the client
+  // without passing through the incremental board filter, so they need
+  // the scrub inline. The main streamed path is scrubbed authoritatively
+  // in the pipeline's final stage (index.js) via the `complete` event.
+  return stripInternalTags(parseBoardTags(text).cleanedText);
 }
 
 // Primary teaching model. Env-overridable so the tutor can be pointed at a
