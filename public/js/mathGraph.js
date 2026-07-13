@@ -86,28 +86,40 @@
       function parseUnary() {
         if (peek() && peek().value === '-') { consume(); const inner = parseUnary(); return (x) => -inner(x); }
         if (peek() && peek().value === '+') { consume(); return parseUnary(); }
-        return parsePower();
+        return parseImplicitMult();
       }
 
-      function parsePower() {
-        let base = parseImplicitMult();
-        if (peek() && (peek().value === '^' || peek().value === '**')) {
-          consume(); const exp = parseUnary(); const b = base;
-          return (x) => Math.pow(b(x), exp(x));
-        }
-        return base;
-      }
-
+      // Implicit multiplication binds LOOSER than exponentiation, so each
+      // factor is parsed as a power. This makes `4x^2` = 4*(x^2), not (4x)^2.
       function parseImplicitMult() {
-        let left = parseAtom();
+        let left = parsePower();
         while (peek()) {
           const t = peek();
           if (t.type === 'num' || t.type === 'id' || t.value === '(' || t.value === '|') {
-            const right = parseAtom(); const l = left, r = right;
+            const right = parsePower(); const l = left, r = right;
             left = (x) => l(x) * r(x);
           } else break;
         }
         return left;
+      }
+
+      function parsePower() {
+        let base = parseAtom();
+        if (peek() && (peek().value === '^' || peek().value === '**')) {
+          consume();
+          // Exponent binds tighter than implicit mult and is right-associative
+          // (`2^3^2` = 2^(3^2)); allow a leading sign so `x^-1` works.
+          let exp;
+          if (peek() && (peek().value === '-' || peek().value === '+')) {
+            const sign = consume().value; const e = parsePower();
+            exp = sign === '-' ? (x) => -e(x) : e;
+          } else {
+            exp = parsePower();
+          }
+          const b = base;
+          return (x) => Math.pow(b(x), exp(x));
+        }
+        return base;
       }
 
       function parseAtom() {
