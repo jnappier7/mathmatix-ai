@@ -390,13 +390,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
 
     /**
-     * Lock the Voice Tutor sidebar button for non-premium users.
+     * Lock the Voice Tutor buttons for non-premium users.
      * Premium = unlimited tier, school-licensed, or teacher/parent/admin role.
+     *
+     * There are TWO entry points into voice: the sidebar button
+     * (#sidebar-voice-tutor-btn) and the composer headset (#voice-mode-btn).
+     * voice-mode.js bows out of a locked click expecting an upgrade-prompt
+     * handler here, so BOTH must get one — otherwise the composer headset is a
+     * dead button for free-tier users (no toggle, no prompt, no feedback).
      */
     function gateVoiceTutorButton(user) {
-        const btn = document.getElementById('sidebar-voice-tutor-btn');
+        const sidebarBtn = document.getElementById('sidebar-voice-tutor-btn');
+        const composerBtn = document.getElementById('voice-mode-btn');
         const lock = document.getElementById('voice-tutor-lock');
-        if (!btn || !lock) return;
+        if (!lock || (!sidebarBtn && !composerBtn)) return;
 
         const role = user.role || 'student';
         const hasPremiumRole = role === 'teacher' || role === 'parent' || role === 'admin';
@@ -405,21 +412,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (hasPremiumRole || hasUnlimited || hasSchoolLicense) return;
 
-        // Non-premium: show lock, dim button, intercept click
+        // Non-premium: show the shared lock and intercept clicks on every entry
+        // point with the upgrade prompt. The shared lock being visible is also
+        // what tells voice-mode.js to stand down (it checks it at click time).
         lock.style.display = '';
-        btn.style.opacity = '0.65';
-        btn.style.cursor = 'default';
-        btn.title = 'Voice Tutor requires the Unlimited plan or a school license';
 
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            showUpgradePrompt({
-                premiumFeatureBlocked: true,
-                feature: 'Voice chat',
-                tier: user.subscriptionTier || 'free',
-                upgradeRequired: true
+        const interceptWithUpgrade = (el) => {
+            if (!el) return;
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                showUpgradePrompt({
+                    premiumFeatureBlocked: true,
+                    feature: 'Voice chat',
+                    tier: user.subscriptionTier || 'free',
+                    upgradeRequired: true
+                });
             });
-        });
+        };
+
+        if (sidebarBtn) {
+            // Dim the sidebar row to read as locked (it has room for it).
+            sidebarBtn.style.opacity = '0.65';
+            sidebarBtn.style.cursor = 'default';
+            sidebarBtn.title = 'Voice Tutor requires the Unlimited plan or a school license';
+        }
+        if (composerBtn) {
+            composerBtn.title = 'Voice chat requires the Unlimited plan or a school license';
+        }
+
+        interceptWithUpgrade(sidebarBtn);
+        interceptWithUpgrade(composerBtn);
     }
 
     function setupChatUI() {
