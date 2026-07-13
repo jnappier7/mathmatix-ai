@@ -2915,6 +2915,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 data = await response.json();
             }
 
+            // QA P1-7: refresh the AI-time meter from the POST-response balance
+            // the server computed for THIS turn (freeWeeklySecondsRemaining).
+            // The X-Free-Remaining-Seconds header is set by usageGate BEFORE the
+            // turn's AI time is measured, so the pill lagged a full turn and
+            // "didn't move". This value already has the current turn deducted.
+            // Merge the cached usage so the "Resets in…" line survives the update.
+            if (data && typeof data.freeWeeklySecondsRemaining === 'number' &&
+                typeof updateFreeTimeIndicator === 'function') {
+                const prevUsage = (window._billingStatus && window._billingStatus.usage) || {};
+                updateFreeTimeIndicator({
+                    ...prevUsage,
+                    secondsRemaining: data.freeWeeklySecondsRemaining,
+                    limitReached: data.freeWeeklySecondsRemaining <= 0,
+                });
+            }
+
             // Process AI response (same logic as original sendMessage)
             let aiText = data.text || '';
             const wasStreamed = contentType.includes('text/event-stream');
