@@ -83,6 +83,21 @@ export function updateFreeTimeIndicator(usage) {
     const remaining = usage.secondsRemaining || 0;
     const mins = Math.floor(remaining / 60);
 
+    // QA P2: the pill is fixed over the bottom-right, which can sit on top of
+    // Work Board graphs/cards. Let the student dismiss it for the session so it
+    // doesn't block the canvas — BUT force it back (and clear the dismissal)
+    // once time runs low/out, so the upgrade nudge can't be permanently hidden.
+    const DISMISS_KEY = 'mm_time_pill_dismissed';
+    const isCritical = usage.limitReached || remaining <= 300;
+    const readFlag = () => { try { return sessionStorage.getItem(DISMISS_KEY) === '1'; } catch { return false; } };
+    if (isCritical) {
+        try { sessionStorage.removeItem(DISMISS_KEY); } catch { /* private mode */ }
+    } else if (readFlag()) {
+        indicator.style.display = 'none';
+        return;
+    }
+    indicator.style.display = '';
+
     // Calculate human-readable reset time. "Resets soon" was the
     // previous fallback for the last hour, which my UI review flagged
     // as too vague. Show concrete minutes instead (rounded up so we
@@ -117,8 +132,16 @@ export function updateFreeTimeIndicator(usage) {
         indicator.innerHTML = `<strong>${mins} min</strong> AI time left &mdash; <span style="color:#00d4ff;text-decoration:underline">Get Mathmatix+</span>` + resetLine + subtitle;
         indicator.style.borderColor = '#ffaa00';
     } else {
-        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle;
+        // Comfortable state: offer a dismiss "×" so it can be cleared off the board.
+        const dismissBtn = '<span id="mm-time-dismiss" role="button" aria-label="Hide time indicator" title="Hide — it comes back when your time runs low" style="position:absolute;top:-7px;right:-7px;width:18px;height:18px;line-height:15px;text-align:center;background:#33334d;color:#ccc;border:1px solid #555;border-radius:50%;font-size:12px;cursor:pointer;">&times;</span>';
+        indicator.innerHTML = `<strong>${mins} min</strong> AI time left` + resetLine + subtitle + dismissBtn;
         indicator.style.borderColor = '#333';
+        const x = indicator.querySelector('#mm-time-dismiss');
+        if (x) x.addEventListener('click', (e) => {
+            e.stopPropagation();
+            try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch { /* private mode */ }
+            indicator.style.display = 'none';
+        });
     }
 }
 
@@ -151,7 +174,7 @@ export async function showUpgradePrompt(errorData) {
     const subtitle = isFeatureBlock
         ? `${errorData.feature} requires Mathmatix+.`
         : isLimitReached
-        ? "You've used your free minutes this week. Upgrade for unlimited tutoring."
+        ? "You've used your free minutes this month. Upgrade for unlimited tutoring."
         : 'Unlimited 24/7 tutoring for your child. Cancel anytime.';
 
     // Price display
@@ -183,7 +206,7 @@ export async function showUpgradePrompt(errorData) {
             </ul>
             <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">Get Mathmatix+</button>
             ${isLimitReached
-                ? '<div style="color:#666;font-size:12px;margin-top:12px;">Your free minutes reset weekly. Upgrade for uninterrupted learning.</div>'
+                ? '<div style="color:#666;font-size:12px;margin-top:12px;">Your free minutes reset monthly. Upgrade for uninterrupted learning.</div>'
                 : '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/week)</button>'
             }
         </div>`;
@@ -233,7 +256,7 @@ export function showNewUserPricingPrompt() {
     banner.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #7b2ff7;border-radius:12px;padding:16px 24px;z-index:9500;max-width:440px;width:90%;text-align:center;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideDown 0.3s ease;';
     banner.innerHTML = `
         <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Welcome to Mathmatix!</div>
-        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">You have <strong style="color:#00d4ff;">30 free minutes</strong> of AI tutoring this week. Want unlimited access?</div>
+        <div style="font-size:13px;color:#aaa;margin-bottom:14px;line-height:1.5;">You have <strong style="color:#00d4ff;">30 free minutes</strong> of AI tutoring this month. Want unlimited access?</div>
         <div style="display:flex;gap:10px;justify-content:center;">
             <a href="/pricing.html" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;">View Plans</a>
             <button id="dismiss-pricing-banner" style="background:transparent;color:#666;border:1px solid #333;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;">Maybe Later</button>
