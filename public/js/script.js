@@ -2961,8 +2961,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Only append if we didn't already stream the message into the DOM
-            if (!wasStreamed) {
+            // Only append if we didn't already stream the message into the DOM.
+            // The `!streamRef` case guards against silent dead-air: a streamed
+            // response can arrive as a `complete` event with NO prior `chunk`
+            // (e.g. the server's pipeline-exception fallback ships its reply only
+            // in `complete`), so no bubble was ever created. Without this, the
+            // text in data.text is dropped with no error — the student sees
+            // nothing. Only append when there's actual prose, so a legitimate
+            // "tutor only drew on the board" turn stays correctly silent.
+            if (!wasStreamed || (!streamRef && aiText && aiText.trim())) {
                 appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
             } else if (hasInlineVisuals) {
                 // Streaming already inserted the message, but visual commands
