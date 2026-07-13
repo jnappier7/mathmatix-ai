@@ -109,12 +109,13 @@ function createStructuredChatStreamExtractor() {
             if (scanIdx + 5 >= fullBuffer.length) return emitted;
             const hex = fullBuffer.slice(scanIdx + 2, scanIdx + 6);
             if (!/^[0-9a-fA-F]{4}$/.test(hex)) {
-              // Malformed escape. Bail out of structured extraction
-              // by transitioning to POST_CHAT — the eventual
-              // finalize() JSON.parse will fail and the caller
-              // will fall back. Don't emit garbage chat text.
-              state = STATE_POST_CHAT;
-              return emitted;
+              // Not a valid \uXXXX. Rather than bail to POST_CHAT
+              // (which used to strand finalize() into the raw-envelope
+              // fallback), keep `\u` literally and read on. finalize()'s
+              // tolerant recovery handles the malformed buffer.
+              emitted += '\\u';
+              scanIdx += 2;
+              continue;
             }
             emitted += String.fromCharCode(parseInt(hex, 16));
             scanIdx += 6;
@@ -122,10 +123,17 @@ function createStructuredChatStreamExtractor() {
           }
           const decoded = SIMPLE_ESCAPES[next];
           if (decoded === undefined) {
-            // Unknown escape. JSON spec rejects it; we mirror by
-            // bailing to POST_CHAT and letting finalize fail.
-            state = STATE_POST_CHAT;
-            return emitted;
+            // Invalid JSON escape — almost always LaTeX written with a
+            // single backslash (\times, \boxed, \3x). The model emits
+            // this constantly, and strict JSON.parse rejects it. Rather
+            // than bail to POST_CHAT (which stranded finalize() into the
+            // raw-envelope fallback that leaked the whole payload into
+            // the chat bubble), keep the backslash + char literally so
+            // the LaTeX survives and streaming stays complete. finalize()
+            // repairs the buffer to recover board_commands.
+            emitted += '\\' + next;
+            scanIdx += 2;
+            continue;
           }
           emitted += decoded;
           scanIdx += 2;
@@ -158,11 +166,7 @@ function createStructuredChatStreamExtractor() {
     },
 
     finalize() {
-      try {
-        return JSON.parse(fullBuffer);
-      } catch {
-        return null;
-      }
+      return recoverStructuredResponse(fullBuffer);
     },
 
     getRawBuffer() {
@@ -175,6 +179,149 @@ function createStructuredChatStreamExtractor() {
   };
 }
 
+/* ============================================================
+   Tolerant recovery + envelope guard
+   ------------------------------------------------------------
+   The tutor's structured response is a JSON envelope
+   `{ turn_type, chat_message, board_commands }`. When the model
+   emits LaTeX with single backslashes (\times, \boxed, \3x), the
+   body is not valid JSON. Under a provider that does not enforce
+   strict escaping at the API boundary (e.g. the Claude adapter's
+   output_config), the malformed body reaches us and a naive
+   JSON.parse throws.
+
+   The dangerous failure mode this guards against: on parse
+   failure the old code fell back to a plain LLM call whose prompt
+   still asked for the JSON envelope, then rendered/persisted that
+   raw envelope verbatim — the whole `{ "chat_message": ... }`
+   blob showing up in the student's chat bubble and saved to
+   history.
+
+   These helpers make failure graceful: recover the chat text
+   (LaTeX-preserving) plus best-effort board commands, and, as a
+   last-line guard, strip a raw envelope back down to its chat
+   text before anything is shown or saved.
+   ============================================================ */
+
+// Double only backslashes that do NOT begin a valid JSON escape,
+// making a LaTeX-corrupted body parseable without disturbing the
+// structural escapes (\" \\ \uXXXX) that hold the JSON together.
+function repairInvalidEscapes(s) {
+  return s.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+}
+
+// Pull the chat_message string value out of a (possibly malformed)
+// envelope by hand, decoding valid JSON escapes and keeping any
+// invalid ones (LaTeX) literal. Returns null if no chat_message
+// key is present.
+function extractChatMessageLoose(raw) {
+  if (typeof raw !== 'string') return null;
+  const m = CHAT_KEY_RE.exec(raw);
+  if (!m) return null;
+  let i = m.index + m[0].length;
+  let out = '';
+  while (i < raw.length) {
+    const ch = raw[i];
+    if (ch === '\\') {
+      const next = raw[i + 1];
+      if (next === undefined) break;
+      if (next === 'u') {
+        const hex = raw.slice(i + 2, i + 6);
+        if (/^[0-9a-fA-F]{4}$/.test(hex)) {
+          out += String.fromCharCode(parseInt(hex, 16));
+          i += 6;
+          continue;
+        }
+        out += '\\u';
+        i += 2;
+        continue;
+      }
+      const decoded = SIMPLE_ESCAPES[next];
+      if (decoded !== undefined) {
+        out += decoded;
+      } else {
+        // Invalid escape → LaTeX; keep it literal.
+        out += '\\' + next;
+      }
+      i += 2;
+      continue;
+    }
+    if (ch === '"') break; // unescaped closing quote ends the value
+    out += ch;
+    i += 1;
+  }
+  return out;
+}
+
+/**
+ * Parse a structured-tutor envelope tolerantly.
+ *
+ * @param {string} raw - The full accumulated response body.
+ * @returns {{turn_type?, chat_message, board_commands}|null}
+ *   A parsed/recovered object, or null only when there is no
+ *   recognizable chat_message at all (caller must then use a safe
+ *   generic message — never the raw text).
+ */
+function recoverStructuredResponse(raw) {
+  if (typeof raw !== 'string' || raw.length === 0) return null;
+
+  // 1. Strict parse — the common case (valid JSON from a strict
+  //    provider). Returns the full object untouched.
+  try {
+    return JSON.parse(raw);
+  } catch { /* fall through to recovery */ }
+
+  // 2. Recover chat text reliably and LaTeX-preserving.
+  const chat = extractChatMessageLoose(raw);
+  if (chat == null) return null;
+
+  // 3. Best-effort board recovery from an escape-repaired parse.
+  //    If it still fails, we drop the board rather than leak — a
+  //    missing card is recoverable, a JSON dump in the bubble is not.
+  let boardCommands = [];
+  let turnType;
+  try {
+    const repaired = JSON.parse(repairInvalidEscapes(raw));
+    if (Array.isArray(repaired.board_commands)) boardCommands = repaired.board_commands;
+    if (typeof repaired.turn_type === 'string') turnType = repaired.turn_type;
+  } catch { /* board dropped; chat still shows */ }
+
+  return { turn_type: turnType, chat_message: chat, board_commands: boardCommands };
+}
+
+// Does this text look like a raw tutor JSON envelope rather than
+// prose? Narrow on purpose: must start with `{` and carry the
+// chat_message key, so ordinary chat that merely mentions braces
+// is never touched.
+function looksLikeEnvelope(text) {
+  if (typeof text !== 'string') return false;
+  const t = text.trimStart();
+  return t.charCodeAt(0) === 0x7b /* { */ && /"chat_message"\s*:/.test(t);
+}
+
+/**
+ * Last-line guard applied to any text about to be shown to the
+ * student or persisted. If a raw envelope slipped through (e.g. a
+ * fallback LLM call that still returned the JSON shape), reduce it
+ * to just its chat text. Ordinary prose passes through untouched.
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function deEnvelope(text) {
+  if (!looksLikeEnvelope(text)) return text;
+  const recovered = recoverStructuredResponse(text);
+  const chat = recovered && typeof recovered.chat_message === 'string'
+    ? recovered.chat_message.trim()
+    : '';
+  // Envelope-shaped but unrecoverable → safe generic, never raw.
+  return chat || "I'm not sure how to respond.";
+}
+
 module.exports = {
   createStructuredChatStreamExtractor,
+  recoverStructuredResponse,
+  extractChatMessageLoose,
+  deEnvelope,
+  looksLikeEnvelope,
 };

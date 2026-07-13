@@ -138,16 +138,105 @@ describe('structuredChatStreamExtractor — finalize', () => {
     expect(parsed.board_commands[0].action).toBe('pose');
   });
 
-  test('returns null when the JSON is truncated', () => {
+  test('recovers chat_message when the JSON is truncated', () => {
+    // Previously returned null (→ leaky raw-envelope fallback).
+    // Now recovers the chat text so nothing raw ever surfaces.
     const x = createStructuredChatStreamExtractor();
     x.push('{"chat_message":"this never finishes');
-    expect(x.finalize()).toBeNull();
+    expect(x.finalize()).toEqual({
+      turn_type: undefined,
+      chat_message: 'this never finishes',
+      board_commands: [],
+    });
   });
 
-  test('returns null when the JSON is syntactically broken', () => {
+  test('returns null when there is no recognizable chat_message', () => {
     const x = createStructuredChatStreamExtractor();
     x.push('this is not JSON at all');
     expect(x.finalize()).toBeNull();
+  });
+});
+
+describe('structuredChatStreamExtractor — single-backslash LaTeX (QA P0-1)', () => {
+  test('streams invalid \\3x escape literally instead of bailing', () => {
+    const x = createStructuredChatStreamExtractor();
+    const out = x.push('{"chat_message":"Think of \\3x like 3 boxes","board_commands":[]}');
+    expect(out).toBe('Think of \\3x like 3 boxes');
+  });
+
+  test('streams \\times literally (t is a valid escape char, but content is LaTeX)', () => {
+    const x = createStructuredChatStreamExtractor();
+    // \t IS a valid JSON escape, so this one round-trips through JSON.parse
+    // as a tab; the point of the test is that streaming does not crash/leak.
+    const out = x.push('{"chat_message":"a \\\\times b","board_commands":[]}');
+    expect(out).toBe('a \\times b');
+  });
+
+  test('finalize recovers chat + board from a body with invalid LaTeX escapes', () => {
+    const x = createStructuredChatStreamExtractor();
+    // \3x makes the body invalid JSON; board carries valid escaped LaTeX.
+    x.push('{"turn_type":"problem_introduction","chat_message":"Solve \\3x = 9","board_commands":[{"action":"pose","tex":"3x = 9","op":null,"check":null,"fn":null,"query":null,"caption":null,"model":null,"spec":null,"prompt":null}]}');
+    const parsed = x.finalize();
+    expect(parsed).not.toBeNull();
+    expect(parsed.chat_message).toBe('Solve \\3x = 9');
+    expect(parsed.board_commands).toHaveLength(1);
+    expect(parsed.board_commands[0].action).toBe('pose');
+    expect(parsed.turn_type).toBe('problem_introduction');
+  });
+
+  test('malformed unicode streams literally and finalize recovers', () => {
+    const x = createStructuredChatStreamExtractor();
+    const out = x.push('{"chat_message":"hi\\uGGGG","board_commands":[]}');
+    expect(out).toBe('hi\\uGGGG');
+    const parsed = x.finalize();
+    expect(parsed).not.toBeNull();
+    expect(parsed.chat_message).toBe('hi\\uGGGG');
+  });
+});
+
+const { deEnvelope, recoverStructuredResponse, looksLikeEnvelope } = require('../../utils/structuredChatStreamExtractor');
+
+describe('deEnvelope — last-line guard against raw envelope leaks', () => {
+  test('strips a raw envelope down to its chat text', () => {
+    const raw = '{ "chat_message": "Let\'s dig in!", "board_commands": [], "turn_type": "feedback" }';
+    expect(deEnvelope(raw)).toBe("Let's dig in!");
+  });
+
+  test('strips an envelope that carries invalid single-backslash LaTeX', () => {
+    const raw = '{"chat_message":"Think of \\3x like boxes","board_commands":[]}';
+    expect(deEnvelope(raw)).toBe('Think of \\3x like boxes');
+  });
+
+  test('passes ordinary prose through untouched', () => {
+    const prose = "Great work! x = 8 is correct. What's the next step?";
+    expect(deEnvelope(prose)).toBe(prose);
+  });
+
+  test('passes prose that merely mentions braces through untouched', () => {
+    const prose = 'The set {1, 2, 3} has three elements.';
+    expect(deEnvelope(prose)).toBe(prose);
+  });
+
+  test('envelope-shaped but unrecoverable → safe generic, never raw', () => {
+    // Envelope shape with the chat_message key present (so it is
+    // inspected) but empty — must not echo the raw JSON back.
+    const raw = '{ "chat_message": "", "board_commands": [] }';
+    const out = deEnvelope(raw);
+    expect(out).toBe("I'm not sure how to respond.");
+    expect(out).not.toContain('board_commands');
+  });
+
+  test('looksLikeEnvelope only fires on real envelope shape', () => {
+    expect(looksLikeEnvelope('{"chat_message":"hi"}')).toBe(true);
+    expect(looksLikeEnvelope('  {\n"chat_message" : "hi"}')).toBe(true);
+    expect(looksLikeEnvelope('Just chatting about {sets}')).toBe(false);
+    expect(looksLikeEnvelope('')).toBe(false);
+    expect(looksLikeEnvelope(null)).toBe(false);
+  });
+
+  test('recoverStructuredResponse strict-parses valid JSON untouched', () => {
+    const obj = recoverStructuredResponse('{"chat_message":"ok","board_commands":[]}');
+    expect(obj).toEqual({ chat_message: 'ok', board_commands: [] });
   });
 });
 
@@ -162,16 +251,6 @@ describe('structuredChatStreamExtractor — defensive behavior', () => {
     expect(x.push(null)).toBe('');
     expect(x.push(undefined)).toBe('');
     expect(x.push(42)).toBe('');
-  });
-
-  test('malformed unicode escape transitions to POST_CHAT cleanly', () => {
-    // \uGGGG is invalid (not hex). Extractor should stop emitting
-    // chat content rather than produce garbage; finalize will then
-    // return null and the caller can fall back.
-    const x = createStructuredChatStreamExtractor();
-    const out = x.push('{"chat_message":"hi\\uGGGG","board_commands":[]}');
-    expect(out).toBe('hi');
-    expect(x.finalize()).toBeNull();
   });
 
   test('long PRE_CHAT prefix does not balloon scanIdx unboundedly', () => {
