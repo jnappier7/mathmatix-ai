@@ -43,6 +43,7 @@ const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
+const { stripInternalTags, hasInternalTags } = require('../internalTagSanitizer');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
@@ -1082,6 +1083,23 @@ async function runPipeline(message, ctx) {
     verified.visualTabCommands = visualTabParsed.visualTabCommands.slice(0, 2);
   } else {
     verified.visualTabCommands = [];
+  }
+
+  // ── Stage 5f: INTERNAL-TAG SCRUB (last line of defense) ──
+  // After every legitimate side-channel tag has been extracted above,
+  // strip any internal scaffolding the model echoed into the prose —
+  // an injected [ANSWER_PRE_CHECK: ...] directive, or a board command
+  // the model wrote as raw JSON instead of a <BOARD/> tag. This is the
+  // authoritative student-facing text (returned as `text` below and
+  // sent as the `complete` event, which REPLACES the streamed bubble),
+  // so scrubbing here fixes the persisted leak regardless of what
+  // flickered mid-stream. Guarded by a cheap predicate — no-op on the
+  // clean common case.
+  if (hasInternalTags(verified.text)) {
+    boardLogger.warn('Internal scaffolding leaked into tutor text; scrubbed', {
+      conversationId: ctx.conversation?._id ? String(ctx.conversation._id) : null,
+    });
+    verified.text = stripInternalTags(verified.text);
   }
 
   // ── Merge LLM signals into sidecar ──
