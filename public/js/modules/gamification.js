@@ -330,17 +330,22 @@ export function showTutorUnlockCelebration(tutorIds) {
 export function processGamificationEvents(gamification) {
     if (!gamification) return;
 
+    // QA P2: surface the COIN reward, not just XP — quests/challenges are a
+    // primary coin faucet, but the UI only showed XP so students never saw
+    // where coins come from.
+    const rewardText = (xp, coins) => `+${xp} XP${coins > 0 ? ` · +${coins} 🪙` : ''}`;
+
     // Show quest completion toasts
     if (gamification.questsCompleted && gamification.questsCompleted.length > 0) {
         for (const quest of gamification.questsCompleted) {
-            showToast(`${quest.icon || '🎯'} Quest Complete: ${quest.name} (+${quest.xpEarned} XP)`, 5000);
+            showToast(`${quest.icon || '🎯'} Quest Complete: ${quest.name} (${rewardText(quest.xpEarned, quest.coinsEarned)})`, 5000);
         }
     }
 
     // Show challenge completion toasts
     if (gamification.challengesCompleted && gamification.challengesCompleted.length > 0) {
         for (const challenge of gamification.challengesCompleted) {
-            showToast(`${challenge.icon || '⭐'} Challenge Complete: ${challenge.name} (+${challenge.xpEarned} XP)`, 6000);
+            showToast(`${challenge.icon || '⭐'} Challenge Complete: ${challenge.name} (${rewardText(challenge.xpEarned, challenge.coinsEarned)})`, 6000);
             if (challenge.specialReward) {
                 setTimeout(() => {
                     showToast(`🏆 Reward: ${challenge.specialReward}`, 5000);
