@@ -443,12 +443,12 @@ const NEW_PROBLEM_CUE = /\b(solve|factor|simplify|expand|evaluate|graph|compute|
 // textContent (see public/js/workspace.js:42).
 // ---------------------------------------------------------------------------
 
-const GEOMETRY_VOCAB = /\b(triangles?|circles?|angles?|radius|diameter|circumference|hypotenuse|polygons?|quadrilaterals?|parallelograms?|rectangles?|trapezoids?|pentagons?|hexagons?|perimeters?|congruent|similar|parallel|perpendicular|bisectors?|midpoints?|chords?|tangents?|secants?|arcs?|sectors?|(?:vertex|vertices)|legs?|diagonals?|altitudes?|medians?|centroids?|equation\s+of\s+(?:a|the)\s+circle)\b/i;
+const GEOMETRY_VOCAB = /\b(triangles?|circles?|angles?|radius|diameter|circumference|hypotenuse|polygons?|quadrilaterals?|parallelograms?|rectangles?|trapezoids?|pentagons?|hexagons?|perimeters?|congruent|similar|parallel|perpendicular|bisectors?|midpoints?|chords?|tangents?|secants?|arcs?|sectors?|(?:vertex|vertices)|legs?|diagonals?|altitudes?|medians?|centroids?|equation\s+of\s+(?:a|the)\s+circle|volumes?|surface\s+areas?|prisms?|cuboids?|cubes?|cylinders?|spheres?|cones?|pyramids?|tetrahedra)\b/i;
 
 // "Question:", "Here's one", "What is …", "Find …", "Convert …",
 // etc. Conservative — bare statements without a cue don't fire so
 // concept explanations stay off the board.
-const PROBLEM_CUE = /\b(question\s*:|here'?s\s+(?:a|one|another)|try\s+(?:this|one|the\s+following)|let'?s\s+try|what\s+(?:is|are|'?s)\b|find\s+(?:the|how|out)\b|calculate\b|determine\b|convert\b|how\s+(?:many|long|wide|much|tall|far)\b|solve\s+for\b)/i;
+const PROBLEM_CUE = /\b(question\s*:|here'?s\s+(?:a|one|another)|try\s+(?:this|one|the\s+following)|let'?s\s+try|what(?:\s+(?:is|are)|'?s)\b|find\s+(?:the|how|out)\b|calculate\b|determine\b|convert\b|how\s+(?:many|long|wide|much|tall|far)\b|solve\s+for\b)/i;
 
 // Conversational offers Maya makes at the end of a concept explanation
 // ("What would you like to explore next?", "Do you want to try one?").
@@ -467,7 +467,14 @@ function extractProblemSentence(text) {
   // on the preceding sentence so we can find the one ending in '?'.
   // Skip offer questions — they're tutor next-step prompts, not problems.
   const sentences = body.split(/(?<=[.!?])\s+/).filter(s => s.trim());
-  const qIdx = sentences.findIndex(s => /\?\s*$/.test(s) && !OFFER_QUESTION.test(s));
+  let qIdx = sentences.findIndex(s => /\?\s*$/.test(s) && !OFFER_QUESTION.test(s));
+  // Imperative asks ("Find the volume.", "Calculate the surface area.") carry
+  // the problem without a '?'. Fall back to a PROBLEM_CUE sentence when no
+  // question sentence exists. Only reached from detectGeometryProblem, which
+  // has already confirmed geometry vocab + a number, so this stays scoped.
+  if (qIdx === -1) {
+    qIdx = sentences.findIndex(s => PROBLEM_CUE.test(s) && !OFFER_QUESTION.test(s));
+  }
   if (qIdx === -1) return null;
 
   // Include up to two preceding setup sentences (the parameters) so
@@ -515,7 +522,16 @@ function detectGeometryProblem(tutorText) {
 
 function normalizeForCompare(s) {
   if (!s || typeof s !== 'string') return '';
-  return s.toLowerCase().replace(/\s+/g, '').replace(/[\\${}()[\]]/g, '');
+  let out = s.toLowerCase();
+  // Canonicalize operator synonyms so equivalent cards dedupe (QA P1-2):
+  // "6 × 7", "6 \times 7", "6 * 7", "6 \cdot 7", "6 · 7" must all compare
+  // equal. Fold BEFORE stripping backslashes so \times / \cdot / \div match.
+  out = out
+    .replace(/\\times\b|\\cdot\b|×|·|∗|\*/g, '*')
+    .replace(/\\div\b|÷/g, '/');
+  // strip whitespace and LaTeX structural punctuation/backslashes (this also
+  // removes a trailing lone "\" artifact, so "6 \times 7 = 42 \" folds too)
+  return out.replace(/\s+/g, '').replace(/[\\${}()[\]]/g, '');
 }
 
 function commandsOverlap(a, b) {

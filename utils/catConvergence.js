@@ -17,6 +17,17 @@
 const { SESSION_DEFAULTS } = require('./catConfig');
 const { thetaToPercentile } = require('./irt');
 
+// Theta-stabilized early stop (QA P1-4). At typical item discrimination the
+// SE≤0.30 threshold is often unreachable within maxQuestions, so a consistent
+// student would run to the cap (~27 questions). Once the ability estimate has
+// settled — small spread over a recent window after enough questions — we
+// know the placement and can stop honestly. Tuned via simulation so
+// consistent students finish in ~15 questions across the ability range while
+// erratic responders keep going.
+const STABILITY_MIN_QUESTIONS = SESSION_DEFAULTS.stabilityMinQuestions ?? 12;
+const STABILITY_WINDOW = SESSION_DEFAULTS.stabilityWindow ?? 6;
+const STABILITY_RANGE = SESSION_DEFAULTS.stabilityRange ?? 0.35;
+
 // ===========================================================================
 // CONVERGENCE CRITERIA
 // ===========================================================================
@@ -270,6 +281,18 @@ function checkConvergence(session) {
     result.converged = true;
     result.canStop = true;
     result.reason = 'plateau-detected';
+    result.confidence = 'medium';
+    return result;
+  }
+
+  // TIER 5b: Theta-stabilized early stop. The ability estimate has settled
+  // (small spread over the recent window) after enough questions — the honest
+  // "we're confident" signal when SE can't reach 0.30 in time (QA P1-4).
+  if (questionCount >= STABILITY_MIN_QUESTIONS &&
+      checkThetaStability(responses, STABILITY_WINDOW, STABILITY_RANGE)) {
+    result.converged = true;
+    result.canStop = true;
+    result.reason = 'theta-stabilized';
     result.confidence = 'medium';
     return result;
   }

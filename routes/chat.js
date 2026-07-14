@@ -2315,6 +2315,10 @@ async function handleGreetingRequest(req, res, userId) {
                     res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
                     return res.end();
                 }
+                // QA P1-6: send WITHIN-level XP (and a level reconciled from
+                // actual XP), never total XP. Sending user.xp here with a stale
+                // level produced the "577 / 140" broken fraction on return.
+                const contXp = BRAND_CONFIG.xpProgress(user.xp);
                 return res.json({
                     text: '',
                     continued: true,
@@ -2322,9 +2326,9 @@ async function handleGreetingRequest(req, res, userId) {
                     messages: visibleMessages,
                     voiceId: contTutor.voiceId,
                     isGreeting: true,
-                    userXp: user.xp || 0,
-                    userLevel: user.level || 1,
-                    xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1)
+                    userXp: contXp.xpForCurrentLevel,
+                    userLevel: contXp.level,
+                    xpNeeded: contXp.xpForNextLevel
                 });
             }
         }

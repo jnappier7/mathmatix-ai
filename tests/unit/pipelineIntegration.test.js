@@ -285,6 +285,47 @@ describe('Pipeline Integration: runPipeline', () => {
     expect(result._pipeline.signalStats.total).toBeGreaterThanOrEqual(0);
   });
 
+  test('fair-time floor: a fast turn still bills at least the floor', async () => {
+    // A single gpt-4o-mini turn returns in well under a second, so raw
+    // aiProcessingSeconds ≈ 0. Without the floor, a dense multi-turn session
+    // meters to near-zero ("2 minutes" for 10+ real minutes of tutoring).
+    const user = mockUser({ weeklyAISeconds: 0 });
+    const conversation = mockConversation([
+      { role: 'assistant', content: 'What is 6 + 6?', problemResult: null },
+      { role: 'user', content: '12' },
+    ]);
+
+    mockLLMResponse('Nice! 12 is correct. <PROBLEM_RESULT:correct>');
+
+    // aiProcessingStartTime = now → raw elapsed rounds to ~0s, so the floor governs.
+    const result = await runPipeline('12', buildCtx(user, conversation));
+
+    const FLOOR = Number(process.env.AI_TIME_FLOOR_SECONDS) || 30;
+    expect(result.aiTimeUsed).toBe(FLOOR);
+  });
+
+  test('fair-time floor: a slow turn still bills its true (higher) latency', async () => {
+    // A slow vision-grading turn on gpt-4o exceeds the floor — bill real latency,
+    // don't clamp down to it.
+    const user = mockUser({ weeklyAISeconds: 0 });
+    const conversation = mockConversation([
+      { role: 'assistant', content: 'What is 6 + 6?', problemResult: null },
+      { role: 'user', content: '12' },
+    ]);
+
+    mockLLMResponse('Nice! 12 is correct. <PROBLEM_RESULT:correct>');
+
+    const FLOOR = Number(process.env.AI_TIME_FLOOR_SECONDS) || 30;
+    // Backdate the start so raw elapsed is ~90s — well above the floor.
+    const ctx = buildCtx(user, conversation, {
+      aiProcessingStartTime: Date.now() - 90_000,
+    });
+    const result = await runPipeline('12', ctx);
+
+    expect(result.aiTimeUsed).toBeGreaterThan(FLOOR);
+    expect(result.aiTimeUsed).toBeGreaterThanOrEqual(89);
+  });
+
   test('persists session mood to conversation document', async () => {
     const user = mockUser();
     const conversation = mockConversation([

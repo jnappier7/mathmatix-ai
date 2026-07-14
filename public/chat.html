@@ -27,7 +27,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        with the tutor's work mirrored inline as cards. To bring the board back,
        set boardPanel: true (or delete this block). -->
   <script>
-    window.MM_FEATURES = Object.assign({ boardPanel: true }, window.MM_FEATURES || {});
+    // livingWorkspace: 'live' — the Living Workspace replaces the legacy tabbed
+    // board. boardPanel stays true so #cr-workspace (the mount slot) is visible;
+    // the M-C swap hides the legacy tools *inside* it and mounts the new surface.
+    // Kill switch: set livingWorkspace:'off' here (legacy board returns untouched).
+    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live' }, window.MM_FEATURES || {});
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
@@ -68,13 +72,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (window.MM_FEATURES.boardPanel === true) window.loadBoardTools();
   </script>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/dist/css/chat-css0.11b0dff1.css" />
+  <link rel="stylesheet" href="/dist/css/chat-css0.2422dcfc.css" />
 <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
   <link rel="stylesheet" href="/dist/css/chat-css1.dae1c280.css" />
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
-  <link rel="stylesheet" href="/css/chat-redesign.css" />
+  <link rel="stylesheet" href="/css/chat-redesign.css?v=20260713" />
   <!-- Gamification surfacing: combo meter + identity chip -->
   <link rel="stylesheet" href="/css/gamification-surfacing.css" />
   <!-- Personal status card modal (Progress button) -->
@@ -104,6 +108,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- MathGraph: self-contained canvas graphing engine (replaces function-plot CDN) -->
   <script defer src="/js/mathGraph.js"></script>
+  <!-- Living Workspace (M-B preview). Self-gating: does nothing unless the
+       LivingWorkspace flag is dev|beta|live (?livingWorkspace=dev). When on,
+       it lazy-loads the workspace and mirrors the tutor's board output onto
+       the new surface beside the old board. Default OFF → zero impact. -->
+  <script defer src="/js/living-workspace/chat-workspace.js?v=20260714"></script>
   <!-- Final safety net: strips any inline visual tag no renderer handled -->
   <script defer src="/js/stripVisualTags.js"></script>
   <!-- Non-core libs (lazy-loaded after first interaction) -->
@@ -2288,9 +2297,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script defer src="/js/chat-redesign.js"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
-  <script src="/dist/js/chat-js2.c335943a.js"></script>
+  <script src="/dist/js/chat-js2.0c1f9d9e.js"></script>
 <!-- Voice as a layout mode of the chat stage -->
-  <script src="/js/voice-mode.js?v=2"></script>
+  <script src="/js/voice-mode.js?v=3"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
   <script src="/dist/js/chat-js3.6635f3ec.js"></script>
@@ -2351,7 +2360,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       updateUI();
     })();
   </script>
-  <script src="/dist/js/chat-js8.910bc9c0.js"></script>
+  <script src="/dist/js/chat-js8.89eef321.js"></script>
 <script src="/js/script.js?v=20260714" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.bc0be9a3.js"></script>

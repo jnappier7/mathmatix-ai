@@ -797,3 +797,44 @@ body.cr-mode .inline-equation-palette {
 .message-cta:active { transform: translateY(0); }
 .message-cta:disabled { opacity: 0.55; cursor: default; transform: none; }
 .message-cta .cta-emoji { font-size: 16px; line-height: 1; }
+
+/* ============================================================
+   Clean tutor panel (QA — "drop the dark studio, go clean/white")
+   ------------------------------------------------------------
+   The tutor hero used to force a dark navy gradient + a per-tutor
+   "studio" backdrop image + a darkening overlay — the heaviest dark
+   element on an otherwise theme-light UI. The avatars are transparent
+   PNGs, so we drop the studio scene and sit the character on a normal
+   THEMED panel (same --cr-bg-panel as the chat column). Result: clean
+   white in light mode (the default), and a consistent dark panel in
+   dark mode — never a white panel clashing beside a dark column.
+   ============================================================ */
+.cr-tutor-hero {
+  background: var(--cr-bg-panel);
+  border: 1px solid var(--cr-border);
+  /* Soft shadow so the panel doesn't visually merge into the chat column. */
+  box-shadow: 0 8px 30px rgba(15, 26, 36, 0.06);
+}
+/* Drop the dark studio backdrop image + its darkening ::after overlay. */
+.cr-tutor-hero .cr-tutor-backdrop { display: none; }
+/* Softer, lighter portrait shadow + a faint rim so dark hair/edges read
+   cleanly on a light panel instead of looking pasted-on. */
+.cr-tutor-portrait {
+  filter:
+    drop-shadow(0 8px 16px rgba(15, 26, 36, 0.16))
+    drop-shadow(0 0 1px rgba(15, 26, 36, 0.28));
+}
+/* "Live with" badge + encourage card: themed surfaces (were hardcoded
+   dark), so text stays legible in whichever theme is active. */
+.cr-live-badge {
+  background: var(--cr-bg-2);
+  border: 1px solid var(--cr-border);
+  color: var(--cr-text);
+  box-shadow: 0 2px 8px rgba(15, 26, 36, 0.08);
+}
+.cr-encourage-card {
+  background: var(--cr-bg-2);
+  border: 1px solid var(--cr-border);
+}
+.cr-encourage-title { color: var(--cr-text); }
+.cr-encourage-body  { color: var(--cr-text-dim); }

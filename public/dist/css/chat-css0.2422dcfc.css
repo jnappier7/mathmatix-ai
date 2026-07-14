@@ -13086,6 +13086,116 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
   }
 }
 
+/* ── Lifecycle hero — mastery-first, effort-framed, one clear next step ── */
+.rc-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.rc-hero-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.rc-hero-skill {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.rc-hero-track {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.rc-hero-fill {
+  height: 100%;
+  background: #2dd4bf;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.rc-hero-progrow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.rc-hero-copy {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.5;
+}
+
+.rc-hero-week,
+.rc-hero-effort {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(45, 212, 191, 0.12);
+  border-radius: 10px;
+  padding: 9px 11px;
+}
+
+.rc-hero-week strong,
+.rc-hero-effort strong {
+  color: #2dd4bf;
+  font-weight: 600;
+}
+
+.rc-hero-badge {
+  font-size: 0.82rem;
+  color: #2dd4bf;
+  font-weight: 600;
+}
+
+.rc-hero-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #2dd4bf;
+  color: #04302b;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.rc-hero-cta:hover {
+  background: #5eead4;
+}
+
+.rc-hero-alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  border: none;
+  padding: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.rc-hero-alt:hover {
+  color: #fff;
+}
+
+.rc-hero-arrow {
+  font-weight: 700;
+}
+
 /* --- /css/mobile-ux-overhaul.css --- */
 /* ============================================
    MOBILE UX OVERHAUL — Stats bar, hero actions, polish

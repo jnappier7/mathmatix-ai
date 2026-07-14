@@ -502,6 +502,36 @@ describe('boardSynthesizer — geometry pose fallback', () => {
       expect(r.sentence).toMatch(/triangle DEF\?$/);
     });
 
+    test('catches a rectangular-prism VOLUME word problem (3D solids)', () => {
+      const r = _detectGeometryProblem(
+        "A prism has volume 45.5 cm3, length 7 cm, and width 2.6 cm. What's the height?"
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/prism|volume/i);
+      // must NOT bake in the answer (45.5 / (7*2.6) = 2.5)
+      expect(r.tex).not.toMatch(/2\.5/);
+    });
+
+    test('catches a cylinder volume problem', () => {
+      const r = _detectGeometryProblem(
+        'A cylinder has a radius of 3 cm and a height of 10 cm. Find the volume.'
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/cylinder|volume/i);
+    });
+
+    test('catches a surface-area problem', () => {
+      const r = _detectGeometryProblem(
+        'A cube has a side length of 4 inches. What is the surface area of the cube?'
+      );
+      expect(r).not.toBeNull();
+      expect(r.sentence).toMatch(/cube|surface area/i);
+    });
+
+    test('does not fire on non-math uses of "volume" (no problem cue)', () => {
+      expect(_detectGeometryProblem('Turn the volume down, it is 11 out of 10.')).toBeNull();
+    });
+
     test('catches a "Question:" framed prompt', () => {
       const r = _detectGeometryProblem(
         "Awesome! Let's try this:\n\nQuestion: A circle has a radius of 8 units. What is the area of the circle?"

@@ -637,7 +637,8 @@ const userSchema = new Schema({
     coins:          { type: Number, default: 0, min: 0 },  // spendable balance
     lifetimeEarned: { type: Number, default: 0 },          // analytics; never spent down
     dailyEarned:    { type: Number, default: 0 },          // anti-abuse daily cap counter
-    lastCoinReset:  { type: Date, default: Date.now }       // anchors the daily reset
+    lastCoinReset:  { type: Date, default: Date.now },      // anchors the daily reset
+    retroLevelGrantedAt: { type: Date, default: null }      // set once by scripts/grantRetroactiveLevelCoins.js so the backfill is idempotent
   },
 
   /* Cosmetics ownership + equipped loadout (see utils/cosmeticsCatalog.js).

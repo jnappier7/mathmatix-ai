@@ -387,13 +387,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
 
     /**
-     * Lock the Voice Tutor sidebar button for non-premium users.
+     * Lock the Voice Tutor buttons for non-premium users.
      * Premium = unlimited tier, school-licensed, or teacher/parent/admin role.
+     *
+     * There are TWO entry points into voice: the sidebar button
+     * (#sidebar-voice-tutor-btn) and the composer headset (#voice-mode-btn).
+     * voice-mode.js bows out of a locked click expecting an upgrade-prompt
+     * handler here, so BOTH must get one — otherwise the composer headset is a
+     * dead button for free-tier users (no toggle, no prompt, no feedback).
      */
     function gateVoiceTutorButton(user) {
-        const btn = document.getElementById('sidebar-voice-tutor-btn');
+        const sidebarBtn = document.getElementById('sidebar-voice-tutor-btn');
+        const composerBtn = document.getElementById('voice-mode-btn');
         const lock = document.getElementById('voice-tutor-lock');
-        if (!btn || !lock) return;
+        if (!lock || (!sidebarBtn && !composerBtn)) return;
 
         const role = user.role || 'student';
         const hasPremiumRole = role === 'teacher' || role === 'parent' || role === 'admin';
@@ -402,21 +409,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (hasPremiumRole || hasUnlimited || hasSchoolLicense) return;
 
-        // Non-premium: show lock, dim button, intercept click
+        // Non-premium: show the shared lock and intercept clicks on every entry
+        // point with the upgrade prompt. The shared lock being visible is also
+        // what tells voice-mode.js to stand down (it checks it at click time).
         lock.style.display = '';
-        btn.style.opacity = '0.65';
-        btn.style.cursor = 'default';
-        btn.title = 'Voice Tutor requires the Unlimited plan or a school license';
 
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            showUpgradePrompt({
-                premiumFeatureBlocked: true,
-                feature: 'Voice chat',
-                tier: user.subscriptionTier || 'free',
-                upgradeRequired: true
+        const interceptWithUpgrade = (el) => {
+            if (!el) return;
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                showUpgradePrompt({
+                    premiumFeatureBlocked: true,
+                    feature: 'Voice chat',
+                    tier: user.subscriptionTier || 'free',
+                    upgradeRequired: true
+                });
             });
-        });
+        };
+
+        if (sidebarBtn) {
+            // Dim the sidebar row to read as locked (it has room for it).
+            sidebarBtn.style.opacity = '0.65';
+            sidebarBtn.style.cursor = 'default';
+            sidebarBtn.title = 'Voice Tutor requires the Unlimited plan or a school license';
+        }
+        if (composerBtn) {
+            composerBtn.title = 'Voice chat requires the Unlimited plan or a school license';
+        }
+
+        interceptWithUpgrade(sidebarBtn);
+        interceptWithUpgrade(composerBtn);
     }
 
     function setupChatUI() {
@@ -2756,10 +2778,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         showToast('Last message! Your free time is almost up.', 'warning');
                     } else if (remaining <= 120 && remaining > 30 && !window._warned2m) {
                         window._warned2m = true;
-                        showToast('About 2 minutes of AI time remaining this week.', 'warning');
+                        showToast('About 2 minutes of AI time remaining this month.', 'warning');
                     } else if (remaining <= 300 && remaining > 120 && !window._warned5m) {
                         window._warned5m = true;
-                        showToast('5 minutes of free AI time left this week.', 'info');
+                        showToast('5 minutes of free AI time left this month.', 'info');
                     }
                 }
             }
@@ -2767,12 +2789,17 @@ document.addEventListener("DOMContentLoaded", () => {
             // Check if response is SSE stream (text/event-stream)
             const contentType = response.headers.get('Content-Type') || '';
             let data;
+            // Declared out here (not inside the stream branch) because the
+            // post-stream dead-air guard below reads `!streamRef` — with a
+            // block-scoped `let`, that read threw "streamRef is not defined"
+            // on every streamed turn (the error surfaced *after* the reply
+            // rendered, since finalize runs inside the branch).
+            let streamRef = null;
 
             if (contentType.includes('text/event-stream')) {
                 // Read SSE stream: show words as they arrive
                 // Don't create the bubble yet — wait until first chunk arrives
                 // to avoid showing a blank pill during pipeline processing.
-                let streamRef = null;
                 let fullText = '';
                 let completeData = null;
 
@@ -2890,6 +2917,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 data = await response.json();
             }
 
+            // QA P1-7: refresh the AI-time meter from the POST-response balance
+            // the server computed for THIS turn (freeWeeklySecondsRemaining).
+            // The X-Free-Remaining-Seconds header is set by usageGate BEFORE the
+            // turn's AI time is measured, so the pill lagged a full turn and
+            // "didn't move". This value already has the current turn deducted.
+            // Merge the cached usage so the "Resets in…" line survives the update.
+            if (data && typeof data.freeWeeklySecondsRemaining === 'number' &&
+                typeof updateFreeTimeIndicator === 'function') {
+                const prevUsage = (window._billingStatus && window._billingStatus.usage) || {};
+                updateFreeTimeIndicator({
+                    ...prevUsage,
+                    secondsRemaining: data.freeWeeklySecondsRemaining,
+                    limitReached: data.freeWeeklySecondsRemaining <= 0,
+                });
+            }
+
             // Process AI response (same logic as original sendMessage)
             let aiText = data.text || '';
             const wasStreamed = contentType.includes('text/event-stream');
@@ -2936,8 +2979,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Only append if we didn't already stream the message into the DOM
-            if (!wasStreamed) {
+            // Only append if we didn't already stream the message into the DOM.
+            // The `!streamRef` case guards against silent dead-air: a streamed
+            // response can arrive as a `complete` event with NO prior `chunk`
+            // (e.g. the server's pipeline-exception fallback ships its reply only
+            // in `complete`), so no bubble was ever created. Without this, the
+            // text in data.text is dropped with no error — the student sees
+            // nothing. Only append when there's actual prose, so a legitimate
+            // "tutor only drew on the board" turn stays correctly silent.
+            if (!wasStreamed || (!streamRef && aiText && aiText.trim())) {
                 appendMessage(aiText, "ai", graphData, data.isMasteryQuiz);
             } else if (hasInlineVisuals) {
                 // Streaming already inserted the message, but visual commands
@@ -3057,11 +3107,27 @@ document.addEventListener("DOMContentLoaded", () => {
             // Phase B: execute server-emitted <BOARD> commands against
             // the embedded WorkBoard. The pipeline pre-guards these
             // against the #1 rule; this handler just dispatches.
-            if (Array.isArray(data.boardCommands) && data.boardCommands.length > 0 && window.BoardCommandHandler) {
+            // Skip when the Living Workspace is on — it owns the board slot
+            // now (the legacy board is hidden), so running this handler would
+            // just double-process commands into invisible DOM.
+            const lwsOwnsBoard = !!(window.LWS_CHAT && typeof window.LWS_CHAT.isOn === 'function' && window.LWS_CHAT.isOn());
+            if (!lwsOwnsBoard && Array.isArray(data.boardCommands) && data.boardCommands.length > 0 && window.BoardCommandHandler) {
                 try {
                     window.BoardCommandHandler.executeBoardCommands(data.boardCommands);
                 } catch (error) {
                     console.error('[BoardCommandHandler] Failed to execute commands:', error);
+                }
+            }
+
+            // Living Workspace preview (M-B): when the flag is on, mirror the
+            // SAME already-guarded board commands onto the new surface beside
+            // the old board. No-op when the flag is off. (QA: continue the
+            // workspace build — see /js/living-workspace/chat-workspace.js)
+            if (window.LWS_CHAT && window.LWS_CHAT.isOn() && Array.isArray(data.boardCommands)) {
+                try {
+                    window.LWS_CHAT.applyBoardCommands(data.boardCommands);
+                } catch (error) {
+                    console.error('[LWS_CHAT] applyBoardCommands failed:', error);
                 }
             }
 

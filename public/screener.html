@@ -166,16 +166,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <i class="fas fa-trophy"></i>
           </div>
           <h1>Assessment Complete!</h1>
-          <p class="results-subtitle">We've found your exact level</p>
+          <p class="results-subtitle">Here's where we'll start</p>
         </div>
 
+        <!-- QA P0-4: lead with the student's actual starting point (grade /
+             course), not a raw IRT theta. Percentile and accuracy are
+             internal analytics (adaptive accuracy hovers ~50-75% by design,
+             so it misleads students) and are intentionally not shown here. -->
         <div class="results-stats">
-          <div class="result-stat">
-            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+          <div class="result-stat result-stat--placement">
+            <div class="stat-icon"><i class="fas fa-map-signs"></i></div>
             <div class="stat-content">
-              <div class="stat-label">Ability Level</div>
-              <div class="stat-value-large" id="final-theta">--</div>
-              <div class="stat-sublabel" id="final-percentile">--th percentile</div>
+              <div class="stat-label">Your Starting Point</div>
+              <div class="stat-value-large" id="final-grade">--</div>
+              <div class="stat-sublabel" id="final-grade-desc">Building your personalized path…</div>
+            </div>
+          </div>
+
+          <div class="result-stat">
+            <div class="stat-icon"><i class="fas fa-list-check"></i></div>
+            <div class="stat-content">
+              <div class="stat-label">Questions</div>
+              <div class="stat-value-large" id="final-questions">--</div>
+              <div class="stat-sublabel">answered</div>
             </div>
           </div>
 
@@ -184,16 +197,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="stat-content">
               <div class="stat-label">Time</div>
               <div class="stat-value-large" id="final-duration">--</div>
-              <div class="stat-sublabel" id="final-questions">-- questions</div>
-            </div>
-          </div>
-
-          <div class="result-stat">
-            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-content">
-              <div class="stat-label">Accuracy</div>
-              <div class="stat-value-large" id="final-accuracy">--</div>
-              <div class="stat-sublabel">correct answers</div>
+              <div class="stat-sublabel">well spent</div>
             </div>
           </div>
         </div>
@@ -253,6 +257,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/adaptiveScreener.js"></script>
+  <script src="/js/adaptiveScreener.js?v=20260713"></script>
 </body>
 </html>

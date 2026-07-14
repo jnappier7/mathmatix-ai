@@ -1,0 +1,284 @@
+/* ============================================================
+   living-workspace.css — styles for the new workspace surface.
+   Scoped under .lws-root so it never bleeds into chat/board.
+   Grid colors are exposed as --lws-* custom properties the canvas
+   renderer reads via getComputedStyle.
+   ============================================================ */
+
+.lws-root {
+  --lws-grid-bg: #0f1422;
+  --lws-grid-minor: rgba(255, 255, 255, 0.05);
+  --lws-grid-major: rgba(255, 255, 255, 0.11);
+  --lws-grid-border: rgba(255, 255, 255, 0.22);
+  --lws-card-bg: #1b2238;
+  --lws-card-border: rgba(255, 255, 255, 0.14);
+  --lws-card-ink: #e6e9f2;
+  --lws-accent: #8b7bff;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  outline: none;
+  background: var(--lws-grid-bg);
+  color: var(--lws-card-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.lws-root:focus-visible { box-shadow: inset 0 0 0 2px var(--lws-accent); }
+
+@media (prefers-color-scheme: light) {
+  .lws-root {
+    --lws-grid-bg: #f5f7fb;
+    --lws-grid-minor: rgba(15, 23, 42, 0.06);
+    --lws-grid-major: rgba(15, 23, 42, 0.12);
+    --lws-grid-border: rgba(15, 23, 42, 0.20);
+    --lws-card-bg: #ffffff;
+    --lws-card-border: rgba(15, 23, 42, 0.14);
+    --lws-card-ink: #18202b;
+    --lws-accent: #6c5ce7;
+  }
+}
+
+.lws-grid { position: absolute; inset: 0; display: block; }
+.lws-overlay { position: absolute; inset: 0; pointer-events: none; }
+
+/* element hosts receive pointer events; the empty overlay does not,
+   so panning the substrate still works between elements. */
+.lws-el { pointer-events: auto; }
+
+/* ── focused derivation board (build brick #1) ─────────────────
+   A document-style flow: problem pinned at top, steps beneath it.
+   Replaces the free-canvas card placement for the chat surface. */
+.lws-dv-root { overflow: hidden; }
+.lws-dv {
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+  padding: 20px clamp(14px, 5%, 42px) 40px;
+  background-image:
+    linear-gradient(var(--lws-grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lws-grid-minor) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+.lws-dv-inner { max-width: 560px; margin: 0 auto; }
+
+.lws-dv-empty {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; gap: 8px;
+  padding: 24px; pointer-events: none; color: var(--lws-card-ink);
+}
+.lws-dv-empty-ic { font-size: 32px; opacity: .55; }
+.lws-dv-empty-t { font: 600 15px/1.3 system-ui, sans-serif; opacity: .8; }
+.lws-dv-empty-s { font: 13px/1.45 system-ui, sans-serif; opacity: .55; max-width: 280px; }
+
+.lws-dv-problem {
+  position: sticky; top: -20px; z-index: 3;
+  background: linear-gradient(180deg, var(--lws-card-bg), color-mix(in srgb, var(--lws-card-bg) 88%, var(--lws-grid-bg)));
+  border: 1px solid var(--lws-card-border); border-left: 3px solid var(--lws-accent);
+  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
+}
+.lws-dv-plabel { font: 10px system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--lws-accent); margin-bottom: 6px; }
+.lws-dv-ptex { font-size: 21px; color: var(--lws-card-ink); }
+
+.lws-dv-lines { display: flex; flex-direction: column; }
+.lws-dv-line { padding: 7px 4px; animation: lws-dv-in .34s cubic-bezier(.2, 1, .3, 1) both; }
+@keyframes lws-dv-in { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
+.lws-dv-tex { font-size: 20px; color: var(--lws-card-ink); }
+.lws-dv-operation { padding: 4px 4px 0; }
+.lws-dv-op {
+  font: 12.5px ui-monospace, "SF Mono", Menlo, monospace; color: var(--lws-accent);
+  background: color-mix(in srgb, var(--lws-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lws-accent) 30%, transparent);
+  border-radius: 7px; padding: 2px 8px; opacity: .95;
+}
+.lws-dv-scaffold .lws-dv-tex, .lws-dv-example .lws-dv-tex { opacity: .82; font-size: 18px; }
+.lws-dv-solution {
+  margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--lws-card-border);
+}
+.lws-dv-solution .lws-dv-tex { font-weight: 700; }
+.lws-dv-block { padding: 10px 0; }
+.lws-dv-block > * { max-width: 100%; }
+
+/* ── equation card ── */
+.lws-eq-card {
+  min-width: 120px;
+  background: var(--lws-card-bg);
+  border: 1px solid var(--lws-card-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  user-select: none;
+}
+.lws-el.is-provisional .lws-eq-card {
+  border-color: var(--lws-accent);
+  border-style: dashed;
+}
+.lws-eq-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  cursor: grab;
+  background: rgba(139, 123, 255, 0.10);
+  border-bottom: 1px solid var(--lws-card-border);
+  font-size: 12px;
+}
+.lws-eq-header:active { cursor: grabbing; }
+.lws-eq-grip { opacity: 0.6; }
+.lws-eq-title { flex: 1; color: var(--lws-card-ink); opacity: 0.75; }
+.lws-eq-edit {
+  border: 0; background: transparent; color: var(--lws-accent);
+  cursor: pointer; font-size: 13px; padding: 2px 6px; border-radius: 6px;
+}
+.lws-eq-edit:hover { background: rgba(139, 123, 255, 0.18); }
+.lws-eq-body {
+  padding: 12px 14px;
+  cursor: text;
+  min-height: 24px;
+  color: var(--lws-card-ink);
+}
+.lws-eq-body .katex { font-size: 1.15em; }
+.lws-eq-input {
+  font-size: 15px; padding: 4px 6px; width: 180px;
+  border: 1px solid var(--lws-accent); border-radius: 6px;
+  background: var(--lws-card-bg); color: var(--lws-card-ink);
+}
+.lws-eq-body math-field { font-size: 18px; }
+
+/* screen-reader-only live region */
+.lws-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ── Algebra tiles element (P6) ────────────────────────────────
+   A "tile" (term) is a draggable chip. Teal = positive, red =
+   negative; unit/constant chips are smaller. Drop a like chip on
+   another to combine; +n on −n of the same variable = a zero pair.
+   Provisional state (P7) reuses .lws-el.is-provisional (dashed). */
+.lws-tiles-card {
+  min-width: 160px;
+  background: var(--lws-card-bg);
+  border: 1px solid var(--lws-card-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  user-select: none;
+}
+.lws-el.is-provisional .lws-tiles-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-tiles-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7;
+  cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-tiles-header:active { cursor: grabbing; }
+.lws-tiles-body { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; align-items: center; }
+.lws-tile-chip {
+  font: 600 15px/1 ui-monospace, Menlo, Consolas, monospace;
+  padding: 10px 12px; border-radius: 8px; border: 1.5px solid transparent;
+  cursor: grab; color: #0f1a24; transition: box-shadow 0.12s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18); touch-action: none;
+}
+.lws-tile-chip.is-var  { min-width: 46px; }
+.lws-tile-chip.is-unit { min-width: 30px; border-radius: 6px; }
+.lws-tile-chip.is-pos  { background: #bfeae6; border-color: #12b3b3; }
+.lws-tile-chip.is-neg  { background: #ffd9d9; border-color: #e05656; }
+.lws-tile-chip.is-selected { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+.lws-tile-chip.is-dragging { cursor: grabbing; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3); z-index: 5; opacity: 0.95; }
+.lws-tile-chip.is-target { box-shadow: 0 0 0 3px #16c86d; }
+.lws-tile-chip.is-target-invalid { box-shadow: 0 0 0 3px #e05656; }
+.lws-tile-chip:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+/* ── Number-line element (P13) ─────────────────────────────── */
+.lws-nl-card {
+  min-width: 340px;
+  background: var(--lws-card-bg);
+  border: 1px solid var(--lws-card-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none;
+}
+.lws-el.is-provisional .lws-nl-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-nl-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab;
+  border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-nl-body { padding: 6px 4px; }
+.lws-nl-axis  { stroke: var(--lws-card-ink); stroke-width: 2; opacity: 0.85; }
+.lws-nl-tick  { stroke: var(--lws-card-ink); stroke-width: 1.5; opacity: 0.55; }
+.lws-nl-label { fill: var(--lws-card-ink); font: 11px ui-monospace, Menlo, monospace; opacity: 0.8; }
+.lws-nl-point { fill: #12b3b3; stroke: #fff; stroke-width: 2; cursor: grab; }
+.lws-nl-point.is-dragging { cursor: grabbing; }
+.lws-nl-point:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+/* ── Graph element (P14) ───────────────────────────────────── */
+.lws-graph-card {
+  background: var(--lws-card-bg); border: 1px solid var(--lws-card-border);
+  border-radius: 10px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none;
+}
+.lws-el.is-provisional .lws-graph-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-graph-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-graph-body { padding: 4px; }
+.lws-graph-readout {
+  padding: 4px 10px 8px; font: 12px ui-monospace, Menlo, monospace;
+  color: var(--lws-card-ink); opacity: 0.85; text-align: center;
+}
+.lws-graph-tracer:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+/* ── Note card (interim renderer for image/geometry — P15/P17 pending) ── */
+.lws-note-card {
+  background: var(--lws-card-bg); border: 1px solid var(--lws-card-border);
+  border-radius: 10px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none; min-width: 140px; max-width: 260px;
+}
+.lws-el.is-provisional .lws-note-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-note-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-note-body {
+  padding: 10px 12px; display: flex; gap: 8px; align-items: center;
+  color: var(--lws-card-ink); font-size: 14px;
+}
+.lws-note-icon { font-size: 20px; line-height: 1; flex: 0 0 auto; }
+.lws-note-text { opacity: 0.9; word-break: break-word; }
+
+/* ── Image element (P15 — real safe-search picture) ────────── */
+.lws-image-card {
+  background: var(--lws-card-bg); border: 1px solid var(--lws-card-border);
+  border-radius: 10px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none; width: 240px;
+}
+.lws-el.is-provisional .lws-image-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-image-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-image-body { padding: 8px; display: flex; align-items: center; justify-content: center; min-height: 60px; }
+.lws-image-img { max-width: 100%; max-height: 200px; border-radius: 6px; display: block; }
+.lws-image-fallback {
+  display: flex; gap: 8px; align-items: center; padding: 6px;
+  color: var(--lws-card-ink); font-size: 14px; opacity: 0.9;
+}
+.lws-image-caption {
+  padding: 0 10px 8px; text-align: center;
+  font: 12px/1.4 Inter, system-ui, sans-serif; color: var(--lws-card-ink); opacity: 0.82;
+}
+
+/* ── Empty state (fresh canvas hint) ───────────────────────── */
+.lws-empty-state {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; text-align: center; padding: 24px;
+  pointer-events: none; color: rgba(232, 236, 244, 0.66);
+}
+.lws-empty-state .lws-empty-icon { font-size: 34px; }
+.lws-empty-state .lws-empty-title { font: 600 15px/1.3 Inter, system-ui, sans-serif; }
+.lws-empty-state .lws-empty-sub {
+  font: 13px/1.45 Inter, system-ui, sans-serif; opacity: 0.82; max-width: 280px;
+}

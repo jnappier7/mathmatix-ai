@@ -15,21 +15,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- SEO Meta Tags -->
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://mathmatix.ai/login.html" />
+  <link rel="canonical" href="https://www.mathmatix.ai/login.html" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://mathmatix.ai/login.html" />
+  <meta property="og:url" content="https://www.mathmatix.ai/login.html" />
   <meta property="og:title" content="Login | Mathmatix AI" />
   <meta property="og:description" content="Log in to Mathmatix AI to continue your personalized math learning journey." />
-  <meta property="og:image" content="https://mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
   <meta property="og:site_name" content="Mathmatix AI" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Login | Mathmatix AI" />
   <meta name="twitter:description" content="Log in to continue your personalized math learning journey." />
-  <meta name="twitter:image" content="https://mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta name="twitter:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
 
   <link rel="stylesheet" href="/css/design-system.css" />
   <link rel="stylesheet" href="/style.css" />
@@ -53,6 +53,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        The default .landing-page-body adds a hard column flex; we
        override below for the split layout. */
     body.auth-modern {
+      /* QA brand standardization (option B): product chrome = teal. The login
+         page read purple because it drove chrome off the purple --cr-accent
+         token; retint those tokens to the brand teal, scoped to the auth
+         page only. Gamification (which hardcodes its own purple) is
+         untouched, so purple stays where it belongs. */
+      --cr-accent: #12B3B3;
+      --cr-accent-strong: #0E9191;
+      --cr-accent-grad: linear-gradient(135deg, #12B3B3, #0E9191);
       background: var(--cr-bg-0);
       color: var(--cr-text);
       min-height: 100dvh;
@@ -116,7 +124,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .auth-modern .auth-brand {
       position: relative;
       padding: 64px 56px;
-      background: linear-gradient(160deg, #EDE9FF 0%, #F5F7FB 55%, #FFFFFF 100%);
+      background: linear-gradient(160deg, #E3F6F6 0%, #F5F7FB 55%, #FFFFFF 100%);
       border-right: 1px solid var(--cr-border);
       display: flex;
       flex-direction: column;

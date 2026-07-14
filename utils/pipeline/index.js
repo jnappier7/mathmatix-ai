@@ -43,6 +43,8 @@ const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
+const { stripInternalTags, hasInternalTags } = require('../internalTagSanitizer');
+const { parseBoardJsonCommands } = require('../boardJsonParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
@@ -450,11 +452,27 @@ async function runPipeline(message, ctx) {
       && generatedResult.structuredBoardCommands.length > 0) {
     rawLlmBoardCommands = generatedResult.structuredBoardCommands;
   } else {
-    // Legacy path: parse tags out of verify.text.
+    // Legacy path: parse <BOARD/> tags out of verify.text.
     const boardParsed = parseBoardTags(verified.text);
     if (boardParsed.boardCommands.length > 0) {
       verified.text = boardParsed.cleanedText;
       rawLlmBoardCommands = boardParsed.boardCommands;
+    }
+
+    // Recovery: some models emit board commands as raw JSON instead of
+    // the <BOARD/> tag syntax. Parse those too so they (a) don't leak as
+    // visible text and (b) actually reach the board. They join
+    // rawLlmBoardCommands and flow through the identical concept-model
+    // resolve + pedagogy guard below, so the #1 anti-cheat rule vets them
+    // exactly like tag-form commands.
+    const jsonParsed = parseBoardJsonCommands(verified.text);
+    if (jsonParsed.boardCommands.length > 0) {
+      verified.text = jsonParsed.cleanedText;
+      rawLlmBoardCommands = rawLlmBoardCommands.concat(jsonParsed.boardCommands);
+      boardLogger.info('Recovered board commands emitted as raw JSON', {
+        count: jsonParsed.boardCommands.length,
+        actions: jsonParsed.boardCommands.map(c => c.action),
+      });
     }
   }
 
@@ -1082,6 +1100,23 @@ async function runPipeline(message, ctx) {
     verified.visualTabCommands = visualTabParsed.visualTabCommands.slice(0, 2);
   } else {
     verified.visualTabCommands = [];
+  }
+
+  // ── Stage 5f: INTERNAL-TAG SCRUB (last line of defense) ──
+  // After every legitimate side-channel tag has been extracted above,
+  // strip any internal scaffolding the model echoed into the prose —
+  // an injected [ANSWER_PRE_CHECK: ...] directive, or a board command
+  // the model wrote as raw JSON instead of a <BOARD/> tag. This is the
+  // authoritative student-facing text (returned as `text` below and
+  // sent as the `complete` event, which REPLACES the streamed bubble),
+  // so scrubbing here fixes the persisted leak regardless of what
+  // flickered mid-stream. Guarded by a cheap predicate — no-op on the
+  // clean common case.
+  if (hasInternalTags(verified.text)) {
+    boardLogger.warn('Internal scaffolding leaked into tutor text; scrubbed', {
+      conversationId: ctx.conversation?._id ? String(ctx.conversation._id) : null,
+    });
+    verified.text = stripInternalTags(verified.text);
   }
 
   // ── Merge LLM signals into sidecar ──

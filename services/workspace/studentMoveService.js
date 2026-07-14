@@ -19,6 +19,7 @@
 const { validateInbound, VerifiedMove, ELEMENT_TYPES } = require('../../shared/workspace');
 const { verifyAlgebraTileMove } = require('../../utils/workspace/algebraTileVerifier');
 const { normalizeTileMove } = require('./moveNormalizer');
+const { applyMove: applyMoveWithState, hasTileState } = require('./workspaceStateService');
 
 // element type → its server-authoritative verifier. Extend as elements ship.
 const VERIFIERS = {
@@ -37,6 +38,16 @@ function processStudentMove(rawPayload) {
     return { ok: false, status: 400, errors: inbound.errors };
   }
   const move = inbound.value;
+
+  // 1b. AUTHORITATIVE tile-state path (P7 server half): when the move carries a
+  // tile snapshot in previousState, the server holds the state and applies the
+  // move through the engine — resolving tiles by reference, not trusting the
+  // client's operand values. Returns the same envelope + the new `snapshot`.
+  // Moves without a snapshot fall through to the stateless verdict path below
+  // (backward-compatible with the P1 contract). See workspaceStateService.js.
+  if (hasTileState(move)) {
+    return applyMoveWithState(move);
+  }
 
   // reposition / undo carry no mathematical claim — accept without a math verdict
   if (move.mode === 'reposition' || move.mode === 'exploration') {

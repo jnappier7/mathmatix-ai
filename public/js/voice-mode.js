@@ -116,13 +116,19 @@
 
   function toggle() { if (isOn()) { exit(); } else { enter(); } }
 
-  // Open the "show your work" flow. That modal is the unified upload entry —
-  // it offers both Take Photo and Upload Image/PDF — so proxying to the
-  // camera button keeps upload AND show-your-work reachable from voice mode,
-  // where the composer (and its paperclip/camera buttons) is hidden. The
-  // camera button lives inside the hidden compose bar, but .click() still
-  // fires its JS handler, and the modal overlays voice fine.
+  // Open the unified upload menu (Take a photo / Upload a file / Scan with
+  // phone) from voice mode, where the composer's camera/paperclip buttons are
+  // hidden. unified-upload.js owns that flow now; we pass our own button as the
+  // anchor so the popover positions next to the voice control instead of the
+  // hidden camera button (whose rect is 0×0 while the composer is display:none,
+  // which would strand the menu in the top-left corner). Falls back to clicking
+  // the legacy buttons on older builds without unified upload.
   function openShowYourWork() {
+    var self = document.getElementById('mpc-voice-work');
+    if (window.UnifiedUpload && typeof window.UnifiedUpload.open === 'function') {
+      window.UnifiedUpload.open(self);
+      return;
+    }
     var cam = document.getElementById('camera-button');
     if (cam) { cam.click(); return; }
     var attach = document.getElementById('attach-button');

@@ -207,5 +207,14 @@
     init();
   }
 
-  window.UnifiedUpload = { open: function () { var c = document.getElementById('camera-button'); if (c) openMenu(c); } };
+  // open(anchor?) — opens the capture menu. Callers may pass their own anchor
+  // element so the menu positions next to THEM (e.g. the voice-mode control,
+  // used when the composer's camera button is hidden and has a zero rect).
+  // Defaults to the camera button.
+  window.UnifiedUpload = {
+    open: function (anchor) {
+      var el = anchor || document.getElementById('camera-button');
+      if (el) openMenu(el);
+    }
+  };
 })();
