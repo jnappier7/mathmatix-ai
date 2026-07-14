@@ -2792,12 +2792,17 @@ document.addEventListener("DOMContentLoaded", () => {
             // Check if response is SSE stream (text/event-stream)
             const contentType = response.headers.get('Content-Type') || '';
             let data;
+            // Declared out here (not inside the stream branch) because the
+            // post-stream dead-air guard below reads `!streamRef` — with a
+            // block-scoped `let`, that read threw "streamRef is not defined"
+            // on every streamed turn (the error surfaced *after* the reply
+            // rendered, since finalize runs inside the branch).
+            let streamRef = null;
 
             if (contentType.includes('text/event-stream')) {
                 // Read SSE stream: show words as they arrive
                 // Don't create the bubble yet — wait until first chunk arrives
                 // to avoid showing a blank pill during pipeline processing.
-                let streamRef = null;
                 let fullText = '';
                 let completeData = null;
 
