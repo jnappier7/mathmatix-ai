@@ -27,7 +27,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        with the tutor's work mirrored inline as cards. To bring the board back,
        set boardPanel: true (or delete this block). -->
   <script>
-    window.MM_FEATURES = Object.assign({ boardPanel: true }, window.MM_FEATURES || {});
+    // livingWorkspace: 'live' — the Living Workspace replaces the legacy tabbed
+    // board. boardPanel stays true so #cr-workspace (the mount slot) is visible;
+    // the M-C swap hides the legacy tools *inside* it and mounts the new surface.
+    // Kill switch: set livingWorkspace:'off' here (legacy board returns untouched).
+    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live' }, window.MM_FEATURES || {});
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
