@@ -97,3 +97,83 @@
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+
+/* ── Algebra tiles element (P6) ────────────────────────────────
+   A "tile" (term) is a draggable chip. Teal = positive, red =
+   negative; unit/constant chips are smaller. Drop a like chip on
+   another to combine; +n on −n of the same variable = a zero pair.
+   Provisional state (P7) reuses .lws-el.is-provisional (dashed). */
+.lws-tiles-card {
+  min-width: 160px;
+  background: var(--lws-card-bg);
+  border: 1px solid var(--lws-card-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  user-select: none;
+}
+.lws-el.is-provisional .lws-tiles-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-tiles-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7;
+  cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-tiles-header:active { cursor: grabbing; }
+.lws-tiles-body { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; align-items: center; }
+.lws-tile-chip {
+  font: 600 15px/1 ui-monospace, Menlo, Consolas, monospace;
+  padding: 10px 12px; border-radius: 8px; border: 1.5px solid transparent;
+  cursor: grab; color: #0f1a24; transition: box-shadow 0.12s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18); touch-action: none;
+}
+.lws-tile-chip.is-var  { min-width: 46px; }
+.lws-tile-chip.is-unit { min-width: 30px; border-radius: 6px; }
+.lws-tile-chip.is-pos  { background: #bfeae6; border-color: #12b3b3; }
+.lws-tile-chip.is-neg  { background: #ffd9d9; border-color: #e05656; }
+.lws-tile-chip.is-selected { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+.lws-tile-chip.is-dragging { cursor: grabbing; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3); z-index: 5; opacity: 0.95; }
+.lws-tile-chip.is-target { box-shadow: 0 0 0 3px #16c86d; }
+.lws-tile-chip.is-target-invalid { box-shadow: 0 0 0 3px #e05656; }
+.lws-tile-chip:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+/* ── Number-line element (P13) ─────────────────────────────── */
+.lws-nl-card {
+  min-width: 340px;
+  background: var(--lws-card-bg);
+  border: 1px solid var(--lws-card-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none;
+}
+.lws-el.is-provisional .lws-nl-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-nl-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab;
+  border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-nl-body { padding: 6px 4px; }
+.lws-nl-axis  { stroke: var(--lws-card-ink); stroke-width: 2; opacity: 0.85; }
+.lws-nl-tick  { stroke: var(--lws-card-ink); stroke-width: 1.5; opacity: 0.55; }
+.lws-nl-label { fill: var(--lws-card-ink); font: 11px ui-monospace, Menlo, monospace; opacity: 0.8; }
+.lws-nl-point { fill: #12b3b3; stroke: #fff; stroke-width: 2; cursor: grab; }
+.lws-nl-point.is-dragging { cursor: grabbing; }
+.lws-nl-point:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+/* ── Graph element (P14) ───────────────────────────────────── */
+.lws-graph-card {
+  background: var(--lws-card-bg); border: 1px solid var(--lws-card-border);
+  border-radius: 10px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none;
+}
+.lws-el.is-provisional .lws-graph-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-graph-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-graph-body { padding: 4px; }
+.lws-graph-readout {
+  padding: 4px 10px 8px; font: 12px ui-monospace, Menlo, monospace;
+  color: var(--lws-card-ink); opacity: 0.85; text-align: center;
+}
+.lws-graph-tracer:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
