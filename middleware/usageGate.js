@@ -163,10 +163,18 @@ async function usageGate(req, res, next) {
     const msUntilReset = resetDate - now;
     const daysUntilReset = Math.max(0, Math.ceil(msUntilReset / (1000 * 60 * 60 * 24)));
 
+    // Course-aware upgrade nudge: if the student is mid-course, hitting the cap is the
+    // conversion moment — keep it warm and in-context instead of a generic paywall.
+    const inCourse = !!user.activeCourseSessionId;
+    const upgradeLine = inCourse
+      ? `Upgrade to Mathmatix+ to keep going in your course without waiting, or ask your teacher about a school license!`
+      : `Upgrade to Unlimited for non-stop tutoring, or ask your teacher about a school license!`;
+
     return res.status(402).json({
-      message: `You've used your 30 free minutes this month. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. Upgrade to Unlimited for non-stop tutoring, or ask your teacher about a school license!`,
+      message: `You've used your 30 free minutes this month. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. ${upgradeLine}`,
       usageLimitReached: true,
       tier: 'free',
+      inCourse,
       freeMinutesUsed: Math.floor(aiUsed / 60),
       freeMinutesTotal: 30,
       freeSecondsRemaining: 0,

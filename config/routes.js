@@ -226,8 +226,11 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/phone-upload', phoneUploadRoutes);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
-  app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes);
-  app.use('/api/course-sessions', isAuthenticated, premiumFeatureGate('Courses'), courseSessionRoutes);
+  // Courses are open to ALL students as a free on-ramp (see docs/COURSES_IN_FLOW_DESIGN.md).
+  // AI usage inside a course is still metered by usageGate on /api/course-chat — the monthly
+  // free-minute cap, not a paywall, is the conversion lever to Mathmatix+.
+  app.use('/api/courses', isAuthenticated, courseRoutes);
+  app.use('/api/course-sessions', isAuthenticated, courseSessionRoutes);
   app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes);
   app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes);
   app.use('/api/guidedLesson', isAuthenticated, aiEndpointLimiter, guidedLessonRoutes);
