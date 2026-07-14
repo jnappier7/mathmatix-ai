@@ -58,7 +58,7 @@
     'core/snapshotManager.js', 'core/a11yCommands.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
     'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
-    'dom/noteElement.js', 'dom/studentMoveClient.js',
+    'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
   ];
 
@@ -169,14 +169,18 @@
             onChange: function () { /* tracer exploration — mode:'exploration', no answer injection */ },
           }));
         }
-        // Image (P15) + geometry (P17) don't have real renderers yet. Until
-        // they land, a titled NOTE CARD shows what the tutor asked for (the
-        // gate-approved image query / figure label) instead of vanishing or
-        // showing a bare "[image]". Same renderer, registered for both types.
+        // Image (P15): render the REAL safe-search picture. Reuses the app's
+        // COPPA-safe /api/images pipeline; degrades to a labelled note on any
+        // failure. Falls back to the note card if the module didn't load.
+        if (window.LWS.ImageElement) {
+          overlayMgr.registerRenderer('image', window.LWS.ImageElement.makeRenderer());
+        } else if (window.LWS.NoteElement) {
+          overlayMgr.registerRenderer('image', window.LWS.NoteElement.makeRenderer());
+        }
+        // Geometry (P17) has no real renderer yet — a titled note card shows
+        // the figure label instead of a bare "[geometry]".
         if (window.LWS.NoteElement) {
-          var noteRenderer = window.LWS.NoteElement.makeRenderer();
-          overlayMgr.registerRenderer('image', noteRenderer);
-          overlayMgr.registerRenderer('geometry', noteRenderer);
+          overlayMgr.registerRenderer('geometry', window.LWS.NoteElement.makeRenderer());
         }
         // Number line (P13). A marker drag emits onChange; wiring it through
         // the student-move loop mirrors tiles and is a small follow-up.
