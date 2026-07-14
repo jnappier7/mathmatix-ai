@@ -25,12 +25,16 @@ const isJudgeCall = (messages) => /equivalence judge/i.test(messages[0].content)
 
 beforeEach(() => callLLM.mockReset());
 
+// NOTE: escalation is the LLM-tier fallback, reached only for NON-symbolic
+// answers — a symbolically-checkable answer is resolved by the CAS at tier 1
+// (see the last test). So these use prose/conceptual answers, which the CAS
+// declines, to drive the tier transitions.
 test('tier 1 resolves a confident answer — no escalation', async () => {
   callLLM.mockImplementation((model, messages) =>
-    Promise.resolve(isJudgeCall(messages) ? judgeReply(true, 0.95) : computeReply('7'))
+    Promise.resolve(isJudgeCall(messages) ? judgeReply(true, 0.95) : computeReply('increases'))
   );
 
-  const v = await verifyWithEscalation('Solve 2x + 3 = 13', '7');
+  const v = await verifyWithEscalation('Explain the trend of the function', 'it increases');
 
   expect(v.isCorrect).toBe(true);
   expect(v.escalated).toBe(false);
@@ -42,11 +46,11 @@ test('tier 1 resolves a confident answer — no escalation', async () => {
 test('low-confidence tier 1 escalates and the stronger judge resolves it', async () => {
   callLLM.mockImplementation((model, messages) => {
     const judging = isJudgeCall(messages);
-    if (model === VERIFIER_MODEL) return Promise.resolve(judging ? judgeReply(true, 0.4) : computeReply('7'));
-    return Promise.resolve(judging ? judgeReply(true, 0.95) : computeReply('7')); // ESCALATION_MODEL
+    if (model === VERIFIER_MODEL) return Promise.resolve(judging ? judgeReply(true, 0.4) : computeReply('by comparison'));
+    return Promise.resolve(judging ? judgeReply(true, 0.95) : computeReply('by comparison')); // ESCALATION_MODEL
   });
 
-  const v = await verifyWithEscalation('Find the derivative of x^2', '2x');
+  const v = await verifyWithEscalation('How would you prove the series converges?', 'by the comparison test');
 
   expect(v.escalated).toBe(true);
   expect(v.escalationResolved).toBe(true);
@@ -61,10 +65,10 @@ test('a tier-1 parse failure escalates (and tier 2 can return incorrect)', async
     if (model === VERIFIER_MODEL) {
       return Promise.resolve({ choices: [{ message: { content: 'not json at all' } }] }); // step1 parse fail
     }
-    return Promise.resolve(isJudgeCall(messages) ? judgeReply(false, 0.9) : computeReply('8'));
+    return Promise.resolve(isJudgeCall(messages) ? judgeReply(false, 0.9) : computeReply('north'));
   });
 
-  const v = await verifyWithEscalation('A word problem', '7');
+  const v = await verifyWithEscalation('Which direction does it point?', 'south');
 
   expect(v.escalated).toBe(true);
   expect(v.isCorrect).toBe(false);
@@ -75,15 +79,23 @@ test('a tier-1 parse failure escalates (and tier 2 can return incorrect)', async
 
 test('when both tiers are uncertain, the result stays unverifiable', async () => {
   callLLM.mockImplementation((model, messages) =>
-    Promise.resolve(isJudgeCall(messages) ? judgeReply(true, 0.3) : computeReply('7'))
+    Promise.resolve(isJudgeCall(messages) ? judgeReply(true, 0.3) : computeReply('converges'))
   );
 
-  const v = await verifyWithEscalation('A hard proof', '7');
+  const v = await verifyWithEscalation('How does the series behave?', 'it converges');
 
   expect(v.escalated).toBe(true);
   expect(v.escalationResolved).toBe(false);
   expect(v.isCorrect).toBeNull();
   expect(callLLM).toHaveBeenCalledTimes(4);
+});
+
+test('CAS resolves a symbolic answer at tier 1 — no judge, no escalation', async () => {
+  callLLM.mockImplementation(() => Promise.resolve(computeReply('2x'))); // only step 1 is ever called
+  const v = await verifyWithEscalation('Find the derivative of x^2', '2x');
+  expect(v.isCorrect).toBe(true);
+  expect(v.escalated).toBe(false);
+  expect(callLLM).toHaveBeenCalledTimes(1); // compute only; CAS confirmed equivalence
 });
 
 test('missing input never escalates — nothing to verify', async () => {

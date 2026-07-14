@@ -1,4 +1,32 @@
-const { symbolicVerify, equivalent, verifyAntiderivative, latexToExpr, extractIntegral } = require('../../utils/pipeline/symbolicVerifier');
+const { symbolicVerify, equivalent, verifyAntiderivative, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer } = require('../../utils/pipeline/symbolicVerifier');
+
+describe('symbolicVerifier — posed-arithmetic detection (the 50x3 fumble)', () => {
+  it('extracts the arithmetic the tutor asked to compute', () => {
+    expect(detectPosedArithmetic("what's 50 × 3?")).toBe('50*3');
+    expect(detectPosedArithmetic('multiply 10 × 5 × 3')).toBe('10*5*3');
+    expect(detectPosedArithmetic('what is 50 + 50 + 50?')).toBe('50+50+50');
+    expect(detectPosedArithmetic('so what is 4 − 1?')).toBe('4-1');
+  });
+  it('does NOT fire on algebra, dimensions, or list numbers (no false positives)', () => {
+    expect(detectPosedArithmetic('the derivative of x^4 is 4x^3')).toBeNull();      // algebra
+    expect(detectPosedArithmetic('a prism has length 7 cm and width 2.6 cm')).toBeNull(); // list, no operator
+    expect(detectPosedArithmetic('you got problem 3 right')).toBeNull();           // lone number
+    expect(detectPosedArithmetic('')).toBeNull();
+  });
+  it('bareNumericAnswer accepts a bare answer, rejects expressions/prose', () => {
+    expect(bareNumericAnswer('150')).toBe('150');
+    expect(bareNumericAnswer('72 cm^3')).toBe('72');
+    expect(bareNumericAnswer('-2')).toBe('-2');
+    expect(bareNumericAnswer('50*3=150')).toBeNull();   // an expression
+    expect(bareNumericAnswer('x^2')).toBeNull();        // no number
+    expect(bareNumericAnswer('i think 3 or maybe 4')).toBeNull(); // two numbers
+  });
+  it('end-to-end: a bare answer to a posed computation verifies correctly', () => {
+    // tutor: "what's 50 × 3?"  student: "150"  -> equivalent('50*3','150') = true
+    expect(equivalent(detectPosedArithmetic("what's 50 × 3?"), bareNumericAnswer('150'))).toBe(true);
+    expect(equivalent(detectPosedArithmetic("what's 50 × 3?"), bareNumericAnswer('140'))).toBe(false);
+  });
+});
 
 describe('symbolicVerifier — extractIntegral + problemTex path', () => {
   it('pulls the integrand + variable from integral problem tex', () => {

@@ -153,4 +153,35 @@ function symbolicVerify(p) {
   return { isCorrect: null, method: 'unverifiable', confidence: 0 };
 }
 
-module.exports = { symbolicVerify, equivalent, verifyAntiderivative, latexToExpr, extractIntegral };
+// Pull a purely-NUMERIC arithmetic computation the tutor posed ("what's
+// 50 × 3?" -> "50*3", "multiply 10 × 5 × 3" -> "10*5*3"). Numbers joined by
+// arithmetic operators with NO letters attached, so it never mis-fires on
+// algebra (2x), dimensions ("7 cm, 2.6 cm"), or list/step numbers. Returns the
+// last such expression (the question usually trails the message), or null.
+function detectPosedArithmetic(text) {
+  if (text == null) return null;
+  const s = String(text).replace(/×/g, '*').replace(/·/g, '*').replace(/÷/g, '/').replace(/[−–—]/g, '-');
+  const re = /(?<![\w.$])-?\d+(?:\.\d+)?(?:\s*[*+/-]\s*-?\d+(?:\.\d+)?)+(?![\w.])/g;
+  const m = s.match(re);
+  if (!m || !m.length) return null;
+  const expr = m[m.length - 1].replace(/\s+/g, '');
+  if (!/\d[*+/]-?\d|\d-\d/.test(expr)) return null;   // needs a real binary operator
+  return expr;
+}
+
+// The student's answer as a bare number, or null if it's an expression/prose.
+// "150" -> "150", "72 cm^3" -> "72", "-2" -> "-2"; "50*3=150" / "x^2" -> null.
+function bareNumericAnswer(text) {
+  if (text == null) return null;
+  // strip a trailing unit (+ optional exponent) so "72 cm^3" reads as one number
+  const t = String(text).replace(/[−–—]/g, '-')
+    .replace(/\s*(cm|mm|km|m|in|ft|yd|units?|degrees?|°)\s*(\^?\s*\d+|[²³¹])?\s*[.!]*$/i, '')
+    .trim();
+  if (/[a-z]/i.test(t)) return null;                  // leftover letters -> prose / variable (x^2)
+  if (/[*+/×÷=^]/.test(t)) return null;               // an expression or a power, not a bare answer
+  const nums = t.match(/-?\d+(?:\.\d+)?/g);
+  if (!nums || nums.length !== 1) return null;        // exactly one number
+  return nums[0];
+}
+
+module.exports = { symbolicVerify, equivalent, verifyAntiderivative, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer };
