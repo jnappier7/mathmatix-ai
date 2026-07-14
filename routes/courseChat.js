@@ -19,6 +19,7 @@ const { detectAndFetchResource, detectResourceMention } = require('../utils/reso
 const { buildProgressUpdate } = require('../utils/progressState');
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 const { buildCoursePipelineContext, postProcessCourseResult } = require('../utils/pipeline/courseAdapter');
+const { FREE_WEEKLY_SECONDS } = require('../middleware/usageGate');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
@@ -314,7 +315,7 @@ router.post('/', async (req, res) => {
                 },
                 aiTimeUsed: aiProcessingSeconds,
                 freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
-                    ? Math.max(0, (20 * 60) - (user.weeklyAISeconds || 0))
+                    ? Math.max(0, FREE_WEEKLY_SECONDS - (user.weeklyAISeconds || 0))
                     : null,
                 // Interactive tools
                 graphTool: graphToolConfig,
