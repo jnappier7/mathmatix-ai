@@ -221,6 +221,28 @@
     render(cmds);
   };
 
+  // Friendly empty state so a fresh canvas doesn't read as blank/broken —
+  // mirrors the legacy board's "Ready to work it out?" hint. Non-interactive
+  // (pointer-events:none) so it never blocks panning; auto-hides the moment
+  // the first element lands and returns if the board is cleared.
+  function wireEmptyState(mount) {
+    if (!shell || !shell.registry) return;
+    var hint = document.createElement('div');
+    hint.className = 'lws-empty-state';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.innerHTML =
+      '<div class="lws-empty-icon">✍️</div>' +
+      '<div class="lws-empty-title">Ready to work it out?</div>' +
+      '<div class="lws-empty-sub">Your steps, graphs, and tiles show up here as you and your tutor build them together.</div>';
+    mount.appendChild(hint);
+    function refresh() {
+      var count = shell.registry.list ? shell.registry.list().length : 0;
+      hint.style.display = count === 0 ? '' : 'none';
+    }
+    try { shell.registry.subscribe(refresh); } catch (_) { /* no subscribe → static hint */ }
+    refresh();
+  }
+
   function boot() {
     injectCss();
     loadNext(0, function () {
@@ -229,6 +251,7 @@
       shell = makeShell();
       shell.mount(mount);
       ready = true;
+      wireEmptyState(mount);
       if (pending) { var p = pending; pending = null; render(p); }
       console.log('[LWS_CHAT] mounted (mode=' + MODE + ')');
     });

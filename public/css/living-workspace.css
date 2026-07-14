@@ -195,3 +195,16 @@
 }
 .lws-note-icon { font-size: 20px; line-height: 1; flex: 0 0 auto; }
 .lws-note-text { opacity: 0.9; word-break: break-word; }
+
+/* ── Empty state (fresh canvas hint) ───────────────────────── */
+.lws-empty-state {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; text-align: center; padding: 24px;
+  pointer-events: none; color: rgba(232, 236, 244, 0.66);
+}
+.lws-empty-state .lws-empty-icon { font-size: 34px; }
+.lws-empty-state .lws-empty-title { font: 600 15px/1.3 Inter, system-ui, sans-serif; }
+.lws-empty-state .lws-empty-sub {
+  font: 13px/1.45 Inter, system-ui, sans-serif; opacity: 0.82; max-width: 280px;
+}
