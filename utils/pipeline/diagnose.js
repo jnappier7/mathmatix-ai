@@ -11,6 +11,7 @@
  */
 
 const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSolver');
+const { symbolicVerify } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 
 /**
@@ -229,6 +230,30 @@ async function diagnose(observation, context = {}) {
     isCorrect = true;
     correctAnswer = studentAnswer;
     verificationSource = 'arithmetic_override';
+  }
+
+  // ── Step 2a.5: SYMBOLIC verification (deterministic, before the LLM) ──
+  // Differentiate an integral answer back to the integrand, or numerically
+  // compare an expression to the known answer — resolving the algebra/calculus
+  // the solver can't parse (multi-term integrals, un-simplified forms, factored
+  // vs expanded). This is where the tutor was getting isCorrect=null and then
+  // guessing/false-flagging correct work. Deterministic and high-confidence;
+  // it only ever ADDS a verdict — unparseable/undecidable stays null and falls
+  // through to the LLM fallback, never a manufactured verdict.
+  if (isCorrect === null && multiRoot === null) {
+    try {
+      const sym = symbolicVerify({
+        studentAnswer,
+        correctAnswer: problemInfo && problemInfo.correctAnswer,
+        problemTex: context.pinnedProblemTex,
+      });
+      if (sym.isCorrect !== null) {
+        isCorrect = sym.isCorrect;
+        if (sym.isCorrect && correctAnswer == null) correctAnswer = studentAnswer;
+        verificationSource = 'symbolic:' + sym.method;
+        console.log(`[Diagnose] Symbolic ${sym.method}: ${isCorrect ? 'correct' : 'incorrect'}`);
+      }
+    } catch (_) { /* never break diagnosis */ }
   }
 
   // ── Step 2b: LLM verification fallback ──
