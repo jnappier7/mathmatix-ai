@@ -494,10 +494,21 @@ async function persist(params) {
   }
 
   // ── 9. AI time tracking ──
-  if (aiProcessingSeconds > 0) {
+  // Fair-time floor: a genuine tutoring turn always meters at least
+  // AI_TIME_FLOOR_SECONDS. Without this, the quota counts only raw server
+  // LLM latency, so a dense multi-turn session on fast gpt-4o-mini (a few
+  // seconds per turn) under-counts to near-zero — e.g. a 10-turn, ~12-minute
+  // session billed as "2 minutes". Slow turns (gpt-4o vision grading) still
+  // bill their true latency via max(). Only real turns are lifted: the
+  // aiProcessingSeconds > 0 guard means non-turns still bill nothing.
+  const AI_TIME_FLOOR_SECONDS = Number(process.env.AI_TIME_FLOOR_SECONDS) || 30;
+  const billedSeconds = aiProcessingSeconds > 0
+    ? Math.max(aiProcessingSeconds, AI_TIME_FLOOR_SECONDS)
+    : 0;
+  if (billedSeconds > 0) {
     const previousWeekly = user.weeklyAISeconds || 0;
-    const updatedWeekly = previousWeekly + aiProcessingSeconds;
-    const aiTimeUpdate = { $inc: { weeklyAISeconds: aiProcessingSeconds, totalAISeconds: aiProcessingSeconds } };
+    const updatedWeekly = previousWeekly + billedSeconds;
+    const aiTimeUpdate = { $inc: { weeklyAISeconds: billedSeconds, totalAISeconds: billedSeconds } };
 
     const FREE_WEEKLY = 30 * 60;
     const packStillValid = (user.subscriptionTier === 'pack_60' || user.subscriptionTier === 'pack_120') &&
@@ -518,7 +529,7 @@ async function persist(params) {
       console.error('[Persist] AI time tracking error:', err);
     }
 
-    results.aiTimeUsed = aiProcessingSeconds;
+    results.aiTimeUsed = billedSeconds;
     results.freeWeeklySecondsRemaining =
       (!user.subscriptionTier || user.subscriptionTier === 'free')
         ? Math.max(0, FREE_WEEKLY - updatedWeekly)
