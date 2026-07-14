@@ -57,7 +57,7 @@
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
-    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/studentMoveClient.js',
+    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
   ];
 
@@ -159,6 +159,15 @@
         // Algebra tiles: local gesture → P7 close-the-loop (optimistic
         // provisional → /api/student-moves verdict → commit/snap-back →
         // tutor reaction). csrfFetch carries the CSRF token in chat.
+        // Graph (P14). Completes the P5 adapter's `graph` board-command path:
+        // the tutor's already-gate-approved graph now renders on the surface,
+        // with a draggable tracer. (The visual-gate vertex/y-int extension is
+        // the server-side safety that makes exposing the graph safe.)
+        if (window.LWS.GraphElement) {
+          overlayMgr.registerRenderer('graph', window.LWS.GraphElement.makeRenderer({
+            onChange: function () { /* tracer exploration — mode:'exploration', no answer injection */ },
+          }));
+        }
         // Number line (P13). A marker drag emits onChange; wiring it through
         // the student-move loop mirrors tiles and is a small follow-up.
         if (window.LWS.NumberLineElement) {
