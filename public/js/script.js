@@ -3110,7 +3110,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // Phase B: execute server-emitted <BOARD> commands against
             // the embedded WorkBoard. The pipeline pre-guards these
             // against the #1 rule; this handler just dispatches.
-            if (Array.isArray(data.boardCommands) && data.boardCommands.length > 0 && window.BoardCommandHandler) {
+            // Skip when the Living Workspace is on — it owns the board slot
+            // now (the legacy board is hidden), so running this handler would
+            // just double-process commands into invisible DOM.
+            const lwsOwnsBoard = !!(window.LWS_CHAT && typeof window.LWS_CHAT.isOn === 'function' && window.LWS_CHAT.isOn());
+            if (!lwsOwnsBoard && Array.isArray(data.boardCommands) && data.boardCommands.length > 0 && window.BoardCommandHandler) {
                 try {
                     window.BoardCommandHandler.executeBoardCommands(data.boardCommands);
                 } catch (error) {

@@ -57,7 +57,8 @@
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
-    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js', 'dom/studentMoveClient.js',
+    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
+    'dom/noteElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
   ];
 
@@ -167,6 +168,15 @@
           overlayMgr.registerRenderer('graph', window.LWS.GraphElement.makeRenderer({
             onChange: function () { /* tracer exploration — mode:'exploration', no answer injection */ },
           }));
+        }
+        // Image (P15) + geometry (P17) don't have real renderers yet. Until
+        // they land, a titled NOTE CARD shows what the tutor asked for (the
+        // gate-approved image query / figure label) instead of vanishing or
+        // showing a bare "[image]". Same renderer, registered for both types.
+        if (window.LWS.NoteElement) {
+          var noteRenderer = window.LWS.NoteElement.makeRenderer();
+          overlayMgr.registerRenderer('image', noteRenderer);
+          overlayMgr.registerRenderer('geometry', noteRenderer);
         }
         // Number line (P13). A marker drag emits onChange; wiring it through
         // the student-move loop mirrors tiles and is a small follow-up.
