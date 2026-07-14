@@ -62,7 +62,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js2.eeaf2aeb.js",
+      "src": "/dist/js/chat-js2.872abfd9.js",
       "files": [
         "/js/voice-stream-client.js?v=3",
         "/js/voice-controller.js"
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js7.faa7a00a.js",
+      "src": "/dist/js/chat-js7.7e458518.js",
       "files": [
         "/js/mobile-poster-chat.js",
         "/js/inlineEquationBox.js",

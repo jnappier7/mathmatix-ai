@@ -461,17 +461,20 @@ window.I18N_TRANSLATIONS = {
     French: 'Choisissez la langue que vous souhaitez pour les explications mathématiques.',
     German: 'Wählen Sie die Sprache, in der Ihr Tutor Mathe-Konzepte erklären soll.'
   },
-  'settings.handsFreeMode': {
-    English: 'Hands-Free Mode', Spanish: 'Modo manos libres', Russian: 'Режим без рук', Chinese: '免提模式',
-    Vietnamese: 'Chế độ rảnh tay', Arabic: 'الوضع بدون استخدام اليدين', Somali: 'Habka gacmo-furnaanta', French: 'Mode mains libres', German: 'Freisprechmodus'
+  'settings.darkMode': {
+    English: 'Dark Mode', Spanish: 'Modo oscuro', Russian: 'Тёмный режим', Chinese: '深色模式',
+    Vietnamese: 'Chế độ tối', Arabic: 'الوضع الداكن', Somali: 'Habka Mugdiga', French: 'Mode sombre', German: 'Dunkelmodus'
   },
-  'settings.autoplayAudio': {
-    English: 'Autoplay Audio', Spanish: 'Reproducción automática', Russian: 'Автоматическое воспроизведение', Chinese: '自动播放音频',
-    Vietnamese: 'Tự động phát âm thanh', Arabic: 'تشغيل تلقائي للصوت', Somali: 'Dhagaysi toos ah', French: 'Lecture automatique', German: 'Audio automatisch abspielen'
-  },
-  'settings.voiceChatOrb': {
-    English: 'Voice Chat Orb', Spanish: 'Orbe de chat de voz', Russian: 'Кнопка голосового чата', Chinese: '语音聊天球',
-    Vietnamese: 'Quả cầu chat thoại', Arabic: 'زرّ الدردشة الصوتية', Somali: 'Badhanka codka sheekaysiga', French: 'Bouton de chat vocal', German: 'Sprachchat-Button'
+  'settings.darkModeDescription': {
+    English: 'Use the dark color theme. Light mode is the default.',
+    Spanish: 'Usa el tema de color oscuro. El modo claro es el predeterminado.',
+    Russian: 'Использовать тёмную цветовую тему. По умолчанию — светлый режим.',
+    Chinese: '使用深色主题。默认为浅色模式。',
+    Vietnamese: 'Sử dụng giao diện màu tối. Chế độ sáng là mặc định.',
+    Arabic: 'استخدم السمة الداكنة. الوضع الفاتح هو الافتراضي.',
+    Somali: 'Isticmaal midabka mugdiga. Habka iftiinka ayaa ah kan caadiga ah.',
+    French: 'Utiliser le thème sombre. Le mode clair est celui par défaut.',
+    German: 'Dunkles Farbschema verwenden. Der Hellmodus ist die Standardeinstellung.'
   },
   'settings.changePassword': {
     English: 'Change Password', Spanish: 'Cambiar contraseña', Russian: 'Изменить пароль', Chinese: '更改密码',

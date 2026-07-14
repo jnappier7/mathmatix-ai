@@ -1326,22 +1326,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
           <div class="form-group settings-toggle">
-          <label for="handsFreeToggle" data-i18n="settings.handsFreeMode">Hands-Free Mode</label>
-          <input type="checkbox" id="handsFreeToggle" class="toggle-switch">
+          <label for="darkModeToggle" data-i18n="settings.darkMode">Dark Mode</label>
+          <input type="checkbox" id="darkModeToggle" class="toggle-switch">
         </div>
-        <p class="setting-description">When enabled, the AI's responses will be read aloud automatically and typed out on screen.</p>
-
-        <div class="form-group settings-toggle">
-          <label for="autoplayTtsToggle" data-i18n="settings.autoplayAudio">Autoplay Audio</label>
-          <input type="checkbox" id="autoplayTtsToggle" class="toggle-switch">
-        </div>
-        <p class="setting-description">Controls whether audio plays automatically in Hands-Free mode.</p>
-
-        <div class="form-group settings-toggle">
-          <label for="voiceChatToggle" data-i18n="settings.voiceChatOrb">Voice Chat Orb</label>
-          <input type="checkbox" id="voiceChatToggle" class="toggle-switch">
-        </div>
-        <p class="setting-description">Show or hide the purple voice chat button in the bottom-right corner.</p>
+        <p class="setting-description" data-i18n="settings.darkModeDescription">Use the dark color theme. Light mode is the default.</p>
 
         <hr style="margin: 25px 0; border: none; border-top: 1px solid #ddd;">
 
@@ -2300,7 +2288,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script defer src="/js/chat-redesign.js"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
-  <script src="/dist/js/chat-js2.eeaf2aeb.js"></script>
+  <script src="/dist/js/chat-js2.872abfd9.js"></script>
 <!-- Voice as a layout mode of the chat stage -->
   <script src="/js/voice-mode.js?v=2"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
@@ -2338,24 +2326,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </script>
   <script src="/dist/js/chat-js6.43429f6a.js"></script>
 <!-- mobile-chat-nav.js (4-tab bottom nav) retired — replaced by the poster-chat hybrid -->
-  <script src="/dist/js/chat-js7.faa7a00a.js"></script>
+  <script src="/dist/js/chat-js7.7e458518.js"></script>
 <script>
-    // Wire up the dark mode toggle button in the header
+    // Wire up the dark mode controls: the header quick-toggle button (hidden in
+    // the current cr-mode layout) AND the Dark Mode switch in Settings. Both stay
+    // in sync via the 'themechange' event that applyTheme() dispatches.
     (function() {
+      if (!window.ThemeToggle) return;
       const btn = document.getElementById('theme-toggle-btn');
-      if (!btn || !window.ThemeToggle) return;
-      function updateIcon() {
+      const settingsToggle = document.getElementById('darkModeToggle');
+      function updateUI() {
         const dark = ThemeToggle.getTheme() === 'dark';
-        btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+        if (btn) {
+          btn.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+          btn.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+        }
+        if (settingsToggle) settingsToggle.checked = dark;
       }
-      btn.addEventListener('click', () => { ThemeToggle.toggle(); updateIcon(); });
-      document.addEventListener('themechange', updateIcon);
-      updateIcon();
+      if (btn) btn.addEventListener('click', () => { ThemeToggle.toggle(); });
+      if (settingsToggle) settingsToggle.addEventListener('change', () => {
+        ThemeToggle.setTheme(settingsToggle.checked ? 'dark' : 'light');
+      });
+      document.addEventListener('themechange', updateUI);
+      updateUI();
     })();
   </script>
   <script src="/dist/js/chat-js8.910bc9c0.js"></script>
-<script src="/js/script.js?v=20260709" type="module"></script>
+<script src="/js/script.js?v=20260714" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.bc0be9a3.js"></script>
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
