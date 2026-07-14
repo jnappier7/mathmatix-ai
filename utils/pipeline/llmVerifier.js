@@ -25,6 +25,7 @@
  */
 
 const { callLLM } = require('../llmGateway');
+const { symbolicVerify } = require('./symbolicVerifier');
 
 // Small, fast model. Matches the existing PRIMARY_CHAT_MODEL in verify.js so
 // we stay within the OpenAI-only contract of openaiClient.js. A swap to
@@ -117,6 +118,20 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
     if (!modelAnswer) {
       return { ...unverifiable, error: 'step1_parse_failed' };
     }
+
+    // ── Step 2a: SYMBOLIC equivalence (deterministic, before the LLM judge) ──
+    // Step 1's LLM is good at COMPUTING the expected answer for any math it
+    // reads — algebra, calculus, inline sub-questions. The CAS is exact at
+    // CHECKING equivalence. Confirm with mathjs first, so any answer that's
+    // symbolically parseable gets a deterministic verdict instead of the flaky
+    // LLM equivalence judge (the step that eyeballed x^6-2x^2+... and got it
+    // wrong). Non-symbolic answers (word problems, proofs) fall through below.
+    try {
+      const sym = symbolicVerify({ studentAnswer: answer, correctAnswer: modelAnswer });
+      if (sym.isCorrect !== null) {
+        return { isCorrect: sym.isCorrect, confidence: 0.98, modelAnswer, rationale: 'symbolic:' + sym.method, error: null };
+      }
+    } catch (_) { /* fall through to the LLM equivalence judge */ }
 
     // ── Step 2: Ask equivalence judge ──
     // Independent call, still no persona. Just: do these two mean the same thing?

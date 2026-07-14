@@ -39,48 +39,62 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
     callLLM.mockReset();
   });
 
-  test('returns isCorrect=true when verdict matches with high confidence', async () => {
-    callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '9x^2 - 5', form: 'simplified' }))
-      .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.98, rationale: 'algebraic equivalence' }));
+  // The CAS resolves any symbolically-checkable answer deterministically, right
+  // after step 1 computes the expected answer — so the flaky LLM equivalence
+  // judge (step 2) is bypassed for symbolic math.
+  test('CAS confirms a symbolically-equivalent answer without the LLM judge', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: '9x^2 - 5', form: 'simplified' })); // step 1 only
 
-    const result = await llmVerifyAnswer(
-      'What is the derivative of 3x^3 - 5x + 2?',
-      '9x^2 - 5'
-    );
+    const result = await llmVerifyAnswer('What is the derivative of 3x^3 - 5x + 2?', '9x^2 - 5');
 
     expect(result.isCorrect).toBe(true);
-    expect(result.confidence).toBe(0.98);
     expect(result.modelAnswer).toBe('9x^2 - 5');
-    expect(result.error).toBeNull();
-    expect(callLLM).toHaveBeenCalledTimes(2);
+    expect(result.rationale).toMatch(/symbolic/);
+    expect(callLLM).toHaveBeenCalledTimes(1); // no equivalence judge needed
   });
 
-  test('returns isCorrect=false when verdict says no match with high confidence', async () => {
-    callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '9x^2 - 5' }))
-      .mockResolvedValueOnce(fakeCompletion({ matches: false, confidence: 0.95, rationale: 'wrong coefficient' }));
+  test('CAS rejects a wrong symbolic answer (no false verdict from a flaky judge)', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: '9x^2 - 5' }));
 
-    const result = await llmVerifyAnswer(
-      'Derivative of 3x^3 - 5x + 2',
-      '6x^2 - 5'
-    );
+    const result = await llmVerifyAnswer('Derivative of 3x^3 - 5x + 2', '6x^2 - 5');
 
     expect(result.isCorrect).toBe(false);
-    expect(result.confidence).toBe(0.95);
-    expect(result.modelAnswer).toBe('9x^2 - 5');
+    expect(callLLM).toHaveBeenCalledTimes(1);
   });
 
-  test('low confidence returns isCorrect=null (treated as unverifiable)', async () => {
-    callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: 'x^2 + 2x + 1' }))
-      .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.4, rationale: 'uncertain' }));
+  // The exact case the old flow gave up on: the LLM judge was unsure, but the
+  // answer is genuinely correct — the CAS now confirms it.
+  test('CAS confirms a correct answer the LLM judge would have marked unverifiable', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ answer: 'x^2 + 2x + 1' }));
 
     const result = await llmVerifyAnswer('Factor x^2+2x+1', '(x+1)^2');
 
+    expect(result.isCorrect).toBe(true); // (x+1)^2 ≡ x^2+2x+1
+    expect(callLLM).toHaveBeenCalledTimes(1);
+  });
+
+  // Non-symbolic answers (prose / conceptual) still use the two-step LLM judge.
+  test('LLM judge handles a non-symbolic answer (match, high confidence)', async () => {
+    callLLM
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
+      .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.98, rationale: 'same idea' }));
+
+    const result = await llmVerifyAnswer('Describe the graph near x = 0', 'it is continuous there');
+
+    expect(result.isCorrect).toBe(true);
+    expect(result.confidence).toBe(0.98);
+    expect(callLLM).toHaveBeenCalledTimes(2); // CAS declines prose -> judge runs
+  });
+
+  test('non-symbolic low confidence returns isCorrect=null (unverifiable)', async () => {
+    callLLM
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'converges' }))
+      .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.4, rationale: 'uncertain' }));
+
+    const result = await llmVerifyAnswer('How does the series behave?', 'it converges');
+
     expect(result.isCorrect).toBeNull();
     expect(result.confidence).toBe(0.4);
-    expect(result.modelAnswer).toBe('x^2 + 2x + 1');
   });
 
   test('missing inputs return unverifiable with error', async () => {
@@ -100,7 +114,7 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
       choices: [{ message: { content: 'not valid json at all' } }],
     });
 
-    const result = await llmVerifyAnswer('What is 2+2?', '4');
+    const result = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
 
     expect(result.isCorrect).toBeNull();
     expect(result.error).toBe('step1_parse_failed');
@@ -110,30 +124,31 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
   test('step 1 returns no answer field → unverifiable', async () => {
     callLLM.mockResolvedValueOnce(fakeCompletion({ form: 'simplified' /* no answer */ }));
 
-    const result = await llmVerifyAnswer('What is 2+2?', '4');
+    const result = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
 
     expect(result.isCorrect).toBeNull();
     expect(result.error).toBe('step1_parse_failed');
   });
 
   test('step 2 parse failure returns unverifiable but preserves modelAnswer', async () => {
+    // prose answer -> CAS declines -> the LLM judge (step 2) runs and parse-fails
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '4' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
       .mockResolvedValueOnce({
         choices: [{ message: { content: 'garbage' } }],
       });
 
-    const result = await llmVerifyAnswer('What is 2+2?', '4');
+    const result = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
 
     expect(result.isCorrect).toBeNull();
     expect(result.error).toBe('step2_parse_failed');
-    expect(result.modelAnswer).toBe('4');
+    expect(result.modelAnswer).toBe('continuous');
   });
 
   test('thrown error from LLM returns unverifiable with error message', async () => {
     callLLM.mockRejectedValueOnce(new Error('rate limited'));
 
-    const result = await llmVerifyAnswer('What is 2+2?', '4');
+    const result = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
 
     expect(result.isCorrect).toBeNull();
     expect(result.confidence).toBe(0);
@@ -142,10 +157,10 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
 
   test('confidence above 1 clamps to 1', async () => {
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '4' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
       .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 1.5 }));
 
-    const result = await llmVerifyAnswer('What is 2+2?', '4');
+    const result = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
 
     expect(result.confidence).toBe(1);
     expect(result.isCorrect).toBe(true);
@@ -153,10 +168,10 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
 
   test('negative confidence clamps to 0 and becomes unverifiable', async () => {
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '4' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
       .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: -0.3 }));
 
-    const result = await llmVerifyAnswer('What is 2+2?', '4');
+    const result = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
 
     expect(result.confidence).toBe(0);
     expect(result.isCorrect).toBeNull();
@@ -164,29 +179,29 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
 
   test('respects confidenceThreshold override', async () => {
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '4' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
       .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.55 }));
 
     // Default threshold is 0.6, so confidence 0.55 → unverifiable
-    const defaultRun = await llmVerifyAnswer('What is 2+2?', '4');
+    const defaultRun = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
     expect(defaultRun.isCorrect).toBeNull();
 
     callLLM.mockReset();
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '4' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
       .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.55 }));
 
     // Lower the threshold → trust the verdict
-    const lowThresh = await llmVerifyAnswer('What is 2+2?', '4', { confidenceThreshold: 0.5 });
+    const lowThresh = await llmVerifyAnswer('Describe the behavior', 'it is continuous', { confidenceThreshold: 0.5 });
     expect(lowThresh.isCorrect).toBe(true);
   });
 
   test('passes the configured model to callLLM', async () => {
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '4' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
       .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.9 }));
 
-    await llmVerifyAnswer('What is 2+2?', '4', { model: 'custom-model' });
+    await llmVerifyAnswer('Describe the behavior', 'it is continuous', { model: 'custom-model' });
 
     expect(callLLM).toHaveBeenNthCalledWith(
       1,
@@ -210,10 +225,10 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
 
   test('defaults to VERIFIER_MODEL when no model is supplied', async () => {
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '4' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
       .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.9 }));
 
-    await llmVerifyAnswer('What is 2+2?', '4');
+    await llmVerifyAnswer('Describe the behavior', 'it is continuous');
 
     expect(callLLM).toHaveBeenCalledWith(
       VERIFIER_MODEL,
@@ -224,15 +239,15 @@ describe('LLMVerifier: llmVerifyAnswer', () => {
 
   test('step 2 prompt includes both expected and student answers', async () => {
     callLLM
-      .mockResolvedValueOnce(fakeCompletion({ answer: '(x+3)(x-2)' }))
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'increasing' }))
       .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.9 }));
 
-    await llmVerifyAnswer('Factor x^2+x-6', '(x-2)(x+3)');
+    await llmVerifyAnswer('Describe the trend', 'it is increasing');
 
     const step2Call = callLLM.mock.calls[1];
     const step2UserMsg = step2Call[1].find(m => m.role === 'user');
-    expect(step2UserMsg.content).toContain('(x+3)(x-2)');    // expected
-    expect(step2UserMsg.content).toContain('(x-2)(x+3)');    // student
+    expect(step2UserMsg.content).toContain('increasing');        // expected
+    expect(step2UserMsg.content).toContain('it is increasing');  // student
   });
 
   test('truncates very long problem text and answer', async () => {
