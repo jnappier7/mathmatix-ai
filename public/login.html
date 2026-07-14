@@ -53,6 +53,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        The default .landing-page-body adds a hard column flex; we
        override below for the split layout. */
     body.auth-modern {
+      /* QA brand standardization (option B): product chrome = teal. The login
+         page read purple because it drove chrome off the purple --cr-accent
+         token; retint those tokens to the brand teal, scoped to the auth
+         page only. Gamification (which hardcodes its own purple) is
+         untouched, so purple stays where it belongs. */
+      --cr-accent: #12B3B3;
+      --cr-accent-strong: #0E9191;
+      --cr-accent-grad: linear-gradient(135deg, #12B3B3, #0E9191);
       background: var(--cr-bg-0);
       color: var(--cr-text);
       min-height: 100dvh;
@@ -116,7 +124,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .auth-modern .auth-brand {
       position: relative;
       padding: 64px 56px;
-      background: linear-gradient(160deg, #EDE9FF 0%, #F5F7FB 55%, #FFFFFF 100%);
+      background: linear-gradient(160deg, #E3F6F6 0%, #F5F7FB 55%, #FFFFFF 100%);
       border-right: 1px solid var(--cr-border);
       display: flex;
       flex-direction: column;
