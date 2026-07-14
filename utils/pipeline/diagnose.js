@@ -11,7 +11,7 @@
  */
 
 const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSolver');
-const { symbolicVerify } = require('./symbolicVerifier');
+const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 
 /**
@@ -252,6 +252,26 @@ async function diagnose(observation, context = {}) {
         if (sym.isCorrect && correctAnswer == null) correctAnswer = studentAnswer;
         verificationSource = 'symbolic:' + sym.method;
         console.log(`[Diagnose] Symbolic ${sym.method}: ${isCorrect ? 'correct' : 'incorrect'}`);
+      }
+
+      // Bare answer to a conversational arithmetic sub-question the tutor just
+      // posed ("what's 50 × 3?" -> "150"). These are never the pinned problem,
+      // so they went unverified and the tutor guessed / fumbled the arithmetic.
+      // Verify the student's bare number against the tutor's last message.
+      // Conservative: purely-numeric arithmetic vs a single-number answer only.
+      if (isCorrect === null && recentAI.length) {
+        const lastTutor = recentAI[recentAI.length - 1] && recentAI[recentAI.length - 1].content;
+        const posed = detectPosedArithmetic(lastTutor);
+        const ans = bareNumericAnswer(studentAnswer != null ? studentAnswer : rawText);
+        if (posed && ans != null) {
+          const r = equivalent(posed, ans);
+          if (r !== null) {
+            isCorrect = r;
+            if (r && correctAnswer == null) correctAnswer = ans;
+            verificationSource = 'symbolic:arithmetic';
+            console.log(`[Diagnose] Arithmetic check: "${posed}" vs "${ans}" -> ${isCorrect ? 'correct' : 'incorrect'}`);
+          }
+        }
       }
     } catch (_) { /* never break diagnosis */ }
   }
