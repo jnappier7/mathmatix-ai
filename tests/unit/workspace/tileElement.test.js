@@ -27,12 +27,16 @@ describe('interpretDrop — the shared gesture→operation contract', () => {
     expect(Tile.interpretDrop(x2, xNeg2)).toEqual({ type: 'remove_zero_pair', tileRefs: ['a', 'c'] });
   });
 
-  test('unlike variables → null (cancel; no math op)', () => {
-    expect(Tile.interpretDrop(x2, y5)).toBeNull();
-    expect(Tile.interpretDrop(x2, unit4)).toBeNull();
+  test('unlike terms → still a combine ATTEMPT (client proposes; server coaches the misconception)', () => {
+    // The pedagogy is "allow-and-teach": the student may TRY to combine 2x
+    // and 4, or 2x and 5y. The client sends a combine attempt; the server
+    // classifies it combine_unlike_terms and the tutor coaches — the UI must
+    // NOT block it.
+    expect(Tile.interpretDrop(x2, y5)).toEqual({ type: 'combine_like_terms', tileRefs: ['a', 'e'] });
+    expect(Tile.interpretDrop(x2, unit4)).toEqual({ type: 'combine_like_terms', tileRefs: ['a', 'd'] });
   });
 
-  test('dropping a tile on itself → null', () => {
+  test('dropping a tile on itself → null (no-op)', () => {
     expect(Tile.interpretDrop(x2, x2)).toBeNull();
   });
 

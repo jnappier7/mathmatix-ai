@@ -35,14 +35,18 @@
     return a.variable === b.variable && a.coefficient === -b.coefficient && a.coefficient !== 0;
   }
 
-  // Interpret "chip A dropped onto chip B" → an operation (or null = cancel).
-  // Pure: given two term tiles, decide the intent. Same rule for mouse and
-  // keyboard so the DoD "same operation object" holds.
+  // Interpret "chip A dropped onto chip B" → an operation (or null = no-op).
+  // Pure; same rule for mouse and keyboard so the DoD "same operation object"
+  // holds. The client PROPOSES, the server DISPOSES: dropping one chip on
+  // another is always a combine ATTEMPT (intent), EXCEPT an exact +n/−n pair,
+  // which is a zero pair. Crucially we do NOT block unlike terms here — the
+  // student is allowed to try combining 2x and 4; the server classifies it as
+  // the combine_unlike_terms misconception and the tutor coaches it (spec:
+  // "allow-and-teach"). Only a drop on itself is a no-op.
   function interpretDrop(a, b) {
     if (!a || !b || a.id === b.id) return null;
     if (zeroPair(a, b)) return { type: 'remove_zero_pair', tileRefs: [a.id, b.id] };
-    if (like(a, b)) return { type: 'combine_like_terms', tileRefs: [a.id, b.id] };
-    return null; // unlike, non-pair → no math op (cancel; chip snaps back)
+    return { type: 'combine_like_terms', tileRefs: [a.id, b.id] };
   }
 
   function termLabel(t) {

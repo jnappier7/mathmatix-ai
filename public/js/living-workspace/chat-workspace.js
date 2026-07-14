@@ -38,9 +38,17 @@
   var MODE = resolveMode();
   var ON = MODE === 'dev' || MODE === 'beta' || MODE === 'live';
 
+  // Chat context for the student-move loop (P7). Chat refines it via
+  // window.LWS_CHAT.setContext({ conversationId, workspaceId }).
+  var ctx = { conversationId: null, workspaceId: 'chat' };
+
   // Public surface is always defined so callers don't need to feature-detect
   // twice; when off, applyBoardCommands is a no-op.
-  var api = { isOn: function () { return ON; }, applyBoardCommands: function () {} };
+  var api = {
+    isOn: function () { return ON; },
+    applyBoardCommands: function () {},
+    setContext: function (c) { if (c && typeof c === 'object') { if (c.conversationId != null) ctx.conversationId = c.conversationId; if (c.workspaceId != null) ctx.workspaceId = c.workspaceId; } },
+  };
   window.LWS_CHAT = api;
   if (!ON) return;
 
@@ -49,6 +57,7 @@
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
+    'dom/tileElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
   ];
 
@@ -108,12 +117,35 @@
     return mount;
   }
 
+  // Surface the tutor's reaction to a student move. Prefer the chat's own
+  // message renderer; fall back to a DOM event chat can listen for.
+  function surfaceReaction(text) {
+    try {
+      if (typeof window.appendMessage === 'function') { window.appendMessage('assistant', text); return; }
+    } catch (_) { /* fall through */ }
+    try { window.dispatchEvent(new CustomEvent('lws:tutor-reaction', { detail: { text: text } })); } catch (_) {}
+  }
+
   function makeShell() {
     return new window.LWS.Shell({
       world: { width: 2400, height: 1600 },
       registerRenderers: function (overlayMgr, sh) {
         overlayMgr.registerRenderer('equation', window.LWS.EquationElement.makeRenderer({
           onEditCommit: function (id, latex) { sh.updateElement(id, { semantic: { latex: latex, plain: latex } }); },
+        }));
+        // Algebra tiles: local gesture → P7 close-the-loop (optimistic
+        // provisional → /api/student-moves verdict → commit/snap-back →
+        // tutor reaction). csrfFetch carries the CSRF token in chat.
+        overlayMgr.registerRenderer('algebra_tiles', window.LWS.TileElement.makeRenderer({
+          onOperation: function (op) {
+            var el = sh.registry.get('tiles-1') || sh.registry.list().find(function (e) { return e.type === 'algebra_tiles'; });
+            if (!el) return;
+            window.LWS.StudentMoveClient.runTileMove({
+              shell: sh, element: el, operation: op, source: 'gesture',
+              ctx: ctx, fetch: (typeof window.csrfFetch === 'function' ? window.csrfFetch : undefined),
+              onReaction: function (txt) { surfaceReaction(txt); },
+            });
+          },
         }));
       },
     });
