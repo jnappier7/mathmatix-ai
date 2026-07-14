@@ -33,8 +33,20 @@ describe('visualGate — helpers', () => {
     expect(extractNumbers('No real solutions')).toEqual([]);
   });
 
-  it('graphRevealedValues computes the roots a graph would expose', () => {
-    expect(graphRevealedValues('x^2 - 5x + 6').sort()).toEqual([2, 3]);
+  it('graphRevealedValues exposes roots AND y-intercept AND vertex', () => {
+    // x^2 - 5x + 6: roots 2 & 3, y-intercept f(0)=6, vertex (2.5, -0.25).
+    const v = graphRevealedValues('x^2 - 5x + 6');
+    expect(v).toEqual(expect.arrayContaining([2, 3])); // roots
+    expect(v).toContain(6);                            // y-intercept
+    expect(v).toContain(2.5);                          // vertex x
+    expect(v).toContain(-0.25);                        // vertex y (minimum value)
+  });
+
+  it('graphRevealedValues gets the y-intercept of a line', () => {
+    // 2x + 5: root -2.5, y-intercept 5.
+    const v = graphRevealedValues('2x + 5');
+    expect(v).toContain(5);
+    expect(v).toContain(-2.5);
   });
 
   it('visualIsTheTask detects a graphing assignment', () => {
@@ -129,6 +141,44 @@ describe('visualGate — orchestrator + modes', () => {
     });
     expect(record.decision).toBe('block');
     expect(command).toEqual({ action: 'graph', fn: 'x^2 - 5x + 6' }); // unchanged in shadow
+  });
+
+  it('live_control blocks a graph that leaks the VERTEX (previously slipped through)', async () => {
+    // "minimum value" answer = the vertex y (−1). Roots {1,3} would NOT catch
+    // this; the vertex extension does.
+    const vertexProblem = {
+      problemText: 'Find the minimum value of x^2 - 4x + 3',
+      normalizedExpression: 'x^2 - 4x + 3',
+      correctAnswer: 'y = -1',
+      problemType: 'quadratic',
+      status: 'unsolved',
+    };
+    const { command, record } = await applyVisualGate({
+      command: { action: 'graph', fn: 'x^2 - 4x + 3' },
+      activeProblem: vertexProblem,
+      mode: MODES.LIVE_CONTROL,
+      valueJudge: allowJudge,
+    });
+    expect(record.decision).toBe('block');
+    expect(command).toBeNull();
+  });
+
+  it('live_control blocks a graph that leaks the Y-INTERCEPT', async () => {
+    const yIntProblem = {
+      problemText: 'What is the y-intercept of x^2 - 4x + 3?',
+      normalizedExpression: 'x^2 - 4x + 3',
+      correctAnswer: 'y-intercept = 3',
+      problemType: 'quadratic',
+      status: 'unsolved',
+    };
+    const { command, record } = await applyVisualGate({
+      command: { action: 'graph', fn: 'x^2 - 4x + 3' },
+      activeProblem: yIntProblem,
+      mode: MODES.LIVE_CONTROL,
+      valueJudge: allowJudge,
+    });
+    expect(record.decision).toBe('block');
+    expect(command).toBeNull();
   });
 
   it('live_control blocks a leaking graph (drops it)', async () => {
