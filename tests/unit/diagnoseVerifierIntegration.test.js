@@ -52,6 +52,26 @@ describe('diagnose — symbolic verifier integration (the live regressions)', ()
     expect(d.isCorrect).toBe(false);
   });
 
+  it('grades a correct equation solution against the pinned problem', async () => {
+    const d = await diagnose(ans('x = 2 or x = 3'), {
+      recentAssistantMessages: [{ content: 'Solve it: $x^2 - 5x + 6 = 0$' }],
+      recentUserMessages: [],
+      pinnedProblemTex: 'x^2 - 5x + 6 = 0',
+    });
+    expect(d.isCorrect).toBe(true);
+  });
+
+  it('does NOT false-flag an intermediate step on an equation problem', async () => {
+    // Pinned problem 2x+4=20; tutor asked for 2x; student's "16" is a correct
+    // step, not a claimed solution — must never be graded wrong vs the equation.
+    const d = await diagnose(ans('16'), {
+      recentAssistantMessages: [{ content: 'Good — so what is 2x?' }],
+      recentUserMessages: [],
+      pinnedProblemTex: '2x + 4 = 20',
+    });
+    expect(d.isCorrect).not.toBe(false);
+  });
+
   it('does NOT fire on a bare number when the tutor posed no arithmetic (no over-reach)', async () => {
     const d = await diagnose(ans('150'), {
       recentAssistantMessages: [{ content: 'Nice work — ready for the next problem?' }],

@@ -1,4 +1,4 @@
-const { symbolicVerify, equivalent, verifyAntiderivative, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer } = require('../../utils/pipeline/symbolicVerifier');
+const { symbolicVerify, equivalent, verifyAntiderivative, verifyEquationSolution, extractEquation, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer } = require('../../utils/pipeline/symbolicVerifier');
 
 describe('symbolicVerifier — posed-arithmetic detection (the 50x3 fumble)', () => {
   it('extracts the arithmetic the tutor asked to compute', () => {
@@ -111,5 +111,42 @@ describe('symbolicVerifier — symbolicVerify (top-level)', () => {
   it('NEVER throws, whatever the input', () => {
     expect(() => symbolicVerify({ studentAnswer: '\\frac{', correctAnswer: '}{}\\' })).not.toThrow();
     expect(() => symbolicVerify(null)).not.toThrow();
+  });
+});
+
+describe('symbolicVerifier — equation-solution verification (substitute & check)', () => {
+  it('splits an equation problem tex into lhs/rhs', () => {
+    expect(extractEquation('2x + 4 = 20')).toMatchObject({ lhs: '2x + 4', rhs: '20' });
+    expect(extractEquation('x^{2} - 5x + 6 = 0')).toBeTruthy();
+    expect(extractEquation('3x^2 + 4x - 7')).toBeNull();     // no '=', not an equation
+    expect(extractEquation('a = b = c')).toBeNull();          // ambiguous, not one equation
+  });
+
+  it('confirms a correct linear solution and rejects a wrong one', () => {
+    expect(verifyEquationSolution('x = 8', '2x + 4 = 20')).toBe(true);   // 2*8+4=20 ✓
+    expect(verifyEquationSolution('x = 7', '2x + 4 = 20')).toBe(false);  // 18 ≠ 20
+    expect(verifyEquationSolution('x = -7/3', '3x + 7 = 0')).toBe(true); // fractions
+  });
+
+  it('confirms BOTH roots of a quadratic the deterministic solver can\'t parse', () => {
+    expect(verifyEquationSolution('x = 2 or x = 3', 'x^2 - 5x + 6 = 0')).toBe(true);
+    expect(verifyEquationSolution('x = 2 or x = 5', 'x^2 - 5x + 6 = 0')).toBe(false); // 5 isn't a root
+  });
+
+  it('REFUSES to grade a bare intermediate number against the equation (no false-flag)', () => {
+    // Student is mid-solve on 2x+4=20; tutor asked "what is 2x?"; student says "16".
+    // "16" satisfies nothing about the *whole* equation, but it's a correct step —
+    // the verifier must decline (null), never return false.
+    expect(verifyEquationSolution('16', '2x + 4 = 20')).toBeNull();
+    expect(verifyEquationSolution('8', '2x + 4 = 20')).toBeNull();   // even the right value, bare -> decline
+  });
+
+  it('wires through symbolicVerify via problemTex (method: equation)', () => {
+    const v = symbolicVerify({ studentAnswer: 'x = 8', problemTex: '2x + 4 = 20' });
+    expect(v.isCorrect).toBe(true);
+    expect(v.method).toBe('equation');
+    expect(symbolicVerify({ studentAnswer: 'x = 3', problemTex: 'x^2 - 5x + 6 = 0' }).isCorrect).toBe(true);
+    // an integral problemTex must still take the antiderivative path, not equation
+    expect(symbolicVerify({ studentAnswer: 'x^6 + C', problemTex: '\\int 6x^5\\,dx' }).method).toBe('antiderivative');
   });
 });
