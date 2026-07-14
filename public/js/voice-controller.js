@@ -252,13 +252,14 @@ class VoiceController {
     // ============================================
 
     createVoiceUI() {
-        // The floating voice orb has been removed from the UI entirely — it's
-        // never mounted to the DOM (see the appendChild note below), so it can't
-        // appear in normal chat OR voice mode. Voice is entered/exited from the
-        // composer headset (#voice-mode-btn) and the sidebar "Voice Tutor" button;
-        // in-voice feedback comes from the "Live with <tutor>" pill meter.
-        // The orb elements are still constructed (detached) so the controller's
-        // state machine — driven by voice-mode.js — stays null-safe.
+        // The orb IS the microphone in voice mode — the central mic/listening
+        // control that voice-mode.js flanks with #mpc-voice-work and
+        // #mpc-voice-end (see voice-mode.js: "The orb is the mic"). It is hidden
+        // during normal chat and shown only in voice mode via CSS
+        // (body.cr-mode:not(.cr-voice) #voice-chat-container { display:none }).
+        // Do NOT unmount it, or voice mode loses its mic. The old settings
+        // "Voice Chat Orb" toggle / voiceChatEnabled preference is gone, so the
+        // orb is always available (CSS decides when it's visible).
         const voiceEnabled = true;
 
         // Create floating voice button (like GPT's orb)
@@ -302,9 +303,7 @@ class VoiceController {
 
         voiceContainer.appendChild(orbButton);
         voiceContainer.appendChild(statusText);
-        // Intentionally NOT mounted to the DOM — the floating orb is fully
-        // removed from the UI. Refs below stay valid for the state machine.
-        // (was: document.body.appendChild(voiceContainer);)
+        document.body.appendChild(voiceContainer);
 
         this.voiceButton = orbButton;
         this.voiceOrb = orbButton.querySelector('.orb-inner');
