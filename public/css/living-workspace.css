@@ -177,3 +177,56 @@
   color: var(--lws-card-ink); opacity: 0.85; text-align: center;
 }
 .lws-graph-tracer:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+/* ── Note card (interim renderer for image/geometry — P15/P17 pending) ── */
+.lws-note-card {
+  background: var(--lws-card-bg); border: 1px solid var(--lws-card-border);
+  border-radius: 10px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none; min-width: 140px; max-width: 260px;
+}
+.lws-el.is-provisional .lws-note-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-note-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-note-body {
+  padding: 10px 12px; display: flex; gap: 8px; align-items: center;
+  color: var(--lws-card-ink); font-size: 14px;
+}
+.lws-note-icon { font-size: 20px; line-height: 1; flex: 0 0 auto; }
+.lws-note-text { opacity: 0.9; word-break: break-word; }
+
+/* ── Image element (P15 — real safe-search picture) ────────── */
+.lws-image-card {
+  background: var(--lws-card-bg); border: 1px solid var(--lws-card-border);
+  border-radius: 10px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none; width: 240px;
+}
+.lws-el.is-provisional .lws-image-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-image-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab; border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-image-body { padding: 8px; display: flex; align-items: center; justify-content: center; min-height: 60px; }
+.lws-image-img { max-width: 100%; max-height: 200px; border-radius: 6px; display: block; }
+.lws-image-fallback {
+  display: flex; gap: 8px; align-items: center; padding: 6px;
+  color: var(--lws-card-ink); font-size: 14px; opacity: 0.9;
+}
+.lws-image-caption {
+  padding: 0 10px 8px; text-align: center;
+  font: 12px/1.4 Inter, system-ui, sans-serif; color: var(--lws-card-ink); opacity: 0.82;
+}
+
+/* ── Empty state (fresh canvas hint) ───────────────────────── */
+.lws-empty-state {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; text-align: center; padding: 24px;
+  pointer-events: none; color: rgba(232, 236, 244, 0.66);
+}
+.lws-empty-state .lws-empty-icon { font-size: 34px; }
+.lws-empty-state .lws-empty-title { font: 600 15px/1.3 Inter, system-ui, sans-serif; }
+.lws-empty-state .lws-empty-sub {
+  font: 13px/1.45 Inter, system-ui, sans-serif; opacity: 0.82; max-width: 280px;
+}

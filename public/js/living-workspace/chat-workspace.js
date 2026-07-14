@@ -57,7 +57,8 @@
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
-    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js', 'dom/studentMoveClient.js',
+    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
+    'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
   ];
 
@@ -168,6 +169,19 @@
             onChange: function () { /* tracer exploration — mode:'exploration', no answer injection */ },
           }));
         }
+        // Image (P15): render the REAL safe-search picture. Reuses the app's
+        // COPPA-safe /api/images pipeline; degrades to a labelled note on any
+        // failure. Falls back to the note card if the module didn't load.
+        if (window.LWS.ImageElement) {
+          overlayMgr.registerRenderer('image', window.LWS.ImageElement.makeRenderer());
+        } else if (window.LWS.NoteElement) {
+          overlayMgr.registerRenderer('image', window.LWS.NoteElement.makeRenderer());
+        }
+        // Geometry (P17) has no real renderer yet — a titled note card shows
+        // the figure label instead of a bare "[geometry]".
+        if (window.LWS.NoteElement) {
+          overlayMgr.registerRenderer('geometry', window.LWS.NoteElement.makeRenderer());
+        }
         // Number line (P13). A marker drag emits onChange; wiring it through
         // the student-move loop mirrors tiles and is a small follow-up.
         if (window.LWS.NumberLineElement) {
@@ -211,6 +225,28 @@
     render(cmds);
   };
 
+  // Friendly empty state so a fresh canvas doesn't read as blank/broken —
+  // mirrors the legacy board's "Ready to work it out?" hint. Non-interactive
+  // (pointer-events:none) so it never blocks panning; auto-hides the moment
+  // the first element lands and returns if the board is cleared.
+  function wireEmptyState(mount) {
+    if (!shell || !shell.registry) return;
+    var hint = document.createElement('div');
+    hint.className = 'lws-empty-state';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.innerHTML =
+      '<div class="lws-empty-icon">✍️</div>' +
+      '<div class="lws-empty-title">Ready to work it out?</div>' +
+      '<div class="lws-empty-sub">Your steps, graphs, and tiles show up here as you and your tutor build them together.</div>';
+    mount.appendChild(hint);
+    function refresh() {
+      var count = shell.registry.list ? shell.registry.list().length : 0;
+      hint.style.display = count === 0 ? '' : 'none';
+    }
+    try { shell.registry.subscribe(refresh); } catch (_) { /* no subscribe → static hint */ }
+    refresh();
+  }
+
   function boot() {
     injectCss();
     loadNext(0, function () {
@@ -219,6 +255,7 @@
       shell = makeShell();
       shell.mount(mount);
       ready = true;
+      wireEmptyState(mount);
       if (pending) { var p = pending; pending = null; render(p); }
       console.log('[LWS_CHAT] mounted (mode=' + MODE + ')');
     });

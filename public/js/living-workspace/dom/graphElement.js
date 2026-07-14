@@ -135,21 +135,36 @@
         svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
         svg.setAttribute('width', String(W)); svg.setAttribute('height', String(H));
 
+        // Clip the curve to the plot rectangle: a function that leaves the
+        // y-window is then cut cleanly at the frame instead of drawing flat
+        // "shoulders" along yMin/yMax (the old clamp artifact). Unique id per
+        // element so multiple graphs don't share a clip.
+        const clipId = 'lws-gclip-' + String(current.id || 'g').replace(/[^a-zA-Z0-9_-]/g, '');
+        const defs = doc.createElementNS(SVGNS, 'defs');
+        const clip = doc.createElementNS(SVGNS, 'clipPath');
+        clip.setAttribute('id', clipId);
+        const clipRect = doc.createElementNS(SVGNS, 'rect');
+        clipRect.setAttribute('x', String(PAD)); clipRect.setAttribute('y', String(PAD));
+        clipRect.setAttribute('width', String(W - 2 * PAD)); clipRect.setAttribute('height', String(H - 2 * PAD));
+        clip.appendChild(clipRect); defs.appendChild(clip); svg.appendChild(defs);
+
         // axes
         if (yMin <= 0 && yMax >= 0) axisLine(svg, PAD, yToPx(0, yMin, yMax), W - PAD, yToPx(0, yMin, yMax));
         if (xMin <= 0 && xMax >= 0) axisLine(svg, xToPx(0, xMin, xMax), PAD, xToPx(0, xMin, xMax), H - PAD);
 
-        // curve (break the path at undefined samples so asymptotes don't join)
+        // curve — no y-clamp; the clipPath trims overflow at the frame. Break
+        // the path at undefined samples so asymptotes don't join across gaps.
         let d = '', pen = false;
         for (const p of pts) {
           if (p.y === null) { pen = false; continue; }
-          const px = xToPx(p.x, xMin, xMax), py = yToPx(clampNum(p.y, yMin, yMax), yMin, yMax);
+          const px = xToPx(p.x, xMin, xMax), py = yToPx(p.y, yMin, yMax);
           d += (pen ? 'L' : 'M') + px.toFixed(1) + ' ' + py.toFixed(1) + ' ';
           pen = true;
         }
         const path = doc.createElementNS(SVGNS, 'path');
         path.setAttribute('d', d.trim()); path.setAttribute('class', 'lws-graph-curve');
         path.setAttribute('fill', 'none'); path.style.stroke = '#12b3b3'; path.style.strokeWidth = '2.5';
+        path.setAttribute('clip-path', 'url(#' + clipId + ')');
         svg.appendChild(path);
 
         // tracer handle
