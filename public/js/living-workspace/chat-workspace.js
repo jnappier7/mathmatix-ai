@@ -85,7 +85,30 @@
     document.body.appendChild(s);
   }
 
+  // THE SWAP (M-C): take over the chat's board region in-layout. Hide the old
+  // board's contents inside #cr-workspace and mount the new surface there, so
+  // the workspace IS the board (not a floating preview). Reversible — flag off
+  // leaves #cr-workspace untouched; the hidden nodes are still in the DOM.
+  // Falls back to a floating panel when #cr-workspace is absent (dev harnesses,
+  // other pages) so the integration still works anywhere.
   function buildPanel() {
+    var region = document.getElementById('cr-workspace');
+    if (region) {
+      region.classList.add('lws-swapped');
+      // Hide the old tabbed board tools, keep them in the DOM (reversible).
+      for (var i = 0; i < region.children.length; i++) {
+        region.children[i].setAttribute('data-lws-hidden', '1');
+        region.children[i].style.display = 'none';
+      }
+      var mountIn = document.createElement('div');
+      mountIn.id = 'lws-chat-mount';
+      mountIn.style.cssText = 'position:absolute;inset:0;';
+      if (getComputedStyle(region).position === 'static') region.style.position = 'relative';
+      region.appendChild(mountIn);
+      return mountIn;
+    }
+
+    // Fallback: floating dev panel.
     var panel = document.createElement('div');
     panel.id = 'lws-chat-panel';
     panel.setAttribute('aria-label', 'Living Workspace (preview)');
