@@ -52,6 +52,11 @@
   window.LWS_CHAT = api;
   if (!ON) return;
 
+  // Cache-buster for the lazily-loaded workspace CSS + modules. prod serves
+  // public/ with a 7-day cache and no content hashing, so bump this whenever
+  // any living-workspace asset changes (and the chat.html <script ?v=> tag to
+  // match, so this file itself refreshes). See project_asset_cache_busting.
+  var ASSET_V = '?v=20260714';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -60,9 +65,12 @@
     'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
     'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
+    'dom/derivationView.js',
   ];
 
-  var shell = null;
+  // Build brick #1: the chat board renders as a FOCUSED DERIVATION
+  // (dom/derivationView.js), not free-floating canvas cards. `dv` is that view.
+  var dv = null;
   var ready = false;
   var pending = null;        // latest board_commands received before ready
   var turn = 0;
@@ -70,7 +78,7 @@
   function injectCss() {
     if (document.querySelector('link[data-lws]')) return;
     var link = document.createElement('link');
-    link.rel = 'stylesheet'; link.href = '/css/living-workspace.css'; link.dataset.lws = '1';
+    link.rel = 'stylesheet'; link.href = '/css/living-workspace.css' + ASSET_V; link.dataset.lws = '1';
     document.head.appendChild(link);
   }
 
@@ -79,7 +87,7 @@
   function loadNext(i, done) {
     if (i >= SCRIPTS.length) return done();
     var s = document.createElement('script');
-    s.src = BASE + SCRIPTS[i];
+    s.src = BASE + SCRIPTS[i] + ASSET_V;
     s.async = false;
     s.onload = function () { loadNext(i + 1, done); };
     s.onerror = function () { console.error('[LWS_CHAT] failed to load', s.src); };
@@ -141,83 +149,36 @@
     return mount;
   }
 
-  // Surface the tutor's reaction to a student move. Prefer the chat's own
-  // message renderer; fall back to a DOM event chat can listen for.
-  function surfaceReaction(text) {
-    try {
-      if (typeof window.appendMessage === 'function') { window.appendMessage('assistant', text); return; }
-    } catch (_) { /* fall through */ }
-    try { window.dispatchEvent(new CustomEvent('lws:tutor-reaction', { detail: { text: text } })); } catch (_) {}
-  }
-
-  function makeShell() {
-    return new window.LWS.Shell({
-      world: { width: 2400, height: 1600 },
-      registerRenderers: function (overlayMgr, sh) {
-        overlayMgr.registerRenderer('equation', window.LWS.EquationElement.makeRenderer({
-          onEditCommit: function (id, latex) { sh.updateElement(id, { semantic: { latex: latex, plain: latex } }); },
-        }));
-        // Algebra tiles: local gesture → P7 close-the-loop (optimistic
-        // provisional → /api/student-moves verdict → commit/snap-back →
-        // tutor reaction). csrfFetch carries the CSRF token in chat.
-        // Graph (P14). Completes the P5 adapter's `graph` board-command path:
-        // the tutor's already-gate-approved graph now renders on the surface,
-        // with a draggable tracer. (The visual-gate vertex/y-int extension is
-        // the server-side safety that makes exposing the graph safe.)
-        if (window.LWS.GraphElement) {
-          overlayMgr.registerRenderer('graph', window.LWS.GraphElement.makeRenderer({
-            onChange: function () { /* tracer exploration — mode:'exploration', no answer injection */ },
-          }));
-        }
-        // Image (P15): render the REAL safe-search picture. Reuses the app's
-        // COPPA-safe /api/images pipeline; degrades to a labelled note on any
-        // failure. Falls back to the note card if the module didn't load.
-        if (window.LWS.ImageElement) {
-          overlayMgr.registerRenderer('image', window.LWS.ImageElement.makeRenderer());
-        } else if (window.LWS.NoteElement) {
-          overlayMgr.registerRenderer('image', window.LWS.NoteElement.makeRenderer());
-        }
-        // Geometry (P17) has no real renderer yet — a titled note card shows
-        // the figure label instead of a bare "[geometry]".
-        if (window.LWS.NoteElement) {
-          overlayMgr.registerRenderer('geometry', window.LWS.NoteElement.makeRenderer());
-        }
-        // Number line (P13). A marker drag emits onChange; wiring it through
-        // the student-move loop mirrors tiles and is a small follow-up.
-        if (window.LWS.NumberLineElement) {
-          overlayMgr.registerRenderer('number_line', window.LWS.NumberLineElement.makeRenderer({
-            onChange: function () { /* TODO: send as a StudentMove (same loop as tiles) */ },
-          }));
-        }
-        overlayMgr.registerRenderer('algebra_tiles', window.LWS.TileElement.makeRenderer({
-          onOperation: function (op) {
-            var el = sh.registry.get('tiles-1') || sh.registry.list().find(function (e) { return e.type === 'algebra_tiles'; });
-            if (!el) return;
-            window.LWS.StudentMoveClient.runTileMove({
-              shell: sh, element: el, operation: op, source: 'gesture',
-              ctx: ctx, fetch: (typeof window.csrfFetch === 'function' ? window.csrfFetch : undefined),
-              onReaction: function (txt) { surfaceReaction(txt); },
-            });
-          },
-        }));
-      },
-    });
+  // Renderers for the inline blocks the derivation embeds. Equation-family
+  // lines (pose/resolve/apply/verify/scaffold/example) are typeset directly by
+  // the view; only graph / image / geometry need a renderer, and those are the
+  // only non-equation element types board_commands ever produce via the P5
+  // adapter (tiles / number lines are never emitted by board_commands, so the
+  // derivation needs no student-move loop).
+  function makeRenderers() {
+    var r = {};
+    if (window.LWS.GraphElement) {
+      r.graph = window.LWS.GraphElement.makeRenderer({ onChange: function () { /* exploration only; no answer injection */ } });
+    }
+    // Image (P15): real safe-search picture, degrading to a labelled note.
+    if (window.LWS.ImageElement) r.image = window.LWS.ImageElement.makeRenderer();
+    else if (window.LWS.NoteElement) r.image = window.LWS.NoteElement.makeRenderer();
+    // Geometry (P17): titled note card until a real figure renderer lands.
+    if (window.LWS.NoteElement) r.geometry = window.LWS.NoteElement.makeRenderer();
+    return r;
   }
 
   // Render one turn's board_commands onto the surface via the P5 adapter.
+  // Render one turn's board_commands as derivation items. The P5 adapter maps
+  // commands → elements (role-tagged); the derivation view lays them out
+  // (problem pinned, steps flowing, graph/image inline). `clear` wipes first.
   function render(cmds) {
-    if (!ready || !shell) { pending = cmds; return; }
+    if (!ready || !dv) { pending = cmds; return; }
     var out;
     try { out = window.LWS.adaptBoardCommands(cmds, { idPrefix: 'lgc' + (++turn) }); }
     catch (e) { console.error('[LWS_CHAT] adapt failed', e); return; }
-    try {
-      if (out.clear) {
-        shell.registry.list().slice().forEach(function (el) {
-          try { shell.removeElement(el.id); } catch (_) {}
-        });
-      }
-      out.elements.forEach(function (el) { try { shell.addElement(el); } catch (_) {} });
-    } catch (e) { console.error('[LWS_CHAT] render failed', e); }
+    try { dv.apply(out.elements, out.clear); }
+    catch (e) { console.error('[LWS_CHAT] render failed', e); }
   }
 
   api.applyBoardCommands = function (cmds) {
@@ -225,39 +186,15 @@
     render(cmds);
   };
 
-  // Friendly empty state so a fresh canvas doesn't read as blank/broken —
-  // mirrors the legacy board's "Ready to work it out?" hint. Non-interactive
-  // (pointer-events:none) so it never blocks panning; auto-hides the moment
-  // the first element lands and returns if the board is cleared.
-  function wireEmptyState(mount) {
-    if (!shell || !shell.registry) return;
-    var hint = document.createElement('div');
-    hint.className = 'lws-empty-state';
-    hint.setAttribute('aria-hidden', 'true');
-    hint.innerHTML =
-      '<div class="lws-empty-icon">✍️</div>' +
-      '<div class="lws-empty-title">Ready to work it out?</div>' +
-      '<div class="lws-empty-sub">Your steps, graphs, and tiles show up here as you and your tutor build them together.</div>';
-    mount.appendChild(hint);
-    function refresh() {
-      var count = shell.registry.list ? shell.registry.list().length : 0;
-      hint.style.display = count === 0 ? '' : 'none';
-    }
-    try { shell.registry.subscribe(refresh); } catch (_) { /* no subscribe → static hint */ }
-    refresh();
-  }
-
   function boot() {
     injectCss();
     loadNext(0, function () {
-      if (!window.LWS || !window.LWS.Shell) { console.error('[LWS_CHAT] LWS not available after load'); return; }
+      if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
       var mount = buildPanel();
-      shell = makeShell();
-      shell.mount(mount);
+      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers() });
       ready = true;
-      wireEmptyState(mount);
       if (pending) { var p = pending; pending = null; render(p); }
-      console.log('[LWS_CHAT] mounted (mode=' + MODE + ')');
+      console.log('[LWS_CHAT] mounted (derivation, mode=' + MODE + ')');
     });
   }
 

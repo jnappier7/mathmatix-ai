@@ -46,6 +46,58 @@
    so panning the substrate still works between elements. */
 .lws-el { pointer-events: auto; }
 
+/* ── focused derivation board (build brick #1) ─────────────────
+   A document-style flow: problem pinned at top, steps beneath it.
+   Replaces the free-canvas card placement for the chat surface. */
+.lws-dv-root { overflow: hidden; }
+.lws-dv {
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+  padding: 20px clamp(14px, 5%, 42px) 40px;
+  background-image:
+    linear-gradient(var(--lws-grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--lws-grid-minor) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+.lws-dv-inner { max-width: 560px; margin: 0 auto; }
+
+.lws-dv-empty {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; gap: 8px;
+  padding: 24px; pointer-events: none; color: var(--lws-card-ink);
+}
+.lws-dv-empty-ic { font-size: 32px; opacity: .55; }
+.lws-dv-empty-t { font: 600 15px/1.3 system-ui, sans-serif; opacity: .8; }
+.lws-dv-empty-s { font: 13px/1.45 system-ui, sans-serif; opacity: .55; max-width: 280px; }
+
+.lws-dv-problem {
+  position: sticky; top: -20px; z-index: 3;
+  background: linear-gradient(180deg, var(--lws-card-bg), color-mix(in srgb, var(--lws-card-bg) 88%, var(--lws-grid-bg)));
+  border: 1px solid var(--lws-card-border); border-left: 3px solid var(--lws-accent);
+  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
+}
+.lws-dv-plabel { font: 10px system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--lws-accent); margin-bottom: 6px; }
+.lws-dv-ptex { font-size: 21px; color: var(--lws-card-ink); }
+
+.lws-dv-lines { display: flex; flex-direction: column; }
+.lws-dv-line { padding: 7px 4px; animation: lws-dv-in .34s cubic-bezier(.2, 1, .3, 1) both; }
+@keyframes lws-dv-in { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
+.lws-dv-tex { font-size: 20px; color: var(--lws-card-ink); }
+.lws-dv-operation { padding: 4px 4px 0; }
+.lws-dv-op {
+  font: 12.5px ui-monospace, "SF Mono", Menlo, monospace; color: var(--lws-accent);
+  background: color-mix(in srgb, var(--lws-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--lws-accent) 30%, transparent);
+  border-radius: 7px; padding: 2px 8px; opacity: .95;
+}
+.lws-dv-scaffold .lws-dv-tex, .lws-dv-example .lws-dv-tex { opacity: .82; font-size: 18px; }
+.lws-dv-solution {
+  margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--lws-card-border);
+}
+.lws-dv-solution .lws-dv-tex { font-weight: 700; }
+.lws-dv-block { padding: 10px 0; }
+.lws-dv-block > * { max-width: 100%; }
+
 /* ── equation card ── */
 .lws-eq-card {
   min-width: 120px;
