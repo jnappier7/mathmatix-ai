@@ -33,7 +33,7 @@
  * @module utils/visualGate
  */
 
-const { parseCleanProblem } = require('./mathSolver');
+const { parseCleanProblem, parsePolynomialTerms } = require('./mathSolver');
 const { contentHash, wasRecentlyShown } = require('./problemTracking');
 
 // Modes form an audit-first ladder, matching the structured-tutor-response
@@ -99,37 +99,85 @@ function extractNumbers(answer) {
   return matches.map(Number).filter((n) => Number.isFinite(n));
 }
 
+/** Dedupe a numeric list within NUM_TOLERANCE (keeps the revealed set tidy). */
+function dedupeNumbers(list) {
+  const out = [];
+  for (const n of list) {
+    if (!Number.isFinite(n)) continue;
+    if (!out.some((m) => Math.abs(m - n) <= NUM_TOLERANCE)) out.push(n);
+  }
+  return out;
+}
+
 /**
- * Compute the values a graph of `fn` would visibly reveal — primarily its real
- * roots (x-intercepts), by solving "fn = 0" with the existing deterministic
- * solver. These are the coordinates a student could read straight off the
- * curve. Returns [] when the function can't be solved to discrete real values
- * (in which case there's nothing numeric to leak).
+ * y-intercept + vertex — coordinates a student can read straight off a curve
+ * BEYOND its roots. Deterministic + polynomial-only (returns [] for anything
+ * parsePolynomialTerms can't handle — trig/log/rational, etc.).
+ *   - y-intercept: f(0) = the constant term.
+ *   - vertex (degree-2 only): x_v = −b/2a, y_v = c − b²/4a (both are visible).
+ * These are exactly the values that make a *draggable* graph exploitable (a
+ * student drags the handle to the vertex / axis crossing and reads it off).
  *
- * NOTE: covers roots/x-intercepts, which is the dominant leak surface
- * ("find the roots/zeros/x-intercepts of f"). Vertex/y-intercept/intersection
- * leaks are a documented extension point — see README for the gate.
+ * @param {string} fn
+ * @returns {number[]}
+ */
+function polynomialFeatureValues(fn) {
+  let terms;
+  try { terms = parsePolynomialTerms(normalizeExpr(fn)); } catch (_) { return []; }
+  if (!Array.isArray(terms) || !terms.length) return [];
+
+  const constTerm = terms.filter((t) => t.exp === 0).reduce((s, t) => s + t.coeff, 0);
+  const values = [constTerm]; // y-intercept f(0)
+
+  const degree = terms.reduce((d, t) => Math.max(d, t.exp), 0);
+  if (degree === 2) {
+    const a = terms.filter((t) => t.exp === 2).reduce((s, t) => s + t.coeff, 0);
+    const b = terms.filter((t) => t.exp === 1).reduce((s, t) => s + t.coeff, 0);
+    if (a !== 0) {
+      values.push(-b / (2 * a));              // vertex x
+      values.push(constTerm - (b * b) / (4 * a)); // vertex y (the min/max value)
+    }
+  }
+  return values.filter((n) => Number.isFinite(n));
+}
+
+/**
+ * Compute the values a graph of `fn` would visibly reveal — the coordinates a
+ * student could read straight off the curve. Covers:
+ *   - roots / x-intercepts (solve "fn = 0" with the deterministic solver),
+ *   - the y-intercept f(0), and
+ *   - the vertex (x and y) of a quadratic.
+ * Returns [] when nothing numeric is derivable (e.g. a transcendental with no
+ * solvable roots and no polynomial features).
+ *
+ * REMAINING extension: intersection leaks (two graphed functions crossing at
+ * the answer) — a turn-level, multi-command concern, not a single-fn one.
  *
  * @param {string} fn
  * @returns {number[]}
  */
 function graphRevealedValues(fn) {
   if (!fn || typeof fn !== 'string') return [];
+  const values = [];
+
+  // Roots / x-intercepts (existing).
   const probe = `${fn} = 0`;
-  let parsed;
   try {
-    parsed = parseCleanProblem(probe);
-  } catch (_) {
-    return [];
-  }
-  if (!parsed || !parsed.hasMath || !parsed.solution || !parsed.solution.success) {
-    return [];
-  }
-  const sol = parsed.solution;
-  if (Array.isArray(sol.roots) && sol.roots.length) {
-    return sol.roots.map(Number).filter((n) => Number.isFinite(n));
-  }
-  return extractNumbers(sol.answer);
+    const parsed = parseCleanProblem(probe);
+    if (parsed && parsed.hasMath && parsed.solution && parsed.solution.success) {
+      const sol = parsed.solution;
+      if (Array.isArray(sol.roots) && sol.roots.length) {
+        values.push(...sol.roots.map(Number).filter((n) => Number.isFinite(n)));
+      } else {
+        values.push(...extractNumbers(sol.answer));
+      }
+    }
+  } catch (_) { /* unsolvable → contributes no roots */ }
+
+  // y-intercept + vertex (new).
+  values.push(...polynomialFeatureValues(fn));
+
+  return dedupeNumbers(values);
 }
 
 /** Do two numeric sets share any value (within tolerance)? */
