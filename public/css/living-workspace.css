@@ -136,3 +136,26 @@
 .lws-tile-chip.is-target { box-shadow: 0 0 0 3px #16c86d; }
 .lws-tile-chip.is-target-invalid { box-shadow: 0 0 0 3px #e05656; }
 .lws-tile-chip:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+/* ── Number-line element (P13) ─────────────────────────────── */
+.lws-nl-card {
+  min-width: 340px;
+  background: var(--lws-card-bg);
+  border: 1px solid var(--lws-card-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden; user-select: none;
+}
+.lws-el.is-provisional .lws-nl-card { border-color: var(--lws-accent); border-style: dashed; }
+.lws-nl-header {
+  padding: 4px 10px; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--lws-card-ink); opacity: 0.7; cursor: grab;
+  border-bottom: 1px solid var(--lws-card-border);
+}
+.lws-nl-body { padding: 6px 4px; }
+.lws-nl-axis  { stroke: var(--lws-card-ink); stroke-width: 2; opacity: 0.85; }
+.lws-nl-tick  { stroke: var(--lws-card-ink); stroke-width: 1.5; opacity: 0.55; }
+.lws-nl-label { fill: var(--lws-card-ink); font: 11px ui-monospace, Menlo, monospace; opacity: 0.8; }
+.lws-nl-point { fill: #12b3b3; stroke: #fff; stroke-width: 2; cursor: grab; }
+.lws-nl-point.is-dragging { cursor: grabbing; }
+.lws-nl-point:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }

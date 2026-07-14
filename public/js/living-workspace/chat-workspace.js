@@ -57,7 +57,7 @@
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
-    'dom/tileElement.js', 'dom/studentMoveClient.js',
+    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
   ];
 
@@ -159,6 +159,13 @@
         // Algebra tiles: local gesture → P7 close-the-loop (optimistic
         // provisional → /api/student-moves verdict → commit/snap-back →
         // tutor reaction). csrfFetch carries the CSRF token in chat.
+        // Number line (P13). A marker drag emits onChange; wiring it through
+        // the student-move loop mirrors tiles and is a small follow-up.
+        if (window.LWS.NumberLineElement) {
+          overlayMgr.registerRenderer('number_line', window.LWS.NumberLineElement.makeRenderer({
+            onChange: function () { /* TODO: send as a StudentMove (same loop as tiles) */ },
+          }));
+        }
         overlayMgr.registerRenderer('algebra_tiles', window.LWS.TileElement.makeRenderer({
           onOperation: function (op) {
             var el = sh.registry.get('tiles-1') || sh.registry.list().find(function (e) { return e.type === 'algebra_tiles'; });
