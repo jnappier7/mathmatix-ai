@@ -52,6 +52,11 @@
   window.LWS_CHAT = api;
   if (!ON) return;
 
+  // Cache-buster for the lazily-loaded workspace CSS + modules. prod serves
+  // public/ with a 7-day cache and no content hashing, so bump this whenever
+  // any living-workspace asset changes (and the chat.html <script ?v=> tag to
+  // match, so this file itself refreshes). See project_asset_cache_busting.
+  var ASSET_V = '?v=20260714';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -73,7 +78,7 @@
   function injectCss() {
     if (document.querySelector('link[data-lws]')) return;
     var link = document.createElement('link');
-    link.rel = 'stylesheet'; link.href = '/css/living-workspace.css'; link.dataset.lws = '1';
+    link.rel = 'stylesheet'; link.href = '/css/living-workspace.css' + ASSET_V; link.dataset.lws = '1';
     document.head.appendChild(link);
   }
 
@@ -82,7 +87,7 @@
   function loadNext(i, done) {
     if (i >= SCRIPTS.length) return done();
     var s = document.createElement('script');
-    s.src = BASE + SCRIPTS[i];
+    s.src = BASE + SCRIPTS[i] + ASSET_V;
     s.async = false;
     s.onload = function () { loadNext(i + 1, done); };
     s.onerror = function () { console.error('[LWS_CHAT] failed to load', s.src); };
