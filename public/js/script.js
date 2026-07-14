@@ -84,9 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const settingsBtn = document.getElementById("open-settings-modal-btn");
     const settingsModal = document.getElementById("settings-modal");
     const closeSettingsBtn = document.getElementById("close-settings-modal-btn");
-    const handsFreeToggle = document.getElementById("handsFreeToggle");
-    const autoplayTtsToggle = document.getElementById("autoplayTtsToggle");
-    const voiceChatToggle = document.getElementById("voiceChatToggle");
     const changeTutorBtn = document.getElementById('change-tutor-btn');
     const stopAudioBtn = document.getElementById('stop-audio-btn');
     const pauseAudioBtn = document.getElementById('pause-audio-btn');
@@ -3659,9 +3656,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Settings Modal Logic ---
     function openSettingsModal() {
         if (settingsModal && currentUser) {
-            handsFreeToggle.checked = !!currentUser.preferences.handsFreeModeEnabled;
-            autoplayTtsToggle.checked = !!currentUser.preferences.autoplayTtsHandsFree;
-            voiceChatToggle.checked = currentUser.preferences.voiceChatEnabled !== false; // Default to true
+            // Dark Mode toggle state is synced by the theme controller (see the
+            // inline theme script in chat.html), not here.
             // Tutor change button handled separately below
             settingsModal.classList.add('is-visible');
         }
@@ -3987,33 +3983,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Settings toggle event listeners
-    if (handsFreeToggle) {
-        handsFreeToggle.addEventListener('change', async () => {
-            await updateSettings({ handsFreeModeEnabled: handsFreeToggle.checked });
-            if (currentUser) currentUser.preferences.handsFreeModeEnabled = handsFreeToggle.checked;
-        });
-    }
-    if (autoplayTtsToggle) {
-        autoplayTtsToggle.addEventListener('change', async () => {
-            await updateSettings({ autoplayTtsHandsFree: autoplayTtsToggle.checked });
-            if (currentUser) currentUser.preferences.autoplayTtsHandsFree = autoplayTtsToggle.checked;
-        });
-    }
-    if (voiceChatToggle) {
-        voiceChatToggle.addEventListener('change', async () => {
-            await updateSettings({ voiceChatEnabled: voiceChatToggle.checked });
-            if (currentUser) currentUser.preferences.voiceChatEnabled = voiceChatToggle.checked;
-
-            // Show/hide voice orb
-            if (window.voiceController) {
-                const voiceContainer = document.getElementById('voice-chat-container');
-                if (voiceContainer) {
-                    voiceContainer.style.display = voiceChatToggle.checked ? 'flex' : 'none';
-                }
-            }
-        });
-    }
+    // (Hands-Free / Autoplay Audio / Voice Chat Orb settings toggles were removed.
+    // The floating voice orb is now always shown — see voice-controller.js.)
 
     // Inline Equation Palette (MS Word-like) — Multi-line support
     const inlineEquationPalette = document.getElementById('inline-equation-palette');

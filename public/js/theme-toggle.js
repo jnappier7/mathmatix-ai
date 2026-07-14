@@ -124,22 +124,24 @@
         // Check for stored preference
         const stored = getStoredPreference();
 
-        if (stored === 'system' || stored === null) {
-            // Use system preference
+        if (stored === 'system') {
+            // User explicitly opted to follow the OS setting
             applyTheme(getSystemPreference(), false);
         } else if (THEMES.includes(stored)) {
             // Use stored preference
             applyTheme(stored, false);
         } else {
-            // Default to light
+            // Default: light mode. We intentionally ignore the OS preference here
+            // so light is the app default until the user chooses a theme themselves.
             applyTheme('light', false);
         }
 
-        // Listen for system preference changes
+        // Listen for system preference changes — only relevant when the user has
+        // explicitly chosen to follow the OS ('system'). A brand-new/unset user
+        // stays on light regardless of their OS theme.
         if (window.matchMedia) {
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-                const stored = getStoredPreference();
-                if (stored === 'system' || stored === null) {
+                if (getStoredPreference() === 'system') {
                     applyTheme(e.matches ? 'dark' : 'light');
                 }
             });
