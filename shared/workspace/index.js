@@ -19,4 +19,7 @@ module.exports = {
   ...require('./schemas/presenceCommand.schema'),
 
   makeValidator: require('./schemas/_validator').makeValidator,
+
+  // P5 — read-only legacy board-command → workspace-element adapter.
+  adaptBoardCommands: require('./legacyBoardAdapter').adaptBoardCommands,
 };
