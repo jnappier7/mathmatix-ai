@@ -43,13 +43,27 @@
 
   function norm(s) { return String(s == null ? '' : s).replace(/\s+/g, '').toLowerCase(); }
 
+  // KaTeX.render expects RAW math and errors on math-mode delimiters ("Can't
+  // use function '\(' in math mode"), rendering the source in red. The tutor
+  // sometimes wraps board tex in \(...\) / \[...\] / $...$, so strip those
+  // wrappers before typesetting. Interior \left( … \right) are untouched
+  // (only a backslash IMMEDIATELY before ( ) [ ] is a delimiter). Exported
+  // for tests.
+  function cleanLatex(s) {
+    var t = String(s == null ? '' : s).trim();
+    t = t.replace(/\\[()[\]]/g, ' ');        // \( \) \[ \] delimiters -> space
+    t = t.replace(/^\$\$?/, '').replace(/\$\$?$/, ''); // $ … $ or $$ … $$
+    return t.trim();
+  }
+
   function typeset(target, latex) {
     var katex = root.katex;
+    var tex = cleanLatex(latex);
     if (katex && typeof katex.render === 'function') {
-      try { katex.render(latex || '', target, { throwOnError: false, displayMode: false }); return; }
+      try { katex.render(tex, target, { throwOnError: false, displayMode: false }); return; }
       catch (_) { /* fall through to text */ }
     }
-    target.textContent = latex || '';
+    target.textContent = tex;
   }
 
   function DerivationView(container, opts) {
@@ -170,6 +184,7 @@
   };
 
   DerivationView.classify = classify;
+  DerivationView.cleanLatex = cleanLatex;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex };
 })(typeof self !== 'undefined' ? self : this);

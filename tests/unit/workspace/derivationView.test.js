@@ -1,4 +1,33 @@
-const { classify } = require('../../../public/js/living-workspace/dom/derivationView.js');
+const { classify, cleanLatex } = require('../../../public/js/living-workspace/dom/derivationView.js');
+
+// The tutor sometimes wraps board tex in math delimiters, which make
+// KaTeX.render error ("Can't use function '\(' in math mode") and show raw
+// red source. cleanLatex strips those wrappers so the equation typesets.
+describe('derivationView.cleanLatex', () => {
+  it('strips the \\(...\\) delimiters seen live (multi-wrapped answer)', () => {
+    // \(x^{5}\)-\(x^{3}\)+7x+C  ->  x^{5} - x^{3} +7x+C  (renderable)
+    const out = cleanLatex('\\(x^{5}\\)-\\(x^{3}\\)+7x+C');
+    expect(out).not.toMatch(/\\[()]/);
+    expect(out).toContain('x^{5}');
+    expect(out).toContain('+C');
+  });
+
+  it('strips \\[...\\] display delimiters and $ / $$ wrappers', () => {
+    expect(cleanLatex('\\[ x = 5 \\]')).toBe('x = 5');
+    expect(cleanLatex('$$\\int x\\,dx$$')).toBe('\\int x\\,dx');
+    expect(cleanLatex('$x+1$')).toBe('x+1');
+  });
+
+  it('leaves clean tex and interior \\left( … \\right) untouched', () => {
+    expect(cleanLatex('x^2 - 4x + 3')).toBe('x^2 - 4x + 3');
+    expect(cleanLatex('\\left( x+1 \\right)^2')).toBe('\\left( x+1 \\right)^2');
+  });
+
+  it('handles junk', () => {
+    expect(cleanLatex(null)).toBe('');
+    expect(cleanLatex(undefined)).toBe('');
+  });
+});
 
 // classify() decides how each adapted element renders in the focused
 // derivation. Pure function; the DOM layout is verified in-browser.
