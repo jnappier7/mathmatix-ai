@@ -1,5 +1,5 @@
 {
-  "_comment": "ACT Math blueprint \u2014 CURRENT spec (2025+): 45 questions, 50 minutes, 4 answer choices. Categories per official ACT reporting categories. Content = Fable-authored, verified items (seeds/act-fable-items.generated.json). Replaces the legacy 60-question/5-choice blueprint.",
+  "_comment": "ACT Math blueprint — CURRENT spec (2025+): 45 questions, 50 minutes, 4 answer choices. Categories per official ACT reporting categories. Content = Fable-authored, verified items (seeds/act-fable-items.generated.json). Replaces the legacy 60-question/5-choice blueprint.",
   "testId": "act-math",
   "title": "ACT Math Practice Test",
   "subject": "act-math",
@@ -37,22 +37,60 @@
   ],
   "skillsByCategory": {
     "integrating-essential-skills": [
-      "act-integrating-essential-skills"
+      "act-basic-geometry-measures",
+      "act-multi-step-arithmetic",
+      "act-percentages",
+      "act-rates-unit-conversion",
+      "act-ratios-proportions",
+      "act-time-schedule-arithmetic"
     ],
     "algebra": [
-      "act-algebra"
+      "act-absolute-value-equations-inequalities",
+      "act-linear-equations",
+      "act-linear-inequalities",
+      "act-polynomial-expressions",
+      "act-quadratic-equations",
+      "act-radical-rational-equations",
+      "act-systems-of-equations",
+      "act-variation-direct-inverse",
+      "act-word-problems-modeling"
     ],
     "functions": [
-      "act-functions"
+      "act-exponential-models",
+      "act-function-composition",
+      "act-function-evaluation-notation",
+      "act-graph-transformations",
+      "act-linear-functions-models",
+      "act-logarithms",
+      "act-quadratic-functions-parabolas",
+      "act-sequences",
+      "act-trigonometric-functions"
     ],
     "geometry": [
-      "act-geometry"
+      "act-angles-parallel-lines",
+      "act-area-perimeter",
+      "act-circles",
+      "act-coordinate-geometry",
+      "act-law-of-sines-cosines",
+      "act-right-triangle-trigonometry",
+      "act-similar-congruent-figures",
+      "act-triangles-angle-relationships",
+      "act-triangles-pythagorean-theorem",
+      "act-volume-surface-area"
     ],
     "statistics-probability": [
-      "act-statistics-probability"
+      "act-center-spread",
+      "act-conditional-probability",
+      "act-counting-arrangements",
+      "act-expected-value",
+      "act-probability"
     ],
     "number-quantity": [
-      "act-number-quantity"
+      "act-complex-numbers",
+      "act-exponent-rules",
+      "act-matrices-vectors",
+      "act-radicals-roots",
+      "act-scientific-notation"
     ]
   },
   "scaledScore": {
