@@ -98,8 +98,8 @@ function toClientItem(slot, problem) {
     position: slot.position,
     category: slot.category,
     skillId: slot.skillId,
-    problemId: String(problem._id),
-    question: problem.question,
+    problemId: problem.problemId,          // the string problemId (matches findNearDifficulty excludes)
+    content: problem.prompt,               // field is `prompt`; screener sends it as `content`
     answerType: problem.answerType,
     options: problem.answerType === 'multiple-choice' ? (problem.options || []) : undefined,
     difficulty: problem.difficulty,
@@ -154,7 +154,7 @@ async function assembleForm(opts = {}) {
       problem = null;
     }
     if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
-    usedProblemIds.push(problem._id);
+    usedProblemIds.push(problem.problemId);
     items.push(toClientItem(slot, problem));
   }
 

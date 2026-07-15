@@ -231,6 +231,45 @@ is a Phase 2b follow-up, gated on the mode-transition detector being proven.
 
 ---
 
+## 6b. ACT boot-camp practice tests — **content engine + fixed-form rail SHIPPED**
+
+Boot camps (ACT/SAT/algebra-prep/calc-prep, ~3 weeks) run on the pathway system;
+their differentiator is a **practice test** built from a composite of the boot
+camp's skills, as *original parallel forms* (our own items), delivered like the
+Starting Point.
+
+The ACT Math skill catalog already existed (`seeds/skills-act-math-prep.json`,
+36 skills in ACT reporting categories). Built on top:
+
+- **`seeds/act-math-blueprint.json`** — the 60-item composition (category weights,
+  easy→hard difficulty ramp, skills-by-category, approximate raw→scaled 1–36
+  table). Derived from the ACT Math *reporting-category structure* — not a copy of
+  any published test.
+- **`utils/actTestAssembler.js`** — assembles an original parallel form by
+  sampling our own skill-tagged bank (`Problem.findNearDifficulty`); reports any
+  unfillable slot as a **generation spec** for `scripts/generate*.js`.
+  `skillPool()` / `rawToScaled()` support both delivery modes.
+- **`routes/actTest.js` + `models/actTestSession.js`** — a **fixed-form** delivery
+  rail (parallel to the screener, per the `growthCheck.js` precedent) at
+  `/api/act-test` (`start` / `next-problem` / `submit-answer` / `complete`),
+  mirroring the screener's per-item contract so the existing item-render UI can
+  drive it. Grades by re-fetching the Problem server-side; returns raw + scaled +
+  per-category breakdown. **Free** (boot-camp on-ramp), no AI at request time.
+- **`scripts/actTestCoverage.js`** (`npm run act:coverage`) — reports how much of
+  a form the bank can fill and prints the generation worklist for gaps.
+
+**Prerequisite before it delivers value:** the `Problem` bank must actually
+contain `act-*`-tagged items. Run `act:coverage`; generate to fill the gaps.
+
+**Adaptive diagnostic (follow-up, "delivered like the Starting Point"):** the CAT
+engine is reusable — `skillSelector.selectSkill(pool, …)` takes whatever skill
+pool it's handed, so constraining it to `skillPool()` yields an adaptive ACT
+diagnostic. Prereqs the screener map surfaced: add `'act-math'` to
+`ScreenerSession.sessionType`; give ACT skills IRT difficulties (they carry
+`difficultyLevel`, not `irtDifficulty`) or extend `catConfig`'s
+`CATEGORY_DIFFICULTY_MAP`/`CATEGORY_TO_BROAD` to cover ACT categories; map
+theta→scaled(1–36) for the report; add an ACT branch/fork to `FloatingScreener`.
+
 ## 7. Open questions
 
 1. **Where does a non-enrolled student's queue come from before they've been
