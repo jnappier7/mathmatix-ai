@@ -56,7 +56,8 @@ function difficultyForPosition(blueprint, position) {
 }
 
 /**
- * Expand category weights + ramp into an ordered list of 60 slots, with each
+ * Expand category weights + ramp into an ordered list of slots (one per item in
+ * the blueprint, e.g. 45), with each
  * category spread evenly across the form (interleaved like a real ACT, not
  * blocked by category) and a rotating skill assignment for within-category
  * coverage.
@@ -139,7 +140,7 @@ function toGenerationSpec(slot) {
     category: slot.category,
     targetDifficulty: slot.targetDifficulty,
     answerType: 'multiple-choice',
-    optionCount: 5,
+    optionCount: (DEFAULT_BLUEPRINT.choicesPerItem || 4),
   };
 }
 
@@ -159,6 +160,7 @@ async function assembleForm(opts = {}) {
   const rng = mulberry32(seed);
 
   const Problem = require('../models/problem');
+  const byCat = blueprint.skillsByCategory || {};
   const slots = buildSlots(blueprint, rng);
   const usedProblemIds = [];
   const usedSignatures = new Map();   // prompt-shape -> count, to avoid look-alikes
@@ -186,7 +188,26 @@ async function assembleForm(opts = {}) {
         const p = await Problem.findNearDifficulty(slot.skillId, slot.targetDifficulty, usedProblemIds, { preferMultipleChoice: true });
         candidates = p ? [p] : [];
       }
+      if (!candidates.length) {
+        // Same-category fallback: a thin sub-skill can be asked for more times
+        // than it has items (a few categories have more slots than sub-skills).
+        // Draw another item from the SAME reporting category so the form stays
+        // exactly 45 items with the exact category composition the scaled score
+        // depends on. The item keeps its own fine skillId for personalization.
+        const catSkills = byCat[slot.category] || [];
+        if (catSkills.length) {
+          candidates = await Problem.find({
+            skillId: { $in: catSkills },
+            isActive: true,
+            answerType: 'multiple-choice',
+            problemId: { $nin: usedProblemIds },
+          }).limit(24).lean();
+        }
+      }
       problem = pickDiverse(candidates, usedSignatures);
+      // Record the item's OWN fine skill (fallback may cross sub-skills within
+      // the category), so scoring & personalization attribute to the real skill.
+      if (problem && problem.skillId) slot.skillId = problem.skillId;
     } catch (err) {
       // DB/query error — treat as a gap, keep assembling the rest.
       problem = null;

@@ -57,10 +57,15 @@ describe('actTestAssembler.buildSlots', () => {
 });
 
 describe('actTestAssembler.skillPool', () => {
-  test('returns the 6 ACT category skills, all act- prefixed', () => {
+  test('returns the fine-grained ACT skills (one per sub-skill), all act- prefixed', () => {
     const pool = A.skillPool();
-    expect(pool).toHaveLength(6);
+    // Fable bank tags every item with a fine sub-skill (e.g. act-quadratic-equations);
+    // the pool is the union across all six categories.
+    const expected = Object.values(bp.skillsByCategory).reduce((n, arr) => n + arr.length, 0);
+    expect(pool).toHaveLength(expected);
+    expect(pool.length).toBeGreaterThan(6);         // finer than the 6 categories
     expect(pool.every(s => s.startsWith('act-'))).toBe(true);
+    expect(new Set(pool).size).toBe(pool.length);   // no duplicate skillIds
   });
 });
 

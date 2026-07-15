@@ -16,7 +16,8 @@
    "answer": 2,
    "explanation": "Distribute: 4x − 12 = 20, so 4x = 32 and x = 8. The answer is C. Dividing 20 by 4 first and then subtracting 3 gives the incorrect value 2; ignoring the factor of 4 gives 23.",
    "verify": "import sympy as sp; x=sp.symbols('x'); sp.solve(sp.Eq(4*(x-3),20),x)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Linear equations"
   },
   {
    "n": 2,
@@ -33,7 +34,8 @@
    "answer": 3,
    "explanation": "A 15% increase means multiplying by 1.15, so Saturday's revenue was 480 × 1.15 = $552, choice J. Choosing $408 applies a 15% decrease, $495 adds $15 instead of 15%, and $528 uses a 10% increase.",
    "verify": "print(round(480 * 1.15, 2))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Percentages"
   },
   {
    "n": 3,
@@ -50,7 +52,8 @@
    "answer": 1,
    "explanation": "Add exponents when multiplying: x⁴ · x⁵ = x⁹. Subtract when dividing: x⁹/x² = x⁷, choice B. Multiplying the exponents 4 and 5 leads to the distractors x¹⁰ (20/2) and x¹⁸ (20 − 2).",
    "verify": "import sympy as sp; x = sp.symbols('x'); print(sp.simplify(x**4 * x**5 / x**2))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Exponent rules"
   },
   {
    "n": 4,
@@ -67,7 +70,8 @@
    "answer": 0,
    "explanation": "The angle measures of a triangle sum to 180°, so m∠C = 180° − 38° − 95° = 47°, choice F. Choosing 57° comes from computing 95° − 38°, and 142° comes from subtracting only ∠A from 180°.",
    "verify": "print(180 - 95 - 38)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Triangles & angle relationships"
   },
   {
    "n": 5,
@@ -84,7 +88,8 @@
    "answer": 2,
    "explanation": "g(−1) = (−1)³ − 2(−1) + 5 = −1 + 2 + 5 = 6. The answer is C. Treating (−1)³ as 1 gives 8; mishandling −2(−1) as −2 gives 2.",
    "verify": "(-1)**3 - 2*(-1) + 5",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Function evaluation & notation"
   },
   {
    "n": 6,
@@ -101,7 +106,8 @@
    "answer": 0,
    "explanation": "The mean is the sum divided by the count: (240 + 310 + 180 + 270)/4 = 1,000/4 = 250, choice F. Choosing 255 gives the median instead of the mean, and 1,000 is the total, not the mean.",
    "verify": "print((240 + 310 + 180 + 270) / 4)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Center & spread"
   },
   {
    "n": 7,
@@ -118,7 +124,8 @@
    "answer": 1,
    "explanation": "Perimeter = 2(length) + 2(width) = 2(3x + 2) + 2(x − 4) = 6x + 4 + 2x − 8 = 8x − 4. The answer is B. Adding only one length and one width gives 4x − 2, and multiplying gives the area, 3x² − 10x − 8.",
    "verify": "import sympy as sp; x=sp.symbols('x'); sp.expand(2*(3*x+2)+2*(x-4))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Polynomial expressions"
   },
   {
    "n": 8,
@@ -135,7 +142,8 @@
    "answer": 2,
    "explanation": "Convert 6 meters to 600 centimeters, then divide: 600 ÷ 45 ≈ 13.3, so 13 complete tubes can be cut, choice H. Rounding up to 14 is wrong because the 14th tube would be incomplete; choosing 1 comes from forgetting to convert meters to centimeters.",
    "verify": "print(600 // 45)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Multi-step arithmetic"
   },
   {
    "n": 9,
@@ -152,7 +160,8 @@
    "answer": 1,
    "explanation": "By the Pythagorean theorem, x² = 9² + 12² = 81 + 144 = 225, so x = 15, choice B. Choosing √63 comes from subtracting the squares, 21 from adding the legs, and 225 from forgetting to take the square root.",
    "verify": "print((9**2 + 12**2) ** 0.5)",
-   "figure_code": "def draw(ax):\n    ax.plot([0, 12, 0, 0], [0, 0, 9, 0], 'k-', lw=1.5)\n    ax.plot([0.7, 0.7, 0], [0, 0.7, 0.7], 'k-', lw=1)\n    ax.text(6, -0.5, '12', ha='center', va='top')\n    ax.text(-0.4, 4.5, '9', ha='right', va='center')\n    ax.text(6.7, 5.2, 'x', ha='left', va='bottom')\n    ax.set_xlim(-2.5, 14)\n    ax.set_ylim(-2, 11)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    ax.plot([0, 12, 0, 0], [0, 0, 9, 0], 'k-', lw=1.5)\n    ax.plot([0.7, 0.7, 0], [0, 0.7, 0.7], 'k-', lw=1)\n    ax.text(6, -0.5, '12', ha='center', va='top')\n    ax.text(-0.4, 4.5, '9', ha='right', va='center')\n    ax.text(6.7, 5.2, 'x', ha='left', va='bottom')\n    ax.set_xlim(-2.5, 14)\n    ax.set_ylim(-2, 11)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Triangles & Pythagorean theorem"
   },
   {
    "n": 10,
@@ -169,7 +178,8 @@
    "answer": 1,
    "explanation": "From the 3rd term to the 7th term is 4 steps, and the terms increase by 27 − 11 = 16. So the common difference is 16/4 = 4. The answer is G. Dividing by 2 instead of 4 gives 8.",
    "verify": "(27-11)/(7-3)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Sequences"
   },
   {
    "n": 11,
@@ -186,7 +196,8 @@
    "answer": 2,
    "explanation": "Each ratio part equals 630 ÷ 7 = 90, so the pears number 2 × 90 = 180, choice C. Choosing 90 stops after one part, and 140 comes from dividing 630 by 9 total parts before multiplying by 2.",
    "verify": "print(630 // 7 * 2)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Ratios & proportions"
   },
   {
    "n": 12,
@@ -203,7 +214,8 @@
    "answer": 0,
    "explanation": "Substitute y = 2x + 1 into the second equation: 3x + 2x + 1 = 16, so 5x = 15 and x = 3, choice F. Choosing 3.4 comes from dropping the +1 incorrectly (5x = 17), and 7 is the value of y, not x.",
    "verify": "import sympy as sp; x, y = sp.symbols('x y'); print(sp.solve([y - 2*x - 1, 3*x + y - 16], [x, y]))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Systems of equations"
   },
   {
    "n": 13,
@@ -220,7 +232,8 @@
    "answer": 0,
    "explanation": "There are 5 + 7 + 8 = 20 jerseys, of which 7 are medium, so the probability is 7/20, choice A. The distractors use incorrect totals, such as 7/13 from counting only the non-medium jerseys in the denominator.",
    "verify": "from fractions import Fraction; print(Fraction(7, 5 + 7 + 8))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Probability"
   },
   {
    "n": 14,
@@ -237,7 +250,8 @@
    "answer": 1,
    "explanation": "Simplify each radical: √48 = 4√3 and √27 = 3√3, so the sum is 7√3, choice G. Choosing 5√3 comes from adding under the radical first (√75), which is not valid for sums.",
    "verify": "import sympy as sp; print(sp.sqrt(48) + sp.sqrt(27))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Radicals & roots"
   },
   {
    "n": 15,
@@ -254,7 +268,8 @@
    "answer": 1,
    "explanation": "The 116° angle and the x° angle are same-side interior angles, which are supplementary when the lines are parallel. So x = 180 − 116 = 64, choice B. Choosing 116 treats the angles as congruent, and 26 comes from using 90° instead of 180°.",
    "verify": "print(180 - 116)",
-   "figure_code": "def draw(ax):\n    ax.plot([-6, 6], [2, 2], 'k-', lw=1.5)\n    ax.plot([-6, 6], [-2, -2], 'k-', lw=1.5)\n    ax.plot([-4.5, 4.5], [-4.5, 4.5], 'k-', lw=1.2)\n    ax.text(2.9, 1.35, '116\\u00b0', ha='left', va='top')\n    ax.text(-1.1, -1.75, 'x\\u00b0', ha='left', va='bottom')\n    ax.text(6.3, 2, '\\u2113', ha='left', va='center')\n    ax.text(6.3, -2, 'm', ha='left', va='center')\n    ax.set_xlim(-7, 8.5)\n    ax.set_ylim(-6, 6)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    ax.plot([-6, 6], [2, 2], 'k-', lw=1.5)\n    ax.plot([-6, 6], [-2, -2], 'k-', lw=1.5)\n    ax.plot([-4.5, 4.5], [-4.5, 4.5], 'k-', lw=1.2)\n    ax.text(2.9, 1.35, '116\\u00b0', ha='left', va='top')\n    ax.text(-1.1, -1.75, 'x\\u00b0', ha='left', va='bottom')\n    ax.text(6.3, 2, '\\u2113', ha='left', va='center')\n    ax.text(6.3, -2, 'm', ha='left', va='center')\n    ax.set_xlim(-7, 8.5)\n    ax.set_ylim(-6, 6)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Angles & parallel lines"
   },
   {
    "n": 16,
@@ -271,7 +286,8 @@
    "answer": 1,
    "explanation": "Work from the inside out: f(2) = 2(2) − 3 = 1, then g(1) = 1² + 1 = 2, choice G. Choosing 1 stops at f(2), 5 is g(2) alone, and 7 comes from computing f(g(2)) instead.",
    "verify": "f = lambda x: 2*x - 3; g = lambda x: x**2 + 1; print(g(f(2)))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Function composition"
   },
   {
    "n": 17,
@@ -288,7 +304,8 @@
    "answer": 2,
    "explanation": "Factor: (x − 7)(x + 3) = 0, so x = 7 or x = −3. The greater solution is 7. The answer is C.",
    "verify": "import sympy as sp; x=sp.symbols('x'); max(sp.solve(x**2-4*x-21,x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Quadratic equations"
   },
   {
    "n": 18,
@@ -305,7 +322,8 @@
    "answer": 2,
    "explanation": "A 35% decrease leaves 65% of the price: 84 × 0.65 = $54.60, choice H. Choosing $29.40 gives the amount of the discount rather than the discounted price, and $49.00 subtracts $35 instead of 35%.",
    "verify": "print(round(84 * 0.65, 2))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Percentages"
   },
   {
    "n": 19,
@@ -322,7 +340,8 @@
    "answer": 2,
    "explanation": "From C = 2πr = 16π, the radius is r = 8. The area is πr² = 64π, choice C. Choosing 256π comes from using 16 as the radius, and 32π comes from doubling the circumference instead of squaring the radius.",
    "verify": "import sympy as sp; r = 16*sp.pi/(2*sp.pi); print(sp.pi*r**2)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Circles"
   },
   {
    "n": 20,
@@ -339,7 +358,8 @@
    "answer": 2,
    "explanation": "The rate is 5,400 ÷ 36 = 150 downloads per hour, so in 60 hours the total is 150 × 60 = 9,000, choice H. Choosing 3,240 inverts the proportion, and 10,800 doubles the total instead of scaling by 60/36.",
    "verify": "print(5400 / 36 * 60)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Rates & unit conversion"
   },
   {
    "n": 21,
@@ -356,7 +376,8 @@
    "answer": 3,
    "explanation": "A shift 3 units left replaces x with x + 3, and a shift 2 units down subtracts 2 from the output, giving y = f(x + 3) − 2, choice D. Choosing f(x − 3) − 2 reverses the direction of the horizontal shift.",
    "verify": null,
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Graph transformations"
   },
   {
    "n": 22,
@@ -373,7 +394,8 @@
    "answer": 3,
    "explanation": "Expand: 12 − 3i + 8i − 2i². Since i² = −1, this is 12 + 5i + 2 = 14 + 5i, choice J. Choosing 10 + 5i treats −2i² as −2, and 12 + 5i drops the i² term entirely.",
    "verify": "print((3 + 2j) * (4 - 1j))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Complex numbers"
   },
   {
    "n": 23,
@@ -390,7 +412,8 @@
    "answer": 3,
    "explanation": "By the fundamental counting principle, multiply the number of options: 4 × 3 × 5 = 60, choice D. Choosing 12 adds the three numbers instead of multiplying, and 20 multiplies only 4 × 5.",
    "verify": "print(4 * 3 * 5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Counting & arrangements"
   },
   {
    "n": 24,
@@ -407,7 +430,8 @@
    "answer": 3,
    "explanation": "Set the costs equal: 3 + 2m = 7.5 + 1.25m, so 0.75m = 4.5 and m = 6, choice J. The distractors come from arithmetic slips such as dividing 4.5 by 1.25 pieces of the setup incorrectly or subtracting the fees in the wrong order.",
    "verify": "import sympy as sp; m = sp.symbols('m'); print(sp.solve(sp.Eq(3 + 2*m, 7.5 + 1.25*m), m))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Word problems & modeling"
   },
   {
    "n": 25,
@@ -424,7 +448,8 @@
    "answer": 1,
    "explanation": "Add the three railed sides: 12 + 12 + 18 = 42 feet, choice B. Choosing 60 uses the full perimeter, 48 rails the wrong combination of sides (18 + 18 + 12), and 30 uses only one side of each length.",
    "verify": "print(12 + 12 + 18)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Basic geometry measures"
   },
   {
    "n": 26,
@@ -441,7 +466,8 @@
    "answer": 1,
    "explanation": "Arc length is the fraction of the circumference: (80/360)(2π · 9) = (2/9)(18π) = 4π, choice G. Choosing 2π uses πr instead of 2πr for the circumference, 9π is half the circumference, and 18π is the area of the sector, not the arc length.",
    "verify": "import sympy as sp; print(sp.Rational(80, 360) * 2 * sp.pi * 9)",
-   "figure_code": "def draw(ax):\n    import numpy as np\n    t = np.linspace(0, 2*np.pi, 240)\n    ax.plot(9*np.cos(t), 9*np.sin(t), 'k-', lw=1.2)\n    a = np.radians(80)\n    ax.plot([0, 9], [0, 0], 'k-', lw=1.2)\n    ax.plot([0, 9*np.cos(a)], [0, 9*np.sin(a)], 'k-', lw=1.2)\n    ta = np.linspace(0, a, 60)\n    ax.plot(1.8*np.cos(ta), 1.8*np.sin(ta), 'k-', lw=0.8)\n    ax.text(2.9*np.cos(a/2), 2.9*np.sin(a/2), '80\\u00b0', ha='center', va='center')\n    ax.plot([0], [0], 'ko', ms=3)\n    ax.text(-0.9, -0.7, 'O', ha='center', va='center')\n    ax.text(4.5, -1.1, '9', ha='center', va='center')\n    ax.set_xlim(-11, 11)\n    ax.set_ylim(-11, 11)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    import numpy as np\n    t = np.linspace(0, 2*np.pi, 240)\n    ax.plot(9*np.cos(t), 9*np.sin(t), 'k-', lw=1.2)\n    a = np.radians(80)\n    ax.plot([0, 9], [0, 0], 'k-', lw=1.2)\n    ax.plot([0, 9*np.cos(a)], [0, 9*np.sin(a)], 'k-', lw=1.2)\n    ta = np.linspace(0, a, 60)\n    ax.plot(1.8*np.cos(ta), 1.8*np.sin(ta), 'k-', lw=0.8)\n    ax.text(2.9*np.cos(a/2), 2.9*np.sin(a/2), '80\\u00b0', ha='center', va='center')\n    ax.plot([0], [0], 'ko', ms=3)\n    ax.text(-0.9, -0.7, 'O', ha='center', va='center')\n    ax.text(4.5, -1.1, '9', ha='center', va='center')\n    ax.set_xlim(-11, 11)\n    ax.set_ylim(-11, 11)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Circles"
   },
   {
    "n": 27,
@@ -458,7 +484,8 @@
    "answer": 3,
    "explanation": "Growth of 5% per month multiplies the total by 1.05 each month, so S(t) = 800(1.05)^t, choice D. Choice A models linear growth of 40 subscribers per month, and 800(0.05)^t multiplies by only the 5%, causing decay.",
    "verify": "S = lambda t: 800 * 1.05**t; print(round(S(1), 2), round(S(2), 2))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Exponential models"
   },
   {
    "n": 28,
@@ -475,7 +502,8 @@
    "answer": 0,
    "explanation": "Distribute: 3x − 6 < 7x + 10. Then −16 < 4x, so x > −4. The answer is F. Sign errors when collecting terms lead to x < −4 or x < 4.",
    "verify": "import sympy as sp; x=sp.symbols('x'); sp.solve_univariate_inequality(3*(x-2)<7*x+10, x)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Linear inequalities"
   },
   {
    "n": 29,
@@ -492,7 +520,8 @@
    "answer": 3,
    "explanation": "The amount of acid stays fixed at 0.30(2) = 0.6 liter. Solving 0.6 = 0.20(2 + w) gives 2 + w = 3, so w = 1 liter, choice D. Choosing 0.6 gives the amount of acid rather than the water to add, and 0.4 is 20% of the original 2 liters.",
    "verify": "import sympy as sp; w = sp.symbols('w'); print(sp.solve(sp.Eq(sp.Rational(3, 10)*2, sp.Rational(1, 5)*(2 + w)), w))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Ratios & proportions"
   },
   {
    "n": 30,
@@ -509,7 +538,8 @@
    "answer": 0,
    "explanation": "With 20 games, the median is the average of the 10th and 11th values in order. The first 4 values are 0 and the next 7 are 1, so the 10th and 11th values are both 1, making the median 1, choice F. Choosing 1.4 gives the mean, and 1.5 averages the smallest and largest values.",
    "verify": "import statistics; data = [0]*4 + [1]*7 + [2]*6 + [3]*3; print(statistics.median(data))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Center & spread"
   },
   {
    "n": 31,
@@ -526,7 +556,8 @@
    "answer": 2,
    "explanation": "The height is the side opposite the 62° angle and 40 m is the adjacent side, so tan 62° = h/40, which gives h = 40 tan 62°, choice C. Choosing 40 sin 62° confuses the adjacent side with the hypotenuse, and 40/tan 62° inverts the ratio.",
    "verify": "import math; print(round(40 * math.tan(math.radians(62)), 1))",
-   "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([0, 40, 40, 0], [0, 0, 75, 0], 'k-', lw=1.5)\n    ax.plot([37, 37, 40], [0, 3, 3], 'k-', lw=1)\n    t = np.linspace(0, np.radians(62), 40)\n    ax.plot(9*np.cos(t), 9*np.sin(t), 'k-', lw=0.8)\n    ax.text(12.5, 3.5, '62\\u00b0', ha='left', va='bottom')\n    ax.text(20, -3, '40 m', ha='center', va='top')\n    ax.text(42, 37, 'h', ha='left', va='center')\n    ax.set_xlim(-6, 52)\n    ax.set_ylim(-10, 82)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([0, 40, 40, 0], [0, 0, 75, 0], 'k-', lw=1.5)\n    ax.plot([37, 37, 40], [0, 3, 3], 'k-', lw=1)\n    t = np.linspace(0, np.radians(62), 40)\n    ax.plot(9*np.cos(t), 9*np.sin(t), 'k-', lw=0.8)\n    ax.text(12.5, 3.5, '62\\u00b0', ha='left', va='bottom')\n    ax.text(20, -3, '40 m', ha='center', va='top')\n    ax.text(42, 37, 'h', ha='left', va='center')\n    ax.set_xlim(-6, 52)\n    ax.set_ylim(-10, 82)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Right-triangle trigonometry"
   },
   {
    "n": 32,
@@ -543,7 +574,8 @@
    "answer": 0,
    "explanation": "Either 2x − 5 = 11, giving x = 8, or 2x − 5 = −11, giving x = −3. The product is 8(−3) = −24, choice F. Choosing 24 drops the negative sign, and 5 gives the sum of the solutions instead of the product.",
    "verify": "x1 = (5 + 11) / 2; x2 = (5 - 11) / 2; print(x1, x2, x1 * x2)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Absolute value equations/inequalities"
   },
   {
    "n": 33,
@@ -560,7 +592,8 @@
    "answer": 2,
    "explanation": "The row 1, column 2 entry of AB is (row 1 of A) · (column 2 of B) = 2(4) + (−1)(6) = 8 − 6 = 2, choice C. Choosing 4 uses column 1 of B, −1 computes the corresponding entry of BA, and −4 multiplies entries elementwise.",
    "verify": "import sympy as sp; A = sp.Matrix([[2, -1], [3, 0]]); B = sp.Matrix([[1, 4], [-2, 6]]); print((A*B)[0, 1])",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Matrices & vectors"
   },
   {
    "n": 34,
@@ -577,7 +610,8 @@
    "answer": 0,
    "explanation": "Revenue is 190 × $4.50 = $855. Profit is revenue minus all costs: 855 − 340 − 125 = $390, choice F. Choosing $515 forgets the fixed costs, $730 forgets the ingredient costs, and $855 is revenue with no costs subtracted.",
    "verify": "print(190 * 4.50 - 340 - 125)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Multi-step arithmetic"
   },
   {
    "n": 35,
@@ -594,7 +628,8 @@
    "answer": 0,
    "explanation": "Vertex form with vertex (2, −1) is f(x) = a(x − 2)² − 1, and the parabola opens upward, so a > 0. Checking a = 1: f(0) = 4 − 1 = 3, matching the y-intercept, so choice A is correct. Choice B has vertex (−2, −1), C opens downward, and D has vertex (2, 1).",
    "verify": "f = lambda x: (x - 2)**2 - 1; print(f(2), f(0))",
-   "figure_code": "def draw(ax):\n    import numpy as np\n    x = np.linspace(-0.7, 4.7, 120)\n    ax.plot(x, (x - 2)**2 - 1, 'k-', lw=1.6)\n    ax.plot([-2, 6], [0, 0], 'k-', lw=0.8)\n    ax.plot([0, 0], [-2.5, 6.5], 'k-', lw=0.8)\n    ax.plot([2], [-1], 'ko', ms=4)\n    ax.text(2.15, -1.5, '(2, \\u22121)', ha='left', va='top')\n    ax.plot([0], [3], 'ko', ms=4)\n    ax.text(-0.25, 3.1, '(0, 3)', ha='right', va='center')\n    ax.text(5.8, -0.6, 'x', ha='center', va='top')\n    ax.text(0.35, 6.3, 'y', ha='left', va='center')\n    ax.set_xlim(-2.5, 6.5)\n    ax.set_ylim(-3, 7)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    import numpy as np\n    x = np.linspace(-0.7, 4.7, 120)\n    ax.plot(x, (x - 2)**2 - 1, 'k-', lw=1.6)\n    ax.plot([-2, 6], [0, 0], 'k-', lw=0.8)\n    ax.plot([0, 0], [-2.5, 6.5], 'k-', lw=0.8)\n    ax.plot([2], [-1], 'ko', ms=4)\n    ax.text(2.15, -1.5, '(2, \\u22121)', ha='left', va='top')\n    ax.plot([0], [3], 'ko', ms=4)\n    ax.text(-0.25, 3.1, '(0, 3)', ha='right', va='center')\n    ax.text(5.8, -0.6, 'x', ha='center', va='top')\n    ax.text(0.35, 6.3, 'y', ha='left', va='center')\n    ax.set_xlim(-2.5, 6.5)\n    ax.set_ylim(-3, 7)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Quadratic functions & parabolas"
   },
   {
    "n": 36,
@@ -611,7 +646,8 @@
    "answer": 1,
    "explanation": "Total prize money is 50 + 5(10) = $100, so the expected winnings per ticket are 100/200 = $0.50. Subtracting the $2 cost gives a net expected value of −$1.50, choice G. Choosing $0.50 forgets the cost of the ticket, and −$2.00 ignores the prizes.",
    "verify": "print((50 + 5*10) / 200 - 2)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Expected value"
   },
   {
    "n": 37,
@@ -628,7 +664,8 @@
    "answer": 0,
    "explanation": "Complete the square: (x − 3)² + (y + 2)² = 12 + 9 + 4 = 25, so the radius is √25 = 5, choice A. Choosing 25 gives r², 13 uses only the added constants 9 + 4, and 12 uses the original constant term.",
    "verify": "import sympy as sp; print(sp.sqrt(12 + 9 + 4))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Coordinate geometry"
   },
   {
    "n": 38,
@@ -645,7 +682,8 @@
    "answer": 1,
    "explanation": "Squaring gives 2x + 7 = x² − 8x + 16, so x² − 10x + 9 = 0 and x = 1 or x = 9. Checking, x = 1 gives √9 = 3 but x − 4 = −3, so it is extraneous; x = 9 gives √25 = 5 = 9 − 4. The answer is G. Choice H fails to check for extraneous solutions.",
    "verify": "import sympy as sp; x = sp.symbols('x'); print(sp.solve(sp.sqrt(2*x + 7) - (x - 4), x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Radical & rational equations"
   },
   {
    "n": 39,
@@ -662,7 +700,8 @@
    "answer": 3,
    "explanation": "The area is 14 × 10 = 140 square feet, so the material costs 140 × 3.20 = $448. With 8% tax, the total is 448 × 1.08 = $483.84, choice D. Choosing $448.00 omits the tax, $456.00 adds $8 instead of 8%, and $35.84 is only the tax amount.",
    "verify": "print(round(14 * 10 * 3.20 * 1.08, 2))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Percentages"
   },
   {
    "n": 40,
@@ -679,7 +718,8 @@
    "answer": 2,
    "explanation": "Rewrite in exponential form: 2x + 1 = 5² = 25, so 2x = 24 and x = 12, choice H. Choosing 4.5 comes from setting 2x + 1 = 5 · 2 = 10, and 24.5 comes from setting 2x + 1 = 50.",
    "verify": "import sympy as sp; x = sp.symbols('x'); print(sp.solve(sp.Eq(5**2, 2*x + 1), x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Logarithms"
   },
   {
    "n": 41,
@@ -696,7 +736,8 @@
    "answer": 1,
    "explanation": "Compute 2u + v = ⟨6 − 1, −4 + 4⟩ = ⟨5, 0⟩, whose magnitude is √(25 + 0) = 5, choice B. Choosing √113 computes 2u − v instead, 25 forgets the square root, and √5 takes the square root of the component instead of its square.",
    "verify": "w = (2*3 + (-1), 2*(-2) + 4); print((w[0]**2 + w[1]**2) ** 0.5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Matrices & vectors"
   },
   {
    "n": 42,
@@ -713,7 +754,8 @@
    "answer": 3,
    "explanation": "This is a conditional probability: the sample space is the 24 camp attendees, of whom 15 are forwards, so the probability is 15/24 = 5/8, choice J. Choosing 3/8 uses all 40 players as the denominator (15/40), and 3/5 is the probability of attending camp.",
    "verify": "from fractions import Fraction; print(Fraction(15, 24))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Probability"
   },
   {
    "n": 43,
@@ -730,7 +772,8 @@
    "answer": 0,
    "explanation": "By the Law of Cosines, QR² = 5² + 8² − 2(5)(8)cos 60° = 25 + 64 − 80(1/2) = 49, so QR = 7. The answer is A. Ignoring the cosine term gives √89; adding it instead of subtracting gives √129.",
    "verify": "import math; math.sqrt(25+64-2*5*8*math.cos(math.radians(60)))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Law of sines/cosines"
   },
   {
    "n": 44,
@@ -747,7 +790,8 @@
    "answer": 1,
    "explanation": "Exactly one real solution requires the discriminant to be zero: k² − 4(1)(49) = 0, so k² = 196 and k = 14, choice G. Choosing 7 takes √49 without accounting for the factor of 4, and 98 is 2(49).",
    "verify": "import sympy as sp; k = sp.symbols('k'); print([s for s in sp.solve(sp.Eq(k**2 - 4*49, 0), k) if s > 0])",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Quadratic equations"
   },
   {
    "n": 45,
@@ -764,7 +808,8 @@
    "answer": 0,
    "explanation": "The sine function has maximum value 1, so the maximum of 4 sin(2x) − 1 is 4(1) − 1 = 3, choice A. Choosing 4 gives the amplitude alone, 5 adds 1 instead of subtracting, and 8 incorrectly doubles the amplitude using the 2 inside the sine.",
    "verify": "print(4 * 1 - 1)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Trigonometric functions"
   }
  ]
 }

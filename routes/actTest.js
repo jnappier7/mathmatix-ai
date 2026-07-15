@@ -24,7 +24,7 @@ const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAss
 // skillId → human-readable name, so the report can name EXACT weak skills
 // (e.g. "Quadratic Equations") rather than just the broad category.
 const ACT_SKILL_NAMES = (() => {
-  // Category-level skills used by the current Fable-authored bank.
+  // Broad category names — fallback if an item lacks a fine sub-skill tag.
   const map = {
     'act-number-quantity': 'Number & Quantity',
     'act-algebra': 'Algebra',
@@ -33,12 +33,19 @@ const ACT_SKILL_NAMES = (() => {
     'act-statistics-probability': 'Statistics & Probability',
     'act-integrating-essential-skills': 'Integrating Essential Skills',
   };
-  // Fine-grained skill names (used if/when items carry sub-skill tags).
+  // Fine-grained skill names generated from the Fable bank's per-item `skill`
+  // tags (scripts/ingestFableActItems.py) — e.g. act-quadratic-equations →
+  // "Quadratic equations". Lets the report name EXACT weak skills.
+  try {
+    const fine = require('../seeds/act-skill-names.json');
+    for (const [id, name] of Object.entries(fine)) map[id] = name;
+  } catch { /* fine-grained names optional */ }
+  // Legacy prep-skill catalog, if present (superset of names).
   try {
     const seed = require('../seeds/skills-act-math-prep.json');
     const arr = Array.isArray(seed) ? seed : (seed.skills || []);
     for (const s of arr) map[s.skillId] = s.displayName || s.skillId;
-  } catch { /* fine-grained names optional */ }
+  } catch { /* optional */ }
   return map;
 })();
 

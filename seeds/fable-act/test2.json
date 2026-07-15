@@ -16,7 +16,8 @@
    "answer": 1,
    "explanation": "The discount is 15% of $40, which is 0.15 × 40 = $6, so a member pays 40 − 6 = $34. Equivalently, the member pays 85% of the price: 0.85 × 40 = 34. The correct answer is B.",
    "verify": "print(40*0.85)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Percentages"
   },
   {
    "n": 2,
@@ -33,7 +34,8 @@
    "answer": 2,
    "explanation": "Add 7 to both sides to get 5x = 25, then divide by 5 to get x = 5. The correct answer is H.",
    "verify": "import sympy as sp\nx = sp.symbols('x')\nprint(sp.solve(sp.Eq(5*x - 7, 18), x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Linear equations"
   },
   {
    "n": 3,
@@ -50,7 +52,8 @@
    "answer": 3,
    "explanation": "Raise each factor to the third power: 3³ = 27 and (x²)³ = x⁶ by the power-of-a-power rule. So (3x²)³ = 27x⁶, and the correct answer is D.",
    "verify": "import sympy as sp\nx = sp.symbols('x')\nprint(sp.expand((3*x**2)**3))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Exponent rules"
   },
   {
    "n": 4,
@@ -67,7 +70,8 @@
    "answer": 0,
    "explanation": "The interior angles of a triangle sum to 180°. The third angle measures 180 − 42 − 65 = 73°. The correct answer is F.",
    "verify": "print(180 - 42 - 65)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Triangles & angle relationships"
   },
   {
    "n": 5,
@@ -84,7 +88,8 @@
    "answer": 3,
    "explanation": "The mean is the sum divided by the number of values: (9 + 12 + 15 + 18 + 26)/5 = 80/5 = 16. Choice C, 15, is the median, not the mean. The correct answer is D.",
    "verify": "print((9+12+15+18+26)/5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Center & spread"
   },
   {
    "n": 6,
@@ -101,7 +106,8 @@
    "answer": 2,
    "explanation": "Substitute x = −2: f(−2) = 2(−2)² − 3(−2) + 1 = 2(4) + 6 + 1 = 15. Choice G, 3, comes from the sign error −3(−2) = −6. The correct answer is H.",
    "verify": "print(2*(-2)**2 - 3*(-2) + 1)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Function evaluation & notation"
   },
   {
    "n": 7,
@@ -118,7 +124,8 @@
    "answer": 2,
    "explanation": "Convert 45 minutes to hours: 45/60 = 0.75 hour. Average speed is distance divided by time: 18/0.75 = 24 miles per hour. The correct answer is C.",
    "verify": "print(18/(45/60))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Rates & unit conversion"
   },
   {
    "n": 8,
@@ -135,7 +142,8 @@
    "answer": 2,
    "explanation": "Subtracting 3x − 8 from 7x + 2 gives (7x + 2) − (3x − 8) = 7x + 2 − 3x + 8 = 4x + 10. The answer is H. A common error is failing to distribute the negative to −8, which gives 4x − 6, or reversing the order of subtraction.",
    "verify": "import sympy as sp; x=sp.symbols('x'); sp.expand((7*x+2)-(3*x-8))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Polynomial expressions"
   },
   {
    "n": 9,
@@ -152,7 +160,8 @@
    "answer": 1,
    "explanation": "The width is area ÷ length = 63/9 = 7 cm. The perimeter is 2(length + width) = 2(9 + 7) = 32 cm. Choice A, 16, is only half the perimeter. The correct answer is B.",
    "verify": "w = 63/9\nprint(2*(9 + w))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Area & perimeter"
   },
   {
    "n": 10,
@@ -169,7 +178,8 @@
    "answer": 3,
    "explanation": "There are 4 + 5 + 3 = 12 marbles, of which 4 + 5 = 9 are not green. The probability is 9/12 = 3/4. The correct answer is J.",
    "verify": "from fractions import Fraction\nprint(Fraction(4+5, 4+5+3))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Probability"
   },
   {
    "n": 11,
@@ -186,7 +196,8 @@
    "answer": 3,
    "explanation": "Factor out the largest perfect square: 48 = 16 × 3, so √48 = √16 · √3 = 4√3. The correct answer is D.",
    "verify": "import sympy as sp\nprint(sp.sqrt(48), sp.sqrt(48) == 4*sp.sqrt(3))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Radicals & roots"
   },
   {
    "n": 12,
@@ -203,7 +214,8 @@
    "answer": 2,
    "explanation": "The nth term is a₁ + (n − 1)d. The 12th term is 7 + (12 − 1)(4) = 7 + 44 = 51. Choice J, 55, comes from using n instead of n − 1. The correct answer is H.",
    "verify": "print(7 + (12-1)*4)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Sequences"
   },
   {
    "n": 13,
@@ -220,7 +232,8 @@
    "answer": 1,
    "explanation": "Set up the proportion nickels/dimes = 3/5, so nickels = (3/5)(40) = 24. Choice D, 64, is the total number of nickels and dimes. The correct answer is B.",
    "verify": "print(40*3/5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Ratios & proportions"
   },
   {
    "n": 14,
@@ -237,7 +250,8 @@
    "answer": 1,
    "explanation": "By the distance formula, d = √((5 − (−1))² + (−4 − 4)²) = √(36 + 64) = √100 = 10. Choice J, 100, is the square of the distance. The correct answer is G.",
    "verify": "print(((5 - (-1))**2 + (-4 - 4)**2)**0.5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Coordinate geometry"
   },
   {
    "n": 15,
@@ -254,7 +268,8 @@
    "answer": 0,
    "explanation": "Subtract 4 from both sides: −x > 3. Dividing by −1 reverses the inequality: x < −3. The answer is A. Forgetting to flip the inequality sign gives x > −3.",
    "verify": "import sympy as sp; x=sp.symbols('x'); sp.solve_univariate_inequality(4-x>7, x)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Linear inequalities"
   },
   {
    "n": 16,
@@ -271,7 +286,8 @@
    "answer": 1,
    "explanation": "Work from the inside out: g(2) = 2² + 1 = 5, then f(5) = 3(5) − 2 = 13. Choice H, 17, is g(f(2)), the composition in the wrong order. The correct answer is G.",
    "verify": "f = lambda x: 3*x - 2\ng = lambda x: x**2 + 1\nprint(f(g(2)))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Function composition"
   },
   {
    "n": 17,
@@ -288,7 +304,8 @@
    "answer": 3,
    "explanation": "The side labeled x is opposite the 35° angle and the 12-inch side is adjacent, so tan 35° = x/12. Solving gives x = 12 tan 35°. The correct answer is D.",
    "verify": "import math\nprint(round(12*math.tan(math.radians(35)), 3))  # x = 12 tan 35 (~8.403), confirming choice D",
-   "figure_code": "def draw(ax):\n    ax.plot([0, 6, 6, 0], [0, 0, 4.2, 0], 'k-')\n    ax.plot([5.55, 5.55, 6], [0, 0.45, 0.45], 'k-')\n    ax.text(3, -0.3, '12', ha='center', va='top')\n    ax.text(6.25, 2.1, 'x', ha='left', va='center')\n    ax.text(1.5, 0.18, '35°', ha='left', va='bottom')\n    ax.set_xlim(-1, 8)\n    ax.set_ylim(-1.3, 5.2)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    ax.plot([0, 6, 6, 0], [0, 0, 4.2, 0], 'k-')\n    ax.plot([5.55, 5.55, 6], [0, 0.45, 0.45], 'k-')\n    ax.text(3, -0.3, '12', ha='center', va='top')\n    ax.text(6.25, 2.1, 'x', ha='left', va='center')\n    ax.text(1.5, 0.18, '35°', ha='left', va='bottom')\n    ax.set_xlim(-1, 8)\n    ax.set_ylim(-1.3, 5.2)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Right-triangle trigonometry"
   },
   {
    "n": 18,
@@ -305,7 +322,8 @@
    "answer": 2,
    "explanation": "From the second equation, x = y + 1. Substituting into the first gives 2(y + 1) + 3y = 12, so 5y = 10 and y = 2, which makes x = 3. Choice G, 2, is the value of y. The correct answer is H.",
    "verify": "import sympy as sp\nx, y = sp.symbols('x y')\nprint(sp.solve([sp.Eq(2*x + 3*y, 12), sp.Eq(x - y, 1)], [x, y]))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Systems of equations"
   },
   {
    "n": 19,
@@ -322,7 +340,8 @@
    "answer": 3,
    "explanation": "By the fundamental counting principle, multiply the number of independent options: 4 × 5 × 3 = 60. Choice A, 12, incorrectly adds the options instead of multiplying. The correct answer is D.",
    "verify": "print(4*5*3)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Counting & arrangements"
   },
   {
    "n": 20,
@@ -339,7 +358,8 @@
    "answer": 1,
    "explanation": "Subtract the flat fee first: 54 − 9 = 45 was the hourly charge. Dividing by the rate gives 45/15 = 3 hours. Choice H, 3.6, comes from dividing $54 by $15 without removing the fee. The correct answer is G.",
    "verify": "print((54 - 9)/15)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Rates & unit conversion"
   },
   {
    "n": 21,
@@ -356,7 +376,8 @@
    "answer": 2,
    "explanation": "Expand with FOIL: 3 − 12i + 2i − 8i². Since i² = −1, the last term is +8, so the product is (3 + 8) + (−12 + 2)i = 11 − 10i. Choice A results from treating i² as +1. The correct answer is C.",
    "verify": "import sympy as sp\nprint(sp.expand((3 + 2*sp.I)*(1 - 4*sp.I)))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Complex numbers"
   },
   {
    "n": 22,
@@ -373,7 +394,8 @@
    "answer": 3,
    "explanation": "From C = 2πr = 16π, the radius is r = 8. The area is πr² = π(8²) = 64π square inches. Choice G, 16π, uses the diameter formula or repeats the circumference. The correct answer is J.",
    "verify": "r = 16/2\nprint(r**2)  # coefficient of pi in the area, should be 64",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Circles"
   },
   {
    "n": 23,
@@ -390,7 +412,8 @@
    "answer": 3,
    "explanation": "Replacing x with x − 3 shifts a graph 3 units to the right (horizontal shifts are opposite in sign), and adding 2 outside the function shifts it 2 units up. The correct answer is D.",
    "verify": null,
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Graph transformations"
   },
   {
    "n": 24,
@@ -407,7 +430,8 @@
    "answer": 2,
    "explanation": "Factor: x² − 5x − 24 = (x − 8)(x + 3) = 0, since −8 · 3 = −24 and −8 + 3 = −5. The zero-product property gives x = 8 or x = −3. The correct answer is H.",
    "verify": "import sympy as sp\nx = sp.symbols('x')\nprint(sp.solve(x**2 - 5*x - 24, x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Quadratic equations"
   },
   {
    "n": 25,
@@ -424,7 +448,8 @@
    "answer": 1,
    "explanation": "Divide the length in kilometers by the number of kilometers per mile: 21 ÷ 1.6 = 13.125, which is closest to 13.1 miles. Choice D, 33.6, incorrectly multiplies by 1.6. The correct answer is B.",
    "verify": "print(21/1.6)  # 13.125, closest to 13.1",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Multi-step arithmetic"
   },
   {
    "n": 26,
@@ -441,7 +466,8 @@
    "answer": 0,
    "explanation": "The four splits must total 4 × 28.5 = 114 seconds. The three known splits total 85.8 seconds, so the fourth is 114 − 85.8 = 28.2 seconds. Choice H, 28.6, is the mean of the three given splits. The correct answer is F.",
    "verify": "print(round(28.5*4 - (27.8 + 29.1 + 28.9), 4))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Center & spread"
   },
   {
    "n": 27,
@@ -458,7 +484,8 @@
    "answer": 2,
    "explanation": "Because ℓ ∥ m, the 68° angle at line ℓ has a corresponding congruent angle on the same side of the transversal at line m, and the angle marked x° is supplementary to that angle. Therefore x = 180 − 68 = 112. Choice B incorrectly assumes the marked angles are congruent. The correct answer is C.",
    "verify": "print(180 - 68)",
-   "figure_code": "def draw(ax):\n    ax.plot([-0.5, 4], [2, 2], 'k-')\n    ax.plot([-0.5, 4], [0, 0], 'k-')\n    ax.plot([0.15, 3.15], [-0.8, 3.2], 'k-')\n    ax.text(4.15, 2, 'ℓ', ha='left', va='center')\n    ax.text(4.15, 0, 'm', ha='left', va='center')\n    ax.text(3.25, 3.25, 't', ha='left', va='bottom')\n    ax.text(2.85, 2.15, '68°', ha='left', va='bottom')\n    ax.text(0.35, 0.15, 'x°', ha='right', va='bottom')\n    ax.set_xlim(-1, 5)\n    ax.set_ylim(-1.3, 3.8)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    ax.plot([-0.5, 4], [2, 2], 'k-')\n    ax.plot([-0.5, 4], [0, 0], 'k-')\n    ax.plot([0.15, 3.15], [-0.8, 3.2], 'k-')\n    ax.text(4.15, 2, 'ℓ', ha='left', va='center')\n    ax.text(4.15, 0, 'm', ha='left', va='center')\n    ax.text(3.25, 3.25, 't', ha='left', va='bottom')\n    ax.text(2.85, 2.15, '68°', ha='left', va='bottom')\n    ax.text(0.35, 0.15, 'x°', ha='right', va='bottom')\n    ax.set_xlim(-1, 5)\n    ax.set_ylim(-1.3, 3.8)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Angles & parallel lines"
   },
   {
    "n": 28,
@@ -475,7 +502,8 @@
    "answer": 0,
    "explanation": "First scale A by 2: 2A = [[2, 6], [4, 0]]. Then subtract B entry by entry: [[2 − 4, 6 − (−1)], [4 − 2, 0 − 5]] = [[−2, 7], [2, −5]]. Choice G is A − B, forgetting the scalar 2. The correct answer is F.",
    "verify": "import sympy as sp\nA = sp.Matrix([[1, 3], [2, 0]])\nB = sp.Matrix([[4, -1], [2, 5]])\nprint((2*A - B).tolist())",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Matrices & vectors"
   },
   {
    "n": 29,
@@ -492,7 +520,8 @@
    "answer": 0,
    "explanation": "Since log₃ 9 = 2, the equation becomes log₃ x = 4 − 2 = 2, so x = 3² = 9. Choice D, 81, ignores the log₃ 9 term. The correct answer is A.",
    "verify": "import sympy as sp\nx = sp.symbols('x', positive=True)\nprint(sp.solve(sp.Eq(sp.log(x, 3) + sp.log(9, 3), 4), x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Logarithms"
   },
   {
    "n": 30,
@@ -509,7 +538,8 @@
    "answer": 2,
    "explanation": "Either 2x − 7 = 11, giving x = 9, or 2x − 7 = −11, giving x = −2. The sum of the solutions is 9 + (−2) = 7. Choice G, 3.5, is the average of the solutions rather than the sum. The correct answer is H.",
    "verify": "import sympy as sp\nx = sp.symbols('x', real=True)\nprint(sum(sp.solve(sp.Eq(sp.Abs(2*x - 7), 11), x)))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Absolute value equations/inequalities"
   },
   {
    "n": 31,
@@ -526,7 +556,8 @@
    "answer": 0,
    "explanation": "Their combined rate is 1/12 + 1/8 = 2/24 + 3/24 = 5/24 apartment per hour. The time is the reciprocal: 24/5 = 4.8 hours. Choice C, 10, is the average of the two times, a classic error. The correct answer is A.",
    "verify": "print(1/(1/12 + 1/8))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Rates & unit conversion"
   },
   {
    "n": 32,
@@ -543,7 +574,8 @@
    "answer": 0,
    "explanation": "Complete the square: (x² − 8x + 16) + (y² + 6y + 9) = 11 + 16 + 9, so (x − 4)² + (y + 3)² = 36. The radius is √36 = 6. Choice J, 36, is r², not r. The correct answer is F.",
    "verify": "print((11 + (8/2)**2 + (6/2)**2)**0.5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Coordinate geometry"
   },
   {
    "n": 33,
@@ -560,7 +592,8 @@
    "answer": 0,
    "explanation": "For y = a sin(bx), the amplitude is |a| = 3 and the period is 2π/b = 2π/2 = π. Choice B forgets to divide the period by 2, and choice D swaps the roles of the constants. The correct answer is A.",
    "verify": "import sympy as sp\nx = sp.symbols('x')\nprint(3, sp.periodicity(3*sp.sin(2*x), x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Trigonometric functions"
   },
   {
    "n": 34,
@@ -577,7 +610,8 @@
    "answer": 3,
    "explanation": "This is a conditional probability: the selection is restricted to the 120 pass holders. P(rides every weekday | pass holder) = 80/120 = 2/3. Choice G, 2/5, divides by all 200 surveyed riders instead. The correct answer is J.",
    "verify": "from fractions import Fraction\nprint(Fraction(80, 120))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Probability"
   },
   {
    "n": 35,
@@ -594,7 +628,8 @@
    "answer": 1,
    "explanation": "Squaring both sides gives x + 10 = x² − 4x + 4, so x² − 5x − 6 = 0 and (x − 6)(x + 1) = 0, yielding x = 6 or x = −1. Checking in the original equation, x = −1 gives √9 = 3 but x − 2 = −3, so it is extraneous; only x = 6 works. The correct answer is B.",
    "verify": "import sympy as sp\nx = sp.symbols('x')\nprint(sp.solve(sp.Eq(sp.sqrt(x + 10), x - 2), x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Radical & rational equations"
   },
   {
    "n": 36,
@@ -611,7 +646,8 @@
    "answer": 1,
    "explanation": "Apply the multipliers in sequence: 1.20 × 0.90 = 1.08, so the ending value is 108% of the original — an 8% increase. Choice H, 10%, incorrectly subtracts the percents (20 − 10). The correct answer is G.",
    "verify": "print(round((1.20*0.90 - 1)*100, 6))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Percentages"
   },
   {
    "n": 37,
@@ -628,7 +664,8 @@
    "answer": 0,
    "explanation": "The rectangle's area is 10 × 6 = 60. The semicircle has diameter 10, so its radius is 5 and its area is (1/2)π(5²) = 12.5π. The total area is 60 + 12.5π square meters. Choice B uses a full circle instead of a semicircle. The correct answer is A.",
    "verify": "import sympy as sp\nprint(sp.nsimplify(10*6) + sp.Rational(1, 2)*sp.pi*5**2)",
-   "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([0, 10, 10, 0, 0], [0, 0, 6, 6, 0], 'k-')\n    t = np.linspace(0, np.pi, 100)\n    ax.plot(5 + 5*np.cos(t), 6 + 5*np.sin(t), 'k-')\n    ax.text(5, -0.4, '10 m', ha='center', va='top')\n    ax.text(-0.4, 3, '6 m', ha='right', va='center')\n    ax.set_xlim(-2.5, 12.5)\n    ax.set_ylim(-1.8, 12)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([0, 10, 10, 0, 0], [0, 0, 6, 6, 0], 'k-')\n    t = np.linspace(0, np.pi, 100)\n    ax.plot(5 + 5*np.cos(t), 6 + 5*np.sin(t), 'k-')\n    ax.text(5, -0.4, '10 m', ha='center', va='top')\n    ax.text(-0.4, 3, '6 m', ha='right', va='center')\n    ax.set_xlim(-2.5, 12.5)\n    ax.set_ylim(-1.8, 12)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Area & perimeter"
   },
   {
    "n": 38,
@@ -645,7 +682,8 @@
    "answer": 2,
    "explanation": "The vertex of the parabola occurs at h = −b/(2a) = −12/(2·(−2)) = 3. Then T(3) = −2(9) + 12(3) + 50 = −18 + 36 + 50 = 68. Choice F, 50, is the temperature at noon, not the maximum. The correct answer is H.",
    "verify": "import sympy as sp\nh = sp.symbols('h')\nT = -2*h**2 + 12*h + 50\nhv = sp.solve(sp.diff(T, h), h)[0]\nprint(hv, T.subs(h, hv))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Quadratic functions & parabolas"
   },
   {
    "n": 39,
@@ -662,7 +700,8 @@
    "answer": 3,
    "explanation": "Write both sides with base 2: 8^(x−2) = (2³)^(x−2) = 2^(3x−6). Setting the exponents equal gives x + 4 = 3x − 6, so 2x = 10 and x = 5. Choice C, 3, comes from applying the 3 only to the constant term. The correct answer is D.",
    "verify": "import sympy as sp\nx = sp.symbols('x', real=True)\nprint(sp.solve(sp.Eq(2**(x + 4), 8**(x - 2)), x))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Exponent rules"
   },
   {
    "n": 40,
@@ -679,7 +718,8 @@
    "answer": 1,
    "explanation": "The expected winnings per ticket are (400 + 100 + 100)/200 = 600/200 = $3.00. Subtracting the $5 cost gives an expected net value of 3 − 5 = −$2.00. Choice J, $3.00, forgets to subtract the ticket price. The correct answer is G.",
    "verify": "print((400 + 2*100)/200 - 5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Expected value"
   },
   {
    "n": 41,
@@ -696,7 +736,8 @@
    "answer": 1,
    "explanation": "The system has infinitely many solutions when the equations are proportional. Multiplying the first equation by 3 gives 12x + 3ky = 30, which matches the second equation when 3k = 21, so k = 7. The correct answer is B.",
    "verify": "import sympy as sp\nk = sp.symbols('k')\nprint(sp.solve(sp.Eq(3*k, 21), k))",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Systems of equations"
   },
   {
    "n": 42,
@@ -713,7 +754,8 @@
    "answer": 2,
    "explanation": "The number of batches needed is 180 ÷ 15 = 12. At 2.5 cups per batch, that requires 12 × 2.5 = 30 cups of kernels. Choice F, 12, stops at the number of batches. The correct answer is H.",
    "verify": "print(180/15*2.5)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Multi-step arithmetic"
   },
   {
    "n": 43,
@@ -730,7 +772,8 @@
    "answer": 3,
    "explanation": "Because DE ∥ BC, △ADE is similar to △ABC with ratio AD/AB = 6/(6 + 4) = 3/5. Therefore BC = DE ÷ (3/5) = 9 × (10/6) = 15. Choice C, 13.5, comes from using the ratio 6:4 instead of 6:10. The correct answer is D.",
    "verify": "print(9*(6 + 4)/6)",
-   "figure_code": "def draw(ax):\n    ax.plot([0, 6, 2.5, 0], [0, 0, 5, 0], 'k-')\n    ax.plot([1, 4.6], [2, 2], 'k-')\n    ax.text(2.5, 5.15, 'A', ha='center', va='bottom')\n    ax.text(-0.15, -0.15, 'B', ha='right', va='top')\n    ax.text(6.15, -0.15, 'C', ha='left', va='top')\n    ax.text(0.8, 2.0, 'D', ha='right', va='center')\n    ax.text(4.8, 2.0, 'E', ha='left', va='center')\n    ax.text(1.5, 3.6, '6', ha='right', va='center')\n    ax.text(0.3, 1.0, '4', ha='right', va='center')\n    ax.text(2.8, 2.12, '9', ha='center', va='bottom')\n    ax.set_xlim(-1.2, 7.5)\n    ax.set_ylim(-1, 6)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    ax.plot([0, 6, 2.5, 0], [0, 0, 5, 0], 'k-')\n    ax.plot([1, 4.6], [2, 2], 'k-')\n    ax.text(2.5, 5.15, 'A', ha='center', va='bottom')\n    ax.text(-0.15, -0.15, 'B', ha='right', va='top')\n    ax.text(6.15, -0.15, 'C', ha='left', va='top')\n    ax.text(0.8, 2.0, 'D', ha='right', va='center')\n    ax.text(4.8, 2.0, 'E', ha='left', va='center')\n    ax.text(1.5, 3.6, '6', ha='right', va='center')\n    ax.text(0.3, 1.0, '4', ha='right', va='center')\n    ax.text(2.8, 2.12, '9', ha='center', va='bottom')\n    ax.set_xlim(-1.2, 7.5)\n    ax.set_ylim(-1, 6)\n    ax.set_aspect('equal')\n    ax.axis('off')",
+   "skill": "Similar & congruent figures"
   },
   {
    "n": 44,
@@ -747,7 +790,8 @@
    "answer": 0,
    "explanation": "Vertex form with vertex (3, −4) is y = a(x − 3)² − 4. Substituting the point (1, 0): 0 = a(−2)² − 4, so 4a = 4 and a = 1, giving y = (x − 3)² − 4. Choice G, with (x + 3)², places the vertex at x = −3. The correct answer is F.",
    "verify": "f = lambda x: (x - 3)**2 - 4\nprint(f(3), f(1), f(5))  # expect -4 0 0",
-   "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([-1.5, 7], [0, 0], 'k-', linewidth=0.8)\n    ax.plot([0, 0], [-5.5, 7], 'k-', linewidth=0.8)\n    x = np.linspace(-0.2, 6.2, 200)\n    ax.plot(x, (x - 3)**2 - 4, 'k-')\n    ax.plot([1, 5, 3], [0, 0, -4], 'ko', markersize=4)\n    ax.text(1, 0.3, '(1, 0)', ha='right', va='bottom')\n    ax.text(5, 0.3, '(5, 0)', ha='left', va='bottom')\n    ax.text(3, -4.4, '(3, −4)', ha='center', va='top')\n    ax.text(6.9, 0.25, 'x', ha='right', va='bottom')\n    ax.text(0.25, 6.7, 'y', ha='left', va='top')\n    ax.set_xlim(-1.8, 7.3)\n    ax.set_ylim(-5.9, 7.3)\n    ax.axis('off')"
+   "figure_code": "def draw(ax):\n    import numpy as np\n    ax.plot([-1.5, 7], [0, 0], 'k-', linewidth=0.8)\n    ax.plot([0, 0], [-5.5, 7], 'k-', linewidth=0.8)\n    x = np.linspace(-0.2, 6.2, 200)\n    ax.plot(x, (x - 3)**2 - 4, 'k-')\n    ax.plot([1, 5, 3], [0, 0, -4], 'ko', markersize=4)\n    ax.text(1, 0.3, '(1, 0)', ha='right', va='bottom')\n    ax.text(5, 0.3, '(5, 0)', ha='left', va='bottom')\n    ax.text(3, -4.4, '(3, −4)', ha='center', va='top')\n    ax.text(6.9, 0.25, 'x', ha='right', va='bottom')\n    ax.text(0.25, 6.7, 'y', ha='left', va='top')\n    ax.set_xlim(-1.8, 7.3)\n    ax.set_ylim(-5.9, 7.3)\n    ax.axis('off')",
+   "skill": "Quadratic functions & parabolas"
   },
   {
    "n": 45,
@@ -764,7 +808,8 @@
    "answer": 2,
    "explanation": "The charges beyond the base plan were 78 − 30 = $48, which pays for 48/12 = 4 additional GB. Adding the 5 GB included in the plan gives a total of 5 + 4 = 9 GB. Choice A, 4, counts only the additional gigabytes. The correct answer is C.",
    "verify": "print(5 + (78 - 30)/12)",
-   "figure_code": null
+   "figure_code": null,
+   "skill": "Multi-step arithmetic"
   }
  ]
 }
