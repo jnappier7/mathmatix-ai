@@ -270,6 +270,44 @@ router.post('/complete', async (req, res) => {
   }
 });
 
+// ── GET /history — completed attempts for the growth report ──
+router.get('/history', async (req, res) => {
+  try {
+    const sessions = await ActTestSession.find({ userId: req.user._id, status: 'completed' })
+      .sort({ completedAt: 1 })
+      .lean();
+
+    const attempts = sessions.map(s => {
+      const byCategory = {};
+      const bySkill = {};
+      for (const r of (s.responses || [])) {
+        const c = r.category || 'unknown';
+        byCategory[c] = byCategory[c] || { correct: 0, total: 0 };
+        byCategory[c].total += 1;
+        if (r.correct) byCategory[c].correct += 1;
+
+        const sk = r.skillId || 'unknown';
+        bySkill[sk] = bySkill[sk] || { correct: 0, total: 0, name: ACT_SKILL_NAMES[sk] || sk };
+        bySkill[sk].total += 1;
+        if (r.correct) bySkill[sk].correct += 1;
+      }
+      return {
+        completedAt: s.completedAt,
+        rawScore: s.rawScore,
+        scaledScore: s.scaledScore,
+        totalItems: (s.items || []).length || (s.responses || []).length,
+        byCategory,
+        bySkill,
+      };
+    });
+
+    return res.json({ count: attempts.length, attempts });
+  } catch (err) {
+    console.error('[actTest] history error:', err.message);
+    return res.status(500).json({ message: 'Could not load your test history.' });
+  }
+});
+
 // ── helper: load a session the caller owns ──────────────────
 async function loadOwnedSession(sessionId, userId, res) {
   if (!sessionId) { res.status(400).json({ message: 'sessionId is required.' }); return null; }

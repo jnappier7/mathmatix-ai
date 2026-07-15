@@ -48,6 +48,14 @@
   .actt-catbar{flex:1;height:9px;background:#ece9f5;border-radius:5px;overflow:hidden;display:block}
   .actt-catfill{display:block;height:100%;background:linear-gradient(90deg,#667eea,#764ba2)}
   .actt-catpct{flex:0 0 54px;text-align:left;color:#777;font-variant-numeric:tabular-nums}
+  .actt-trend{font-size:20px;font-weight:800;color:#764ba2;text-align:center;letter-spacing:.02em}
+  .actt-cmp{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13px}
+  .actt-cmpname{flex:0 0 180px;text-align:right;color:#555;text-transform:capitalize}
+  .actt-cmpval{flex:1;color:#333;font-variant-numeric:tabular-nums}
+  .actt-delta{flex:0 0 62px;text-align:center;font-weight:700;font-size:11px;padding:2px 6px;border-radius:20px;font-variant-numeric:tabular-nums}
+  .actt-up{background:#e4f6ea;color:#1a7f43}
+  .actt-down{background:#fdeaea;color:#c0392b}
+  .actt-same{background:#eee;color:#888}
   .actt-err{color:#c0392b;padding:24px;text-align:center}
   @media (prefers-color-scheme:dark){
     .actt-card{background:#1c1a2b;color:#ece9f7}
@@ -59,6 +67,8 @@
     .actt-skip{background:#26233a;color:#cbc7e0}
     .actt-bar,.actt-catbar{background:#2d2a40}
     .actt-catname{color:#b7b3cc}
+    .actt-cmpname{color:#b7b3cc}.actt-cmpval{color:#d7d3ea}
+    .actt-up{background:#183a27;color:#63d391}.actt-down{background:#3a1c1c;color:#ff8a8a}.actt-same{background:#2d2a40;color:#9a96b2}
   }`;
 
   const CATEGORY_LABELS = {
@@ -129,6 +139,7 @@
     async open() {
       this._mount();
       this.overlay.style.display = 'flex';
+      this.el('actt-timer').style.display = '';   // restore (progress view hides it)
       this.el('actt-body').innerHTML = '<div class="actt-center">Building your practice test…</div>';
       try {
         const data = await api('/api/act-test/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
@@ -249,12 +260,14 @@
           <div style="max-width:520px;margin:0 auto">${cats}</div>
           <div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
             <button class="actt-btn actt-next" id="actt-tutor">📤 Review with my tutor</button>
+            <button class="actt-btn actt-skip" id="actt-progress">📈 My progress</button>
             <button class="actt-btn actt-skip" id="actt-retake">Take another</button>
             <button class="actt-btn actt-skip" id="actt-done">Done</button>
           </div>`;
         this.el('actt-done').addEventListener('click', () => this.close());
         this.el('actt-retake').addEventListener('click', () => { this.sessionId = null; this.open(); });
         this.el('actt-tutor').addEventListener('click', () => this.sendToTutor(r));
+        this.el('actt-progress').addEventListener('click', () => this.showProgress());
       } catch (e) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Could not score the test.'}</div>`;
       }
@@ -296,6 +309,83 @@
       input.focus();
       setTimeout(() => sendBtn.click(), 60);
     }
+
+    async showProgress() {
+      this._mount();
+      this._stopTimer();
+      this.overlay.style.display = 'flex';
+      this.el('actt-timer').style.display = 'none';   // no test running here
+      this.el('actt-progwrap').style.display = 'none';
+      this.el('actt-foot').style.display = 'none';
+      this.el('actt-body').innerHTML = '<div class="actt-center">Loading your progress…</div>';
+      try {
+        const data = await api('/api/act-test/history');
+        this.renderProgress(data || { count: 0, attempts: [] });
+      } catch (e) {
+        this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Could not load your progress.'}</div>`;
+      }
+    }
+
+    renderProgress(data) {
+      const attempts = (data.attempts || []).filter(a => a.scaledScore != null);
+      const backBtns = `<div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center">
+          <button class="actt-btn actt-next" id="actt-newtest">Take a test</button>
+          <button class="actt-btn actt-skip" id="actt-close2">Close</button>
+        </div>`;
+      const wire = () => {
+        this.el('actt-close2').addEventListener('click', () => this.close());
+        this.el('actt-newtest').addEventListener('click', () => { this.sessionId = null; this.open(); });
+      };
+
+      if (attempts.length === 0) {
+        this.el('actt-body').innerHTML = `<div class="actt-center">You haven't completed a practice test yet.<br><small>Take one to start tracking your growth.</small></div>${backBtns}`;
+        return wire();
+      }
+      if (attempts.length === 1) {
+        const a = attempts[0];
+        this.el('actt-body').innerHTML = `
+          <div class="actt-center"><div class="actt-score">${a.scaledScore}</div><div class="actt-scorelab">Your first ACT Math score (approx.)</div>
+          <div class="actt-sub">Take the test again after some practice to see your growth here.</div></div>${backBtns}`;
+        return wire();
+      }
+
+      const first = attempts[0], latest = attempts[attempts.length - 1];
+      const delta = latest.scaledScore - first.scaledScore;
+      const deltaChip = (d) => {
+        const cls = d > 0 ? 'actt-up' : d < 0 ? 'actt-down' : 'actt-same';
+        const sign = d > 0 ? `▲ +${d}` : d < 0 ? `▼ ${d}` : '= 0';
+        return `<span class="actt-delta ${cls}">${sign}</span>`;
+      };
+
+      // Per-category first → latest (categories present in both).
+      const cats = Object.keys(latest.byCategory).filter(c => first.byCategory[c]).map(c => {
+        const f = first.byCategory[c], l = latest.byCategory[c];
+        const fp = f.total ? f.correct / f.total : 0, lp = l.total ? l.correct / l.total : 0;
+        return { c, name: CATEGORY_LABELS[c] || c, f, l, d: Math.round((lp - fp) * 100) };
+      }).sort((a, b) => b.d - a.d);
+
+      const catRows = cats.map(x => `
+        <div class="actt-cmp">
+          <span class="actt-cmpname">${x.name}</span>
+          <span class="actt-cmpval">${x.f.correct}/${x.f.total} → ${x.l.correct}/${x.l.total}</span>
+          ${deltaChip(x.d > 0 ? +Math.round(x.d) : x.d)}
+        </div>`).join('');
+
+      const trend = attempts.map(a => a.scaledScore).join('  →  ');
+
+      this.el('actt-body').innerHTML = `
+        <div class="actt-center" style="padding-bottom:6px">
+          <div class="actt-score">${latest.scaledScore}</div>
+          <div class="actt-scorelab">Latest ACT Math score (approx.)</div>
+          <div class="actt-sub">${deltaChip(delta)} &nbsp;since your first test &nbsp;·&nbsp; ${attempts.length} attempts</div>
+          <div class="actt-trend">${trend}</div>
+        </div>
+        <div style="max-width:520px;margin:14px auto 0">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:6px;text-align:center">By category · first → latest</div>
+          ${catRows}
+        </div>${backBtns}`;
+      wire();
+    }
   }
 
   function escapeHtml(s) {
@@ -304,6 +394,7 @@
 
   window.actTest = new ActTest();
   window.openActTest = function () { window.actTest.open(); };
+  window.openActProgress = function () { window.actTest.showProgress(); };
 
   // Reachable entry point: a boot-camp CTA can link to /chat.html?acttest=1,
   // and it's an easy way to try the flow. (A visible button lives with the
