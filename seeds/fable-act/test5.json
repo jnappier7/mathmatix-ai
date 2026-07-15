@@ -1,0 +1,770 @@
+{
+ "test": 5,
+ "questions": [
+  {
+   "n": 1,
+   "category": "IES",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "What is 15% of 240?",
+   "choices": [
+    "12",
+    "24",
+    "30",
+    "36"
+   ],
+   "answer": 3,
+   "explanation": "Convert the percent to a decimal and multiply: 0.15 × 240 = 36, choice D. A common error is finding 10% (24) or 5% (12) instead of 15%.",
+   "verify": "print(0.15*240)",
+   "figure_code": null
+  },
+  {
+   "n": 2,
+   "category": "ALG",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "If x/4 + 3 = 10, then x = ?",
+   "choices": [
+    "7",
+    "13",
+    "28",
+    "52"
+   ],
+   "answer": 2,
+   "explanation": "Subtract 3: x/4 = 7. Multiply by 4: x = 28. The answer is H. Forgetting to multiply by 4 gives 7; adding 3 before multiplying gives 52.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); sp.solve(sp.Eq(x/4+3,10),x)",
+   "figure_code": null
+  },
+  {
+   "n": 3,
+   "category": "NQ",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "Which of the following is equivalent to 2√10 · 3√5?",
+   "choices": [
+    "5√15",
+    "6√15",
+    "30√2",
+    "150"
+   ],
+   "answer": 2,
+   "explanation": "Multiply coefficients and radicands: 2·3 = 6 and √10·√5 = √50 = 5√2. So the product is 6·5√2 = 30√2. The answer is C. Adding the radicands gives 6√15.",
+   "verify": "import math; (2*math.sqrt(10)*3*math.sqrt(5), 30*math.sqrt(2))",
+   "figure_code": null
+  },
+  {
+   "n": 4,
+   "category": "GEO",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "Lines ℓ and m are parallel and are intersected by transversal t, as shown in the figure below. Based on the marked angle measures, what is the value of x?",
+   "choices": [
+    "22",
+    "68",
+    "112",
+    "158"
+   ],
+   "answer": 2,
+   "explanation": "The marked angles are same-side interior angles between parallel lines, so they are supplementary. Thus x = 180 − 68 = 112, choice H. Choice G mistakes them for alternate interior (equal) angles.",
+   "verify": "print(180-68)",
+   "figure_code": "def draw(ax):\n    ax.plot([0, 10], [2, 2], 'k-', lw=1.5)\n    ax.plot([0, 10], [6, 6], 'k-', lw=1.5)\n    ax.plot([1.5, 8.5], [0.5, 7.5], 'k-', lw=1.5)\n    ax.annotate('', xy=(9.8, 2), xytext=(9.2, 2), arrowprops=dict(arrowstyle='->', lw=1))\n    ax.annotate('', xy=(9.8, 6), xytext=(9.2, 6), arrowprops=dict(arrowstyle='->', lw=1))\n    ax.text(3.9, 2.3, '68\\u00b0', fontsize=12)\n    ax.text(7.9, 5.35, 'x\\u00b0', fontsize=12)\n    ax.set_xlim(-0.5, 10.5)\n    ax.set_ylim(-0.5, 8.5)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+  },
+  {
+   "n": 5,
+   "category": "FUN",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "The function f is defined by f(x) = 2x² − 3x + 4. What is the value of f(−3)?",
+   "choices": [
+    "−31",
+    "−5",
+    "13",
+    "31"
+   ],
+   "answer": 3,
+   "explanation": "Substitute: f(−3) = 2(−3)² − 3(−3) + 4 = 18 + 9 + 4 = 31, choice D. Choice B comes from evaluating 2(−3)² as −18, and choice C from computing −3(−3) as −9.",
+   "verify": "print(2*(-3)**2 - 3*(-3) + 4)",
+   "figure_code": null
+  },
+  {
+   "n": 6,
+   "category": "IES",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "A dog walking service walks 6 dogs each day, taking each dog on a 1.5-mile walk. How many total miles does the service walk dogs over 5 days?",
+   "choices": [
+    "7.5",
+    "9",
+    "30",
+    "45"
+   ],
+   "answer": 3,
+   "explanation": "Each day the service walks 6 × 1.5 = 9 miles, so over 5 days it walks 9 × 5 = 45 miles, choice J. Choice G is only one day's total, and choice H ignores the walk length.",
+   "verify": "print(6*1.5*5)",
+   "figure_code": null
+  },
+  {
+   "n": 7,
+   "category": "SP",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "The mean of 5 numbers is 14. Four of the numbers are 9, 11, 16, and 20. What is the fifth number?",
+   "choices": [
+    "12",
+    "14",
+    "16",
+    "18"
+   ],
+   "answer": 1,
+   "explanation": "The 5 numbers must total 5 × 14 = 70. The four given numbers sum to 56, so the fifth number is 70 − 56 = 14. The answer is B.",
+   "verify": "5*14 - (9+11+16+20)",
+   "figure_code": null
+  },
+  {
+   "n": 8,
+   "category": "ALG",
+   "modeling": true,
+   "difficulty": 2,
+   "stem": "A recording studio charges a $45 booking fee plus $30 per hour of studio time. A band's total charge was $165. For how many hours did the band book the studio?",
+   "choices": [
+    "3",
+    "4",
+    "5.5",
+    "7"
+   ],
+   "answer": 1,
+   "explanation": "Model the charge as 45 + 30h = 165. Subtracting 45 gives 30h = 120, so h = 4 hours, choice G. Choice H divides 165 by 30 without removing the booking fee, and choice J adds the fee instead of subtracting it.",
+   "verify": "print((165-45)/30)",
+   "figure_code": null
+  },
+  {
+   "n": 9,
+   "category": "GEO",
+   "modeling": false,
+   "difficulty": 1,
+   "stem": "What is the area, in square centimeters, of a triangle with a base of 12 centimeters and a height of 7 centimeters?",
+   "choices": [
+    "19",
+    "21",
+    "38",
+    "42"
+   ],
+   "answer": 3,
+   "explanation": "Triangle area is (1/2)(base)(height) = (1/2)(12)(7) = 42 square centimeters, choice D. Choice A adds the dimensions, and choice B takes half of the correct area by applying the 1/2 twice.",
+   "verify": "print(0.5*12*7)",
+   "figure_code": null
+  },
+  {
+   "n": 10,
+   "category": "FUN",
+   "modeling": false,
+   "difficulty": 2,
+   "stem": "The first three terms of an arithmetic sequence are 7, 11, and 15. What is the 20th term of the sequence?",
+   "choices": [
+    "76",
+    "79",
+    "80",
+    "83"
+   ],
+   "answer": 3,
+   "explanation": "The common difference is 4, so the nth term is 7 + 4(n − 1). The 20th term is 7 + 4(19) = 83, choice J. Choice G uses 18 steps instead of 19, and choice H is simply 4 × 20.",
+   "verify": "print(7 + 19*4)",
+   "figure_code": null
+  },
+  {
+   "n": 11,
+   "category": "NQ",
+   "modeling": false,
+   "difficulty": 2,
+   "stem": "What is the product (4 × 10⁵)(6 × 10³) expressed in scientific notation?",
+   "choices": [
+    "2.4 × 10⁹",
+    "24 × 10⁹",
+    "2.4 × 10¹⁵",
+    "24 × 10¹⁵"
+   ],
+   "answer": 0,
+   "explanation": "Multiply the coefficients and add the exponents: 24 × 10⁸, which in scientific notation is 2.4 × 10⁹, choice A. Choice C multiplies the exponents instead of adding them.",
+   "verify": "print((4e5)*(6e3))",
+   "figure_code": null
+  },
+  {
+   "n": 12,
+   "category": "IES",
+   "modeling": false,
+   "difficulty": 2,
+   "stem": "A quilter uses 5/8 yard of fabric for each quilt block. How many yards of fabric are needed to make 32 blocks?",
+   "choices": [
+    "4",
+    "20",
+    "25.6",
+    "51.2"
+   ],
+   "answer": 1,
+   "explanation": "Multiply the amount per block by the number of blocks: (5/8)(32) = 20 yards, choice G. Choice J inverts the fraction and multiplies by 8/5, and choice F divides 32 by 8 without using the 5.",
+   "verify": "print(5/8*32)",
+   "figure_code": null
+  },
+  {
+   "n": 13,
+   "category": "SP",
+   "modeling": false,
+   "difficulty": 2,
+   "stem": "A vintage arcade prize bin contains 5 red tokens, 7 blue tokens, and 8 green tokens. If 1 token is drawn at random, what is the probability that it is blue?",
+   "choices": [
+    "7/20",
+    "7/15",
+    "7/13",
+    "13/20"
+   ],
+   "answer": 0,
+   "explanation": "There are 5 + 7 + 8 = 20 tokens in all, and 7 are blue, so P(blue) = 7/20, choice A. Choice C divides by the number of non-blue tokens, and choice D is the probability of not drawing blue.",
+   "verify": "from fractions import Fraction\nprint(Fraction(7, 5+7+8))",
+   "figure_code": null
+  },
+  {
+   "n": 14,
+   "category": "ALG",
+   "modeling": false,
+   "difficulty": 2,
+   "stem": "Which of the following expressions is equivalent to (2x − 3)(x + 5)?",
+   "choices": [
+    "2x² + 7x − 15",
+    "2x² − 7x − 15",
+    "2x² + 13x − 15",
+    "2x² + 7x + 15"
+   ],
+   "answer": 0,
+   "explanation": "FOIL: 2x·x + 2x·5 − 3·x − 3·5 = 2x² + 10x − 3x − 15 = 2x² + 7x − 15, choice F. Choice G has a sign error on the middle term, and choice H adds 10x + 3x instead of subtracting.",
+   "verify": "import sympy as sp\nx = sp.Symbol('x')\nprint(sp.expand((2*x-3)*(x+5)))",
+   "figure_code": null
+  },
+  {
+   "n": 15,
+   "category": "GEO",
+   "modeling": false,
+   "difficulty": 2,
+   "stem": "A circle has a radius of 9 inches. What is the area of the circle, in square inches?",
+   "choices": [
+    "9π",
+    "18π",
+    "40.5π",
+    "81π"
+   ],
+   "answer": 3,
+   "explanation": "Area of a circle is πr² = π(9)² = 81π square inches, choice D. Choice B is the circumference (2πr), and choice C is half the correct area.",
+   "verify": "import sympy as sp\nprint(sp.pi*9**2)",
+   "figure_code": null
+  },
+  {
+   "n": 16,
+   "category": "FUN",
+   "modeling": false,
+   "difficulty": 2,
+   "stem": "If f(x) = 2x + 1 and g(x) = x² − 3, what is the value of f(g(3))?",
+   "choices": [
+    "6",
+    "13",
+    "46",
+    "49"
+   ],
+   "answer": 1,
+   "explanation": "Work inside out: g(3) = 3² − 3 = 6, then f(6) = 2(6) + 1 = 13, choice G. Choice F stops after finding g(3), and choice H computes the composition in the wrong order, g(f(3)) = g(7) = 46.",
+   "verify": "f = lambda x: 2*x + 1\ng = lambda x: x**2 - 3\nprint(f(g(3)))",
+   "figure_code": null
+  },
+  {
+   "n": 17,
+   "category": "NQ",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "For i = √(−1), which of the following is equal to (5 − 3i)²?",
+   "choices": [
+    "16 − 30i",
+    "16 + 30i",
+    "34 − 30i",
+    "25 + 9i"
+   ],
+   "answer": 0,
+   "explanation": "(5 − 3i)² = 25 − 30i + 9i² = 25 − 30i − 9 = 16 − 30i. The answer is A. Treating i² as +1 gives 34 − 30i.",
+   "verify": "complex(5,-3)**2",
+   "figure_code": null
+  },
+  {
+   "n": 18,
+   "category": "IES",
+   "modeling": true,
+   "difficulty": 2,
+   "stem": "A national park shuttle travels 36 miles in 45 minutes. What is the shuttle's average speed, in miles per hour?",
+   "choices": [
+    "27",
+    "42",
+    "45",
+    "48"
+   ],
+   "answer": 3,
+   "explanation": "Convert 45 minutes to 0.75 hour, then divide distance by time: 36/0.75 = 48 miles per hour, choice J. Choice F multiplies by 0.75 instead of dividing, and choice H confuses the number of minutes with the speed.",
+   "verify": "print(36/(45/60))",
+   "figure_code": null
+  },
+  {
+   "n": 19,
+   "category": "GEO",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "In △ABC below, D lies on side AB, E lies on side AC, and DE ∥ BC. If AD = 5, DB = 3, and DE = 10, what is the length of BC?",
+   "choices": [
+    "6.25",
+    "13",
+    "16",
+    "25"
+   ],
+   "answer": 2,
+   "explanation": "Because DE ∥ BC, △ADE ~ △ABC with ratio AD/AB = 5/8. So DE/BC = 5/8, giving BC = 10 · (8/5) = 16, choice C. Choice A uses the ratio 5/8 in the wrong direction, and choice B just adds DB to DE.",
+   "verify": "print(10*8/5)",
+   "figure_code": "def draw(ax):\n    A = (3, 8); B = (0, 0); C = (9, 0)\n    D = (1.125, 3); E = (6.75, 3)\n    ax.plot([A[0], B[0]], [A[1], B[1]], 'k-', lw=1.5)\n    ax.plot([A[0], C[0]], [A[1], C[1]], 'k-', lw=1.5)\n    ax.plot([B[0], C[0]], [B[1], C[1]], 'k-', lw=1.5)\n    ax.plot([D[0], E[0]], [D[1], E[1]], 'k-', lw=1.5)\n    ax.text(3, 8.25, 'A', ha='center', fontsize=12)\n    ax.text(-0.45, -0.55, 'B', fontsize=12)\n    ax.text(9.15, -0.55, 'C', fontsize=12)\n    ax.text(0.45, 2.95, 'D', fontsize=12)\n    ax.text(7.05, 2.95, 'E', fontsize=12)\n    ax.text(1.55, 5.6, '5', fontsize=11)\n    ax.text(0.05, 1.4, '3', fontsize=11)\n    ax.text(3.9, 3.25, '10', ha='center', fontsize=11)\n    ax.set_xlim(-1.2, 10)\n    ax.set_ylim(-1.4, 9)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+  },
+  {
+   "n": 20,
+   "category": "ALG",
+   "modeling": true,
+   "difficulty": 3,
+   "stem": "At a vintage arcade, 3 plays of pinball and 2 plays of skee-ball cost 19 tokens, and 1 play of pinball and 4 plays of skee-ball cost 23 tokens. How many tokens does 1 play of skee-ball cost?",
+   "choices": [
+    "3",
+    "4",
+    "5",
+    "7"
+   ],
+   "answer": 2,
+   "explanation": "Let p and s be the token costs. From 3p + 2s = 19 and p + 4s = 23, multiply the second equation by 3 and subtract: 10s = 50, so s = 5, choice H. Choice F is the cost of pinball, not skee-ball.",
+   "verify": "import sympy as sp\np, s = sp.symbols('p s')\nsol = sp.solve([3*p + 2*s - 19, p + 4*s - 23], [p, s])\nprint(sol[s])",
+   "figure_code": null
+  },
+  {
+   "n": 21,
+   "category": "SP",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "A recording studio logged sessions of 30, 45, 60, 60, 75, 90, and 130 minutes last week. What is the median session length, in minutes?",
+   "choices": [
+    "60",
+    "70",
+    "75",
+    "100"
+   ],
+   "answer": 0,
+   "explanation": "With the 7 values already in increasing order, the median is the 4th value, 60 minutes, choice A. Choice B is the mean (490/7 = 70), and choice D is the range.",
+   "verify": "import statistics\nprint(statistics.median([30, 45, 60, 60, 75, 90, 130]))",
+   "figure_code": null
+  },
+  {
+   "n": 22,
+   "category": "FUN",
+   "modeling": true,
+   "difficulty": 3,
+   "stem": "The number of daily riders on a national park shuttle is modeled by R(w) = 350 + 45w, where w is the number of weeks after the shuttle route opened. Which of the following statements is the best interpretation of the number 45 in this model?",
+   "choices": [
+    "The number of riders per day increases by about 45 each week.",
+    "The number of riders per day increases by about 350 each week.",
+    "The shuttle carried about 45 riders per day during the week the route opened.",
+    "The total number of riders is always 45 times the number of weeks."
+   ],
+   "answer": 0,
+   "explanation": "In a linear model, the coefficient of the input variable is the rate of change: R increases by 45 riders per day for each 1-week increase in w, choice F. The 350 is the initial value, not the weekly change.",
+   "verify": null,
+   "figure_code": null
+  },
+  {
+   "n": 23,
+   "category": "IES",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "A planetarium raised its ticket price from $8.00 to $9.20. This is a price increase of what percent?",
+   "choices": [
+    "12%",
+    "13%",
+    "15%",
+    "20%"
+   ],
+   "answer": 2,
+   "explanation": "Percent increase is (change)/(original) × 100 = (1.20/8.00) × 100 = 15%, choice C. Choice B divides the change by the new price instead of the original price.",
+   "verify": "print((9.20-8.00)/8.00*100)",
+   "figure_code": null
+  },
+  {
+   "n": 24,
+   "category": "GEO",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "In the right triangle shown below, the right angle is at C, the measure of ∠A is 34°, and AC = 50 feet. Which of the following expressions gives the length of BC, in feet?",
+   "choices": [
+    "50 sin 34°",
+    "50 cos 34°",
+    "50 tan 34°",
+    "50/tan 34°"
+   ],
+   "answer": 2,
+   "explanation": "Relative to ∠A, BC is the opposite side and AC is the adjacent side, so tan 34° = BC/50, which gives BC = 50 tan 34°, choice H. Choice F confuses sine (opposite/hypotenuse) with tangent, and choice J inverts the ratio.",
+   "verify": "import math\nprint(round(50*math.tan(math.radians(34)), 2))",
+   "figure_code": "def draw(ax):\n    A = (0, 0); C = (8, 0); B = (8, 5.4)\n    ax.plot([A[0], C[0]], [A[1], C[1]], 'k-', lw=1.5)\n    ax.plot([C[0], B[0]], [C[1], B[1]], 'k-', lw=1.5)\n    ax.plot([A[0], B[0]], [A[1], B[1]], 'k-', lw=1.5)\n    ax.plot([7.6, 7.6, 8], [0, 0.4, 0.4], 'k-', lw=1)\n    ax.text(-0.4, -0.1, 'A', fontsize=12)\n    ax.text(8.15, -0.4, 'C', fontsize=12)\n    ax.text(8.15, 5.45, 'B', fontsize=12)\n    ax.text(1.35, 0.18, '34\\u00b0', fontsize=11)\n    ax.text(4, -0.6, '50', ha='center', fontsize=11)\n    ax.text(8.3, 2.55, 'x', fontsize=11)\n    ax.set_xlim(-1, 9.6)\n    ax.set_ylim(-1.3, 6.3)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+  },
+  {
+   "n": 25,
+   "category": "ALG",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "What is the solution set of the inequality 6 − 5x ≥ 26?",
+   "choices": [
+    "x ≤ −4",
+    "x ≥ −4",
+    "x ≤ 4",
+    "x ≥ 4"
+   ],
+   "answer": 0,
+   "explanation": "Subtract 6: −5x ≥ 20. Divide by −5 and reverse the inequality: x ≤ −4. The answer is A. Not reversing the sign gives x ≥ −4.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); sp.solve_univariate_inequality(6-5*x>=26, x)",
+   "figure_code": null
+  },
+  {
+   "n": 26,
+   "category": "NQ",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "For all nonzero x and y, which of the following expressions is equivalent to (2x³y²)³/(4x⁴y)?",
+   "choices": [
+    "2x⁵y⁵",
+    "2x⁵y⁶",
+    "6x⁵y⁵",
+    "8x⁵y⁵"
+   ],
+   "answer": 0,
+   "explanation": "Cube the numerator: (2x³y²)³ = 8x⁹y⁶. Dividing by 4x⁴y gives 2x⁵y⁵, choice F. Choice G forgets to subtract the exponent of y in the denominator, and choice J never divides the coefficient 8 by 4.",
+   "verify": "import sympy as sp\nx, y = sp.symbols('x y')\nprint(sp.simplify((2*x**3*y**2)**3/(4*x**4*y)))",
+   "figure_code": null
+  },
+  {
+   "n": 27,
+   "category": "FUN",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "The graph of y = f(x) is drawn in the standard (x,y) coordinate plane. If g(x) = f(x − 4) + 2, the graph of y = g(x) is the graph of y = f(x) shifted:",
+   "choices": [
+    "4 units to the left and 2 units up",
+    "4 units to the right and 2 units up",
+    "4 units to the right and 2 units down",
+    "2 units to the right and 4 units up"
+   ],
+   "answer": 1,
+   "explanation": "Replacing x with x − 4 shifts a graph 4 units to the right, and adding 2 outside the function shifts it 2 units up, choice B. Choice A applies the common misconception that x − 4 shifts left.",
+   "verify": null,
+   "figure_code": null
+  },
+  {
+   "n": 28,
+   "category": "SP",
+   "modeling": false,
+   "difficulty": 3,
+   "stem": "A planetarium evening program consists of one of 4 different shows, one of 3 start times, and one of 2 seating sections. How many different program combinations are possible?",
+   "choices": [
+    "9",
+    "12",
+    "24",
+    "36"
+   ],
+   "answer": 2,
+   "explanation": "By the fundamental counting principle, multiply the number of options: 4 × 3 × 2 = 24, choice H. Choice F adds the options instead of multiplying, and choice G omits the seating choice.",
+   "verify": "print(4*3*2)",
+   "figure_code": null
+  },
+  {
+   "n": 29,
+   "category": "IES",
+   "modeling": true,
+   "difficulty": 3,
+   "stem": "Four charity fun run volunteers raised an average of $65 each. How much money must a 5th volunteer raise so that the average for all 5 volunteers is $70?",
+   "choices": [
+    "$25",
+    "$70",
+    "$75",
+    "$90"
+   ],
+   "answer": 3,
+   "explanation": "Five volunteers averaging $70 must raise 5 × 70 = $350 in all. The first four raised 4 × 65 = $260, so the 5th must raise 350 − 260 = $90, choice D. Choice B assumes the new volunteer only needs to match the target average.",
+   "verify": "print(5*70 - 4*65)",
+   "figure_code": null
+  },
+  {
+   "n": 30,
+   "category": "GEO",
+   "modeling": true,
+   "difficulty": 3,
+   "stem": "A cylindrical grain silo has an inside diameter of 12 feet and a height of 20 feet. What is the volume of the silo, in cubic feet?",
+   "choices": [
+    "240π",
+    "720π",
+    "1440π",
+    "2880π"
+   ],
+   "answer": 1,
+   "explanation": "The radius is half the diameter, r = 6, so V = πr²h = π(6²)(20) = 720π cubic feet, choice G. Choice J uses the diameter 12 in place of the radius, and choice F computes πdh instead of πr²h.",
+   "verify": "import sympy as sp\nprint(sp.pi*6**2*20)",
+   "figure_code": null
+  },
+  {
+   "n": 31,
+   "category": "ALG",
+   "modeling": false,
+   "difficulty": 4,
+   "stem": "What are the solutions of the equation 2x² − 5x − 3 = 0?",
+   "choices": [
+    "−3 and 1/2",
+    "−1/2 and 3",
+    "−3 and −1/2",
+    "1/2 and 3"
+   ],
+   "answer": 1,
+   "explanation": "Factor: 2x² − 5x − 3 = (2x + 1)(x − 3) = 0, so x = −1/2 or x = 3, choice B. Choice A reverses the signs of both roots, a common factoring slip.",
+   "verify": "import sympy as sp\nx = sp.Symbol('x')\nprint(sp.solve(2*x**2 - 5*x - 3, x))",
+   "figure_code": null
+  },
+  {
+   "n": 32,
+   "category": "FUN",
+   "modeling": false,
+   "difficulty": 4,
+   "stem": "What is the solution of the equation log₃(x) + log₃(x + 2) = 1?",
+   "choices": [
+    "−3",
+    "1",
+    "3",
+    "9"
+   ],
+   "answer": 1,
+   "explanation": "Combine: log₃(x(x + 2)) = 1, so x² + 2x = 3. Then x² + 2x − 3 = (x + 3)(x − 1) = 0, giving x = 1 or x = −3. Since log₃(x) requires x > 0, only x = 1 works. The answer is B.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); [s for s in sp.solve(x**2+2*x-3,x) if s>0]",
+   "figure_code": null
+  },
+  {
+   "n": 33,
+   "category": "GEO",
+   "modeling": false,
+   "difficulty": 4,
+   "stem": "In the standard (x,y) coordinate plane, a circle has equation x² + y² − 8x + 6y = 11. What is the radius of the circle?",
+   "choices": [
+    "√11",
+    "5",
+    "6",
+    "36"
+   ],
+   "answer": 2,
+   "explanation": "Complete the square: (x² − 8x + 16) + (y² + 6y + 9) = 11 + 16 + 9, so (x − 4)² + (y + 3)² = 36. The radius is √36 = 6, choice C. Choice D is r², and choice A ignores the completed-square terms.",
+   "verify": "import sympy as sp\nprint(sp.sqrt(11 + 16 + 9))",
+   "figure_code": null
+  },
+  {
+   "n": 34,
+   "category": "NQ",
+   "modeling": false,
+   "difficulty": 4,
+   "stem": "What is the determinant of the matrix below?\n\n|5 −2|\n|3 4|",
+   "choices": [
+    "−26",
+    "14",
+    "20",
+    "26"
+   ],
+   "answer": 3,
+   "explanation": "For a 2×2 matrix, the determinant is ad − bc = (5)(4) − (−2)(3) = 20 + 6 = 26, choice J. Choice G subtracts 6 instead of adding (sign error on −2 · 3), and choice F reverses the subtraction order.",
+   "verify": "print(5*4 - (-2)*3)",
+   "figure_code": null
+  },
+  {
+   "n": 35,
+   "category": "IES",
+   "modeling": true,
+   "difficulty": 4,
+   "stem": "A bulk grain silo is filled with 300 bushels of wheat that cost $6.50 per bushel and 200 bushels of wheat that cost $5.00 per bushel. What is the cost per bushel of the mixture?",
+   "choices": [
+    "$5.60",
+    "$5.75",
+    "$5.90",
+    "$6.20"
+   ],
+   "answer": 2,
+   "explanation": "Total cost is 300(6.50) + 200(5.00) = 1950 + 1000 = $2950 for 500 bushels, so the mixture costs 2950/500 = $5.90 per bushel, choice C. Choice B is the unweighted average of the two prices, and choice A swaps the weights.",
+   "verify": "print((300*6.50 + 200*5.00)/500)",
+   "figure_code": null
+  },
+  {
+   "n": 36,
+   "category": "SP",
+   "modeling": false,
+   "difficulty": 4,
+   "stem": "A woodworking shop bin holds 4 oak boards and 6 maple boards. If 2 boards are drawn at random without replacement, what is the probability that both are oak?",
+   "choices": [
+    "2/15",
+    "4/25",
+    "1/5",
+    "2/5"
+   ],
+   "answer": 0,
+   "explanation": "P(first oak) = 4/10, then P(second oak) = 3/9 since one oak is gone. The product is (4/10)(3/9) = 12/90 = 2/15, choice F. Choice G incorrectly draws with replacement, (4/10)².",
+   "verify": "from fractions import Fraction\nprint(Fraction(4, 10)*Fraction(3, 9))",
+   "figure_code": null
+  },
+  {
+   "n": 37,
+   "category": "ALG",
+   "modeling": false,
+   "difficulty": 4,
+   "stem": "What is the product of the real solutions of the equation |x − 4| = 9?",
+   "choices": [
+    "−65",
+    "−36",
+    "8",
+    "65"
+   ],
+   "answer": 0,
+   "explanation": "x − 4 = 9 gives x = 13; x − 4 = −9 gives x = −5. The product is 13(−5) = −65. The answer is A. The sum of the solutions is 8, a tempting wrong answer.",
+   "verify": "13*(-5)",
+   "figure_code": null
+  },
+  {
+   "n": 38,
+   "category": "FUN",
+   "modeling": true,
+   "difficulty": 4,
+   "stem": "The water depth near a tide gauge is modeled by h(t) = 4 + 2.5 sin(πt/6), where h is the depth in feet and t is the number of hours after midnight. The graph of h is shown below. What is the period of h, in hours?",
+   "choices": [
+    "2.5",
+    "4",
+    "6",
+    "12"
+   ],
+   "answer": 3,
+   "explanation": "The period of sin(bt) is 2π/b. Here b = π/6, so the period is 2π/(π/6) = 12 hours, choice J. Choice H is only half the period (crest to trough), choice F is the amplitude, and choice G is the midline value.",
+   "verify": "import sympy as sp\nprint(2*sp.pi/(sp.pi/6))",
+   "figure_code": "def draw(ax):\n    import numpy as np\n    t = np.linspace(0, 24, 400)\n    h = 4 + 2.5*np.sin(np.pi*t/6)\n    ax.plot(t, h, 'k-', lw=1.5)\n    ax.set_xticks([0, 6, 12, 18, 24])\n    ax.set_yticks([0, 2, 4, 6, 8])\n    ax.set_xlabel('t (hours after midnight)')\n    ax.set_ylabel('h (feet)')\n    ax.set_xlim(0, 24)\n    ax.set_ylim(0, 8)\n    ax.spines['top'].set_visible(False)\n    ax.spines['right'].set_visible(False)"
+  },
+  {
+   "n": 39,
+   "category": "IES",
+   "modeling": true,
+   "difficulty": 4,
+   "stem": "A woodworking shop lists a bench for $240. The bench is discounted 25%, and then 8% sales tax is applied to the discounted price. What is the total cost of the bench?",
+   "choices": [
+    "$165.60",
+    "$180.00",
+    "$194.40",
+    "$199.20"
+   ],
+   "answer": 2,
+   "explanation": "The discounted price is 240 × 0.75 = $180, and with tax the total is 180 × 1.08 = $194.40, choice C. Choice B forgets the tax, and choice D incorrectly combines the percents as a single 17% discount (240 × 0.83).",
+   "verify": "print(240*0.75*1.08)",
+   "figure_code": null
+  },
+  {
+   "n": 40,
+   "category": "GEO",
+   "modeling": false,
+   "difficulty": 4,
+   "stem": "In the circle below with center O, the measure of central angle ∠AOB is 100°, and point C lies on the major arc AB. What is the measure of inscribed angle ∠ACB?",
+   "choices": [
+    "40°",
+    "50°",
+    "100°",
+    "130°"
+   ],
+   "answer": 1,
+   "explanation": "An inscribed angle measures half the central angle that intercepts the same arc, so ∠ACB = 100°/2 = 50°, choice G. Choice H forgets to halve the central angle, and choice J uses the major arc (260°/2) instead of the minor arc.",
+   "verify": "print(100/2)",
+   "figure_code": "def draw(ax):\n    import numpy as np\n    import math\n    th = np.linspace(0, 2*np.pi, 200)\n    ax.plot(np.cos(th), np.sin(th), 'k-', lw=1.5)\n    A = (math.cos(math.radians(130)), math.sin(math.radians(130)))\n    B = (math.cos(math.radians(30)), math.sin(math.radians(30)))\n    C = (math.cos(math.radians(250)), math.sin(math.radians(250)))\n    ax.plot([0, A[0]], [0, A[1]], 'k-', lw=1)\n    ax.plot([0, B[0]], [0, B[1]], 'k-', lw=1)\n    ax.plot([C[0], A[0]], [C[1], A[1]], 'k-', lw=1)\n    ax.plot([C[0], B[0]], [C[1], B[1]], 'k-', lw=1)\n    ax.plot([0], [0], 'ko', ms=3)\n    ax.text(0.06, -0.14, 'O', fontsize=12)\n    ax.text(A[0]-0.2, A[1]+0.07, 'A', fontsize=12)\n    ax.text(B[0]+0.07, B[1]+0.05, 'B', fontsize=12)\n    ax.text(C[0]-0.07, C[1]-0.22, 'C', fontsize=12)\n    ax.text(-0.13, 0.28, '100\\u00b0', fontsize=11)\n    ax.set_xlim(-1.4, 1.4)\n    ax.set_ylim(-1.4, 1.4)\n    ax.set_aspect('equal')\n    ax.axis('off')"
+  },
+  {
+   "n": 41,
+   "category": "SP",
+   "modeling": true,
+   "difficulty": 5,
+   "stem": "For a charity fun run raffle, 200 tickets are sold at $5 each. One winning ticket is worth $250, and two other winning tickets are worth $50 each. What is the expected net gain or loss for a person who buys 1 ticket?",
+   "choices": [
+    "−$5.00",
+    "−$3.50",
+    "−$3.25",
+    "$1.75"
+   ],
+   "answer": 2,
+   "explanation": "The expected payout per ticket is (250 + 50 + 50)/200 = 350/200 = $1.75. Subtracting the $5 cost gives an expected net of 1.75 − 5 = −$3.25, choice C. Choice D forgets the ticket cost, and choice B counts only one $50 prize.",
+   "verify": "print((250 + 2*50)/200 - 5)",
+   "figure_code": null
+  },
+  {
+   "n": 42,
+   "category": "FUN",
+   "modeling": true,
+   "difficulty": 5,
+   "stem": "A planetarium's nightly ticket revenue, in dollars, is modeled by R(p) = −5p² + 150p, where p is the ticket price in dollars. What ticket price maximizes the nightly revenue?",
+   "choices": [
+    "$10",
+    "$15",
+    "$30",
+    "$1,125"
+   ],
+   "answer": 1,
+   "explanation": "A downward parabola peaks at its vertex: p = −b/(2a) = −150/(2 · −5) = 15, choice G. Choice H is the nonzero p-intercept of the revenue function, and choice J is the maximum revenue itself rather than the price.",
+   "verify": "print(-150/(2*(-5)))",
+   "figure_code": null
+  },
+  {
+   "n": 43,
+   "category": "ALG",
+   "modeling": false,
+   "difficulty": 5,
+   "stem": "What are all real values of x that satisfy √(2x + 7) = x − 4?",
+   "choices": [
+    "1",
+    "9",
+    "1 and 9",
+    "There are no real values."
+   ],
+   "answer": 1,
+   "explanation": "Squaring gives 2x + 7 = x² − 8x + 16, so x² − 10x + 9 = (x − 1)(x − 9) = 0. Checking in the original equation, x = 1 gives √9 = −3, which is false, so only x = 9 works, choice B. Choice C fails to reject the extraneous root introduced by squaring.",
+   "verify": "import sympy as sp\nx = sp.Symbol('x')\nprint(sp.solve(sp.sqrt(2*x + 7) - (x - 4), x))",
+   "figure_code": null
+  },
+  {
+   "n": 44,
+   "category": "IES",
+   "modeling": true,
+   "difficulty": 5,
+   "stem": "One long-arm quilting machine can finish a quilt in 6 hours, and a second machine can finish an identical quilt in 10 hours. Working together at these constant rates, how long would the two machines take to finish one quilt?",
+   "choices": [
+    "3 hours 45 minutes",
+    "4 hours",
+    "8 hours",
+    "16 hours"
+   ],
+   "answer": 0,
+   "explanation": "The combined rate is 1/6 + 1/10 = 8/30 = 4/15 quilt per hour, so the time is 15/4 = 3.75 hours, which is 3 hours 45 minutes, choice F. Choice H averages the two times, and choice J adds them; both ignore that the machines work simultaneously.",
+   "verify": "print(1/(1/6 + 1/10))",
+   "figure_code": null
+  },
+  {
+   "n": 45,
+   "category": "NQ",
+   "modeling": false,
+   "difficulty": 5,
+   "stem": "If 27ˣ = 9⁽ˣ⁺²⁾, then x = ?",
+   "choices": [
+    "1",
+    "2",
+    "4",
+    "8"
+   ],
+   "answer": 2,
+   "explanation": "Write both sides with base 3: 27ˣ = 3³ˣ and 9⁽ˣ⁺²⁾ = 3²ˣ⁺⁴. Setting the exponents equal gives 3x = 2x + 4, so x = 4, choice C. Choice B comes from setting 3x = 2x + 2, ignoring that the exponent x + 2 must be doubled.",
+   "verify": "import sympy as sp\nx = sp.Symbol('x')\nprint(sp.solve(sp.Eq(27**x, 9**(x + 2)), x))",
+   "figure_code": null
+  }
+ ]
+}
