@@ -255,11 +255,20 @@ The ACT Math skill catalog already existed (`seeds/skills-act-math-prep.json`,
   mirroring the screener's per-item contract so the existing item-render UI can
   drive it. Grades by re-fetching the Problem server-side; returns raw + scaled +
   per-category breakdown. **Free** (boot-camp on-ramp), no AI at request time.
+- **`scripts/generateActItems.js`** (`npm run act:gen`, `npm run act:seed`) — an
+  **original item generator** for all 31 content skills. Every item is
+  template-generated: the correct answer is *computed* from the parameters and a
+  validator plugs it back into the problem, rejecting anything inconsistent — a
+  wrong answer key cannot ship (correctness-by-construction). Distractors model
+  real student errors. Ships a starter bank in `seeds/act-math-items.generated.json`
+  (245 items, ~8/skill) that assembles a full 60/60 form; `act:seed` upserts it
+  into Mongo. Covered by `tests/unit/generateActItems.test.js` (every key valid,
+  form fills).
 - **`scripts/actTestCoverage.js`** (`npm run act:coverage`) — reports how much of
-  a form the bank can fill and prints the generation worklist for gaps.
+  a form the live bank can fill and prints the generation worklist for gaps.
 
-**Prerequisite before it delivers value:** the `Problem` bank must actually
-contain `act-*`-tagged items. Run `act:coverage`; generate to fill the gaps.
+**To make it live:** `npm run act:seed` (loads the 245 items into Mongo), then
+`/api/act-test` delivers a full form. Extend/vary with `act:gen --per-skill N`.
 
 **Adaptive diagnostic (follow-up, "delivered like the Starting Point"):** the CAT
 engine is reusable — `skillSelector.selectSkill(pool, …)` takes whatever skill
