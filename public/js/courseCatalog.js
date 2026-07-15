@@ -21,6 +21,19 @@ class CourseManager {
     // Initialisation
     // --------------------------------------------------
     init() {
+        // Reveal the "My Courses" sidebar entry point when the feature is on.
+        // Flag default is set in chat.html (MM_FEATURES.courses); ?courses=0/1 overrides per session.
+        const flagParams = new URLSearchParams(window.location.search);
+        const urlCourses = flagParams.get('courses');
+        const coursesOn = urlCourses !== null
+            ? (urlCourses !== '0' && urlCourses !== 'false')
+            : (window.MM_FEATURES ? window.MM_FEATURES.courses !== false : true);
+        const coursesSection = document.getElementById('sidebar-courses-section');
+        if (coursesSection && coursesOn) {
+            coursesSection.style.display = '';
+        }
+        if (!coursesOn) return; // feature off — skip wiring entirely
+
         // Browse Courses button → open catalog modal
         const browseBtn = document.getElementById('browse-courses-btn');
         if (browseBtn) {

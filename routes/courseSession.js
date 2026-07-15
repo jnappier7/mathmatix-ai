@@ -11,9 +11,6 @@ const Conversation = require('../models/conversation');
 const User = require('../models/user');
 const { calculateOverallProgress } = require('../utils/coursePrompt');
 const { buildProgressUpdate } = require('../utils/progressState');
-const { isLicenseValid } = require('../middleware/usageGate');
-
-const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 
 /* ============================================================
    GET /api/course-sessions/catalog
@@ -140,27 +137,9 @@ router.post('/enroll', async (req, res) => {
       return res.status(400).json({ success: false, message: 'courseId is required' });
     }
 
-    // Courses require Unlimited plan or school license (when billing is enabled)
-    // Exception: Pi Day (March 14) — all courses are free for everyone
-    const now = new Date();
-    const piDayFreeAccess = now.getMonth() === 2 && now.getDate() === 14;
-
-    if (BILLING_ENABLED && req.user.role === 'student' && !piDayFreeAccess) {
-      const hasUnlimited = req.user.subscriptionTier === 'unlimited';
-      let hasSchoolLicense = false;
-      if (req.user.schoolLicenseId) {
-        hasSchoolLicense = await isLicenseValid(req.user.schoolLicenseId);
-      }
-      if (!hasUnlimited && !hasSchoolLicense) {
-        return res.status(402).json({
-          success: false,
-          message: 'Courses require the Unlimited plan ($19.95/month) or a school license.',
-          premiumFeatureBlocked: true,
-          feature: 'Courses',
-          upgradeRequired: true
-        });
-      }
-    }
+    // Courses are open to all students as a free on-ramp — no plan/license required to enrol.
+    // AI usage inside the course is still metered by usageGate (30 free min/month); the cap,
+    // not enrolment, is the upgrade moment. See docs/COURSES_IN_FLOW_DESIGN.md.
 
     // Check for existing session in this course (active OR paused)
     const existing = await CourseSession.findOne({

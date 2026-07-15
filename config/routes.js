@@ -75,6 +75,7 @@ const assessmentRoutes = require('../routes/assessment');
 const screenerRoutes = require('../routes/screener');
 const checkpointRoutes = require('../routes/checkpoint');
 const growthCheckRoutes = require('../routes/growthCheck');
+const actTestRoutes = require('../routes/actTest');
 const masteryRoutes = require('../routes/mastery');
 const nudgeRoutes = require('../routes/nudges');
 // masteryChat: REMOVED — mastery mode consolidated into /api/chat with { mastery: true }
@@ -226,8 +227,11 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/phone-upload', phoneUploadRoutes);
   app.use('/api/images', isAuthenticated, imageSearchRoutes);
   app.use('/api/curriculum', isAuthenticated, curriculumRoutes);
-  app.use('/api/courses', isAuthenticated, premiumFeatureGate('Courses'), courseRoutes);
-  app.use('/api/course-sessions', isAuthenticated, premiumFeatureGate('Courses'), courseSessionRoutes);
+  // Courses are open to ALL students as a free on-ramp (see docs/COURSES_IN_FLOW_DESIGN.md).
+  // AI usage inside a course is still metered by usageGate on /api/course-chat — the monthly
+  // free-minute cap, not a paywall, is the conversion lever to Mathmatix+.
+  app.use('/api/courses', isAuthenticated, courseRoutes);
+  app.use('/api/course-sessions', isAuthenticated, courseSessionRoutes);
   app.use('/api/course-chat', isAuthenticated, aiEndpointLimiter, usageGate, courseChatRoutes);
   app.use('/api/teacher-resources', isAuthenticated, teacherResourceRoutes);
   app.use('/api/guidedLesson', isAuthenticated, aiEndpointLimiter, guidedLessonRoutes);
@@ -235,6 +239,8 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/screener', isAuthenticated, screenerRoutes);
   app.use('/api/checkpoint', isAuthenticated, checkpointRoutes);
   app.use('/api/growth-check', isAuthenticated, growthCheckRoutes);
+  // ACT Math practice test — free (boot-camp on-ramp), fixed-form, no AI at request time.
+  app.use('/api/act-test', isAuthenticated, actTestRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
   app.use('/api/nudges', isAuthenticated, nudgeRoutes);
   // masteryChat route REMOVED — mastery mode consolidated into /api/chat
