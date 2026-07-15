@@ -56,9 +56,37 @@
     return t.trim();
   }
 
+  // Prose — a \text{…} wrapper or a natural-language sentence (word problems,
+  // geometry statements) — must WRAP. KaTeX renders it as a single non-wrapping
+  // line that runs off the right edge of the board (clipped by overflow-x). So
+  // detect prose and render it as plain, wrapping text; keep KaTeX for real math.
+  function looksLikeProse(s) {
+    var t = String(s == null ? '' : s).trim();
+    if (!t) return false;
+    if (/^\\text\s*\{[\s\S]*\}$/.test(t)) return true;             // whole thing is \text{…}
+    // Strip LaTeX commands (\frac, \quad, \Rightarrow, \text …) and braces first
+    // so command names aren't mistaken for words — then count the genuine words
+    // left. Math is single-letter variables, digits and operators (none 3+ letter
+    // runs), so 3+ real words means prose, not an equation.
+    var stripped = t.replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}]/g, ' ');
+    return (stripped.match(/[A-Za-z]{3,}/g) || []).length >= 3;
+  }
+
+  // Unwrap \text{…} to the readable sentence (drop KaTeX spacing escapes).
+  function unwrapText(s) {
+    var m = String(s == null ? '' : s).trim().match(/^\\text\s*\{([\s\S]*)\}$/);
+    var out = m ? m[1] : String(s == null ? '' : s);
+    return out.replace(/\\[,;:!> ]/g, ' ').replace(/\\\\/g, ' ').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
   function typeset(target, latex) {
     var katex = root.katex;
     var tex = cleanLatex(latex);
+    if (looksLikeProse(tex)) {                                     // wrap prose as text
+      target.textContent = unwrapText(tex);
+      target.className += ' lws-dv-prose';
+      return;
+    }
     if (katex && typeof katex.render === 'function') {
       try { katex.render(tex, target, { throwOnError: false, displayMode: false }); return; }
       catch (_) { /* fall through to text */ }
@@ -185,6 +213,8 @@
 
   DerivationView.classify = classify;
   DerivationView.cleanLatex = cleanLatex;
+  DerivationView.looksLikeProse = looksLikeProse;
+  DerivationView.unwrapText = unwrapText;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText };
 })(typeof self !== 'undefined' ? self : this);
