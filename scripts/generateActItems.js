@@ -37,6 +37,12 @@ const pick = (arr) => arr[Math.floor(RNG() * arr.length)];
 const co = (k, v) => (k === 1 ? v : k === -1 ? `-${v}` : `${k}${v}`);
 // Money: whole dollars plain, else two decimals.
 const money = (v) => (Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`);
+// Trinomial x^2 + Bx + C, cleanly formatted (handles ±1 coefficient and 0 terms).
+const trinomial = (B, C) => {
+  const bpart = B === 0 ? '' : B === 1 ? ' + x' : B === -1 ? ' - x' : (B > 0 ? ` + ${B}x` : ` - ${Math.abs(B)}x`);
+  const cpart = C === 0 ? '' : (C > 0 ? ` + ${C}` : ` - ${Math.abs(C)}`);
+  return `x^2${bpart}${cpart}`;
+};
 
 // ── MC assembler: takes correct value + distractor values, dedupes,
 //    shuffles, assigns the correct letter. Enforces exactly-one-correct. ──
@@ -212,12 +218,20 @@ G['act-quadratic-equations'] = (d) => {
 G['act-polynomial-expressions'] = (d) => {
   const a = nz(-6, 6), b = nz(-6, 6); // (x+a)(x+b) = x^2 + (a+b)x + ab
   const sum = a + b, prod = a * b;
-  const sgn = (n) => (n >= 0 ? `+ ${n}` : `- ${Math.abs(n)}`);
-  const correct = `x^2 ${sgn(sum)}x ${sgn(prod)}`;
+  if (sum === 0) return null; // avoid a degenerate answer with no middle term
+  const correct = trinomial(sum, prod);
   return {
     prompt: `Expand: (x ${a >= 0 ? '+' : '-'} ${Math.abs(a)})(x ${b >= 0 ? '+' : '-'} ${Math.abs(b)})`,
     correct, format: (v) => v,
-    distractors: [`x^2 ${sgn(prod)}x ${sgn(sum)}`, `x^2 ${sgn(sum)}x ${sgn(-prod)}`, `x^2 ${sgn(a * b + 1)}`, `x^2 ${sgn(sum)}`],
+    // Every distractor keeps the x^2 + Bx + C form — real sign/arithmetic errors,
+    // not degenerate shapes like "x^2 + 3".
+    distractors: [
+      trinomial(prod, sum),        // swapped middle & constant (added where they should multiply)
+      trinomial(-sum, prod),       // sign error on the middle term
+      trinomial(sum, -prod),       // sign error on the constant
+      trinomial(-sum, -prod),      // both signs flipped
+      trinomial(sum + a, prod),    // arithmetic slip combining the middle term
+    ],
     validate: () => (a + b === sum) && (a * b === prod),
   };
 };
@@ -356,11 +370,18 @@ G['act-congruence-similarity'] = (d) => {
 
 // integrating-essential-skills ----------------------------------
 G['act-multi-step-rate-proportion'] = (d) => {
-  // Two-leg trip — total distance = r1·h1 + r2·h2 (two computed steps).
+  // Two-leg problem — total = r1·h1 + r2·h2 (two computed steps). Scenario
+  // varies so repeated draws in one form don't read as the same question.
   const r1 = ri(3, 9), h1 = ri(2, 4), r2 = ri(3, 9), h2 = ri(2, 4);
   const correct = r1 * h1 + r2 * h2;
+  const ctx = pick([
+    ['A cyclist rides', 'miles per hour', 'hours', 'total distance traveled, in miles'],
+    ['A delivery van drives', 'miles per hour', 'hours', 'total distance driven, in miles'],
+    ['A printer prints', 'pages per minute', 'minutes', 'total number of pages printed'],
+    ['An assembly line produces', 'units per hour', 'hours', 'total number of units produced'],
+  ]);
   return {
-    prompt: `A cyclist rides at ${r1} miles per hour for ${h1} hours, then at ${r2} miles per hour for ${h2} hours. What is the total distance traveled, in miles?`,
+    prompt: `${ctx[0]} at ${r1} ${ctx[1]} for ${h1} ${ctx[2]}, then at ${r2} ${ctx[1]} for ${h2} ${ctx[2]}. What is the ${ctx[3]}?`,
     correct,
     distractors: [r1 * h1, (r1 + r2) * (h1 + h2), r1 + r2 + h1 + h2, correct + r1, correct - h2],
     trap: r1 * h2 + r2 * h1, // paired the wrong speed with the wrong time
@@ -376,8 +397,14 @@ G['act-algebraic-reasoning-context'] = (d) => {
   // Set up total = fixed + per·m, then SOLVE for the number of months m.
   const per = ri(3, 9), fixed = ri(2, 8) * 5, m = ri(3, 9);
   const total = fixed + per * m; const correct = m;
+  const ctx = pick([
+    ['A gym charges a', 'one-time sign-up fee plus', 'each month', 'months'],
+    ['A phone plan has a', 'activation fee plus', 'each month', 'months'],
+    ['A pool club charges a', 'membership fee plus', 'per visit', 'visits'],
+    ['A tool service has a', 'flat fee plus', 'per day', 'days'],
+  ]);
   return {
-    prompt: `A gym charges a $${fixed} one-time sign-up fee plus $${per} each month. After how many months will a member have paid $${total} in all?`,
+    prompt: `${ctx[0]} $${fixed} ${ctx[1]} $${per} ${ctx[2]}. After how many ${ctx[3]} will the total paid reach $${total}?`,
     correct,
     distractors: [Math.round(total / per), m + 1, m - 1, Math.round(total / (per + fixed)) || 1, total - fixed],
     trap: Math.round((total + fixed) / per), // ADDED the sign-up fee instead of subtracting it before dividing
@@ -389,8 +416,9 @@ G['act-percent-applications'] = (d) => {
   const price = pick([40, 50, 60, 80, 100, 120]); const disc = pick([10, 20, 25]); const tax = pick([5, 8, 10]);
   const sale = price * (1 - disc / 100);
   const correct = Math.round(sale * (1 + tax / 100) * 100) / 100;
+  const item = pick(['jacket', 'laptop', 'pair of shoes', 'backpack', 'desk lamp', 'bicycle']);
   return {
-    prompt: `A $${price} jacket is ${disc}% off. With ${tax}% sales tax added to the discounted price, what is the final cost?`,
+    prompt: `A $${price} ${item} is ${disc}% off. With ${tax}% sales tax added to the discounted price, what is the final cost?`,
     correct, format: money,
     distractors: [sale, Math.round(price * (1 + tax / 100) * 100) / 100, price - disc, Math.round(price * disc / 100 * 100) / 100],
     // TRAP: combined the percents on the original price — (1 − disc% + tax%) — instead of applying them in sequence.
@@ -511,12 +539,18 @@ function assemblyProof(items) {
   return { filled, total: slots.length, missing };
 }
 
-async function seedDb(items) {
+async function seedDb(items, fresh) {
   require('dotenv').config();
   const mongoose = require('mongoose');
   if (!process.env.MONGO_URI) { console.error('MONGO_URI not set — cannot --seed-db'); process.exit(1); }
   await mongoose.connect(process.env.MONGO_URI);
   const Problem = require('../models/problem');
+  // --fresh removes prior template-generated ACT items first, so regenerated
+  // prompts (new problemIds) don't leave stale copies behind.
+  if (fresh) {
+    const del = await Problem.deleteMany({ source: 'act-template-gen' });
+    console.log(`Cleared ${del.deletedCount} existing ACT items (--fresh).`);
+  }
   let up = 0;
   for (const it of items) {
     await Problem.updateOne({ problemId: it.problemId }, { $set: it }, { upsert: true });
@@ -540,7 +574,7 @@ async function main() {
   console.log(`\nAssembly proof: filled ${proof.filled}/${proof.total} slots of a full form.`);
   if (Object.keys(proof.missing).length) console.log('  short on:', proof.missing);
 
-  if (args.includes('--seed-db')) await seedDb(items);
+  if (args.includes('--seed-db')) await seedDb(items, args.includes('--fresh'));
 }
 
 if (require.main === module) main();
