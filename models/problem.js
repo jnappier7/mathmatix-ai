@@ -44,6 +44,19 @@ const problemSchema = new mongoose.Schema({
     type: String
   },
 
+  // Optional declarative figure (fixed-library kind + concrete params) for
+  // problems whose visual is drawn by the renderer rather than a baked SVG.
+  // Shape: { kind: 'grid'|'numberline'|'parabola'|..., params: {...},
+  //          keyFigure?: { kind, params } }  (see seeds/alg1-assessments/ALG1_SPEC.md)
+  figure: {
+    type: mongoose.Schema.Types.Mixed
+  },
+
+  // Optional worked solution (used by the tutor and answer review)
+  explanation: {
+    type: String
+  },
+
   // Answer object with equivalents
   answer: {
     type: {

@@ -56,7 +56,8 @@ function difficultyForPosition(blueprint, position) {
 }
 
 /**
- * Expand category weights + ramp into an ordered list of 60 slots, with each
+ * Expand category weights + ramp into an ordered list of slots (one per item in
+ * the blueprint, e.g. 45), with each
  * category spread evenly across the form (interleaved like a real ACT, not
  * blocked by category) and a rotating skill assignment for within-category
  * coverage.
@@ -107,6 +108,30 @@ function toClientItem(slot, problem) {
   };
 }
 
+/**
+ * A prompt's "shape" — the wording with all numbers blanked — so two problems
+ * that read the same except for their numbers collapse to one signature. Used
+ * to keep a single form from repeating the same-looking question.
+ */
+function promptSignature(s) {
+  return String(s || '').replace(/\d+(\.\d+)?/g, '#').replace(/\s+/g, ' ').trim().slice(0, 90);
+}
+
+/**
+ * From a candidate pool, pick the problem whose shape has appeared LEAST in the
+ * form so far — so repeated draws of the same skill surface different wordings.
+ */
+function pickDiverse(candidates, usedSignatures) {
+  if (!candidates || !candidates.length) return null;
+  let best = candidates[0], bestCount = Infinity;
+  for (const c of candidates) {
+    const count = usedSignatures.get(promptSignature(c.prompt)) || 0;
+    if (count < bestCount) { best = c; bestCount = count; }
+    if (bestCount === 0) break; // an unused shape — take it immediately
+  }
+  return best;
+}
+
 /** A spec the problem generator can fulfill for an unfillable slot. */
 function toGenerationSpec(slot) {
   return {
@@ -115,7 +140,7 @@ function toGenerationSpec(slot) {
     category: slot.category,
     targetDifficulty: slot.targetDifficulty,
     answerType: 'multiple-choice',
-    optionCount: 5,
+    optionCount: (DEFAULT_BLUEPRINT.choicesPerItem || 4),
   };
 }
 
@@ -135,8 +160,10 @@ async function assembleForm(opts = {}) {
   const rng = mulberry32(seed);
 
   const Problem = require('../models/problem');
+  const byCat = blueprint.skillsByCategory || {};
   const slots = buildSlots(blueprint, rng);
   const usedProblemIds = [];
+  const usedSignatures = new Map();   // prompt-shape -> count, to avoid look-alikes
   const items = [];
   const gaps = [];
 
@@ -144,18 +171,50 @@ async function assembleForm(opts = {}) {
     if (!slot.skillId) { gaps.push(toGenerationSpec(slot)); continue; }
     let problem = null;
     try {
-      problem = await Problem.findNearDifficulty(
-        slot.skillId,
-        slot.targetDifficulty,
-        usedProblemIds,
-        { preferMultipleChoice: true }
-      );
+      // Fetch a POOL of candidates near the target difficulty, then pick the
+      // one whose wording-shape is least-used so far — this is what prevents
+      // the same-looking question appearing 3-4 times in one form.
+      const lo = Math.max(1, slot.targetDifficulty - 1);
+      const hi = Math.min(5, slot.targetDifficulty + 1);
+      let candidates = await Problem.find({
+        skillId: slot.skillId,
+        isActive: true,
+        answerType: 'multiple-choice',
+        difficulty: { $gte: lo, $lte: hi },
+        problemId: { $nin: usedProblemIds },
+      }).limit(16).lean();
+      if (!candidates.length) {
+        // Widen: any difficulty for this skill, still excluding used items.
+        const p = await Problem.findNearDifficulty(slot.skillId, slot.targetDifficulty, usedProblemIds, { preferMultipleChoice: true });
+        candidates = p ? [p] : [];
+      }
+      if (!candidates.length) {
+        // Same-category fallback: a thin sub-skill can be asked for more times
+        // than it has items (a few categories have more slots than sub-skills).
+        // Draw another item from the SAME reporting category so the form stays
+        // exactly 45 items with the exact category composition the scaled score
+        // depends on. The item keeps its own fine skillId for personalization.
+        const catSkills = byCat[slot.category] || [];
+        if (catSkills.length) {
+          candidates = await Problem.find({
+            skillId: { $in: catSkills },
+            isActive: true,
+            answerType: 'multiple-choice',
+            problemId: { $nin: usedProblemIds },
+          }).limit(24).lean();
+        }
+      }
+      problem = pickDiverse(candidates, usedSignatures);
+      // Record the item's OWN fine skill (fallback may cross sub-skills within
+      // the category), so scoring & personalization attribute to the real skill.
+      if (problem && problem.skillId) slot.skillId = problem.skillId;
     } catch (err) {
       // DB/query error — treat as a gap, keep assembling the rest.
       problem = null;
     }
     if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
     usedProblemIds.push(problem.problemId);
+    usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
     items.push(toClientItem(slot, problem));
   }
 
@@ -197,5 +256,7 @@ module.exports = {
   skillPool,
   rawToScaled,
   difficultyForPosition,
+  promptSignature,
+  pickDiverse,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };

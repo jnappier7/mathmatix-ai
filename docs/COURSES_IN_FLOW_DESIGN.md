@@ -238,37 +238,53 @@ their differentiator is a **practice test** built from a composite of the boot
 camp's skills, as *original parallel forms* (our own items), delivered like the
 Starting Point.
 
-The ACT Math skill catalog already existed (`seeds/skills-act-math-prep.json`,
-36 skills in ACT reporting categories). Built on top:
+**Content engine = Fable-authored, verified items.** The bank is 225 items across
+5 full ACT Math forms (Fable 5), each item carrying a worked `explanation`, a
+machine `verify` snippet, an optional matplotlib `figure_code`, and a **per-item
+fine `skill` tag** (e.g. "Quadratic equations", "Right-triangle trigonometry").
+This replaced the earlier template generator so the diagnostic personalizes at the
+**exact-skill** level, not just the six broad reporting categories. Built on top:
 
-- **`seeds/act-math-blueprint.json`** — the 60-item composition (category weights,
-  easy→hard difficulty ramp, skills-by-category, approximate raw→scaled 1–36
-  table). Derived from the ACT Math *reporting-category structure* — not a copy of
-  any published test.
-- **`utils/actTestAssembler.js`** — assembles an original parallel form by
-  sampling our own skill-tagged bank (`Problem.findNearDifficulty`); reports any
-  unfillable slot as a **generation spec** for `scripts/generate*.js`.
-  `skillPool()` / `rawToScaled()` support both delivery modes.
+- **`seeds/fable-act/test{1..5}.json`** — the source forms (`SPEC.md` documents the
+  schema). Current spec (2025+): **45 questions, 50 minutes, 4 choices**, the six
+  ACT reporting categories, difficulty ramp Q1-15/16-30/31-45.
+- **`scripts/ingestFableActItems.py`** (`npm run act:ingest`) — renders each
+  `figure_code` to inline SVG (matplotlib → `<svg>`) and maps every question to a
+  `Problem` doc tagged with `skillId = slug(skill)` (fine-grained). Emits three
+  files: `seeds/act-fable-items.generated.json` (225 items), `act-skill-names.json`
+  ({skillId → readable name}, **44 skills**), and `act-skills-by-category.json`
+  ({category → [skillId]}). Every item ships with its explanation preserved.
+- **`seeds/act-math-blueprint.json`** — the 45-item composition (category weights,
+  difficulty ramp, **fine `skillsByCategory`** from the ingest, approximate
+  raw→scaled 1–36 table). Derived from the ACT Math *reporting-category structure* —
+  not a copy of any published test.
+- **`utils/actTestAssembler.js`** — assembles an original parallel form by drawing
+  candidate pools per fine skill near the target difficulty, then `pickDiverse()`
+  (wording-shape signature) to keep look-alikes out of one form. A **same-category
+  fallback** fills a slot from another sub-skill in the same category when a thin
+  sub-skill runs dry, so every form is exactly 45 items with the exact category
+  composition the scaled score depends on — the item keeps its own fine skillId for
+  scoring/personalization. `skillPool()` (44 fine skills) / `rawToScaled()` support
+  both delivery modes.
 - **`routes/actTest.js` + `models/actTestSession.js`** — a **fixed-form** delivery
   rail (parallel to the screener, per the `growthCheck.js` precedent) at
-  `/api/act-test` (`start` / `next-problem` / `submit-answer` / `complete`),
-  mirroring the screener's per-item contract so the existing item-render UI can
-  drive it. Grades by re-fetching the Problem server-side; returns raw + scaled +
-  per-category breakdown. **Free** (boot-camp on-ramp), no AI at request time.
-- **`scripts/generateActItems.js`** (`npm run act:gen`, `npm run act:seed`) — an
-  **original item generator** for all 31 content skills. Every item is
-  template-generated: the correct answer is *computed* from the parameters and a
-  validator plugs it back into the problem, rejecting anything inconsistent — a
-  wrong answer key cannot ship (correctness-by-construction). Distractors model
-  real student errors. Ships a starter bank in `seeds/act-math-items.generated.json`
-  (245 items, ~8/skill) that assembles a full 60/60 form; `act:seed` upserts it
-  into Mongo. Covered by `tests/unit/generateActItems.test.js` (every key valid,
-  form fills).
+  `/api/act-test` (`start` / `next-problem` / `submit-answer` / `complete` /
+  `history`), mirroring the screener's per-item contract so the existing item-render
+  UI can drive it. Grades by re-fetching the Problem server-side; returns raw +
+  scaled + per-category **and per-fine-skill** breakdown, computes `weakSkills`
+  (exact sub-skills missed), and seeds them into `tutorPlan.skillFocus` so the
+  follow-up tutoring targets the student's real gaps. `ACT_SKILL_NAMES` loads
+  `act-skill-names.json` so the report names skills exactly. **Free** (boot-camp
+  on-ramp), no AI at request time.
+- **`scripts/seedActItems.js`** (`npm run act:seed`) — upserts the generated items
+  into Mongo (`source: act-fable`), clearing prior generated ACT items first.
 - **`scripts/actTestCoverage.js`** (`npm run act:coverage`) — reports how much of
-  a form the live bank can fill and prints the generation worklist for gaps.
+  a form the live bank can fill and prints the generation worklist for any gaps.
 
-**To make it live:** `npm run act:seed` (loads the 245 items into Mongo), then
-`/api/act-test` delivers a full form. Extend/vary with `act:gen --per-skill N`.
+**To make it live:** `npm run act:ingest` (regenerate items + skill maps from the
+Fable forms), then `npm run act:seed` (loads them into Mongo); `/api/act-test` then
+delivers a full 45-item form. Re-run `act:ingest` whenever the Fable source forms
+change.
 
 **Adaptive diagnostic (follow-up, "delivered like the Starting Point"):** the CAT
 engine is reusable — `skillSelector.selectSkill(pool, …)` takes whatever skill
@@ -278,6 +294,54 @@ diagnostic. Prereqs the screener map surfaced: add `'act-math'` to
 `difficultyLevel`, not `irtDifficulty`) or extend `catConfig`'s
 `CATEGORY_DIFFICULTY_MAP`/`CATEGORY_TO_BROAD` to cover ACT categories; map
 theta→scaled(1–36) for the report; add an ACT branch/fork to `FloatingScreener`.
+
+## 6c. Algebra 1 assessment bank — **ingested + preserved (delivery deferred)**
+
+Fable-authored Algebra 1 course assessments — a *different animal* from the ACT
+bank. Where ACT is self-scoring 4-choice practice, this is teacher-style,
+free-response ("show all your work") course material: 9 modules (M1–7, M10, M11),
+each a **Quiz** (8 core + 3 spiral) and **Test** (12–14 core + 5 spiral), every
+item in **3 parallel versions** for integrity, with error-analysis / justify /
+multi-step-application items and a separately-graded spiral-review section.
+
+Chosen delivery target: **student course-flow** (tutor pulls items as
+checkpoints/practice and grades free-response via the existing LLM verifier +
+`mathSolver`), not the ACT self-scoring rail. This pass is **ingest + preserve**;
+the renderer and BKT wiring are the follow-up.
+
+- **`seeds/alg1-assessments/`** — source of record: `alg1_m{N}.json` (9 modules) +
+  `ALG1_SPEC.md` (authoring spec: item schema, fixed figure library, module
+  coverage) + `README.md` (provenance/pipeline).
+- **`scripts/ingestAlg1Items.py`** (`npm run alg1:ingest`) — expands the 3 versions
+  into **798 `Problem` docs** (`source: alg1-fable`), tagged at **module level**
+  (`alg1-m{N}`), `work`→`constructed-response` / `mc`→`multiple-choice` (answer key
+  parsed by letter *or* choice-text match) / `fill`→`constructed-response`,
+  `solution`→`explanation`, declarative `figure` preserved per version. Emits
+  `alg1-items.generated.json`, `alg1-skill-names.json`, `alg1-assessment-map.json`
+  (the quiz/test structure for the future rail), and `alg1-catalog-crosswalk.json`
+  (module → existing `skills-algebra-1.json` skillIds — scaffold for fine per-item
+  tagging).
+- **`scripts/auditAlg1Items.py`** (`npm run alg1:audit`) — runs every per-version
+  `verify` snippet (762 run, 756 pass; 6 hand-verified false-positives allowlisted).
+  Exits non-zero only on a **new** regression, so a wrong key can't slip in.
+- **`scripts/seedAlg1Items.js`** (`npm run alg1:seed`) — upserts the bank into Mongo.
+- **`models/problem.js`** — added an optional `figure` (Mixed) field so declarative
+  figures survive seeding for the deferred renderer.
+
+Once seeded, the tutor can already **pool** these via `Problem.find({ skillId })` /
+`findNearDifficulty`.
+
+**Figure renderer — DONE.** `scripts/alg1FigureRenderer.py` renders the fixed
+declarative library (grid/numberline/line_graph/abs_graph/parabola/mapping/points/
+story/table + numberline_answer/grid_answer overlays) to clean self-contained SVG.
+Ingestion bakes each student figure into `Problem.svg` and each answer overlay into
+`figure.keyFigure.svg` (75 figures + 42 key overlays), so the existing inline-visual
+display shows them with no frontend changes.
+
+**Still deferred (follow-up PR):** (1) fine-grained per-item skill tagging via the
+crosswalk (or ask Fable to add per-item `skill` tags, as the ACT bank now carries);
+(2) wire module skills to BKT / `tutorPlan.skillFocus` so they become first-class
+course checkpoints, not just a poolable bank.
 
 ## 7. Open questions
 

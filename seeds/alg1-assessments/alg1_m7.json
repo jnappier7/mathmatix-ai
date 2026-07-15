@@ -1,0 +1,864 @@
+{
+  "module": 7,
+  "topics": "Systems of Linear Equations",
+  "quiz": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "work",
+        "prompt": [
+          "Is (3, 1) a solution of the system below? Check both equations and answer yes or no.\nx + y = 4\n2x − y = 7",
+          "Is (2, 5) a solution of the system below? Check both equations and answer yes or no.\nx + y = 7\n3x − y = 4",
+          "Is (4, −1) a solution of the system below? Check both equations and answer yes or no.\nx + y = 3\n2x − y = 6"
+        ],
+        "choices": null,
+        "answer": [
+          "No — (3, 1) satisfies x + y = 4, but 2(3) − 1 = 5 ≠ 7.",
+          "No — (2, 5) satisfies x + y = 7, but 3(2) − 5 = 1 ≠ 4.",
+          "No — (4, −1) satisfies x + y = 3, but 2(4) − (−1) = 9 ≠ 6."
+        ],
+        "solution": [
+          "x + y: 3 + 1 = 4 ✓ → 2x − y: 6 − 1 = 5 ≠ 7 → a solution must satisfy BOTH equations → not a solution",
+          "x + y: 2 + 5 = 7 ✓ → 3x − y: 6 − 5 = 1 ≠ 4 → a solution must satisfy BOTH equations → not a solution",
+          "x + y: 4 + (−1) = 3 ✓ → 2x − y: 8 + 1 = 9 ≠ 6 → a solution must satisfy BOTH equations → not a solution"
+        ],
+        "verify": [
+          "x_,y_=3,1; assert x_+y_==4 and 2*x_-y_==5 and 2*x_-y_!=7; print('ok')",
+          "x_,y_=2,5; assert x_+y_==7 and 3*x_-y_==1 and 3*x_-y_!=4; print('ok')",
+          "x_,y_=4,-1; assert x_+y_==3 and 2*x_-y_==9 and 2*x_-y_!=6; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the system.\ny = 2x\nx + y = 12",
+          "Solve the system.\ny = 3x\nx + y = 16",
+          "Solve the system.\ny = 4x\nx + y = 15"
+        ],
+        "choices": null,
+        "answer": ["(4, 8)", "(4, 12)", "(3, 12)"],
+        "solution": [
+          "Substitute: x + 2x = 12 → 3x = 12 → x = 4 → y = 2(4) = 8 → (4, 8)",
+          "Substitute: x + 3x = 16 → 4x = 16 → x = 4 → y = 3(4) = 12 → (4, 12)",
+          "Substitute: x + 4x = 15 → 5x = 15 → x = 3 → y = 4(3) = 12 → (3, 12)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,2*x),Eq(x+y,12)],x,y); assert next(iter(s))==(4,8); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,3*x),Eq(x+y,16)],x,y); assert next(iter(s))==(4,12); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,4*x),Eq(x+y,15)],x,y); assert next(iter(s))==(3,12); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by graphing. Graph both lines on the grid, label the point of intersection, and state the solution.\ny = x + 1\ny = −x + 5",
+          "Solve the system by graphing. Graph both lines on the grid, label the point of intersection, and state the solution.\ny = −x + 1\ny = 2x + 4",
+          "Solve the system by graphing. Graph both lines on the grid, label the point of intersection, and state the solution.\ny = x − 5\ny = −2x + 4"
+        ],
+        "choices": null,
+        "answer": ["(2, 3)", "(−1, 2)", "(3, −2)"],
+        "solution": [
+          "Line 1: y-intercept 1, slope 1 → Line 2: y-intercept 5, slope −1 → lines cross at (2, 3) → check: 2 + 1 = 3 ✓ and −2 + 5 = 3 ✓",
+          "Line 1: y-intercept 1, slope −1 → Line 2: y-intercept 4, slope 2 → lines cross at (−1, 2) → check: −(−1) + 1 = 2 ✓ and 2(−1) + 4 = 2 ✓",
+          "Line 1: y-intercept −5, slope 1 → Line 2: y-intercept 4, slope −2 → lines cross at (3, −2) → check: 3 − 5 = −2 ✓ and −2(3) + 4 = −2 ✓"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,x+1),Eq(y,-x+5)],x,y); assert next(iter(s))==(2,3); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,-x+1),Eq(y,2*x+4)],x,y); assert next(iter(s))==(-1,2); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,x-5),Eq(y,-2*x+4)],x,y); assert next(iter(s))==(3,-2); print('ok')"
+        ],
+        "figure": {
+          "kind": "grid",
+          "params": [
+            {"xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8}
+          ]
+        },
+        "key_figure": {
+          "kind": "grid_answer",
+          "params": [
+            {"lines": [{"slope": 1, "yint": 1}, {"slope": -1, "yint": 5}], "points": [[2, 3]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"lines": [{"slope": -1, "yint": 1}, {"slope": 2, "yint": 4}], "points": [[-1, 2]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"lines": [{"slope": 1, "yint": -5}, {"slope": -2, "yint": 4}], "points": [[3, -2]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8}
+          ]
+        },
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by substitution.\ny = 3x − 4\n2x + y = 11",
+          "Solve the system by substitution.\ny = 2x + 1\n3x + y = 16",
+          "Solve the system by substitution.\ny = 4x − 2\n2x + y = 10"
+        ],
+        "choices": null,
+        "answer": ["(3, 5)", "(3, 7)", "(2, 6)"],
+        "solution": [
+          "2x + (3x − 4) = 11 → 5x − 4 = 11 → 5x = 15 → x = 3 → y = 3(3) − 4 = 5 → (3, 5)",
+          "3x + (2x + 1) = 16 → 5x + 1 = 16 → 5x = 15 → x = 3 → y = 2(3) + 1 = 7 → (3, 7)",
+          "2x + (4x − 2) = 10 → 6x − 2 = 10 → 6x = 12 → x = 2 → y = 4(2) − 2 = 6 → (2, 6)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,3*x-4),Eq(2*x+y,11)],x,y); assert next(iter(s))==(3,5); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,2*x+1),Eq(3*x+y,16)],x,y); assert next(iter(s))==(3,7); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,4*x-2),Eq(2*x+y,10)],x,y); assert next(iter(s))==(2,6); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by elimination.\nx + 2y = 7\n3x − 2y = 5",
+          "Solve the system by elimination.\n5x + 2y = 16\n3x − 2y = 0",
+          "Solve the system by elimination.\nx + 4y = 9\n2x − 4y = 6"
+        ],
+        "choices": null,
+        "answer": ["(3, 2)", "(2, 3)", "(5, 1)"],
+        "solution": [
+          "Add the equations: 4x = 12 → x = 3 → 3 + 2y = 7 → 2y = 4 → y = 2 → (3, 2)",
+          "Add the equations: 8x = 16 → x = 2 → 5(2) + 2y = 16 → 2y = 6 → y = 3 → (2, 3)",
+          "Add the equations: 3x = 15 → x = 5 → 5 + 4y = 9 → 4y = 4 → y = 1 → (5, 1)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(x+2*y,7),Eq(3*x-2*y,5)],x,y); assert next(iter(s))==(3,2); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(5*x+2*y,16),Eq(3*x-2*y,0)],x,y); assert next(iter(s))==(2,3); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(x+4*y,9),Eq(2*x-4*y,6)],x,y); assert next(iter(s))==(5,1); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by elimination. You will need to multiply one equation by a constant first.\n3x + 2y = 16\nx − y = 2",
+          "Solve the system by elimination. You will need to multiply one equation by a constant first.\n3x + 4y = 25\nx + 2y = 11",
+          "Solve the system by elimination. You will need to multiply one equation by a constant first.\n4x + 3y = 10\n2x − y = 0"
+        ],
+        "choices": null,
+        "answer": ["(4, 2)", "(3, 4)", "(1, 2)"],
+        "solution": [
+          "Multiply the second equation by 2: 2x − 2y = 4 → add: 5x = 20 → x = 4 → 4 − y = 2 → y = 2 → (4, 2)",
+          "Multiply the second equation by −2: −2x − 4y = −22 → add: x = 3 → 3 + 2y = 11 → 2y = 8 → y = 4 → (3, 4)",
+          "Multiply the second equation by 3: 6x − 3y = 0 → add: 10x = 10 → x = 1 → 2(1) − y = 0 → y = 2 → (1, 2)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(3*x+2*y,16),Eq(x-y,2)],x,y); assert next(iter(s))==(4,2); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(3*x+4*y,25),Eq(x+2*y,11)],x,y); assert next(iter(s))==(3,4); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(4*x+3*y,10),Eq(2*x-y,0)],x,y); assert next(iter(s))==(1,2); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "For each system, state whether it has one solution, no solution, or infinitely many solutions. Explain how you know for each — you should not need to solve completely.\n(a) y = 2x + 1 and y = 2x − 3\n(b) 2x + y = 4 and 4x + 2y = 8\n(c) y = x + 2 and y = −x + 4",
+          "For each system, state whether it has one solution, no solution, or infinitely many solutions. Explain how you know for each — you should not need to solve completely.\n(a) y = 3x − 2 and y = 3x + 5\n(b) x + 2y = 6 and 2x + 4y = 12\n(c) y = 2x − 1 and y = −x + 5",
+          "For each system, state whether it has one solution, no solution, or infinitely many solutions. Explain how you know for each — you should not need to solve completely.\n(a) y = −x + 4 and y = −x − 1\n(b) 3x + y = 5 and 6x + 2y = 10\n(c) y = 4x + 3 and y = x − 3"
+        ],
+        "choices": null,
+        "answer": [
+          "(a) no solution; (b) infinitely many solutions; (c) one solution",
+          "(a) no solution; (b) infinitely many solutions; (c) one solution",
+          "(a) no solution; (b) infinitely many solutions; (c) one solution"
+        ],
+        "solution": [
+          "(a) same slope 2, different y-intercepts → parallel lines, no solution; (b) second equation is 2 times the first → same line, infinitely many; (c) different slopes (1 and −1) → lines cross exactly once, one solution",
+          "(a) same slope 3, different y-intercepts → parallel lines, no solution; (b) second equation is 2 times the first → same line, infinitely many; (c) different slopes (2 and −1) → lines cross exactly once, one solution",
+          "(a) same slope −1, different y-intercepts → parallel lines, no solution; (b) second equation is 2 times the first → same line, infinitely many; (c) different slopes (4 and 1) → lines cross exactly once, one solution"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,2*x+1),Eq(y,2*x-3)],x,y)==S.EmptySet; assert next(iter(linsolve([Eq(2*x+y,4),Eq(4*x+2*y,8)],x,y))).free_symbols; assert not next(iter(linsolve([Eq(y,x+2),Eq(y,-x+4)],x,y))).free_symbols; print('ok')",
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,3*x-2),Eq(y,3*x+5)],x,y)==S.EmptySet; assert next(iter(linsolve([Eq(x+2*y,6),Eq(2*x+4*y,12)],x,y))).free_symbols; assert not next(iter(linsolve([Eq(y,2*x-1),Eq(y,-x+5)],x,y))).free_symbols; print('ok')",
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,-x+4),Eq(y,-x-1)],x,y)==S.EmptySet; assert next(iter(linsolve([Eq(3*x+y,5),Eq(6*x+2*y,10)],x,y))).free_symbols; assert not next(iter(linsolve([Eq(y,4*x+3),Eq(y,x-3)],x,y))).free_symbols; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Adult tickets to the fall play cost $8 and student tickets cost $5. The drama club sold 120 tickets and collected $795. Write a system of equations, then solve it to find how many adult tickets and how many student tickets were sold.",
+          "Adult tickets to the basketball game cost $9 and student tickets cost $4. The booster club sold 150 tickets and collected $1000. Write a system of equations, then solve it to find how many adult tickets and how many student tickets were sold.",
+          "Adult tickets to the spring concert cost $10 and child tickets cost $6. The choir sold 90 tickets and collected $780. Write a system of equations, then solve it to find how many adult tickets and how many child tickets were sold."
+        ],
+        "choices": null,
+        "answer": [
+          "a + s = 120 and 8a + 5s = 795; 65 adult tickets and 55 student tickets",
+          "a + s = 150 and 9a + 4s = 1000; 80 adult tickets and 70 student tickets",
+          "a + c = 90 and 10a + 6c = 780; 60 adult tickets and 30 child tickets"
+        ],
+        "solution": [
+          "Let a = adult, s = student → a + s = 120 and 8a + 5s = 795 → s = 120 − a → 8a + 5(120 − a) = 795 → 3a + 600 = 795 → 3a = 195 → a = 65 → s = 55 → check: 8(65) + 5(55) = 520 + 275 = 795 ✓",
+          "Let a = adult, s = student → a + s = 150 and 9a + 4s = 1000 → s = 150 − a → 9a + 4(150 − a) = 1000 → 5a + 600 = 1000 → 5a = 400 → a = 80 → s = 70 → check: 9(80) + 4(70) = 720 + 280 = 1000 ✓",
+          "Let a = adult, c = child → a + c = 90 and 10a + 6c = 780 → c = 90 − a → 10a + 6(90 − a) = 780 → 4a + 540 = 780 → 4a = 240 → a = 60 → c = 30 → check: 10(60) + 6(30) = 600 + 180 = 780 ✓"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; a,s=symbols('a s'); r=linsolve([Eq(a+s,120),Eq(8*a+5*s,795)],a,s); assert next(iter(r))==(65,55); print('ok')",
+          "from sympy import symbols, Eq, linsolve; a,s=symbols('a s'); r=linsolve([Eq(a+s,150),Eq(9*a+4*s,1000)],a,s); assert next(iter(r))==(80,70); print('ok')",
+          "from sympy import symbols, Eq, linsolve; a,c=symbols('a c'); r=linsolve([Eq(a+c,90),Eq(10*a+6*c,780)],a,c); assert next(iter(r))==(60,30); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 1,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line that passes through (2, 3) and (6, 11).",
+          "Find the slope of the line that passes through (1, 5) and (4, −4).",
+          "Find the slope of the line that passes through (0, −3) and (4, 9)."
+        ],
+        "choices": null,
+        "answer": ["m = 2", "m = −3", "m = 3"],
+        "solution": [
+          "m = (11 − 3)/(6 − 2) = 8/4 = 2",
+          "m = (−4 − 5)/(4 − 1) = −9/3 = −3",
+          "m = (9 − (−3))/(4 − 0) = 12/4 = 3"
+        ],
+        "verify": [
+          "assert (11-3)/(6-2)==2; print('ok')",
+          "assert (-4-5)/(4-1)==-3; print('ok')",
+          "assert (9-(-3))/(4-0)==3; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line with slope 2 that passes through (3, 1).",
+          "Write the equation, in slope-intercept form, of the line with slope −3 that passes through (1, 4).",
+          "Write the equation, in slope-intercept form, of the line with slope 4 that passes through (2, 5)."
+        ],
+        "choices": null,
+        "answer": ["y = 2x − 5", "y = −3x + 7", "y = 4x − 3"],
+        "solution": [
+          "1 = 2(3) + b → 1 = 6 + b → b = −5 → y = 2x − 5",
+          "4 = −3(1) + b → 4 = −3 + b → b = 7 → y = −3x + 7",
+          "5 = 4(2) + b → 5 = 8 + b → b = −3 → y = 4x − 3"
+        ],
+        "verify": [
+          "m,b=2,-5; assert 1==m*3+b; print('ok')",
+          "m,b=-3,7; assert 4==m*1+b; print('ok')",
+          "m,b=4,-3; assert 5==m*2+b; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M5"
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality: −3x + 4 > 19",
+          "Solve the inequality: −2x − 5 ≥ 9",
+          "Solve the inequality: −5x + 2 > 22"
+        ],
+        "choices": null,
+        "answer": ["x < −5", "x ≤ −7", "x < −4"],
+        "solution": [
+          "−3x > 15 → divide by −3, flip the sign → x < −5",
+          "−2x ≥ 14 → divide by −2, flip the sign → x ≤ −7",
+          "−5x > 20 → divide by −5, flip the sign → x < −4"
+        ],
+        "verify": [
+          "from sympy import symbols, solveset, S, Interval, oo; x=symbols('x'); assert solveset(-3*x+4>19,x,S.Reals)==Interval.open(-oo,-5); print('ok')",
+          "from sympy import symbols, solveset, S, Interval, oo; x=symbols('x'); assert solveset(-2*x-5>=9,x,S.Reals)==Interval(-oo,-7); print('ok')",
+          "from sympy import symbols, solveset, S, Interval, oo; x=symbols('x'); assert solveset(-5*x+2>22,x,S.Reals)==Interval.open(-oo,-4); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M6"
+      }
+    ]
+  },
+  "test": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "work",
+        "prompt": [
+          "Is (2, 3) a solution of the system below? Check both equations and answer yes or no.\n3x + y = 9\nx − y = −1",
+          "Is (1, 4) a solution of the system below? Check both equations and answer yes or no.\n2x + y = 6\nx − y = −3",
+          "Is (5, 2) a solution of the system below? Check both equations and answer yes or no.\nx + 2y = 9\nx − y = 3"
+        ],
+        "choices": null,
+        "answer": [
+          "Yes — 3(2) + 3 = 9 ✓ and 2 − 3 = −1 ✓, so (2, 3) satisfies both equations.",
+          "Yes — 2(1) + 4 = 6 ✓ and 1 − 4 = −3 ✓, so (1, 4) satisfies both equations.",
+          "Yes — 5 + 2(2) = 9 ✓ and 5 − 2 = 3 ✓, so (5, 2) satisfies both equations."
+        ],
+        "solution": [
+          "3x + y: 6 + 3 = 9 ✓ → x − y: 2 − 3 = −1 ✓ → satisfies both → yes, a solution",
+          "2x + y: 2 + 4 = 6 ✓ → x − y: 1 − 4 = −3 ✓ → satisfies both → yes, a solution",
+          "x + 2y: 5 + 4 = 9 ✓ → x − y: 5 − 2 = 3 ✓ → satisfies both → yes, a solution"
+        ],
+        "verify": [
+          "x_,y_=2,3; assert 3*x_+y_==9 and x_-y_==-1; print('ok')",
+          "x_,y_=1,4; assert 2*x_+y_==6 and x_-y_==-3; print('ok')",
+          "x_,y_=5,2; assert x_+2*y_==9 and x_-y_==3; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the system.\ny = 3x\ny = x + 8",
+          "Solve the system.\ny = 4x\ny = x + 9",
+          "Solve the system.\ny = 2x\ny = x + 7"
+        ],
+        "choices": null,
+        "answer": ["(4, 12)", "(3, 12)", "(7, 14)"],
+        "solution": [
+          "Set equal: 3x = x + 8 → 2x = 8 → x = 4 → y = 3(4) = 12 → (4, 12)",
+          "Set equal: 4x = x + 9 → 3x = 9 → x = 3 → y = 4(3) = 12 → (3, 12)",
+          "Set equal: 2x = x + 7 → x = 7 → y = 2(7) = 14 → (7, 14)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,3*x),Eq(y,x+8)],x,y); assert next(iter(s))==(4,12); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,4*x),Eq(y,x+9)],x,y); assert next(iter(s))==(3,12); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,2*x),Eq(y,x+7)],x,y); assert next(iter(s))==(7,14); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the system.\ny = 2x\n3x + y = 25",
+          "Solve the system.\ny = 3x\n2x + y = 20",
+          "Solve the system.\ny = 4x\n2x + y = 18"
+        ],
+        "choices": null,
+        "answer": ["(5, 10)", "(4, 12)", "(3, 12)"],
+        "solution": [
+          "Substitute: 3x + 2x = 25 → 5x = 25 → x = 5 → y = 2(5) = 10 → (5, 10)",
+          "Substitute: 2x + 3x = 20 → 5x = 20 → x = 4 → y = 3(4) = 12 → (4, 12)",
+          "Substitute: 2x + 4x = 18 → 6x = 18 → x = 3 → y = 4(3) = 12 → (3, 12)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,2*x),Eq(3*x+y,25)],x,y); assert next(iter(s))==(5,10); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,3*x),Eq(2*x+y,20)],x,y); assert next(iter(s))==(4,12); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,4*x),Eq(2*x+y,18)],x,y); assert next(iter(s))==(3,12); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "a) Graph both equations of the system on the grid.\nb) State the solution of the system and check it in both equations.\ny = 2x − 5\ny = −x + 4",
+          "a) Graph both equations of the system on the grid.\nb) State the solution of the system and check it in both equations.\ny = x + 5\ny = −x + 1",
+          "a) Graph both equations of the system on the grid.\nb) State the solution of the system and check it in both equations.\ny = 3x − 2\ny = −x + 6"
+        ],
+        "choices": null,
+        "answer": ["(3, 1)", "(−2, 3)", "(2, 4)"],
+        "solution": [
+          "a) Line 1: y-intercept −5, slope 2; Line 2: y-intercept 4, slope −1 → b) lines cross at (3, 1) → check: 2(3) − 5 = 1 ✓ and −3 + 4 = 1 ✓",
+          "a) Line 1: y-intercept 5, slope 1; Line 2: y-intercept 1, slope −1 → b) lines cross at (−2, 3) → check: −2 + 5 = 3 ✓ and −(−2) + 1 = 3 ✓",
+          "a) Line 1: y-intercept −2, slope 3; Line 2: y-intercept 6, slope −1 → b) lines cross at (2, 4) → check: 3(2) − 2 = 4 ✓ and −2 + 6 = 4 ✓"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,2*x-5),Eq(y,-x+4)],x,y); assert next(iter(s))==(3,1); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,x+5),Eq(y,-x+1)],x,y); assert next(iter(s))==(-2,3); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,3*x-2),Eq(y,-x+6)],x,y); assert next(iter(s))==(2,4); print('ok')"
+        ],
+        "figure": {
+          "kind": "grid",
+          "params": [
+            {"xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8}
+          ]
+        },
+        "key_figure": {
+          "kind": "grid_answer",
+          "params": [
+            {"lines": [{"slope": 2, "yint": -5}, {"slope": -1, "yint": 4}], "points": [[3, 1]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"lines": [{"slope": 1, "yint": 5}, {"slope": -1, "yint": 1}], "points": [[-2, 3]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"lines": [{"slope": 3, "yint": -2}, {"slope": -1, "yint": 6}], "points": [[2, 4]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8}
+          ]
+        },
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by substitution.\nx = y + 4\n2x + y = 14",
+          "Solve the system by substitution.\nx = y − 1\n3x + y = 13",
+          "Solve the system by substitution.\nx = 2y + 1\nx + 3y = 16"
+        ],
+        "choices": null,
+        "answer": ["(6, 2)", "(3, 4)", "(7, 3)"],
+        "solution": [
+          "2(y + 4) + y = 14 → 2y + 8 + y = 14 → 3y = 6 → y = 2 → x = 2 + 4 = 6 → (6, 2)",
+          "3(y − 1) + y = 13 → 3y − 3 + y = 13 → 4y = 16 → y = 4 → x = 4 − 1 = 3 → (3, 4)",
+          "(2y + 1) + 3y = 16 → 5y + 1 = 16 → 5y = 15 → y = 3 → x = 2(3) + 1 = 7 → (7, 3)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(x,y+4),Eq(2*x+y,14)],x,y); assert next(iter(s))==(6,2); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(x,y-1),Eq(3*x+y,13)],x,y); assert next(iter(s))==(3,4); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(x,2*y+1),Eq(x+3*y,16)],x,y); assert next(iter(s))==(7,3); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by elimination.\n3x + 4y = 24\n5x − 4y = 8",
+          "Solve the system by elimination.\n3x + 5y = 26\n4x − 5y = −12",
+          "Solve the system by elimination.\n2x + 3y = 15\n4x − 3y = 21"
+        ],
+        "choices": null,
+        "answer": ["(4, 3)", "(2, 4)", "(6, 1)"],
+        "solution": [
+          "Add the equations: 8x = 32 → x = 4 → 3(4) + 4y = 24 → 4y = 12 → y = 3 → (4, 3)",
+          "Add the equations: 7x = 14 → x = 2 → 3(2) + 5y = 26 → 5y = 20 → y = 4 → (2, 4)",
+          "Add the equations: 6x = 36 → x = 6 → 2(6) + 3y = 15 → 3y = 3 → y = 1 → (6, 1)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(3*x+4*y,24),Eq(5*x-4*y,8)],x,y); assert next(iter(s))==(4,3); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(3*x+5*y,26),Eq(4*x-5*y,-12)],x,y); assert next(iter(s))==(2,4); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(2*x+3*y,15),Eq(4*x-3*y,21)],x,y); assert next(iter(s))==(6,1); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by elimination. You will need to multiply one equation by a constant first.\n3x + 2y = 4\nx + 4y = −2",
+          "Solve the system by elimination. You will need to multiply one equation by a constant first.\n2x + 5y = 13\nx + 3y = 8",
+          "Solve the system by elimination. You will need to multiply one equation by a constant first.\n5x + 2y = 16\nx − 4y = 12"
+        ],
+        "choices": null,
+        "answer": ["(2, −1)", "(−1, 3)", "(4, −2)"],
+        "solution": [
+          "Multiply the first equation by −2: −6x − 4y = −8 → add to the second: −5x = −10 → x = 2 → 2 + 4y = −2 → 4y = −4 → y = −1 → (2, −1)",
+          "Multiply the second equation by −2: −2x − 6y = −16 → add to the first: −y = −3 → y = 3 → x + 3(3) = 8 → x = −1 → (−1, 3)",
+          "Multiply the first equation by 2: 10x + 4y = 32 → add to the second: 11x = 44 → x = 4 → 4 − 4y = 12 → −4y = 8 → y = −2 → (4, −2)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(3*x+2*y,4),Eq(x+4*y,-2)],x,y); assert next(iter(s))==(2,-1); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(2*x+5*y,13),Eq(x+3*y,8)],x,y); assert next(iter(s))==(-1,3); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(5*x+2*y,16),Eq(x-4*y,12)],x,y); assert next(iter(s))==(4,-2); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system by elimination. You will need to multiply both equations by constants first.\n2x + 3y = 12\n3x + 2y = 13",
+          "Solve the system by elimination. You will need to multiply both equations by constants first.\n3x + 4y = 10\n2x + 3y = 7",
+          "Solve the system by elimination. You will need to multiply both equations by constants first.\n5x + 2y = 22\n2x + 3y = 11"
+        ],
+        "choices": null,
+        "answer": ["(3, 2)", "(2, 1)", "(4, 1)"],
+        "solution": [
+          "Multiply the first by 3 and the second by 2: 6x + 9y = 36 and 6x + 4y = 26 → subtract: 5y = 10 → y = 2 → 2x + 3(2) = 12 → 2x = 6 → x = 3 → (3, 2)",
+          "Multiply the first by 2 and the second by 3: 6x + 8y = 20 and 6x + 9y = 21 → subtract: −y = −1 → y = 1 → 3x + 4(1) = 10 → 3x = 6 → x = 2 → (2, 1)",
+          "Multiply the first by 3 and the second by 2: 15x + 6y = 66 and 4x + 6y = 22 → subtract: 11x = 44 → x = 4 → 2(4) + 3y = 11 → 3y = 3 → y = 1 → (4, 1)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(2*x+3*y,12),Eq(3*x+2*y,13)],x,y); assert next(iter(s))==(3,2); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(3*x+4*y,10),Eq(2*x+3*y,7)],x,y); assert next(iter(s))==(2,1); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(5*x+2*y,22),Eq(2*x+3*y,11)],x,y); assert next(iter(s))==(4,1); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 9,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the system using any method (graphing, substitution, or elimination). Name the method you chose and explain in one sentence why it fits this system.\ny = x + 2\n4x + 2y = 22",
+          "Solve the system using any method (graphing, substitution, or elimination). Name the method you chose and explain in one sentence why it fits this system.\ny = x − 1\n3x + 2y = 18",
+          "Solve the system using any method (graphing, substitution, or elimination). Name the method you chose and explain in one sentence why it fits this system.\ny = x + 3\n2x + 4y = 24"
+        ],
+        "choices": null,
+        "answer": [
+          "(3, 5); substitution is efficient because y is already isolated (any correct method with correct work earns credit)",
+          "(4, 3); substitution is efficient because y is already isolated (any correct method with correct work earns credit)",
+          "(2, 5); substitution is efficient because y is already isolated (any correct method with correct work earns credit)"
+        ],
+        "solution": [
+          "Substitution (y is already solved for): 4x + 2(x + 2) = 22 → 6x + 4 = 22 → 6x = 18 → x = 3 → y = 3 + 2 = 5 → (3, 5)",
+          "Substitution (y is already solved for): 3x + 2(x − 1) = 18 → 5x − 2 = 18 → 5x = 20 → x = 4 → y = 4 − 1 = 3 → (4, 3)",
+          "Substitution (y is already solved for): 2x + 4(x + 3) = 24 → 6x + 12 = 24 → 6x = 12 → x = 2 → y = 2 + 3 = 5 → (2, 5)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,x+2),Eq(4*x+2*y,22)],x,y); assert next(iter(s))==(3,5); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,x-1),Eq(3*x+2*y,18)],x,y); assert next(iter(s))==(4,3); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(y,x+3),Eq(2*x+4*y,24)],x,y); assert next(iter(s))==(2,5); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 10,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "For each system, state whether it has one solution, no solution, or infinitely many solutions. Explain how you know for each — you should not need to solve completely.\n(a) y = 4x − 1 and y = 4x + 6\n(b) x + 3y = 6 and 2x + 6y = 12\n(c) y = −2x + 3 and y = x − 6",
+          "For each system, state whether it has one solution, no solution, or infinitely many solutions. Explain how you know for each — you should not need to solve completely.\n(a) y = −2x + 5 and y = −2x − 3\n(b) 2x + y = 7 and 6x + 3y = 21\n(c) y = 3x + 1 and y = −x + 9",
+          "For each system, state whether it has one solution, no solution, or infinitely many solutions. Explain how you know for each — you should not need to solve completely.\n(a) y = 5x + 2 and y = 5x − 4\n(b) x − 2y = 4 and 3x − 6y = 12\n(c) y = −3x + 2 and y = 2x − 8"
+        ],
+        "choices": null,
+        "answer": [
+          "(a) no solution; (b) infinitely many solutions; (c) one solution",
+          "(a) no solution; (b) infinitely many solutions; (c) one solution",
+          "(a) no solution; (b) infinitely many solutions; (c) one solution"
+        ],
+        "solution": [
+          "(a) same slope 4, different y-intercepts → parallel lines, no solution; (b) second equation is 2 times the first → same line, infinitely many; (c) different slopes (−2 and 1) → lines cross exactly once, one solution",
+          "(a) same slope −2, different y-intercepts → parallel lines, no solution; (b) second equation is 3 times the first → same line, infinitely many; (c) different slopes (3 and −1) → lines cross exactly once, one solution",
+          "(a) same slope 5, different y-intercepts → parallel lines, no solution; (b) second equation is 3 times the first → same line, infinitely many; (c) different slopes (−3 and 2) → lines cross exactly once, one solution"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,4*x-1),Eq(y,4*x+6)],x,y)==S.EmptySet; assert next(iter(linsolve([Eq(x+3*y,6),Eq(2*x+6*y,12)],x,y))).free_symbols; assert not next(iter(linsolve([Eq(y,-2*x+3),Eq(y,x-6)],x,y))).free_symbols; print('ok')",
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,-2*x+5),Eq(y,-2*x-3)],x,y)==S.EmptySet; assert next(iter(linsolve([Eq(2*x+y,7),Eq(6*x+3*y,21)],x,y))).free_symbols; assert not next(iter(linsolve([Eq(y,3*x+1),Eq(y,-x+9)],x,y))).free_symbols; print('ok')",
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,5*x+2),Eq(y,5*x-4)],x,y)==S.EmptySet; assert next(iter(linsolve([Eq(x-2*y,4),Eq(3*x-6*y,12)],x,y))).free_symbols; assert not next(iter(linsolve([Eq(y,-3*x+2),Eq(y,2*x-8)],x,y))).free_symbols; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 11,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Without graphing or solving, explain how you know the system below has no solution.\ny = 3x + 4\ny = 3x − 7",
+          "Without graphing or solving, explain how you know the system below has no solution.\ny = −2x + 6\ny = −2x + 1",
+          "Without graphing or solving, explain how you know the system below has no solution.\ny = 5x − 3\ny = 5x + 8"
+        ],
+        "choices": null,
+        "answer": [
+          "Both lines have slope 3 but different y-intercepts (4 and −7), so they are parallel and never intersect — no solution.",
+          "Both lines have slope −2 but different y-intercepts (6 and 1), so they are parallel and never intersect — no solution.",
+          "Both lines have slope 5 but different y-intercepts (−3 and 8), so they are parallel and never intersect — no solution."
+        ],
+        "solution": [
+          "Same slope (3) means the lines rise at the same rate → different y-intercepts (4 ≠ −7) means they never touch → parallel lines have no point in common → no solution; algebraically, 3x + 4 = 3x − 7 gives 4 = −7, which is false",
+          "Same slope (−2) means the lines fall at the same rate → different y-intercepts (6 ≠ 1) means they never touch → parallel lines have no point in common → no solution; algebraically, −2x + 6 = −2x + 1 gives 6 = 1, which is false",
+          "Same slope (5) means the lines rise at the same rate → different y-intercepts (−3 ≠ 8) means they never touch → parallel lines have no point in common → no solution; algebraically, 5x − 3 = 5x + 8 gives −3 = 8, which is false"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,3*x+4),Eq(y,3*x-7)],x,y)==S.EmptySet; print('ok')",
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,-2*x+6),Eq(y,-2*x+1)],x,y)==S.EmptySet; print('ok')",
+          "from sympy import symbols, Eq, linsolve, S; x,y=symbols('x y'); assert linsolve([Eq(y,5*x-3),Eq(y,5*x+8)],x,y)==S.EmptySet; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 12,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "To solve the system below, Maya subtracted the second equation from the first.\n3x + 4y = 26\n3x + 2y = 16\nHer work: \"3x − 3x = 0, then 4y + 2y = 6y, and 26 − 16 = 10, so 6y = 10 and y = 5/3.\"\nIdentify Maya's mistake, then solve the system correctly. Show all steps.",
+          "To solve the system below, Jonas subtracted the second equation from the first.\n2x + 5y = 11\n2x + 3y = 9\nHis work: \"2x − 2x = 0, then 5y + 3y = 8y, and 11 − 9 = 2, so 8y = 2 and y = 1/4.\"\nIdentify Jonas's mistake, then solve the system correctly. Show all steps.",
+          "To solve the system below, Lin subtracted the second equation from the first.\n4x + 3y = 22\n4x + y = 10\nHer work: \"4x − 4x = 0, then 3y + y = 4y, and 22 − 10 = 12, so 4y = 12 and y = 3.\"\nIdentify Lin's mistake, then solve the system correctly. Show all steps."
+        ],
+        "choices": null,
+        "answer": [
+          "Mistake: she added the y-terms instead of subtracting them; when subtracting, every term of the second equation must be subtracted. Correct solution: (2, 5).",
+          "Mistake: he added the y-terms instead of subtracting them; when subtracting, every term of the second equation must be subtracted. Correct solution: (3, 1).",
+          "Mistake: she added the y-terms instead of subtracting them; when subtracting, every term of the second equation must be subtracted. Correct solution: (1, 6)."
+        ],
+        "solution": [
+          "Mistake: subtracting the second equation changes the sign of EVERY term, so the y-terms give 4y − 2y = 2y, not 4y + 2y = 6y → correct: 2y = 10 → y = 5 → 3x + 4(5) = 26 → 3x = 6 → x = 2 → (2, 5)",
+          "Mistake: subtracting the second equation changes the sign of EVERY term, so the y-terms give 5y − 3y = 2y, not 5y + 3y = 8y → correct: 2y = 2 → y = 1 → 2x + 5(1) = 11 → 2x = 6 → x = 3 → (3, 1)",
+          "Mistake: subtracting the second equation changes the sign of EVERY term, so the y-terms give 3y − y = 2y, not 3y + y = 4y → correct: 2y = 12 → y = 6 → 4x + 3(6) = 22 → 4x = 4 → x = 1 → (1, 6)"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(3*x+4*y,26),Eq(3*x+2*y,16)],x,y); assert next(iter(s))==(2,5); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(2*x+5*y,11),Eq(2*x+3*y,9)],x,y); assert next(iter(s))==(3,1); print('ok')",
+          "from sympy import symbols, Eq, linsolve; x,y=symbols('x y'); s=linsolve([Eq(4*x+3*y,22),Eq(4*x+y,10)],x,y); assert next(iter(s))==(1,6); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 13,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Dario has 24 coins, all nickels and quarters, worth $3.40 in all.\na) Define your variables and write a system of equations for this situation.\nb) Solve your system to find how many nickels and how many quarters Dario has.",
+          "Amara has 18 coins, all dimes and quarters, worth $3.00 in all.\na) Define your variables and write a system of equations for this situation.\nb) Solve your system to find how many dimes and how many quarters Amara has.",
+          "Theo has 30 coins, all nickels and dimes, worth $2.20 in all.\na) Define your variables and write a system of equations for this situation.\nb) Solve your system to find how many nickels and how many dimes Theo has."
+        ],
+        "choices": null,
+        "answer": [
+          "a) n + q = 24 and 0.05n + 0.25q = 3.40; b) 13 nickels and 11 quarters",
+          "a) d + q = 18 and 0.10d + 0.25q = 3.00; b) 10 dimes and 8 quarters",
+          "a) n + d = 30 and 0.05n + 0.10d = 2.20; b) 16 nickels and 14 dimes"
+        ],
+        "solution": [
+          "a) Let n = nickels, q = quarters → n + q = 24 and 5n + 25q = 340 (in cents) → b) n = 24 − q → 5(24 − q) + 25q = 340 → 120 + 20q = 340 → 20q = 220 → q = 11 → n = 13 → check: 13(5) + 11(25) = 65 + 275 = 340 ✓ → 13 nickels, 11 quarters",
+          "a) Let d = dimes, q = quarters → d + q = 18 and 10d + 25q = 300 (in cents) → b) d = 18 − q → 10(18 − q) + 25q = 300 → 180 + 15q = 300 → 15q = 120 → q = 8 → d = 10 → check: 10(10) + 8(25) = 100 + 200 = 300 ✓ → 10 dimes, 8 quarters",
+          "a) Let n = nickels, d = dimes → n + d = 30 and 5n + 10d = 220 (in cents) → b) n = 30 − d → 5(30 − d) + 10d = 220 → 150 + 5d = 220 → 5d = 70 → d = 14 → n = 16 → check: 16(5) + 14(10) = 80 + 140 = 220 ✓ → 16 nickels, 14 dimes"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve; n,q=symbols('n q'); s=linsolve([Eq(n+q,24),Eq(5*n+25*q,340)],n,q); assert next(iter(s))==(13,11); print('ok')",
+          "from sympy import symbols, Eq, linsolve; d,q=symbols('d q'); s=linsolve([Eq(d+q,18),Eq(10*d+25*q,300)],d,q); assert next(iter(s))==(10,8); print('ok')",
+          "from sympy import symbols, Eq, linsolve; n,d=symbols('n d'); s=linsolve([Eq(n+d,30),Eq(5*n+10*d,220)],n,d); assert next(iter(s))==(16,14); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 14,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "A lab technician mixes a 20% saline solution with a 50% saline solution to make 30 liters of a 30% saline solution.\na) Define your variables and write a system of equations for this situation.\nb) Solve your system to find how many liters of each solution the technician should use.",
+          "A chemistry student mixes a 15% acid solution with a 40% acid solution to make 50 liters of a 25% acid solution.\na) Define your variables and write a system of equations for this situation.\nb) Solve your system to find how many liters of each solution the student should use.",
+          "A beverage company mixes a drink that is 10% real juice with one that is 30% real juice to make 40 liters of a drink that is 25% real juice.\na) Define your variables and write a system of equations for this situation.\nb) Solve your system to find how many liters of each drink the company should use."
+        ],
+        "choices": null,
+        "answer": [
+          "a) x + y = 30 and 0.20x + 0.50y = 0.30(30) = 9; b) 20 liters of the 20% solution and 10 liters of the 50% solution",
+          "a) x + y = 50 and 0.15x + 0.40y = 0.25(50) = 12.5; b) 30 liters of the 15% solution and 20 liters of the 40% solution",
+          "a) x + y = 40 and 0.10x + 0.30y = 0.25(40) = 10; b) 10 liters of the 10% drink and 30 liters of the 30% drink"
+        ],
+        "solution": [
+          "a) Let x = liters of 20%, y = liters of 50% → x + y = 30 and 0.20x + 0.50y = 9 → b) multiply by 10: 2x + 5y = 90 → also 2x + 2y = 60 → subtract: 3y = 30 → y = 10 → x = 20 → check: 0.20(20) + 0.50(10) = 4 + 5 = 9 ✓ → 20 L of 20% and 10 L of 50%",
+          "a) Let x = liters of 15%, y = liters of 40% → x + y = 50 and 0.15x + 0.40y = 12.5 → b) multiply by 20: 3x + 8y = 250 → also 3x + 3y = 150 → subtract: 5y = 100 → y = 20 → x = 30 → check: 0.15(30) + 0.40(20) = 4.5 + 8 = 12.5 ✓ → 30 L of 15% and 20 L of 40%",
+          "a) Let x = liters of 10%, y = liters of 30% → x + y = 40 and 0.10x + 0.30y = 10 → b) multiply by 10: x + 3y = 100 → subtract x + y = 40: 2y = 60 → y = 30 → x = 10 → check: 0.10(10) + 0.30(30) = 1 + 9 = 10 ✓ → 10 L of 10% and 30 L of 30%"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, linsolve, Rational; x,y=symbols('x y'); s=linsolve([Eq(x+y,30),Eq(Rational(1,5)*x+Rational(1,2)*y,9)],x,y); assert next(iter(s))==(20,10); print('ok')",
+          "from sympy import symbols, Eq, linsolve, Rational; x,y=symbols('x y'); s=linsolve([Eq(x+y,50),Eq(Rational(3,20)*x+Rational(2,5)*y,Rational(25,2))],x,y); assert next(iter(s))==(30,20); print('ok')",
+          "from sympy import symbols, Eq, linsolve, Rational; x,y=symbols('x y'); s=linsolve([Eq(x+y,40),Eq(Rational(1,10)*x+Rational(3,10)*y,10)],x,y); assert next(iter(s))==(10,30); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 1,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line that passes through (3, 1) and (7, 13).",
+          "Find the slope of the line that passes through (−2, 5) and (2, −3).",
+          "Find the slope of the line that passes through (0, 4) and (6, 16)."
+        ],
+        "choices": null,
+        "answer": ["m = 3", "m = −2", "m = 2"],
+        "solution": [
+          "m = (13 − 1)/(7 − 3) = 12/4 = 3",
+          "m = (−3 − 5)/(2 − (−2)) = −8/4 = −2",
+          "m = (16 − 4)/(6 − 0) = 12/6 = 2"
+        ],
+        "verify": [
+          "assert (13-1)/(7-3)==3; print('ok')",
+          "assert (-3-5)/(2-(-2))==-2; print('ok')",
+          "assert (16-4)/(6-0)==2; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Rewrite the equation in slope-intercept form: 4x + 2y = 10",
+          "Rewrite the equation in slope-intercept form: 2x + 4y = 12",
+          "Rewrite the equation in slope-intercept form: 6x − 2y = 10"
+        ],
+        "choices": null,
+        "answer": ["y = −2x + 5", "y = −(1/2)x + 3", "y = 3x − 5"],
+        "solution": [
+          "2y = −4x + 10 → divide by 2 → y = −2x + 5",
+          "4y = −2x + 12 → divide by 4 → y = −(1/2)x + 3",
+          "−2y = −6x + 10 → divide by −2 → y = 3x − 5"
+        ],
+        "verify": [
+          "from sympy import symbols, Eq, solve, simplify; x,y=symbols('x y'); e=solve(Eq(4*x+2*y,10),y)[0]; assert simplify(e-(-2*x+5))==0; print('ok')",
+          "from sympy import symbols, Eq, solve, simplify, Rational; x,y=symbols('x y'); e=solve(Eq(2*x+4*y,12),y)[0]; assert simplify(e-(-Rational(1,2)*x+3))==0; print('ok')",
+          "from sympy import symbols, Eq, solve, simplify; x,y=symbols('x y'); e=solve(Eq(6*x-2*y,10),y)[0]; assert simplify(e-(3*x-5))==0; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in point-slope form, of the line with slope −2 that passes through (4, 1).",
+          "Write the equation, in point-slope form, of the line with slope 3 that passes through (−2, 5).",
+          "Write the equation, in point-slope form, of the line with slope 1/2 that passes through (6, −1)."
+        ],
+        "choices": null,
+        "answer": ["y − 1 = −2(x − 4)", "y − 5 = 3(x + 2)", "y + 1 = (1/2)(x − 6)"],
+        "solution": [
+          "y − y1 = m(x − x1) → y − 1 = −2(x − 4)",
+          "y − y1 = m(x − x1) → y − 5 = 3(x − (−2)) → y − 5 = 3(x + 2)",
+          "y − y1 = m(x − x1) → y − (−1) = (1/2)(x − 6) → y + 1 = (1/2)(x − 6)"
+        ],
+        "verify": [
+          "from sympy import symbols, simplify; x=symbols('x'); assert simplify((1+-2*(x-4))-(-2*x+9))==0; print('ok')",
+          "from sympy import symbols, simplify; x=symbols('x'); assert simplify((5+3*(x+2))-(3*x+11))==0; print('ok')",
+          "from sympy import symbols, simplify, Rational; x=symbols('x'); assert simplify((-1+Rational(1,2)*(x-6))-(Rational(1,2)*x-4))==0; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M5"
+      },
+      {
+        "n": 4,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "What is the slope of a line PERPENDICULAR to the line y = (2/3)x − 4?",
+          "What is the slope of a line PERPENDICULAR to the line y = −(1/4)x + 2?",
+          "What is the slope of a line PERPENDICULAR to the line y = 5x + 1?"
+        ],
+        "choices": null,
+        "answer": ["−3/2", "4", "−1/5"],
+        "solution": [
+          "Perpendicular slope is the opposite reciprocal of 2/3 → −3/2 → check: (2/3)(−3/2) = −1 ✓",
+          "Perpendicular slope is the opposite reciprocal of −1/4 → 4 → check: (−1/4)(4) = −1 ✓",
+          "Perpendicular slope is the opposite reciprocal of 5 → −1/5 → check: (5)(−1/5) = −1 ✓"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; assert F(2,3)*F(-3,2)==-1; print('ok')",
+          "from fractions import Fraction as F; assert F(-1,4)*4==-1; print('ok')",
+          "from fractions import Fraction as F; assert 5*F(-1,5)==-1; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M5"
+      },
+      {
+        "n": 5,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality: −2x + 7 ≤ 19",
+          "Solve the inequality: −4x − 3 > 13",
+          "Solve the inequality: −3x + 5 < 20"
+        ],
+        "choices": null,
+        "answer": ["x ≥ −6", "x < −4", "x > −5"],
+        "solution": [
+          "−2x ≤ 12 → divide by −2, flip the sign → x ≥ −6",
+          "−4x > 16 → divide by −4, flip the sign → x < −4",
+          "−3x < 15 → divide by −3, flip the sign → x > −5"
+        ],
+        "verify": [
+          "from sympy import symbols, solveset, S, Interval, oo; x=symbols('x'); assert solveset(-2*x+7<=19,x,S.Reals)==Interval(-6,oo); print('ok')",
+          "from sympy import symbols, solveset, S, Interval, oo; x=symbols('x'); assert solveset(-4*x-3>13,x,S.Reals)==Interval.open(-oo,-4); print('ok')",
+          "from sympy import symbols, solveset, S, Interval, oo; x=symbols('x'); assert solveset(-3*x+5<20,x,S.Reals)==Interval.open(-5,oo); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M6"
+      }
+    ]
+  }
+}

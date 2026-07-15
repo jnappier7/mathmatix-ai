@@ -46,6 +46,9 @@ function latexToExpr(input) {
     .replace(/\\([a-zA-Z]+)/g, '$1')                                     // \ln \sin -> ln sin
     .replace(/[{}]/g, '')
     .replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/').replace(/·/g, '*');
+  // |2b + 1| -> abs(2b + 1) so absolute-value equations are checkable (\left|
+  // \right| already stripped above, leaving bare | … |). Non-greedy, single level.
+  s = s.replace(/\|\s*([^|]+?)\s*\|/g, 'abs($1)');
   return s.trim();
 }
 
@@ -141,7 +144,15 @@ function claimedSolutionValues(text, variable) {
 function verifyEquationSolution(studentAnswer, equationTex, variable) {
   const eq = extractEquation(equationTex);
   if (!eq) return null;
-  const v = variable || 'x';
+  // Auto-detect the unknown from the equation (m, p, t, b, …) instead of
+  // assuming x — a problem in 'p' with a "p = 60" answer must still verify.
+  // Only when there's exactly ONE single-letter variable; otherwise fall back
+  // to x (a multi-variable/literal equation has no single value to check).
+  let v = variable;
+  if (!v) {
+    const found = collectVars('(' + eq.lhs + ')-(' + eq.rhs + ')').filter(function (x) { return x.length === 1; });
+    v = found.length === 1 ? found[0] : 'x';
+  }
   const vals = claimedSolutionValues(studentAnswer, v);
   if (!vals.length) return null;
   const diff = compile('(' + eq.lhs + ')-(' + eq.rhs + ')');

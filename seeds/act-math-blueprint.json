@@ -1,122 +1,116 @@
 {
-  "_comment": "ACT Math practice-test BLUEPRINT. Defines the target composition of an ORIGINAL parallel form (our own items). Derived from the ACT Math reporting-category structure; NOT a copy of any published test. Delivered adaptively (like the Starting Point) or as a fixed-form timed test.",
+  "_comment": "ACT Math blueprint — CURRENT spec (2025+): 45 questions, 50 minutes, 4 answer choices. Categories per official ACT reporting categories. Content = Fable-authored, verified items (seeds/act-fable-items.generated.json). Replaces the legacy 60-question/5-choice blueprint.",
   "testId": "act-math",
   "title": "ACT Math Practice Test",
   "subject": "act-math",
-  "totalItems": 60,
-  "timeLimitMinutes": 60,
+  "totalItems": 45,
+  "timeLimitMinutes": 50,
+  "choicesPerItem": 4,
   "scoreScale": {
     "min": 1,
     "max": 36
   },
   "categoryWeights": {
-    "integrating-essential-skills": 16,
-    "geometry": 12,
-    "algebra": 10,
+    "integrating-essential-skills": 9,
+    "algebra": 8,
     "functions": 8,
-    "statistics-probability": 8,
-    "number-quantity": 6
+    "geometry": 8,
+    "statistics-probability": 7,
+    "number-quantity": 5
   },
   "difficultyRamp": [
     {
       "fromPosition": 1,
-      "toPosition": 20,
+      "toPosition": 15,
       "targetDifficulty": 2
     },
     {
-      "fromPosition": 21,
-      "toPosition": 40,
+      "fromPosition": 16,
+      "toPosition": 30,
       "targetDifficulty": 3
     },
     {
-      "fromPosition": 41,
-      "toPosition": 60,
+      "fromPosition": 31,
+      "toPosition": 45,
       "targetDifficulty": 4
     }
   ],
   "skillsByCategory": {
     "integrating-essential-skills": [
-      "act-multi-step-rate-proportion",
-      "act-area-perimeter-composite",
-      "act-algebraic-reasoning-context",
-      "act-percent-applications",
-      "act-measurement-unit-conversion"
-    ],
-    "geometry": [
-      "act-angles-lines-triangles",
-      "act-polygons-circles",
-      "act-area-volume-surface-area",
-      "act-coordinate-geometry",
-      "act-right-triangle-trig",
-      "act-congruence-similarity"
+      "act-basic-geometry-measures",
+      "act-multi-step-arithmetic",
+      "act-percentages",
+      "act-rates-unit-conversion",
+      "act-ratios-proportions",
+      "act-time-schedule-arithmetic"
     ],
     "algebra": [
+      "act-absolute-value-equations-inequalities",
       "act-linear-equations",
-      "act-systems-of-equations",
-      "act-quadratic-equations",
+      "act-linear-inequalities",
       "act-polynomial-expressions",
-      "act-radical-rational-expressions"
+      "act-quadratic-equations",
+      "act-radical-rational-equations",
+      "act-systems-of-equations",
+      "act-variation-direct-inverse",
+      "act-word-problems-modeling"
     ],
     "functions": [
-      "act-function-notation-evaluation",
-      "act-linear-functions",
-      "act-quadratic-functions",
-      "act-polynomial-exponential-log",
-      "act-trig-functions",
-      "act-function-transformations"
+      "act-exponential-models",
+      "act-function-composition",
+      "act-function-evaluation-notation",
+      "act-graph-transformations",
+      "act-linear-functions-models",
+      "act-logarithms",
+      "act-quadratic-functions-parabolas",
+      "act-sequences",
+      "act-trigonometric-functions"
+    ],
+    "geometry": [
+      "act-angles-parallel-lines",
+      "act-area-perimeter",
+      "act-circles",
+      "act-coordinate-geometry",
+      "act-law-of-sines-cosines",
+      "act-right-triangle-trigonometry",
+      "act-similar-congruent-figures",
+      "act-triangles-angle-relationships",
+      "act-triangles-pythagorean-theorem",
+      "act-volume-surface-area"
     ],
     "statistics-probability": [
       "act-center-spread",
-      "act-data-representations",
-      "act-two-way-tables",
-      "act-probability",
-      "act-counting-techniques"
+      "act-conditional-probability",
+      "act-counting-arrangements",
+      "act-expected-value",
+      "act-probability"
     ],
     "number-quantity": [
-      "act-real-complex-numbers",
-      "act-exponents-roots",
-      "act-ratios-proportions-percents",
-      "act-matrices-vectors"
-    ]
-  },
-  "notTestedAsItems": {
-    "_comment": "Taught in the boot camp, not sampled as scored items.",
-    "test-strategy": [
-      "act-backsolving",
-      "act-picking-numbers",
-      "act-estimation-elimination",
-      "act-pacing-strategy"
-    ],
-    "modeling": [
-      "act-model-interpretation"
+      "act-complex-numbers",
+      "act-exponent-rules",
+      "act-matrices-vectors",
+      "act-radicals-roots",
+      "act-scientific-notation"
     ]
   },
   "scaledScore": {
-    "_comment": "APPROXIMATE raw(0-60)->scaled(1-36) estimate for practice feedback only. Real ACT scaling is per-form and proprietary.",
+    "_comment": "APPROXIMATE raw(0-45)->scaled(1-36) estimate for practice feedback only.",
     "approximate": true,
     "scaledByRaw": [
       1,
-      2,
-      4,
-      6,
-      8,
+      3,
+      5,
+      7,
       9,
       10,
       11,
-      11,
-      12,
       12,
       13,
-      13,
       14,
-      14,
-      14,
-      15,
       15,
       15,
       16,
       16,
-      17,
       17,
       17,
       18,
@@ -126,7 +120,6 @@
       20,
       20,
       21,
-      21,
       22,
       22,
       23,
@@ -135,24 +128,18 @@
       24,
       25,
       25,
-      25,
       26,
       26,
       27,
       27,
       28,
       28,
-      28,
-      29,
       29,
       30,
       30,
-      31,
       31,
       32,
       33,
-      33,
-      34,
       34,
       35,
       36

@@ -1,0 +1,820 @@
+{
+  "module": 2,
+  "topics": "Solving Linear Equations",
+  "quiz": {
+    "items": [
+      {
+        "n": 1,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve for x: x + 12 = 5",
+          "Solve for x: x − 9 = −4",
+          "Solve for x: x + 15 = 4"
+        ],
+        "choices": null,
+        "answer": ["x = −7", "x = 5", "x = −11"],
+        "solution": [
+          "x + 12 = 5 → subtract 12 from both sides → x = −7",
+          "x − 9 = −4 → add 9 to both sides → x = 5",
+          "x + 15 = 4 → subtract 15 from both sides → x = −11"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(x + 12, 5), x) == [-7]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(x - 9, -4), x) == [5]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(x + 15, 4), x) == [-11]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve for x: −3x = 27",
+          "Solve for x: −7x = 56",
+          "Solve for x: −4x = 24"
+        ],
+        "choices": null,
+        "answer": ["x = −9", "x = −8", "x = −6"],
+        "solution": [
+          "−3x = 27 → divide both sides by −3 → x = −9",
+          "−7x = 56 → divide both sides by −7 → x = −8",
+          "−4x = 24 → divide both sides by −4 → x = −6"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(-3*x, 27), x) == [-9]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(-7*x, 56), x) == [-8]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(-4*x, 24), x) == [-6]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve for x. Show all your work: 3(x − 4) = 2x + 1",
+          "Solve for x. Show all your work: 5(x + 2) = 3x + 24",
+          "Solve for x. Show all your work: 4(x − 1) = 2x + 12"
+        ],
+        "choices": null,
+        "answer": ["x = 13", "x = 7", "x = 8"],
+        "solution": [
+          "3(x − 4) = 2x + 1 → distribute: 3x − 12 = 2x + 1 → subtract 2x: x − 12 = 1 → add 12: x = 13",
+          "5(x + 2) = 3x + 24 → distribute: 5x + 10 = 3x + 24 → subtract 3x: 2x + 10 = 24 → subtract 10: 2x = 14 → x = 7",
+          "4(x − 1) = 2x + 12 → distribute: 4x − 4 = 2x + 12 → subtract 2x: 2x − 4 = 12 → add 4: 2x = 16 → x = 8"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(3*(x - 4), 2*x + 1), x) == [13]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(5*(x + 2), 3*x + 24), x) == [7]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(4*(x - 1), 2*x + 12), x) == [8]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve for w: (2/3)w + 5 = 13",
+          "Solve for p: (3/5)p − 2 = 7",
+          "Solve for n: (5/8)n + 1 = 11"
+        ],
+        "choices": null,
+        "answer": ["w = 12", "p = 15", "n = 16"],
+        "solution": [
+          "(2/3)w + 5 = 13 → subtract 5: (2/3)w = 8 → multiply both sides by 3/2 → w = 12",
+          "(3/5)p − 2 = 7 → add 2: (3/5)p = 9 → multiply both sides by 5/3 → p = 15",
+          "(5/8)n + 1 = 11 → subtract 1: (5/8)n = 10 → multiply both sides by 8/5 → n = 16"
+        ],
+        "verify": [
+          "import sympy as sp\nw = sp.symbols('w')\nassert sp.solve(sp.Eq(sp.Rational(2,3)*w + 5, 13), w) == [12]",
+          "import sympy as sp\np = sp.symbols('p')\nassert sp.solve(sp.Eq(sp.Rational(3,5)*p - 2, 7), p) == [15]",
+          "import sympy as sp\nn = sp.symbols('n')\nassert sp.solve(sp.Eq(sp.Rational(5,8)*n + 1, 11), n) == [16]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the proportion. Show all your work: (y + 4)/(3y) = 2/5",
+          "Solve the proportion. Show all your work: (x + 6)/(4x) = 1/2",
+          "Solve the proportion. Show all your work: (n + 3)/(5n) = 2/7"
+        ],
+        "choices": null,
+        "answer": ["y = 20", "x = 6", "n = 7"],
+        "solution": [
+          "Cross multiply: 5(y + 4) = 2(3y) → 5y + 20 = 6y → subtract 5y: 20 = y → y = 20",
+          "Cross multiply: 2(x + 6) = 1(4x) → 2x + 12 = 4x → subtract 2x: 12 = 2x → x = 6",
+          "Cross multiply: 7(n + 3) = 2(5n) → 7n + 21 = 10n → subtract 7n: 21 = 3n → n = 7"
+        ],
+        "verify": [
+          "import sympy as sp\ny = sp.symbols('y')\nassert sp.solve(sp.Eq((y + 4)/(3*y), sp.Rational(2,5)), y) == [20]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq((x + 6)/(4*x), sp.Rational(1,2)), x) == [6]",
+          "import sympy as sp\nn = sp.symbols('n')\nassert sp.solve(sp.Eq((n + 3)/(5*n), sp.Rational(2,7)), n) == [7]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the equation y = mx + b for m.",
+          "Solve the equation P = 2l + 2w for w.",
+          "Solve the equation v = u + at for a."
+        ],
+        "choices": null,
+        "answer": ["m = (y − b)/x", "w = (P − 2l)/2", "a = (v − u)/t"],
+        "solution": [
+          "y = mx + b → subtract b: y − b = mx → divide both sides by x → m = (y − b)/x",
+          "P = 2l + 2w → subtract 2l: P − 2l = 2w → divide both sides by 2 → w = (P − 2l)/2",
+          "v = u + at → subtract u: v − u = at → divide both sides by t → a = (v − u)/t"
+        ],
+        "verify": [
+          "import sympy as sp\ny, m, x, b = sp.symbols('y m x b')\nsol = sp.solve(sp.Eq(y, m*x + b), m)[0]\nassert sp.simplify(sol - (y - b)/x) == 0",
+          "import sympy as sp\nP, l, w = sp.symbols('P l w')\nsol = sp.solve(sp.Eq(P, 2*l + 2*w), w)[0]\nassert sp.simplify(sol - (P - 2*l)/2) == 0",
+          "import sympy as sp\nv, u, a, t = sp.symbols('v u a t')\nsol = sp.solve(sp.Eq(v, u + a*t), a)[0]\nassert sp.simplify(sol - (v - u)/t) == 0"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Five more than twice a number is 19. Write an equation, then solve it to find the number.",
+          "Three less than four times a number is 21. Write an equation, then solve it to find the number.",
+          "Two less than five times a number is 38. Write an equation, then solve it to find the number."
+        ],
+        "choices": null,
+        "answer": ["2n + 5 = 19; n = 7", "4n − 3 = 21; n = 6", "5n − 2 = 38; n = 8"],
+        "solution": [
+          "Let n = the number → 2n + 5 = 19 → subtract 5: 2n = 14 → divide by 2: n = 7",
+          "Let n = the number → 4n − 3 = 21 → add 3: 4n = 24 → divide by 4: n = 6",
+          "Let n = the number → 5n − 2 = 38 → add 2: 5n = 40 → divide by 5: n = 8"
+        ],
+        "verify": [
+          "import sympy as sp\nn = sp.symbols('n')\nassert sp.solve(sp.Eq(2*n + 5, 19), n) == [7]",
+          "import sympy as sp\nn = sp.symbols('n')\nassert sp.solve(sp.Eq(4*n - 3, 21), n) == [6]",
+          "import sympy as sp\nn = sp.symbols('n')\nassert sp.solve(sp.Eq(5*n - 2, 38), n) == [8]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Peak Fitness charges a $25 sign-up fee plus $10 per month. River Gym charges a $10 sign-up fee plus $13 per month. Write an equation and solve it to find the number of months when the total cost of the two gyms will be the same.",
+          "JumpZone charges a $30 membership fee plus $8 per visit. AirPark charges a $12 membership fee plus $14 per visit. Write an equation and solve it to find the number of visits when the total cost of the two parks will be the same.",
+          "SplashWorld charges a $40 season fee plus $6 per week for swim lessons. City Pool charges a $16 season fee plus $12 per week. Write an equation and solve it to find the number of weeks when the total cost of the two programs will be the same."
+        ],
+        "choices": null,
+        "answer": ["25 + 10m = 10 + 13m; m = 5 months", "30 + 8v = 12 + 14v; v = 3 visits", "40 + 6w = 16 + 12w; w = 4 weeks"],
+        "solution": [
+          "Let m = number of months → 25 + 10m = 10 + 13m → subtract 10m: 25 = 10 + 3m → subtract 10: 15 = 3m → m = 5 months",
+          "Let v = number of visits → 30 + 8v = 12 + 14v → subtract 8v: 30 = 12 + 6v → subtract 12: 18 = 6v → v = 3 visits",
+          "Let w = number of weeks → 40 + 6w = 16 + 12w → subtract 6w: 40 = 16 + 6w → subtract 16: 24 = 6w → w = 4 weeks"
+        ],
+        "verify": [
+          "import sympy as sp\nm = sp.symbols('m')\nassert sp.solve(sp.Eq(25 + 10*m, 10 + 13*m), m) == [5]",
+          "import sympy as sp\nv = sp.symbols('v')\nassert sp.solve(sp.Eq(30 + 8*v, 12 + 14*v), v) == [3]",
+          "import sympy as sp\nw = sp.symbols('w')\nassert sp.solve(sp.Eq(40 + 6*w, 16 + 12*w), w) == [4]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 1,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Evaluate: 18 − 12 ÷ 3 + 2²",
+          "Evaluate: 24 − 16 ÷ 4 + 3²",
+          "Evaluate: 30 − 20 ÷ 5 + 2³"
+        ],
+        "choices": null,
+        "answer": ["18", "29", "34"],
+        "solution": [
+          "18 − 12 ÷ 3 + 2² → 18 − 4 + 4 → 18",
+          "24 − 16 ÷ 4 + 3² → 24 − 4 + 9 → 29",
+          "30 − 20 ÷ 5 + 2³ → 30 − 4 + 8 → 34"
+        ],
+        "verify": [
+          "assert 18 - 12/3 + 2**2 == 18",
+          "assert 24 - 16/4 + 3**2 == 29",
+          "assert 30 - 20/5 + 2**3 == 34"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Evaluate 3x² − 2y when x = 2 and y = 5.",
+          "Evaluate 2a² + 3b when a = 3 and b = −2.",
+          "Evaluate 4m² − 5n when m = 2 and n = −1."
+        ],
+        "choices": null,
+        "answer": ["2", "12", "21"],
+        "solution": [
+          "3(2)² − 2(5) → 3(4) − 10 → 12 − 10 → 2",
+          "2(3)² + 3(−2) → 2(9) − 6 → 18 − 6 → 12",
+          "4(2)² − 5(−1) → 4(4) + 5 → 16 + 5 → 21"
+        ],
+        "verify": [
+          "x = 2; y = 5\nassert 3*x**2 - 2*y == 2",
+          "a = 3; b = -2\nassert 2*a**2 + 3*b == 12",
+          "m = 2; n = -1\nassert 4*m**2 - 5*n == 21"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write an algebraic expression: seven more than the quotient of a number n and 3.",
+          "Write an algebraic expression: five more than the quotient of a number n and 8.",
+          "Write an algebraic expression: four more than the quotient of a number n and 6."
+        ],
+        "choices": null,
+        "answer": ["n/3 + 7", "n/8 + 5", "n/6 + 4"],
+        "solution": [
+          "quotient of n and 3 → n/3; seven more → n/3 + 7",
+          "quotient of n and 8 → n/8; five more → n/8 + 5",
+          "quotient of n and 6 → n/6; four more → n/6 + 4"
+        ],
+        "verify": [
+          "import sympy as sp\nn = sp.symbols('n')\nexpr = sp.sympify('n/3 + 7')\nassert expr.subs(n, 12) == 12/sp.Integer(3) + 7 == 11",
+          "import sympy as sp\nn = sp.symbols('n')\nexpr = sp.sympify('n/8 + 5')\nassert expr.subs(n, 16) == 16/sp.Integer(8) + 5 == 7",
+          "import sympy as sp\nn = sp.symbols('n')\nexpr = sp.sympify('n/6 + 4')\nassert expr.subs(n, 18) == 18/sp.Integer(6) + 4 == 7"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      }
+    ]
+  },
+  "test": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "work",
+        "prompt": [
+          "Solve for x: x + 9 = −4",
+          "Solve for x: x − 7 = −12",
+          "Solve for x: x + 6 = −14"
+        ],
+        "choices": null,
+        "answer": ["x = −13", "x = −5", "x = −20"],
+        "solution": [
+          "x + 9 = −4 → subtract 9 from both sides → x = −13",
+          "x − 7 = −12 → add 7 to both sides → x = −5",
+          "x + 6 = −14 → subtract 6 from both sides → x = −20"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(x + 9, -4), x) == [-13]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(x - 7, -12), x) == [-5]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(x + 6, -14), x) == [-20]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 1,
+        "type": "work",
+        "prompt": [
+          "Solve for x: −4x = 36",
+          "Solve for x: −6x = 42",
+          "Solve for x: −5x = 40"
+        ],
+        "choices": null,
+        "answer": ["x = −9", "x = −7", "x = −8"],
+        "solution": [
+          "−4x = 36 → divide both sides by −4 → x = −9",
+          "−6x = 42 → divide both sides by −6 → x = −7",
+          "−5x = 40 → divide both sides by −5 → x = −8"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(-4*x, 36), x) == [-9]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(-6*x, 42), x) == [-7]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(-5*x, 40), x) == [-8]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve for x: 2x − 5 = 11",
+          "Solve for x: 3x + 4 = 19",
+          "Solve for x: 4x − 6 = 18"
+        ],
+        "choices": null,
+        "answer": ["x = 8", "x = 5", "x = 6"],
+        "solution": [
+          "2x − 5 = 11 → add 5: 2x = 16 → divide by 2 → x = 8",
+          "3x + 4 = 19 → subtract 4: 3x = 15 → divide by 3 → x = 5",
+          "4x − 6 = 18 → add 6: 4x = 24 → divide by 4 → x = 6"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(2*x - 5, 11), x) == [8]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(3*x + 4, 19), x) == [5]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(4*x - 6, 18), x) == [6]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve for x. Show all your work: 3(x + 4) − 5 = 19",
+          "Solve for x. Show all your work: 2(x − 3) + 7 = 15",
+          "Solve for x. Show all your work: 5(x + 1) − 7 = 23"
+        ],
+        "choices": null,
+        "answer": ["x = 4", "x = 7", "x = 5"],
+        "solution": [
+          "3(x + 4) − 5 = 19 → distribute: 3x + 12 − 5 = 19 → combine: 3x + 7 = 19 → subtract 7: 3x = 12 → x = 4",
+          "2(x − 3) + 7 = 15 → distribute: 2x − 6 + 7 = 15 → combine: 2x + 1 = 15 → subtract 1: 2x = 14 → x = 7",
+          "5(x + 1) − 7 = 23 → distribute: 5x + 5 − 7 = 23 → combine: 5x − 2 = 23 → add 2: 5x = 25 → x = 5"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(3*(x + 4) - 5, 19), x) == [4]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(2*(x - 3) + 7, 15), x) == [7]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(5*(x + 1) - 7, 23), x) == [5]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve for x. Show all your work: 5(x − 2) = 3(x + 4)",
+          "Solve for x. Show all your work: 4(2x − 3) = 2(x + 9)",
+          "Solve for x. Show all your work: 2(3x + 5) = 4(x + 6)"
+        ],
+        "choices": null,
+        "answer": ["x = 11", "x = 5", "x = 7"],
+        "solution": [
+          "5(x − 2) = 3(x + 4) → distribute: 5x − 10 = 3x + 12 → subtract 3x: 2x − 10 = 12 → add 10: 2x = 22 → x = 11",
+          "4(2x − 3) = 2(x + 9) → distribute: 8x − 12 = 2x + 18 → subtract 2x: 6x − 12 = 18 → add 12: 6x = 30 → x = 5",
+          "2(3x + 5) = 4(x + 6) → distribute: 6x + 10 = 4x + 24 → subtract 4x: 2x + 10 = 24 → subtract 10: 2x = 14 → x = 7"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(5*(x - 2), 3*(x + 4)), x) == [11]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(4*(2*x - 3), 2*(x + 9)), x) == [5]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(2*(3*x + 5), 4*(x + 6)), x) == [7]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve for x. Show all your work: 6 − 2(x + 4) = 10",
+          "Solve for x. Show all your work: 9 − 3(x + 2) = 12",
+          "Solve for x. Show all your work: 8 − 4(x − 1) = 20"
+        ],
+        "choices": null,
+        "answer": ["x = −6", "x = −3", "x = −2"],
+        "solution": [
+          "6 − 2(x + 4) = 10 → distribute: 6 − 2x − 8 = 10 → combine: −2x − 2 = 10 → add 2: −2x = 12 → x = −6",
+          "9 − 3(x + 2) = 12 → distribute: 9 − 3x − 6 = 12 → combine: −3x + 3 = 12 → subtract 3: −3x = 9 → x = −3",
+          "8 − 4(x − 1) = 20 → distribute: 8 − 4x + 4 = 20 → combine: −4x + 12 = 20 → subtract 12: −4x = 8 → x = −2"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(6 - 2*(x + 4), 10), x) == [-6]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(9 - 3*(x + 2), 12), x) == [-3]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(8 - 4*(x - 1), 20), x) == [-2]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve for x. Show all your work: (2/5)x − 3 = 5",
+          "Solve for x. Show all your work: (3/4)x + 2 = 11",
+          "Solve for x. Show all your work: (4/7)x − 1 = 7"
+        ],
+        "choices": null,
+        "answer": ["x = 20", "x = 12", "x = 14"],
+        "solution": [
+          "(2/5)x − 3 = 5 → add 3: (2/5)x = 8 → multiply both sides by 5/2 → x = 20",
+          "(3/4)x + 2 = 11 → subtract 2: (3/4)x = 9 → multiply both sides by 4/3 → x = 12",
+          "(4/7)x − 1 = 7 → add 1: (4/7)x = 8 → multiply both sides by 7/4 → x = 14"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(sp.Rational(2,5)*x - 3, 5), x) == [20]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(sp.Rational(3,4)*x + 2, 11), x) == [12]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(sp.Rational(4,7)*x - 1, 7), x) == [14]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the proportion. Show all your work: (n − 2)/(4n) = 1/6",
+          "Solve the proportion. Show all your work: (m + 8)/(6m) = 1/3",
+          "Solve the proportion. Show all your work: (p + 10)/(8p) = 3/8"
+        ],
+        "choices": null,
+        "answer": ["n = 6", "m = 8", "p = 5"],
+        "solution": [
+          "Cross multiply: 6(n − 2) = 1(4n) → 6n − 12 = 4n → subtract 4n: 2n − 12 = 0 → add 12: 2n = 12 → n = 6",
+          "Cross multiply: 3(m + 8) = 1(6m) → 3m + 24 = 6m → subtract 3m: 24 = 3m → m = 8",
+          "Cross multiply: 8(p + 10) = 3(8p) → 8p + 80 = 24p → subtract 8p: 80 = 16p → p = 5"
+        ],
+        "verify": [
+          "import sympy as sp\nn = sp.symbols('n')\nassert sp.solve(sp.Eq((n - 2)/(4*n), sp.Rational(1,6)), n) == [6]",
+          "import sympy as sp\nm = sp.symbols('m')\nassert sp.solve(sp.Eq((m + 8)/(6*m), sp.Rational(1,3)), m) == [8]",
+          "import sympy as sp\np = sp.symbols('p')\nassert sp.solve(sp.Eq((p + 10)/(8*p), sp.Rational(3,8)), p) == [5]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 9,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Maya solved the equation 2(x + 3) = 16 like this: Step 1: 2x + 3 = 16. Step 2: 2x = 13. Step 3: x = 13/2. (a) Identify the mistake Maya made. (b) Solve the equation correctly. Show all your work.",
+          "Deon solved the equation 3(x − 4) = 18 like this: Step 1: 3x − 4 = 18. Step 2: 3x = 22. Step 3: x = 22/3. (a) Identify the mistake Deon made. (b) Solve the equation correctly. Show all your work.",
+          "Priya solved the equation 5(x − 1) = 30 like this: Step 1: 5x − 1 = 30. Step 2: 5x = 31. Step 3: x = 31/5. (a) Identify the mistake Priya made. (b) Solve the equation correctly. Show all your work."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) In Step 1 she did not distribute the 2 to the 3; it should be 2x + 6 = 16. (b) x = 5",
+          "(a) In Step 1 he did not distribute the 3 to the −4; it should be 3x − 12 = 18. (b) x = 10",
+          "(a) In Step 1 she did not distribute the 5 to the −1; it should be 5x − 5 = 30. (b) x = 7"
+        ],
+        "solution": [
+          "(a) Maya multiplied 2 by x but not by 3 → correct distribution gives 2x + 6 = 16; (b) 2x + 6 = 16 → subtract 6: 2x = 10 → x = 5",
+          "(a) Deon multiplied 3 by x but not by −4 → correct distribution gives 3x − 12 = 18; (b) 3x − 12 = 18 → add 12: 3x = 30 → x = 10",
+          "(a) Priya multiplied 5 by x but not by −1 → correct distribution gives 5x − 5 = 30; (b) 5x − 5 = 30 → add 5: 5x = 35 → x = 7"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(2*x + 3, 16), x) == [sp.Rational(13,2)]\nassert sp.solve(sp.Eq(2*(x + 3), 16), x) == [5]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(3*x - 4, 18), x) == [sp.Rational(22,3)]\nassert sp.solve(sp.Eq(3*(x - 4), 18), x) == [10]",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(5*x - 1, 30), x) == [sp.Rational(31,5)]\nassert sp.solve(sp.Eq(5*(x - 1), 30), x) == [7]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 10,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "(a) Solve the equation 2x + 3y = 12 for y. (b) Solve the formula V = lwh for h.",
+          "(a) Solve the equation 4x + 5y = 20 for y. (b) Solve the formula I = Prt for t.",
+          "(a) Solve the equation 3x + 2y = 18 for y. (b) Solve the formula V = πr²h for h."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) y = (12 − 2x)/3  (b) h = V/(lw)",
+          "(a) y = (20 − 4x)/5  (b) t = I/(Pr)",
+          "(a) y = (18 − 3x)/2  (b) h = V/(πr²)"
+        ],
+        "solution": [
+          "(a) 2x + 3y = 12 → subtract 2x: 3y = 12 − 2x → divide by 3: y = (12 − 2x)/3; (b) V = lwh → divide both sides by lw: h = V/(lw)",
+          "(a) 4x + 5y = 20 → subtract 4x: 5y = 20 − 4x → divide by 5: y = (20 − 4x)/5; (b) I = Prt → divide both sides by Pr: t = I/(Pr)",
+          "(a) 3x + 2y = 18 → subtract 3x: 2y = 18 − 3x → divide by 2: y = (18 − 3x)/2; (b) V = πr²h → divide both sides by πr²: h = V/(πr²)"
+        ],
+        "verify": [
+          "import sympy as sp\nx, y, V, l, w, h = sp.symbols('x y V l w h')\nassert sp.simplify(sp.solve(sp.Eq(2*x + 3*y, 12), y)[0] - (12 - 2*x)/3) == 0\nassert sp.simplify(sp.solve(sp.Eq(V, l*w*h), h)[0] - V/(l*w)) == 0",
+          "import sympy as sp\nx, y, I, P, r, t = sp.symbols('x y I P r t')\nassert sp.simplify(sp.solve(sp.Eq(4*x + 5*y, 20), y)[0] - (20 - 4*x)/5) == 0\nassert sp.simplify(sp.solve(sp.Eq(I, P*r*t), t)[0] - I/(P*r)) == 0",
+          "import sympy as sp\nx, y, V, r, h = sp.symbols('x y V r h', positive=True)\nassert sp.simplify(sp.solve(sp.Eq(3*x + 2*y, 18), y)[0] - (18 - 3*x)/2) == 0\nassert sp.simplify(sp.solve(sp.Eq(V, sp.pi*r**2*h), h)[0] - V/(sp.pi*r**2)) == 0"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 11,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "The sum of three consecutive integers is 72. Write an equation, then solve it to find the three integers.",
+          "The sum of three consecutive integers is 45. Write an equation, then solve it to find the three integers.",
+          "The sum of three consecutive integers is 96. Write an equation, then solve it to find the three integers."
+        ],
+        "choices": null,
+        "answer": [
+          "n + (n + 1) + (n + 2) = 72; the integers are 23, 24, 25",
+          "n + (n + 1) + (n + 2) = 45; the integers are 14, 15, 16",
+          "n + (n + 1) + (n + 2) = 96; the integers are 31, 32, 33"
+        ],
+        "solution": [
+          "Let n = first integer → n + (n + 1) + (n + 2) = 72 → 3n + 3 = 72 → subtract 3: 3n = 69 → n = 23 → integers: 23, 24, 25",
+          "Let n = first integer → n + (n + 1) + (n + 2) = 45 → 3n + 3 = 45 → subtract 3: 3n = 42 → n = 14 → integers: 14, 15, 16",
+          "Let n = first integer → n + (n + 1) + (n + 2) = 96 → 3n + 3 = 96 → subtract 3: 3n = 93 → n = 31 → integers: 31, 32, 33"
+        ],
+        "verify": [
+          "import sympy as sp\nn = sp.symbols('n')\nsol = sp.solve(sp.Eq(n + (n + 1) + (n + 2), 72), n)\nassert sol == [23]\nassert 23 + 24 + 25 == 72",
+          "import sympy as sp\nn = sp.symbols('n')\nsol = sp.solve(sp.Eq(n + (n + 1) + (n + 2), 45), n)\nassert sol == [14]\nassert 14 + 15 + 16 == 45",
+          "import sympy as sp\nn = sp.symbols('n')\nsol = sp.solve(sp.Eq(n + (n + 1) + (n + 2), 96), n)\nassert sol == [31]\nassert 31 + 32 + 33 == 96"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 12,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Streamly charges a $9 sign-up fee plus $12 per month. Vidora charges a $27 sign-up fee plus $9 per month. (a) Write and solve an equation to find the number of months when the two services will have cost the same amount. (b) Explain how you know which service is cheaper after that number of months.",
+          "TuneBox charges a $14 sign-up fee plus $11 per month. Melodio charges a $38 sign-up fee plus $8 per month. (a) Write and solve an equation to find the number of months when the two services will have cost the same amount. (b) Explain how you know which service is cheaper after that number of months.",
+          "GameHub charges a $10 sign-up fee plus $13 per month. PlayVault charges a $45 sign-up fee plus $6 per month. (a) Write and solve an equation to find the number of months when the two services will have cost the same amount. (b) Explain how you know which service is cheaper after that number of months."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) 9 + 12m = 27 + 9m; m = 6 months. (b) Vidora — its monthly rate ($9) is lower, so after 6 months its total grows more slowly and stays cheaper.",
+          "(a) 14 + 11m = 38 + 8m; m = 8 months. (b) Melodio — its monthly rate ($8) is lower, so after 8 months its total grows more slowly and stays cheaper.",
+          "(a) 10 + 13m = 45 + 6m; m = 5 months. (b) PlayVault — its monthly rate ($6) is lower, so after 5 months its total grows more slowly and stays cheaper."
+        ],
+        "solution": [
+          "(a) Let m = months → 9 + 12m = 27 + 9m → subtract 9m: 9 + 3m = 27 → subtract 9: 3m = 18 → m = 6 months; (b) after month 6, Vidora is cheaper because it adds only $9 per month while Streamly adds $12 per month (check m = 7: Streamly $93 vs Vidora $90)",
+          "(a) Let m = months → 14 + 11m = 38 + 8m → subtract 8m: 14 + 3m = 38 → subtract 14: 3m = 24 → m = 8 months; (b) after month 8, Melodio is cheaper because it adds only $8 per month while TuneBox adds $11 per month (check m = 9: TuneBox $113 vs Melodio $110)",
+          "(a) Let m = months → 10 + 13m = 45 + 6m → subtract 6m: 10 + 7m = 45 → subtract 10: 7m = 35 → m = 5 months; (b) after month 5, PlayVault is cheaper because it adds only $6 per month while GameHub adds $13 per month (check m = 6: GameHub $88 vs PlayVault $81)"
+        ],
+        "verify": [
+          "import sympy as sp\nm = sp.symbols('m')\nassert sp.solve(sp.Eq(9 + 12*m, 27 + 9*m), m) == [6]\nassert 9 + 12*7 > 27 + 9*7",
+          "import sympy as sp\nm = sp.symbols('m')\nassert sp.solve(sp.Eq(14 + 11*m, 38 + 8*m), m) == [8]\nassert 14 + 11*9 > 38 + 8*9",
+          "import sympy as sp\nm = sp.symbols('m')\nassert sp.solve(sp.Eq(10 + 13*m, 45 + 6*m), m) == [5]\nassert 10 + 13*6 > 45 + 6*6"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 13,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "A 6-foot-tall lifeguard casts a 9-foot shadow. At the same time, a flagpole next to her casts a 36-foot shadow. Write and solve a proportion to find the height of the flagpole.",
+          "A 5-foot-tall student casts an 8-foot shadow. At the same time, a tree next to him casts a 32-foot shadow. Write and solve a proportion to find the height of the tree.",
+          "A 6-foot-tall coach casts a 4-foot shadow. At the same time, a water tower next to her casts a 30-foot shadow. Write and solve a proportion to find the height of the water tower."
+        ],
+        "choices": null,
+        "answer": [
+          "6/9 = h/36; h = 24 feet",
+          "5/8 = h/32; h = 20 feet",
+          "6/4 = h/30; h = 45 feet"
+        ],
+        "solution": [
+          "height/shadow: 6/9 = h/36 → cross multiply: 9h = 6(36) → 9h = 216 → h = 24 feet",
+          "height/shadow: 5/8 = h/32 → cross multiply: 8h = 5(32) → 8h = 160 → h = 20 feet",
+          "height/shadow: 6/4 = h/30 → cross multiply: 4h = 6(30) → 4h = 180 → h = 45 feet"
+        ],
+        "verify": [
+          "import sympy as sp\nh = sp.symbols('h')\nassert sp.solve(sp.Eq(sp.Rational(6,9), h/36), h) == [24]",
+          "import sympy as sp\nh = sp.symbols('h')\nassert sp.solve(sp.Eq(sp.Rational(5,8), h/32), h) == [20]",
+          "import sympy as sp\nh = sp.symbols('h')\nassert sp.solve(sp.Eq(sp.Rational(6,4), h/30), h) == [45]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 14,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Consider the equation 3x + 7 = 3x − 2. (a) How many solutions does this equation have? (b) Explain how you know without solving completely.",
+          "Consider the equation 5x − 4 = 5x + 9. (a) How many solutions does this equation have? (b) Explain how you know without solving completely.",
+          "Consider the equation 2x + 6 = 2x − 5. (a) How many solutions does this equation have? (b) Explain how you know without solving completely."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) No solution. (b) Subtracting 3x from both sides leaves 7 = −2, which is false for every value of x.",
+          "(a) No solution. (b) Subtracting 5x from both sides leaves −4 = 9, which is false for every value of x.",
+          "(a) No solution. (b) Subtracting 2x from both sides leaves 6 = −5, which is false for every value of x."
+        ],
+        "solution": [
+          "Both sides have the same x-term (3x) but different constants → subtract 3x: 7 = −2, a false statement → no value of x works → no solution",
+          "Both sides have the same x-term (5x) but different constants → subtract 5x: −4 = 9, a false statement → no value of x works → no solution",
+          "Both sides have the same x-term (2x) but different constants → subtract 2x: 6 = −5, a false statement → no value of x works → no solution"
+        ],
+        "verify": [
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(3*x + 7, 3*x - 2), x) == []",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(5*x - 4, 5*x + 9), x) == []",
+          "import sympy as sp\nx = sp.symbols('x')\nassert sp.solve(sp.Eq(2*x + 6, 2*x - 5), x) == []"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 1,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Evaluate: 36 ÷ 4 + 2 × 5",
+          "Evaluate: 48 ÷ 6 + 3 × 4",
+          "Evaluate: 40 ÷ 8 + 3 × 6"
+        ],
+        "choices": null,
+        "answer": ["19", "20", "23"],
+        "solution": [
+          "36 ÷ 4 + 2 × 5 → 9 + 10 → 19",
+          "48 ÷ 6 + 3 × 4 → 8 + 12 → 20",
+          "40 ÷ 8 + 3 × 6 → 5 + 18 → 23"
+        ],
+        "verify": [
+          "assert 36/4 + 2*5 == 19",
+          "assert 48/6 + 3*4 == 20",
+          "assert 40/8 + 3*6 == 23"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Evaluate: (2 + 3)² − 10",
+          "Evaluate: (4 + 1)² − 12",
+          "Evaluate: (3 + 3)² − 20"
+        ],
+        "choices": null,
+        "answer": ["15", "13", "16"],
+        "solution": [
+          "(2 + 3)² − 10 → 5² − 10 → 25 − 10 → 15",
+          "(4 + 1)² − 12 → 5² − 12 → 25 − 12 → 13",
+          "(3 + 3)² − 20 → 6² − 20 → 36 − 20 → 16"
+        ],
+        "verify": [
+          "assert (2 + 3)**2 - 10 == 15",
+          "assert (4 + 1)**2 - 12 == 13",
+          "assert (3 + 3)**2 - 20 == 16"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Evaluate x² − 3x when x = −2.",
+          "Evaluate x² + 4x when x = −3.",
+          "Evaluate x² − 5x when x = −1."
+        ],
+        "choices": null,
+        "answer": ["10", "−3", "6"],
+        "solution": [
+          "(−2)² − 3(−2) → 4 + 6 → 10",
+          "(−3)² + 4(−3) → 9 − 12 → −3",
+          "(−1)² − 5(−1) → 1 + 5 → 6"
+        ],
+        "verify": [
+          "x = -2\nassert x**2 - 3*x == 10",
+          "x = -3\nassert x**2 + 4*x == -3",
+          "x = -1\nassert x**2 - 5*x == 6"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 4,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Evaluate 2a + 3b when a = 4 and b = −2.",
+          "Evaluate 5m − 2n when m = 3 and n = −4.",
+          "Evaluate 3p − 4q when p = 5 and q = 2."
+        ],
+        "choices": null,
+        "answer": ["2", "23", "7"],
+        "solution": [
+          "2(4) + 3(−2) → 8 − 6 → 2",
+          "5(3) − 2(−4) → 15 + 8 → 23",
+          "3(5) − 4(2) → 15 − 8 → 7"
+        ],
+        "verify": [
+          "a = 4; b = -2\nassert 2*a + 3*b == 2",
+          "m = 3; n = -4\nassert 5*m - 2*n == 23",
+          "p = 5; q = 2\nassert 3*p - 4*q == 7"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 5,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write an algebraic expression: six less than the product of 4 and a number n.",
+          "Write an algebraic expression: nine less than the product of 7 and a number n.",
+          "Write an algebraic expression: three less than the product of 5 and a number n."
+        ],
+        "choices": null,
+        "answer": ["4n − 6", "7n − 9", "5n − 3"],
+        "solution": [
+          "product of 4 and n → 4n; six less → 4n − 6",
+          "product of 7 and n → 7n; nine less → 7n − 9",
+          "product of 5 and n → 5n; three less → 5n − 3"
+        ],
+        "verify": [
+          "import sympy as sp\nn = sp.symbols('n')\nexpr = sp.sympify('4*n - 6')\nassert expr.subs(n, 10) == 4*10 - 6 == 34",
+          "import sympy as sp\nn = sp.symbols('n')\nexpr = sp.sympify('7*n - 9')\nassert expr.subs(n, 10) == 7*10 - 9 == 61",
+          "import sympy as sp\nn = sp.symbols('n')\nexpr = sp.sympify('5*n - 3')\nassert expr.subs(n, 10) == 5*10 - 3 == 47"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      }
+    ]
+  }
+}

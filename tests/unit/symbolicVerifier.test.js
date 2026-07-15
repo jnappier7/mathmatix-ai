@@ -149,4 +149,24 @@ describe('symbolicVerifier — equation-solution verification (substitute & chec
     // an integral problemTex must still take the antiderivative path, not equation
     expect(symbolicVerify({ studentAnswer: 'x^6 + C', problemTex: '\\int 6x^5\\,dx' }).method).toBe('antiderivative');
   });
+
+  // Regression: the verifier used to assume the unknown was always 'x', so any
+  // problem in m/p/b/t/… returned null and fell through to the LLM. Now it
+  // auto-detects the variable from the equation.
+  it('auto-detects the unknown for non-x variables (m, p, t, …)', () => {
+    expect(verifyEquationSolution('p = 60', 'p/12 + 3 = 8')).toBe(true);       // #6
+    expect(verifyEquationSolution('p = 50', 'p/12 + 3 = 8')).toBe(false);
+    expect(verifyEquationSolution('m = 25', '(1/5)m + 6 = 11')).toBe(true);    // #2
+    expect(verifyEquationSolution('t = 12', '50t = 60(t - 2)')).toBe(true);    // #5 setup
+    expect(symbolicVerify({ studentAnswer: 'p = 60', problemTex: 'p/12 + 3 = 8' }).isCorrect).toBe(true);
+  });
+
+  it('verifies absolute-value equations (|…| -> abs), including both roots', () => {
+    expect(verifyEquationSolution('b = 2 or b = -3', '|2b + 1| = 5')).toBe(true);  // #8
+    expect(verifyEquationSolution('b = 4', '|2b + 1| = 5')).toBe(false);
+  });
+
+  it('still declines a multi-variable / literal equation (no single value to check)', () => {
+    expect(verifyEquationSolution('d = 2', 't = 5d')).toBeNull();
+  });
 });
