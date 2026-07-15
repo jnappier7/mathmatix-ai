@@ -128,4 +128,24 @@ async function generateVerifiedTwin(problemText, opts) {
   return { ok: false, verified: false, reason: 'unverified' };
 }
 
-module.exports = { generateVerifiedTwin, verifyTwin, TWIN_MODEL };
+/**
+ * Best-effort: attach a CAS-verified twin to a decision for the tutor to
+ * co-solve. Mutates and returns `decision`. Never throws and only sets
+ * `decision.verifiedTwin` when a twin was actually verified — so the caller's
+ * gating (which actions warrant a twin) stays in the caller, and any failure
+ * silently falls back to the improvised parallel problem in buildActionPrompt.
+ *
+ * @param {object} decision       the decide() result (mutated)
+ * @param {string} problemText    the problem the student is stuck on
+ * @returns {Promise<object>} the same decision
+ */
+async function attachVerifiedTwin(decision, problemText) {
+  if (!decision || !problemText) return decision;
+  try {
+    const t = await generateVerifiedTwin(problemText);
+    if (t.ok) decision.verifiedTwin = { twin: t.twin, answer: t.answer };
+  } catch (_) { /* best-effort — improvised parallel problem remains the fallback */ }
+  return decision;
+}
+
+module.exports = { generateVerifiedTwin, verifyTwin, attachVerifiedTwin, TWIN_MODEL };
