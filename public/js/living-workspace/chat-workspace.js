@@ -47,6 +47,7 @@
   var api = {
     isOn: function () { return ON; },
     applyBoardCommands: function () {},
+    applyVoiceBoard: function () {},
     setContext: function (c) { if (c && typeof c === 'object') { if (c.conversationId != null) ctx.conversationId = c.conversationId; if (c.workspaceId != null) ctx.workspaceId = c.workspaceId; } },
   };
   window.LWS_CHAT = api;
@@ -56,7 +57,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260714';
+  var ASSET_V = '?v=20260715';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -65,7 +66,7 @@
     'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
     'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
-    'dom/derivationView.js',
+    'dom/derivationView.js', 'dom/voiceBoardTranslate.js',
   ];
 
   // Build brick #1: the chat board renders as a FOCUSED DERIVATION
@@ -184,6 +185,18 @@
   api.applyBoardCommands = function (cmds) {
     if (!Array.isArray(cmds) || cmds.length === 0) return;
     render(cmds);
+  };
+
+  // Voice turns speak the legacy board protocol (mathSteps / boardActions).
+  // Translate to boardCommands and render, so the derivation view updates live
+  // during a voice session instead of freezing after the first (text-posed)
+  // problem. No-op if the translator or payload is empty.
+  api.applyVoiceBoard = function (payload) {
+    if (!window.LWS || typeof window.LWS.voiceToBoardCommands !== 'function') return;
+    var cmds;
+    try { cmds = window.LWS.voiceToBoardCommands(payload); }
+    catch (e) { console.error('[LWS_CHAT] voice translate failed', e); return; }
+    if (Array.isArray(cmds) && cmds.length) render(cmds);
   };
 
   function boot() {
