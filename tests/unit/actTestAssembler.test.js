@@ -105,3 +105,47 @@ describe('actTestAssembler.difficultyForPosition', () => {
     expect(A.difficultyForPosition(bp, 55)).toBe(4);
   });
 });
+
+describe('actTestAssembler diversity (no look-alike problems in one form)', () => {
+  test('promptSignature blanks numbers so same-wording items collapse', () => {
+    const a = A.promptSignature('A cyclist rides at 5 mph for 3 hours');
+    const b = A.promptSignature('A cyclist rides at 8 mph for 2 hours');
+    expect(a).toBe(b); // same shape, different numbers
+    const c = A.promptSignature('A printer prints at 5 ppm for 3 minutes');
+    expect(c).not.toBe(a); // different shape
+  });
+
+  test('pickDiverse avoids a shape already used in the form', () => {
+    const pool = [
+      { problemId: '1', prompt: 'A cyclist rides at 5 mph for 3 hours' },
+      { problemId: '2', prompt: 'A printer prints at 5 ppm for 3 minutes' },
+    ];
+    const used = new Map([[A.promptSignature(pool[0].prompt), 1]]);
+    expect(A.pickDiverse(pool, used).problemId).toBe('2');
+  });
+
+  test('four draws of one skill spread across four distinct shapes', () => {
+    const pool = [
+      { problemId: '1', prompt: 'A cyclist rides at 5 mph for 3 hours, then 6 for 3' },
+      { problemId: '2', prompt: 'A cyclist rides at 8 mph for 2 hours, then 4 for 3' },
+      { problemId: '3', prompt: 'A delivery van drives at 5 mph for 3 hours, then 6 for 2' },
+      { problemId: '4', prompt: 'A printer prints at 5 ppm for 3 minutes, then 6 for 2' },
+      { problemId: '5', prompt: 'An assembly line produces at 5 uph for 3 hours, then 6 for 2' },
+    ];
+    const used = new Map();
+    const picks = [];
+    for (let i = 0; i < 4; i++) {
+      const avail = pool.filter(p => !picks.includes(p.problemId));
+      const p = A.pickDiverse(avail, used);
+      picks.push(p.problemId);
+      const sig = A.promptSignature(p.prompt);
+      used.set(sig, (used.get(sig) || 0) + 1);
+    }
+    const shapes = new Set(picks.map(id => A.promptSignature(pool.find(p => p.problemId === id).prompt)));
+    expect(shapes.size).toBe(4); // no look-alikes
+  });
+
+  test('pickDiverse returns null on an empty pool', () => {
+    expect(A.pickDiverse([], new Map())).toBeNull();
+  });
+});

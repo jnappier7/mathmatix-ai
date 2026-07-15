@@ -107,6 +107,30 @@ function toClientItem(slot, problem) {
   };
 }
 
+/**
+ * A prompt's "shape" — the wording with all numbers blanked — so two problems
+ * that read the same except for their numbers collapse to one signature. Used
+ * to keep a single form from repeating the same-looking question.
+ */
+function promptSignature(s) {
+  return String(s || '').replace(/\d+(\.\d+)?/g, '#').replace(/\s+/g, ' ').trim().slice(0, 90);
+}
+
+/**
+ * From a candidate pool, pick the problem whose shape has appeared LEAST in the
+ * form so far — so repeated draws of the same skill surface different wordings.
+ */
+function pickDiverse(candidates, usedSignatures) {
+  if (!candidates || !candidates.length) return null;
+  let best = candidates[0], bestCount = Infinity;
+  for (const c of candidates) {
+    const count = usedSignatures.get(promptSignature(c.prompt)) || 0;
+    if (count < bestCount) { best = c; bestCount = count; }
+    if (bestCount === 0) break; // an unused shape — take it immediately
+  }
+  return best;
+}
+
 /** A spec the problem generator can fulfill for an unfillable slot. */
 function toGenerationSpec(slot) {
   return {
@@ -137,6 +161,7 @@ async function assembleForm(opts = {}) {
   const Problem = require('../models/problem');
   const slots = buildSlots(blueprint, rng);
   const usedProblemIds = [];
+  const usedSignatures = new Map();   // prompt-shape -> count, to avoid look-alikes
   const items = [];
   const gaps = [];
 
@@ -144,18 +169,31 @@ async function assembleForm(opts = {}) {
     if (!slot.skillId) { gaps.push(toGenerationSpec(slot)); continue; }
     let problem = null;
     try {
-      problem = await Problem.findNearDifficulty(
-        slot.skillId,
-        slot.targetDifficulty,
-        usedProblemIds,
-        { preferMultipleChoice: true }
-      );
+      // Fetch a POOL of candidates near the target difficulty, then pick the
+      // one whose wording-shape is least-used so far — this is what prevents
+      // the same-looking question appearing 3-4 times in one form.
+      const lo = Math.max(1, slot.targetDifficulty - 1);
+      const hi = Math.min(5, slot.targetDifficulty + 1);
+      let candidates = await Problem.find({
+        skillId: slot.skillId,
+        isActive: true,
+        answerType: 'multiple-choice',
+        difficulty: { $gte: lo, $lte: hi },
+        problemId: { $nin: usedProblemIds },
+      }).limit(16).lean();
+      if (!candidates.length) {
+        // Widen: any difficulty for this skill, still excluding used items.
+        const p = await Problem.findNearDifficulty(slot.skillId, slot.targetDifficulty, usedProblemIds, { preferMultipleChoice: true });
+        candidates = p ? [p] : [];
+      }
+      problem = pickDiverse(candidates, usedSignatures);
     } catch (err) {
       // DB/query error — treat as a gap, keep assembling the rest.
       problem = null;
     }
     if (!problem) { gaps.push(toGenerationSpec(slot)); continue; }
     usedProblemIds.push(problem.problemId);
+    usedSignatures.set(promptSignature(problem.prompt), (usedSignatures.get(promptSignature(problem.prompt)) || 0) + 1);
     items.push(toClientItem(slot, problem));
   }
 
@@ -197,5 +235,7 @@ module.exports = {
   skillPool,
   rawToScaled,
   difficultyForPosition,
+  promptSignature,
+  pickDiverse,
   getBlueprint: () => DEFAULT_BLUEPRINT,
 };
