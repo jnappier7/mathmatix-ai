@@ -14,6 +14,7 @@ const { callLLM, callLLMStream, callLLMStructured } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCompact');
 const { buildSlimRules } = require('./promptSlim');
+const { formatVerifiedTwinInstruction } = require('../worksheetGuard');
 const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTools');
 const { parseBoardTags } = require('../boardTagParser');
 const { stripInternalTags } = require('../internalTagSanitizer');
@@ -102,22 +103,40 @@ function buildActionPrompt(decision) {
       }
       break;
 
-    case ACTIONS.WORKED_EXAMPLE:
-      parts.push('Student has struggled with multiple attempts. Show a WORKED EXAMPLE using a PARALLEL problem (same skill, DIFFERENT numbers).');
-      parts.push('ANTI-CHEAT RULE: You MUST change the numbers. If the original problem is "3x + 5 = 14", your example might use "2x + 7 = 15". NEVER use the student\'s exact numbers.');
-      parts.push('Walk through step by step with think-aloud. Show your reasoning at each step.');
-      parts.push('After the example, say: "Now try applying the same method to your problem."');
-      parts.push('NEVER solve their original problem. NEVER reveal their answer.');
+    case ACTIONS.WORKED_EXAMPLE: {
+      // If the pipeline produced a CAS-verified twin (utils/twinGenerator),
+      // hand the tutor that concrete, answer-checked parallel problem instead
+      // of asking it to improvise one. Falls back to the improvised instruction
+      // when no twin was produced (unverifiable type / generation failed).
+      const twinBlock = decision.verifiedTwin ? formatVerifiedTwinInstruction(decision.verifiedTwin) : '';
+      if (twinBlock) {
+        parts.push('Student has struggled with multiple attempts. Show a WORKED EXAMPLE using the verified parallel problem below.');
+        parts.push(twinBlock);
+      } else {
+        parts.push('Student has struggled with multiple attempts. Show a WORKED EXAMPLE using a PARALLEL problem (same skill, DIFFERENT numbers).');
+        parts.push('ANTI-CHEAT RULE: You MUST change the numbers. If the original problem is "3x + 5 = 14", your example might use "2x + 7 = 15". NEVER use the student\'s exact numbers.');
+        parts.push('Walk through step by step with think-aloud. Show your reasoning at each step.');
+        parts.push('After the example, say: "Now try applying the same method to your problem."');
+        parts.push('NEVER solve their original problem. NEVER reveal their answer.');
+      }
       break;
+    }
 
-    case ACTIONS.EXIT_RAMP:
+    case ACTIONS.EXIT_RAMP: {
+      const twinBlock = decision.verifiedTwin ? formatVerifiedTwinInstruction(decision.verifiedTwin) : '';
       parts.push('Student is stuck and has tried multiple times. Use the EXIT RAMP:');
-      parts.push('1. Work a parallel problem (same skill, different numbers) step-by-step');
-      parts.push('2. Then ask them to apply the same method to their problem');
-      parts.push('3. If STILL stuck, offer to skip and move on');
+      if (twinBlock) {
+        parts.push(twinBlock);
+        parts.push('After the parallel example, ask them to apply the same method to their own problem; if STILL stuck, offer to skip and move on.');
+      } else {
+        parts.push('1. Work a parallel problem (same skill, different numbers) step-by-step');
+        parts.push('2. Then ask them to apply the same method to their problem');
+        parts.push('3. If STILL stuck, offer to skip and move on');
+      }
       parts.push('NEVER reveal the answer. The answer stays hidden. Always.');
       parts.push('Do NOT say "That\'s right", "Correct", or any affirmation — the student did not answer correctly.');
       break;
+    }
 
     case ACTIONS.SCAFFOLD_DOWN:
       parts.push('The student said they don\'t know or needs more support. Lower the barrier:');
