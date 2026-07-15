@@ -1,143 +1,11 @@
 [
   {
-    "problemId": "act-act-multi-step-rate-proportion-a13fe1d7ce",
+    "problemId": "act-act-multi-step-rate-proportion-507c6b353f",
     "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 3 parts per hour. How many parts does it produce in 5 hours?",
+    "prompt": "A cyclist rides at 4 miles per hour for 3 hours, then at 8 miles per hour for 2 hours. What is the total distance traveled, in miles?",
     "answer": {
       "type": "auto",
-      "value": "15",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "30"
-      },
-      {
-        "label": "B",
-        "text": "18"
-      },
-      {
-        "label": "C",
-        "text": "8"
-      },
-      {
-        "label": "D",
-        "text": "15"
-      },
-      {
-        "label": "E",
-        "text": "10"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-multi-step-rate-proportion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "a13fe1d7ce79d5df6c95418b349ad8116d7893c8b7738e340eea8c95ead95ca7",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-multi-step-rate-proportion-0d98d54d72",
-    "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 8 parts per hour. How many parts does it produce in 5 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "40",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "40"
-      },
-      {
-        "label": "B",
-        "text": "13"
-      },
-      {
-        "label": "C",
-        "text": "80"
-      },
-      {
-        "label": "D",
-        "text": "35"
-      },
-      {
-        "label": "E",
-        "text": "48"
-      }
-    ],
-    "correctOption": "A",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-multi-step-rate-proportion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "0d98d54d727ccefbc07e315ee44b9a2f53a7f3fbf0aef2487575a9ef9853ad0a",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-multi-step-rate-proportion-f08ac06ff8",
-    "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 7 parts per hour. How many parts does it produce in 8 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "56",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "112"
-      },
-      {
-        "label": "B",
-        "text": "56"
-      },
-      {
-        "label": "C",
-        "text": "48"
-      },
-      {
-        "label": "D",
-        "text": "15"
-      },
-      {
-        "label": "E",
-        "text": "63"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-multi-step-rate-proportion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "f08ac06ff84cc55c4e9fe2bde8c1af5687998db23c4db5123187270cbd39ffd0",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-multi-step-rate-proportion-22ca676850",
-    "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 4 parts per hour. How many parts does it produce in 2 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "8",
+      "value": "28",
       "equivalents": []
     },
     "answerType": "multiple-choice",
@@ -148,187 +16,11 @@
       },
       {
         "label": "B",
-        "text": "16"
+        "text": "28"
       },
       {
         "label": "C",
-        "text": "8"
-      },
-      {
-        "label": "D",
-        "text": "10"
-      },
-      {
-        "label": "E",
-        "text": "6"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-multi-step-rate-proportion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "22ca67685099d2e96ecc1161f5603263c4e92005f71b8678c6e83b66b6a23365",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-multi-step-rate-proportion-2bb0f1f8bd",
-    "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 8 parts per hour. How many parts does it produce in 8 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "64",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "72"
-      },
-      {
-        "label": "B",
-        "text": "64"
-      },
-      {
-        "label": "C",
-        "text": "16"
-      },
-      {
-        "label": "D",
-        "text": "56"
-      },
-      {
-        "label": "E",
-        "text": "128"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-multi-step-rate-proportion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "2bb0f1f8bd6831a50e31b95a9ba39fbed79ab66b3a878ab1b539daf89b1f4c3d",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-multi-step-rate-proportion-64076677fc",
-    "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 9 parts per hour. How many parts does it produce in 5 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "45",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "54"
-      },
-      {
-        "label": "B",
-        "text": "40"
-      },
-      {
-        "label": "C",
-        "text": "45"
-      },
-      {
-        "label": "D",
-        "text": "90"
-      },
-      {
-        "label": "E",
-        "text": "14"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-multi-step-rate-proportion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "64076677fcd8e42c3783d3965160b6f9a61f651b5d755562ed3a5d6460e2b545",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-multi-step-rate-proportion-6dcb91b119",
-    "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 8 parts per hour. How many parts does it produce in 6 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "48",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "42"
-      },
-      {
-        "label": "B",
-        "text": "14"
-      },
-      {
-        "label": "C",
-        "text": "96"
-      },
-      {
-        "label": "D",
-        "text": "48"
-      },
-      {
-        "label": "E",
-        "text": "56"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-multi-step-rate-proportion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "6dcb91b1197c533f2c986731ec5f585cdf87c5f740321200dd422961a358d722",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-multi-step-rate-proportion-baaf019d61",
-    "skillId": "act-multi-step-rate-proportion",
-    "prompt": "A machine produces 4 parts per hour. How many parts does it produce in 4 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "16",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "20"
-      },
-      {
-        "label": "B",
-        "text": "8"
-      },
-      {
-        "label": "C",
-        "text": "12"
+        "text": "17"
       },
       {
         "label": "D",
@@ -336,7 +28,315 @@
       },
       {
         "label": "E",
+        "text": "60"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 2,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-multi-step-rate-proportion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "507c6b353fdcbaf15f3494c12e9ab3753761e3f977f2c2c9a8799f61e942eb36",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-multi-step-rate-proportion-f373278627",
+    "skillId": "act-multi-step-rate-proportion",
+    "prompt": "A cyclist rides at 6 miles per hour for 4 hours, then at 9 miles per hour for 4 hours. What is the total distance traveled, in miles?",
+    "answer": {
+      "type": "auto",
+      "value": "60",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "120"
+      },
+      {
+        "label": "B",
+        "text": "60"
+      },
+      {
+        "label": "C",
+        "text": "24"
+      },
+      {
+        "label": "D",
+        "text": "66"
+      },
+      {
+        "label": "E",
+        "text": "23"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 2,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-multi-step-rate-proportion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "f373278627e5485c5516a36e1372b2da5d1b20281bdf81bb229da73a320a163a",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-multi-step-rate-proportion-7b57bbb67b",
+    "skillId": "act-multi-step-rate-proportion",
+    "prompt": "A cyclist rides at 6 miles per hour for 3 hours, then at 5 miles per hour for 2 hours. What is the total distance traveled, in miles?",
+    "answer": {
+      "type": "auto",
+      "value": "28",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "55"
+      },
+      {
+        "label": "B",
         "text": "16"
+      },
+      {
+        "label": "C",
+        "text": "28"
+      },
+      {
+        "label": "D",
+        "text": "34"
+      },
+      {
+        "label": "E",
+        "text": "18"
+      }
+    ],
+    "correctOption": "C",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-multi-step-rate-proportion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "7b57bbb67b821bb55d6612be1d5c476805f17fe8188d70713ec05a60675024a5",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-multi-step-rate-proportion-9e8a8d8690",
+    "skillId": "act-multi-step-rate-proportion",
+    "prompt": "A cyclist rides at 9 miles per hour for 4 hours, then at 9 miles per hour for 4 hours. What is the total distance traveled, in miles?",
+    "answer": {
+      "type": "auto",
+      "value": "72",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "26"
+      },
+      {
+        "label": "B",
+        "text": "72"
+      },
+      {
+        "label": "C",
+        "text": "81"
+      },
+      {
+        "label": "D",
+        "text": "36"
+      },
+      {
+        "label": "E",
+        "text": "144"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-multi-step-rate-proportion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "9e8a8d869023d7bf6b32a2706176126c788ee9eb616a133bf2f6e810adfc5888",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-multi-step-rate-proportion-2d0603d4ed",
+    "skillId": "act-multi-step-rate-proportion",
+    "prompt": "A cyclist rides at 5 miles per hour for 2 hours, then at 3 miles per hour for 4 hours. What is the total distance traveled, in miles?",
+    "answer": {
+      "type": "auto",
+      "value": "22",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "48"
+      },
+      {
+        "label": "B",
+        "text": "22"
+      },
+      {
+        "label": "C",
+        "text": "27"
+      },
+      {
+        "label": "D",
+        "text": "10"
+      },
+      {
+        "label": "E",
+        "text": "14"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-multi-step-rate-proportion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "2d0603d4edb6ef41fdae941b72fc461c667d7b0784c91df591b12de5943b54bc",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-multi-step-rate-proportion-24fad99b7d",
+    "skillId": "act-multi-step-rate-proportion",
+    "prompt": "A cyclist rides at 9 miles per hour for 4 hours, then at 5 miles per hour for 2 hours. What is the total distance traveled, in miles?",
+    "answer": {
+      "type": "auto",
+      "value": "46",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "36"
+      },
+      {
+        "label": "B",
+        "text": "38"
+      },
+      {
+        "label": "C",
+        "text": "84"
+      },
+      {
+        "label": "D",
+        "text": "20"
+      },
+      {
+        "label": "E",
+        "text": "46"
+      }
+    ],
+    "correctOption": "E",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-multi-step-rate-proportion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "24fad99b7d7433e1554ee4120b38f98a5752b50f7129f0833bfe84ee2bbcb0c1",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-multi-step-rate-proportion-337acd176d",
+    "skillId": "act-multi-step-rate-proportion",
+    "prompt": "A cyclist rides at 6 miles per hour for 4 hours, then at 3 miles per hour for 4 hours. What is the total distance traveled, in miles?",
+    "answer": {
+      "type": "auto",
+      "value": "36",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "17"
+      },
+      {
+        "label": "B",
+        "text": "24"
+      },
+      {
+        "label": "C",
+        "text": "72"
+      },
+      {
+        "label": "D",
+        "text": "36"
+      },
+      {
+        "label": "E",
+        "text": "42"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-multi-step-rate-proportion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "337acd176d827570a95e4bedd149164a36163033b62e2871cfca3c71b7745398",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-multi-step-rate-proportion-8dc707b068",
+    "skillId": "act-multi-step-rate-proportion",
+    "prompt": "A cyclist rides at 5 miles per hour for 3 hours, then at 6 miles per hour for 3 hours. What is the total distance traveled, in miles?",
+    "answer": {
+      "type": "auto",
+      "value": "33",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "15"
+      },
+      {
+        "label": "B",
+        "text": "38"
+      },
+      {
+        "label": "C",
+        "text": "17"
+      },
+      {
+        "label": "D",
+        "text": "66"
+      },
+      {
+        "label": "E",
+        "text": "33"
       }
     ],
     "correctOption": "E",
@@ -348,85 +348,40 @@
       "act-multi-step-rate-proportion"
     ],
     "source": "act-template-gen",
-    "contentHash": "baaf019d617ea6552b46f39b85efa9e6ad3f6921e7064beb64807df57f1c46c5",
+    "contentHash": "8dc707b068e2bc2e2e8f26f8848767623649d3685b26db93ebfaafa067962683",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-4a7a2a14ee",
+    "problemId": "act-act-area-perimeter-composite-15e835a7dc",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "In the figure shown, a square of side 2 has been cut from the corner of a 5-by-7 rectangle. What is the area of the remaining (shaded) region?",
-    "svg": "<svg viewBox=\"0 0 120 124\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 66,20 66,44 90,44 90,104 30,104\" stroke-linejoin=\"round\"/></svg>",
+    "prompt": "In the figure shown, a square of side 4 has been cut from the corner of a 7-by-6 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 144 112\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 66,20 66,68 114,68 114,92 30,92\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
-      "value": "31",
+      "value": "26",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "39"
-      },
-      {
-        "label": "B",
-        "text": "35"
-      },
-      {
-        "label": "C",
-        "text": "31"
-      },
-      {
-        "label": "D",
         "text": "22"
       },
       {
-        "label": "E",
-        "text": "33"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-area-perimeter-composite"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "4a7a2a14eeef3bc7ab7aa3c21764361b008b5cdb8a7f106e9424049c4429b913",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-area-perimeter-composite-0617d3733f",
-    "skillId": "act-area-perimeter-composite",
-    "prompt": "In the figure shown, a square of side 4 has been cut from the corner of a 6-by-4 rectangle. What is the area of the remaining (shaded) region?",
-    "svg": "<svg viewBox=\"0 0 132 88\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 54,20 54,68 102,68 102,68 30,68\" stroke-linejoin=\"round\"/></svg>",
-    "answer": {
-      "type": "auto",
-      "value": "8",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "20"
-      },
-      {
         "label": "B",
-        "text": "24"
+        "text": "58"
       },
       {
         "label": "C",
-        "text": "8"
+        "text": "26"
       },
       {
         "label": "D",
-        "text": "16"
+        "text": "42"
       },
       {
         "label": "E",
-        "text": "40"
+        "text": "38"
       }
     ],
     "correctOption": "C",
@@ -438,28 +393,28 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "0617d3733fadd9f9d0bbe5793a6e6727972de5f9e0065db910d8c870de379408",
+    "contentHash": "15e835a7dcc1013dc80dd20f6dfc2b5870ff79e77b6a6a74e9d77524b4ed8729",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-1d7e5377d8",
+    "problemId": "act-act-area-perimeter-composite-d3a6ba83ac",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "In the figure shown, a square of side 5 has been cut from the corner of a 7-by-5 rectangle. What is the area of the remaining (shaded) region?",
-    "svg": "<svg viewBox=\"0 0 144 100\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 54,20 54,80 114,80 114,80 30,80\" stroke-linejoin=\"round\"/></svg>",
+    "prompt": "In the figure shown, a square of side 3 has been cut from the corner of a 6-by-5 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 132 100\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 66,20 66,56 102,56 102,80 30,80\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
-      "value": "10",
+      "value": "21",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "35"
+        "text": "30"
       },
       {
         "label": "B",
-        "text": "10"
+        "text": "39"
       },
       {
         "label": "C",
@@ -467,15 +422,15 @@
       },
       {
         "label": "D",
-        "text": "60"
+        "text": "21"
       },
       {
         "label": "E",
-        "text": "30"
+        "text": "27"
       }
     ],
-    "correctOption": "B",
-    "difficulty": 3,
+    "correctOption": "D",
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -483,7 +438,7 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "1d7e5377d87c1e28256b41571f34ddfdc4152370dfe31ba486be21c6f522772d",
+    "contentHash": "d3a6ba83aca03792c54267ca59284340acf5fa95210c1239be30bd50c53bdb58",
     "isActive": true
   },
   {
@@ -610,7 +565,7 @@
       }
     ],
     "correctOption": "E",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -700,7 +655,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 5,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -712,79 +667,80 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-f45eb94c18",
-    "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $18 plus $4 per hour. What is the total charge for a 4-hour job?",
+    "problemId": "act-act-area-perimeter-composite-aba5bffee8",
+    "skillId": "act-area-perimeter-composite",
+    "prompt": "In the figure shown, a square of side 3 has been cut from the corner of a 7-by-6 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 144 112\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 78,20 78,56 114,56 114,92 30,92\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
-      "value": "$34",
+      "value": "33",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$38"
+        "text": "39"
       },
       {
         "label": "B",
-        "text": "$88"
+        "text": "42"
       },
       {
         "label": "C",
-        "text": "$34"
+        "text": "33"
       },
       {
         "label": "D",
-        "text": "$16"
+        "text": "51"
       },
       {
         "label": "E",
-        "text": "$22"
+        "text": "23"
       }
     ],
     "correctOption": "C",
-    "difficulty": 2,
+    "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-algebraic-reasoning-context"
+      "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "f45eb94c18a073c3ffbf4302d1e6a4216281cde43c7ee044c3502ba9f3822ff5",
+    "contentHash": "aba5bffee87d8007c50eb69e3e7c96ab644373d33ae4e508f438c2b4eea5b6cd",
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-95fee355cc",
+    "problemId": "act-act-algebraic-reasoning-context-5e90bd329e",
     "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $11 plus $6 per hour. What is the total charge for a 7-hour job?",
+    "prompt": "A gym charges a $35 one-time sign-up fee plus $8 each month. After how many months will a member have paid $107 in all?",
     "answer": {
       "type": "auto",
-      "value": "$53",
+      "value": "9",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$17"
+        "text": "8"
       },
       {
         "label": "B",
-        "text": "$59"
+        "text": "2"
       },
       {
         "label": "C",
-        "text": "$119"
+        "text": "10"
       },
       {
         "label": "D",
-        "text": "$42"
+        "text": "13"
       },
       {
         "label": "E",
-        "text": "$53"
+        "text": "9"
       }
     ],
     "correctOption": "E",
@@ -796,39 +752,83 @@
       "act-algebraic-reasoning-context"
     ],
     "source": "act-template-gen",
-    "contentHash": "95fee355cc0b2af65b49378c7d0d1f94bb7f2a10389a793ca0dfe342ad1a47ae",
+    "contentHash": "5e90bd329e2b0405232cd11b0d73fd61575f21256d7dbafa46f0d825ad1c44b9",
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-6bdc16e552",
+    "problemId": "act-act-algebraic-reasoning-context-a1e6eda95f",
     "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $12 plus $8 per hour. What is the total charge for a 8-hour job?",
+    "prompt": "A gym charges a $15 one-time sign-up fee plus $3 each month. After how many months will a member have paid $42 in all?",
     "answer": {
       "type": "auto",
-      "value": "$76",
+      "value": "9",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$160"
+        "text": "9"
       },
       {
         "label": "B",
-        "text": "$20"
+        "text": "8"
       },
       {
         "label": "C",
-        "text": "$64"
+        "text": "10"
       },
       {
         "label": "D",
-        "text": "$76"
+        "text": "2"
       },
       {
         "label": "E",
-        "text": "$84"
+        "text": "14"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 2,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-algebraic-reasoning-context"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "a1e6eda95ffed1bca7dab5183a155b393c5c21b8f32aec7c75c5ec118d31b068",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-algebraic-reasoning-context-c2ce69366e",
+    "skillId": "act-algebraic-reasoning-context",
+    "prompt": "A gym charges a $10 one-time sign-up fee plus $5 each month. After how many months will a member have paid $55 in all?",
+    "answer": {
+      "type": "auto",
+      "value": "9",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "4"
+      },
+      {
+        "label": "B",
+        "text": "11"
+      },
+      {
+        "label": "C",
+        "text": "10"
+      },
+      {
+        "label": "D",
+        "text": "9"
+      },
+      {
+        "label": "E",
+        "text": "8"
       }
     ],
     "correctOption": "D",
@@ -840,42 +840,42 @@
       "act-algebraic-reasoning-context"
     ],
     "source": "act-template-gen",
-    "contentHash": "6bdc16e5525a90e5cb13885105a2a9ec010d76d16543c6310f916e85fceb55c8",
+    "contentHash": "c2ce69366ecdc1efa615c560e61868bd4513550b9c5da56ff2ae84020d5dd99e",
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-82371ecab5",
+    "problemId": "act-act-algebraic-reasoning-context-2cf0973b05",
     "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $20 plus $8 per hour. What is the total charge for a 2-hour job?",
+    "prompt": "A gym charges a $20 one-time sign-up fee plus $7 each month. After how many months will a member have paid $69 in all?",
     "answer": {
       "type": "auto",
-      "value": "$36",
+      "value": "7",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$16"
+        "text": "7"
       },
       {
         "label": "B",
-        "text": "$56"
+        "text": "8"
       },
       {
         "label": "C",
-        "text": "$36"
+        "text": "3"
       },
       {
         "label": "D",
-        "text": "$44"
+        "text": "6"
       },
       {
         "label": "E",
-        "text": "$28"
+        "text": "10"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
@@ -884,39 +884,39 @@
       "act-algebraic-reasoning-context"
     ],
     "source": "act-template-gen",
-    "contentHash": "82371ecab5d0eea9b0f8d62d8971282e87852c599793ffe8327d4799ea51a429",
+    "contentHash": "2cf0973b0595d781f17db49e133656c71a7f648b86c82fc000422014d28fcfcd",
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-0a32724bf3",
+    "problemId": "act-act-algebraic-reasoning-context-4d3f7422b6",
     "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $20 plus $4 per hour. What is the total charge for a 4-hour job?",
+    "prompt": "A gym charges a $25 one-time sign-up fee plus $6 each month. After how many months will a member have paid $49 in all?",
     "answer": {
       "type": "auto",
-      "value": "$36",
+      "value": "4",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$16"
+        "text": "3"
       },
       {
         "label": "B",
-        "text": "$36"
+        "text": "4"
       },
       {
         "label": "C",
-        "text": "$40"
+        "text": "5"
       },
       {
         "label": "D",
-        "text": "$96"
+        "text": "8"
       },
       {
         "label": "E",
-        "text": "$24"
+        "text": "2"
       }
     ],
     "correctOption": "B",
@@ -928,39 +928,39 @@
       "act-algebraic-reasoning-context"
     ],
     "source": "act-template-gen",
-    "contentHash": "0a32724bf30bae8d90175fb9c3e6b29d831ad3bbe8263591f933061569f82fd4",
+    "contentHash": "4d3f7422b67b82b1179e977183da22b5b5e2fe561e4aa8c7c310c15bde837918",
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-adebaf1700",
+    "problemId": "act-act-algebraic-reasoning-context-cad4a551b2",
     "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $20 plus $3 per hour. What is the total charge for a 7-hour job?",
+    "prompt": "A gym charges a $15 one-time sign-up fee plus $4 each month. After how many months will a member have paid $31 in all?",
     "answer": {
       "type": "auto",
-      "value": "$41",
+      "value": "4",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$161"
+        "text": "5"
       },
       {
         "label": "B",
-        "text": "$44"
+        "text": "12"
       },
       {
         "label": "C",
-        "text": "$21"
+        "text": "3"
       },
       {
         "label": "D",
-        "text": "$23"
+        "text": "8"
       },
       {
         "label": "E",
-        "text": "$41"
+        "text": "4"
       }
     ],
     "correctOption": "E",
@@ -972,42 +972,42 @@
       "act-algebraic-reasoning-context"
     ],
     "source": "act-template-gen",
-    "contentHash": "adebaf1700bd26cae9469372092201dd8a822e9396fa439d09da604b92c1b6d4",
+    "contentHash": "cad4a551b2601f3efa356c8b2d01f3525400492732c76e56866afcc5b9f97266",
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-edba0c8aed",
+    "problemId": "act-act-algebraic-reasoning-context-20fb2b8d32",
     "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $15 plus $5 per hour. What is the total charge for a 3-hour job?",
+    "prompt": "A gym charges a $10 one-time sign-up fee plus $4 each month. After how many months will a member have paid $30 in all?",
     "answer": {
       "type": "auto",
-      "value": "$30",
+      "value": "5",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$30"
+        "text": "8"
       },
       {
         "label": "B",
-        "text": "$15"
+        "text": "4"
       },
       {
         "label": "C",
-        "text": "$35"
+        "text": "6"
       },
       {
         "label": "D",
-        "text": "$20"
+        "text": "10"
       },
       {
         "label": "E",
-        "text": "$60"
+        "text": "5"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "E",
     "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
@@ -1016,35 +1016,79 @@
       "act-algebraic-reasoning-context"
     ],
     "source": "act-template-gen",
-    "contentHash": "edba0c8aed0898a53da945db511faf88b6b0fba3c49db8cbe4660f12dcc06374",
+    "contentHash": "20fb2b8d328a632352a134d67447755e340638f217ae2d83ca83c3c5476a8d25",
     "isActive": true
   },
   {
-    "problemId": "act-act-algebraic-reasoning-context-be8918b596",
+    "problemId": "act-act-algebraic-reasoning-context-36f0759614",
     "skillId": "act-algebraic-reasoning-context",
-    "prompt": "A plumber charges $8 plus $6 per hour. What is the total charge for a 8-hour job?",
+    "prompt": "A gym charges a $20 one-time sign-up fee plus $8 each month. After how many months will a member have paid $44 in all?",
     "answer": {
       "type": "auto",
-      "value": "$56",
+      "value": "3",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$112"
+        "text": "3"
       },
       {
         "label": "B",
-        "text": "$14"
+        "text": "8"
       },
       {
         "label": "C",
-        "text": "$56"
+        "text": "2"
       },
       {
         "label": "D",
-        "text": "$62"
+        "text": "6"
+      },
+      {
+        "label": "E",
+        "text": "4"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 5,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-algebraic-reasoning-context"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "36f07596147a1c682fad1feccd835d8a191851f4eb6a6c9ebce20cbc976fecb6",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-percent-applications-a11c159089",
+    "skillId": "act-percent-applications",
+    "prompt": "A $60 jacket is 20% off. With 5% sales tax added to the discounted price, what is the final cost?",
+    "answer": {
+      "type": "auto",
+      "value": "$50.40",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "$40"
+      },
+      {
+        "label": "B",
+        "text": "$12"
+      },
+      {
+        "label": "C",
+        "text": "$50.40"
+      },
+      {
+        "label": "D",
+        "text": "$63"
       },
       {
         "label": "E",
@@ -1052,50 +1096,6 @@
       }
     ],
     "correctOption": "C",
-    "difficulty": 5,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-algebraic-reasoning-context"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "be8918b596ba2a6692885481f3cd23d4c48ceecf98666de58a383f4a52ea7b79",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-percent-applications-1d7cccefa9",
-    "skillId": "act-percent-applications",
-    "prompt": "A $50 item is discounted 15%. What is the sale price?",
-    "answer": {
-      "type": "auto",
-      "value": "$42.50",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "$35"
-      },
-      {
-        "label": "B",
-        "text": "$7.50"
-      },
-      {
-        "label": "C",
-        "text": "$49.25"
-      },
-      {
-        "label": "D",
-        "text": "$57.50"
-      },
-      {
-        "label": "E",
-        "text": "$42.50"
-      }
-    ],
-    "correctOption": "E",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -1104,263 +1104,43 @@
       "act-percent-applications"
     ],
     "source": "act-template-gen",
-    "contentHash": "1d7cccefa9ec6f764c128eb1e2b58749e0dfb55587ca0f39930c24ff1bc7f2b3",
+    "contentHash": "a11c1590899c4be230688a036076ede8ca3e953becc12ddea312031eee3f6ce1",
     "isActive": true
   },
   {
-    "problemId": "act-act-percent-applications-845a81ef98",
+    "problemId": "act-act-percent-applications-82c80e8eb5",
     "skillId": "act-percent-applications",
-    "prompt": "A $90 item is discounted 20%. What is the sale price?",
+    "prompt": "A $60 jacket is 25% off. With 10% sales tax added to the discounted price, what is the final cost?",
     "answer": {
       "type": "auto",
-      "value": "$72",
+      "value": "$49.50",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$108"
+        "text": "$66"
       },
       {
         "label": "B",
-        "text": "$72"
-      },
-      {
-        "label": "C",
-        "text": "$88.20"
-      },
-      {
-        "label": "D",
-        "text": "$18"
-      },
-      {
-        "label": "E",
-        "text": "$70"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-percent-applications"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "845a81ef989b887f3bbcb2d9dda0131351331a717d09e4606efacd8ab4071abf",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-percent-applications-0a0bb23947",
-    "skillId": "act-percent-applications",
-    "prompt": "A $60 item is discounted 15%. What is the sale price?",
-    "answer": {
-      "type": "auto",
-      "value": "$51",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "$45"
-      },
-      {
-        "label": "B",
-        "text": "$69"
-      },
-      {
-        "label": "C",
-        "text": "$59.10"
-      },
-      {
-        "label": "D",
-        "text": "$9"
-      },
-      {
-        "label": "E",
-        "text": "$51"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-percent-applications"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "0a0bb23947af99d3c281714cb77beb79f05b673a0a82a5e530dc996b0417ecfd",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-percent-applications-da4ec4530c",
-    "skillId": "act-percent-applications",
-    "prompt": "A $70 item is discounted 15%. What is the sale price?",
-    "answer": {
-      "type": "auto",
-      "value": "$59.50",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "$80.50"
-      },
-      {
-        "label": "B",
-        "text": "$68.95"
-      },
-      {
-        "label": "C",
-        "text": "$59.50"
-      },
-      {
-        "label": "D",
-        "text": "$10.50"
-      },
-      {
-        "label": "E",
-        "text": "$55"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-percent-applications"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "da4ec4530c4a84d87d4001eca5436d4cfa89ca6aa98d94f89a5db0ace3de9f42",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-percent-applications-b8dea580ba",
-    "skillId": "act-percent-applications",
-    "prompt": "A $80 item is discounted 30%. What is the sale price?",
-    "answer": {
-      "type": "auto",
-      "value": "$56",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "$104"
-      },
-      {
-        "label": "B",
-        "text": "$56"
-      },
-      {
-        "label": "C",
-        "text": "$50"
-      },
-      {
-        "label": "D",
-        "text": "$24"
-      },
-      {
-        "label": "E",
-        "text": "$77.60"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-percent-applications"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "b8dea580bac184ba861ec06623b7145c1fc2e382bec5ea9062a9516ed6c13d56",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-percent-applications-1af2c0976d",
-    "skillId": "act-percent-applications",
-    "prompt": "A $60 item is discounted 25%. What is the sale price?",
-    "answer": {
-      "type": "auto",
-      "value": "$45",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "$45"
-      },
-      {
-        "label": "B",
-        "text": "$75"
-      },
-      {
-        "label": "C",
-        "text": "$58.50"
-      },
-      {
-        "label": "D",
         "text": "$35"
       },
       {
-        "label": "E",
+        "label": "C",
         "text": "$15"
-      }
-    ],
-    "correctOption": "A",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-percent-applications"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "1af2c0976de3f8a091172fe075cc18a472e93c111d03e76a089838204dcbc6ad",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-percent-applications-3ba8da09be",
-    "skillId": "act-percent-applications",
-    "prompt": "A $110 item is discounted 10%. What is the sale price?",
-    "answer": {
-      "type": "auto",
-      "value": "$99",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "$121"
-      },
-      {
-        "label": "B",
-        "text": "$100"
-      },
-      {
-        "label": "C",
-        "text": "$108.90"
       },
       {
         "label": "D",
-        "text": "$99"
+        "text": "$45"
       },
       {
         "label": "E",
-        "text": "$11"
+        "text": "$49.50"
       }
     ],
-    "correctOption": "D",
-    "difficulty": 4,
+    "correctOption": "E",
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -1368,39 +1148,259 @@
       "act-percent-applications"
     ],
     "source": "act-template-gen",
-    "contentHash": "3ba8da09be88b75a71d0b9982096f062b97356598bb15586d429d6f3a727428a",
+    "contentHash": "82c80e8eb536eacfcdd20fbc699e3234eac37b70bd09d6de150f9256570e2a86",
     "isActive": true
   },
   {
-    "problemId": "act-act-percent-applications-930e95cf05",
+    "problemId": "act-act-percent-applications-9c3a5d7476",
     "skillId": "act-percent-applications",
-    "prompt": "A $120 item is discounted 30%. What is the sale price?",
+    "prompt": "A $120 jacket is 25% off. With 8% sales tax added to the discounted price, what is the final cost?",
     "answer": {
       "type": "auto",
-      "value": "$84",
+      "value": "$97.20",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "$36"
+        "text": "$129.60"
       },
       {
         "label": "B",
-        "text": "$84"
+        "text": "$97.20"
       },
       {
         "label": "C",
-        "text": "$116.40"
-      },
-      {
-        "label": "D",
         "text": "$90"
       },
       {
+        "label": "D",
+        "text": "$95"
+      },
+      {
         "label": "E",
-        "text": "$156"
+        "text": "$30"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-percent-applications"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "9c3a5d74767c9514df8e38ecda95104ee172d2d18d841f153812ee2bab13c153",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-percent-applications-599e100e8b",
+    "skillId": "act-percent-applications",
+    "prompt": "A $40 jacket is 25% off. With 8% sales tax added to the discounted price, what is the final cost?",
+    "answer": {
+      "type": "auto",
+      "value": "$32.40",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "$15"
+      },
+      {
+        "label": "B",
+        "text": "$10"
+      },
+      {
+        "label": "C",
+        "text": "$43.20"
+      },
+      {
+        "label": "D",
+        "text": "$30"
+      },
+      {
+        "label": "E",
+        "text": "$32.40"
+      }
+    ],
+    "correctOption": "E",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-percent-applications"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "599e100e8b0cfe4fdf2c11803dc184fd281dde4b2cf8ae5794cfbe3fbea63709",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-percent-applications-bfdf0ff081",
+    "skillId": "act-percent-applications",
+    "prompt": "A $50 jacket is 20% off. With 10% sales tax added to the discounted price, what is the final cost?",
+    "answer": {
+      "type": "auto",
+      "value": "$44",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "$40"
+      },
+      {
+        "label": "B",
+        "text": "$55"
+      },
+      {
+        "label": "C",
+        "text": "$10"
+      },
+      {
+        "label": "D",
+        "text": "$30"
+      },
+      {
+        "label": "E",
+        "text": "$44"
+      }
+    ],
+    "correctOption": "E",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-percent-applications"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "bfdf0ff081dabf066e325d1390a8d31ed7109c025a7f8c2d39eeb3db7a607eec",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-percent-applications-202b2575c4",
+    "skillId": "act-percent-applications",
+    "prompt": "A $80 jacket is 20% off. With 5% sales tax added to the discounted price, what is the final cost?",
+    "answer": {
+      "type": "auto",
+      "value": "$67.20",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "$84"
+      },
+      {
+        "label": "B",
+        "text": "$60"
+      },
+      {
+        "label": "C",
+        "text": "$64"
+      },
+      {
+        "label": "D",
+        "text": "$68"
+      },
+      {
+        "label": "E",
+        "text": "$67.20"
+      }
+    ],
+    "correctOption": "E",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-percent-applications"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "202b2575c4a6b747ea6e991bcc02b5031f32dd6461b8777f9c5dd0cf287596b6",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-percent-applications-2680623f86",
+    "skillId": "act-percent-applications",
+    "prompt": "A $40 jacket is 25% off. With 10% sales tax added to the discounted price, what is the final cost?",
+    "answer": {
+      "type": "auto",
+      "value": "$33",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "$44"
+      },
+      {
+        "label": "B",
+        "text": "$33"
+      },
+      {
+        "label": "C",
+        "text": "$15"
+      },
+      {
+        "label": "D",
+        "text": "$30"
+      },
+      {
+        "label": "E",
+        "text": "$34"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-percent-applications"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "2680623f86e444fcd2b28358d4b376fca1d2fac4f900b2c6ddb4e2af2c8533df",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-percent-applications-5e8ef1c2e8",
+    "skillId": "act-percent-applications",
+    "prompt": "A $40 jacket is 10% off. With 5% sales tax added to the discounted price, what is the final cost?",
+    "answer": {
+      "type": "auto",
+      "value": "$37.80",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "$42"
+      },
+      {
+        "label": "B",
+        "text": "$37.80"
+      },
+      {
+        "label": "C",
+        "text": "$30"
+      },
+      {
+        "label": "D",
+        "text": "$36"
+      },
+      {
+        "label": "E",
+        "text": "$38"
       }
     ],
     "correctOption": "B",
@@ -1412,7 +1412,51 @@
       "act-percent-applications"
     ],
     "source": "act-template-gen",
-    "contentHash": "930e95cf05d3bc3382445dd7d8c7d1adf2830ee8384ce28d3c029fe878a6677f",
+    "contentHash": "5e8ef1c2e816a1247e113d414f1e44a777bda4ecddee91660bb164ece766a04c",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-measurement-unit-conversion-6828ac9d72",
+    "skillId": "act-measurement-unit-conversion",
+    "prompt": "How many ounces are in 5 pounds?",
+    "answer": {
+      "type": "auto",
+      "value": "80",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "40"
+      },
+      {
+        "label": "B",
+        "text": "21"
+      },
+      {
+        "label": "C",
+        "text": "80"
+      },
+      {
+        "label": "D",
+        "text": "75"
+      },
+      {
+        "label": "E",
+        "text": "160"
+      }
+    ],
+    "correctOption": "C",
+    "difficulty": 2,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-measurement-unit-conversion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "6828ac9d72288372ac0e981f0eb44558533cace341d6ae0b28f76a31ef335490",
     "isActive": true
   },
   {
@@ -1428,26 +1472,26 @@
     "options": [
       {
         "label": "A",
-        "text": "14"
-      },
-      {
-        "label": "B",
-        "text": "48"
-      },
-      {
-        "label": "C",
         "text": "24"
       },
       {
+        "label": "B",
+        "text": "12"
+      },
+      {
+        "label": "C",
+        "text": "48"
+      },
+      {
         "label": "D",
-        "text": "1"
+        "text": "22"
       },
       {
         "label": "E",
-        "text": "22"
+        "text": "14"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -1457,6 +1501,182 @@
     ],
     "source": "act-template-gen",
     "contentHash": "e2d0aae66d74b3673d823ece66e20791f58a19e56687d9d277be5cc0aa7ac853",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-measurement-unit-conversion-a70340ed08",
+    "skillId": "act-measurement-unit-conversion",
+    "prompt": "How many inches are in 2 yards?",
+    "answer": {
+      "type": "auto",
+      "value": "72",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "72"
+      },
+      {
+        "label": "B",
+        "text": "38"
+      },
+      {
+        "label": "C",
+        "text": "144"
+      },
+      {
+        "label": "D",
+        "text": "70"
+      },
+      {
+        "label": "E",
+        "text": "36"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-measurement-unit-conversion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "a70340ed084f8cb0a279b0227f80b8c8f281d96ba90025fcfaa4fcfab9c4678f",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-measurement-unit-conversion-1a47958926",
+    "skillId": "act-measurement-unit-conversion",
+    "prompt": "How many ounces are in 3 pounds?",
+    "answer": {
+      "type": "auto",
+      "value": "48",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "96"
+      },
+      {
+        "label": "B",
+        "text": "48"
+      },
+      {
+        "label": "C",
+        "text": "45"
+      },
+      {
+        "label": "D",
+        "text": "24"
+      },
+      {
+        "label": "E",
+        "text": "19"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-measurement-unit-conversion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "1a4795892673c3e8d1744487ae4057b379ea4e17e34e4f3cbcd432d60c9c7b88",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-measurement-unit-conversion-e0cc892cc4",
+    "skillId": "act-measurement-unit-conversion",
+    "prompt": "How many seconds are in 5 hours?",
+    "answer": {
+      "type": "auto",
+      "value": "18000",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "36000"
+      },
+      {
+        "label": "B",
+        "text": "3605"
+      },
+      {
+        "label": "C",
+        "text": "17995"
+      },
+      {
+        "label": "D",
+        "text": "18000"
+      },
+      {
+        "label": "E",
+        "text": "9000"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-measurement-unit-conversion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "e0cc892cc40626653ca800b775c1e8f155ceaff9eef152e3a2d7cb3fc9726aeb",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-measurement-unit-conversion-6079209f62",
+    "skillId": "act-measurement-unit-conversion",
+    "prompt": "How many ounces are in 7 pounds?",
+    "answer": {
+      "type": "auto",
+      "value": "112",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "56"
+      },
+      {
+        "label": "B",
+        "text": "105"
+      },
+      {
+        "label": "C",
+        "text": "224"
+      },
+      {
+        "label": "D",
+        "text": "112"
+      },
+      {
+        "label": "E",
+        "text": "23"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-measurement-unit-conversion"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "6079209f62eab69e54db81f3e5e3edf3b75e7ee36c7f9ae6960f17a3b046c4bb",
     "isActive": true
   },
   {
@@ -1480,19 +1700,19 @@
       },
       {
         "label": "C",
-        "text": "60"
+        "text": "64"
       },
       {
         "label": "D",
-        "text": "1"
+        "text": "32"
       },
       {
         "label": "E",
-        "text": "64"
+        "text": "60"
       }
     ],
-    "correctOption": "E",
-    "difficulty": 2,
+    "correctOption": "C",
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -1504,115 +1724,27 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-measurement-unit-conversion-1a47958926",
+    "problemId": "act-act-measurement-unit-conversion-3da981fe2c",
     "skillId": "act-measurement-unit-conversion",
-    "prompt": "How many ounces are in 3 pounds?",
+    "prompt": "How many ounces are in 2 pounds?",
     "answer": {
       "type": "auto",
-      "value": "48",
+      "value": "32",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "45"
+        "text": "18"
       },
       {
         "label": "B",
-        "text": "48"
+        "text": "30"
       },
       {
         "label": "C",
-        "text": "96"
-      },
-      {
-        "label": "D",
-        "text": "1"
-      },
-      {
-        "label": "E",
-        "text": "19"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-measurement-unit-conversion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "1a4795892673c3e8d1744487ae4057b379ea4e17e34e4f3cbcd432d60c9c7b88",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-measurement-unit-conversion-0a9f3cea78",
-    "skillId": "act-measurement-unit-conversion",
-    "prompt": "How many inches are in 4 feet?",
-    "answer": {
-      "type": "auto",
-      "value": "48",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "1"
-      },
-      {
-        "label": "B",
-        "text": "44"
-      },
-      {
-        "label": "C",
-        "text": "48"
-      },
-      {
-        "label": "D",
-        "text": "16"
-      },
-      {
-        "label": "E",
-        "text": "96"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-measurement-unit-conversion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "0a9f3cea7832234745bbf05767d4ad12ad05b13a8d10e0d2238865c53bb9872a",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-measurement-unit-conversion-1bd5fd1dd3",
-    "skillId": "act-measurement-unit-conversion",
-    "prompt": "How many minutes are in 4 hours?",
-    "answer": {
-      "type": "auto",
-      "value": "240",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "480"
-      },
-      {
-        "label": "B",
-        "text": "1"
-      },
-      {
-        "label": "C",
-        "text": "240"
+        "text": "32"
       },
       {
         "label": "D",
@@ -1620,142 +1752,10 @@
       },
       {
         "label": "E",
-        "text": "236"
+        "text": "16"
       }
     ],
     "correctOption": "C",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-measurement-unit-conversion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "1bd5fd1dd3b62fd77bd8d0f905d29870d09ab2ba217bbc52a807921c5c9b2e36",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-measurement-unit-conversion-3c7228aa73",
-    "skillId": "act-measurement-unit-conversion",
-    "prompt": "How many feet are in 6 yards?",
-    "answer": {
-      "type": "auto",
-      "value": "18",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "12"
-      },
-      {
-        "label": "B",
-        "text": "18"
-      },
-      {
-        "label": "C",
-        "text": "36"
-      },
-      {
-        "label": "D",
-        "text": "9"
-      },
-      {
-        "label": "E",
-        "text": "2"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-measurement-unit-conversion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "3c7228aa73459eae5dc28de16ffdf195244b321c0877036992a68982516a06ad",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-measurement-unit-conversion-4facf1079d",
-    "skillId": "act-measurement-unit-conversion",
-    "prompt": "How many ounces are in 6 pounds?",
-    "answer": {
-      "type": "auto",
-      "value": "96",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "90"
-      },
-      {
-        "label": "B",
-        "text": "192"
-      },
-      {
-        "label": "C",
-        "text": "22"
-      },
-      {
-        "label": "D",
-        "text": "1"
-      },
-      {
-        "label": "E",
-        "text": "96"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-measurement-unit-conversion"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "4facf1079d85a3968cd20b4635816802c3204017e6934572ab874f1310778db4",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-measurement-unit-conversion-4c47ba3044",
-    "skillId": "act-measurement-unit-conversion",
-    "prompt": "How many feet are in 8 yards?",
-    "answer": {
-      "type": "auto",
-      "value": "24",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "16"
-      },
-      {
-        "label": "B",
-        "text": "48"
-      },
-      {
-        "label": "C",
-        "text": "3"
-      },
-      {
-        "label": "D",
-        "text": "11"
-      },
-      {
-        "label": "E",
-        "text": "24"
-      }
-    ],
-    "correctOption": "E",
     "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
@@ -1764,27 +1764,27 @@
       "act-measurement-unit-conversion"
     ],
     "source": "act-template-gen",
-    "contentHash": "4c47ba3044ea84a4a1305f1c5151c6c776c48b5cf1327272d2c225d97f8617d7",
+    "contentHash": "3da981fe2cc5ad7025cde8038af9d0658c379e6d50b77ed5f9b63b855406a561",
     "isActive": true
   },
   {
-    "problemId": "act-act-angles-lines-triangles-28c3e12ef1",
+    "problemId": "act-act-angles-lines-triangles-6befe651f9",
     "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 42° and 45°. What is the measure of the third angle?",
+    "prompt": "Two angles of a triangle measure 43° and 45°. What is the measure of the third angle?",
     "answer": {
       "type": "auto",
-      "value": "93°",
+      "value": "92°",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "135°"
+        "text": "137°"
       },
       {
         "label": "B",
-        "text": "93°"
+        "text": "88°"
       },
       {
         "label": "C",
@@ -1792,14 +1792,14 @@
       },
       {
         "label": "D",
-        "text": "138°"
+        "text": "92°"
       },
       {
         "label": "E",
-        "text": "87°"
+        "text": "135°"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "D",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -1808,13 +1808,13 @@
       "act-angles-lines-triangles"
     ],
     "source": "act-template-gen",
-    "contentHash": "28c3e12ef1c075ad5c3f2206f612d51f900a8db25988fc0196eda945eeaf5db7",
+    "contentHash": "6befe651f90cc65ee92e1bc5cf651df039ee06c6b1a223bace5e16d6cbdc8797",
     "isActive": true
   },
   {
-    "problemId": "act-act-angles-lines-triangles-7eee5ea143",
+    "problemId": "act-act-angles-lines-triangles-cc72dba960",
     "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 76° and 32°. What is the measure of the third angle?",
+    "prompt": "Two angles of a triangle measure 58° and 50°. What is the measure of the third angle?",
     "answer": {
       "type": "auto",
       "value": "72°",
@@ -1824,11 +1824,11 @@
     "options": [
       {
         "label": "A",
-        "text": "72°"
+        "text": "90°"
       },
       {
         "label": "B",
-        "text": "104°"
+        "text": "72°"
       },
       {
         "label": "C",
@@ -1836,14 +1836,14 @@
       },
       {
         "label": "D",
-        "text": "148°"
+        "text": "122°"
       },
       {
         "label": "E",
-        "text": "90°"
+        "text": "130°"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -1852,175 +1852,43 @@
       "act-angles-lines-triangles"
     ],
     "source": "act-template-gen",
-    "contentHash": "7eee5ea143bb6922ed9c3f3e0e7301291aaafbf331bf1dd47a2ee428a17f1a89",
+    "contentHash": "cc72dba9603cb796effd2f70f8a473d2e707c1b6235f7beb16d75240ce3b05df",
     "isActive": true
   },
   {
-    "problemId": "act-act-angles-lines-triangles-bf82e6b9be",
+    "problemId": "act-act-angles-lines-triangles-4c249c9cfc",
     "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 43° and 35°. What is the measure of the third angle?",
+    "prompt": "Two angles of a triangle measure 39° and 40°. What is the measure of the third angle?",
     "answer": {
       "type": "auto",
-      "value": "102°",
+      "value": "101°",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "90°"
+        "text": "101°"
       },
       {
         "label": "B",
-        "text": "78°"
-      },
-      {
-        "label": "C",
-        "text": "145°"
-      },
-      {
-        "label": "D",
-        "text": "102°"
-      },
-      {
-        "label": "E",
-        "text": "137°"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-angles-lines-triangles"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "bf82e6b9bee10a787336d7f3915b49f380520b37a8033747ca71e35cf137b751",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-angles-lines-triangles-a337967c2d",
-    "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 55° and 66°. What is the measure of the third angle?",
-    "answer": {
-      "type": "auto",
-      "value": "59°",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "114°"
-      },
-      {
-        "label": "B",
-        "text": "121°"
-      },
-      {
-        "label": "C",
-        "text": "125°"
-      },
-      {
-        "label": "D",
         "text": "90°"
       },
       {
-        "label": "E",
-        "text": "59°"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-angles-lines-triangles"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "a337967c2d63ff7103d99a883fdf44836ac29bbf2b3073adb931416a8e0b0f2e",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-angles-lines-triangles-78db4a7d9c",
-    "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 80° and 70°. What is the measure of the third angle?",
-    "answer": {
-      "type": "auto",
-      "value": "30°",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "150°"
-      },
-      {
-        "label": "B",
-        "text": "110°"
-      },
-      {
         "label": "C",
-        "text": "90°"
-      },
-      {
-        "label": "D",
-        "text": "100°"
-      },
-      {
-        "label": "E",
-        "text": "30°"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-angles-lines-triangles"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "78db4a7d9c623aabf48b29d47e60b6ec79ed1adb2f02206c092abb451d4325e6",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-angles-lines-triangles-8ef4fb986e",
-    "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 50° and 40°. What is the measure of the third angle?",
-    "answer": {
-      "type": "auto",
-      "value": "90°",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
         "text": "140°"
       },
       {
-        "label": "B",
-        "text": "80°"
-      },
-      {
-        "label": "C",
-        "text": "130°"
-      },
-      {
         "label": "D",
-        "text": "90°"
+        "text": "79°"
       },
       {
         "label": "E",
-        "text": "100°"
+        "text": "141°"
       }
     ],
-    "correctOption": "D",
-    "difficulty": 4,
+    "correctOption": "A",
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -2028,16 +1896,16 @@
       "act-angles-lines-triangles"
     ],
     "source": "act-template-gen",
-    "contentHash": "8ef4fb986edca30490e1d525d6b07261b5b081c2ae5091dd58d520d93a8ea522",
+    "contentHash": "4c249c9cfcd8ccbd4bfb1c0e35837b68d31f83a256888f842b7115c278bce2e0",
     "isActive": true
   },
   {
-    "problemId": "act-act-angles-lines-triangles-f1f2c753dd",
+    "problemId": "act-act-angles-lines-triangles-6a0f0a9238",
     "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 56° and 50°. What is the measure of the third angle?",
+    "prompt": "Two angles of a triangle measure 37° and 31°. What is the measure of the third angle?",
     "answer": {
       "type": "auto",
-      "value": "74°",
+      "value": "112°",
       "equivalents": []
     },
     "answerType": "multiple-choice",
@@ -2048,23 +1916,23 @@
       },
       {
         "label": "B",
-        "text": "130°"
+        "text": "68°"
       },
       {
         "label": "C",
-        "text": "106°"
+        "text": "112°"
       },
       {
         "label": "D",
-        "text": "74°"
+        "text": "149°"
       },
       {
         "label": "E",
-        "text": "124°"
+        "text": "143°"
       }
     ],
-    "correctOption": "D",
-    "difficulty": 4,
+    "correctOption": "C",
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -2072,23 +1940,23 @@
       "act-angles-lines-triangles"
     ],
     "source": "act-template-gen",
-    "contentHash": "f1f2c753dd7dd58c71cf66025d1d2efc31920c1f160dc5489431b19c15daf2b6",
+    "contentHash": "6a0f0a92388f8a3c2932bfca9bd1addfba1a6d84a269ba9a8506038d8998d480",
     "isActive": true
   },
   {
-    "problemId": "act-act-angles-lines-triangles-a1ded5774c",
+    "problemId": "act-act-angles-lines-triangles-541d725d47",
     "skillId": "act-angles-lines-triangles",
-    "prompt": "Two angles of a triangle measure 47° and 79°. What is the measure of the third angle?",
+    "prompt": "Two angles of a triangle measure 79° and 76°. What is the measure of the third angle?",
     "answer": {
       "type": "auto",
-      "value": "54°",
+      "value": "25°",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "133°"
+        "text": "155°"
       },
       {
         "label": "B",
@@ -2096,7 +1964,7 @@
       },
       {
         "label": "C",
-        "text": "54°"
+        "text": "25°"
       },
       {
         "label": "D",
@@ -2104,10 +1972,142 @@
       },
       {
         "label": "E",
-        "text": "126°"
+        "text": "104°"
       }
     ],
     "correctOption": "C",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-angles-lines-triangles"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "541d725d47249152d9e9409cb6e5c6e8fbfdd50385cb9f65fc10d4b1084f4130",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-angles-lines-triangles-4b3bd712e1",
+    "skillId": "act-angles-lines-triangles",
+    "prompt": "Two angles of a triangle measure 65° and 77°. What is the measure of the third angle?",
+    "answer": {
+      "type": "auto",
+      "value": "38°",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "90°"
+      },
+      {
+        "label": "B",
+        "text": "38°"
+      },
+      {
+        "label": "C",
+        "text": "103°"
+      },
+      {
+        "label": "D",
+        "text": "115°"
+      },
+      {
+        "label": "E",
+        "text": "142°"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-angles-lines-triangles"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "4b3bd712e146a21bb9e1470287c237489d721015dc269e89469fb1eccf93fc8a",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-angles-lines-triangles-ab195559bb",
+    "skillId": "act-angles-lines-triangles",
+    "prompt": "Two angles of a triangle measure 79° and 60°. What is the measure of the third angle?",
+    "answer": {
+      "type": "auto",
+      "value": "41°",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "139°"
+      },
+      {
+        "label": "B",
+        "text": "101°"
+      },
+      {
+        "label": "C",
+        "text": "90°"
+      },
+      {
+        "label": "D",
+        "text": "41°"
+      },
+      {
+        "label": "E",
+        "text": "120°"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-angles-lines-triangles"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "ab195559bb89e9ed5cc4907bf854b3a2bdded41e3f4a3028b9f7d942ab3735ba",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-angles-lines-triangles-0392524b57",
+    "skillId": "act-angles-lines-triangles",
+    "prompt": "Two angles of a triangle measure 31° and 76°. What is the measure of the third angle?",
+    "answer": {
+      "type": "auto",
+      "value": "73°",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "73°"
+      },
+      {
+        "label": "B",
+        "text": "90°"
+      },
+      {
+        "label": "C",
+        "text": "107°"
+      },
+      {
+        "label": "D",
+        "text": "104°"
+      },
+      {
+        "label": "E",
+        "text": "149°"
+      }
+    ],
+    "correctOption": "A",
     "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
@@ -2116,185 +2116,7 @@
       "act-angles-lines-triangles"
     ],
     "source": "act-template-gen",
-    "contentHash": "a1ded5774cb62e1bfb38cc11bc70724417d63c6eae792f0a4682f0d34ab8a6f5",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-polygons-circles-db43864a60",
-    "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of the regular 10-gon shown?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 134.1,28.1 155.2,57.1 155.2,92.9 134.1,121.9 100.0,133.0 65.9,121.9 44.8,92.9 44.8,57.1 65.9,28.1\" stroke-linejoin=\"round\"/></svg>",
-    "answer": {
-      "type": "auto",
-      "value": "144°",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "36°"
-      },
-      {
-        "label": "B",
-        "text": "180°"
-      },
-      {
-        "label": "C",
-        "text": "144°"
-      },
-      {
-        "label": "D",
-        "text": "1440°"
-      },
-      {
-        "label": "E",
-        "text": "18°"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-polygons-circles"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "db43864a60f9ee91815d5dc908104ff7e89aa3605ec2ba484a69b683c6e49b7e",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-polygons-circles-68e6432c74",
-    "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of the regular 24-gon shown?",
-    "answer": {
-      "type": "auto",
-      "value": "165°",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "7.5°"
-      },
-      {
-        "label": "B",
-        "text": "3960°"
-      },
-      {
-        "label": "C",
-        "text": "165°"
-      },
-      {
-        "label": "D",
-        "text": "180°"
-      },
-      {
-        "label": "E",
-        "text": "15°"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-polygons-circles"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "68e6432c743ca7b87f760ef9aa22445da68875e9ee341bd158936a2daf0b4c72",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-polygons-circles-1b11ff8e8a",
-    "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of the regular 18-gon shown?",
-    "answer": {
-      "type": "auto",
-      "value": "160°",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "160°"
-      },
-      {
-        "label": "B",
-        "text": "10°"
-      },
-      {
-        "label": "C",
-        "text": "2880°"
-      },
-      {
-        "label": "D",
-        "text": "20°"
-      },
-      {
-        "label": "E",
-        "text": "180°"
-      }
-    ],
-    "correctOption": "A",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-polygons-circles"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "1b11ff8e8ab46c2a650de720034211e941cf238a2aeec83396dcde04a040b8f5",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-polygons-circles-7beecb7077",
-    "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of the regular 5-gon shown?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 155.2,57.1 134.1,121.9 65.9,121.9 44.8,57.1\" stroke-linejoin=\"round\"/></svg>",
-    "answer": {
-      "type": "auto",
-      "value": "108°",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "36°"
-      },
-      {
-        "label": "B",
-        "text": "108°"
-      },
-      {
-        "label": "C",
-        "text": "540°"
-      },
-      {
-        "label": "D",
-        "text": "72°"
-      },
-      {
-        "label": "E",
-        "text": "180°"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-polygons-circles"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "7beecb7077129efd69b3a3471795d300dc179ce2cd7ccdebc86a6f64b322b19f",
+    "contentHash": "0392524b57ee53978b567f17f3af576bdda58666060f2669e2dd784ca15fb5a8",
     "isActive": true
   },
   {
@@ -2310,27 +2132,27 @@
     "options": [
       {
         "label": "A",
-        "text": "180°"
+        "text": "12°"
       },
       {
         "label": "B",
-        "text": "156°"
+        "text": "180°"
       },
       {
         "label": "C",
-        "text": "2340°"
-      },
-      {
-        "label": "D",
         "text": "24°"
       },
       {
+        "label": "D",
+        "text": "2340°"
+      },
+      {
         "label": "E",
-        "text": "12°"
+        "text": "156°"
       }
     ],
-    "correctOption": "B",
-    "difficulty": 3,
+    "correctOption": "E",
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -2339,6 +2161,50 @@
     ],
     "source": "act-template-gen",
     "contentHash": "d01292a4a9212f7f36f0f44cffe66ea27e58606438a122d3a8d34f52b3bdcf6d",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-polygons-circles-b68f36c479",
+    "skillId": "act-polygons-circles",
+    "prompt": "What is the measure of one interior angle of the regular 20-gon shown?",
+    "answer": {
+      "type": "auto",
+      "value": "162°",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "3240°"
+      },
+      {
+        "label": "B",
+        "text": "180°"
+      },
+      {
+        "label": "C",
+        "text": "9°"
+      },
+      {
+        "label": "D",
+        "text": "18°"
+      },
+      {
+        "label": "E",
+        "text": "162°"
+      }
+    ],
+    "correctOption": "E",
+    "difficulty": 2,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-polygons-circles"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "b68f36c479a3afa356ff30f1af51f3882475ced0c2e6c8e6905fb7380e887449",
     "isActive": true
   },
   {
@@ -2367,15 +2233,15 @@
       },
       {
         "label": "D",
-        "text": "1800°"
+        "text": "180°"
       },
       {
         "label": "E",
-        "text": "180°"
+        "text": "1800°"
       }
     ],
     "correctOption": "B",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -2387,28 +2253,28 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-a438fc4cf0",
+    "problemId": "act-act-polygons-circles-db43864a60",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of the regular 6-gon shown?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 150.2,46.0 150.2,104.0 100.0,133.0 49.8,104.0 49.8,46.0\" stroke-linejoin=\"round\"/></svg>",
+    "prompt": "What is the measure of one interior angle of the regular 10-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 134.1,28.1 155.2,57.1 155.2,92.9 134.1,121.9 100.0,133.0 65.9,121.9 44.8,92.9 44.8,57.1 65.9,28.1\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
-      "value": "120°",
+      "value": "144°",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "60°"
+        "text": "36°"
       },
       {
         "label": "B",
-        "text": "30°"
+        "text": "18°"
       },
       {
         "label": "C",
-        "text": "720°"
+        "text": "144°"
       },
       {
         "label": "D",
@@ -2416,11 +2282,11 @@
       },
       {
         "label": "E",
-        "text": "120°"
+        "text": "1440°"
       }
     ],
-    "correctOption": "E",
-    "difficulty": 4,
+    "correctOption": "C",
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -2428,7 +2294,52 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "a438fc4cf03173115b31662107f6bd8657e9ac360d2b4694ca48bc51e5d4cb3f",
+    "contentHash": "db43864a60f9ee91815d5dc908104ff7e89aa3605ec2ba484a69b683c6e49b7e",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-polygons-circles-7beecb7077",
+    "skillId": "act-polygons-circles",
+    "prompt": "What is the measure of one interior angle of the regular 5-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 155.2,57.1 134.1,121.9 65.9,121.9 44.8,57.1\" stroke-linejoin=\"round\"/></svg>",
+    "answer": {
+      "type": "auto",
+      "value": "108°",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "72°"
+      },
+      {
+        "label": "B",
+        "text": "36°"
+      },
+      {
+        "label": "C",
+        "text": "108°"
+      },
+      {
+        "label": "D",
+        "text": "180°"
+      },
+      {
+        "label": "E",
+        "text": "540°"
+      }
+    ],
+    "correctOption": "C",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-polygons-circles"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "7beecb7077129efd69b3a3471795d300dc179ce2cd7ccdebc86a6f64b322b19f",
     "isActive": true
   },
   {
@@ -2445,7 +2356,7 @@
     "options": [
       {
         "label": "A",
-        "text": "40°"
+        "text": "140°"
       },
       {
         "label": "B",
@@ -2453,11 +2364,100 @@
       },
       {
         "label": "C",
-        "text": "1260°"
+        "text": "40°"
       },
       {
         "label": "D",
-        "text": "140°"
+        "text": "180°"
+      },
+      {
+        "label": "E",
+        "text": "1260°"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-polygons-circles"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "5167a2fc11904d6472e10059da24ffb68139257bc7afd6d9877d8e95328216cc",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-polygons-circles-e9063bbaea",
+    "skillId": "act-polygons-circles",
+    "prompt": "What is the measure of one interior angle of the regular 36-gon shown?",
+    "answer": {
+      "type": "auto",
+      "value": "170°",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "170°"
+      },
+      {
+        "label": "B",
+        "text": "6120°"
+      },
+      {
+        "label": "C",
+        "text": "10°"
+      },
+      {
+        "label": "D",
+        "text": "180°"
+      },
+      {
+        "label": "E",
+        "text": "5°"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-polygons-circles"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "e9063bbaea131d620460fab1c162d76d67c50aece68476519e125613cccfbb86",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-polygons-circles-a438fc4cf0",
+    "skillId": "act-polygons-circles",
+    "prompt": "What is the measure of one interior angle of the regular 6-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 150.2,46.0 150.2,104.0 100.0,133.0 49.8,104.0 49.8,46.0\" stroke-linejoin=\"round\"/></svg>",
+    "answer": {
+      "type": "auto",
+      "value": "120°",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "30°"
+      },
+      {
+        "label": "B",
+        "text": "720°"
+      },
+      {
+        "label": "C",
+        "text": "60°"
+      },
+      {
+        "label": "D",
+        "text": "120°"
       },
       {
         "label": "E",
@@ -2473,42 +2473,42 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "5167a2fc11904d6472e10059da24ffb68139257bc7afd6d9877d8e95328216cc",
+    "contentHash": "a438fc4cf03173115b31662107f6bd8657e9ac360d2b4694ca48bc51e5d4cb3f",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-volume-surface-area-ec73684fd6",
+    "problemId": "act-act-area-volume-surface-area-596879dc61",
     "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the area of a triangle with base 6 and height 8?",
+    "prompt": "What is the area of a triangle with base 12 and height 5?",
     "answer": {
       "type": "auto",
-      "value": "24",
+      "value": "30",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "14"
+        "text": "8.5"
       },
       {
         "label": "B",
-        "text": "16"
+        "text": "20"
       },
       {
         "label": "C",
-        "text": "7"
+        "text": "30"
       },
       {
         "label": "D",
-        "text": "48"
+        "text": "17"
       },
       {
         "label": "E",
-        "text": "24"
+        "text": "60"
       }
     ],
-    "correctOption": "E",
+    "correctOption": "C",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -2517,86 +2517,86 @@
       "act-area-volume-surface-area"
     ],
     "source": "act-template-gen",
-    "contentHash": "ec73684fd6777771f85ef2cbab32c375b8b9ef734ee79f50f98c758cf7836e91",
+    "contentHash": "596879dc612bbba654dc8580c8ce01063c98b489c47edb3f2f6551efa0bb27bb",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-volume-surface-area-9a246c1c51",
+    "problemId": "act-act-area-volume-surface-area-8523dc6def",
     "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the volume of a box with dimensions 3 × 2 × 3?",
+    "prompt": "What is the area of a rectangle with length 7 and width 4?",
     "answer": {
       "type": "auto",
-      "value": "18",
+      "value": "28",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "8"
+        "text": "28"
       },
       {
         "label": "B",
+        "text": "11"
+      },
+      {
+        "label": "C",
+        "text": "56"
+      },
+      {
+        "label": "D",
+        "text": "14"
+      },
+      {
+        "label": "E",
+        "text": "22"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 2,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-area-volume-surface-area"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "8523dc6def7ec91fc6dd9bc3f87979df628059d0e36e1969bddf1b785dcde7a8",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-area-volume-surface-area-9ba9a538fc",
+    "skillId": "act-area-volume-surface-area",
+    "prompt": "What is the area of a triangle with base 6 and height 7?",
+    "answer": {
+      "type": "auto",
+      "value": "21",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "6.5"
+      },
+      {
+        "label": "B",
+        "text": "21"
+      },
+      {
+        "label": "C",
+        "text": "13"
+      },
+      {
+        "label": "D",
+        "text": "14"
+      },
+      {
+        "label": "E",
         "text": "42"
-      },
-      {
-        "label": "C",
-        "text": "18"
-      },
-      {
-        "label": "D",
-        "text": "36"
-      },
-      {
-        "label": "E",
-        "text": "9"
       }
     ],
-    "correctOption": "C",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-area-volume-surface-area"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "9a246c1c51c552c3133b8b70cec8886187ed88fe3c26bb3c88934bf3ef11fa9c",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-area-volume-surface-area-c35421fc9c",
-    "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the area of a triangle with base 9 and height 3?",
-    "answer": {
-      "type": "auto",
-      "value": "13.5",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "12"
-      },
-      {
-        "label": "B",
-        "text": "9"
-      },
-      {
-        "label": "C",
-        "text": "27"
-      },
-      {
-        "label": "D",
-        "text": "6"
-      },
-      {
-        "label": "E",
-        "text": "13.5"
-      }
-    ],
-    "correctOption": "E",
+    "correctOption": "B",
     "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
@@ -2605,43 +2605,175 @@
       "act-area-volume-surface-area"
     ],
     "source": "act-template-gen",
-    "contentHash": "c35421fc9c4e1bcaa532b59332cd960939b7ef52889c8b8049ff07dba853fb9b",
+    "contentHash": "9ba9a538fc929fd77e80a0cc3ca55fbafe45ccb655533f43ee758b74f170746b",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-volume-surface-area-e239b70e97",
+    "problemId": "act-act-area-volume-surface-area-42491fd93a",
     "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the volume of a box with dimensions 5 × 4 × 5?",
+    "prompt": "What is the volume of a box with dimensions 2 × 5 × 3?",
     "answer": {
       "type": "auto",
-      "value": "100",
+      "value": "30",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "25"
+        "text": "60"
       },
       {
         "label": "B",
-        "text": "130"
+        "text": "62"
       },
       {
         "label": "C",
-        "text": "100"
+        "text": "30"
       },
       {
         "label": "D",
+        "text": "13"
+      },
+      {
+        "label": "E",
+        "text": "10"
+      }
+    ],
+    "correctOption": "C",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-area-volume-surface-area"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "42491fd93a24a2e5c05f144292f17a49cd4e9055955c282ee6aef780eb27b2b0",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-area-volume-surface-area-c729f324b8",
+    "skillId": "act-area-volume-surface-area",
+    "prompt": "What is the area of a rectangle with length 8 and width 7?",
+    "answer": {
+      "type": "auto",
+      "value": "56",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "56"
+      },
+      {
+        "label": "B",
+        "text": "15"
+      },
+      {
+        "label": "C",
+        "text": "112"
+      },
+      {
+        "label": "D",
+        "text": "28"
+      },
+      {
+        "label": "E",
+        "text": "30"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-area-volume-surface-area"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "c729f324b8f64f2159391c8be421a6a534d9f99e2813668db317e90d37e9ebb5",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-area-volume-surface-area-2f0c15a25b",
+    "skillId": "act-area-volume-surface-area",
+    "prompt": "What is the volume of a box with dimensions 5 × 4 × 2?",
+    "answer": {
+      "type": "auto",
+      "value": "40",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "40"
+      },
+      {
+        "label": "B",
+        "text": "76"
+      },
+      {
+        "label": "C",
+        "text": "22"
+      },
+      {
+        "label": "D",
+        "text": "11"
+      },
+      {
+        "label": "E",
+        "text": "80"
+      }
+    ],
+    "correctOption": "A",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-area-volume-surface-area"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "2f0c15a25b7daa86ed85696eddaccb2d72c4595eec94e9557799202d4510fb95",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-area-volume-surface-area-2dc96a9146",
+    "skillId": "act-area-volume-surface-area",
+    "prompt": "What is the area of a triangle with base 4 and height 7?",
+    "answer": {
+      "type": "auto",
+      "value": "14",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
         "text": "14"
       },
       {
+        "label": "B",
+        "text": "28"
+      },
+      {
+        "label": "C",
+        "text": "11"
+      },
+      {
+        "label": "D",
+        "text": "9.333333333333334"
+      },
+      {
         "label": "E",
-        "text": "200"
+        "text": "5.5"
       }
     ],
-    "correctOption": "C",
-    "difficulty": 3,
+    "correctOption": "A",
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -2649,27 +2781,27 @@
       "act-area-volume-surface-area"
     ],
     "source": "act-template-gen",
-    "contentHash": "e239b70e97d4d0194f106e3e32d5e4e2c5dc655f87d7821c78dc708526c2c62a",
+    "contentHash": "2dc96a91468306edf86d453588fb281aa52213ecce5766acb1090f9d4ea149c2",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-volume-surface-area-e0fa9d0f25",
+    "problemId": "act-act-area-volume-surface-area-e50aedcef5",
     "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the area of a rectangle with length 8 and width 9?",
+    "prompt": "What is the volume of a box with dimensions 4 × 3 × 3?",
     "answer": {
       "type": "auto",
-      "value": "72",
+      "value": "36",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "34"
+        "text": "15"
       },
       {
         "label": "B",
-        "text": "36"
+        "text": "10"
       },
       {
         "label": "C",
@@ -2677,143 +2809,11 @@
       },
       {
         "label": "D",
-        "text": "144"
+        "text": "36"
       },
       {
         "label": "E",
-        "text": "17"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-area-volume-surface-area"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "e0fa9d0f25baa527680cb8ae2dbf46cb1e979ab21ad2eb6280921aa15514eead",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-area-volume-surface-area-188378f66b",
-    "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the area of a triangle with base 5 and height 7?",
-    "answer": {
-      "type": "auto",
-      "value": "17.5",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "35"
-      },
-      {
-        "label": "B",
-        "text": "6"
-      },
-      {
-        "label": "C",
-        "text": "11.666666666666666"
-      },
-      {
-        "label": "D",
-        "text": "12"
-      },
-      {
-        "label": "E",
-        "text": "17.5"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-area-volume-surface-area"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "188378f66b4a245fbd3f17683b402d9e73aa301bf18d3e42deac562b1b7c0374",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-area-volume-surface-area-c12ad0387d",
-    "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the area of a triangle with base 9 and height 7?",
-    "answer": {
-      "type": "auto",
-      "value": "31.5",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "16"
-      },
-      {
-        "label": "B",
-        "text": "31.5"
-      },
-      {
-        "label": "C",
-        "text": "21"
-      },
-      {
-        "label": "D",
-        "text": "63"
-      },
-      {
-        "label": "E",
-        "text": "8"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-area-volume-surface-area"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "c12ad0387dc373baf8fee082067a409d3d1de1d91ef7a310054dafd6ecda36c2",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-area-volume-surface-area-0c54fd5d75",
-    "skillId": "act-area-volume-surface-area",
-    "prompt": "What is the area of a rectangle with length 9 and width 6?",
-    "answer": {
-      "type": "auto",
-      "value": "54",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "30"
-      },
-      {
-        "label": "B",
-        "text": "108"
-      },
-      {
-        "label": "C",
-        "text": "15"
-      },
-      {
-        "label": "D",
-        "text": "54"
-      },
-      {
-        "label": "E",
-        "text": "27"
+        "text": "66"
       }
     ],
     "correctOption": "D",
@@ -2825,43 +2825,43 @@
       "act-area-volume-surface-area"
     ],
     "source": "act-template-gen",
-    "contentHash": "0c54fd5d75f458c5cb286e165508a16f5caa8f36ee78a6decb5d59131aa4d40c",
+    "contentHash": "e50aedcef57623e61d480ace198f15afb31c317e7f44191c1d33e8a68d30c677",
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-a9a5022bcb",
+    "problemId": "act-act-coordinate-geometry-89d8eac1f2",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment joining the two points shown, (1, -2) and (2, -2)?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"112\" cy=\"93\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"87\" fill=\"#7c5cff\" stroke=\"none\">(1, -2)</text><circle cx=\"124\" cy=\"93\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"130\" y=\"87\" fill=\"#7c5cff\" stroke=\"none\">(2, -2)</text></svg>",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (-3, 5) and (0, 0)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"64\" cy=\"30\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"70\" y=\"24\" fill=\"#7c5cff\" stroke=\"none\">(-3, 5)</text><circle cx=\"100\" cy=\"75\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"106\" y=\"69\" fill=\"#7c5cff\" stroke=\"none\">(0, 0)</text></svg>",
     "answer": {
       "type": "auto",
-      "value": "(1.5, -2)",
+      "value": "(-1.5, 2.5)",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "(3, -4)"
+        "text": "(-1.5, 2.5)"
       },
       {
         "label": "B",
-        "text": "(-2, 1.5)"
+        "text": "(3, -5)"
       },
       {
         "label": "C",
-        "text": "(1.5, -2)"
+        "text": "(-0.5, 2.5)"
       },
       {
         "label": "D",
-        "text": "(1, 0)"
+        "text": "(-3, 5)"
       },
       {
         "label": "E",
-        "text": "(2.5, -2)"
+        "text": "(2.5, -1.5)"
       }
     ],
-    "correctOption": "C",
+    "correctOption": "A",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -2870,42 +2870,43 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "a9a5022bcb35c1a710496d0438be6278c175f4f572f7366b8be7b1f15a5edcc3",
+    "contentHash": "89d8eac1f200c6a2810cd36e2198315b73583ae85dad7ac5a9c4fc3c6777fb8b",
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-454ced9ff5",
+    "problemId": "act-act-coordinate-geometry-9dc207e7dc",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the distance between (5, 5) and (8, 9)?",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (-4, 0) and (2, 0)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"52\" cy=\"75\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"58\" y=\"69\" fill=\"#7c5cff\" stroke=\"none\">(-4, 0)</text><circle cx=\"124\" cy=\"75\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"130\" y=\"69\" fill=\"#7c5cff\" stroke=\"none\">(2, 0)</text></svg>",
     "answer": {
       "type": "auto",
-      "value": "5",
+      "value": "(-1, 0)",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "6"
+        "text": "(0, 0)"
       },
       {
         "label": "B",
-        "text": "7"
+        "text": "(-1, 0)"
       },
       {
         "label": "C",
-        "text": "3"
+        "text": "(6, 0)"
       },
       {
         "label": "D",
-        "text": "12"
+        "text": "(0, -1)"
       },
       {
         "label": "E",
-        "text": "5"
+        "text": "(-2, 0)"
       }
     ],
-    "correctOption": "E",
+    "correctOption": "B",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -2914,40 +2915,40 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "454ced9ff533f2ea9502a10cbbbf39ac3b27031932b5476728610f49c8e6cd49",
+    "contentHash": "9dc207e7dc3c567816b1a3734e29567bc7123fffd6cd9d2341be1150943e48a4",
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-d0b05612a3",
+    "problemId": "act-act-coordinate-geometry-8a610c691e",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment joining the two points shown, (-5, 2) and (1, 3)?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"40\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"46\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(-5, 2)</text><circle cx=\"112\" cy=\"48\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"42\" fill=\"#7c5cff\" stroke=\"none\">(1, 3)</text></svg>",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (1, 1) and (2, -1)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"112\" cy=\"66\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"60\" fill=\"#7c5cff\" stroke=\"none\">(1, 1)</text><circle cx=\"124\" cy=\"84\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"130\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\">(2, -1)</text></svg>",
     "answer": {
       "type": "auto",
-      "value": "(-2, 2.5)",
+      "value": "(1.5, 0)",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "(2.5, -2)"
+        "text": "(2.5, 0)"
       },
       {
         "label": "B",
-        "text": "(-4, 5)"
+        "text": "(1, -2)"
       },
       {
         "label": "C",
-        "text": "(-2, 2.5)"
+        "text": "(1.5, 0)"
       },
       {
         "label": "D",
-        "text": "(-1, 2.5)"
+        "text": "(3, 0)"
       },
       {
         "label": "E",
-        "text": "(6, 1)"
+        "text": "(0, 1.5)"
       }
     ],
     "correctOption": "C",
@@ -2959,40 +2960,39 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "d0b05612a3335488107aa2356ba5b7355452a4e5d9f6db82d501c73938a36e61",
+    "contentHash": "8a610c691e9a19a8f491ef2ef9d4c8d228e559c21607e67224e858f2310ded32",
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-44164cb634",
+    "problemId": "act-act-coordinate-geometry-2367c7e31e",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment joining the two points shown, (5, 5) and (1, 2)?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"160\" cy=\"30\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"166\" y=\"24\" fill=\"#7c5cff\" stroke=\"none\">(5, 5)</text><circle cx=\"112\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(1, 2)</text></svg>",
+    "prompt": "What is the distance between (0, 0) and (8, 15)?",
     "answer": {
       "type": "auto",
-      "value": "(3, 3.5)",
+      "value": "17",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "(4, 3.5)"
+        "text": "11"
       },
       {
         "label": "B",
-        "text": "(3, 3.5)"
+        "text": "17"
       },
       {
         "label": "C",
-        "text": "(3.5, 3)"
+        "text": "18"
       },
       {
         "label": "D",
-        "text": "(6, 7)"
+        "text": "120"
       },
       {
         "label": "E",
-        "text": "(-4, -3)"
+        "text": "23"
       }
     ],
     "correctOption": "B",
@@ -3004,102 +3004,13 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "44164cb63410091e895c3d77727d882fc5bcc7a10302ed7a79fb7ef59dc054e3",
+    "contentHash": "2367c7e31ee898f6dab5b20c2c3634b2c5b98a6c2da4f62d73a1492bfd880b4b",
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-e6fdbde599",
+    "problemId": "act-act-coordinate-geometry-f6c2a6cc4a",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the distance between (-4, -3) and (1, 9)?",
-    "answer": {
-      "type": "auto",
-      "value": "13",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "60"
-      },
-      {
-        "label": "B",
-        "text": "14"
-      },
-      {
-        "label": "C",
-        "text": "17"
-      },
-      {
-        "label": "D",
-        "text": "8"
-      },
-      {
-        "label": "E",
-        "text": "13"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-coordinate-geometry"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "e6fdbde599085eb300f3278e9f55c10b06536680edb94641aef289fc7e253057",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-coordinate-geometry-c400987432",
-    "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment joining the two points shown, (-1, 1) and (1, 2)?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"88\" cy=\"66\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"94\" y=\"60\" fill=\"#7c5cff\" stroke=\"none\">(-1, 1)</text><circle cx=\"112\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(1, 2)</text></svg>",
-    "answer": {
-      "type": "auto",
-      "value": "(0, 1.5)",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "(1, 1.5)"
-      },
-      {
-        "label": "B",
-        "text": "(0, 3)"
-      },
-      {
-        "label": "C",
-        "text": "(1.5, 0)"
-      },
-      {
-        "label": "D",
-        "text": "(2, 1)"
-      },
-      {
-        "label": "E",
-        "text": "(0, 1.5)"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-coordinate-geometry"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "c400987432d9e104ab111a39d905a0d37aea583320d92288955c177b76795336",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-coordinate-geometry-a48b5b3585",
-    "skillId": "act-coordinate-geometry",
-    "prompt": "What is the distance between (3, 4) and (6, 8)?",
+    "prompt": "What is the distance between (5, 2) and (8, 6)?",
     "answer": {
       "type": "auto",
       "value": "5",
@@ -3109,23 +3020,67 @@
     "options": [
       {
         "label": "A",
-        "text": "5"
-      },
-      {
-        "label": "B",
-        "text": "6"
-      },
-      {
-        "label": "C",
         "text": "7"
       },
       {
-        "label": "D",
+        "label": "B",
+        "text": "5"
+      },
+      {
+        "label": "C",
         "text": "12"
       },
       {
-        "label": "E",
+        "label": "D",
         "text": "3"
+      },
+      {
+        "label": "E",
+        "text": "6"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-coordinate-geometry"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "f6c2a6cc4a0ad808c7278e2c934bf27b3f36000879ab6198fd391c0fb48a9e30",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-coordinate-geometry-d5698c5e89",
+    "skillId": "act-coordinate-geometry",
+    "prompt": "What is the distance between (-3, 5) and (2, 17)?",
+    "answer": {
+      "type": "auto",
+      "value": "13",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "13"
+      },
+      {
+        "label": "B",
+        "text": "17"
+      },
+      {
+        "label": "C",
+        "text": "14"
+      },
+      {
+        "label": "D",
+        "text": "60"
+      },
+      {
+        "label": "E",
+        "text": "8"
       }
     ],
     "correctOption": "A",
@@ -3137,59 +3092,13 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "a48b5b3585535e3c9fda6d889b36c422a55c5d320b3819bf31ee07d086d07b17",
+    "contentHash": "d5698c5e8977763eb2f05afff2a1ccdac243775cc92a92df9ea1b8ab6ea65ac6",
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-62e2af7c1f",
+    "problemId": "act-act-coordinate-geometry-e5cd812399",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment joining the two points shown, (4, 1) and (1, 2)?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"148\" cy=\"66\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"154\" y=\"60\" fill=\"#7c5cff\" stroke=\"none\">(4, 1)</text><circle cx=\"112\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(1, 2)</text></svg>",
-    "answer": {
-      "type": "auto",
-      "value": "(2.5, 1.5)",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "(5, 3)"
-      },
-      {
-        "label": "B",
-        "text": "(1.5, 2.5)"
-      },
-      {
-        "label": "C",
-        "text": "(2.5, 1.5)"
-      },
-      {
-        "label": "D",
-        "text": "(3.5, 1.5)"
-      },
-      {
-        "label": "E",
-        "text": "(-3, 1)"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 5,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-coordinate-geometry"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "62e2af7c1fc4bc682a87a2079447b9d86477348684b5128f59610622852b3f68",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-right-triangle-trig-7fff992dd7",
-    "skillId": "act-right-triangle-trig",
-    "prompt": "In the right triangle shown, the legs have length 5 and 12. What is the length of the hypotenuse?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">5</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">12</text></svg>",
+    "prompt": "What is the distance between (-1, 5) and (4, 17)?",
     "answer": {
       "type": "auto",
       "value": "13",
@@ -3199,42 +3108,41 @@
     "options": [
       {
         "label": "A",
-        "text": "8"
+        "text": "13"
       },
       {
         "label": "B",
-        "text": "14"
+        "text": "8"
       },
       {
         "label": "C",
-        "text": "17"
+        "text": "60"
       },
       {
         "label": "D",
-        "text": "12"
+        "text": "17"
       },
       {
         "label": "E",
-        "text": "13"
+        "text": "14"
       }
     ],
-    "correctOption": "E",
-    "difficulty": 2,
+    "correctOption": "A",
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-right-triangle-trig"
+      "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "7fff992dd736f447a26ec3f3d141f84866f7eaa4ee4b9f64f83f498dabb64d4c",
+    "contentHash": "e5cd812399e0a253d82dbdb108e3d090d9378e2871935c482db2e4444f4f7227",
     "isActive": true
   },
   {
-    "problemId": "act-act-right-triangle-trig-d569434159",
-    "skillId": "act-right-triangle-trig",
-    "prompt": "In the right triangle shown, the legs have length 6 and 8. What is the length of the hypotenuse?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">6</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">8</text></svg>",
+    "problemId": "act-act-coordinate-geometry-66ab6c2f43",
+    "skillId": "act-coordinate-geometry",
+    "prompt": "What is the distance between (-3, -4) and (3, 4)?",
     "answer": {
       "type": "auto",
       "value": "10",
@@ -3260,19 +3168,19 @@
       },
       {
         "label": "E",
-        "text": "9"
+        "text": "48"
       }
     ],
     "correctOption": "C",
-    "difficulty": 2,
+    "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-right-triangle-trig"
+      "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "d56943415991ca0a0e0711a6de8bc811bc830a4d5f329be9023a9f0bf217e864",
+    "contentHash": "66ab6c2f43415a201017784d2fb8bee261bb6f803b0d70cd47da5c9818278ffc",
     "isActive": true
   },
   {
@@ -3293,11 +3201,11 @@
       },
       {
         "label": "B",
-        "text": "21"
+        "text": "14"
       },
       {
         "label": "C",
-        "text": "14"
+        "text": "21"
       },
       {
         "label": "D",
@@ -3309,7 +3217,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -3321,40 +3229,40 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-right-triangle-trig-ca750442c2",
+    "problemId": "act-act-right-triangle-trig-7fff992dd7",
     "skillId": "act-right-triangle-trig",
-    "prompt": "In the right triangle shown, the legs have length 3 and 4. What is the length of the hypotenuse?",
-    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">3</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">4</text></svg>",
+    "prompt": "In the right triangle shown, the legs have length 5 and 12. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">5</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">12</text></svg>",
     "answer": {
       "type": "auto",
-      "value": "5",
+      "value": "13",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "7"
+        "text": "17"
       },
       {
         "label": "B",
-        "text": "5"
+        "text": "8"
       },
       {
         "label": "C",
-        "text": "6"
+        "text": "13"
       },
       {
         "label": "D",
-        "text": "3"
+        "text": "12"
       },
       {
         "label": "E",
-        "text": "4"
+        "text": "14"
       }
     ],
-    "correctOption": "B",
-    "difficulty": 3,
+    "correctOption": "C",
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -3362,7 +3270,7 @@
       "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "ca750442c29abcc887ace36e4fdb84be1aeac1d0b233b6b48b6881971ca6646a",
+    "contentHash": "7fff992dd736f447a26ec3f3d141f84866f7eaa4ee4b9f64f83f498dabb64d4c",
     "isActive": true
   },
   {
@@ -3379,26 +3287,26 @@
     "options": [
       {
         "label": "A",
-        "text": "18"
-      },
-      {
-        "label": "B",
         "text": "17"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "23"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "11"
+      },
+      {
+        "label": "D",
+        "text": "18"
       },
       {
         "label": "E",
         "text": "16"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "A",
     "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
@@ -3411,141 +3319,10 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-congruence-similarity-eb22153ae2",
-    "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 5 corresponds to a side of length 10. What length corresponds to a side of length 4?",
-    "answer": {
-      "type": "auto",
-      "value": "8",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "8"
-      },
-      {
-        "label": "B",
-        "text": "2"
-      },
-      {
-        "label": "C",
-        "text": "6"
-      },
-      {
-        "label": "D",
-        "text": "9"
-      },
-      {
-        "label": "E",
-        "text": "12"
-      }
-    ],
-    "correctOption": "A",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-congruence-similarity"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "eb22153ae2d1523ac5338b77dabe8dca2eab7e1eaca6b55c66674a93b9ac716a",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-congruence-similarity-afe3b8b9da",
-    "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 7 corresponds to a side of length 21. What length corresponds to a side of length 8?",
-    "answer": {
-      "type": "auto",
-      "value": "24",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "32"
-      },
-      {
-        "label": "B",
-        "text": "22"
-      },
-      {
-        "label": "C",
-        "text": "11"
-      },
-      {
-        "label": "D",
-        "text": "24"
-      },
-      {
-        "label": "E",
-        "text": "3"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-congruence-similarity"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "afe3b8b9da171995d60919b1775f1697abf79b9b0682b9f39f0691c3a074074a",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-congruence-similarity-e405d98625",
-    "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 5 corresponds to a side of length 20. What length corresponds to a side of length 7?",
-    "answer": {
-      "type": "auto",
-      "value": "28",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "11"
-      },
-      {
-        "label": "B",
-        "text": "2"
-      },
-      {
-        "label": "C",
-        "text": "35"
-      },
-      {
-        "label": "D",
-        "text": "28"
-      },
-      {
-        "label": "E",
-        "text": "22"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-congruence-similarity"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "e405d986255c57c078363674d2ef3e004693cfcbdf7f42ba22ef6042c8af2541",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-congruence-similarity-ee4da28956",
-    "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 6 corresponds to a side of length 12. What length corresponds to a side of length 5?",
+    "problemId": "act-act-right-triangle-trig-d569434159",
+    "skillId": "act-right-triangle-trig",
+    "prompt": "In the right triangle shown, the legs have length 6 and 8. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">6</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">8</text></svg>",
     "answer": {
       "type": "auto",
       "value": "10",
@@ -3559,125 +3336,82 @@
       },
       {
         "label": "B",
-        "text": "10"
-      },
-      {
-        "label": "C",
-        "text": "15"
-      },
-      {
-        "label": "D",
-        "text": "3"
-      },
-      {
-        "label": "E",
-        "text": "7"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-congruence-similarity"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "ee4da28956105bff54781dbd53db89c59dcbf822cd596191bcd3fce9ded6d8fa",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-congruence-similarity-3f836d1aaa",
-    "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 4 corresponds to a side of length 8. What length corresponds to a side of length 7?",
-    "answer": {
-      "type": "auto",
-      "value": "14",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "4"
-      },
-      {
-        "label": "B",
         "text": "14"
       },
       {
         "label": "C",
-        "text": "21"
+        "text": "10"
       },
       {
         "label": "D",
-        "text": "9"
+        "text": "7"
       },
       {
         "label": "E",
-        "text": "11"
+        "text": "9"
       }
     ],
-    "correctOption": "B",
+    "correctOption": "C",
     "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-congruence-similarity"
+      "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "3f836d1aaa3878122dbbd4e873af45567a87cec06734a8802e98206ca76f3e53",
+    "contentHash": "d56943415991ca0a0e0711a6de8bc811bc830a4d5f329be9023a9f0bf217e864",
     "isActive": true
   },
   {
-    "problemId": "act-act-congruence-similarity-ef2ba59e5f",
-    "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 8 corresponds to a side of length 24. What length corresponds to a side of length 7?",
+    "problemId": "act-act-right-triangle-trig-ca750442c2",
+    "skillId": "act-right-triangle-trig",
+    "prompt": "In the right triangle shown, the legs have length 3 and 4. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">3</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">4</text></svg>",
     "answer": {
       "type": "auto",
-      "value": "21",
+      "value": "5",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "2"
+        "text": "3"
       },
       {
         "label": "B",
-        "text": "23"
+        "text": "6"
       },
       {
         "label": "C",
-        "text": "21"
+        "text": "7"
       },
       {
         "label": "D",
-        "text": "10"
+        "text": "4"
       },
       {
         "label": "E",
-        "text": "28"
+        "text": "5"
       }
     ],
-    "correctOption": "C",
-    "difficulty": 4,
+    "correctOption": "E",
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-congruence-similarity"
+      "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "ef2ba59e5fe2fcc78296d343b0f8cd1e67e6c3bf4e57ceb357f94ccba179f65a",
+    "contentHash": "ca750442c29abcc887ace36e4fdb84be1aeac1d0b233b6b48b6881971ca6646a",
     "isActive": true
   },
   {
-    "problemId": "act-act-congruence-similarity-ea8f32db72",
+    "problemId": "act-act-congruence-similarity-eaed7cf073",
     "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 4 corresponds to a side of length 16. What length corresponds to a side of length 8?",
+    "prompt": "Two triangles are similar. A side of length 3 corresponds to a side of length 12. What length corresponds to a side of length 8?",
     "answer": {
       "type": "auto",
       "value": "32",
@@ -3687,7 +3421,7 @@
     "options": [
       {
         "label": "A",
-        "text": "2"
+        "text": "12"
       },
       {
         "label": "B",
@@ -3695,19 +3429,19 @@
       },
       {
         "label": "C",
-        "text": "12"
+        "text": "32"
       },
       {
         "label": "D",
-        "text": "20"
+        "text": "2"
       },
       {
         "label": "E",
-        "text": "32"
+        "text": "17"
       }
     ],
-    "correctOption": "E",
-    "difficulty": 4,
+    "correctOption": "C",
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -3715,13 +3449,145 @@
       "act-congruence-similarity"
     ],
     "source": "act-template-gen",
-    "contentHash": "ea8f32db725f9a9827c56fe8c8430e03bc618b736a0bc3e2258f1f07c2020a0e",
+    "contentHash": "eaed7cf0736c76afb98528949b7cdff1721e724ac2586ff7c0d49c7ea94ae9b1",
     "isActive": true
   },
   {
-    "problemId": "act-act-congruence-similarity-e184128ba0",
+    "problemId": "act-act-congruence-similarity-45c8405f7f",
     "skillId": "act-congruence-similarity",
-    "prompt": "Two triangles are similar. A side of length 3 corresponds to a side of length 6. What length corresponds to a side of length 8?",
+    "prompt": "Two triangles are similar. A side of length 8 corresponds to a side of length 24. What length corresponds to a side of length 5?",
+    "answer": {
+      "type": "auto",
+      "value": "15",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "2"
+      },
+      {
+        "label": "B",
+        "text": "8"
+      },
+      {
+        "label": "C",
+        "text": "20"
+      },
+      {
+        "label": "D",
+        "text": "21"
+      },
+      {
+        "label": "E",
+        "text": "15"
+      }
+    ],
+    "correctOption": "E",
+    "difficulty": 2,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-congruence-similarity"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "45c8405f7f41c81e7b424ffb93b59ddccd32821e1f5b0c6ba3f1918ddc45691d",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-congruence-similarity-de538b28d6",
+    "skillId": "act-congruence-similarity",
+    "prompt": "Two triangles are similar. A side of length 6 corresponds to a side of length 12. What length corresponds to a side of length 9?",
+    "answer": {
+      "type": "auto",
+      "value": "18",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "15"
+      },
+      {
+        "label": "B",
+        "text": "27"
+      },
+      {
+        "label": "C",
+        "text": "11"
+      },
+      {
+        "label": "D",
+        "text": "18"
+      },
+      {
+        "label": "E",
+        "text": "5"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-congruence-similarity"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "de538b28d6717485c8eff07cf4a358304cb77245b487af9b1e9904910d87ab38",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-congruence-similarity-cfcf2416c5",
+    "skillId": "act-congruence-similarity",
+    "prompt": "Two triangles are similar. A side of length 8 corresponds to a side of length 16. What length corresponds to a side of length 5?",
+    "answer": {
+      "type": "auto",
+      "value": "10",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "15"
+      },
+      {
+        "label": "B",
+        "text": "10"
+      },
+      {
+        "label": "C",
+        "text": "7"
+      },
+      {
+        "label": "D",
+        "text": "3"
+      },
+      {
+        "label": "E",
+        "text": "13"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-congruence-similarity"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "cfcf2416c5f57b90637dbd770e35a1dfbddc204b070c3d4a5558e19f5dba784d",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-congruence-similarity-c2f0f3864d",
+    "skillId": "act-congruence-similarity",
+    "prompt": "Two triangles are similar. A side of length 5 corresponds to a side of length 10. What length corresponds to a side of length 8?",
     "answer": {
       "type": "auto",
       "value": "16",
@@ -3731,23 +3597,155 @@
     "options": [
       {
         "label": "A",
-        "text": "11"
-      },
-      {
-        "label": "B",
-        "text": "24"
-      },
-      {
-        "label": "C",
-        "text": "10"
-      },
-      {
-        "label": "D",
         "text": "4"
       },
       {
-        "label": "E",
+        "label": "B",
         "text": "16"
+      },
+      {
+        "label": "C",
+        "text": "24"
+      },
+      {
+        "label": "D",
+        "text": "10"
+      },
+      {
+        "label": "E",
+        "text": "13"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-congruence-similarity"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "c2f0f3864d8da009bba52fe608cfc02dac69b939527c3d25ab2a2270888029a0",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-congruence-similarity-b285ef65b0",
+    "skillId": "act-congruence-similarity",
+    "prompt": "Two triangles are similar. A side of length 8 corresponds to a side of length 16. What length corresponds to a side of length 6?",
+    "answer": {
+      "type": "auto",
+      "value": "12",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "18"
+      },
+      {
+        "label": "B",
+        "text": "12"
+      },
+      {
+        "label": "C",
+        "text": "14"
+      },
+      {
+        "label": "D",
+        "text": "3"
+      },
+      {
+        "label": "E",
+        "text": "8"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-congruence-similarity"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "b285ef65b0536cefe772a67c31b0beb9ccf269b8385f3cc8a9c3a658124888a4",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-congruence-similarity-188cbe4d01",
+    "skillId": "act-congruence-similarity",
+    "prompt": "Two triangles are similar. A side of length 8 corresponds to a side of length 32. What length corresponds to a side of length 5?",
+    "answer": {
+      "type": "auto",
+      "value": "20",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "1"
+      },
+      {
+        "label": "B",
+        "text": "25"
+      },
+      {
+        "label": "C",
+        "text": "9"
+      },
+      {
+        "label": "D",
+        "text": "20"
+      },
+      {
+        "label": "E",
+        "text": "29"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-congruence-similarity"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "188cbe4d01eff90275a6cb09855f28874fae3b0ae14fb6d9822224efca956010",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-congruence-similarity-fb89d9f19a",
+    "skillId": "act-congruence-similarity",
+    "prompt": "Two triangles are similar. A side of length 7 corresponds to a side of length 14. What length corresponds to a side of length 6?",
+    "answer": {
+      "type": "auto",
+      "value": "12",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "13"
+      },
+      {
+        "label": "B",
+        "text": "18"
+      },
+      {
+        "label": "C",
+        "text": "3"
+      },
+      {
+        "label": "D",
+        "text": "8"
+      },
+      {
+        "label": "E",
+        "text": "12"
       }
     ],
     "correctOption": "E",
@@ -3759,39 +3757,39 @@
       "act-congruence-similarity"
     ],
     "source": "act-template-gen",
-    "contentHash": "e184128ba0ed077f11d6683862d8ed6e67cff94804ff27e732ca2da09e9e532a",
+    "contentHash": "fb89d9f19a944685c82a2487b36dd631be99f56d93f515a264ba047779ca2e48",
     "isActive": true
   },
   {
-    "problemId": "act-act-linear-equations-62c6560209",
+    "problemId": "act-act-linear-equations-c823d35b2a",
     "skillId": "act-linear-equations",
-    "prompt": "If 2x + 7 = 4x - 5, then x = ?",
+    "prompt": "If 3x - 6 = -2x - 21, then x = ?",
     "answer": {
       "type": "auto",
-      "value": "6",
+      "value": "-3",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "-6"
+        "text": "-4"
       },
       {
         "label": "B",
-        "text": "-12"
+        "text": "-2"
       },
       {
         "label": "C",
-        "text": "5"
+        "text": "-15"
       },
       {
         "label": "D",
-        "text": "7"
+        "text": "3"
       },
       {
         "label": "E",
-        "text": "6"
+        "text": "-3"
       }
     ],
     "correctOption": "E",
@@ -3803,42 +3801,42 @@
       "act-linear-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "62c65602094c526346e666d2b8de9b2cd8226ae94c24233ed4545b17b7d6bbee",
+    "contentHash": "c823d35b2a65f958e7d35f465927dfd53e694364b4447e514ec627ba95926ab0",
     "isActive": true
   },
   {
-    "problemId": "act-act-linear-equations-d99c7a9c5f",
+    "problemId": "act-act-linear-equations-1845bb3f94",
     "skillId": "act-linear-equations",
-    "prompt": "If 4x + 5 = 2x + 19, then x = ?",
+    "prompt": "If 2x + 7 = -x + 31, then x = ?",
     "answer": {
       "type": "auto",
-      "value": "7",
+      "value": "8",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "-7"
+        "text": "7"
       },
       {
         "label": "B",
-        "text": "14"
+        "text": "-8"
       },
       {
         "label": "C",
-        "text": "6"
+        "text": "24"
       },
       {
         "label": "D",
-        "text": "7"
+        "text": "9"
       },
       {
         "label": "E",
         "text": "8"
       }
     ],
-    "correctOption": "D",
+    "correctOption": "E",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -3847,16 +3845,60 @@
       "act-linear-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "d99c7a9c5f264455fc5f104fc1140ec6dfdd745e6989786a4081225ff52031ba",
+    "contentHash": "1845bb3f942ffd3364efbeebd5125b1e59e03a68e198afa5dea2213e9083abc9",
     "isActive": true
   },
   {
-    "problemId": "act-act-linear-equations-146b303f2a",
+    "problemId": "act-act-linear-equations-03a18e6d12",
     "skillId": "act-linear-equations",
-    "prompt": "If 6x + 5 = -2x + 53, then x = ?",
+    "prompt": "If 2x - 7 = -4x + 11, then x = ?",
     "answer": {
       "type": "auto",
-      "value": "6",
+      "value": "3",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "-3"
+      },
+      {
+        "label": "B",
+        "text": "2"
+      },
+      {
+        "label": "C",
+        "text": "18"
+      },
+      {
+        "label": "D",
+        "text": "3"
+      },
+      {
+        "label": "E",
+        "text": "4"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-linear-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "03a18e6d12522ec42d0610d3eac80e8f8178507584223dcaf0fcd0e0354dc0e7",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-linear-equations-042bb75324",
+    "skillId": "act-linear-equations",
+    "prompt": "If 5x + 8 = -x + 56, then x = ?",
+    "answer": {
+      "type": "auto",
+      "value": "8",
       "equivalents": []
     },
     "answerType": "multiple-choice",
@@ -3867,63 +3909,19 @@
       },
       {
         "label": "B",
-        "text": "5"
-      },
-      {
-        "label": "C",
         "text": "7"
       },
       {
-        "label": "D",
-        "text": "6"
-      },
-      {
-        "label": "E",
-        "text": "-6"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-linear-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "146b303f2a82c8eb256a7c328ca73a401023863890ff78aa8dfc5e5d412a8f44",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-linear-equations-c7a8fff9f5",
-    "skillId": "act-linear-equations",
-    "prompt": "If 5x - 1 = -x - 19, then x = ?",
-    "answer": {
-      "type": "auto",
-      "value": "-3",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "-2"
-      },
-      {
-        "label": "B",
-        "text": "3"
-      },
-      {
         "label": "C",
-        "text": "-3"
+        "text": "8"
       },
       {
         "label": "D",
-        "text": "-18"
+        "text": "9"
       },
       {
         "label": "E",
-        "text": "-4"
+        "text": "-8"
       }
     ],
     "correctOption": "C",
@@ -3935,13 +3933,145 @@
       "act-linear-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "c7a8fff9f556e144843eea3db3959a47947e8b449cd2fbee20529184ed71df25",
+    "contentHash": "042bb753247418d0fbc123f6e1f364c5c544f5fb0f2aee7411cef9724a8f660c",
     "isActive": true
   },
   {
-    "problemId": "act-act-linear-equations-b54fdacecb",
+    "problemId": "act-act-linear-equations-dc9ee19c85",
     "skillId": "act-linear-equations",
-    "prompt": "If 6x - 8 = 3x - 26, then x = ?",
+    "prompt": "If 5x - 4 = x - 24, then x = ?",
+    "answer": {
+      "type": "auto",
+      "value": "-5",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "-6"
+      },
+      {
+        "label": "B",
+        "text": "-5"
+      },
+      {
+        "label": "C",
+        "text": "-4"
+      },
+      {
+        "label": "D",
+        "text": "-20"
+      },
+      {
+        "label": "E",
+        "text": "5"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-linear-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "dc9ee19c8586117b2fbadce4eee352438544f2fe08c1ef0a94407621b738467b",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-linear-equations-cb6b4510fa",
+    "skillId": "act-linear-equations",
+    "prompt": "If 5x + 0 = -x + 18, then x = ?",
+    "answer": {
+      "type": "auto",
+      "value": "3",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "18"
+      },
+      {
+        "label": "B",
+        "text": "3"
+      },
+      {
+        "label": "C",
+        "text": "2"
+      },
+      {
+        "label": "D",
+        "text": "4"
+      },
+      {
+        "label": "E",
+        "text": "-3"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-linear-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "cb6b4510fad3d65df5ccb81b79e26824529ae6387acda92350322866b6b40ba7",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-linear-equations-6d850644fb",
+    "skillId": "act-linear-equations",
+    "prompt": "If 9x - 7 = 3x - 31, then x = ?",
+    "answer": {
+      "type": "auto",
+      "value": "-4",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "4"
+      },
+      {
+        "label": "B",
+        "text": "-4"
+      },
+      {
+        "label": "C",
+        "text": "-24"
+      },
+      {
+        "label": "D",
+        "text": "-3"
+      },
+      {
+        "label": "E",
+        "text": "-5"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-linear-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "6d850644fb60d64a7ac5e9c91a0fb3f524fe2a82d38f4da5b477aae5083e930b",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-linear-equations-5d853f9cf3",
+    "skillId": "act-linear-equations",
+    "prompt": "If 4x + 3 = 2x - 9, then x = ?",
     "answer": {
       "type": "auto",
       "value": "-6",
@@ -3951,15 +4081,15 @@
     "options": [
       {
         "label": "A",
-        "text": "-18"
+        "text": "-12"
       },
       {
         "label": "B",
-        "text": "-5"
+        "text": "-6"
       },
       {
         "label": "C",
-        "text": "-6"
+        "text": "-5"
       },
       {
         "label": "D",
@@ -3970,8 +4100,8 @@
         "text": "-7"
       }
     ],
-    "correctOption": "C",
-    "difficulty": 3,
+    "correctOption": "B",
+    "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -3979,104 +4109,16 @@
       "act-linear-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "b54fdacecba66d585d235e46f52972243d23246dbf1e62a7bc6f219f09ca26ce",
+    "contentHash": "5d853f9cf32c3d5995f82b1f6b53598bbff8d160db7bc4a4bbbb4e7ff34138c0",
     "isActive": true
   },
   {
-    "problemId": "act-act-linear-equations-ac8890f994",
-    "skillId": "act-linear-equations",
-    "prompt": "If 2x - 4 = -3x - 14, then x = ?",
+    "problemId": "act-act-systems-of-equations-e6b8c817a7",
+    "skillId": "act-systems-of-equations",
+    "prompt": "If 3x + 4y = 24 and 4x + 4y = 28, what is x + y?",
     "answer": {
       "type": "auto",
-      "value": "-2",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "-10"
-      },
-      {
-        "label": "B",
-        "text": "-1"
-      },
-      {
-        "label": "C",
-        "text": "-3"
-      },
-      {
-        "label": "D",
-        "text": "-2"
-      },
-      {
-        "label": "E",
-        "text": "2"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-linear-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "ac8890f994f693b0228f8b544febef772b4a831651a21b55a9fc6b0a013b2504",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-linear-equations-78c5c134a4",
-    "skillId": "act-linear-equations",
-    "prompt": "If 4x - 1 = -3x - 29, then x = ?",
-    "answer": {
-      "type": "auto",
-      "value": "-4",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "-3"
-      },
-      {
-        "label": "B",
-        "text": "-5"
-      },
-      {
-        "label": "C",
-        "text": "4"
-      },
-      {
-        "label": "D",
-        "text": "-4"
-      },
-      {
-        "label": "E",
-        "text": "-28"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-linear-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "78c5c134a4453e9b12d0cfe22711e036e0c7f6f202b8e95e9e6bad824d08d781",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-linear-equations-ac42e969ea",
-    "skillId": "act-linear-equations",
-    "prompt": "If 7x - 8 = -4x + 58, then x = ?",
-    "answer": {
-      "type": "auto",
-      "value": "6",
+      "value": "7",
       "equivalents": []
     },
     "answerType": "multiple-choice",
@@ -4087,63 +4129,63 @@
       },
       {
         "label": "B",
-        "text": "5"
+        "text": "1"
       },
       {
         "label": "C",
-        "text": "66"
+        "text": "4"
       },
       {
         "label": "D",
-        "text": "-6"
+        "text": "12"
       },
       {
         "label": "E",
-        "text": "6"
+        "text": "3"
       }
     ],
-    "correctOption": "E",
-    "difficulty": 5,
+    "correctOption": "A",
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-linear-equations"
+      "act-systems-of-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "ac42e969ea99a9c893de4f4df7ce84a6e7ae68a270c35e668c4517faa33dd89e",
+    "contentHash": "e6b8c817a75c86b739fe3f38661dca0297c4e1e2e604354f9578d09399517538",
     "isActive": true
   },
   {
-    "problemId": "act-act-systems-of-equations-7b6d4409fa",
+    "problemId": "act-act-systems-of-equations-0d74e6b752",
     "skillId": "act-systems-of-equations",
-    "prompt": "If 3x + 3y = 15 and 2x + 4y = 22, what is x + y?",
+    "prompt": "If 3x + y = 12 and 2x + 2y = 16, what is x + y?",
     "answer": {
       "type": "auto",
-      "value": "5",
+      "value": "8",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "-6"
+        "text": "2"
       },
       {
         "label": "B",
-        "text": "6"
+        "text": "12"
       },
       {
         "label": "C",
-        "text": "5"
+        "text": "8"
       },
       {
         "label": "D",
-        "text": "-1"
+        "text": "6"
       },
       {
         "label": "E",
-        "text": "-7"
+        "text": "-4"
       }
     ],
     "correctOption": "C",
@@ -4155,57 +4197,13 @@
       "act-systems-of-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "7b6d4409fa5c5f457d79870c95ec07e1c965c7ce7029c6f224b970a2057e1d06",
+    "contentHash": "0d74e6b752980a118b71163ea05577ef9be18b0354d923a6e8a9fce139fc55be",
     "isActive": true
   },
   {
-    "problemId": "act-act-systems-of-equations-9778b40d6a",
+    "problemId": "act-act-systems-of-equations-d53240f373",
     "skillId": "act-systems-of-equations",
-    "prompt": "If 2x + y = 7 and 4x + 3y = 17, what is x + y?",
-    "answer": {
-      "type": "auto",
-      "value": "5",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "3"
-      },
-      {
-        "label": "B",
-        "text": "2"
-      },
-      {
-        "label": "C",
-        "text": "-1"
-      },
-      {
-        "label": "D",
-        "text": "5"
-      },
-      {
-        "label": "E",
-        "text": "6"
-      }
-    ],
-    "correctOption": "D",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-systems-of-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "9778b40d6ab2e7ec36d4f011e7c28161cf1a475fd1c2649676c8b31f39dc68c7",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-systems-of-equations-a8fee6626f",
-    "skillId": "act-systems-of-equations",
-    "prompt": "If x + 2y = -2 and 2x + 3y = -1, what is x + y?",
+    "prompt": "If 2x + 4y = -4 and 4x + 4y = 4, what is x + y?",
     "answer": {
       "type": "auto",
       "value": "1",
@@ -4215,11 +4213,11 @@
     "options": [
       {
         "label": "A",
-        "text": "1"
+        "text": "-12"
       },
       {
         "label": "B",
-        "text": "4"
+        "text": "1"
       },
       {
         "label": "C",
@@ -4227,7 +4225,95 @@
       },
       {
         "label": "D",
-        "text": "-12"
+        "text": "4"
+      },
+      {
+        "label": "E",
+        "text": "-3"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-systems-of-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "d53240f3738751d81a06f241f0a796d5827aff8d752c402cf03101683e1ce6bc",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-systems-of-equations-199c5075f9",
+    "skillId": "act-systems-of-equations",
+    "prompt": "If 4x + y = 11 and 3x + 2y = 2, what is x + y?",
+    "answer": {
+      "type": "auto",
+      "value": "-1",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "9"
+      },
+      {
+        "label": "B",
+        "text": "-1"
+      },
+      {
+        "label": "C",
+        "text": "4"
+      },
+      {
+        "label": "D",
+        "text": "-5"
+      },
+      {
+        "label": "E",
+        "text": "-20"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-systems-of-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "199c5075f93d34e139c53c7fa5837dcabd56248cd4ef62ca1e2fe3bce6e9019c",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-systems-of-equations-6f2837dbd6",
+    "skillId": "act-systems-of-equations",
+    "prompt": "If 3x + 2y = 12 and 2x + 3y = 3, what is x + y?",
+    "answer": {
+      "type": "auto",
+      "value": "3",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "3"
+      },
+      {
+        "label": "B",
+        "text": "-18"
+      },
+      {
+        "label": "C",
+        "text": "6"
+      },
+      {
+        "label": "D",
+        "text": "9"
       },
       {
         "label": "E",
@@ -4243,16 +4329,60 @@
       "act-systems-of-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "a8fee6626f124c20f0618758f74d9706b5c0fcf7c1866c23ca9c7deb36adb16c",
+    "contentHash": "6f2837dbd62560064818f1b00191db3d4506f2be8b6c34c3cb582ba6922fba44",
     "isActive": true
   },
   {
-    "problemId": "act-act-systems-of-equations-b6a414f47a",
+    "problemId": "act-act-systems-of-equations-ccd9aa5f45",
     "skillId": "act-systems-of-equations",
-    "prompt": "If 4x + 4y = 40 and 4x + 3y = 36, what is x + y?",
+    "prompt": "If 3x + 3y = 24 and 3x + y = 14, what is x + y?",
     "answer": {
       "type": "auto",
-      "value": "10",
+      "value": "8",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "-2"
+      },
+      {
+        "label": "B",
+        "text": "3"
+      },
+      {
+        "label": "C",
+        "text": "15"
+      },
+      {
+        "label": "D",
+        "text": "5"
+      },
+      {
+        "label": "E",
+        "text": "8"
+      }
+    ],
+    "correctOption": "E",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-systems-of-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "ccd9aa5f45da3f2f914fc6062c0148baa63e1f7cf6f0caca5780f4fe744b2886",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-systems-of-equations-252b489112",
+    "skillId": "act-systems-of-equations",
+    "prompt": "If 3x + 2y = 2 and 4x + 3y = 4, what is x + y?",
+    "answer": {
+      "type": "auto",
+      "value": "2",
       "equivalents": []
     },
     "answerType": "multiple-choice",
@@ -4263,198 +4393,66 @@
       },
       {
         "label": "B",
-        "text": "4"
+        "text": "-6"
       },
       {
         "label": "C",
-        "text": "10"
-      },
-      {
-        "label": "D",
-        "text": "6"
-      },
-      {
-        "label": "E",
-        "text": "24"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-systems-of-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "b6a414f47abba09ae20ca16ff9fc30628fd012850fe061f9cb1485858d396d94",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-systems-of-equations-a69a54d9bc",
-    "skillId": "act-systems-of-equations",
-    "prompt": "If 4x + 4y = -16 and 4x + 3y = -15, what is x + y?",
-    "answer": {
-      "type": "auto",
-      "value": "-4",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "3"
-      },
-      {
-        "label": "B",
         "text": "-2"
       },
       {
-        "label": "C",
-        "text": "-4"
-      },
-      {
         "label": "D",
-        "text": "-3"
-      },
-      {
-        "label": "E",
-        "text": "-1"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-systems-of-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "a69a54d9bcb8e1e740ca33c5d8cf625cc8d9d9818528dbcd3243cd19ee1b7cff",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-systems-of-equations-1ecbd212a7",
-    "skillId": "act-systems-of-equations",
-    "prompt": "If x + 3y = 10 and 2x + 4y = 10, what is x + y?",
-    "answer": {
-      "type": "auto",
-      "value": "0",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "0"
-      },
-      {
-        "label": "B",
-        "text": "5"
-      },
-      {
-        "label": "C",
-        "text": "-10"
-      },
-      {
-        "label": "D",
-        "text": "-5"
-      },
-      {
-        "label": "E",
-        "text": "-25"
-      }
-    ],
-    "correctOption": "A",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-systems-of-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "1ecbd212a7b1f500efeaf682afc2a36811fef56ca10122cb9a1d94ed2e208ce1",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-systems-of-equations-310c7d92e2",
-    "skillId": "act-systems-of-equations",
-    "prompt": "If 4x + y = -13 and 2x + 3y = 1, what is x + y?",
-    "answer": {
-      "type": "auto",
-      "value": "-1",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "-4"
-      },
-      {
-        "label": "B",
-        "text": "-7"
-      },
-      {
-        "label": "C",
-        "text": "-1"
-      },
-      {
-        "label": "D",
-        "text": "-12"
-      },
-      {
-        "label": "E",
-        "text": "3"
-      }
-    ],
-    "correctOption": "C",
-    "difficulty": 4,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-systems-of-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "310c7d92e2259f401cfc751f5c20caf26d8a307c3d09f4d592cb4bddab73d0d5",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-systems-of-equations-d461c79d92",
-    "skillId": "act-systems-of-equations",
-    "prompt": "If x + 3y = -8 and 2x + 2y = 0, what is x + y?",
-    "answer": {
-      "type": "auto",
-      "value": "0",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "0"
-      },
-      {
-        "label": "B",
         "text": "4"
       },
       {
-        "label": "C",
-        "text": "8"
-      },
-      {
-        "label": "D",
-        "text": "-4"
-      },
-      {
         "label": "E",
-        "text": "-16"
+        "text": "-8"
       }
     ],
     "correctOption": "A",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-systems-of-equations"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "252b489112ef1c69cace0a276bf5cd8c9038afd356e5c4158b27c069c1cdea36",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-systems-of-equations-a3da93c892",
+    "skillId": "act-systems-of-equations",
+    "prompt": "If 4x + 4y = 12 and x + 3y = -1, what is x + y?",
+    "answer": {
+      "type": "auto",
+      "value": "3",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "7"
+      },
+      {
+        "label": "B",
+        "text": "-10"
+      },
+      {
+        "label": "C",
+        "text": "3"
+      },
+      {
+        "label": "D",
+        "text": "-2"
+      },
+      {
+        "label": "E",
+        "text": "5"
+      }
+    ],
+    "correctOption": "C",
     "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
@@ -4463,139 +4461,7 @@
       "act-systems-of-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "d461c79d92a9a12c2387615db4190cd457718d4bcd167ff41e176781cbf1e52f",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-quadratic-equations-18326da622",
-    "skillId": "act-quadratic-equations",
-    "prompt": "Which of the following is a solution to x² - 1x - 12 = 0?",
-    "answer": {
-      "type": "auto",
-      "value": "4",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "4"
-      },
-      {
-        "label": "B",
-        "text": "1"
-      },
-      {
-        "label": "C",
-        "text": "-4"
-      },
-      {
-        "label": "D",
-        "text": "3"
-      },
-      {
-        "label": "E",
-        "text": "-12"
-      }
-    ],
-    "correctOption": "A",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-quadratic-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "18326da62282c7f782d56d372ca3ab3531ea3de47cd6be1ee01fea01128adde1",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-quadratic-equations-aec16618dd",
-    "skillId": "act-quadratic-equations",
-    "prompt": "Which of the following is a solution to x² - 9x + 20 = 0?",
-    "answer": {
-      "type": "auto",
-      "value": "5",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "-5"
-      },
-      {
-        "label": "B",
-        "text": "5"
-      },
-      {
-        "label": "C",
-        "text": "-4"
-      },
-      {
-        "label": "D",
-        "text": "20"
-      },
-      {
-        "label": "E",
-        "text": "9"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-quadratic-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "aec16618dd9cc77c91fdb52de98d5fd1c38b8a8d74d632f75fc91e0ade3883df",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-quadratic-equations-ff5716b0b2",
-    "skillId": "act-quadratic-equations",
-    "prompt": "Which of the following is a solution to x² - 10x + 24 = 0?",
-    "answer": {
-      "type": "auto",
-      "value": "6",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "6"
-      },
-      {
-        "label": "B",
-        "text": "24"
-      },
-      {
-        "label": "C",
-        "text": "10"
-      },
-      {
-        "label": "D",
-        "text": "-6"
-      },
-      {
-        "label": "E",
-        "text": "-4"
-      }
-    ],
-    "correctOption": "A",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-quadratic-equations"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "ff5716b0b23c091f2c8b30cccdb2eb535d222f7dc3cb456d4d447ff9d92c202f",
+    "contentHash": "a3da93c8928ea100de08560ff39ab56f0b8acf2097101c0f0a10e971ac0207a9",
     "isActive": true
   },
   {
@@ -4631,7 +4497,7 @@
       }
     ],
     "correctOption": "E",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -4675,7 +4541,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -4719,7 +4585,7 @@
       }
     ],
     "correctOption": "A",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -4763,7 +4629,7 @@
       }
     ],
     "correctOption": "A",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -4807,7 +4673,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 5,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -4819,135 +4685,135 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-polynomial-expressions-ab63901d91",
-    "skillId": "act-polynomial-expressions",
-    "prompt": "Expand: (x + 5)(x + 6)",
+    "problemId": "act-act-quadratic-equations-cc12b30c0c",
+    "skillId": "act-quadratic-equations",
+    "prompt": "Which of the following is a solution to x² - 11x + 30 = 0?",
     "answer": {
       "type": "auto",
-      "value": "x^2 + 11x + 30",
+      "value": "6",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "x^2 + 11"
+        "text": "11"
       },
       {
         "label": "B",
-        "text": "x^2 + 11x + 30"
+        "text": "6"
       },
       {
         "label": "C",
-        "text": "x^2 + 31"
+        "text": "30"
       },
       {
         "label": "D",
-        "text": "x^2 + 11x - 30"
+        "text": "-6"
       },
       {
         "label": "E",
-        "text": "x^2 + 30x + 11"
+        "text": "-5"
       }
     ],
     "correctOption": "B",
-    "difficulty": 2,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-polynomial-expressions"
+      "act-quadratic-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "ab63901d916d84c9bac8e9b8d72acb84fd15ea90f26260493d311592680d470e",
+    "contentHash": "cc12b30c0cff1d2d7afdb77e48f20d9667aec5f1e4fdcadf34f1612bcfa9d820",
     "isActive": true
   },
   {
-    "problemId": "act-act-polynomial-expressions-0d1fb0c578",
-    "skillId": "act-polynomial-expressions",
-    "prompt": "Expand: (x + 6)(x + 3)",
+    "problemId": "act-act-quadratic-equations-e51a649025",
+    "skillId": "act-quadratic-equations",
+    "prompt": "Which of the following is a solution to x² - 9x + 18 = 0?",
     "answer": {
       "type": "auto",
-      "value": "x^2 + 9x + 18",
+      "value": "6",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "x^2 + 18x + 9"
+        "text": "-6"
       },
       {
         "label": "B",
-        "text": "x^2 + 9x + 18"
+        "text": "6"
       },
       {
         "label": "C",
-        "text": "x^2 + 9"
+        "text": "9"
       },
       {
         "label": "D",
-        "text": "x^2 + 9x - 18"
+        "text": "-3"
       },
       {
         "label": "E",
-        "text": "x^2 + 19"
+        "text": "18"
       }
     ],
     "correctOption": "B",
-    "difficulty": 2,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-polynomial-expressions"
+      "act-quadratic-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "0d1fb0c57882c08918b7e377daaa538f9d23c7261b919061193864b7d604555f",
+    "contentHash": "e51a64902548a3d96b83c40198a01d446557ede264c4146bba72ece920a6bda9",
     "isActive": true
   },
   {
-    "problemId": "act-act-polynomial-expressions-c4a479504c",
-    "skillId": "act-polynomial-expressions",
-    "prompt": "Expand: (x - 6)(x - 5)",
+    "problemId": "act-act-quadratic-equations-0dbb9fc166",
+    "skillId": "act-quadratic-equations",
+    "prompt": "Which of the following is a solution to x² + 11x + 30 = 0?",
     "answer": {
       "type": "auto",
-      "value": "x^2 - 11x + 30",
+      "value": "-5",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "x^2 + 31"
+        "text": "30"
       },
       {
         "label": "B",
-        "text": "x^2 - 11"
+        "text": "-11"
       },
       {
         "label": "C",
-        "text": "x^2 + 30x - 11"
+        "text": "6"
       },
       {
         "label": "D",
-        "text": "x^2 - 11x + 30"
+        "text": "-5"
       },
       {
         "label": "E",
-        "text": "x^2 - 11x - 30"
+        "text": "5"
       }
     ],
     "correctOption": "D",
-    "difficulty": 3,
+    "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-polynomial-expressions"
+      "act-quadratic-equations"
     ],
     "source": "act-template-gen",
-    "contentHash": "c4a479504c7bd03ec58ec6d0577e3e88afd1ff5fc8bc2f0033ffb53719af6a84",
+    "contentHash": "0dbb9fc166c52a2a26360c55d7a56b766f8f3571046ea6aba07164e99bcaf9ea",
     "isActive": true
   },
   {
@@ -4983,7 +4849,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5027,7 +4893,7 @@
       }
     ],
     "correctOption": "E",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5071,7 +4937,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5115,7 +4981,7 @@
       }
     ],
     "correctOption": "C",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5159,7 +5025,7 @@
       }
     ],
     "correctOption": "A",
-    "difficulty": 5,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5171,135 +5037,135 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-radical-rational-expressions-27fe7500f7",
-    "skillId": "act-radical-rational-expressions",
-    "prompt": "Simplify: √80",
+    "problemId": "act-act-polynomial-expressions-f04538c081",
+    "skillId": "act-polynomial-expressions",
+    "prompt": "Expand: (x - 1)(x + 3)",
     "answer": {
       "type": "auto",
-      "value": "4√5",
+      "value": "x^2 + 2x - 3",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "4√5"
+        "text": "x^2 + 2x - 3"
       },
       {
         "label": "B",
-        "text": "20√1"
+        "text": "x^2 - 3x + 2"
       },
       {
         "label": "C",
-        "text": "80"
+        "text": "x^2 + 2"
       },
       {
         "label": "D",
-        "text": "9√5"
+        "text": "x^2 - 2"
       },
       {
         "label": "E",
-        "text": "4√10"
+        "text": "x^2 + 2x + 3"
       }
     ],
     "correctOption": "A",
-    "difficulty": 2,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-radical-rational-expressions"
+      "act-polynomial-expressions"
     ],
     "source": "act-template-gen",
-    "contentHash": "27fe7500f77d31e7d5249f4e4cbf166fbcc1fd016bcfce346ef8c39906a52871",
+    "contentHash": "f04538c0816e28aa6876349f6d8e1a5bbfff31038564c2fd423bbaa037acd4ef",
     "isActive": true
   },
   {
-    "problemId": "act-act-radical-rational-expressions-63cc21f580",
-    "skillId": "act-radical-rational-expressions",
-    "prompt": "Simplify: √75",
+    "problemId": "act-act-polynomial-expressions-3cc5275086",
+    "skillId": "act-polynomial-expressions",
+    "prompt": "Expand: (x - 3)(x + 6)",
     "answer": {
       "type": "auto",
-      "value": "5√3",
+      "value": "x^2 + 3x - 18",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "75"
+        "text": "x^2 + 3"
       },
       {
         "label": "B",
-        "text": "5√3"
+        "text": "x^2 + 3x - 18"
       },
       {
         "label": "C",
-        "text": "5√6"
+        "text": "x^2 + 3x + 18"
       },
       {
         "label": "D",
-        "text": "8√3"
+        "text": "x^2 - 17"
       },
       {
         "label": "E",
-        "text": "15√1"
+        "text": "x^2 - 18x + 3"
       }
     ],
     "correctOption": "B",
-    "difficulty": 2,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-radical-rational-expressions"
+      "act-polynomial-expressions"
     ],
     "source": "act-template-gen",
-    "contentHash": "63cc21f5805c334e62df23ae862b0d1b95233de588e3b6713c09b0c6f23257a9",
+    "contentHash": "3cc527508616f6df9ccc75efc87fc30e91e68d05bd6a07bbeec6101808c1ee42",
     "isActive": true
   },
   {
-    "problemId": "act-act-radical-rational-expressions-281e03dcfa",
-    "skillId": "act-radical-rational-expressions",
-    "prompt": "Simplify: √18",
+    "problemId": "act-act-polynomial-expressions-91481e1c01",
+    "skillId": "act-polynomial-expressions",
+    "prompt": "Expand: (x - 4)(x - 2)",
     "answer": {
       "type": "auto",
-      "value": "3√2",
+      "value": "x^2 - 6x + 8",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "3√2"
+        "text": "x^2 - 6x + 8"
       },
       {
         "label": "B",
-        "text": "5√2"
+        "text": "x^2 + 9"
       },
       {
         "label": "C",
-        "text": "3√4"
+        "text": "x^2 - 6x - 8"
       },
       {
         "label": "D",
-        "text": "6√1"
+        "text": "x^2 + 8x - 6"
       },
       {
         "label": "E",
-        "text": "18"
+        "text": "x^2 - 6"
       }
     ],
     "correctOption": "A",
-    "difficulty": 3,
+    "difficulty": 5,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-radical-rational-expressions"
+      "act-polynomial-expressions"
     ],
     "source": "act-template-gen",
-    "contentHash": "281e03dcfa2fb4a02dd89ad955b4bdf726c6e292396548637609c3f1e2de62ac",
+    "contentHash": "91481e1c012eb4966b2ccf210b25316c73a74610410feb17d7ecc41c9866d352",
     "isActive": true
   },
   {
@@ -5335,7 +5201,7 @@
       }
     ],
     "correctOption": "A",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5379,7 +5245,7 @@
       }
     ],
     "correctOption": "E",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5423,7 +5289,7 @@
       }
     ],
     "correctOption": "C",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5467,7 +5333,7 @@
       }
     ],
     "correctOption": "B",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5479,35 +5345,167 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-radical-rational-expressions-0e59fca760",
+    "problemId": "act-act-radical-rational-expressions-3b5367f4ab",
     "skillId": "act-radical-rational-expressions",
-    "prompt": "Simplify: √180",
+    "prompt": "Simplify: √48",
     "answer": {
       "type": "auto",
-      "value": "6√5",
+      "value": "4√3",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "6√10"
+        "text": "12√1"
       },
       {
         "label": "B",
-        "text": "30√1"
+        "text": "4√6"
       },
       {
         "label": "C",
-        "text": "6√5"
+        "text": "48"
       },
       {
         "label": "D",
-        "text": "180"
+        "text": "4√3"
       },
       {
         "label": "E",
-        "text": "11√5"
+        "text": "7√3"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-radical-rational-expressions"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "3b5367f4ab67f79bee8495d64431f977467658f2df076e0d668acf5b040a7245",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-radical-rational-expressions-8eb9d160c9",
+    "skillId": "act-radical-rational-expressions",
+    "prompt": "Simplify: √125",
+    "answer": {
+      "type": "auto",
+      "value": "5√5",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "5√10"
+      },
+      {
+        "label": "B",
+        "text": "25√1"
+      },
+      {
+        "label": "C",
+        "text": "5√5"
+      },
+      {
+        "label": "D",
+        "text": "125"
+      },
+      {
+        "label": "E",
+        "text": "10√5"
+      }
+    ],
+    "correctOption": "C",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-radical-rational-expressions"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "8eb9d160c9074c0a1091db0a435ea5d0ee0f2e4a3525957fc03ce1036abfe968",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-radical-rational-expressions-94c1f4b75c",
+    "skillId": "act-radical-rational-expressions",
+    "prompt": "Simplify: √96",
+    "answer": {
+      "type": "auto",
+      "value": "4√6",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "4√12"
+      },
+      {
+        "label": "B",
+        "text": "4√6"
+      },
+      {
+        "label": "C",
+        "text": "24√1"
+      },
+      {
+        "label": "D",
+        "text": "10√6"
+      },
+      {
+        "label": "E",
+        "text": "96"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 4,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-radical-rational-expressions"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "94c1f4b75ca657721c28e674a6802d12093698881a34bcbc6477db54ce9a7287",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-radical-rational-expressions-457916c62d",
+    "skillId": "act-radical-rational-expressions",
+    "prompt": "Simplify: √50",
+    "answer": {
+      "type": "auto",
+      "value": "5√2",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "10√1"
+      },
+      {
+        "label": "B",
+        "text": "7√2"
+      },
+      {
+        "label": "C",
+        "text": "5√2"
+      },
+      {
+        "label": "D",
+        "text": "5√4"
+      },
+      {
+        "label": "E",
+        "text": "50"
       }
     ],
     "correctOption": "C",
@@ -5519,7 +5517,7 @@
       "act-radical-rational-expressions"
     ],
     "source": "act-template-gen",
-    "contentHash": "0e59fca760f006b0dadbe0686280f353588cef4ead67511edfb0b8500fd6c388",
+    "contentHash": "457916c62d3b50d6aff1f4c19d59513997461c7b869a2ce7d80dc4647c132e62",
     "isActive": true
   },
   {
@@ -5535,7 +5533,7 @@
     "options": [
       {
         "label": "A",
-        "text": "-19"
+        "text": "-16"
       },
       {
         "label": "B",
@@ -5543,18 +5541,18 @@
       },
       {
         "label": "C",
-        "text": "-16"
-      },
-      {
-        "label": "D",
         "text": "-17"
       },
       {
-        "label": "E",
+        "label": "D",
         "text": "-7"
+      },
+      {
+        "label": "E",
+        "text": "-19"
       }
     ],
-    "correctOption": "A",
+    "correctOption": "E",
     "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
@@ -5564,94 +5562,6 @@
     ],
     "source": "act-template-gen",
     "contentHash": "2aa842d1f028f75f6837c17f9f9ca8912aeed4c24bc8c69d6bade5b72980145d",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-function-notation-evaluation-a12e23d77b",
-    "skillId": "act-function-notation-evaluation",
-    "prompt": "If f(x) = 4x² + 1, what is f(-4)?",
-    "answer": {
-      "type": "auto",
-      "value": "65",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "257"
-      },
-      {
-        "label": "B",
-        "text": "63"
-      },
-      {
-        "label": "C",
-        "text": "68"
-      },
-      {
-        "label": "D",
-        "text": "-15"
-      },
-      {
-        "label": "E",
-        "text": "65"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-function-notation-evaluation"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "a12e23d77b5c6b3c8a676ee30db8b896800d21547c6630ce37694acd75660b67",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-function-notation-evaluation-3793a97ccc",
-    "skillId": "act-function-notation-evaluation",
-    "prompt": "If f(x) = -4x² - 3, what is f(3)?",
-    "answer": {
-      "type": "auto",
-      "value": "-39",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "-15"
-      },
-      {
-        "label": "B",
-        "text": "-24"
-      },
-      {
-        "label": "C",
-        "text": "141"
-      },
-      {
-        "label": "D",
-        "text": "-33"
-      },
-      {
-        "label": "E",
-        "text": "-39"
-      }
-    ],
-    "correctOption": "E",
-    "difficulty": 3,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-function-notation-evaluation"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "3793a97cccd085b6f8e417dda5fc299695a40cd6880e8e8c676b6c83f96a138f",
     "isActive": true
   },
   {
@@ -5687,7 +5597,7 @@
       }
     ],
     "correctOption": "C",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5775,7 +5685,7 @@
       }
     ],
     "correctOption": "B",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5819,7 +5729,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5863,7 +5773,7 @@
       }
     ],
     "correctOption": "A",
-    "difficulty": 5,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -5875,91 +5785,91 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-linear-functions-972f1bfb70",
-    "skillId": "act-linear-functions",
-    "prompt": "What is the slope of the line through (-2, 4) and (-5, 3)?",
+    "problemId": "act-act-function-notation-evaluation-96b4a131e5",
+    "skillId": "act-function-notation-evaluation",
+    "prompt": "If f(x) = 3x² - 1, what is f(-1)?",
     "answer": {
       "type": "auto",
-      "value": "-1/-3",
+      "value": "2",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "-3"
-      },
-      {
-        "label": "B",
-        "text": "-1/-3"
-      },
-      {
-        "label": "C",
-        "text": "-0.3333333333333333"
-      },
-      {
-        "label": "D",
-        "text": "3"
-      },
-      {
-        "label": "E",
-        "text": "-1"
-      }
-    ],
-    "correctOption": "B",
-    "difficulty": 2,
-    "gradeBand": "8-12",
-    "tags": [
-      "act",
-      "act-math",
-      "act-linear-functions"
-    ],
-    "source": "act-template-gen",
-    "contentHash": "972f1bfb70727f5c5c640a43c7c9d6a167227b5981ed53af4c3e233ba8734baf",
-    "isActive": true
-  },
-  {
-    "problemId": "act-act-linear-functions-df7a2edf32",
-    "skillId": "act-linear-functions",
-    "prompt": "What is the slope of the line through (-3, -3) and (1, 2)?",
-    "answer": {
-      "type": "auto",
-      "value": "5/4",
-      "equivalents": []
-    },
-    "answerType": "multiple-choice",
-    "options": [
-      {
-        "label": "A",
-        "text": "4/5"
-      },
-      {
-        "label": "B",
-        "text": "-1.25"
-      },
-      {
-        "label": "C",
         "text": "4"
       },
       {
+        "label": "B",
+        "text": "0"
+      },
+      {
+        "label": "C",
+        "text": "2"
+      },
+      {
         "label": "D",
-        "text": "5"
+        "text": "-4"
       },
       {
         "label": "E",
-        "text": "5/4"
+        "text": "8"
       }
     ],
-    "correctOption": "E",
-    "difficulty": 2,
+    "correctOption": "C",
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-linear-functions"
+      "act-function-notation-evaluation"
     ],
     "source": "act-template-gen",
-    "contentHash": "df7a2edf32ed0627b275164ee96e1a3e969a52af0656f858656beeb96d8f351c",
+    "contentHash": "96b4a131e5f02607cabd59e788b9e1e34e1f7469ff5bef12368572f206cba5b5",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-function-notation-evaluation-94f40d87e7",
+    "skillId": "act-function-notation-evaluation",
+    "prompt": "If f(x) = -2x² + 2, what is f(-3)?",
+    "answer": {
+      "type": "auto",
+      "value": "-16",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "-22"
+      },
+      {
+        "label": "B",
+        "text": "-16"
+      },
+      {
+        "label": "C",
+        "text": "8"
+      },
+      {
+        "label": "D",
+        "text": "38"
+      },
+      {
+        "label": "E",
+        "text": "-20"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 5,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-function-notation-evaluation"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "94f40d87e7c06e6b4861044f8ba29776da7969130dd16139529825a09bcc4c7d",
     "isActive": true
   },
   {
@@ -5995,7 +5905,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -6039,7 +5949,7 @@
       }
     ],
     "correctOption": "E",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -6127,7 +6037,7 @@
       }
     ],
     "correctOption": "E",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -6171,7 +6081,7 @@
       }
     ],
     "correctOption": "A",
-    "difficulty": 4,
+    "difficulty": 3,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -6215,7 +6125,7 @@
       }
     ],
     "correctOption": "D",
-    "difficulty": 5,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -6227,79 +6137,123 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-quadratic-functions-fbd665509e",
-    "skillId": "act-quadratic-functions",
-    "prompt": "What is the vertex of the parabola y = 2(x - 4)² - 6?",
+    "problemId": "act-act-linear-functions-c1f77355c5",
+    "skillId": "act-linear-functions",
+    "prompt": "What is the slope of the line through (-2, 0) and (1, 4)?",
     "answer": {
       "type": "auto",
-      "value": "(4, -6)",
+      "value": "4/3",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "(4, -6)"
+        "text": "4/3"
       },
       {
         "label": "B",
-        "text": "(-6, 4)"
+        "text": "3/4"
       },
       {
         "label": "C",
-        "text": "(-4, 6)"
+        "text": "3"
       },
       {
         "label": "D",
-        "text": "(-4, -6)"
+        "text": "-1.3333333333333333"
       },
       {
         "label": "E",
-        "text": "(4, 6)"
+        "text": "4"
       }
     ],
     "correctOption": "A",
-    "difficulty": 2,
+    "difficulty": 4,
     "gradeBand": "8-12",
     "tags": [
       "act",
       "act-math",
-      "act-quadratic-functions"
+      "act-linear-functions"
     ],
     "source": "act-template-gen",
-    "contentHash": "fbd665509e56a65ce259cf9a0f2c794c82487f4cdbafb93f753ad90f010cbb47",
+    "contentHash": "c1f77355c5dbf524d0e85fafe7dc8b3e1a8f943392cae40ee40ce4b57d697d2c",
     "isActive": true
   },
   {
-    "problemId": "act-act-quadratic-functions-1bf22db683",
-    "skillId": "act-quadratic-functions",
-    "prompt": "What is the vertex of the parabola y = 1(x + 2)² - 3?",
+    "problemId": "act-act-linear-functions-c0b0a4403a",
+    "skillId": "act-linear-functions",
+    "prompt": "What is the slope of the line through (1, -6) and (5, -1)?",
     "answer": {
       "type": "auto",
-      "value": "(-2, -3)",
+      "value": "5/4",
       "equivalents": []
     },
     "answerType": "multiple-choice",
     "options": [
       {
         "label": "A",
-        "text": "(2, -3)"
+        "text": "4"
       },
       {
         "label": "B",
-        "text": "(-3, -2)"
+        "text": "5/4"
       },
       {
         "label": "C",
-        "text": "(2, 3)"
+        "text": "-1.25"
       },
       {
         "label": "D",
-        "text": "(-2, -3)"
+        "text": "5"
       },
       {
         "label": "E",
-        "text": "(-2, 3)"
+        "text": "4/5"
+      }
+    ],
+    "correctOption": "B",
+    "difficulty": 5,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-linear-functions"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "c0b0a4403a4bd5259f54ce2ee398e117efd8e1c0e8247f8972d57fe5e36e959e",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-quadratic-functions-41f74f98b2",
+    "skillId": "act-quadratic-functions",
+    "prompt": "What is the vertex of the parabola y = 1(x + 2)² + 5?",
+    "answer": {
+      "type": "auto",
+      "value": "(-2, 5)",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "(-2, -5)"
+      },
+      {
+        "label": "B",
+        "text": "(2, 5)"
+      },
+      {
+        "label": "C",
+        "text": "(5, -2)"
+      },
+      {
+        "label": "D",
+        "text": "(-2, 5)"
+      },
+      {
+        "label": "E",
+        "text": "(2, -5)"
       }
     ],
     "correctOption": "D",
@@ -6311,7 +6265,7 @@
       "act-quadratic-functions"
     ],
     "source": "act-template-gen",
-    "contentHash": "1bf22db68335604c314c7da6287263eb0dd28d8b4730f13a8d74af16085e3277",
+    "contentHash": "41f74f98b2e3516108b2dbf746126ba6c3c180c9817454b2be5db1f41894cac3",
     "isActive": true
   },
   {
@@ -6347,7 +6301,7 @@
       }
     ],
     "correctOption": "B",
-    "difficulty": 3,
+    "difficulty": 2,
     "gradeBand": "8-12",
     "tags": [
       "act",
@@ -6400,6 +6354,50 @@
     ],
     "source": "act-template-gen",
     "contentHash": "c744d428be4f4db2f273a35009f8ef1d61bbe39eab05f2cf0c6e78f577915726",
+    "isActive": true
+  },
+  {
+    "problemId": "act-act-quadratic-functions-fbd665509e",
+    "skillId": "act-quadratic-functions",
+    "prompt": "What is the vertex of the parabola y = 2(x - 4)² - 6?",
+    "answer": {
+      "type": "auto",
+      "value": "(4, -6)",
+      "equivalents": []
+    },
+    "answerType": "multiple-choice",
+    "options": [
+      {
+        "label": "A",
+        "text": "(-4, 6)"
+      },
+      {
+        "label": "B",
+        "text": "(4, 6)"
+      },
+      {
+        "label": "C",
+        "text": "(-4, -6)"
+      },
+      {
+        "label": "D",
+        "text": "(4, -6)"
+      },
+      {
+        "label": "E",
+        "text": "(-6, 4)"
+      }
+    ],
+    "correctOption": "D",
+    "difficulty": 3,
+    "gradeBand": "8-12",
+    "tags": [
+      "act",
+      "act-math",
+      "act-quadratic-functions"
+    ],
+    "source": "act-template-gen",
+    "contentHash": "fbd665509e56a65ce259cf9a0f2c794c82487f4cdbafb93f753ad90f010cbb47",
     "isActive": true
   },
   {

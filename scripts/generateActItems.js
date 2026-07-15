@@ -356,8 +356,16 @@ G['act-congruence-similarity'] = (d) => {
 
 // integrating-essential-skills ----------------------------------
 G['act-multi-step-rate-proportion'] = (d) => {
-  const rate = ri(2, 9); const hours = ri(2, 6 + d); const correct = rate * hours;
-  return { prompt: `A machine produces ${rate} parts per hour. How many parts does it produce in ${hours} hours?`, correct, distractors: [rate + hours, correct + rate, correct - hours, 2 * correct, correct + hours, rate * hours - rate], validate: () => rate * hours === correct };
+  // Two-leg trip — total distance = r1·h1 + r2·h2 (two computed steps).
+  const r1 = ri(3, 9), h1 = ri(2, 4), r2 = ri(3, 9), h2 = ri(2, 4);
+  const correct = r1 * h1 + r2 * h2;
+  return {
+    prompt: `A cyclist rides at ${r1} miles per hour for ${h1} hours, then at ${r2} miles per hour for ${h2} hours. What is the total distance traveled, in miles?`,
+    correct,
+    distractors: [r1 * h1, (r1 + r2) * (h1 + h2), r1 + r2 + h1 + h2, correct + r1, correct - h2],
+    trap: r1 * h2 + r2 * h1, // paired the wrong speed with the wrong time
+    validate: () => r1 * h1 + r2 * h2 === correct,
+  };
 };
 G['act-area-perimeter-composite'] = (d) => {
   const a = ri(3, 7), b = ri(3, 7), c = ri(2, 5); // L-shape: big rect a×b minus corner c×c
@@ -365,17 +373,52 @@ G['act-area-perimeter-composite'] = (d) => {
   return { prompt: `In the figure shown, a square of side ${c} has been cut from the corner of a ${a}-by-${b} rectangle. What is the area of the remaining (shaded) region?`, correct, svg: SVG.lShape(a, b, c), distractors: [a * b, a * b + c * c, a * b - c, 2 * (a + b) - c], validate: () => a * b - c * c === correct && correct > 0 };
 };
 G['act-algebraic-reasoning-context'] = (d) => {
-  const per = ri(3, 9), fixed = ri(5, 20), n = ri(2, 8); const correct = per * n + fixed;
-  return { prompt: `A plumber charges $${fixed} plus $${per} per hour. What is the total charge for a ${n}-hour job?`, correct, format: money, distractors: [per * n, fixed + per, per * (n + 1) + fixed, per * n + fixed * n], validate: () => per * n + fixed === correct };
+  // Set up total = fixed + per·m, then SOLVE for the number of months m.
+  const per = ri(3, 9), fixed = ri(2, 8) * 5, m = ri(3, 9);
+  const total = fixed + per * m; const correct = m;
+  return {
+    prompt: `A gym charges a $${fixed} one-time sign-up fee plus $${per} each month. After how many months will a member have paid $${total} in all?`,
+    correct,
+    distractors: [Math.round(total / per), m + 1, m - 1, Math.round(total / (per + fixed)) || 1, total - fixed],
+    trap: Math.round((total + fixed) / per), // ADDED the sign-up fee instead of subtracting it before dividing
+    validate: () => fixed + per * correct === total,
+  };
 };
 G['act-percent-applications'] = (d) => {
-  const price = ri(2, 12) * 10; const disc = pick([10, 15, 20, 25, 30, 40]); const correct = price * (1 - disc / 100);
-  return { prompt: `A $${price} item is discounted ${disc}%. What is the sale price?`, correct, format: money, distractors: [price * disc / 100, price + price * disc / 100, price - disc, price * (1 - disc / 1000)], validate: () => Math.abs(price * (1 - disc / 100) - correct) < 1e-9 };
+  // Two-step: apply the discount, THEN add sales tax on the discounted price.
+  const price = pick([40, 50, 60, 80, 100, 120]); const disc = pick([10, 20, 25]); const tax = pick([5, 8, 10]);
+  const sale = price * (1 - disc / 100);
+  const correct = Math.round(sale * (1 + tax / 100) * 100) / 100;
+  return {
+    prompt: `A $${price} jacket is ${disc}% off. With ${tax}% sales tax added to the discounted price, what is the final cost?`,
+    correct, format: money,
+    distractors: [sale, Math.round(price * (1 + tax / 100) * 100) / 100, price - disc, Math.round(price * disc / 100 * 100) / 100],
+    // TRAP: combined the percents on the original price — (1 − disc% + tax%) — instead of applying them in sequence.
+    trap: Math.round(price * (1 + (tax - disc) / 100) * 100) / 100,
+    validate: () => Math.abs(price * (1 - disc / 100) * (1 + tax / 100) - correct) < 0.01,
+  };
 };
 G['act-measurement-unit-conversion'] = (d) => {
-  const kind = pick([['feet', 'inches', 12], ['yards', 'feet', 3], ['hours', 'minutes', 60], ['pounds', 'ounces', 16]]);
+  // Includes two-step conversions (yards→inches = ×3×12, hours→seconds = ×60×60).
+  const kind = pick([
+    ['yards', 'inches', 36, [3, 12]],
+    ['hours', 'seconds', 3600, [60, 60]],
+    ['feet', 'inches', 12, null],
+    ['pounds', 'ounces', 16, null],
+    ['gallons', 'cups', 16, null],
+  ]);
   const q = ri(2, 8); const correct = q * kind[2];
-  return { prompt: `How many ${kind[1]} are in ${q} ${kind[0]}?`, correct, distractors: [q + kind[2], Math.round(q / kind[2]) || 1, q * (kind[2] - 1), q * kind[2] * 2], validate: () => q * kind[2] === correct };
+  const twoStep = kind[3];
+  const distractors = [q + kind[2], q * (kind[2] - 1), q * kind[2] * 2, Math.round(q * kind[2] / 2)];
+  if (twoStep) distractors.push(q * twoStep[0], q * twoStep[1]); // stopped after one conversion
+  return {
+    prompt: `How many ${kind[1]} are in ${q} ${kind[0]}?`,
+    correct,
+    distractors,
+    // TRAP (two-step only): ADDED the two conversion factors instead of multiplying them.
+    trap: twoStep ? q * (twoStep[0] + twoStep[1]) : q + kind[2],
+    validate: () => q * kind[2] === correct,
+  };
 };
 
 // statistics-probability ----------------------------------------
@@ -428,10 +471,15 @@ function generate(perSkill) {
     let made = 0, attempts = 0;
     while (made < perSkill && attempts < perSkill * 8) {
       attempts++;
-      const spec = gen(diffs[made] || 3);
+      const diff = diffs[made] || 3;
+      const spec = gen(diff);
       if (!spec) continue;
       if (spec.validate && !spec.validate()) { rejects.failValidate++; continue; }
-      const item = buildMC({ skillId, prompt: spec.prompt, correct: spec.correct, distractors: spec.distractors, difficulty: diffs[made] || 3, format: spec.format, svg: spec.svg });
+      // Trap distractors (a sophisticated, specific misread) only surface on
+      // hard items (d>=4). On easy items, distractors stay honest/instructive.
+      let distractors = spec.distractors;
+      if (spec.trap != null && diff >= 4) distractors = [spec.trap, ...distractors];
+      const item = buildMC({ skillId, prompt: spec.prompt, correct: spec.correct, distractors, difficulty: diff, format: spec.format, svg: spec.svg });
       if (!item) { rejects.fewDistractors++; continue; }
       if (byId.has(item.problemId)) continue; // dedupe identical prompts
       // FINAL self-check: exactly one option equals the answer value.
