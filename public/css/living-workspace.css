@@ -49,7 +49,7 @@
 /* ── focused derivation board (build brick #1) ─────────────────
    A document-style flow: problem pinned at top, steps beneath it.
    Replaces the free-canvas card placement for the chat surface. */
-.lws-dv-root { overflow: hidden; }
+.lws-dv-root { overflow: hidden; --lws-dv-scale: 1; }
 .lws-dv {
   position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
   padding: 20px clamp(14px, 5%, 42px) 40px;
@@ -66,8 +66,8 @@
   padding: 24px; pointer-events: none; color: var(--lws-card-ink);
 }
 .lws-dv-empty-ic { font-size: 32px; opacity: .55; }
-.lws-dv-empty-t { font: 600 15px/1.3 system-ui, sans-serif; opacity: .8; }
-.lws-dv-empty-s { font: 13px/1.45 system-ui, sans-serif; opacity: .55; max-width: 280px; }
+.lws-dv-empty-t { font: 600 15px/1.3 system-ui, sans-serif; font-size: calc(15px * var(--lws-dv-scale)); opacity: .8; }
+.lws-dv-empty-s { font: 13px/1.45 system-ui, sans-serif; font-size: calc(13px * var(--lws-dv-scale)); opacity: .55; max-width: 280px; }
 
 .lws-dv-problem {
   position: sticky; top: -20px; z-index: 3;
@@ -76,33 +76,55 @@
   border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
   box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
 }
-.lws-dv-plabel { font: 10px system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--lws-accent); margin-bottom: 6px; }
-.lws-dv-ptex { font-size: 21px; color: var(--lws-card-ink); }
+.lws-dv-plabel { font: 10px system-ui, sans-serif; font-size: calc(10px * var(--lws-dv-scale)); letter-spacing: .16em; text-transform: uppercase; color: var(--lws-accent); margin-bottom: 6px; }
+.lws-dv-ptex { font-size: calc(21px * var(--lws-dv-scale)); color: var(--lws-card-ink); }
 /* Never let a card run off the board: prose wraps; a genuinely wide equation
    scrolls within its own line instead of clipping past the right edge. */
 .lws-dv-ptex, .lws-dv-tex { max-width: 100%; overflow-x: auto; overflow-y: hidden; overflow-wrap: anywhere; }
 .lws-dv-ptex::-webkit-scrollbar, .lws-dv-tex::-webkit-scrollbar { height: 4px; }
-.lws-dv-prose { white-space: normal; font-size: 15px; line-height: 1.45; overflow-x: hidden; }
-.lws-dv-ptex.lws-dv-prose { font-size: 16px; }
+.lws-dv-prose { white-space: normal; font-size: calc(15px * var(--lws-dv-scale)); line-height: 1.45; overflow-x: hidden; }
+.lws-dv-ptex.lws-dv-prose { font-size: calc(16px * var(--lws-dv-scale)); }
 
 .lws-dv-lines { display: flex; flex-direction: column; }
 .lws-dv-line { padding: 7px 4px; animation: lws-dv-in .34s cubic-bezier(.2, 1, .3, 1) both; }
 @keyframes lws-dv-in { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
-.lws-dv-tex { font-size: 20px; color: var(--lws-card-ink); }
+.lws-dv-tex { font-size: calc(20px * var(--lws-dv-scale)); color: var(--lws-card-ink); }
 .lws-dv-operation { padding: 4px 4px 0; }
 .lws-dv-op {
-  font: 12.5px ui-monospace, "SF Mono", Menlo, monospace; color: var(--lws-accent);
+  font: 12.5px ui-monospace, "SF Mono", Menlo, monospace; font-size: calc(12.5px * var(--lws-dv-scale)); color: var(--lws-accent);
   background: color-mix(in srgb, var(--lws-accent) 12%, transparent);
   border: 1px solid color-mix(in srgb, var(--lws-accent) 30%, transparent);
   border-radius: 7px; padding: 2px 8px; opacity: .95;
 }
-.lws-dv-scaffold .lws-dv-tex, .lws-dv-example .lws-dv-tex { opacity: .82; font-size: 18px; }
+.lws-dv-scaffold .lws-dv-tex, .lws-dv-example .lws-dv-tex { opacity: .82; font-size: calc(18px * var(--lws-dv-scale)); }
 .lws-dv-solution {
   margin-top: 4px; padding-top: 10px; border-top: 1px dashed var(--lws-card-border);
 }
 .lws-dv-solution .lws-dv-tex { font-weight: 700; }
 .lws-dv-block { padding: 10px 0; }
 .lws-dv-block > * { max-width: 100%; }
+
+/* Text-size control (accessibility): scale all board text up/down. Pinned to
+   the board corner, fixed while the derivation scrolls beneath it. */
+.lws-dv-az {
+  position: absolute; top: 10px; right: 12px; z-index: 6;
+  display: flex; align-items: stretch; gap: 1px;
+  background: color-mix(in srgb, var(--lws-card-bg) 84%, transparent);
+  border: 1px solid var(--lws-card-border); border-radius: 9px; padding: 2px;
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.lws-dv-az button {
+  appearance: none; -webkit-appearance: none; border: none; background: transparent;
+  cursor: pointer; color: var(--lws-card-ink); border-radius: 7px; line-height: 1;
+  font-family: system-ui, sans-serif; padding: 3px 8px; min-width: 30px; min-height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.lws-dv-az button:hover { background: color-mix(in srgb, var(--lws-accent) 18%, transparent); }
+.lws-dv-az button:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 1px; }
+.lws-dv-az button:disabled { opacity: .35; cursor: default; background: transparent; }
+.lws-dv-az .az-dn { font-size: 12px; }
+.lws-dv-az .az-up { font-size: 17px; }
+.lws-dv-az .az-lab { font-size: 10px; opacity: .7; min-width: 34px; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
 
 /* ── equation card ── */
 .lws-eq-card {

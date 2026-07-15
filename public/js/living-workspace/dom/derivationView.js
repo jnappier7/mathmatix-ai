@@ -119,8 +119,44 @@
     container.appendChild(rootEl);
 
     this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, problem: problem, lines: lines };
+    this._mountTextScale(rootEl);
     this._refreshEmpty();
   }
+
+  // Accessibility: a small A−/A+ control that scales ALL board text via the
+  // --lws-dv-scale token (see living-workspace.css). Persisted per browser so a
+  // student who needs larger text sets it once. Keyboard-operable buttons with
+  // aria-labels; the middle readout is a reset button and an aria-live region.
+  DerivationView.prototype._mountTextScale = function (rootEl) {
+    var d = this.doc;
+    var STORE = 'lws.dv.textScale', MIN = 0.85, MAX = 1.8, STEP = 0.15;
+    var scale = 1;
+    try { var v = parseFloat(root.localStorage && root.localStorage.getItem(STORE)); if (v >= MIN && v <= MAX) scale = v; } catch (_) { /* storage blocked */ }
+
+    var bar = d.createElement('div');
+    bar.className = 'lws-dv-az';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', 'Board text size');
+
+    var dn = d.createElement('button'); dn.type = 'button'; dn.className = 'az-dn'; dn.textContent = 'A'; dn.setAttribute('aria-label', 'Decrease board text size');
+    var mid = d.createElement('button'); mid.type = 'button'; mid.className = 'az-lab'; mid.setAttribute('aria-label', 'Reset board text size'); mid.setAttribute('aria-live', 'polite');
+    var up = d.createElement('button'); up.type = 'button'; up.className = 'az-up'; up.textContent = 'A'; up.setAttribute('aria-label', 'Increase board text size');
+    bar.appendChild(dn); bar.appendChild(mid); bar.appendChild(up);
+    rootEl.appendChild(bar);
+
+    function apply() {
+      scale = Math.max(MIN, Math.min(MAX, Math.round(scale * 100) / 100));
+      rootEl.style.setProperty('--lws-dv-scale', String(scale));
+      mid.textContent = Math.round(scale * 100) + '%';
+      dn.disabled = scale <= MIN + 1e-6;
+      up.disabled = scale >= MAX - 1e-6;
+      try { root.localStorage && root.localStorage.setItem(STORE, String(scale)); } catch (_) { /* ignore */ }
+    }
+    dn.addEventListener('click', function () { scale -= STEP; apply(); });
+    up.addEventListener('click', function () { scale += STEP; apply(); });
+    mid.addEventListener('click', function () { scale = 1; apply(); });
+    apply();
+  };
 
   DerivationView.prototype._refreshEmpty = function () {
     var has = this._problemTex != null || this.el.lines.childNodes.length > 0;
