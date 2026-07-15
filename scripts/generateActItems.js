@@ -41,7 +41,7 @@ const money = (v) => (Number.isInteger(v) ? `$${v}` : `$${v.toFixed(2)}`);
 // ── MC assembler: takes correct value + distractor values, dedupes,
 //    shuffles, assigns the correct letter. Enforces exactly-one-correct. ──
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
-function buildMC({ skillId, prompt, correct, distractors, difficulty, format }) {
+function buildMC({ skillId, prompt, correct, distractors, difficulty, format, svg }) {
   const fmt = format || ((v) => String(v));
   const correctText = fmt(correct);
   // Unique distractor texts, none equal to the correct text.
@@ -63,6 +63,7 @@ function buildMC({ skillId, prompt, correct, distractors, difficulty, format }) 
     problemId: `act-${skillId}-${contentHash.slice(0, 10)}`,
     skillId,
     prompt,
+    svg: svg || undefined,
     answer: { type: 'auto', value: correctText, equivalents: [] },
     answerType: 'multiple-choice',
     options,
@@ -86,7 +87,42 @@ function numDistractors(correct, pool) {
   return out;
 }
 
-// ── generators: skillId -> (difficulty) -> { prompt, correct, distractors, format?, validate? } ──
+// ── SVG figure helpers ────────────────────────────────────────
+// Compact, theme-neutral figures (purple stroke + label text read on light and
+// dark grounds). Returned as an `svg` string the runner renders above the prompt.
+const SVG = {
+  _wrap: (inner, vb = '0 0 200 150') =>
+    `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:220px" stroke="#7c5cff" fill="none" stroke-width="2" font-family="sans-serif" font-size="13">${inner}</svg>`,
+  rightTriangle(legA, legB) {
+    // right angle at bottom-left; horizontal leg = legA, vertical leg = legB
+    const inner = `
+      <polygon points="30,120 170,120 30,30" stroke-linejoin="round"/>
+      <rect x="30" y="108" width="12" height="12" stroke-width="1.5"/>
+      <text x="100" y="138" fill="#7c5cff" stroke="none" text-anchor="middle">${legA}</text>
+      <text x="16" y="78" fill="#7c5cff" stroke="none" text-anchor="middle">${legB}</text>`;
+    return SVG._wrap(inner);
+  },
+  regularPolygon(n) {
+    const cx = 100, cy = 75, r = 58; const pts = [];
+    for (let i = 0; i < n; i++) { const ang = -Math.PI / 2 + (2 * Math.PI * i) / n; pts.push(`${(cx + r * Math.cos(ang)).toFixed(1)},${(cy + r * Math.sin(ang)).toFixed(1)}`); }
+    return SVG._wrap(`<polygon points="${pts.join(' ')}" stroke-linejoin="round"/>`);
+  },
+  points(p1, p2) {
+    // plot two points on a small axis; map math coords (-6..6) to svg
+    const mx = (x) => 100 + x * 12, my = (y) => 75 - y * 9;
+    const dot = (p, lbl) => `<circle cx="${mx(p[0])}" cy="${my(p[1])}" r="3.5" fill="#7c5cff" stroke="none"/><text x="${mx(p[0]) + 6}" y="${my(p[1]) - 6}" fill="#7c5cff" stroke="none">(${p[0]}, ${p[1]})</text>`;
+    const axes = `<line x1="20" y1="75" x2="180" y2="75" stroke="#bbb" stroke-width="1"/><line x1="100" y1="15" x2="100" y2="140" stroke="#bbb" stroke-width="1"/>`;
+    return SVG._wrap(axes + dot(p1) + dot(p2), '0 0 200 150');
+  },
+  lShape(a, b, c) {
+    // a×b rectangle (scaled) with a c×c bite from top-right corner
+    const s = 12; const W = a * s, H = b * s, C = c * s; const ox = 30, oy = 20;
+    const pts = `${ox},${oy} ${ox + W - C},${oy} ${ox + W - C},${oy + C} ${ox + W},${oy + C} ${ox + W},${oy + H} ${ox},${oy + H}`;
+    return SVG._wrap(`<polygon points="${pts}" stroke-linejoin="round"/>`, `0 0 ${ox * 2 + W} ${oy * 2 + H}`);
+  },
+};
+
+// ── generators: skillId -> (difficulty) -> { prompt, correct, distractors, format?, validate?, svg? } ──
 // validate() returns true iff the emitted correct answer really solves the problem.
 const G = {};
 
@@ -281,8 +317,8 @@ G['act-angles-lines-triangles'] = (d) => {
 G['act-polygons-circles'] = (d) => {
   const n = pick([5, 6, 8, 9, 10, 12, 15, 18, 20, 24, 36]); const correct = (n - 2) * 180 / n;
   return {
-    prompt: `What is the measure of one interior angle of a regular ${n}-gon?`,
-    correct, format: (v) => `${v}°`,
+    prompt: `What is the measure of one interior angle of the regular ${n}-gon shown?`,
+    correct, format: (v) => `${v}°`, svg: n <= 12 ? SVG.regularPolygon(n) : undefined,
     distractors: [(n - 2) * 180, 360 / n, 180 / n, (n * 180) / n],
     validate: () => Number.isInteger(correct) && correct === (n - 2) * 180 / n,
   };
@@ -300,7 +336,7 @@ G['act-coordinate-geometry'] = (d) => {
   if (kind === 'mid') {
     const x2 = ri(-5, 5), y2 = ri(-5, 5); const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
     const correct = `(${mx}, ${my})`;
-    return { prompt: `What is the midpoint of the segment from (${x1}, ${y1}) to (${x2}, ${y2})?`, correct, format: (v) => v, distractors: [`(${x1 + x2}, ${y1 + y2})`, `(${x2 - x1}, ${y2 - y1})`, `(${my}, ${mx})`, `(${(x1 + x2) / 2 + 1}, ${(y1 + y2) / 2})`], validate: () => true };
+    return { prompt: `What is the midpoint of the segment joining the two points shown, (${x1}, ${y1}) and (${x2}, ${y2})?`, correct, format: (v) => v, svg: SVG.points([x1, y1], [x2, y2]), distractors: [`(${x1 + x2}, ${y1 + y2})`, `(${x2 - x1}, ${y2 - y1})`, `(${my}, ${mx})`, `(${(x1 + x2) / 2 + 1}, ${(y1 + y2) / 2})`], validate: () => true };
   }
   // Pythagorean triple distance
   const trip = pick([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17]]);
@@ -310,7 +346,7 @@ G['act-coordinate-geometry'] = (d) => {
 G['act-right-triangle-trig'] = (d) => {
   const trip = pick([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17], [9, 12, 15]]);
   const correct = trip[2];
-  return { prompt: `A right triangle has legs of length ${trip[0]} and ${trip[1]}. What is the length of the hypotenuse?`, correct, distractors: [trip[0] + trip[1], trip[2] - 1, trip[2] + 1, Math.round(Math.sqrt(trip[0] * trip[1])), trip[0] + trip[1] - 1, trip[1] + trip[0] + 2], validate: () => trip[0] ** 2 + trip[1] ** 2 === correct ** 2 };
+  return { prompt: `In the right triangle shown, the legs have length ${trip[0]} and ${trip[1]}. What is the length of the hypotenuse?`, correct, svg: SVG.rightTriangle(trip[0], trip[1]), distractors: [trip[0] + trip[1], trip[2] - 1, trip[2] + 1, Math.round(Math.sqrt(trip[0] * trip[1])), trip[0] + trip[1] - 1, trip[1] + trip[0] + 2], validate: () => trip[0] ** 2 + trip[1] ** 2 === correct ** 2 };
 };
 G['act-congruence-similarity'] = (d) => {
   const k = ri(2, 4); const base = ri(3, 8); const correspond = base * k; const other = ri(3, 9);
@@ -326,7 +362,7 @@ G['act-multi-step-rate-proportion'] = (d) => {
 G['act-area-perimeter-composite'] = (d) => {
   const a = ri(3, 7), b = ri(3, 7), c = ri(2, 5); // L-shape: big rect a×b minus corner c×c
   const correct = a * b - c * c;
-  return { prompt: `A rectangle ${a} by ${b} has a square of side ${c} cut from one corner. What is the remaining area?`, correct, distractors: [a * b, a * b + c * c, a * b - c, 2 * (a + b) - c], validate: () => a * b - c * c === correct && correct > 0 };
+  return { prompt: `In the figure shown, a square of side ${c} has been cut from the corner of a ${a}-by-${b} rectangle. What is the area of the remaining (shaded) region?`, correct, svg: SVG.lShape(a, b, c), distractors: [a * b, a * b + c * c, a * b - c, 2 * (a + b) - c], validate: () => a * b - c * c === correct && correct > 0 };
 };
 G['act-algebraic-reasoning-context'] = (d) => {
   const per = ri(3, 9), fixed = ri(5, 20), n = ri(2, 8); const correct = per * n + fixed;
@@ -395,7 +431,7 @@ function generate(perSkill) {
       const spec = gen(diffs[made] || 3);
       if (!spec) continue;
       if (spec.validate && !spec.validate()) { rejects.failValidate++; continue; }
-      const item = buildMC({ skillId, prompt: spec.prompt, correct: spec.correct, distractors: spec.distractors, difficulty: diffs[made] || 3, format: spec.format });
+      const item = buildMC({ skillId, prompt: spec.prompt, correct: spec.correct, distractors: spec.distractors, difficulty: diffs[made] || 3, format: spec.format, svg: spec.svg });
       if (!item) { rejects.fewDistractors++; continue; }
       if (byId.has(item.problemId)) continue; // dedupe identical prompts
       // FINAL self-check: exactly one option equals the answer value.

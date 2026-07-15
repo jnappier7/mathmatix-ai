@@ -15,6 +15,7 @@ const actItemSchema = new Schema({
   skillId: { type: String },
   category: { type: String },
   content: { type: String },                 // the prompt shown to the student
+  svg: { type: String },                     // optional figure
   answerType: { type: String },
   options: [{ label: String, text: String }],
   difficulty: { type: Number },

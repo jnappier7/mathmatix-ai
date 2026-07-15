@@ -103,6 +103,7 @@ router.get('/next-problem', async (req, res) => {
       problem: {
         problemId: item.problemId,
         content: item.content,
+        svg: item.svg,
         skillId: item.skillId,
         category: item.category,
         answerType: item.answerType,

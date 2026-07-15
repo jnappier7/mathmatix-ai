@@ -25,6 +25,8 @@
   .actt-bar{height:6px;background:#ece9f5;border-radius:3px;overflow:hidden}
   .actt-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:0;transition:width .25s}
   .actt-body{padding:18px;overflow-y:auto}
+  .actt-fig{display:flex;justify-content:center;margin:2px 0 14px}
+  .actt-fig svg{background:#faf9ff;border:1px solid #efedf8;border-radius:10px;padding:8px}
   .actt-q{font-size:17px;line-height:1.5;margin:4px 0 16px;white-space:pre-wrap}
   .actt-opts{display:flex;flex-direction:column;gap:8px}
   .actt-opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:2px solid #e7e4f1;border-radius:11px;cursor:pointer;font-size:15px;background:#fff;text-align:left;transition:all .12s}
@@ -188,7 +190,11 @@
       const opts = (p.options || []).map(o =>
         `<button class="actt-opt" data-label="${o.label}"><span class="actt-optlab">${o.label}</span><span>${escapeHtml(o.text)}</span></button>`
       ).join('');
-      this.el('actt-body').innerHTML = `<div class="actt-q">${escapeHtml(p.content || '')}</div><div class="actt-opts">${opts}</div>`;
+      // Figure is our own generated SVG (from the item bank), not user input.
+      // Guard: only render a bare <svg> with no scripts.
+      const fig = (p.svg && /^<svg[\s>]/.test(p.svg) && !/<script/i.test(p.svg))
+        ? `<div class="actt-fig">${p.svg}</div>` : '';
+      this.el('actt-body').innerHTML = `${fig}<div class="actt-q">${escapeHtml(p.content || '')}</div><div class="actt-opts">${opts}</div>`;
       this.el('actt-body').querySelectorAll('.actt-opt').forEach(btn => {
         btn.addEventListener('click', () => {
           this.selected = btn.getAttribute('data-label');

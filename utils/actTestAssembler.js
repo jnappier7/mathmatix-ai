@@ -100,6 +100,7 @@ function toClientItem(slot, problem) {
     skillId: slot.skillId,
     problemId: problem.problemId,          // the string problemId (matches findNearDifficulty excludes)
     content: problem.prompt,               // field is `prompt`; screener sends it as `content`
+    svg: problem.svg || undefined,         // optional figure
     answerType: problem.answerType,
     options: problem.answerType === 'multiple-choice' ? (problem.options || []) : undefined,
     difficulty: problem.difficulty,

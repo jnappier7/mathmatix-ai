@@ -352,9 +352,10 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-1d55897189",
+    "problemId": "act-act-area-perimeter-composite-4a7a2a14ee",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 5 by 7 has a square of side 2 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 2 has been cut from the corner of a 5-by-7 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 120 124\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 66,20 66,44 90,44 90,104 30,104\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "31",
@@ -392,13 +393,14 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "1d5589718941fc99335e18f3e5412960ce57b819aabbfc99400c1470f64f52a1",
+    "contentHash": "4a7a2a14eeef3bc7ab7aa3c21764361b008b5cdb8a7f106e9424049c4429b913",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-59079adf70",
+    "problemId": "act-act-area-perimeter-composite-0617d3733f",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 6 by 4 has a square of side 4 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 4 has been cut from the corner of a 6-by-4 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 132 88\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 54,20 54,68 102,68 102,68 30,68\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "8",
@@ -436,13 +438,14 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "59079adf70b2766f19b02084e546cb8c780f21050e8c504e7025904235447b1f",
+    "contentHash": "0617d3733fadd9f9d0bbe5793a6e6727972de5f9e0065db910d8c870de379408",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-c6f7e9ab43",
+    "problemId": "act-act-area-perimeter-composite-1d7e5377d8",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 7 by 5 has a square of side 5 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 5 has been cut from the corner of a 7-by-5 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 144 100\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 54,20 54,80 114,80 114,80 30,80\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "10",
@@ -480,13 +483,14 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "c6f7e9ab43af66a1fc511e78771a07d2c9c1d63615cc9b5ec6d7752f2d29a97e",
+    "contentHash": "1d7e5377d87c1e28256b41571f34ddfdc4152370dfe31ba486be21c6f522772d",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-e89543acfa",
+    "problemId": "act-act-area-perimeter-composite-15cf52b424",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 5 by 7 has a square of side 5 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 5 has been cut from the corner of a 5-by-7 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 120 124\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 30,20 30,80 90,80 90,104 30,104\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "10",
@@ -524,13 +528,14 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "e89543acfa49c8ab4a56ce64f9e72dac85a761ba7d18e82d417d94dce74eeabc",
+    "contentHash": "15cf52b424382ab4ca9a939ca5c829995ab1debb393e1040a5695a383649be1f",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-6c171564ab",
+    "problemId": "act-act-area-perimeter-composite-1f6b36110f",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 4 by 3 has a square of side 3 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 3 has been cut from the corner of a 4-by-3 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 108 76\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 42,20 42,56 78,56 78,56 30,56\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "3",
@@ -568,13 +573,14 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "6c171564ab90ef4da785bfcef805292b60aa0d8b149aaa89a219b7db3d5578ea",
+    "contentHash": "1f6b36110fe5376d8291ccfeb7422b44065a5b3280163cfffd8f903b80152ce6",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-ed414179c3",
+    "problemId": "act-act-area-perimeter-composite-05b1a8f284",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 5 by 7 has a square of side 3 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 3 has been cut from the corner of a 5-by-7 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 120 124\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 54,20 54,56 90,56 90,104 30,104\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "26",
@@ -612,13 +618,14 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "ed414179c305c665c78785ce05f1e9958e7bb19ea600c8f758e345780aad1cf0",
+    "contentHash": "05b1a8f284863e9e334a2c8fd6977062c5fb741ecff7ab4c5b15f7c9f63beb32",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-a4e327425c",
+    "problemId": "act-act-area-perimeter-composite-c9bf870119",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 5 by 5 has a square of side 2 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 2 has been cut from the corner of a 5-by-5 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 120 100\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 66,20 66,44 90,44 90,80 30,80\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "21",
@@ -656,13 +663,14 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "a4e327425c099eb1e2470f99301655cd5185cf5556812d5a91d57c6a6d3b53d4",
+    "contentHash": "c9bf870119f926db47ecad6a1bab02468474e52bbc829f3fd5bb58eaeb0389de",
     "isActive": true
   },
   {
-    "problemId": "act-act-area-perimeter-composite-9aff74273e",
+    "problemId": "act-act-area-perimeter-composite-6dbfb14bc8",
     "skillId": "act-area-perimeter-composite",
-    "prompt": "A rectangle 4 by 6 has a square of side 4 cut from one corner. What is the remaining area?",
+    "prompt": "In the figure shown, a square of side 4 has been cut from the corner of a 4-by-6 rectangle. What is the area of the remaining (shaded) region?",
+    "svg": "<svg viewBox=\"0 0 108 112\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"30,20 30,20 30,68 78,68 78,92 30,92\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "8",
@@ -700,7 +708,7 @@
       "act-area-perimeter-composite"
     ],
     "source": "act-template-gen",
-    "contentHash": "9aff74273e058af97eaf3086b7a4f6d3b8128f3d6aaba43c8a7543469a341319",
+    "contentHash": "6dbfb14bc85e38ad0555043ef12d1565040dc89adc8e246be7426a56eaa79265",
     "isActive": true
   },
   {
@@ -2112,9 +2120,10 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-4ab299e776",
+    "problemId": "act-act-polygons-circles-db43864a60",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 10-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 10-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 134.1,28.1 155.2,57.1 155.2,92.9 134.1,121.9 100.0,133.0 65.9,121.9 44.8,92.9 44.8,57.1 65.9,28.1\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "144°",
@@ -2152,13 +2161,13 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "4ab299e77637854e19137bed3867d2bf64842bc48a2d85fde4bc6ec20eae229d",
+    "contentHash": "db43864a60f9ee91815d5dc908104ff7e89aa3605ec2ba484a69b683c6e49b7e",
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-cf209d6f30",
+    "problemId": "act-act-polygons-circles-68e6432c74",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 24-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 24-gon shown?",
     "answer": {
       "type": "auto",
       "value": "165°",
@@ -2196,13 +2205,13 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "cf209d6f30e738cf46fa695f4f21080246b1feb3cbfee4427f94705b6cd05167",
+    "contentHash": "68e6432c743ca7b87f760ef9aa22445da68875e9ee341bd158936a2daf0b4c72",
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-d338b52a11",
+    "problemId": "act-act-polygons-circles-1b11ff8e8a",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 18-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 18-gon shown?",
     "answer": {
       "type": "auto",
       "value": "160°",
@@ -2240,13 +2249,14 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "d338b52a11713444d5c41a8b79f33bb94df01426a4f302995a29afdcb622d5fd",
+    "contentHash": "1b11ff8e8ab46c2a650de720034211e941cf238a2aeec83396dcde04a040b8f5",
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-2c31981a43",
+    "problemId": "act-act-polygons-circles-7beecb7077",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 5-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 5-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 155.2,57.1 134.1,121.9 65.9,121.9 44.8,57.1\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "108°",
@@ -2284,13 +2294,13 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "2c31981a4357cfd1721ef045bcc83be9f77dffb5974a18d9827a9c67da1985ab",
+    "contentHash": "7beecb7077129efd69b3a3471795d300dc179ce2cd7ccdebc86a6f64b322b19f",
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-089cb9115f",
+    "problemId": "act-act-polygons-circles-d01292a4a9",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 15-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 15-gon shown?",
     "answer": {
       "type": "auto",
       "value": "156°",
@@ -2328,13 +2338,14 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "089cb9115fc28b7e3f539472922d476748a67c3fc5651798ae940a1d8dd19324",
+    "contentHash": "d01292a4a9212f7f36f0f44cffe66ea27e58606438a122d3a8d34f52b3bdcf6d",
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-f23ad59710",
+    "problemId": "act-act-polygons-circles-f7031a29c3",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 12-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 12-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 129.0,24.8 150.2,46.0 158.0,75.0 150.2,104.0 129.0,125.2 100.0,133.0 71.0,125.2 49.8,104.0 42.0,75.0 49.8,46.0 71.0,24.8\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "150°",
@@ -2372,13 +2383,14 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "f23ad597101c9f8d32c6f0a974fbb36005718a4fe2b827932ce0b2df4d93708b",
+    "contentHash": "f7031a29c327cbae8a47feee82235b44d5476b0841eb5858e19ce6906dbcbd92",
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-f1afd19014",
+    "problemId": "act-act-polygons-circles-a438fc4cf0",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 6-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 6-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 150.2,46.0 150.2,104.0 100.0,133.0 49.8,104.0 49.8,46.0\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "120°",
@@ -2416,13 +2428,14 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "f1afd19014fba1cae18af44f58beceb6cbaa493601ab98c68f0efb6ef19953b1",
+    "contentHash": "a438fc4cf03173115b31662107f6bd8657e9ac360d2b4694ca48bc51e5d4cb3f",
     "isActive": true
   },
   {
-    "problemId": "act-act-polygons-circles-974bba90e9",
+    "problemId": "act-act-polygons-circles-5167a2fc11",
     "skillId": "act-polygons-circles",
-    "prompt": "What is the measure of one interior angle of a regular 9-gon?",
+    "prompt": "What is the measure of one interior angle of the regular 9-gon shown?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><polygon points=\"100.0,17.0 137.3,30.6 157.1,64.9 150.2,104.0 119.8,129.5 80.2,129.5 49.8,104.0 42.9,64.9 62.7,30.6\" stroke-linejoin=\"round\"/></svg>",
     "answer": {
       "type": "auto",
       "value": "140°",
@@ -2460,7 +2473,7 @@
       "act-polygons-circles"
     ],
     "source": "act-template-gen",
-    "contentHash": "974bba90e978c77464782ad03971858313f75dcdfcc439dc553e7d102f7a5d56",
+    "contentHash": "5167a2fc11904d6472e10059da24ffb68139257bc7afd6d9877d8e95328216cc",
     "isActive": true
   },
   {
@@ -2816,9 +2829,10 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-d4256b0d73",
+    "problemId": "act-act-coordinate-geometry-a9a5022bcb",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment from (1, -2) to (2, -2)?",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (1, -2) and (2, -2)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"112\" cy=\"93\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"87\" fill=\"#7c5cff\" stroke=\"none\">(1, -2)</text><circle cx=\"124\" cy=\"93\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"130\" y=\"87\" fill=\"#7c5cff\" stroke=\"none\">(2, -2)</text></svg>",
     "answer": {
       "type": "auto",
       "value": "(1.5, -2)",
@@ -2856,7 +2870,7 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "d4256b0d7325d51d126129c9de8d4743dc349d0e569d4801dd8918986a01b569",
+    "contentHash": "a9a5022bcb35c1a710496d0438be6278c175f4f572f7366b8be7b1f15a5edcc3",
     "isActive": true
   },
   {
@@ -2904,9 +2918,10 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-385d010d3c",
+    "problemId": "act-act-coordinate-geometry-d0b05612a3",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment from (-5, 2) to (1, 3)?",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (-5, 2) and (1, 3)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"40\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"46\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(-5, 2)</text><circle cx=\"112\" cy=\"48\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"42\" fill=\"#7c5cff\" stroke=\"none\">(1, 3)</text></svg>",
     "answer": {
       "type": "auto",
       "value": "(-2, 2.5)",
@@ -2944,13 +2959,14 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "385d010d3c92863c93f5534f56810a4073af6c83409163ee85ddb42c7d99c545",
+    "contentHash": "d0b05612a3335488107aa2356ba5b7355452a4e5d9f6db82d501c73938a36e61",
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-b396a42ecc",
+    "problemId": "act-act-coordinate-geometry-44164cb634",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment from (5, 5) to (1, 2)?",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (5, 5) and (1, 2)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"160\" cy=\"30\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"166\" y=\"24\" fill=\"#7c5cff\" stroke=\"none\">(5, 5)</text><circle cx=\"112\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(1, 2)</text></svg>",
     "answer": {
       "type": "auto",
       "value": "(3, 3.5)",
@@ -2988,7 +3004,7 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "b396a42eccecf455311c3c4242e6de18246b7ebf886ce8148007ddf9f9f818f1",
+    "contentHash": "44164cb63410091e895c3d77727d882fc5bcc7a10302ed7a79fb7ef59dc054e3",
     "isActive": true
   },
   {
@@ -3036,9 +3052,10 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-4f33f9e984",
+    "problemId": "act-act-coordinate-geometry-c400987432",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment from (-1, 1) to (1, 2)?",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (-1, 1) and (1, 2)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"88\" cy=\"66\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"94\" y=\"60\" fill=\"#7c5cff\" stroke=\"none\">(-1, 1)</text><circle cx=\"112\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(1, 2)</text></svg>",
     "answer": {
       "type": "auto",
       "value": "(0, 1.5)",
@@ -3076,7 +3093,7 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "4f33f9e984b650f077baf7a72a4e3aa81f5f86057fd81dbfa58a0499ca20467f",
+    "contentHash": "c400987432d9e104ab111a39d905a0d37aea583320d92288955c177b76795336",
     "isActive": true
   },
   {
@@ -3124,9 +3141,10 @@
     "isActive": true
   },
   {
-    "problemId": "act-act-coordinate-geometry-579ce4d46a",
+    "problemId": "act-act-coordinate-geometry-62e2af7c1f",
     "skillId": "act-coordinate-geometry",
-    "prompt": "What is the midpoint of the segment from (4, 1) to (1, 2)?",
+    "prompt": "What is the midpoint of the segment joining the two points shown, (4, 1) and (1, 2)?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\"><line x1=\"20\" y1=\"75\" x2=\"180\" y2=\"75\" stroke=\"#bbb\" stroke-width=\"1\"/><line x1=\"100\" y1=\"15\" x2=\"100\" y2=\"140\" stroke=\"#bbb\" stroke-width=\"1\"/><circle cx=\"148\" cy=\"66\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"154\" y=\"60\" fill=\"#7c5cff\" stroke=\"none\">(4, 1)</text><circle cx=\"112\" cy=\"57\" r=\"3.5\" fill=\"#7c5cff\" stroke=\"none\"/><text x=\"118\" y=\"51\" fill=\"#7c5cff\" stroke=\"none\">(1, 2)</text></svg>",
     "answer": {
       "type": "auto",
       "value": "(2.5, 1.5)",
@@ -3164,13 +3182,14 @@
       "act-coordinate-geometry"
     ],
     "source": "act-template-gen",
-    "contentHash": "579ce4d46a35cbe45cae281d1b4e86b1fdb1600249c1ee7060dcf05abc7fc64c",
+    "contentHash": "62e2af7c1fc4bc682a87a2079447b9d86477348684b5128f59610622852b3f68",
     "isActive": true
   },
   {
-    "problemId": "act-act-right-triangle-trig-25b128c82b",
+    "problemId": "act-act-right-triangle-trig-7fff992dd7",
     "skillId": "act-right-triangle-trig",
-    "prompt": "A right triangle has legs of length 5 and 12. What is the length of the hypotenuse?",
+    "prompt": "In the right triangle shown, the legs have length 5 and 12. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">5</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">12</text></svg>",
     "answer": {
       "type": "auto",
       "value": "13",
@@ -3208,13 +3227,14 @@
       "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "25b128c82bad1dda4198eefbde40b74c3984e2715c904317aa45a159d61232d4",
+    "contentHash": "7fff992dd736f447a26ec3f3d141f84866f7eaa4ee4b9f64f83f498dabb64d4c",
     "isActive": true
   },
   {
-    "problemId": "act-act-right-triangle-trig-e486f2fd8f",
+    "problemId": "act-act-right-triangle-trig-d569434159",
     "skillId": "act-right-triangle-trig",
-    "prompt": "A right triangle has legs of length 6 and 8. What is the length of the hypotenuse?",
+    "prompt": "In the right triangle shown, the legs have length 6 and 8. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">6</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">8</text></svg>",
     "answer": {
       "type": "auto",
       "value": "10",
@@ -3252,13 +3272,14 @@
       "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "e486f2fd8f88da9c09dedda90979c722fefc4c8e3e3244d8f3c32a2b5e8bf767",
+    "contentHash": "d56943415991ca0a0e0711a6de8bc811bc830a4d5f329be9023a9f0bf217e864",
     "isActive": true
   },
   {
-    "problemId": "act-act-right-triangle-trig-1b2da9b036",
+    "problemId": "act-act-right-triangle-trig-54394e51d2",
     "skillId": "act-right-triangle-trig",
-    "prompt": "A right triangle has legs of length 9 and 12. What is the length of the hypotenuse?",
+    "prompt": "In the right triangle shown, the legs have length 9 and 12. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">9</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">12</text></svg>",
     "answer": {
       "type": "auto",
       "value": "15",
@@ -3296,13 +3317,14 @@
       "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "1b2da9b03619156597f2f9ee2ed999d62f3d07bb0a50128bdaad2f98da2cc40e",
+    "contentHash": "54394e51d27e3f765b55a2aae3f19603ebf16bd4143c81e627e8bd61af21713c",
     "isActive": true
   },
   {
-    "problemId": "act-act-right-triangle-trig-ea45682b37",
+    "problemId": "act-act-right-triangle-trig-ca750442c2",
     "skillId": "act-right-triangle-trig",
-    "prompt": "A right triangle has legs of length 3 and 4. What is the length of the hypotenuse?",
+    "prompt": "In the right triangle shown, the legs have length 3 and 4. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">3</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">4</text></svg>",
     "answer": {
       "type": "auto",
       "value": "5",
@@ -3340,13 +3362,14 @@
       "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "ea45682b3726fe6bf1f68c842e4a16db3d3187d13610366736b384460b43badc",
+    "contentHash": "ca750442c29abcc887ace36e4fdb84be1aeac1d0b233b6b48b6881971ca6646a",
     "isActive": true
   },
   {
-    "problemId": "act-act-right-triangle-trig-4a89dcc568",
+    "problemId": "act-act-right-triangle-trig-38ec4874db",
     "skillId": "act-right-triangle-trig",
-    "prompt": "A right triangle has legs of length 8 and 15. What is the length of the hypotenuse?",
+    "prompt": "In the right triangle shown, the legs have length 8 and 15. What is the length of the hypotenuse?",
+    "svg": "<svg viewBox=\"0 0 200 150\" xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" style=\"max-width:220px\" stroke=\"#7c5cff\" fill=\"none\" stroke-width=\"2\" font-family=\"sans-serif\" font-size=\"13\">\n      <polygon points=\"30,120 170,120 30,30\" stroke-linejoin=\"round\"/>\n      <rect x=\"30\" y=\"108\" width=\"12\" height=\"12\" stroke-width=\"1.5\"/>\n      <text x=\"100\" y=\"138\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">8</text>\n      <text x=\"16\" y=\"78\" fill=\"#7c5cff\" stroke=\"none\" text-anchor=\"middle\">15</text></svg>",
     "answer": {
       "type": "auto",
       "value": "17",
@@ -3384,7 +3407,7 @@
       "act-right-triangle-trig"
     ],
     "source": "act-template-gen",
-    "contentHash": "4a89dcc56881db2a7465958f1b5cddaa6fe2d1fe3eaa7a13bfe8a3f8eedd592c",
+    "contentHash": "38ec4874db46c5e4e45961c52b1646ab2220af543ee9dd807b68b6bd988524c9",
     "isActive": true
   },
   {
