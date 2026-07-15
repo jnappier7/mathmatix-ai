@@ -20,6 +20,7 @@ const { observe, MESSAGE_TYPES } = require('./observe');
 const { diagnose } = require('./diagnose');
 const { decide, ACTIONS } = require('./decide');
 const { generate, assemblePrompt } = require('./generate');
+const { attachVerifiedTwin } = require('../twinGenerator');
 const { verify } = require('./verify');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { persist } = require('./persist');
@@ -359,6 +360,23 @@ async function runPipeline(message, ctx) {
   }
 
   console.log(`[Pipeline] Decide: ${decision.action}${decision.phase ? ` (phase: ${decision.phase})` : ''}`);
+
+  // ── Verified twin (anti-cheat co-solve) ──
+  // For a worked example / exit ramp, hand the tutor a CAS-verified PARALLEL
+  // problem instead of asking it to improvise one with no checked answer (see
+  // utils/twinGenerator + worksheetGuard.formatVerifiedTwinInstruction). Gated
+  // to these two actions (the student is stuck), so the extra LLM latency is
+  // only paid when a worked example is actually being shown; best-effort, and
+  // buildActionPrompt falls back to the improvised instruction if none attaches.
+  if (decision.action === ACTIONS.WORKED_EXAMPLE || decision.action === ACTIONS.EXIT_RAMP) {
+    const stuckProblem = pickProblemContext(
+      recentAssistantMessages.map(msg => ({ content: msg.content, problemInfo: msg.problemInfo || null }))
+    );
+    await attachVerifiedTwin(decision, stuckProblem);
+    if (decision.verifiedTwin) {
+      console.log('[Pipeline] Verified twin attached for', decision.action);
+    }
+  }
 
   // ── Build sidecar (deterministic signals pre-filled) ──
   const sidecar = buildSidecar(observation, diagnosis, decision, {

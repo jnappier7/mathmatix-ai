@@ -9,7 +9,7 @@ jest.mock('../../utils/logger', () => ({
 }));
 
 const { callLLM } = require('../../utils/llmGateway');
-const { generateVerifiedTwin, verifyTwin } = require('../../utils/twinGenerator');
+const { generateVerifiedTwin, verifyTwin, attachVerifiedTwin } = require('../../utils/twinGenerator');
 
 const wrap = (obj) => ({ choices: [{ message: { content: JSON.stringify(obj) } }] });
 
@@ -94,5 +94,28 @@ describe('generateVerifiedTwin — end to end (mocked LLM, real CAS)', () => {
       .mockResolvedValueOnce(wrap({ twin: 'Solve 5x = 20', problemTex: '5x = 20', answer: 'x = 4', checkType: 'equation', checkAgainst: '5x = 20' }));
     const r = await generateVerifiedTwin('Solve 3x = 9');
     expect(r).toMatchObject({ ok: true, answer: 'x = 4' });
+  });
+});
+
+describe('attachVerifiedTwin — orchestrator glue', () => {
+  it('attaches a verified twin to the decision', async () => {
+    callLLM.mockResolvedValueOnce(wrap({ twin: 'Solve 4x = 12', problemTex: '4x = 12', answer: 'x = 3', checkType: 'equation', checkAgainst: '4x = 12' }));
+    const decision = { action: 'WORKED_EXAMPLE', directives: [] };
+    await attachVerifiedTwin(decision, 'Solve 2x = 10');
+    expect(decision.verifiedTwin).toEqual({ twin: 'Solve 4x = 12', answer: 'x = 3' });
+  });
+
+  it('leaves the decision untouched when no problem text', async () => {
+    const decision = { action: 'WORKED_EXAMPLE', directives: [] };
+    await attachVerifiedTwin(decision, '');
+    expect(decision.verifiedTwin).toBeUndefined();
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  it('leaves the decision untouched (no throw) when the twin can\'t be verified', async () => {
+    callLLM.mockResolvedValue(wrap({ twin: 'Solve 4x = 12', problemTex: '4x = 12', answer: 'x = 9', checkType: 'equation', checkAgainst: '4x = 12' })); // wrong
+    const decision = { action: 'EXIT_RAMP', directives: [] };
+    await attachVerifiedTwin(decision, 'Solve 2x = 10');
+    expect(decision.verifiedTwin).toBeUndefined();
   });
 });
