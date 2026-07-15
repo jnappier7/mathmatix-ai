@@ -45,10 +45,19 @@ carry no per-item skill tag and modules don't map 1:1 to `skills-algebra-1.json`
 `alg1-catalog-crosswalk.json` scaffolds the follow-up **fine-grained per-item**
 mapping (mirroring how the ACT bank went category → sub-skill).
 
+## Figures (rendered)
+
+`scripts/alg1FigureRenderer.py` renders the fixed declarative library (grid,
+numberline, line_graph, abs_graph, parabola, mapping, points, story, table, plus
+the key-only overlays numberline_answer / grid_answer) to clean self-contained
+**SVG**. The ingester bakes each item's student figure into `Problem.svg` and the
+answer overlay into `figure.keyFigure.svg`, so the existing inline-visual display
+shows them with no frontend changes. Run `python3 scripts/alg1FigureRenderer.py`
+for a preview of every kind.
+
 ## Deferred (follow-up PR)
 
-- **Figure renderer** for the fixed declarative library (grid, numberline,
-  line_graph, abs_graph, parabola, mapping, points, story, table + key overlays).
-  Figures are preserved on each Problem (`figure` field) but not yet drawn.
+- **Fine-grained per-item skill tagging** via `alg1-catalog-crosswalk.json` (or
+  have Fable add per-item `skill` tags, as the ACT bank now carries).
 - **Delivery rail**: wire module skills to BKT / `tutorPlan.skillFocus` so these
   become first-class Algebra 1 course checkpoints/practice, not just a poolable bank.
