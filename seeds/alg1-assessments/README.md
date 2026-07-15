@@ -25,11 +25,11 @@ node   scripts/seedAlg1Items.js --fresh   # alg1:seed — upsert into MongoDB (s
 
 Ingestion emits (in `seeds/`):
 
-- `alg1-items.generated.json` — 798 Problem docs (266 items × 3 versions).
-- `alg1-skill-names.json` — `{ alg1-m{N}: "Module topic" }`.
-- `alg1-assessment-map.json` — module → quiz/test → core/spiral → [problemId] (+ points),
+- `alg1-items.generated.json` — 798 Problem docs (266 items × 3 versions), fine skillId each.
+- `alg1-skill-names.json` — `{ fineSkillId: "Readable name" }`.
+- `alg1-assessment-map.json` — module → quiz/test → core/spiral → [{problemId, skillId}] (+ points),
   the structural map for the future assessment/checkpoint delivery rail.
-- `alg1-catalog-crosswalk.json` — module → existing `skills-algebra-1.json` skillIds it covers.
+- `alg1-skills-by-module.json` — module → `[{skillId, name, inCatalog}]`, the worklist for BKT wiring.
 
 ## Correctness
 
@@ -38,12 +38,20 @@ snippet-level false positives (Python float-vs-int and sympy structural `==`);
 the answers are hand-verified correct and allowlisted in `auditAlg1Items.py`, so
 `alg1:audit` exits non-zero only on a **new** regression.
 
-## Skill tagging (status)
+## Skill tagging (fine-grained)
 
-Items are tagged at **module level** (`alg1-m{N}`) for now — the Fable items
-carry no per-item skill tag and modules don't map 1:1 to `skills-algebra-1.json`.
-`alg1-catalog-crosswalk.json` scaffolds the follow-up **fine-grained per-item**
-mapping (mirroring how the ACT bank went category → sub-skill).
+Each item is tagged with an **exact sub-skill** by `scripts/alg1SkillClassifier.py`
+— a deterministic, per-module keyword classifier (e.g. `completing-the-square`,
+`factoring-trinomials`, `parallel-perpendicular-lines`). It reuses existing
+catalog skillIds (`skills-algebra-1.json`) where they exist and adds fine ids for
+the gaps; spiral-review items are tagged by their **source** module. Every one of
+the 266 items maps to a fine skill (0 coarse fallbacks) across **63 distinct
+skills** (16 already in the catalog, 47 new). `alg1-skills-by-module.json` lists
+them per module with an `inCatalog` flag — the worklist for wiring them to BKT.
+
+**Forward-compatible with Fable tags:** if a per-item `skill` field is added to
+the source JSONs (as the ACT bank now carries), the ingester prefers it over the
+classifier, so gold-standard author tags can be swapped in with no rework.
 
 ## Figures (rendered)
 
@@ -57,7 +65,7 @@ for a preview of every kind.
 
 ## Deferred (follow-up PR)
 
-- **Fine-grained per-item skill tagging** via `alg1-catalog-crosswalk.json` (or
-  have Fable add per-item `skill` tags, as the ACT bank now carries).
-- **Delivery rail**: wire module skills to BKT / `tutorPlan.skillFocus` so these
-  become first-class Algebra 1 course checkpoints/practice, not just a poolable bank.
+- **Delivery rail**: wire the fine skills to BKT / `tutorPlan.skillFocus` (the 47
+  new ones need Skill catalog docs) so these become first-class Algebra 1 course
+  checkpoints/practice, not just a poolable bank — `alg1-skills-by-module.json` is
+  the worklist.
