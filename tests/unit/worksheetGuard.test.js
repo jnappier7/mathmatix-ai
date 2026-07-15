@@ -25,7 +25,32 @@ const {
   filterAnswerKeyResponse,
   detectParallelExampleIntroduction,
   isCheckWorkIntent,
+  formatVerifiedTwinInstruction,
 } = require('../../utils/worksheetGuard');
+
+describe('formatVerifiedTwinInstruction — bridge from a verified twin to the guard', () => {
+  const twin = { twin: 'Solve for x: 3x - 5 = 16', answer: 'x = 7' };
+
+  it('embeds the twin problem and its verified answer', () => {
+    const block = formatVerifiedTwinInstruction(twin);
+    expect(block).toContain('3x - 5 = 16');
+    expect(block).toContain('x = 7');
+    expect(block).toContain('[SYSTEM INSTRUCTION');
+  });
+
+  it('instructs the tutor NOT to reveal the answer or work the student\'s own problem', () => {
+    const block = formatVerifiedTwinInstruction(twin).toLowerCase();
+    expect(block).toMatch(/do not (reveal|state).*(answer|up front)/);
+    expect(block).toMatch(/one step at a time|step by step|socratic/);
+    expect(block).toContain("student's own");
+  });
+
+  it('returns empty string for an unusable/absent twin (safe fallback)', () => {
+    expect(formatVerifiedTwinInstruction(null)).toBe('');
+    expect(formatVerifiedTwinInstruction({})).toBe('');
+    expect(formatVerifiedTwinInstruction({ twin: 'x=1' })).toBe(''); // no answer
+  });
+});
 
 describe('detectAnswerAnnouncement', () => {
   // ── Multi-root announcements (the transcript's primary leak) ──
