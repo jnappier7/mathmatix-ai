@@ -109,6 +109,52 @@ function verifyAntiderivative(studentF, integrand, variable) {
   return equivalent(dF, f);
 }
 
+// Split an equation problem tex into { lhs, rhs } (exactly one '='), or null.
+function extractEquation(tex) {
+  const s = latexToExpr(tex);
+  if (!s) return null;
+  const parts = s.split('=');
+  if (parts.length !== 2 || !parts[0].trim() || !parts[1].trim()) return null;
+  return { lhs: parts[0].trim(), rhs: parts[1].trim() };
+}
+
+// The solution value(s) a student EXPLICITLY claimed via "x = …": "x = 8" -> [8],
+// "x = 2 or x = 3" -> [2,3], "x = -7/3" -> [-2.33…]. A bare number is
+// deliberately NOT accepted here — mid-problem it could be an intermediate step,
+// and force-grading that against the whole equation would false-flag correct
+// working. Explicit "x =" is the signal that the student is claiming a solution.
+function claimedSolutionValues(text, variable) {
+  if (text == null) return [];
+  const v = variable || 'x';
+  const s = String(text).replace(/[−–—]/g, '-');
+  const re = new RegExp(v + '\\s*=\\s*(-?[0-9][0-9.]*(?:\\s*/\\s*-?[0-9.]+)?)', 'gi');
+  const out = []; let m;
+  while ((m = re.exec(s)) !== null) {
+    try { const val = math.evaluate(m[1]); if (typeof val === 'number' && isFinite(val)) out.push(val); } catch (_) { /* skip */ }
+  }
+  return out;
+}
+
+// A student's solution is correct iff every value they named satisfies the
+// equation: substitute into (lhs - rhs) and check it's ~0. (Completeness —
+// did they name ALL roots — is diagnose's root-set logic, not this.)
+function verifyEquationSolution(studentAnswer, equationTex, variable) {
+  const eq = extractEquation(equationTex);
+  if (!eq) return null;
+  const v = variable || 'x';
+  const vals = claimedSolutionValues(studentAnswer, v);
+  if (!vals.length) return null;
+  const diff = compile('(' + eq.lhs + ')-(' + eq.rhs + ')');
+  if (!diff) return null;
+  for (const val of vals) {
+    let r;
+    try { r = diff.evaluate({ [v]: val }); } catch (_) { return null; }
+    if (typeof r !== 'number' || !isFinite(r)) return null;
+    if (Math.abs(r) > 1e-6 * (1 + Math.abs(val))) return false;
+  }
+  return true;
+}
+
 // Pull the integrand + variable out of an integral problem tex:
 // "\int (6x^5 - 4x)\,dx" / "∫ 6x^5 dx" -> { integrand:'6x^5 - 4x', variable:'x' }.
 function extractIntegral(tex) {
@@ -141,6 +187,11 @@ function symbolicVerify(p) {
     if (integrand && p.studentAnswer) {
       const r = verifyAntiderivative(p.studentAnswer, integrand, variable);
       if (r !== null) return { isCorrect: r, method: 'antiderivative', confidence: 0.98 };
+    }
+    // Equation problem ("solve …=…"): does the student's stated x=value satisfy it?
+    if (p.problemTex && p.studentAnswer != null) {
+      const r = verifyEquationSolution(p.studentAnswer, p.problemTex, variable);
+      if (r !== null) return { isCorrect: r, method: 'equation', confidence: 0.98 };
     }
     if (p.correctAnswer != null && p.studentAnswer != null) {
       const a = latexToExpr(p.studentAnswer); const b = latexToExpr(p.correctAnswer);
@@ -184,4 +235,4 @@ function bareNumericAnswer(text) {
   return nums[0];
 }
 
-module.exports = { symbolicVerify, equivalent, verifyAntiderivative, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer };
+module.exports = { symbolicVerify, equivalent, verifyAntiderivative, verifyEquationSolution, extractEquation, latexToExpr, extractIntegral, detectPosedArithmetic, bareNumericAnswer };
