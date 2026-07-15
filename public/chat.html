@@ -80,7 +80,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
   <link rel="stylesheet" href="/css/design-system.css" />
   <!-- Redesigned chat shell (opt-in via body.cr-mode) -->
-  <link rel="stylesheet" href="/css/chat-redesign.css?v=20260713" />
+  <link rel="stylesheet" href="/css/chat-redesign.css?v=20260715" />
   <!-- Gamification surfacing: combo meter + identity chip -->
   <link rel="stylesheet" href="/css/gamification-surfacing.css" />
   <!-- Personal status card modal (Progress button) -->
@@ -351,23 +351,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <!-- My Courses — revealed by courseCatalog.js init() when MM_FEATURES.courses is on. -->
-    <div class="sidebar-section" id="sidebar-courses-section" style="display: none;">
-      <button class="courses-toggle" id="courses-toggle-btn">
-        <span><i class="fas fa-graduation-cap" style="margin-right: 6px; font-size: 13px; color: #764ba2;"></i><span data-i18n="chat.myCourses">My Courses</span></span>
-        <i class="fas fa-chevron-down"></i>
-      </button>
-
-      <div id="sidebar-courses" class="sidebar-courses-list">
-        <div id="course-sessions-list">
-          <!-- Populated by courseCatalog.js -->
-        </div>
-        <button id="browse-courses-btn" class="sidebar-tool-btn" style="margin-top: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px;">
-          <i class="fas fa-graduation-cap"></i>
-          <span data-i18n="chat.browseCourses">Browse Courses</span>
-        </button>
-      </div>
-    </div>
+    <!-- My Courses lives in the cr-stage hero column now (#sidebar-courses-section
+         below the tutor hero) — the legacy sidebar is display:none'd in cr-mode. -->
 
     <!-- Tools (collapsed by default) -->
     <div class="sidebar-section">
@@ -451,7 +436,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Main Content Area (Full Width) -->
   <main id="app-layout-wrapper" class="sidebar-layout">
     <div class="cr-stage">
-      <!-- Tutor hero panel (left) — portrait + backdrop swap per tutor -->
+      <!-- Hero column (left): tutor video panel on top, My Courses card below.
+           The wrapper carries the column's height cap; the hero flexes to
+           whatever the courses card doesn't use. -->
+      <div class="cr-hero-col">
+      <!-- Tutor hero panel — portrait + backdrop swap per tutor -->
       <aside class="cr-tutor-hero" aria-hidden="true">
         <div class="cr-tutor-backdrop"></div>
         <!-- Voice-reactive glow: pulses in sync with the tutor's TTS via
@@ -459,6 +448,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
              backdrop, behind the portrait. -->
         <div class="cr-tutor-glow" aria-hidden="true"></div>
         <img id="cr-tutor-portrait" class="cr-tutor-portrait" alt="" />
+        <!-- Idle video loop (double-buffered pair so two clips can alternate
+             with a crossfade). Sits over the portrait, under the celebration
+             video. Wired by chat-redesign.js; portrait stays as the fallback. -->
+        <video id="cr-tutor-idle-a" class="cr-tutor-idle-video" muted playsinline preload="auto" aria-hidden="true"></video>
+        <video id="cr-tutor-idle-b" class="cr-tutor-idle-video" muted playsinline preload="auto" aria-hidden="true"></video>
         <video id="cr-tutor-celebration-video" class="cr-tutor-celebration-video" muted playsinline preload="auto" aria-hidden="true"></video>
         <script>
           /* No-flash poster: paint the returning student's tutor before
@@ -490,6 +484,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
       </aside>
+
+      <!-- My Courses — moved out of the legacy sidebar (hidden in cr-mode) into
+           the hero column. Same ids as before so courseCatalog.js keeps working:
+           init() reveals this section when MM_FEATURES.courses is on. -->
+      <div class="cr-courses-card" id="sidebar-courses-section" style="display: none;">
+        <button class="courses-toggle" id="courses-toggle-btn">
+          <span><i class="fas fa-graduation-cap" style="margin-right: 6px; font-size: 13px; color: #764ba2;"></i><span data-i18n="chat.myCourses">My Courses</span></span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+
+        <div id="sidebar-courses" class="sidebar-courses-list">
+          <div id="course-sessions-list">
+            <!-- Populated by courseCatalog.js -->
+          </div>
+          <button id="browse-courses-btn" style="margin-top: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px;">
+            <i class="fas fa-graduation-cap"></i>
+            <span data-i18n="chat.browseCourses">Browse Courses</span>
+          </button>
+        </div>
+      </div>
+      </div><!-- /.cr-hero-col -->
 
     <div id="chat-container" class="dashboard-panel full-width">
       <!-- Course Progress Bar (shown when course session is active) -->
@@ -2296,15 +2311,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
 <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
-  <script defer src="/js/chat-redesign.js"></script>
+  <script defer src="/js/chat-redesign.js?v=20260715"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
-  <script src="/dist/js/chat-js2.0c1f1731.js"></script>
+  <script src="/dist/js/chat-js2.3949a53a.js"></script>
 <!-- Voice as a layout mode of the chat stage -->
   <script src="/js/voice-mode.js?v=3"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.6635f3ec.js"></script>
+  <script src="/dist/js/chat-js3.babd546b.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
   <script src="/dist/js/chat-js4.c195e962.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
@@ -2329,7 +2344,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- ACT Math practice test runner — window.openActTest() (boot-camp diagnostic) -->
   <script src="/js/act-test.js"></script>
   <!-- Phase D: executes server-emitted <GRAPH>/<TILES> tab-switch commands -->
-  <script src="/dist/js/chat-js5.1f62385f.js"></script>
+  <script src="/dist/js/chat-js5.c6527a5d.js"></script>
 <!-- PDF.js library for PDF preview and rendering -->
   <script src="/pdfjs-viewer/build/pdf.mjs" type="module"></script>
   <script type="module">
@@ -2364,7 +2379,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       updateUI();
     })();
   </script>
-  <script src="/dist/js/chat-js8.89eef321.js"></script>
+  <script src="/dist/js/chat-js8.2b53a001.js"></script>
 <script src="/js/script.js?v=20260714" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.bc0be9a3.js"></script>

@@ -298,6 +298,57 @@ html.mm-board-hidden #mathmatix-whiteboard-panel { display: none !important; }
   }
 }
 
+/* ----- Hero column: tutor video + My Courses card ----- */
+/* The wrapper owns the column's height cap + footer margin (they used to
+   live on .cr-tutor-hero directly). The hero flexes to fill whatever the
+   courses card doesn't need, which is how "shrink the tutor video to make
+   room for courses" actually happens. */
+.cr-hero-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  max-height: calc(100vh - 124px);
+  margin-bottom: 60px;
+}
+@media (min-width: 901px) {
+  .cr-hero-col .cr-tutor-hero {
+    flex: 1 1 auto;
+    min-height: 280px;      /* was 520px solo — courses card takes the rest */
+    max-height: none;
+    margin-bottom: 0;
+  }
+}
+@media (max-width: 900px) {
+  /* Single-column mobile: dissolve the wrapper so the hero is a direct grid
+     child again and the existing compact-banner rules apply untouched. */
+  .cr-hero-col { display: contents; }
+}
+
+/* My Courses card — pinned light like the tutor panel above it (the inner
+   .courses-toggle / .course-sidebar-item styles from courseCatalog.css were
+   designed for a light sidebar and are reused as-is). */
+.cr-courses-card {
+  flex: 0 1 auto;
+  overflow-y: auto;
+  background: #FFFFFF;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 8px 30px rgba(15, 26, 36, 0.06);
+  padding: 10px 12px 12px;
+  scrollbar-width: thin;
+}
+/* The toggle header inherits legacy --clr-* vars that dark-mode.css flips —
+   pin it light so the card matches the pinned-light tutor panel above. */
+.cr-courses-card .courses-toggle {
+  background: #F8FAFB;
+  color: #333;
+}
+.cr-courses-card .courses-toggle:hover { background: #F1F5F9; }
+@media (max-width: 900px) {
+  .cr-courses-card { display: none; }
+}
+
 /* ----- Tutor hero panel ----- */
 .cr-tutor-hero {
   position: relative;
@@ -380,6 +431,30 @@ html.mm-board-hidden #mathmatix-whiteboard-panel { display: none !important; }
   /* meter skips --voice-amp under reduced motion, so the glow rests at its
      faint baseline; kill the transition too so nothing animates. */
   .cr-tutor-glow { transition: none; }
+}
+
+/* Idle video loop — the tutor's resting "alive" state. Double-buffered pair
+   (idle-a / idle-b) stacked over the portrait so two clips can alternate;
+   whichever carries .is-showing is visible and the 300ms fade masks the
+   handoff. Same cover-crop as the celebration clip (all tutor videos share
+   the 1152×768 frame), sitting under it (z:1 vs z:2). */
+.cr-tutor-idle-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+.cr-tutor-idle-video.is-showing { opacity: 1; }
+@media (max-width: 900px) {
+  /* Compact banner hero keeps the static 96px portrait; JS skips the idle
+     loop below 900px too, this is the belt-and-suspenders. */
+  .cr-tutor-idle-video { display: none !important; }
 }
 
 /* In-place level-up celebration. Overlays the portrait in the same hero box
@@ -805,13 +880,16 @@ body.cr-mode .inline-equation-palette {
    "studio" backdrop image + a darkening overlay — the heaviest dark
    element on an otherwise theme-light UI. The avatars are transparent
    PNGs, so we drop the studio scene and sit the character on a normal
-   THEMED panel (same --cr-bg-panel as the chat column). Result: clean
-   white in light mode (the default), and a consistent dark panel in
-   dark mode — never a white panel clashing beside a dark column.
+   clean panel.
+
+   PINNED LIGHT (2026-07-15): the tutor window stays light in BOTH themes —
+   the idle/celebration videos are shot on light backgrounds, so a dark
+   panel would frame them badly. Fixed light-theme values here instead of
+   theme vars; the values mirror [data-theme="light"] in design-system.css.
    ============================================================ */
 .cr-tutor-hero {
-  background: var(--cr-bg-panel);
-  border: 1px solid var(--cr-border);
+  background: #FFFFFF;
+  border: 1px solid rgba(15, 23, 42, 0.08);
   /* Soft shadow so the panel doesn't visually merge into the chat column. */
   box-shadow: 0 8px 30px rgba(15, 26, 36, 0.06);
 }
@@ -824,17 +902,19 @@ body.cr-mode .inline-equation-palette {
     drop-shadow(0 8px 16px rgba(15, 26, 36, 0.16))
     drop-shadow(0 0 1px rgba(15, 26, 36, 0.28));
 }
-/* "Live with" badge + encourage card: themed surfaces (were hardcoded
-   dark), so text stays legible in whichever theme is active. */
+/* "Live with" badge + encourage card: fixed light surfaces to match the
+   pinned-light panel — theme vars would flip them dark in dark mode and
+   strand light text on the white panel. Slightly translucent so they read
+   as chips floating over the idle video. */
 .cr-live-badge {
-  background: var(--cr-bg-2);
-  border: 1px solid var(--cr-border);
-  color: var(--cr-text);
+  background: rgba(238, 241, 247, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  color: #18202B;
   box-shadow: 0 2px 8px rgba(15, 26, 36, 0.08);
 }
 .cr-encourage-card {
-  background: var(--cr-bg-2);
-  border: 1px solid var(--cr-border);
+  background: rgba(238, 241, 247, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
-.cr-encourage-title { color: var(--cr-text); }
-.cr-encourage-body  { color: var(--cr-text-dim); }
+.cr-encourage-title { color: #18202B; }
+.cr-encourage-body  { color: #5B6876; }

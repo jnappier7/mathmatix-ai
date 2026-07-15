@@ -21,6 +21,20 @@
   // to preload the clip when the tutor swaps.
   const TUTORS_WITH_CELEBRATION_VIDEO = new Set(['bob', 'maya', 'mr-nappier', 'ms-maria']);
 
+  // Cache-buster for /videos/* — prod caches static assets 7 days with no
+  // hashing, so bump this whenever a clip is re-exported under the same name.
+  const VIDEO_VERSION = '?v=20260715';
+
+  // How many idle clips each tutor has on disk ({id}_idle.mp4, {id}_idle2.mp4).
+  // Tutors not listed here (and reduced-motion users) keep the static
+  // portrait + PNG micro-animation instead.
+  const IDLE_VIDEO_COUNTS = {
+    'bob': 2,
+    'maya': 1,           // no maya_idle2 yet — single clip loops
+    'mr-nappier': 2,
+    'ms-maria': 2
+  };
+
   // Tutors whose backdrop gets a depth-of-field blur so the portrait reads
   // cleanly. Maya's backdrop is already soft, so she's left sharp.
   const BLUR_BACKDROP = new Set(['bob', 'mr-nappier', 'ms-maria']);
@@ -155,6 +169,118 @@
     if (frames.glance) scheduleGlance();
   }
 
+  // --- Idle video loop ----------------------------------------------------
+  // The hero's "living" idle: real video clips instead of PNG frame-swaps.
+  // Two stacked <video> elements double-buffer so a tutor's two idle clips
+  // alternate with a crossfade (single-clip tutors just loop element A).
+  // The PNG portrait stays underneath as the loading/fallback frame, and
+  // startPosterAnimation remains the fallback for tutors with no clips,
+  // reduced-motion users, and the compact mobile hero.
+
+  let idleLoop = null;
+
+  const IDLE_MOBILE_MQ = window.matchMedia && window.matchMedia('(max-width: 900px)');
+
+  function idleSrcFor(tutorId, n) {
+    return '/videos/' + tutorId + '_idle' + (n > 1 ? n : '') + '.mp4' + VIDEO_VERSION;
+  }
+
+  function stopIdleVideos() {
+    if (!idleLoop) return;
+    idleLoop.alive = false;
+    idleLoop.els.forEach(function (el) {
+      el.onended = null;
+      el.onerror = null;
+      el.classList.remove('is-showing');
+      el.pause();
+    });
+    idleLoop = null;
+  }
+
+  function startIdleVideos(tutorId) {
+    stopIdleVideos();
+    if (PREFERS_REDUCED_MOTION) return false;
+    // Compact mobile hero hides the idle layer — don't burn bandwidth there.
+    if (IDLE_MOBILE_MQ && IDLE_MOBILE_MQ.matches) return false;
+
+    // 'default' renders as Mr. Nappier — borrow his clips.
+    const id = IDLE_VIDEO_COUNTS[tutorId] ? tutorId :
+      (tutorId === 'default' ? 'mr-nappier' : null);
+    if (!id) return false;
+
+    const a = document.getElementById('cr-tutor-idle-a');
+    const b = document.getElementById('cr-tutor-idle-b');
+    if (!a || !b) return false;
+
+    const count = IDLE_VIDEO_COUNTS[id];
+    const loop = { alive: true, tutorId: tutorId, els: [a, b], cur: 0 };
+    idleLoop = loop;
+
+    const fallback = function () {
+      if (idleLoop !== loop || !loop.alive) return;
+      stopIdleVideos();
+      startPosterAnimation(tutorId);
+    };
+
+    const show = function (el) {
+      if (idleLoop !== loop || !loop.alive) return;
+      el.classList.add('is-showing');
+      loop.els.forEach(function (other) {
+        if (other !== el) other.classList.remove('is-showing');
+      });
+    };
+
+    const playEl = function (el) {
+      try { el.currentTime = 0; } catch (_) { /* not seekable yet */ }
+      const p = el.play();
+      if (p && typeof p.then === 'function') {
+        p.then(function () { show(el); }).catch(fallback);
+      } else {
+        show(el);
+      }
+    };
+
+    if (count === 1) {
+      // Single clip: seamless native loop on element A; B stays idle.
+      a.loop = true;
+      a.onerror = fallback;
+      if (!a.src || a.src.indexOf(idleSrcFor(id, 1)) === -1) a.src = idleSrcFor(id, 1);
+      b.removeAttribute('src');
+      playEl(a);
+      return true;
+    }
+
+    // Two clips: A holds idle1, B holds idle2 (both buffering up front).
+    // Whichever just ended hands off to the other; the 300ms CSS crossfade
+    // masks the seam. Ordering: play the incoming clip first, only then
+    // fade — so the swap shows motion, never a stalled first frame.
+    loop.els.forEach(function (el, i) {
+      el.loop = false;
+      el.onerror = fallback;
+      const want = idleSrcFor(id, i + 1);
+      if (!el.src || el.src.indexOf(want) === -1) el.src = want;
+      el.onended = function () {
+        if (idleLoop !== loop || !loop.alive) return;
+        loop.cur = (loop.cur + 1) % 2;
+        playEl(loop.els[loop.cur]);
+      };
+    });
+    playEl(a);
+    return true;
+  }
+
+  // Battery: pause the active idle clip while the tab is hidden.
+  document.addEventListener('visibilitychange', function () {
+    if (!idleLoop) return;
+    const el = idleLoop.els[idleLoop.cur];
+    if (document.hidden) {
+      el.pause();
+    } else {
+      const p = el.play();
+      if (p && typeof p.catch === 'function') p.catch(function () { /* ignore */ });
+    }
+  });
+
   function applyTutor(tutorId) {
     const tutor = getTutorConfig(tutorId);
     if (!tutor) return;
@@ -183,8 +309,9 @@
     // rather than being truncated to just "Mr.".
     if (nameEl) nameEl.textContent = (tutor.name || 'Tutor');
 
-    // Bring the poster to life with idle micro-animation.
-    startPosterAnimation(tutorId);
+    // Bring the poster to life: idle video loop when the tutor has clips,
+    // PNG micro-animation otherwise.
+    if (!startIdleVideos(tutorId)) startPosterAnimation(tutorId);
 
     // Preload the celebration video silently so the level-up reveal is
     // instant — no fetch latency, no first-frame flash.
@@ -198,7 +325,7 @@
   // kid sees motion appear, never a swap.
 
   function celebrationSrcFor(tutorId) {
-    return '/videos/' + tutorId + '_levelUp.mp4';
+    return '/videos/' + tutorId + '_levelUp.mp4' + VIDEO_VERSION;
   }
 
   function preloadCelebrationVideo(tutorId) {
@@ -227,6 +354,7 @@
     preloadCelebrationVideo(tutorId);
 
     stopPosterAnimation();
+    stopIdleVideos();
 
     let restored = false;
     const restore = function () {
@@ -239,7 +367,7 @@
       setTimeout(function () {
         video.pause();
         try { video.currentTime = 0; } catch (_) { /* ignore */ }
-        startPosterAnimation(tutorId);
+        if (!startIdleVideos(tutorId)) startPosterAnimation(tutorId);
       }, 260);
     };
 

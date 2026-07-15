@@ -62,14 +62,14 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js2.0c1f1731.js",
+      "src": "/dist/js/chat-js2.3949a53a.js",
       "files": [
         "/js/voice-stream-client.js?v=3",
         "/js/voice-controller.js"
       ]
     },
     {
-      "src": "/dist/js/chat-js3.6635f3ec.js",
+      "src": "/dist/js/chat-js3.babd546b.js",
       "files": [
         "/js/chat-board-integration.js",
         "/js/floating-screener.js",
@@ -87,7 +87,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js5.1f62385f.js",
+      "src": "/dist/js/chat-js5.c6527a5d.js",
       "files": [
         "/js/visualTabTagHandler.js",
         "/js/dailyQuests.js",
@@ -119,7 +119,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js8.89eef321.js",
+      "src": "/dist/js/chat-js8.2b53a001.js",
       "files": [
         "/js/student-resources.js",
         "/js/settings.js",
