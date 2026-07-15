@@ -313,14 +313,14 @@ the renderer and BKT wiring are the follow-up.
   `ALG1_SPEC.md` (authoring spec: item schema, fixed figure library, module
   coverage) + `README.md` (provenance/pipeline).
 - **`scripts/ingestAlg1Items.py`** (`npm run alg1:ingest`) — expands the 3 versions
-  into **798 `Problem` docs** (`source: alg1-fable`), tagged at **module level**
-  (`alg1-m{N}`), `work`→`constructed-response` / `mc`→`multiple-choice` (answer key
-  parsed by letter *or* choice-text match) / `fill`→`constructed-response`,
-  `solution`→`explanation`, declarative `figure` preserved per version. Emits
-  `alg1-items.generated.json`, `alg1-skill-names.json`, `alg1-assessment-map.json`
-  (the quiz/test structure for the future rail), and `alg1-catalog-crosswalk.json`
-  (module → existing `skills-algebra-1.json` skillIds — scaffold for fine per-item
-  tagging).
+  into **798 `Problem` docs** (`source: alg1-fable`), each tagged with a **fine
+  sub-skill** (`scripts/alg1SkillClassifier.py`), `work`→`constructed-response` /
+  `mc`→`multiple-choice` (answer key parsed by letter *or* choice-text match) /
+  `fill`→`constructed-response`, `solution`→`explanation`, declarative `figure`
+  rendered to SVG per version. Emits `alg1-items.generated.json`,
+  `alg1-skill-names.json`, `alg1-assessment-map.json` (the quiz/test structure for
+  the future rail), and `alg1-skills-by-module.json` (module → fine skills with an
+  `inCatalog` flag — the worklist for BKT wiring).
 - **`scripts/auditAlg1Items.py`** (`npm run alg1:audit`) — runs every per-version
   `verify` snippet (762 run, 756 pass; 6 hand-verified false-positives allowlisted).
   Exits non-zero only on a **new** regression, so a wrong key can't slip in.
@@ -338,10 +338,18 @@ Ingestion bakes each student figure into `Problem.svg` and each answer overlay i
 `figure.keyFigure.svg` (75 figures + 42 key overlays), so the existing inline-visual
 display shows them with no frontend changes.
 
-**Still deferred (follow-up PR):** (1) fine-grained per-item skill tagging via the
-crosswalk (or ask Fable to add per-item `skill` tags, as the ACT bank now carries);
-(2) wire module skills to BKT / `tutorPlan.skillFocus` so they become first-class
-course checkpoints, not just a poolable bank.
+**Fine-grained skill tagging — DONE.** `scripts/alg1SkillClassifier.py` tags each
+item with an exact sub-skill from its wording (e.g. `completing-the-square`,
+`parallel-perpendicular-lines`), reusing catalog skillIds where they exist and
+adding fine ids for the gaps; spiral items are tagged by their source module. All
+266 items map to a fine skill (0 coarse fallbacks) across 63 distinct skills (16
+already in the catalog, 47 new — listed per module in `alg1-skills-by-module.json`).
+The ingester prefers a per-item `skill` field if Fable ever adds one, so
+gold-standard tags can be swapped in with no rework.
+
+**Still deferred (follow-up PR):** wire the fine skills to BKT / `tutorPlan.skillFocus`
+(the 47 new ones need Skill catalog docs) so they become first-class course
+checkpoints, not just a poolable bank — `alg1-skills-by-module.json` is the worklist.
 
 ## 7. Open questions
 

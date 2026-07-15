@@ -1,0 +1,565 @@
+{
+  "1": [
+    {
+      "skillId": "decimal-operations",
+      "name": "Decimal operations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "evaluating-expressions",
+      "name": "Evaluating expressions with substitution",
+      "inCatalog": false
+    },
+    {
+      "skillId": "fraction-operations",
+      "name": "Fraction operations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "integer-operations",
+      "name": "Integer operations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "order-of-operations",
+      "name": "Order of operations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-one-step-equations",
+      "name": "Solving one-step equations",
+      "inCatalog": true
+    },
+    {
+      "skillId": "writing-algebraic-expressions",
+      "name": "Writing algebraic expressions",
+      "inCatalog": false
+    }
+  ],
+  "2": [
+    {
+      "skillId": "evaluating-expressions",
+      "name": "Evaluating expressions with substitution",
+      "inCatalog": false
+    },
+    {
+      "skillId": "linear-equations-number-of-solutions",
+      "name": "Number of solutions of a linear equation",
+      "inCatalog": false
+    },
+    {
+      "skillId": "literal-equations",
+      "name": "Literal equations (solving for a variable)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "order-of-operations",
+      "name": "Order of operations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-equations-with-variables-both-sides",
+      "name": "Equations with variables on both sides",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-multi-step-equations",
+      "name": "Solving multi-step equations",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-one-step-equations",
+      "name": "Solving one-step equations",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-proportions",
+      "name": "Solving proportions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-two-step-equations",
+      "name": "Solving two-step equations",
+      "inCatalog": true
+    },
+    {
+      "skillId": "writing-algebraic-expressions",
+      "name": "Writing algebraic expressions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "writing-solving-equations-context",
+      "name": "Writing & solving equations from context",
+      "inCatalog": false
+    }
+  ],
+  "3": [
+    {
+      "skillId": "discrete-continuous-relations",
+      "name": "Discrete vs continuous relations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "evaluating-expressions",
+      "name": "Evaluating expressions with substitution",
+      "inCatalog": false
+    },
+    {
+      "skillId": "function-application-modeling",
+      "name": "Function models in context",
+      "inCatalog": false
+    },
+    {
+      "skillId": "function-notation-evaluation",
+      "name": "Function notation & evaluation",
+      "inCatalog": false
+    },
+    {
+      "skillId": "identifying-functions",
+      "name": "Identifying functions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "interpreting-graphs-stories",
+      "name": "Interpreting graphs (story matching)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "literal-equations",
+      "name": "Literal equations (solving for a variable)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "order-of-operations",
+      "name": "Order of operations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-equations-with-variables-both-sides",
+      "name": "Equations with variables on both sides",
+      "inCatalog": true
+    },
+    {
+      "skillId": "writing-algebraic-expressions",
+      "name": "Writing algebraic expressions",
+      "inCatalog": false
+    }
+  ],
+  "4": [
+    {
+      "skillId": "absolute-value-graphs-transformations",
+      "name": "Absolute-value graphs & transformations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "function-notation-evaluation",
+      "name": "Function notation & evaluation",
+      "inCatalog": false
+    },
+    {
+      "skillId": "graphing-linear-equations-slope-intercept",
+      "name": "Graphing lines in slope-intercept form",
+      "inCatalog": true
+    },
+    {
+      "skillId": "identifying-functions",
+      "name": "Identifying functions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "linear-modeling-slope-intercept",
+      "name": "Linear models (slope-intercept)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "reading-slope-from-graph",
+      "name": "Reading slope & intercept from a graph",
+      "inCatalog": false
+    },
+    {
+      "skillId": "slope-from-two-points",
+      "name": "Slope from two points",
+      "inCatalog": false
+    },
+    {
+      "skillId": "slope-intercept-from-equation",
+      "name": "Slope & intercept from an equation",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-equations-with-variables-both-sides",
+      "name": "Equations with variables on both sides",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-one-step-equations",
+      "name": "Solving one-step equations",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-proportions",
+      "name": "Solving proportions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "standard-to-slope-intercept",
+      "name": "Converting standard to slope-intercept form",
+      "inCatalog": false
+    },
+    {
+      "skillId": "undefined-zero-slope",
+      "name": "Undefined & zero slope",
+      "inCatalog": false
+    }
+  ],
+  "5": [
+    {
+      "skillId": "absolute-value-graphs-transformations",
+      "name": "Absolute-value graphs & transformations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "converting-between-forms",
+      "name": "Converting between forms of a line",
+      "inCatalog": false
+    },
+    {
+      "skillId": "function-notation-evaluation",
+      "name": "Function notation & evaluation",
+      "inCatalog": false
+    },
+    {
+      "skillId": "linear-equation-forms-reference",
+      "name": "The three forms of a linear equation",
+      "inCatalog": false
+    },
+    {
+      "skillId": "linear-modeling-writing-equations",
+      "name": "Writing linear models from context",
+      "inCatalog": false
+    },
+    {
+      "skillId": "literal-equations",
+      "name": "Literal equations (solving for a variable)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "parallel-perpendicular-lines",
+      "name": "Parallel & perpendicular lines",
+      "inCatalog": false
+    },
+    {
+      "skillId": "point-slope-form",
+      "name": "Point-slope form",
+      "inCatalog": false
+    },
+    {
+      "skillId": "slope-from-two-points",
+      "name": "Slope from two points",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-equations-with-variables-both-sides",
+      "name": "Equations with variables on both sides",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-multi-step-equations",
+      "name": "Solving multi-step equations",
+      "inCatalog": true
+    },
+    {
+      "skillId": "standard-form-equations",
+      "name": "Standard-form equations",
+      "inCatalog": false
+    },
+    {
+      "skillId": "standard-to-slope-intercept",
+      "name": "Converting standard to slope-intercept form",
+      "inCatalog": false
+    },
+    {
+      "skillId": "writing-linear-equations-slope-intercept",
+      "name": "Writing equations in slope-intercept form",
+      "inCatalog": true
+    }
+  ],
+  "6": [
+    {
+      "skillId": "compound-inequalities",
+      "name": "Compound inequalities",
+      "inCatalog": false
+    },
+    {
+      "skillId": "literal-equations",
+      "name": "Literal equations (solving for a variable)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "matching-inequality-graphs",
+      "name": "Matching an inequality to its graph",
+      "inCatalog": false
+    },
+    {
+      "skillId": "slope-from-two-points",
+      "name": "Slope from two points",
+      "inCatalog": false
+    },
+    {
+      "skillId": "slope-intercept-from-equation",
+      "name": "Slope & intercept from an equation",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-equations-with-variables-both-sides",
+      "name": "Equations with variables on both sides",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-graphing-inequalities",
+      "name": "Solving & graphing inequalities",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-multi-step-equations",
+      "name": "Solving multi-step equations",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-one-variable-inequalities",
+      "name": "Solving one-variable inequalities",
+      "inCatalog": false
+    },
+    {
+      "skillId": "standard-to-slope-intercept",
+      "name": "Converting standard to slope-intercept form",
+      "inCatalog": false
+    },
+    {
+      "skillId": "writing-linear-equations-slope-intercept",
+      "name": "Writing equations in slope-intercept form",
+      "inCatalog": true
+    },
+    {
+      "skillId": "writing-solving-inequalities-context",
+      "name": "Writing & solving inequalities from context",
+      "inCatalog": false
+    }
+  ],
+  "7": [
+    {
+      "skillId": "checking-system-solutions",
+      "name": "Checking a solution of a system",
+      "inCatalog": false
+    },
+    {
+      "skillId": "choosing-a-solution-method",
+      "name": "Choosing a method for a system",
+      "inCatalog": false
+    },
+    {
+      "skillId": "classifying-system-solutions",
+      "name": "Classifying the number of solutions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "parallel-perpendicular-lines",
+      "name": "Parallel & perpendicular lines",
+      "inCatalog": false
+    },
+    {
+      "skillId": "point-slope-form",
+      "name": "Point-slope form",
+      "inCatalog": false
+    },
+    {
+      "skillId": "slope-from-two-points",
+      "name": "Slope from two points",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-one-variable-inequalities",
+      "name": "Solving one-variable inequalities",
+      "inCatalog": false
+    },
+    {
+      "skillId": "standard-to-slope-intercept",
+      "name": "Converting standard to slope-intercept form",
+      "inCatalog": false
+    },
+    {
+      "skillId": "systems-application-modeling",
+      "name": "Systems word problems",
+      "inCatalog": false
+    },
+    {
+      "skillId": "systems-of-equations-elimination",
+      "name": "Solving systems by elimination",
+      "inCatalog": true
+    },
+    {
+      "skillId": "systems-of-equations-graphing",
+      "name": "Solving systems by graphing",
+      "inCatalog": true
+    },
+    {
+      "skillId": "systems-of-equations-substitution",
+      "name": "Solving systems by substitution",
+      "inCatalog": true
+    },
+    {
+      "skillId": "writing-linear-equations-slope-intercept",
+      "name": "Writing equations in slope-intercept form",
+      "inCatalog": true
+    }
+  ],
+  "10": [
+    {
+      "skillId": "classifying-system-solutions",
+      "name": "Classifying the number of solutions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "factoring-application",
+      "name": "Factoring in context (area)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "factoring-by-grouping",
+      "name": "Factoring by grouping",
+      "inCatalog": false
+    },
+    {
+      "skillId": "factoring-gcf",
+      "name": "Factoring the GCF",
+      "inCatalog": true
+    },
+    {
+      "skillId": "factoring-trinomials",
+      "name": "Factoring trinomials",
+      "inCatalog": false
+    },
+    {
+      "skillId": "literal-equations",
+      "name": "Literal equations (solving for a variable)",
+      "inCatalog": false
+    },
+    {
+      "skillId": "multiplying-binomials",
+      "name": "Multiplying binomials",
+      "inCatalog": false
+    },
+    {
+      "skillId": "polynomial-addition-subtraction",
+      "name": "Adding & subtracting polynomials",
+      "inCatalog": true
+    },
+    {
+      "skillId": "polynomial-multiplication-monomial",
+      "name": "Multiplying a polynomial by a monomial",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-equations-with-variables-both-sides",
+      "name": "Equations with variables on both sides",
+      "inCatalog": true
+    },
+    {
+      "skillId": "special-products",
+      "name": "Special products",
+      "inCatalog": false
+    },
+    {
+      "skillId": "systems-of-equations-elimination",
+      "name": "Solving systems by elimination",
+      "inCatalog": true
+    },
+    {
+      "skillId": "systems-of-equations-substitution",
+      "name": "Solving systems by substitution",
+      "inCatalog": true
+    },
+    {
+      "skillId": "writing-linear-equations-slope-intercept",
+      "name": "Writing equations in slope-intercept form",
+      "inCatalog": true
+    }
+  ],
+  "11": [
+    {
+      "skillId": "choosing-quadratic-method",
+      "name": "Choosing a method to solve a quadratic",
+      "inCatalog": false
+    },
+    {
+      "skillId": "classifying-system-solutions",
+      "name": "Classifying the number of solutions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "completing-the-square",
+      "name": "Solving by completing the square",
+      "inCatalog": false
+    },
+    {
+      "skillId": "discriminant-number-of-solutions",
+      "name": "Discriminant & number of solutions",
+      "inCatalog": false
+    },
+    {
+      "skillId": "factoring-trinomials",
+      "name": "Factoring trinomials",
+      "inCatalog": false
+    },
+    {
+      "skillId": "multiplying-binomials",
+      "name": "Multiplying binomials",
+      "inCatalog": false
+    },
+    {
+      "skillId": "quadratic-abc-identification",
+      "name": "Identifying a, b, c",
+      "inCatalog": false
+    },
+    {
+      "skillId": "quadratic-application",
+      "name": "Quadratic applications",
+      "inCatalog": false
+    },
+    {
+      "skillId": "quadratic-equations-graphing",
+      "name": "Graphing quadratic functions",
+      "inCatalog": true
+    },
+    {
+      "skillId": "quadratic-formula",
+      "name": "Solving with the quadratic formula",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-one-variable-inequalities",
+      "name": "Solving one-variable inequalities",
+      "inCatalog": false
+    },
+    {
+      "skillId": "solving-quadratics-factoring",
+      "name": "Solving quadratics by factoring",
+      "inCatalog": true
+    },
+    {
+      "skillId": "solving-quadratics-square-roots",
+      "name": "Solving by square roots",
+      "inCatalog": true
+    },
+    {
+      "skillId": "systems-of-equations-elimination",
+      "name": "Solving systems by elimination",
+      "inCatalog": true
+    },
+    {
+      "skillId": "systems-of-equations-substitution",
+      "name": "Solving systems by substitution",
+      "inCatalog": true
+    }
+  ]
+}
