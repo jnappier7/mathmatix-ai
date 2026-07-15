@@ -255,6 +255,57 @@ describe('boardSynthesizer — full turns', () => {
     expect(pose.tex).toMatch(/4x.*3.*27/);
   });
 
+  // ──────────────────────────────────────────────────────────────
+  // Tutor poses a NEW problem while one is already PINNED (live bug):
+  // board + grader's pinnedProblemTex went stale, so a correct answer to
+  // the new problem was graded against the old one.
+  // ──────────────────────────────────────────────────────────────
+
+  describe('tutor re-poses a new problem over a pinned one', () => {
+    const PIN = 'x^2 - 5x + 6 = 0';
+
+    test('THE FIX: tutor poses harder quadratic with a cue → clear + pose the new one', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: '1/2 and -3',
+        tutorResponse: "Alright, un poco más picante this time.\n2x^2 + 5x - 3 = 0\nLeading coefficient isn't 1 anymore, so factoring's trickier. What's your first move?",
+        diagnosis: {}, observation: {},
+        lastBoardAction: 'pose',
+        pinnedProblem: PIN,
+      });
+      const pose = cards.find(c => c.action === 'pose');
+      expect(pose).toBeTruthy();
+      expect(pose.tex).toMatch(/2x.*5x.*3/);
+      expect(cards.some(c => c.action === 'clear')).toBe(true); // replaces the old board
+    });
+
+    test('GUARD: multi-line worked scratch of the CURRENT problem does NOT re-pose', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: 'ok',
+        tutorResponse: 'So x^2 - 5x + 6 = 0 becomes\n(x-2)(x-3) = 0\nso x = 2 or x = 3',
+        diagnosis: {}, observation: {}, lastBoardAction: 'pose', pinnedProblem: PIN,
+      });
+      expect(cards.some(c => c.action === 'pose')).toBe(false);
+    });
+
+    test('GUARD: tutor restating the SAME problem (even with a cue) does NOT re-pose', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: 'ok',
+        tutorResponse: "Let's try x^2 - 5x + 6 = 0 again. What's the first move?",
+        diagnosis: {}, observation: {}, lastBoardAction: 'pose', pinnedProblem: PIN,
+      });
+      expect(cards.some(c => c.action === 'pose')).toBe(false);
+    });
+
+    test('GUARD: a new equation mentioned WITHOUT a pose cue does NOT re-pose (conservative)', () => {
+      const cards = synthesizeBoardCommands({
+        studentMessage: 'ok',
+        tutorResponse: 'Remember, 2x^2 + 5x - 3 = 0 is also a quadratic.',
+        diagnosis: {}, observation: {}, lastBoardAction: 'pose', pinnedProblem: PIN,
+      });
+      expect(cards.some(c => c.action === 'pose')).toBe(false);
+    });
+  });
+
   test('Final answer turn: student "x=6" + math engine confirms → verify even when tutor hedges', () => {
     // The bug B scenario: math engine confirms x=6, but the tutor's
     // prose says "Hmm, let's double-check that last step." The board
