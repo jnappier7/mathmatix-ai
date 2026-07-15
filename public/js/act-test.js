@@ -262,16 +262,24 @@
     // Compose a student-voiced results summary and hand it to the chat tutor so
     // the conversation has context and remediation can start on the weak areas.
     buildTutorMessage(r) {
+      const head = `I just finished an ACT Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
+
+      // Prefer EXACT skills (e.g. "Quadratic Equations") over broad categories.
+      const skills = (r.weakSkills || []).slice(0, 5);
+      if (skills.length) {
+        const list = skills.map(s => `${s.name} (missed ${s.missed}/${s.total})`).join(', ');
+        return `${head} The specific skills I missed questions on: ${list}. Can we work through those one at a time, starting with the weakest?`;
+      }
+
+      // Fallback: category level (if the backend didn't send per-skill data).
       const cats = Object.entries(r.byCategory || {})
         .map(([k, v]) => ({ name: CATEGORY_LABELS[k] || k, correct: v.correct, total: v.total, pct: v.total ? v.correct / v.total : 1 }))
-        .sort((a, b) => a.pct - b.pct);
-      const weak = cats.filter(c => c.correct < c.total).slice(0, 2);
-      const head = `I just finished an ACT Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
-      if (!weak.length) {
+        .sort((a, b) => a.pct - b.pct)
+        .filter(c => c.correct < c.total).slice(0, 2);
+      if (!cats.length) {
         return `${head} I got everything right — what should I work on to push my score even higher?`;
       }
-      const list = weak.map(c => `${c.name} (${c.correct}/${c.total})`).join(' and ');
-      return `${head} My weakest areas were ${list}. Can we start reviewing those, one topic at a time?`;
+      return `${head} My weakest areas were ${cats.map(c => `${c.name} (${c.correct}/${c.total})`).join(' and ')}. Can we start reviewing those, one topic at a time?`;
     }
 
     sendToTutor(r) {

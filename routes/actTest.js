@@ -21,6 +21,18 @@ const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
 
+// skillId → human-readable name, so the report can name EXACT weak skills
+// (e.g. "Quadratic Equations") rather than just the broad category.
+const ACT_SKILL_NAMES = (() => {
+  try {
+    const seed = require('../seeds/skills-act-math-prep.json');
+    const arr = Array.isArray(seed) ? seed : (seed.skills || []);
+    const map = {};
+    for (const s of arr) map[s.skillId] = s.displayName || s.skillId;
+    return map;
+  } catch { return {}; }
+})();
+
 // ── POST /start ─────────────────────────────────────────────
 router.post('/', async (req, res) => {
   return res.status(404).json({ message: 'Use POST /api/act-test/start' });
@@ -183,12 +195,29 @@ router.post('/complete', async (req, res) => {
 
     // Per-category breakdown — the diagnostic signal that drives the boot-camp plan.
     const byCategory = {};
+    const bySkill = {};
     for (const r of session.responses) {
       const c = r.category || 'unknown';
       byCategory[c] = byCategory[c] || { correct: 0, total: 0 };
       byCategory[c].total += 1;
       if (r.correct) byCategory[c].correct += 1;
+
+      const s = r.skillId || 'unknown';
+      bySkill[s] = bySkill[s] || { correct: 0, total: 0 };
+      bySkill[s].total += 1;
+      if (r.correct) bySkill[s].correct += 1;
     }
+
+    // Exact weak skills (by name), worst first — the precise remediation targets.
+    const weakSkills = Object.entries(bySkill)
+      .filter(([, v]) => v.correct < v.total)
+      .map(([skillId, v]) => ({
+        skillId,
+        name: ACT_SKILL_NAMES[skillId] || skillId,
+        missed: v.total - v.correct,
+        total: v.total,
+      }))
+      .sort((a, b) => (b.missed / b.total) - (a.missed / a.total) || b.missed - a.missed);
 
     session.status = 'completed';
     session.completedAt = new Date();
@@ -205,6 +234,7 @@ router.post('/complete', async (req, res) => {
         scaledApproximate: true,
         accuracy: total ? Math.round((raw / total) * 100) : 0,
         byCategory,
+        weakSkills,
         durationMinutes: session.startedAt
           ? Math.round((session.completedAt - session.startedAt) / 60000)
           : null,
