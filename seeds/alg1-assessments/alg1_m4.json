@@ -1,0 +1,935 @@
+{
+  "module": 4,
+  "topics": "Slope & Graphing Linear/Abs-Value Functions",
+  "quiz": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "State the slope and the y-intercept of the line y = 3x − 5.",
+          "State the slope and the y-intercept of the line y = −2x + 7.",
+          "State the slope and the y-intercept of the line y = 4x + 1."
+        ],
+        "choices": null,
+        "answer": [
+          "slope = 3, y-intercept = −5",
+          "slope = −2, y-intercept = 7",
+          "slope = 4, y-intercept = 1"
+        ],
+        "solution": [
+          "y = mx + b form → m = 3, b = −5",
+          "y = mx + b form → m = −2, b = 7",
+          "y = mx + b form → m = 4, b = 1"
+        ],
+        "verify": [
+          "f=lambda x:3*x-5; assert f(0)==-5 and f(1)-f(0)==3",
+          "f=lambda x:-2*x+7; assert f(0)==7 and f(1)-f(0)==-2",
+          "f=lambda x:4*x+1; assert f(0)==1 and f(1)-f(0)==4"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 1,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line that passes through (1, 2) and (3, 8).",
+          "Find the slope of the line that passes through (2, 5) and (4, 1).",
+          "Find the slope of the line that passes through (−1, −3) and (2, 9)."
+        ],
+        "choices": null,
+        "answer": ["m = 3", "m = −2", "m = 4"],
+        "solution": [
+          "m = (8 − 2)/(3 − 1) = 6/2 = 3",
+          "m = (1 − 5)/(4 − 2) = −4/2 = −2",
+          "m = (9 − (−3))/(2 − (−1)) = 12/3 = 4"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; assert F(8-2,3-1)==3",
+          "from fractions import Fraction as F; assert F(1-5,4-2)==-2",
+          "from fractions import Fraction as F; assert F(9-(-3),2-(-1))==4"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Rewrite 4x + 2y = 8 in slope-intercept form.",
+          "Rewrite 9x + 3y = 6 in slope-intercept form.",
+          "Rewrite 10x − 5y = 15 in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": ["y = −2x + 4", "y = −3x + 2", "y = 2x − 3"],
+        "solution": [
+          "4x + 2y = 8 → 2y = −4x + 8 → y = −2x + 4",
+          "9x + 3y = 6 → 3y = −9x + 6 → y = −3x + 2",
+          "10x − 5y = 15 → −5y = −10x + 15 → y = 2x − 3"
+        ],
+        "verify": [
+          "for xx in (0,3):\n    yy=-2*xx+4\n    assert 4*xx+2*yy==8",
+          "for xx in (0,3):\n    yy=-3*xx+2\n    assert 9*xx+3*yy==6",
+          "for xx in (0,3):\n    yy=2*xx-3\n    assert 10*xx-5*yy==15"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line through each pair of points. Show the slope formula for each.  a) (−2, 5) and (4, 5)   b) (3, −1) and (3, 7)",
+          "Find the slope of the line through each pair of points. Show the slope formula for each.  a) (−6, −2) and (1, −2)   b) (5, 4) and (5, −8)",
+          "Find the slope of the line through each pair of points. Show the slope formula for each.  a) (0, 6) and (7, 6)   b) (−4, 2) and (−4, 9)"
+        ],
+        "choices": null,
+        "answer": [
+          "a) m = 0  b) slope is undefined",
+          "a) m = 0  b) slope is undefined",
+          "a) m = 0  b) slope is undefined"
+        ],
+        "solution": [
+          "a) m = (5 − 5)/(4 − (−2)) = 0/6 = 0 (horizontal) → b) m = (7 − (−1))/(3 − 3) = 8/0 → undefined (vertical)",
+          "a) m = (−2 − (−2))/(1 − (−6)) = 0/7 = 0 (horizontal) → b) m = (−8 − 4)/(5 − 5) = −12/0 → undefined (vertical)",
+          "a) m = (6 − 6)/(7 − 0) = 0/7 = 0 (horizontal) → b) m = (9 − 2)/(−4 − (−4)) = 7/0 → undefined (vertical)"
+        ],
+        "verify": [
+          "assert 5-5==0 and 4-(-2)!=0; assert 3-3==0 and 7-(-1)!=0",
+          "assert -2-(-2)==0 and 1-(-6)!=0; assert 5-5==0 and -8-4!=0",
+          "assert 6-6==0 and 7-0!=0; assert -4-(-4)==0 and 9-2!=0"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Graph the line y = (1/2)x − 3 on the grid. Plot the y-intercept first, then use the slope to plot at least two more points.",
+          "Graph the line y = −(3/4)x + 2 on the grid. Plot the y-intercept first, then use the slope to plot at least two more points.",
+          "Graph the line y = (3/2)x − 4 on the grid. Plot the y-intercept first, then use the slope to plot at least two more points."
+        ],
+        "choices": null,
+        "answer": [
+          "Line through (0, −3) rising 1 for every run of 2, e.g. (2, −2) and (4, −1)",
+          "Line through (0, 2) falling 3 for every run of 4, e.g. (4, −1) and (8, −4)",
+          "Line through (0, −4) rising 3 for every run of 2, e.g. (2, −1) and (4, 2)"
+        ],
+        "solution": [
+          "Start at b = −3 on the y-axis → slope 1/2: right 2, up 1 → plot (2, −2), (4, −1) → draw the line",
+          "Start at b = 2 on the y-axis → slope −3/4: right 4, down 3 → plot (4, −1), (8, −4) → draw the line",
+          "Start at b = −4 on the y-axis → slope 3/2: right 2, up 3 → plot (2, −1), (4, 2) → draw the line"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; f=lambda x:F(1,2)*x-3; assert f(0)==-3 and f(2)==-2 and f(4)==-1",
+          "from fractions import Fraction as F; f=lambda x:F(-3,4)*x+2; assert f(0)==2 and f(4)==-1 and f(8)==-4",
+          "from fractions import Fraction as F; f=lambda x:F(3,2)*x-4; assert f(0)==-4 and f(2)==-1 and f(4)==2"
+        ],
+        "figure": {
+          "kind": "grid",
+          "params": [
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10}
+          ]
+        },
+        "key_figure": {
+          "kind": "grid_answer",
+          "params": [
+            {"lines": [{"slope": 0.5, "yint": -3}], "points": [[0, -3], [2, -2], [4, -1]], "xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"lines": [{"slope": -0.75, "yint": 2}], "points": [[0, 2], [4, -1], [8, -4]], "xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"lines": [{"slope": 1.5, "yint": -4}], "points": [[0, -4], [2, -1], [4, 2]], "xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10}
+          ]
+        },
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "The graph of a line is shown.  a) Find the slope.  b) Find the y-intercept.  c) Write the equation of the line in slope-intercept form.",
+          "The graph of a line is shown.  a) Find the slope.  b) Find the y-intercept.  c) Write the equation of the line in slope-intercept form.",
+          "The graph of a line is shown.  a) Find the slope.  b) Find the y-intercept.  c) Write the equation of the line in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": [
+          "a) m = 2  b) b = −5  c) y = 2x − 5",
+          "a) m = −3  b) b = 1  c) y = −3x + 1",
+          "a) m = 3  b) b = −2  c) y = 3x − 2"
+        ],
+        "solution": [
+          "Rise/run between lattice points: up 2 for each 1 right → m = 2 → crosses y-axis at (0, −5) → b = −5 → y = 2x − 5",
+          "Rise/run between lattice points: down 3 for each 1 right → m = −3 → crosses y-axis at (0, 1) → b = 1 → y = −3x + 1",
+          "Rise/run between lattice points: up 3 for each 1 right → m = 3 → crosses y-axis at (0, −2) → b = −2 → y = 3x − 2"
+        ],
+        "verify": [
+          "f=lambda x:2*x-5; assert f(0)==-5 and f(1)-f(0)==2",
+          "f=lambda x:-3*x+1; assert f(0)==1 and f(1)-f(0)==-3",
+          "f=lambda x:3*x-2; assert f(0)==-2 and f(1)-f(0)==3"
+        ],
+        "figure": {
+          "kind": "line_graph",
+          "params": [
+            {"slope": 2, "yint": -5, "xmin": -8, "xmax": 8},
+            {"slope": -3, "yint": 1, "xmin": -8, "xmax": 8},
+            {"slope": 3, "yint": -2, "xmin": -8, "xmax": 8}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "For g(x) = |x − 3| + 2:  a) Identify the vertex.  b) Describe how the graph of g is a translation of the graph of f(x) = |x|.",
+          "For g(x) = |x + 4| − 1:  a) Identify the vertex.  b) Describe how the graph of g is a translation of the graph of f(x) = |x|.",
+          "For g(x) = |x − 6| − 5:  a) Identify the vertex.  b) Describe how the graph of g is a translation of the graph of f(x) = |x|."
+        ],
+        "choices": null,
+        "answer": [
+          "a) vertex (3, 2)  b) translated 3 units right and 2 units up",
+          "a) vertex (−4, −1)  b) translated 4 units left and 1 unit down",
+          "a) vertex (6, −5)  b) translated 6 units right and 5 units down"
+        ],
+        "solution": [
+          "g(x) = |x − h| + k with h = 3, k = 2 → vertex (3, 2) → shift right 3, up 2",
+          "g(x) = |x − h| + k with h = −4, k = −1 → vertex (−4, −1) → shift left 4, down 1",
+          "g(x) = |x − h| + k with h = 6, k = −5 → vertex (6, −5) → shift right 6, down 5"
+        ],
+        "verify": [
+          "g=lambda x:abs(x-3)+2; assert g(3)==2 and g(2)==3 and g(4)==3",
+          "g=lambda x:abs(x+4)-1; assert g(-4)==-1 and g(-5)==0 and g(-3)==0",
+          "g=lambda x:abs(x-6)-5; assert g(6)==-5 and g(5)==-4 and g(7)==-4"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "A candle burns at a steady rate. Its height in inches after t hours is h = 12 − 2t.  a) State the slope and the y-intercept.  b) Explain what the slope means in this situation.  c) Find the height of the candle after 4 hours.",
+          "A pool drains at a steady rate. Its volume in gallons after t minutes is V = 300 − 25t.  a) State the slope and the y-intercept.  b) Explain what the slope means in this situation.  c) Find the volume of the pool after 6 minutes.",
+          "A phone battery drains at a steady rate. Its charge in percent after t hours is B = 80 − 5t.  a) State the slope and the y-intercept.  b) Explain what the slope means in this situation.  c) Find the charge of the battery after 9 hours."
+        ],
+        "choices": null,
+        "answer": [
+          "a) slope = −2, y-intercept = 12  b) the candle loses 2 inches of height each hour  c) 4 inches",
+          "a) slope = −25, y-intercept = 300  b) the pool loses 25 gallons each minute  c) 150 gallons",
+          "a) slope = −5, y-intercept = 80  b) the battery loses 5 percent of charge each hour  c) 35 percent"
+        ],
+        "solution": [
+          "m = −2, b = 12 → slope: height drops 2 in. per hour; b: starting height 12 in. → h(4) = 12 − 2(4) = 12 − 8 = 4",
+          "m = −25, b = 300 → slope: volume drops 25 gal per minute; b: starting volume 300 gal → V(6) = 300 − 25(6) = 300 − 150 = 150",
+          "m = −5, b = 80 → slope: charge drops 5% per hour; b: starting charge 80% → B(9) = 80 − 5(9) = 80 − 45 = 35"
+        ],
+        "verify": [
+          "h=lambda t:12-2*t; assert h(0)==12 and h(1)-h(0)==-2 and h(4)==4",
+          "V=lambda t:300-25*t; assert V(0)==300 and V(1)-V(0)==-25 and V(6)==150",
+          "B=lambda t:80-5*t; assert B(0)==80 and B(1)-B(0)==-5 and B(9)==35"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 9,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve: 3(x − 4) = 2x + 5",
+          "Solve: 5(x + 2) = 3x + 18",
+          "Solve: 4(x − 1) = 2x + 10"
+        ],
+        "choices": null,
+        "answer": ["x = 17", "x = 4", "x = 7"],
+        "solution": [
+          "3x − 12 = 2x + 5 → x − 12 = 5 → x = 17",
+          "5x + 10 = 3x + 18 → 2x = 8 → x = 4",
+          "4x − 4 = 2x + 10 → 2x = 14 → x = 7"
+        ],
+        "verify": [
+          "x=17; assert 3*(x-4)==2*x+5",
+          "x=4; assert 5*(x+2)==3*x+18",
+          "x=7; assert 4*(x-1)==2*x+10"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 10,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Given f(x) = 2x − 7, find f(−3).",
+          "Given f(x) = 3x + 4, find f(−5).",
+          "Given f(x) = −2x + 9, find f(6)."
+        ],
+        "choices": null,
+        "answer": ["f(−3) = −13", "f(−5) = −11", "f(6) = −3"],
+        "solution": [
+          "f(−3) = 2(−3) − 7 = −6 − 7 = −13",
+          "f(−5) = 3(−5) + 4 = −15 + 4 = −11",
+          "f(6) = −2(6) + 9 = −12 + 9 = −3"
+        ],
+        "verify": [
+          "f=lambda x:2*x-7; assert f(-3)==-13",
+          "f=lambda x:3*x+4; assert f(-5)==-11",
+          "f=lambda x:-2*x+9; assert f(6)==-3"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M3"
+      },
+      {
+        "n": 11,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve for w:  P = 2l + 2w",
+          "Solve for h:  A = (1/2)bh",
+          "Solve for x:  y = mx + b"
+        ],
+        "choices": null,
+        "answer": ["w = (P − 2l)/2", "h = 2A/b", "x = (y − b)/m"],
+        "solution": [
+          "P − 2l = 2w → w = (P − 2l)/2",
+          "2A = bh → h = 2A/b",
+          "y − b = mx → x = (y − b)/m"
+        ],
+        "verify": [
+          "P,l=20,4; w=(P-2*l)/2; assert 2*l+2*w==P and w==6",
+          "from fractions import Fraction as F; A,b=24,6; h=2*A/b; assert F(1,2)*b*h==A and h==8",
+          "y,m,b=11,3,2; x=(y-b)/m; assert m*x+b==y and x==3"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      }
+    ]
+  },
+  "test": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "State the slope and the y-intercept of the line y = −4x + 6.",
+          "State the slope and the y-intercept of the line y = 5x − 2.",
+          "State the slope and the y-intercept of the line y = −3x − 8."
+        ],
+        "choices": null,
+        "answer": [
+          "slope = −4, y-intercept = 6",
+          "slope = 5, y-intercept = −2",
+          "slope = −3, y-intercept = −8"
+        ],
+        "solution": [
+          "y = mx + b form → m = −4, b = 6",
+          "y = mx + b form → m = 5, b = −2",
+          "y = mx + b form → m = −3, b = −8"
+        ],
+        "verify": [
+          "f=lambda x:-4*x+6; assert f(0)==6 and f(1)-f(0)==-4",
+          "f=lambda x:5*x-2; assert f(0)==-2 and f(1)-f(0)==5",
+          "f=lambda x:-3*x-8; assert f(0)==-8 and f(1)-f(0)==-3"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line that passes through (2, 3) and (5, 12).",
+          "Find the slope of the line that passes through (−1, 4) and (3, −4).",
+          "Find the slope of the line that passes through (0, −5) and (4, 3)."
+        ],
+        "choices": null,
+        "answer": ["m = 3", "m = −2", "m = 2"],
+        "solution": [
+          "m = (12 − 3)/(5 − 2) = 9/3 = 3",
+          "m = (−4 − 4)/(3 − (−1)) = −8/4 = −2",
+          "m = (3 − (−5))/(4 − 0) = 8/4 = 2"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; assert F(12-3,5-2)==3",
+          "from fractions import Fraction as F; assert F(-4-4,3-(-1))==-2",
+          "from fractions import Fraction as F; assert F(3-(-5),4-0)==2"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Rewrite 5x + y = 9 in slope-intercept form.",
+          "Rewrite 8x + 4y = 20 in slope-intercept form.",
+          "Rewrite 6x − 2y = 10 in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": ["y = −5x + 9", "y = −2x + 5", "y = 3x − 5"],
+        "solution": [
+          "5x + y = 9 → y = −5x + 9",
+          "8x + 4y = 20 → 4y = −8x + 20 → y = −2x + 5",
+          "6x − 2y = 10 → −2y = −6x + 10 → y = 3x − 5"
+        ],
+        "verify": [
+          "for xx in (0,2):\n    yy=-5*xx+9\n    assert 5*xx+yy==9",
+          "for xx in (0,2):\n    yy=-2*xx+5\n    assert 8*xx+4*yy==20",
+          "for xx in (0,2):\n    yy=3*xx-5\n    assert 6*xx-2*yy==10"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line through each pair of points. Show the slope formula for each.  a) (−3, 1) and (1, 9)   b) (2, −6) and (8, −6)   c) (−5, 3) and (−5, 10)",
+          "Find the slope of the line through each pair of points. Show the slope formula for each.  a) (−2, 7) and (2, −5)   b) (−9, 4) and (3, 4)   c) (6, −2) and (6, 11)",
+          "Find the slope of the line through each pair of points. Show the slope formula for each.  a) (1, −8) and (4, 7)   b) (0, −7) and (10, −7)   c) (−1, 5) and (−1, −6)"
+        ],
+        "choices": null,
+        "answer": [
+          "a) m = 2  b) m = 0  c) slope is undefined",
+          "a) m = −3  b) m = 0  c) slope is undefined",
+          "a) m = 5  b) m = 0  c) slope is undefined"
+        ],
+        "solution": [
+          "a) m = (9 − 1)/(1 − (−3)) = 8/4 = 2 → b) m = (−6 − (−6))/(8 − 2) = 0/6 = 0 (horizontal) → c) m = (10 − 3)/(−5 − (−5)) = 7/0 → undefined (vertical)",
+          "a) m = (−5 − 7)/(2 − (−2)) = −12/4 = −3 → b) m = (4 − 4)/(3 − (−9)) = 0/12 = 0 (horizontal) → c) m = (11 − (−2))/(6 − 6) = 13/0 → undefined (vertical)",
+          "a) m = (7 − (−8))/(4 − 1) = 15/3 = 5 → b) m = (−7 − (−7))/(10 − 0) = 0/10 = 0 (horizontal) → c) m = (−6 − 5)/(−1 − (−1)) = −11/0 → undefined (vertical)"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; assert F(9-1,1-(-3))==2; assert -6-(-6)==0 and 8-2!=0; assert -5-(-5)==0 and 10-3!=0",
+          "from fractions import Fraction as F; assert F(-5-7,2-(-2))==-3; assert 4-4==0 and 3-(-9)!=0; assert 6-6==0 and 11-(-2)!=0",
+          "from fractions import Fraction as F; assert F(7-(-8),4-1)==5; assert -7-(-7)==0 and 10-0!=0; assert -1-(-1)==0 and -6-5!=0"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Graph the line y = −(1/2)x + 4 on the grid. Plot the y-intercept first, then use the slope to plot at least two more points.",
+          "Graph the line y = (3/2)x + 1 on the grid. Plot the y-intercept first, then use the slope to plot at least two more points.",
+          "Graph the line y = −(1/4)x − 2 on the grid. Plot the y-intercept first, then use the slope to plot at least two more points."
+        ],
+        "choices": null,
+        "answer": [
+          "Line through (0, 4) falling 1 for every run of 2, e.g. (2, 3) and (4, 2)",
+          "Line through (0, 1) rising 3 for every run of 2, e.g. (2, 4) and (4, 7)",
+          "Line through (0, −2) falling 1 for every run of 4, e.g. (4, −3) and (8, −4)"
+        ],
+        "solution": [
+          "Start at b = 4 on the y-axis → slope −1/2: right 2, down 1 → plot (2, 3), (4, 2) → draw the line",
+          "Start at b = 1 on the y-axis → slope 3/2: right 2, up 3 → plot (2, 4), (4, 7) → draw the line",
+          "Start at b = −2 on the y-axis → slope −1/4: right 4, down 1 → plot (4, −3), (8, −4) → draw the line"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; f=lambda x:F(-1,2)*x+4; assert f(0)==4 and f(2)==3 and f(4)==2",
+          "from fractions import Fraction as F; f=lambda x:F(3,2)*x+1; assert f(0)==1 and f(2)==4 and f(4)==7",
+          "from fractions import Fraction as F; f=lambda x:F(-1,4)*x-2; assert f(0)==-2 and f(4)==-3 and f(8)==-4"
+        ],
+        "figure": {
+          "kind": "grid",
+          "params": [
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10}
+          ]
+        },
+        "key_figure": {
+          "kind": "grid_answer",
+          "params": [
+            {"lines": [{"slope": -0.5, "yint": 4}], "points": [[0, 4], [2, 3], [4, 2]], "xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"lines": [{"slope": 1.5, "yint": 1}], "points": [[0, 1], [2, 4], [4, 7]], "xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"lines": [{"slope": -0.25, "yint": -2}], "points": [[0, -2], [4, -3], [8, -4]], "xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10}
+          ]
+        },
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "The graph of a line is shown.  a) Find the slope.  b) Find the y-intercept.  c) Write the equation of the line in slope-intercept form.",
+          "The graph of a line is shown.  a) Find the slope.  b) Find the y-intercept.  c) Write the equation of the line in slope-intercept form.",
+          "The graph of a line is shown.  a) Find the slope.  b) Find the y-intercept.  c) Write the equation of the line in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": [
+          "a) m = −2  b) b = 7  c) y = −2x + 7",
+          "a) m = 3  b) b = −4  c) y = 3x − 4",
+          "a) m = −1  b) b = 2  c) y = −x + 2"
+        ],
+        "solution": [
+          "Rise/run between lattice points: down 2 for each 1 right → m = −2 → crosses y-axis at (0, 7) → b = 7 → y = −2x + 7",
+          "Rise/run between lattice points: up 3 for each 1 right → m = 3 → crosses y-axis at (0, −4) → b = −4 → y = 3x − 4",
+          "Rise/run between lattice points: down 1 for each 1 right → m = −1 → crosses y-axis at (0, 2) → b = 2 → y = −x + 2"
+        ],
+        "verify": [
+          "f=lambda x:-2*x+7; assert f(0)==7 and f(1)-f(0)==-2",
+          "f=lambda x:3*x-4; assert f(0)==-4 and f(1)-f(0)==3",
+          "f=lambda x:-1*x+2; assert f(0)==2 and f(1)-f(0)==-1"
+        ],
+        "figure": {
+          "kind": "line_graph",
+          "params": [
+            {"slope": -2, "yint": 7, "xmin": -8, "xmax": 8},
+            {"slope": 3, "yint": -4, "xmin": -8, "xmax": 8},
+            {"slope": -1, "yint": 2, "xmin": -8, "xmax": 8}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Rewrite 3x + 4y = 8 in slope-intercept form, then state the slope and the y-intercept.",
+          "Rewrite 2x + 5y = −10 in slope-intercept form, then state the slope and the y-intercept.",
+          "Rewrite 5x − 2y = 6 in slope-intercept form, then state the slope and the y-intercept."
+        ],
+        "choices": null,
+        "answer": [
+          "y = −(3/4)x + 2; slope = −3/4, y-intercept = 2",
+          "y = −(2/5)x − 2; slope = −2/5, y-intercept = −2",
+          "y = (5/2)x − 3; slope = 5/2, y-intercept = −3"
+        ],
+        "solution": [
+          "3x + 4y = 8 → 4y = −3x + 8 → y = −(3/4)x + 2 → m = −3/4, b = 2",
+          "2x + 5y = −10 → 5y = −2x − 10 → y = −(2/5)x − 2 → m = −2/5, b = −2",
+          "5x − 2y = 6 → −2y = −5x + 6 → y = (5/2)x − 3 → m = 5/2, b = −3"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; f=lambda x:F(-3,4)*x+2; assert all(3*x+4*f(x)==8 for x in (0,4)) and f(0)==2 and f(4)-f(0)==F(-3,4)*4",
+          "from fractions import Fraction as F; f=lambda x:F(-2,5)*x-2; assert all(2*x+5*f(x)==-10 for x in (0,5)) and f(0)==-2 and f(5)-f(0)==F(-2,5)*5",
+          "from fractions import Fraction as F; f=lambda x:F(5,2)*x-3; assert all(5*x-2*f(x)==6 for x in (0,2)) and f(0)==-3 and f(2)-f(0)==F(5,2)*2"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Mia rewrote the equation 3x + 6y = 12 in slope-intercept form. Her work:  Step 1: 6y = −3x + 12.  Step 2: y = −3x + 2.  Identify Mia's mistake, then show the correct solution.",
+          "Tomás rewrote the equation 2x + 8y = 24 in slope-intercept form. His work:  Step 1: 8y = −2x + 24.  Step 2: y = −2x + 3.  Identify Tomás's mistake, then show the correct solution.",
+          "Priya rewrote the equation 6x + 8y = 40 in slope-intercept form. Her work:  Step 1: 8y = −6x + 40.  Step 2: y = −6x + 5.  Identify Priya's mistake, then show the correct solution."
+        ],
+        "choices": null,
+        "answer": [
+          "In Step 2 she divided only the constant by 6, not the x-term. Correct: y = −(1/2)x + 2",
+          "In Step 2 he divided only the constant by 8, not the x-term. Correct: y = −(1/4)x + 3",
+          "In Step 2 she divided only the constant by 8, not the x-term. Correct: y = −(3/4)x + 5"
+        ],
+        "solution": [
+          "Every term must be divided by 6 → 6y = −3x + 12 → y = −3x/6 + 12/6 → y = −(1/2)x + 2",
+          "Every term must be divided by 8 → 8y = −2x + 24 → y = −2x/8 + 24/8 → y = −(1/4)x + 3",
+          "Every term must be divided by 8 → 8y = −6x + 40 → y = −6x/8 + 40/8 → y = −(3/4)x + 5"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; f=lambda x:F(-1,2)*x+2; assert all(3*x+6*f(x)==12 for x in (0,2)); g=lambda x:-3*x+2; assert 3*2+6*g(2)!=12",
+          "from fractions import Fraction as F; f=lambda x:F(-1,4)*x+3; assert all(2*x+8*f(x)==24 for x in (0,4)); g=lambda x:-2*x+3; assert 2*2+8*g(2)!=24",
+          "from fractions import Fraction as F; f=lambda x:F(-3,4)*x+5; assert all(6*x+8*f(x)==40 for x in (0,4)); g=lambda x:-6*x+5; assert 6*2+8*g(2)!=40"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 9,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "An online movie service charges a one-time sign-up fee plus a monthly rate. The total cost in dollars after m months is C = 12m + 25.  a) State the slope and explain what it means in this situation.  b) State the y-intercept and explain what it means in this situation.  c) Find the total cost after 6 months.",
+          "A meal-kit service charges a one-time delivery-box fee plus a weekly rate. The total cost in dollars after w weeks is C = 9w + 40.  a) State the slope and explain what it means in this situation.  b) State the y-intercept and explain what it means in this situation.  c) Find the total cost after 8 weeks.",
+          "A gaming service charges a one-time account fee plus a monthly rate. The total cost in dollars after m months is C = 14m + 30.  a) State the slope and explain what it means in this situation.  b) State the y-intercept and explain what it means in this situation.  c) Find the total cost after 5 months."
+        ],
+        "choices": null,
+        "answer": [
+          "a) slope = 12; the service costs $12 per month  b) y-intercept = 25; the sign-up fee is $25  c) $97",
+          "a) slope = 9; the service costs $9 per week  b) y-intercept = 40; the delivery-box fee is $40  c) $112",
+          "a) slope = 14; the service costs $14 per month  b) y-intercept = 30; the account fee is $30  c) $100"
+        ],
+        "solution": [
+          "m = 12 → $12 per month → b = 25 → one-time fee of $25 → C(6) = 12(6) + 25 = 72 + 25 = 97",
+          "m = 9 → $9 per week → b = 40 → one-time fee of $40 → C(8) = 9(8) + 40 = 72 + 40 = 112",
+          "m = 14 → $14 per month → b = 30 → one-time fee of $30 → C(5) = 14(5) + 30 = 70 + 30 = 100"
+        ],
+        "verify": [
+          "C=lambda m:12*m+25; assert C(0)==25 and C(1)-C(0)==12 and C(6)==97",
+          "C=lambda w:9*w+40; assert C(0)==40 and C(1)-C(0)==9 and C(8)==112",
+          "C=lambda m:14*m+30; assert C(0)==30 and C(1)-C(0)==14 and C(5)==100"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 10,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "For g(x) = |x + 5| + 3:  a) Identify the vertex.  b) Describe how the graph of g is a translation of the graph of f(x) = |x|.",
+          "For g(x) = |x − 2| − 7:  a) Identify the vertex.  b) Describe how the graph of g is a translation of the graph of f(x) = |x|.",
+          "For g(x) = |x + 1| − 4:  a) Identify the vertex.  b) Describe how the graph of g is a translation of the graph of f(x) = |x|."
+        ],
+        "choices": null,
+        "answer": [
+          "a) vertex (−5, 3)  b) translated 5 units left and 3 units up",
+          "a) vertex (2, −7)  b) translated 2 units right and 7 units down",
+          "a) vertex (−1, −4)  b) translated 1 unit left and 4 units down"
+        ],
+        "solution": [
+          "g(x) = |x − h| + k with h = −5, k = 3 → vertex (−5, 3) → shift left 5, up 3",
+          "g(x) = |x − h| + k with h = 2, k = −7 → vertex (2, −7) → shift right 2, down 7",
+          "g(x) = |x − h| + k with h = −1, k = −4 → vertex (−1, −4) → shift left 1, down 4"
+        ],
+        "verify": [
+          "g=lambda x:abs(x+5)+3; assert g(-5)==3 and g(-6)==4 and g(-4)==4",
+          "g=lambda x:abs(x-2)-7; assert g(2)==-7 and g(1)==-6 and g(3)==-6",
+          "g=lambda x:abs(x+1)-4; assert g(-1)==-4 and g(-2)==-3 and g(0)==-3"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 11,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "The graph of an absolute value function g is shown.  a) Identify the vertex.  b) Write the equation of g in the form g(x) = |x − h| + k.",
+          "The graph of an absolute value function g is shown.  a) Identify the vertex.  b) Write the equation of g in the form g(x) = |x − h| + k.",
+          "The graph of an absolute value function g is shown.  a) Identify the vertex.  b) Write the equation of g in the form g(x) = |x − h| + k."
+        ],
+        "choices": null,
+        "answer": [
+          "a) vertex (2, −1)  b) g(x) = |x − 2| − 1",
+          "a) vertex (−3, 2)  b) g(x) = |x + 3| + 2",
+          "a) vertex (−4, −2)  b) g(x) = |x + 4| − 2"
+        ],
+        "solution": [
+          "The lowest point of the V is (2, −1) → h = 2, k = −1 → g(x) = |x − 2| − 1",
+          "The lowest point of the V is (−3, 2) → h = −3, k = 2 → g(x) = |x + 3| + 2",
+          "The lowest point of the V is (−4, −2) → h = −4, k = −2 → g(x) = |x + 4| − 2"
+        ],
+        "verify": [
+          "g=lambda x:abs(x-2)-1; assert g(2)==-1 and g(1)==0 and g(3)==0",
+          "g=lambda x:abs(x+3)+2; assert g(-3)==2 and g(-4)==3 and g(-2)==3",
+          "g=lambda x:abs(x+4)-2; assert g(-4)==-2 and g(-5)==-1 and g(-3)==-1"
+        ],
+        "figure": {
+          "kind": "abs_graph",
+          "params": [
+            {"h": 2, "k": -1, "a": 1},
+            {"h": -3, "k": 2, "a": 1},
+            {"h": -4, "k": -2, "a": 1}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 12,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Graph g(x) = |x − 1| + 2 on the grid. Plot the vertex first, then plot at least two points on each side of the vertex.",
+          "Graph g(x) = |x + 3| − 4 on the grid. Plot the vertex first, then plot at least two points on each side of the vertex.",
+          "Graph g(x) = |x − 5| + 1 on the grid. Plot the vertex first, then plot at least two points on each side of the vertex."
+        ],
+        "choices": null,
+        "answer": [
+          "V-shaped graph with vertex (1, 2) opening up through (0, 3), (2, 3), (−1, 4), (3, 4)",
+          "V-shaped graph with vertex (−3, −4) opening up through (−4, −3), (−2, −3), (−5, −2), (−1, −2)",
+          "V-shaped graph with vertex (5, 1) opening up through (4, 2), (6, 2), (3, 3), (7, 3)"
+        ],
+        "solution": [
+          "Vertex at (h, k) = (1, 2) → slopes ±1 from the vertex → points (0, 3), (2, 3), (−1, 4), (3, 4) → draw the V",
+          "Vertex at (h, k) = (−3, −4) → slopes ±1 from the vertex → points (−4, −3), (−2, −3), (−5, −2), (−1, −2) → draw the V",
+          "Vertex at (h, k) = (5, 1) → slopes ±1 from the vertex → points (4, 2), (6, 2), (3, 3), (7, 3) → draw the V"
+        ],
+        "verify": [
+          "g=lambda x:abs(x-1)+2; assert g(1)==2 and g(0)==3 and g(2)==3 and g(-1)==4 and g(3)==4",
+          "g=lambda x:abs(x+3)-4; assert g(-3)==-4 and g(-4)==-3 and g(-2)==-3 and g(-5)==-2 and g(-1)==-2",
+          "g=lambda x:abs(x-5)+1; assert g(5)==1 and g(4)==2 and g(6)==2 and g(3)==3 and g(7)==3"
+        ],
+        "figure": {
+          "kind": "grid",
+          "params": [
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10},
+            {"xmin": -10, "xmax": 10, "ymin": -10, "ymax": 10}
+          ]
+        },
+        "key_figure": {
+          "kind": "abs_graph",
+          "params": [
+            {"h": 1, "k": 2, "a": 1},
+            {"h": -3, "k": -4, "a": 1},
+            {"h": 5, "k": 1, "a": 1}
+          ]
+        },
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 13,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "A line passes through (4, −2) and (4, 6). Explain how you know the slope of this line is undefined and not 0.",
+          "A line passes through (−3, 1) and (−3, 9). Explain how you know the slope of this line is undefined and not 0.",
+          "A line passes through (7, −5) and (7, 2). Explain how you know the slope of this line is undefined and not 0."
+        ],
+        "choices": null,
+        "answer": [
+          "The x-coordinates are equal, so the run is 4 − 4 = 0. Slope = rise/run = 8/0, and division by 0 is undefined; the line is vertical. A slope of 0 would require a rise of 0 (a horizontal line).",
+          "The x-coordinates are equal, so the run is −3 − (−3) = 0. Slope = rise/run = 8/0, and division by 0 is undefined; the line is vertical. A slope of 0 would require a rise of 0 (a horizontal line).",
+          "The x-coordinates are equal, so the run is 7 − 7 = 0. Slope = rise/run = 7/0, and division by 0 is undefined; the line is vertical. A slope of 0 would require a rise of 0 (a horizontal line)."
+        ],
+        "solution": [
+          "run = 4 − 4 = 0 and rise = 6 − (−2) = 8 → slope = 8/0 → dividing by zero is undefined → vertical line; slope 0 happens only when the rise is 0",
+          "run = −3 − (−3) = 0 and rise = 9 − 1 = 8 → slope = 8/0 → dividing by zero is undefined → vertical line; slope 0 happens only when the rise is 0",
+          "run = 7 − 7 = 0 and rise = 2 − (−5) = 7 → slope = 7/0 → dividing by zero is undefined → vertical line; slope 0 happens only when the rise is 0"
+        ],
+        "verify": [
+          "assert 4-4==0 and 6-(-2)==8",
+          "assert -3-(-3)==0 and 9-1==8",
+          "assert 7-7==0 and 2-(-5)==7"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 14,
+        "points": 2,
+        "type": "mc",
+        "prompt": [
+          "Which statement describes how the graph of g(x) = |x − 4| + 3 is a translation of the graph of f(x) = |x|?",
+          "Which statement describes how the graph of g(x) = |x + 6| − 2 is a translation of the graph of f(x) = |x|?",
+          "Which statement describes how the graph of g(x) = |x − 8| − 1 is a translation of the graph of f(x) = |x|?"
+        ],
+        "choices": [
+          ["A) 4 units right and 3 units up", "B) 4 units left and 3 units up", "C) 4 units right and 3 units down", "D) 3 units right and 4 units up"],
+          ["A) 6 units right and 2 units down", "B) 6 units left and 2 units down", "C) 6 units left and 2 units up", "D) 2 units left and 6 units down"],
+          ["A) 8 units left and 1 unit down", "B) 8 units right and 1 unit up", "C) 8 units right and 1 unit down", "D) 1 unit right and 8 units down"]
+        ],
+        "answer": ["A", "B", "C"],
+        "solution": [
+          "g(x) = |x − h| + k with h = 4, k = 3 → vertex moves from (0, 0) to (4, 3) → right 4, up 3 → choice A",
+          "g(x) = |x − h| + k with h = −6, k = −2 → vertex moves from (0, 0) to (−6, −2) → left 6, down 2 → choice B",
+          "g(x) = |x − h| + k with h = 8, k = −1 → vertex moves from (0, 0) to (8, −1) → right 8, down 1 → choice C"
+        ],
+        "verify": [
+          "g=lambda x:abs(x-4)+3; assert g(4)==3 and g(3)==4 and g(5)==4",
+          "g=lambda x:abs(x+6)-2; assert g(-6)==-2 and g(-7)==-1 and g(-5)==-1",
+          "g=lambda x:abs(x-8)-1; assert g(8)==-1 and g(7)==0 and g(9)==0"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 15,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve: 5x − 7 = 2x + 8",
+          "Solve: 7x + 4 = 3x − 16",
+          "Solve: 6x − 9 = 2x + 19"
+        ],
+        "choices": null,
+        "answer": ["x = 5", "x = −5", "x = 7"],
+        "solution": [
+          "3x − 7 = 8 → 3x = 15 → x = 5",
+          "4x + 4 = −16 → 4x = −20 → x = −5",
+          "4x − 9 = 19 → 4x = 28 → x = 7"
+        ],
+        "verify": [
+          "x=5; assert 5*x-7==2*x+8",
+          "x=-5; assert 7*x+4==3*x-16",
+          "x=7; assert 6*x-9==2*x+19"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 16,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the proportion: (x + 3)/12 = 5/6",
+          "Solve the proportion: (x − 2)/15 = 3/5",
+          "Solve the proportion: (x + 4)/21 = 2/3"
+        ],
+        "choices": null,
+        "answer": ["x = 7", "x = 11", "x = 10"],
+        "solution": [
+          "6(x + 3) = 60 → x + 3 = 10 → x = 7",
+          "5(x − 2) = 45 → x − 2 = 9 → x = 11",
+          "3(x + 4) = 42 → x + 4 = 14 → x = 10"
+        ],
+        "verify": [
+          "from fractions import Fraction as F; x=7; assert F(x+3,12)==F(5,6)",
+          "from fractions import Fraction as F; x=11; assert F(x-2,15)==F(3,5)",
+          "from fractions import Fraction as F; x=10; assert F(x+4,21)==F(2,3)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 17,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve for t:  d = rt",
+          "Solve for r:  C = 2πr",
+          "Solve for h:  V = lwh"
+        ],
+        "choices": null,
+        "answer": ["t = d/r", "r = C/(2π)", "h = V/(lw)"],
+        "solution": [
+          "Divide both sides by r → t = d/r",
+          "Divide both sides by 2π → r = C/(2π)",
+          "Divide both sides by lw → h = V/(lw)"
+        ],
+        "verify": [
+          "d,r=30,5; t=d/r; assert r*t==d and t==6",
+          "import math; C=10.0; r=C/(2*math.pi); assert abs(2*math.pi*r-C)<1e-9",
+          "V,l,w=24,3,2; h=V/(l*w); assert l*w*h==V and h==4"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 18,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Given f(x) = x² − 4, find f(−3).",
+          "Given f(x) = x² + 2, find f(−4).",
+          "Given f(x) = x² − 5, find f(−6)."
+        ],
+        "choices": null,
+        "answer": ["f(−3) = 5", "f(−4) = 18", "f(−6) = 31"],
+        "solution": [
+          "f(−3) = (−3)² − 4 = 9 − 4 = 5",
+          "f(−4) = (−4)² + 2 = 16 + 2 = 18",
+          "f(−6) = (−6)² − 5 = 36 − 5 = 31"
+        ],
+        "verify": [
+          "f=lambda x:x**2-4; assert f(-3)==5",
+          "f=lambda x:x**2+2; assert f(-4)==18",
+          "f=lambda x:x**2-5; assert f(-6)==31"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M3"
+      },
+      {
+        "n": 19,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Is the relation {(2, 3), (4, 5), (2, 7), (6, 1)} a function? Explain how you know.",
+          "Is the relation {(−1, 4), (0, 2), (3, 8), (−1, 5)} a function? Explain how you know.",
+          "Is the relation {(5, 1), (6, 3), (8, 2), (6, 9)} a function? Explain how you know."
+        ],
+        "choices": null,
+        "answer": [
+          "No; the input 2 is paired with two different outputs (3 and 7).",
+          "No; the input −1 is paired with two different outputs (4 and 5).",
+          "No; the input 6 is paired with two different outputs (3 and 9)."
+        ],
+        "solution": [
+          "A function pairs each input with exactly one output → x = 2 appears with y = 3 and y = 7 → not a function",
+          "A function pairs each input with exactly one output → x = −1 appears with y = 4 and y = 5 → not a function",
+          "A function pairs each input with exactly one output → x = 6 appears with y = 3 and y = 9 → not a function"
+        ],
+        "verify": [
+          "xs=[2,4,2,6]; assert len(set(xs))<len(xs) and xs.count(2)==2",
+          "xs=[-1,0,3,-1]; assert len(set(xs))<len(xs) and xs.count(-1)==2",
+          "xs=[5,6,8,6]; assert len(set(xs))<len(xs) and xs.count(6)==2"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M3"
+      }
+    ]
+  }
+}

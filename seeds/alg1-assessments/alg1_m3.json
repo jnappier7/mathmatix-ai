@@ -1,0 +1,941 @@
+{
+  "module": 3,
+  "topics": "Functions & Relations",
+  "quiz": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Given f(x) = 3x − 2, find f(−4).",
+          "Given f(x) = 2x − 7, find f(−3).",
+          "Given f(x) = 4x + 1, find f(−5)."
+        ],
+        "choices": null,
+        "answer": [
+          "f(−4) = −14",
+          "f(−3) = −13",
+          "f(−5) = −19"
+        ],
+        "solution": [
+          "f(−4) = 3(−4) − 2 → −12 − 2 → −14",
+          "f(−3) = 2(−3) − 7 → −6 − 7 → −13",
+          "f(−5) = 4(−5) + 1 → −20 + 1 → −19"
+        ],
+        "verify": [
+          "f=lambda x:3*x-2; assert f(-4)==-14",
+          "f=lambda x:2*x-7; assert f(-3)==-13",
+          "f=lambda x:4*x+1; assert f(-5)==-19"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Given g(x) = x² − 5, find g(−3).",
+          "Given g(x) = x² + 2, find g(−4).",
+          "Given g(x) = x² − 1, find g(−6)."
+        ],
+        "choices": null,
+        "answer": [
+          "g(−3) = 4",
+          "g(−4) = 18",
+          "g(−6) = 35"
+        ],
+        "solution": [
+          "g(−3) = (−3)² − 5 → 9 − 5 → 4",
+          "g(−4) = (−4)² + 2 → 16 + 2 → 18",
+          "g(−6) = (−6)² − 1 → 36 − 1 → 35"
+        ],
+        "verify": [
+          "g=lambda x:x**2-5; assert g(-3)==4",
+          "g=lambda x:x**2+2; assert g(-4)==18",
+          "g=lambda x:x**2-1; assert g(-6)==35"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "The graph shows a relation. (a) State the domain. (b) State the range. (c) Is the relation a function?",
+          "The graph shows a relation. (a) State the domain. (b) State the range. (c) Is the relation a function?",
+          "The graph shows a relation. (a) State the domain. (b) State the range. (c) Is the relation a function?"
+        ],
+        "choices": null,
+        "answer": [
+          "(a) Domain: {−2, 0, 1, 4}  (b) Range: {−1, 3, 5}  (c) Yes, it is a function.",
+          "(a) Domain: {−3, 0, 2, 5}  (b) Range: {−4, 2, 6}  (c) Yes, it is a function.",
+          "(a) Domain: {−1, 0, 3, 6}  (b) Range: {−2, 4, 7}  (c) Yes, it is a function."
+        ],
+        "solution": [
+          "Points are (−2, 3), (0, 5), (1, 3), (4, −1) → domain = x-values {−2, 0, 1, 4} → range = y-values {−1, 3, 5} → no x-value repeats, so each input has exactly one output → function",
+          "Points are (−3, 2), (0, 6), (2, 2), (5, −4) → domain = x-values {−3, 0, 2, 5} → range = y-values {−4, 2, 6} → no x-value repeats, so each input has exactly one output → function",
+          "Points are (−1, 7), (0, 4), (3, 7), (6, −2) → domain = x-values {−1, 0, 3, 6} → range = y-values {−2, 4, 7} → no x-value repeats, so each input has exactly one output → function"
+        ],
+        "verify": [
+          "pts=[(-2,3),(0,5),(1,3),(4,-1)]; assert sorted(set(p[0] for p in pts))==[-2,0,1,4] and sorted(set(p[1] for p in pts))==[-1,3,5] and len(set(p[0] for p in pts))==len(pts)",
+          "pts=[(-3,2),(0,6),(2,2),(5,-4)]; assert sorted(set(p[0] for p in pts))==[-3,0,2,5] and sorted(set(p[1] for p in pts))==[-4,2,6] and len(set(p[0] for p in pts))==len(pts)",
+          "pts=[(-1,7),(0,4),(3,7),(6,-2)]; assert sorted(set(p[0] for p in pts))==[-1,0,3,6] and sorted(set(p[1] for p in pts))==[-2,4,7] and len(set(p[0] for p in pts))==len(pts)"
+        ],
+        "figure": {
+          "kind": "points",
+          "params": [
+            {"pts": [[-2, 3], [0, 5], [1, 3], [4, -1]], "xmin": -6, "xmax": 6, "ymin": -6, "ymax": 6},
+            {"pts": [[-3, 2], [0, 6], [2, 2], [5, -4]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8},
+            {"pts": [[-1, 7], [0, 4], [3, 7], [6, -2]], "xmin": -8, "xmax": 8, "ymin": -8, "ymax": 8}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Does the mapping diagram show a function? Explain how you know.",
+          "Does the mapping diagram show a function? Explain how you know.",
+          "Does the mapping diagram show a function? Explain how you know."
+        ],
+        "choices": null,
+        "answer": [
+          "No — the input 1 is paired with two different outputs, 4 and 6.",
+          "No — the input −4 is paired with two different outputs, 1 and 3.",
+          "No — the input 6 is paired with two different outputs, 2 and 9."
+        ],
+        "solution": [
+          "A function pairs each input with exactly one output → the input 1 has two arrows (to 4 and to 6) → not a function",
+          "A function pairs each input with exactly one output → the input −4 has two arrows (to 1 and to 3) → not a function",
+          "A function pairs each input with exactly one output → the input 6 has two arrows (to 2 and to 9) → not a function"
+        ],
+        "verify": [
+          "x=[-2,1,3]; y=[0,4,6]; arrows=[[0,0],[1,1],[1,2],[2,2]]; outs=set(y[a[1]] for a in arrows if x[a[0]]==1); assert outs=={4,6}",
+          "x=[-4,2,5]; y=[1,3,8]; arrows=[[0,0],[0,1],[1,2],[2,2]]; outs=set(y[a[1]] for a in arrows if x[a[0]]==-4); assert outs=={1,3}",
+          "x=[-1,0,6]; y=[2,5,9]; arrows=[[0,1],[1,0],[2,0],[2,2]]; outs=set(y[a[1]] for a in arrows if x[a[0]]==6); assert outs=={2,9}"
+        ],
+        "figure": {
+          "kind": "mapping",
+          "params": [
+            {"x": [-2, 1, 3], "y": [0, 4, 6], "arrows": [[0, 0], [1, 1], [1, 2], [2, 2]]},
+            {"x": [-4, 2, 5], "y": [1, 3, 8], "arrows": [[0, 0], [0, 1], [1, 2], [2, 2]]},
+            {"x": [-1, 0, 6], "y": [2, 5, 9], "arrows": [[0, 1], [1, 0], [2, 0], [2, 2]]}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Does the table represent y as a function of x? Explain your reasoning.",
+          "Does the table represent y as a function of x? Explain your reasoning.",
+          "Does the table represent y as a function of x? Explain your reasoning."
+        ],
+        "choices": null,
+        "answer": [
+          "Yes — every x-value is different, so each input has exactly one output. A repeated y-value (5 appears twice) does not break a function.",
+          "Yes — every x-value is different, so each input has exactly one output. A repeated y-value (1 appears twice) does not break a function.",
+          "Yes — every x-value is different, so each input has exactly one output. A repeated y-value (3 appears twice) does not break a function."
+        ],
+        "solution": [
+          "Check the x-column: −3, −1, 2, 4 are all different → each input has exactly one output → yes, a function; outputs may repeat (y = 5 is used by two inputs)",
+          "Check the x-column: −5, −2, 3, 7 are all different → each input has exactly one output → yes, a function; outputs may repeat (y = 1 is used by two inputs)",
+          "Check the x-column: −4, −2, 1, 5 are all different → each input has exactly one output → yes, a function; outputs may repeat (y = 3 is used by two inputs)"
+        ],
+        "verify": [
+          "rows=[[-3,5],[-1,2],[2,5],[4,8]]; xs=[r[0] for r in rows]; ys=[r[1] for r in rows]; assert len(set(xs))==len(xs) and len(set(ys))<len(ys)",
+          "rows=[[-5,1],[-2,6],[3,1],[7,9]]; xs=[r[0] for r in rows]; ys=[r[1] for r in rows]; assert len(set(xs))==len(xs) and len(set(ys))<len(ys)",
+          "rows=[[-4,0],[-2,3],[1,3],[5,10]]; xs=[r[0] for r in rows]; ys=[r[1] for r in rows]; assert len(set(xs))==len(xs) and len(set(ys))<len(ys)"
+        ],
+        "figure": {
+          "kind": "table",
+          "params": [
+            {"headers": ["x", "y"], "rows": [[-3, 5], [-1, 2], [2, 5], [4, 8]]},
+            {"headers": ["x", "y"], "rows": [[-5, 1], [-2, 6], [3, 1], [7, 9]]},
+            {"headers": ["x", "y"], "rows": [[-4, 0], [-2, 3], [1, 3], [5, 10]]}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 2,
+        "type": "mc",
+        "prompt": [
+          "The relation {(1, 5), (2, 8), (4, 3)} is a function. Which ordered pair, when added to the relation, would make it NOT a function?",
+          "The relation {(0, 4), (3, 7), (6, 2)} is a function. Which ordered pair, when added to the relation, would make it NOT a function?",
+          "The relation {(2, 1), (5, 6), (8, 9)} is a function. Which ordered pair, when added to the relation, would make it NOT a function?"
+        ],
+        "choices": [
+          ["(3, 5)", "(2, 6)", "(5, 8)", "(0, 3)"],
+          ["(5, 7)", "(1, 2)", "(3, 9)", "(−2, 4)"],
+          ["(4, 6)", "(8, 3)", "(7, 9)", "(−1, 1)"]
+        ],
+        "answer": [
+          "B — (2, 6)",
+          "C — (3, 9)",
+          "B — (8, 3)"
+        ],
+        "solution": [
+          "A pair breaks the function if it repeats an x-value with a new y-value → (2, 6) uses x = 2, which is already paired with 8 → not a function; the other choices all use new x-values",
+          "A pair breaks the function if it repeats an x-value with a new y-value → (3, 9) uses x = 3, which is already paired with 7 → not a function; the other choices all use new x-values",
+          "A pair breaks the function if it repeats an x-value with a new y-value → (8, 3) uses x = 8, which is already paired with 9 → not a function; the other choices all use new x-values"
+        ],
+        "verify": [
+          "rel=[(1,5),(2,8),(4,3)]; ch=[(3,5),(2,6),(5,8),(0,3)]; br=[c for c in ch if any(p[0]==c[0] and p[1]!=c[1] for p in rel)]; assert br==[(2,6)]",
+          "rel=[(0,4),(3,7),(6,2)]; ch=[(5,7),(1,2),(3,9),(-2,4)]; br=[c for c in ch if any(p[0]==c[0] and p[1]!=c[1] for p in rel)]; assert br==[(3,9)]",
+          "rel=[(2,1),(5,6),(8,9)]; ch=[(4,6),(8,3),(7,9),(-1,1)]; br=[c for c in ch if any(p[0]==c[0] and p[1]!=c[1] for p in rel)]; assert br==[(8,3)]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Given f(x) = 2|x| − 3 and g(x) = x² + 1, find f(−4) + g(3). Show each step.",
+          "Given f(x) = 3|x| − 4 and g(x) = x² + 2, find f(−5) + g(4). Show each step.",
+          "Given f(x) = 4|x| − 7 and g(x) = x² + 3, find f(−6) + g(2). Show each step."
+        ],
+        "choices": null,
+        "answer": [
+          "f(−4) + g(3) = 15",
+          "f(−5) + g(4) = 29",
+          "f(−6) + g(2) = 24"
+        ],
+        "solution": [
+          "f(−4) = 2|−4| − 3 = 2(4) − 3 = 5 → g(3) = 3² + 1 = 9 + 1 = 10 → f(−4) + g(3) = 5 + 10 = 15",
+          "f(−5) = 3|−5| − 4 = 3(5) − 4 = 11 → g(4) = 4² + 2 = 16 + 2 = 18 → f(−5) + g(4) = 11 + 18 = 29",
+          "f(−6) = 4|−6| − 7 = 4(6) − 7 = 17 → g(2) = 2² + 3 = 4 + 3 = 7 → f(−6) + g(2) = 17 + 7 = 24"
+        ],
+        "verify": [
+          "f=lambda x:2*abs(x)-3; g=lambda x:x**2+1; assert f(-4)==5 and g(3)==10 and f(-4)+g(3)==15",
+          "f=lambda x:3*abs(x)-4; g=lambda x:x**2+2; assert f(-5)==11 and g(4)==18 and f(-5)+g(4)==29",
+          "f=lambda x:4*abs(x)-7; g=lambda x:x**2+3; assert f(-6)==17 and g(2)==7 and f(-6)+g(2)==24"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Tell whether each situation is best represented by a continuous relation, a discrete relation, or neither. (a) The number of raffle tickets sold each day at a fair. (b) The temperature of a cup of tea as it cools. (c) The relation pairing each student in a class with his or her favorite color.",
+          "Tell whether each situation is best represented by a continuous relation, a discrete relation, or neither. (a) The number of gallons of water in a bathtub as it drains. (b) The number of cars in a parking lot each hour. (c) The relation pairing each library book with its genre.",
+          "Tell whether each situation is best represented by a continuous relation, a discrete relation, or neither. (a) The height of a sunflower as it grows over the summer. (b) The number of text messages a student sends each day. (c) The relation pairing each song on a playlist with its music style."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) discrete  (b) continuous  (c) neither",
+          "(a) continuous  (b) discrete  (c) neither",
+          "(a) continuous  (b) discrete  (c) neither"
+        ],
+        "solution": [
+          "(a) tickets are counted in whole numbers → discrete → (b) temperature changes smoothly through every value over time → continuous → (c) the outputs (colors) are not numbers, so the relation is neither discrete nor continuous",
+          "(a) the water level changes smoothly through every value as it drains → continuous → (b) cars are counted in whole numbers → discrete → (c) the outputs (genres) are not numbers, so the relation is neither discrete nor continuous",
+          "(a) the height changes smoothly through every value as it grows → continuous → (b) messages are counted in whole numbers → discrete → (c) the outputs (music styles) are not numbers, so the relation is neither discrete nor continuous"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 9,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Simplify: 5 + 3(8 − 6)²",
+          "Simplify: 7 + 2(9 − 5)²",
+          "Simplify: 4 + 6(7 − 4)²"
+        ],
+        "choices": null,
+        "answer": ["17", "39", "58"],
+        "solution": [
+          "5 + 3(2)² → 5 + 3(4) → 5 + 12 → 17",
+          "7 + 2(4)² → 7 + 2(16) → 7 + 32 → 39",
+          "4 + 6(3)² → 4 + 6(9) → 4 + 54 → 58"
+        ],
+        "verify": [
+          "assert 5+3*(8-6)**2==17",
+          "assert 7+2*(9-5)**2==39",
+          "assert 4+6*(7-4)**2==58"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 10,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Evaluate 3a² − 2b when a = −2 and b = 5.",
+          "Evaluate 2a² − 3b when a = −3 and b = 4.",
+          "Evaluate 4a² − 5b when a = −1 and b = 2."
+        ],
+        "choices": null,
+        "answer": ["2", "6", "−6"],
+        "solution": [
+          "3(−2)² − 2(5) → 3(4) − 10 → 12 − 10 → 2",
+          "2(−3)² − 3(4) → 2(9) − 12 → 18 − 12 → 6",
+          "4(−1)² − 5(2) → 4(1) − 10 → 4 − 10 → −6"
+        ],
+        "verify": [
+          "a=-2; b=5; assert 3*a**2-2*b==2",
+          "a=-3; b=4; assert 2*a**2-3*b==6",
+          "a=-1; b=2; assert 4*a**2-5*b==-6"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 11,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve: 4x − 7 = 2x + 9",
+          "Solve: 5x − 3 = 3x + 11",
+          "Solve: 6x − 5 = 2x + 19"
+        ],
+        "choices": null,
+        "answer": ["x = 8", "x = 7", "x = 6"],
+        "solution": [
+          "4x − 7 = 2x + 9 → 2x − 7 = 9 → 2x = 16 → x = 8",
+          "5x − 3 = 3x + 11 → 2x − 3 = 11 → 2x = 14 → x = 7",
+          "6x − 5 = 2x + 19 → 4x − 5 = 19 → 4x = 24 → x = 6"
+        ],
+        "verify": [
+          "x=8; assert 4*x-7==2*x+9",
+          "x=7; assert 5*x-3==3*x+11",
+          "x=6; assert 6*x-5==2*x+19"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      }
+    ]
+  },
+  "test": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Given f(x) = −2x + 5, find f(3).",
+          "Given f(x) = −3x + 4, find f(2).",
+          "Given f(x) = −4x + 7, find f(3)."
+        ],
+        "choices": null,
+        "answer": [
+          "f(3) = −1",
+          "f(2) = −2",
+          "f(3) = −5"
+        ],
+        "solution": [
+          "f(3) = −2(3) + 5 → −6 + 5 → −1",
+          "f(2) = −3(2) + 4 → −6 + 4 → −2",
+          "f(3) = −4(3) + 7 → −12 + 7 → −5"
+        ],
+        "verify": [
+          "f=lambda x:-2*x+5; assert f(3)==-1",
+          "f=lambda x:-3*x+4; assert f(2)==-2",
+          "f=lambda x:-4*x+7; assert f(3)==-5"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Given g(x) = x² − 4, find g(−5).",
+          "Given g(x) = x² − 3, find g(−6).",
+          "Given g(x) = x² − 8, find g(−4)."
+        ],
+        "choices": null,
+        "answer": [
+          "g(−5) = 21",
+          "g(−6) = 33",
+          "g(−4) = 8"
+        ],
+        "solution": [
+          "g(−5) = (−5)² − 4 → 25 − 4 → 21",
+          "g(−6) = (−6)² − 3 → 36 − 3 → 33",
+          "g(−4) = (−4)² − 8 → 16 − 8 → 8"
+        ],
+        "verify": [
+          "g=lambda x:x**2-4; assert g(-5)==21",
+          "g=lambda x:x**2-3; assert g(-6)==33",
+          "g=lambda x:x**2-8; assert g(-4)==8"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Given h(x) = |x − 6|, find h(−2).",
+          "Given h(x) = |x − 4|, find h(−5).",
+          "Given h(x) = |x − 7|, find h(−3)."
+        ],
+        "choices": null,
+        "answer": [
+          "h(−2) = 8",
+          "h(−5) = 9",
+          "h(−3) = 10"
+        ],
+        "solution": [
+          "h(−2) = |−2 − 6| → |−8| → 8",
+          "h(−5) = |−5 − 4| → |−9| → 9",
+          "h(−3) = |−3 − 7| → |−10| → 10"
+        ],
+        "verify": [
+          "h=lambda x:abs(x-6); assert h(-2)==8",
+          "h=lambda x:abs(x-4); assert h(-5)==9",
+          "h=lambda x:abs(x-7); assert h(-3)==10"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Consider the relation {(−3, 2), (−1, −4), (0, 3), (2, 2), (4, −1)}. (a) State the domain. (b) State the range. (c) Is the relation a function? Explain how you know.",
+          "Consider the relation {(−4, 1), (−2, 5), (0, −3), (3, 1), (5, 4)}. (a) State the domain. (b) State the range. (c) Is the relation a function? Explain how you know.",
+          "Consider the relation {(−5, −2), (−2, 4), (1, 6), (3, −2), (6, 0)}. (a) State the domain. (b) State the range. (c) Is the relation a function? Explain how you know."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) Domain: {−3, −1, 0, 2, 4}  (b) Range: {−4, −1, 2, 3}  (c) Yes — no x-value repeats, so each input has exactly one output.",
+          "(a) Domain: {−4, −2, 0, 3, 5}  (b) Range: {−3, 1, 4, 5}  (c) Yes — no x-value repeats, so each input has exactly one output.",
+          "(a) Domain: {−5, −2, 1, 3, 6}  (b) Range: {−2, 0, 4, 6}  (c) Yes — no x-value repeats, so each input has exactly one output."
+        ],
+        "solution": [
+          "Domain = set of x-values: {−3, −1, 0, 2, 4} → range = set of y-values (list repeats once): {−4, −1, 2, 3} → every x-value is different, so each input is paired with exactly one output → function; the repeated output 2 does not matter",
+          "Domain = set of x-values: {−4, −2, 0, 3, 5} → range = set of y-values (list repeats once): {−3, 1, 4, 5} → every x-value is different, so each input is paired with exactly one output → function; the repeated output 1 does not matter",
+          "Domain = set of x-values: {−5, −2, 1, 3, 6} → range = set of y-values (list repeats once): {−2, 0, 4, 6} → every x-value is different, so each input is paired with exactly one output → function; the repeated output −2 does not matter"
+        ],
+        "verify": [
+          "pts=[(-3,2),(-1,-4),(0,3),(2,2),(4,-1)]; assert sorted(set(p[0] for p in pts))==[-3,-1,0,2,4] and sorted(set(p[1] for p in pts))==[-4,-1,2,3] and len(set(p[0] for p in pts))==len(pts)",
+          "pts=[(-4,1),(-2,5),(0,-3),(3,1),(5,4)]; assert sorted(set(p[0] for p in pts))==[-4,-2,0,3,5] and sorted(set(p[1] for p in pts))==[-3,1,4,5] and len(set(p[0] for p in pts))==len(pts)",
+          "pts=[(-5,-2),(-2,4),(1,6),(3,-2),(6,0)]; assert sorted(set(p[0] for p in pts))==[-5,-2,1,3,6] and sorted(set(p[1] for p in pts))==[-2,0,4,6] and len(set(p[0] for p in pts))==len(pts)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "The mapping diagram shows a relation. Is the relation a function? Explain how you know.",
+          "The mapping diagram shows a relation. Is the relation a function? Explain how you know.",
+          "The mapping diagram shows a relation. Is the relation a function? Explain how you know."
+        ],
+        "choices": null,
+        "answer": [
+          "Yes — every input has exactly one arrow. Two inputs sharing the same output does not break a function.",
+          "Yes — every input has exactly one arrow. Two inputs sharing the same output does not break a function.",
+          "Yes — every input has exactly one arrow. Two inputs sharing the same output does not break a function."
+        ],
+        "solution": [
+          "Each of the inputs −3, 0, 2, 5 has exactly one arrow → each input has exactly one output → function; the inputs −3 and 2 both map to 1, which is allowed",
+          "Each of the inputs −2, 1, 4, 6 has exactly one arrow → each input has exactly one output → function; the inputs 1 and 4 both map to 3, which is allowed",
+          "Each of the inputs −1, 2, 3, 7 has exactly one arrow → each input has exactly one output → function; the inputs 2 and 3 both map to 5, which is allowed"
+        ],
+        "verify": [
+          "arrows=[[0,0],[1,1],[2,0],[3,1]]; ins=[a[0] for a in arrows]; assert len(set(ins))==len(ins)==4",
+          "arrows=[[0,1],[1,0],[2,0],[3,1]]; ins=[a[0] for a in arrows]; assert len(set(ins))==len(ins)==4",
+          "arrows=[[0,0],[1,1],[2,1],[3,0]]; ins=[a[0] for a in arrows]; assert len(set(ins))==len(ins)==4"
+        ],
+        "figure": {
+          "kind": "mapping",
+          "params": [
+            {"x": [-3, 0, 2, 5], "y": [1, 7], "arrows": [[0, 0], [1, 1], [2, 0], [3, 1]]},
+            {"x": [-2, 1, 4, 6], "y": [3, 9], "arrows": [[0, 1], [1, 0], [2, 0], [3, 1]]},
+            {"x": [-1, 2, 3, 7], "y": [0, 5], "arrows": [[0, 0], [1, 1], [2, 1], [3, 0]]}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Does the table represent y as a function of x? Justify your answer.",
+          "Does the table represent y as a function of x? Justify your answer.",
+          "Does the table represent y as a function of x? Justify your answer."
+        ],
+        "choices": null,
+        "answer": [
+          "No — the input x = 1 is paired with two different outputs (6 and 9).",
+          "No — the input x = 0 is paired with two different outputs (5 and 8).",
+          "No — the input x = 2 is paired with two different outputs (7 and 10)."
+        ],
+        "solution": [
+          "Check the x-column: 1 appears twice with different y-values (6 and 9) → one input has two outputs → not a function",
+          "Check the x-column: 0 appears twice with different y-values (5 and 8) → one input has two outputs → not a function",
+          "Check the x-column: 2 appears twice with different y-values (7 and 10) → one input has two outputs → not a function"
+        ],
+        "verify": [
+          "rows=[[-2,4],[1,6],[1,9],[3,0]]; outs=set(r[1] for r in rows if r[0]==1); assert outs=={6,9}",
+          "rows=[[-4,2],[0,5],[0,8],[6,1]]; outs=set(r[1] for r in rows if r[0]==0); assert outs=={5,8}",
+          "rows=[[-1,3],[2,7],[2,10],[5,4]]; outs=set(r[1] for r in rows if r[0]==2); assert outs=={7,10}"
+        ],
+        "figure": {
+          "kind": "table",
+          "params": [
+            {"headers": ["x", "y"], "rows": [[-2, 4], [1, 6], [1, 9], [3, 0]]},
+            {"headers": ["x", "y"], "rows": [[-4, 2], [0, 5], [0, 8], [6, 1]]},
+            {"headers": ["x", "y"], "rows": [[-1, 3], [2, 7], [2, 10], [5, 4]]}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 2,
+        "type": "mc",
+        "prompt": [
+          "The relation {(−2, 6), (1, 3), (5, 9)} is a function. Which ordered pair, when added to the relation, would make it NOT a function?",
+          "The relation {(−1, 4), (2, 7), (6, 0)} is a function. Which ordered pair, when added to the relation, would make it NOT a function?",
+          "The relation {(−3, 8), (0, 2), (4, 6)} is a function. Which ordered pair, when added to the relation, would make it NOT a function?"
+        ],
+        "choices": [
+          ["(0, 6)", "(1, 8)", "(4, 3)", "(−5, 9)"],
+          ["(3, 7)", "(−4, 0)", "(6, 5)", "(1, 4)"],
+          ["(−3, 1)", "(5, 2)", "(2, 8)", "(7, 6)"]
+        ],
+        "answer": [
+          "B — (1, 8)",
+          "C — (6, 5)",
+          "A — (−3, 1)"
+        ],
+        "solution": [
+          "A pair breaks the function if it repeats an x-value with a new y-value → (1, 8) repeats x = 1, already paired with 3 → not a function; the other choices all use new x-values",
+          "A pair breaks the function if it repeats an x-value with a new y-value → (6, 5) repeats x = 6, already paired with 0 → not a function; the other choices all use new x-values",
+          "A pair breaks the function if it repeats an x-value with a new y-value → (−3, 1) repeats x = −3, already paired with 8 → not a function; the other choices all use new x-values"
+        ],
+        "verify": [
+          "rel=[(-2,6),(1,3),(5,9)]; ch=[(0,6),(1,8),(4,3),(-5,9)]; br=[c for c in ch if any(p[0]==c[0] and p[1]!=c[1] for p in rel)]; assert br==[(1,8)]",
+          "rel=[(-1,4),(2,7),(6,0)]; ch=[(3,7),(-4,0),(6,5),(1,4)]; br=[c for c in ch if any(p[0]==c[0] and p[1]!=c[1] for p in rel)]; assert br==[(6,5)]",
+          "rel=[(-3,8),(0,2),(4,6)]; ch=[(-3,1),(5,2),(2,8),(7,6)]; br=[c for c in ch if any(p[0]==c[0] and p[1]!=c[1] for p in rel)]; assert br==[(-3,1)]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Given f(x) = 4x − 5: (a) Find f(−3). (b) Find the value of x for which f(x) = 19.",
+          "Given f(x) = 3x − 8: (a) Find f(−4). (b) Find the value of x for which f(x) = 13.",
+          "Given f(x) = 5x − 6: (a) Find f(−2). (b) Find the value of x for which f(x) = 34."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) f(−3) = −17  (b) x = 6",
+          "(a) f(−4) = −20  (b) x = 7",
+          "(a) f(−2) = −16  (b) x = 8"
+        ],
+        "solution": [
+          "(a) f(−3) = 4(−3) − 5 = −12 − 5 = −17 → (b) 4x − 5 = 19 → 4x = 24 → x = 6",
+          "(a) f(−4) = 3(−4) − 8 = −12 − 8 = −20 → (b) 3x − 8 = 13 → 3x = 21 → x = 7",
+          "(a) f(−2) = 5(−2) − 6 = −10 − 6 = −16 → (b) 5x − 6 = 34 → 5x = 40 → x = 8"
+        ],
+        "verify": [
+          "f=lambda x:4*x-5; assert f(-3)==-17 and f(6)==19",
+          "f=lambda x:3*x-8; assert f(-4)==-20 and f(7)==13",
+          "f=lambda x:5*x-6; assert f(-2)==-16 and f(8)==34"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 9,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Given f(x) = x² − 2x and g(x) = 3|x| + 1, find f(−3) + g(−5). Show each step.",
+          "Given f(x) = x² − 3x and g(x) = 2|x| + 5, find f(−4) + g(−6). Show each step.",
+          "Given f(x) = x² − 4x and g(x) = 5|x| + 2, find f(−2) + g(−3). Show each step."
+        ],
+        "choices": null,
+        "answer": [
+          "f(−3) + g(−5) = 31",
+          "f(−4) + g(−6) = 45",
+          "f(−2) + g(−3) = 29"
+        ],
+        "solution": [
+          "f(−3) = (−3)² − 2(−3) = 9 + 6 = 15 → g(−5) = 3|−5| + 1 = 15 + 1 = 16 → f(−3) + g(−5) = 15 + 16 = 31",
+          "f(−4) = (−4)² − 3(−4) = 16 + 12 = 28 → g(−6) = 2|−6| + 5 = 12 + 5 = 17 → f(−4) + g(−6) = 28 + 17 = 45",
+          "f(−2) = (−2)² − 4(−2) = 4 + 8 = 12 → g(−3) = 5|−3| + 2 = 15 + 2 = 17 → f(−2) + g(−3) = 12 + 17 = 29"
+        ],
+        "verify": [
+          "f=lambda x:x**2-2*x; g=lambda x:3*abs(x)+1; assert f(-3)==15 and g(-5)==16 and f(-3)+g(-5)==31",
+          "f=lambda x:x**2-3*x; g=lambda x:2*abs(x)+5; assert f(-4)==28 and g(-6)==17 and f(-4)+g(-6)==45",
+          "f=lambda x:x**2-4*x; g=lambda x:5*abs(x)+2; assert f(-2)==12 and g(-3)==17 and f(-2)+g(-3)==29"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 10,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Tell whether each situation is best represented by a continuous relation, a discrete relation, or neither. (a) The height of a candle as it burns. (b) The number of students absent from school each day. (c) The relation pairing each city with its area code. (d) The amount of gas in a car's tank during a road trip.",
+          "Tell whether each situation is best represented by a continuous relation, a discrete relation, or neither. (a) The number of loaves of bread a bakery sells each day. (b) The weight of a puppy as it grows. (c) The relation pairing each team with its mascot. (d) The number of push-ups an athlete completes each morning.",
+          "Tell whether each situation is best represented by a continuous relation, a discrete relation, or neither. (a) The speed of a train during a trip. (b) The number of emails an office receives each hour. (c) The relation pairing each country with the colors on its flag. (d) The depth of water in a pool as it fills."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) continuous  (b) discrete  (c) neither  (d) continuous",
+          "(a) discrete  (b) continuous  (c) neither  (d) discrete",
+          "(a) continuous  (b) discrete  (c) neither  (d) continuous"
+        ],
+        "solution": [
+          "(a) height changes smoothly through every value → continuous → (b) students are counted in whole numbers → discrete → (c) the outputs (area codes as labels for cities) are categories, not measured or counted quantities on a number line → neither → (d) the amount of gas changes smoothly → continuous",
+          "(a) loaves are counted in whole numbers → discrete → (b) weight changes smoothly through every value → continuous → (c) the outputs (mascots) are not numbers → neither → (d) push-ups are counted in whole numbers → discrete",
+          "(a) speed changes smoothly through every value → continuous → (b) emails are counted in whole numbers → discrete → (c) the outputs (flag colors) are not numbers → neither → (d) depth changes smoothly through every value → continuous"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 11,
+        "points": 2,
+        "type": "mc",
+        "prompt": [
+          "The graph shows Kai's distance from home over time. Which story best matches the graph?",
+          "The graph shows Rosa's distance from home over time. Which story best matches the graph?",
+          "The graph shows Leo's distance from his house over time. Which story best matches the graph?"
+        ],
+        "choices": [
+          [
+            "Kai jogs away from home, then speeds up, then keeps jogging even faster.",
+            "Kai walks away from home at a steady pace, stops to rest, then returns home at a faster pace.",
+            "Kai walks away from home, walks partway back, then stops to rest.",
+            "Kai runs toward home, rests, then walks away from home."
+          ],
+          [
+            "Rosa walks away from home slowly, then rides her bike away even faster, then stays at the park.",
+            "Rosa rides away from home quickly, then slows down, then returns home.",
+            "Rosa stays home for a while, then walks away, then returns home.",
+            "Rosa walks away at a steady pace the entire time, then returns home quickly."
+          ],
+          [
+            "Leo walks away from the house, stops to rest, then keeps walking away.",
+            "Leo walks away from the house and then returns home without stopping.",
+            "Leo walks away from the house, walks partway back, then turns around and walks even farther away.",
+            "Leo rests at home, walks away, then walks partway back."
+          ]
+        ],
+        "answer": ["B", "A", "C"],
+        "solution": [
+          "The graph rises steadily (moving away), is flat (stopped), then falls to zero more steeply than it rose (returning home faster) → choice B",
+          "The graph rises gently (moving away slowly), then rises more steeply (moving away faster), then is flat above zero (staying at one place away from home) → choice A",
+          "The graph rises (moving away), falls partway but not to zero (returning partway), then rises even higher (walking farther away) → choice C"
+        ],
+        "verify": [
+          "segs=[[4,4],[2,0],[2,-4]]; assert segs[0][1]>0 and segs[1][1]==0 and segs[2][1]<0 and sum(s[1] for s in segs)==0 and abs(segs[2][1]/segs[2][0])>abs(segs[0][1]/segs[0][0])",
+          "segs=[[2,2],[3,5],[3,0]]; r=[s[1]/s[0] for s in segs]; assert r[0]>0 and r[1]>r[0] and r[2]==0 and sum(s[1] for s in segs)>0",
+          "segs=[[2,3],[3,-2],[3,4]]; assert segs[0][1]>0 and segs[1][1]<0 and abs(segs[1][1])<segs[0][1] and segs[2][1]>0"
+        ],
+        "figure": {
+          "kind": "story",
+          "params": [
+            {"segments": [[4, 4], [2, 0], [2, -4]]},
+            {"segments": [[2, 2], [3, 5], [3, 0]]},
+            {"segments": [[2, 3], [3, -2], [3, 4]]}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 12,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Mika evaluated f(x) = x² + 2x at x = −3 and wrote: \"f(−3) = −3² + 2(−3) = −9 − 6 = −15.\" Identify Mika's mistake, then show the correct solution.",
+          "Deon evaluated g(x) = x² − 4x at x = −5 and wrote: \"g(−5) = −5² − 4(−5) = −25 + 20 = −5.\" Identify Deon's mistake, then show the correct solution.",
+          "Sana evaluated h(x) = x² + 3x at x = −4 and wrote: \"h(−4) = −4² + 3(−4) = −16 − 12 = −28.\" Identify Sana's mistake, then show the correct solution."
+        ],
+        "choices": null,
+        "answer": [
+          "Mistake: Mika squared incorrectly, computing −3² = −9 instead of (−3)² = 9. Correct: f(−3) = 9 − 6 = 3.",
+          "Mistake: Deon squared incorrectly, computing −5² = −25 instead of (−5)² = 25. Correct: g(−5) = 25 + 20 = 45.",
+          "Mistake: Sana squared incorrectly, computing −4² = −16 instead of (−4)² = 16. Correct: h(−4) = 16 − 12 = 4."
+        ],
+        "solution": [
+          "When substituting, the whole input is squared: (−3)² = 9, not −(3²) = −9 → f(−3) = (−3)² + 2(−3) = 9 − 6 = 3",
+          "When substituting, the whole input is squared: (−5)² = 25, not −(5²) = −25 → g(−5) = (−5)² − 4(−5) = 25 + 20 = 45",
+          "When substituting, the whole input is squared: (−4)² = 16, not −(4²) = −16 → h(−4) = (−4)² + 3(−4) = 16 − 12 = 4"
+        ],
+        "verify": [
+          "f=lambda x:x**2+2*x; assert f(-3)==3 and -(3**2)+2*(-3)==-15",
+          "g=lambda x:x**2-4*x; assert g(-5)==45 and -(5**2)-4*(-5)==-5",
+          "h=lambda x:x**2+3*x; assert h(-4)==4 and -(4**2)+3*(-4)==-28"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 13,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "A climbing gym charges a $12 entry fee plus $3 per hour, so the total cost of a visit is C(h) = 3h + 12, where h is the number of hours. (a) Find C(4) and explain what it means. (b) Find the value of h for which C(h) = 27. (c) Is the domain of this function continuous or discrete? Explain.",
+          "A kayak rental company charges a $10 launch fee plus $8 per hour, so the total cost is K(h) = 8h + 10, where h is the number of hours. (a) Find K(3) and explain what it means. (b) Find the value of h for which K(h) = 58. (c) Is the domain of this function continuous or discrete? Explain.",
+          "A scooter rental company charges a $9 unlock fee plus $6 per hour, so the total cost is S(h) = 6h + 9, where h is the number of hours. (a) Find S(5) and explain what it means. (b) Find the value of h for which S(h) = 33. (c) Is the domain of this function continuous or discrete? Explain."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) C(4) = 24 — a 4-hour visit costs $24.  (b) h = 5  (c) Continuous — time can be any part of an hour, not just whole numbers.",
+          "(a) K(3) = 34 — a 3-hour rental costs $34.  (b) h = 6  (c) Continuous — time can be any part of an hour, not just whole numbers.",
+          "(a) S(5) = 39 — a 5-hour rental costs $39.  (b) h = 4  (c) Continuous — time can be any part of an hour, not just whole numbers."
+        ],
+        "solution": [
+          "(a) C(4) = 3(4) + 12 = 12 + 12 = 24, so 4 hours costs $24 → (b) 3h + 12 = 27 → 3h = 15 → h = 5 hours → (c) hours can take any value (like 2.5), so the domain is continuous",
+          "(a) K(3) = 8(3) + 10 = 24 + 10 = 34, so 3 hours costs $34 → (b) 8h + 10 = 58 → 8h = 48 → h = 6 hours → (c) hours can take any value (like 1.5), so the domain is continuous",
+          "(a) S(5) = 6(5) + 9 = 30 + 9 = 39, so 5 hours costs $39 → (b) 6h + 9 = 33 → 6h = 24 → h = 4 hours → (c) hours can take any value (like 3.5), so the domain is continuous"
+        ],
+        "verify": [
+          "C=lambda h:3*h+12; assert C(4)==24 and C(5)==27",
+          "K=lambda h:8*h+10; assert K(3)==34 and K(6)==58",
+          "S=lambda h:6*h+9; assert S(5)==39 and S(4)==33"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 14,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Tickets to the spring fair cost $9 each. (a) Write a function T(n) for the total cost of n tickets. (b) Find T(6) and explain what it means. (c) Is the domain of this function discrete or continuous? Explain.",
+          "Raffle tickets at the band fundraiser cost $7 each. (a) Write a function R(n) for the total cost of n tickets. (b) Find R(8) and explain what it means. (c) Is the domain of this function discrete or continuous? Explain.",
+          "The robotics club car wash charges $8 per car. (a) Write a function W(n) for the total earned from washing n cars. (b) Find W(9) and explain what it means. (c) Is the domain of this function discrete or continuous? Explain."
+        ],
+        "choices": null,
+        "answer": [
+          "(a) T(n) = 9n  (b) T(6) = 54 — six tickets cost $54.  (c) Discrete — you can only buy a whole number of tickets.",
+          "(a) R(n) = 7n  (b) R(8) = 56 — eight tickets cost $56.  (c) Discrete — you can only buy a whole number of tickets.",
+          "(a) W(n) = 8n  (b) W(9) = 72 — washing nine cars earns $72.  (c) Discrete — you can only wash a whole number of cars."
+        ],
+        "solution": [
+          "(a) each ticket costs $9, so T(n) = 9n → (b) T(6) = 9(6) = 54, so 6 tickets cost $54 → (c) n must be a whole number (no fractional tickets), so the domain is discrete",
+          "(a) each ticket costs $7, so R(n) = 7n → (b) R(8) = 7(8) = 56, so 8 tickets cost $56 → (c) n must be a whole number (no fractional tickets), so the domain is discrete",
+          "(a) each car earns $8, so W(n) = 8n → (b) W(9) = 8(9) = 72, so 9 cars earn $72 → (c) n must be a whole number (no fractional cars), so the domain is discrete"
+        ],
+        "verify": [
+          "T=lambda n:9*n; assert T(6)==54",
+          "R=lambda n:7*n; assert R(8)==56",
+          "W=lambda n:8*n; assert W(9)==72"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 15,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Simplify: 24 − 18 ÷ 3 + 4²",
+          "Simplify: 30 − 24 ÷ 4 + 3²",
+          "Simplify: 20 − 16 ÷ 2 + 5²"
+        ],
+        "choices": null,
+        "answer": ["34", "33", "37"],
+        "solution": [
+          "24 − 6 + 16 → 18 + 16 → 34",
+          "30 − 6 + 9 → 24 + 9 → 33",
+          "20 − 8 + 25 → 12 + 25 → 37"
+        ],
+        "verify": [
+          "assert 24-18/3+4**2==34",
+          "assert 30-24/4+3**2==33",
+          "assert 20-16/2+5**2==37"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 16,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Evaluate 2x² − y when x = −3 and y = 4.",
+          "Evaluate 3x² − y when x = −2 and y = 7.",
+          "Evaluate 4x² − y when x = −2 and y = 9."
+        ],
+        "choices": null,
+        "answer": ["14", "5", "7"],
+        "solution": [
+          "2(−3)² − 4 → 2(9) − 4 → 18 − 4 → 14",
+          "3(−2)² − 7 → 3(4) − 7 → 12 − 7 → 5",
+          "4(−2)² − 9 → 4(4) − 9 → 16 − 9 → 7"
+        ],
+        "verify": [
+          "x=-3; y=4; assert 2*x**2-y==14",
+          "x=-2; y=7; assert 3*x**2-y==5",
+          "x=-2; y=9; assert 4*x**2-y==7"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 17,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Write an algebraic expression: seven less than twice a number n.",
+          "Write an algebraic expression: five more than three times a number n.",
+          "Write an algebraic expression: nine less than four times a number n."
+        ],
+        "choices": null,
+        "answer": ["2n − 7", "3n + 5", "4n − 9"],
+        "solution": [
+          "twice a number → 2n → seven less than that → 2n − 7",
+          "three times a number → 3n → five more than that → 3n + 5",
+          "four times a number → 4n → nine less than that → 4n − 9"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M1"
+      },
+      {
+        "n": 18,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve: 3(x − 4) = 2x + 1",
+          "Solve: 4(x − 2) = 3x + 6",
+          "Solve: 5(x − 3) = 4x + 2"
+        ],
+        "choices": null,
+        "answer": ["x = 13", "x = 14", "x = 17"],
+        "solution": [
+          "3x − 12 = 2x + 1 → x − 12 = 1 → x = 13",
+          "4x − 8 = 3x + 6 → x − 8 = 6 → x = 14",
+          "5x − 15 = 4x + 2 → x − 15 = 2 → x = 17"
+        ],
+        "verify": [
+          "x=13; assert 3*(x-4)==2*x+1",
+          "x=14; assert 4*(x-2)==3*x+6",
+          "x=17; assert 5*(x-3)==4*x+2"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 19,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve P = 2l + 2w for w.",
+          "Solve A = (1/2)bh for h.",
+          "Solve y = mx + b for m."
+        ],
+        "choices": null,
+        "answer": [
+          "w = (P − 2l)/2",
+          "h = 2A/b",
+          "m = (y − b)/x"
+        ],
+        "solution": [
+          "P = 2l + 2w → P − 2l = 2w → w = (P − 2l)/2",
+          "A = (1/2)bh → 2A = bh → h = 2A/b",
+          "y = mx + b → y − b = mx → m = (y − b)/x"
+        ],
+        "verify": [
+          "P,l=25.0,4.5; w=(P-2*l)/2; assert abs(P-(2*l+2*w))<1e-9",
+          "A,b=14.0,3.5; h=2*A/b; assert abs(A-0.5*b*h)<1e-9",
+          "y,x,b=11.0,2.5,3.0; m=(y-b)/x; assert abs(y-(m*x+b))<1e-9"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      }
+    ]
+  }
+}

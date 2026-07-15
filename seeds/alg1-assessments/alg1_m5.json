@@ -1,0 +1,838 @@
+{
+  "module": 5,
+  "topics": "Writing Linear Equations",
+  "quiz": {
+    "items": [
+      {
+        "n": 1,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Quick Reference: Without looking back, write the three general forms of a linear equation.  a) slope-intercept form  b) point-slope form  c) standard form",
+          "Quick Reference: Without looking back, write the three general forms of a linear equation.  a) slope-intercept form  b) point-slope form  c) standard form",
+          "Quick Reference: Without looking back, write the three general forms of a linear equation.  a) slope-intercept form  b) point-slope form  c) standard form"
+        ],
+        "choices": null,
+        "answer": [
+          "a) y = mx + b   b) y − y₁ = m(x − x₁)   c) Ax + By = C",
+          "a) y = mx + b   b) y − y₁ = m(x − x₁)   c) Ax + By = C",
+          "a) y = mx + b   b) y − y₁ = m(x − x₁)   c) Ax + By = C"
+        ],
+        "solution": [
+          "Memorized forms: slope-intercept y = mx + b; point-slope y − y₁ = m(x − x₁); standard Ax + By = C",
+          "Memorized forms: slope-intercept y = mx + b; point-slope y − y₁ = m(x − x₁); standard Ax + By = C",
+          "Memorized forms: slope-intercept y = mx + b; point-slope y − y₁ = m(x − x₁); standard Ax + By = C"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line with slope 3 and y-intercept −5.",
+          "Write the equation, in slope-intercept form, of the line with slope −2 and y-intercept 4.",
+          "Write the equation, in slope-intercept form, of the line with slope 1/2 and y-intercept −3."
+        ],
+        "choices": null,
+        "answer": ["y = 3x − 5", "y = −2x + 4", "y = (1/2)x − 3"],
+        "solution": [
+          "Substitute m = 3 and b = −5 into y = mx + b → y = 3x − 5",
+          "Substitute m = −2 and b = 4 into y = mx + b → y = −2x + 4",
+          "Substitute m = 1/2 and b = −3 into y = mx + b → y = (1/2)x − 3"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=3*x-5; assert sp.diff(f,x)==3 and f.subs(x,0)==-5; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-2*x+4; assert sp.diff(f,x)==-2 and f.subs(x,0)==4; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=sp.Rational(1,2)*x-3; assert sp.diff(f,x)==sp.Rational(1,2) and f.subs(x,0)==-3; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write an equation in point-slope form for the line that passes through (2, −3) and has slope 4. You do not need to simplify.",
+          "Write an equation in point-slope form for the line that passes through (−1, 5) and has slope −3. You do not need to simplify.",
+          "Write an equation in point-slope form for the line that passes through (3, −1) and has slope 2. You do not need to simplify."
+        ],
+        "choices": null,
+        "answer": ["y + 3 = 4(x − 2)", "y − 5 = −3(x + 1)", "y + 1 = 2(x − 3)"],
+        "solution": [
+          "Use y − y₁ = m(x − x₁) with m = 4, (x₁, y₁) = (2, −3) → y − (−3) = 4(x − 2) → y + 3 = 4(x − 2)",
+          "Use y − y₁ = m(x − x₁) with m = −3, (x₁, y₁) = (−1, 5) → y − 5 = −3(x − (−1)) → y − 5 = −3(x + 1)",
+          "Use y − y₁ = m(x − x₁) with m = 2, (x₁, y₁) = (3, −1) → y − (−1) = 2(x − 3) → y + 1 = 2(x − 3)"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=4*(x-2)-3; assert f.subs(x,2)==-3 and sp.diff(f,x)==4; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*(x+1)+5; assert f.subs(x,-1)==5 and sp.diff(f,x)==-3; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=2*(x-3)-1; assert f.subs(x,3)==-1 and sp.diff(f,x)==2; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line that passes through (1, 4) and (3, 10).",
+          "Write the equation, in slope-intercept form, of the line that passes through (2, 1) and (6, 9).",
+          "Write the equation, in slope-intercept form, of the line that passes through (−1, 7) and (2, −2)."
+        ],
+        "choices": null,
+        "answer": ["y = 3x + 1", "y = 2x − 3", "y = −3x + 4"],
+        "solution": [
+          "m = (10 − 4)/(3 − 1) = 6/2 = 3 → use (1, 4): 4 = 3(1) + b → b = 1 → y = 3x + 1",
+          "m = (9 − 1)/(6 − 2) = 8/4 = 2 → use (2, 1): 1 = 2(2) + b → b = −3 → y = 2x − 3",
+          "m = (−2 − 7)/(2 − (−1)) = −9/3 = −3 → use (−1, 7): 7 = −3(−1) + b → b = 4 → y = −3x + 4"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=3*x+1; assert f.subs(x,1)==4 and f.subs(x,3)==10 and sp.diff(f,x)==sp.Rational(10-4,3-1); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=2*x-3; assert f.subs(x,2)==1 and f.subs(x,6)==9 and sp.diff(f,x)==sp.Rational(9-1,6-2); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*x+4; assert f.subs(x,-1)==7 and f.subs(x,2)==-2 and sp.diff(f,x)==sp.Rational(-2-7,2-(-1)); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line shown in the graph.",
+          "Write the equation, in slope-intercept form, of the line shown in the graph.",
+          "Write the equation, in slope-intercept form, of the line shown in the graph."
+        ],
+        "choices": null,
+        "answer": ["y = 2x + 1", "y = −3x + 2", "y = (1/2)x − 2"],
+        "solution": [
+          "The line crosses the y-axis at (0, 1), so b = 1 → rise/run = 2/1, so m = 2 → y = 2x + 1",
+          "The line crosses the y-axis at (0, 2), so b = 2 → rise/run = −3/1, so m = −3 → y = −3x + 2",
+          "The line crosses the y-axis at (0, −2), so b = −2 → rise/run = 1/2, so m = 1/2 → y = (1/2)x − 2"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=2*x+1; assert sp.diff(f,x)==2 and f.subs(x,0)==1; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*x+2; assert sp.diff(f,x)==-3 and f.subs(x,0)==2; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=sp.Rational(1,2)*x-2; assert sp.diff(f,x)==sp.Rational(1,2) and f.subs(x,0)==-2; print('ok')"
+        ],
+        "figure": {
+          "kind": "line_graph",
+          "params": [
+            {"slope": 2, "yint": 1, "xmin": -8, "xmax": 8},
+            {"slope": -3, "yint": 2, "xmin": -8, "xmax": 8},
+            {"slope": 0.5, "yint": -2, "xmin": -8, "xmax": 8}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Rewrite y = (2/3)x + 4 in standard form Ax + By = C, where A, B, and C are integers and A is positive.",
+          "Rewrite y = −(3/4)x + 2 in standard form Ax + By = C, where A, B, and C are integers and A is positive.",
+          "Rewrite y = (5/2)x − 3 in standard form Ax + By = C, where A, B, and C are integers and A is positive."
+        ],
+        "choices": null,
+        "answer": ["2x − 3y = −12", "3x + 4y = 8", "5x − 2y = 6"],
+        "solution": [
+          "Multiply both sides by 3: 3y = 2x + 12 → move the x-term: −2x + 3y = 12 → multiply by −1 so A > 0: 2x − 3y = −12",
+          "Multiply both sides by 4: 4y = −3x + 8 → move the x-term: 3x + 4y = 8 (A is already positive)",
+          "Multiply both sides by 2: 2y = 5x − 6 → move the x-term: −5x + 2y = −6 → multiply by −1 so A > 0: 5x − 2y = 6"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); y=sp.Rational(2,3)*x+4; assert sp.simplify(2*x-3*y-(-12))==0; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); y=-sp.Rational(3,4)*x+2; assert sp.simplify(3*x+4*y-8)==0; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); y=sp.Rational(5,2)*x-3; assert sp.simplify(5*x-2*y-6)==0; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line that passes through (2, −5) and is parallel to the line y = −4x + 1.",
+          "Write the equation, in slope-intercept form, of the line that passes through (−1, 2) and is parallel to the line y = 3x + 7.",
+          "Write the equation, in slope-intercept form, of the line that passes through (4, −3) and is parallel to the line y = −2x − 6."
+        ],
+        "choices": null,
+        "answer": ["y = −4x + 3", "y = 3x + 5", "y = −2x + 5"],
+        "solution": [
+          "Parallel lines have equal slopes, so m = −4 → substitute (2, −5): −5 = −4(2) + b → −5 = −8 + b → b = 3 → y = −4x + 3",
+          "Parallel lines have equal slopes, so m = 3 → substitute (−1, 2): 2 = 3(−1) + b → 2 = −3 + b → b = 5 → y = 3x + 5",
+          "Parallel lines have equal slopes, so m = −2 → substitute (4, −3): −3 = −2(4) + b → −3 = −8 + b → b = 5 → y = −2x + 5"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=-4*x+3; assert f.subs(x,2)==-5 and sp.diff(f,x)==sp.diff(-4*x+1,x); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=3*x+5; assert f.subs(x,-1)==2 and sp.diff(f,x)==sp.diff(3*x+7,x); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-2*x+5; assert f.subs(x,4)==-3 and sp.diff(f,x)==sp.diff(-2*x-6,x); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Nia opens a savings account with $40 and deposits $12 every week.  a) Write an equation for the total amount T (in dollars) in the account after w weeks.  b) What does the slope of your equation mean in this situation?  c) What does the y-intercept mean in this situation?",
+          "A candle is 30 cm tall when it is lit and burns down 2 cm every hour.  a) Write an equation for the height h (in cm) of the candle after t hours.  b) What does the slope of your equation mean in this situation?  c) What does the y-intercept mean in this situation?",
+          "A phone plan charges an $18 monthly fee plus $3 for each gigabyte of data used.  a) Write an equation for the total monthly cost C (in dollars) when g gigabytes are used.  b) What does the slope of your equation mean in this situation?  c) What does the y-intercept mean in this situation?"
+        ],
+        "choices": null,
+        "answer": [
+          "a) T = 12w + 40  b) the account grows by $12 each week  c) the account started with $40",
+          "a) h = −2t + 30  b) the candle loses 2 cm of height each hour  c) the candle was 30 cm tall when lit",
+          "a) C = 3g + 18  b) each gigabyte used adds $3 to the bill  c) the $18 fee is charged even if 0 GB are used"
+        ],
+        "solution": [
+          "Rate of change = 12 dollars/week (slope), starting value = 40 (y-intercept) → T = 12w + 40; slope: +$12 per week deposited; y-intercept: $40 opening balance at w = 0",
+          "Rate of change = −2 cm/hour (slope), starting value = 30 (y-intercept) → h = −2t + 30; slope: height decreases 2 cm each hour; y-intercept: 30 cm starting height at t = 0",
+          "Rate of change = 3 dollars/GB (slope), starting value = 18 (y-intercept) → C = 3g + 18; slope: cost rises $3 per gigabyte; y-intercept: $18 base fee at g = 0"
+        ],
+        "verify": [
+          "import sympy as sp; w=sp.Symbol('w'); T=12*w+40; assert T.subs(w,0)==40 and T.subs(w,5)==100 and sp.diff(T,w)==12; print('ok')",
+          "import sympy as sp; t=sp.Symbol('t'); h=-2*t+30; assert h.subs(t,0)==30 and h.subs(t,10)==10 and sp.diff(h,t)==-2; print('ok')",
+          "import sympy as sp; g=sp.Symbol('g'); C=3*g+18; assert C.subs(g,0)==18 and C.subs(g,4)==30 and sp.diff(C,g)==3; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 9,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve: 4x − 7 = 2x + 9",
+          "Solve: 5x + 3 = 2x − 12",
+          "Solve: 3(x − 2) = 2x + 5"
+        ],
+        "choices": null,
+        "answer": ["x = 8", "x = −5", "x = 11"],
+        "solution": [
+          "4x − 7 = 2x + 9 → 2x = 16 → x = 8",
+          "5x + 3 = 2x − 12 → 3x = −15 → x = −5",
+          "3x − 6 = 2x + 5 → x = 11"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.solve(sp.Eq(4*x-7,2*x+9),x)==[8]; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.solve(sp.Eq(5*x+3,2*x-12),x)==[-5]; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.solve(sp.Eq(3*(x-2),2*x+5),x)==[11]; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 10,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "If f(x) = 2x − 9, find f(−4).",
+          "If f(x) = −3x + 4, find f(5).",
+          "If f(x) = 4x + 1, find f(−6)."
+        ],
+        "choices": null,
+        "answer": ["f(−4) = −17", "f(5) = −11", "f(−6) = −23"],
+        "solution": [
+          "f(−4) = 2(−4) − 9 = −8 − 9 = −17",
+          "f(5) = −3(5) + 4 = −15 + 4 = −11",
+          "f(−6) = 4(−6) + 1 = −24 + 1 = −23"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=2*x-9; assert f.subs(x,-4)==-17; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*x+4; assert f.subs(x,5)==-11; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=4*x+1; assert f.subs(x,-6)==-23; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M3"
+      },
+      {
+        "n": 11,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line that passes through (−2, 5) and (4, −7).",
+          "Find the slope of the line that passes through (1, −3) and (5, 9).",
+          "Find the slope of the line that passes through (−1, 6) and (3, −6)."
+        ],
+        "choices": null,
+        "answer": ["m = −2", "m = 3", "m = −3"],
+        "solution": [
+          "m = (−7 − 5)/(4 − (−2)) = −12/6 = −2",
+          "m = (9 − (−3))/(5 − 1) = 12/4 = 3",
+          "m = (−6 − 6)/(3 − (−1)) = −12/4 = −3"
+        ],
+        "verify": [
+          "import sympy as sp; assert sp.Rational(-7-5,4-(-2))==-2; print('ok')",
+          "import sympy as sp; assert sp.Rational(9-(-3),5-1)==3; print('ok')",
+          "import sympy as sp; assert sp.Rational(-6-6,3-(-1))==-3; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      }
+    ]
+  },
+  "test": {
+    "items": [
+      {
+        "n": 1,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Quick Reference: Without looking back, write the three general forms of a linear equation.  a) slope-intercept form  b) point-slope form  c) standard form",
+          "Quick Reference: Without looking back, write the three general forms of a linear equation.  a) slope-intercept form  b) point-slope form  c) standard form",
+          "Quick Reference: Without looking back, write the three general forms of a linear equation.  a) slope-intercept form  b) point-slope form  c) standard form"
+        ],
+        "choices": null,
+        "answer": [
+          "a) y = mx + b   b) y − y₁ = m(x − x₁)   c) Ax + By = C",
+          "a) y = mx + b   b) y − y₁ = m(x − x₁)   c) Ax + By = C",
+          "a) y = mx + b   b) y − y₁ = m(x − x₁)   c) Ax + By = C"
+        ],
+        "solution": [
+          "Memorized forms: slope-intercept y = mx + b; point-slope y − y₁ = m(x − x₁); standard Ax + By = C",
+          "Memorized forms: slope-intercept y = mx + b; point-slope y − y₁ = m(x − x₁); standard Ax + By = C",
+          "Memorized forms: slope-intercept y = mx + b; point-slope y − y₁ = m(x − x₁); standard Ax + By = C"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line with slope −4 and y-intercept 7.",
+          "Write the equation, in slope-intercept form, of the line with slope 5 and y-intercept −2.",
+          "Write the equation, in slope-intercept form, of the line with slope −3 and y-intercept −8."
+        ],
+        "choices": null,
+        "answer": ["y = −4x + 7", "y = 5x − 2", "y = −3x − 8"],
+        "solution": [
+          "Substitute m = −4 and b = 7 into y = mx + b → y = −4x + 7",
+          "Substitute m = 5 and b = −2 into y = mx + b → y = 5x − 2",
+          "Substitute m = −3 and b = −8 into y = mx + b → y = −3x − 8"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=-4*x+7; assert sp.diff(f,x)==-4 and f.subs(x,0)==7; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=5*x-2; assert sp.diff(f,x)==5 and f.subs(x,0)==-2; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*x-8; assert sp.diff(f,x)==-3 and f.subs(x,0)==-8; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write an equation in point-slope form for the line that passes through (5, 1) and has slope −2. You do not need to simplify.",
+          "Write an equation in point-slope form for the line that passes through (−4, 2) and has slope 3. You do not need to simplify.",
+          "Write an equation in point-slope form for the line that passes through (2, 6) and has slope −5. You do not need to simplify."
+        ],
+        "choices": null,
+        "answer": ["y − 1 = −2(x − 5)", "y − 2 = 3(x + 4)", "y − 6 = −5(x − 2)"],
+        "solution": [
+          "Use y − y₁ = m(x − x₁) with m = −2, (x₁, y₁) = (5, 1) → y − 1 = −2(x − 5)",
+          "Use y − y₁ = m(x − x₁) with m = 3, (x₁, y₁) = (−4, 2) → y − 2 = 3(x − (−4)) → y − 2 = 3(x + 4)",
+          "Use y − y₁ = m(x − x₁) with m = −5, (x₁, y₁) = (2, 6) → y − 6 = −5(x − 2)"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=-2*(x-5)+1; assert f.subs(x,5)==1 and sp.diff(f,x)==-2; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=3*(x+4)+2; assert f.subs(x,-4)==2 and sp.diff(f,x)==3; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-5*(x-2)+6; assert f.subs(x,2)==6 and sp.diff(f,x)==-5; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line that passes through (2, 5) and (4, 13). Show how you found the slope and the y-intercept.",
+          "Write the equation, in slope-intercept form, of the line that passes through (−1, 8) and (3, −4). Show how you found the slope and the y-intercept.",
+          "Write the equation, in slope-intercept form, of the line that passes through (1, −2) and (5, 6). Show how you found the slope and the y-intercept."
+        ],
+        "choices": null,
+        "answer": ["y = 4x − 3", "y = −3x + 5", "y = 2x − 4"],
+        "solution": [
+          "m = (13 − 5)/(4 − 2) = 8/2 = 4 → use (2, 5): 5 = 4(2) + b → b = −3 → y = 4x − 3",
+          "m = (−4 − 8)/(3 − (−1)) = −12/4 = −3 → use (−1, 8): 8 = −3(−1) + b → b = 5 → y = −3x + 5",
+          "m = (6 − (−2))/(5 − 1) = 8/4 = 2 → use (1, −2): −2 = 2(1) + b → b = −4 → y = 2x − 4"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=4*x-3; assert f.subs(x,2)==5 and f.subs(x,4)==13 and sp.diff(f,x)==sp.Rational(13-5,4-2); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*x+5; assert f.subs(x,-1)==8 and f.subs(x,3)==-4 and sp.diff(f,x)==sp.Rational(-4-8,3-(-1)); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=2*x-4; assert f.subs(x,1)==-2 and f.subs(x,5)==6 and sp.diff(f,x)==sp.Rational(6-(-2),5-1); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Use the graph.  a) State the slope and the y-intercept of the line shown.  b) Write the equation of the line in slope-intercept form.",
+          "Use the graph.  a) State the slope and the y-intercept of the line shown.  b) Write the equation of the line in slope-intercept form.",
+          "Use the graph.  a) State the slope and the y-intercept of the line shown.  b) Write the equation of the line in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": [
+          "a) m = −2, y-intercept (0, 5)  b) y = −2x + 5",
+          "a) m = 3, y-intercept (0, −4)  b) y = 3x − 4",
+          "a) m = 1/2, y-intercept (0, 3)  b) y = (1/2)x + 3"
+        ],
+        "solution": [
+          "The line crosses the y-axis at (0, 5) → from there it falls 2 for every 1 right, so m = −2 → y = −2x + 5",
+          "The line crosses the y-axis at (0, −4) → from there it rises 3 for every 1 right, so m = 3 → y = 3x − 4",
+          "The line crosses the y-axis at (0, 3) → from there it rises 1 for every 2 right, so m = 1/2 → y = (1/2)x + 3"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=-2*x+5; assert sp.diff(f,x)==-2 and f.subs(x,0)==5; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=3*x-4; assert sp.diff(f,x)==3 and f.subs(x,0)==-4; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=sp.Rational(1,2)*x+3; assert sp.diff(f,x)==sp.Rational(1,2) and f.subs(x,0)==3; print('ok')"
+        ],
+        "figure": {
+          "kind": "line_graph",
+          "params": [
+            {"slope": -2, "yint": 5, "xmin": -8, "xmax": 8},
+            {"slope": 3, "yint": -4, "xmin": -8, "xmax": 8},
+            {"slope": 0.5, "yint": 3, "xmin": -8, "xmax": 8}
+          ]
+        },
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Rewrite y = (3/5)x − 2 in standard form Ax + By = C, where A, B, and C are integers and A is positive.",
+          "Rewrite y = −(2/7)x + 1 in standard form Ax + By = C, where A, B, and C are integers and A is positive.",
+          "Rewrite y = (4/3)x + 5 in standard form Ax + By = C, where A, B, and C are integers and A is positive."
+        ],
+        "choices": null,
+        "answer": ["3x − 5y = 10", "2x + 7y = 7", "4x − 3y = −15"],
+        "solution": [
+          "Multiply both sides by 5: 5y = 3x − 10 → move the x-term: −3x + 5y = −10 → multiply by −1 so A > 0: 3x − 5y = 10",
+          "Multiply both sides by 7: 7y = −2x + 7 → move the x-term: 2x + 7y = 7 (A is already positive)",
+          "Multiply both sides by 3: 3y = 4x + 15 → move the x-term: −4x + 3y = 15 → multiply by −1 so A > 0: 4x − 3y = −15"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); y=sp.Rational(3,5)*x-2; assert sp.simplify(3*x-5*y-10)==0; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); y=-sp.Rational(2,7)*x+1; assert sp.simplify(2*x+7*y-7)==0; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); y=sp.Rational(4,3)*x+5; assert sp.simplify(4*x-3*y-(-15))==0; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in slope-intercept form, of the line that passes through (2, 1) and is parallel to the line y = −3x + 2.",
+          "Write the equation, in slope-intercept form, of the line that passes through (−2, 3) and is parallel to the line y = 4x − 1.",
+          "Write the equation, in slope-intercept form, of the line that passes through (5, −4) and is parallel to the line y = −2x + 9."
+        ],
+        "choices": null,
+        "answer": ["y = −3x + 7", "y = 4x + 11", "y = −2x + 6"],
+        "solution": [
+          "Parallel lines have equal slopes, so m = −3 → substitute (2, 1): 1 = −3(2) + b → b = 7 → y = −3x + 7",
+          "Parallel lines have equal slopes, so m = 4 → substitute (−2, 3): 3 = 4(−2) + b → b = 11 → y = 4x + 11",
+          "Parallel lines have equal slopes, so m = −2 → substitute (5, −4): −4 = −2(5) + b → b = 6 → y = −2x + 6"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*x+7; assert f.subs(x,2)==1 and sp.diff(f,x)==sp.diff(-3*x+2,x); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=4*x+11; assert f.subs(x,-2)==3 and sp.diff(f,x)==sp.diff(4*x-1,x); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-2*x+6; assert f.subs(x,5)==-4 and sp.diff(f,x)==sp.diff(-2*x+9,x); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Find the slope of any line that is perpendicular to the line 3x − 4y = 8. Show your work.",
+          "Find the slope of any line that is perpendicular to the line 5x + 2y = 10. Show your work.",
+          "Find the slope of any line that is perpendicular to the line 2x − 7y = 14. Show your work."
+        ],
+        "choices": null,
+        "answer": ["perpendicular slope = −4/3", "perpendicular slope = 2/5", "perpendicular slope = −7/2"],
+        "solution": [
+          "Solve for y: −4y = −3x + 8 → y = (3/4)x − 2, so the slope is 3/4 → perpendicular slope is the opposite reciprocal: −4/3",
+          "Solve for y: 2y = −5x + 10 → y = −(5/2)x + 5, so the slope is −5/2 → perpendicular slope is the opposite reciprocal: 2/5",
+          "Solve for y: −7y = −2x + 14 → y = (2/7)x − 2, so the slope is 2/7 → perpendicular slope is the opposite reciprocal: −7/2"
+        ],
+        "verify": [
+          "import sympy as sp; x,y=sp.symbols('x y'); m=sp.solve(sp.Eq(3*x-4*y,8),y)[0].coeff(x); assert m*sp.Rational(-4,3)==-1; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); m=sp.solve(sp.Eq(5*x+2*y,10),y)[0].coeff(x); assert m*sp.Rational(2,5)==-1; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); m=sp.solve(sp.Eq(2*x-7*y,14),y)[0].coeff(x); assert m*sp.Rational(-7,2)==-1; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 9,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Write the equation, in standard form Ax + By = C (integer coefficients, A positive), of the line that passes through (4, 1) and is perpendicular to the line y = 2x + 3.",
+          "Write the equation, in standard form Ax + By = C (integer coefficients, A positive), of the line that passes through (−3, 2) and is perpendicular to the line y = 3x − 5.",
+          "Write the equation, in standard form Ax + By = C (integer coefficients, A positive), of the line that passes through (6, −1) and is perpendicular to the line y = −(3/2)x + 4."
+        ],
+        "choices": null,
+        "answer": ["x + 2y = 6", "x + 3y = 3", "2x − 3y = 15"],
+        "solution": [
+          "Perpendicular slope = −1/2 → y − 1 = −(1/2)(x − 4) → y = −(1/2)x + 3 → multiply by 2: 2y = −x + 6 → x + 2y = 6",
+          "Perpendicular slope = −1/3 → y − 2 = −(1/3)(x + 3) → y = −(1/3)x + 1 → multiply by 3: 3y = −x + 3 → x + 3y = 3",
+          "Perpendicular slope = 2/3 → y + 1 = (2/3)(x − 6) → y = (2/3)x − 5 → multiply by 3: 3y = 2x − 15 → 2x − 3y = 15"
+        ],
+        "verify": [
+          "import sympy as sp; x,y=sp.symbols('x y'); f=sp.solve(sp.Eq(x+2*y,6),y)[0]; assert f.subs(x,4)==1 and f.coeff(x)*2==-1; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); f=sp.solve(sp.Eq(x+3*y,3),y)[0]; assert f.subs(x,-3)==2 and f.coeff(x)*3==-1; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); f=sp.solve(sp.Eq(2*x-3*y,15),y)[0]; assert f.subs(x,6)==-1 and f.coeff(x)*sp.Rational(-3,2)==-1; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 10,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Error Analysis: Desmond wrote the equation of the line through (2, 3) and (4, 7). His work: m = (4 − 2)/(7 − 3) = 2/4 = 1/2, so y = (1/2)x + 2.  a) Identify Desmond's mistake.  b) Show the correct solution and write the correct equation in slope-intercept form.",
+          "Error Analysis: Priya wrote the equation of the line through (3, 4) and (6, 13). Her work: m = (6 − 3)/(13 − 4) = 3/9 = 1/3, so y = (1/3)x + 3.  a) Identify Priya's mistake.  b) Show the correct solution and write the correct equation in slope-intercept form.",
+          "Error Analysis: Marco wrote the equation of the line through (4, 3) and (8, 1). His work: m = (8 − 4)/(1 − 3) = 4/(−2) = −2, so y = −2x + 11.  a) Identify Marco's mistake.  b) Show the correct solution and write the correct equation in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": [
+          "a) He put the x-values on top: slope is change in y over change in x.  b) m = (7 − 3)/(4 − 2) = 2; 3 = 2(2) + b → b = −1; y = 2x − 1",
+          "a) She put the x-values on top: slope is change in y over change in x.  b) m = (13 − 4)/(6 − 3) = 3; 4 = 3(3) + b → b = −5; y = 3x − 5",
+          "a) He put the x-values on top: slope is change in y over change in x.  b) m = (1 − 3)/(8 − 4) = −1/2; 3 = −(1/2)(4) + b → b = 5; y = −(1/2)x + 5"
+        ],
+        "solution": [
+          "The slope formula is m = (y₂ − y₁)/(x₂ − x₁); Desmond flipped it → m = (7 − 3)/(4 − 2) = 4/2 = 2 → use (2, 3): 3 = 2(2) + b → b = −1 → y = 2x − 1",
+          "The slope formula is m = (y₂ − y₁)/(x₂ − x₁); Priya flipped it → m = (13 − 4)/(6 − 3) = 9/3 = 3 → use (3, 4): 4 = 3(3) + b → b = −5 → y = 3x − 5",
+          "The slope formula is m = (y₂ − y₁)/(x₂ − x₁); Marco flipped it → m = (1 − 3)/(8 − 4) = −2/4 = −1/2 → use (4, 3): 3 = −(1/2)(4) + b → b = 5 → y = −(1/2)x + 5"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=2*x-1; assert f.subs(x,2)==3 and f.subs(x,4)==7 and sp.diff(f,x)==sp.Rational(7-3,4-2); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=3*x-5; assert f.subs(x,3)==4 and f.subs(x,6)==13 and sp.diff(f,x)==sp.Rational(13-4,6-3); print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-sp.Rational(1,2)*x+5; assert f.subs(x,4)==3 and f.subs(x,8)==1 and sp.diff(f,x)==sp.Rational(1-3,8-4); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 11,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Kai makes the same deposit into his savings account every month. After 3 months the account holds $260; after 7 months it holds $420.  a) Write an equation, in slope-intercept form, for the balance B (in dollars) after m months.  b) What does the slope mean in this situation?  c) What does the y-intercept mean in this situation?",
+          "A hot-air balloon descends at a constant rate. Two minutes after it begins descending, its altitude is 210 meters; after 5 minutes, its altitude is 120 meters.  a) Write an equation, in slope-intercept form, for the altitude a (in meters) after t minutes.  b) What does the slope mean in this situation?  c) What does the y-intercept mean in this situation?",
+          "A print shop charges a one-time setup fee plus a constant price per flyer. An order of 40 flyers costs $22; an order of 90 flyers costs $37.  a) Write an equation, in slope-intercept form, for the cost C (in dollars) of an order of f flyers.  b) What does the slope mean in this situation?  c) What does the y-intercept mean in this situation?"
+        ],
+        "choices": null,
+        "answer": [
+          "a) B = 40m + 140  b) Kai deposits $40 each month  c) the account started with $140 before the monthly deposits began",
+          "a) a = −30t + 270  b) the balloon descends 30 meters each minute  c) the balloon was at 270 meters when it began descending",
+          "a) C = 0.30f + 10  b) each flyer costs $0.30 to print  c) the setup fee is $10, charged before any flyers are printed"
+        ],
+        "solution": [
+          "m = (420 − 260)/(7 − 3) = 160/4 = 40 → 260 = 40(3) + b → b = 140 → B = 40m + 140; slope: +$40 deposited per month; y-intercept: $140 starting balance at m = 0",
+          "m = (120 − 210)/(5 − 2) = −90/3 = −30 → 210 = −30(2) + b → b = 270 → a = −30t + 270; slope: altitude drops 30 m per minute; y-intercept: 270 m starting altitude at t = 0",
+          "m = (37 − 22)/(90 − 40) = 15/50 = 0.30 → 22 = 0.30(40) + b → b = 10 → C = 0.30f + 10; slope: $0.30 per flyer; y-intercept: $10 setup fee at f = 0"
+        ],
+        "verify": [
+          "import sympy as sp; m=sp.Symbol('m'); B=40*m+140; assert B.subs(m,3)==260 and B.subs(m,7)==420 and sp.diff(B,m)==sp.Rational(420-260,7-3); print('ok')",
+          "import sympy as sp; t=sp.Symbol('t'); a=-30*t+270; assert a.subs(t,2)==210 and a.subs(t,5)==120 and sp.diff(a,t)==sp.Rational(120-210,5-2); print('ok')",
+          "import sympy as sp; f=sp.Symbol('f'); C=sp.Rational(3,10)*f+10; assert C.subs(f,40)==22 and C.subs(f,90)==37 and sp.diff(C,f)==sp.Rational(37-22,90-40); print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 12,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Are the lines y = (2/3)x − 4 and 2x − 3y = 6 parallel, perpendicular, or neither? Explain how you know using their slopes.",
+          "Are the lines y = −(1/2)x + 3 and x + 2y = 10 parallel, perpendicular, or neither? Explain how you know using their slopes.",
+          "Are the lines y = (4/5)x − 1 and 4x − 5y = 20 parallel, perpendicular, or neither? Explain how you know using their slopes."
+        ],
+        "choices": null,
+        "answer": [
+          "Parallel: both slopes are 2/3 but the y-intercepts (−4 and −2) differ, so the lines never intersect.",
+          "Parallel: both slopes are −1/2 but the y-intercepts (3 and 5) differ, so the lines never intersect.",
+          "Parallel: both slopes are 4/5 but the y-intercepts (−1 and −4) differ, so the lines never intersect."
+        ],
+        "solution": [
+          "Rewrite 2x − 3y = 6: −3y = −2x + 6 → y = (2/3)x − 2 → both slopes equal 2/3 and −4 ≠ −2, so the lines are parallel (equal slopes, different intercepts)",
+          "Rewrite x + 2y = 10: 2y = −x + 10 → y = −(1/2)x + 5 → both slopes equal −1/2 and 3 ≠ 5, so the lines are parallel (equal slopes, different intercepts)",
+          "Rewrite 4x − 5y = 20: −5y = −4x + 20 → y = (4/5)x − 4 → both slopes equal 4/5 and −1 ≠ −4, so the lines are parallel (equal slopes, different intercepts)"
+        ],
+        "verify": [
+          "import sympy as sp; x,y=sp.symbols('x y'); g=sp.solve(sp.Eq(2*x-3*y,6),y)[0]; assert g.coeff(x)==sp.Rational(2,3) and g.subs(x,0)!=-4; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); g=sp.solve(sp.Eq(x+2*y,10),y)[0]; assert g.coeff(x)==sp.Rational(-1,2) and g.subs(x,0)!=3; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); g=sp.solve(sp.Eq(4*x-5*y,20),y)[0]; assert g.coeff(x)==sp.Rational(4,5) and g.subs(x,0)!=-1; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 13,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Rewrite y + 2 = 3(x − 4) in slope-intercept form.",
+          "Rewrite y − 5 = −2(x + 1) in slope-intercept form.",
+          "Rewrite y + 4 = (1/2)(x − 6) in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": ["y = 3x − 14", "y = −2x + 3", "y = (1/2)x − 7"],
+        "solution": [
+          "Distribute: y + 2 = 3x − 12 → subtract 2: y = 3x − 14",
+          "Distribute: y − 5 = −2x − 2 → add 5: y = −2x + 3",
+          "Distribute: y + 4 = (1/2)x − 3 → subtract 4: y = (1/2)x − 7"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.expand(3*(x-4)-2)==3*x-14; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.expand(-2*(x+1)+5)==-2*x+3; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.expand(sp.Rational(1,2)*(x-6)-4)==sp.Rational(1,2)*x-7; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 14,
+        "points": 2,
+        "type": "mc",
+        "prompt": [
+          "Which equation represents the line that passes through (−2, 6) with slope −3?",
+          "Which equation represents the line that passes through (4, −1) with slope 2?",
+          "Which equation represents the line that passes through (−3, 5) with slope −2?"
+        ],
+        "choices": [
+          ["A) y = −3x", "B) y = −3x + 6", "C) y = 3x + 12", "D) y = −3x − 12"],
+          ["A) y = 2x + 7", "B) y = 2x − 9", "C) y = −2x + 7", "D) y = 2x − 1"],
+          ["A) y = −2x + 11", "B) y = −2x + 5", "C) y = −2x − 1", "D) y = 2x + 11"]
+        ],
+        "answer": ["A", "B", "C"],
+        "solution": [
+          "6 = −3(−2) + b → 6 = 6 + b → b = 0 → y = −3x, choice A",
+          "−1 = 2(4) + b → −1 = 8 + b → b = −9 → y = 2x − 9, choice B",
+          "5 = −2(−3) + b → 5 = 6 + b → b = −1 → y = −2x − 1, choice C"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=-3*x; assert f.subs(x,-2)==6 and sp.diff(f,x)==-3; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=2*x-9; assert f.subs(x,4)==-1 and sp.diff(f,x)==2; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=-2*x-1; assert f.subs(x,-3)==5 and sp.diff(f,x)==-2; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 15,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve: (2/3)x + 5 = 13",
+          "Solve: (3/5)x − 4 = 8",
+          "Solve: (3/2)x − 5 = 4"
+        ],
+        "choices": null,
+        "answer": ["x = 12", "x = 20", "x = 6"],
+        "solution": [
+          "(2/3)x = 8 → x = 8 · (3/2) = 12",
+          "(3/5)x = 12 → x = 12 · (5/3) = 20",
+          "(3/2)x = 9 → x = 9 · (2/3) = 6"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.solve(sp.Eq(sp.Rational(2,3)*x+5,13),x)==[12]; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.solve(sp.Eq(sp.Rational(3,5)*x-4,8),x)==[20]; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); assert sp.solve(sp.Eq(sp.Rational(3,2)*x-5,4),x)==[6]; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 16,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve y = mx + b for x.",
+          "Solve P = 2l + 2w for w.",
+          "Solve A = (1/2)bh for h."
+        ],
+        "choices": null,
+        "answer": ["x = (y − b)/m", "w = (P − 2l)/2", "h = 2A/b"],
+        "solution": [
+          "Subtract b: y − b = mx → divide by m: x = (y − b)/m",
+          "Subtract 2l: P − 2l = 2w → divide by 2: w = (P − 2l)/2",
+          "Multiply by 2: 2A = bh → divide by b: h = 2A/b"
+        ],
+        "verify": [
+          "import sympy as sp; y,m,b,xv=sp.symbols('y m b xv'); assert sp.simplify(sp.solve(sp.Eq(y,m*xv+b),xv)[0]-(y-b)/m)==0; print('ok')",
+          "import sympy as sp; P,l,w=sp.symbols('P l w'); assert sp.simplify(sp.solve(sp.Eq(P,2*l+2*w),w)[0]-(P-2*l)/2)==0; print('ok')",
+          "import sympy as sp; A,b,h=sp.symbols('A b h'); assert sp.simplify(sp.solve(sp.Eq(A,sp.Rational(1,2)*b*h),h)[0]-2*A/b)==0; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 17,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "If f(x) = x² − 3x, find f(−2).",
+          "If g(x) = 2x² + 1, find g(−3).",
+          "If f(x) = x² + 4x, find f(−5)."
+        ],
+        "choices": null,
+        "answer": ["f(−2) = 10", "g(−3) = 19", "f(−5) = 5"],
+        "solution": [
+          "f(−2) = (−2)² − 3(−2) = 4 + 6 = 10",
+          "g(−3) = 2(−3)² + 1 = 2(9) + 1 = 19",
+          "f(−5) = (−5)² + 4(−5) = 25 − 20 = 5"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=x**2-3*x; assert f.subs(x,-2)==10; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); g=2*x**2+1; assert g.subs(x,-3)==19; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=x**2+4*x; assert f.subs(x,-5)==5; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M3"
+      },
+      {
+        "n": 18,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Rewrite 6x + 2y = 8 in slope-intercept form, then state the slope and y-intercept.",
+          "Rewrite 4x − 2y = 10 in slope-intercept form, then state the slope and y-intercept.",
+          "Rewrite 10x + 5y = 35 in slope-intercept form, then state the slope and y-intercept."
+        ],
+        "choices": null,
+        "answer": [
+          "y = −3x + 4; slope −3, y-intercept (0, 4)",
+          "y = 2x − 5; slope 2, y-intercept (0, −5)",
+          "y = −2x + 7; slope −2, y-intercept (0, 7)"
+        ],
+        "solution": [
+          "2y = −6x + 8 → y = −3x + 4 → m = −3, b = 4",
+          "−2y = −4x + 10 → y = 2x − 5 → m = 2, b = −5",
+          "5y = −10x + 35 → y = −2x + 7 → m = −2, b = 7"
+        ],
+        "verify": [
+          "import sympy as sp; x,y=sp.symbols('x y'); f=sp.solve(sp.Eq(6*x+2*y,8),y)[0]; assert f==-3*x+4; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); f=sp.solve(sp.Eq(4*x-2*y,10),y)[0]; assert f==2*x-5; print('ok')",
+          "import sympy as sp; x,y=sp.symbols('x y'); f=sp.solve(sp.Eq(10*x+5*y,35),y)[0]; assert f==-2*x+7; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      },
+      {
+        "n": 19,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "State the vertex of f(x) = |x − 3| + 2.",
+          "State the vertex of g(x) = |x + 4| − 1.",
+          "State the vertex of f(x) = |x − 6| − 5."
+        ],
+        "choices": null,
+        "answer": ["(3, 2)", "(−4, −1)", "(6, −5)"],
+        "solution": [
+          "f(x) = |x − h| + k has vertex (h, k) → h = 3, k = 2 → vertex (3, 2)",
+          "g(x) = |x − h| + k has vertex (h, k) → h = −4, k = −1 → vertex (−4, −1)",
+          "f(x) = |x − h| + k has vertex (h, k) → h = 6, k = −5 → vertex (6, −5)"
+        ],
+        "verify": [
+          "import sympy as sp; x=sp.Symbol('x'); f=sp.Abs(x-3)+2; assert f.subs(x,3)==2 and f.subs(x,2)==3 and f.subs(x,4)==3; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); g=sp.Abs(x+4)-1; assert g.subs(x,-4)==-1 and g.subs(x,-5)==0 and g.subs(x,-3)==0; print('ok')",
+          "import sympy as sp; x=sp.Symbol('x'); f=sp.Abs(x-6)-5; assert f.subs(x,6)==-5 and f.subs(x,5)==-4 and f.subs(x,7)==-4; print('ok')"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      }
+    ]
+  }
+}

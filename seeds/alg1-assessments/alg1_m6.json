@@ -1,0 +1,936 @@
+{
+  "module": 6,
+  "topics": "Linear Inequalities",
+  "quiz": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Solve the inequality: x + 7 < 12",
+          "Solve the inequality: x + 5 < 11",
+          "Solve the inequality: x + 9 < 13"
+        ],
+        "choices": null,
+        "answer": ["x < 5", "x < 6", "x < 4"],
+        "solution": [
+          "x + 7 < 12 → subtract 7 from both sides → x < 5",
+          "x + 5 < 11 → subtract 5 from both sides → x < 6",
+          "x + 9 < 13 → subtract 9 from both sides → x < 4"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(x+7<12,x,relational=False)==Interval.open(-oo,5)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(x+5<11,x,relational=False)==Interval.open(-oo,6)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(x+9<13,x,relational=False)==Interval.open(-oo,4)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Solve the inequality: 3x ≥ 15",
+          "Solve the inequality: 4x ≥ 24",
+          "Solve the inequality: 6x ≥ 42"
+        ],
+        "choices": null,
+        "answer": ["x ≥ 5", "x ≥ 6", "x ≥ 7"],
+        "solution": [
+          "3x ≥ 15 → divide both sides by 3 → x ≥ 5",
+          "4x ≥ 24 → divide both sides by 4 → x ≥ 6",
+          "6x ≥ 42 → divide both sides by 6 → x ≥ 7"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(3*x>=15,x,relational=False)==Interval(5,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(4*x>=24,x,relational=False)==Interval(6,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(6*x>=42,x,relational=False)==Interval(7,oo)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality: −2x > 10",
+          "Solve the inequality: −3x > 12",
+          "Solve the inequality: −4x > 8"
+        ],
+        "choices": null,
+        "answer": ["x < −5", "x < −4", "x < −2"],
+        "solution": [
+          "−2x > 10 → divide both sides by −2 and FLIP the inequality symbol → x < −5",
+          "−3x > 12 → divide both sides by −3 and FLIP the inequality symbol → x < −4",
+          "−4x > 8 → divide both sides by −4 and FLIP the inequality symbol → x < −2"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-2*x>10,x,relational=False)==Interval.open(-oo,-5)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-3*x>12,x,relational=False)==Interval.open(-oo,-4)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-4*x>8,x,relational=False)==Interval.open(-oo,-2)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality, then graph the solution set on the number line: 3x + 5 > 14",
+          "Solve the inequality, then graph the solution set on the number line: 4x + 7 > 27",
+          "Solve the inequality, then graph the solution set on the number line: 5x + 2 > 22"
+        ],
+        "choices": null,
+        "answer": ["x > 3; open circle at 3, shaded to the right", "x > 5; open circle at 5, shaded to the right", "x > 4; open circle at 4, shaded to the right"],
+        "solution": [
+          "3x + 5 > 14 → subtract 5 → 3x > 9 → divide by 3 → x > 3; graph: open circle at 3, arrow to the right",
+          "4x + 7 > 27 → subtract 7 → 4x > 20 → divide by 4 → x > 5; graph: open circle at 5, arrow to the right",
+          "5x + 2 > 22 → subtract 2 → 5x > 20 → divide by 5 → x > 4; graph: open circle at 4, arrow to the right"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(3*x+5>14,x,relational=False)==Interval.open(3,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(4*x+7>27,x,relational=False)==Interval.open(5,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(5*x+2>22,x,relational=False)==Interval.open(4,oo)"
+        ],
+        "figure": {
+          "kind": "numberline",
+          "params": [
+            {"min": -2, "max": 8},
+            {"min": 0, "max": 10},
+            {"min": -1, "max": 9}
+          ]
+        },
+        "key_figure": {
+          "kind": "numberline_answer",
+          "params": [
+            {"min": -2, "max": 8, "point": 3, "closed": false, "direction": "right"},
+            {"min": 0, "max": 10, "point": 5, "closed": false, "direction": "right"},
+            {"min": -1, "max": 9, "point": 4, "closed": false, "direction": "right"}
+          ]
+        },
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality, then graph the solution set on the number line: 9 − 2x ≤ 15",
+          "Solve the inequality, then graph the solution set on the number line: 7 − 3x ≤ 19",
+          "Solve the inequality, then graph the solution set on the number line: 5 − 4x ≤ 13"
+        ],
+        "choices": null,
+        "answer": ["x ≥ −3; closed circle at −3, shaded to the right", "x ≥ −4; closed circle at −4, shaded to the right", "x ≥ −2; closed circle at −2, shaded to the right"],
+        "solution": [
+          "9 − 2x ≤ 15 → subtract 9 → −2x ≤ 6 → divide by −2 and FLIP → x ≥ −3; graph: closed circle at −3, arrow to the right",
+          "7 − 3x ≤ 19 → subtract 7 → −3x ≤ 12 → divide by −3 and FLIP → x ≥ −4; graph: closed circle at −4, arrow to the right",
+          "5 − 4x ≤ 13 → subtract 5 → −4x ≤ 8 → divide by −4 and FLIP → x ≥ −2; graph: closed circle at −2, arrow to the right"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(9-2*x<=15,x,relational=False)==Interval(-3,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(7-3*x<=19,x,relational=False)==Interval(-4,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(5-4*x<=13,x,relational=False)==Interval(-2,oo)"
+        ],
+        "figure": {
+          "kind": "numberline",
+          "params": [
+            {"min": -8, "max": 2},
+            {"min": -9, "max": 1},
+            {"min": -7, "max": 3}
+          ]
+        },
+        "key_figure": {
+          "kind": "numberline_answer",
+          "params": [
+            {"min": -8, "max": 2, "point": -3, "closed": true, "direction": "right"},
+            {"min": -9, "max": 1, "point": -4, "closed": true, "direction": "right"},
+            {"min": -7, "max": 3, "point": -2, "closed": true, "direction": "right"}
+          ]
+        },
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 2,
+        "type": "mc",
+        "prompt": [
+          "Which graph shows the solution set of −3x + 4 ≥ 13?",
+          "Which graph shows the solution set of −2x + 1 ≥ 9?",
+          "Which graph shows the solution set of −4x + 3 ≥ 11?"
+        ],
+        "choices": [
+          ["Graph A", "Graph B", "Graph C", "Graph D"],
+          ["Graph A", "Graph B", "Graph C", "Graph D"],
+          ["Graph A", "Graph B", "Graph C", "Graph D"]
+        ],
+        "choices_figures": {
+          "kind": "numberline_answer",
+          "params": [
+            [
+              {"min": -8, "max": 8, "point": -3, "closed": false, "direction": "left"},
+              {"min": -8, "max": 8, "point": -3, "closed": true, "direction": "left"},
+              {"min": -8, "max": 8, "point": -3, "closed": true, "direction": "right"},
+              {"min": -8, "max": 8, "point": 3, "closed": true, "direction": "left"}
+            ],
+            [
+              {"min": -8, "max": 8, "point": -4, "closed": false, "direction": "left"},
+              {"min": -8, "max": 8, "point": -4, "closed": true, "direction": "right"},
+              {"min": -8, "max": 8, "point": 4, "closed": true, "direction": "left"},
+              {"min": -8, "max": 8, "point": -4, "closed": true, "direction": "left"}
+            ],
+            [
+              {"min": -8, "max": 8, "point": -2, "closed": true, "direction": "left"},
+              {"min": -8, "max": 8, "point": -2, "closed": false, "direction": "left"},
+              {"min": -8, "max": 8, "point": -2, "closed": true, "direction": "right"},
+              {"min": -8, "max": 8, "point": 2, "closed": true, "direction": "left"}
+            ]
+          ]
+        },
+        "answer": ["Graph B (closed circle at −3, shaded left: x ≤ −3)", "Graph D (closed circle at −4, shaded left: x ≤ −4)", "Graph A (closed circle at −2, shaded left: x ≤ −2)"],
+        "solution": [
+          "−3x + 4 ≥ 13 → subtract 4 → −3x ≥ 9 → divide by −3 and FLIP → x ≤ −3 → closed circle at −3, shaded left → Graph B",
+          "−2x + 1 ≥ 9 → subtract 1 → −2x ≥ 8 → divide by −2 and FLIP → x ≤ −4 → closed circle at −4, shaded left → Graph D",
+          "−4x + 3 ≥ 11 → subtract 3 → −4x ≥ 8 → divide by −4 and FLIP → x ≤ −2 → closed circle at −2, shaded left → Graph A"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-3*x+4>=13,x,relational=False)==Interval(-oo,-3)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-2*x+1>=9,x,relational=False)==Interval(-oo,-4)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-4*x+3>=11,x,relational=False)==Interval(-oo,-2)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Solve the compound inequality, then graph the solution set on the number line: −5 < 2x + 1 ≤ 7",
+          "Solve the compound inequality, then graph the solution set on the number line: −7 ≤ 3x − 1 < 8",
+          "Solve the compound inequality, then graph the solution set on the number line: −4 < 2x − 6 ≤ 4"
+        ],
+        "choices": null,
+        "answer": ["−3 < x ≤ 3; open circle at −3, closed circle at 3, shaded between", "−2 ≤ x < 3; closed circle at −2, open circle at 3, shaded between", "1 < x ≤ 5; open circle at 1, closed circle at 5, shaded between"],
+        "solution": [
+          "−5 < 2x + 1 ≤ 7 → subtract 1 from all three parts → −6 < 2x ≤ 6 → divide all parts by 2 → −3 < x ≤ 3; graph: open circle at −3, closed circle at 3, shade between",
+          "−7 ≤ 3x − 1 < 8 → add 1 to all three parts → −6 ≤ 3x < 9 → divide all parts by 3 → −2 ≤ x < 3; graph: closed circle at −2, open circle at 3, shade between",
+          "−4 < 2x − 6 ≤ 4 → add 6 to all three parts → 2 < 2x ≤ 10 → divide all parts by 2 → 1 < x ≤ 5; graph: open circle at 1, closed circle at 5, shade between"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval; x=symbols('x'); A=S(2*x+1>-5,x,relational=False).intersect(S(2*x+1<=7,x,relational=False)); assert A==Interval.Lopen(-3,3)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval; x=symbols('x'); A=S(3*x-1>=-7,x,relational=False).intersect(S(3*x-1<8,x,relational=False)); assert A==Interval.Ropen(-2,3)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval; x=symbols('x'); A=S(2*x-6>-4,x,relational=False).intersect(S(2*x-6<=4,x,relational=False)); assert A==Interval.Lopen(1,5)"
+        ],
+        "figure": {
+          "kind": "numberline",
+          "params": [
+            {"min": -6, "max": 6},
+            {"min": -5, "max": 6},
+            {"min": -2, "max": 8}
+          ]
+        },
+        "key_figure": {
+          "kind": "numberline_answer",
+          "params": [
+            {"min": -6, "max": 6, "point": -3, "closed": false, "direction": "right", "point2": 3, "closed2": true, "direction2": "left"},
+            {"min": -5, "max": 6, "point": -2, "closed": true, "direction": "right", "point2": 3, "closed2": false, "direction2": "left"},
+            {"min": -2, "max": 8, "point": 1, "closed": false, "direction": "right", "point2": 5, "closed2": true, "direction2": "left"}
+          ]
+        },
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Jaylen has $60 to spend at the county fair. Admission costs $12, and each ride ticket costs $4. Write an inequality for the number of ride tickets r Jaylen can buy, then solve it. What is the greatest number of ride tickets he can buy?",
+          "Priya has $50 to spend at the arcade. The entry pass costs $8, and each game card costs $6. Write an inequality for the number of game cards g Priya can buy, then solve it. What is the greatest number of game cards she can buy?",
+          "Marco has $85 to spend at the food truck festival. Entry costs $10, and each meal voucher costs $5. Write an inequality for the number of meal vouchers m Marco can buy, then solve it. What is the greatest number of meal vouchers he can buy?"
+        ],
+        "choices": null,
+        "answer": ["12 + 4r ≤ 60; r ≤ 12; at most 12 ride tickets", "8 + 6g ≤ 50; g ≤ 7; at most 7 game cards", "10 + 5m ≤ 85; m ≤ 15; at most 15 meal vouchers"],
+        "solution": [
+          "Total spent must be at most $60 → 12 + 4r ≤ 60 → subtract 12 → 4r ≤ 48 → divide by 4 → r ≤ 12 → Jaylen can buy at most 12 ride tickets",
+          "Total spent must be at most $50 → 8 + 6g ≤ 50 → subtract 8 → 6g ≤ 42 → divide by 6 → g ≤ 7 → Priya can buy at most 7 game cards",
+          "Total spent must be at most $85 → 10 + 5m ≤ 85 → subtract 10 → 5m ≤ 75 → divide by 5 → m ≤ 15 → Marco can buy at most 15 meal vouchers"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; r=symbols('r'); assert S(12+4*r<=60,r,relational=False)==Interval(-oo,12)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; g=symbols('g'); assert S(8+6*g<=50,g,relational=False)==Interval(-oo,7)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; m=symbols('m'); assert S(10+5*m<=85,m,relational=False)==Interval(-oo,15)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 9,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the equation: 3(x − 4) = 18",
+          "Solve the equation: 4(x − 2) = 20",
+          "Solve the equation: 5(x + 1) = 35"
+        ],
+        "choices": null,
+        "answer": ["x = 10", "x = 7", "x = 6"],
+        "solution": [
+          "3(x − 4) = 18 → divide by 3 → x − 4 = 6 → x = 10",
+          "4(x − 2) = 20 → divide by 4 → x − 2 = 5 → x = 7",
+          "5(x + 1) = 35 → divide by 5 → x + 1 = 7 → x = 6"
+        ],
+        "verify": [
+          "from sympy import symbols, solve, Eq; x=symbols('x'); assert solve(Eq(3*(x-4),18),x)==[10]",
+          "from sympy import symbols, solve, Eq; x=symbols('x'); assert solve(Eq(4*(x-2),20),x)==[7]",
+          "from sympy import symbols, solve, Eq; x=symbols('x'); assert solve(Eq(5*(x+1),35),x)==[6]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 10,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "State the slope and the y-intercept of the line y = −5x + 2.",
+          "State the slope and the y-intercept of the line y = 4x − 9.",
+          "State the slope and the y-intercept of the line y = −2x + 6."
+        ],
+        "choices": null,
+        "answer": ["slope = −5, y-intercept = 2", "slope = 4, y-intercept = −9", "slope = −2, y-intercept = 6"],
+        "solution": [
+          "y = mx + b form → m = −5, b = 2",
+          "y = mx + b form → m = 4, b = −9",
+          "y = mx + b form → m = −2, b = 6"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      },
+      {
+        "n": 11,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Write the equation of the line with slope 2 and y-intercept −3 in slope-intercept form.",
+          "Write the equation of the line with slope −4 and y-intercept 5 in slope-intercept form.",
+          "Write the equation of the line with slope 3 and y-intercept −7 in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": ["y = 2x − 3", "y = −4x + 5", "y = 3x − 7"],
+        "solution": [
+          "y = mx + b with m = 2, b = −3 → y = 2x − 3",
+          "y = mx + b with m = −4, b = 5 → y = −4x + 5",
+          "y = mx + b with m = 3, b = −7 → y = 3x − 7"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M5"
+      }
+    ]
+  },
+  "test": {
+    "items": [
+      {
+        "n": 1,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Solve the inequality: x − 6 > 2",
+          "Solve the inequality: x − 4 > 5",
+          "Solve the inequality: x − 3 > 4"
+        ],
+        "choices": null,
+        "answer": ["x > 8", "x > 9", "x > 7"],
+        "solution": [
+          "x − 6 > 2 → add 6 to both sides → x > 8",
+          "x − 4 > 5 → add 4 to both sides → x > 9",
+          "x − 3 > 4 → add 3 to both sides → x > 7"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(x-6>2,x,relational=False)==Interval.open(8,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(x-4>5,x,relational=False)==Interval.open(9,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(x-3>4,x,relational=False)==Interval.open(7,oo)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 2,
+        "points": 1,
+        "type": "fill",
+        "prompt": [
+          "Solve the inequality: x/3 ≤ 4",
+          "Solve the inequality: x/5 ≤ 2",
+          "Solve the inequality: x/4 ≤ 6"
+        ],
+        "choices": null,
+        "answer": ["x ≤ 12", "x ≤ 10", "x ≤ 24"],
+        "solution": [
+          "x/3 ≤ 4 → multiply both sides by 3 → x ≤ 12",
+          "x/5 ≤ 2 → multiply both sides by 5 → x ≤ 10",
+          "x/4 ≤ 6 → multiply both sides by 4 → x ≤ 24"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo, Rational; x=symbols('x'); assert S(x/3<=4,x,relational=False)==Interval(-oo,12)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo, Rational; x=symbols('x'); assert S(x/5<=2,x,relational=False)==Interval(-oo,10)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo, Rational; x=symbols('x'); assert S(x/4<=6,x,relational=False)==Interval(-oo,24)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 3,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality: −6x < 18",
+          "Solve the inequality: −5x < 20",
+          "Solve the inequality: −7x < 14"
+        ],
+        "choices": null,
+        "answer": ["x > −3", "x > −4", "x > −2"],
+        "solution": [
+          "−6x < 18 → divide both sides by −6 and FLIP the inequality symbol → x > −3",
+          "−5x < 20 → divide both sides by −5 and FLIP the inequality symbol → x > −4",
+          "−7x < 14 → divide both sides by −7 and FLIP the inequality symbol → x > −2"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-6*x<18,x,relational=False)==Interval.open(-3,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-5*x<20,x,relational=False)==Interval.open(-4,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-7*x<14,x,relational=False)==Interval.open(-2,oo)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 4,
+        "points": 2,
+        "type": "fill",
+        "prompt": [
+          "Write an inequality for each statement. (a) A ferry can carry at most 48 vehicles (use v). (b) You must be at least 54 inches tall to ride the coaster (use h).",
+          "Write an inequality for each statement. (a) An elevator can hold at most 15 people (use p). (b) You must be at least 13 years old to open the account (use a).",
+          "Write an inequality for each statement. (a) A carry-on bag can weigh at most 25 pounds (use w). (b) Volunteers must complete at least 40 hours (use h)."
+        ],
+        "choices": null,
+        "answer": ["(a) v ≤ 48; (b) h ≥ 54", "(a) p ≤ 15; (b) a ≥ 13", "(a) w ≤ 25; (b) h ≥ 40"],
+        "solution": [
+          "'At most 48' means 48 or fewer → v ≤ 48; 'at least 54' means 54 or more → h ≥ 54",
+          "'At most 15' means 15 or fewer → p ≤ 15; 'at least 13' means 13 or more → a ≥ 13",
+          "'At most 25' means 25 or less → w ≤ 25; 'at least 40' means 40 or more → h ≥ 40"
+        ],
+        "verify": [null, null, null],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 5,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality, then graph the solution set on the number line: 2x + 9 < 3",
+          "Solve the inequality, then graph the solution set on the number line: 3x + 10 < 4",
+          "Solve the inequality, then graph the solution set on the number line: 6x + 11 < 5"
+        ],
+        "choices": null,
+        "answer": ["x < −3; open circle at −3, shaded to the left", "x < −2; open circle at −2, shaded to the left", "x < −1; open circle at −1, shaded to the left"],
+        "solution": [
+          "2x + 9 < 3 → subtract 9 → 2x < −6 → divide by 2 → x < −3; graph: open circle at −3, arrow to the left",
+          "3x + 10 < 4 → subtract 10 → 3x < −6 → divide by 3 → x < −2; graph: open circle at −2, arrow to the left",
+          "6x + 11 < 5 → subtract 11 → 6x < −6 → divide by 6 → x < −1; graph: open circle at −1, arrow to the left"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(2*x+9<3,x,relational=False)==Interval.open(-oo,-3)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(3*x+10<4,x,relational=False)==Interval.open(-oo,-2)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(6*x+11<5,x,relational=False)==Interval.open(-oo,-1)"
+        ],
+        "figure": {
+          "kind": "numberline",
+          "params": [
+            {"min": -8, "max": 2},
+            {"min": -7, "max": 3},
+            {"min": -6, "max": 4}
+          ]
+        },
+        "key_figure": {
+          "kind": "numberline_answer",
+          "params": [
+            {"min": -8, "max": 2, "point": -3, "closed": false, "direction": "left"},
+            {"min": -7, "max": 3, "point": -2, "closed": false, "direction": "left"},
+            {"min": -6, "max": 4, "point": -1, "closed": false, "direction": "left"}
+          ]
+        },
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 6,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality, then graph the solution set on the number line: 5x − 7 ≥ 3x + 5",
+          "Solve the inequality, then graph the solution set on the number line: 7x − 4 ≥ 4x + 8",
+          "Solve the inequality, then graph the solution set on the number line: 6x − 9 ≥ 2x + 3"
+        ],
+        "choices": null,
+        "answer": ["x ≥ 6; closed circle at 6, shaded to the right", "x ≥ 4; closed circle at 4, shaded to the right", "x ≥ 3; closed circle at 3, shaded to the right"],
+        "solution": [
+          "5x − 7 ≥ 3x + 5 → subtract 3x → 2x − 7 ≥ 5 → add 7 → 2x ≥ 12 → divide by 2 → x ≥ 6; graph: closed circle at 6, arrow to the right",
+          "7x − 4 ≥ 4x + 8 → subtract 4x → 3x − 4 ≥ 8 → add 4 → 3x ≥ 12 → divide by 3 → x ≥ 4; graph: closed circle at 4, arrow to the right",
+          "6x − 9 ≥ 2x + 3 → subtract 2x → 4x − 9 ≥ 3 → add 9 → 4x ≥ 12 → divide by 4 → x ≥ 3; graph: closed circle at 3, arrow to the right"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(5*x-7>=3*x+5,x,relational=False)==Interval(6,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(7*x-4>=4*x+8,x,relational=False)==Interval(4,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(6*x-9>=2*x+3,x,relational=False)==Interval(3,oo)"
+        ],
+        "figure": {
+          "kind": "numberline",
+          "params": [
+            {"min": 0, "max": 10},
+            {"min": -1, "max": 9},
+            {"min": -2, "max": 8}
+          ]
+        },
+        "key_figure": {
+          "kind": "numberline_answer",
+          "params": [
+            {"min": 0, "max": 10, "point": 6, "closed": true, "direction": "right"},
+            {"min": -1, "max": 9, "point": 4, "closed": true, "direction": "right"},
+            {"min": -2, "max": 8, "point": 3, "closed": true, "direction": "right"}
+          ]
+        },
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 7,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Solve the inequality. Show all your steps: −2(x − 4) > 10",
+          "Solve the inequality. Show all your steps: −3(x − 2) > 12",
+          "Solve the inequality. Show all your steps: −4(x + 1) > 8"
+        ],
+        "choices": null,
+        "answer": ["x < −1", "x < −2", "x < −3"],
+        "solution": [
+          "−2(x − 4) > 10 → distribute → −2x + 8 > 10 → subtract 8 → −2x > 2 → divide by −2 and FLIP → x < −1",
+          "−3(x − 2) > 12 → distribute → −3x + 6 > 12 → subtract 6 → −3x > 6 → divide by −3 and FLIP → x < −2",
+          "−4(x + 1) > 8 → distribute → −4x − 4 > 8 → add 4 → −4x > 12 → divide by −4 and FLIP → x < −3"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-2*(x-4)>10,x,relational=False)==Interval.open(-oo,-1)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-3*(x-2)>12,x,relational=False)==Interval.open(-oo,-2)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-4*(x+1)>8,x,relational=False)==Interval.open(-oo,-3)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 8,
+        "points": 2,
+        "type": "mc",
+        "prompt": [
+          "Which graph shows the solution set of 4 − 3x ≤ −5?",
+          "Which graph shows the solution set of 6 − 2x ≤ −4?",
+          "Which graph shows the solution set of 8 − 4x ≤ 0?"
+        ],
+        "choices": [
+          ["Graph A", "Graph B", "Graph C", "Graph D"],
+          ["Graph A", "Graph B", "Graph C", "Graph D"],
+          ["Graph A", "Graph B", "Graph C", "Graph D"]
+        ],
+        "choices_figures": {
+          "kind": "numberline_answer",
+          "params": [
+            [
+              {"min": -8, "max": 8, "point": 3, "closed": true, "direction": "right"},
+              {"min": -8, "max": 8, "point": 3, "closed": false, "direction": "right"},
+              {"min": -8, "max": 8, "point": 3, "closed": true, "direction": "left"},
+              {"min": -8, "max": 8, "point": -3, "closed": true, "direction": "right"}
+            ],
+            [
+              {"min": -8, "max": 8, "point": 5, "closed": false, "direction": "right"},
+              {"min": -8, "max": 8, "point": 5, "closed": true, "direction": "left"},
+              {"min": -8, "max": 8, "point": 5, "closed": true, "direction": "right"},
+              {"min": -8, "max": 8, "point": -5, "closed": true, "direction": "right"}
+            ],
+            [
+              {"min": -8, "max": 8, "point": 2, "closed": false, "direction": "right"},
+              {"min": -8, "max": 8, "point": 2, "closed": true, "direction": "right"},
+              {"min": -8, "max": 8, "point": -2, "closed": true, "direction": "right"},
+              {"min": -8, "max": 8, "point": 2, "closed": true, "direction": "left"}
+            ]
+          ]
+        },
+        "answer": ["Graph A (closed circle at 3, shaded right: x ≥ 3)", "Graph C (closed circle at 5, shaded right: x ≥ 5)", "Graph B (closed circle at 2, shaded right: x ≥ 2)"],
+        "solution": [
+          "4 − 3x ≤ −5 → subtract 4 → −3x ≤ −9 → divide by −3 and FLIP → x ≥ 3 → closed circle at 3, shaded right → Graph A",
+          "6 − 2x ≤ −4 → subtract 6 → −2x ≤ −10 → divide by −2 and FLIP → x ≥ 5 → closed circle at 5, shaded right → Graph C",
+          "8 − 4x ≤ 0 → subtract 8 → −4x ≤ −8 → divide by −4 and FLIP → x ≥ 2 → closed circle at 2, shaded right → Graph B"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(4-3*x<=-5,x,relational=False)==Interval(3,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(6-2*x<=-4,x,relational=False)==Interval(5,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(8-4*x<=0,x,relational=False)==Interval(2,oo)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": null
+      },
+      {
+        "n": 9,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Solve the compound inequality, then graph the solution set on the number line: 2 ≤ 3x + 5 < 14",
+          "Solve the compound inequality, then graph the solution set on the number line: 1 ≤ 2x + 7 < 15",
+          "Solve the compound inequality, then graph the solution set on the number line: 3 ≤ 5x + 13 < 33"
+        ],
+        "choices": null,
+        "answer": ["−1 ≤ x < 3; closed circle at −1, open circle at 3, shaded between", "−3 ≤ x < 4; closed circle at −3, open circle at 4, shaded between", "−2 ≤ x < 4; closed circle at −2, open circle at 4, shaded between"],
+        "solution": [
+          "2 ≤ 3x + 5 < 14 → subtract 5 from all three parts → −3 ≤ 3x < 9 → divide all parts by 3 → −1 ≤ x < 3; graph: closed circle at −1, open circle at 3, shade between",
+          "1 ≤ 2x + 7 < 15 → subtract 7 from all three parts → −6 ≤ 2x < 8 → divide all parts by 2 → −3 ≤ x < 4; graph: closed circle at −3, open circle at 4, shade between",
+          "3 ≤ 5x + 13 < 33 → subtract 13 from all three parts → −10 ≤ 5x < 20 → divide all parts by 5 → −2 ≤ x < 4; graph: closed circle at −2, open circle at 4, shade between"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval; x=symbols('x'); A=S(3*x+5>=2,x,relational=False).intersect(S(3*x+5<14,x,relational=False)); assert A==Interval.Ropen(-1,3)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval; x=symbols('x'); A=S(2*x+7>=1,x,relational=False).intersect(S(2*x+7<15,x,relational=False)); assert A==Interval.Ropen(-3,4)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval; x=symbols('x'); A=S(5*x+13>=3,x,relational=False).intersect(S(5*x+13<33,x,relational=False)); assert A==Interval.Ropen(-2,4)"
+        ],
+        "figure": {
+          "kind": "numberline",
+          "params": [
+            {"min": -5, "max": 5},
+            {"min": -6, "max": 6},
+            {"min": -5, "max": 6}
+          ]
+        },
+        "key_figure": {
+          "kind": "numberline_answer",
+          "params": [
+            {"min": -5, "max": 5, "point": -1, "closed": true, "direction": "right", "point2": 3, "closed2": false, "direction2": "left"},
+            {"min": -6, "max": 6, "point": -3, "closed": true, "direction": "right", "point2": 4, "closed2": false, "direction2": "left"},
+            {"min": -5, "max": 6, "point": -2, "closed": true, "direction": "right", "point2": 4, "closed2": false, "direction2": "left"}
+          ]
+        },
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 10,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Solve the compound inequality, then graph the solution set on the number line: 4x + 3 < −9 or 2x − 5 > 3",
+          "Solve the compound inequality, then graph the solution set on the number line: 5x + 6 < −4 or 3x − 4 > 8",
+          "Solve the compound inequality, then graph the solution set on the number line: 2x + 11 < 3 or 4x − 3 > 9"
+        ],
+        "choices": null,
+        "answer": ["x < −3 or x > 4; open circle at −3 shaded left, open circle at 4 shaded right", "x < −2 or x > 4; open circle at −2 shaded left, open circle at 4 shaded right", "x < −4 or x > 3; open circle at −4 shaded left, open circle at 3 shaded right"],
+        "solution": [
+          "4x + 3 < −9 → 4x < −12 → x < −3; 2x − 5 > 3 → 2x > 8 → x > 4; solution: x < −3 or x > 4; graph: open circle at −3 with arrow left, open circle at 4 with arrow right",
+          "5x + 6 < −4 → 5x < −10 → x < −2; 3x − 4 > 8 → 3x > 12 → x > 4; solution: x < −2 or x > 4; graph: open circle at −2 with arrow left, open circle at 4 with arrow right",
+          "2x + 11 < 3 → 2x < −8 → x < −4; 4x − 3 > 9 → 4x > 12 → x > 3; solution: x < −4 or x > 3; graph: open circle at −4 with arrow left, open circle at 3 with arrow right"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, Union, oo; x=symbols('x'); A=Union(S(4*x+3<-9,x,relational=False), S(2*x-5>3,x,relational=False)); assert A==Union(Interval.open(-oo,-3), Interval.open(4,oo))",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, Union, oo; x=symbols('x'); A=Union(S(5*x+6<-4,x,relational=False), S(3*x-4>8,x,relational=False)); assert A==Union(Interval.open(-oo,-2), Interval.open(4,oo))",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, Union, oo; x=symbols('x'); A=Union(S(2*x+11<3,x,relational=False), S(4*x-3>9,x,relational=False)); assert A==Union(Interval.open(-oo,-4), Interval.open(3,oo))"
+        ],
+        "figure": {
+          "kind": "numberline",
+          "params": [
+            {"min": -8, "max": 8},
+            {"min": -7, "max": 8},
+            {"min": -8, "max": 7}
+          ]
+        },
+        "key_figure": {
+          "kind": "numberline_answer",
+          "params": [
+            {"min": -8, "max": 8, "point": -3, "closed": false, "direction": "left", "point2": 4, "closed2": false, "direction2": "right"},
+            {"min": -7, "max": 8, "point": -2, "closed": false, "direction": "left", "point2": 4, "closed2": false, "direction2": "right"},
+            {"min": -8, "max": 7, "point": -4, "closed": false, "direction": "left", "point2": 3, "closed2": false, "direction2": "right"}
+          ]
+        },
+        "workspace": 2,
+        "spiral_source": null
+      },
+      {
+        "n": 11,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Devon solved the inequality −4x + 2 > 18 as shown: −4x + 2 > 18 → −4x > 16 → x > −4. Identify Devon's mistake, then show the correct solution.",
+          "Amara solved the inequality −3x + 5 > 20 as shown: −3x + 5 > 20 → −3x > 15 → x > −5. Identify Amara's mistake, then show the correct solution.",
+          "Theo solved the inequality −2x + 7 > 19 as shown: −2x + 7 > 19 → −2x > 12 → x > −6. Identify Theo's mistake, then show the correct solution."
+        ],
+        "choices": null,
+        "answer": ["Mistake: did not flip the inequality symbol when dividing by −4; correct solution: x < −4", "Mistake: did not flip the inequality symbol when dividing by −3; correct solution: x < −5", "Mistake: did not flip the inequality symbol when dividing by −2; correct solution: x < −6"],
+        "solution": [
+          "The subtraction step is correct, but when dividing both sides by −4 the inequality symbol must be reversed → −4x > 16 → x < −4",
+          "The subtraction step is correct, but when dividing both sides by −3 the inequality symbol must be reversed → −3x > 15 → x < −5",
+          "The subtraction step is correct, but when dividing both sides by −2 the inequality symbol must be reversed → −2x > 12 → x < −6"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-4*x+2>18,x,relational=False)==Interval.open(-oo,-4)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-3*x+5>20,x,relational=False)==Interval.open(-oo,-5)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(-2*x+7>19,x,relational=False)==Interval.open(-oo,-6)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 12,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "Rosa is building a rectangular garden with a width of 8 feet. She has at most 44 feet of fencing for the perimeter. Write an inequality for the possible lengths L of the garden, then solve it. What is the greatest possible length?",
+          "Kenji is building a rectangular dog pen with a width of 7 meters. He has at most 34 meters of fencing for the perimeter. Write an inequality for the possible lengths L of the pen, then solve it. What is the greatest possible length?",
+          "Imani is framing a rectangular mural with a width of 9 feet. She has at most 50 feet of trim for the perimeter. Write an inequality for the possible lengths L of the mural, then solve it. What is the greatest possible length?"
+        ],
+        "choices": null,
+        "answer": ["2L + 2(8) ≤ 44; L ≤ 14 (and L > 0); greatest length 14 ft", "2L + 2(7) ≤ 34; L ≤ 10 (and L > 0); greatest length 10 m", "2L + 2(9) ≤ 50; L ≤ 16 (and L > 0); greatest length 16 ft"],
+        "solution": [
+          "Perimeter = 2L + 2w ≤ 44 with w = 8 → 2L + 16 ≤ 44 → subtract 16 → 2L ≤ 28 → divide by 2 → L ≤ 14 → since a length must be positive, 0 < L ≤ 14, so the greatest possible length is 14 feet",
+          "Perimeter = 2L + 2w ≤ 34 with w = 7 → 2L + 14 ≤ 34 → subtract 14 → 2L ≤ 20 → divide by 2 → L ≤ 10 → since a length must be positive, 0 < L ≤ 10, so the greatest possible length is 10 meters",
+          "Perimeter = 2L + 2w ≤ 50 with w = 9 → 2L + 18 ≤ 50 → subtract 18 → 2L ≤ 32 → divide by 2 → L ≤ 16 → since a length must be positive, 0 < L ≤ 16, so the greatest possible length is 16 feet"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; L=symbols('L'); assert S(2*L+2*8<=44,L,relational=False)==Interval(-oo,14)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; L=symbols('L'); assert S(2*L+2*7<=34,L,relational=False)==Interval(-oo,10)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; L=symbols('L'); assert S(2*L+2*9<=50,L,relational=False)==Interval(-oo,16)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 13,
+        "points": 4,
+        "type": "work",
+        "prompt": [
+          "The drama club needs to raise at least $300 for costumes. The club already has $84 and earns $6 for every ticket sold. (a) Write and solve an inequality for the number of tickets t the club must sell. (b) What is the minimum number of tickets the club must sell?",
+          "The robotics team needs to raise at least $250 for parts. The team already has $75 and earns $5 for every candle sold. (a) Write and solve an inequality for the number of candles c the team must sell. (b) What is the minimum number of candles the team must sell?",
+          "The soccer team needs to raise at least $420 for uniforms. The team already has $60 and earns $8 for every car wash pass sold. (a) Write and solve an inequality for the number of passes p the team must sell. (b) What is the minimum number of passes the team must sell?"
+        ],
+        "choices": null,
+        "answer": ["(a) 6t + 84 ≥ 300; t ≥ 36; (b) minimum 36 tickets", "(a) 5c + 75 ≥ 250; c ≥ 35; (b) minimum 35 candles", "(a) 8p + 60 ≥ 420; p ≥ 45; (b) minimum 45 passes"],
+        "solution": [
+          "'At least $300' means the total must be ≥ 300 → 6t + 84 ≥ 300 → subtract 84 → 6t ≥ 216 → divide by 6 → t ≥ 36 → the club must sell at least 36 tickets, so the minimum is 36",
+          "'At least $250' means the total must be ≥ 250 → 5c + 75 ≥ 250 → subtract 75 → 5c ≥ 175 → divide by 5 → c ≥ 35 → the team must sell at least 35 candles, so the minimum is 35",
+          "'At least $420' means the total must be ≥ 420 → 8p + 60 ≥ 420 → subtract 60 → 8p ≥ 360 → divide by 8 → p ≥ 45 → the team must sell at least 45 passes, so the minimum is 45"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; t=symbols('t'); assert S(6*t+84>=300,t,relational=False)==Interval(36,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; c=symbols('c'); assert S(5*c+75>=250,c,relational=False)==Interval(35,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; p=symbols('p'); assert S(8*p+60>=420,p,relational=False)==Interval(45,oo)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 3,
+        "spiral_source": null
+      },
+      {
+        "n": 14,
+        "points": 3,
+        "type": "work",
+        "prompt": [
+          "Nia claims that the inequalities 6x < 18 and −6x < −18 have the same solution set. Is she correct? Solve both inequalities and explain how you know.",
+          "Owen claims that the inequalities 4x < 20 and −4x < −20 have the same solution set. Is he correct? Solve both inequalities and explain how you know.",
+          "Sana claims that the inequalities 5x < 10 and −5x < −10 have the same solution set. Is she correct? Solve both inequalities and explain how you know."
+        ],
+        "choices": null,
+        "answer": ["No; 6x < 18 gives x < 3, but −6x < −18 gives x > 3 because dividing by −6 flips the symbol — the solution sets are opposite rays", "No; 4x < 20 gives x < 5, but −4x < −20 gives x > 5 because dividing by −4 flips the symbol — the solution sets are opposite rays", "No; 5x < 10 gives x < 2, but −5x < −10 gives x > 2 because dividing by −5 flips the symbol — the solution sets are opposite rays"],
+        "solution": [
+          "6x < 18 → x < 3; −6x < −18 → divide by −6 and FLIP → x > 3; the sets share no values (e.g., x = 0 satisfies the first but not the second), so Nia is not correct",
+          "4x < 20 → x < 5; −4x < −20 → divide by −4 and FLIP → x > 5; the sets share no values (e.g., x = 0 satisfies the first but not the second), so Owen is not correct",
+          "5x < 10 → x < 2; −5x < −10 → divide by −5 and FLIP → x > 2; the sets share no values (e.g., x = 0 satisfies the first but not the second), so Sana is not correct"
+        ],
+        "verify": [
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(6*x<18,x,relational=False)==Interval.open(-oo,3) and S(-6*x<-18,x,relational=False)==Interval.open(3,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(4*x<20,x,relational=False)==Interval.open(-oo,5) and S(-4*x<-20,x,relational=False)==Interval.open(5,oo)",
+          "from sympy import symbols, solve_univariate_inequality as S, Interval, oo; x=symbols('x'); assert S(5*x<10,x,relational=False)==Interval.open(-oo,2) and S(-5*x<-10,x,relational=False)==Interval.open(2,oo)"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 2,
+        "spiral_source": null
+      }
+    ],
+    "spiral": [
+      {
+        "n": 15,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the equation: 6x + 5 = 3x + 26",
+          "Solve the equation: 7x + 2 = 4x + 17",
+          "Solve the equation: 8x + 3 = 5x + 27"
+        ],
+        "choices": null,
+        "answer": ["x = 7", "x = 5", "x = 8"],
+        "solution": [
+          "6x + 5 = 3x + 26 → subtract 3x → 3x + 5 = 26 → subtract 5 → 3x = 21 → x = 7",
+          "7x + 2 = 4x + 17 → subtract 4x → 3x + 2 = 17 → subtract 2 → 3x = 15 → x = 5",
+          "8x + 3 = 5x + 27 → subtract 5x → 3x + 3 = 27 → subtract 3 → 3x = 24 → x = 8"
+        ],
+        "verify": [
+          "from sympy import symbols, solve, Eq; x=symbols('x'); assert solve(Eq(6*x+5,3*x+26),x)==[7]",
+          "from sympy import symbols, solve, Eq; x=symbols('x'); assert solve(Eq(7*x+2,4*x+17),x)==[5]",
+          "from sympy import symbols, solve, Eq; x=symbols('x'); assert solve(Eq(8*x+3,5*x+27),x)==[8]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 16,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Solve the formula d = rt for t.",
+          "Solve the formula V = lwh for h.",
+          "Solve the formula I = Prt for r."
+        ],
+        "choices": null,
+        "answer": ["t = d/r", "h = V/(lw)", "r = I/(Pt)"],
+        "solution": [
+          "d = rt → divide both sides by r → t = d/r",
+          "V = lwh → divide both sides by lw → h = V/(lw)",
+          "I = Prt → divide both sides by Pt → r = I/(Pt)"
+        ],
+        "verify": [
+          "from sympy import symbols, solve, Eq; d,r,t=symbols('d r t'); assert solve(Eq(d,r*t),t)==[d/r]",
+          "from sympy import symbols, solve, Eq; V,l,w,h=symbols('V l w h'); assert solve(Eq(V,l*w*h),h)==[V/(l*w)]",
+          "from sympy import symbols, solve, Eq; I,P,r,t=symbols('I P r t'); assert solve(Eq(I,P*r*t),r)==[I/(P*t)]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M2"
+      },
+      {
+        "n": 17,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Rewrite 6x + 2y = 10 in slope-intercept form, then state the slope.",
+          "Rewrite 4x + 2y = 12 in slope-intercept form, then state the slope.",
+          "Rewrite 8x + 4y = 28 in slope-intercept form, then state the slope."
+        ],
+        "choices": null,
+        "answer": ["y = −3x + 5; slope = −3", "y = −2x + 6; slope = −2", "y = −2x + 7; slope = −2"],
+        "solution": [
+          "6x + 2y = 10 → subtract 6x → 2y = −6x + 10 → divide by 2 → y = −3x + 5 → slope = −3",
+          "4x + 2y = 12 → subtract 4x → 2y = −4x + 12 → divide by 2 → y = −2x + 6 → slope = −2",
+          "8x + 4y = 28 → subtract 8x → 4y = −8x + 28 → divide by 4 → y = −2x + 7 → slope = −2"
+        ],
+        "verify": [
+          "from sympy import symbols, solve, Eq; x,y=symbols('x y'); assert solve(Eq(6*x+2*y,10),y)==[5-3*x]",
+          "from sympy import symbols, solve, Eq; x,y=symbols('x y'); assert solve(Eq(4*x+2*y,12),y)==[6-2*x]",
+          "from sympy import symbols, solve, Eq; x,y=symbols('x y'); assert solve(Eq(8*x+4*y,28),y)==[7-2*x]"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      },
+      {
+        "n": 18,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Find the slope of the line through the points (3, 1) and (5, 9).",
+          "Find the slope of the line through the points (−1, 2) and (1, 8).",
+          "Find the slope of the line through the points (1, −2) and (3, 8)."
+        ],
+        "choices": null,
+        "answer": ["m = 4", "m = 3", "m = 5"],
+        "solution": [
+          "m = (9 − 1)/(5 − 3) = 8/2 = 4",
+          "m = (8 − 2)/(1 − (−1)) = 6/2 = 3",
+          "m = (8 − (−2))/(3 − 1) = 10/2 = 5"
+        ],
+        "verify": [
+          "from sympy import Rational; assert Rational(9-1,5-3)==4",
+          "from sympy import Rational; assert Rational(8-2,1-(-1))==3",
+          "from sympy import Rational; assert Rational(8-(-2),3-1)==5"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M4"
+      },
+      {
+        "n": 19,
+        "points": 2,
+        "type": "work",
+        "prompt": [
+          "Write the equation of the line that passes through (2, 3) with slope 4. Give your answer in slope-intercept form.",
+          "Write the equation of the line that passes through (1, 5) with slope −2. Give your answer in slope-intercept form.",
+          "Write the equation of the line that passes through (3, −1) with slope 2. Give your answer in slope-intercept form."
+        ],
+        "choices": null,
+        "answer": ["y = 4x − 5", "y = −2x + 7", "y = 2x − 7"],
+        "solution": [
+          "y − 3 = 4(x − 2) → y − 3 = 4x − 8 → y = 4x − 5",
+          "y − 5 = −2(x − 1) → y − 5 = −2x + 2 → y = −2x + 7",
+          "y + 1 = 2(x − 3) → y + 1 = 2x − 6 → y = 2x − 7"
+        ],
+        "verify": [
+          "assert 4*2-5==3",
+          "assert -2*1+7==5",
+          "assert 2*3-7==-1"
+        ],
+        "figure": null,
+        "key_figure": null,
+        "workspace": 1,
+        "spiral_source": "M5"
+      }
+    ]
+  }
+}
