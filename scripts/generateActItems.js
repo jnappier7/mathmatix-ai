@@ -389,9 +389,12 @@ G['act-multi-step-rate-proportion'] = (d) => {
   };
 };
 G['act-area-perimeter-composite'] = (d) => {
-  const a = ri(3, 7), b = ri(3, 7), c = ri(2, 5); // L-shape: big rect a×b minus corner c×c
+  const a = ri(4, 8), b = ri(4, 8);
+  // Cut MUST be strictly smaller than both sides, or the remaining shape is a
+  // rectangle (or impossible) and contradicts the L-shape figure.
+  const c = ri(2, Math.min(a, b) - 1);
   const correct = a * b - c * c;
-  return { prompt: `In the figure shown, a square of side ${c} has been cut from the corner of a ${a}-by-${b} rectangle. What is the area of the remaining (shaded) region?`, correct, svg: SVG.lShape(a, b, c), distractors: [a * b, a * b + c * c, a * b - c, 2 * (a + b) - c], validate: () => a * b - c * c === correct && correct > 0 };
+  return { prompt: `In the figure shown, a square of side ${c} has been cut from the corner of a ${a}-by-${b} rectangle. What is the area of the remaining (shaded) region?`, correct, svg: SVG.lShape(a, b, c), distractors: [a * b, a * b + c * c, a * b - c, 2 * (a + b) - c, a * b - 2 * c], validate: () => c < a && c < b && a * b - c * c === correct && correct > 0 };
 };
 G['act-algebraic-reasoning-context'] = (d) => {
   // Set up total = fixed + per·m, then SOLVE for the number of months m.

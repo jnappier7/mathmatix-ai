@@ -246,15 +246,46 @@
             <div class="actt-sub">${r.rawScore}/${r.totalItems} correct · ${r.accuracy}% · ${r.durationMinutes != null ? r.durationMinutes + ' min' : ''}</div>
           </div>
           <div style="max-width:520px;margin:0 auto">${cats}</div>
-          <div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center">
+          <div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button class="actt-btn actt-next" id="actt-tutor">📤 Review with my tutor</button>
+            <button class="actt-btn actt-skip" id="actt-retake">Take another</button>
             <button class="actt-btn actt-skip" id="actt-done">Done</button>
-            <button class="actt-btn actt-next" id="actt-retake">Take another</button>
           </div>`;
         this.el('actt-done').addEventListener('click', () => this.close());
         this.el('actt-retake').addEventListener('click', () => { this.sessionId = null; this.open(); });
+        this.el('actt-tutor').addEventListener('click', () => this.sendToTutor(r));
       } catch (e) {
         this.el('actt-body').innerHTML = `<div class="actt-err">${e.message || 'Could not score the test.'}</div>`;
       }
+    }
+
+    // Compose a student-voiced results summary and hand it to the chat tutor so
+    // the conversation has context and remediation can start on the weak areas.
+    buildTutorMessage(r) {
+      const cats = Object.entries(r.byCategory || {})
+        .map(([k, v]) => ({ name: CATEGORY_LABELS[k] || k, correct: v.correct, total: v.total, pct: v.total ? v.correct / v.total : 1 }))
+        .sort((a, b) => a.pct - b.pct);
+      const weak = cats.filter(c => c.correct < c.total).slice(0, 2);
+      const head = `I just finished an ACT Math practice test — estimated score ${r.scaledScore != null ? r.scaledScore : '?'} (${r.rawScore}/${r.totalItems} correct).`;
+      if (!weak.length) {
+        return `${head} I got everything right — what should I work on to push my score even higher?`;
+      }
+      const list = weak.map(c => `${c.name} (${c.correct}/${c.total})`).join(' and ');
+      return `${head} My weakest areas were ${list}. Can we start reviewing those, one topic at a time?`;
+    }
+
+    sendToTutor(r) {
+      const msg = this.buildTutorMessage(r);
+      this.close();
+      const input = document.getElementById('user-input') || document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-button') || document.querySelector('.send-button');
+      if (!input || !sendBtn) { return; }
+      // #user-input is a contenteditable div; set text + fire input so the chat
+      // picks up the value, then trigger send (mirrors the app's own pattern).
+      if (input.isContentEditable) input.textContent = msg; else input.value = msg;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.focus();
+      setTimeout(() => sendBtn.click(), 60);
     }
   }
 
