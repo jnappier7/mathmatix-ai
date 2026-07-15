@@ -56,9 +56,37 @@
     return t.trim();
   }
 
+  // Prose — a \text{…} wrapper or a natural-language sentence (word problems,
+  // geometry statements) — must WRAP. KaTeX renders it as a single non-wrapping
+  // line that runs off the right edge of the board (clipped by overflow-x). So
+  // detect prose and render it as plain, wrapping text; keep KaTeX for real math.
+  function looksLikeProse(s) {
+    var t = String(s == null ? '' : s).trim();
+    if (!t) return false;
+    if (/^\\text\s*\{[\s\S]*\}$/.test(t)) return true;             // whole thing is \text{…}
+    // Strip LaTeX commands (\frac, \quad, \Rightarrow, \text …) and braces first
+    // so command names aren't mistaken for words — then count the genuine words
+    // left. Math is single-letter variables, digits and operators (none 3+ letter
+    // runs), so 3+ real words means prose, not an equation.
+    var stripped = t.replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}]/g, ' ');
+    return (stripped.match(/[A-Za-z]{3,}/g) || []).length >= 3;
+  }
+
+  // Unwrap \text{…} to the readable sentence (drop KaTeX spacing escapes).
+  function unwrapText(s) {
+    var m = String(s == null ? '' : s).trim().match(/^\\text\s*\{([\s\S]*)\}$/);
+    var out = m ? m[1] : String(s == null ? '' : s);
+    return out.replace(/\\[,;:!> ]/g, ' ').replace(/\\\\/g, ' ').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
   function typeset(target, latex) {
     var katex = root.katex;
     var tex = cleanLatex(latex);
+    if (looksLikeProse(tex)) {                                     // wrap prose as text
+      target.textContent = unwrapText(tex);
+      target.className += ' lws-dv-prose';
+      return;
+    }
     if (katex && typeof katex.render === 'function') {
       try { katex.render(tex, target, { throwOnError: false, displayMode: false }); return; }
       catch (_) { /* fall through to text */ }
@@ -91,8 +119,44 @@
     container.appendChild(rootEl);
 
     this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, problem: problem, lines: lines };
+    this._mountTextScale(rootEl);
     this._refreshEmpty();
   }
+
+  // Accessibility: a small A−/A+ control that scales ALL board text via the
+  // --lws-dv-scale token (see living-workspace.css). Persisted per browser so a
+  // student who needs larger text sets it once. Keyboard-operable buttons with
+  // aria-labels; the middle readout is a reset button and an aria-live region.
+  DerivationView.prototype._mountTextScale = function (rootEl) {
+    var d = this.doc;
+    var STORE = 'lws.dv.textScale', MIN = 0.85, MAX = 1.8, STEP = 0.15;
+    var scale = 1;
+    try { var v = parseFloat(root.localStorage && root.localStorage.getItem(STORE)); if (v >= MIN && v <= MAX) scale = v; } catch (_) { /* storage blocked */ }
+
+    var bar = d.createElement('div');
+    bar.className = 'lws-dv-az';
+    bar.setAttribute('role', 'group');
+    bar.setAttribute('aria-label', 'Board text size');
+
+    var dn = d.createElement('button'); dn.type = 'button'; dn.className = 'az-dn'; dn.textContent = 'A'; dn.setAttribute('aria-label', 'Decrease board text size');
+    var mid = d.createElement('button'); mid.type = 'button'; mid.className = 'az-lab'; mid.setAttribute('aria-label', 'Reset board text size'); mid.setAttribute('aria-live', 'polite');
+    var up = d.createElement('button'); up.type = 'button'; up.className = 'az-up'; up.textContent = 'A'; up.setAttribute('aria-label', 'Increase board text size');
+    bar.appendChild(dn); bar.appendChild(mid); bar.appendChild(up);
+    rootEl.appendChild(bar);
+
+    function apply() {
+      scale = Math.max(MIN, Math.min(MAX, Math.round(scale * 100) / 100));
+      rootEl.style.setProperty('--lws-dv-scale', String(scale));
+      mid.textContent = Math.round(scale * 100) + '%';
+      dn.disabled = scale <= MIN + 1e-6;
+      up.disabled = scale >= MAX - 1e-6;
+      try { root.localStorage && root.localStorage.setItem(STORE, String(scale)); } catch (_) { /* ignore */ }
+    }
+    dn.addEventListener('click', function () { scale -= STEP; apply(); });
+    up.addEventListener('click', function () { scale += STEP; apply(); });
+    mid.addEventListener('click', function () { scale = 1; apply(); });
+    apply();
+  };
 
   DerivationView.prototype._refreshEmpty = function () {
     var has = this._problemTex != null || this.el.lines.childNodes.length > 0;
@@ -185,6 +249,8 @@
 
   DerivationView.classify = classify;
   DerivationView.cleanLatex = cleanLatex;
+  DerivationView.looksLikeProse = looksLikeProse;
+  DerivationView.unwrapText = unwrapText;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText };
 })(typeof self !== 'undefined' ? self : this);
