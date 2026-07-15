@@ -31,6 +31,8 @@ import re
 import hashlib
 from collections import defaultdict
 
+import alg1FigureRenderer as figrender  # scripts/ is sys.path[0] when run as a script
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 SRC = os.path.join(ROOT, "seeds", "alg1-assessments")
@@ -127,16 +129,24 @@ def build_problem(mod, section, grp, it, vi):
         options = [{"label": LETTERS[i], "text": str(c)} for i, c in enumerate(choices)]
         correct = parse_correct_option(answer_val, choices)
 
+    svg = None
     figure = None
-    if it.get("figure"):
-        fig = it["figure"]
-        params = fig.get("params")
-        figure = {"kind": fig.get("kind"), "params": params[vi] if isinstance(params, list) else params}
-        if it.get("key_figure"):
-            kf = it["key_figure"]
-            kparams = kf.get("params")
-            figure["keyFigure"] = {"kind": kf.get("kind"),
-                                   "params": kparams[vi] if isinstance(kparams, list) else kparams}
+    src_fig, src_key = it.get("figure"), it.get("key_figure")
+    if src_fig or src_key:
+        figure = {}
+        if src_fig:
+            params = src_fig.get("params")
+            pv = params[vi] if isinstance(params, list) else params
+            figure["kind"] = src_fig.get("kind")
+            figure["params"] = pv
+            svg = figrender.render(src_fig.get("kind"), pv)  # baked into Problem.svg
+        if src_key:
+            kparams = src_key.get("params")
+            kpv = kparams[vi] if isinstance(kparams, list) else kparams
+            figure["keyFigure"] = {"kind": src_key.get("kind"), "params": kpv}
+            ksvg = figrender.render(src_key.get("kind"), kpv)  # answer-review overlay
+            if ksvg:
+                figure["keyFigure"]["svg"] = ksvg
 
     tags = ["alg1", "alg1-m%d" % mod, section, "spiral" if grp == "spiral" else "core",
             itype, "v%d" % (vi + 1)]
@@ -147,6 +157,7 @@ def build_problem(mod, section, grp, it, vi):
         "problemId": pid,
         "skillId": skill_id,
         "prompt": prompt,
+        "svg": svg,
         "figure": figure,
         "answer": {"type": "exact", "value": answer_val, "equivalents": []},
         "answerType": answer_type,
@@ -204,9 +215,11 @@ def main():
 
     n_mc = sum(1 for i in items if i["answerType"] == "multiple-choice")
     n_expl = sum(1 for i in items if i["explanation"])
+    n_svg = sum(1 for i in items if i.get("svg"))
+    n_keysvg = sum(1 for i in items if (i.get("figure") or {}).get("keyFigure", {}).get("svg"))
     print("Ingested %d Problem docs -> %s" % (len(items), os.path.relpath(ITEMS_OUT, os.getcwd())))
-    print("  modules: %d | figures: %d | explanations: %d | multiple-choice: %d"
-          % (len(MODULES), figs, n_expl, n_mc))
+    print("  modules: %d | figures: %d (rendered svg: %d, key-svg: %d) | explanations: %d | multiple-choice: %d"
+          % (len(MODULES), figs, n_svg, n_keysvg, n_expl, n_mc))
     if mc_missing_key:
         print("  [warn] %d MC items missing a parseable answer key: %s"
               % (len(mc_missing_key), ", ".join(mc_missing_key[:8])))

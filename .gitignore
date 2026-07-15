@@ -40,3 +40,7 @@ public/audio/voice/
 
 # Local Claude Code preview config (per-dev tooling)
 .claude/
+
+# Python
+__pycache__/
+*.pyc

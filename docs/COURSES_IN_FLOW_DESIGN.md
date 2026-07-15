@@ -329,12 +329,19 @@ the renderer and BKT wiring are the follow-up.
   figures survive seeding for the deferred renderer.
 
 Once seeded, the tutor can already **pool** these via `Problem.find({ skillId })` /
-`findNearDifficulty`. **Deferred (follow-up PR):** (1) render the fixed figure
-library (grid/numberline/line_graph/abs_graph/parabola/mapping/points/story/table
-+ key overlays); (2) fine-grained per-item skill tagging via the crosswalk (or ask
-Fable to add per-item `skill` tags, as the ACT bank now carries); (3) wire module
-skills to BKT / `tutorPlan.skillFocus` so they become first-class course
-checkpoints, not just a poolable bank.
+`findNearDifficulty`.
+
+**Figure renderer — DONE.** `scripts/alg1FigureRenderer.py` renders the fixed
+declarative library (grid/numberline/line_graph/abs_graph/parabola/mapping/points/
+story/table + numberline_answer/grid_answer overlays) to clean self-contained SVG.
+Ingestion bakes each student figure into `Problem.svg` and each answer overlay into
+`figure.keyFigure.svg` (75 figures + 42 key overlays), so the existing inline-visual
+display shows them with no frontend changes.
+
+**Still deferred (follow-up PR):** (1) fine-grained per-item skill tagging via the
+crosswalk (or ask Fable to add per-item `skill` tags, as the ACT bank now carries);
+(2) wire module skills to BKT / `tutorPlan.skillFocus` so they become first-class
+course checkpoints, not just a poolable bank.
 
 ## 7. Open questions
 
