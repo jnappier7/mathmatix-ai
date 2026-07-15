@@ -21,6 +21,18 @@ const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
 
+// skillId → human-readable name, so the report can name EXACT weak skills
+// (e.g. "Quadratic Equations") rather than just the broad category.
+const ACT_SKILL_NAMES = (() => {
+  try {
+    const seed = require('../seeds/skills-act-math-prep.json');
+    const arr = Array.isArray(seed) ? seed : (seed.skills || []);
+    const map = {};
+    for (const s of arr) map[s.skillId] = s.displayName || s.skillId;
+    return map;
+  } catch { return {}; }
+})();
+
 // ── POST /start ─────────────────────────────────────────────
 router.post('/', async (req, res) => {
   return res.status(404).json({ message: 'Use POST /api/act-test/start' });
@@ -183,18 +195,58 @@ router.post('/complete', async (req, res) => {
 
     // Per-category breakdown — the diagnostic signal that drives the boot-camp plan.
     const byCategory = {};
+    const bySkill = {};
     for (const r of session.responses) {
       const c = r.category || 'unknown';
       byCategory[c] = byCategory[c] || { correct: 0, total: 0 };
       byCategory[c].total += 1;
       if (r.correct) byCategory[c].correct += 1;
+
+      const s = r.skillId || 'unknown';
+      bySkill[s] = bySkill[s] || { correct: 0, total: 0 };
+      bySkill[s].total += 1;
+      if (r.correct) bySkill[s].correct += 1;
     }
+
+    // Exact weak skills (by name), worst first — the precise remediation targets.
+    const weakSkills = Object.entries(bySkill)
+      .filter(([, v]) => v.correct < v.total)
+      .map(([skillId, v]) => ({
+        skillId,
+        name: ACT_SKILL_NAMES[skillId] || skillId,
+        missed: v.total - v.correct,
+        total: v.total,
+      }))
+      .sort((a, b) => (b.missed / b.total) - (a.missed / a.total) || b.missed - a.missed);
 
     session.status = 'completed';
     session.completedAt = new Date();
     session.rawScore = raw;
     session.scaledScore = scaled ? scaled.scaled : null;
     await session.save();
+
+    // ── Personalize from the pretest ──
+    // Seed the exact weak skills into the student's tutor plan (worst first), so
+    // structured teaching automatically targets THIS student's gaps. Additive
+    // and non-fatal. resolveSkill tolerates act-* skills not yet in the catalog.
+    let plannedSkills = 0;
+    try {
+      const { loadOrCreatePlan, addSkillToFocus } = require('../utils/tutorPlanManager');
+      const plan = await loadOrCreatePlan(req.user._id, { user: req.user });
+      for (const s of weakSkills.slice(0, 8)) {
+        addSkillToFocus(plan, {
+          skillId: s.skillId,
+          displayName: s.name,
+          reason: 'assessment-identified',
+          familiarity: 'developing',                              // seen it, missed it → guided mode
+          priority: Math.min(10, 6 + Math.round((s.missed / s.total) * 3)), // 6–9 by miss rate
+        });
+        plannedSkills += 1;
+      }
+      if (plannedSkills > 0) await plan.save();
+    } catch (planErr) {
+      console.error('[actTest] plan seed error (non-fatal):', planErr.message);
+    }
 
     return res.json({
       success: true,
@@ -205,6 +257,8 @@ router.post('/complete', async (req, res) => {
         scaledApproximate: true,
         accuracy: total ? Math.round((raw / total) * 100) : 0,
         byCategory,
+        weakSkills,
+        plannedSkills,
         durationMinutes: session.startedAt
           ? Math.round((session.completedAt - session.startedAt) / 60000)
           : null,
