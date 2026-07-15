@@ -225,6 +225,29 @@ router.post('/complete', async (req, res) => {
     session.scaledScore = scaled ? scaled.scaled : null;
     await session.save();
 
+    // ── Personalize from the pretest ──
+    // Seed the exact weak skills into the student's tutor plan (worst first), so
+    // structured teaching automatically targets THIS student's gaps. Additive
+    // and non-fatal. resolveSkill tolerates act-* skills not yet in the catalog.
+    let plannedSkills = 0;
+    try {
+      const { loadOrCreatePlan, addSkillToFocus } = require('../utils/tutorPlanManager');
+      const plan = await loadOrCreatePlan(req.user._id, { user: req.user });
+      for (const s of weakSkills.slice(0, 8)) {
+        addSkillToFocus(plan, {
+          skillId: s.skillId,
+          displayName: s.name,
+          reason: 'assessment-identified',
+          familiarity: 'developing',                              // seen it, missed it → guided mode
+          priority: Math.min(10, 6 + Math.round((s.missed / s.total) * 3)), // 6–9 by miss rate
+        });
+        plannedSkills += 1;
+      }
+      if (plannedSkills > 0) await plan.save();
+    } catch (planErr) {
+      console.error('[actTest] plan seed error (non-fatal):', planErr.message);
+    }
+
     return res.json({
       success: true,
       report: {
@@ -235,6 +258,7 @@ router.post('/complete', async (req, res) => {
         accuracy: total ? Math.round((raw / total) * 100) : 0,
         byCategory,
         weakSkills,
+        plannedSkills,
         durationMinutes: session.startedAt
           ? Math.round((session.completedAt - session.startedAt) / 60000)
           : null,
