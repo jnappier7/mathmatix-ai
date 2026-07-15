@@ -1,0 +1,5723 @@
+{
+  "1": {
+    "topics": "Expressions (Sections 1.1-1.2)",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m1-quiz-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n7-v1",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n7-v2",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n7-v3",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n8-v1",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n8-v2",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-quiz-core-n8-v3",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m1-quiz-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-quiz-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m1-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n6-v1",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n6-v2",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n6-v3",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n7-v1",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n7-v2",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n7-v3",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n9-v1",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n9-v2",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n9-v3",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n10-v1",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n10-v2",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n10-v3",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n11-v1",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n11-v2",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n11-v3",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n12-v1",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n12-v2",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n12-v3",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n13-v1",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n13-v2",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n13-v3",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n14-v1",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n14-v2",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m1-test-core-n14-v3",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m1-test-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        },
+        {
+          "problemId": "alg1-m1-test-sp-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "Pre-Algebra"
+        }
+      ]
+    }
+  },
+  "2": {
+    "topics": "Solving Linear Equations",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m2-quiz-core-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n3-v1",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n3-v2",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n3-v3",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n6-v1",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n6-v2",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n6-v3",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-quiz-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m2-quiz-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-quiz-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m2-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n9-v1",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n9-v2",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n9-v3",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n10-v1",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n10-v2",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n10-v3",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n11-v1",
+          "n": 11,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n11-v2",
+          "n": 11,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n11-v3",
+          "n": 11,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n12-v1",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n12-v2",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n12-v3",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n13-v1",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n13-v2",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n13-v3",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n14-v1",
+          "n": 14,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n14-v2",
+          "n": 14,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m2-test-core-n14-v3",
+          "n": 14,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m2-test-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m2-test-sp-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M1"
+        }
+      ]
+    }
+  },
+  "3": {
+    "topics": "Functions & Relations",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m3-quiz-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n3-v1",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n3-v2",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n3-v3",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n6-v1",
+          "n": 6,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n6-v2",
+          "n": 6,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n6-v3",
+          "n": 6,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n7-v1",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n7-v2",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n7-v3",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-quiz-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m3-quiz-sp-n9-v1",
+          "n": 9,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n9-v2",
+          "n": 9,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n9-v3",
+          "n": 9,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n10-v1",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n10-v2",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n10-v3",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n11-v1",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n11-v2",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m3-quiz-sp-n11-v3",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m3-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n3-v1",
+          "n": 3,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n3-v2",
+          "n": 3,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n3-v3",
+          "n": 3,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n4-v1",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n4-v2",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n4-v3",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n6-v1",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n6-v2",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n6-v3",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n7-v1",
+          "n": 7,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n7-v2",
+          "n": 7,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n7-v3",
+          "n": 7,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n8-v1",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n8-v2",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n8-v3",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n9-v1",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n9-v2",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n9-v3",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n10-v1",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n10-v2",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n10-v3",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n11-v1",
+          "n": 11,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n11-v2",
+          "n": 11,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n11-v3",
+          "n": 11,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n12-v1",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n12-v2",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n12-v3",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n13-v1",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n13-v2",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n13-v3",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n14-v1",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n14-v2",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m3-test-core-n14-v3",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m3-test-sp-n15-v1",
+          "n": 15,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n15-v2",
+          "n": 15,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n15-v3",
+          "n": 15,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n16-v1",
+          "n": 16,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n16-v2",
+          "n": 16,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n16-v3",
+          "n": 16,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n17-v1",
+          "n": 17,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n17-v2",
+          "n": 17,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n17-v3",
+          "n": 17,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M1"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n18-v1",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n18-v2",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n18-v3",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n19-v1",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n19-v2",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m3-test-sp-n19-v3",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        }
+      ]
+    }
+  },
+  "4": {
+    "topics": "Slope & Graphing Linear/Abs-Value Functions",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m4-quiz-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n8-v1",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n8-v2",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-quiz-core-n8-v3",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m4-quiz-sp-n9-v1",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n9-v2",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n9-v3",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n10-v1",
+          "n": 10,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n10-v2",
+          "n": 10,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n10-v3",
+          "n": 10,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n11-v1",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n11-v2",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-quiz-sp-n11-v3",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m4-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n4-v1",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n4-v2",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n4-v3",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n9-v1",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n9-v2",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n9-v3",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n10-v1",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n10-v2",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n10-v3",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n11-v1",
+          "n": 11,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n11-v2",
+          "n": 11,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n11-v3",
+          "n": 11,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n12-v1",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n12-v2",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n12-v3",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n13-v1",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n13-v2",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n13-v3",
+          "n": 13,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n14-v1",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n14-v2",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m4-test-core-n14-v3",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m4-test-sp-n15-v1",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n15-v2",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n15-v3",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n16-v1",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n16-v2",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n16-v3",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n17-v1",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n17-v2",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n17-v3",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n18-v1",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n18-v2",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n18-v3",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n19-v1",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n19-v2",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m4-test-sp-n19-v3",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M3"
+        }
+      ]
+    }
+  },
+  "5": {
+    "topics": "Writing Linear Equations",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m5-quiz-core-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n6-v1",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n6-v2",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n6-v3",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n8-v1",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n8-v2",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-quiz-core-n8-v3",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m5-quiz-sp-n9-v1",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n9-v2",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n9-v3",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n10-v1",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n10-v2",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n10-v3",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n11-v1",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n11-v2",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m5-quiz-sp-n11-v3",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m5-test-core-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n4-v1",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n4-v2",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n4-v3",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n8-v1",
+          "n": 8,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n8-v2",
+          "n": 8,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n8-v3",
+          "n": 8,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n9-v1",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n9-v2",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n9-v3",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n10-v1",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n10-v2",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n10-v3",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n11-v1",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n11-v2",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n11-v3",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n12-v1",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n12-v2",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n12-v3",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n13-v1",
+          "n": 13,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n13-v2",
+          "n": 13,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n13-v3",
+          "n": 13,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n14-v1",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n14-v2",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m5-test-core-n14-v3",
+          "n": 14,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m5-test-sp-n15-v1",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n15-v2",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n15-v3",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n16-v1",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n16-v2",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n16-v3",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n17-v1",
+          "n": 17,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n17-v2",
+          "n": 17,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n17-v3",
+          "n": 17,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M3"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n18-v1",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n18-v2",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n18-v3",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n19-v1",
+          "n": 19,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n19-v2",
+          "n": 19,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m5-test-sp-n19-v3",
+          "n": 19,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M4"
+        }
+      ]
+    }
+  },
+  "6": {
+    "topics": "Linear Inequalities",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m6-quiz-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n6-v1",
+          "n": 6,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n6-v2",
+          "n": 6,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n6-v3",
+          "n": 6,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n7-v1",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n7-v2",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n7-v3",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n8-v1",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n8-v2",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-quiz-core-n8-v3",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m6-quiz-sp-n9-v1",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n9-v2",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n9-v3",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n10-v1",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n10-v2",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n10-v3",
+          "n": 10,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n11-v1",
+          "n": 11,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n11-v2",
+          "n": 11,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m6-quiz-sp-n11-v3",
+          "n": 11,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": "M5"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m6-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n8-v1",
+          "n": 8,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n8-v2",
+          "n": 8,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n8-v3",
+          "n": 8,
+          "points": 2,
+          "type": "mc",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n9-v1",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n9-v2",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n9-v3",
+          "n": 9,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n10-v1",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n10-v2",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n10-v3",
+          "n": 10,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n11-v1",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n11-v2",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n11-v3",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n12-v1",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n12-v2",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n12-v3",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n13-v1",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n13-v2",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n13-v3",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n14-v1",
+          "n": 14,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n14-v2",
+          "n": 14,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m6-test-core-n14-v3",
+          "n": 14,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m6-test-sp-n15-v1",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n15-v2",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n15-v3",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n16-v1",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n16-v2",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n16-v3",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n17-v1",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n17-v2",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n17-v3",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n18-v1",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n18-v2",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n18-v3",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n19-v1",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n19-v2",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m6-test-sp-n19-v3",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        }
+      ]
+    }
+  },
+  "7": {
+    "topics": "Systems of Linear Equations",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m7-quiz-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n3-v1",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n3-v2",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n3-v3",
+          "n": 3,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-quiz-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m7-quiz-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m7-quiz-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m7-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n4-v1",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n4-v2",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n4-v3",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n9-v1",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n9-v2",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n9-v3",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n10-v1",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n10-v2",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n10-v3",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n11-v1",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n11-v2",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n11-v3",
+          "n": 11,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n12-v1",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n12-v2",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n12-v3",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n13-v1",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n13-v2",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n13-v3",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n14-v1",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n14-v2",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m7-test-core-n14-v3",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m7-test-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M4"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m7-test-sp-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        }
+      ]
+    }
+  },
+  "10": {
+    "topics": "Polynomials & Factoring",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m10-quiz-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n7-v1",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n7-v2",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n7-v3",
+          "n": 7,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n8-v1",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n8-v2",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-quiz-core-n8-v3",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m10-quiz-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m10-quiz-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m10-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n3-v1",
+          "n": 3,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n3-v2",
+          "n": 3,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n3-v3",
+          "n": 3,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n4-v1",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n4-v2",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n4-v3",
+          "n": 4,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n7-v1",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n7-v2",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n7-v3",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n8-v1",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n8-v2",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n8-v3",
+          "n": 8,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n9-v1",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n9-v2",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n9-v3",
+          "n": 9,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n10-v1",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n10-v2",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n10-v3",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n11-v1",
+          "n": 11,
+          "points": 8,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n11-v2",
+          "n": 11,
+          "points": 8,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n11-v3",
+          "n": 11,
+          "points": 8,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n12-v1",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n12-v2",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n12-v3",
+          "n": 12,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n13-v1",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n13-v2",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m10-test-core-n13-v3",
+          "n": 13,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m10-test-sp-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M2"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M5"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m10-test-sp-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        }
+      ]
+    }
+  },
+  "11": {
+    "topics": "Quadratic Equations",
+    "quiz": {
+      "core": [
+        {
+          "problemId": "alg1-m11-quiz-core-n1-v1",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n1-v2",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n1-v3",
+          "n": 1,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n2-v1",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n2-v2",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n2-v3",
+          "n": 2,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n4-v1",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n4-v2",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n4-v3",
+          "n": 4,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n5-v1",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n5-v2",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-quiz-core-n5-v3",
+          "n": 5,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m11-quiz-sp-n6-v1",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n6-v2",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n6-v3",
+          "n": 6,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n7-v1",
+          "n": 7,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n7-v2",
+          "n": 7,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n7-v3",
+          "n": 7,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n8-v1",
+          "n": 8,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n8-v2",
+          "n": 8,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        },
+        {
+          "problemId": "alg1-m11-quiz-sp-n8-v3",
+          "n": 8,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        }
+      ]
+    },
+    "test": {
+      "core": [
+        {
+          "problemId": "alg1-m11-test-core-n1-v1",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n1-v2",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n1-v3",
+          "n": 1,
+          "points": 1,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n2-v1",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n2-v2",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n2-v3",
+          "n": 2,
+          "points": 1,
+          "type": "fill",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n3-v1",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n3-v2",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n3-v3",
+          "n": 3,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n4-v1",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n4-v2",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n4-v3",
+          "n": 4,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n5-v1",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n5-v2",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n5-v3",
+          "n": 5,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n6-v1",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n6-v2",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n6-v3",
+          "n": 6,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n7-v1",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n7-v2",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n7-v3",
+          "n": 7,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n8-v1",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n8-v2",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n8-v3",
+          "n": 8,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n9-v1",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n9-v2",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n9-v3",
+          "n": 9,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n10-v1",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n10-v2",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n10-v3",
+          "n": 10,
+          "points": 3,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n11-v1",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n11-v2",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n11-v3",
+          "n": 11,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n12-v1",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n12-v2",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n12-v3",
+          "n": 12,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n13-v1",
+          "n": 13,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n13-v2",
+          "n": 13,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n13-v3",
+          "n": 13,
+          "points": 2,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n14-v1",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n14-v2",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        },
+        {
+          "problemId": "alg1-m11-test-core-n14-v3",
+          "n": 14,
+          "points": 4,
+          "type": "work",
+          "spiralSource": null
+        }
+      ],
+      "spiral": [
+        {
+          "problemId": "alg1-m11-test-sp-n15-v1",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n15-v2",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n15-v3",
+          "n": 15,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M6"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n16-v1",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n16-v2",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n16-v3",
+          "n": 16,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n17-v1",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n17-v2",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n17-v3",
+          "n": 17,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M7"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n18-v1",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n18-v2",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n18-v3",
+          "n": 18,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n19-v1",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n19-v2",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        },
+        {
+          "problemId": "alg1-m11-test-sp-n19-v3",
+          "n": 19,
+          "points": 2,
+          "type": "work",
+          "spiralSource": "M10"
+        }
+      ]
+    }
+  }
+}

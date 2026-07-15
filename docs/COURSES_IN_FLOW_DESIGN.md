@@ -295,6 +295,47 @@ diagnostic. Prereqs the screener map surfaced: add `'act-math'` to
 `CATEGORY_DIFFICULTY_MAP`/`CATEGORY_TO_BROAD` to cover ACT categories; map
 theta→scaled(1–36) for the report; add an ACT branch/fork to `FloatingScreener`.
 
+## 6c. Algebra 1 assessment bank — **ingested + preserved (delivery deferred)**
+
+Fable-authored Algebra 1 course assessments — a *different animal* from the ACT
+bank. Where ACT is self-scoring 4-choice practice, this is teacher-style,
+free-response ("show all your work") course material: 9 modules (M1–7, M10, M11),
+each a **Quiz** (8 core + 3 spiral) and **Test** (12–14 core + 5 spiral), every
+item in **3 parallel versions** for integrity, with error-analysis / justify /
+multi-step-application items and a separately-graded spiral-review section.
+
+Chosen delivery target: **student course-flow** (tutor pulls items as
+checkpoints/practice and grades free-response via the existing LLM verifier +
+`mathSolver`), not the ACT self-scoring rail. This pass is **ingest + preserve**;
+the renderer and BKT wiring are the follow-up.
+
+- **`seeds/alg1-assessments/`** — source of record: `alg1_m{N}.json` (9 modules) +
+  `ALG1_SPEC.md` (authoring spec: item schema, fixed figure library, module
+  coverage) + `README.md` (provenance/pipeline).
+- **`scripts/ingestAlg1Items.py`** (`npm run alg1:ingest`) — expands the 3 versions
+  into **798 `Problem` docs** (`source: alg1-fable`), tagged at **module level**
+  (`alg1-m{N}`), `work`→`constructed-response` / `mc`→`multiple-choice` (answer key
+  parsed by letter *or* choice-text match) / `fill`→`constructed-response`,
+  `solution`→`explanation`, declarative `figure` preserved per version. Emits
+  `alg1-items.generated.json`, `alg1-skill-names.json`, `alg1-assessment-map.json`
+  (the quiz/test structure for the future rail), and `alg1-catalog-crosswalk.json`
+  (module → existing `skills-algebra-1.json` skillIds — scaffold for fine per-item
+  tagging).
+- **`scripts/auditAlg1Items.py`** (`npm run alg1:audit`) — runs every per-version
+  `verify` snippet (762 run, 756 pass; 6 hand-verified false-positives allowlisted).
+  Exits non-zero only on a **new** regression, so a wrong key can't slip in.
+- **`scripts/seedAlg1Items.js`** (`npm run alg1:seed`) — upserts the bank into Mongo.
+- **`models/problem.js`** — added an optional `figure` (Mixed) field so declarative
+  figures survive seeding for the deferred renderer.
+
+Once seeded, the tutor can already **pool** these via `Problem.find({ skillId })` /
+`findNearDifficulty`. **Deferred (follow-up PR):** (1) render the fixed figure
+library (grid/numberline/line_graph/abs_graph/parabola/mapping/points/story/table
++ key overlays); (2) fine-grained per-item skill tagging via the crosswalk (or ask
+Fable to add per-item `skill` tags, as the ACT bank now carries); (3) wire module
+skills to BKT / `tutorPlan.skillFocus` so they become first-class course
+checkpoints, not just a poolable bank.
+
 ## 7. Open questions
 
 1. **Where does a non-enrolled student's queue come from before they've been
