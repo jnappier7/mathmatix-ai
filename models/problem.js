@@ -44,6 +44,11 @@ const problemSchema = new mongoose.Schema({
     type: String
   },
 
+  // Optional worked solution (used by the tutor and answer review)
+  explanation: {
+    type: String
+  },
+
   // Answer object with equivalents
   answer: {
     type: {
