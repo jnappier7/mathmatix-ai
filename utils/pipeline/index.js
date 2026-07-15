@@ -213,6 +213,18 @@ async function runPipeline(message, ctx) {
     // chat.js already loads it for re-entry/override detection.
     tutorPlan = ctx.tutorPlan || await loadOrCreatePlan(ctx.user._id, { user: ctx.user });
 
+    // ── Phase 2: structure everywhere ──
+    // Seed the skill-focus queue from the student's own mastery signals so the
+    // structured-teaching machine runs in free chat too (not only in courses).
+    // Non-fatal, guarded to only act when the queue is empty and the student is
+    // not in a course. See utils/skillFocusBuilder.js.
+    try {
+      const { refreshSkillFocus } = require('../skillFocusBuilder');
+      refreshSkillFocus(tutorPlan, ctx.user, { inCourse: !!ctx.user.activeCourseSessionId });
+    } catch (seedErr) {
+      console.error('[Pipeline] skillFocus seed error (non-fatal):', seedErr.message);
+    }
+
     const resolved = await resolveCurrentTarget(tutorPlan, {
       user: ctx.user,
       activeSkillId: ctx.activeSkill?.skillId || null,

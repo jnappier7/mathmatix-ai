@@ -184,17 +184,31 @@ No code. Get §1 agreed so the drift cleanup and the queue work aren't relitigat
   in-context upgrade prompt.
 - **Risk:** low. Reversible by re-adding the gate.
 
-### Phase 2 — feed `skillFocus` in free chat *(the core)*
+### Phase 2 — feed `skillFocus` in free chat *(the core)* — **v1 SHIPPED**
 Populate `tutorPlan.skillFocus` from signals already computed, so the structured
-machine runs for un-enrolled students:
-- Screener/placement result → seed the queue with the placed frontier.
-- BKT prerequisite gaps (`knowledgeTracer`) → enqueue struggle-detected skills.
-- FSRS review-due (`fsrsScheduler`) → enqueue review items.
-- Wire the real caller for `addSkillToFocus()` (today: zero callers) inside
-  `pipeline/persist.js` or the plan-load path (`loadOrCreatePlan`).
-- **Risk:** medium. This changes default tutor behavior. Gate behind a flag
-  (`MM_FEATURES.structuredDefault`) and A/B before full rollout. Validate that
-  `shouldSuppressSocratic` doesn't over-trigger and start leaking answers.
+machine runs for un-enrolled students. Implemented in `utils/skillFocusBuilder.js`,
+called from the pipeline right after the plan loads (`pipeline/index.js`).
+
+**Open question #2 resolved — "guided", not "course-locked".** v1 seeds ONLY
+skills the student has already *touched*:
+- **Review-due** (FSRS `reviewSchedule.nextReviewDate`) → jumps the queue (priority 8).
+- **In-progress** (developing / introduced / proficient via `TutorPlan.inferFamiliarity`)
+  → continues the work, ordered by familiarity.
+
+It deliberately **skips `never-seen` skills**, because those map to the
+answer-dumping `instruct` mode; touched skills map to `guide`/`strengthen`,
+which stay Socratic-compatible. So the tutor proactively *continues and reviews*
+what the student is working on, but does not force-introduce brand-new frontier
+skills against an off-plan question. The existing off-plan gate in `decide.js`
+(`isStudentOnPlanTopic`) remains the backstop. Proactive frontier introduction
+is a Phase 2b follow-up, gated on the mode-transition detector being proven.
+
+- Only runs when the active queue is empty (no thrash) and never during a course
+  session (the course drives its own queue).
+- **Kill switch:** env `STRUCTURED_FREE_CHAT=false` disables seeding globally.
+- Covered by `tests/unit/skillFocusBuilder.test.js`.
+- **Still to do (2b):** frontier/never-seen introduction, placement-result seeding
+  for brand-new students, and a defined soft step-lock strength.
 
 ### Phase 3 — unify the endpoints
 - Fold `/api/course-chat` handling into `/api/chat` behind a `structureLevel`

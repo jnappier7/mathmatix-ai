@@ -31,7 +31,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     // board. boardPanel stays true so #cr-workspace (the mount slot) is visible;
     // the M-C swap hides the legacy tools *inside* it and mounts the new surface.
     // Kill switch: set livingWorkspace:'off' here (legacy board returns untouched).
-    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live' }, window.MM_FEATURES || {});
+    // courses: true — the "My Courses" sidebar entry point is live (structure-everywhere).
+    // Kill switch: set courses:false here, or load with ?courses=0 to hide it for a session.
+    window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live', courses: true }, window.MM_FEATURES || {});
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
@@ -349,7 +351,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <!-- My Courses (hidden — not production ready) -->
+    <!-- My Courses — revealed by courseCatalog.js init() when MM_FEATURES.courses is on. -->
     <div class="sidebar-section" id="sidebar-courses-section" style="display: none;">
       <button class="courses-toggle" id="courses-toggle-btn">
         <span><i class="fas fa-graduation-cap" style="margin-right: 6px; font-size: 13px; color: #764ba2;"></i><span data-i18n="chat.myCourses">My Courses</span></span>
