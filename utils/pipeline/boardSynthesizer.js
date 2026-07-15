@@ -423,6 +423,13 @@ function looksLikeProblemStatement(text) {
 // a new problem to re-pose.
 const NEW_PROBLEM_CUE = /\b(solve|factor|simplify|expand|evaluate|graph|compute|calculate|find|what\s+is|new\s+problem|next\s+problem|another\s+(?:one|problem))\b/i;
 
+// How a TUTOR introduces a fresh problem ("un poco más picante this time —
+// 2x^2+5x-3=0", "try this one", "here's another", "how about"). The student
+// path uses NEW_PROBLEM_CUE; the tutor phrases it differently. Requiring a cue
+// here is deliberately conservative — without one we do NOT re-pose, so the
+// tutor's own intermediate scratch work never gets mistaken for a new problem.
+const TUTOR_NEW_PROBLEM_CUE = /\b(this\s+time|try\s+(?:this|one|another|the\s+next)|here'?s\s+(?:a|one|another|the\s+next)|next\s+(?:one|problem)|how\s+about|let'?s\s+(?:try|do)|another\s+(?:one|problem)|new\s+(?:one|problem)|round\s+\d|level\s+up)\b/i;
+
 // ---------------------------------------------------------------------------
 // Geometry pose fallback — when parseCleanProblem can't see a problem.
 //
@@ -598,6 +605,22 @@ function synthesizeBoardCommands({
         && normalizeForCompare(fresh.tex) !== normalizeForCompare(pinnedProblem)) {
       cards.push({ action: 'clear' });
       cards.push({ action: 'pose', tex: fresh.tex });
+    } else {
+      // The TUTOR may have posed a NEW problem ("un poco más picante this
+      // time — 2x^2+5x-3=0"). The student-pose path above never sees that, so
+      // the board — and the grader's pinnedProblemTex (conversation.boardProblem.tex)
+      // — go stale, and the student's next answer gets checked against the OLD
+      // problem (a correct answer graded wrong). Detect a tutor-posed new
+      // problem too, gated: a fresh, solvable, DIFFERENT problem, stated as a
+      // single ask (not multi-line worked scratch), with a tutor pose cue.
+      const tutorFresh = detectPosedProblem(tutorResponse);
+      if (tutorFresh
+          && TUTOR_NEW_PROBLEM_CUE.test(tutorResponse)
+          && looksLikeProblemStatement(tutorResponse)
+          && normalizeForCompare(tutorFresh.tex) !== normalizeForCompare(pinnedProblem)) {
+        cards.push({ action: 'clear' });
+        cards.push({ action: 'pose', tex: tutorFresh.tex });
+      }
     }
   } else if (cycleIsClosed) {
     // Empty board. Prefer the student's message — if they introduced
