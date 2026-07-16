@@ -38,7 +38,11 @@ export function showLevelUpCelebration(currentUser) {
     const currentLevel = currentUser.level || 1;
     const isMilestone = currentLevel % 5 === 0;
     const videoType = isMilestone ? 'levelUp' : 'smallcele';
-    const videoPath = `/videos/${tutorId}_${videoType}.mp4`;
+    // smallcele ships as webm (~5× smaller than the mp4 exports) with the
+    // mp4 kept as the Safari/legacy fallback; levelUp only has mp4.
+    const preferWebm = videoType === 'smallcele' &&
+        video.canPlayType && video.canPlayType('video/webm; codecs="vp9"');
+    const videoPath = `/videos/${tutorId}_${videoType}.${preferWebm ? 'webm' : 'mp4'}?v=20260717`;
 
     if (titleEl && subtitleEl) {
         if (isMilestone) {

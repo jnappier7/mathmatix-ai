@@ -162,6 +162,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/mobile-light-theme.css" />
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
   <link rel="stylesheet" href="/css/mobile-companion-home.css" />
+  <!-- Docked tutor cam + typing pill (phones only; AFTER poster + light re-skin) -->
+  <link rel="stylesheet" href="/css/mobile-tutor-cam.css?v=20260717" />
   <script defer src="/js/i18n-translations.js"></script>
   <script defer src="/js/i18n.js"></script>
 </head>
@@ -496,6 +498,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="cr-waveform" aria-hidden="true">
             <span></span><span></span><span></span><span></span><span></span><span></span>
           </span>
+        </div>
+        <!-- Mobile pill state (mobile-tutor-cam.css): replaces the cam while
+             the student types. Identity populated by applyTutor(). -->
+        <div class="mm-cam-pill" aria-hidden="true">
+          <img id="mm-cam-pill-avatar" alt="" />
+          <span id="mm-cam-pill-label">Your tutor is watching your work</span>
+          <span class="mm-cam-pill-dot"></span>
         </div>
         <div class="cr-encourage-card">
           <div class="cr-encourage-title"><span aria-hidden="true">⭐</span> Keep it up!</div>
@@ -2336,7 +2345,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
 <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
-  <script defer src="/js/chat-redesign.js?v=20260715"></script>
+  <script defer src="/js/chat-redesign.js?v=20260717"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
   <script src="/dist/js/chat-js2.dacbff7b.js"></script>
