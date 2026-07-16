@@ -10,6 +10,7 @@ const { generateSystemPrompt } = require('./prompt');
 const { callLLM, callLLMStream } = require('./llmGateway');
 const { verify: pipelineVerify } = require('./pipeline');
 const { checkReadingLevel } = require('./readability');
+const { ensureBoardCarriesSpokenMath } = require('./voiceBoardGuard');
 const sttStream = require('./sttStream');
 const ttsStream = require('./ttsStream');
 const ttsProvider = require('./ttsProvider');
@@ -76,6 +77,9 @@ Hmm, not quite. We have 2 times x. What's the opposite of multiplying by 2? <mat
 
 REMEMBER: never speak math notation. The LaTeX goes in the math tag only.
 Never put system tags or JSON inside the spoken portion.
+If your spoken sentence names a specific equation or expression, that same
+math MUST appear in the math array THIS turn — voice mode has no transcript,
+so anything not on the board is lost the moment you finish saying it.
 `;
 
 // Board-actions voice prompt — used by the chat-page orb. Actions are
@@ -114,6 +118,9 @@ PEDAGOGY (CRITICAL):
 - Never just give the answer — scaffold with hints and parallel problems.
 
 REMEMBER: speak naturally; let the board do the visual work.
+If your spoken sentence names a specific equation or expression, WRITE that
+same math on the board THIS turn — voice mode has no transcript, so anything
+not on the board is lost the moment you finish saying it.
 `;
 
 class VoiceSession {
@@ -535,6 +542,27 @@ class VoiceSession {
             } catch (_) { /* non-fatal */ }
         }
 
+        // ── "Voice explains, board shows" guard ──
+        // Captions are ephemeral: any math the tutor said aloud must survive
+        // on the board. If the model spoke symbolic math but shipped no board
+        // output, mirror the spoken math as synthesized steps. Skipped on
+        // verify-redirects (those deliberately drop board content).
+        if (turn.metric.abortReason !== 'verify_redirect') {
+            try {
+                const guard = ensureBoardCarriesSpokenMath(
+                    verifiedText, mathStepsForBoard, boardActionsForFinal
+                );
+                if (guard.mirrored.length) {
+                    mathStepsForBoard = guard.mathSteps;
+                    logger.info('voice board guard mirrored spoken math', {
+                        userId: this.userId, mode: this.mode, lines: guard.mirrored,
+                    });
+                }
+            } catch (err) {
+                logger.warn('voice board guard failed (non-fatal)', { error: err.message });
+            }
+        }
+
         // ── Send final response + math/board ──
         this._send({
             type: 'response_final',
@@ -597,6 +625,10 @@ Always include an "explanation" field on the most recent mathStep when
 possible — the orchestrator uses it to answer mid-explanation
 clarifications without a fresh pipeline pass.
 
+If "spoken" names a specific equation or expression, that same math MUST
+appear in "mathSteps" THIS turn — voice mode has no transcript, so anything
+not on the board is lost the moment it's said.
+
 Never speak math notation. Never include system tags. Always valid JSON.`;
 
         const messages = [
@@ -656,6 +688,23 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
             }
         } catch (err) {
             logger.warn('orch verify failed (using unverified)', { error: err.message });
+        }
+
+        // ── "Voice explains, board shows" guard (same rule as _driveTurn) ──
+        // Placed before the orchestrator handoff so the mirrored steps reach
+        // both the orchestrator's voiceJson and the legacy response_final.
+        if (turn.metric.abortReason !== 'verify_redirect') {
+            try {
+                const guard = ensureBoardCarriesSpokenMath(verifiedSpoken, verifiedSteps, []);
+                if (guard.mirrored.length) {
+                    verifiedSteps = guard.mathSteps;
+                    logger.info('voice board guard mirrored spoken math', {
+                        userId: this.userId, mode: this.mode, lines: guard.mirrored,
+                    });
+                }
+            } catch (err) {
+                logger.warn('voice board guard failed (non-fatal)', { error: err.message });
+            }
         }
 
         // ── 3. Resolve current phase for phaseEnforcer ──
