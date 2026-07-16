@@ -1,0 +1,1092 @@
+[
+  {
+    "skillId": "integer-operations",
+    "displayName": "Integer operations",
+    "description": "Add, subtract, multiply, and divide positive and negative integers.",
+    "category": "integers-rationals",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Foundations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "7.NS.1",
+      "7.NS.2"
+    ],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "fraction-operations",
+    "displayName": "Fraction operations",
+    "description": "Add, subtract, multiply, and divide fractions and write results in simplest form.",
+    "category": "fractions",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Foundations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "6.NS.1",
+      "7.NS.1"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "decimal-operations",
+    "displayName": "Decimal operations",
+    "description": "Add, subtract, multiply, and divide decimals.",
+    "category": "decimals",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Foundations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "6.NS.3"
+    ],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "order-of-operations",
+    "displayName": "Order of operations",
+    "description": "Evaluate numeric expressions using the order of operations, including exponents and grouping.",
+    "category": "expressions",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Expressions",
+    "prerequisites": [
+      "integer-operations"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "6.EE.1",
+      "6.EE.2"
+    ],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "evaluating-expressions",
+    "displayName": "Evaluating expressions with substitution",
+    "description": "Evaluate algebraic expressions by substituting values, including negatives and fractions.",
+    "category": "expressions",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Expressions",
+    "prerequisites": [
+      "order-of-operations",
+      "integer-operations"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "6.EE.2"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "writing-algebraic-expressions",
+    "displayName": "Writing algebraic expressions",
+    "description": "Translate between verbal phrases and numerical or algebraic expressions.",
+    "category": "expressions",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Expressions",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "6.EE.2",
+      "A-SSE.1"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "solving-proportions",
+    "displayName": "Solving proportions",
+    "description": "Solve proportion equations, including rational and similar-figure setups.",
+    "category": "ratios-proportions",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Solving Linear Equations",
+    "prerequisites": [
+      "solving-multi-step-equations"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "7.RP.2",
+      "A-REI.3"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "literal-equations",
+    "displayName": "Literal equations (solving for a variable)",
+    "description": "Solve a formula or literal equation for one of its variables.",
+    "category": "linear-equations",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Solving Linear Equations",
+    "prerequisites": [
+      "solving-multi-step-equations"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.4"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "writing-solving-equations-context",
+    "displayName": "Writing & solving equations from context",
+    "description": "Write and solve a linear equation from a real-world situation.",
+    "category": "linear-equations",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Solving Linear Equations",
+    "prerequisites": [
+      "solving-multi-step-equations"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.1"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "linear-equations-number-of-solutions",
+    "displayName": "Number of solutions of a linear equation",
+    "description": "Determine whether a linear equation has one, no, or infinitely many solutions.",
+    "category": "linear-equations",
+    "course": "Algebra 1",
+    "quarter": 1,
+    "unit": "Solving Linear Equations",
+    "prerequisites": [
+      "solving-equations-with-variables-both-sides"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.3"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "function-notation-evaluation",
+    "displayName": "Function notation & evaluation",
+    "description": "Evaluate functions written in function notation, including combined expressions.",
+    "category": "functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Functions & Relations",
+    "prerequisites": [
+      "evaluating-expressions"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.2"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "identifying-functions",
+    "displayName": "Identifying functions",
+    "description": "Decide whether a relation is a function from pairs, tables, mappings, or graphs.",
+    "category": "functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Functions & Relations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.1"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "domain-and-range",
+    "displayName": "Domain and range",
+    "description": "State the domain and range of a relation from a set, table, or graph.",
+    "category": "functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Functions & Relations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.1"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "discrete-continuous-relations",
+    "displayName": "Discrete vs continuous relations",
+    "description": "Classify a situation as best modeled by a discrete, continuous, or neither relation.",
+    "category": "functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Functions & Relations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.5"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "interpreting-graphs-stories",
+    "displayName": "Interpreting graphs (story matching)",
+    "description": "Match a qualitative graph to the story it represents.",
+    "category": "functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Functions & Relations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.4"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "function-application-modeling",
+    "displayName": "Function models in context",
+    "description": "Write and interpret a function that models a real-world context.",
+    "category": "functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Functions & Relations",
+    "prerequisites": [
+      "function-notation-evaluation"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "F-BF.1",
+      "F-IF.4"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "slope-from-two-points",
+    "displayName": "Slope from two points",
+    "description": "Find the slope of a line through two points, including zero and undefined cases.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Slope & Graphing",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.6",
+      "8.EE.5"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "slope-intercept-from-equation",
+    "displayName": "Slope & intercept from an equation",
+    "description": "Identify the slope and y-intercept from a slope-intercept equation.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Slope & Graphing",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.7a"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "standard-to-slope-intercept",
+    "displayName": "Converting standard to slope-intercept form",
+    "description": "Rewrite a linear equation from standard form into slope-intercept form.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Slope & Graphing",
+    "prerequisites": [
+      "solving-multi-step-equations"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.10"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "reading-slope-from-graph",
+    "displayName": "Reading slope & intercept from a graph",
+    "description": "Read the slope, y-intercept, and equation of a line from its graph.",
+    "category": "graphing",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Slope & Graphing",
+    "prerequisites": [
+      "slope-from-two-points"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "F-IF.7a"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "undefined-zero-slope",
+    "displayName": "Undefined & zero slope",
+    "description": "Distinguish zero slope (horizontal) from undefined slope (vertical).",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Slope & Graphing",
+    "prerequisites": [
+      "slope-from-two-points"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "8.EE.5"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "absolute-value-graphs-transformations",
+    "displayName": "Absolute-value graphs & transformations",
+    "description": "Identify the vertex and describe transformations of f(x)=a|x-h|+k.",
+    "category": "graphing",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Slope & Graphing",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "F-BF.3",
+      "F-IF.7b"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "linear-modeling-slope-intercept",
+    "displayName": "Linear models (slope-intercept)",
+    "description": "Interpret slope and intercept of a linear model in context.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Slope & Graphing",
+    "prerequisites": [
+      "slope-intercept-from-equation"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "F-LE.5",
+      "S-ID.7"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "linear-equation-forms-reference",
+    "displayName": "The three forms of a linear equation",
+    "description": "Recall the slope-intercept, point-slope, and standard forms of a linear equation.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Writing Linear Equations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.2"
+    ],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 10,
+      "fluencyType": "reflex",
+      "toleranceFactor": 2.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "point-slope-form",
+    "displayName": "Point-slope form",
+    "description": "Write the equation of a line in point-slope form from a point and a slope.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Writing Linear Equations",
+    "prerequisites": [
+      "slope-from-two-points"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.2"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "standard-form-equations",
+    "displayName": "Standard-form equations",
+    "description": "Write or rewrite a linear equation in standard form with integer coefficients.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Writing Linear Equations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.2"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "converting-between-forms",
+    "displayName": "Converting between forms of a line",
+    "description": "Convert a linear equation among slope-intercept, point-slope, and standard forms.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Writing Linear Equations",
+    "prerequisites": [
+      "point-slope-form"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.2"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "parallel-perpendicular-lines",
+    "displayName": "Parallel & perpendicular lines",
+    "description": "Use slope relationships to write or identify parallel and perpendicular lines.",
+    "category": "parallel-perpendicular",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Writing Linear Equations",
+    "prerequisites": [
+      "slope-from-two-points"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "G-GPE.5"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "linear-modeling-writing-equations",
+    "displayName": "Writing linear models from context",
+    "description": "Write a linear equation that models a real-world situation and interpret it.",
+    "category": "linear-functions",
+    "course": "Algebra 1",
+    "quarter": 2,
+    "unit": "Writing Linear Equations",
+    "prerequisites": [
+      "point-slope-form"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.2",
+      "F-LE.2"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "solving-one-variable-inequalities",
+    "displayName": "Solving one-variable inequalities",
+    "description": "Solve one-variable inequalities, flipping the sign when multiplying or dividing by a negative.",
+    "category": "inequalities",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Linear Inequalities",
+    "prerequisites": [
+      "solving-multi-step-equations"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.3"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "solving-graphing-inequalities",
+    "displayName": "Solving & graphing inequalities",
+    "description": "Solve an inequality and graph its solution set on a number line.",
+    "category": "inequalities",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Linear Inequalities",
+    "prerequisites": [
+      "solving-one-variable-inequalities"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.3"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "matching-inequality-graphs",
+    "displayName": "Matching an inequality to its graph",
+    "description": "Match an inequality to the number-line graph of its solution set.",
+    "category": "inequalities",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Linear Inequalities",
+    "prerequisites": [
+      "solving-one-variable-inequalities"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.3"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "compound-inequalities",
+    "displayName": "Compound inequalities",
+    "description": "Solve and graph compound (and / or) inequalities.",
+    "category": "inequalities",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Linear Inequalities",
+    "prerequisites": [
+      "solving-graphing-inequalities"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.3"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "writing-solving-inequalities-context",
+    "displayName": "Writing & solving inequalities from context",
+    "description": "Write and solve an inequality from a real-world constraint (at least / at most).",
+    "category": "inequalities",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Linear Inequalities",
+    "prerequisites": [
+      "solving-one-variable-inequalities"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.1",
+      "A-CED.3"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "checking-system-solutions",
+    "displayName": "Checking a solution of a system",
+    "description": "Check whether an ordered pair is a solution of a system of equations.",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Systems of Equations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.6"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 25,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "classifying-system-solutions",
+    "displayName": "Classifying the number of solutions",
+    "description": "Determine whether a system has one, no, or infinitely many solutions.",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Systems of Equations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.6"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "choosing-a-solution-method",
+    "displayName": "Choosing a method for a system",
+    "description": "Choose an efficient method (graphing, substitution, elimination) for a given system.",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Systems of Equations",
+    "prerequisites": [
+      "systems-of-equations-substitution",
+      "systems-of-equations-elimination"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.6"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "systems-application-modeling",
+    "displayName": "Systems word problems",
+    "description": "Set up and solve a system of equations from a word problem (tickets, coins, mixture).",
+    "category": "systems",
+    "course": "Algebra 1",
+    "quarter": 3,
+    "unit": "Systems of Equations",
+    "prerequisites": [
+      "systems-of-equations-elimination"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.3",
+      "A-REI.6"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "multiplying-binomials",
+    "displayName": "Multiplying binomials",
+    "description": "Multiply binomials and other polynomials, writing the product in standard form.",
+    "category": "polynomials",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Polynomials & Factoring",
+    "prerequisites": [
+      "polynomial-multiplication-monomial"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-APR.1"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "special-products",
+    "displayName": "Special products",
+    "description": "Expand special products: (a+b)(a-b), (a+b)^2, and (a-b)^2.",
+    "category": "polynomials",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Polynomials & Factoring",
+    "prerequisites": [
+      "multiplying-binomials"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-APR.1",
+      "A-SSE.2"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "factoring-trinomials",
+    "displayName": "Factoring trinomials",
+    "description": "Factor trinomials (a=1 and a>1) completely, or identify a prime polynomial.",
+    "category": "factoring",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Polynomials & Factoring",
+    "prerequisites": [
+      "factoring-gcf"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-SSE.3a"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "factoring-by-grouping",
+    "displayName": "Factoring by grouping",
+    "description": "Factor a four-term polynomial by grouping.",
+    "category": "factoring",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Polynomials & Factoring",
+    "prerequisites": [
+      "factoring-gcf"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-SSE.2"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "procedural",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "factoring-application",
+    "displayName": "Factoring in context (area)",
+    "description": "Use factoring to model an area or context problem with binomial dimensions.",
+    "category": "factoring",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Polynomials & Factoring",
+    "prerequisites": [
+      "factoring-trinomials"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-SSE.3a"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "quadratic-abc-identification",
+    "displayName": "Identifying a, b, c",
+    "description": "Identify the coefficients a, b, and c of a quadratic in standard form.",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Equations",
+    "prerequisites": [],
+    "enables": [],
+    "standardsAlignment": [
+      "A-SSE.1"
+    ],
+    "difficultyLevel": 2,
+    "fluencyMetadata": {
+      "baseFluencyTime": 10,
+      "fluencyType": "reflex",
+      "toleranceFactor": 2.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "completing-the-square",
+    "displayName": "Solving by completing the square",
+    "description": "Solve a quadratic equation by completing the square.",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Equations",
+    "prerequisites": [
+      "solving-quadratics-square-roots"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.4a",
+      "A-REI.4b"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 35,
+      "fluencyType": "algorithm",
+      "toleranceFactor": 2.5
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "discriminant-number-of-solutions",
+    "displayName": "Discriminant & number of solutions",
+    "description": "Use the discriminant to determine the number of real solutions of a quadratic.",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Equations",
+    "prerequisites": [
+      "quadratic-formula"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.4b"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "choosing-quadratic-method",
+    "displayName": "Choosing a method to solve a quadratic",
+    "description": "Choose the most efficient method to solve a given quadratic equation.",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Equations",
+    "prerequisites": [
+      "solving-quadratics-factoring",
+      "solving-quadratics-square-roots"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-REI.4b"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "conceptual",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  },
+  {
+    "skillId": "quadratic-application",
+    "displayName": "Quadratic applications",
+    "description": "Model and solve a real-world problem (projectile, area) with a quadratic equation.",
+    "category": "quadratics",
+    "course": "Algebra 1",
+    "quarter": 4,
+    "unit": "Quadratic Equations",
+    "prerequisites": [
+      "solving-quadratics-factoring"
+    ],
+    "enables": [],
+    "standardsAlignment": [
+      "A-CED.1",
+      "A-REI.4b"
+    ],
+    "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 75,
+      "fluencyType": "application",
+      "toleranceFactor": 3.0
+    },
+    "source": "alg1-fable"
+  }
+]

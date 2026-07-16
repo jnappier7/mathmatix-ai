@@ -33,6 +33,7 @@ const CURRICULUM_FILES = [
 
   // High School & College
   'skills-algebra-1.json',
+  'skills-algebra-1-fable.json',   // fine sub-skills for the Fable Algebra 1 assessment bank
   'skills-geometry.json',
   'skills-algebra-2.json',
   'skills-precalculus.json',

@@ -60,9 +60,11 @@ RULES = {
         ("function-application-modeling", "Function models in context",
          r"write a function|c\(h\)|t\(n\)|entry fee|per hour|per ticket|charges \$"),
         ("discrete-continuous-relations", "Discrete vs continuous relations", r"continuous|discrete"),
+        # domain/range items (which also ask "is it a function") lead with "state the
+        # domain"; they carry identifying-functions as a secondary skill (see SECONDARY).
+        ("domain-and-range", "Domain and range", r"state the domain"),
         ("identifying-functions", "Identifying functions",
          r"a function|vertical line test|mapping diagram|represent y as a function|ordered pair"),
-        ("domain-and-range", "Domain and range", r"domain|range"),
         ("function-notation-evaluation", "Function notation & evaluation", r"f\(|g\(|h\("),
     ],
     4: [
@@ -162,6 +164,29 @@ NAMES = {}
 for _mod, _rules in RULES.items():
     for _sid, _name, _pat in _rules:
         NAMES[_sid] = _name
+
+# Secondary skills an item ALSO exercises (populate Problem.secondarySkillIds).
+# Kept intentionally small — only genuine multi-skill overlaps. Mastery credit
+# today is primary-only, but this documents the coverage and is future-proof.
+SECONDARY = {
+    3: [("identifying-functions", r"a function"),
+        ("domain-and-range", r"state the domain")],
+}
+
+
+def secondary_skills(item, module, primary, is_spiral=False):
+    """Return extra skillIds the item exercises, excluding the primary."""
+    rules_module = module
+    if is_spiral:
+        sm = _spiral_module(item.get("spiral_source"))
+        if sm is not None:
+            rules_module = sm
+    text = str(item.get("prompt", [""])[0]).lower()
+    out = []
+    for sid, pat in SECONDARY.get(rules_module, []):
+        if sid != primary and sid not in out and re.search(pat, text):
+            out.append(sid)
+    return out
 
 
 def _spiral_module(source):

@@ -126,7 +126,7 @@ def resolve_skill(it, mod, grp):
     return classifier.classify(it, mod, is_spiral=(grp == "spiral"))
 
 
-def build_problem(mod, section, grp, it, vi, skill_id):
+def build_problem(mod, section, grp, it, vi, skill_id, secondary):
     """One Problem doc for version vi of a Fable item."""
     n = it["n"]
     itype = it.get("type", "work")
@@ -169,6 +169,7 @@ def build_problem(mod, section, grp, it, vi, skill_id):
     doc = {
         "problemId": pid,
         "skillId": skill_id,
+        "secondarySkillIds": secondary,
         "prompt": prompt,
         "svg": svg,
         "figure": figure,
@@ -207,8 +208,12 @@ def main():
                     skill_id, skill_name = resolve_skill(it, mod, grp)   # version-independent
                     names[skill_id] = skill_name
                     by_module[mod].add(skill_id)
+                    secondary = classifier.secondary_skills(it, mod, skill_id, is_spiral=(grp == "spiral"))
+                    for s in secondary:
+                        names.setdefault(s, classifier.NAMES.get(s, s))
+                        by_module[mod].add(s)
                     for vi in range(3):
-                        doc = build_problem(mod, section, grp, it, vi, skill_id)
+                        doc = build_problem(mod, section, grp, it, vi, skill_id, secondary)
                         if doc["figure"]:
                             figs += 1
                         if doc["answerType"] == "multiple-choice" and not doc["correctOption"]:

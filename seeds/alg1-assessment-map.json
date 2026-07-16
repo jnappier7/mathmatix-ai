@@ -1524,7 +1524,7 @@
         {
           "problemId": "alg1-m3-quiz-core-n3-v1",
           "n": 3,
-          "skillId": "identifying-functions",
+          "skillId": "domain-and-range",
           "points": 3,
           "type": "work",
           "spiralSource": null
@@ -1532,7 +1532,7 @@
         {
           "problemId": "alg1-m3-quiz-core-n3-v2",
           "n": 3,
-          "skillId": "identifying-functions",
+          "skillId": "domain-and-range",
           "points": 3,
           "type": "work",
           "spiralSource": null
@@ -1540,7 +1540,7 @@
         {
           "problemId": "alg1-m3-quiz-core-n3-v3",
           "n": 3,
-          "skillId": "identifying-functions",
+          "skillId": "domain-and-range",
           "points": 3,
           "type": "work",
           "spiralSource": null
@@ -1818,7 +1818,7 @@
         {
           "problemId": "alg1-m3-test-core-n4-v1",
           "n": 4,
-          "skillId": "identifying-functions",
+          "skillId": "domain-and-range",
           "points": 4,
           "type": "work",
           "spiralSource": null
@@ -1826,7 +1826,7 @@
         {
           "problemId": "alg1-m3-test-core-n4-v2",
           "n": 4,
-          "skillId": "identifying-functions",
+          "skillId": "domain-and-range",
           "points": 4,
           "type": "work",
           "spiralSource": null
@@ -1834,7 +1834,7 @@
         {
           "problemId": "alg1-m3-test-core-n4-v3",
           "n": 4,
-          "skillId": "identifying-functions",
+          "skillId": "domain-and-range",
           "points": 4,
           "type": "work",
           "spiralSource": null

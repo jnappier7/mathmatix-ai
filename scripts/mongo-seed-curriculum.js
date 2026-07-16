@@ -22,6 +22,7 @@ const files = [
   "skills-grade-7.json",
   "skills-grade-8.json",
   "skills-algebra-1.json",
+  "skills-algebra-1-fable.json",
   "skills-geometry.json",
   "skills-algebra-2.json",
   "skills-precalculus.json",

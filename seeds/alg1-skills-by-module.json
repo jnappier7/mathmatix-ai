@@ -100,6 +100,11 @@
       "inCatalog": false
     },
     {
+      "skillId": "domain-and-range",
+      "name": "Domain and range",
+      "inCatalog": false
+    },
+    {
       "skillId": "evaluating-expressions",
       "name": "Evaluating expressions with substitution",
       "inCatalog": false
