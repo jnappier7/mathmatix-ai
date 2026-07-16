@@ -9,8 +9,31 @@ const path = require('path');
 const CourseSession = require('../models/courseSession');
 const Conversation = require('../models/conversation');
 const User = require('../models/user');
+const ActTestSession = require('../models/actTestSession');
 const { calculateOverallProgress } = require('../utils/coursePrompt');
 const { buildProgressUpdate } = require('../utils/progressState');
+
+// Day-one diagnostic prompt for the ACT prep course: on entry, nudge the student
+// to take a full practice ACT (delivered as a card in the welcome splash) so the
+// tutor can target the bootcamp to their real gaps. Persists until they've
+// completed one. Returns a descriptor for welcomeData.diagnostic, or null.
+async function buildCourseDiagnostic(userId, courseId) {
+  if (courseId !== 'act-prep') return null;
+  try {
+    const taken = await ActTestSession.countDocuments({ userId, status: 'completed' });
+    if (taken > 0) return null;
+  } catch (err) {
+    console.error('[CourseSession] diagnostic check failed (non-fatal):', err.message);
+    return null;
+  }
+  return {
+    type: 'act-practice',
+    title: 'Start with a full Practice ACT',
+    body: 'Take a timed practice ACT Math test first. Your tutor uses the results to pinpoint '
+      + 'exactly which skills to focus your bootcamp on — so every session targets your real gaps.',
+    cta: 'Take the Practice ACT',
+  };
+}
 
 /* ============================================================
    GET /api/course-sessions/catalog
@@ -178,7 +201,8 @@ router.post('/enroll', async (req, res) => {
         moduleCount: pathwayModules.length,
         units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
         prerequisites: pathway.prerequisites || [],
-        firstModuleTitle: pathwayModules[0]?.title || 'Getting Started'
+        firstModuleTitle: pathwayModules[0]?.title || 'Getting Started',
+        diagnostic: await buildCourseDiagnostic(req.user._id, courseId)
       };
 
       console.log(`📚 [CourseSession] ${req.user.firstName} resumed ${existing.courseName} (${existing.overallProgress}% progress preserved)`);
@@ -275,7 +299,8 @@ router.post('/enroll', async (req, res) => {
       moduleCount: pathwayModules.length,
       units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
       prerequisites: pathway.prerequisites || [],
-      firstModuleTitle: pathwayModules[0]?.title || 'Getting Started'
+      firstModuleTitle: pathwayModules[0]?.title || 'Getting Started',
+      diagnostic: await buildCourseDiagnostic(req.user._id, courseId)
     };
 
     res.json({

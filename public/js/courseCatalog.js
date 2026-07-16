@@ -1114,6 +1114,23 @@ class CourseManager {
             </div>`
         ).join('');
 
+        // Day-one diagnostic card (e.g. ACT prep → take a full practice ACT first).
+        // A prominent card with a CTA that launches the practice test; the tutor
+        // then targets the bootcamp to the results. Delivered on the welcome splash.
+        const diag = welcome.diagnostic;
+        const diagnosticHtml = (diag && diag.type === 'act-practice') ? `
+            <div class="course-diagnostic-card" style="margin-top:16px; padding:16px; border-radius:12px; background:linear-gradient(135deg,#eef2ff,#faf5ff); border:1px solid #c7d2fe;">
+                <div style="font-size:14px; font-weight:700; color:#4338ca; margin-bottom:6px;">
+                    <i class="fas fa-clipboard-check" style="margin-right:6px;"></i>${this.escapeHtml(diag.title)}
+                </div>
+                <div style="font-size:12px; color:#555; line-height:1.5; margin-bottom:12px;">${this.escapeHtml(diag.body)}</div>
+                <button class="course-diagnostic-cta" onclick="this.closest('.course-welcome-splash').remove(); if (window.openActTest) { window.openActTest(); }" style="
+                    width:100%; padding:12px; border:none; border-radius:10px;
+                    background:linear-gradient(135deg,#4f46e5,#7c3aed); color:white;
+                    font-weight:700; font-size:14px; cursor:pointer;
+                "><i class="fas fa-play" style="margin-right:6px;"></i>${this.escapeHtml(diag.cta)}</button>
+            </div>` : '';
+
         // Course mini-tour tips (shown below the learning path for first-time enrollees)
         const courseTipsHtml = isResume ? '' : `
             <div class="course-tips" style="margin-top:16px; border-top:1px solid #f0f0f0; padding-top:14px;">
@@ -1158,15 +1175,20 @@ class CourseManager {
                 ${unitListHtml}
                 ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}
                 ${courseTipsHtml}
+                ${diagnosticHtml}
                 <div style="margin-top: 16px; padding: 8px 12px; background: #fef9c3; border: 1px solid #fde68a; border-radius: 8px; font-size: 11px; color: #b45309; display: flex; align-items: flex-start; gap: 6px;">
                     <i class="fas fa-circle-exclamation" style="margin-top: 1px; flex-shrink: 0;"></i>
                     <span><strong>Disclaimer:</strong> These courses do not count for academic credit and are not meant to replace in-person instruction.</span>
                 </div>
                 <button onclick="this.closest('.course-welcome-splash').remove()" style="
-                    margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px;
-                    background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+                    margin-top: 16px; width: 100%; padding: 12px; border-radius: 10px;
+                    ${diagnosticHtml
+                        ? 'border: 1px solid #c7d2fe; background: white; color: #4f46e5;'
+                        : 'border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white;'}
                     font-weight: 700; font-size: 14px; cursor: pointer;
-                "><i class="fas fa-play" style="margin-right: 6px;"></i>${isResume ? 'Continue Learning' : `Start ${this.escapeHtml(welcome.firstModuleTitle)}`}</button>
+                "><i class="fas fa-play" style="margin-right: 6px;"></i>${diagnosticHtml
+                        ? `Skip for now — start ${this.escapeHtml(welcome.firstModuleTitle)}`
+                        : (isResume ? 'Continue Learning' : `Start ${this.escapeHtml(welcome.firstModuleTitle)}`)}</button>
             </div>
         `;
 
