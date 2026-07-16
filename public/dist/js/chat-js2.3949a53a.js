@@ -627,7 +627,9 @@ class VoiceController {
 
             case 'board_actions':
                 if (this.config.enableBoardCommands && Array.isArray(ev.boardActions)) {
-                    this.executeBoardActions(ev.boardActions);
+                    // When LWS owns the board, defer to response_final (the full
+                    // turn) so partial + final don't render duplicate lines.
+                    if (!this._lwsOwnsBoard()) this.executeBoardActions(ev.boardActions);
                 }
                 break;
 
@@ -635,8 +637,12 @@ class VoiceController {
                 if (ev.text && window.appendMessage) {
                     window.appendMessage(ev.text, 'ai');
                 }
-                if (this.config.enableBoardCommands && Array.isArray(ev.boardActions) && ev.boardActions.length) {
-                    this.executeBoardActions(ev.boardActions);
+                if (this.config.enableBoardCommands) {
+                    if (this._lwsOwnsBoard()) {
+                        this._renderVoiceBoardToLWS({ mathSteps: ev.mathSteps, boardActions: ev.boardActions });
+                    } else if (Array.isArray(ev.boardActions) && ev.boardActions.length) {
+                        this.executeBoardActions(ev.boardActions);
+                    }
                 }
                 this._pendingResponseText = '';
                 break;
@@ -693,8 +699,15 @@ class VoiceController {
     // ============================================
 
     createVoiceUI() {
-        // Check user preference for voice chat enabled (default to true)
-        const voiceEnabled = !window.currentUser || window.currentUser?.preferences?.voiceChatEnabled !== false;
+        // The orb IS the microphone in voice mode — the central mic/listening
+        // control that voice-mode.js flanks with #mpc-voice-work and
+        // #mpc-voice-end (see voice-mode.js: "The orb is the mic"). It is hidden
+        // during normal chat and shown only in voice mode via CSS
+        // (body.cr-mode:not(.cr-voice) #voice-chat-container { display:none }).
+        // Do NOT unmount it, or voice mode loses its mic. The old settings
+        // "Voice Chat Orb" toggle / voiceChatEnabled preference is gone, so the
+        // orb is always available (CSS decides when it's visible).
+        const voiceEnabled = true;
 
         // Create floating voice button (like GPT's orb)
         const voiceContainer = document.createElement('div');
@@ -1415,7 +1428,8 @@ class VoiceController {
                     boardContextData = phase.boardContext || null;
 
                     if (phase.boardActions && this.config.enableBoardCommands) {
-                        this.executeBoardActions(phase.boardActions);
+                        if (this._lwsOwnsBoard()) this._renderVoiceBoardToLWS({ boardActions: phase.boardActions });
+                        else this.executeBoardActions(phase.boardActions);
                     }
 
                     if (responseText && window.appendMessage) {
@@ -1459,7 +1473,8 @@ class VoiceController {
         }
         if (data.response) {
             if (data.boardActions && this.config.enableBoardCommands) {
-                await this.executeBoardActions(data.boardActions);
+                if (this._lwsOwnsBoard()) this._renderVoiceBoardToLWS({ boardActions: data.boardActions });
+                else await this.executeBoardActions(data.boardActions);
             }
             if (window.appendMessage) {
                 window.appendMessage(data.response, 'ai', null, data.isMasteryQuiz);
@@ -1518,6 +1533,22 @@ class VoiceController {
         };
 
         return context;
+    }
+
+    // When the Living Workspace owns the board slot, the legacy whiteboard is
+    // hidden — so voice board output must be translated onto the LWS derivation
+    // view instead, or it renders into an invisible board (the "board froze
+    // after the first problem" bug). See js/living-workspace/dom/voiceBoardTranslate.js.
+    _lwsOwnsBoard() {
+        return !!(window.LWS_CHAT && typeof window.LWS_CHAT.isOn === 'function' && window.LWS_CHAT.isOn());
+    }
+
+    // Render one voice turn's board payload (mathSteps + boardActions) onto the
+    // LWS derivation view. Called at turn-final only (not on streaming partials)
+    // so lines don't render twice.
+    _renderVoiceBoardToLWS(payload) {
+        try { window.LWS_CHAT.applyVoiceBoard(payload); }
+        catch (e) { console.error('[Voice] LWS board render failed', e); }
     }
 
     async executeBoardActions(actions) {

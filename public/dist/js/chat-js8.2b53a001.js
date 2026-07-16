@@ -738,7 +738,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const statusEl2 = document.getElementById('settings-sub-status');
                 if (statusEl2) {
                     const mins = data.usage ? Math.floor((data.usage.secondsRemaining || 0) / 60) : '?';
-                    statusEl2.innerHTML = `<strong>Free Plan</strong> — ${mins} AI min remaining this week`;
+                    statusEl2.innerHTML = `<strong>Free Plan</strong> — ${mins} AI min remaining this month`;
                 }
                 if (manageSubBtn) {
                     manageSubBtn.innerHTML = '<i class="fas fa-arrow-up"></i> Upgrade to Mathmatix+';

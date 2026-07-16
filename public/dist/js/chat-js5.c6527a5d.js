@@ -309,7 +309,7 @@ class DailyQuestManager {
         <div class="completion-content">
           <h4>Quest Complete!</h4>
           <p>${quest.icon} ${quest.name}</p>
-          <div class="completion-reward">+${quest.xpEarned} XP</div>
+          <div class="completion-reward">+${quest.xpEarned} XP${quest.coinsEarned > 0 ? ` · +${quest.coinsEarned} 🪙` : ''}</div>
         </div>
       </div>
     `;
