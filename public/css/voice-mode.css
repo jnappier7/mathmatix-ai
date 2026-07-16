@@ -36,18 +36,55 @@ body.cr-voice .cr-voice-toggle {
   border: 1px solid var(--cr-border);
 }
 
-/* ---- Stage reflow (desktop — the 3-column stage) ---- */
+/* ---- Stage reflow (desktop — the 3-column stage) ----
+   Voice drops the running transcript entirely: the tutor's speech is
+   captioned live under the cam (voice-subtitles.js) and the workspace
+   takes the floor. [tutor cam ~30% | shared workspace]. The transcript
+   keeps recording into the hidden chat container — the History control
+   opens it as a drawer.
+   NOTE: the grid child in column 1 is .cr-hero-col (the wrapper around
+   the hero + courses card), not .cr-tutor-hero — ordering the hero
+   directly stopped working when the wrapper landed. */
 @media (min-width: 1201px) {
   body.cr-voice .cr-stage {
-    grid-template-columns: 360px minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(300px, 30%) minmax(0, 1fr);
   }
-  body.cr-voice .cr-tutor-hero  { order: 1; }
+  body.cr-voice .cr-hero-col    { order: 1; }
   body.cr-voice #cr-workspace   { order: 2; }   /* centre stage */
-  body.cr-voice #chat-container { order: 3; }   /* becomes the transcript */
 
-  /* Transcript: a calmer, more compact read than the active chat. */
-  body.cr-voice #chat-container { opacity: 0.96; }
-  body.cr-voice #chat-messages-container { font-size: 13px; }
+  /* No running transcript in voice — captions carry the words. */
+  body.cr-voice #chat-container { display: none; }
+
+  /* The cam is the whole left column: courses + encouragement step aside,
+     captions take the bottom of the hero. */
+  body.cr-voice .cr-courses-card { display: none !important; }
+  body.cr-voice .cr-encourage-card { display: none; }
+
+  /* History drawer: peek the (still-recording) transcript on demand. */
+  body.cr-voice.cr-voice-history #chat-container {
+    display: flex;
+    position: fixed;
+    top: 76px;
+    right: 18px;
+    bottom: 96px;
+    width: 400px;
+    max-width: calc(100vw - 36px);
+    z-index: 60;
+    margin: 0 !important;
+    max-height: none;
+    box-shadow: 0 24px 64px rgba(15, 26, 36, 0.28);
+    opacity: 1;
+  }
+  body.cr-voice.cr-voice-history #chat-messages-container { font-size: 13px; }
+}
+
+/* Board flag off → no workspace to center. Keep the chat visible so
+   voice mode never renders an empty stage. */
+@media (min-width: 1201px) {
+  html.mm-board-hidden body.cr-voice .cr-stage {
+    grid-template-columns: minmax(300px, 30%) minmax(0, 1fr);
+  }
+  html.mm-board-hidden body.cr-voice #chat-container { display: flex; }
 }
 
 /* ---- Voice presence: the tutor hero reads as "live" ----
@@ -57,6 +94,17 @@ body.cr-voice .cr-voice-toggle {
    second competing animation. */
 body.cr-voice .cr-tutor-hero {
   box-shadow: 0 0 0 1px rgba(18, 179, 179, 0.55), 0 0 48px -14px rgba(18, 179, 179, 0.6);
+}
+/* State ring: the cam edge answers "whose turn is it" at a glance.
+   voice-subtitles.js stamps data-voice-state on the hero. */
+body.cr-voice .cr-tutor-hero[data-voice-state="listening"] {
+  box-shadow: 0 0 0 2px rgba(18, 179, 179, 0.65), 0 0 52px -12px rgba(18, 179, 179, 0.65);
+}
+body.cr-voice .cr-tutor-hero[data-voice-state="thinking"] {
+  box-shadow: 0 0 0 2px rgba(239, 159, 39, 0.55), 0 0 52px -12px rgba(239, 159, 39, 0.5);
+}
+body.cr-voice .cr-tutor-hero[data-voice-state="speaking"] {
+  box-shadow: 0 0 0 2px rgba(124, 107, 255, 0.65), 0 0 56px -10px rgba(124, 107, 255, 0.65);
 }
 body.cr-voice .cr-tutor-glow {
   background: radial-gradient(circle,
@@ -161,7 +209,141 @@ body.cr-voice .cr-live-badge { transform: scale(1.06); }
 /* ---- Trim chrome that competes with the voice experience ---- */
 body.cr-voice .cr-quick-actions { display: none; }
 
+/* ============================================================
+   Caption layer (#mm-voice-captions, driven by voice-subtitles.js)
+   Lives at the bottom of the tutor hero, over the idle video.
+   Pinned-light like the rest of the tutor window.
+   ============================================================ */
+#mm-voice-captions { display: none; }
+
+body.cr-voice #mm-voice-captions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  z-index: 3;               /* above idle video (1) + celebration (2) */
+  margin: 10px;
+  pointer-events: auto;
+}
+
+/* -- State chip -- */
+.mm-vc-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #18202B;
+  backdrop-filter: blur(6px);
+}
+.mm-vc-state-dot { width: 8px; height: 8px; border-radius: 50%; }
+.mm-vc-state[data-state="idle"]      .mm-vc-state-dot { background: #B4B2A9; }
+.mm-vc-state[data-state="listening"] .mm-vc-state-dot {
+  background: #12B3B3;
+  box-shadow: 0 0 8px rgba(18, 179, 179, 0.8);
+  animation: mm-vc-pulse 1.6s ease-in-out infinite;
+}
+.mm-vc-state[data-state="thinking"]  .mm-vc-state-dot {
+  background: #EF9F27;
+  animation: mm-vc-pulse 0.8s ease-in-out infinite;
+}
+.mm-vc-state[data-state="speaking"]  .mm-vc-state-dot { background: #7C6BFF; }
+.mm-vc-state[data-state="error"]     .mm-vc-state-dot { background: #E24B4A; }
+@keyframes mm-vc-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.8); }
+}
+/* Tiny waveform, only while the tutor speaks. */
+.mm-vc-wave { display: none; align-items: end; gap: 2px; height: 10px; }
+.mm-vc-state[data-state="speaking"] .mm-vc-wave { display: inline-flex; }
+.mm-vc-wave span {
+  width: 2px; border-radius: 1px; background: #7C6BFF;
+  animation: mm-vc-wavebar 0.9s ease-in-out infinite;
+}
+.mm-vc-wave span:nth-child(1) { height: 40%; animation-delay: 0s; }
+.mm-vc-wave span:nth-child(2) { height: 90%; animation-delay: 0.15s; }
+.mm-vc-wave span:nth-child(3) { height: 60%; animation-delay: 0.3s; }
+@keyframes mm-vc-wavebar {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1); }
+}
+
+/* -- Tutor karaoke caption -- */
+.mm-vc-tutor {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 14px;
+  padding: 10px 13px;
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #18202B;
+  max-height: calc(1.45em * 3 + 20px);   /* trailing 3-line window */
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+}
+
+/* -- Student echo -- */
+.mm-vc-student {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-end;
+  max-width: 95%;
+  background: rgba(225, 245, 238, 0.94);
+  border: 1px solid rgba(18, 179, 179, 0.3);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 12.5px;
+  color: #04342C;
+}
+.mm-vc-student .fa-microphone {
+  color: #0F9B8E;
+  font-size: 12px;
+  /* mic pip breathes with input level (--mic-amp set by voice-subtitles) */
+  text-shadow: 0 0 calc(2px + var(--mic-amp, 0) * 8px) rgba(18, 179, 179, 0.9);
+}
+.mm-vc-student.is-interim { font-style: italic; opacity: 0.75; }
+.mm-vc-student[hidden] { display: none; }
+.mm-vc-tutor[hidden] { display: none; }
+
+/* -- Replay / History -- */
+.mm-vc-actions { display: flex; gap: 8px; }
+.mm-vc-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #444441;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms ease, transform 120ms ease;
+}
+.mm-vc-actions button:hover { background: #FFFFFF; }
+.mm-vc-actions button:active { transform: scale(0.96); }
+#mm-vc-replay.is-empty { animation: mm-vc-shake 0.4s ease; }
+@keyframes mm-vc-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+body.cr-voice-history #mm-vc-history {
+  background: #EDE9FF;
+  border-color: rgba(124, 107, 255, 0.5);
+  color: #3C3489;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cr-stage { transition: none; }
   body.cr-voice .cr-tutor-hero { animation: none; }
+  .mm-vc-state-dot, .mm-vc-wave span, #mm-vc-replay.is-empty { animation: none; }
 }

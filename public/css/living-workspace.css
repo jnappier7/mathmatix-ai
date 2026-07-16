@@ -39,6 +39,31 @@
   }
 }
 
+/* The APP theme outranks the OS preference. theme-toggle.js stamps
+   data-theme on <html> (chat defaults to light), so a light-theme student
+   on a dark-OS machine no longer gets a dark board beside the light tutor
+   panel — and an explicit dark pick stays dark on a light OS. */
+html[data-theme="light"] .lws-root {
+  --lws-grid-bg: #f5f7fb;
+  --lws-grid-minor: rgba(15, 23, 42, 0.06);
+  --lws-grid-major: rgba(15, 23, 42, 0.12);
+  --lws-grid-border: rgba(15, 23, 42, 0.20);
+  --lws-card-bg: #ffffff;
+  --lws-card-border: rgba(15, 23, 42, 0.14);
+  --lws-card-ink: #18202b;
+  --lws-accent: #6c5ce7;
+}
+html[data-theme="dark"] .lws-root {
+  --lws-grid-bg: #0f1422;
+  --lws-grid-minor: rgba(255, 255, 255, 0.05);
+  --lws-grid-major: rgba(255, 255, 255, 0.11);
+  --lws-grid-border: rgba(255, 255, 255, 0.22);
+  --lws-card-bg: #1b2238;
+  --lws-card-border: rgba(255, 255, 255, 0.14);
+  --lws-card-ink: #e6e9f2;
+  --lws-accent: #8b7bff;
+}
+
 .lws-grid { position: absolute; inset: 0; display: block; }
 .lws-overlay { position: absolute; inset: 0; pointer-events: none; }
 

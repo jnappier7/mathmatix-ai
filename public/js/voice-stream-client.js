@@ -57,7 +57,21 @@
 
             // Pending audio buffer to play once context is running
             this._pendingChunks = [];
+
+            // Analyser on the output chain — feeds the voice-reactive glow
+            // (chat-voice-meter.js) which the streaming path never powered.
+            this.outAnalyser = null;
+
+            // Last-turn PCM retention for the caption bar's replay button.
+            // Chunks accumulate per tutor turn (cleared on turn_start),
+            // capped so a runaway turn can't hoard memory.
+            this._turnPcm = [];
+            this._turnPcmSamples = 0;
+            this._replaying = false;
         }
+
+        // ~120s at 22.05kHz mono — a generous ceiling for one tutor turn.
+        static get REPLAY_MAX_SAMPLES() { return 22050 * 120; }
 
         async connect() {
             if (this.ws && this.ws.readyState <= 1) return;
@@ -158,7 +172,13 @@
                 });
                 this.outGain = this.audioCtx.createGain();
                 this.outGain.gain.value = 1.0;
-                this.outGain.connect(this.audioCtx.destination);
+                // outGain → analyser → destination, mirroring modules/audio.js,
+                // so the tutor glow reacts on the streaming path too.
+                this.outAnalyser = this.audioCtx.createAnalyser();
+                this.outAnalyser.fftSize = 256;
+                this.outAnalyser.smoothingTimeConstant = 0.8;
+                this.outGain.connect(this.outAnalyser);
+                this.outAnalyser.connect(this.audioCtx.destination);
                 try {
                     await this.audioCtx.audioWorklet.addModule(WORKLET_PATH);
                 } catch (err) {
@@ -274,6 +294,7 @@
             this._sendJson({ type: 'barge_in', at_ms: Date.now() });
             this.aiSpeaking = false;
             this.consecutiveLoudFrames = 0;
+            this._dispatchPlaybackEvent('audioPlaybackEnded');
             this.on({ type: 'barge_in' });
         }
 
@@ -331,6 +352,11 @@
             if (this.audioCtx.state === 'suspended') {
                 this.audioCtx.resume().catch(() => {});
             }
+            // Retain the live turn's PCM for replay (replays don't re-record).
+            if (!this._replaying && this._turnPcmSamples < VoiceStreamClient.REPLAY_MAX_SAMPLES) {
+                this._turnPcm.push({ i16, sampleRate });
+                this._turnPcmSamples += i16.length;
+            }
             const f32 = new Float32Array(i16.length);
             for (let i = 0; i < i16.length; i++) f32[i] = i16[i] / 0x8000;
             const buf = this.audioCtx.createBuffer(1, f32.length, sampleRate);
@@ -345,6 +371,7 @@
                 this.aiSpeaking = true;
                 this.consecutiveLoudFrames = 0;
                 this.on({ type: 'ai_speaking_started' });
+                this._dispatchPlaybackEvent('audioPlaybackStarted');
             }
             // When the last scheduled chunk completes, mark AI as no longer speaking
             const expectedDoneAt = this.scheduledUntil;
@@ -352,8 +379,38 @@
                 if (this.audioCtx.currentTime >= expectedDoneAt - 0.02 && this.aiSpeaking) {
                     this.aiSpeaking = false;
                     this.on({ type: 'ai_speaking_ended' });
+                    this._dispatchPlaybackEvent('audioPlaybackEnded');
                 }
             }, (buf.duration + 0.05) * 1000);
+        }
+
+        // Same DOM events modules/audio.js fires — chat-voice-meter.js listens
+        // for them to drive --voice-amp, so the glow now works on this path.
+        _dispatchPlaybackEvent(name) {
+            try {
+                document.dispatchEvent(new CustomEvent(name, {
+                    detail: { analyser: this.outAnalyser }
+                }));
+            } catch (_) { /* SSR/odd envs */ }
+        }
+
+        /**
+         * Replay the tutor's last spoken turn from retained PCM.
+         * Returns false when there's nothing to replay or audio is busy.
+         */
+        replayLastTurn() {
+            if (!this.audioCtx || this.aiSpeaking || !this._turnPcm.length) return false;
+            this._replaying = true;
+            this.scheduledUntil = this.audioCtx.currentTime;
+            for (const chunk of this._turnPcm) {
+                this._playPcmS16(chunk.i16, chunk.sampleRate);
+            }
+            this._replaying = false;
+            return true;
+        }
+
+        hasReplayableTurn() {
+            return this._turnPcm.length > 0;
         }
 
         _handleEvent(msg) {
@@ -372,6 +429,9 @@
                     this.on({ type: 'transcript_final', text: msg.text });
                     break;
                 case 'turn_start':
+                    // Fresh tutor turn — previous turn's replay buffer expires.
+                    this._turnPcm = [];
+                    this._turnPcmSamples = 0;
                     this.on({ type: 'turn_start', turnId: msg.turnId, transcript: msg.transcript });
                     break;
                 case 'response_delta':
