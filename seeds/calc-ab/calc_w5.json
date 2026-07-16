@@ -1,0 +1,242 @@
+{
+  "week": 5,
+  "title": "Exit Exam: Mini-AP Comprehensive",
+  "mc": [
+    {
+      "n": 1,
+      "unit": "U1",
+      "skill": "Limits of trigonometric quotients",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "lim(x→0) sin(5x)/(3x) =",
+      "choices": ["0", "3/5", "1", "5/3"],
+      "answer": 3,
+      "explanation": "Rewrite sin(5x)/(3x) = (5/3)·(sin(5x)/(5x)). Because lim(u→0) sin(u)/u = 1, the limit is (5/3)·1 = 5/3. The distractor 1 comes from applying sin(u)/u = 1 without accounting for the mismatched coefficients, and 3/5 comes from inverting the ratio.",
+      "verify": "import sympy as sp; x=sp.Symbol('x'); assert sp.limit(sp.sin(5*x)/(3*x), x, 0) == sp.Rational(5,3)",
+      "figure": null
+    },
+    {
+      "n": 2,
+      "unit": "U2",
+      "skill": "Limit definition of the derivative",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "lim(h→0) ((2 + h)⁵ − 32)/h =",
+      "choices": ["16", "32", "80", "160"],
+      "answer": 2,
+      "explanation": "This limit is the definition of f′(2) for f(x) = x⁵, since f(2) = 32. Because f′(x) = 5x⁴, the value is f′(2) = 5·2⁴ = 80. The distractor 16 is 2⁴ (forgot the factor of 5), 32 is f(2), and 160 is 5·32 = 5·f(2).",
+      "verify": "import sympy as sp; h=sp.Symbol('h'); assert sp.limit(((2+h)**5 - 32)/h, h, 0) == 80",
+      "figure": null
+    },
+    {
+      "n": 3,
+      "unit": "U2",
+      "skill": "Product rule",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If f(x) = x² sin x, then f′(π) =",
+      "choices": ["−π²", "−2π", "0", "π²"],
+      "answer": 0,
+      "explanation": "By the product rule, f′(x) = 2x sin x + x² cos x. At x = π, sin π = 0 and cos π = −1, so f′(π) = 0 + π²(−1) = −π². The distractor −2π is the classic error of multiplying the two derivatives, (2x)(cos x) = 2π(−1).",
+      "verify": "import sympy as sp; x=sp.Symbol('x'); assert sp.diff(x**2*sp.sin(x), x).subs(x, sp.pi) == -sp.pi**2",
+      "figure": null
+    },
+    {
+      "n": 4,
+      "unit": "U3",
+      "skill": "Implicit differentiation",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If x² + xy + y² = 7, what is dy/dx at the point (1, 2)?",
+      "choices": ["−4/5", "−1/2", "4/5", "5/4"],
+      "answer": 0,
+      "explanation": "Differentiating implicitly: 2x + y + x(dy/dx) + 2y(dy/dx) = 0, so dy/dx = −(2x + y)/(x + 2y). At (1, 2) this is −(2 + 2)/(1 + 4) = −4/5. The distractor −1/2 comes from forgetting the product rule on the xy term (using only −2x/(2y)), and 4/5 is a sign error.",
+      "verify": "import sympy as sp; x,y=sp.symbols('x y'); F=x**2 + x*y + y**2 - 7; dydx=-sp.diff(F,x)/sp.diff(F,y); assert dydx.subs({x:1, y:2}) == sp.Rational(-4,5)",
+      "figure": null
+    },
+    {
+      "n": 5,
+      "unit": "U3",
+      "skill": "Derivative of an inverse function",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "Let f be a differentiable function with f(2) = 5 and f′(2) = 3. If g is the inverse function of f, what is g′(5)?",
+      "choices": ["−1/3", "1/5", "1/3", "3"],
+      "answer": 2,
+      "explanation": "Since g = f⁻¹ and f(2) = 5, we have g(5) = 2, and g′(5) = 1/f′(g(5)) = 1/f′(2) = 1/3. The distractor 3 forgets to take the reciprocal, 1/5 uses f(2) = 5 instead of f′(2), and −1/3 confuses the reciprocal with a negative reciprocal.",
+      "verify": "import sympy as sp; x,y=sp.symbols('x y'); f=3*x - 1; g=sp.solve(sp.Eq(y, f), x)[0]; assert f.subs(x,2)==5 and sp.diff(f,x)==3 and sp.diff(g, y).subs(y, 5) == sp.Rational(1,3)",
+      "figure": null
+    },
+    {
+      "n": 6,
+      "unit": "U4",
+      "skill": "Related rates",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "A spherical piece of ice melts so that its volume decreases at a constant rate of 36π cm³ per minute. At the instant when the radius is 3 cm, what is the rate of change of the radius, in cm per minute? (The volume of a sphere is V = (4/3)πr³.)",
+      "choices": ["−1", "−1/3", "1/3", "1"],
+      "answer": 0,
+      "explanation": "Differentiating V = (4/3)πr³ with respect to t gives dV/dt = 4πr²(dr/dt). Substituting dV/dt = −36π and r = 3: −36π = 4π(9)(dr/dt), so dr/dt = −36π/(36π) = −1 cm/min. The radius is shrinking, so the rate must be negative; the distractor 1 drops the sign of dV/dt.",
+      "verify": "import sympy as sp; r=sp.Symbol('r'); V=sp.Rational(4,3)*sp.pi*r**3; dVdr=sp.diff(V, r); assert sp.simplify(-36*sp.pi/dVdr.subs(r,3)) == -1",
+      "figure": null
+    },
+    {
+      "n": 7,
+      "unit": "U5",
+      "skill": "First derivative test from a graph of f′",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "The figure shows the graph of f′, the derivative of a function f, on the interval −4 ≤ x ≤ 4. At which value of x does f have a relative maximum?",
+      "choices": ["x = −3", "x = 1", "x = 2", "x = 4"],
+      "answer": 1,
+      "explanation": "f has a relative maximum where f′ changes sign from positive to negative. From the graph, f′ > 0 on (−3, 1) and f′ < 0 on (1, 4), so f changes from increasing to decreasing at x = 1, giving a relative maximum there. At x = −3, f′ changes from negative to positive, which is a relative minimum.",
+      "verify": "import sympy as sp; x=sp.Symbol('x'); fp=2 - 2*x; assert fp.subs(x, sp.Rational(1,2)) > 0 and fp.subs(x, 1) == 0 and fp.subs(x, sp.Rational(3,2)) < 0",
+      "figure": {"kind": "pwlinear", "params": {"pts": [[-4,-2],[-2,2],[0,2],[2,-2],[4,0]], "xmin": -4, "xmax": 4, "ymin": -4, "ymax": 4}}
+    },
+    {
+      "n": 8,
+      "unit": "U5",
+      "skill": "Mean Value Theorem",
+      "practice": "MP3",
+      "calc": false,
+      "stem": "Let f(x) = x³ on the closed interval [0, 3]. What is the value of c guaranteed by the Mean Value Theorem on this interval?",
+      "choices": ["−√3", "1", "3/2", "√3"],
+      "answer": 3,
+      "explanation": "f is continuous on [0, 3] and differentiable on (0, 3), so the MVT applies. The average rate of change is (f(3) − f(0))/(3 − 0) = 27/3 = 9, and f′(c) = 3c² = 9 gives c = ±√3. Only c = √3 lies in the open interval (0, 3), so the guaranteed value is c = √3; the distractor −√3 forgets to reject the root outside the interval.",
+      "verify": "import sympy as sp; c=sp.Symbol('c'); sols=sp.solve(sp.Eq(3*c**2, sp.Rational(27,3)), c); assert sp.sqrt(3) in sols and all(not (0 < s < 3) for s in sols if s != sp.sqrt(3))",
+      "figure": null
+    },
+    {
+      "n": 9,
+      "unit": "U6",
+      "skill": "Riemann sums from a table",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "The rate at which vehicles pass a highway checkpoint, in vehicles per hour, is given by a differentiable function R of time t. Selected values of R(t) are shown in the table. Using a left Riemann sum with the four subintervals indicated by the table, what is the approximate total number of vehicles that pass the checkpoint from t = 0 to t = 10 hours?",
+      "choices": ["2750", "5750", "5875", "6000"],
+      "answer": 1,
+      "explanation": "The left Riemann sum uses the left endpoint value on each subinterval times its width: (2)(400) + (3)(550) + (3)(700) + (2)(600) = 800 + 1650 + 2100 + 1200 = 5750 vehicles. The distractor 6000 is the right Riemann sum, 5875 is the trapezoidal estimate, and 2750 is the sum of the table values with the subinterval widths ignored.",
+      "verify": "ts=[0,2,5,8,10]; Rs=[400,550,700,600,500]; left=sum((ts[i+1]-ts[i])*Rs[i] for i in range(4)); right=sum((ts[i+1]-ts[i])*Rs[i+1] for i in range(4)); trap=sum((ts[i+1]-ts[i])*(Rs[i]+Rs[i+1])/2 for i in range(4)); assert left==5750 and right==6000 and trap==5875",
+      "figure": {"kind": "table", "params": {"headers": ["t (hours)", "R(t) (vehicles per hour)"], "rows": [[0, 400], [2, 550], [5, 700], [8, 600], [10, 500]]}}
+    },
+    {
+      "n": 10,
+      "unit": "U7",
+      "skill": "Slope fields",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "The figure shows a slope field. The slope field could represent which of the following differential equations?",
+      "choices": ["dy/dx = x + y", "dy/dx = y − x", "dy/dx = x·y", "dy/dx = x − y"],
+      "answer": 3,
+      "explanation": "In the figure, every segment along the line y = x is horizontal, so dy/dx = 0 whenever y = x; this eliminates dy/dx = x + y and dy/dx = x·y. Below the line y = x the slopes are positive and above it they are negative, which matches dy/dx = x − y (for example, slope 2 at (2, 0) and slope −2 at (0, 2)). The equation dy/dx = y − x would reverse those signs.",
+      "verify": "import sympy as sp; x,y=sp.symbols('x y'); s=x - y; assert s.subs({x:1, y:1}) == 0 and s.subs({x:2, y:0}) == 2 and s.subs({x:0, y:2}) == -2",
+      "figure": {"kind": "slopefield", "params": {"expr": "x - y", "xmin": -3, "xmax": 3, "ymin": -3, "ymax": 3, "step": 1}}
+    },
+    {
+      "n": 11,
+      "unit": "U4",
+      "skill": "Derivative in context (rate of change)",
+      "practice": "MP4",
+      "calc": true,
+      "stem": "The rate at which vehicles enter a stretch of highway is modeled by R(t) = 100 + 30 sin(t/2) vehicles per hour, where t is measured in hours for 0 ≤ t ≤ 8. What is R′(3), the rate at which R is changing at time t = 3 hours?",
+      "choices": ["−14.850 vehicles per hour per hour", "1.061 vehicles per hour per hour", "2.122 vehicles per hour per hour", "129.925 vehicles per hour per hour"],
+      "answer": 1,
+      "explanation": "By the chain rule, R′(t) = 30 cos(t/2)·(1/2) = 15 cos(t/2), so R′(3) = 15 cos(1.5) ≈ 1.061 vehicles per hour per hour. The distractor 2.122 drops the chain rule factor of 1/2, −14.850 evaluates 15 cos(3) instead of 15 cos(3/2), and 129.925 is R(3) rather than R′(3).",
+      "verify": "import sympy as sp; t=sp.Symbol('t'); R=100 + 30*sp.sin(t/2); val=float(sp.diff(R, t).subs(t, 3)); assert abs(val - 1.061) < 0.001 and abs(float(30*sp.cos(sp.Rational(3,2))) - 2.122) < 0.001",
+      "figure": null
+    },
+    {
+      "n": 12,
+      "unit": "U6",
+      "skill": "Definite integral of a rate (accumulation in context)",
+      "practice": "MP4",
+      "calc": true,
+      "stem": "Ice in a storage container melts at a rate of m(t) = 2e^(−0.5t) kilograms per hour, where t is measured in hours. According to this model, how many kilograms of ice melt during the time interval 0 ≤ t ≤ 4?",
+      "choices": ["0.541 kg", "1.729 kg", "3.459 kg", "6.918 kg"],
+      "answer": 2,
+      "explanation": "The total amount melted is the integral of the rate: ∫₀⁴ 2e^(−0.5t) dt = [−4e^(−0.5t)] from 0 to 4 = 4 − 4e^(−2) ≈ 3.459 kg. The distractor 1.729 forgets to divide by −0.5 when antidifferentiating (using −2e^(−0.5t)), 6.918 doubles the answer, and 0.541 is 4e^(−2), the result of reversing the bounds' contributions.",
+      "verify": "import sympy as sp; t=sp.Symbol('t'); val=float(sp.integrate(2*sp.exp(-t/2), (t, 0, 4))); assert abs(val - 3.459) < 0.001",
+      "figure": null
+    },
+    {
+      "n": 13,
+      "unit": "U6",
+      "skill": "FTC Part 1 with chain rule",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "Let h(x) = ∫ from 0 to x² of cos t dt. What is h′(1.2)?",
+      "choices": ["0.130", "0.313", "0.870", "2.400"],
+      "answer": 1,
+      "explanation": "By the Fundamental Theorem of Calculus with the chain rule, h′(x) = cos(x²)·2x. So h′(1.2) = 2(1.2)cos(1.44) ≈ 2.4(0.13042) ≈ 0.313. The distractor 0.130 is cos(1.44) with the chain rule factor 2x dropped, 0.870 is 2.4 cos(1.2) (substituting x instead of x²), and 2.400 is only the factor 2x.",
+      "verify": "import sympy as sp; x,u=sp.symbols('x u'); h=sp.integrate(sp.cos(u), (u, 0, x**2)); val=float(sp.diff(h, x).subs(x, sp.Rational(6,5))); assert abs(val - 0.313) < 0.001",
+      "figure": null
+    },
+    {
+      "n": 14,
+      "unit": "U5",
+      "skill": "Absolute extrema (candidates test)",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "What is the absolute minimum value of f(x) = x³ − 5x + 2 on the closed interval [0, 3]?",
+      "choices": ["−2.303", "1.291", "2.000", "14.000"],
+      "answer": 0,
+      "explanation": "f′(x) = 3x² − 5 = 0 gives x = √(5/3) ≈ 1.291 as the only critical point in [0, 3]. Comparing candidates: f(0) = 2, f(1.291) ≈ −2.303, and f(3) = 14, so the absolute minimum value is ≈ −2.303. The distractor 1.291 is the location of the minimum rather than the minimum value — a classic AP error.",
+      "verify": "import sympy as sp; x=sp.Symbol('x'); f=x**3 - 5*x + 2; c=sp.sqrt(sp.Rational(5,3)); assert sp.solve(sp.diff(f,x), x)==[-c, c]; m=min(float(f.subs(x, v)) for v in [0, c, 3]); assert abs(m - (-2.303)) < 0.001",
+      "figure": null
+    },
+    {
+      "n": 15,
+      "unit": "U8",
+      "skill": "Area between curves",
+      "practice": "MP2",
+      "calc": true,
+      "stem": "Let S be the region in the xy-plane bounded by the graphs of y = cos x and y = x², shown shaded in the figure. What is the area of S?",
+      "choices": ["0.547", "0.824", "1.095", "1.468"],
+      "answer": 2,
+      "explanation": "The curves intersect where cos x = x², at x = ±0.824 (found with a calculator). Since cos x ≥ x² between the intersection points, the area is ∫ from −0.824 to 0.824 of (cos x − x²) dx ≈ 1.095. The distractor 0.547 integrates only from 0 to 0.824 (half the region), 0.824 is the intersection coordinate, and 1.468 omits the x² term from the integrand.",
+      "verify": "import sympy as sp; x=sp.Symbol('x'); a=sp.nsolve(sp.cos(x) - x**2, 0.8); area=float(sp.integrate(sp.cos(x) - x**2, (x, -a, a))); assert abs(float(a) - 0.824) < 0.001 and abs(area - 1.095) < 0.001",
+      "figure": {"kind": "region", "params": {"expr1": "np.cos(x)", "expr2": "x**2", "a": -0.8241, "b": 0.8241, "xmin": -1.5, "xmax": 1.5, "ymin": -0.5, "ymax": 1.5}}
+    }
+  ],
+  "frq": {
+    "unit": "U8",
+    "skill": "Particle motion",
+    "calc": false,
+    "context": "A particle moves along the x-axis so that its velocity at time t, for 0 ≤ t ≤ 5, is given by v(t) = t² − 6t + 8. The position of the particle at time t is x(t), and x(0) = 3.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Find the acceleration of the particle at time t = 1. Is the speed of the particle increasing or decreasing at t = 1? Give a reason for your answer.",
+        "points": 2,
+        "solution": "a(t) = v′(t) = 2t − 6, so a(1) = −4. Since v(1) = 1 − 6 + 8 = 3 > 0 and a(1) = −4 < 0, the velocity and acceleration have opposite signs at t = 1, so the speed of the particle is decreasing at t = 1.",
+        "rubric": ["1 pt: a(1) = −4 (from a(t) = v′(t) = 2t − 6)", "1 pt: states speed is decreasing WITH reason: v(1) = 3 > 0 and a(1) = −4 < 0 have opposite signs"],
+        "verify": "import sympy as sp; t=sp.Symbol('t'); v=t**2 - 6*t + 8; a=sp.diff(v, t); assert a.subs(t, 1) == -4 and v.subs(t, 1) == 3"
+      },
+      {
+        "label": "b",
+        "prompt": "Find all times t, 0 ≤ t ≤ 5, at which the particle changes direction. Justify your answer.",
+        "points": 2,
+        "solution": "v(t) = t² − 6t + 8 = (t − 2)(t − 4) = 0 at t = 2 and t = 4. Since v(t) > 0 on (0, 2), v(t) < 0 on (2, 4), and v(t) > 0 on (4, 5), the velocity changes sign at both t = 2 and t = 4. Therefore the particle changes direction at t = 2 and t = 4.",
+        "rubric": ["1 pt: identifies t = 2 and t = 4 (sets v(t) = 0 and solves)", "1 pt: justification that v(t) changes sign at each of t = 2 and t = 4 (positive to negative at t = 2, negative to positive at t = 4)"],
+        "verify": "import sympy as sp; t=sp.Symbol('t'); v=t**2 - 6*t + 8; assert sorted(sp.solve(v, t)) == [2, 4] and v.subs(t, 1) > 0 and v.subs(t, 3) < 0 and v.subs(t, 5) > 0"
+      },
+      {
+        "label": "c",
+        "prompt": "Find the position of the particle at time t = 3.",
+        "points": 2,
+        "solution": "x(3) = x(0) + ∫₀³ v(t) dt = 3 + [t³/3 − 3t² + 8t] from 0 to 3 = 3 + (9 − 27 + 24) = 3 + 6 = 9. The particle is at x = 9 at time t = 3.",
+        "rubric": ["1 pt: expresses position as x(3) = x(0) + ∫₀³ v(t) dt (or an equivalent antiderivative with the initial condition x(0) = 3)", "1 pt: x(3) = 9"],
+        "verify": "import sympy as sp; t=sp.Symbol('t'); v=t**2 - 6*t + 8; assert 3 + sp.integrate(v, (t, 0, 3)) == 9"
+      },
+      {
+        "label": "d",
+        "prompt": "Find the total distance traveled by the particle over the time interval 0 ≤ t ≤ 5.",
+        "points": 3,
+        "solution": "Total distance = ∫₀⁵ |v(t)| dt. Splitting at the sign changes t = 2 and t = 4 with F(t) = t³/3 − 3t² + 8t: ∫₀² v dt = 20/3, ∫₂⁴ v dt = 16/3 − 20/3 = −4/3, and ∫₄⁵ v dt = 20/3 − 16/3 = 4/3. Total distance = 20/3 + |−4/3| + 4/3 = 28/3. The particle travels 28/3 units.",
+        "rubric": ["1 pt: sets up total distance as ∫₀⁵ |v(t)| dt or splits the integral at t = 2 and t = 4", "1 pt: correct antidifferentiation and evaluation of the three pieces (20/3, −4/3, 4/3)", "1 pt: total distance = 28/3"],
+        "verify": "import sympy as sp; t=sp.Symbol('t'); v=t**2 - 6*t + 8; d=sp.integrate(v,(t,0,2)) - sp.integrate(v,(t,2,4)) + sp.integrate(v,(t,4,5)); assert d == sp.Rational(28,3) and sp.integrate(sp.Abs(v),(t,0,5)) == sp.Rational(28,3)"
+      }
+    ],
+    "figure": null
+  }
+}

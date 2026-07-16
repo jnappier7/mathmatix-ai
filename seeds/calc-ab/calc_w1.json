@@ -1,0 +1,280 @@
+{
+  "week": 1,
+  "title": "Foundations: Limits and Basic Differentiation",
+  "mc": [
+    {
+      "n": 1,
+      "unit": "U1",
+      "skill": "Limits by algebraic manipulation",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "lim(x→2) (x² − 5x + 6)/(x − 2) is",
+      "choices": ["−1", "0", "1", "nonexistent"],
+      "answer": 0,
+      "explanation": "Direct substitution gives the indeterminate form 0/0, so factor: x² − 5x + 6 = (x − 2)(x − 3). For x ≠ 2 the expression equals x − 3, so the limit is 2 − 3 = −1. The 0/0 form does not mean the limit fails to exist; it signals that algebraic simplification is needed.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.limit((x**2 - 5*x + 6)/(x - 2), x, 2) == -1",
+      "figure": null
+    },
+    {
+      "n": 2,
+      "unit": "U1",
+      "skill": "Limits at infinity and horizontal asymptotes",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "lim(x→∞) (6x² − x + 4)/(2x² + 5x) is",
+      "choices": ["0", "3", "6", "∞"],
+      "answer": 1,
+      "explanation": "The numerator and denominator have the same degree, so the limit is the ratio of the leading coefficients: 6/2 = 3. Dividing every term by x² makes this explicit, since −1/x, 4/x², and 5/x all approach 0 as x → ∞. Choosing 6 uses only the numerator's leading coefficient, and 0 or ∞ come from misreading the degrees.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.limit((6*x**2 - x + 4)/(2*x**2 + 5*x), x, sp.oo) == 3",
+      "figure": null
+    },
+    {
+      "n": 3,
+      "unit": "U1",
+      "skill": "Special trigonometric limits",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "lim(x→0) sin(5x)/(3x) is",
+      "choices": ["0", "3/5", "1", "5/3"],
+      "answer": 3,
+      "explanation": "Rewrite sin(5x)/(3x) = (5/3)·[sin(5x)/(5x)]. As x → 0, sin(5x)/(5x) → 1 by the special limit lim(u→0) sin u / u = 1, so the limit is 5/3. Answering 1 ignores the mismatched coefficients, and 3/5 inverts the ratio.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.limit(sp.sin(5*x)/(3*x), x, 0) == sp.Rational(5, 3)",
+      "figure": null
+    },
+    {
+      "n": 4,
+      "unit": "U1",
+      "skill": "Infinite limits and vertical asymptotes from a graph",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "The graph of the function f shown above has a vertical asymptote at x = 1 and a horizontal asymptote at y = 2. Which of the following statements is true?",
+      "choices": [
+        "f is continuous at x = 1",
+        "lim(x→1) f(x) = 2",
+        "lim(x→∞) f(x) = ∞",
+        "lim(x→1⁻) f(x) = −∞ and lim(x→1⁺) f(x) = ∞"
+      ],
+      "answer": 3,
+      "explanation": "As x approaches 1 from the left, the graph falls without bound, so lim(x→1⁻) f(x) = −∞; from the right it rises without bound, so lim(x→1⁺) f(x) = ∞. Because the one-sided behaviors are unbounded, f has neither a limit nor continuity at x = 1. As x → ∞ the graph approaches the horizontal asymptote y = 2, not ∞.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nf = 2 + 1/(x - 1)\nassert sp.limit(f, x, 1, '-') == -sp.oo\nassert sp.limit(f, x, 1, '+') == sp.oo\nassert sp.limit(f, x, sp.oo) == 2",
+      "figure": {
+        "kind": "fgraph",
+        "params": {
+          "expr": "2 + 1/(x - 1)",
+          "xmin": -3,
+          "xmax": 5,
+          "ymin": -6,
+          "ymax": 10
+        }
+      }
+    },
+    {
+      "n": 5,
+      "unit": "U1",
+      "skill": "Continuity at a point (removable discontinuity)",
+      "practice": "MP3",
+      "calc": false,
+      "stem": "Let f(x) = (x² − 16)/(x − 4) for x ≠ 4, and f(4) = 3k − 1, where k is a constant. For what value of k is f continuous at x = 4?",
+      "choices": ["7/3", "8/3", "3", "8"],
+      "answer": 2,
+      "explanation": "For continuity at x = 4, we need lim(x→4) f(x) = f(4). Factoring gives (x − 4)(x + 4)/(x − 4) = x + 4 for x ≠ 4, so the limit is 8. Setting 3k − 1 = 8 gives k = 3. Answering 8 finds the limit but never solves for k; 7/3 comes from the sign error 3k = 8 − 1.",
+      "verify": "import sympy as sp\nx, k = sp.symbols('x k')\nL = sp.limit((x**2 - 16)/(x - 4), x, 4)\nassert L == 8\nassert sp.solve(sp.Eq(3*k - 1, L), k) == [3]",
+      "figure": null
+    },
+    {
+      "n": 6,
+      "unit": "U2",
+      "skill": "Power rule with negative exponents",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If f(x) = 2x³ − 4/x, then f′(x) =",
+      "choices": ["6x² − 4/x²", "6x² − 4", "6x² + 4/x²", "6x² − 4 ln|x|"],
+      "answer": 2,
+      "explanation": "Rewrite f(x) = 2x³ − 4x⁻¹. The power rule gives f′(x) = 6x² − 4(−1)x⁻² = 6x² + 4/x². The sign flip from d/dx[x⁻¹] = −x⁻² is essential: dropping it gives the distractor 6x² − 4/x², and 6x² − 4 ln|x| confuses differentiation with antidifferentiation of 1/x.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.simplify(sp.diff(2*x**3 - 4/x, x) - (6*x**2 + 4/x**2)) == 0",
+      "figure": null
+    },
+    {
+      "n": 7,
+      "unit": "U2",
+      "skill": "Recognizing the limit definition of the derivative",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "lim(h→0) [(2 + h)⁵ − 32]/h is",
+      "choices": ["0", "16", "32", "80"],
+      "answer": 3,
+      "explanation": "This limit has the form lim(h→0) [f(2 + h) − f(2)]/h with f(x) = x⁵, since f(2) = 32. Therefore the limit equals f′(2). Because f′(x) = 5x⁴, the value is 5(2)⁴ = 80. Answering 32 confuses the limit with f(2), and 16 stops at 2⁴ without the factor of 5.",
+      "verify": "import sympy as sp\nh = sp.symbols('h')\nassert sp.limit(((2 + h)**5 - 32)/h, h, 0) == 80",
+      "figure": null
+    },
+    {
+      "n": 8,
+      "unit": "U2",
+      "skill": "Product rule with trigonometric functions",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "d/dx[x² cos x] =",
+      "choices": [
+        "−2x sin x",
+        "2x cos x + x² sin x",
+        "2x sin x + x² cos x",
+        "2x cos x − x² sin x"
+      ],
+      "answer": 3,
+      "explanation": "By the product rule, d/dx[x² cos x] = (2x)(cos x) + (x²)(−sin x) = 2x cos x − x² sin x. The distractor −2x sin x is the classic error of multiplying the two derivatives together, and 2x cos x + x² sin x forgets that d/dx[cos x] = −sin x.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.simplify(sp.diff(x**2*sp.cos(x), x) - (2*x*sp.cos(x) - x**2*sp.sin(x))) == 0",
+      "figure": null
+    },
+    {
+      "n": 9,
+      "unit": "U2",
+      "skill": "Quotient rule evaluated at a point",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If f(x) = (3x + 1)/(x² + 2), then f′(1) =",
+      "choices": ["−1/9", "1/9", "1/3", "3/2"],
+      "answer": 1,
+      "explanation": "By the quotient rule, f′(x) = [3(x² + 2) − (3x + 1)(2x)]/(x² + 2)². At x = 1 this is [3(3) − (4)(2)]/3² = (9 − 8)/9 = 1/9. The distractor −1/9 reverses the terms in the numerator, 1/3 forgets to square the denominator, and 3/2 is the erroneous ratio of the separate derivatives 3/(2x).",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nf = (3*x + 1)/(x**2 + 2)\nassert sp.diff(f, x).subs(x, 1) == sp.Rational(1, 9)",
+      "figure": null
+    },
+    {
+      "n": 10,
+      "unit": "U3",
+      "skill": "Implicit differentiation",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If x² + xy + y² = 7, what is dy/dx at the point (1, 2)?",
+      "choices": ["−4/5", "−2/5", "−1", "4/5"],
+      "answer": 0,
+      "explanation": "Differentiating both sides with respect to x gives 2x + (y + x·dy/dx) + 2y·dy/dx = 0, where the xy term requires the product rule. Solving, dy/dx = −(2x + y)/(x + 2y). At (1, 2) this is −(2 + 2)/(1 + 4) = −4/5. The distractor −2/5 comes from forgetting the product rule on xy (losing the y term), and 4/5 is a sign error.",
+      "verify": "import sympy as sp\nx, y = sp.symbols('x y')\ndydx = sp.idiff(x**2 + x*y + y**2 - 7, y, x)\nassert dydx.subs({x: 1, y: 2}) == sp.Rational(-4, 5)",
+      "figure": null
+    },
+    {
+      "n": 11,
+      "unit": "U1",
+      "skill": "Intermediate Value Theorem with a table",
+      "practice": "MP3",
+      "calc": true,
+      "stem": "An oil slick spreads across the surface of a bay. The area of the slick, A(t) square kilometers, is a continuous function of time t, measured in hours. Selected values of A(t) are shown in the table above. What is the minimum number of values of t on the interval 0 ≤ t ≤ 8 for which A(t) = 3?",
+      "choices": ["1", "2", "3", "4"],
+      "answer": 2,
+      "explanation": "Because A is continuous, the Intermediate Value Theorem applies on each subinterval between table values. Since A(0) = 1.2 < 3 < 3.5 = A(2), since A(5) = 2.8 < 3 < 3.5 = A(2), and since A(5) = 2.8 < 3 < 6.0 = A(8), the IVT guarantees at least one solution of A(t) = 3 in each of (0, 2), (2, 5), and (5, 8). Therefore A(t) = 3 for a minimum of 3 values of t; the table cannot guarantee more.",
+      "verify": "vals = [1.2, 3.5, 2.8, 6.0]\ncrossings = sum(1 for i in range(len(vals) - 1) if (vals[i] - 3)*(vals[i+1] - 3) < 0)\nassert crossings == 3",
+      "figure": {
+        "kind": "table",
+        "params": {
+          "headers": ["t (hours)", "A(t) (km²)"],
+          "rows": [[0, 1.2], [2, 3.5], [5, 2.8], [8, 6.0]]
+        }
+      }
+    },
+    {
+      "n": 12,
+      "unit": "U2",
+      "skill": "Slope of a tangent line (derivatives of eˣ and polynomials)",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "Let f(x) = e^x − 3x². What is the slope of the line tangent to the graph of f at x = 1.2?",
+      "choices": ["−5.320", "−3.880", "−1.000", "3.320"],
+      "answer": 1,
+      "explanation": "The slope of the tangent line is f′(1.2). Since f′(x) = e^x − 6x, we get f′(1.2) = e^1.2 − 7.2 ≈ 3.32012 − 7.2 = −3.880. The distractor −1.000 is f(1.2), the function value rather than the slope; −5.320 uses the power-rule error 6x² instead of 6x; and 3.320 differentiates only the e^x term.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nf = sp.exp(x) - 3*x**2\nval = float(sp.diff(f, x).subs(x, sp.Rational(6, 5)))\nassert abs(val - (-3.880)) < 0.0005, val",
+      "figure": null
+    },
+    {
+      "n": 13,
+      "unit": "U2",
+      "skill": "Instantaneous rate of change in context",
+      "practice": "MP2",
+      "calc": true,
+      "stem": "A drone's height above the ground is modeled by h(t) = −0.2t³ + 2.4t² + 1 meters, where t is measured in seconds after launch, 0 ≤ t ≤ 10. What is the instantaneous rate of change of the drone's height, in meters per second, at t = 3.5?",
+      "choices": ["1.050", "5.950", "9.450", "21.825"],
+      "answer": 2,
+      "explanation": "The instantaneous rate of change of height is h′(t) = −0.6t² + 4.8t. At t = 3.5, h′(3.5) = −0.6(12.25) + 4.8(3.5) = −7.35 + 16.8 = 9.450 meters per second. The distractor 5.950 is the average rate of change [h(3.5) − h(0)]/3.5, 21.825 is the height h(3.5) itself, and 1.050 uses the power-rule error 2.4t in place of 4.8t.",
+      "verify": "import sympy as sp\nt = sp.symbols('t')\nh = sp.Rational(-1, 5)*t**3 + sp.Rational(12, 5)*t**2 + 1\nval = float(sp.diff(h, t).subs(t, sp.Rational(7, 2)))\nassert abs(val - 9.450) < 0.0005, val\navg = float((h.subs(t, sp.Rational(7, 2)) - h.subs(t, 0))/sp.Rational(7, 2))\nassert abs(avg - 5.950) < 0.0005, avg",
+      "figure": null
+    },
+    {
+      "n": 14,
+      "unit": "U3",
+      "skill": "Chain rule with exponential functions in context",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "The temperature of a cup of coffee is modeled by T(t) = 68 + 104e^(−0.15t) degrees Fahrenheit, where t is measured in minutes after the coffee is poured. What is T′(4), in degrees Fahrenheit per minute?",
+      "choices": ["−8.561", "8.561", "57.076", "125.076"],
+      "answer": 0,
+      "explanation": "By the chain rule, T′(t) = 104e^(−0.15t)·(−0.15) = −15.6e^(−0.15t). Then T′(4) = −15.6e^(−0.6) ≈ −8.561 degrees Fahrenheit per minute; the negative value indicates the coffee is cooling. The distractor 57.076 drops the chain-rule factor −0.15, 8.561 makes a sign error, and 125.076 is the temperature T(4), not the rate.",
+      "verify": "import sympy as sp\nt = sp.symbols('t')\nT = 68 + 104*sp.exp(sp.Rational(-3, 20)*t)\nval = float(sp.diff(T, t).subs(t, 4))\nassert abs(val - (-8.561)) < 0.0005, val\nassert abs(float(T.subs(t, 4)) - 125.076) < 0.0005",
+      "figure": null
+    },
+    {
+      "n": 15,
+      "unit": "U3",
+      "skill": "Derivative of an inverse function",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "Let f(x) = x³ + 2x − 1, and let g be the inverse function of f. What is the value of g′(11)?",
+      "choices": ["0.003", "0.071", "2.000", "14.000"],
+      "answer": 1,
+      "explanation": "Since g = f⁻¹, g′(11) = 1/f′(g(11)). Solving f(c) = 11, that is c³ + 2c − 12 = 0, gives c = 2, so g(11) = 2. Then f′(x) = 3x² + 2 gives f′(2) = 14, so g′(11) = 1/14 ≈ 0.071. The distractor 0.003 evaluates 1/f′(11) instead of 1/f′(g(11)), 14.000 forgets the reciprocal, and 2.000 stops at g(11).",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nf = x**3 + 2*x - 1\nroots = [r for r in sp.solve(sp.Eq(f, 11), x) if r.is_real]\nassert roots == [2]\nval = float(1/sp.diff(f, x).subs(x, 2))\nassert abs(val - 0.071) < 0.0005, val",
+      "figure": null
+    }
+  ],
+  "frq": {
+    "unit": "U2",
+    "skill": "Limit definition of the derivative and tangent lines",
+    "calc": false,
+    "context": "Let f be the function defined by f(x) = x³ − 4x + 2 for all real numbers x.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Evaluate lim(x→2) [f(x) − f(2)]/(x − 2). Show the computations that lead to your answer.",
+        "points": 2,
+        "solution": "f(2) = 8 − 8 + 2 = 2, so the limit is lim(x→2) (x³ − 4x)/(x − 2) = lim(x→2) x(x − 2)(x + 2)/(x − 2) = lim(x→2) x(x + 2) = 2(4) = 8. (Equivalently, this limit is by definition f′(2).)",
+        "rubric": [
+          "1 pt: recognizes the limit as f′(2) or correctly factors and cancels (x − 2) in the difference quotient",
+          "1 pt: value 8"
+        ],
+        "verify": "import sympy as sp\nx = sp.symbols('x')\nf = x**3 - 4*x + 2\nassert sp.limit((f - f.subs(x, 2))/(x - 2), x, 2) == 8"
+      },
+      {
+        "label": "b",
+        "prompt": "Using the limit definition of the derivative, f′(x) = lim(h→0) [f(x + h) − f(x)]/h, show that f′(x) = 3x² − 4.",
+        "points": 3,
+        "solution": "f(x + h) − f(x) = (x + h)³ − 4(x + h) + 2 − (x³ − 4x + 2) = 3x²h + 3xh² + h³ − 4h. Dividing by h (h ≠ 0) gives 3x² + 3xh + h² − 4. As h → 0, the terms 3xh and h² approach 0, so f′(x) = lim(h→0) (3x² + 3xh + h² − 4) = 3x² − 4.",
+        "rubric": [
+          "1 pt: correct difference quotient [f(x + h) − f(x)]/h with f(x + h) expanded",
+          "1 pt: algebra: cancels the h from every remaining term",
+          "1 pt: evaluates the limit as h → 0 to obtain 3x² − 4 (limit notation used correctly throughout)"
+        ],
+        "verify": "import sympy as sp\nx, h = sp.symbols('x h')\nf = x**3 - 4*x + 2\ndq = (f.subs(x, x + h) - f)/h\nassert sp.simplify(sp.limit(dq, h, 0) - (3*x**2 - 4)) == 0"
+      },
+      {
+        "label": "c",
+        "prompt": "Write an equation of the line tangent to the graph of f at the point where x = 2.",
+        "points": 2,
+        "solution": "The point of tangency is (2, f(2)) = (2, 2), and the slope is f′(2) = 3(4) − 4 = 8, consistent with part (a). An equation of the tangent line is y = 2 + 8(x − 2), or equivalently y = 8x − 14.",
+        "rubric": [
+          "1 pt: uses the point (2, 2) (computes f(2) = 2)",
+          "1 pt: tangent line equation with slope f′(2) = 8, e.g. y = 2 + 8(x − 2)"
+        ],
+        "verify": "import sympy as sp\nx = sp.symbols('x')\nf = x**3 - 4*x + 2\nassert f.subs(x, 2) == 2\nassert sp.diff(f, x).subs(x, 2) == 8\ntangent = 2 + 8*(x - 2)\nassert sp.expand(tangent) == 8*x - 14"
+      },
+      {
+        "label": "d",
+        "prompt": "Find all values of x at which the line tangent to the graph of f is horizontal. Justify your answer.",
+        "points": 2,
+        "solution": "A tangent line is horizontal where f′(x) = 0. Setting 3x² − 4 = 0 gives x² = 4/3, so x = −2√3/3 and x = 2√3/3 (equivalently x = ±2/√3). These are the only solutions of f′(x) = 0, so they are exactly the x-values where the tangent line is horizontal, because a horizontal tangent occurs precisely where the derivative equals 0.",
+        "rubric": [
+          "1 pt: sets f′(x) = 0 (i.e., 3x² − 4 = 0)",
+          "1 pt: both values x = ±2√3/3 with justification that horizontal tangents occur exactly where f′(x) = 0"
+        ],
+        "verify": "import sympy as sp\nx = sp.symbols('x')\nsols = sp.solve(3*x**2 - 4, x)\nassert set(sols) == {-2*sp.sqrt(3)/3, 2*sp.sqrt(3)/3}"
+      }
+    ],
+    "figure": null
+  }
+}
