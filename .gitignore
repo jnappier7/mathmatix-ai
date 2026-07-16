@@ -44,3 +44,7 @@ public/audio/voice/
 # Python
 __pycache__/
 *.pyc
+
+# Raw video source material — never ship (masters live locally / in cloud storage)
+video-masters/
+public/videos/*.mov

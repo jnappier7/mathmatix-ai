@@ -78,11 +78,31 @@
   // removed once every core tutor had real idle clips.)
 
   let idleLoop = null;
+  let idlePaused = false;
 
-  const IDLE_MOBILE_MQ = window.matchMedia && window.matchMedia('(max-width: 900px)');
+  // Phones (≤768) run the idle loop inside the docked tutor cam; the
+  // 769–900 tablet band still shows the compact static banner, so only
+  // that band skips video.
+  const IDLE_SKIP_MQ = window.matchMedia &&
+    window.matchMedia('(min-width: 769px) and (max-width: 900px)');
+  const PHONE_MQ = window.matchMedia && window.matchMedia('(max-width: 768px)');
 
   function idleSrcFor(tutorId, n) {
     return '/videos/' + tutorId + '_idle' + (n > 1 ? n : '') + '.mp4' + VIDEO_VERSION;
+  }
+
+  // Pause without tearing down (pill state, hidden tab). Resume rejoins
+  // the loop where it left off.
+  function setIdlePaused(paused) {
+    idlePaused = !!paused;
+    if (!idleLoop) return;
+    const el = idleLoop.els[idleLoop.cur];
+    if (idlePaused) {
+      el.pause();
+    } else if (!document.hidden) {
+      const p = el.play();
+      if (p && typeof p.catch === 'function') p.catch(function () { /* ignore */ });
+    }
   }
 
   function stopIdleVideos() {
@@ -100,8 +120,8 @@
   function startIdleVideos(tutorId) {
     stopIdleVideos();
     if (PREFERS_REDUCED_MOTION) return false;
-    // Compact mobile hero hides the idle layer — don't burn bandwidth there.
-    if (IDLE_MOBILE_MQ && IDLE_MOBILE_MQ.matches) return false;
+    // Tablet band shows the compact static banner — no video there.
+    if (IDLE_SKIP_MQ && IDLE_SKIP_MQ.matches) return false;
 
     // 'default' renders as Mr. Nappier — borrow his clips.
     const id = IDLE_VIDEO_COUNTS[tutorId] ? tutorId :
@@ -131,6 +151,7 @@
 
     const playEl = function (el) {
       try { el.currentTime = 0; } catch (_) { /* not seekable yet */ }
+      if (idlePaused) { show(el); return; } // pill state: hold the frame
       const p = el.play();
       if (p && typeof p.then === 'function') {
         p.then(function () { show(el); }).catch(fallback);
@@ -172,13 +193,72 @@
   document.addEventListener('visibilitychange', function () {
     if (!idleLoop) return;
     const el = idleLoop.els[idleLoop.cur];
-    if (document.hidden) {
+    if (document.hidden || idlePaused) {
       el.pause();
     } else {
       const p = el.play();
       if (p && typeof p.catch === 'function') p.catch(function () { /* ignore */ });
     }
   });
+
+  // --- Mobile cam ⇄ pill presence -----------------------------------------
+  // Phones dock the tutor as a small cam card above the thread. The moment
+  // the kid starts typing (composer focus / keyboard up), presence steps
+  // back: body.mm-tutor-pill collapses the cam to a "watching your work"
+  // pill and pauses the idle video. Blur/keyboard-close expands it again.
+  function wireMobileCamPill() {
+    if (!PHONE_MQ) return;
+
+    let pill = false;
+    let blurTimer = null;
+
+    const setPill = function (on) {
+      if (on === pill) return;
+      pill = on;
+      document.body.classList.toggle('mm-tutor-pill', on);
+      setIdlePaused(on);
+    };
+
+    const isComposer = function (el) {
+      return !!(el && el.closest && el.closest('#input-container'));
+    };
+
+    document.addEventListener('focusin', function (e) {
+      if (!PHONE_MQ.matches) return;
+      if (isComposer(e.target)) {
+        if (blurTimer) { clearTimeout(blurTimer); blurTimer = null; }
+        setPill(true);
+      }
+    });
+    document.addEventListener('focusout', function (e) {
+      if (!pill) return;
+      // Grace period: toolbar taps blur the input for a beat — don't
+      // bounce the cam open/closed mid-interaction.
+      if (blurTimer) clearTimeout(blurTimer);
+      blurTimer = setTimeout(function () {
+        blurTimer = null;
+        const active = document.activeElement;
+        if (!isComposer(active)) setPill(false);
+      }, 350);
+    });
+
+    // iOS: focus events can lag the keyboard — the visual viewport
+    // shrinking is the ground truth.
+    if (window.visualViewport) {
+      const baseH = window.visualViewport.height;
+      window.visualViewport.addEventListener('resize', function () {
+        if (!PHONE_MQ.matches) return;
+        const shrunk = window.visualViewport.height < baseH - 140;
+        if (shrunk) setPill(true);
+        else if (!isComposer(document.activeElement)) setPill(false);
+      });
+    }
+
+    // Leaving phone width always restores the full presence.
+    PHONE_MQ.addEventListener && PHONE_MQ.addEventListener('change', function (e) {
+      if (!e.matches) setPill(false);
+    });
+  }
 
   function applyTutor(tutorId) {
     const tutor = getTutorConfig(tutorId);
@@ -207,6 +287,12 @@
     // Live-with label — full name, so titled tutors read "Mr. Nappier"
     // rather than being truncated to just "Mr.".
     if (nameEl) nameEl.textContent = (tutor.name || 'Tutor');
+
+    // Mobile pill mirrors the same identity.
+    const pillAvatar = document.getElementById('mm-cam-pill-avatar');
+    const pillLabel = document.getElementById('mm-cam-pill-label');
+    if (pillAvatar && heroFile) pillAvatar.src = imgSrc(heroFile);
+    if (pillLabel) pillLabel.textContent = (tutor.name || 'Your tutor') + ' is watching your work';
 
     // Bring the poster to life with the idle video loop (no-op → static
     // portrait for tutors without clips / reduced motion / mobile).
@@ -348,6 +434,7 @@
     wireStreakPill();
     wireProgressButton();
     wireMicButton();
+    wireMobileCamPill();
   }
 
   // --- Quick action chips ------------------------------------------------
