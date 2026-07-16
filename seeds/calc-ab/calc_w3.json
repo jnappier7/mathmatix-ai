@@ -1,0 +1,287 @@
+{
+  "week": 3,
+  "title": "Integration & FTC",
+  "mc": [
+    {
+      "n": 1,
+      "unit": "U6",
+      "skill": "Riemann sums from a table",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "The rate at which vehicles pass a highway sensor is modeled by a differentiable function R, where R(t) is measured in vehicles per minute and t is measured in minutes. Selected values of R(t) are given in the table. Using a left Riemann sum with the four subintervals indicated by the table, which of the following best approximates the total number of vehicles that pass the sensor from t = 0 to t = 20 minutes?",
+      "choices": ["285 vehicles", "290 vehicles", "295 vehicles", "345 vehicles"],
+      "answer": 2,
+      "explanation": "Each subinterval has width 5, and a left Riemann sum uses the left endpoint of each subinterval: 5(12) + 5(15) + 5(18) + 5(14) = 5(59) = 295 vehicles. This approximates ∫ from 0 to 20 of R(t) dt, the total number of vehicles that pass the sensor. Choosing 285 uses right endpoints, 290 is the trapezoidal sum, and 345 incorrectly uses all five table values.",
+      "verify": "left = 5*(12+15+18+14)\nright = 5*(15+18+14+10)\ntrap = (left+right)/2\nassert left == 295 and right == 285 and trap == 290",
+      "figure": {
+        "kind": "table",
+        "params": {
+          "headers": ["t (minutes)", "R(t) (vehicles per minute)"],
+          "rows": [[0, 12], [5, 15], [10, 18], [15, 14], [20, 10]]
+        }
+      }
+    },
+    {
+      "n": 2,
+      "unit": "U6",
+      "skill": "FTC Part 1",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If g(x) = ∫₂ˣ √(t³ + 1) dt, then g′(2) =",
+      "choices": ["0", "3", "6", "9"],
+      "answer": 1,
+      "explanation": "By the Fundamental Theorem of Calculus (Part 1), g′(x) = √(x³ + 1). Therefore g′(2) = √(8 + 1) = √9 = 3. The value 0 is g(2), not g′(2); 9 is the value of x³ + 1 without the square root.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.sqrt(x**3 + 1).subs(x, 2) == 3",
+      "figure": null
+    },
+    {
+      "n": 3,
+      "unit": "U6",
+      "skill": "U-substitution (indefinite)",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "∫ 6x²(x³ + 5)⁴ dx =",
+      "choices": [
+        "(2/5)(x³ + 5)⁵ + C",
+        "2(x³ + 5)⁵ + C",
+        "(1/5)(x³ + 5)⁵ + C",
+        "(2/5)x³(x³ + 5)⁵ + C"
+      ],
+      "answer": 0,
+      "explanation": "Let u = x³ + 5, so du = 3x² dx and 6x² dx = 2 du. The integral becomes ∫ 2u⁴ du = (2/5)u⁵ + C = (2/5)(x³ + 5)⁵ + C. Choice B forgets to divide by 5 when applying the power rule; choice C drops the factor of 2 from 6x² dx = 2 du; choice D incorrectly leaves a factor of x³ in the antiderivative.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.simplify(sp.diff(sp.Rational(2,5)*(x**3+5)**5, x) - 6*x**2*(x**3+5)**4) == 0",
+      "figure": null
+    },
+    {
+      "n": 4,
+      "unit": "U6",
+      "skill": "FTC Part 2 (evaluation)",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "∫₁ᵉ (3/x) dx =",
+      "choices": ["3 − 3/e²", "3", "3e", "e³"],
+      "answer": 1,
+      "explanation": "An antiderivative of 3/x is 3 ln x. By the Fundamental Theorem of Calculus (Part 2), the integral equals 3 ln e − 3 ln 1 = 3(1) − 3(0) = 3. Choice A results from the classic error of using the power rule backward to get −3/x² and evaluating; that is a derivative, not an antiderivative.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.integrate(3/x, (x, 1, sp.E)) == 3",
+      "figure": null
+    },
+    {
+      "n": 5,
+      "unit": "U6",
+      "skill": "FTC with chain rule",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "d/dx [∫ from 0 to x² of cos t dt] =",
+      "choices": ["cos(x²)", "2x cos x", "−2x sin(x²)", "2x cos(x²)"],
+      "answer": 3,
+      "explanation": "By the Fundamental Theorem of Calculus combined with the chain rule, d/dx of ∫ from 0 to u(x) of cos t dt equals cos(u(x)) · u′(x). With u(x) = x², this is cos(x²) · 2x = 2x cos(x²). Choice A drops the chain rule factor 2x; choice C differentiates the integrand instead of applying the FTC.",
+      "verify": "import sympy as sp\nx, t = sp.symbols('x t')\nassert sp.simplify(sp.diff(sp.integrate(sp.cos(t), (t, 0, x**2)), x) - 2*x*sp.cos(x**2)) == 0",
+      "figure": null
+    },
+    {
+      "n": 6,
+      "unit": "U7",
+      "skill": "Slope fields",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "The slope field shown in the figure is for which of the following differential equations?",
+      "choices": ["dy/dx = x + y", "dy/dx = x − y", "dy/dx = y − x", "dy/dx = xy"],
+      "answer": 1,
+      "explanation": "In the field, segments are horizontal exactly along the line y = x, which requires dy/dx = 0 when y = x; only dy/dx = x − y and dy/dx = y − x satisfy this. Below the line y = x (for example at (0, −2)), the field shows positive slopes, and x − y = 0 − (−2) = 2 > 0 matches, while y − x would be negative there. Therefore the equation is dy/dx = x − y.",
+      "verify": "f = lambda x, y: x - y\nassert f(2, 2) == 0 and f(-1, -1) == 0\nassert f(0, -2) > 0 and f(0, 2) < 0",
+      "figure": {
+        "kind": "slopefield",
+        "params": {
+          "expr": "x - y",
+          "xmin": -3,
+          "xmax": 3,
+          "ymin": -3,
+          "ymax": 3,
+          "step": 1
+        }
+      }
+    },
+    {
+      "n": 7,
+      "unit": "U7",
+      "skill": "Separation of variables",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If dy/dx = xy and y(0) = 3, then y =",
+      "choices": ["3e^(x²/2)", "3e^(x²)", "e^(x²/2) + 2", "(3/2)x² + 3"],
+      "answer": 0,
+      "explanation": "Separating variables gives (1/y) dy = x dx, so ln|y| = x²/2 + C. Exponentiating yields y = Ae^(x²/2), and y(0) = 3 gives A = 3, so y = 3e^(x²/2). Choice B forgets the 1/2 when antidifferentiating x; choice C incorrectly adds the initial-condition constant instead of using a multiplicative constant; choice D ignores the y on the right side entirely.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\ny = sp.Function('y')\nsol = sp.dsolve(sp.Eq(y(x).diff(x), x*y(x)), y(x), ics={y(0): 3})\nassert sp.simplify(sol.rhs - 3*sp.exp(x**2/2)) == 0",
+      "figure": null
+    },
+    {
+      "n": 8,
+      "unit": "U6",
+      "skill": "Properties of definite integrals",
+      "practice": "MP3",
+      "calc": false,
+      "stem": "The function f is continuous on [2, 7], with ∫₂⁷ f(x) dx = 10 and ∫₂⁴ f(x) dx = 3. What is the value of ∫₄⁷ (2f(x) − 4) dx?",
+      "choices": ["2", "10", "14", "26"],
+      "answer": 0,
+      "explanation": "By additivity of the definite integral, ∫₄⁷ f(x) dx = 10 − 3 = 7. Then ∫₄⁷ (2f(x) − 4) dx = 2(7) − ∫₄⁷ 4 dx = 14 − 4(7 − 4) = 14 − 12 = 2, because the constant 4 must be integrated over the interval of length 3. Choice B subtracts 4 only once instead of integrating it; choice C forgets the −4 term; choice D adds the given integrals instead of subtracting.",
+      "verify": "I27, I24 = 10, 3\nI47 = I27 - I24\nassert I47 == 7\nassert 2*I47 - 4*(7 - 4) == 2",
+      "figure": null
+    },
+    {
+      "n": 9,
+      "unit": "U7",
+      "skill": "Exponential models",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "A bacteria population grows at a rate proportional to its size, with constant of proportionality 0.02 per hour. If the initial population is 500 bacteria, which of the following gives the population P(t) after t hours?",
+      "choices": [
+        "P(t) = 0.02t + 500",
+        "P(t) = 500 + e^(0.02t)",
+        "P(t) = 500e^(0.02t)",
+        "P(t) = 500 ln(1 + 0.02t)"
+      ],
+      "answer": 2,
+      "explanation": "The condition \"rate proportional to size\" means dP/dt = 0.02P, whose general solution is P(t) = Ce^(0.02t). Since P(0) = 500, we have C = 500, so P(t) = 500e^(0.02t). Choice A models constant (linear) growth, and choice B incorrectly adds the exponential to the initial value rather than scaling it.",
+      "verify": "import sympy as sp\nt = sp.symbols('t')\nP = sp.Function('P')\nsol = sp.dsolve(sp.Eq(P(t).diff(t), sp.Rational(1,50)*P(t)), P(t), ics={P(0): 500})\nassert sp.simplify(sol.rhs - 500*sp.exp(t/50)) == 0",
+      "figure": null
+    },
+    {
+      "n": 10,
+      "unit": "U6",
+      "skill": "U-substitution with change of bounds",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "∫₀² x·e^(x²) dx =",
+      "choices": ["(e² − 1)/2", "(e⁴ − 1)/2", "e⁴/2", "e⁴ − 1"],
+      "answer": 1,
+      "explanation": "Let u = x², so du = 2x dx and x dx = (1/2) du; the bounds change from x = 0, 2 to u = 0, 4. The integral becomes (1/2)∫₀⁴ e^u du = (1/2)(e⁴ − 1). Choice A results from the classic error of keeping the original x-bounds after substituting; choice C forgets to evaluate at the lower bound; choice D drops the factor of 1/2.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\nassert sp.simplify(sp.integrate(x*sp.exp(x**2), (x, 0, 2)) - (sp.exp(4) - 1)/2) == 0",
+      "figure": null
+    },
+    {
+      "n": 11,
+      "unit": "U6",
+      "skill": "Trapezoidal sum from a table",
+      "practice": "MP2",
+      "calc": true,
+      "stem": "Water is pumped into a reservoir at a rate P(t), measured in gallons per hour, where t is measured in hours. Selected values of P(t) are given in the table. Using a trapezoidal sum with the four subintervals indicated by the table, which of the following best approximates the total amount of water, in gallons, pumped into the reservoir from t = 0 to t = 12 hours?",
+      "choices": ["538 gallons", "543 gallons", "548 gallons", "558 gallons"],
+      "answer": 2,
+      "explanation": "The subintervals have unequal widths 2, 3, 4, and 3, so each trapezoid must use its own width: (2/2)(40 + 46) + (3/2)(46 + 52) + (4/2)(52 + 44) + (3/2)(44 + 38) = 86 + 147 + 192 + 123 = 548 gallons. This approximates ∫ from 0 to 12 of P(t) dt. Choice B incorrectly assumes equal widths of 3; choices A and D are the right and left Riemann sums.",
+      "verify": "trap = (2/2)*(40+46) + (3/2)*(46+52) + (4/2)*(52+44) + (3/2)*(44+38)\nleft = 2*40 + 3*46 + 4*52 + 3*44\nright = 2*46 + 3*52 + 4*44 + 3*38\nequal = (3/2)*(40 + 2*46 + 2*52 + 2*44 + 38)\nassert abs(trap - 548) < 1e-9 and left == 558 and right == 538 and abs(equal - 543) < 1e-9",
+      "figure": {
+        "kind": "table",
+        "params": {
+          "headers": ["t (hours)", "P(t) (gallons per hour)"],
+          "rows": [[0, 40], [2, 46], [5, 52], [9, 44], [12, 38]]
+        }
+      }
+    },
+    {
+      "n": 12,
+      "unit": "U6",
+      "skill": "Accumulation in context",
+      "practice": "MP2",
+      "calc": true,
+      "stem": "Vehicles cross a toll bridge at a rate modeled by R(t) = 400 + 250 sin(t²/12) vehicles per hour, where t is measured in hours and 0 ≤ t ≤ 4. According to the model, which of the following is closest to the total number of vehicles that cross the bridge from t = 1 to t = 4?",
+      "choices": ["222.175", "1200.000", "1584.161", "1991.102"],
+      "answer": 2,
+      "explanation": "The total number of vehicles is the accumulation of the rate: ∫ from 1 to 4 of R(t) dt = ∫ from 1 to 4 of (400 + 250 sin(t²/12)) dt ≈ 1584.161 vehicles, evaluated numerically with a calculator. Choice A is R(4) − R(1), the net change in the rate itself, not the accumulation; choice B integrates only the constant 400; choice D uses the interval [0, 4] instead of [1, 4].",
+      "verify": "import sympy as sp\nt = sp.symbols('t')\nR = 400 + 250*sp.sin(t**2/12)\nv = float(sp.N(sp.Integral(R, (t, 1, 4)), 10))\nassert abs(v - 1584.161) < 0.001\nassert abs(float(sp.N(sp.Integral(R, (t, 0, 4)), 10)) - 1991.102) < 0.001\nassert abs(float((R.subs(t,4) - R.subs(t,1)).evalf()) - 222.175) < 0.001",
+      "figure": null
+    },
+    {
+      "n": 13,
+      "unit": "U7",
+      "skill": "Exponential growth models",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "A bacteria culture grows at a rate proportional to its size. At time t = 0 hours the culture contains 200 bacteria, and at t = 3 hours it contains 800 bacteria. According to this model, how many bacteria are in the culture at t = 5 hours?",
+      "choices": ["1200.000", "1269.921", "1600.000", "2015.874"],
+      "answer": 3,
+      "explanation": "The model dP/dt = kP gives P(t) = 200e^(kt). Since P(3) = 800, e^(3k) = 4, so k = (ln 4)/3, and P(5) = 200e^(5(ln 4)/3) = 200·4^(5/3) ≈ 2015.874 bacteria. Choice A assumes linear growth of 200 bacteria per hour; choice B is P(4); choice C incorrectly assumes the population simply doubles from 800 by t = 5.",
+      "verify": "import sympy as sp\nk = sp.log(4)/3\nP5 = 200*sp.exp(5*k)\nassert abs(float(P5) - 2015.874) < 0.001\nassert abs(float(200*sp.exp(4*k)) - 1269.921) < 0.001",
+      "figure": null
+    },
+    {
+      "n": 14,
+      "unit": "U7",
+      "skill": "Particular solutions by separation",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "Let y = f(x) be the particular solution to the differential equation dy/dx = x·e^(−y) with initial condition f(0) = 0. What is the value of f(2)?",
+      "choices": ["1.099", "1.609", "2.000", "3.000"],
+      "answer": 0,
+      "explanation": "Separating variables gives e^y dy = x dx, so e^y = x²/2 + C. The condition f(0) = 0 gives C = 1, so y = ln(x²/2 + 1) and f(2) = ln(2 + 1) = ln 3 ≈ 1.099. Choice B is ln 5, from dropping the 1/2 when antidifferentiating x; choice D reports e^y = 3 without taking the logarithm; choice C ignores the e^(−y) factor and integrates dy/dx = x.",
+      "verify": "import sympy as sp\nx = sp.symbols('x')\ny = sp.Function('y')\nsol = sp.dsolve(sp.Eq(y(x).diff(x), x*sp.exp(-y(x))), y(x), ics={y(0): 0})\nval = float(sol.rhs.subs(x, 2))\nassert abs(val - float(sp.log(3))) < 1e-9\nassert abs(val - 1.099) < 0.001",
+      "figure": null
+    },
+    {
+      "n": 15,
+      "unit": "U7",
+      "skill": "Separable models in context",
+      "practice": "MP1",
+      "calc": true,
+      "stem": "A cylindrical tank is draining so that the volume V of water, in gallons, satisfies dV/dt = −k√V, where k is a positive constant and t is measured in hours. At t = 0 the tank holds 400 gallons, and at t = 5 it holds 256 gallons. According to this model, at what time t is the tank empty?",
+      "choices": ["t = 12.500", "t = 13.889", "t = 20.000", "t = 25.000"],
+      "answer": 3,
+      "explanation": "Separating variables gives V^(−1/2) dV = −k dt, so 2√V = −kt + C. From V(0) = 400, C = 40; from V(5) = 256, 2(16) = 40 − 5k, so k = 8/5. Then √V = 20 − (4/5)t, which equals 0 when t = 25 hours. Choice A results from dropping the factor 2 in the antiderivative of V^(−1/2); choice B assumes water drains at the constant rate (400 − 256)/5 = 28.8 gallons per hour; choice C confuses √400 = 20 with the draining time.",
+      "verify": "import sympy as sp\nt = sp.symbols('t')\nV = (20 - sp.Rational(4,5)*t)**2\nassert V.subs(t, 0) == 400 and V.subs(t, 5) == 256\nassert sp.solve(sp.Eq(V, 0), t) == [25]\nassert sp.simplify(sp.diff(V, t) + sp.Rational(8,5)*(20 - sp.Rational(4,5)*t)) == 0",
+      "figure": null
+    }
+  ],
+  "frq": {
+    "unit": "U6",
+    "skill": "Rate in/rate out (accumulation)",
+    "calc": true,
+    "context": "At a water treatment plant, a storage tank contains 150 gallons of water at time t = 0. During the time interval 0 ≤ t ≤ 10 hours, water is pumped into the tank at the rate E(t) = 8 + 6 cos(t/3) gallons per hour, and water drains out of the tank at the rate L(t) = 10e^(−0.05t) gallons per hour. Let W(t) be the amount of water, in gallons, in the tank at time t.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "How many gallons of water are pumped into the tank during the time interval 0 ≤ t ≤ 10 hours?",
+        "points": 2,
+        "solution": "The amount pumped in is the accumulation of the in-rate: ∫ from 0 to 10 of E(t) dt = ∫ from 0 to 10 of (8 + 6 cos(t/3)) dt = 80 + 18 sin(10/3) ≈ 76.570 gallons.",
+        "rubric": [
+          "1 pt: sets up the definite integral ∫ from 0 to 10 of E(t) dt",
+          "1 pt: answer 76.570 gallons (accept 76.569 to 76.570)"
+        ],
+        "verify": "import sympy as sp\nt = sp.symbols('t')\nE = 8 + 6*sp.cos(t/3)\nv = float(sp.N(sp.integrate(E, (t, 0, 10)), 10))\nassert abs(v - 76.570) < 0.001"
+      },
+      {
+        "label": "b",
+        "prompt": "Is the amount of water in the tank increasing or decreasing at time t = 4 hours? Give a reason for your answer.",
+        "points": 2,
+        "solution": "W′(t) = E(t) − L(t). At t = 4, E(4) = 8 + 6 cos(4/3) ≈ 9.411 gallons per hour and L(4) = 10e^(−0.2) ≈ 8.187 gallons per hour, so W′(4) = E(4) − L(4) ≈ 1.224 > 0. Because W′(4) > 0 (water is entering faster than it is draining), the amount of water in the tank is increasing at t = 4.",
+        "rubric": [
+          "1 pt: considers W′(4) = E(4) − L(4) (or compares E(4) and L(4) numerically)",
+          "1 pt: concludes increasing with reason W′(4) ≈ 1.224 > 0, i.e., E(4) > L(4)"
+        ],
+        "verify": "import sympy as sp\nt = sp.symbols('t')\nE = 8 + 6*sp.cos(t/3)\nL = 10*sp.exp(-t/20)\nd = float((E - L).subs(t, 4))\nassert d > 0 and abs(d - 1.224) < 0.001"
+      },
+      {
+        "label": "c",
+        "prompt": "Find W(10), the amount of water in the tank at time t = 10 hours.",
+        "points": 2,
+        "solution": "W(10) = 150 + ∫ from 0 to 10 of (E(t) − L(t)) dt = 150 + 76.570 − ∫ from 0 to 10 of 10e^(−0.05t) dt = 150 + 76.570 − 200(1 − e^(−0.5)) ≈ 150 + 76.570 − 78.694 ≈ 147.876 gallons.",
+        "rubric": [
+          "1 pt: expression W(10) = 150 + ∫ from 0 to 10 of (E(t) − L(t)) dt (initial condition plus net accumulation)",
+          "1 pt: answer 147.876 gallons (accept 147.875 to 147.876)"
+        ],
+        "verify": "import sympy as sp\nt = sp.symbols('t')\nE = 8 + 6*sp.cos(t/3)\nL = 10*sp.exp(-t/20)\nW10 = float(sp.N(150 + sp.integrate(E - L, (t, 0, 10)), 10))\nassert abs(W10 - 147.876) < 0.001"
+      },
+      {
+        "label": "d",
+        "prompt": "For 0 ≤ t ≤ 10, find the time t at which the amount of water in the tank is an absolute maximum. Justify your answer.",
+        "points": 3,
+        "solution": "W′(t) = E(t) − L(t) = 0 when 8 + 6 cos(t/3) = 10e^(−0.05t); solving with a calculator gives t ≈ 4.774. This is the only critical point of W on (0, 10): W′(t) > 0 for 0 ≤ t < 4.774 and W′(t) < 0 for 4.774 < t ≤ 10, so W increases before t ≈ 4.774 and decreases after. Therefore the amount of water is an absolute maximum at t ≈ 4.774 hours.",
+        "rubric": [
+          "1 pt: sets W′(t) = 0, i.e., E(t) = L(t)",
+          "1 pt: t = 4.774 (accept 4.774 to 4.775)",
+          "1 pt: justification that W′ changes sign from positive to negative at the only critical point (or a candidates test comparing W(0), W(4.774), W(10))"
+        ],
+        "verify": "import sympy as sp\nt = sp.symbols('t')\nE = 8 + 6*sp.cos(t/3)\nL = 10*sp.exp(-t/20)\nroot = float(sp.nsolve(E - L, t, 4.5))\nassert abs(root - 4.774) < 0.001\nassert float((E-L).subs(t, 2)) > 0 and float((E-L).subs(t, 6)) < 0 and float((E-L).subs(t, 10)) < 0"
+      }
+    ],
+    "figure": null
+  }
+}

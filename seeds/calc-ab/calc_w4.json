@@ -1,0 +1,276 @@
+{
+  "week": 4,
+  "title": "Applications of Integration",
+  "mc": [
+    {
+      "n": 1,
+      "unit": "U8",
+      "skill": "Average value of a function",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "What is the average value of f(x) = 3x² − 2x on the interval [0, 2]?",
+      "choices": ["2", "1", "4", "8"],
+      "answer": 0,
+      "explanation": "The average value is (1/(2−0)) ∫₀² (3x² − 2x) dx = (1/2)[x³ − x²] from 0 to 2 = (1/2)(8 − 4) = 2. A common error is computing the definite integral (4) and forgetting to divide by the length of the interval.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.integrate(3*x**2-2*x,(x,0,2))/2)",
+      "figure": null
+    },
+    {
+      "n": 2,
+      "unit": "U6",
+      "skill": "U-substitution (definite)",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "∫₀¹ x(x² + 1)³ dx =",
+      "choices": ["1/8", "15/8", "15/4", "4"],
+      "answer": 1,
+      "explanation": "Let u = x² + 1, so du = 2x dx and the bounds become u = 1 to u = 2. The integral is (1/2) ∫₁² u³ du = (1/2)(u⁴/4) from 1 to 2 = (1/2)(4 − 1/4) = 15/8. Forgetting the factor of 1/2 gives 15/4; failing to change the bounds gives 1/8.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.integrate(x*(x**2+1)**3,(x,0,1)))",
+      "figure": null
+    },
+    {
+      "n": 3,
+      "unit": "U8",
+      "skill": "Area between curves",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "What is the area of the region enclosed by the graphs of y = 2x and y = x²?",
+      "choices": ["2/3", "8/3", "4/3", "4"],
+      "answer": 2,
+      "explanation": "The curves intersect where 2x = x², at x = 0 and x = 2, and y = 2x is the upper curve on (0, 2). The area is ∫₀² (2x − x²) dx = [x² − x³/3] from 0 to 2 = 4 − 8/3 = 4/3. Reversing top and bottom gives −4/3, which signals an integrand set up in the wrong order.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.integrate(2*x-x**2,(x,0,2)))",
+      "figure": null
+    },
+    {
+      "n": 4,
+      "unit": "U4",
+      "skill": "L'Hospital's Rule",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "lim(x→0) (e^(2x) − 1)/(sin 3x) =",
+      "choices": ["0", "1", "3/2", "2/3"],
+      "answer": 3,
+      "explanation": "Both numerator and denominator approach 0 as x → 0, so L'Hospital's Rule applies because the limit has the indeterminate form 0/0. Differentiating gives lim(x→0) 2e^(2x)/(3 cos 3x) = 2/3. Choosing 3/2 comes from inverting the derivatives.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.limit((sp.exp(2*x)-1)/sp.sin(3*x),x,0))",
+      "figure": null
+    },
+    {
+      "n": 5,
+      "unit": "U8",
+      "skill": "Particle motion: total distance",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "A particle moves along a line with velocity v(t) = t² − 4t + 3 for 0 ≤ t ≤ 3. What is the total distance traveled by the particle over this interval?",
+      "choices": ["8/3", "0", "4/3", "4"],
+      "answer": 0,
+      "explanation": "Since v(t) = (t − 1)(t − 3), the velocity changes sign at t = 1, so total distance requires ∫₀³ |v(t)| dt. We get ∫₀¹ v dt = 4/3 and ∫₁³ v dt = −4/3, so the total distance is 4/3 + 4/3 = 8/3. The displacement ∫₀³ v dt = 0 is the classic distractor: distance is not displacement when velocity changes sign.",
+      "verify": "import sympy as sp; t=sp.symbols('t'); v=t**2-4*t+3; print(sp.integrate(v,(t,0,1)) - sp.integrate(v,(t,1,3)))",
+      "figure": null
+    },
+    {
+      "n": 6,
+      "unit": "U5",
+      "skill": "Mean Value Theorem",
+      "practice": "MP3",
+      "calc": false,
+      "stem": "Let f(x) = x³ on the interval [0, 3]. What value of c in (0, 3) satisfies the conclusion of the Mean Value Theorem for f on [0, 3]?",
+      "choices": ["√3", "3/2", "3", "9"],
+      "answer": 0,
+      "explanation": "Because f is continuous on [0, 3] and differentiable on (0, 3), the MVT guarantees a c with f′(c) = (f(3) − f(0))/(3 − 0) = 27/3 = 9. Solving 3c² = 9 gives c² = 3, so c = √3 (the value in the interval). Answering 9 confuses the average rate of change with the value of c.",
+      "verify": "import sympy as sp; c=sp.symbols('c',positive=True); print(sp.solve(sp.Eq(3*c**2,(3**3-0)/3),c))",
+      "figure": null
+    },
+    {
+      "n": 7,
+      "unit": "U8",
+      "skill": "Volume: disks",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "The region bounded by y = √x, the x-axis, and the line x = 4 is revolved about the x-axis. What is the volume of the resulting solid?",
+      "choices": ["4π", "8", "8π", "16π"],
+      "answer": 2,
+      "explanation": "Using disks, V = π ∫₀⁴ (√x)² dx = π ∫₀⁴ x dx = π(x²/2) from 0 to 4 = 8π. Omitting π gives 8, and forgetting to square the radius leads to 16π/... type errors. Each disk has radius √x because the region touches the axis of revolution.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.pi*sp.integrate((sp.sqrt(x))**2,(x,0,4)))",
+      "figure": null
+    },
+    {
+      "n": 8,
+      "unit": "U6",
+      "skill": "FTC with chain rule",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "If g(x) = ∫ from 0 to x² of sin t dt, then g′(x) =",
+      "choices": ["sin(x²)", "2x sin(x²)", "2x cos(x²)", "x² sin(x²)"],
+      "answer": 1,
+      "explanation": "By the Fundamental Theorem of Calculus combined with the chain rule, g′(x) = sin(x²) · d/dx[x²] = 2x sin(x²). Choosing sin(x²) drops the chain rule factor 2x, and 2x cos(x²) differentiates the integrand instead of evaluating it at the upper limit.",
+      "verify": "import sympy as sp; x,t=sp.symbols('x t'); print(sp.simplify(sp.diff(sp.integrate(sp.sin(t),(t,0,x**2)),x)))",
+      "figure": null
+    },
+    {
+      "n": 9,
+      "unit": "U8",
+      "skill": "Volume: washers",
+      "practice": "MP1",
+      "calc": false,
+      "stem": "The region enclosed by the graphs of y = x and y = x² is revolved about the x-axis. What is the volume of the resulting solid?",
+      "choices": ["π/30", "2/15", "π/6", "2π/15"],
+      "answer": 3,
+      "explanation": "The curves intersect at x = 0 and x = 1, with y = x as the outer radius and y = x² as the inner radius. V = π ∫₀¹ [(x)² − (x²)²] dx = π ∫₀¹ (x² − x⁴) dx = π(1/3 − 1/5) = 2π/15. The distractor π/30 comes from the classic error of squaring the difference, π ∫ (x − x²)² dx, instead of subtracting the squares.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.pi*sp.integrate(x**2-x**4,(x,0,1)))",
+      "figure": null
+    },
+    {
+      "n": 10,
+      "unit": "U8",
+      "skill": "Volume: known cross-sections (semicircles)",
+      "practice": "MP2",
+      "calc": false,
+      "stem": "The base of a solid is the triangular region in the first quadrant bounded by the line y = 6 − 2x, the x-axis, and the y-axis, as shown. Each cross-section of the solid perpendicular to the x-axis is a semicircle with diameter lying in the base. What is the volume of the solid?",
+      "choices": ["9π/2", "9π", "18π", "36"],
+      "answer": 0,
+      "explanation": "For each x in [0, 3], the diameter of the semicircular cross-section is 6 − 2x, so the radius is (6 − 2x)/2 = 3 − x and the cross-sectional area is (1/2)π(3 − x)². Then V = (π/2) ∫₀³ (3 − x)² dx = (π/2)(9) = 9π/2. Using the full diameter as the radius quadruples the answer to 18π — the most common error on semicircle cross-section problems.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.integrate(sp.pi/2*(3-x)**2,(x,0,3)))",
+      "figure": {
+        "kind": "region",
+        "params": {
+          "expr1": "6 - 2*x",
+          "expr2": "0",
+          "a": 0,
+          "b": 3,
+          "xmin": -1,
+          "xmax": 4,
+          "ymin": -1,
+          "ymax": 7
+        }
+      }
+    },
+    {
+      "n": 11,
+      "unit": "U8",
+      "skill": "Particle motion: position from velocity",
+      "practice": "MP2",
+      "calc": true,
+      "stem": "A skier moves along a straight cross-country trail so that her velocity is v(t) = 4e^(−t/2) meters per second for 0 ≤ t ≤ 3. At time t = 0 she is 5 meters from the trailhead. To the nearest thousandth, how many meters from the trailhead is she at time t = 3?",
+      "choices": ["6.215", "7.678", "11.215", "13.000"],
+      "answer": 2,
+      "explanation": "Position is initial position plus displacement: s(3) = 5 + ∫₀³ 4e^(−t/2) dt = 5 + [−8e^(−t/2)] from 0 to 3 = 5 + 8(1 − e^(−1.5)) ≈ 11.215 meters. The distractor 6.215 is the displacement alone — forgetting to add the initial position of 5 meters. Since v(t) > 0 throughout, displacement equals distance here.",
+      "verify": "import sympy as sp; t=sp.symbols('t'); print(sp.N(5 + sp.integrate(4*sp.exp(-t/2),(t,0,3)), 6))",
+      "figure": null
+    },
+    {
+      "n": 12,
+      "unit": "U4",
+      "skill": "Rate of change from a model",
+      "practice": "MP2",
+      "calc": true,
+      "stem": "The depth of water in a mountain lake is modeled by D(t) = 12 + 3 cos(πt/6) − 0.2t meters, where t is measured in hours since dawn. To the nearest thousandth, what is the rate of change of the depth, in meters per hour, at time t = 4?",
+      "choices": ["−2.798", "−1.560", "1.560", "9.700"],
+      "answer": 1,
+      "explanation": "D′(t) = −3 · (π/6) sin(πt/6) − 0.2 = −(π/2) sin(πt/6) − 0.2. At t = 4, D′(4) = −(π/2) sin(2π/3) − 0.2 = −(π√3)/4 − 0.2 ≈ −1.560 meters per hour, so the depth is decreasing because D′(4) < 0. The distractor −2.798 drops the chain-rule factor π/6, and 9.700 is the depth D(4) rather than its rate of change.",
+      "verify": "import sympy as sp; t=sp.symbols('t'); D=12+3*sp.cos(sp.pi*t/6)-sp.Rational(1,5)*t; print(sp.N(sp.diff(D,t).subs(t,4), 6))",
+      "figure": null
+    },
+    {
+      "n": 13,
+      "unit": "U6",
+      "skill": "Trapezoidal sum from a table",
+      "practice": "MP2",
+      "calc": true,
+      "stem": "A snowmaking machine pumps water at a rate R(t), in liters per minute, recorded in the table at selected times t (minutes). Using a trapezoidal sum with the four subintervals indicated by the table, what is the approximate total amount of water, in liters, pumped from t = 0 to t = 40?",
+      "choices": ["430", "450", "510", "440"],
+      "answer": 3,
+      "explanation": "The trapezoidal sum is 10·[(8+12)/2 + (12+15)/2 + (15+10)/2 + (10+6)/2] = 10·(10 + 13.5 + 12.5 + 8) = 440 liters. This approximates ∫₀⁴⁰ R(t) dt, the total water pumped, because R is a rate. The distractors 450 and 430 are the left and right Riemann sums, respectively.",
+      "verify": "print(10*((8+12)/2+(12+15)/2+(15+10)/2+(10+6)/2))",
+      "figure": {
+        "kind": "table",
+        "params": {
+          "headers": ["t (min)", "R(t) (L/min)"],
+          "rows": [[0, 8], [10, 12], [20, 15], [30, 10], [40, 6]]
+        }
+      }
+    },
+    {
+      "n": 14,
+      "unit": "U5",
+      "skill": "Relative extrema (first derivative test)",
+      "practice": "MP3",
+      "calc": true,
+      "stem": "Let f(x) = x·e^(−x²). At what value of x, to the nearest thousandth, does f attain its relative maximum?",
+      "choices": ["−0.707", "0.429", "0.707", "1.414"],
+      "answer": 2,
+      "explanation": "f′(x) = e^(−x²)(1 − 2x²), which is zero at x = ±1/√2. Since f′ changes from positive to negative at x = 1/√2 ≈ 0.707, f has a relative maximum there by the First Derivative Test; at x = −0.707, f′ changes from negative to positive, giving a relative minimum. The distractor 0.429 is the maximum value f(0.707), not the location where it occurs.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); crit=sp.solve(sp.diff(x*sp.exp(-x**2),x),x); print([sp.N(c,6) for c in crit])",
+      "figure": null
+    },
+    {
+      "n": 15,
+      "unit": "U5",
+      "skill": "Absolute extrema (candidates test)",
+      "practice": "MP3",
+      "calc": true,
+      "stem": "What is the absolute minimum value of f(x) = x − 2 sin x on the closed interval [0, 3], to the nearest thousandth?",
+      "choices": ["−2.718", "−0.685", "1.047", "2.718"],
+      "answer": 1,
+      "explanation": "f′(x) = 1 − 2 cos x = 0 gives cos x = 1/2, so x = π/3 is the only critical point in (0, 3). Comparing candidates: f(0) = 0, f(π/3) = π/3 − √3 ≈ −0.685, and f(3) = 3 − 2 sin 3 ≈ 2.718; the absolute minimum value is −0.685 because it is the least of the candidate values. The distractor 1.047 is the x-coordinate π/3 where the minimum occurs, not the minimum value.",
+      "verify": "import sympy as sp; x=sp.symbols('x'); f=x-2*sp.sin(x); vals=[f.subs(x,0), f.subs(x,sp.pi/3), f.subs(x,3)]; print([sp.N(v,6) for v in vals], sp.N(min(vals,key=lambda v: sp.N(v)),6))",
+      "figure": null
+    }
+  ],
+  "frq": {
+    "unit": "U8",
+    "skill": "Area and volume of a plane region",
+    "calc": false,
+    "context": "Let R be the region in the xy-plane enclosed by the graphs of f(x) = 4 − x² and g(x) = x + 2, as shown in the figure. The graphs intersect at the points (−2, 0) and (1, 3).",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Find the area of R.",
+        "points": 3,
+        "solution": "On [−2, 1], f(x) ≥ g(x), so Area = ∫ from −2 to 1 of [(4 − x²) − (x + 2)] dx = ∫ from −2 to 1 of (2 − x − x²) dx = [2x − x²/2 − x³/3] from −2 to 1 = (2 − 1/2 − 1/3) − (−4 − 2 + 8/3) = 7/6 + 10/3 = 9/2.",
+        "rubric": [
+          "1 pt: limits of integration x = −2 to x = 1 (from the intersection points)",
+          "1 pt: integrand (4 − x²) − (x + 2), top curve minus bottom curve",
+          "1 pt: antiderivative and answer 9/2"
+        ],
+        "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.integrate((4-x**2)-(x+2),(x,-2,1)))"
+      },
+      {
+        "label": "b",
+        "prompt": "Find the volume of the solid generated when R is revolved about the horizontal line y = −1.",
+        "points": 3,
+        "solution": "Both curves lie above y = −1 on [−2, 1]. Outer radius: (4 − x²) − (−1) = 5 − x²; inner radius: (x + 2) − (−1) = x + 3. Volume = π ∫ from −2 to 1 of [(5 − x²)² − (x + 3)²] dx = π ∫ from −2 to 1 of (x⁴ − 11x² − 6x + 16) dx = π[x⁵/5 − 11x³/3 − 3x² + 16x] from −2 to 1 = π(143/15 + 316/15) = 153π/5.",
+        "rubric": [
+          "1 pt: form π ∫ [(outer radius)² − (inner radius)²] dx with limits −2 to 1",
+          "1 pt: correct radii 5 − x² and x + 3 (each shifted by +1 for the axis y = −1)",
+          "1 pt: answer 153π/5"
+        ],
+        "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.integrate(sp.pi*((5-x**2)**2-(x+3)**2),(x,-2,1)))"
+      },
+      {
+        "label": "c",
+        "prompt": "The region R is the base of a solid. For this solid, each cross-section perpendicular to the x-axis is a rectangle whose height is 3 times its width in the base. Find the volume of the solid.",
+        "points": 3,
+        "solution": "For each x in [−2, 1], the width of the rectangle is w(x) = (4 − x²) − (x + 2) = 2 − x − x², and its height is 3w(x), so the cross-sectional area is A(x) = 3(2 − x − x²)². Volume = ∫ from −2 to 1 of 3(2 − x − x²)² dx = 3 ∫ from −2 to 1 of (x⁴ + 2x³ − 3x² − 4x + 4) dx = 3(81/10) = 243/10.",
+        "rubric": [
+          "1 pt: cross-sectional area A(x) = 3[(4 − x²) − (x + 2)]²",
+          "1 pt: volume integral ∫ from −2 to 1 of A(x) dx (correct limits, no π)",
+          "1 pt: answer 243/10"
+        ],
+        "verify": "import sympy as sp; x=sp.symbols('x'); print(sp.integrate(3*((4-x**2)-(x+2))**2,(x,-2,1)))"
+      }
+    ],
+    "figure": {
+      "kind": "region",
+      "params": {
+        "expr1": "4 - x**2",
+        "expr2": "x + 2",
+        "a": -2,
+        "b": 1,
+        "xmin": -3.5,
+        "xmax": 3,
+        "ymin": -1.5,
+        "ymax": 5
+      }
+    }
+  }
+}

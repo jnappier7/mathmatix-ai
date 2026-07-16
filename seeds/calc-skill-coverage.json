@@ -1,0 +1,93 @@
+{
+  "bySkill": {
+    "area-between-curves": 2,
+    "average-value": 1,
+    "basic-differentiation-rules": 4,
+    "chain-rule": 2,
+    "common-derivatives": 1,
+    "concavity-inflection": 1,
+    "continuity-types": 1,
+    "derivative-definition": 3,
+    "exponential-growth-decay": 2,
+    "ftc": 8,
+    "implicit-differentiation": 3,
+    "increasing-decreasing-extrema": 7,
+    "inverse-function-derivatives": 3,
+    "ivt-squeeze": 1,
+    "lhopitals-rule": 2,
+    "limits-algebraic-techniques": 3,
+    "limits-at-infinity": 1,
+    "linearization": 1,
+    "motion": 4,
+    "motion-integrals": 2,
+    "mvt-evt": 3,
+    "one-sided-infinite-limits": 1,
+    "optimization": 1,
+    "related-rates": 3,
+    "riemann-sums": 4,
+    "separable-des": 3,
+    "slope-fields": 2,
+    "u-substitution": 3,
+    "volume-cross-sections": 1,
+    "volume-disk-washer": 2
+  },
+  "byUnit": {
+    "U1": [
+      "continuity-types",
+      "ivt-squeeze",
+      "limits-algebraic-techniques",
+      "limits-at-infinity",
+      "one-sided-infinite-limits"
+    ],
+    "U2": [
+      "basic-differentiation-rules",
+      "common-derivatives",
+      "derivative-definition"
+    ],
+    "U3": [
+      "chain-rule",
+      "implicit-differentiation",
+      "inverse-function-derivatives"
+    ],
+    "U4": [
+      "lhopitals-rule",
+      "linearization",
+      "motion",
+      "related-rates"
+    ],
+    "U5": [
+      "concavity-inflection",
+      "curve-sketching",
+      "increasing-decreasing-extrema",
+      "mvt-evt",
+      "optimization"
+    ],
+    "U6": [
+      "ftc",
+      "riemann-sums",
+      "u-substitution"
+    ],
+    "U7": [
+      "exponential-growth-decay",
+      "separable-des",
+      "slope-fields"
+    ],
+    "U8": [
+      "area-between-curves",
+      "average-value",
+      "motion-integrals",
+      "volume-cross-sections",
+      "volume-disk-washer"
+    ]
+  },
+  "categoryForUnit": {
+    "U1": "limits",
+    "U2": "derivatives",
+    "U3": "derivatives",
+    "U4": "applications-derivatives",
+    "U5": "applications-derivatives",
+    "U6": "integrals",
+    "U7": "differential-equations",
+    "U8": "applications-integrals"
+  }
+}

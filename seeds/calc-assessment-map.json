@@ -1,0 +1,969 @@
+{
+  "1": {
+    "week": 1,
+    "title": "Foundations: Limits and Basic Differentiation",
+    "mcCount": 15,
+    "frqPoints": 9,
+    "mc": [
+      {
+        "problemId": "calc-ab-w1q1",
+        "n": 1,
+        "unit": "U1",
+        "skill": "Limits by algebraic manipulation",
+        "skillId": "limits-algebraic-techniques",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q2",
+        "n": 2,
+        "unit": "U1",
+        "skill": "Limits at infinity and horizontal asymptotes",
+        "skillId": "limits-at-infinity",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q3",
+        "n": 3,
+        "unit": "U1",
+        "skill": "Special trigonometric limits",
+        "skillId": "limits-algebraic-techniques",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q4",
+        "n": 4,
+        "unit": "U1",
+        "skill": "Infinite limits and vertical asymptotes from a graph",
+        "skillId": "one-sided-infinite-limits",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q5",
+        "n": 5,
+        "unit": "U1",
+        "skill": "Continuity at a point (removable discontinuity)",
+        "skillId": "continuity-types",
+        "practice": "MP3",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q6",
+        "n": 6,
+        "unit": "U2",
+        "skill": "Power rule with negative exponents",
+        "skillId": "basic-differentiation-rules",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q7",
+        "n": 7,
+        "unit": "U2",
+        "skill": "Recognizing the limit definition of the derivative",
+        "skillId": "derivative-definition",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q8",
+        "n": 8,
+        "unit": "U2",
+        "skill": "Product rule with trigonometric functions",
+        "skillId": "basic-differentiation-rules",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q9",
+        "n": 9,
+        "unit": "U2",
+        "skill": "Quotient rule evaluated at a point",
+        "skillId": "basic-differentiation-rules",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q10",
+        "n": 10,
+        "unit": "U3",
+        "skill": "Implicit differentiation",
+        "skillId": "implicit-differentiation",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w1q11",
+        "n": 11,
+        "unit": "U1",
+        "skill": "Intermediate Value Theorem with a table",
+        "skillId": "ivt-squeeze",
+        "practice": "MP3",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w1q12",
+        "n": 12,
+        "unit": "U2",
+        "skill": "Slope of a tangent line (derivatives of eˣ and polynomials)",
+        "skillId": "common-derivatives",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w1q13",
+        "n": 13,
+        "unit": "U2",
+        "skill": "Instantaneous rate of change in context",
+        "skillId": "derivative-definition",
+        "practice": "MP2",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w1q14",
+        "n": 14,
+        "unit": "U3",
+        "skill": "Chain rule with exponential functions in context",
+        "skillId": "chain-rule",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w1q15",
+        "n": 15,
+        "unit": "U3",
+        "skill": "Derivative of an inverse function",
+        "skillId": "inverse-function-derivatives",
+        "practice": "MP1",
+        "calc": true
+      }
+    ],
+    "frq": {
+      "unit": "U2",
+      "skill": "Limit definition of the derivative and tangent lines",
+      "skillId": "derivative-definition",
+      "calc": false,
+      "context": "Let f be the function defined by f(x) = x³ − 4x + 2 for all real numbers x.",
+      "svg": null,
+      "points": 9,
+      "parts": [
+        {
+          "label": "a",
+          "prompt": "Evaluate lim(x→2) [f(x) − f(2)]/(x − 2). Show the computations that lead to your answer.",
+          "points": 2,
+          "solution": "f(2) = 8 − 8 + 2 = 2, so the limit is lim(x→2) (x³ − 4x)/(x − 2) = lim(x→2) x(x − 2)(x + 2)/(x − 2) = lim(x→2) x(x + 2) = 2(4) = 8. (Equivalently, this limit is by definition f′(2).)",
+          "rubric": [
+            "1 pt: recognizes the limit as f′(2) or correctly factors and cancels (x − 2) in the difference quotient",
+            "1 pt: value 8"
+          ]
+        },
+        {
+          "label": "b",
+          "prompt": "Using the limit definition of the derivative, f′(x) = lim(h→0) [f(x + h) − f(x)]/h, show that f′(x) = 3x² − 4.",
+          "points": 3,
+          "solution": "f(x + h) − f(x) = (x + h)³ − 4(x + h) + 2 − (x³ − 4x + 2) = 3x²h + 3xh² + h³ − 4h. Dividing by h (h ≠ 0) gives 3x² + 3xh + h² − 4. As h → 0, the terms 3xh and h² approach 0, so f′(x) = lim(h→0) (3x² + 3xh + h² − 4) = 3x² − 4.",
+          "rubric": [
+            "1 pt: correct difference quotient [f(x + h) − f(x)]/h with f(x + h) expanded",
+            "1 pt: algebra: cancels the h from every remaining term",
+            "1 pt: evaluates the limit as h → 0 to obtain 3x² − 4 (limit notation used correctly throughout)"
+          ]
+        },
+        {
+          "label": "c",
+          "prompt": "Write an equation of the line tangent to the graph of f at the point where x = 2.",
+          "points": 2,
+          "solution": "The point of tangency is (2, f(2)) = (2, 2), and the slope is f′(2) = 3(4) − 4 = 8, consistent with part (a). An equation of the tangent line is y = 2 + 8(x − 2), or equivalently y = 8x − 14.",
+          "rubric": [
+            "1 pt: uses the point (2, 2) (computes f(2) = 2)",
+            "1 pt: tangent line equation with slope f′(2) = 8, e.g. y = 2 + 8(x − 2)"
+          ]
+        },
+        {
+          "label": "d",
+          "prompt": "Find all values of x at which the line tangent to the graph of f is horizontal. Justify your answer.",
+          "points": 2,
+          "solution": "A tangent line is horizontal where f′(x) = 0. Setting 3x² − 4 = 0 gives x² = 4/3, so x = −2√3/3 and x = 2√3/3 (equivalently x = ±2/√3). These are the only solutions of f′(x) = 0, so they are exactly the x-values where the tangent line is horizontal, because a horizontal tangent occurs precisely where the derivative equals 0.",
+          "rubric": [
+            "1 pt: sets f′(x) = 0 (i.e., 3x² − 4 = 0)",
+            "1 pt: both values x = ±2√3/3 with justification that horizontal tangents occur exactly where f′(x) = 0"
+          ]
+        }
+      ]
+    }
+  },
+  "2": {
+    "week": 2,
+    "title": "Derivative Applications",
+    "mcCount": 15,
+    "frqPoints": 9,
+    "mc": [
+      {
+        "problemId": "calc-ab-w2q1",
+        "n": 1,
+        "unit": "U3",
+        "skill": "Chain rule",
+        "skillId": "chain-rule",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q2",
+        "n": 2,
+        "unit": "U3",
+        "skill": "Implicit differentiation",
+        "skillId": "implicit-differentiation",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q3",
+        "n": 3,
+        "unit": "U3",
+        "skill": "Inverse function derivative",
+        "skillId": "inverse-function-derivatives",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q4",
+        "n": 4,
+        "unit": "U4",
+        "skill": "L'Hospital's Rule",
+        "skillId": "lhopitals-rule",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q5",
+        "n": 5,
+        "unit": "U4",
+        "skill": "Related rates: ladder",
+        "skillId": "related-rates",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q6",
+        "n": 6,
+        "unit": "U4",
+        "skill": "Related rates: sphere",
+        "skillId": "related-rates",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q7",
+        "n": 7,
+        "unit": "U4",
+        "skill": "Rectilinear motion: rest",
+        "skillId": "motion",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q8",
+        "n": 8,
+        "unit": "U4",
+        "skill": "Linearization",
+        "skillId": "linearization",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q9",
+        "n": 9,
+        "unit": "U5",
+        "skill": "Mean Value Theorem",
+        "skillId": "mvt-evt",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q10",
+        "n": 10,
+        "unit": "U5",
+        "skill": "Concavity",
+        "skillId": "concavity-inflection",
+        "practice": "MP3",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w2q11",
+        "n": 11,
+        "unit": "U4",
+        "skill": "Motion: acceleration when v = 0",
+        "skillId": "motion",
+        "practice": "MP2",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w2q12",
+        "n": 12,
+        "unit": "U5",
+        "skill": "Optimization: box design",
+        "skillId": "optimization",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w2q13",
+        "n": 13,
+        "unit": "U5",
+        "skill": "Absolute extrema (candidates test)",
+        "skillId": "increasing-decreasing-extrema",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w2q14",
+        "n": 14,
+        "unit": "U5",
+        "skill": "Local extrema from f′ sign change",
+        "skillId": "increasing-decreasing-extrema",
+        "practice": "MP3",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w2q15",
+        "n": 15,
+        "unit": "U5",
+        "skill": "Increasing/decreasing from f′",
+        "skillId": "increasing-decreasing-extrema",
+        "practice": "MP3",
+        "calc": true
+      }
+    ],
+    "frq": {
+      "unit": "U5",
+      "skill": "Curve analysis from the graph of f′",
+      "skillId": "curve-sketching",
+      "calc": false,
+      "context": "Let f be a twice-differentiable function defined on the closed interval −4 ≤ x ≤ 4. The figure shows the graph of f′, the derivative of f, which consists of four line segments through the points (−4, 4), (−2, 0), (0, −2), (2, 0), and (4, 4). It is known that f(1) = 5.",
+      "svg": "<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"214.794063pt\" height=\"166.779297pt\" viewBox=\"0 0 214.794063 166.779297\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n <metadata>\n  <rdf:RDF xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:cc=\"http://creativecommons.org/ns#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n   <cc:Work>\n    <dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/>\n    <dc:date>2026-07-16T14:51:15.088399</dc:date>\n    <dc:format>image/svg+xml</dc:format>\n    <dc:creator>\n     <cc:Agent>\n      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>\n     </cc:Agent>\n    </dc:creator>\n   </cc:Work>\n  </rdf:RDF>\n </metadata>\n <defs>\n  <style type=\"text/css\">*{stroke-linejoin: round; stroke-linecap: butt}</style>\n </defs>\n <g id=\"figure_1\">\n  <g id=\"patch_1\">\n   <path d=\"M 0 166.779297 \nL 214.794063 166.779297 \nL 214.794063 0 \nL 0 0 \nz\n\" style=\"fill: #ffffff\"/>\n  </g>\n  <g id=\"axes_1\">\n   <g id=\"patch_2\">\n    <path d=\"M 21.545313 148.079297 \nL 205.685313 148.079297 \nL 205.685313 9.479297 \nL 21.545313 9.479297 \nz\n\" style=\"fill: #ffffff\"/>\n   </g>\n   <g id=\"matplotlib.axis_1\">\n    <g id=\"xtick_1\">\n     <g id=\"line2d_1\">\n      <path d=\"M 21.545313 148.079297 \nL 21.545313 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_2\">\n      <defs>\n       <path id=\"mbff9f3b308\" d=\"M 0 0 \nL 0 2 \n\" style=\"stroke: #334155; stroke-width: 0.8\"/>\n      </defs>\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"21.545313\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_1\">\n      <!-- −4 -->\n      <g style=\"fill: #334155\" transform=\"translate(17.122656 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-c9c\" d=\"M 678 2272 \nL 4684 2272 \nL 4684 1741 \nL 678 1741 \nL 678 2272 \nz\n\" transform=\"scale(0.015625)\"/>\n        <path id=\"DejaVuSans-17\" d=\"M 2419 4116 \nL 825 1625 \nL 2419 1625 \nL 2419 4116 \nz\nM 2253 4666 \nL 3047 4666 \nL 3047 1625 \nL 3713 1625 \nL 3713 1100 \nL 3047 1100 \nL 3047 0 \nL 2419 0 \nL 2419 1100 \nL 313 1100 \nL 313 1709 \nL 2253 4666 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-17\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_2\">\n     <g id=\"line2d_3\">\n      <path d=\"M 44.562813 148.079297 \nL 44.562813 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_4\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"44.562813\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_2\">\n      <!-- −3 -->\n      <g style=\"fill: #334155\" transform=\"translate(40.140156 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-16\" d=\"M 2597 2516 \nQ 3050 2419 3304 2112 \nQ 3559 1806 3559 1356 \nQ 3559 666 3084 287 \nQ 2609 -91 1734 -91 \nQ 1441 -91 1130 -33 \nQ 819 25 488 141 \nL 488 750 \nQ 750 597 1062 519 \nQ 1375 441 1716 441 \nQ 2309 441 2620 675 \nQ 2931 909 2931 1356 \nQ 2931 1769 2642 2001 \nQ 2353 2234 1838 2234 \nL 1294 2234 \nL 1294 2753 \nL 1863 2753 \nQ 2328 2753 2575 2939 \nQ 2822 3125 2822 3475 \nQ 2822 3834 2567 4026 \nQ 2313 4219 1838 4219 \nQ 1578 4219 1281 4162 \nQ 984 4106 628 3988 \nL 628 4550 \nQ 988 4650 1302 4700 \nQ 1616 4750 1894 4750 \nQ 2613 4750 3031 4423 \nQ 3450 4097 3450 3541 \nQ 3450 3153 3228 2886 \nQ 3006 2619 2597 2516 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-16\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_3\">\n     <g id=\"line2d_5\">\n      <path d=\"M 67.580313 148.079297 \nL 67.580313 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_6\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"67.580313\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_3\">\n      <!-- −2 -->\n      <g style=\"fill: #334155\" transform=\"translate(63.157656 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-15\" d=\"M 1228 531 \nL 3431 531 \nL 3431 0 \nL 469 0 \nL 469 531 \nQ 828 903 1448 1529 \nQ 2069 2156 2228 2338 \nQ 2531 2678 2651 2914 \nQ 2772 3150 2772 3378 \nQ 2772 3750 2511 3984 \nQ 2250 4219 1831 4219 \nQ 1534 4219 1204 4116 \nQ 875 4013 500 3803 \nL 500 4441 \nQ 881 4594 1212 4672 \nQ 1544 4750 1819 4750 \nQ 2544 4750 2975 4387 \nQ 3406 4025 3406 3419 \nQ 3406 3131 3298 2873 \nQ 3191 2616 2906 2266 \nQ 2828 2175 2409 1742 \nQ 1991 1309 1228 531 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-15\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_4\">\n     <g id=\"line2d_7\">\n      <path d=\"M 90.597813 148.079297 \nL 90.597813 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_8\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"90.597813\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_4\">\n      <!-- −1 -->\n      <g style=\"fill: #334155\" transform=\"translate(86.175156 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-14\" d=\"M 794 531 \nL 1825 531 \nL 1825 4091 \nL 703 3866 \nL 703 4441 \nL 1819 4666 \nL 2450 4666 \nL 2450 531 \nL 3481 531 \nL 3481 0 \nL 794 0 \nL 794 531 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-14\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_5\">\n     <g id=\"line2d_9\">\n      <path d=\"M 113.615313 148.079297 \nL 113.615313 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_10\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"113.615313\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_5\">\n      <!-- 0 -->\n      <g style=\"fill: #334155\" transform=\"translate(111.706563 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-13\" d=\"M 2034 4250 \nQ 1547 4250 1301 3770 \nQ 1056 3291 1056 2328 \nQ 1056 1369 1301 889 \nQ 1547 409 2034 409 \nQ 2525 409 2770 889 \nQ 3016 1369 3016 2328 \nQ 3016 3291 2770 3770 \nQ 2525 4250 2034 4250 \nz\nM 2034 4750 \nQ 2819 4750 3233 4129 \nQ 3647 3509 3647 2328 \nQ 3647 1150 3233 529 \nQ 2819 -91 2034 -91 \nQ 1250 -91 836 529 \nQ 422 1150 422 2328 \nQ 422 3509 836 4129 \nQ 1250 4750 2034 4750 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-13\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_6\">\n     <g id=\"line2d_11\">\n      <path d=\"M 136.632813 148.079297 \nL 136.632813 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_12\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"136.632813\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_6\">\n      <!-- 1 -->\n      <g style=\"fill: #334155\" transform=\"translate(134.724063 158.137891) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-14\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_7\">\n     <g id=\"line2d_13\">\n      <path d=\"M 159.650313 148.079297 \nL 159.650313 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_14\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"159.650313\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_7\">\n      <!-- 2 -->\n      <g style=\"fill: #334155\" transform=\"translate(157.741563 158.137891) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-15\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_8\">\n     <g id=\"line2d_15\">\n      <path d=\"M 182.667813 148.079297 \nL 182.667813 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_16\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"182.667813\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_8\">\n      <!-- 3 -->\n      <g style=\"fill: #334155\" transform=\"translate(180.759063 158.137891) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-16\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_9\">\n     <g id=\"line2d_17\">\n      <path d=\"M 205.685313 148.079297 \nL 205.685313 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_18\">\n      <g>\n       <use xlink:href=\"#mbff9f3b308\" x=\"205.685313\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_9\">\n      <!-- 4 -->\n      <g style=\"fill: #334155\" transform=\"translate(203.776563 158.137891) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-17\"/>\n      </g>\n     </g>\n    </g>\n   </g>\n   <g id=\"matplotlib.axis_2\">\n    <g id=\"ytick_1\">\n     <g id=\"line2d_19\">\n      <path d=\"M 21.545313 148.079297 \nL 205.685313 148.079297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_20\">\n      <defs>\n       <path id=\"m96ffb7307f\" d=\"M 0 0 \nL -2 0 \n\" style=\"stroke: #334155; stroke-width: 0.8\"/>\n      </defs>\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_10\">\n      <!-- −4 -->\n      <g style=\"fill: #334155\" transform=\"translate(7.2 150.358594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-17\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_2\">\n     <g id=\"line2d_21\">\n      <path d=\"M 21.545313 132.679297 \nL 205.685313 132.679297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_22\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"132.679297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_11\">\n      <!-- −3 -->\n      <g style=\"fill: #334155\" transform=\"translate(7.2 134.958594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-16\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_3\">\n     <g id=\"line2d_23\">\n      <path d=\"M 21.545313 117.279297 \nL 205.685313 117.279297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_24\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"117.279297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_12\">\n      <!-- −2 -->\n      <g style=\"fill: #334155\" transform=\"translate(7.2 119.558594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-15\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_4\">\n     <g id=\"line2d_25\">\n      <path d=\"M 21.545313 101.879297 \nL 205.685313 101.879297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_26\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"101.879297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_13\">\n      <!-- −1 -->\n      <g style=\"fill: #334155\" transform=\"translate(7.2 104.158594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-14\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_5\">\n     <g id=\"line2d_27\">\n      <path d=\"M 21.545313 86.479297 \nL 205.685313 86.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_28\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"86.479297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_14\">\n      <!-- 0 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 88.758594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-13\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_6\">\n     <g id=\"line2d_29\">\n      <path d=\"M 21.545313 71.079297 \nL 205.685313 71.079297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_30\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"71.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_15\">\n      <!-- 1 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 73.358594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-14\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_7\">\n     <g id=\"line2d_31\">\n      <path d=\"M 21.545313 55.679297 \nL 205.685313 55.679297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_32\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"55.679297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_16\">\n      <!-- 2 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 57.958594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-15\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_8\">\n     <g id=\"line2d_33\">\n      <path d=\"M 21.545313 40.279297 \nL 205.685313 40.279297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_34\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"40.279297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_17\">\n      <!-- 3 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 42.558594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-16\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_9\">\n     <g id=\"line2d_35\">\n      <path d=\"M 21.545313 24.879297 \nL 205.685313 24.879297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_36\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"24.879297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_18\">\n      <!-- 4 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 27.158594) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-17\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_10\">\n     <g id=\"line2d_37\">\n      <path d=\"M 21.545313 9.479297 \nL 205.685313 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_38\">\n      <g>\n       <use xlink:href=\"#m96ffb7307f\" x=\"21.545313\" y=\"9.479297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_19\">\n      <!-- 5 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 11.758594) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-18\" d=\"M 691 4666 \nL 3169 4666 \nL 3169 4134 \nL 1269 4134 \nL 1269 2991 \nQ 1406 3038 1543 3061 \nQ 1681 3084 1819 3084 \nQ 2600 3084 3056 2656 \nQ 3513 2228 3513 1497 \nQ 3513 744 3044 326 \nQ 2575 -91 1722 -91 \nQ 1428 -91 1123 -41 \nQ 819 9 494 109 \nL 494 744 \nQ 775 591 1075 516 \nQ 1375 441 1709 441 \nQ 2250 441 2565 725 \nQ 2881 1009 2881 1497 \nQ 2881 1984 2565 2268 \nQ 2250 2553 1709 2553 \nQ 1456 2553 1204 2497 \nQ 953 2441 691 2322 \nL 691 4666 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-18\"/>\n      </g>\n     </g>\n    </g>\n   </g>\n   <g id=\"line2d_39\">\n    <path d=\"M 21.545313 24.879297 \nL 67.580313 86.479297 \nL 113.615313 117.279297 \nL 159.650313 86.479297 \nL 205.685313 24.879297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #2563eb; stroke-width: 1.9; stroke-linecap: square\"/>\n    <defs>\n     <path id=\"m180e7bc434\" d=\"M 0 1.75 \nC 0.464105 1.75 0.909265 1.565609 1.237437 1.237437 \nC 1.565609 0.909265 1.75 0.464105 1.75 0 \nC 1.75 -0.464105 1.565609 -0.909265 1.237437 -1.237437 \nC 0.909265 -1.565609 0.464105 -1.75 0 -1.75 \nC -0.464105 -1.75 -0.909265 -1.565609 -1.237437 -1.237437 \nC -1.565609 -0.909265 -1.75 -0.464105 -1.75 0 \nC -1.75 0.464105 -1.565609 0.909265 -1.237437 1.237437 \nC -0.909265 1.565609 -0.464105 1.75 0 1.75 \nz\n\" style=\"stroke: #2563eb\"/>\n    </defs>\n    <g clip-path=\"url(#p980c1bf950)\">\n     <use xlink:href=\"#m180e7bc434\" x=\"21.545313\" y=\"24.879297\" style=\"fill: #2563eb; stroke: #2563eb\"/>\n     <use xlink:href=\"#m180e7bc434\" x=\"67.580313\" y=\"86.479297\" style=\"fill: #2563eb; stroke: #2563eb\"/>\n     <use xlink:href=\"#m180e7bc434\" x=\"113.615313\" y=\"117.279297\" style=\"fill: #2563eb; stroke: #2563eb\"/>\n     <use xlink:href=\"#m180e7bc434\" x=\"159.650313\" y=\"86.479297\" style=\"fill: #2563eb; stroke: #2563eb\"/>\n     <use xlink:href=\"#m180e7bc434\" x=\"205.685313\" y=\"24.879297\" style=\"fill: #2563eb; stroke: #2563eb\"/>\n    </g>\n   </g>\n   <g id=\"line2d_40\">\n    <path d=\"M 21.545313 86.479297 \nL 205.685313 86.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #334155; stroke-width: 1.1; stroke-linecap: square\"/>\n   </g>\n   <g id=\"line2d_41\">\n    <path d=\"M 113.615313 148.079297 \nL 113.615313 9.479297 \n\" clip-path=\"url(#p980c1bf950)\" style=\"fill: none; stroke: #334155; stroke-width: 1.1; stroke-linecap: square\"/>\n   </g>\n  </g>\n </g>\n <defs>\n  <clipPath id=\"p980c1bf950\">\n   <rect x=\"21.545313\" y=\"9.479297\" width=\"184.14\" height=\"138.6\"/>\n  </clipPath>\n </defs>\n</svg>",
+      "points": 9,
+      "parts": [
+        {
+          "label": "a",
+          "prompt": "On what open intervals contained in −4 < x < 4 is f increasing? Give a reason for your answer.",
+          "points": 2,
+          "solution": "f is increasing on (−4, −2) and on (2, 4) because f′(x) > 0 on those intervals. From the graph, f′ is positive for −4 < x < −2 and for 2 < x < 4, and negative for −2 < x < 2.",
+          "rubric": [
+            "1 pt: identifies both intervals (−4, −2) and (2, 4)",
+            "1 pt: reason: f is increasing because f′(x) > 0 on those intervals"
+          ]
+        },
+        {
+          "label": "b",
+          "prompt": "Find the x-coordinate of each point at which f has a local maximum or a local minimum on −4 < x < 4. Justify your answers.",
+          "points": 2,
+          "solution": "f has a local maximum at x = −2 because f′ changes sign from positive to negative there. f has a local minimum at x = 2 because f′ changes sign from negative to positive there.",
+          "rubric": [
+            "1 pt: local maximum at x = −2 with justification (f′ changes from positive to negative)",
+            "1 pt: local minimum at x = 2 with justification (f′ changes from negative to positive)"
+          ]
+        },
+        {
+          "label": "c",
+          "prompt": "On what open interval is the graph of f concave down? Find the x-coordinate of each point of inflection of the graph of f. Justify your answers.",
+          "points": 3,
+          "solution": "The graph of f is concave down on (−4, 0) because f′ is decreasing on that interval (the segments of the graph of f′ have negative slopes −2 and −1 there). The graph of f is concave up on (0, 4) because f′ is increasing there. There is a point of inflection at x = 0 because f′ changes from decreasing to increasing at x = 0.",
+          "rubric": [
+            "1 pt: concave down on (−4, 0)",
+            "1 pt: point of inflection at x = 0 only",
+            "1 pt: justification: f′ is decreasing on (−4, 0) and changes from decreasing to increasing at x = 0"
+          ]
+        },
+        {
+          "label": "d",
+          "prompt": "Write an equation of the line tangent to the graph of f at x = 1.",
+          "points": 2,
+          "solution": "From the graph, f′(1) = −1 (on the segment from (0, −2) to (2, 0), which has slope 1, the value at x = 1 is −1). Since f(1) = 5, the tangent line is y = 5 − (x − 1), that is, y = −x + 6.",
+          "rubric": [
+            "1 pt: f′(1) = −1 read from the graph",
+            "1 pt: tangent line equation y − 5 = −1(x − 1) (or equivalent)"
+          ]
+        }
+      ]
+    }
+  },
+  "3": {
+    "week": 3,
+    "title": "Integration & FTC",
+    "mcCount": 15,
+    "frqPoints": 9,
+    "mc": [
+      {
+        "problemId": "calc-ab-w3q1",
+        "n": 1,
+        "unit": "U6",
+        "skill": "Riemann sums from a table",
+        "skillId": "riemann-sums",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q2",
+        "n": 2,
+        "unit": "U6",
+        "skill": "FTC Part 1",
+        "skillId": "ftc",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q3",
+        "n": 3,
+        "unit": "U6",
+        "skill": "U-substitution (indefinite)",
+        "skillId": "u-substitution",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q4",
+        "n": 4,
+        "unit": "U6",
+        "skill": "FTC Part 2 (evaluation)",
+        "skillId": "ftc",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q5",
+        "n": 5,
+        "unit": "U6",
+        "skill": "FTC with chain rule",
+        "skillId": "ftc",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q6",
+        "n": 6,
+        "unit": "U7",
+        "skill": "Slope fields",
+        "skillId": "slope-fields",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q7",
+        "n": 7,
+        "unit": "U7",
+        "skill": "Separation of variables",
+        "skillId": "separable-des",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q8",
+        "n": 8,
+        "unit": "U6",
+        "skill": "Properties of definite integrals",
+        "skillId": "ftc",
+        "practice": "MP3",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q9",
+        "n": 9,
+        "unit": "U7",
+        "skill": "Exponential models",
+        "skillId": "exponential-growth-decay",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q10",
+        "n": 10,
+        "unit": "U6",
+        "skill": "U-substitution with change of bounds",
+        "skillId": "u-substitution",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w3q11",
+        "n": 11,
+        "unit": "U6",
+        "skill": "Trapezoidal sum from a table",
+        "skillId": "riemann-sums",
+        "practice": "MP2",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w3q12",
+        "n": 12,
+        "unit": "U6",
+        "skill": "Accumulation in context",
+        "skillId": "ftc",
+        "practice": "MP2",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w3q13",
+        "n": 13,
+        "unit": "U7",
+        "skill": "Exponential growth models",
+        "skillId": "exponential-growth-decay",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w3q14",
+        "n": 14,
+        "unit": "U7",
+        "skill": "Particular solutions by separation",
+        "skillId": "separable-des",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w3q15",
+        "n": 15,
+        "unit": "U7",
+        "skill": "Separable models in context",
+        "skillId": "separable-des",
+        "practice": "MP1",
+        "calc": true
+      }
+    ],
+    "frq": {
+      "unit": "U6",
+      "skill": "Rate in/rate out (accumulation)",
+      "skillId": "ftc",
+      "calc": true,
+      "context": "At a water treatment plant, a storage tank contains 150 gallons of water at time t = 0. During the time interval 0 ≤ t ≤ 10 hours, water is pumped into the tank at the rate E(t) = 8 + 6 cos(t/3) gallons per hour, and water drains out of the tank at the rate L(t) = 10e^(−0.05t) gallons per hour. Let W(t) be the amount of water, in gallons, in the tank at time t.",
+      "svg": null,
+      "points": 9,
+      "parts": [
+        {
+          "label": "a",
+          "prompt": "How many gallons of water are pumped into the tank during the time interval 0 ≤ t ≤ 10 hours?",
+          "points": 2,
+          "solution": "The amount pumped in is the accumulation of the in-rate: ∫ from 0 to 10 of E(t) dt = ∫ from 0 to 10 of (8 + 6 cos(t/3)) dt = 80 + 18 sin(10/3) ≈ 76.570 gallons.",
+          "rubric": [
+            "1 pt: sets up the definite integral ∫ from 0 to 10 of E(t) dt",
+            "1 pt: answer 76.570 gallons (accept 76.569 to 76.570)"
+          ]
+        },
+        {
+          "label": "b",
+          "prompt": "Is the amount of water in the tank increasing or decreasing at time t = 4 hours? Give a reason for your answer.",
+          "points": 2,
+          "solution": "W′(t) = E(t) − L(t). At t = 4, E(4) = 8 + 6 cos(4/3) ≈ 9.411 gallons per hour and L(4) = 10e^(−0.2) ≈ 8.187 gallons per hour, so W′(4) = E(4) − L(4) ≈ 1.224 > 0. Because W′(4) > 0 (water is entering faster than it is draining), the amount of water in the tank is increasing at t = 4.",
+          "rubric": [
+            "1 pt: considers W′(4) = E(4) − L(4) (or compares E(4) and L(4) numerically)",
+            "1 pt: concludes increasing with reason W′(4) ≈ 1.224 > 0, i.e., E(4) > L(4)"
+          ]
+        },
+        {
+          "label": "c",
+          "prompt": "Find W(10), the amount of water in the tank at time t = 10 hours.",
+          "points": 2,
+          "solution": "W(10) = 150 + ∫ from 0 to 10 of (E(t) − L(t)) dt = 150 + 76.570 − ∫ from 0 to 10 of 10e^(−0.05t) dt = 150 + 76.570 − 200(1 − e^(−0.5)) ≈ 150 + 76.570 − 78.694 ≈ 147.876 gallons.",
+          "rubric": [
+            "1 pt: expression W(10) = 150 + ∫ from 0 to 10 of (E(t) − L(t)) dt (initial condition plus net accumulation)",
+            "1 pt: answer 147.876 gallons (accept 147.875 to 147.876)"
+          ]
+        },
+        {
+          "label": "d",
+          "prompt": "For 0 ≤ t ≤ 10, find the time t at which the amount of water in the tank is an absolute maximum. Justify your answer.",
+          "points": 3,
+          "solution": "W′(t) = E(t) − L(t) = 0 when 8 + 6 cos(t/3) = 10e^(−0.05t); solving with a calculator gives t ≈ 4.774. This is the only critical point of W on (0, 10): W′(t) > 0 for 0 ≤ t < 4.774 and W′(t) < 0 for 4.774 < t ≤ 10, so W increases before t ≈ 4.774 and decreases after. Therefore the amount of water is an absolute maximum at t ≈ 4.774 hours.",
+          "rubric": [
+            "1 pt: sets W′(t) = 0, i.e., E(t) = L(t)",
+            "1 pt: t = 4.774 (accept 4.774 to 4.775)",
+            "1 pt: justification that W′ changes sign from positive to negative at the only critical point (or a candidates test comparing W(0), W(4.774), W(10))"
+          ]
+        }
+      ]
+    }
+  },
+  "4": {
+    "week": 4,
+    "title": "Applications of Integration",
+    "mcCount": 15,
+    "frqPoints": 9,
+    "mc": [
+      {
+        "problemId": "calc-ab-w4q1",
+        "n": 1,
+        "unit": "U8",
+        "skill": "Average value of a function",
+        "skillId": "average-value",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q2",
+        "n": 2,
+        "unit": "U6",
+        "skill": "U-substitution (definite)",
+        "skillId": "u-substitution",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q3",
+        "n": 3,
+        "unit": "U8",
+        "skill": "Area between curves",
+        "skillId": "area-between-curves",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q4",
+        "n": 4,
+        "unit": "U4",
+        "skill": "L'Hospital's Rule",
+        "skillId": "lhopitals-rule",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q5",
+        "n": 5,
+        "unit": "U8",
+        "skill": "Particle motion: total distance",
+        "skillId": "motion-integrals",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q6",
+        "n": 6,
+        "unit": "U5",
+        "skill": "Mean Value Theorem",
+        "skillId": "mvt-evt",
+        "practice": "MP3",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q7",
+        "n": 7,
+        "unit": "U8",
+        "skill": "Volume: disks",
+        "skillId": "volume-disk-washer",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q8",
+        "n": 8,
+        "unit": "U6",
+        "skill": "FTC with chain rule",
+        "skillId": "ftc",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q9",
+        "n": 9,
+        "unit": "U8",
+        "skill": "Volume: washers",
+        "skillId": "volume-disk-washer",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q10",
+        "n": 10,
+        "unit": "U8",
+        "skill": "Volume: known cross-sections (semicircles)",
+        "skillId": "volume-cross-sections",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w4q11",
+        "n": 11,
+        "unit": "U8",
+        "skill": "Particle motion: position from velocity",
+        "skillId": "motion-integrals",
+        "practice": "MP2",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w4q12",
+        "n": 12,
+        "unit": "U4",
+        "skill": "Rate of change from a model",
+        "skillId": "motion",
+        "practice": "MP2",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w4q13",
+        "n": 13,
+        "unit": "U6",
+        "skill": "Trapezoidal sum from a table",
+        "skillId": "riemann-sums",
+        "practice": "MP2",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w4q14",
+        "n": 14,
+        "unit": "U5",
+        "skill": "Relative extrema (first derivative test)",
+        "skillId": "increasing-decreasing-extrema",
+        "practice": "MP3",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w4q15",
+        "n": 15,
+        "unit": "U5",
+        "skill": "Absolute extrema (candidates test)",
+        "skillId": "increasing-decreasing-extrema",
+        "practice": "MP3",
+        "calc": true
+      }
+    ],
+    "frq": {
+      "unit": "U8",
+      "skill": "Area and volume of a plane region",
+      "skillId": "area-between-curves",
+      "calc": false,
+      "context": "Let R be the region in the xy-plane enclosed by the graphs of f(x) = 4 − x² and g(x) = x + 2, as shown in the figure. The graphs intersect at the points (−2, 0) and (1, 3).",
+      "svg": "<svg xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"214.794063pt\" height=\"166.779297pt\" viewBox=\"0 0 214.794063 166.779297\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n <metadata>\n  <rdf:RDF xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:cc=\"http://creativecommons.org/ns#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n   <cc:Work>\n    <dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\"/>\n    <dc:date>2026-07-16T14:51:15.279057</dc:date>\n    <dc:format>image/svg+xml</dc:format>\n    <dc:creator>\n     <cc:Agent>\n      <dc:title>Matplotlib v3.11.0, https://matplotlib.org/</dc:title>\n     </cc:Agent>\n    </dc:creator>\n   </cc:Work>\n  </rdf:RDF>\n </metadata>\n <defs>\n  <style type=\"text/css\">*{stroke-linejoin: round; stroke-linecap: butt}</style>\n </defs>\n <g id=\"figure_1\">\n  <g id=\"patch_1\">\n   <path d=\"M 0 166.779297 \nL 214.794063 166.779297 \nL 214.794063 0 \nL 0 0 \nz\n\" style=\"fill: #ffffff\"/>\n  </g>\n  <g id=\"axes_1\">\n   <g id=\"patch_2\">\n    <path d=\"M 21.545313 148.079297 \nL 205.685313 148.079297 \nL 205.685313 9.479297 \nL 21.545313 9.479297 \nz\n\" style=\"fill: #ffffff\"/>\n   </g>\n   <g id=\"FillBetweenPolyCollection_1\">\n    <defs>\n     <path id=\"m2e0357c3a1\" d=\"M 64.039159 -50.684615 \nL 64.039159 -50.684615 \nL 64.323398 -51.538244 \nL 64.607638 -52.38758 \nL 64.891878 -53.232623 \nL 65.176118 -54.073373 \nL 65.460358 -54.909829 \nL 65.744597 -55.741992 \nL 66.028837 -56.569862 \nL 66.313077 -57.393439 \nL 66.597317 -58.212722 \nL 66.881556 -59.027713 \nL 67.165796 -59.83841 \nL 67.450036 -60.644814 \nL 67.734276 -61.446925 \nL 68.018515 -62.244742 \nL 68.302755 -63.038267 \nL 68.586995 -63.827498 \nL 68.871235 -64.612436 \nL 69.155475 -65.393081 \nL 69.439714 -66.169432 \nL 69.723954 -66.941491 \nL 70.008194 -67.709256 \nL 70.292434 -68.472728 \nL 70.576673 -69.231907 \nL 70.860913 -69.986793 \nL 71.145153 -70.737385 \nL 71.429393 -71.483685 \nL 71.713633 -72.225691 \nL 71.997872 -72.963404 \nL 72.282112 -73.696824 \nL 72.566352 -74.42595 \nL 72.850592 -75.150784 \nL 73.134831 -75.871324 \nL 73.419071 -76.587571 \nL 73.703311 -77.299525 \nL 73.987551 -78.007185 \nL 74.271791 -78.710553 \nL 74.55603 -79.409627 \nL 74.84027 -80.104408 \nL 75.12451 -80.794896 \nL 75.40875 -81.481091 \nL 75.692989 -82.162992 \nL 75.977229 -82.840601 \nL 76.261469 -83.513916 \nL 76.545709 -84.182938 \nL 76.829948 -84.847666 \nL 77.114188 -85.508102 \nL 77.398428 -86.164244 \nL 77.682668 -86.816094 \nL 77.966908 -87.46365 \nL 78.251147 -88.106912 \nL 78.535387 -88.745882 \nL 78.819627 -89.380558 \nL 79.103867 -90.010942 \nL 79.388106 -90.637032 \nL 79.672346 -91.258829 \nL 79.956586 -91.876332 \nL 80.240826 -92.489543 \nL 80.525066 -93.09846 \nL 80.809305 -93.703084 \nL 81.093545 -94.303415 \nL 81.377785 -94.899453 \nL 81.662025 -95.491197 \nL 81.946264 -96.078649 \nL 82.230504 -96.661807 \nL 82.514744 -97.240672 \nL 82.798984 -97.815244 \nL 83.083223 -98.385522 \nL 83.367463 -98.951508 \nL 83.651703 -99.5132 \nL 83.935943 -100.070599 \nL 84.220183 -100.623705 \nL 84.504422 -101.172517 \nL 84.788662 -101.717037 \nL 85.072902 -102.257263 \nL 85.357142 -102.793196 \nL 85.641381 -103.324836 \nL 85.925621 -103.852183 \nL 86.209861 -104.375236 \nL 86.494101 -104.893997 \nL 86.778341 -105.408464 \nL 87.06258 -105.918638 \nL 87.34682 -106.424518 \nL 87.63106 -106.926106 \nL 87.9153 -107.4234 \nL 88.199539 -107.916402 \nL 88.483779 -108.40511 \nL 88.768019 -108.889524 \nL 89.052259 -109.369646 \nL 89.336499 -109.845475 \nL 89.620738 -110.31701 \nL 89.904978 -110.784252 \nL 90.189218 -111.247201 \nL 90.473458 -111.705856 \nL 90.757697 -112.160219 \nL 91.041937 -112.610288 \nL 91.326177 -113.056064 \nL 91.610417 -113.497547 \nL 91.894656 -113.934737 \nL 92.178896 -114.367634 \nL 92.463136 -114.796237 \nL 92.747376 -115.220547 \nL 93.031616 -115.640564 \nL 93.315855 -116.056288 \nL 93.600095 -116.467718 \nL 93.884335 -116.874856 \nL 94.168575 -117.2777 \nL 94.452814 -117.676251 \nL 94.737054 -118.070509 \nL 95.021294 -118.460474 \nL 95.305534 -118.846145 \nL 95.589774 -119.227523 \nL 95.874013 -119.604609 \nL 96.158253 -119.9774 \nL 96.442493 -120.345899 \nL 96.726733 -120.710105 \nL 97.010972 -121.070017 \nL 97.295212 -121.425636 \nL 97.579452 -121.776962 \nL 97.863692 -122.123995 \nL 98.147931 -122.466734 \nL 98.432171 -122.805181 \nL 98.716411 -123.139334 \nL 99.000651 -123.469194 \nL 99.284891 -123.794761 \nL 99.56913 -124.116035 \nL 99.85337 -124.433015 \nL 100.13761 -124.745702 \nL 100.42185 -125.054096 \nL 100.706089 -125.358197 \nL 100.990329 -125.658005 \nL 101.274569 -125.953519 \nL 101.558809 -126.244741 \nL 101.843049 -126.531669 \nL 102.127288 -126.814304 \nL 102.411528 -127.092646 \nL 102.695768 -127.366694 \nL 102.980008 -127.63645 \nL 103.264247 -127.901912 \nL 103.548487 -128.163081 \nL 103.832727 -128.419956 \nL 104.116967 -128.672539 \nL 104.401207 -128.920829 \nL 104.685446 -129.164825 \nL 104.969686 -129.404528 \nL 105.253926 -129.639938 \nL 105.538166 -129.871054 \nL 105.822405 -130.097878 \nL 106.106645 -130.320408 \nL 106.390885 -130.538645 \nL 106.675125 -130.752589 \nL 106.959364 -130.96224 \nL 107.243604 -131.167597 \nL 107.527844 -131.368662 \nL 107.812084 -131.565433 \nL 108.096324 -131.757911 \nL 108.380563 -131.946096 \nL 108.664803 -132.129987 \nL 108.949043 -132.309586 \nL 109.233283 -132.484891 \nL 109.517522 -132.655903 \nL 109.801762 -132.822622 \nL 110.086002 -132.985047 \nL 110.370242 -133.14318 \nL 110.654482 -133.297019 \nL 110.938721 -133.446565 \nL 111.222961 -133.591818 \nL 111.507201 -133.732778 \nL 111.791441 -133.869444 \nL 112.07568 -134.001818 \nL 112.35992 -134.129898 \nL 112.64416 -134.253685 \nL 112.9284 -134.373178 \nL 113.212639 -134.488379 \nL 113.496879 -134.599286 \nL 113.781119 -134.705901 \nL 114.065359 -134.808222 \nL 114.349599 -134.906249 \nL 114.633838 -134.999984 \nL 114.918078 -135.089426 \nL 115.202318 -135.174574 \nL 115.486558 -135.255429 \nL 115.770797 -135.331991 \nL 116.055037 -135.404259 \nL 116.339277 -135.472235 \nL 116.623517 -135.535917 \nL 116.907757 -135.595306 \nL 117.191996 -135.650402 \nL 117.476236 -135.701205 \nL 117.760476 -135.747714 \nL 118.044716 -135.789931 \nL 118.328955 -135.827854 \nL 118.613195 -135.861484 \nL 118.897435 -135.890821 \nL 119.181675 -135.915864 \nL 119.465915 -135.936615 \nL 119.750154 -135.953072 \nL 120.034394 -135.965236 \nL 120.318634 -135.973107 \nL 120.602874 -135.976685 \nL 120.887113 -135.975969 \nL 121.171353 -135.97096 \nL 121.455593 -135.961658 \nL 121.739833 -135.948063 \nL 122.024072 -135.930175 \nL 122.308312 -135.907994 \nL 122.592552 -135.881519 \nL 122.876792 -135.850751 \nL 123.161032 -135.81569 \nL 123.445271 -135.776336 \nL 123.729511 -135.732688 \nL 124.013751 -135.684748 \nL 124.297991 -135.632514 \nL 124.58223 -135.575987 \nL 124.86647 -135.515167 \nL 125.15071 -135.450053 \nL 125.43495 -135.380647 \nL 125.71919 -135.306947 \nL 126.003429 -135.228954 \nL 126.287669 -135.146668 \nL 126.571909 -135.060089 \nL 126.856149 -134.969216 \nL 127.140388 -134.874051 \nL 127.424628 -134.774592 \nL 127.708868 -134.67084 \nL 127.993108 -134.562794 \nL 128.277347 -134.450456 \nL 128.561587 -134.333824 \nL 128.845827 -134.212899 \nL 129.130067 -134.087681 \nL 129.414307 -133.95817 \nL 129.698546 -133.824366 \nL 129.982786 -133.686268 \nL 130.267026 -133.543877 \nL 130.551266 -133.397194 \nL 130.835505 -133.246216 \nL 131.119745 -133.090946 \nL 131.403985 -132.931383 \nL 131.688225 -132.767526 \nL 131.972465 -132.599376 \nL 132.256704 -132.426933 \nL 132.540944 -132.250197 \nL 132.825184 -132.069167 \nL 133.109424 -131.883844 \nL 133.393663 -131.694229 \nL 133.677903 -131.50032 \nL 133.962143 -131.302117 \nL 134.246383 -131.099622 \nL 134.530623 -130.892833 \nL 134.814862 -130.681752 \nL 135.099102 -130.466377 \nL 135.383342 -130.246708 \nL 135.667582 -130.022747 \nL 135.951821 -129.794492 \nL 136.236061 -129.561945 \nL 136.520301 -129.325104 \nL 136.804541 -129.08397 \nL 137.08878 -128.838542 \nL 137.37302 -128.588822 \nL 137.65726 -128.334808 \nL 137.9415 -128.076501 \nL 138.22574 -127.813901 \nL 138.509979 -127.547008 \nL 138.794219 -127.275822 \nL 139.078459 -127.000342 \nL 139.362699 -126.720569 \nL 139.646938 -126.436503 \nL 139.931178 -126.148144 \nL 140.215418 -125.855492 \nL 140.499658 -125.558546 \nL 140.783898 -125.257307 \nL 141.068137 -124.951775 \nL 141.352377 -124.64195 \nL 141.636617 -124.327832 \nL 141.920857 -124.00942 \nL 142.205096 -123.686716 \nL 142.489336 -123.359718 \nL 142.773576 -123.028427 \nL 143.057816 -122.692842 \nL 143.342055 -122.352965 \nL 143.626295 -122.008794 \nL 143.910535 -121.660331 \nL 144.194775 -121.307573 \nL 144.479015 -120.950523 \nL 144.763254 -120.58918 \nL 145.047494 -120.223543 \nL 145.331734 -119.853613 \nL 145.615974 -119.479391 \nL 145.900213 -119.100874 \nL 146.184453 -118.718065 \nL 146.468693 -118.330962 \nL 146.752933 -117.939567 \nL 147.037173 -117.543878 \nL 147.321412 -117.143896 \nL 147.605652 -116.73962 \nL 147.889892 -116.331052 \nL 148.174132 -115.91819 \nL 148.458371 -115.501035 \nL 148.742611 -115.079587 \nL 149.026851 -114.653846 \nL 149.026851 -114.653846 \nL 149.026851 -114.653846 \nL 148.742611 -114.439902 \nL 148.458371 -114.225958 \nL 148.174132 -114.012014 \nL 147.889892 -113.79807 \nL 147.605652 -113.584127 \nL 147.321412 -113.370183 \nL 147.037173 -113.156239 \nL 146.752933 -112.942295 \nL 146.468693 -112.728351 \nL 146.184453 -112.514407 \nL 145.900213 -112.300463 \nL 145.615974 -112.086519 \nL 145.331734 -111.872575 \nL 145.047494 -111.658631 \nL 144.763254 -111.444687 \nL 144.479015 -111.230744 \nL 144.194775 -111.0168 \nL 143.910535 -110.802856 \nL 143.626295 -110.588912 \nL 143.342055 -110.374968 \nL 143.057816 -110.161024 \nL 142.773576 -109.94708 \nL 142.489336 -109.733136 \nL 142.205096 -109.519192 \nL 141.920857 -109.305248 \nL 141.636617 -109.091304 \nL 141.352377 -108.87736 \nL 141.068137 -108.663417 \nL 140.783898 -108.449473 \nL 140.499658 -108.235529 \nL 140.215418 -108.021585 \nL 139.931178 -107.807641 \nL 139.646938 -107.593697 \nL 139.362699 -107.379753 \nL 139.078459 -107.165809 \nL 138.794219 -106.951865 \nL 138.509979 -106.737921 \nL 138.22574 -106.523977 \nL 137.9415 -106.310033 \nL 137.65726 -106.09609 \nL 137.37302 -105.882146 \nL 137.08878 -105.668202 \nL 136.804541 -105.454258 \nL 136.520301 -105.240314 \nL 136.236061 -105.02637 \nL 135.951821 -104.812426 \nL 135.667582 -104.598482 \nL 135.383342 -104.384538 \nL 135.099102 -104.170594 \nL 134.814862 -103.95665 \nL 134.530623 -103.742706 \nL 134.246383 -103.528763 \nL 133.962143 -103.314819 \nL 133.677903 -103.100875 \nL 133.393663 -102.886931 \nL 133.109424 -102.672987 \nL 132.825184 -102.459043 \nL 132.540944 -102.245099 \nL 132.256704 -102.031155 \nL 131.972465 -101.817211 \nL 131.688225 -101.603267 \nL 131.403985 -101.389323 \nL 131.119745 -101.175379 \nL 130.835505 -100.961436 \nL 130.551266 -100.747492 \nL 130.267026 -100.533548 \nL 129.982786 -100.319604 \nL 129.698546 -100.10566 \nL 129.414307 -99.891716 \nL 129.130067 -99.677772 \nL 128.845827 -99.463828 \nL 128.561587 -99.249884 \nL 128.277347 -99.03594 \nL 127.993108 -98.821996 \nL 127.708868 -98.608052 \nL 127.424628 -98.394109 \nL 127.140388 -98.180165 \nL 126.856149 -97.966221 \nL 126.571909 -97.752277 \nL 126.287669 -97.538333 \nL 126.003429 -97.324389 \nL 125.71919 -97.110445 \nL 125.43495 -96.896501 \nL 125.15071 -96.682557 \nL 124.86647 -96.468613 \nL 124.58223 -96.254669 \nL 124.297991 -96.040725 \nL 124.013751 -95.826782 \nL 123.729511 -95.612838 \nL 123.445271 -95.398894 \nL 123.161032 -95.18495 \nL 122.876792 -94.971006 \nL 122.592552 -94.757062 \nL 122.308312 -94.543118 \nL 122.024072 -94.329174 \nL 121.739833 -94.11523 \nL 121.455593 -93.901286 \nL 121.171353 -93.687342 \nL 120.887113 -93.473399 \nL 120.602874 -93.259455 \nL 120.318634 -93.045511 \nL 120.034394 -92.831567 \nL 119.750154 -92.617623 \nL 119.465915 -92.403679 \nL 119.181675 -92.189735 \nL 118.897435 -91.975791 \nL 118.613195 -91.761847 \nL 118.328955 -91.547903 \nL 118.044716 -91.333959 \nL 117.760476 -91.120015 \nL 117.476236 -90.906072 \nL 117.191996 -90.692128 \nL 116.907757 -90.478184 \nL 116.623517 -90.26424 \nL 116.339277 -90.050296 \nL 116.055037 -89.836352 \nL 115.770797 -89.622408 \nL 115.486558 -89.408464 \nL 115.202318 -89.19452 \nL 114.918078 -88.980576 \nL 114.633838 -88.766632 \nL 114.349599 -88.552688 \nL 114.065359 -88.338745 \nL 113.781119 -88.124801 \nL 113.496879 -87.910857 \nL 113.212639 -87.696913 \nL 112.9284 -87.482969 \nL 112.64416 -87.269025 \nL 112.35992 -87.055081 \nL 112.07568 -86.841137 \nL 111.791441 -86.627193 \nL 111.507201 -86.413249 \nL 111.222961 -86.199305 \nL 110.938721 -85.985361 \nL 110.654482 -85.771418 \nL 110.370242 -85.557474 \nL 110.086002 -85.34353 \nL 109.801762 -85.129586 \nL 109.517522 -84.915642 \nL 109.233283 -84.701698 \nL 108.949043 -84.487754 \nL 108.664803 -84.27381 \nL 108.380563 -84.059866 \nL 108.096324 -83.845922 \nL 107.812084 -83.631978 \nL 107.527844 -83.418034 \nL 107.243604 -83.204091 \nL 106.959364 -82.990147 \nL 106.675125 -82.776203 \nL 106.390885 -82.562259 \nL 106.106645 -82.348315 \nL 105.822405 -82.134371 \nL 105.538166 -81.920427 \nL 105.253926 -81.706483 \nL 104.969686 -81.492539 \nL 104.685446 -81.278595 \nL 104.401207 -81.064651 \nL 104.116967 -80.850707 \nL 103.832727 -80.636764 \nL 103.548487 -80.42282 \nL 103.264247 -80.208876 \nL 102.980008 -79.994932 \nL 102.695768 -79.780988 \nL 102.411528 -79.567044 \nL 102.127288 -79.3531 \nL 101.843049 -79.139156 \nL 101.558809 -78.925212 \nL 101.274569 -78.711268 \nL 100.990329 -78.497324 \nL 100.706089 -78.28338 \nL 100.42185 -78.069437 \nL 100.13761 -77.855493 \nL 99.85337 -77.641549 \nL 99.56913 -77.427605 \nL 99.284891 -77.213661 \nL 99.000651 -76.999717 \nL 98.716411 -76.785773 \nL 98.432171 -76.571829 \nL 98.147931 -76.357885 \nL 97.863692 -76.143941 \nL 97.579452 -75.929997 \nL 97.295212 -75.716054 \nL 97.010972 -75.50211 \nL 96.726733 -75.288166 \nL 96.442493 -75.074222 \nL 96.158253 -74.860278 \nL 95.874013 -74.646334 \nL 95.589774 -74.43239 \nL 95.305534 -74.218446 \nL 95.021294 -74.004502 \nL 94.737054 -73.790558 \nL 94.452814 -73.576614 \nL 94.168575 -73.36267 \nL 93.884335 -73.148727 \nL 93.600095 -72.934783 \nL 93.315855 -72.720839 \nL 93.031616 -72.506895 \nL 92.747376 -72.292951 \nL 92.463136 -72.079007 \nL 92.178896 -71.865063 \nL 91.894656 -71.651119 \nL 91.610417 -71.437175 \nL 91.326177 -71.223231 \nL 91.041937 -71.009287 \nL 90.757697 -70.795343 \nL 90.473458 -70.5814 \nL 90.189218 -70.367456 \nL 89.904978 -70.153512 \nL 89.620738 -69.939568 \nL 89.336499 -69.725624 \nL 89.052259 -69.51168 \nL 88.768019 -69.297736 \nL 88.483779 -69.083792 \nL 88.199539 -68.869848 \nL 87.9153 -68.655904 \nL 87.63106 -68.44196 \nL 87.34682 -68.228016 \nL 87.06258 -68.014073 \nL 86.778341 -67.800129 \nL 86.494101 -67.586185 \nL 86.209861 -67.372241 \nL 85.925621 -67.158297 \nL 85.641381 -66.944353 \nL 85.357142 -66.730409 \nL 85.072902 -66.516465 \nL 84.788662 -66.302521 \nL 84.504422 -66.088577 \nL 84.220183 -65.874633 \nL 83.935943 -65.660689 \nL 83.651703 -65.446746 \nL 83.367463 -65.232802 \nL 83.083223 -65.018858 \nL 82.798984 -64.804914 \nL 82.514744 -64.59097 \nL 82.230504 -64.377026 \nL 81.946264 -64.163082 \nL 81.662025 -63.949138 \nL 81.377785 -63.735194 \nL 81.093545 -63.52125 \nL 80.809305 -63.307306 \nL 80.525066 -63.093362 \nL 80.240826 -62.879419 \nL 79.956586 -62.665475 \nL 79.672346 -62.451531 \nL 79.388106 -62.237587 \nL 79.103867 -62.023643 \nL 78.819627 -61.809699 \nL 78.535387 -61.595755 \nL 78.251147 -61.381811 \nL 77.966908 -61.167867 \nL 77.682668 -60.953923 \nL 77.398428 -60.739979 \nL 77.114188 -60.526036 \nL 76.829948 -60.312092 \nL 76.545709 -60.098148 \nL 76.261469 -59.884204 \nL 75.977229 -59.67026 \nL 75.692989 -59.456316 \nL 75.40875 -59.242372 \nL 75.12451 -59.028428 \nL 74.84027 -58.814484 \nL 74.55603 -58.60054 \nL 74.271791 -58.386596 \nL 73.987551 -58.172652 \nL 73.703311 -57.958709 \nL 73.419071 -57.744765 \nL 73.134831 -57.530821 \nL 72.850592 -57.316877 \nL 72.566352 -57.102933 \nL 72.282112 -56.888989 \nL 71.997872 -56.675045 \nL 71.713633 -56.461101 \nL 71.429393 -56.247157 \nL 71.145153 -56.033213 \nL 70.860913 -55.819269 \nL 70.576673 -55.605325 \nL 70.292434 -55.391382 \nL 70.008194 -55.177438 \nL 69.723954 -54.963494 \nL 69.439714 -54.74955 \nL 69.155475 -54.535606 \nL 68.871235 -54.321662 \nL 68.586995 -54.107718 \nL 68.302755 -53.893774 \nL 68.018515 -53.67983 \nL 67.734276 -53.465886 \nL 67.450036 -53.251942 \nL 67.165796 -53.037998 \nL 66.881556 -52.824055 \nL 66.597317 -52.610111 \nL 66.313077 -52.396167 \nL 66.028837 -52.182223 \nL 65.744597 -51.968279 \nL 65.460358 -51.754335 \nL 65.176118 -51.540391 \nL 64.891878 -51.326447 \nL 64.607638 -51.112503 \nL 64.323398 -50.898559 \nL 64.039159 -50.684615 \nz\n\" style=\"stroke: #93c5fd; stroke-opacity: 0.55\"/>\n    </defs>\n    <g clip-path=\"url(#p75095e0feb)\">\n     <use xlink:href=\"#m2e0357c3a1\" x=\"0\" y=\"166.779297\" style=\"fill: #93c5fd; fill-opacity: 0.55; stroke: #93c5fd; stroke-opacity: 0.55\"/>\n    </g>\n   </g>\n   <g id=\"matplotlib.axis_1\">\n    <g id=\"xtick_1\">\n     <g id=\"line2d_1\">\n      <path d=\"M 35.709928 148.079297 \nL 35.709928 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_2\">\n      <defs>\n       <path id=\"m3d193a6a00\" d=\"M 0 0 \nL 0 2 \n\" style=\"stroke: #334155; stroke-width: 0.8\"/>\n      </defs>\n      <g>\n       <use xlink:href=\"#m3d193a6a00\" x=\"35.709928\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_1\">\n      <!-- −3 -->\n      <g style=\"fill: #334155\" transform=\"translate(31.287272 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-c9c\" d=\"M 678 2272 \nL 4684 2272 \nL 4684 1741 \nL 678 1741 \nL 678 2272 \nz\n\" transform=\"scale(0.015625)\"/>\n        <path id=\"DejaVuSans-16\" d=\"M 2597 2516 \nQ 3050 2419 3304 2112 \nQ 3559 1806 3559 1356 \nQ 3559 666 3084 287 \nQ 2609 -91 1734 -91 \nQ 1441 -91 1130 -33 \nQ 819 25 488 141 \nL 488 750 \nQ 750 597 1062 519 \nQ 1375 441 1716 441 \nQ 2309 441 2620 675 \nQ 2931 909 2931 1356 \nQ 2931 1769 2642 2001 \nQ 2353 2234 1838 2234 \nL 1294 2234 \nL 1294 2753 \nL 1863 2753 \nQ 2328 2753 2575 2939 \nQ 2822 3125 2822 3475 \nQ 2822 3834 2567 4026 \nQ 2313 4219 1838 4219 \nQ 1578 4219 1281 4162 \nQ 984 4106 628 3988 \nL 628 4550 \nQ 988 4650 1302 4700 \nQ 1616 4750 1894 4750 \nQ 2613 4750 3031 4423 \nQ 3450 4097 3450 3541 \nQ 3450 3153 3228 2886 \nQ 3006 2619 2597 2516 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-16\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_2\">\n     <g id=\"line2d_3\">\n      <path d=\"M 64.039159 148.079297 \nL 64.039159 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_4\">\n      <g>\n       <use xlink:href=\"#m3d193a6a00\" x=\"64.039159\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_2\">\n      <!-- −2 -->\n      <g style=\"fill: #334155\" transform=\"translate(59.616502 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-15\" d=\"M 1228 531 \nL 3431 531 \nL 3431 0 \nL 469 0 \nL 469 531 \nQ 828 903 1448 1529 \nQ 2069 2156 2228 2338 \nQ 2531 2678 2651 2914 \nQ 2772 3150 2772 3378 \nQ 2772 3750 2511 3984 \nQ 2250 4219 1831 4219 \nQ 1534 4219 1204 4116 \nQ 875 4013 500 3803 \nL 500 4441 \nQ 881 4594 1212 4672 \nQ 1544 4750 1819 4750 \nQ 2544 4750 2975 4387 \nQ 3406 4025 3406 3419 \nQ 3406 3131 3298 2873 \nQ 3191 2616 2906 2266 \nQ 2828 2175 2409 1742 \nQ 1991 1309 1228 531 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-15\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_3\">\n     <g id=\"line2d_5\">\n      <path d=\"M 92.368389 148.079297 \nL 92.368389 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_6\">\n      <g>\n       <use xlink:href=\"#m3d193a6a00\" x=\"92.368389\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_3\">\n      <!-- −1 -->\n      <g style=\"fill: #334155\" transform=\"translate(87.945733 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-14\" d=\"M 794 531 \nL 1825 531 \nL 1825 4091 \nL 703 3866 \nL 703 4441 \nL 1819 4666 \nL 2450 4666 \nL 2450 531 \nL 3481 531 \nL 3481 0 \nL 794 0 \nL 794 531 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-14\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_4\">\n     <g id=\"line2d_7\">\n      <path d=\"M 120.69762 148.079297 \nL 120.69762 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_8\">\n      <g>\n       <use xlink:href=\"#m3d193a6a00\" x=\"120.69762\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_4\">\n      <!-- 0 -->\n      <g style=\"fill: #334155\" transform=\"translate(118.78887 158.137891) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-13\" d=\"M 2034 4250 \nQ 1547 4250 1301 3770 \nQ 1056 3291 1056 2328 \nQ 1056 1369 1301 889 \nQ 1547 409 2034 409 \nQ 2525 409 2770 889 \nQ 3016 1369 3016 2328 \nQ 3016 3291 2770 3770 \nQ 2525 4250 2034 4250 \nz\nM 2034 4750 \nQ 2819 4750 3233 4129 \nQ 3647 3509 3647 2328 \nQ 3647 1150 3233 529 \nQ 2819 -91 2034 -91 \nQ 1250 -91 836 529 \nQ 422 1150 422 2328 \nQ 422 3509 836 4129 \nQ 1250 4750 2034 4750 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-13\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_5\">\n     <g id=\"line2d_9\">\n      <path d=\"M 149.026851 148.079297 \nL 149.026851 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_10\">\n      <g>\n       <use xlink:href=\"#m3d193a6a00\" x=\"149.026851\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_5\">\n      <!-- 1 -->\n      <g style=\"fill: #334155\" transform=\"translate(147.118101 158.137891) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-14\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_6\">\n     <g id=\"line2d_11\">\n      <path d=\"M 177.356082 148.079297 \nL 177.356082 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_12\">\n      <g>\n       <use xlink:href=\"#m3d193a6a00\" x=\"177.356082\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_6\">\n      <!-- 2 -->\n      <g style=\"fill: #334155\" transform=\"translate(175.447332 158.137891) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-15\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"xtick_7\">\n     <g id=\"line2d_13\">\n      <path d=\"M 205.685313 148.079297 \nL 205.685313 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_14\">\n      <g>\n       <use xlink:href=\"#m3d193a6a00\" x=\"205.685313\" y=\"148.079297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_7\">\n      <!-- 3 -->\n      <g style=\"fill: #334155\" transform=\"translate(203.776563 158.137891) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-16\"/>\n      </g>\n     </g>\n    </g>\n   </g>\n   <g id=\"matplotlib.axis_2\">\n    <g id=\"ytick_1\">\n     <g id=\"line2d_15\">\n      <path d=\"M 21.545313 137.417758 \nL 205.685313 137.417758 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_16\">\n      <defs>\n       <path id=\"m048cd66850\" d=\"M 0 0 \nL -2 0 \n\" style=\"stroke: #334155; stroke-width: 0.8\"/>\n      </defs>\n      <g>\n       <use xlink:href=\"#m048cd66850\" x=\"21.545313\" y=\"137.417758\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_8\">\n      <!-- −1 -->\n      <g style=\"fill: #334155\" transform=\"translate(7.2 139.697055) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-c9c\"/>\n       <use xlink:href=\"#DejaVuSans-14\" transform=\"translate(83.796875 0)\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_2\">\n     <g id=\"line2d_17\">\n      <path d=\"M 21.545313 116.094681 \nL 205.685313 116.094681 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_18\">\n      <g>\n       <use xlink:href=\"#m048cd66850\" x=\"21.545313\" y=\"116.094681\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_9\">\n      <!-- 0 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 118.373978) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-13\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_3\">\n     <g id=\"line2d_19\">\n      <path d=\"M 21.545313 94.771605 \nL 205.685313 94.771605 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_20\">\n      <g>\n       <use xlink:href=\"#m048cd66850\" x=\"21.545313\" y=\"94.771605\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_10\">\n      <!-- 1 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 97.050901) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-14\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_4\">\n     <g id=\"line2d_21\">\n      <path d=\"M 21.545313 73.448528 \nL 205.685313 73.448528 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_22\">\n      <g>\n       <use xlink:href=\"#m048cd66850\" x=\"21.545313\" y=\"73.448528\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_11\">\n      <!-- 2 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 75.727825) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-15\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_5\">\n     <g id=\"line2d_23\">\n      <path d=\"M 21.545313 52.125451 \nL 205.685313 52.125451 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_24\">\n      <g>\n       <use xlink:href=\"#m048cd66850\" x=\"21.545313\" y=\"52.125451\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_12\">\n      <!-- 3 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 54.404748) scale(0.06 -0.06)\">\n       <use xlink:href=\"#DejaVuSans-16\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_6\">\n     <g id=\"line2d_25\">\n      <path d=\"M 21.545313 30.802374 \nL 205.685313 30.802374 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_26\">\n      <g>\n       <use xlink:href=\"#m048cd66850\" x=\"21.545313\" y=\"30.802374\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_13\">\n      <!-- 4 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 33.081671) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-17\" d=\"M 2419 4116 \nL 825 1625 \nL 2419 1625 \nL 2419 4116 \nz\nM 2253 4666 \nL 3047 4666 \nL 3047 1625 \nL 3713 1625 \nL 3713 1100 \nL 3047 1100 \nL 3047 0 \nL 2419 0 \nL 2419 1100 \nL 313 1100 \nL 313 1709 \nL 2253 4666 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-17\"/>\n      </g>\n     </g>\n    </g>\n    <g id=\"ytick_7\">\n     <g id=\"line2d_27\">\n      <path d=\"M 21.545313 9.479297 \nL 205.685313 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #e2e8f0; stroke-width: 0.6; stroke-linecap: square\"/>\n     </g>\n     <g id=\"line2d_28\">\n      <g>\n       <use xlink:href=\"#m048cd66850\" x=\"21.545313\" y=\"9.479297\" style=\"fill: #334155; stroke: #334155; stroke-width: 0.8\"/>\n      </g>\n     </g>\n     <g id=\"text_14\">\n      <!-- 5 -->\n      <g style=\"fill: #334155\" transform=\"translate(12.227813 11.758594) scale(0.06 -0.06)\">\n       <defs>\n        <path id=\"DejaVuSans-18\" d=\"M 691 4666 \nL 3169 4666 \nL 3169 4134 \nL 1269 4134 \nL 1269 2991 \nQ 1406 3038 1543 3061 \nQ 1681 3084 1819 3084 \nQ 2600 3084 3056 2656 \nQ 3513 2228 3513 1497 \nQ 3513 744 3044 326 \nQ 2575 -91 1722 -91 \nQ 1428 -91 1123 -41 \nQ 819 9 494 109 \nL 494 744 \nQ 775 591 1075 516 \nQ 1375 441 1709 441 \nQ 2250 441 2565 725 \nQ 2881 1009 2881 1497 \nQ 2881 1984 2565 2268 \nQ 2250 2553 1709 2553 \nQ 1456 2553 1204 2497 \nQ 953 2441 691 2322 \nL 691 4666 \nz\n\" transform=\"scale(0.015625)\"/>\n       </defs>\n       <use xlink:href=\"#DejaVuSans-18\"/>\n      </g>\n     </g>\n    </g>\n   </g>\n   <g id=\"line2d_29\">\n    <path d=\"M 48.896133 167.779297 \nL 52.59396 154.033726 \nL 56.590321 139.995493 \nL 60.586681 126.805932 \nL 64.27563 115.384211 \nL 67.964578 104.685619 \nL 71.346114 95.513824 \nL 74.72765 86.949659 \nL 78.109186 78.993121 \nL 81.183309 72.287187 \nL 84.257433 66.083425 \nL 87.331556 60.381835 \nL 90.098267 55.679762 \nL 92.864979 51.384449 \nL 95.63169 47.495896 \nL 98.398401 44.014102 \nL 100.8577 41.260651 \nL 103.316999 38.828591 \nL 105.776297 36.717921 \nL 108.235596 34.928642 \nL 110.387483 33.626663 \nL 112.539369 32.570749 \nL 114.691256 31.760899 \nL 116.843142 31.197114 \nL 118.995029 30.879393 \nL 121.146915 30.807737 \nL 123.298802 30.982146 \nL 125.450688 31.402619 \nL 127.602575 32.069156 \nL 129.754461 32.981758 \nL 131.906348 34.140424 \nL 134.058234 35.545155 \nL 136.210121 37.195951 \nL 138.669419 39.383878 \nL 141.128718 41.893195 \nL 143.588017 44.723903 \nL 146.047316 47.876002 \nL 148.814027 51.806274 \nL 151.580738 56.143306 \nL 154.347449 60.887098 \nL 157.421573 66.635042 \nL 160.495696 72.885158 \nL 163.56982 79.637447 \nL 166.951356 87.644974 \nL 170.332892 96.26013 \nL 173.714428 105.482915 \nL 177.403376 116.237132 \nL 181.092324 127.714478 \nL 184.781272 139.914952 \nL 188.777633 153.948163 \nL 192.499063 167.779297 \nL 192.499063 167.779297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #2563eb; stroke-width: 1.6; stroke-linecap: square\"/>\n   </g>\n   <g id=\"line2d_30\">\n    <path d=\"M 21.545313 148.079297 \nL 205.685313 9.479297 \nL 205.685313 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #dc2626; stroke-width: 1.6; stroke-linecap: square\"/>\n   </g>\n   <g id=\"line2d_31\">\n    <path d=\"M 21.545313 116.094681 \nL 205.685313 116.094681 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #334155; stroke-width: 1.1; stroke-linecap: square\"/>\n   </g>\n   <g id=\"line2d_32\">\n    <path d=\"M 120.69762 148.079297 \nL 120.69762 9.479297 \n\" clip-path=\"url(#p75095e0feb)\" style=\"fill: none; stroke: #334155; stroke-width: 1.1; stroke-linecap: square\"/>\n   </g>\n  </g>\n </g>\n <defs>\n  <clipPath id=\"p75095e0feb\">\n   <rect x=\"21.545313\" y=\"9.479297\" width=\"184.14\" height=\"138.6\"/>\n  </clipPath>\n </defs>\n</svg>",
+      "points": 9,
+      "parts": [
+        {
+          "label": "a",
+          "prompt": "Find the area of R.",
+          "points": 3,
+          "solution": "On [−2, 1], f(x) ≥ g(x), so Area = ∫ from −2 to 1 of [(4 − x²) − (x + 2)] dx = ∫ from −2 to 1 of (2 − x − x²) dx = [2x − x²/2 − x³/3] from −2 to 1 = (2 − 1/2 − 1/3) − (−4 − 2 + 8/3) = 7/6 + 10/3 = 9/2.",
+          "rubric": [
+            "1 pt: limits of integration x = −2 to x = 1 (from the intersection points)",
+            "1 pt: integrand (4 − x²) − (x + 2), top curve minus bottom curve",
+            "1 pt: antiderivative and answer 9/2"
+          ]
+        },
+        {
+          "label": "b",
+          "prompt": "Find the volume of the solid generated when R is revolved about the horizontal line y = −1.",
+          "points": 3,
+          "solution": "Both curves lie above y = −1 on [−2, 1]. Outer radius: (4 − x²) − (−1) = 5 − x²; inner radius: (x + 2) − (−1) = x + 3. Volume = π ∫ from −2 to 1 of [(5 − x²)² − (x + 3)²] dx = π ∫ from −2 to 1 of (x⁴ − 11x² − 6x + 16) dx = π[x⁵/5 − 11x³/3 − 3x² + 16x] from −2 to 1 = π(143/15 + 316/15) = 153π/5.",
+          "rubric": [
+            "1 pt: form π ∫ [(outer radius)² − (inner radius)²] dx with limits −2 to 1",
+            "1 pt: correct radii 5 − x² and x + 3 (each shifted by +1 for the axis y = −1)",
+            "1 pt: answer 153π/5"
+          ]
+        },
+        {
+          "label": "c",
+          "prompt": "The region R is the base of a solid. For this solid, each cross-section perpendicular to the x-axis is a rectangle whose height is 3 times its width in the base. Find the volume of the solid.",
+          "points": 3,
+          "solution": "For each x in [−2, 1], the width of the rectangle is w(x) = (4 − x²) − (x + 2) = 2 − x − x², and its height is 3w(x), so the cross-sectional area is A(x) = 3(2 − x − x²)². Volume = ∫ from −2 to 1 of 3(2 − x − x²)² dx = 3 ∫ from −2 to 1 of (x⁴ + 2x³ − 3x² − 4x + 4) dx = 3(81/10) = 243/10.",
+          "rubric": [
+            "1 pt: cross-sectional area A(x) = 3[(4 − x²) − (x + 2)]²",
+            "1 pt: volume integral ∫ from −2 to 1 of A(x) dx (correct limits, no π)",
+            "1 pt: answer 243/10"
+          ]
+        }
+      ]
+    }
+  },
+  "5": {
+    "week": 5,
+    "title": "Exit Exam: Mini-AP Comprehensive",
+    "mcCount": 15,
+    "frqPoints": 9,
+    "mc": [
+      {
+        "problemId": "calc-ab-w5q1",
+        "n": 1,
+        "unit": "U1",
+        "skill": "Limits of trigonometric quotients",
+        "skillId": "limits-algebraic-techniques",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q2",
+        "n": 2,
+        "unit": "U2",
+        "skill": "Limit definition of the derivative",
+        "skillId": "derivative-definition",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q3",
+        "n": 3,
+        "unit": "U2",
+        "skill": "Product rule",
+        "skillId": "basic-differentiation-rules",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q4",
+        "n": 4,
+        "unit": "U3",
+        "skill": "Implicit differentiation",
+        "skillId": "implicit-differentiation",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q5",
+        "n": 5,
+        "unit": "U3",
+        "skill": "Derivative of an inverse function",
+        "skillId": "inverse-function-derivatives",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q6",
+        "n": 6,
+        "unit": "U4",
+        "skill": "Related rates",
+        "skillId": "related-rates",
+        "practice": "MP1",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q7",
+        "n": 7,
+        "unit": "U5",
+        "skill": "First derivative test from a graph of f′",
+        "skillId": "increasing-decreasing-extrema",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q8",
+        "n": 8,
+        "unit": "U5",
+        "skill": "Mean Value Theorem",
+        "skillId": "mvt-evt",
+        "practice": "MP3",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q9",
+        "n": 9,
+        "unit": "U6",
+        "skill": "Riemann sums from a table",
+        "skillId": "riemann-sums",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q10",
+        "n": 10,
+        "unit": "U7",
+        "skill": "Slope fields",
+        "skillId": "slope-fields",
+        "practice": "MP2",
+        "calc": false
+      },
+      {
+        "problemId": "calc-ab-w5q11",
+        "n": 11,
+        "unit": "U4",
+        "skill": "Derivative in context (rate of change)",
+        "skillId": "motion",
+        "practice": "MP4",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w5q12",
+        "n": 12,
+        "unit": "U6",
+        "skill": "Definite integral of a rate (accumulation in context)",
+        "skillId": "ftc",
+        "practice": "MP4",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w5q13",
+        "n": 13,
+        "unit": "U6",
+        "skill": "FTC Part 1 with chain rule",
+        "skillId": "ftc",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w5q14",
+        "n": 14,
+        "unit": "U5",
+        "skill": "Absolute extrema (candidates test)",
+        "skillId": "increasing-decreasing-extrema",
+        "practice": "MP1",
+        "calc": true
+      },
+      {
+        "problemId": "calc-ab-w5q15",
+        "n": 15,
+        "unit": "U8",
+        "skill": "Area between curves",
+        "skillId": "area-between-curves",
+        "practice": "MP2",
+        "calc": true
+      }
+    ],
+    "frq": {
+      "unit": "U8",
+      "skill": "Particle motion",
+      "skillId": "motion-integrals",
+      "calc": false,
+      "context": "A particle moves along the x-axis so that its velocity at time t, for 0 ≤ t ≤ 5, is given by v(t) = t² − 6t + 8. The position of the particle at time t is x(t), and x(0) = 3.",
+      "svg": null,
+      "points": 9,
+      "parts": [
+        {
+          "label": "a",
+          "prompt": "Find the acceleration of the particle at time t = 1. Is the speed of the particle increasing or decreasing at t = 1? Give a reason for your answer.",
+          "points": 2,
+          "solution": "a(t) = v′(t) = 2t − 6, so a(1) = −4. Since v(1) = 1 − 6 + 8 = 3 > 0 and a(1) = −4 < 0, the velocity and acceleration have opposite signs at t = 1, so the speed of the particle is decreasing at t = 1.",
+          "rubric": [
+            "1 pt: a(1) = −4 (from a(t) = v′(t) = 2t − 6)",
+            "1 pt: states speed is decreasing WITH reason: v(1) = 3 > 0 and a(1) = −4 < 0 have opposite signs"
+          ]
+        },
+        {
+          "label": "b",
+          "prompt": "Find all times t, 0 ≤ t ≤ 5, at which the particle changes direction. Justify your answer.",
+          "points": 2,
+          "solution": "v(t) = t² − 6t + 8 = (t − 2)(t − 4) = 0 at t = 2 and t = 4. Since v(t) > 0 on (0, 2), v(t) < 0 on (2, 4), and v(t) > 0 on (4, 5), the velocity changes sign at both t = 2 and t = 4. Therefore the particle changes direction at t = 2 and t = 4.",
+          "rubric": [
+            "1 pt: identifies t = 2 and t = 4 (sets v(t) = 0 and solves)",
+            "1 pt: justification that v(t) changes sign at each of t = 2 and t = 4 (positive to negative at t = 2, negative to positive at t = 4)"
+          ]
+        },
+        {
+          "label": "c",
+          "prompt": "Find the position of the particle at time t = 3.",
+          "points": 2,
+          "solution": "x(3) = x(0) + ∫₀³ v(t) dt = 3 + [t³/3 − 3t² + 8t] from 0 to 3 = 3 + (9 − 27 + 24) = 3 + 6 = 9. The particle is at x = 9 at time t = 3.",
+          "rubric": [
+            "1 pt: expresses position as x(3) = x(0) + ∫₀³ v(t) dt (or an equivalent antiderivative with the initial condition x(0) = 3)",
+            "1 pt: x(3) = 9"
+          ]
+        },
+        {
+          "label": "d",
+          "prompt": "Find the total distance traveled by the particle over the time interval 0 ≤ t ≤ 5.",
+          "points": 3,
+          "solution": "Total distance = ∫₀⁵ |v(t)| dt. Splitting at the sign changes t = 2 and t = 4 with F(t) = t³/3 − 3t² + 8t: ∫₀² v dt = 20/3, ∫₂⁴ v dt = 16/3 − 20/3 = −4/3, and ∫₄⁵ v dt = 20/3 − 16/3 = 4/3. Total distance = 20/3 + |−4/3| + 4/3 = 28/3. The particle travels 28/3 units.",
+          "rubric": [
+            "1 pt: sets up total distance as ∫₀⁵ |v(t)| dt or splits the integral at t = 2 and t = 4",
+            "1 pt: correct antidifferentiation and evaluation of the three pieces (20/3, −4/3, 4/3)",
+            "1 pt: total distance = 28/3"
+          ]
+        }
+      ]
+    }
+  }
+}
