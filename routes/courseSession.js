@@ -344,7 +344,12 @@ router.post('/:id/activate', async (req, res) => {
       await Conversation.findByIdAndUpdate(session.conversationId, { isActive: true });
     }
 
-    res.json({ success: true, session });
+    // Day-one diagnostic nudge for returning students too (e.g. an ACT-prep
+    // student who enrolled earlier and never took the practice test). Shown as a
+    // card when they re-open the course from the sidebar.
+    const diagnostic = await buildCourseDiagnostic(req.user._id, session.courseId);
+
+    res.json({ success: true, session, diagnostic });
   } catch (err) {
     console.error('[CourseSession] Error activating:', err);
     res.status(500).json({ success: false, message: 'Failed to activate course session' });

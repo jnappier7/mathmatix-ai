@@ -933,6 +933,10 @@ class CourseManager {
             // Switch sidebar to course context (hides sessions, leaderboard, quests)
             if (window.sidebar) window.sidebar.setContext('course');
 
+            // Day-one diagnostic nudge for returning students (e.g. ACT-prep student
+            // who never took the practice test) — shown as a standalone card.
+            if (data.diagnostic) this.showDiagnosticCard(data.diagnostic);
+
             // Fire silent course greeting — AI introduces the course/module
             this.sendCourseGreeting();
 
@@ -1092,6 +1096,42 @@ class CourseManager {
     }
 
     // --------------------------------------------------
+    // Day-one diagnostic card (e.g. ACT prep → "Take the Practice ACT"). The CTA
+    // launches the practice test; the button removes whichever card container it
+    // lives in (the welcome splash when embedded, or its own card when standalone).
+    // --------------------------------------------------
+    diagnosticCardHtml(diag) {
+        if (!diag || diag.type !== 'act-practice') return '';
+        return `
+            <div class="course-diagnostic-card" style="margin-top:16px; padding:16px; border-radius:12px; background:linear-gradient(135deg,#eef2ff,#faf5ff); border:1px solid #c7d2fe;">
+                <div style="font-size:14px; font-weight:700; color:#4338ca; margin-bottom:6px;">
+                    <i class="fas fa-clipboard-check" style="margin-right:6px;"></i>${this.escapeHtml(diag.title)}
+                </div>
+                <div style="font-size:12px; color:#555; line-height:1.5; margin-bottom:12px;">${this.escapeHtml(diag.body)}</div>
+                <button class="course-diagnostic-cta" onclick="(this.closest('.course-welcome-splash') || this.closest('.course-diagnostic-wrap') || this.closest('.course-diagnostic-card'))?.remove(); if (window.openActTest) { window.openActTest(); }" style="
+                    width:100%; padding:12px; border:none; border-radius:10px;
+                    background:linear-gradient(135deg,#4f46e5,#7c3aed); color:white;
+                    font-weight:700; font-size:14px; cursor:pointer;
+                "><i class="fas fa-play" style="margin-right:6px;"></i>${this.escapeHtml(diag.cta)}</button>
+            </div>`;
+    }
+
+    // Show the diagnostic card on its own (returning students who re-open the
+    // course from the sidebar, i.e. activateCourse — no welcome splash there).
+    showDiagnosticCard(diag) {
+        const html = this.diagnosticCardHtml(diag);
+        if (!html) return;
+        const chatBox = document.getElementById('chat-messages-container');
+        if (!chatBox) return;
+        if (chatBox.querySelector('.course-diagnostic-card')) return; // don't stack duplicates
+        const wrap = document.createElement('div');
+        wrap.className = 'course-diagnostic-wrap';
+        wrap.style.cssText = 'margin:16px auto; max-width:520px; animation:catalogSlideIn 0.4s ease;';
+        wrap.innerHTML = html;
+        chatBox.appendChild(wrap);
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     // Welcome splash (shown in chat after enrollment)
     // --------------------------------------------------
     showWelcomeSplash(welcome, isResume = false) {
@@ -1114,22 +1154,9 @@ class CourseManager {
             </div>`
         ).join('');
 
-        // Day-one diagnostic card (e.g. ACT prep → take a full practice ACT first).
-        // A prominent card with a CTA that launches the practice test; the tutor
-        // then targets the bootcamp to the results. Delivered on the welcome splash.
-        const diag = welcome.diagnostic;
-        const diagnosticHtml = (diag && diag.type === 'act-practice') ? `
-            <div class="course-diagnostic-card" style="margin-top:16px; padding:16px; border-radius:12px; background:linear-gradient(135deg,#eef2ff,#faf5ff); border:1px solid #c7d2fe;">
-                <div style="font-size:14px; font-weight:700; color:#4338ca; margin-bottom:6px;">
-                    <i class="fas fa-clipboard-check" style="margin-right:6px;"></i>${this.escapeHtml(diag.title)}
-                </div>
-                <div style="font-size:12px; color:#555; line-height:1.5; margin-bottom:12px;">${this.escapeHtml(diag.body)}</div>
-                <button class="course-diagnostic-cta" onclick="this.closest('.course-welcome-splash').remove(); if (window.openActTest) { window.openActTest(); }" style="
-                    width:100%; padding:12px; border:none; border-radius:10px;
-                    background:linear-gradient(135deg,#4f46e5,#7c3aed); color:white;
-                    font-weight:700; font-size:14px; cursor:pointer;
-                "><i class="fas fa-play" style="margin-right:6px;"></i>${this.escapeHtml(diag.cta)}</button>
-            </div>` : '';
+        // Day-one diagnostic card (e.g. ACT prep → take a full practice ACT first),
+        // embedded in the welcome splash. See diagnosticCardHtml().
+        const diagnosticHtml = this.diagnosticCardHtml(welcome.diagnostic);
 
         // Course mini-tour tips (shown below the learning path for first-time enrollees)
         const courseTipsHtml = isResume ? '' : `
