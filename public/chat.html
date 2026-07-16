@@ -90,7 +90,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- Interactive math workspace (chat right slot) -->
   <link rel="stylesheet" href="/css/workspace.css?v=20260711" />
   <!-- Voice mode (layout mode of the chat stage) -->
-  <link rel="stylesheet" href="/css/voice-mode.css?v=2" />
+  <link rel="stylesheet" href="/css/voice-mode.css?v=3" />
   <!-- Fresh styling for rendered math (equation cards) -->
   <link rel="stylesheet" href="/css/math-style.css" />
   <!-- DNS prefetch & preconnect for CDN domains -->
@@ -114,7 +114,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        LivingWorkspace flag is dev|beta|live (?livingWorkspace=dev). When on,
        it lazy-loads the workspace and mirrors the tutor's board output onto
        the new surface beside the old board. Default OFF → zero impact. -->
-  <script defer src="/js/living-workspace/chat-workspace.js?v=20260716"></script>
+  <script defer src="/js/living-workspace/chat-workspace.js?v=20260716b"></script>
   <!-- Final safety net: strips any inline visual tag no renderer handled -->
   <script defer src="/js/stripVisualTags.js"></script>
   <!-- Non-core libs (lazy-loaded after first interaction) -->
@@ -502,6 +502,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="cr-encourage-body">
             You're making great progress and asking great questions <span class="cr-heart" aria-hidden="true">💜</span>
           </div>
+        </div>
+        <!-- Voice-mode caption layer (voice-subtitles.js). Replaces the
+             running transcript in voice mode: tutor speech as karaoke
+             subtitles, live student STT echo, replay + history. Hidden
+             outside body.cr-voice (voice-mode.css). -->
+        <div id="mm-voice-captions">
+          <div class="mm-vc-state" id="mm-vc-state" data-state="idle">
+            <span class="mm-vc-state-dot" aria-hidden="true"></span>
+            <span id="mm-vc-state-label">Ready</span>
+            <span class="mm-vc-wave" aria-hidden="true"><span></span><span></span><span></span></span>
+          </div>
+          <div class="mm-vc-tutor" id="mm-vc-tutor" aria-hidden="true" hidden></div>
+          <div class="mm-vc-student" id="mm-vc-student" hidden>
+            <i class="fas fa-microphone" aria-hidden="true"></i>
+            <span id="mm-vc-student-text"></span>
+          </div>
+          <div class="mm-vc-actions">
+            <button id="mm-vc-replay" type="button" title="Hear that again">
+              <i class="fas fa-undo" aria-hidden="true"></i> Replay
+            </button>
+            <button id="mm-vc-history" type="button" title="Show the conversation">
+              <i class="fas fa-history" aria-hidden="true"></i> History
+            </button>
+          </div>
+          <span id="mm-vc-announcer" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);" aria-live="polite"></span>
         </div>
       </aside>
       </div><!-- /.cr-hero-col -->
@@ -2314,9 +2339,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script defer src="/js/chat-redesign.js?v=20260715"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
-  <script src="/dist/js/chat-js2.3949a53a.js"></script>
+  <script src="/dist/js/chat-js2.dacbff7b.js"></script>
 <!-- Voice as a layout mode of the chat stage -->
   <script src="/js/voice-mode.js?v=3"></script>
+  <!-- Voice-mode captions: karaoke subtitles + student STT echo + replay/history -->
+  <script defer src="/js/voice-subtitles.js?v=20260716"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
   <script src="/dist/js/chat-js3.babd546b.js"></script>

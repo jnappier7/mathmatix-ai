@@ -79,12 +79,53 @@
     return out.replace(/\\[,;:!> ]/g, ' ').replace(/\\\\/g, ' ').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
   }
 
+  // Clean a prose (non-math) run: drop KaTeX spacing escapes and stray braces.
+  function proseRunClean(s) {
+    return String(s).replace(/\\[,;:!> ]/g, ' ').replace(/\\\\/g, ' ').replace(/[{}]/g, '').replace(/\s+/g, ' ');
+  }
+
+  // Inline math tokens that can sit INSIDE problem prose ("order \frac12, 0.3
+  // …"). \frac / \sqrt come before the generic \command so the digits/args are
+  // captured, not left behind as raw text.
+  var INLINE_MATH = /\$[^$]+\$|\\frac\s*(?:\{[^{}]*\}\s*\{[^{}]*\}|\d\s*\d)|\\sqrt\s*(?:\{[^{}]*\}|\d+)|\\[a-zA-Z]+(?:\{[^{}]*\})?|[A-Za-z0-9]+\^\{?[A-Za-z0-9]+\}?/g;
+
+  // Render mixed prose + inline math: words become wrapping text nodes, math
+  // fragments become KaTeX spans. Falls back to plain text if no math is found.
+  function renderProseWithMath(target, tex, katex) {
+    var doc = target.ownerDocument;
+    target.textContent = '';
+    var last = 0; var m; var found = false;
+    INLINE_MATH.lastIndex = 0;
+    while ((m = INLINE_MATH.exec(tex)) !== null) {
+      if (m.index > last) {
+        var run = proseRunClean(tex.slice(last, m.index));
+        if (run) target.appendChild(doc.createTextNode(run));
+      }
+      var span = doc.createElement('span');
+      var frag = m[0].replace(/^\$|\$$/g, '');
+      if (katex && typeof katex.render === 'function') {
+        try { katex.render(frag, span, { throwOnError: false, displayMode: false }); }
+        catch (_) { span.textContent = m[0]; }
+      } else { span.textContent = m[0]; }
+      target.appendChild(span);
+      found = true;
+      last = m.index + m[0].length;
+    }
+    if (last < tex.length) {
+      var tail = proseRunClean(tex.slice(last));
+      if (tail) target.appendChild(doc.createTextNode(tail));
+    }
+    if (!found) target.textContent = unwrapText(tex);   // pure prose, no math
+  }
+
   function typeset(target, latex) {
     var katex = root.katex;
     var tex = cleanLatex(latex);
-    if (looksLikeProse(tex)) {                                     // wrap prose as text
-      target.textContent = unwrapText(tex);
+    if (looksLikeProse(tex)) {
       target.className += ' lws-dv-prose';
+      var whole = tex.trim().match(/^\\text\s*\{[\s\S]*\}$/);   // a pure \text{…} sentence
+      if (whole) target.textContent = unwrapText(tex);
+      else renderProseWithMath(target, tex, katex);            // prose w/ inline math (\frac…)
       return;
     }
     if (katex && typeof katex.render === 'function') {

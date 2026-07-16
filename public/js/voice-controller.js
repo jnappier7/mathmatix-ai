@@ -154,7 +154,17 @@ class VoiceController {
         console.log('[Voice] streaming pipeline active (chat-page orb)');
     }
 
+    // Mirror every stream event onto the DOM so presentation layers
+    // (voice-subtitles.js captions) can react without coupling to this
+    // class or the WS protocol. Detail is the raw event object.
+    _broadcastVoiceEvent(ev) {
+        try {
+            document.dispatchEvent(new CustomEvent('mm:voice', { detail: ev }));
+        } catch (_) { /* CustomEvent unavailable — captions just stay off */ }
+    }
+
     handleStreamEvent(ev) {
+        this._broadcastVoiceEvent(ev);
         switch (ev.type) {
             case 'ready':
                 break;
@@ -251,6 +261,22 @@ class VoiceController {
                 }
                 break;
         }
+    }
+
+    /**
+     * Replay the tutor's last spoken turn. Streaming path replays retained
+     * PCM; legacy path delegates to modules/audio.js's restart button.
+     */
+    replayLastTutorAudio() {
+        if (this.streamClient && typeof this.streamClient.replayLastTurn === 'function') {
+            if (this.streamClient.replayLastTurn()) return true;
+        }
+        const restartBtn = document.getElementById('restart-audio-btn');
+        if (restartBtn && restartBtn.style.display !== 'none') {
+            restartBtn.click();
+            return true;
+        }
+        return false;
     }
 
     // ============================================
@@ -978,12 +1004,14 @@ class VoiceController {
                 try { phase = JSON.parse(line); } catch (e) { continue; }
 
                 if (phase.phase === 'transcription' && phase.transcription) {
+                    this._broadcastVoiceEvent({ type: 'transcript_final', text: phase.transcription });
                     if (window.appendMessage) {
                         window.appendMessage(phase.transcription, 'user');
                     }
 
                 } else if (phase.phase === 'response') {
                     responseText = phase.response || '';
+                    this._broadcastVoiceEvent({ type: 'response_final', text: responseText });
                     boardContextData = phase.boardContext || null;
 
                     if (phase.boardActions && this.config.enableBoardCommands) {
@@ -1170,6 +1198,9 @@ class VoiceController {
     // ============================================
 
     updateUI(state) {
+        // State mirror for the caption layer (covers the legacy HTTP path,
+        // whose speaking/thinking transitions only pass through here).
+        this._broadcastVoiceEvent({ type: 'ui_state', state });
         if (!this.voiceButton || !this.statusText) return;
 
         // Remove all state classes
