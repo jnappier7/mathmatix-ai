@@ -436,10 +436,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Main Content Area (Full Width) -->
   <main id="app-layout-wrapper" class="sidebar-layout">
     <div class="cr-stage">
-      <!-- Hero column (left): tutor video panel on top, My Courses card below.
+      <!-- Hero column (left): My Courses card on top, tutor video panel below.
            The wrapper carries the column's height cap; the hero flexes to
            whatever the courses card doesn't use. -->
       <div class="cr-hero-col">
+      <!-- My Courses card on top; the tutor/avatar hero fills the space below.
+           Same ids as before so courseCatalog.js keeps working: init() reveals
+           this section when MM_FEATURES.courses is on. -->
+      <div class="cr-courses-card" id="sidebar-courses-section" style="display: none;">
+        <button class="courses-toggle" id="courses-toggle-btn">
+          <span><i class="fas fa-graduation-cap" style="margin-right: 6px; font-size: 13px; color: #764ba2;"></i><span data-i18n="chat.myCourses">My Courses</span></span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+
+        <div id="sidebar-courses" class="sidebar-courses-list">
+          <div id="course-sessions-list">
+            <!-- Populated by courseCatalog.js -->
+          </div>
+          <button id="browse-courses-btn" style="margin-top: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px;">
+            <i class="fas fa-graduation-cap"></i>
+            <span data-i18n="chat.browseCourses">Browse Courses</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Tutor hero panel — portrait + backdrop swap per tutor -->
       <aside class="cr-tutor-hero" aria-hidden="true">
         <div class="cr-tutor-backdrop"></div>
@@ -484,26 +504,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
       </aside>
-
-      <!-- My Courses — moved out of the legacy sidebar (hidden in cr-mode) into
-           the hero column. Same ids as before so courseCatalog.js keeps working:
-           init() reveals this section when MM_FEATURES.courses is on. -->
-      <div class="cr-courses-card" id="sidebar-courses-section" style="display: none;">
-        <button class="courses-toggle" id="courses-toggle-btn">
-          <span><i class="fas fa-graduation-cap" style="margin-right: 6px; font-size: 13px; color: #764ba2;"></i><span data-i18n="chat.myCourses">My Courses</span></span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
-
-        <div id="sidebar-courses" class="sidebar-courses-list">
-          <div id="course-sessions-list">
-            <!-- Populated by courseCatalog.js -->
-          </div>
-          <button id="browse-courses-btn" style="margin-top: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px;">
-            <i class="fas fa-graduation-cap"></i>
-            <span data-i18n="chat.browseCourses">Browse Courses</span>
-          </button>
-        </div>
-      </div>
       </div><!-- /.cr-hero-col -->
 
     <div id="chat-container" class="dashboard-panel full-width">
