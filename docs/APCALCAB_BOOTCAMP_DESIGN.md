@@ -94,5 +94,13 @@ small, then scale the bank.
   `scripts/calcSkillMap.py`). 75 MC → `Problem` docs mapped to existing catalog skills
   (BKT-wired for free), 5 weekly FRQs preserved in `seeds/calc-assessment-map.json`,
   94/94 verify snippets pass, all figures render.
-- **Weekly bootcamp rail — follow-up.** Weekly delivery, auto-MC + rubric-FRQ scoring,
-  priority-scored plan, AP-band projection. The assessment map is the rail's input.
+- **Weekly bootcamp rail — SHIPPED.** `routes/calcBootcamp.js` (`/api/calc-bootcamp`)
+  + `models/calcBootcampSession.js` + `utils/calcBootcamp.js` (scoring core, unit-tested).
+  The loop: `start-week` freezes a week's 15 MC + FRQ (client-safe, no keys/solutions);
+  `submit-mc` auto-scores and returns accuracy by unit / practice / calculator plus the
+  miss explanations; `submit-frq` AI-scores the response against the rubric (through the
+  LLM gateway, falling back to MC-only if unparseable); `complete-week` computes the
+  composite (MC 50% + FRQ 50%), projects an AP band (1–5), ranks weak skills by
+  priority = (1 − accuracy) × exam weight × recency, commits a ≤3-topic plan with one
+  retrospective, and seeds the student's `tutorPlan.skillFocus`; `progress` returns the
+  week-over-week band trajectory.

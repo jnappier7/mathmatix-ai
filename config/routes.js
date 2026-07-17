@@ -76,6 +76,7 @@ const screenerRoutes = require('../routes/screener');
 const checkpointRoutes = require('../routes/checkpoint');
 const growthCheckRoutes = require('../routes/growthCheck');
 const actTestRoutes = require('../routes/actTest');
+const calcBootcampRoutes = require('../routes/calcBootcamp');
 const masteryRoutes = require('../routes/mastery');
 const nudgeRoutes = require('../routes/nudges');
 // masteryChat: REMOVED — mastery mode consolidated into /api/chat with { mastery: true }
@@ -241,6 +242,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/growth-check', isAuthenticated, growthCheckRoutes);
   // ACT Math practice test — free (boot-camp on-ramp), fixed-form, no AI at request time.
   app.use('/api/act-test', isAuthenticated, actTestRoutes);
+  app.use('/api/calc-bootcamp', isAuthenticated, calcBootcampRoutes);
   app.use('/api/mastery', isAuthenticated, masteryRoutes);
   app.use('/api/nudges', isAuthenticated, nudgeRoutes);
   // masteryChat route REMOVED — mastery mode consolidated into /api/chat

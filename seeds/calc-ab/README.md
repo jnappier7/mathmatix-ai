@@ -52,9 +52,10 @@ area between curves), `table` — to SVG (matplotlib for graphs, crisp SVG for
 tables). Ingestion bakes each into `Problem.svg` / the FRQ's `svg`. Run
 `python3 scripts/calcFigureRenderer.py` for a preview of every figure in the bank.
 
-## Deferred (follow-up PR)
+## Weekly bootcamp rail (shipped)
 
-The **weekly bootcamp rail**: weekly diagnostic delivery, auto-scored MC +
-tutor-scored FRQ against the rubric, priority-scored ≤3-topic weekly plan, and an
-AP 1–5 band projection with a week-over-week trajectory. The assessment map is the
-rail's input contract.
+`calc-assessment-map.json` is the input contract for `routes/calcBootcamp.js`
+(`/api/calc-bootcamp`): `start-week` → `submit-mc` (auto-scored) → `submit-frq`
+(AI rubric-scored) → `complete-week` (AP-band projection, priority-scored ≤3-topic
+plan seeded into `tutorPlan.skillFocus`) → `progress` (band trajectory). Scoring
+core in `utils/calcBootcamp.js` (unit-tested); state in `models/calcBootcampSession.js`.
