@@ -13,26 +13,51 @@ const ActTestSession = require('../models/actTestSession');
 const { calculateOverallProgress } = require('../utils/coursePrompt');
 const { buildProgressUpdate } = require('../utils/progressState');
 
-// Day-one diagnostic prompt for the ACT prep course: on entry, nudge the student
-// to take a full practice ACT (delivered as a card in the welcome splash) so the
-// tutor can target the bootcamp to their real gaps. Persists until they've
-// completed one. Returns a descriptor for welcomeData.diagnostic, or null.
-async function buildCourseDiagnostic(userId, courseId) {
-  if (courseId !== 'act-prep') return null;
-  try {
-    const taken = await ActTestSession.countDocuments({ userId, status: 'completed' });
-    if (taken > 0) return null;
-  } catch (err) {
-    console.error('[CourseSession] diagnostic check failed (non-fatal):', err.message);
-    return null;
-  }
-  return {
+// Day-one diagnostic prompt shown as a card on course entry, so the tutor can
+// target the course to the student's real level. Per course:
+//   - ACT prep → a full practice ACT (window.openActTest), gated on having taken one.
+//   - Algebra / Calculus / Precalc → the adaptive Starting Point placement
+//     (window.openStartingPoint), gated on user.assessmentCompleted.
+// Persists until the student completes it. Returns a welcomeData.diagnostic
+// descriptor, or null. Extend by adding a course entry below.
+const STARTING_POINT_CARD = {
+  type: 'starting-point',
+  title: 'Find your Starting Point',
+  body: 'Take a short adaptive placement first — no studying needed. Your tutor uses it to '
+    + 'start you at exactly the right level and focus each session on what you actually need.',
+  cta: 'Take the Starting Point',
+};
+const COURSE_DIAGNOSTICS = {
+  'act-prep': {
     type: 'act-practice',
     title: 'Start with a full Practice ACT',
     body: 'Take a timed practice ACT Math test first. Your tutor uses the results to pinpoint '
       + 'exactly which skills to focus your bootcamp on — so every session targets your real gaps.',
     cta: 'Take the Practice ACT',
-  };
+  },
+  'algebra-1': STARTING_POINT_CARD,
+  'algebra-2': STARTING_POINT_CARD,
+  'ap-calculus-ab': STARTING_POINT_CARD,
+  'calculus-bc': STARTING_POINT_CARD,
+  'precalculus': STARTING_POINT_CARD,
+};
+
+async function buildCourseDiagnostic(user, courseId) {
+  const card = COURSE_DIAGNOSTICS[courseId];
+  if (!card || !user) return null;
+  try {
+    if (card.type === 'act-practice') {
+      const taken = await ActTestSession.countDocuments({ userId: user._id, status: 'completed' });
+      if (taken > 0) return null;                 // already took a practice ACT
+    } else if (card.type === 'starting-point') {
+      const expired = user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) < new Date();
+      if (user.assessmentCompleted && !expired) return null; // already placed (and current)
+    }
+  } catch (err) {
+    console.error('[CourseSession] diagnostic check failed (non-fatal):', err.message);
+    return null;
+  }
+  return { type: card.type, title: card.title, body: card.body, cta: card.cta };
 }
 
 /* ============================================================
@@ -202,7 +227,7 @@ router.post('/enroll', async (req, res) => {
         units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
         prerequisites: pathway.prerequisites || [],
         firstModuleTitle: pathwayModules[0]?.title || 'Getting Started',
-        diagnostic: await buildCourseDiagnostic(req.user._id, courseId)
+        diagnostic: await buildCourseDiagnostic(req.user, courseId)
       };
 
       console.log(`📚 [CourseSession] ${req.user.firstName} resumed ${existing.courseName} (${existing.overallProgress}% progress preserved)`);
@@ -300,7 +325,7 @@ router.post('/enroll', async (req, res) => {
       units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
       prerequisites: pathway.prerequisites || [],
       firstModuleTitle: pathwayModules[0]?.title || 'Getting Started',
-      diagnostic: await buildCourseDiagnostic(req.user._id, courseId)
+      diagnostic: await buildCourseDiagnostic(req.user, courseId)
     };
 
     res.json({
@@ -347,7 +372,7 @@ router.post('/:id/activate', async (req, res) => {
     // Day-one diagnostic nudge for returning students too (e.g. an ACT-prep
     // student who enrolled earlier and never took the practice test). Shown as a
     // card when they re-open the course from the sidebar.
-    const diagnostic = await buildCourseDiagnostic(req.user._id, session.courseId);
+    const diagnostic = await buildCourseDiagnostic(req.user, session.courseId);
 
     res.json({ success: true, session, diagnostic });
   } catch (err) {

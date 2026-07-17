@@ -1101,14 +1101,24 @@ class CourseManager {
     // lives in (the welcome splash when embedded, or its own card when standalone).
     // --------------------------------------------------
     diagnosticCardHtml(diag) {
-        if (!diag || diag.type !== 'act-practice') return '';
+        if (!diag || !diag.type) return '';
+        // type → the client launcher invoked by the CTA. Starting Point mirrors
+        // the existing inline-CTA path (floatingScreener, falling back to
+        // window.openStartingPoint). Unknown types render nothing.
+        const launchers = {
+            'act-practice': 'if (window.openActTest) { window.openActTest(); }',
+            'starting-point': "if (window.floatingScreener) { Promise.resolve(window.floatingScreener.checkAssessmentStatus()).then(function(){ window.floatingScreener.open(); }).catch(function(){}); } else if (window.openStartingPoint) { window.openStartingPoint(); }",
+        };
+        const launch = launchers[diag.type];
+        if (!launch) return '';
+        const dismiss = "(this.closest('.course-welcome-splash') || this.closest('.course-diagnostic-wrap') || this.closest('.course-diagnostic-card'))?.remove();";
         return `
             <div class="course-diagnostic-card" style="margin-top:16px; padding:16px; border-radius:12px; background:linear-gradient(135deg,#eef2ff,#faf5ff); border:1px solid #c7d2fe;">
                 <div style="font-size:14px; font-weight:700; color:#4338ca; margin-bottom:6px;">
                     <i class="fas fa-clipboard-check" style="margin-right:6px;"></i>${this.escapeHtml(diag.title)}
                 </div>
                 <div style="font-size:12px; color:#555; line-height:1.5; margin-bottom:12px;">${this.escapeHtml(diag.body)}</div>
-                <button class="course-diagnostic-cta" onclick="(this.closest('.course-welcome-splash') || this.closest('.course-diagnostic-wrap') || this.closest('.course-diagnostic-card'))?.remove(); if (window.openActTest) { window.openActTest(); }" style="
+                <button class="course-diagnostic-cta" onclick="${dismiss} ${launch}" style="
                     width:100%; padding:12px; border:none; border-radius:10px;
                     background:linear-gradient(135deg,#4f46e5,#7c3aed); color:white;
                     font-weight:700; font-size:14px; cursor:pointer;
