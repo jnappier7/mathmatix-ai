@@ -1,0 +1,180 @@
+{
+  "name": "explain",
+  "duration": 2.8,
+  "loop": true,
+  "fps": 30,
+  "tracks": {
+    "upper_arm_L.rotation": [
+      {
+        "t": 0,
+        "v": -10,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.7,
+        "v": -16,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.4,
+        "v": -10,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.1,
+        "v": -14,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.8,
+        "v": -10
+      }
+    ],
+    "forearm_L.rotation": [
+      {
+        "t": 0,
+        "v": -40,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.7,
+        "v": -55,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.4,
+        "v": -38,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.1,
+        "v": -52,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.8,
+        "v": -40
+      }
+    ],
+    "hand_L.rotation": [
+      {
+        "t": 0,
+        "v": -8,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.7,
+        "v": -18,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.4,
+        "v": -6,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.1,
+        "v": -16,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.8,
+        "v": -8
+      }
+    ],
+    "upper_arm_R.rotation": [
+      {
+        "t": 0,
+        "v": 12,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.7,
+        "v": 8,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.4,
+        "v": 15,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.1,
+        "v": 9,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.8,
+        "v": 12
+      }
+    ],
+    "forearm_R.rotation": [
+      {
+        "t": 0,
+        "v": 45,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.7,
+        "v": 34,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.4,
+        "v": 50,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.1,
+        "v": 36,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.8,
+        "v": 45
+      }
+    ],
+    "hand_R.rotation": [
+      {
+        "t": 0,
+        "v": 10,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.7,
+        "v": 4,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.4,
+        "v": 14,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.1,
+        "v": 5,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.8,
+        "v": 10
+      }
+    ],
+    "head.y": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.4,
+        "v": -2,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.8,
+        "v": 0
+      }
+    ]
+  }
+}
