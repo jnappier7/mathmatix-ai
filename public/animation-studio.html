@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Animation Studio — MATHMATIX.AI</title>
+  <link rel="icon" href="/images/favicon-256x256.png">
+  <link rel="stylesheet" href="/css/animation-studio.css">
+</head>
+<body>
+  <div id="studio" class="studio">
+
+    <!-- ============================================================ topbar -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">M∆THM∆TIX</span>
+        <span class="brand-sub">Animation Studio</span>
+      </div>
+
+      <div class="clipbar">
+        <label class="field">
+          <span>Rig</span>
+          <select id="rigSelect"></select>
+        </label>
+        <label class="field">
+          <span>Clip</span>
+          <select id="clipSelect"></select>
+        </label>
+        <button id="btnNewClip" title="New clip">＋ New</button>
+        <button id="btnDupClip" title="Duplicate clip">⧉ Duplicate</button>
+        <button id="btnRenameClip" title="Rename clip">✎ Rename</button>
+        <button id="btnDeleteClip" class="danger" title="Delete clip">🗑</button>
+      </div>
+
+      <div class="iobar">
+        <button id="btnImport" title="Import a clip JSON file">⬆ Import</button>
+        <button id="btnDownload" title="Download this clip as JSON">⬇ Clip JSON</button>
+        <button id="btnSnapshot" title="Save the current frame as a PNG">📷 PNG</button>
+        <button id="btnExport" class="primary" title="Render this clip to a WebM video">🎬 Export video</button>
+        <button id="btnHelp" title="Keyboard shortcuts">?</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </header>
+
+    <!-- ============================================================== main -->
+    <div class="main">
+
+      <!-- left: part tree + slots -->
+      <aside class="panel left">
+        <h3>Parts</h3>
+        <div id="partTree" class="part-tree"></div>
+        <h3>Expression slots</h3>
+        <div id="slotPanel" class="slot-panel"></div>
+      </aside>
+
+      <!-- center: viewport -->
+      <section class="viewport-wrap">
+        <div class="viewport-toolbar">
+          <label class="field">
+            <span>Framing</span>
+            <select id="framingSelect"></select>
+          </label>
+          <label class="field">
+            <span>Background</span>
+            <select id="bgSelect">
+              <option value="checker">Checker</option>
+              <option value="#ffffff" selected>Chat white</option>
+              <option value="#f4f7f6">Chat mist</option>
+              <option value="#1e2530">Studio dark</option>
+            </select>
+          </label>
+          <label class="toggle" title="Ghost the previous and next keyframe poses">
+            <input type="checkbox" id="onionToggle"> Onion skin
+          </label>
+          <label class="toggle" title="Preview this clip layered on top of the looping idle clip, the way the runtime plays overlays">
+            <input type="checkbox" id="baseToggle"> Idle underlay
+          </label>
+          <span class="spacer"></span>
+          <button id="btnZoomFit" title="Fit rig in view">Fit</button>
+          <button id="btnZoom100" title="Zoom to 100%">1:1</button>
+          <span id="zoomLabel" class="zoom-label">100%</span>
+        </div>
+        <div id="viewportHost" class="viewport-host">
+          <canvas id="viewport"></canvas>
+          <div id="viewportHint" class="viewport-hint">
+            Click a part to select · drag to rotate · <b>Shift</b>-drag to move ·
+            <b>Alt</b>-drag / wheel to pan &amp; zoom
+          </div>
+        </div>
+      </section>
+
+      <!-- right: inspector -->
+      <aside class="panel right">
+        <h3>Inspector</h3>
+        <div id="inspectorEmpty" class="muted">Select a part to edit its channels.</div>
+        <div id="inspector" class="inspector" hidden>
+          <div class="insp-title" id="inspPartName">—</div>
+          <div id="channelRows"></div>
+          <button id="btnResetPart" class="wide" title="Remove every keyframe this clip has for this part">Reset part in this clip</button>
+        </div>
+
+        <h3>Keyframe</h3>
+        <div id="keyEmpty" class="muted">Select a keyframe in the timeline.</div>
+        <div id="keyEditor" class="key-editor" hidden>
+          <div class="key-info" id="keyInfo">—</div>
+          <label class="field wide">
+            <span>Easing (out of this key)</span>
+            <select id="keyEasing"></select>
+          </label>
+          <label class="field">
+            <span>Time (s)</span>
+            <input type="number" id="keyTime" step="0.01" min="0">
+          </label>
+          <label class="field" id="keyValueField">
+            <span>Value</span>
+            <input type="number" id="keyValue" step="0.1">
+          </label>
+          <button id="btnDeleteKeys" class="danger wide">Delete selected key(s)</button>
+        </div>
+
+        <h3>Clip</h3>
+        <div class="clip-props">
+          <label class="field">
+            <span>Duration (s)</span>
+            <input type="number" id="clipDuration" step="0.1" min="0.1">
+          </label>
+          <label class="field">
+            <span>FPS (snap)</span>
+            <input type="number" id="clipFps" step="1" min="1" max="120">
+          </label>
+          <label class="toggle"><input type="checkbox" id="clipLoop"> Loop</label>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ========================================================== timeline -->
+    <footer class="timeline-wrap">
+      <div class="transport">
+        <button id="btnToStart" title="Jump to start (Home)">⏮</button>
+        <button id="btnPlay" class="primary" title="Play / pause (Space)">▶</button>
+        <button id="btnStepBack" title="Previous frame (←)">◀︎▪</button>
+        <button id="btnStepFwd" title="Next frame (→)">▪▶︎</button>
+        <span id="timeLabel" class="time-label">0.00s · f0</span>
+        <span class="spacer"></span>
+        <label class="toggle rec" title="Automatically key a channel when you change it">
+          <input type="checkbox" id="autoKeyToggle" checked> ● Auto-key
+        </label>
+        <label class="toggle" title="Snap keyframes and the playhead to whole frames">
+          <input type="checkbox" id="snapToggle" checked> Snap
+        </label>
+        <button id="btnKeyPose" title="Key every changed channel of the selected part at the playhead (K)">🔑 Key selected</button>
+        <button id="btnUndo" title="Undo (Ctrl+Z)">↩</button>
+        <button id="btnRedo" title="Redo (Ctrl+Shift+Z)">↪</button>
+      </div>
+      <div id="timelineHost" class="timeline-host">
+        <canvas id="timeline"></canvas>
+      </div>
+    </footer>
+
+    <!-- ====================================================== export modal -->
+    <div id="exportModal" class="modal-backdrop" hidden>
+      <div class="modal">
+        <h2>Export video</h2>
+        <div class="modal-grid">
+          <label class="field">
+            <span>Framing</span>
+            <select id="exportFraming"></select>
+          </label>
+          <label class="field">
+            <span>FPS</span>
+            <select id="exportFps">
+              <option value="30" selected>30</option>
+              <option value="60">60</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Background</span>
+            <input type="color" id="exportBg" value="#ffffff">
+          </label>
+          <label class="field">
+            <span>Loops to render</span>
+            <input type="number" id="exportLoops" value="1" min="1" max="20" step="1">
+          </label>
+          <label class="toggle wide">
+            <input type="checkbox" id="exportBase"> Layer on looping idle (runtime composite)
+          </label>
+          <label class="toggle wide">
+            <input type="checkbox" id="exportBlink" checked> Auto-blink
+          </label>
+        </div>
+        <div id="exportStatus" class="export-status"></div>
+        <div class="modal-actions">
+          <button id="btnExportCancel">Cancel</button>
+          <button id="btnExportGo" class="primary">Render WebM</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== help modal -->
+    <div id="helpModal" class="modal-backdrop" hidden>
+      <div class="modal">
+        <h2>Shortcuts</h2>
+        <table class="help-table">
+          <tr><td><b>Space</b></td><td>Play / pause</td></tr>
+          <tr><td><b>← / →</b></td><td>Step one frame (with Shift: 10 frames)</td></tr>
+          <tr><td><b>Home</b></td><td>Jump to start</td></tr>
+          <tr><td><b>K</b></td><td>Key all changed channels of the selected part</td></tr>
+          <tr><td><b>Delete</b></td><td>Delete selected keyframe(s)</td></tr>
+          <tr><td><b>Ctrl+Z / Ctrl+Shift+Z</b></td><td>Undo / redo</td></tr>
+          <tr><td><b>Drag part</b></td><td>Rotate around its pivot</td></tr>
+          <tr><td><b>Shift-drag part</b></td><td>Translate</td></tr>
+          <tr><td><b>Alt-drag / middle-drag</b></td><td>Pan the viewport</td></tr>
+          <tr><td><b>Wheel</b></td><td>Zoom the viewport</td></tr>
+          <tr><td><b>Double-click timeline row</b></td><td>Add a key at that time</td></tr>
+        </table>
+        <div class="modal-actions">
+          <button id="btnHelpClose" class="primary">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/rig/rig-core.js"></script>
+  <script src="/js/rig/rig-player.js"></script>
+  <script src="/js/animation-studio.js"></script>
+</body>
+</html>

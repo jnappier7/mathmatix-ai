@@ -1,0 +1,19 @@
+{
+  "name": "talk",
+  "duration": 0.52,
+  "loop": true,
+  "fps": 30,
+  "tracks": {
+    "slots.mouth": [
+      { "t": 0, "v": "ah", "e": "step" },
+      { "t": 0.14, "v": "rest", "e": "step" },
+      { "t": 0.24, "v": "ah", "e": "step" },
+      { "t": 0.4, "v": "rest", "e": "step" }
+    ],
+    "head.y": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 0.26, "v": 2, "e": "inOutSine" },
+      { "t": 0.52, "v": 0 }
+    ]
+  }
+}

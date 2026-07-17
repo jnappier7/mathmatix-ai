@@ -1,0 +1,52 @@
+{
+  "name": "thinking",
+  "duration": 4.2,
+  "loop": true,
+  "fps": 30,
+  "tracks": {
+    "head.rotation": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1, "v": -4, "e": "linear" },
+      { "t": 3.2, "v": -4, "e": "inOutSine" },
+      { "t": 4.2, "v": 0 }
+    ],
+    "eye_L.x": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1, "v": -4, "e": "linear" },
+      { "t": 3.2, "v": -4, "e": "inOutSine" },
+      { "t": 4.2, "v": 0 }
+    ],
+    "eye_R.x": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1, "v": -4, "e": "linear" },
+      { "t": 3.2, "v": -4, "e": "inOutSine" },
+      { "t": 4.2, "v": 0 }
+    ],
+    "eye_L.y": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1, "v": -3, "e": "linear" },
+      { "t": 3.2, "v": -3, "e": "inOutSine" },
+      { "t": 4.2, "v": 0 }
+    ],
+    "eye_R.y": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1, "v": -3, "e": "linear" },
+      { "t": 3.2, "v": -3, "e": "inOutSine" },
+      { "t": 4.2, "v": 0 }
+    ],
+    "slots.brow_R": [
+      { "t": 0.6, "v": "raised", "e": "step" },
+      { "t": 3.4, "v": "rest", "e": "step" }
+    ],
+    "torso.scaleY": [
+      { "t": 0, "v": 1, "e": "inOutSine" },
+      { "t": 2.1, "v": 1.01, "e": "inOutSine" },
+      { "t": 4.2, "v": 1 }
+    ],
+    "torso.y": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 2.1, "v": -2, "e": "inOutSine" },
+      { "t": 4.2, "v": 0 }
+    ]
+  }
+}

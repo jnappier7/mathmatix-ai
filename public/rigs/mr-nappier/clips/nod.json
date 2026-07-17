@@ -1,0 +1,30 @@
+{
+  "name": "nod",
+  "duration": 1.1,
+  "loop": false,
+  "fps": 30,
+  "tracks": {
+    "head.y": [
+      { "t": 0, "v": 0, "e": "inOutQuad" },
+      { "t": 0.22, "v": 13, "e": "inOutQuad" },
+      { "t": 0.45, "v": 2, "e": "inOutQuad" },
+      { "t": 0.68, "v": 13, "e": "inOutQuad" },
+      { "t": 0.95, "v": 0 }
+    ],
+    "head.rotation": [
+      { "t": 0, "v": 0, "e": "inOutQuad" },
+      { "t": 0.22, "v": 1.5, "e": "inOutQuad" },
+      { "t": 0.45, "v": 0.3, "e": "inOutQuad" },
+      { "t": 0.68, "v": 1.5, "e": "inOutQuad" },
+      { "t": 0.95, "v": 0 }
+    ],
+    "slots.brow_L": [
+      { "t": 0, "v": "raised", "e": "step" },
+      { "t": 0.8, "v": "rest", "e": "step" }
+    ],
+    "slots.brow_R": [
+      { "t": 0, "v": "raised", "e": "step" },
+      { "t": 0.8, "v": "rest", "e": "step" }
+    ]
+  }
+}
