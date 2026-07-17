@@ -1,0 +1,53 @@
+{
+  "name": "idle",
+  "duration": 3.4,
+  "loop": true,
+  "fps": 30,
+  "tracks": {
+    "torso.scaleY": [
+      { "t": 0, "v": 1, "e": "inOutSine" },
+      { "t": 1.7, "v": 1.012, "e": "inOutSine" },
+      { "t": 3.4, "v": 1 }
+    ],
+    "torso.y": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.7, "v": -2, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ],
+    "head.rotation": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.7, "v": -1.2, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ],
+    "head.y": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.7, "v": -3, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ],
+    "tie.rotation": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.9, "v": 1.6, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ],
+    "upper_arm_R.rotation": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.7, "v": -1.5, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ],
+    "upper_arm_L.rotation": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.7, "v": 1.5, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ],
+    "forearm_R.rotation": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.7, "v": -1, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ],
+    "forearm_L.rotation": [
+      { "t": 0, "v": 0, "e": "inOutSine" },
+      { "t": 1.7, "v": 1, "e": "inOutSine" },
+      { "t": 3.4, "v": 0 }
+    ]
+  }
+}

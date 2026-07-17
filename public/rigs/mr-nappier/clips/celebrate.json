@@ -1,0 +1,238 @@
+{
+  "name": "celebrate",
+  "duration": 1.4,
+  "loop": false,
+  "fps": 30,
+  "tracks": {
+    "root.y": [
+      {
+        "t": 0.05,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.38,
+        "v": -42,
+        "e": "inQuad"
+      },
+      {
+        "t": 0.62,
+        "v": 0,
+        "e": "outQuad"
+      },
+      {
+        "t": 0.74,
+        "v": -8,
+        "e": "inQuad"
+      },
+      {
+        "t": 0.86,
+        "v": 0
+      }
+    ],
+    "upper_arm_R.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outBack"
+      },
+      {
+        "t": 0.32,
+        "v": 14,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": 11.9,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "forearm_R.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outBack"
+      },
+      {
+        "t": 0.32,
+        "v": 58,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": 52.9,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "hand_R.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.32,
+        "v": 20,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": 16,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "upper_arm_L.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outBack"
+      },
+      {
+        "t": 0.32,
+        "v": -14,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": -11.9,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "forearm_L.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outBack"
+      },
+      {
+        "t": 0.32,
+        "v": -58,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": -52.9,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "hand_L.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.32,
+        "v": -20,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": -16,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "head.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.32,
+        "v": -2.5,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": -2,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "head.y": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.32,
+        "v": -7,
+        "e": "linear"
+      },
+      {
+        "t": 0.85,
+        "v": -5,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 1.4,
+        "v": 0
+      }
+    ],
+    "slots.brow_L": [
+      {
+        "t": 0,
+        "v": "raised",
+        "e": "step"
+      },
+      {
+        "t": 1.15,
+        "v": "rest",
+        "e": "step"
+      }
+    ],
+    "slots.brow_R": [
+      {
+        "t": 0,
+        "v": "raised",
+        "e": "step"
+      },
+      {
+        "t": 1.15,
+        "v": "rest",
+        "e": "step"
+      }
+    ],
+    "slots.mouth": [
+      {
+        "t": 0,
+        "v": "ah",
+        "e": "step"
+      },
+      {
+        "t": 0.95,
+        "v": "rest",
+        "e": "step"
+      }
+    ]
+  }
+}
