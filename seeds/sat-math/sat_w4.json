@@ -1,0 +1,504 @@
+{
+ "week": 4,
+ "title": "Geometry & Trig + retention",
+ "items": [
+  {
+   "n": 1,
+   "domain": "GEO",
+   "skill": "Lines, angles, and triangles",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "In the figure, lines p and q are parallel and are cut by a transversal t. One of the angles formed measures 65°. What is the value of x?",
+   "choices": [
+    "65",
+    "115",
+    "25",
+    "125"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The 65° angle and the angle marked x° are same-side interior angles between the parallel lines, so they are supplementary. Therefore x = 180 − 65 = 115. Choosing 65 confuses supplementary angles with corresponding (equal) angles, and 25 treats the pair as complementary.",
+   "verify": "assert 180 - 65 == 115",
+   "figure": {
+    "kind": "geometry",
+    "params": {
+     "shape": "lines",
+     "labels": {
+      "line1": "p",
+      "line2": "q",
+      "transversal": "t",
+      "angle1": "65°",
+      "angle2": "x°"
+     },
+     "marks": {
+      "parallel": [
+       "p",
+       "q"
+      ],
+      "angle_positions": {
+       "65°": "above line p, right of t",
+       "x°": "below line q, right of t"
+      }
+     }
+    }
+   }
+  },
+  {
+   "n": 2,
+   "domain": "GEO",
+   "skill": "Area and volume",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "The side panel of a small skate ramp is a triangle with a base of 8 feet and a height of 3.5 feet, as shown. What is the area, in square feet, of the side panel?",
+   "choices": [
+    "5.75",
+    "11.5",
+    "14",
+    "28"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The area of a triangle is (1/2) × base × height. So the area is (1/2)(8)(3.5) = 14 square feet. Choosing 28 forgets the factor of 1/2, and 11.5 adds the base and height instead of multiplying.",
+   "verify": "assert 0.5 * 8 * 3.5 == 14",
+   "figure": {
+    "kind": "geometry",
+    "params": {
+     "shape": "triangle",
+     "labels": {
+      "base": "8 ft",
+      "height": "3.5 ft"
+     },
+     "marks": {
+      "right_angle": "between base and height"
+     }
+    }
+   }
+  },
+  {
+   "n": 3,
+   "domain": "ALG",
+   "skill": "Linear equations in one variable",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "If 3(x − 4) = 18, what is the value of x?",
+   "choices": [
+    "14/3",
+    "6",
+    "22/3",
+    "10"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Divide both sides by 3 to get x − 4 = 6, then add 4 to get x = 10. Choosing 6 forgets to add 4 back, and 22/3 comes from failing to distribute the 3 to the −4 (solving 3x − 4 = 18).",
+   "verify": "from sympy import symbols, solve, Eq, Rational\nx = symbols('x')\nassert solve(Eq(3*(x - 4), 18)) == [10]",
+   "figure": null
+  },
+  {
+   "n": 4,
+   "domain": "ALG",
+   "skill": "Linear functions",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "The graph of the linear function f passes through the points (2, 5) and (6, 17) in the xy-plane. What is the slope of the graph of f?",
+   "choices": [
+    "3",
+    "1/3",
+    "−3",
+    "12"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Slope is the change in y divided by the change in x: (17 − 5)/(6 − 2) = 12/4 = 3. Choosing 1/3 inverts the ratio (Δx over Δy), and 12 uses only the change in y.",
+   "verify": "from sympy import Rational\nassert Rational(17 - 5, 6 - 2) == 3",
+   "figure": null
+  },
+  {
+   "n": 5,
+   "domain": "GEO",
+   "skill": "Lines, angles, and triangles",
+   "difficulty": "E",
+   "type": "spr",
+   "stem": "The measures of the three interior angles of a triangle are x°, 2x°, and 75°. What is the value of x?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "35",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The interior angles of a triangle sum to 180°, so x + 2x + 75 = 180. Then 3x = 105, so x = 35.",
+   "verify": "from sympy import symbols, solve, Eq\nx = symbols('x')\nsol = solve(Eq(x + 2*x + 75, 180))\nassert sol == [35]\ncanonical = float('35')\nassert canonical == 35\nfor eq in []:\n    assert abs(float(eq) - canonical) < 1e-9",
+   "figure": null
+  },
+  {
+   "n": 6,
+   "domain": "ADV",
+   "skill": "Equivalent expressions",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "Which expression is equivalent to (x + 5)(x − 2)?",
+   "choices": [
+    "x² + 3x − 10",
+    "x² − 3x − 10",
+    "x² + 3x + 10",
+    "x² − 10"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Expanding gives x² − 2x + 5x − 10 = x² + 3x − 10. Choosing x² − 10 forgets the middle terms, and x² − 3x − 10 makes a sign error when combining −2x and 5x.",
+   "verify": "from sympy import symbols, expand\nx = symbols('x')\nassert expand((x + 5)*(x - 2)) == x**2 + 3*x - 10",
+   "figure": null
+  },
+  {
+   "n": 7,
+   "domain": "PSDA",
+   "skill": "Ratios, rates, proportional relationships, and units",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "An artist is designing a tile mosaic that uses blue tiles and white tiles in a ratio of 3 to 5. If the mosaic uses 120 blue tiles, how many white tiles does it use?",
+   "choices": [
+    "40",
+    "72",
+    "320",
+    "200"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Each group of the ratio has 3 blue and 5 white tiles, and 120 blue tiles means 120/3 = 40 groups. So there are 40 × 5 = 200 white tiles. Choosing 72 reverses the ratio (120 × 3/5), and 320 gives the total number of tiles instead.",
+   "verify": "from sympy import Rational\nassert Rational(120, 3) * 5 == 200",
+   "figure": null
+  },
+  {
+   "n": 8,
+   "domain": "GEO",
+   "skill": "Area and volume",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A grain silo is in the shape of a right circular cylinder with an interior radius of 4 meters and an interior height of 10 meters. The silo is completely filled with grain that weighs 700 kilograms per cubic meter. Which of the following is closest to the total weight, in kilograms, of the grain in the silo?",
+   "choices": [
+    "88,000",
+    "176,000",
+    "352,000",
+    "1,407,000"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The volume of the cylinder is πr²h = π(4²)(10) = 160π ≈ 502.65 cubic meters. Multiplying by the density gives 502.65 × 700 ≈ 351,858, so about 352,000 kilograms. Choosing 88,000 uses r instead of r² in the volume formula, and 1,407,000 uses the diameter squared.",
+   "verify": "from sympy import pi\nw = float(pi * 4**2 * 10 * 700)\nassert abs(w - 351858) < 100\nassert round(w, -3) == 352000",
+   "figure": null
+  },
+  {
+   "n": 9,
+   "domain": "GEO",
+   "skill": "Lines, angles, and triangles",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A vertical pole 6 feet tall casts a shadow 4 feet long on level ground. At the same time, a grain silo on the same ground casts a shadow 30 feet long. The triangles formed by each object and its shadow are similar. What is the height, in feet, of the silo?",
+   "choices": [
+    "20",
+    "45",
+    "120",
+    "180"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Because the triangles are similar, height/shadow is the same for both objects: 6/4 = h/30. Solving gives h = 30 × 6/4 = 45 feet. Choosing 20 reverses the ratio (30 × 4/6), and 180 multiplies 6 by 30 without dividing.",
+   "verify": "from sympy import Rational\nassert Rational(6, 4) * 30 == 45",
+   "figure": null
+  },
+  {
+   "n": 10,
+   "domain": "GEO",
+   "skill": "Right triangles and trigonometry",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A guy-wire supports a cell tower. The wire is anchored to level ground at a point 9 meters from the base of the tower and is attached to the tower at a point 12 meters above the ground, as shown. What is the length, in meters, of the guy-wire?",
+   "choices": [
+    "3",
+    "15",
+    "21",
+    "√63"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The tower, the ground, and the wire form a right triangle with legs 9 and 12, and the wire is the hypotenuse. By the Pythagorean theorem, the length is √(9² + 12²) = √225 = 15 meters. Choosing 21 adds the legs, and √63 subtracts the squares as if the wire were a leg.",
+   "verify": "from sympy import sqrt\nassert sqrt(9**2 + 12**2) == 15",
+   "figure": {
+    "kind": "geometry",
+    "params": {
+     "shape": "triangle",
+     "labels": {
+      "vertical_leg": "12 m (tower)",
+      "horizontal_leg": "9 m (ground)",
+      "hypotenuse": "guy-wire"
+     },
+     "marks": {
+      "right_angle": "between tower and ground"
+     }
+    }
+   }
+  },
+  {
+   "n": 11,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "2x + 3y = 24\nx − y = 2\nIf (x, y) is the solution to the system of equations above, what is the value of x?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "6",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "From the second equation, x = y + 2. Substituting into the first equation gives 2(y + 2) + 3y = 24, so 5y + 4 = 24 and y = 4. Then x = 4 + 2 = 6.",
+   "verify": "from sympy import symbols, solve, Eq\nx, y = symbols('x y')\nsol = solve([Eq(2*x + 3*y, 24), Eq(x - y, 2)], [x, y])\nassert sol[x] == 6 and sol[y] == 4\ncanonical = float('6')\nassert canonical == float(sol[x])\nfor eq in []:\n    assert abs(float(eq) - canonical) < 1e-9",
+   "figure": null
+  },
+  {
+   "n": 12,
+   "domain": "GEO",
+   "skill": "Right triangles and trigonometry",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A person is flying a kite on level ground. The 50-meter string is fully extended and pulled taut, and it makes an angle of 37° with the horizontal, as shown. Which expression gives the height, in meters, of the kite above the level of the person's hand?",
+   "choices": [
+    "50 sin 37°",
+    "50 cos 37°",
+    "50 tan 37°",
+    "50/sin 37°"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The string is the hypotenuse of a right triangle, and the height is the side opposite the 37° angle. Since sin = opposite/hypotenuse, the height is 50 sin 37°. Choosing 50 cos 37° gives the horizontal distance instead, and 50/sin 37° inverts the ratio.",
+   "verify": "from sympy import sin, cos, rad\nh = float(50*sin(rad(37)))\nassert abs(h - 30.09) < 0.01\nassert h < float(50*cos(rad(37))) + 10 and h < 50",
+   "figure": {
+    "kind": "geometry",
+    "params": {
+     "shape": "triangle",
+     "labels": {
+      "hypotenuse": "50 m (string)",
+      "angle": "37°",
+      "vertical_leg": "h"
+     },
+     "marks": {
+      "right_angle": "between vertical leg and ground",
+      "angle_position": "between string and horizontal"
+     }
+    }
+   }
+  },
+  {
+   "n": 13,
+   "domain": "PSDA",
+   "skill": "Percentages",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A tile mosaic kit is on sale for $102.00, which is 15% off its original price. What was the original price of the kit?",
+   "choices": [
+    "$86.70",
+    "$117.30",
+    "$120.00",
+    "$122.40"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The sale price is 85% of the original price p, so 0.85p = 102. Dividing gives p = 102/0.85 = 120, so the original price was $120.00. Choosing $117.30 incorrectly adds 15% of the sale price (102 × 1.15), and $86.70 takes 15% off the sale price again.",
+   "verify": "assert abs(102 / 0.85 - 120) < 1e-9\nassert abs(120 * 0.85 - 102) < 1e-9",
+   "figure": null
+  },
+  {
+   "n": 14,
+   "domain": "GEO",
+   "skill": "Circles",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "In a circle with radius 9 centimeters, an arc has length 6π centimeters. What is the measure, in degrees, of the central angle that intercepts this arc?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "120",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The circumference of the circle is 2π(9) = 18π centimeters. The arc is 6π/18π = 1/3 of the circle, so the central angle is (1/3)(360°) = 120°.",
+   "verify": "from sympy import pi, Rational\nangle = (6*pi / (2*pi*9)) * 360\nassert angle == 120\ncanonical = float('120')\nassert canonical == float(angle)\nfor eq in []:\n    assert abs(float(eq) - canonical) < 1e-9",
+   "figure": null
+  },
+  {
+   "n": 15,
+   "domain": "ADV",
+   "skill": "Nonlinear functions",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A jet of water in a city park fountain follows a parabolic path. The height of the water, in feet, at a horizontal distance of x feet from the nozzle is given by h(x) = −x² + 6x. What is the maximum height, in feet, reached by the water?",
+   "choices": [
+    "3",
+    "6",
+    "9",
+    "12"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The parabola opens downward, so the maximum occurs at the vertex, where x = −b/(2a) = −6/(2)(−1) = 3. Then h(3) = −9 + 18 = 9 feet. Choosing 3 gives the x-coordinate of the vertex instead of the height, and 6 gives the distance where the water lands.",
+   "verify": "from sympy import symbols, diff, solve\nx = symbols('x')\nh = -x**2 + 6*x\nxv = solve(diff(h, x))[0]\nassert xv == 3 and h.subs(x, xv) == 9",
+   "figure": null
+  },
+  {
+   "n": 16,
+   "domain": "ALG",
+   "skill": "Linear inequalities in one or two variables",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A community group is building a skate ramp. Renting a workshop space costs a flat fee of $40 plus $15 per hour. The group can spend at most $250 on the rental. What is the greatest whole number of hours the group can rent the workshop?",
+   "choices": [
+    "13",
+    "14",
+    "15",
+    "16"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The cost for h hours is 40 + 15h, so the group needs 40 + 15h ≤ 250. Subtracting 40 and dividing by 15 gives h ≤ 210/15 = 14, so the greatest whole number of hours is 14. Choosing 16 ignores the $40 flat fee (250/15 rounded down).",
+   "verify": "assert 40 + 15*14 <= 250 and 40 + 15*15 > 250",
+   "figure": null
+  },
+  {
+   "n": 17,
+   "domain": "ADV",
+   "skill": "Nonlinear functions",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A grain silo initially holds 2,400 bushels of grain. Each day, 20% of the grain remaining in the silo is removed. Which function g gives the number of bushels remaining after d days?",
+   "choices": [
+    "g(d) = 2,400(0.8)^d",
+    "g(d) = 2,400(0.2)^d",
+    "g(d) = 2,400(1.2)^d",
+    "g(d) = 2,400 − 480d"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Removing 20% each day leaves 80% of the previous day's amount, so the amount is multiplied by 0.8 each day: g(d) = 2,400(0.8)^d. Choosing (0.2)^d keeps only 20% instead of removing 20%, and 2,400 − 480d treats the decrease as a constant 480 bushels per day rather than 20% of the remaining amount.",
+   "verify": "g = lambda d: 2400 * 0.8**d\nassert g(1) == 2400 - 0.2*2400\nassert abs(g(2) - 0.8*g(1)) < 1e-9",
+   "figure": null
+  },
+  {
+   "n": 18,
+   "domain": "GEO",
+   "skill": "Circles",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "The graph of x² + y² − 6x + 4y − 12 = 0 in the xy-plane is a circle. What is the radius of the circle?",
+   "choices": [
+    "2√3",
+    "5",
+    "12",
+    "25"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Completing the square gives (x² − 6x + 9) + (y² + 4y + 4) = 12 + 9 + 4, or (x − 3)² + (y + 2)² = 25. The radius is √25 = 5. Choosing 25 gives r² instead of r, and 2√3 takes the square root of the constant 12 without completing the square.",
+   "verify": "from sympy import symbols, expand\nx, y = symbols('x y')\nassert expand((x - 3)**2 + (y + 2)**2 - 25) == expand(x**2 + y**2 - 6*x + 4*y - 12)\nassert 25**0.5 == 5",
+   "figure": null
+  },
+  {
+   "n": 19,
+   "domain": "ADV",
+   "skill": "Nonlinear equations and systems",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "y = x² − 4x + 5\ny = 2x − 3\nThe graphs of the equations above intersect at two points in the xy-plane. What is the sum of the x-coordinates of the two points of intersection?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "6",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Setting the expressions for y equal gives x² − 4x + 5 = 2x − 3, so x² − 6x + 8 = 0. Factoring gives (x − 2)(x − 4) = 0, so x = 2 or x = 4, and the sum is 2 + 4 = 6. (Equivalently, the sum of the roots of x² − 6x + 8 = 0 is −(−6)/1 = 6.)",
+   "verify": "from sympy import symbols, solve, Eq\nx = symbols('x')\nroots = solve(Eq(x**2 - 4*x + 5, 2*x - 3))\nassert sorted(roots) == [2, 4]\ncanonical = float('6')\nassert canonical == float(sum(roots))\nfor eq in []:\n    assert abs(float(eq) - canonical) < 1e-9",
+   "figure": null
+  },
+  {
+   "n": 20,
+   "domain": "GEO",
+   "skill": "Right triangles and trigonometry",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "A Ferris wheel has a radius of 20 meters, and its center is 25 meters above the ground. A car starts at the lowest point of the wheel and travels 150° around the circle. What is the height, in meters, of the car above the ground at that position?",
+   "choices": [
+    "25 − 10√3",
+    "25 + 10√2",
+    "45",
+    "25 + 10√3"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "After rotating 150° from the bottom, the car's height above the center's level is −20 cos 150° = 20(√3/2) = 10√3, since the vertical position relative to the center is −r cos θ measured from the lowest point. So the height above the ground is 25 + 10√3 ≈ 42.3 meters. Choosing 25 − 10√3 puts the car below the center (a sign error), and 45 assumes the car reached the top of the wheel.",
+   "verify": "from sympy import cos, rad, sqrt, simplify\nh = 25 - 20*cos(rad(150))\nassert simplify(h - (25 + 10*sqrt(3))) == 0\nassert abs(float(h) - 42.32) < 0.01",
+   "figure": null
+  },
+  {
+   "n": 21,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "kx − 6y = 10\n2x − 3y = 5\nIn the system of equations above, k is a constant. If the system has infinitely many solutions, what is the value of k?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "4",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "For infinitely many solutions, the two equations must be equivalent. Multiplying the second equation by 2 gives 4x − 6y = 10, which matches the first equation when k = 4. Equivalently, the ratios must all be equal: k/2 = −6/−3 = 10/5 = 2, so k = 4.",
+   "verify": "from sympy import symbols, expand\nx, y = symbols('x y')\nk = 4\nassert expand(k*x - 6*y - 10 - 2*(2*x - 3*y - 5)) == 0\ncanonical = float('4')\nassert canonical == 4.0\nfor eq in []:\n    assert abs(float(eq) - canonical) < 1e-9",
+   "figure": null
+  },
+  {
+   "n": 22,
+   "domain": "ADV",
+   "skill": "Nonlinear equations and systems",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "What is the solution set of the equation √(2x + 7) = x + 2?",
+   "choices": [
+    "{−3}",
+    "{−3, 1}",
+    "The equation has no real solutions.",
+    "{1}"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Squaring both sides gives 2x + 7 = x² + 4x + 4, so x² + 2x − 3 = 0 and (x + 3)(x − 1) = 0, giving candidates x = −3 and x = 1. Checking x = −3: √(1) = 1 but x + 2 = −1, so it is extraneous; checking x = 1: √9 = 3 = 1 + 2, which works. The solution set is {1}; choosing {−3, 1} forgets to check for extraneous solutions.",
+   "verify": "from sympy import symbols, solve, Eq, sqrt\nx = symbols('x')\nsol = solve(Eq(sqrt(2*x + 7), x + 2))\nassert sol == [1]\nassert (2*(-3) + 7)**0.5 != -3 + 2",
+   "figure": null
+  }
+ ]
+}

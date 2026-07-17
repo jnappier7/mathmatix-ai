@@ -1,0 +1,506 @@
+{
+ "week": 2,
+ "title": "Advanced Math",
+ "items": [
+  {
+   "n": 1,
+   "domain": "ADV",
+   "skill": "Equivalent expressions",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "Which expression is equivalent to (x + 3)(x − 5)?",
+   "choices": [
+    "x² − 2x − 15",
+    "x² + 2x − 15",
+    "x² − 2x + 15",
+    "x² − 15"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Distribute each term: (x + 3)(x − 5) = x² − 5x + 3x − 15 = x² − 2x − 15. Choice B flips the sign of the middle term, choice C flips the sign of the constant, and choice D drops the middle term entirely.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.expand((x+3)*(x-5))==x**2-2*x-15",
+   "figure": null
+  },
+  {
+   "n": 2,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (exponential)",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A bacteria culture starts with 500 cells, and the population doubles every hour. The number of cells t hours after the culture is started is given by P(t) = 500·2^t. How many cells are in the culture 3 hours after it is started?",
+   "choices": [
+    "1,500",
+    "3,000",
+    "4,000",
+    "8,000"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Substitute t = 3: P(3) = 500·2³ = 500·8 = 4,000 cells. Choice A multiplies 500 by 3, choice B multiplies 500 by 2 and then by 3 instead of using the exponent, and choice D doubles one extra time (500·2⁴).",
+   "verify": "assert 500*2**3==4000",
+   "figure": null
+  },
+  {
+   "n": 3,
+   "domain": "ALG",
+   "skill": "Linear functions",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "The percent charge remaining in a drone battery t minutes after takeoff is given by B(t) = 100 − 8t. How many minutes after takeoff will the battery charge be 36%?",
+   "choices": [
+    "4.5",
+    "8",
+    "12.5",
+    "17"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Set 100 − 8t = 36. Subtracting 100 from both sides gives −8t = −64, so t = 8 minutes. Choice A divides 36 by 8, choice C divides 100 by 8 (the time to fully drain), and choice D adds 36 to 100 instead of subtracting.",
+   "verify": "import sympy as sp; t=sp.symbols('t'); assert sp.solve(sp.Eq(100-8*t,36),t)==[8]",
+   "figure": null
+  },
+  {
+   "n": 4,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (quadratic)",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "The graph of the quadratic function f is shown, where y = f(x). At which values of x does the graph cross the x-axis?",
+   "choices": [
+    "−1 and 5",
+    "1 and −5",
+    "2 and −9",
+    "−3 and 3"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The graph crosses the x-axis where y = 0, which occurs at x = −1 and x = 5. Choice B flips both signs, choice C mistakes the vertex coordinates (2, −9) for intercepts, and choice D assumes the intercepts are symmetric about x = 0 instead of about the axis of symmetry x = 2.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.solve((x-2)**2-9,x)==[-1,5]",
+   "figure": {
+    "kind": "fgraph",
+    "params": {
+     "expr": "(x-2)**2-9",
+     "xmin": -6,
+     "xmax": 8,
+     "ymin": -10,
+     "ymax": 10
+    }
+   }
+  },
+  {
+   "n": 5,
+   "domain": "PSDA",
+   "skill": "Percentages",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "In May, a rooftop solar panel array produced 240 kilowatt-hours of energy. In June, the same array produced 300 kilowatt-hours. The June output is what percent greater than the May output?",
+   "choices": [
+    "20%",
+    "25%",
+    "60%",
+    "125%"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The increase is 300 − 240 = 60 kilowatt-hours. Percent increase compares the change to the original amount: 60/240 = 0.25 = 25%. Choice A divides by the new value 300 instead of the original, choice C treats the raw difference 60 as a percent, and choice D gives the ratio 300/240 as a percent instead of the percent increase.",
+   "verify": "assert (300-240)/240*100==25",
+   "figure": null
+  },
+  {
+   "n": 6,
+   "domain": "GEO",
+   "skill": "Circles (area)",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A circular tidal basin has a radius of 6 meters. What is the area, in square meters, of the surface of the basin?",
+   "choices": [
+    "12π",
+    "36",
+    "144π",
+    "36π"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The area of a circle is A = πr². With r = 6, the area is π(6²) = 36π square meters. Choice A is the circumference 2πr, choice B forgets the factor of π, and choice C uses the diameter 12 in place of the radius.",
+   "verify": "import sympy as sp; assert sp.pi*6**2==36*sp.pi",
+   "figure": null
+  },
+  {
+   "n": 7,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (radical)",
+   "difficulty": "E",
+   "type": "spr",
+   "stem": "If √(x + 7) = 5, what is the value of x?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "18",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Square both sides of the equation: x + 7 = 25. Subtracting 7 from both sides gives x = 18. Checking: √(18 + 7) = √25 = 5, so the solution is not extraneous.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); s=sp.solve(sp.sqrt(x+7)-5,x); assert s==[18]; assert float('18')==18.0",
+   "figure": null
+  },
+  {
+   "n": 8,
+   "domain": "ADV",
+   "skill": "Equivalent expressions (rational)",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "Which expression is equivalent to (2x² + 7x − 15)/(x + 5) for x ≠ −5?",
+   "choices": [
+    "x − 3",
+    "2x + 3",
+    "2x − 3",
+    "2x − 5"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Factor the numerator: 2x² + 7x − 15 = (2x − 3)(x + 5). Dividing out the common factor (x + 5) leaves 2x − 3. Choice B flips the sign of the constant, choice A drops the leading coefficient, and choice D mixes up the factor pair.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.simplify((2*x**2+7*x-15)/(x+5)-(2*x-3))==0",
+   "figure": null
+  },
+  {
+   "n": 9,
+   "domain": "ALG",
+   "skill": "Linear functions (interpretation)",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The value, in dollars, of a car t years after it is purchased is modeled by V(t) = 24,500 − 1,800t. Which of the following is the best interpretation of the number 1,800 in this model?",
+   "choices": [
+    "The car was purchased for $1,800.",
+    "The car's value decreases by an average of $1,800 per year.",
+    "The car's value decreases by an average of $1,800 per month.",
+    "The car's value t years after purchase is 1,800t dollars."
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "In a linear model V(t) = 24,500 − 1,800t, the coefficient of t is the constant rate of change: the value drops by $1,800 for each 1-year increase in t. Choice A confuses the rate with the purchase price 24,500 (the initial value), choice C uses the wrong time unit, and choice D mistakes the total decrease 1,800t for the car's value.",
+   "verify": null,
+   "figure": null
+  },
+  {
+   "n": 10,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "If 2x + y = 17 and x − y = 4, what is the value of x?",
+   "choices": [
+    "3",
+    "4",
+    "13",
+    "7"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Adding the two equations eliminates y: (2x + y) + (x − y) = 17 + 4, so 3x = 21 and x = 7. Then y = x − 4 = 3. Choice A is the value of y, choice C subtracts the right-hand sides (17 − 4) without eliminating properly, and choice B repeats the constant from the second equation.",
+   "verify": "import sympy as sp; x,y=sp.symbols('x y'); s=sp.solve([sp.Eq(2*x+y,17),sp.Eq(x-y,4)],[x,y]); assert s[x]==7 and s[y]==3",
+   "figure": null
+  },
+  {
+   "n": 11,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (quadratic maximum)",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A projectile is launched upward from a platform. Its height above the ground, in feet, t seconds after launch is given by h(t) = −16t² + 64t + 80. What is the maximum height, in feet, that the projectile reaches?",
+   "choices": [
+    "2",
+    "80",
+    "128",
+    "144"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The maximum occurs at the vertex, where t = −b/(2a) = −64/(2·(−16)) = 2 seconds. Then h(2) = −16(4) + 64(2) + 80 = −64 + 128 + 80 = 144 feet. Choice A is the time of the maximum, not the height; choice B is the platform height h(0); choice C omits the initial height of 80 feet.",
+   "verify": "import sympy as sp; t=sp.symbols('t'); h=-16*t**2+64*t+80; tv=sp.solve(sp.diff(h,t),t)[0]; assert tv==2 and h.subs(t,tv)==144",
+   "figure": null
+  },
+  {
+   "n": 12,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (exponential)",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "A bacteria culture contains 200 cells, and the population doubles every 3 hours, so the population t hours from now is given by P(t) = 200·2^(t/3). After how many hours will the population reach 6,400 cells?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "15",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Set 200·2^(t/3) = 6,400 and divide both sides by 200 to get 2^(t/3) = 32. Since 32 = 2⁵, the exponents must be equal: t/3 = 5, so t = 15 hours.",
+   "verify": "import sympy as sp; t=sp.symbols('t'); s=sp.solve(200*2**(t/3)-6400,t); assert s==[15]; assert 200*2**(15/3)==6400; assert float('15')==15.0",
+   "figure": null
+  },
+  {
+   "n": 13,
+   "domain": "PSDA",
+   "skill": "Two-variable data (scatterplots & models)",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The scatterplot shows the daily energy output, in kilowatt-hours (kWh), of a solar panel array versus the number of peak sun hours that day, along with a line of best fit. The equation of the line is y = 2.5x + 1. Based on the line of best fit, what is the predicted output, in kWh, on a day with 6 peak sun hours?",
+   "choices": [
+    "8.5",
+    "15",
+    "16",
+    "17.5"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Substitute x = 6 into the equation of the line of best fit: y = 2.5(6) + 1 = 15 + 1 = 16 kWh. Choice B forgets to add the y-intercept, choice D adds 1 to x before multiplying, and choice A adds the slope and x-value instead of multiplying.",
+   "verify": "assert 2.5*6+1==16",
+   "figure": {
+    "kind": "scatter",
+    "params": {
+     "pts": [
+      [
+       2,
+       6.2
+      ],
+      [
+       3,
+       8.4
+      ],
+      [
+       3,
+       9.1
+      ],
+      [
+       4,
+       10.8
+      ],
+      [
+       4,
+       11.5
+      ],
+      [
+       5,
+       13.2
+      ],
+      [
+       5,
+       14.0
+      ],
+      [
+       6,
+       15.7
+      ],
+      [
+       7,
+       18.3
+      ],
+      [
+       8,
+       21.2
+      ]
+     ],
+     "xlabel": "Peak sun hours",
+     "ylabel": "Energy output (kWh)",
+     "line": {
+      "slope": 2.5,
+      "yint": 1
+     }
+    }
+   }
+  },
+  {
+   "n": 14,
+   "domain": "GEO",
+   "skill": "Right triangles & trigonometry",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A drone hovers directly above a point on level ground. An observer stands 60 meters from that point, and the angle of elevation from the observer to the drone is 60°. What is the height of the drone above the ground, in meters?",
+   "choices": [
+    "20√3",
+    "30√3",
+    "60√3",
+    "120"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The height h is the side opposite the 60° angle, and the 60-meter ground distance is adjacent, so tan 60° = h/60. Thus h = 60·tan 60° = 60√3 meters. Choice A divides by √3 instead of multiplying (as if the angle were 30°), choice B halves the correct height, and choice D is the observer-to-drone distance 60/cos 60°, the hypotenuse.",
+   "verify": "import sympy as sp; assert sp.simplify(60*sp.tan(sp.pi/3)-60*sp.sqrt(3))==0",
+   "figure": null
+  },
+  {
+   "n": 15,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (exponential growth)",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A savings account earns 3% annual interest, compounded once per year. The balance, in dollars, t years after the account is opened with $1,200 is given by A(t) = 1,200(1.03)^t. By what percent does the balance increase over the first 2 years?",
+   "choices": [
+    "3%",
+    "6%",
+    "6.09%",
+    "9%"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Over 2 years the balance is multiplied by (1.03)² = 1.0609, an increase of 0.0609, or 6.09%. Choice B ignores compounding by simply doubling 3%, choice A is the one-year rate, and choice D triples the annual rate. The starting amount $1,200 does not affect the percent increase.",
+   "verify": "assert abs((1.03**2-1)*100-6.09)<1e-9",
+   "figure": null
+  },
+  {
+   "n": 16,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (polynomial)",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The function f is defined by f(x) = x³ − 4x² + x + 6. Which of the following is a factor of f(x)?",
+   "choices": [
+    "x − 3",
+    "x − 1",
+    "x + 2",
+    "x + 3"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "By the factor theorem, (x − c) is a factor of f(x) exactly when f(c) = 0. Testing c = 3: f(3) = 27 − 36 + 3 + 6 = 0, so (x − 3) is a factor. For the other choices, f(1) = 4, f(−2) = −20, and f(−3) = −60, none of which is 0. In fact, f(x) = (x + 1)(x − 2)(x − 3).",
+   "verify": "import sympy as sp; x=sp.symbols('x'); f=x**3-4*x**2+x+6; assert f.subs(x,3)==0 and f.subs(x,1)!=0 and f.subs(x,-2)!=0 and f.subs(x,-3)!=0; assert sp.expand((x+1)*(x-2)*(x-3))==f",
+   "figure": null
+  },
+  {
+   "n": 17,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (rational)",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "The function f is defined by f(x) = (x + 4)/(x − 1). If f(a) = 3, what is the value of a?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "7/2",
+   "equivalents": [
+    "3.5"
+   ],
+   "answer_any": null,
+   "explanation": "Set (a + 4)/(a − 1) = 3 and multiply both sides by (a − 1): a + 4 = 3a − 3. Then 7 = 2a, so a = 7/2 = 3.5. Since 7/2 ≠ 1, the denominator is nonzero and the solution is valid.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); s=sp.solve((x+4)/(x-1)-3,x); assert s==[sp.Rational(7,2)]; assert abs(float(sp.Rational(7,2))-3.5)<1e-12",
+   "figure": null
+  },
+  {
+   "n": 18,
+   "domain": "ADV",
+   "skill": "Nonlinear systems (discriminant)",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "In the xy-plane, the graph of y = x² + 2x + 7 intersects the graph of y = 2x + k, where k is a constant, at exactly one point. What is the value of k?",
+   "choices": [
+    "7",
+    "−7",
+    "2",
+    "8"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Set the expressions equal: x² + 2x + 7 = 2x + k. The 2x terms cancel, leaving x² + 7 − k = 0, so x² = k − 7. This has exactly one solution (x = 0) when k − 7 = 0, so k = 7. Choice B flips the sign, choice C grabs the linear coefficient, and choice D would give x² = 1, which has two solutions.",
+   "verify": "import sympy as sp; x,k=sp.symbols('x k'); d=sp.discriminant(x**2+2*x+7-(2*x+k),x); assert sp.solve(sp.Eq(d,0),k)==[7]; assert len(sp.solve(x**2+2*x+7-(2*x+7),x))==1",
+   "figure": null
+  },
+  {
+   "n": 19,
+   "domain": "GEO",
+   "skill": "Circles (equation in the xy-plane)",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "In the xy-plane, the graph of x² + y² − 6x + 4y = 12 is a circle. What is the radius of the circle?",
+   "choices": [
+    "2√3",
+    "5",
+    "12",
+    "25"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Complete the square in both variables: (x² − 6x + 9) + (y² + 4y + 4) = 12 + 9 + 4, which gives (x − 3)² + (y + 2)² = 25. The radius is √25 = 5. Choice A takes √12 without completing the square, choice D is r², and choice C is the constant from the original equation.",
+   "verify": "import sympy as sp; x,y=sp.symbols('x y'); assert sp.simplify((x**2+y**2-6*x+4*y-12)-((x-3)**2+(y+2)**2-25))==0; assert sp.sqrt(25)==5",
+   "figure": null
+  },
+  {
+   "n": 20,
+   "domain": "PSDA",
+   "skill": "Inference & margin of error",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "Quality engineers tested a random sample of 200 drone batteries from a production run. The mean flight time of the batteries in the sample was 24 minutes, with an associated margin of error of 1.5 minutes. Which of the following is the most appropriate conclusion?",
+   "choices": [
+    "The mean flight time of all batteries in the production run is exactly 24 minutes.",
+    "The flight time of each battery in the sample was within 1.5 minutes of 24 minutes.",
+    "Every battery in the production run has a flight time between 22.5 minutes and 25.5 minutes.",
+    "It is plausible that the mean flight time of all batteries in the production run is between 22.5 minutes and 25.5 minutes."
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "A margin of error describes uncertainty in an estimate of a population mean: plausible values of the population mean lie within 24 ± 1.5, that is, between 22.5 and 25.5 minutes. Choice A claims false certainty about the exact mean, and choices B and C wrongly apply the interval to individual batteries rather than to the mean.",
+   "verify": null,
+   "figure": null
+  },
+  {
+   "n": 21,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations (infinitely many solutions)",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "In the system of equations below, a is a constant.\n3x − 5y = 12\nax − 20y = 48\nIf the system has infinitely many solutions, what is the value of a?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "12",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "A system has infinitely many solutions when the two equations are equivalent. The y-coefficients and constants of the second equation are 4 times those of the first (−20 = 4·(−5) and 48 = 4·12), so the second equation must be 4 times the first. Therefore a = 4·3 = 12.",
+   "verify": "import sympy as sp; a=sp.symbols('a'); assert sp.Rational(-20,-5)==4 and sp.Rational(48,12)==4; assert sp.solve(sp.Eq(a,4*3),a)==[12]; x,y=sp.symbols('x y'); assert sp.simplify(4*(3*x-5*y-12)-(12*x-20*y-48))==0; assert float('12')==12.0",
+   "figure": null
+  },
+  {
+   "n": 22,
+   "domain": "ADV",
+   "skill": "Equivalent expressions (identifying constants)",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "The equation (2x + b)(x − 3) = 2x² + cx − 15 is true for all values of x, where b and c are constants. What is the value of c?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "-1",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Expanding the left side gives 2x² + (b − 6)x − 3b. Matching constant terms, −3b = −15, so b = 5. Matching the x-coefficients, c = b − 6 = 5 − 6 = −1.",
+   "verify": "import sympy as sp; x,b,c=sp.symbols('x b c'); diff=sp.expand((2*x+b)*(x-3))-(2*x**2+c*x-15); sol=sp.solve([diff.coeff(x,0), diff.coeff(x,1)],[b,c]); assert sol[b]==5 and sol[c]==-1; assert float('-1')==-1.0",
+   "figure": null
+  }
+ ]
+}
