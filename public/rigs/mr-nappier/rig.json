@@ -481,5 +481,99 @@
         580
       ]
     }
+  },
+  "secondaryMotion": {
+    "tie": {
+      "stiffness": 70,
+      "damping": 9,
+      "react": 0.05,
+      "max": 10
+    },
+    "head": {
+      "stiffness": 320,
+      "damping": 28,
+      "react": 0.008,
+      "max": 2.5
+    },
+    "forearm_L": {
+      "stiffness": 240,
+      "damping": 24,
+      "react": 0.02,
+      "max": 7
+    },
+    "forearm_R": {
+      "stiffness": 240,
+      "damping": 24,
+      "react": 0.02,
+      "max": 7
+    },
+    "hand_L": {
+      "stiffness": 150,
+      "damping": 15,
+      "react": 0.045,
+      "max": 16
+    },
+    "hand_R": {
+      "stiffness": 150,
+      "damping": 15,
+      "react": 0.045,
+      "max": 16
+    }
+  },
+  "microMotion": {
+    "head.rotation": {
+      "amp": 0.35,
+      "freq": 0.11
+    },
+    "head.y": {
+      "amp": 1.1,
+      "freq": 0.07
+    },
+    "torso.rotation": {
+      "amp": 0.14,
+      "freq": 0.09
+    },
+    "eye_L.x": {
+      "amp": 0.7,
+      "freq": 0.05
+    },
+    "eye_R.x": {
+      "amp": 0.7,
+      "freq": 0.05
+    },
+    "brow_L.y": {
+      "amp": 0.35,
+      "freq": 0.06
+    },
+    "brow_R.y": {
+      "amp": 0.35,
+      "freq": 0.06
+    }
+  },
+  "ik": {
+    "hand_L": {
+      "chain": [
+        "forearm_L",
+        "upper_arm_L"
+      ]
+    },
+    "hand_R": {
+      "chain": [
+        "forearm_R",
+        "upper_arm_R"
+      ]
+    },
+    "foot_L": {
+      "chain": [
+        "shin_L",
+        "thigh_L"
+      ]
+    },
+    "foot_R": {
+      "chain": [
+        "shin_R",
+        "thigh_R"
+      ]
+    }
   }
 }

@@ -15,6 +15,7 @@ const RIG = {
     mouth_ah: { pivot: [500, 250], z: 63, parent: 'head', hidden: true },
     arm: { pivot: [400, 450], z: 30, parent: 'torso' },
     forearm: { pivot: [350, 550], z: 31, parent: 'arm' },
+    hand: { pivot: [330, 650], z: 32, parent: 'forearm' },
   },
   slots: {
     mouth: { default: 'rest', states: { rest: 'mouth', ah: 'mouth_ah' } },
@@ -292,6 +293,119 @@ describe('validateClip', () => {
     expect(Core.validateClip(outOfOrder, RIG).some((e) => e.includes('out of order'))).toBe(true);
     const nonFinite = { tracks: { 'head.x': [{ t: 0, v: NaN }] } };
     expect(Core.validateClip(nonFinite, RIG).some((e) => e.includes('non-finite'))).toBe(true);
+  });
+});
+
+describe('secondary motion (spring follow-through)', () => {
+  const rig = {
+    ...RIG,
+    secondaryMotion: { forearm: { stiffness: 200, damping: 22, react: 0.05, max: 15 } },
+  };
+
+  test('a still pose stays still (spring initialized at rest)', () => {
+    const state = Core.newSpringState();
+    const pose = { 'forearm.rotation': 10 };
+    for (let i = 0; i < 30; i++) {
+      const out = Core.stepSecondaryMotion(rig, pose, state, 1 / 30);
+      expect(out['forearm.rotation']).toBeCloseTo(10, 5);
+    }
+  });
+
+  test('converges to a new animated value after it changes', () => {
+    const state = Core.newSpringState();
+    Core.stepSecondaryMotion(rig, { 'forearm.rotation': 0 }, state, 1 / 30);
+    let out;
+    for (let i = 0; i < 120; i++) {
+      out = Core.stepSecondaryMotion(rig, { 'forearm.rotation': 40 }, state, 1 / 30);
+    }
+    expect(out['forearm.rotation']).toBeCloseTo(40, 1);
+  });
+
+  test('parent swing deflects the child, bounded by max', () => {
+    const state = Core.newSpringState();
+    Core.stepSecondaryMotion(rig, { 'arm.rotation': 0 }, state, 1 / 30);
+    // parent whips 60° in one 33ms frame → child lags, but never beyond max
+    let maxDeflect = 0;
+    for (let i = 1; i <= 30; i++) {
+      const out = Core.stepSecondaryMotion(rig, { 'arm.rotation': Math.min(60, i * 20) }, state, 1 / 30);
+      maxDeflect = Math.max(maxDeflect, Math.abs(out['forearm.rotation']));
+    }
+    expect(maxDeflect).toBeGreaterThan(0.5); // it reacted
+    expect(maxDeflect).toBeLessThanOrEqual(15 + 1e-6); // clamped
+  });
+
+  test('deterministic for a fixed dt sequence', () => {
+    const run = () => {
+      const state = Core.newSpringState();
+      const vals = [];
+      for (let i = 0; i < 20; i++) {
+        vals.push(Core.stepSecondaryMotion(rig, { 'arm.rotation': i * 3 }, state, 1 / 30)['forearm.rotation']);
+      }
+      return vals;
+    };
+    expect(run()).toEqual(run());
+  });
+
+  test('no config → pose passes through untouched', () => {
+    const pose = { 'arm.rotation': 5 };
+    expect(Core.stepSecondaryMotion(RIG, pose, Core.newSpringState(), 1 / 30)).toBe(pose);
+  });
+});
+
+describe('micro motion (moving hold)', () => {
+  const rig = {
+    ...RIG,
+    microMotion: {
+      'head.rotation': { amp: 0.4, freq: 0.1 },
+      'head.y': { amp: 1.2, freq: 0.07 },
+    },
+  };
+
+  test('is bounded by amp and pure in t', () => {
+    for (const t of [0, 0.37, 1.5, 12.34, 100]) {
+      const a = Core.applyMicroMotion(rig, {}, t);
+      const b = Core.applyMicroMotion(rig, {}, t);
+      expect(a).toEqual(b); // deterministic
+      expect(Math.abs(a['head.rotation'])).toBeLessThanOrEqual(0.4);
+      expect(Math.abs(a['head.y'])).toBeLessThanOrEqual(1.2);
+    }
+  });
+
+  test('adds on top of animated values', () => {
+    const out = Core.applyMicroMotion(rig, { 'head.rotation': 10 }, 3.3);
+    expect(Math.abs(out['head.rotation'] - 10)).toBeLessThanOrEqual(0.4);
+    expect(out['head.rotation']).not.toBe(10);
+  });
+
+  test('actually moves over time (not a constant offset)', () => {
+    const a = Core.applyMicroMotion(rig, {}, 0.5)['head.rotation'];
+    const b = Core.applyMicroMotion(rig, {}, 3.0)['head.rotation'];
+    expect(a).not.toBeCloseTo(b, 4);
+  });
+});
+
+describe('solveIK (CCD)', () => {
+  // shoulder (400,450) → elbow (350,550) → wrist (330,650):
+  // bone lengths ≈ 112 + 102, so max reach from the shoulder ≈ 214.
+  // The chain rotates elbow-first, and the wrist (hand pivot) is the effector.
+
+  test('reaches a reachable target with the two-bone chain', () => {
+    const target = [430, 620]; // ~173 from the shoulder — inside the envelope
+    const solved = Core.solveIK(RIG, {}, ['forearm', 'arm'], 'hand', target);
+    const world = Core.computeWorldTransforms(RIG, solved);
+    const [ex, ey] = Core.matApply(world.hand.matrix, 330, 650);
+    expect(Math.hypot(ex - target[0], ey - target[1])).toBeLessThan(2);
+  });
+
+  test('points toward an unreachable target without blowing up', () => {
+    const solved = Core.solveIK(RIG, {}, ['forearm', 'arm'], 'hand', [4000, 4000]);
+    for (const v of Object.values(solved)) expect(Number.isFinite(v)).toBe(true);
+  });
+
+  test('does not mutate the input pose', () => {
+    const pose = { 'arm.rotation': 5 };
+    Core.solveIK(RIG, pose, ['forearm', 'arm'], 'hand', [430, 620]);
+    expect(pose).toEqual({ 'arm.rotation': 5 });
   });
 });
 

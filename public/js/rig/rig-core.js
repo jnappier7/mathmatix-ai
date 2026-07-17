@@ -287,6 +287,125 @@
     return { name: name || 'untitled', duration: 2, loop: true, tracks: {} };
   }
 
+  // ------------------------------------------------- secondary motion ------
+  // Spring-driven follow-through: for each part in rig.secondaryMotion, the
+  // rendered local rotation chases the animated value with a damped spring,
+  // and reacts to the parent chain's angular velocity (a fast arm swing makes
+  // the hand lag and overshoot; the tie sways when the torso turns).
+  //
+  // Config per part (in rig.json):
+  //   { stiffness, damping, react, max }
+  //     stiffness/damping — spring constants (≈ 60–300 / 10–30)
+  //     react             — deg of deflection per deg/s of parent velocity
+  //     max               — deflection clamp in degrees
+  //
+  // state is carried between calls: { [part]: {value, velocity, parentAngle} }.
+  // Deterministic for a fixed dt sequence (exports use dt = 1/fps).
+
+  function chainAngle(rig, pose, part) {
+    // Sum of local rotations up the parent chain (cheap world-angle proxy).
+    let angle = 0;
+    let node = rig.parts[part] && rig.parts[part].parent;
+    const seen = new Set();
+    while (node && node !== 'root' && rig.parts[node] && !seen.has(node)) {
+      seen.add(node);
+      angle += getChannel(pose, node, 'rotation');
+      node = rig.parts[node].parent;
+    }
+    return angle + getChannel(pose, 'root', 'rotation');
+  }
+
+  function newSpringState() { return {}; }
+
+  // Returns a NEW pose with sprung rotations; mutates `state`.
+  function stepSecondaryMotion(rig, pose, state, dt) {
+    const cfgAll = rig.secondaryMotion;
+    if (!cfgAll || dt <= 0) return pose;
+    const out = { ...pose };
+    const step = Math.min(dt, 0.05); // clamp huge frame gaps for stability
+    for (const [part, cfg] of Object.entries(cfgAll)) {
+      if (!rig.parts[part]) continue;
+      const animated = getChannel(pose, part, 'rotation');
+      const parentAngle = chainAngle(rig, pose, part);
+      let s = state[part];
+      if (!s) {
+        s = { value: animated, velocity: 0, parentAngle };
+        state[part] = s;
+      }
+      const parentVel = (parentAngle - s.parentAngle) / step; // deg/s
+      s.parentAngle = parentAngle;
+      const max = cfg.max === undefined ? 15 : cfg.max;
+      const react = cfg.react || 0;
+      const deflect = Math.max(-max, Math.min(max, -parentVel * react));
+      const target = animated + deflect;
+      // semi-implicit Euler, substepped for stiff springs at low fps
+      const substeps = Math.max(1, Math.ceil(step / (1 / 120)));
+      const h = step / substeps;
+      const k = cfg.stiffness === undefined ? 160 : cfg.stiffness;
+      const c = cfg.damping === undefined ? 18 : cfg.damping;
+      for (let i = 0; i < substeps; i++) {
+        s.velocity += (k * (target - s.value) - c * s.velocity) * h;
+        s.value += s.velocity * h;
+      }
+      // never drift further than max from the animated pose
+      s.value = Math.max(animated - max, Math.min(animated + max, s.value));
+      out[part + '.rotation'] = s.value;
+    }
+    return out;
+  }
+
+  // --------------------------------------------------- micro motion --------
+  // "Moving hold": deterministic sub-degree drift so held poses stay alive.
+  // rig.microMotion maps track names to { amp, freq } — two detuned sines,
+  // a pure function of t (no state; exports and live playback agree).
+  function applyMicroMotion(rig, pose, t) {
+    const cfg = rig.microMotion;
+    if (!cfg) return pose;
+    const out = { ...pose };
+    let i = 0;
+    for (const [track, m] of Object.entries(cfg)) {
+      const phase = i++ * 1.7; // decorrelate channels
+      const wobble = m.amp * (
+        0.62 * Math.sin(2 * Math.PI * m.freq * t + phase)
+        + 0.38 * Math.sin(2 * Math.PI * m.freq * 2.7 * t + phase * 2.3)
+      );
+      const parts = track.split('.');
+      const base = out[track] !== undefined ? out[track] : CHANNEL_DEFAULTS[parts[1]];
+      if (typeof base === 'number') out[track] = base + wobble;
+    }
+    return out;
+  }
+
+  // ----------------------------------------------------------- IK ----------
+  // CCD solver: adjusts the local rotation of each chain part (child-first,
+  // e.g. ['forearm_L','upper_arm_L']) so that `effector`'s pivot reaches
+  // `target` (rig space). Returns a NEW pose; original is untouched.
+  function solveIK(rig, pose, chain, effector, target, {
+    iterations = 10, tolerance = 1, maxStep = 30,
+  } = {}) {
+    const out = { ...pose };
+    const effPivot = rig.parts[effector].pivot;
+    for (let it = 0; it < iterations; it++) {
+      const world = computeWorldTransforms(rig, out);
+      const [ex, ey] = matApply(world[effector].matrix, effPivot[0], effPivot[1]);
+      if (Math.hypot(target[0] - ex, target[1] - ey) < tolerance) break;
+      for (const bone of chain) {
+        const w = computeWorldTransforms(rig, out);
+        const [cx, cy] = matApply(w[effector].matrix, effPivot[0], effPivot[1]);
+        const bonePivot = rig.parts[bone].pivot;
+        const [bx, by] = matApply(w[bone].matrix, bonePivot[0], bonePivot[1]);
+        const a0 = Math.atan2(cy - by, cx - bx);
+        const a1 = Math.atan2(target[1] - by, target[0] - bx);
+        let delta = (a1 - a0) * 180 / Math.PI;
+        while (delta > 180) delta -= 360;
+        while (delta < -180) delta += 360;
+        delta = Math.max(-maxStep, Math.min(maxStep, delta));
+        out[bone + '.rotation'] = getChannel(out, bone, 'rotation') + delta;
+      }
+    }
+    return out;
+  }
+
   return {
     CHANNELS,
     CHANNEL_DEFAULTS,
@@ -310,5 +429,10 @@
     drawOrder,
     validateClip,
     newClip,
+    chainAngle,
+    newSpringState,
+    stepSecondaryMotion,
+    applyMicroMotion,
+    solveIK,
   };
 });

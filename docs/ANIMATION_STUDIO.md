@@ -57,13 +57,34 @@ rig packages, and export them as WebM videos (the tutor-cam format in
 1. Pick a clip (presets are marked ●; edits autosave to `localStorage` and can be
    reset to the shipped version via the delete button).
 2. Click a part in the viewport (alpha-accurate picking) or the part tree; drag to
-   rotate about its pivot, Shift-drag to translate. With **Auto-key** on, edits key
-   at the playhead. Slots (eyes/mouth/brows) key as stepped state swaps.
+   rotate about its pivot, Shift-drag to translate. **Dragging a hand or foot runs
+   two-bone IK** — the elbow/knee solves itself and both bones key automatically
+   (Ctrl-drag for a plain rotate). With **Auto-key** on, edits key at the playhead.
+   Slots (eyes/mouth/brows) key as stepped state swaps.
 3. Timeline: drag keys, double-click a row to add a key, select a key to change its
    easing/time/value. Onion skin ghosts neighboring keyframe poses.
 4. Export: **Clip JSON** for the runtime, **PNG** frame, or **🎬 WebM** (VP9, framing
    presets from `rig.json`, optional idle-underlay composite + deterministic auto-blink)
-   — drop the WebM next to the existing tutor videos in `public/videos/`.
+   — drop the WebM next to the existing tutor videos in `public/videos/`. Video and
+   PNG exports render at 2× and downscale for crisper edges.
+
+## The life layers (what makes it not look like a puppet)
+
+Two procedural layers run during playback and export (viewport toggles
+**Follow-through** / **Micro life**, export checkbox, on by default; keyframed
+values are always shown exactly while editing):
+
+- **Secondary motion** (`rig.json → secondaryMotion`): per-part damped springs
+  chase the animated rotation and react to the parent chain's angular velocity —
+  a fast gesture makes the hands lag and overshoot, the tie sways, the head
+  settles. Config per part: `{ stiffness, damping, react, max }`. Deterministic
+  for a fixed frame rate, so exports are reproducible.
+- **Micro motion** (`rig.json → microMotion`): sub-degree dual-sine drift on
+  head/eyes/brows/torso (`{ amp, freq }` per track) so held poses read as a
+  breathing character instead of a freeze-frame. Pure function of time.
+
+The `RigPlayer` runtime applies both automatically (`player.secondaryMotion` /
+`player.microMotion` to opt out).
 
 ## Rig authoring notes (Mr. Nappier v3)
 

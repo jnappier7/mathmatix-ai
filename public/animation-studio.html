@@ -76,6 +76,12 @@
           <label class="toggle" title="Preview this clip layered on top of the looping idle clip, the way the runtime plays overlays">
             <input type="checkbox" id="baseToggle"> Idle underlay
           </label>
+          <label class="toggle" title="Spring follow-through and overshoot on tie/hands/head during playback and export">
+            <input type="checkbox" id="lifeToggle" checked> Follow-through
+          </label>
+          <label class="toggle" title="Sub-degree drift on head/eyes/brows so held poses never freeze (playback and export)">
+            <input type="checkbox" id="microToggle" checked> Micro life
+          </label>
           <span class="spacer"></span>
           <button id="btnZoomFit" title="Fit rig in view">Fit</button>
           <button id="btnZoom100" title="Zoom to 100%">1:1</button>
@@ -84,7 +90,8 @@
         <div id="viewportHost" class="viewport-host">
           <canvas id="viewport"></canvas>
           <div id="viewportHint" class="viewport-hint">
-            Click a part to select · drag to rotate · <b>Shift</b>-drag to move ·
+            Click a part to select · drag to rotate (hands/feet: IK) ·
+            <b>Ctrl</b>-drag to force rotate · <b>Shift</b>-drag to move ·
             <b>Alt</b>-drag / wheel to pan &amp; zoom
           </div>
         </div>
@@ -188,6 +195,9 @@
           <label class="toggle wide">
             <input type="checkbox" id="exportBlink" checked> Auto-blink
           </label>
+          <label class="toggle wide">
+            <input type="checkbox" id="exportLife" checked> Follow-through + micro life
+          </label>
         </div>
         <div id="exportStatus" class="export-status"></div>
         <div class="modal-actions">
@@ -209,6 +219,8 @@
           <tr><td><b>Delete</b></td><td>Delete selected keyframe(s)</td></tr>
           <tr><td><b>Ctrl+Z / Ctrl+Shift+Z</b></td><td>Undo / redo</td></tr>
           <tr><td><b>Drag part</b></td><td>Rotate around its pivot</td></tr>
+          <tr><td><b>Drag hand / foot</b></td><td>IK — the elbow/knee solves and keys automatically</td></tr>
+          <tr><td><b>Ctrl-drag hand / foot</b></td><td>Plain rotate (skip IK)</td></tr>
           <tr><td><b>Shift-drag part</b></td><td>Translate</td></tr>
           <tr><td><b>Alt-drag / middle-drag</b></td><td>Pan the viewport</td></tr>
           <tr><td><b>Wheel</b></td><td>Zoom the viewport</td></tr>

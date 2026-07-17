@@ -45,6 +45,9 @@
     undoTag: null,
     dirtySaveTimer: 0,
     timelineRows: [],      // rebuilt on layout: [{track, y}]
+    playClock: 0,          // monotonic playback clock (never wraps) for life layers
+    springs: {},           // spring state for follow-through preview
+    springClock: null,
   };
 
   const $ = (id) => document.getElementById(id);
@@ -52,6 +55,7 @@
   ['rigSelect', 'clipSelect', 'btnNewClip', 'btnDupClip', 'btnRenameClip', 'btnDeleteClip',
     'btnImport', 'importFile', 'btnDownload', 'btnSnapshot', 'btnExport', 'btnHelp',
     'partTree', 'slotPanel', 'framingSelect', 'bgSelect', 'onionToggle', 'baseToggle',
+    'lifeToggle', 'microToggle', 'exportLife',
     'btnZoomFit', 'btnZoom100', 'zoomLabel', 'viewportHost', 'viewport', 'viewportHint',
     'inspectorEmpty', 'inspector', 'inspPartName', 'channelRows', 'btnResetPart',
     'keyEmpty', 'keyEditor', 'keyInfo', 'keyEasing', 'keyTime', 'keyValue', 'keyValueField',
@@ -535,7 +539,23 @@
       if (next !== undefined) renderPoseGhost(ctx, displayPose(next), 0.18);
     }
 
-    const pose = displayPose();
+    let pose = displayPose();
+    // life layers run during playback only — editing shows the exact pose
+    const rig = S.player.rig;
+    if (S.playing) {
+      if (els.microToggle.checked && rig.microMotion) {
+        pose = Core.applyMicroMotion(rig, pose, S.playClock);
+      }
+      if (els.lifeToggle.checked && rig.secondaryMotion) {
+        const dt = S.springClock === null ? 0 : S.playClock - S.springClock;
+        S.springClock = S.playClock;
+        if (dt > 0 && dt <= 0.5) pose = Core.stepSecondaryMotion(rig, pose, S.springs, dt);
+        else S.springs = Core.newSpringState();
+      }
+    } else {
+      S.springs = Core.newSpringState();
+      S.springClock = null;
+    }
     S.player.draw(ctx, pose, { clear: false });
     drawSelection(ctx, pose);
     els.zoomLabel.textContent = Math.round(currentScale() * 100) + '%';
@@ -622,7 +642,9 @@
       const x0 = channelValue(part, 'x');
       const y0 = channelValue(part, 'y');
       const pivotParent = [def.pivot[0] + x0, def.pivot[1] + y0];
-      drag.mode = ev.shiftKey ? 'move' : 'rotate';
+      const ikCfg = S.player.rig.ik && S.player.rig.ik[part];
+      drag.mode = ev.shiftKey ? 'move' : (ikCfg && !ev.ctrlKey ? 'ik' : 'rotate');
+      drag.chain = ikCfg ? ikCfg.chain : null;
       drag.part = part;
       drag.start = { p, rot0, x0, y0, pivotParent };
       drag.moved = false;
@@ -663,6 +685,15 @@
       const { p: p0, x0, y0 } = drag.start;
       setChannel(drag.part, 'x', Math.round(x0 + p[0] - p0[0]));
       setChannel(drag.part, 'y', Math.round(y0 + p[1] - p0[1]));
+    } else if (drag.mode === 'ik') {
+      // drag a hand/foot: solve the elbow/knee chain so its pivot follows
+      const vmInv = Core.matInvert(S.player.viewMatrix(els.viewport.width, els.viewport.height));
+      if (!vmInv) return;
+      const target = Core.matApply(vmInv, cx, cy);
+      const solved = Core.solveIK(S.player.rig, editPose(), drag.chain, drag.part, target);
+      for (const bone of drag.chain) {
+        setChannel(bone, 'rotation', Math.round(solved[bone + '.rotation'] * 10) / 10);
+      }
     }
   });
 
@@ -935,6 +966,7 @@
     lastTs = ts;
     if (S.playing) {
       S.time += dt;
+      S.playClock += dt; // never wraps — feeds the life layers
       if (S.time > S.clip.duration) {
         if (S.clip.loop) S.time %= S.clip.duration;
         else { S.time = S.clip.duration; setPlaying(false); }
@@ -973,13 +1005,20 @@
     const loops = Math.max(1, parseInt(els.exportLoops.value, 10) || 1);
     const withBase = els.exportBase.checked;
     const withBlink = els.exportBlink.checked;
+    const withLife = els.exportLife.checked;
     const bg = els.exportBg.value;
     const duration = Core.clipDuration(S.clip) * (S.clip.loop ? loops : 1);
     const totalFrames = Math.max(1, Math.round(duration * outFps));
 
+    // capture canvas at target size; frames render 2× and downscale (crisper AA)
     const canvas = document.createElement('canvas');
     canvas.width = framing.width; canvas.height = framing.height;
     const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    const ss = document.createElement('canvas');
+    ss.width = framing.width * 2; ss.height = framing.height * 2;
+    const ssCtx = ss.getContext('2d');
     const savedView = [...S.player.view];
     S.player.view = [...framing.view];
 
@@ -995,12 +1034,13 @@
     els.btnExportGo.disabled = true;
     const stream = canvas.captureStream(0);
     const track = stream.getVideoTracks()[0];
-    const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8_000_000 });
+    const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12_000_000 });
     const chunks = [];
     recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     const done = new Promise((resolve) => { recorder.onstop = resolve; });
     recorder.start();
 
+    const springs = Core.newSpringState();
     const poseAt = (t) => {
       let pose = withBase && S.idleClip && S.clip.name !== S.idleClip.name
         ? Core.composePose(Core.sampleClip(S.idleClip, t), Core.sampleClip(S.clip, t))
@@ -1012,16 +1052,22 @@
           pose = { ...pose, 'slots.eye_L': 'closed', 'slots.eye_R': 'closed' };
         }
       }
+      if (withLife) {
+        pose = Core.applyMicroMotion(rig, pose, t);
+        pose = Core.stepSecondaryMotion(rig, pose, springs, 1 / outFps);
+      }
       return pose;
     };
 
     const frameDelay = 1000 / outFps;
     for (let i = 0; i <= totalFrames; i++) {
       const t = Math.min(i / outFps, duration);
+      ssCtx.setTransform(1, 0, 0, 1, 0, 0);
+      ssCtx.fillStyle = bg;
+      ssCtx.fillRect(0, 0, ss.width, ss.height);
+      S.player.draw(ssCtx, poseAt(t), { clear: false });
       ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      S.player.draw(ctx, poseAt(t), { clear: false });
+      ctx.drawImage(ss, 0, 0, canvas.width, canvas.height);
       track.requestFrame();
       els.exportStatus.textContent = `Rendering frame ${i + 1} / ${totalFrames + 1}…`;
       // real-time pacing keeps MediaRecorder timestamps at the target fps
@@ -1047,13 +1093,20 @@
     const canvas = document.createElement('canvas');
     canvas.width = framing.width; canvas.height = framing.height;
     const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     const savedView = [...S.player.view];
     S.player.view = [...framing.view];
+    // render 2× then downscale for crisper edges on rotated parts
+    const ss = document.createElement('canvas');
+    ss.width = framing.width * 2; ss.height = framing.height * 2;
+    const ssCtx = ss.getContext('2d');
     if (S.background !== 'checker') {
-      ctx.fillStyle = S.background;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ssCtx.fillStyle = S.background;
+      ssCtx.fillRect(0, 0, ss.width, ss.height);
     }
-    S.player.draw(ctx, displayPose(), { clear: false });
+    S.player.draw(ssCtx, displayPose(), { clear: false });
+    ctx.drawImage(ss, 0, 0, canvas.width, canvas.height);
     S.player.view = savedView;
     canvas.toBlob((blob) => {
       if (blob) downloadBlob(blob, `${S.rigId}_${S.clip.name}_f${Math.round(S.time * fps())}.png`);

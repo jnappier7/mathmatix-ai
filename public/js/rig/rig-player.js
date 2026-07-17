@@ -35,6 +35,10 @@
       this._alphaCache = {};  // partName -> {data, w, h, scale}
       this._blink = null;     // { next, until } for auto-blink
       this.onFrame = null;    // hook(pose, time) — after sampling, before draw
+      this.secondaryMotion = true; // spring follow-through (rig.secondaryMotion)
+      this.microMotion = true;     // moving-hold drift (rig.microMotion)
+      this._springs = Core.newSpringState();
+      this._springTime = null;
     }
 
     static async load(baseUrl, { fetchImpl } = {}) {
@@ -139,8 +143,25 @@
       ctx.globalAlpha = 1;
     }
 
+    // Sampled pose plus the life layers (micro-motion, spring follow-through).
+    // Springs are stateful: monotonic time steps advance them; a rewind or a
+    // big jump (scrub, clip switch) resets them to the pose.
+    enrichPose(pose, time) {
+      let p = pose;
+      if (this.microMotion && this.rig.microMotion) {
+        p = Core.applyMicroMotion(this.rig, p, time);
+      }
+      if (this.secondaryMotion && this.rig.secondaryMotion) {
+        const dt = this._springTime === null ? 0 : time - this._springTime;
+        this._springTime = time;
+        if (dt <= 0 || dt > 0.5) this._springs = Core.newSpringState();
+        else p = Core.stepSecondaryMotion(this.rig, p, this._springs, dt);
+      }
+      return p;
+    }
+
     renderAt(time, ctx) {
-      const pose = this.samplePose(time);
+      const pose = this.enrichPose(this.samplePose(time), time);
       if (this.onFrame) this.onFrame(pose, time);
       this.draw(ctx || this.ctx, pose);
       return pose;
