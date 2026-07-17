@@ -155,6 +155,22 @@ const skillSchema = new mongoose.Schema({
     required: false  // Optional for backward compatibility
   },
 
+  // Unified "Map of Mathmatix" taxonomy (seeds/unified-taxonomy/math_taxonomy.json).
+  // strand = one of the six cross-cutting through-lines (QNT/PRP/EQV/FNC/SPC/DTA);
+  // courseLevel = the taxonomy course code (ELEM/MS/ALG1/GEO/ALG2/PREC/CALC).
+  // Both optional so existing catalog skills are unaffected.
+  strand: {
+    type: String,
+    enum: ['QNT', 'PRP', 'EQV', 'FNC', 'SPC', 'DTA'],
+    required: false,
+    index: true
+  },
+  courseLevel: {
+    type: String,
+    required: false,
+    index: true
+  },
+
   // Skills that must be mastered before this one
   prerequisites: [{
     type: String,
