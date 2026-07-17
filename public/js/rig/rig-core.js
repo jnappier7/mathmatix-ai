@@ -459,8 +459,10 @@
     if (!rms || rms.length === 0) return [];
     const sorted = [...rms].sort((a, b) => a - b);
     const q = (p) => sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
-    const floor = q(0.2);
-    const peak = q(0.95);
+    // 2%/98% percentiles: the true noise floor and speech level survive even
+    // when the recording is mostly continuous speech with little silence.
+    const floor = q(0.02);
+    const peak = q(0.98);
     if (peak - floor < 1e-6) return []; // silence or constant tone
     const open = opts.threshold !== undefined ? opts.threshold : floor + 0.22 * (peak - floor);
     const close = open * (opts.hysteresis !== undefined ? opts.hysteresis : 0.7);
@@ -509,6 +511,103 @@
     return keys;
   }
 
+  // -------------------------------------------- audio-driven performance --
+  // Derive a gesture performance from a voiceover's RMS envelope — the
+  // "animate from audio" director. Prosody only (no transcript): phrases,
+  // pauses, and energy peaks become gesture cues:
+  //   greeting — first phrase starts        → e.g. wave
+  //   beat     — energy peak mid-phrase     → e.g. head/brow accent
+  //   affirm   — a phrase lands             → e.g. nod
+  //   ponder   — a long pause               → e.g. thinking (bounded by until)
+  //   closing  — final phrase starts        → e.g. celebrate
+  // Returns [{ type, t, until? }] sorted by t. Deterministic.
+  function gestureCuesFromRms(rms, windowSec, opts = {}) {
+    if (!rms || rms.length === 0) return [];
+    const sorted = [...rms].sort((a, b) => a - b);
+    const q = (p) => sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
+    // 2%/98% percentiles: the true noise floor and speech level survive even
+    // when the recording is mostly continuous speech with little silence.
+    const floor = q(0.02);
+    const peak = q(0.98);
+    if (peak - floor < 1e-6) return [];
+    const open = floor + 0.22 * (peak - floor);
+    const close = open * 0.7;
+    const minPhrase = opts.minPhrase !== undefined ? opts.minPhrase : 0.5;
+    const mergeGap = opts.mergeGap !== undefined ? opts.mergeGap : 0.4;
+    const ponderMin = opts.ponderMin !== undefined ? opts.ponderMin : 1.1;
+    const beatSpacing = opts.beatSpacing !== undefined ? opts.beatSpacing : 2.5;
+    const cueSpacing = opts.cueSpacing !== undefined ? opts.cueSpacing : 1.2;
+
+    // 1. speech spans with hysteresis → phrases
+    const spans = [];
+    let openAt = null;
+    for (let i = 0; i < rms.length; i++) {
+      const t = i * windowSec;
+      if (openAt === null && rms[i] >= open) openAt = t;
+      else if (openAt !== null && rms[i] < close) { spans.push([openAt, t]); openAt = null; }
+    }
+    if (openAt !== null) spans.push([openAt, rms.length * windowSec]);
+    const merged = [];
+    for (const s of spans) {
+      const last = merged[merged.length - 1];
+      if (last && s[0] - last[1] < mergeGap) last[1] = s[1];
+      else merged.push([...s]);
+    }
+    const phrases = merged.filter(([a, b]) => b - a >= minPhrase);
+    if (!phrases.length) return [];
+
+    const cues = [];
+    // 2. greeting / closing
+    cues.push({ type: 'greeting', t: Math.max(0, phrases[0][0] - 0.1) });
+    if (phrases.length > 1) {
+      cues.push({ type: 'closing', t: phrases[phrases.length - 1][0] });
+    }
+    // 3. ponder during long pauses
+    for (let i = 0; i + 1 < phrases.length; i++) {
+      const gapStart = phrases[i][1];
+      const gapEnd = phrases[i + 1][0];
+      if (gapEnd - gapStart >= ponderMin) {
+        cues.push({ type: 'ponder', t: gapStart + 0.15, until: gapEnd });
+      }
+    }
+    // 4. affirm as interior phrases land (every other one, keeps it human)
+    for (let i = 1; i < phrases.length - 1; i += 2) {
+      cues.push({ type: 'affirm', t: Math.max(0, phrases[i][1] - 0.3) });
+    }
+    // 5. beats on energy peaks inside phrases
+    const half = Math.max(1, Math.round(0.25 / windowSec));
+    let lastBeat = -Infinity;
+    for (const [a, b] of phrases) {
+      const i0 = Math.round(a / windowSec);
+      const i1 = Math.min(rms.length - 1, Math.round(b / windowSec));
+      let sum = 0;
+      for (let i = i0; i <= i1; i++) sum += rms[i];
+      const avg = sum / Math.max(1, i1 - i0 + 1);
+      for (let i = i0 + half; i <= i1 - half; i++) {
+        if (rms[i] < avg * 1.15) continue;
+        let isPeak = true;
+        for (let j = i - half; j <= i + half; j++) {
+          if (rms[j] > rms[i]) { isPeak = false; break; }
+        }
+        if (!isPeak) continue;
+        const t = i * windowSec;
+        if (t - lastBeat < beatSpacing) continue;
+        lastBeat = t;
+        cues.push({ type: 'beat', t });
+      }
+    }
+    // 6. sort; thin out beats/affirms that crowd structural cues
+    cues.sort((x, y) => x.t - y.t);
+    const kept = [];
+    for (const cue of cues) {
+      const prev = kept[kept.length - 1];
+      const structural = cue.type === 'greeting' || cue.type === 'closing' || cue.type === 'ponder';
+      if (!structural && prev && cue.t - prev.t < cueSpacing) continue;
+      kept.push(cue);
+    }
+    return kept;
+  }
+
   return {
     CHANNELS,
     CHANNEL_DEFAULTS,
@@ -540,5 +639,6 @@
     evaluateSequence,
     validateSequence,
     lipSyncFromRms,
+    gestureCuesFromRms,
   };
 });

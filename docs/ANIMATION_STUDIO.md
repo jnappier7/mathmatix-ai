@@ -98,10 +98,18 @@ clips scheduled on top, plus an optional voiceover. The right-panel
   engine; UI caps at 600s).
 - Schedule clip events: start time per event, and an `until` bound for looping
   clips (`talk` from 5s to 12s). One-shots (`wave`, `nod`) just play once.
-- Load a voiceover audio file (e.g. a Cartesia TTS export) and click
-  **Generate lip-sync** — the studio RMS-analyzes the audio and builds a
-  `lipsync` clip (auto-thresholded, hysteresis, long holds split into flaps)
-  scheduled at 0:00. Regenerate any time; tweak it like any other clip.
+- Load a voiceover audio file (a Cartesia TTS export or **your own recording**
+  — any decodable format) and click **Generate lip-sync** — the studio
+  RMS-analyzes the audio and builds a `lipsync` clip (auto-thresholded,
+  hysteresis, long holds split into flaps) scheduled at 0:00. Regenerate any
+  time; tweak it like any other clip.
+- **✨ Auto-animate from audio** directs the whole performance from the
+  voiceover alone (`RigCore.gestureCuesFromRms`): phrases, pauses, and energy
+  peaks become gesture cues — wave on the opening phrase, `accent` (head dip +
+  brow raise) on stressed moments, nods as phrases land, `thinking` bounded to
+  long pauses, celebrate on the final phrase — plus lip-sync, in one click.
+  Cues are spaced so gestures never crowd each other; everything lands as
+  ordinary editable sequence events.
 - **Preview sequence** plays the whole composition with audio in the viewport;
   **Export sequence video** renders a WebM with the voiceover muxed in
   (VP9+Opus). The export loop is wall-clock-driven: machines that can't render

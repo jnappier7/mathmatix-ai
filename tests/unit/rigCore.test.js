@@ -515,6 +515,71 @@ describe('lipSyncFromRms', () => {
   });
 });
 
+describe('gestureCuesFromRms (audio-driven director)', () => {
+  const WINDOW = 0.03;
+  // envelope helper: base noise + speech spans (with optional emphasis peaks)
+  const envelope = (spans, totalSec, peaks = []) => {
+    const n = Math.round(totalSec / WINDOW);
+    const rms = new Array(n).fill(0.01);
+    for (const [a, b] of spans) {
+      for (let i = Math.round(a / WINDOW); i < Math.round(b / WINDOW); i++) rms[i] = 0.4;
+    }
+    for (const p of peaks) rms[Math.round(p / WINDOW)] = 0.9;
+    return rms;
+  };
+
+  const phrases = [[0.5, 3], [4.5, 7], [8.5, 10]]; // gaps of 1.5s
+
+  test('greeting at the first phrase, closing at the last', () => {
+    const cues = Core.gestureCuesFromRms(envelope(phrases, 11), WINDOW);
+    expect(cues[0].type).toBe('greeting');
+    expect(cues[0].t).toBeCloseTo(0.4, 1);
+    const closing = cues.find((c) => c.type === 'closing');
+    expect(closing).toBeDefined();
+    expect(closing.t).toBeCloseTo(8.5, 0);
+  });
+
+  test('long pauses become bounded ponder cues', () => {
+    const cues = Core.gestureCuesFromRms(envelope(phrases, 11), WINDOW);
+    const ponders = cues.filter((c) => c.type === 'ponder');
+    expect(ponders.length).toBe(2);
+    for (const p of ponders) {
+      expect(p.until).toBeGreaterThan(p.t);
+      expect(p.until - p.t).toBeLessThan(2);
+    }
+  });
+
+  test('emphasis peaks become beats with enforced spacing', () => {
+    const cues = Core.gestureCuesFromRms(
+      envelope([[0.5, 10]], 11, [2, 2.3, 5.5, 9]), WINDOW,
+    );
+    const beats = cues.filter((c) => c.type === 'beat');
+    expect(beats.length).toBeGreaterThanOrEqual(2);
+    for (let i = 1; i < beats.length; i++) {
+      expect(beats[i].t - beats[i - 1].t).toBeGreaterThanOrEqual(2.5 - 1e-6);
+    }
+  });
+
+  test('cues are sorted and deterministic', () => {
+    const rms = envelope(phrases, 11, [1.5, 5.5]);
+    const a = Core.gestureCuesFromRms(rms, WINDOW);
+    const b = Core.gestureCuesFromRms(rms, WINDOW);
+    expect(a).toEqual(b);
+    for (let i = 1; i < a.length; i++) expect(a[i].t).toBeGreaterThanOrEqual(a[i - 1].t);
+  });
+
+  test('silence or flat audio produces no cues', () => {
+    expect(Core.gestureCuesFromRms([], WINDOW)).toEqual([]);
+    expect(Core.gestureCuesFromRms(new Array(300).fill(0.02), WINDOW)).toEqual([]);
+  });
+
+  test('a single phrase gets a greeting but no closing', () => {
+    const cues = Core.gestureCuesFromRms(envelope([[1, 4]], 5), WINDOW);
+    expect(cues.some((c) => c.type === 'greeting')).toBe(true);
+    expect(cues.some((c) => c.type === 'closing')).toBe(false);
+  });
+});
+
 describe('shipped rig + preset clips', () => {
   const fs = require('fs');
   const path = require('path');
