@@ -1,0 +1,26 @@
+{
+  "name": "accent",
+  "duration": 0.55,
+  "loop": false,
+  "fps": 30,
+  "tracks": {
+    "head.y": [
+      { "t": 0, "v": 0, "e": "outCubic" },
+      { "t": 0.12, "v": 6, "e": "inOutCubic" },
+      { "t": 0.32, "v": 0 }
+    ],
+    "head.rotation": [
+      { "t": 0, "v": 0, "e": "outCubic" },
+      { "t": 0.12, "v": 1, "e": "inOutCubic" },
+      { "t": 0.32, "v": 0 }
+    ],
+    "slots.brow_L": [
+      { "t": 0, "v": "raised", "e": "step" },
+      { "t": 0.4, "v": "rest", "e": "step" }
+    ],
+    "slots.brow_R": [
+      { "t": 0, "v": "raised", "e": "step" },
+      { "t": 0.4, "v": "rest", "e": "step" }
+    ]
+  }
+}

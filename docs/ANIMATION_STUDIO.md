@@ -98,10 +98,18 @@ clips scheduled on top, plus an optional voiceover. The right-panel
   engine; UI caps at 600s).
 - Schedule clip events: start time per event, and an `until` bound for looping
   clips (`talk` from 5s to 12s). One-shots (`wave`, `nod`) just play once.
-- Load a voiceover audio file (e.g. a Cartesia TTS export) and click
-  **Generate lip-sync** — the studio RMS-analyzes the audio and builds a
-  `lipsync` clip (auto-thresholded, hysteresis, long holds split into flaps)
-  scheduled at 0:00. Regenerate any time; tweak it like any other clip.
+- Load a voiceover audio file (a Cartesia TTS export or **your own recording**
+  — any decodable format) and click **Generate lip-sync** — the studio
+  RMS-analyzes the audio and builds a `lipsync` clip (auto-thresholded,
+  hysteresis, long holds split into flaps) scheduled at 0:00. Regenerate any
+  time; tweak it like any other clip.
+- **✨ Auto-animate from audio** directs the whole performance from the
+  voiceover alone (`RigCore.gestureCuesFromRms`): phrases, pauses, and energy
+  peaks become gesture cues — wave on the opening phrase, `accent` (head dip +
+  brow raise) on stressed moments, nods as phrases land, `thinking` bounded to
+  long pauses, celebrate on the final phrase — plus lip-sync, in one click.
+  Cues are spaced so gestures never crowd each other; everything lands as
+  ordinary editable sequence events.
 - **Preview sequence** plays the whole composition with audio in the viewport;
   **Export sequence video** renders a WebM with the voiceover muxed in
   (VP9+Opus). The export loop is wall-clock-driven: machines that can't render
@@ -128,16 +136,19 @@ values are always shown exactly while editing):
 The `RigPlayer` runtime applies both automatically (`player.secondaryMotion` /
 `player.microMotion` to opt out).
 
-## Rig authoring notes (Mr. Nappier v3)
+## Rig authoring notes (Mr. Nappier v4)
 
 - Parent chain: `root → torso → head → face parts`, `torso → upper_arm → forearm → hand`,
   `root → thigh → shin → foot`. Slot variants (`lid_closed_*`, `mouth_ah`,
   `brow_raised_*`) are `hidden` parts toggled by slots.
-- **Keep shoulder rotations small (≲ 20°).** The torso sprite has the shoulders and
-  short-sleeve caps baked in and draws *above* the arms, so big `upper_arm` angles slide
-  the arm out from under the baked sleeve. Expressive gestures come from the elbows
-  (`forearm` ±40–95°) — see `celebrate.json` / `wave.json`.
-- Elbow/knee overlap inside the sprites is thin; if a joint shows a seam at a big
-  angle, back the angle off or nudge the child's `x`/`y` a couple of px at that key.
+- **v4 arms draw above the torso** (z 44–46 vs torso 40) with extended joint
+  overlap at elbows/wrists/knees, so real shoulder raises work: `upper_arm`
+  up to ~±45° and `forearm` up to ~±95° stay clean — see `celebrate.json`
+  (V-pose cheer) / `wave.json`. The v3 "keep shoulders ≲20°" rule is gone.
+- Remaining art caveat: the torso still bakes in the short-sleeve caps, so big
+  raises expose small cap tabs at the armpits. A future torso repaint with the
+  caps erased would remove the last constraint.
+- If a joint shows a seam at an extreme angle, back the angle off or nudge the
+  child's `x`/`y` a couple of px at that key.
 - To add a rig: drop `public/rigs/<id>/` with the same structure and add it to the
   `RIGS` list at the top of `public/js/animation-studio.js`.

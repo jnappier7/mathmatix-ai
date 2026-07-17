@@ -72,7 +72,7 @@
     'exportBlink', 'exportStatus', 'btnExportCancel', 'btnExportGo',
     'helpModal', 'btnHelpClose',
     'seqBase', 'seqDuration', 'seqEvents', 'btnSeqAdd', 'seqAudio', 'seqAudioInfo',
-    'btnSeqLipsync', 'btnSeqPreview', 'btnSeqExport', 'seqStatus',
+    'btnSeqLipsync', 'btnSeqAuto', 'btnSeqPreview', 'btnSeqExport', 'seqStatus',
     'prodTopic', 'prodGrade', 'prodLength', 'prodTutor', 'btnProdScript',
     'prodScript', 'btnProdAssemble', 'prodStatus',
   ].forEach((id) => { els[id] = $(id); });
@@ -1265,11 +1265,9 @@
     }
   }
 
-  function generateLipSync() {
-    if (!S.seqAudioBuf) {
-      els.seqStatus.textContent = 'Load a voiceover first.';
-      return;
-    }
+  // Windowed RMS envelope of the loaded voiceover — feeds both lip-sync and
+  // the audio-driven gesture director.
+  function voiceoverRms() {
     const buf = S.seqAudioBuf;
     const hopSec = 0.03;
     const hop = Math.max(1, Math.round(buf.sampleRate * hopSec));
@@ -1284,6 +1282,16 @@
       }
       rms[w] = Math.sqrt(sum / (hop * channels.length));
     }
+    return { rms, hopSec };
+  }
+
+  function generateLipSync() {
+    if (!S.seqAudioBuf) {
+      els.seqStatus.textContent = 'Load a voiceover first.';
+      return;
+    }
+    const buf = S.seqAudioBuf;
+    const { rms, hopSec } = voiceoverRms();
     const keys = Core.lipSyncFromRms(rms, hopSec);
     if (!keys.length) {
       els.seqStatus.textContent = 'No speech detected in the audio.';
@@ -1304,6 +1312,46 @@
     buildSequencer();
     const flaps = keys.filter((k) => k.v === 'ah').length;
     els.seqStatus.textContent = `Lip-sync generated: ${flaps} mouth flaps over ${buf.duration.toFixed(1)}s.`;
+  }
+
+  // Audio-driven director: phrases/pauses/energy peaks → gesture events.
+  const CUE_CLIPS = {
+    greeting: 'wave',
+    beat: 'accent',
+    affirm: 'nod',
+    ponder: 'thinking',
+    closing: 'celebrate',
+  };
+
+  function autoAnimate() {
+    if (!S.seqAudioBuf) {
+      els.seqStatus.textContent = 'Load a voiceover first.';
+      return;
+    }
+    const { rms, hopSec } = voiceoverRms();
+    const cues = Core.gestureCuesFromRms(rms, hopSec);
+    if (!cues.length) {
+      els.seqStatus.textContent = 'No speech detected in the audio.';
+      return;
+    }
+    const events = [];
+    for (const cue of cues) {
+      const clipName = CUE_CLIPS[cue.type];
+      const clip = S.clips[clipName];
+      if (!clip) continue;
+      const ev = { clip: clipName, t: Math.round(cue.t * 10) / 10 };
+      if (clip.loop) {
+        ev.until = Math.round((cue.until !== undefined ? cue.until : cue.t + 3) * 10) / 10;
+        if (ev.until <= ev.t) continue;
+      }
+      events.push(ev);
+    }
+    S.sequence.base = S.clips.idle ? 'idle' : S.sequence.base;
+    S.sequence.duration = Math.ceil(S.seqAudioBuf.duration + 1);
+    S.sequence.events = events;
+    generateLipSync(); // adds the lipsync clip + event, saves, rebuilds UI
+    els.seqStatus.textContent =
+      `Auto-animated: ${events.length} gestures + lip-sync from ${S.seqAudioBuf.duration.toFixed(1)}s of audio.`;
   }
 
   async function exportSequence() {
@@ -1604,6 +1652,7 @@
       if (file) loadSeqAudio(file);
     });
     els.btnSeqLipsync.addEventListener('click', generateLipSync);
+    els.btnSeqAuto.addEventListener('click', autoAnimate);
     els.btnSeqPreview.addEventListener('click', toggleSequencePreview);
     els.btnSeqExport.addEventListener('click', () => exportSequence().catch((e) => {
       exporting = false;
