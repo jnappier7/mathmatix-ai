@@ -167,6 +167,31 @@ input[type="color"] { border: 1px solid var(--border); border-radius: 6px; backg
 .timeline-host { height: 190px; overflow-y: auto; overflow-x: hidden; position: relative; }
 #timeline { display: block; width: 100%; }
 
+/* ---------------------------------------------------------------- producer */
+.producer { display: flex; flex-direction: column; gap: 7px; }
+.producer textarea {
+  background: var(--bg-inset); color: var(--text);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 8px; font: inherit; font-size: 12px; resize: vertical;
+}
+.prod-row { display: flex; gap: 10px; }
+.prod-row input[type="text"] { width: 90px; }
+
+/* --------------------------------------------------------------- sequencer */
+.seq { display: flex; flex-direction: column; gap: 7px; }
+.seq-events { display: flex; flex-direction: column; gap: 4px; }
+.seq-event {
+  display: grid; grid-template-columns: 52px 1fr 52px 24px;
+  gap: 4px; align-items: center;
+}
+.seq-event input[type="number"] { width: 100%; padding: 3px 4px; font-size: 12px; }
+.seq-event select { min-width: 0; font-size: 12px; padding: 3px 4px; }
+.seq-event .rm {
+  width: 22px; height: 22px; padding: 0; border-radius: 5px;
+  font-size: 11px; line-height: 1; color: #ffb3b3;
+}
+.seq-audio input[type="file"] { width: 100%; font-size: 11px; color: var(--text-dim); }
+
 /* ------------------------------------------------------------------ modals */
 .modal-backdrop {
   position: fixed; inset: 0; background: rgba(5, 8, 12, 0.65);

@@ -409,6 +409,112 @@ describe('solveIK (CCD)', () => {
   });
 });
 
+describe('evaluateSequence (long-form composition)', () => {
+  const clips = {
+    idle: {
+      name: 'idle', duration: 2, loop: true,
+      tracks: { 'torso.y': [{ t: 0, v: 0, e: 'linear' }, { t: 2, v: -4 }] },
+    },
+    wave: {
+      name: 'wave', duration: 1, loop: false,
+      tracks: { 'forearm.rotation': [{ t: 0, v: 0, e: 'linear' }, { t: 1, v: -50 }] },
+    },
+    talk: {
+      name: 'talk', duration: 0.5, loop: true,
+      tracks: { 'slots.mouth': [{ t: 0, v: 'ah', e: 'step' }, { t: 0.25, v: 'rest', e: 'step' }] },
+    },
+  };
+  const seq = {
+    name: 'explainer', duration: 90, base: 'idle',
+    events: [
+      { clip: 'wave', t: 2 },
+      { clip: 'talk', t: 5, until: 12 },
+    ],
+  };
+
+  test('base loops for the whole duration', () => {
+    expect(Core.evaluateSequence(seq, clips, 0)['torso.y']).toBeCloseTo(0);
+    expect(Core.evaluateSequence(seq, clips, 61)['torso.y']).toBeCloseTo(-2); // 61 % 2 = 1
+  });
+
+  test('one-shot event plays at its local time then ends', () => {
+    expect(Core.evaluateSequence(seq, clips, 1.9)['forearm.rotation']).toBeUndefined();
+    expect(Core.evaluateSequence(seq, clips, 2.5)['forearm.rotation']).toBeCloseTo(-25);
+    expect(Core.evaluateSequence(seq, clips, 3.5)['forearm.rotation']).toBeUndefined();
+  });
+
+  test('looping event runs until `until` then stops', () => {
+    expect(Core.evaluateSequence(seq, clips, 5.1)['slots.mouth']).toBe('ah');
+    expect(Core.evaluateSequence(seq, clips, 11.9)['slots.mouth']).toBeDefined();
+    expect(Core.evaluateSequence(seq, clips, 12.1)['slots.mouth']).toBeUndefined();
+  });
+
+  test('events override the base track-by-track', () => {
+    const pose = Core.evaluateSequence(seq, clips, 2.5);
+    expect(pose['torso.y']).toBeCloseTo(-1); // base still there
+    expect(pose['forearm.rotation']).toBeCloseTo(-25); // overlay on top
+  });
+
+  test('validateSequence catches unknown clips and bad times', () => {
+    const bad = {
+      duration: -1, base: 'ghost',
+      events: [{ clip: 'nope', t: -2 }, { clip: 'talk', t: 5, until: 3 }],
+    };
+    const errors = Core.validateSequence(bad, clips);
+    expect(errors.some((e) => e.includes('duration'))).toBe(true);
+    expect(errors.some((e) => e.includes('ghost'))).toBe(true);
+    expect(errors.some((e) => e.includes('nope'))).toBe(true);
+    expect(errors.some((e) => e.includes('until'))).toBe(true);
+    expect(Core.validateSequence(seq, clips)).toEqual([]);
+  });
+});
+
+describe('lipSyncFromRms', () => {
+  const WINDOW = 0.03;
+  // helper: silence + speech + silence envelope
+  const envelope = (spans, totalSec) => {
+    const n = Math.round(totalSec / WINDOW);
+    const rms = new Array(n).fill(0.01);
+    for (const [a, b] of spans) {
+      for (let i = Math.round(a / WINDOW); i < Math.round(b / WINDOW); i++) rms[i] = 0.4;
+    }
+    return rms;
+  };
+
+  test('opens during speech, closed in silence', () => {
+    const keys = Core.lipSyncFromRms(envelope([[1, 2]], 3), WINDOW);
+    const at = (t) => Core.sampleTrack(keys, t);
+    expect(at(0.5)).toBe('rest');
+    expect(at(1.05)).toBe('ah');
+    expect(at(2.5)).toBe('rest');
+  });
+
+  test('long speech is split into flaps (not one frozen open mouth)', () => {
+    const keys = Core.lipSyncFromRms(envelope([[0.5, 3.5]], 4), WINDOW);
+    const opens = keys.filter((k) => k.v === 'ah').length;
+    expect(opens).toBeGreaterThan(3); // several flaps across 3s of speech
+  });
+
+  test('ignores blips shorter than minOpen', () => {
+    const keys = Core.lipSyncFromRms(envelope([[1, 1.03]], 2), WINDOW);
+    expect(keys.filter((k) => k.v === 'ah')).toHaveLength(0);
+  });
+
+  test('silence or empty input produces no keys', () => {
+    expect(Core.lipSyncFromRms([], WINDOW)).toEqual([]);
+    expect(Core.lipSyncFromRms(new Array(100).fill(0.02), WINDOW)).toEqual([]);
+  });
+
+  test('keys are step-eased, chronological, and deterministic', () => {
+    const rms = envelope([[0.5, 1.2], [2, 2.6]], 3);
+    const a = Core.lipSyncFromRms(rms, WINDOW);
+    const b = Core.lipSyncFromRms(rms, WINDOW);
+    expect(a).toEqual(b);
+    for (let i = 1; i < a.length; i++) expect(a[i].t).toBeGreaterThanOrEqual(a[i - 1].t);
+    for (const k of a) expect(k.e).toBe('step');
+  });
+});
+
 describe('shipped rig + preset clips', () => {
   const fs = require('fs');
   const path = require('path');
