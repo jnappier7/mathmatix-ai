@@ -158,10 +158,13 @@ The `RigPlayer` runtime applies both automatically (`player.secondaryMotion` /
   cheer) / `wave.json`.
 - If a joint shows a seam at an extreme angle, back the angle off or nudge the
   child's `x`/`y` a couple of px at that key.
-- Slot variants can declare `"transformAs": "<basePart>"` in `rig.json` to
-  inherit the base part's animation channels — that's the drop-in path for a
-  future `hand_L_point` / `hand_R_point` index-finger sprite: add the part
-  (hidden, `transformAs` the base hand), a `hand_L` slot, and key
-  `slots.hand_L: point` during pointing clips.
+- **Hand pose slots** (v6): `hand_L` / `hand_R` slots swap the hand sprite —
+  states `rest`, `point` (index finger), `thumb` (thumbs-up), `spread` (open
+  fingers). Variants declare `transformAs` so they follow the base hand's
+  animation. point/tap/point_up key the finger, wave keys the spread palm,
+  celebrate keys double thumbs; `thumbs_up` is its own gesture clip. The
+  sprites were aligned from pose renders (wristband anchored to the hand
+  pivot; thumb sprites oriented so the thumb is upright at the gesture's
+  chain rotation of ≈±135°) — see the scratch tool notes in the PR.
 - To add a rig: drop `public/rigs/<id>/` with the same structure and add it to the
   `RIGS` list at the top of `public/js/animation-studio.js`.

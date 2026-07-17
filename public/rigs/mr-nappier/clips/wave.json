@@ -173,6 +173,18 @@
         "v": "rest",
         "e": "step"
       }
+    ],
+    "slots.hand_L": [
+      {
+        "t": 0.1,
+        "v": "spread",
+        "e": "step"
+      },
+      {
+        "t": 1.9,
+        "v": "rest",
+        "e": "step"
+      }
     ]
   }
 }

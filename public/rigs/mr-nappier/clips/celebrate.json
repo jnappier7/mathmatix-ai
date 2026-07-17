@@ -233,6 +233,30 @@
         "v": "rest",
         "e": "step"
       }
+    ],
+    "slots.hand_L": [
+      {
+        "t": 0.1,
+        "v": "thumb",
+        "e": "step"
+      },
+      {
+        "t": 1.1,
+        "v": "rest",
+        "e": "step"
+      }
+    ],
+    "slots.hand_R": [
+      {
+        "t": 0.1,
+        "v": "thumb",
+        "e": "step"
+      },
+      {
+        "t": 1.1,
+        "v": "rest",
+        "e": "step"
+      }
     ]
   }
 }

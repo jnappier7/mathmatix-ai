@@ -1,7 +1,7 @@
 {
   "name": "Mr. Nappier",
   "id": "mr-nappier",
-  "version": 5,
+  "version": 6,
   "canvas": [
     1024,
     1536
@@ -402,6 +402,108 @@
         702,
         1447
       ]
+    },
+    "hand_L_point": {
+      "src": "hand_L_point.png",
+      "pivot": [
+        784,
+        713
+      ],
+      "z": 46,
+      "parent": "forearm_L",
+      "hidden": true,
+      "transformAs": "hand_L",
+      "bbox": [
+        744,
+        692,
+        836,
+        878
+      ]
+    },
+    "hand_L_thumb": {
+      "src": "hand_L_thumb.png",
+      "pivot": [
+        784,
+        713
+      ],
+      "z": 46,
+      "parent": "forearm_L",
+      "hidden": true,
+      "transformAs": "hand_L",
+      "bbox": [
+        760,
+        656,
+        946,
+        806
+      ]
+    },
+    "hand_L_spread": {
+      "src": "hand_L_spread.png",
+      "pivot": [
+        784,
+        713
+      ],
+      "z": 46,
+      "parent": "forearm_L",
+      "hidden": true,
+      "transformAs": "hand_L",
+      "bbox": [
+        720,
+        692,
+        846,
+        880
+      ]
+    },
+    "hand_R_point": {
+      "src": "hand_R_point.png",
+      "pivot": [
+        215,
+        726
+      ],
+      "z": 46,
+      "parent": "forearm_R",
+      "hidden": true,
+      "transformAs": "hand_R",
+      "bbox": [
+        160,
+        704,
+        248,
+        894
+      ]
+    },
+    "hand_R_thumb": {
+      "src": "hand_R_thumb.png",
+      "pivot": [
+        215,
+        726
+      ],
+      "z": 46,
+      "parent": "forearm_R",
+      "hidden": true,
+      "transformAs": "hand_R",
+      "bbox": [
+        84,
+        668,
+        236,
+        838
+      ]
+    },
+    "hand_R_spread": {
+      "src": "hand_R_spread.png",
+      "pivot": [
+        215,
+        726
+      ],
+      "z": 46,
+      "parent": "forearm_R",
+      "hidden": true,
+      "transformAs": "hand_R",
+      "bbox": [
+        122,
+        704,
+        264,
+        898
+      ]
     }
   },
   "root": {
@@ -444,6 +546,24 @@
       "states": {
         "rest": "brow_R",
         "raised": "brow_raised_R"
+      }
+    },
+    "hand_L": {
+      "default": "rest",
+      "states": {
+        "rest": "hand_L",
+        "point": "hand_L_point",
+        "thumb": "hand_L_thumb",
+        "spread": "hand_L_spread"
+      }
+    },
+    "hand_R": {
+      "default": "rest",
+      "states": {
+        "rest": "hand_R",
+        "point": "hand_R_point",
+        "thumb": "hand_R_thumb",
+        "spread": "hand_R_spread"
       }
     }
   },
