@@ -1,0 +1,547 @@
+{
+ "week": 3,
+ "title": "Data & Problem-Solving",
+ "items": [
+  {
+   "n": 1,
+   "domain": "PSDA",
+   "skill": "Ratios, rates, proportional relationships, and units",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A rider in a city bike-share program rode 12 miles in 45 minutes. What was the rider's average speed, in miles per hour?",
+   "choices": [
+    "9",
+    "12",
+    "16",
+    "36"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Convert 45 minutes to 0.75 hour. Average speed = distance ÷ time = 12 ÷ 0.75 = 16 miles per hour. Choosing 9 comes from multiplying 12 by 0.75 instead of dividing.",
+   "verify": "from sympy import Rational\nassert Rational(12)/Rational(45,60)==16",
+   "figure": null
+  },
+  {
+   "n": 2,
+   "domain": "PSDA",
+   "skill": "Percentages",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A coffee shop sold 250 drinks on Saturday, and 34% of the drinks sold were iced. How many of the drinks sold were not iced?",
+   "choices": [
+    "34",
+    "85",
+    "165",
+    "216"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "If 34% of the drinks were iced, then 100% − 34% = 66% were not iced. 0.66 × 250 = 165 drinks. Choosing 85 answers the wrong question (the number of iced drinks), a part-versus-whole error, and 216 comes from subtracting 34 from 250.",
+   "verify": "from sympy import Rational\nassert 250*Rational(66,100)==165",
+   "figure": null
+  },
+  {
+   "n": 3,
+   "domain": "PSDA",
+   "skill": "One-variable data: center and spread",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "The list gives the wait times, in minutes, of five patients at a hospital clinic: 35, 10, 45, 40, 20. What is the median wait time, in minutes, for the five patients?",
+   "choices": [
+    "10",
+    "20",
+    "30",
+    "35"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Order the times: 10, 20, 35, 40, 45. The median is the middle value of the ordered list, which is 35. Choosing 30 gives the mean instead of the median, and 45 comes from taking the middle value of the unordered list.",
+   "verify": "d=[35,10,45,40,20]\ns=sorted(d)\nassert s[2]==35\nassert sum(d)/len(d)==30",
+   "figure": null
+  },
+  {
+   "n": 4,
+   "domain": "PSDA",
+   "skill": "One-variable data: center and spread",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "Each student in a class voted for one field-trip destination, and the results are shown in the bar graph. How many more students voted for the zoo than voted for the museum?",
+   "choices": [
+    "6",
+    "8",
+    "14",
+    "22"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Read the bar heights: 14 students voted for the zoo and 8 voted for the museum. The difference is 14 − 8 = 6. Choosing 14 or 8 reports a single bar instead of the difference, and 22 gives the sum of the two bars.",
+   "verify": "labels=['Museum','Zoo','Aquarium','Park']\nvalues=[8,14,11,7]\nv=dict(zip(labels,values))\nassert v['Zoo']-v['Museum']==6",
+   "figure": {
+    "kind": "bar",
+    "params": {
+     "labels": [
+      "Museum",
+      "Zoo",
+      "Aquarium",
+      "Park"
+     ],
+     "values": [
+      8,
+      14,
+      11,
+      7
+     ],
+     "xlabel": "Destination",
+     "ylabel": "Number of votes"
+    }
+   }
+  },
+  {
+   "n": 5,
+   "domain": "ALG",
+   "skill": "Linear equations in one variable",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A city bike-share program charges $3.00 to unlock a bike plus $0.20 per minute of riding. The equation 3 + 0.20m = 9.40 models a ride of m minutes that cost $9.40 total. How many minutes long was the ride?",
+   "choices": [
+    "6.40",
+    "32",
+    "47",
+    "62"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Subtract 3 from both sides to get 0.20m = 6.40, then divide by 0.20 to get m = 32 minutes. Choosing 47 comes from dividing 9.40 by 0.20 without first subtracting the $3.00 unlock fee, and 6.40 stops after the subtraction step.",
+   "verify": "from sympy import symbols, Eq, solve, Rational\nm=symbols('m')\nassert solve(Eq(3+Rational(1,5)*m, Rational(94,10)), m)==[32]",
+   "figure": null
+  },
+  {
+   "n": 6,
+   "domain": "PSDA",
+   "skill": "Probability and conditional probability",
+   "difficulty": "E",
+   "type": "spr",
+   "stem": "In a survey about streaming habits, 32 of the 80 people surveyed said they stream music every day. If one of the 80 people is selected at random, what is the probability that the selected person streams music every day?",
+   "choices": [],
+   "answer": null,
+   "spr_answer": "2/5",
+   "equivalents": [
+    "0.4",
+    ".4",
+    "32/80",
+    "4/10"
+   ],
+   "answer_any": null,
+   "explanation": "The probability is the number of people who stream every day divided by the total number surveyed: 32/80. This simplifies to 2/5, which equals 0.4.",
+   "verify": "from fractions import Fraction\nc=Fraction(2,5)\nassert Fraction(32,80)==c\nfor e in ['0.4','.4','32/80','4/10']:\n    v=Fraction(e) if '/' in e else Fraction(str(float(e)))\n    assert v==c",
+   "figure": null
+  },
+  {
+   "n": 7,
+   "domain": "GEO",
+   "skill": "Area and volume",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "The rectangular seating patio at a coffee shop is 12 feet long and 9 feet wide. What is the area, in square feet, of the patio?",
+   "choices": [
+    "21",
+    "42",
+    "54",
+    "108"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The area of a rectangle is length × width = 12 × 9 = 108 square feet. Choosing 42 gives the perimeter, 21 gives the sum of the two dimensions, and 54 comes from halving the product as if using the triangle area formula.",
+   "verify": "assert 12*9==108\nassert 2*(12+9)==42",
+   "figure": null
+  },
+  {
+   "n": 8,
+   "domain": "ALG",
+   "skill": "Linear functions",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "At a weather station, the relative humidity h(t), as a percent, t hours after noon on a certain day is modeled by h(t) = 62 − 1.5t, where 0 ≤ t ≤ 8. Which of the following is the best interpretation of the number 1.5 in this context?",
+   "choices": [
+    "The relative humidity at noon was 1.5%.",
+    "The relative humidity increased by 1.5 percentage points each hour after noon.",
+    "The relative humidity 8 hours after noon was 1.5%.",
+    "The relative humidity decreased by 1.5 percentage points each hour after noon."
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The model is linear with slope −1.5, so each 1-hour increase in t changes h by −1.5. That means the humidity decreased by 1.5 percentage points per hour after noon. The number 62, not 1.5, gives the humidity at noon.",
+   "verify": "from sympy import symbols, diff, Rational\nt=symbols('t')\nh=62-Rational(3,2)*t\nassert diff(h,t)==Rational(-3,2)\nassert h.subs(t,0)==62",
+   "figure": null
+  },
+  {
+   "n": 9,
+   "domain": "PSDA",
+   "skill": "Probability and conditional probability",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The table summarizes the responses of 120 people in a streaming-habits survey, classified by age group and subscription plan. If one respondent who is under 25 years old is selected at random, what is the probability that the selected respondent has an ad-free plan?",
+   "choices": [
+    "1/4",
+    "2/5",
+    "1/2",
+    "5/8"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Restrict attention to the 75 respondents under 25. Of these, 30 have an ad-free plan, so the conditional probability is 30/75 = 2/5. Choosing 1/4 divides by all 120 respondents instead of only those under 25, and 1/2 conditions on having an ad-free plan instead of on age.",
+   "verify": "from sympy import Rational\nassert 45+30==75 and 15+30==45 and 75+45==120 and 45+15==60 and 30+30==60\nassert Rational(30,75)==Rational(2,5)",
+   "figure": {
+    "kind": "table",
+    "params": {
+     "headers": [
+      "",
+      "Ad-supported",
+      "Ad-free",
+      "Total"
+     ],
+     "rows": [
+      [
+       "Under 25",
+       45,
+       30,
+       75
+      ],
+      [
+       "25 and older",
+       15,
+       30,
+       45
+      ],
+      [
+       "Total",
+       60,
+       60,
+       120
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "n": 10,
+   "domain": "PSDA",
+   "skill": "Percentages",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A coffee shop's total sales were $3,000 in May and $2,400 in June. By what percent did total sales decrease from May to June?",
+   "choices": [
+    "20%",
+    "25%",
+    "75%",
+    "80%"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The decrease is 3,000 − 2,400 = 600 dollars. Percent decrease uses the original (May) amount as the base: 600/3,000 = 0.20, or 20%. Choosing 25% incorrectly uses the June amount as the base, and 80% gives the ratio 2,400/3,000 rather than the percent change.",
+   "verify": "from sympy import Rational\nassert Rational(3000-2400,3000)*100==20\nassert Rational(600,2400)*100==25",
+   "figure": null
+  },
+  {
+   "n": 11,
+   "domain": "PSDA",
+   "skill": "Ratios, rates, proportional relationships, and units",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "In a wildlife tagging study, a tagged elk traveled at an average speed of 2.5 meters per second for 2 hours. How many kilometers did the elk travel during the 2 hours? (1 kilometer = 1,000 meters)",
+   "choices": [],
+   "answer": null,
+   "spr_answer": "18",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Two hours is 2 × 3,600 = 7,200 seconds, so the elk traveled 2.5 × 7,200 = 18,000 meters. Dividing by 1,000 converts this distance to 18 kilometers.",
+   "verify": "from sympy import Rational\nm=Rational(5,2)*2*3600\nassert m==18000\nassert m/1000==18",
+   "figure": null
+  },
+  {
+   "n": 12,
+   "domain": "PSDA",
+   "skill": "Two-variable data: scatterplots and models",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The scatterplot shows the air temperature and the relative humidity recorded at a weather station on 9 afternoons, along with a line of best fit, y = −2x + 95. Which of the following is closest to the relative humidity, as a percent, predicted by the line of best fit for an afternoon with a temperature of 30°C?",
+   "choices": [
+    "35",
+    "65",
+    "95",
+    "155"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Use the line of best fit, not an individual data point. At x = 30, y = −2(30) + 95 = 35, so the predicted relative humidity is 35%. Choosing 95 confuses the y-intercept with the prediction, and 155 comes from a sign error, computing 2(30) + 95.",
+   "verify": "assert -2*30+95==35\nassert 2*30+95==155",
+   "figure": {
+    "kind": "scatter",
+    "params": {
+     "pts": [
+      [
+       20,
+       56
+      ],
+      [
+       22,
+       53
+      ],
+      [
+       24,
+       45
+      ],
+      [
+       25,
+       47
+      ],
+      [
+       27,
+       40
+      ],
+      [
+       29,
+       38
+      ],
+      [
+       30,
+       33
+      ],
+      [
+       32,
+       29
+      ],
+      [
+       34,
+       26
+      ]
+     ],
+     "xlabel": "Temperature (°C)",
+     "ylabel": "Relative humidity (%)",
+     "line": {
+      "slope": -2,
+      "yint": 95
+     }
+    }
+   }
+  },
+  {
+   "n": 13,
+   "domain": "PSDA",
+   "skill": "One-variable data: center and spread",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A hospital recorded the wait times, in minutes, of 15 patients. The mean of the 15 wait times is 42, and the median is 34. The longest recorded wait time, 180 minutes, is discovered to be a data-entry error and is removed from the data set. Which of the following best describes how removing this value affects the mean and the median?",
+   "choices": [
+    "The mean and the median will both stay approximately the same.",
+    "The mean will decrease much more than the median will.",
+    "The median will decrease much more than the mean will.",
+    "The mean will increase, and the median will decrease."
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The value 180 is a high outlier, far above the mean of 42. Removing it lowers the total substantially, so the mean drops by several minutes. The median, the middle value of the ordered list, shifts position by at most half a step, so it changes very little. Therefore the mean decreases much more than the median.",
+   "verify": "d=[20,22,25,28,30,31,33,34,35,36,36,38,40,42,180]\nassert len(d)==15 and sum(d)/15==42 and sorted(d)[7]==34 and max(d)==180\nr=sorted(d)[:-1]\nmean_drop=42-sum(r)/14\nmed_drop=34-(r[6]+r[7])/2\nassert mean_drop>5\nassert 0<=med_drop<=1\nassert mean_drop>med_drop",
+   "figure": null
+  },
+  {
+   "n": 14,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "For a class field trip, museum tickets cost $9 for each student and $14 for each chaperone. The group bought a total of 30 tickets for a total of $300. How many student tickets did the group buy?",
+   "choices": [
+    "6",
+    "15",
+    "21",
+    "24"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Let s and a be the numbers of student and chaperone tickets: s + a = 30 and 9s + 14a = 300. Multiplying the first equation by 9 gives 9s + 9a = 270; subtracting yields 5a = 30, so a = 6 and s = 24. Choosing 6 solves for the chaperone tickets instead of the student tickets.",
+   "verify": "from sympy import symbols, Eq, solve\ns,a=symbols('s a')\nsol=solve([Eq(s+a,30),Eq(9*s+14*a,300)],[s,a])\nassert sol[s]==24 and sol[a]==6",
+   "figure": null
+  },
+  {
+   "n": 15,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (exponential)",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "At the start of a wildlife tagging study, biologists estimated that 240 birds lived in a preserve. The population is estimated to increase by 5% each year. Which of the following functions models the estimated population P(t), where t is the number of years after the start of the study?",
+   "choices": [
+    "P(t) = 240(1.05)^t",
+    "P(t) = 240(1.5)^t",
+    "P(t) = 240 + 0.05t",
+    "P(t) = 0.05(240)^t"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Growth by a fixed 5% each year is exponential with growth factor 1 + 0.05 = 1.05 and initial value 240, so P(t) = 240(1.05)^t. Choosing 240(1.5)^t misreads 5% as a factor of 1.5, and 240 + 0.05t models linear, not exponential, growth.",
+   "verify": "from sympy import symbols, Rational\nt=symbols('t')\nP=240*Rational(105,100)**t\nassert P.subs(t,0)==240\nassert P.subs(t,1)/P.subs(t,0)==Rational(21,20)",
+   "figure": null
+  },
+  {
+   "n": 16,
+   "domain": "PSDA",
+   "skill": "Inference and margin of error",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A city's transportation department surveyed 400 randomly selected members of its bike-share program. Of those surveyed, 62% said they ride at least once per week, with an associated margin of error of 4%. Which of the following is the most appropriate conclusion from these results?",
+   "choices": [
+    "Exactly 62% of all members of the bike-share program ride at least once per week.",
+    "More than 66% of all members of the bike-share program likely ride at least once per week.",
+    "It is plausible that between 58% and 66% of all members of the bike-share program ride at least once per week.",
+    "Between 58% and 66% of the 400 members surveyed ride at least once per week."
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "A margin of error gives a plausible range for the population value: 62% ± 4% is 58% to 66% for all members. It does not give an exact population value, and it does not describe the sample itself, since exactly 62% of the surveyed members gave that response.",
+   "verify": "assert 62-4==58 and 62+4==66",
+   "figure": null
+  },
+  {
+   "n": 17,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (quadratic)",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "The function p(x) = −x² + 20x − 64 models a coffee shop's daily profit, in hundreds of dollars, when the shop charges x dollars per pound for its house-blend coffee beans, where 0 < x < 20. What is one possible price per pound, in dollars, at which the shop's daily profit would be exactly 0?",
+   "choices": [],
+   "answer": null,
+   "spr_answer": "4",
+   "equivalents": [],
+   "answer_any": [
+    "4",
+    "16"
+   ],
+   "explanation": "Set −x² + 20x − 64 = 0, which is equivalent to x² − 20x + 64 = 0. This factors as (x − 4)(x − 16) = 0, so the profit is 0 when x = 4 or x = 16. Either value may be entered.",
+   "verify": "from sympy import symbols, solve\nx=symbols('x')\nassert set(solve(-x**2+20*x-64,x))=={4,16}\nfor e in ['4','16']:\n    v=float(e)\n    assert -v**2+20*v-64==0",
+   "figure": null
+  },
+  {
+   "n": 18,
+   "domain": "PSDA",
+   "skill": "Evaluating statistical claims",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "Researchers reviewed the records of 500 randomly selected patients who visited one hospital's emergency department last year. They found that patients who arrived on weekday mornings generally had shorter wait times than patients who arrived on weekend evenings. Which of the following is the most appropriate conclusion?",
+   "choices": [
+    "Arriving on a weekday morning causes shorter wait times at hospitals in general.",
+    "Arriving on a weekday morning causes shorter wait times at this hospital.",
+    "Arrival time and wait time are associated at hospitals in general.",
+    "At this hospital, arrival time is associated with wait time, but a cause-and-effect relationship cannot be determined."
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Patients were not randomly assigned arrival times, so this observational review can establish only an association, not causation. Because the records were randomly selected from this hospital alone, the finding generalizes to this hospital's patients but should not be extended to hospitals in general.",
+   "verify": null,
+   "figure": null
+  },
+  {
+   "n": 19,
+   "domain": "GEO",
+   "skill": "Right triangles and trigonometry",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "A straight access ramp at a hospital entrance makes an angle θ with the level ground such that sin θ = 3/5. The ramp is 40 feet long. What is the horizontal distance, in feet, covered by the ramp?",
+   "choices": [
+    "24",
+    "30",
+    "32",
+    "50"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Since sin θ = 3/5, the ramp is the hypotenuse of a 3-4-5 right triangle, so cos θ = 4/5. The horizontal distance is 40 × cos θ = 40 × 4/5 = 32 feet. Choosing 24 uses sin θ, which gives the vertical rise, and 50 comes from dividing 40 by 4/5 instead of multiplying.",
+   "verify": "from sympy import Rational, sqrt\nc=sqrt(1-Rational(3,5)**2)\nassert c==Rational(4,5)\nassert 40*c==32\nassert 40*Rational(3,5)==24",
+   "figure": null
+  },
+  {
+   "n": 20,
+   "domain": "ALG",
+   "skill": "Linear inequalities in one or two variables",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "A commuter's bike-share membership costs $12 per month and includes 8 free rides; each ride after the first 8 costs $0.75. The commuter budgets at most $27 for bike-share in a month. What is the greatest number of rides the commuter can take that month without exceeding the budget?",
+   "choices": [],
+   "answer": null,
+   "spr_answer": "28",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "For r rides with r > 8, the monthly cost is 12 + 0.75(r − 8) dollars. Solving 12 + 0.75(r − 8) ≤ 27 gives 0.75(r − 8) ≤ 15, so r − 8 ≤ 20 and r ≤ 28. The greatest number of rides is 28.",
+   "verify": "from sympy import Rational\nassert (27-12)/Rational(3,4)==20\nassert 12+Rational(3,4)*(28-8)==27\nassert 12+Rational(3,4)*(29-8)>27",
+   "figure": null
+  },
+  {
+   "n": 21,
+   "domain": "GEO",
+   "skill": "Area and volume",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "A cylindrical coffee urn has a volume of 720π cubic centimeters and a diameter of 12 centimeters. What is the height, in centimeters, of the urn?",
+   "choices": [
+    "5",
+    "20",
+    "60",
+    "120"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The diameter is 12 centimeters, so the radius is 6 centimeters. From V = πr²h, 720π = π(6²)h = 36πh, so h = 720π/36π = 20 centimeters. Choosing 5 uses the diameter in place of the radius, and 60 divides 720 by 12 as if the formula were V = πrh.",
+   "verify": "from sympy import pi, Rational\nassert 720*pi/(pi*6**2)==20\nassert Rational(720,12**2)==5\nassert Rational(720,12)==60",
+   "figure": null
+  },
+  {
+   "n": 22,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (exponential)",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "In a wildlife tagging study, the number of active tracking tags is modeled by N(t) = 512(1/2)^(t/3), where t is the number of months after the tags are activated. After how many months will exactly 64 tags be active?",
+   "choices": [],
+   "answer": null,
+   "spr_answer": "9",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Solve 512(1/2)^(t/3) = 64. Dividing both sides by 512 gives (1/2)^(t/3) = 64/512 = 1/8 = (1/2)³. So t/3 = 3, and t = 9 months.",
+   "verify": "from sympy import symbols, solve, Rational\nt=symbols('t')\nsol=solve(512*Rational(1,2)**(t/3)-64,t)\nassert 9 in sol\nassert abs(512*0.5**(9/3)-64)<1e-9",
+   "figure": null
+  }
+ ]
+}

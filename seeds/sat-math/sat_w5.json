@@ -1,0 +1,1027 @@
+{
+ "week": 5,
+ "title": "Exit (full section)",
+ "items": [
+  {
+   "n": 1,
+   "domain": "ALG",
+   "skill": "Linear equations in one variable",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 1,
+   "stem": "If 3x + 7 = 25, what is the value of x?",
+   "choices": [
+    "4/3",
+    "6",
+    "32/3",
+    "18"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Subtract 7 from both sides to get 3x = 18, then divide by 3 to get x = 6. Choice C comes from adding 7 instead of subtracting, and choice D comes from forgetting to divide by 3.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.solve(sp.Eq(3*x+7,25))==[6]",
+   "figure": null
+  },
+  {
+   "n": 2,
+   "domain": "ADV",
+   "skill": "Equivalent expressions (binomial product)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 1,
+   "stem": "Which expression is equivalent to (x + 5)(x − 3)?",
+   "choices": [
+    "x² + 2x − 15",
+    "x² − 2x − 15",
+    "x² − 15",
+    "x² + 8x − 15"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Distribute: (x + 5)(x − 3) = x² − 3x + 5x − 15 = x² + 2x − 15. Choice C forgets the middle terms, and choice B makes a sign error when combining −3x and 5x.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.expand((x+5)*(x-3))==x**2+2*x-15",
+   "figure": null
+  },
+  {
+   "n": 3,
+   "domain": "ALG",
+   "skill": "Linear functions (evaluation)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 1,
+   "stem": "The function f is defined by f(x) = 4x − 9. What is the value of f(5)?",
+   "choices": [
+    "−29",
+    "11",
+    "20",
+    "29"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Substitute x = 5: f(5) = 4(5) − 9 = 20 − 9 = 11. Choice D adds 9 instead of subtracting, and choice C ignores the −9 entirely.",
+   "verify": "assert 4*5-9==11",
+   "figure": null
+  },
+  {
+   "n": 4,
+   "domain": "ADV",
+   "skill": "Equivalent expressions (exponent rules)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 1,
+   "stem": "Which expression is equivalent to (3x²)(2x³)?",
+   "choices": [
+    "5x⁵",
+    "5x⁶",
+    "6x⁵",
+    "6x⁶"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Multiply the coefficients and add the exponents: 3 · 2 = 6 and x² · x³ = x⁵, so the product is 6x⁵. Choices A and B add the coefficients, and choices B and D multiply the exponents.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.simplify((3*x**2)*(2*x**3)-6*x**5)==0",
+   "figure": null
+  },
+  {
+   "n": 5,
+   "domain": "GEO",
+   "skill": "Area and volume",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 1,
+   "stem": "The rectangular stage of a community theater is 24 feet long and 15 feet wide. What is the area of the stage, in square feet?",
+   "choices": [
+    "39",
+    "78",
+    "180",
+    "360"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The area of a rectangle is length times width: 24 · 15 = 360 square feet. Choice B (78) is the perimeter, and choice A (39) is the sum of the two dimensions.",
+   "verify": "assert 24*15==360",
+   "figure": null
+  },
+  {
+   "n": 6,
+   "domain": "ALG",
+   "skill": "Linear equations in one variable (distribution)",
+   "difficulty": "E",
+   "type": "spr",
+   "module": 1,
+   "stem": "If 4(x − 3) = 18, what is the value of x?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "7.5",
+   "equivalents": [
+    "15/2"
+   ],
+   "answer_any": null,
+   "explanation": "Distribute to get 4x − 12 = 18, so 4x = 30 and x = 30/4 = 7.5. Equivalently, divide both sides by 4 first: x − 3 = 4.5, so x = 7.5.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); s=sp.solve(sp.Eq(4*(x-3),18))[0]; assert s==sp.Rational(15,2); assert abs(float('7.5')-float(s))<1e-9 and sp.Rational('15/2')==s",
+   "figure": null
+  },
+  {
+   "n": 7,
+   "domain": "PSDA",
+   "skill": "Percentages",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 1,
+   "stem": "A used bookstore reduces the price of a $16.00 book by 25%. What is the sale price of the book?",
+   "choices": [
+    "$4.00",
+    "$12.00",
+    "$15.75",
+    "$20.00"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "A 25% discount means the book sells for 75% of its original price: 0.75 · 16 = $12.00. Choice A is the amount of the discount, not the sale price, and choice C subtracts 25 cents instead of 25 percent.",
+   "verify": "assert abs(16*0.75-12.0)<1e-9",
+   "figure": null
+  },
+  {
+   "n": 8,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (exponential evaluation)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 1,
+   "stem": "An aquaponics farm starts with 50 fish, and the fish population doubles every year. The population t years after opening is modeled by P(t) = 50(2)^t. According to the model, how many fish will there be 3 years after opening?",
+   "choices": [
+    "150",
+    "400",
+    "450",
+    "800"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Evaluate P(3) = 50 · 2³ = 50 · 8 = 400. Choice A multiplies 50 by 3 (linear growth), choice C uses 3² instead of 2³, and choice D doubles one extra time.",
+   "verify": "assert 50*2**3==400",
+   "figure": null
+  },
+  {
+   "n": 9,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations (word problem)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 1,
+   "stem": "A community theater sold 12 tickets to a show for a total of $143. Adult tickets cost $14 each and student tickets cost $9 each. How many adult tickets were sold?",
+   "choices": [
+    "5",
+    "6",
+    "7",
+    "9"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Let a and s be the numbers of adult and student tickets: a + s = 12 and 14a + 9s = 143. Substituting s = 12 − a gives 14a + 108 − 9a = 143, so 5a = 35 and a = 7. Choice A (5) is the number of student tickets.",
+   "verify": "import sympy as sp; a,s=sp.symbols('a s'); sol=sp.solve([sp.Eq(a+s,12),sp.Eq(14*a+9*s,143)]); assert sol[a]==7 and sol[s]==5",
+   "figure": null
+  },
+  {
+   "n": 10,
+   "domain": "ALG",
+   "skill": "Linear functions (interpretation of slope)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 1,
+   "stem": "A 3D-printing shop charges C = 2.5g + 40 dollars for a custom print that uses g grams of material. What is the best interpretation of the number 2.5 in this equation?",
+   "choices": [
+    "Each additional gram of material increases the total cost by $2.50.",
+    "The shop charges $2.50 for a print that uses no material.",
+    "Each additional gram of material increases the total cost by $40.00.",
+    "The total cost of every print decreases by $2.50 per gram."
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "In C = 2.5g + 40, the coefficient 2.5 is the rate of change of cost with respect to grams: each additional gram adds $2.50 to the cost. The constant 40 is the base charge when g = 0, which choice B confuses with 2.5.",
+   "verify": null,
+   "figure": null
+  },
+  {
+   "n": 11,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (quadratic by factoring)",
+   "difficulty": "M",
+   "type": "spr",
+   "module": 1,
+   "stem": "What is one solution to the equation x² − 5x − 24 = 0?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "8",
+   "equivalents": [],
+   "answer_any": [
+    "8",
+    "-3"
+   ],
+   "explanation": "Factor the quadratic: x² − 5x − 24 = (x − 8)(x + 3) = 0, so x = 8 or x = −3. Either value may be entered.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); r=set(sp.solve(x**2-5*x-24)); assert r=={8,-3}; assert float('8') in {float(v) for v in r} and float('-3') in {float(v) for v in r}",
+   "figure": null
+  },
+  {
+   "n": 12,
+   "domain": "PSDA",
+   "skill": "Probability and conditional probability (two-way table)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 1,
+   "stem": "The two-way table summarizes whether the adults and students surveyed by a community theater attended at least one show last season. If one of the surveyed students is selected at random, what is the probability that the student attended at least one show?",
+   "choices": [
+    "7/15",
+    "35/80",
+    "35/150",
+    "75/150"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The condition restricts the selection to the 75 students, of whom 35 attended, so the probability is 35/75 = 7/15. Choice B divides by all attendees (80), and choice C divides by all 150 people surveyed instead of only students.",
+   "verify": "import sympy as sp; assert sp.Rational(35,75)==sp.Rational(7,15)",
+   "figure": {
+    "kind": "table",
+    "params": {
+     "headers": [
+      "",
+      "Attended",
+      "Did not attend",
+      "Total"
+     ],
+     "rows": [
+      [
+       "Adults",
+       "45",
+       "30",
+       "75"
+      ],
+      [
+       "Students",
+       "35",
+       "40",
+       "75"
+      ],
+      [
+       "Total",
+       "80",
+       "70",
+       "150"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "n": 13,
+   "domain": "ALG",
+   "skill": "Linear inequalities in one variable",
+   "difficulty": "M",
+   "type": "spr",
+   "module": 1,
+   "stem": "Kavi's marathon training plan requires him to run at least 40 miles this week. He has run 26.5 miles so far and plans to complete additional runs of 4.5 miles each. What is the least number of additional runs Kavi needs in order to meet the requirement?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "3",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Solve 26.5 + 4.5n ≥ 40, which gives 4.5n ≥ 13.5, so n ≥ 3. Since 3 is already a whole number, the least number of additional runs is 3.",
+   "verify": "assert 26.5+4.5*3>=40 and 26.5+4.5*2<40; assert float('3')==3",
+   "figure": null
+  },
+  {
+   "n": 14,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (exponential, equal bases)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 1,
+   "stem": "If 2^(3x) = 2^(x + 8), what is the value of x?",
+   "choices": [
+    "2",
+    "8/3",
+    "4",
+    "8"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Since the bases are equal, the exponents must be equal: 3x = x + 8, so 2x = 8 and x = 4. Choice B (8/3) comes from setting 3x = 8 and forgetting the x on the right side.",
+   "verify": "assert 2**(3*4)==2**(4+8)",
+   "figure": null
+  },
+  {
+   "n": 15,
+   "domain": "GEO",
+   "skill": "Right triangles and trigonometry (ratios)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 1,
+   "stem": "In a physics lab, a cart rolls down a straight ramp. As shown, the ramp, the floor, and a vertical support form a right triangle: the ramp is 13 meters long, the support is 5 meters tall, and the base along the floor is 12 meters. What is the sine of the angle the ramp makes with the floor?",
+   "choices": [
+    "5/13",
+    "5/12",
+    "12/13",
+    "13/5"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The angle at the floor has opposite side 5 (the vertical support) and hypotenuse 13 (the ramp), so its sine is 5/13. Choice B (5/12) is the tangent of the angle, and choice C (12/13) is its cosine.",
+   "verify": "import math; assert 5**2+12**2==13**2 and abs(5/13-math.sin(math.atan2(5,12)))<1e-9",
+   "figure": {
+    "kind": "geometry",
+    "params": {
+     "shape": "triangle",
+     "labels": {
+      "hypotenuse": "13 m (ramp)",
+      "vertical_leg": "5 m (support)",
+      "horizontal_leg": "12 m (floor)"
+     },
+     "marks": {
+      "right_angle": "between floor and support"
+     }
+    }
+   }
+  },
+  {
+   "n": 16,
+   "domain": "PSDA",
+   "skill": "Two-variable data: scatterplots and models",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 1,
+   "stem": "The scatterplot shows the weekly lettuce yield y, in kilograms, of an aquaponics farm x weeks after planting, along with the line of best fit y = 2.5x + 4. Based on the line of best fit, what is the predicted yield, in kilograms, 8 weeks after planting?",
+   "choices": [
+    "12",
+    "20",
+    "24",
+    "26.5"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Substitute x = 8 into the line of best fit: y = 2.5(8) + 4 = 20 + 4 = 24. Choice B uses the slope term only and forgets the intercept, and choice A adds 8 to the intercept instead of multiplying by the slope.",
+   "verify": "assert 2.5*8+4==24",
+   "figure": {
+    "kind": "scatter",
+    "params": {
+     "pts": [
+      [
+       1,
+       6
+      ],
+      [
+       2,
+       9.5
+      ],
+      [
+       3,
+       11
+      ],
+      [
+       4,
+       14.5
+      ],
+      [
+       5,
+       16
+      ],
+      [
+       6,
+       19.5
+      ],
+      [
+       7,
+       21.5
+      ]
+     ],
+     "xlabel": "Weeks after planting",
+     "ylabel": "Lettuce yield (kg)",
+     "line": {
+      "slope": 2.5,
+      "yint": 4
+     }
+    }
+   }
+  },
+  {
+   "n": 17,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (radical)",
+   "difficulty": "M",
+   "type": "spr",
+   "module": 1,
+   "stem": "What is the solution to the equation √(2x + 7) = 5?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "9",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Square both sides: 2x + 7 = 25, so 2x = 18 and x = 9. Checking, √(2·9 + 7) = √25 = 5, so the solution is not extraneous.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.solve(sp.sqrt(2*x+7)-5)==[9]; assert float('9')==9",
+   "figure": null
+  },
+  {
+   "n": 18,
+   "domain": "ALG",
+   "skill": "Linear equations in two variables (equation from two points)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 1,
+   "stem": "In the xy-plane, a line passes through the points (2, 5) and (6, 17). Which equation defines the line?",
+   "choices": [
+    "y = (1/3)x − 1",
+    "y = 3x + 1",
+    "y = 4x − 3",
+    "y = 3x − 1"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The slope is (17 − 5)/(6 − 2) = 12/4 = 3. Using (2, 5): 5 = 3(2) + b gives b = −1, so y = 3x − 1. Choice B has the wrong sign on the intercept, and choice A inverts the slope.",
+   "verify": "assert (17-5)/(6-2)==3 and 5==3*2-1 and 17==3*6-1",
+   "figure": null
+  },
+  {
+   "n": 19,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations (no solution)",
+   "difficulty": "H",
+   "type": "mc",
+   "module": 1,
+   "stem": "3x − 6y = 12\nax + 8y = −20\nIn the system above, a is a constant. For which value of a does the system have no solution?",
+   "choices": [
+    "−16",
+    "−4",
+    "4",
+    "16"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "A system has no solution when the lines are parallel: the coefficient ratios must satisfy a/3 = 8/(−6), so a = 3 · 8/(−6) = −4. With a = −4 the constant terms are not in the same ratio (12/(−20) ≠ 3/(−4)), so the lines are distinct and parallel.",
+   "verify": "import sympy as sp; x,y=sp.symbols('x y'); assert sp.solve([sp.Eq(3*x-6*y,12),sp.Eq(-4*x+8*y,-20)])==[]",
+   "figure": null
+  },
+  {
+   "n": 20,
+   "domain": "ADV",
+   "skill": "Nonlinear systems (tangency via discriminant)",
+   "difficulty": "H",
+   "type": "mc",
+   "module": 1,
+   "stem": "In the xy-plane, the graphs of y = x² and y = 2x + k intersect at exactly one point, where k is a constant. What is the value of k?",
+   "choices": [
+    "−1",
+    "0",
+    "1",
+    "2"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Setting x² = 2x + k gives x² − 2x − k = 0. Exactly one intersection requires the discriminant to be zero: (−2)² − 4(1)(−k) = 4 + 4k = 0, so k = −1. Then x² − 2x + 1 = (x − 1)² touches at the single point (1, 1).",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.discriminant(x**2-2*x-(-1),x)==0",
+   "figure": null
+  },
+  {
+   "n": 21,
+   "domain": "GEO",
+   "skill": "Circles (equation, completing the square)",
+   "difficulty": "H",
+   "type": "spr",
+   "module": 1,
+   "stem": "In the xy-plane, the equation x² + y² − 6x + 4y = 23 defines a circle. What is the radius of the circle?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "6",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Complete the square: (x² − 6x + 9) + (y² + 4y + 4) = 23 + 9 + 4, so (x − 3)² + (y + 2)² = 36. The radius is √36 = 6.",
+   "verify": "import sympy as sp; x,y=sp.symbols('x y'); assert sp.simplify((x**2+y**2-6*x+4*y-23)-((x-3)**2+(y+2)**2-36))==0; assert float('6')==6",
+   "figure": null
+  },
+  {
+   "n": 22,
+   "domain": "PSDA",
+   "skill": "Inference and margin of error",
+   "difficulty": "H",
+   "type": "mc",
+   "module": 1,
+   "stem": "A neighborhood solar co-op surveyed a random sample of 400 households in a city and found that 62% of the sampled households support building a shared solar array, with an associated margin of error of 4%. Which conclusion is the most appropriate based on these results?",
+   "choices": [
+    "Exactly 62% of all households in the city support building the array.",
+    "Surveying more households would have increased the percent who support the array.",
+    "The survey proves that a majority of households in every neighborhood of the city support the array.",
+    "It is plausible that between 58% and 66% of all households in the city support building the array."
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The margin of error gives a plausible range for the population percent: 62% ± 4%, or 58% to 66%. The sample statistic does not pin down the population value exactly (choice A), and the survey supports a citywide estimate, not a claim about every neighborhood (choice C).",
+   "verify": null,
+   "figure": null
+  },
+  {
+   "n": 23,
+   "domain": "ALG",
+   "skill": "Linear equations in two variables (intercepts)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 2,
+   "stem": "In the xy-plane, the graph of 3x + 5y = 30 crosses the x-axis at the point (a, 0). What is the value of a?",
+   "choices": [
+    "6",
+    "10",
+    "15",
+    "30"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "On the x-axis, y = 0, so 3a = 30 and a = 10. Choice A (6) is the y-intercept, found by setting x = 0 instead.",
+   "verify": "assert 3*10+5*0==30",
+   "figure": null
+  },
+  {
+   "n": 24,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (quadratic evaluation)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 2,
+   "stem": "The function f is defined by f(x) = x² − 3x. What is the value of f(−2)?",
+   "choices": [
+    "−10",
+    "−2",
+    "2",
+    "10"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Substitute x = −2: f(−2) = (−2)² − 3(−2) = 4 + 6 = 10. Choice B treats (−2)² as −4, and choice C computes 4 − 6 by mishandling the sign of −3(−2).",
+   "verify": "assert (-2)**2-3*(-2)==10",
+   "figure": null
+  },
+  {
+   "n": 25,
+   "domain": "PSDA",
+   "skill": "One-variable data (bar graph)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 2,
+   "stem": "The bar graph shows the number of books a used bookstore sold last month in each of four genres. How many more mystery books than science-fiction books were sold?",
+   "choices": [
+    "7",
+    "13",
+    "14",
+    "27"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "From the graph, 42 mystery books and 28 science-fiction books were sold, so the difference is 42 − 28 = 14. Choice A compares mystery with romance, and choice D compares mystery with poetry.",
+   "verify": "assert 42-28==14",
+   "figure": {
+    "kind": "bar",
+    "params": {
+     "labels": [
+      "Mystery",
+      "Romance",
+      "Sci-Fi",
+      "Poetry"
+     ],
+     "values": [
+      42,
+      35,
+      28,
+      15
+     ],
+     "xlabel": "Genre",
+     "ylabel": "Books sold"
+    }
+   }
+  },
+  {
+   "n": 26,
+   "domain": "GEO",
+   "skill": "Lines, angles, and triangles",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 2,
+   "stem": "The measures of the three interior angles of a triangle are x°, 2x°, and 3x°. What is the measure, in degrees, of the smallest angle?",
+   "choices": [
+    "30",
+    "60",
+    "90",
+    "120"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The angle measures sum to 180°: x + 2x + 3x = 6x = 180, so x = 30. The smallest angle measures 30°; choice C (90) is the largest angle.",
+   "verify": "assert 30+60+90==180 and min(30,60,90)==30",
+   "figure": null
+  },
+  {
+   "n": 27,
+   "domain": "ALG",
+   "skill": "Linear equations in one variable (variable on both sides)",
+   "difficulty": "E",
+   "type": "spr",
+   "module": 2,
+   "stem": "If 4x − 9 = 2x + 5, what is the value of x?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "7",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Subtract 2x from both sides to get 2x − 9 = 5, so 2x = 14 and x = 7.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.solve(sp.Eq(4*x-9,2*x+5))==[7]; assert float('7')==7",
+   "figure": null
+  },
+  {
+   "n": 28,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (choosing an exponential model)",
+   "difficulty": "E",
+   "type": "mc",
+   "module": 2,
+   "stem": "In its first year, a 3D-printing shop earned $5,000 in revenue, and its annual revenue has doubled every year since. Which function models the shop's revenue R(t), in dollars, t years after the first year?",
+   "choices": [
+    "R(t) = 5,000 + 2t",
+    "R(t) = 5,000t²",
+    "R(t) = 2(5,000)^t",
+    "R(t) = 5,000(2)^t"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Doubling every year is exponential growth with initial value 5,000 and growth factor 2, so R(t) = 5,000(2)^t. Choice A grows by a constant amount (linear), and choice C swaps the initial value with the growth factor.",
+   "verify": "assert 5000*2**0==5000 and (5000*2**3)/(5000*2**2)==2",
+   "figure": null
+  },
+  {
+   "n": 29,
+   "domain": "PSDA",
+   "skill": "One-variable data: center and spread (outlier effect)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 2,
+   "stem": "In a physics lab, a student records the time, in seconds, for a cart to travel down a track in each of 7 trials: 2.1, 2.2, 2.2, 2.3, 2.4, 2.5, 4.8. Which statement about these data is true?",
+   "choices": [
+    "The mean is less than the median.",
+    "The mean is equal to the median.",
+    "The relationship between the mean and the median cannot be determined.",
+    "The mean is greater than the median."
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The median is the middle value, 2.3, while the mean is 18.5/7 ≈ 2.64. The single large value 4.8 pulls the mean above the median, so the mean is greater.",
+   "verify": "import statistics as st; d=[2.1,2.2,2.2,2.3,2.4,2.5,4.8]; assert st.mean(d)>st.median(d)",
+   "figure": null
+  },
+  {
+   "n": 30,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations (substitution)",
+   "difficulty": "M",
+   "type": "spr",
+   "module": 2,
+   "stem": "3x + 2y = 21\nx = 2y − 1\nIf (x, y) is the solution to the system of equations above, what is the value of x?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "5",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Substitute x = 2y − 1 into the first equation: 3(2y − 1) + 2y = 21, so 8y − 3 = 21 and y = 3. Then x = 2(3) − 1 = 5.",
+   "verify": "import sympy as sp; x,y=sp.symbols('x y'); sol=sp.solve([sp.Eq(3*x+2*y,21),sp.Eq(x,2*y-1)]); assert sol[x]==5 and sol[y]==3; assert float('5')==5",
+   "figure": null
+  },
+  {
+   "n": 31,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (rational)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 2,
+   "stem": "If (x + 1)/(x − 3) = 5, what is the value of x?",
+   "choices": [
+    "−4",
+    "8/3",
+    "7/2",
+    "4"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Multiply both sides by (x − 3): x + 1 = 5x − 15, so 16 = 4x and x = 4. Checking, (4 + 1)/(4 − 3) = 5. Choice A comes from a sign error when moving the −15.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.solve(sp.Eq((x+1)/(x-3),5))==[4]",
+   "figure": null
+  },
+  {
+   "n": 32,
+   "domain": "GEO",
+   "skill": "Area and volume (cylinder)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 2,
+   "stem": "The cylindrical fish tank at an aquaponics farm has an inside radius of 3 feet and a height of 10 feet. What is the volume of the tank, in cubic feet?",
+   "choices": [
+    "30π",
+    "60π",
+    "90π",
+    "300π"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The volume of a cylinder is V = πr²h = π(3²)(10) = 90π cubic feet. Choice A forgets to square the radius, and choice B is the lateral surface area 2πrh.",
+   "verify": "import sympy as sp; assert sp.pi*3**2*10==90*sp.pi",
+   "figure": null
+  },
+  {
+   "n": 33,
+   "domain": "ALG",
+   "skill": "Linear inequalities in two variables",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 2,
+   "stem": "An airport shuttle company will send x sedans and y vans to pick up a large group. Each sedan can carry 3 passengers and each van can carry 7 passengers. Which inequality represents the numbers of sedans and vans that together can carry at least 42 passengers?",
+   "choices": [
+    "3x + 7y ≤ 42",
+    "3x + 7y ≥ 42",
+    "7x + 3y ≥ 42",
+    "7x + 3y ≤ 42"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The sedans carry 3x passengers and the vans carry 7y passengers, so the total is 3x + 7y, and \"at least 42\" means 3x + 7y ≥ 42. Choice A reverses the inequality, and choice C swaps the coefficients.",
+   "verify": null,
+   "figure": null
+  },
+  {
+   "n": 34,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (quadratic maximum)",
+   "difficulty": "M",
+   "type": "spr",
+   "module": 2,
+   "stem": "In a physics lab experiment, a ball is launched straight up, and its height, in feet, t seconds after launch is modeled by h(t) = −16t² + 64t. According to the model, what is the maximum height of the ball, in feet?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "64",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The vertex of h(t) = −16t² + 64t occurs at t = −64/(2 · (−16)) = 2 seconds. The maximum height is h(2) = −16(4) + 64(2) = −64 + 128 = 64 feet.",
+   "verify": "import sympy as sp; t=sp.symbols('t'); h=-16*t**2+64*t; tv=sp.solve(sp.diff(h,t))[0]; assert tv==2 and h.subs(t,2)==64; assert float('64')==64",
+   "figure": null
+  },
+  {
+   "n": 35,
+   "domain": "ADV",
+   "skill": "Equivalent expressions (squaring a binomial)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 2,
+   "stem": "Which expression is equivalent to (2x − 3)²?",
+   "choices": [
+    "4x² + 9",
+    "4x² − 9",
+    "4x² − 6x + 9",
+    "4x² − 12x + 9"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Expand: (2x − 3)² = (2x)² − 2(2x)(3) + 3² = 4x² − 12x + 9. Choice A drops the middle term entirely, and choice C uses −6x instead of doubling the product.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.expand((2*x-3)**2)==4*x**2-12*x+9",
+   "figure": null
+  },
+  {
+   "n": 36,
+   "domain": "ALG",
+   "skill": "Linear functions (perpendicular lines)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 2,
+   "stem": "In the xy-plane, line k is perpendicular to the graph of y = (2/5)x + 3 and passes through the point (0, −4). Which equation defines line k?",
+   "choices": [
+    "y = −(5/2)x − 4",
+    "y = −(2/5)x − 4",
+    "y = (2/5)x − 4",
+    "y = (5/2)x − 4"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "A perpendicular line has slope equal to the negative reciprocal of 2/5, which is −5/2. Since line k passes through (0, −4), its y-intercept is −4, so y = −(5/2)x − 4. Choice B only negates the slope without taking the reciprocal.",
+   "verify": "assert (2/5)*(-5/2)==-1.0 and -(5/2)*0-4==-4",
+   "figure": null
+  },
+  {
+   "n": 37,
+   "domain": "ADV",
+   "skill": "Nonlinear systems (line and parabola)",
+   "difficulty": "M",
+   "type": "mc",
+   "module": 2,
+   "stem": "In the xy-plane, the graphs of y = x² − 4 and y = 3x intersect at two points. What is the sum of the x-coordinates of the two points of intersection?",
+   "choices": [
+    "−3",
+    "−1",
+    "3",
+    "4"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Set x² − 4 = 3x, so x² − 3x − 4 = 0, which factors as (x − 4)(x + 1) = 0, giving x = 4 and x = −1. The sum is 4 + (−1) = 3, which also equals −b/a for the quadratic. Choices B and D are the individual solutions.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); r=sp.solve(sp.Eq(x**2-4,3*x)); assert set(r)=={4,-1} and sum(r)==3",
+   "figure": null
+  },
+  {
+   "n": 38,
+   "domain": "GEO",
+   "skill": "Right triangles (Pythagorean theorem)",
+   "difficulty": "M",
+   "type": "spr",
+   "module": 2,
+   "stem": "During a marathon training run, Amara cuts diagonally across a rectangular field that is 240 meters long and 100 meters wide, running in a straight line from one corner to the opposite corner. How many meters long is her diagonal path across the field?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "260",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The diagonal is the hypotenuse of a right triangle with legs 240 and 100. By the Pythagorean theorem, the diagonal is √(240² + 100²) = √(57,600 + 10,000) = √67,600 = 260 meters.",
+   "verify": "assert 240**2+100**2==260**2; assert float('260')==260",
+   "figure": null
+  },
+  {
+   "n": 39,
+   "domain": "ALG",
+   "skill": "Linear equations in one variable (infinitely many solutions)",
+   "difficulty": "H",
+   "type": "mc",
+   "module": 2,
+   "stem": "4(2x − 1) − 3x = 5x + k\nIn the equation above, k is a constant. If the equation has infinitely many solutions, what is the value of k?",
+   "choices": [
+    "−4",
+    "−1",
+    "0",
+    "4"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Simplify the left side: 8x − 4 − 3x = 5x − 4. The equation 5x − 4 = 5x + k holds for every x only when k = −4. Choice B uses the constant from inside the parentheses without distributing the 4.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); assert sp.simplify(4*(2*x-1)-3*x-(5*x-4))==0",
+   "figure": null
+  },
+  {
+   "n": 40,
+   "domain": "ADV",
+   "skill": "Nonlinear equations (quadratic, relation between roots)",
+   "difficulty": "H",
+   "type": "spr",
+   "module": 2,
+   "stem": "The equation x² + 10x + c = 0, where c is a constant, has two solutions that differ by 4. What is the value of c?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "21",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The solutions sum to −10, and they differ by 4, so they are −3 and −7. The constant c is their product: (−3)(−7) = 21, and indeed x² + 10x + 21 = (x + 3)(x + 7).",
+   "verify": "import sympy as sp; x=sp.symbols('x'); r=sorted(sp.solve(x**2+10*x+21)); assert r==[-7,-3] and r[1]-r[0]==4 and r[0]+r[1]==-10; assert float('21')==21",
+   "figure": null
+  },
+  {
+   "n": 41,
+   "domain": "PSDA",
+   "skill": "Percentages (successive percent change)",
+   "difficulty": "H",
+   "type": "mc",
+   "module": 2,
+   "stem": "A neighborhood solar co-op's monthly energy production increased by 20% from May to June and then decreased by 15% from June to July. How does the co-op's July production compare with its May production?",
+   "choices": [
+    "It increased by 5%.",
+    "It increased by 2%.",
+    "It is unchanged.",
+    "It decreased by 3%."
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Apply the changes multiplicatively: 1.20 · 0.85 = 1.02, so July production is 102% of May production, a 2% increase. Choice A incorrectly adds the percent changes (20% − 15% = 5%).",
+   "verify": "assert abs(1.20*0.85-1.02)<1e-9",
+   "figure": null
+  },
+  {
+   "n": 42,
+   "domain": "GEO",
+   "skill": "Right triangles and trigonometry (complementary angles)",
+   "difficulty": "H",
+   "type": "mc",
+   "module": 2,
+   "stem": "In a right triangle, the measures of the two acute angles are (2a)° and (3a + 10)°. If sin(2a)° = cos(3a + 10)°, what is the value of a?",
+   "choices": [
+    "−10",
+    "16",
+    "18",
+    "20"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The sine of an angle equals the cosine of its complement, so 2a + (3a + 10) = 90. Then 5a = 80 and a = 16. Choice A comes from setting the two angle measures equal to each other, and choice C forgets the 10 when summing to 90.",
+   "verify": "import math; assert 2*16+(3*16+10)==90 and abs(math.sin(math.radians(32))-math.cos(math.radians(58)))<1e-9",
+   "figure": null
+  },
+  {
+   "n": 43,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (quadratic model, zeros)",
+   "difficulty": "H",
+   "type": "mc",
+   "module": 2,
+   "stem": "A 3D-printing shop's monthly profit, in dollars, from selling x custom parts is modeled by P(x) = −2x² + 120x − 1,000. The shop breaks even when P(x) = 0. What is the larger of the two values of x at which the shop breaks even?",
+   "choices": [
+    "10",
+    "30",
+    "50",
+    "60"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Divide P(x) = 0 by −2 to get x² − 60x + 500 = 0, which factors as (x − 10)(x − 50) = 0, so x = 10 or x = 50; the larger is 50. Choice B (30) is the vertex, where profit is greatest, and choice D (60) is the sum of the two break-even values.",
+   "verify": "import sympy as sp; x=sp.symbols('x'); r=sp.solve(-2*x**2+120*x-1000); assert set(r)=={10,50} and max(r)==50",
+   "figure": null
+  },
+  {
+   "n": 44,
+   "domain": "ALG",
+   "skill": "Linear functions (rate from two data points)",
+   "difficulty": "H",
+   "type": "spr",
+   "module": 2,
+   "stem": "An airport shuttle service charges a fixed booking fee plus a constant rate for each mile driven. An 8-mile trip costs $20.50, and a 15-mile trip costs $32.75. What is the rate per mile, in dollars?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "1.75",
+   "equivalents": [
+    "7/4"
+   ],
+   "answer_any": null,
+   "explanation": "The 7 extra miles cost 32.75 − 20.50 = 12.25 dollars, so the rate per mile is 12.25/7 = 1.75 dollars. (The booking fee is then 20.50 − 8(1.75) = 6.50 dollars, consistent with both trips.)",
+   "verify": "import sympy as sp; f,m=sp.symbols('f m'); sol=sp.solve([sp.Eq(f+8*m,sp.Rational(2050,100)),sp.Eq(f+15*m,sp.Rational(3275,100))]); assert sol[m]==sp.Rational(7,4); assert abs(float('1.75')-float(sol[m]))<1e-12 and sp.Rational('7/4')==sol[m]",
+   "figure": null
+  }
+ ]
+}

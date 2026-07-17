@@ -1,0 +1,531 @@
+{
+ "week": 1,
+ "title": "Heart of Algebra",
+ "items": [
+  {
+   "n": 1,
+   "domain": "ALG",
+   "skill": "Linear equations in one variable",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "If 4x − 9 = 19, what is the value of x?",
+   "choices": [
+    "2.5",
+    "7",
+    "10",
+    "28"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Add 9 to both sides to get 4x = 28, then divide both sides by 4 to get x = 7. Choice A results from subtracting 9 instead of adding; choice C results from stopping at 19 − 9; choice D results from forgetting to divide by 4.",
+   "verify": "from sympy import *; x=symbols('x'); assert solve(Eq(4*x-9,19),x)==[7]",
+   "figure": null
+  },
+  {
+   "n": 2,
+   "domain": "ALG",
+   "skill": "Linear functions",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A streaming service charges a one-time sign-up fee plus a fixed monthly rate. The total cost C(m), in dollars, for the first m months of the subscription is given by C(m) = 9m + 15. What is the best interpretation of the number 9 in this context?",
+   "choices": [
+    "The one-time sign-up fee, in dollars",
+    "The total cost, in dollars, for the first month",
+    "The fixed monthly rate, in dollars",
+    "The number of months in the subscription"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "In C(m) = 9m + 15, the coefficient 9 is multiplied by the number of months m, so it is the amount added for each month: the fixed monthly rate. The constant 15 is the one-time sign-up fee (choice A), and C(1) = 24 is the total cost for the first month (choice B).",
+   "verify": null,
+   "figure": null
+  },
+  {
+   "n": 3,
+   "domain": "PSDA",
+   "skill": "Ratios, rates, proportional relationships & units",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A food delivery driver completed 12 deliveries in 3 hours. At this rate, how many deliveries will the driver complete in 8 hours?",
+   "choices": [
+    "32",
+    "4",
+    "24",
+    "96"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The rate is 12 ÷ 3 = 4 deliveries per hour, so in 8 hours the driver completes 4 × 8 = 32 deliveries. Choice B is the hourly rate itself, choice C doubles 12 instead of using the rate, and choice D multiplies 12 × 8 without dividing by 3.",
+   "verify": "assert 12/3*8==32",
+   "figure": null
+  },
+  {
+   "n": 4,
+   "domain": "ALG",
+   "skill": "Linear equations in two variables",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "In the xy-plane, the graph of the equation y = 2x − 6 crosses the x-axis at the point (a, 0). What is the value of a?",
+   "choices": [
+    "−6",
+    "−3",
+    "2",
+    "3"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The graph crosses the x-axis where y = 0, so set 0 = 2x − 6, giving 2x = 6 and x = 3. Choice A is the y-intercept, choice B is a sign slip on the intercept, and choice C is the slope.",
+   "verify": "from sympy import *; x=symbols('x'); assert solve(Eq(2*x-6,0),x)==[3]",
+   "figure": null
+  },
+  {
+   "n": 5,
+   "domain": "GEO",
+   "skill": "Area & volume",
+   "difficulty": "E",
+   "type": "spr",
+   "stem": "A plant nursery is building a rectangular garden bed with a length of 12 feet and a width of 7.5 feet. What is the area, in square feet, of the garden bed?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "90",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The area of a rectangle is length times width. Here the area is 12 × 7.5 = 90 square feet.",
+   "verify": "assert abs(12*7.5-90)<1e-9; vals=['90']; assert all(abs(float(v)-90)<1e-9 for v in vals)",
+   "figure": null
+  },
+  {
+   "n": 6,
+   "domain": "ALG",
+   "skill": "Linear inequalities in one variable",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "A gym membership requires a one-time enrollment fee of $20 plus $30 per month. Marcus can spend at most $200 in total on the membership. Which inequality gives all possible numbers of months m for which Marcus can afford the membership?",
+   "choices": [
+    "m ≤ 6",
+    "m ≥ 6",
+    "m ≤ 22/3",
+    "m ≤ 5"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The total cost is 30m + 20, and it must satisfy 30m + 20 ≤ 200. Subtracting 20 gives 30m ≤ 180, so m ≤ 6. Choice B reverses the inequality, choice C comes from adding the fee instead of subtracting it (220/30), and choice D comes from subtracting both the fee and one month's charge before dividing.",
+   "verify": "from sympy import *; m=symbols('m'); assert solveset(30*m+20<=200, m, S.Reals)==Interval(-oo,6)",
+   "figure": null
+  },
+  {
+   "n": 7,
+   "domain": "PSDA",
+   "skill": "Percentages",
+   "difficulty": "E",
+   "type": "mc",
+   "stem": "Students at a school fundraiser car wash washed 60 vehicles on Saturday. Of these vehicles, 45% were SUVs. How many of the vehicles washed on Saturday were SUVs?",
+   "choices": [
+    "15",
+    "27",
+    "33",
+    "45"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "45% of 60 is 0.45 × 60 = 27, so 27 of the vehicles were SUVs. Choice A subtracts 45 from 60, choice C is the number of vehicles that were NOT SUVs (55% of 60), and choice D treats the percent as a count.",
+   "verify": "assert abs(0.45*60-27)<1e-9",
+   "figure": null
+  },
+  {
+   "n": 8,
+   "domain": "ALG",
+   "skill": "Linear functions",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The function f is linear. If f(2) = 11 and f(5) = 26, what is the value of f(8)?",
+   "choices": [
+    "31",
+    "37",
+    "40",
+    "41"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The slope is (26 − 11)/(5 − 2) = 5, so f(x) = 5x + b. Using f(2) = 11 gives b = 1, so f(x) = 5x + 1 and f(8) = 41. Choice A adds the slope only once to 26, choice B adds the two outputs' difference incorrectly, and choice C computes 5 × 8 but forgets the constant term.",
+   "verify": "m=(26-11)/(5-2); b=11-m*2; assert m*8+b==41",
+   "figure": null
+  },
+  {
+   "n": 9,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "On a commuter train line, 2 adult tickets and 3 student tickets cost a total of $33, and 4 adult tickets and 2 student tickets cost a total of $46. What is the cost, in dollars, of 1 student ticket?",
+   "choices": [
+    "6.60",
+    "9",
+    "5",
+    "14"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Let a be the adult price and s the student price: 2a + 3s = 33 and 4a + 2s = 46. Doubling the first equation gives 4a + 6s = 66; subtracting the second gives 4s = 20, so s = 5 (and a = 9). Choice A divides $33 by 5 total tickets, choice B is the adult ticket price, and choice D is the cost of one adult plus one student ticket.",
+   "verify": "from sympy import *; a,s=symbols('a s'); sol=solve([Eq(2*a+3*s,33),Eq(4*a+2*s,46)],[a,s]); assert sol[s]==5 and sol[a]==9",
+   "figure": null
+  },
+  {
+   "n": 10,
+   "domain": "ADV",
+   "skill": "Equivalent expressions",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "Which expression is equivalent to (2x − 3)²?",
+   "choices": [
+    "4x² − 12x + 9",
+    "4x² + 9",
+    "4x² − 9",
+    "2x² − 12x + 9"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Expand: (2x − 3)² = (2x)² − 2(2x)(3) + 3² = 4x² − 12x + 9. Choice B forgets the middle term, choice C treats the square as a difference of squares, and choice D fails to square the coefficient 2.",
+   "verify": "from sympy import *; x=symbols('x'); assert expand((2*x-3)**2)==4*x**2-12*x+9",
+   "figure": null
+  },
+  {
+   "n": 11,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "If 3x + 2y = 25 and x − 2y = 7, what is the value of x?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "8",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Adding the two equations eliminates y: (3x + 2y) + (x − 2y) = 25 + 7, so 4x = 32 and x = 8.",
+   "verify": "from sympy import *; x,y=symbols('x y'); sol=solve([Eq(3*x+2*y,25),Eq(x-2*y,7)],[x,y]); assert sol[x]==8; vals=['8']; assert all(abs(float(v)-8)<1e-9 for v in vals)",
+   "figure": null
+  },
+  {
+   "n": 12,
+   "domain": "PSDA",
+   "skill": "Two-variable data: scatterplots & models",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The scatterplot shows the height, in centimeters, of each of 8 seedlings at a plant nursery plotted against its age, in weeks, along with a line of best fit. Based on the line of best fit, what is the predicted height, in centimeters, of a seedling that is 10 weeks old?",
+   "choices": [
+    "20",
+    "23",
+    "25",
+    "30"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The line of best fit has slope 2 and y-intercept 3, so the predicted height is h = 2(10) + 3 = 23 centimeters. Choice A uses the slope but omits the intercept, choice D swaps the slope and intercept (3 × 10), and choice C misreads the trend.",
+   "verify": "assert 2*10+3==23",
+   "figure": {
+    "kind": "scatter",
+    "params": {
+     "pts": [
+      [
+       1,
+       5
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       3,
+       9
+      ],
+      [
+       4,
+       10
+      ],
+      [
+       5,
+       13
+      ],
+      [
+       6,
+       14
+      ],
+      [
+       7,
+       16
+      ],
+      [
+       8,
+       19
+      ]
+     ],
+     "xlabel": "Age (weeks)",
+     "ylabel": "Height (cm)",
+     "line": {
+      "slope": 2,
+      "yint": 3
+     }
+    }
+   }
+  },
+  {
+   "n": 13,
+   "domain": "ALG",
+   "skill": "Linear equations in two variables",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The graph of line ℓ in the xy-plane is shown. Line ℓ passes through the points (0, 4) and (8, 0). Which equation defines line ℓ?",
+   "choices": [
+    "y = −2x + 4",
+    "y = (1/2)x + 4",
+    "y = −(1/2)x + 4",
+    "y = −(1/2)x − 4"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The slope is (0 − 4)/(8 − 0) = −1/2, and the y-intercept is 4, so the equation is y = −(1/2)x + 4. Choice A inverts the slope, choice B drops the negative sign, and choice D uses the wrong sign on the intercept.",
+   "verify": "from sympy import *; x=symbols('x'); f=-x/2+4; assert f.subs(x,0)==4 and f.subs(x,8)==0",
+   "figure": {
+    "kind": "fgraph",
+    "params": {
+     "expr": "-x/2 + 4",
+     "xmin": -10,
+     "xmax": 10,
+     "ymin": -10,
+     "ymax": 10
+    }
+   }
+  },
+  {
+   "n": 14,
+   "domain": "GEO",
+   "skill": "Lines, angles & triangles",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "The measures of the interior angles of a triangle are x°, 2x°, and 3x°. What is the measure, in degrees, of the largest interior angle of the triangle?",
+   "choices": [
+    "30",
+    "60",
+    "80",
+    "90"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The angle measures sum to 180°, so x + 2x + 3x = 180, giving 6x = 180 and x = 30. The largest angle is 3x = 90°. Choice A is x itself and choice B is the middle angle 2x.",
+   "verify": "from sympy import *; x=symbols('x'); s=solve(Eq(x+2*x+3*x,180),x)[0]; assert s==30 and 3*s==90",
+   "figure": null
+  },
+  {
+   "n": 15,
+   "domain": "ALG",
+   "skill": "Linear functions",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "A T-shirt printing company charges a one-time setup fee plus a fixed price per shirt. The table shows the total cost C(n), in dollars, to print n shirts for three order sizes. Which equation defines C(n)?",
+   "choices": [
+    "C(n) = 7.5n + 20",
+    "C(n) = 9.5n",
+    "C(n) = 7.5n",
+    "C(n) = 20n + 7.5"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The cost increases by 75 dollars for every 10 additional shirts, so the price per shirt is 7.50 and C(n) = 7.5n + b. Using C(10) = 95 gives b = 20, the setup fee, so C(n) = 7.5n + 20. Choice B divides 95 by 10 and treats the result as a per-shirt price with no fee, choice C omits the setup fee, and choice D swaps the fee and the per-shirt price.",
+   "verify": "assert all(7.5*n+20==c for n,c in [(10,95),(20,170),(30,245)])",
+   "figure": {
+    "kind": "table",
+    "params": {
+     "headers": [
+      "n (shirts)",
+      "C(n) (dollars)"
+     ],
+     "rows": [
+      [
+       "10",
+       "95"
+      ],
+      [
+       "20",
+       "170"
+      ],
+      [
+       "30",
+       "245"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "n": 16,
+   "domain": "ADV",
+   "skill": "Nonlinear equations",
+   "difficulty": "M",
+   "type": "spr",
+   "stem": "What is the sum of the solutions to the equation x² − 7x + 10 = 0?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "7",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Factoring gives (x − 2)(x − 5) = 0, so the solutions are x = 2 and x = 5. Their sum is 2 + 5 = 7 (equivalently, the sum of the roots of x² + bx + c = 0 is −b = 7).",
+   "verify": "from sympy import *; x=symbols('x'); r=solve(Eq(x**2-7*x+10,0),x); assert sum(r)==7; vals=['7']; assert all(abs(float(v)-7)<1e-9 for v in vals)",
+   "figure": null
+  },
+  {
+   "n": 17,
+   "domain": "ALG",
+   "skill": "Linear inequalities in two variables",
+   "difficulty": "M",
+   "type": "mc",
+   "stem": "Which ordered pair (x, y) satisfies both of the inequalities y ≤ −x + 5 and y > 2?",
+   "choices": [
+    "(4, 3)",
+    "(1, 3)",
+    "(1, 2)",
+    "(6, −1)"
+   ],
+   "answer": 1,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "For (1, 3): 3 ≤ −1 + 5 = 4 is true and 3 > 2 is true, so (1, 3) satisfies both. Choice A fails the first inequality (3 > 1), choice C fails the strict inequality y > 2, and choice D fails y > 2.",
+   "verify": "ok=lambda x,y: y<=-x+5 and y>2; assert ok(1,3) and not ok(4,3) and not ok(1,2) and not ok(6,-1)",
+   "figure": null
+  },
+  {
+   "n": 18,
+   "domain": "ALG",
+   "skill": "Systems of two linear equations",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "In the system of equations below, k is a constant.\n2x + 3y = 14\n4x + ky = 21\nFor which value of k does the system have no solution?",
+   "choices": [
+    "−6",
+    "3",
+    "6",
+    "8"
+   ],
+   "answer": 2,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The system has no solution when the lines are parallel: the left sides must be proportional but the right sides not. Since 4 = 2 × 2, we need k = 3 × 2 = 6; then 2(2x + 3y) = 28 ≠ 21, so the lines are parallel and distinct. Choice B copies the coefficient 3 without scaling, and choice A is a sign slip.",
+   "verify": "from sympy import *; x,y=symbols('x y'); assert linsolve([Eq(2*x+3*y,14),Eq(4*x+6*y,21)],x,y)==S.EmptySet",
+   "figure": null
+  },
+  {
+   "n": 19,
+   "domain": "GEO",
+   "skill": "Right triangles & trigonometry",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "In right triangle ABC shown, the right angle is at C. If sin A = 3/5, what is the value of tan B?",
+   "choices": [
+    "3/5",
+    "3/4",
+    "4/5",
+    "4/3"
+   ],
+   "answer": 3,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Since sin A = 3/5, the side opposite angle A can be taken as 3 and the hypotenuse as 5, so the remaining leg is √(25 − 9) = 4. Angle B is opposite the leg of length 4 and adjacent to the leg of length 3, so tan B = 4/3. Choice B is tan A, choice C is cos A (= sin B), and choice A is sin A itself.",
+   "verify": "from sympy import *; a,b,c=3,4,5; assert a**2+b**2==c**2 and Rational(a,c)==Rational(3,5) and Rational(b,a)==Rational(4,3)",
+   "figure": {
+    "kind": "geometry",
+    "params": {
+     "shape": "triangle",
+     "labels": {
+      "A": "A",
+      "B": "B",
+      "C": "C"
+     },
+     "marks": {
+      "right_angle_at": "C"
+     }
+    }
+   }
+  },
+  {
+   "n": 20,
+   "domain": "ADV",
+   "skill": "Nonlinear functions (exponential)",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "The function f is defined by f(x) = a·b^x, where a and b are positive constants. If f(0) = 5 and f(3) = 320, what is the value of b?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "4",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Since f(0) = a·b⁰ = a, we have a = 5. Then f(3) = 5b³ = 320, so b³ = 64 and b = 4.",
+   "verify": "from sympy import *; b=symbols('b',positive=True); assert solve(Eq(5*b**3,320),b)==[4]; vals=['4']; assert all(abs(float(v)-4)<1e-9 for v in vals)",
+   "figure": null
+  },
+  {
+   "n": 21,
+   "domain": "ALG",
+   "skill": "Linear equations in two variables",
+   "difficulty": "H",
+   "type": "spr",
+   "stem": "In the xy-plane, line j passes through the points (−2, 5) and (4, −7). Line k is parallel to line j and passes through the point (0, 1). If the point (3, y) is on line k, what is the value of y?",
+   "choices": null,
+   "answer": null,
+   "spr_answer": "-5",
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "The slope of line j is (−7 − 5)/(4 − (−2)) = −12/6 = −2, so line k also has slope −2. Since line k passes through (0, 1), its equation is y = −2x + 1. At x = 3, y = −2(3) + 1 = −5.",
+   "verify": "from sympy import *; m=Rational(-7-5,4-(-2)); assert m==-2; y=m*3+1; assert y==-5; vals=['-5']; assert all(abs(float(v)-(-5))<1e-9 for v in vals)",
+   "figure": null
+  },
+  {
+   "n": 22,
+   "domain": "ADV",
+   "skill": "Nonlinear equations & systems",
+   "difficulty": "H",
+   "type": "mc",
+   "stem": "In the xy-plane, the graph of y = x² − 4x + c, where c is a constant, intersects the line y = 2 at exactly one point. What is the value of c?",
+   "choices": [
+    "6",
+    "4",
+    "2",
+    "−6"
+   ],
+   "answer": 0,
+   "spr_answer": null,
+   "equivalents": [],
+   "answer_any": null,
+   "explanation": "Setting x² − 4x + c = 2 gives x² − 4x + (c − 2) = 0, which has exactly one solution when the discriminant is zero: 16 − 4(c − 2) = 0. Solving gives c − 2 = 4, so c = 6. Choice B forgets to add back the 2 from the line, choice C is the line's y-value, and choice D is a sign slip.",
+   "verify": "from sympy import *; c=symbols('c'); assert solve(Eq((-4)**2-4*(c-2),0),c)==[6]",
+   "figure": null
+  }
+ ]
+}
