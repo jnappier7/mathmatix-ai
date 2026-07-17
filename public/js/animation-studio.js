@@ -48,6 +48,11 @@
     playClock: 0,          // monotonic playback clock (never wraps) for life layers
     springs: {},           // spring state for follow-through preview
     springClock: null,
+    sequence: null,        // long-form composition: {base, duration, events[]}
+    seqPlay: null,         // active sequence preview: {start, audio?}
+    seqAudioBuf: null,     // decoded voiceover AudioBuffer
+    seqAudioFile: null,
+    seqAudioUrl: null,
   };
 
   const $ = (id) => document.getElementById(id);
@@ -66,6 +71,8 @@
     'exportModal', 'exportFraming', 'exportFps', 'exportBg', 'exportLoops', 'exportBase',
     'exportBlink', 'exportStatus', 'btnExportCancel', 'btnExportGo',
     'helpModal', 'btnHelpClose',
+    'seqBase', 'seqDuration', 'seqEvents', 'btnSeqAdd', 'seqAudio', 'seqAudioInfo',
+    'btnSeqLipsync', 'btnSeqPreview', 'btnSeqExport', 'seqStatus',
   ].forEach((id) => { els[id] = $(id); });
 
   // ------------------------------------------------------------- clip utils
@@ -186,16 +193,16 @@
     clearTimeout(S.dirtySaveTimer);
     S.dirtySaveTimer = setTimeout(() => {
       try {
-        localStorage.setItem(storageKey(), JSON.stringify({ clips: S.clips }));
+        localStorage.setItem(storageKey(), JSON.stringify({ clips: S.clips, sequence: S.sequence }));
       } catch { /* storage full — non-fatal */ }
     }, 400);
   }
 
-  function loadStoredClips() {
+  function loadStored() {
     try {
       const raw = localStorage.getItem(storageKey());
       if (!raw) return {};
-      return JSON.parse(raw).clips || {};
+      return JSON.parse(raw) || {};
     } catch { return {}; }
   }
 
@@ -233,7 +240,10 @@
     for (const [name, clip] of Object.entries(S.presets)) {
       S.clips[name] = JSON.parse(JSON.stringify(clip));
     }
-    Object.assign(S.clips, loadStoredClips());
+    const stored = loadStored();
+    Object.assign(S.clips, stored.clips || {});
+    S.sequence = stored.sequence
+      || { base: S.presets.idle ? 'idle' : null, duration: 75, events: [] };
     S.idleClip = S.presets.idle || S.clips.idle || null;
 
     selectClip(S.clips.idle ? 'idle' : Object.keys(S.clips)[0]);
@@ -539,10 +549,17 @@
       if (next !== undefined) renderPoseGhost(ctx, displayPose(next), 0.18);
     }
 
-    let pose = displayPose();
+    let pose;
+    if (S.seqPlay) {
+      const seqT = S.playClock - S.seqPlay.start;
+      pose = injectBlink(Core.evaluateSequence(S.sequence, S.clips, seqT), seqT);
+      if (seqT >= sequenceDuration()) stopSequencePreview();
+    } else {
+      pose = displayPose();
+    }
     // life layers run during playback only — editing shows the exact pose
     const rig = S.player.rig;
-    if (S.playing) {
+    if (S.playing || S.seqPlay) {
       if (els.microToggle.checked && rig.microMotion) {
         pose = Core.applyMicroMotion(rig, pose, S.playClock);
       }
@@ -563,7 +580,7 @@
 
   function drawSelection(ctx, pose) {
     const part = S.selectedPart;
-    if (!part || part === 'root' || S.playing) return;
+    if (!part || part === 'root' || S.playing || S.seqPlay) return;
     const rig = S.player.rig;
     const def = rig.parts[part];
     if (!def) return;
@@ -922,6 +939,7 @@
 
   // ------------------------------------------------------------ transport --
   function setPlaying(on) {
+    if (on) stopSequencePreview();
     S.playing = on;
     els.btnPlay.textContent = on ? '⏸' : '▶';
     if (on && !S.clip.loop && S.time >= S.clip.duration - EPS) S.time = 0;
@@ -964,14 +982,16 @@
     requestAnimationFrame(frame);
     const dt = lastTs ? Math.min(0.1, (ts - lastTs) / 1000) : 0;
     lastTs = ts;
+    if (S.playing || S.seqPlay) {
+      S.playClock += dt; // never wraps — feeds the life layers + sequence clock
+      needsUiRefresh = true;
+    }
     if (S.playing) {
       S.time += dt;
-      S.playClock += dt; // never wraps — feeds the life layers
       if (S.time > S.clip.duration) {
         if (S.clip.loop) S.time %= S.clip.duration;
         else { S.time = S.clip.duration; setPlaying(false); }
       }
-      needsUiRefresh = true;
     }
     renderViewport();
     if (needsUiRefresh) {
@@ -1119,6 +1139,310 @@
     a.download = filename;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 30000);
+  }
+
+  // ------------------------------------------------ sequencer (long video) --
+  // A sequence is a looping base clip with clips scheduled on top plus an
+  // optional voiceover — this is how 60–90s explainer videos are made.
+
+  function injectBlink(pose, t) {
+    if (pose['slots.eye_L'] !== undefined || pose['slots.eye_R'] !== undefined) return pose;
+    const phase = (t - 1.2) % 2.8; // deterministic: 140ms every 2.8s
+    if (t >= 1.2 && phase >= 0 && phase < 0.14) {
+      return { ...pose, 'slots.eye_L': 'closed', 'slots.eye_R': 'closed' };
+    }
+    return pose;
+  }
+
+  function sequenceDuration() {
+    const audio = S.seqAudioBuf ? S.seqAudioBuf.duration : 0;
+    return Math.max(S.sequence.duration || 0, audio);
+  }
+
+  function buildSequencer() {
+    const names = Object.keys(S.clips).sort();
+    // base select
+    els.seqBase.innerHTML = '';
+    for (const name of names) {
+      const opt = document.createElement('option');
+      opt.value = name; opt.textContent = name;
+      if (name === S.sequence.base) opt.selected = true;
+      els.seqBase.appendChild(opt);
+    }
+    if (els.seqDuration !== document.activeElement) {
+      els.seqDuration.value = S.sequence.duration;
+    }
+    // event rows
+    els.seqEvents.innerHTML = '';
+    S.sequence.events.forEach((ev, i) => {
+      const row = document.createElement('div');
+      row.className = 'seq-event';
+      const tIn = document.createElement('input');
+      tIn.type = 'number'; tIn.step = '0.1'; tIn.min = '0'; tIn.value = ev.t;
+      tIn.title = 'Start time (s)';
+      tIn.addEventListener('change', () => {
+        const v = parseFloat(tIn.value);
+        if (Number.isFinite(v) && v >= 0) { ev.t = v; scheduleSave(); }
+      });
+      const clipSel = document.createElement('select');
+      for (const name of names) {
+        const opt = document.createElement('option');
+        opt.value = name; opt.textContent = name;
+        if (name === ev.clip) opt.selected = true;
+        clipSel.appendChild(opt);
+      }
+      clipSel.addEventListener('change', () => {
+        ev.clip = clipSel.value;
+        scheduleSave();
+        buildSequencer(); // until-field enablement may change
+      });
+      const untilIn = document.createElement('input');
+      untilIn.type = 'number'; untilIn.step = '0.1'; untilIn.min = '0';
+      untilIn.placeholder = 'until';
+      untilIn.title = 'End time for looping clips (s)';
+      const clip = S.clips[ev.clip];
+      untilIn.disabled = !(clip && clip.loop);
+      if (ev.until !== undefined) untilIn.value = ev.until;
+      untilIn.addEventListener('change', () => {
+        const v = parseFloat(untilIn.value);
+        if (Number.isFinite(v) && v > ev.t) ev.until = v;
+        else delete ev.until;
+        scheduleSave();
+      });
+      const rm = document.createElement('button');
+      rm.className = 'rm'; rm.textContent = '✕';
+      rm.addEventListener('click', () => {
+        S.sequence.events.splice(i, 1);
+        scheduleSave();
+        buildSequencer();
+      });
+      row.append(tIn, clipSel, untilIn, rm);
+      els.seqEvents.appendChild(row);
+    });
+    els.seqAudioInfo.textContent = S.seqAudioBuf
+      ? `${S.seqAudioFile.name} — ${S.seqAudioBuf.duration.toFixed(1)}s`
+      : 'No voiceover loaded.';
+  }
+
+  function stopSequencePreview() {
+    if (!S.seqPlay) return;
+    if (S.seqPlay.audio) S.seqPlay.audio.pause();
+    S.seqPlay = null;
+    els.btnSeqPreview.textContent = '▶ Preview sequence';
+    refreshSoon();
+  }
+
+  function toggleSequencePreview() {
+    if (S.seqPlay) { stopSequencePreview(); return; }
+    setPlaying(false);
+    S.seqPlay = { start: S.playClock };
+    if (S.seqAudioUrl) {
+      S.seqPlay.audio = new Audio(S.seqAudioUrl);
+      S.seqPlay.audio.play().catch(() => { /* autoplay policies — visuals still run */ });
+    }
+    els.btnSeqPreview.textContent = '■ Stop preview';
+  }
+
+  async function loadSeqAudio(file) {
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      S.seqAudioBuf = await actx.decodeAudioData(await file.arrayBuffer());
+      S.seqAudioFile = file;
+      if (S.seqAudioUrl) URL.revokeObjectURL(S.seqAudioUrl);
+      S.seqAudioUrl = URL.createObjectURL(file);
+      if (S.seqAudioBuf.duration > S.sequence.duration) {
+        S.sequence.duration = Math.ceil(S.seqAudioBuf.duration);
+        scheduleSave();
+      }
+      els.seqStatus.textContent = '';
+    } catch {
+      els.seqStatus.textContent = 'Could not decode that audio file.';
+    } finally {
+      actx.close();
+      buildSequencer();
+    }
+  }
+
+  function generateLipSync() {
+    if (!S.seqAudioBuf) {
+      els.seqStatus.textContent = 'Load a voiceover first.';
+      return;
+    }
+    const buf = S.seqAudioBuf;
+    const hopSec = 0.03;
+    const hop = Math.max(1, Math.round(buf.sampleRate * hopSec));
+    const channels = [];
+    for (let c = 0; c < buf.numberOfChannels; c++) channels.push(buf.getChannelData(c));
+    const windows = Math.floor(buf.length / hop);
+    const rms = new Array(windows);
+    for (let w = 0; w < windows; w++) {
+      let sum = 0;
+      for (const data of channels) {
+        for (let i = w * hop; i < (w + 1) * hop; i++) sum += data[i] * data[i];
+      }
+      rms[w] = Math.sqrt(sum / (hop * channels.length));
+    }
+    const keys = Core.lipSyncFromRms(rms, hopSec);
+    if (!keys.length) {
+      els.seqStatus.textContent = 'No speech detected in the audio.';
+      return;
+    }
+    S.clips.lipsync = {
+      name: 'lipsync',
+      duration: Math.ceil(buf.duration * 10) / 10,
+      loop: false,
+      fps: 30,
+      tracks: { 'slots.mouth': keys },
+    };
+    if (!S.sequence.events.some((ev) => ev.clip === 'lipsync')) {
+      S.sequence.events.push({ clip: 'lipsync', t: 0 });
+    }
+    scheduleSave();
+    buildClipSelect();
+    buildSequencer();
+    const flaps = keys.filter((k) => k.v === 'ah').length;
+    els.seqStatus.textContent = `Lip-sync generated: ${flaps} mouth flaps over ${buf.duration.toFixed(1)}s.`;
+  }
+
+  async function exportSequence() {
+    if (exporting) return;
+    const errors = Core.validateSequence(S.sequence, S.clips);
+    if (errors.length) {
+      els.seqStatus.textContent = 'Fix sequence first: ' + errors[0];
+      return;
+    }
+    const rig = S.player.rig;
+    const framing = rig.framings[els.framingSelect.value]
+      || { width: rig.canvas[0], height: rig.canvas[1], view: [0, 0, rig.canvas[0], rig.canvas[1]] };
+    const outFps = 30;
+    const duration = sequenceDuration();
+    const bg = S.background === 'checker' ? '#ffffff' : S.background;
+    const wantAudio = !!S.seqAudioBuf;
+
+    const candidates = wantAudio
+      ? ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm']
+      : ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+    const mime = candidates.find((m) => window.MediaRecorder && MediaRecorder.isTypeSupported(m));
+    if (!mime) {
+      els.seqStatus.textContent = 'MediaRecorder WebM is not supported in this browser.';
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = framing.width; canvas.height = framing.height;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    const ss = document.createElement('canvas');
+    ss.width = framing.width * 2; ss.height = framing.height * 2;
+    const ssCtx = ss.getContext('2d');
+    const savedView = [...S.player.view];
+    S.player.view = [...framing.view];
+
+    exporting = true;
+    els.btnSeqExport.disabled = true;
+    stopSequencePreview();
+
+    const stream = canvas.captureStream(0);
+    const track = stream.getVideoTracks()[0];
+    let audioEl = null; let actx = null;
+    if (wantAudio) {
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      audioEl = new Audio(S.seqAudioUrl);
+      const src = actx.createMediaElementSource(audioEl);
+      const dest = actx.createMediaStreamDestination();
+      src.connect(dest); // recorder-only; not routed to speakers
+      stream.addTrack(dest.stream.getAudioTracks()[0]);
+      await actx.resume();
+    }
+    const recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 8_000_000 });
+    const chunks = [];
+    recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    const done = new Promise((resolve) => { recorder.onstop = resolve; });
+
+    const springs = Core.newSpringState();
+    const poseAt = (t, dt) => {
+      let pose = injectBlink(Core.evaluateSequence(S.sequence, S.clips, t), t);
+      pose = Core.applyMicroMotion(rig, pose, t);
+      pose = Core.stepSecondaryMotion(rig, pose, springs, dt);
+      return pose;
+    };
+
+    recorder.start();
+    if (audioEl) audioEl.play();
+    // Wall-clock-driven loop: the audio plays in real time, so frames are
+    // rendered for "now" rather than a fixed grid — a machine that can't
+    // hit 30fps drops frames but stays in sync, and the loop ALWAYS yields
+    // so the tab never freezes.
+    const t0 = performance.now();
+    const frameMs = 1000 / outFps;
+    let prevT = null;
+    let lastStatus = -1;
+    for (;;) {
+      const t = Math.min((performance.now() - t0) / 1000, duration);
+      const dt = prevT === null ? 1 / outFps : Math.max(0.001, t - prevT);
+      prevT = t;
+      ssCtx.setTransform(1, 0, 0, 1, 0, 0);
+      ssCtx.fillStyle = bg;
+      ssCtx.fillRect(0, 0, ss.width, ss.height);
+      S.player.draw(ssCtx, poseAt(t, dt), { clear: false });
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.drawImage(ss, 0, 0, canvas.width, canvas.height);
+      track.requestFrame();
+      if (t - lastStatus >= 0.5) {
+        lastStatus = t;
+        els.seqStatus.textContent = `Rendering ${t.toFixed(1)}s / ${duration.toFixed(1)}s…`;
+      }
+      if (t >= duration) break;
+      const sincePrev = (performance.now() - t0) % frameMs;
+      await new Promise((r) => setTimeout(r, Math.max(4, frameMs - sincePrev)));
+    }
+    if (audioEl) audioEl.pause();
+    recorder.stop();
+    await done;
+    if (actx) actx.close();
+    S.player.view = savedView;
+    exporting = false;
+    els.btnSeqExport.disabled = false;
+
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    downloadBlob(blob, `${S.rigId}_sequence.webm`);
+    els.seqStatus.textContent =
+      `Done — ${(blob.size / 1024 / 1024).toFixed(1)} MB, ${duration.toFixed(1)}s`
+      + `${wantAudio ? ' with audio' : ''} (${mime.includes('vp9') ? 'VP9' : 'VP8'}).`;
+  }
+
+  function bindSequencer() {
+    buildSequencer();
+    els.seqBase.addEventListener('change', () => {
+      S.sequence.base = els.seqBase.value;
+      scheduleSave();
+    });
+    els.seqDuration.addEventListener('change', () => {
+      const v = parseFloat(els.seqDuration.value);
+      if (Number.isFinite(v) && v > 0) { S.sequence.duration = v; scheduleSave(); }
+    });
+    els.btnSeqAdd.addEventListener('click', () => {
+      const last = S.sequence.events[S.sequence.events.length - 1];
+      const names = Object.keys(S.clips).sort();
+      S.sequence.events.push({
+        clip: names.includes('wave') ? 'wave' : names[0],
+        t: last ? Math.round((last.t + 3) * 10) / 10 : 2,
+      });
+      scheduleSave();
+      buildSequencer();
+    });
+    els.seqAudio.addEventListener('change', () => {
+      const file = els.seqAudio.files[0];
+      if (file) loadSeqAudio(file);
+    });
+    els.btnSeqLipsync.addEventListener('click', generateLipSync);
+    els.btnSeqPreview.addEventListener('click', toggleSequencePreview);
+    els.btnSeqExport.addEventListener('click', () => exportSequence().catch((e) => {
+      exporting = false;
+      els.btnSeqExport.disabled = false;
+      els.seqStatus.textContent = 'Export failed: ' + e.message;
+    }));
   }
 
   // --------------------------------------------------------------- UI wiring
@@ -1332,6 +1656,8 @@
         if (ev.shiftKey) redo(); else undo();
       }
     });
+
+    bindSequencer();
 
     new ResizeObserver(refreshSoon).observe(els.viewportHost);
     new ResizeObserver(refreshSoon).observe(els.timelineHost);

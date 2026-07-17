@@ -68,6 +68,28 @@ rig packages, and export them as WebM videos (the tutor-cam format in
    — drop the WebM next to the existing tutor videos in `public/videos/`. Video and
    PNG exports render at 2× and downscale for crisper edges.
 
+## Sequences — 60–90s (and longer) videos
+
+Clips are seconds long; full videos are **sequences**: a looping base clip with
+clips scheduled on top, plus an optional voiceover. The right-panel
+**Sequence · long video** section drives it:
+
+- Pick a base loop (usually `idle`) and a duration (no upper limit in the
+  engine; UI caps at 600s).
+- Schedule clip events: start time per event, and an `until` bound for looping
+  clips (`talk` from 5s to 12s). One-shots (`wave`, `nod`) just play once.
+- Load a voiceover audio file (e.g. a Cartesia TTS export) and click
+  **Generate lip-sync** — the studio RMS-analyzes the audio and builds a
+  `lipsync` clip (auto-thresholded, hysteresis, long holds split into flaps)
+  scheduled at 0:00. Regenerate any time; tweak it like any other clip.
+- **Preview sequence** plays the whole composition with audio in the viewport;
+  **Export sequence video** renders a WebM with the voiceover muxed in
+  (VP9+Opus). The export loop is wall-clock-driven: machines that can't render
+  30fps drop frames but stay in audio sync, and the tab never blocks.
+
+Sequence JSON evaluates through `RigCore.evaluateSequence(seq, clips, t)`, so
+the runtime can play the same composition live later.
+
 ## The life layers (what makes it not look like a puppet)
 
 Two procedural layers run during playback and export (viewport toggles

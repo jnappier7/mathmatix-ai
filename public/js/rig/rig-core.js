@@ -406,6 +406,109 @@
     return out;
   }
 
+  // ------------------------------------------------------ sequences --------
+  // A sequence is a long-form composition: a looping base clip with clips
+  // scheduled on top, e.g. a 90s explainer (idle + talk 4–12s + wave at 2s).
+  //   { name, duration, base: 'idle',
+  //     events: [{ clip, t, until? }] }   — `until` bounds LOOPING clips;
+  //                                         one-shots always play once.
+  // Evaluation is pure layering: base first, events in array order on top.
+  function evaluateSequence(seq, clipsByName, t) {
+    let pose = {};
+    const base = seq && seq.base && clipsByName[seq.base];
+    if (base) pose = sampleClip(base, t);
+    if (!seq || !seq.events) return pose;
+    for (const ev of seq.events) {
+      const clip = clipsByName[ev.clip];
+      if (!clip) continue;
+      const local = t - ev.t;
+      if (local < 0) continue;
+      const dur = clipDuration(clip);
+      const active = clip.loop
+        ? t < (ev.until !== undefined ? ev.until : ev.t + dur)
+        : local <= dur;
+      if (active) pose = composePose(pose, sampleClip(clip, local));
+    }
+    return pose;
+  }
+
+  function validateSequence(seq, clipsByName) {
+    const errors = [];
+    if (!seq || typeof seq !== 'object') return ['sequence is not an object'];
+    if (!(Number.isFinite(seq.duration) && seq.duration > 0)) {
+      errors.push('sequence.duration must be a positive number');
+    }
+    if (seq.base && !clipsByName[seq.base]) errors.push(`unknown base clip: ${seq.base}`);
+    for (const [i, ev] of (seq.events || []).entries()) {
+      if (!clipsByName[ev.clip]) errors.push(`event ${i}: unknown clip "${ev.clip}"`);
+      if (!Number.isFinite(ev.t) || ev.t < 0) errors.push(`event ${i}: bad start time`);
+      if (ev.until !== undefined && !(Number.isFinite(ev.until) && ev.until > ev.t)) {
+        errors.push(`event ${i}: until must be after t`);
+      }
+    }
+    return errors;
+  }
+
+  // ------------------------------------------------------- lip sync --------
+  // Turn a windowed RMS envelope of a voiceover into a slots.mouth track.
+  // rms: array of per-window RMS values; windowSec: seconds per window.
+  // Auto-thresholds from the envelope (noise floor → speech), applies
+  // hysteresis, drops blips, and splits long holds into flaps so sustained
+  // speech reads as talking rather than a frozen open mouth.
+  function lipSyncFromRms(rms, windowSec, opts = {}) {
+    if (!rms || rms.length === 0) return [];
+    const sorted = [...rms].sort((a, b) => a - b);
+    const q = (p) => sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
+    const floor = q(0.2);
+    const peak = q(0.95);
+    if (peak - floor < 1e-6) return []; // silence or constant tone
+    const open = opts.threshold !== undefined ? opts.threshold : floor + 0.22 * (peak - floor);
+    const close = open * (opts.hysteresis !== undefined ? opts.hysteresis : 0.7);
+    const minOpen = opts.minOpen !== undefined ? opts.minOpen : 0.06;
+    const minClose = opts.minClose !== undefined ? opts.minClose : 0.05;
+    const maxHold = opts.maxHold !== undefined ? opts.maxHold : 0.28;
+    const flapGap = opts.flapGap !== undefined ? opts.flapGap : 0.07;
+
+    // 1. raw open/close spans with hysteresis
+    const spans = [];
+    let openAt = null;
+    for (let i = 0; i < rms.length; i++) {
+      const t = i * windowSec;
+      if (openAt === null && rms[i] >= open) openAt = t;
+      else if (openAt !== null && rms[i] < close) { spans.push([openAt, t]); openAt = null; }
+    }
+    if (openAt !== null) spans.push([openAt, rms.length * windowSec]);
+
+    // 2. merge tiny gaps, drop tiny blips
+    const merged = [];
+    for (const span of spans) {
+      const last = merged[merged.length - 1];
+      if (last && span[0] - last[1] < minClose) last[1] = span[1];
+      else merged.push([...span]);
+    }
+    const clean = merged.filter(([a, b]) => b - a >= minOpen);
+
+    // 3. split sustained spans into flaps, emit step keys
+    const keys = [];
+    let cursor = 0; // last emitted state end; rest is implicit before first key
+    for (const [a, b] of clean) {
+      if (keys.length === 0 || a > cursor) keys.push({ t: a, v: 'ah', e: 'step' });
+      else keys.push({ t: cursor, v: 'ah', e: 'step' });
+      let pos = a;
+      while (b - pos > maxHold + flapGap + minOpen) {
+        pos += maxHold;
+        keys.push({ t: pos, v: 'rest', e: 'step' });
+        pos += flapGap;
+        keys.push({ t: pos, v: 'ah', e: 'step' });
+      }
+      keys.push({ t: b, v: 'rest', e: 'step' });
+      cursor = b;
+    }
+    // ensure the track starts closed if speech starts late
+    if (keys.length && keys[0].t > 0.01) keys.unshift({ t: 0, v: 'rest', e: 'step' });
+    return keys;
+  }
+
   return {
     CHANNELS,
     CHANNEL_DEFAULTS,
@@ -434,5 +537,8 @@
     stepSecondaryMotion,
     applyMicroMotion,
     solveIK,
+    evaluateSequence,
+    validateSequence,
+    lipSyncFromRms,
   };
 });
