@@ -1604,7 +1604,11 @@
         const g = segments[i].gesture;
         if (g === 'none' || !S.clips[g]) continue;
         const ev = { clip: g, t: Math.round(starts[i] * 10) / 10 };
-        if (S.clips[g].loop) ev.until = Math.round((starts[i] + 3.5) * 10) / 10;
+        if (S.clips[g].loop) {
+          // looping gestures (thinking, explain) run for their whole segment
+          const segEnd = i + 1 < starts.length ? starts[i + 1] : total / rate;
+          ev.until = Math.round(segEnd * 10) / 10;
+        }
         events.push(ev);
       }
       S.sequence.base = S.clips.idle ? 'idle' : S.sequence.base;

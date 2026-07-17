@@ -1,0 +1,160 @@
+{
+  "name": "present",
+  "duration": 2.4,
+  "loop": false,
+  "fps": 30,
+  "tracks": {
+    "upper_arm_L.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.4,
+        "v": -45,
+        "e": "linear"
+      },
+      {
+        "t": 1.9,
+        "v": -42,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 2.4,
+        "v": 0
+      }
+    ],
+    "forearm_L.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.4,
+        "v": -18,
+        "e": "linear"
+      },
+      {
+        "t": 1.9,
+        "v": -16,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 2.4,
+        "v": 0
+      }
+    ],
+    "hand_L.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "outCubic"
+      },
+      {
+        "t": 0.4,
+        "v": -35,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.65,
+        "v": -22,
+        "e": "inOutSine"
+      },
+      {
+        "t": 1.9,
+        "v": -24,
+        "e": "inOutCubic"
+      },
+      {
+        "t": 2.4,
+        "v": 0
+      }
+    ],
+    "torso.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.45,
+        "v": 1.2,
+        "e": "linear"
+      },
+      {
+        "t": 1.9,
+        "v": 1,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.4,
+        "v": 0
+      }
+    ],
+    "head.rotation": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.45,
+        "v": 2,
+        "e": "linear"
+      },
+      {
+        "t": 1.9,
+        "v": 1.8,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.4,
+        "v": 0
+      }
+    ],
+    "eye_L.x": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.45,
+        "v": 3,
+        "e": "linear"
+      },
+      {
+        "t": 1.8,
+        "v": 3,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.3,
+        "v": 0
+      }
+    ],
+    "eye_R.x": [
+      {
+        "t": 0,
+        "v": 0,
+        "e": "inOutSine"
+      },
+      {
+        "t": 0.45,
+        "v": 3,
+        "e": "linear"
+      },
+      {
+        "t": 1.8,
+        "v": 3,
+        "e": "inOutSine"
+      },
+      {
+        "t": 2.3,
+        "v": 0
+      }
+    ]
+  }
+}

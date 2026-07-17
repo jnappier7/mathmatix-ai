@@ -24,7 +24,7 @@ function isTeacherOrAdmin(req, res, next) {
   return res.status(403).json({ success: false, message: 'Forbidden: Teachers or admins only.' });
 }
 
-const GESTURES = ['none', 'wave', 'nod', 'thinking', 'celebrate'];
+const GESTURES = ['none', 'wave', 'nod', 'thinking', 'celebrate', 'point', 'point_up', 'present', 'tap', 'explain'];
 
 const SCRIPT_FORMAT = {
   type: 'json_schema',
@@ -84,9 +84,12 @@ router.post('/script', isTeacherOrAdmin, async (req, res) => {
         + 'The narration is read aloud by a text-to-speech voice, so: no stage directions, no '
         + 'markdown, no LaTeX — spell out math in words (say "three fourths", not "3/4"). '
         + 'Return 5 to 8 segments. Each segment is a few sentences of narration plus one gesture '
-        + 'cue for the animated character: "wave" only on the greeting segment, "thinking" when '
-        + 'posing a question to the viewer, "nod" for affirmations, "celebrate" only on the final '
-        + 'wrap-up segment, otherwise "none".',
+        + 'cue for the animated character: "wave" only on the greeting segment; "present" when '
+        + 'introducing the example or problem; "point" when directing attention to the work '
+        + '("look at this step"); "tap" for emphasis on a specific detail; "point_up" for the one '
+        + 'key tip or rule; "thinking" when posing a question to the viewer; "nod" for '
+        + 'affirmations; "explain" for a longer stretch of instruction; "celebrate" only on the '
+        + 'final wrap-up segment; otherwise "none".',
     },
     {
       role: 'user',

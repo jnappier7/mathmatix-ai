@@ -1,3 +1,16 @@
 {
-  "clips": ["idle", "talk", "celebrate", "wave", "nod", "thinking", "accent"]
+  "clips": [
+    "idle",
+    "talk",
+    "celebrate",
+    "wave",
+    "nod",
+    "thinking",
+    "accent",
+    "point",
+    "point_up",
+    "present",
+    "tap",
+    "explain"
+  ]
 }
