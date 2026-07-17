@@ -73,6 +73,8 @@
     'helpModal', 'btnHelpClose',
     'seqBase', 'seqDuration', 'seqEvents', 'btnSeqAdd', 'seqAudio', 'seqAudioInfo',
     'btnSeqLipsync', 'btnSeqPreview', 'btnSeqExport', 'seqStatus',
+    'prodTopic', 'prodGrade', 'prodLength', 'prodTutor', 'btnProdScript',
+    'prodScript', 'btnProdAssemble', 'prodStatus',
   ].forEach((id) => { els[id] = $(id); });
 
   // ------------------------------------------------------------- clip utils
@@ -1412,6 +1414,171 @@
       + `${wantAudio ? ' with audio' : ''} (${mime.includes('vp9') ? 'VP9' : 'VP8'}).`;
   }
 
+  // --------------------------------------------- producer (topic → video) --
+  // The Agent-Opus-style flow: topic → LLM script (server, tutor persona) →
+  // per-segment TTS in the tutor's voice → stitched voiceover → lip-sync →
+  // gestures scheduled at segment starts → ready to preview/export.
+
+  function csrfToken() {
+    const m = document.cookie.match(/(?:^|;\s*)_csrf=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  async function api(path, body) {
+    const opts = { credentials: 'same-origin' };
+    if (body !== undefined) {
+      opts.method = 'POST';
+      opts.headers = { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken() };
+      opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(path, opts);
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('Not authorized — log in as a teacher/admin at /login.html in this tab, then retry.');
+    }
+    if (!res.ok) {
+      let msg = 'Request failed (' + res.status + ')';
+      try { msg = (await res.json()).message || msg; } catch { /* non-JSON */ }
+      throw new Error(msg);
+    }
+    return res;
+  }
+
+  const scriptToText = (segments) => segments
+    .map((s) => `${s.gesture} | ${s.text}`).join('\n');
+
+  function textToSegments(text) {
+    return text.split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const m = /^([a-z]+)\s*\|\s*(.+)$/.exec(line);
+        return m ? { gesture: m[1], text: m[2] } : { gesture: 'none', text: line };
+      })
+      .filter((s) => s.text.length > 0);
+  }
+
+  async function producerInit() {
+    try {
+      const res = await api('/api/animation-studio/tutors');
+      const { tutors } = await res.json();
+      els.prodTutor.innerHTML = '';
+      for (const t of tutors) {
+        const opt = document.createElement('option');
+        opt.value = t.voiceId;
+        opt.dataset.tutorId = t.id;
+        opt.textContent = t.name;
+        if (t.id === 'mr-nappier') opt.selected = true;
+        els.prodTutor.appendChild(opt);
+      }
+    } catch (e) {
+      els.prodStatus.textContent = e.message;
+    }
+  }
+
+  async function producerScript() {
+    const topic = els.prodTopic.value.trim();
+    if (!topic) { els.prodStatus.textContent = 'Enter a topic first.'; return; }
+    els.btnProdScript.disabled = true;
+    els.prodStatus.textContent = 'Writing script…';
+    try {
+      const sel = els.prodTutor.selectedOptions[0];
+      const res = await api('/api/animation-studio/script', {
+        topic,
+        gradeLevel: els.prodGrade.value.trim() || 'middle school',
+        targetSeconds: parseInt(els.prodLength.value, 10) || 75,
+        tutorId: sel ? sel.dataset.tutorId : 'mr-nappier',
+      });
+      const { title, segments } = await res.json();
+      els.prodScript.value = scriptToText(segments);
+      els.prodScript.hidden = false;
+      els.btnProdAssemble.hidden = false;
+      els.prodStatus.textContent = `Script ready: "${title}" — edit lines, then Voice & assemble.`;
+    } catch (e) {
+      els.prodStatus.textContent = e.message;
+    } finally {
+      els.btnProdScript.disabled = false;
+    }
+  }
+
+  // 16-bit PCM mono WAV so the sequencer's decode/lip-sync path treats the
+  // stitched voiceover exactly like an uploaded file.
+  function encodeWavPcm16(samples, sampleRate) {
+    const buf = new ArrayBuffer(44 + samples.length * 2);
+    const view = new DataView(buf);
+    const writeStr = (off, str) => { for (let i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i)); };
+    writeStr(0, 'RIFF'); view.setUint32(4, 36 + samples.length * 2, true); writeStr(8, 'WAVE');
+    writeStr(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true); view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+    writeStr(36, 'data'); view.setUint32(40, samples.length * 2, true);
+    for (let i = 0; i < samples.length; i++) {
+      const v = Math.max(-1, Math.min(1, samples[i]));
+      view.setInt16(44 + i * 2, Math.round(v * 32767), true);
+    }
+    return buf;
+  }
+
+  async function producerAssemble() {
+    const segments = textToSegments(els.prodScript.value);
+    if (!segments.length) { els.prodStatus.textContent = 'Script is empty.'; return; }
+    const voiceId = els.prodTutor.value;
+    els.btnProdAssemble.disabled = true;
+    const actx = new (window.AudioContext || window.webkitAudioContext)();
+    try {
+      // 1. voice each segment
+      const buffers = [];
+      for (let i = 0; i < segments.length; i++) {
+        els.prodStatus.textContent = `Voicing segment ${i + 1} / ${segments.length}…`;
+        const res = await api('/api/speak', { text: segments[i].text, voiceId });
+        buffers.push(await actx.decodeAudioData(await res.arrayBuffer()));
+      }
+      // 2. stitch mono with pauses, recording each segment's start time
+      const rate = buffers[0].sampleRate;
+      const gap = Math.round(rate * 0.35);
+      const total = buffers.reduce((n, b) => n + b.length, 0) + gap * (buffers.length - 1);
+      const samples = new Float32Array(total);
+      const starts = [];
+      let offset = 0;
+      for (const b of buffers) {
+        starts.push(offset / rate);
+        for (let c = 0; c < b.numberOfChannels; c++) {
+          const data = b.getChannelData(c);
+          for (let i = 0; i < b.length; i++) samples[offset + i] += data[i] / b.numberOfChannels;
+        }
+        offset += b.length + gap;
+      }
+      // 3. hand the stitched voiceover to the sequencer + lip-sync
+      const wav = new File([encodeWavPcm16(samples, rate)], 'producer-voiceover.wav', { type: 'audio/wav' });
+      await loadSeqAudio(wav);
+      // 4. rebuild the sequence: idle base + gestures at segment starts
+      const events = [];
+      for (let i = 0; i < segments.length; i++) {
+        const g = segments[i].gesture;
+        if (g === 'none' || !S.clips[g]) continue;
+        const ev = { clip: g, t: Math.round(starts[i] * 10) / 10 };
+        if (S.clips[g].loop) ev.until = Math.round((starts[i] + 3.5) * 10) / 10;
+        events.push(ev);
+      }
+      S.sequence.base = S.clips.idle ? 'idle' : S.sequence.base;
+      S.sequence.duration = Math.ceil(total / rate + 1);
+      S.sequence.events = events;
+      generateLipSync(); // adds the lipsync clip + event, saves, rebuilds UI
+      els.prodStatus.textContent =
+        `Assembled: ${segments.length} segments, ${(total / rate).toFixed(1)}s. Preview or Export below.`;
+    } catch (e) {
+      els.prodStatus.textContent = e.message;
+    } finally {
+      actx.close();
+      els.btnProdAssemble.disabled = false;
+    }
+  }
+
+  function bindProducer() {
+    producerInit();
+    els.btnProdScript.addEventListener('click', producerScript);
+    els.btnProdAssemble.addEventListener('click', () => producerAssemble());
+  }
+
   function bindSequencer() {
     buildSequencer();
     els.seqBase.addEventListener('change', () => {
@@ -1658,6 +1825,7 @@
     });
 
     bindSequencer();
+    bindProducer();
 
     new ResizeObserver(refreshSoon).observe(els.viewportHost);
     new ResizeObserver(refreshSoon).observe(els.timelineHost);

@@ -139,6 +139,35 @@
           <label class="toggle"><input type="checkbox" id="clipLoop"> Loop</label>
         </div>
 
+        <h3>Producer · topic → video</h3>
+        <div class="producer">
+          <textarea id="prodTopic" rows="2" placeholder="Topic, e.g. Adding fractions with unlike denominators"></textarea>
+          <div class="prod-row">
+            <label class="field">
+              <span>Grade</span>
+              <input type="text" id="prodGrade" value="middle school" size="10">
+            </label>
+            <label class="field">
+              <span>Length</span>
+              <select id="prodLength">
+                <option value="60">60s</option>
+                <option value="75" selected>75s</option>
+                <option value="90">90s</option>
+              </select>
+            </label>
+          </div>
+          <label class="field wide">
+            <span>Voice</span>
+            <select id="prodTutor"></select>
+          </label>
+          <button id="btnProdScript" class="wide">✍️ Write script</button>
+          <textarea id="prodScript" rows="7" hidden
+            placeholder="gesture | narration — one segment per line"></textarea>
+          <button id="btnProdAssemble" class="wide primary" hidden
+            title="Voice each segment with the tutor's TTS voice, build the voiceover, generate lip-sync, and schedule the gestures">🎙 Voice &amp; assemble</button>
+          <div id="prodStatus" class="export-status"></div>
+        </div>
+
         <h3>Sequence · long video</h3>
         <div class="seq">
           <label class="field">

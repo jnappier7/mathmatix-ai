@@ -68,6 +68,26 @@ rig packages, and export them as WebM videos (the tutor-cam format in
    — drop the WebM next to the existing tutor videos in `public/videos/`. Video and
    PNG exports render at 2× and downscale for crisper edges.
 
+## Producer — topic in, finished video out
+
+The Agent-Opus-style flow, using the app's own AI stack. The **Producer** panel
+(teacher/admin login required — it calls the authed API):
+
+1. Type a topic, pick grade level, length (60/75/90s), and a tutor voice.
+2. **Write script** → `POST /api/animation-studio/script`
+   (`routes/animationStudio.js`, teacher/admin-gated, `aiEndpointLimiter`) uses
+   the LLM gateway (gpt-4o-mini, structured output) to write TTS-safe narration
+   in the persona's voice, split into segments with gesture cues. The script
+   appears as editable `gesture | text` lines.
+3. **Voice & assemble** → each segment is voiced via the existing
+   `POST /api/speak` (Cartesia, the tutor's real voice), stitched client-side
+   into one WAV (0.35s pauses), handed to the sequencer, lip-synced, and the
+   gesture clips are scheduled at each segment's actual start time.
+4. Preview / export as any sequence — WebM with the voiceover muxed in.
+
+Costs are your own OpenAI + Cartesia usage (fractions of a cent per video),
+with no per-clip vendor fees or length caps.
+
 ## Sequences — 60–90s (and longer) videos
 
 Clips are seconds long; full videos are **sequences**: a looping base clip with

@@ -167,6 +167,16 @@ input[type="color"] { border: 1px solid var(--border); border-radius: 6px; backg
 .timeline-host { height: 190px; overflow-y: auto; overflow-x: hidden; position: relative; }
 #timeline { display: block; width: 100%; }
 
+/* ---------------------------------------------------------------- producer */
+.producer { display: flex; flex-direction: column; gap: 7px; }
+.producer textarea {
+  background: var(--bg-inset); color: var(--text);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 8px; font: inherit; font-size: 12px; resize: vertical;
+}
+.prod-row { display: flex; gap: 10px; }
+.prod-row input[type="text"] { width: 90px; }
+
 /* --------------------------------------------------------------- sequencer */
 .seq { display: flex; flex-direction: column; gap: 7px; }
 .seq-events { display: flex; flex-direction: column; gap: 4px; }

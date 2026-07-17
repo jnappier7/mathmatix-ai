@@ -57,6 +57,7 @@ const chatRoutes = require('../routes/chat');
 const studentMovesRoutes = require('../routes/studentMoves');
 const conversationsRoutes = require('../routes/conversations');
 const speakRoutes = require('../routes/speak');
+const animationStudioRoutes = require('../routes/animationStudio');
 const voiceRoutes = require('../routes/voice');
 const voiceTestRoutes = require('../routes/voice-test');
 const voiceTutorRoutes = require('../routes/voiceTutor');
@@ -195,6 +196,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/student-moves', isAuthenticated, isStudent, aiEndpointLimiter, usageGate, studentMovesRoutes);
   app.use('/api/conversations', isAuthenticated, conversationsRoutes);
   app.use('/api/speak', isAuthenticated, speakRoutes);
+  app.use('/api/animation-studio', isAuthenticated, aiEndpointLimiter, animationStudioRoutes);
   app.use('/api/voice', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceRoutes);
   app.use('/api/voice', isAuthenticated, voiceTestRoutes);
   app.use('/api/voice-tutor', isAuthenticated, aiEndpointLimiter, premiumFeatureGate('Voice chat'), voiceTutorRoutes);
