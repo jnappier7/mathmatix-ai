@@ -39,20 +39,24 @@ REVIEW_OUT = os.path.join(ROOT, "docs", "ALG1_UNIFIED_REVIEW.md")
 # Ordered roughly by the Alg1 course sequence. Alternatives are the other
 # plausible unified homes a reviewer might prefer.
 MAP = {
-    # — expressions & numeric fluency (mostly MS prerequisites) —
-    "order-of-operations":        ("MS.QNT.8",  "low", ["MS.EQV.1"], "no dedicated order-of-operations node; nearest is rational-number operations"),
-    "evaluating-expressions":     ("MS.EQV.1",  "med", [],           "substitution/evaluation folded into 'Algebraic expressions'"),
-    "writing-algebraic-expressions": ("MS.EQV.1", "high", [],        "translating words -> expressions"),
-    "integer-operations":         ("MS.QNT.8",  "low", ["MS.QNT.6", "MS.QNT.7"], "unified splits integers into add/sub vs mult/div; mapped to the umbrella"),
-    "fraction-operations":        ("MS.QNT.8",  "med", ["MS.QNT.2"], "fraction ops under rational-number operations"),
-    "decimal-operations":         ("MS.QNT.1",  "high", [],          "decimal operations fluency"),
+    # — expressions & numeric fluency —
+    # PRE-ALGEBRA HOLDOUTS: these competencies have NO ALG1-level node in the Map
+    # (they exist only as Middle School nodes). Per the "keep it Algebra 1"
+    # policy they'd map to ALG1, but there's no honest ALG1 home — flagged so we
+    # can decide whether to add ALG1 foundational nodes or leave them at MS.
+    "order-of-operations":        ("MS.QNT.8",  "low", ["MS.EQV.1"], "PRE-ALG HOLDOUT: no ALG1 order-of-operations node; nearest is MS rational-number operations"),
+    "evaluating-expressions":     ("MS.EQV.1",  "low", [],           "PRE-ALG HOLDOUT: no ALG1 expressions node; substitution/evaluation lives at MS"),
+    "writing-algebraic-expressions": ("MS.EQV.1", "low", [],         "PRE-ALG HOLDOUT: no ALG1 expressions node; word->expression lives at MS"),
+    "integer-operations":         ("MS.QNT.8",  "low", ["MS.QNT.6", "MS.QNT.7"], "PRE-ALG HOLDOUT: no ALG1 integer-ops node (ALG1.QNT is radicals/exponents)"),
+    "fraction-operations":        ("MS.QNT.8",  "low", ["MS.QNT.2"], "PRE-ALG HOLDOUT: no ALG1 fraction-ops node"),
+    "decimal-operations":         ("MS.QNT.1",  "low", [],           "PRE-ALG HOLDOUT: no ALG1 decimal-ops node"),
+    "solving-proportions":        ("MS.PRP.6",  "low", ["ALG1.PRP.3"], "PRE-ALG HOLDOUT: no ALG1 solve-a-proportion node; ALG1.PRP.3 (direct variation) is the nearest ALG1 idea"),
 
     # — linear equations —
-    "solving-one-step-equations": ("MS.EQV.3",  "high", [],          None),
-    "solving-two-step-equations": ("MS.EQV.5",  "high", [],          None),
+    "solving-one-step-equations": ("ALG1.EQV.1", "med", [],          "no dedicated ALG1 one-step node; one-step is a degenerate multi-step case"),
+    "solving-two-step-equations": ("ALG1.EQV.1", "med", [],          "no dedicated ALG1 two-step node; folded into multi-step linear equations"),
     "solving-multi-step-equations": ("ALG1.EQV.1", "high", [],       None),
     "solving-equations-with-variables-both-sides": ("ALG1.EQV.1", "med", [], "both-sides folded into multi-step linear equations"),
-    "solving-proportions":        ("MS.PRP.6",  "high", [],          None),
     "literal-equations":          ("ALG1.EQV.2", "high", [],         None),
     "writing-solving-equations-context": ("ALG1.EQV.1", "med", ["MS.EQV.8"], "no 'equations from context' node; mapped to multi-step"),
     "linear-equations-number-of-solutions": ("ALG1.EQV.1", "low", [], "no dedicated 'number of solutions' node"),
@@ -60,16 +64,16 @@ MAP = {
     # — functions —
     "function-notation-evaluation": ("ALG1.FNC.1", "high", [],       None),
     "domain-and-range":           ("ALG1.FNC.2", "high", [],         None),
-    "identifying-functions":      ("MS.FNC.2",  "med", ["ALG1.FNC.1"], "is-it-a-function / vertical line test -> function concept"),
-    "discrete-continuous-relations": ("MS.FNC.2", "low", ["ALG1.FNC.2"], "no dedicated discrete/continuous node"),
-    "interpreting-graphs-stories": ("MS.FNC.1", "low", ["ALG1.FNC.3"], "story-graph matching; no dedicated node"),
-    "function-application-modeling": ("ALG1.FNC.4", "low", ["MS.FNC.1"], "generic 'function models in context'"),
+    "identifying-functions":      ("ALG1.FNC.1", "med", ["ALG1.FNC.2"], "is-it-a-function / vertical line test -> function notation/concept"),
+    "discrete-continuous-relations": ("ALG1.FNC.2", "low", [], "discrete vs continuous domain -> domain and range"),
+    "interpreting-graphs-stories": ("ALG1.FNC.3", "low", [], "story-graph matching -> graph linear functions; no dedicated node"),
+    "function-application-modeling": ("ALG1.FNC.4", "low", [], "generic 'function models in context'"),
 
     # — slope & graphing lines —
-    "slope-from-two-points":      ("MS.FNC.3",  "med", ["ALG1.PRP.2"], "slope computation -> 'Slope'; ALG1.PRP.2 if framed as rate"),
-    "slope-intercept-from-equation": ("ALG1.FNC.3", "med", ["MS.FNC.3"], "reading slope/intercept off an equation"),
-    "reading-slope-from-graph":   ("MS.FNC.3",  "med", ["ALG1.FNC.3"], "reading slope/intercept off a graph"),
-    "undefined-zero-slope":       ("MS.FNC.3",  "med", ["ALG1.PRP.2"], "special slope cases"),
+    "slope-from-two-points":      ("ALG1.PRP.2", "med", [], "slope from two points -> slope as rate"),
+    "slope-intercept-from-equation": ("ALG1.FNC.3", "med", ["ALG1.PRP.2"], "reading slope/intercept off an equation"),
+    "reading-slope-from-graph":   ("ALG1.PRP.2", "med", ["ALG1.FNC.3"], "reading slope/intercept off a graph"),
+    "undefined-zero-slope":       ("ALG1.PRP.2", "med", [], "special slope cases -> slope as rate"),
     "graphing-linear-equations-slope-intercept": ("ALG1.FNC.3", "high", [], None),
     "linear-modeling-slope-intercept": ("ALG1.FNC.4", "med", [],     "linear models -> write linear equations"),
     "absolute-value-graphs-transformations": ("ALG1.FNC.11", "med", ["ALG2.FNC.4"], "abs-value graphs under function transformations"),

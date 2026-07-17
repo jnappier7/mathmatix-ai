@@ -1,14 +1,14 @@
 {
   "source": "algebra-1",
   "legacySkillCount": 64,
-  "distinctUnifiedTargets": 30,
+  "distinctUnifiedTargets": 26,
   "totalItems": 798,
   "confidenceCounts": {
-    "low": 17,
+    "low": 22,
     "med": 21,
-    "high": 26
+    "high": 21
   },
-  "itemsNeedingReview": 432,
+  "itemsNeedingReview": 504,
   "rows": [
     {
       "legacyId": "order-of-operations",
@@ -23,7 +23,7 @@
           "name": "Algebraic expressions"
         }
       ],
-      "note": "no dedicated order-of-operations node; nearest is rational-number operations",
+      "note": "PRE-ALG HOLDOUT: no ALG1 order-of-operations node; nearest is MS rational-number operations",
       "approved": false
     },
     {
@@ -31,10 +31,10 @@
       "legacyName": "Evaluating expressions with substitution",
       "unifiedId": "MS.EQV.1",
       "unifiedName": "Algebraic expressions",
-      "confidence": "med",
+      "confidence": "low",
       "itemCount": 36,
       "alternatives": [],
-      "note": "substitution/evaluation folded into 'Algebraic expressions'",
+      "note": "PRE-ALG HOLDOUT: no ALG1 expressions node; substitution/evaluation lives at MS",
       "approved": false
     },
     {
@@ -42,11 +42,11 @@
       "legacyName": "Writing algebraic expressions",
       "unifiedId": "MS.EQV.1",
       "unifiedName": "Algebraic expressions",
-      "confidence": "high",
+      "confidence": "low",
       "itemCount": 30,
       "alternatives": [],
-      "note": "translating words -> expressions",
-      "approved": true
+      "note": "PRE-ALG HOLDOUT: no ALG1 expressions node; word->expression lives at MS",
+      "approved": false
     },
     {
       "legacyId": "integer-operations",
@@ -65,7 +65,7 @@
           "name": "Multiply divide integers"
         }
       ],
-      "note": "unified splits integers into add/sub vs mult/div; mapped to the umbrella",
+      "note": "PRE-ALG HOLDOUT: no ALG1 integer-ops node (ALG1.QNT is radicals/exponents)",
       "approved": false
     },
     {
@@ -73,7 +73,7 @@
       "legacyName": "Fraction operations",
       "unifiedId": "MS.QNT.8",
       "unifiedName": "Rational number operations",
-      "confidence": "med",
+      "confidence": "low",
       "itemCount": 6,
       "alternatives": [
         {
@@ -81,7 +81,7 @@
           "name": "Fraction division"
         }
       ],
-      "note": "fraction ops under rational-number operations",
+      "note": "PRE-ALG HOLDOUT: no ALG1 fraction-ops node",
       "approved": false
     },
     {
@@ -89,33 +89,49 @@
       "legacyName": "Decimal operations",
       "unifiedId": "MS.QNT.1",
       "unifiedName": "Decimal operations fluency",
-      "confidence": "high",
+      "confidence": "low",
       "itemCount": 3,
       "alternatives": [],
-      "note": "decimal operations fluency",
-      "approved": true
+      "note": "PRE-ALG HOLDOUT: no ALG1 decimal-ops node",
+      "approved": false
+    },
+    {
+      "legacyId": "solving-proportions",
+      "legacyName": "Solving proportions",
+      "unifiedId": "MS.PRP.6",
+      "unifiedName": "Solve proportions",
+      "confidence": "low",
+      "itemCount": 12,
+      "alternatives": [
+        {
+          "id": "ALG1.PRP.3",
+          "name": "Direct variation"
+        }
+      ],
+      "note": "PRE-ALG HOLDOUT: no ALG1 solve-a-proportion node; ALG1.PRP.3 (direct variation) is the nearest ALG1 idea",
+      "approved": false
     },
     {
       "legacyId": "solving-one-step-equations",
       "legacyName": "Solving one-step equations",
-      "unifiedId": "MS.EQV.3",
-      "unifiedName": "One-step equations",
-      "confidence": "high",
+      "unifiedId": "ALG1.EQV.1",
+      "unifiedName": "Multi-step linear equations",
+      "confidence": "med",
       "itemCount": 24,
       "alternatives": [],
-      "note": null,
-      "approved": true
+      "note": "no dedicated ALG1 one-step node; one-step is a degenerate multi-step case",
+      "approved": false
     },
     {
       "legacyId": "solving-two-step-equations",
       "legacyName": "Solving two-step equations",
-      "unifiedId": "MS.EQV.5",
-      "unifiedName": "Two-step equations",
-      "confidence": "high",
+      "unifiedId": "ALG1.EQV.1",
+      "unifiedName": "Multi-step linear equations",
+      "confidence": "med",
       "itemCount": 3,
       "alternatives": [],
-      "note": null,
-      "approved": true
+      "note": "no dedicated ALG1 two-step node; folded into multi-step linear equations",
+      "approved": false
     },
     {
       "legacyId": "solving-multi-step-equations",
@@ -138,17 +154,6 @@
       "alternatives": [],
       "note": "both-sides folded into multi-step linear equations",
       "approved": false
-    },
-    {
-      "legacyId": "solving-proportions",
-      "legacyName": "Solving proportions",
-      "unifiedId": "MS.PRP.6",
-      "unifiedName": "Solve proportions",
-      "confidence": "high",
-      "itemCount": 12,
-      "alternatives": [],
-      "note": null,
-      "approved": true
     },
     {
       "legacyId": "literal-equations",
@@ -213,49 +218,39 @@
     {
       "legacyId": "identifying-functions",
       "legacyName": "Identifying functions",
-      "unifiedId": "MS.FNC.2",
-      "unifiedName": "Function concept",
+      "unifiedId": "ALG1.FNC.1",
+      "unifiedName": "Function notation",
       "confidence": "med",
       "itemCount": 21,
-      "alternatives": [
-        {
-          "id": "ALG1.FNC.1",
-          "name": "Function notation"
-        }
-      ],
-      "note": "is-it-a-function / vertical line test -> function concept",
-      "approved": false
-    },
-    {
-      "legacyId": "discrete-continuous-relations",
-      "legacyName": "Discrete vs continuous relations",
-      "unifiedId": "MS.FNC.2",
-      "unifiedName": "Function concept",
-      "confidence": "low",
-      "itemCount": 6,
       "alternatives": [
         {
           "id": "ALG1.FNC.2",
           "name": "Domain and range"
         }
       ],
-      "note": "no dedicated discrete/continuous node",
+      "note": "is-it-a-function / vertical line test -> function notation/concept",
+      "approved": false
+    },
+    {
+      "legacyId": "discrete-continuous-relations",
+      "legacyName": "Discrete vs continuous relations",
+      "unifiedId": "ALG1.FNC.2",
+      "unifiedName": "Domain and range",
+      "confidence": "low",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": "discrete vs continuous domain -> domain and range",
       "approved": false
     },
     {
       "legacyId": "interpreting-graphs-stories",
       "legacyName": "Interpreting graphs (story matching)",
-      "unifiedId": "MS.FNC.1",
-      "unifiedName": "Two-variable relationships",
+      "unifiedId": "ALG1.FNC.3",
+      "unifiedName": "Graph linear functions",
       "confidence": "low",
       "itemCount": 3,
-      "alternatives": [
-        {
-          "id": "ALG1.FNC.3",
-          "name": "Graph linear functions"
-        }
-      ],
-      "note": "story-graph matching; no dedicated node",
+      "alternatives": [],
+      "note": "story-graph matching -> graph linear functions; no dedicated node",
       "approved": false
     },
     {
@@ -265,29 +260,19 @@
       "unifiedName": "Write linear equations",
       "confidence": "low",
       "itemCount": 6,
-      "alternatives": [
-        {
-          "id": "MS.FNC.1",
-          "name": "Two-variable relationships"
-        }
-      ],
+      "alternatives": [],
       "note": "generic 'function models in context'",
       "approved": false
     },
     {
       "legacyId": "slope-from-two-points",
       "legacyName": "Slope from two points",
-      "unifiedId": "MS.FNC.3",
-      "unifiedName": "Slope",
+      "unifiedId": "ALG1.PRP.2",
+      "unifiedName": "Slope as rate",
       "confidence": "med",
       "itemCount": 24,
-      "alternatives": [
-        {
-          "id": "ALG1.PRP.2",
-          "name": "Slope as rate"
-        }
-      ],
-      "note": "slope computation -> 'Slope'; ALG1.PRP.2 if framed as rate",
+      "alternatives": [],
+      "note": "slope from two points -> slope as rate",
       "approved": false
     },
     {
@@ -299,8 +284,8 @@
       "itemCount": 9,
       "alternatives": [
         {
-          "id": "MS.FNC.3",
-          "name": "Slope"
+          "id": "ALG1.PRP.2",
+          "name": "Slope as rate"
         }
       ],
       "note": "reading slope/intercept off an equation",
@@ -309,8 +294,8 @@
     {
       "legacyId": "reading-slope-from-graph",
       "legacyName": "Reading slope & intercept from a graph",
-      "unifiedId": "MS.FNC.3",
-      "unifiedName": "Slope",
+      "unifiedId": "ALG1.PRP.2",
+      "unifiedName": "Slope as rate",
       "confidence": "med",
       "itemCount": 6,
       "alternatives": [
@@ -325,17 +310,12 @@
     {
       "legacyId": "undefined-zero-slope",
       "legacyName": "Undefined & zero slope",
-      "unifiedId": "MS.FNC.3",
-      "unifiedName": "Slope",
+      "unifiedId": "ALG1.PRP.2",
+      "unifiedName": "Slope as rate",
       "confidence": "med",
       "itemCount": 3,
-      "alternatives": [
-        {
-          "id": "ALG1.PRP.2",
-          "name": "Slope as rate"
-        }
-      ],
-      "note": "special slope cases",
+      "alternatives": [],
+      "note": "special slope cases -> slope as rate",
       "approved": false
     },
     {
