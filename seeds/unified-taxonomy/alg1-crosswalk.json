@@ -1,0 +1,867 @@
+{
+  "source": "algebra-1",
+  "legacySkillCount": 64,
+  "distinctUnifiedTargets": 30,
+  "totalItems": 798,
+  "confidenceCounts": {
+    "low": 17,
+    "med": 21,
+    "high": 26
+  },
+  "itemsNeedingReview": 432,
+  "rows": [
+    {
+      "legacyId": "order-of-operations",
+      "legacyName": "Order of operations",
+      "unifiedId": "MS.QNT.8",
+      "unifiedName": "Rational number operations",
+      "confidence": "low",
+      "itemCount": 39,
+      "alternatives": [
+        {
+          "id": "MS.EQV.1",
+          "name": "Algebraic expressions"
+        }
+      ],
+      "note": "no dedicated order-of-operations node; nearest is rational-number operations",
+      "approved": false
+    },
+    {
+      "legacyId": "evaluating-expressions",
+      "legacyName": "Evaluating expressions with substitution",
+      "unifiedId": "MS.EQV.1",
+      "unifiedName": "Algebraic expressions",
+      "confidence": "med",
+      "itemCount": 36,
+      "alternatives": [],
+      "note": "substitution/evaluation folded into 'Algebraic expressions'",
+      "approved": false
+    },
+    {
+      "legacyId": "writing-algebraic-expressions",
+      "legacyName": "Writing algebraic expressions",
+      "unifiedId": "MS.EQV.1",
+      "unifiedName": "Algebraic expressions",
+      "confidence": "high",
+      "itemCount": 30,
+      "alternatives": [],
+      "note": "translating words -> expressions",
+      "approved": true
+    },
+    {
+      "legacyId": "integer-operations",
+      "legacyName": "Integer operations",
+      "unifiedId": "MS.QNT.8",
+      "unifiedName": "Rational number operations",
+      "confidence": "low",
+      "itemCount": 9,
+      "alternatives": [
+        {
+          "id": "MS.QNT.6",
+          "name": "Add subtract integers"
+        },
+        {
+          "id": "MS.QNT.7",
+          "name": "Multiply divide integers"
+        }
+      ],
+      "note": "unified splits integers into add/sub vs mult/div; mapped to the umbrella",
+      "approved": false
+    },
+    {
+      "legacyId": "fraction-operations",
+      "legacyName": "Fraction operations",
+      "unifiedId": "MS.QNT.8",
+      "unifiedName": "Rational number operations",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "MS.QNT.2",
+          "name": "Fraction division"
+        }
+      ],
+      "note": "fraction ops under rational-number operations",
+      "approved": false
+    },
+    {
+      "legacyId": "decimal-operations",
+      "legacyName": "Decimal operations",
+      "unifiedId": "MS.QNT.1",
+      "unifiedName": "Decimal operations fluency",
+      "confidence": "high",
+      "itemCount": 3,
+      "alternatives": [],
+      "note": "decimal operations fluency",
+      "approved": true
+    },
+    {
+      "legacyId": "solving-one-step-equations",
+      "legacyName": "Solving one-step equations",
+      "unifiedId": "MS.EQV.3",
+      "unifiedName": "One-step equations",
+      "confidence": "high",
+      "itemCount": 24,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "solving-two-step-equations",
+      "legacyName": "Solving two-step equations",
+      "unifiedId": "MS.EQV.5",
+      "unifiedName": "Two-step equations",
+      "confidence": "high",
+      "itemCount": 3,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "solving-multi-step-equations",
+      "legacyName": "Solving multi-step equations",
+      "unifiedId": "ALG1.EQV.1",
+      "unifiedName": "Multi-step linear equations",
+      "confidence": "high",
+      "itemCount": 18,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "solving-equations-with-variables-both-sides",
+      "legacyName": "Equations with variables on both sides",
+      "unifiedId": "ALG1.EQV.1",
+      "unifiedName": "Multi-step linear equations",
+      "confidence": "med",
+      "itemCount": 33,
+      "alternatives": [],
+      "note": "both-sides folded into multi-step linear equations",
+      "approved": false
+    },
+    {
+      "legacyId": "solving-proportions",
+      "legacyName": "Solving proportions",
+      "unifiedId": "MS.PRP.6",
+      "unifiedName": "Solve proportions",
+      "confidence": "high",
+      "itemCount": 12,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "literal-equations",
+      "legacyName": "Literal equations (solving for a variable)",
+      "unifiedId": "ALG1.EQV.2",
+      "unifiedName": "Literal equations",
+      "confidence": "high",
+      "itemCount": 18,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "writing-solving-equations-context",
+      "legacyName": "Writing & solving equations from context",
+      "unifiedId": "ALG1.EQV.1",
+      "unifiedName": "Multi-step linear equations",
+      "confidence": "med",
+      "itemCount": 12,
+      "alternatives": [
+        {
+          "id": "MS.EQV.8",
+          "name": "Multi-step linear equations"
+        }
+      ],
+      "note": "no 'equations from context' node; mapped to multi-step",
+      "approved": false
+    },
+    {
+      "legacyId": "linear-equations-number-of-solutions",
+      "legacyName": "Number of solutions of a linear equation",
+      "unifiedId": "ALG1.EQV.1",
+      "unifiedName": "Multi-step linear equations",
+      "confidence": "low",
+      "itemCount": 3,
+      "alternatives": [],
+      "note": "no dedicated 'number of solutions' node",
+      "approved": false
+    },
+    {
+      "legacyId": "function-notation-evaluation",
+      "legacyName": "Function notation & evaluation",
+      "unifiedId": "ALG1.FNC.1",
+      "unifiedName": "Function notation",
+      "confidence": "high",
+      "itemCount": 39,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "domain-and-range",
+      "legacyName": "Domain and range",
+      "unifiedId": "ALG1.FNC.2",
+      "unifiedName": "Domain and range",
+      "confidence": "high",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "identifying-functions",
+      "legacyName": "Identifying functions",
+      "unifiedId": "MS.FNC.2",
+      "unifiedName": "Function concept",
+      "confidence": "med",
+      "itemCount": 21,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.1",
+          "name": "Function notation"
+        }
+      ],
+      "note": "is-it-a-function / vertical line test -> function concept",
+      "approved": false
+    },
+    {
+      "legacyId": "discrete-continuous-relations",
+      "legacyName": "Discrete vs continuous relations",
+      "unifiedId": "MS.FNC.2",
+      "unifiedName": "Function concept",
+      "confidence": "low",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.2",
+          "name": "Domain and range"
+        }
+      ],
+      "note": "no dedicated discrete/continuous node",
+      "approved": false
+    },
+    {
+      "legacyId": "interpreting-graphs-stories",
+      "legacyName": "Interpreting graphs (story matching)",
+      "unifiedId": "MS.FNC.1",
+      "unifiedName": "Two-variable relationships",
+      "confidence": "low",
+      "itemCount": 3,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.3",
+          "name": "Graph linear functions"
+        }
+      ],
+      "note": "story-graph matching; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "function-application-modeling",
+      "legacyName": "Function models in context",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "low",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "MS.FNC.1",
+          "name": "Two-variable relationships"
+        }
+      ],
+      "note": "generic 'function models in context'",
+      "approved": false
+    },
+    {
+      "legacyId": "slope-from-two-points",
+      "legacyName": "Slope from two points",
+      "unifiedId": "MS.FNC.3",
+      "unifiedName": "Slope",
+      "confidence": "med",
+      "itemCount": 24,
+      "alternatives": [
+        {
+          "id": "ALG1.PRP.2",
+          "name": "Slope as rate"
+        }
+      ],
+      "note": "slope computation -> 'Slope'; ALG1.PRP.2 if framed as rate",
+      "approved": false
+    },
+    {
+      "legacyId": "slope-intercept-from-equation",
+      "legacyName": "Slope & intercept from an equation",
+      "unifiedId": "ALG1.FNC.3",
+      "unifiedName": "Graph linear functions",
+      "confidence": "med",
+      "itemCount": 9,
+      "alternatives": [
+        {
+          "id": "MS.FNC.3",
+          "name": "Slope"
+        }
+      ],
+      "note": "reading slope/intercept off an equation",
+      "approved": false
+    },
+    {
+      "legacyId": "reading-slope-from-graph",
+      "legacyName": "Reading slope & intercept from a graph",
+      "unifiedId": "MS.FNC.3",
+      "unifiedName": "Slope",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.3",
+          "name": "Graph linear functions"
+        }
+      ],
+      "note": "reading slope/intercept off a graph",
+      "approved": false
+    },
+    {
+      "legacyId": "undefined-zero-slope",
+      "legacyName": "Undefined & zero slope",
+      "unifiedId": "MS.FNC.3",
+      "unifiedName": "Slope",
+      "confidence": "med",
+      "itemCount": 3,
+      "alternatives": [
+        {
+          "id": "ALG1.PRP.2",
+          "name": "Slope as rate"
+        }
+      ],
+      "note": "special slope cases",
+      "approved": false
+    },
+    {
+      "legacyId": "graphing-linear-equations-slope-intercept",
+      "legacyName": "Graphing lines in slope-intercept form",
+      "unifiedId": "ALG1.FNC.3",
+      "unifiedName": "Graph linear functions",
+      "confidence": "high",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "linear-modeling-slope-intercept",
+      "legacyName": "Linear models (slope-intercept)",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": "linear models -> write linear equations",
+      "approved": false
+    },
+    {
+      "legacyId": "absolute-value-graphs-transformations",
+      "legacyName": "Absolute-value graphs & transformations",
+      "unifiedId": "ALG1.FNC.11",
+      "unifiedName": "Function transformations",
+      "confidence": "med",
+      "itemCount": 18,
+      "alternatives": [
+        {
+          "id": "ALG2.FNC.4",
+          "name": "Function transformations"
+        }
+      ],
+      "note": "abs-value graphs under function transformations",
+      "approved": false
+    },
+    {
+      "legacyId": "writing-linear-equations-slope-intercept",
+      "legacyName": "Writing equations in slope-intercept form",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "high",
+      "itemCount": 39,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "point-slope-form",
+      "legacyName": "Point-slope form",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "med",
+      "itemCount": 9,
+      "alternatives": [],
+      "note": "no dedicated point-slope node; under write-linear-equations",
+      "approved": false
+    },
+    {
+      "legacyId": "standard-form-equations",
+      "legacyName": "Standard-form equations",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.3",
+          "name": "Graph linear functions"
+        }
+      ],
+      "note": "no dedicated standard-form node",
+      "approved": false
+    },
+    {
+      "legacyId": "standard-to-slope-intercept",
+      "legacyName": "Converting standard to slope-intercept form",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "low",
+      "itemCount": 21,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.3",
+          "name": "Graph linear functions"
+        }
+      ],
+      "note": "form conversion; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "converting-between-forms",
+      "legacyName": "Converting between forms of a line",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "low",
+      "itemCount": 3,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.3",
+          "name": "Graph linear functions"
+        }
+      ],
+      "note": "form conversion; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "linear-equation-forms-reference",
+      "legacyName": "The three forms of a linear equation",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "low",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.3",
+          "name": "Graph linear functions"
+        }
+      ],
+      "note": "reference/meta skill, not a distinct competency",
+      "approved": false
+    },
+    {
+      "legacyId": "parallel-perpendicular-lines",
+      "legacyName": "Parallel & perpendicular lines",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "low",
+      "itemCount": 18,
+      "alternatives": [],
+      "note": "parallel/perp slopes; no dedicated node in ALG1",
+      "approved": false
+    },
+    {
+      "legacyId": "linear-modeling-writing-equations",
+      "legacyName": "Writing linear models from context",
+      "unifiedId": "ALG1.FNC.4",
+      "unifiedName": "Write linear equations",
+      "confidence": "high",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "solving-one-variable-inequalities",
+      "legacyName": "Solving one-variable inequalities",
+      "unifiedId": "ALG1.EQV.3",
+      "unifiedName": "One-variable inequalities",
+      "confidence": "high",
+      "itemCount": 39,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "solving-graphing-inequalities",
+      "legacyName": "Solving & graphing inequalities",
+      "unifiedId": "ALG1.EQV.3",
+      "unifiedName": "One-variable inequalities",
+      "confidence": "med",
+      "itemCount": 12,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.5",
+          "name": "Graph linear inequalities"
+        }
+      ],
+      "note": "one-variable solve+graph on a number line",
+      "approved": false
+    },
+    {
+      "legacyId": "matching-inequality-graphs",
+      "legacyName": "Matching an inequality to its graph",
+      "unifiedId": "ALG1.EQV.3",
+      "unifiedName": "One-variable inequalities",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.FNC.5",
+          "name": "Graph linear inequalities"
+        }
+      ],
+      "note": "number-line match; FNC.5 if two-variable",
+      "approved": false
+    },
+    {
+      "legacyId": "compound-inequalities",
+      "legacyName": "Compound inequalities",
+      "unifiedId": "ALG1.EQV.4",
+      "unifiedName": "Compound inequalities",
+      "confidence": "high",
+      "itemCount": 9,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "writing-solving-inequalities-context",
+      "legacyName": "Writing & solving inequalities from context",
+      "unifiedId": "ALG1.EQV.3",
+      "unifiedName": "One-variable inequalities",
+      "confidence": "med",
+      "itemCount": 12,
+      "alternatives": [],
+      "note": "inequalities from context; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "checking-system-solutions",
+      "legacyName": "Checking a solution of a system",
+      "unifiedId": "ALG1.EQV.6",
+      "unifiedName": "Systems by graphing",
+      "confidence": "low",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.7",
+          "name": "Systems by substitution"
+        }
+      ],
+      "note": "verifying a system solution; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "systems-of-equations-graphing",
+      "legacyName": "Solving systems by graphing",
+      "unifiedId": "ALG1.EQV.6",
+      "unifiedName": "Systems by graphing",
+      "confidence": "high",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "systems-of-equations-substitution",
+      "legacyName": "Solving systems by substitution",
+      "unifiedId": "ALG1.EQV.7",
+      "unifiedName": "Systems by substitution",
+      "confidence": "high",
+      "itemCount": 21,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "systems-of-equations-elimination",
+      "legacyName": "Solving systems by elimination",
+      "unifiedId": "ALG1.EQV.8",
+      "unifiedName": "Systems by elimination",
+      "confidence": "high",
+      "itemCount": 24,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "classifying-system-solutions",
+      "legacyName": "Classifying the number of solutions",
+      "unifiedId": "ALG1.EQV.6",
+      "unifiedName": "Systems by graphing",
+      "confidence": "low",
+      "itemCount": 15,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.7",
+          "name": "Systems by substitution"
+        }
+      ],
+      "note": "0/1/inf solutions of a system; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "systems-application-modeling",
+      "legacyName": "Systems word problems",
+      "unifiedId": "ALG1.EQV.7",
+      "unifiedName": "Systems by substitution",
+      "confidence": "low",
+      "itemCount": 9,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.8",
+          "name": "Systems by elimination"
+        }
+      ],
+      "note": "systems word problems; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "choosing-a-solution-method",
+      "legacyName": "Choosing a method for a system",
+      "unifiedId": "ALG1.EQV.7",
+      "unifiedName": "Systems by substitution",
+      "confidence": "low",
+      "itemCount": 3,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.8",
+          "name": "Systems by elimination"
+        }
+      ],
+      "note": "meta 'pick a method'; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "polynomial-addition-subtraction",
+      "legacyName": "Adding & subtracting polynomials",
+      "unifiedId": "ALG1.EQV.9",
+      "unifiedName": "Add subtract polynomials",
+      "confidence": "high",
+      "itemCount": 12,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "polynomial-multiplication-monomial",
+      "legacyName": "Multiplying a polynomial by a monomial",
+      "unifiedId": "ALG1.EQV.10",
+      "unifiedName": "Multiply polynomials",
+      "confidence": "high",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "multiplying-binomials",
+      "legacyName": "Multiplying binomials",
+      "unifiedId": "ALG1.EQV.10",
+      "unifiedName": "Multiply polynomials",
+      "confidence": "high",
+      "itemCount": 15,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "special-products",
+      "legacyName": "Special products",
+      "unifiedId": "ALG1.EQV.10",
+      "unifiedName": "Multiply polynomials",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.14",
+          "name": "Factor special products"
+        }
+      ],
+      "note": "special-product *multiplication*; EQV.14 is the factoring side",
+      "approved": false
+    },
+    {
+      "legacyId": "factoring-gcf",
+      "legacyName": "Factoring the GCF",
+      "unifiedId": "ALG1.EQV.11",
+      "unifiedName": "Factor GCF grouping",
+      "confidence": "high",
+      "itemCount": 9,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "factoring-by-grouping",
+      "legacyName": "Factoring by grouping",
+      "unifiedId": "ALG1.EQV.11",
+      "unifiedName": "Factor GCF grouping",
+      "confidence": "high",
+      "itemCount": 3,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "factoring-trinomials",
+      "legacyName": "Factoring trinomials",
+      "unifiedId": "ALG1.EQV.12",
+      "unifiedName": "Factor simple trinomials",
+      "confidence": "med",
+      "itemCount": 15,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.13",
+          "name": "Factor a>1 trinomials"
+        }
+      ],
+      "note": "unified splits simple (a=1) vs a>1 trinomials",
+      "approved": false
+    },
+    {
+      "legacyId": "factoring-application",
+      "legacyName": "Factoring in context (area)",
+      "unifiedId": "ALG1.SPC.2",
+      "unifiedName": "Polynomial geometry models",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.11",
+          "name": "Factor GCF grouping"
+        }
+      ],
+      "note": "factoring in an area context -> polynomial geometry models",
+      "approved": false
+    },
+    {
+      "legacyId": "quadratic-abc-identification",
+      "legacyName": "Identifying a, b, c",
+      "unifiedId": "ALG1.EQV.17",
+      "unifiedName": "Quadratic formula",
+      "confidence": "med",
+      "itemCount": 3,
+      "alternatives": [],
+      "note": "identifying a,b,c as prep for the quadratic formula",
+      "approved": false
+    },
+    {
+      "legacyId": "choosing-quadratic-method",
+      "legacyName": "Choosing a method to solve a quadratic",
+      "unifiedId": "ALG1.EQV.15",
+      "unifiedName": "Solve by factoring",
+      "confidence": "low",
+      "itemCount": 15,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.17",
+          "name": "Quadratic formula"
+        }
+      ],
+      "note": "meta 'pick a method'; no dedicated node",
+      "approved": false
+    },
+    {
+      "legacyId": "solving-quadratics-square-roots",
+      "legacyName": "Solving by square roots",
+      "unifiedId": "ALG1.EQV.15",
+      "unifiedName": "Solve by factoring",
+      "confidence": "low",
+      "itemCount": 9,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.16",
+          "name": "Complete the square"
+        }
+      ],
+      "note": "no square-root-method node; EQV.15/16 are the nearest solving skills",
+      "approved": false
+    },
+    {
+      "legacyId": "solving-quadratics-factoring",
+      "legacyName": "Solving quadratics by factoring",
+      "unifiedId": "ALG1.EQV.15",
+      "unifiedName": "Solve by factoring",
+      "confidence": "high",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "completing-the-square",
+      "legacyName": "Solving by completing the square",
+      "unifiedId": "ALG1.EQV.16",
+      "unifiedName": "Complete the square",
+      "confidence": "high",
+      "itemCount": 3,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "quadratic-formula",
+      "legacyName": "Solving with the quadratic formula",
+      "unifiedId": "ALG1.EQV.17",
+      "unifiedName": "Quadratic formula",
+      "confidence": "high",
+      "itemCount": 3,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "discriminant-number-of-solutions",
+      "legacyName": "Discriminant & number of solutions",
+      "unifiedId": "ALG1.EQV.17",
+      "unifiedName": "Quadratic formula",
+      "confidence": "med",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": "discriminant folded into the quadratic-formula skill",
+      "approved": false
+    },
+    {
+      "legacyId": "quadratic-equations-graphing",
+      "legacyName": "Graphing quadratic functions",
+      "unifiedId": "ALG1.FNC.10",
+      "unifiedName": "Graph quadratic functions",
+      "confidence": "high",
+      "itemCount": 6,
+      "alternatives": [],
+      "note": null,
+      "approved": true
+    },
+    {
+      "legacyId": "quadratic-application",
+      "legacyName": "Quadratic applications",
+      "unifiedId": "ALG1.FNC.10",
+      "unifiedName": "Graph quadratic functions",
+      "confidence": "low",
+      "itemCount": 6,
+      "alternatives": [
+        {
+          "id": "ALG1.EQV.15",
+          "name": "Solve by factoring"
+        }
+      ],
+      "note": "quadratic modeling; FNC.10 (graph) vs EQV.15 (solve)",
+      "approved": false
+    }
+  ]
+}
