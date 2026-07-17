@@ -1,0 +1,80 @@
+{
+  "bySkill": {
+    "ALG1.DTA.1": 5,
+    "ALG1.DTA.2": 3,
+    "ALG1.DTA.3": 4,
+    "ALG1.EQV.1": 7,
+    "ALG1.EQV.10": 6,
+    "ALG1.EQV.15": 4,
+    "ALG1.EQV.3": 2,
+    "ALG1.EQV.7": 11,
+    "ALG1.FNC.1": 1,
+    "ALG1.FNC.10": 7,
+    "ALG1.FNC.4": 15,
+    "ALG1.FNC.5": 4,
+    "ALG1.FNC.8": 6,
+    "ALG2.DTA.1": 1,
+    "ALG2.DTA.3": 3,
+    "ALG2.EQV.12": 2,
+    "ALG2.EQV.13": 1,
+    "ALG2.EQV.15": 2,
+    "ALG2.EQV.16": 3,
+    "ALG2.EQV.6": 6,
+    "ALG2.FNC.6": 1,
+    "GEO.PRP.5": 8,
+    "GEO.SPC.11": 1,
+    "GEO.SPC.16": 2,
+    "GEO.SPC.18": 7,
+    "GEO.SPC.4": 5,
+    "MS.PRP.5": 4,
+    "MS.PRP.7": 7,
+    "MS.QNT.9": 1,
+    "MS.SPC.6": 3
+  },
+  "byDomain": {
+    "ADV": [
+      "ALG1.EQV.10",
+      "ALG1.EQV.15",
+      "ALG1.FNC.10",
+      "ALG1.FNC.8",
+      "ALG2.EQV.12",
+      "ALG2.EQV.13",
+      "ALG2.EQV.15",
+      "ALG2.EQV.16",
+      "ALG2.EQV.6",
+      "ALG2.FNC.6",
+      "MS.QNT.9"
+    ],
+    "ALG": [
+      "ALG1.EQV.1",
+      "ALG1.EQV.3",
+      "ALG1.EQV.7",
+      "ALG1.FNC.1",
+      "ALG1.FNC.4",
+      "ALG1.FNC.5"
+    ],
+    "GEO": [
+      "GEO.PRP.5",
+      "GEO.SPC.11",
+      "GEO.SPC.16",
+      "GEO.SPC.18",
+      "GEO.SPC.4",
+      "MS.SPC.6"
+    ],
+    "PSDA": [
+      "ALG1.DTA.1",
+      "ALG1.DTA.2",
+      "ALG1.DTA.3",
+      "ALG2.DTA.1",
+      "ALG2.DTA.3",
+      "MS.PRP.5",
+      "MS.PRP.7"
+    ]
+  },
+  "domainName": {
+    "ALG": "algebra",
+    "ADV": "advanced-math",
+    "PSDA": "problem-solving-data",
+    "GEO": "geometry-trig"
+  }
+}
