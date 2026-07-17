@@ -49,6 +49,7 @@
     springs: {},           // spring state for follow-through preview
     springClock: null,
     sequence: null,        // long-form composition: {base, duration, events[]}
+    scene: null,           // backdrop: {img, name, x, h, foot} (fractions)
     seqPlay: null,         // active sequence preview: {start, audio?}
     seqAudioBuf: null,     // decoded voiceover AudioBuffer
     seqAudioFile: null,
@@ -75,6 +76,7 @@
     'btnSeqLipsync', 'btnSeqAuto', 'btnSeqPreview', 'btnSeqExport', 'seqStatus',
     'prodTopic', 'prodGrade', 'prodLength', 'prodTutor', 'btnProdScript',
     'prodScript', 'btnProdAssemble', 'prodStatus',
+    'sceneFile', 'sceneInfo', 'sceneX', 'sceneH', 'sceneFoot', 'btnSceneClear',
   ].forEach((id) => { els[id] = $(id); });
 
   // ------------------------------------------------------------- clip utils
@@ -575,8 +577,12 @@
       S.springs = Core.newSpringState();
       S.springClock = null;
     }
-    S.player.draw(ctx, pose, { clear: false });
-    drawSelection(ctx, pose);
+    if (S.scene && (S.playing || S.seqPlay)) {
+      drawSceneFrame(ctx, pose); // composite over the backdrop during playback
+    } else {
+      S.player.draw(ctx, pose, { clear: false });
+      drawSelection(ctx, pose);
+    }
     els.zoomLabel.textContent = Math.round(currentScale() * 100) + '%';
   }
 
@@ -1033,13 +1039,15 @@
     const totalFrames = Math.max(1, Math.round(duration * outFps));
 
     // capture canvas at target size; frames render 2× and downscale (crisper AA)
+    const scene = S.scene; // scene backdrop overrides framing when loaded
+    const size = scene ? sceneExportSize() : framing;
     const canvas = document.createElement('canvas');
-    canvas.width = framing.width; canvas.height = framing.height;
+    canvas.width = size.width; canvas.height = size.height;
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     const ss = document.createElement('canvas');
-    ss.width = framing.width * 2; ss.height = framing.height * 2;
+    ss.width = size.width * 2; ss.height = size.height * 2;
     const ssCtx = ss.getContext('2d');
     const savedView = [...S.player.view];
     S.player.view = [...framing.view];
@@ -1084,12 +1092,16 @@
     const frameDelay = 1000 / outFps;
     for (let i = 0; i <= totalFrames; i++) {
       const t = Math.min(i / outFps, duration);
-      ssCtx.setTransform(1, 0, 0, 1, 0, 0);
-      ssCtx.fillStyle = bg;
-      ssCtx.fillRect(0, 0, ss.width, ss.height);
-      S.player.draw(ssCtx, poseAt(t), { clear: false });
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.drawImage(ss, 0, 0, canvas.width, canvas.height);
+      if (scene) {
+        drawSceneFrame(ctx, poseAt(t));
+      } else {
+        ssCtx.setTransform(1, 0, 0, 1, 0, 0);
+        ssCtx.fillStyle = bg;
+        ssCtx.fillRect(0, 0, ss.width, ss.height);
+        S.player.draw(ssCtx, poseAt(t), { clear: false });
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.drawImage(ss, 0, 0, canvas.width, canvas.height);
+      }
       track.requestFrame();
       els.exportStatus.textContent = `Rendering frame ${i + 1} / ${totalFrames + 1}…`;
       // real-time pacing keeps MediaRecorder timestamps at the target fps
@@ -1109,6 +1121,16 @@
 
   function snapshotPng() {
     const rig = S.player.rig;
+    if (S.scene) {
+      const size = sceneExportSize();
+      const canvas = document.createElement('canvas');
+      canvas.width = size.width; canvas.height = size.height;
+      drawSceneFrame(canvas.getContext('2d'), displayPose());
+      canvas.toBlob((blob) => {
+        if (blob) downloadBlob(blob, `${S.rigId}_${S.clip.name}_scene.png`);
+      }, 'image/png');
+      return;
+    }
     const framingKey = els.framingSelect.value;
     const framing = rig.framings[framingKey]
       || { width: rig.canvas[0], height: rig.canvas[1], view: [0, 0, rig.canvas[0], rig.canvas[1]] };
@@ -1314,6 +1336,105 @@
     els.seqStatus.textContent = `Lip-sync generated: ${flaps} mouth flaps over ${buf.duration.toFixed(1)}s.`;
   }
 
+  // ------------------------------------------------------ scene backdrop --
+  // Composite the character over a set image (e.g. the branded classroom).
+  // Applies during playback/preview in the viewport and in every export;
+  // paused editing keeps the plain background so picking/IK stay exact.
+
+  function sceneCoverRect(cw, ch, img) {
+    const s = Math.max(cw / img.width, ch / img.height);
+    const w = img.width * s; const h = img.height * s;
+    return { x: (cw - w) / 2, y: (ch - h) / 2, w, h };
+  }
+
+  let charCanvas = null;
+  function drawSceneFrame(ctx, pose) {
+    const { img, x, h, foot } = S.scene;
+    const cw = ctx.canvas.width; const ch = ctx.canvas.height;
+    const r = sceneCoverRect(cw, ch, img);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, r.x, r.y, r.w, r.h);
+    // character rendered 2× offscreen, placed by the position/size/floor knobs
+    const rig = S.player.rig;
+    const aspect = rig.canvas[0] / rig.canvas[1];
+    const dh = Math.max(64, r.h * h);
+    const dw = dh * aspect;
+    if (!charCanvas) charCanvas = document.createElement('canvas');
+    const bw = Math.round(dw * 2); const bh = Math.round(dh * 2);
+    if (charCanvas.width !== bw || charCanvas.height !== bh) {
+      charCanvas.width = bw; charCanvas.height = bh;
+    }
+    const cctx = charCanvas.getContext('2d');
+    cctx.setTransform(1, 0, 0, 1, 0, 0);
+    cctx.clearRect(0, 0, bw, bh);
+    const savedView = [...S.player.view];
+    S.player.view = [0, 0, rig.canvas[0], rig.canvas[1]];
+    S.player.draw(cctx, pose, { clear: false });
+    S.player.view = savedView;
+    ctx.drawImage(charCanvas, r.x + x * r.w - dw / 2, r.y + foot * r.h - dh, dw, dh);
+  }
+
+  function sceneExportSize() {
+    const img = S.scene.img;
+    const w = Math.min(1920, img.width);
+    const h = Math.round((w * img.height) / img.width);
+    return { width: w - (w % 2), height: h - (h % 2) }; // even dims for VP9
+  }
+
+  function saveScenePlacement() {
+    try {
+      localStorage.setItem(STORAGE_PREFIX + 'scene:' + S.rigId, JSON.stringify({
+        x: S.scene.x, h: S.scene.h, foot: S.scene.foot,
+      }));
+    } catch { /* non-fatal */ }
+  }
+
+  function loadScene(file) {
+    const img = new Image();
+    img.onload = () => {
+      let placement = { x: 0.72, h: 0.82, foot: 0.95 };
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'scene:' + S.rigId));
+        if (saved) placement = saved;
+      } catch { /* defaults */ }
+      S.scene = { img, name: file.name, ...placement };
+      els.sceneX.value = Math.round(S.scene.x * 100);
+      els.sceneH.value = Math.round(S.scene.h * 100);
+      els.sceneFoot.value = Math.round(S.scene.foot * 100);
+      els.btnSceneClear.disabled = false;
+      els.sceneInfo.textContent =
+        `${file.name} (${img.width}×${img.height}) — shown in playback, previews, and exports.`;
+      refreshSoon();
+    };
+    img.onerror = () => { els.sceneInfo.textContent = 'Could not load that image.'; };
+    img.src = URL.createObjectURL(file);
+  }
+
+  function bindScene() {
+    els.sceneFile.addEventListener('change', () => {
+      const file = els.sceneFile.files[0];
+      if (file) loadScene(file);
+    });
+    const knob = (el, prop) => el.addEventListener('input', () => {
+      if (!S.scene) return;
+      S.scene[prop] = parseInt(el.value, 10) / 100;
+      saveScenePlacement();
+      refreshSoon();
+    });
+    knob(els.sceneX, 'x');
+    knob(els.sceneH, 'h');
+    knob(els.sceneFoot, 'foot');
+    els.btnSceneClear.addEventListener('click', () => {
+      S.scene = null;
+      els.sceneFile.value = '';
+      els.btnSceneClear.disabled = true;
+      els.sceneInfo.textContent = 'No backdrop. Load a set image (e.g. the classroom) — it shows during playback, previews, and every export.';
+      refreshSoon();
+    });
+  }
+
   // Audio-driven director: phrases/pauses/energy peaks → gesture events.
   const CUE_CLIPS = {
     greeting: 'wave',
@@ -1378,13 +1499,15 @@
       return;
     }
 
+    const scene = S.scene; // scene backdrop overrides framing when loaded
+    const size = scene ? sceneExportSize() : framing;
     const canvas = document.createElement('canvas');
-    canvas.width = framing.width; canvas.height = framing.height;
+    canvas.width = size.width; canvas.height = size.height;
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     const ss = document.createElement('canvas');
-    ss.width = framing.width * 2; ss.height = framing.height * 2;
+    ss.width = size.width * 2; ss.height = size.height * 2;
     const ssCtx = ss.getContext('2d');
     const savedView = [...S.player.view];
     S.player.view = [...framing.view];
@@ -1432,12 +1555,16 @@
       const t = Math.min((performance.now() - t0) / 1000, duration);
       const dt = prevT === null ? 1 / outFps : Math.max(0.001, t - prevT);
       prevT = t;
-      ssCtx.setTransform(1, 0, 0, 1, 0, 0);
-      ssCtx.fillStyle = bg;
-      ssCtx.fillRect(0, 0, ss.width, ss.height);
-      S.player.draw(ssCtx, poseAt(t, dt), { clear: false });
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.drawImage(ss, 0, 0, canvas.width, canvas.height);
+      if (scene) {
+        drawSceneFrame(ctx, poseAt(t, dt));
+      } else {
+        ssCtx.setTransform(1, 0, 0, 1, 0, 0);
+        ssCtx.fillStyle = bg;
+        ssCtx.fillRect(0, 0, ss.width, ss.height);
+        S.player.draw(ssCtx, poseAt(t, dt), { clear: false });
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.drawImage(ss, 0, 0, canvas.width, canvas.height);
+      }
       track.requestFrame();
       if (t - lastStatus >= 0.5) {
         lastStatus = t;
@@ -1879,6 +2006,7 @@
 
     bindSequencer();
     bindProducer();
+    bindScene();
 
     new ResizeObserver(refreshSoon).observe(els.viewportHost);
     new ResizeObserver(refreshSoon).observe(els.timelineHost);

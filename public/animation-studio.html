@@ -52,6 +52,18 @@
         <div id="partTree" class="part-tree"></div>
         <h3>Expression slots</h3>
         <div id="slotPanel" class="slot-panel"></div>
+
+        <h3>Scene backdrop</h3>
+        <div class="scene-panel">
+          <label class="field wide scene-file">
+            <input type="file" id="sceneFile" accept="image/*">
+          </label>
+          <div id="sceneInfo" class="muted">No backdrop. Load a set image (e.g. the classroom) — it shows during playback, previews, and every export.</div>
+          <div class="scene-slider"><span>Position</span><input type="range" id="sceneX" min="5" max="95" value="72"></div>
+          <div class="scene-slider"><span>Size</span><input type="range" id="sceneH" min="30" max="110" value="82"></div>
+          <div class="scene-slider"><span>Floor</span><input type="range" id="sceneFoot" min="60" max="100" value="95"></div>
+          <button id="btnSceneClear" class="wide" disabled>Remove backdrop</button>
+        </div>
       </aside>
 
       <!-- center: viewport -->

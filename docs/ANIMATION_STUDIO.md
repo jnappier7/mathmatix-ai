@@ -118,6 +118,16 @@ clips scheduled on top, plus an optional voiceover. The right-panel
 Sequence JSON evaluates through `RigCore.evaluateSequence(seq, clips, t)`, so
 the runtime can play the same composition live later.
 
+## Scene backdrops
+
+Load any set image (e.g. the branded classroom) in the left panel's **Scene
+backdrop** section. During playback, sequence previews, and **every export**
+(clip WebM, sequence WebM, PNG), the character is composited over the backdrop
+— export dimensions become the backdrop's (capped at 1920 wide). Position /
+Size / Floor knobs place the character in the set (placement persists per rig;
+the image itself is session-only — reload it after a refresh). Paused editing
+keeps the plain background so picking and IK stay exact.
+
 ## The life layers (what makes it not look like a puppet)
 
 Two procedural layers run during playback and export (viewport toggles
@@ -148,5 +158,10 @@ The `RigPlayer` runtime applies both automatically (`player.secondaryMotion` /
   cheer) / `wave.json`.
 - If a joint shows a seam at an extreme angle, back the angle off or nudge the
   child's `x`/`y` a couple of px at that key.
+- Slot variants can declare `"transformAs": "<basePart>"` in `rig.json` to
+  inherit the base part's animation channels — that's the drop-in path for a
+  future `hand_L_point` / `hand_R_point` index-finger sprite: add the part
+  (hidden, `transformAs` the base hand), a `hand_L` slot, and key
+  `slots.hand_L: point` during pointing clips.
 - To add a rig: drop `public/rigs/<id>/` with the same structure and add it to the
   `RIGS` list at the top of `public/js/animation-studio.js`.
