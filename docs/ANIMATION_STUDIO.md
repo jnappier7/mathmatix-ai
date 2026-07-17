@@ -136,16 +136,19 @@ values are always shown exactly while editing):
 The `RigPlayer` runtime applies both automatically (`player.secondaryMotion` /
 `player.microMotion` to opt out).
 
-## Rig authoring notes (Mr. Nappier v3)
+## Rig authoring notes (Mr. Nappier v4)
 
 - Parent chain: `root → torso → head → face parts`, `torso → upper_arm → forearm → hand`,
   `root → thigh → shin → foot`. Slot variants (`lid_closed_*`, `mouth_ah`,
   `brow_raised_*`) are `hidden` parts toggled by slots.
-- **Keep shoulder rotations small (≲ 20°).** The torso sprite has the shoulders and
-  short-sleeve caps baked in and draws *above* the arms, so big `upper_arm` angles slide
-  the arm out from under the baked sleeve. Expressive gestures come from the elbows
-  (`forearm` ±40–95°) — see `celebrate.json` / `wave.json`.
-- Elbow/knee overlap inside the sprites is thin; if a joint shows a seam at a big
-  angle, back the angle off or nudge the child's `x`/`y` a couple of px at that key.
+- **v4 arms draw above the torso** (z 44–46 vs torso 40) with extended joint
+  overlap at elbows/wrists/knees, so real shoulder raises work: `upper_arm`
+  up to ~±45° and `forearm` up to ~±95° stay clean — see `celebrate.json`
+  (V-pose cheer) / `wave.json`. The v3 "keep shoulders ≲20°" rule is gone.
+- Remaining art caveat: the torso still bakes in the short-sleeve caps, so big
+  raises expose small cap tabs at the armpits. A future torso repaint with the
+  caps erased would remove the last constraint.
+- If a joint shows a seam at an extreme angle, back the angle off or nudge the
+  child's `x`/`y` a couple of px at that key.
 - To add a rig: drop `public/rigs/<id>/` with the same structure and add it to the
   `RIGS` list at the top of `public/js/animation-studio.js`.
