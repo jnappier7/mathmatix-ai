@@ -1,0 +1,5640 @@
+{
+ "strands": {
+  "QNT": "Quantity & Operations",
+  "PRP": "Proportional Reasoning",
+  "EQV": "Equivalence & Structure",
+  "FNC": "Functional Dependence",
+  "SPC": "Space & Measure",
+  "DTA": "Data & Chance"
+ },
+ "courses": [
+  "ELEM",
+  "MS",
+  "ALG1",
+  "GEO",
+  "ALG2",
+  "PREC",
+  "CALC"
+ ],
+ "skills": [
+  {
+   "skill_id": "ELEM.QNT.1",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Whole number place value",
+   "desc": "Read, write, compare, and order multi-digit whole numbers using place-value understanding.",
+   "grade": "3–4",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "numbers to 1,000 and base-ten bundling (K–2)"
+   ],
+   "next_desc": [
+    "decimal operations fluency (MS)",
+    "integer concepts on the number line (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.2",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Round whole numbers",
+   "desc": "Round whole numbers to any place and use rounding to estimate sums and differences.",
+   "grade": "3–4",
+   "prereq_ids": [
+    "ELEM.QNT.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "estimating with decimals and assessing reasonableness (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.3",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Multi-digit addition subtraction",
+   "desc": "Fluently add and subtract multi-digit whole numbers using the standard algorithm.",
+   "grade": "3–4",
+   "prereq_ids": [
+    "ELEM.QNT.1"
+   ],
+   "prereq_desc": [
+    "addition and subtraction within 100 (K–2)"
+   ],
+   "next_desc": [
+    "adding and subtracting integers (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.4",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Multiplication concepts and facts",
+   "desc": "Interpret multiplication as equal groups and arrays and fluently recall products of one-digit factors.",
+   "grade": "3",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "skip counting and repeated addition (K–2)"
+   ],
+   "next_desc": [
+    "multiplying and dividing signed numbers (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.5",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Division concepts and facts",
+   "desc": "Interpret division as equal sharing or grouping and use fact families to divide within 100.",
+   "grade": "3",
+   "prereq_ids": [
+    "ELEM.QNT.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "fraction division (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.6",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Multi-digit multiplication",
+   "desc": "Multiply multi-digit whole numbers using place-value strategies and the standard algorithm.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.QNT.1",
+    "ELEM.QNT.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "decimal multiplication (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.7",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Multi-digit division",
+   "desc": "Divide multi-digit whole numbers by one- and two-digit divisors and interpret remainders in context.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.QNT.5",
+    "ELEM.QNT.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "decimal division fluency (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.8",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Factors and multiples",
+   "desc": "Find factor pairs and multiples and classify whole numbers as prime or composite.",
+   "grade": "4",
+   "prereq_ids": [
+    "ELEM.QNT.4",
+    "ELEM.QNT.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "GCF and LCM (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.9",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Fractions as numbers",
+   "desc": "Understand unit fractions as equal parts of a whole and locate fractions on the number line.",
+   "grade": "3",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "partitioning shapes into equal shares (K–2)"
+   ],
+   "next_desc": [
+    "rational numbers on the number line (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.10",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Decimal place value",
+   "desc": "Read, write, compare, and round decimals to thousandths using place-value understanding.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.QNT.1",
+    "ELEM.QNT.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "comparing and ordering rational numbers (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.11",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Add subtract fractions",
+   "desc": "Add and subtract fractions and mixed numbers, including with unlike denominators.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.QNT.9",
+    "ELEM.PRP.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "operations on positive and negative rationals (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.12",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Multiply fractions",
+   "desc": "Multiply fractions by whole numbers and by fractions, including in area contexts.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.QNT.4",
+    "ELEM.QNT.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "fraction division (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.13",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Divide with unit fractions",
+   "desc": "Divide unit fractions by whole numbers and whole numbers by unit fractions using models.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.QNT.5",
+    "ELEM.QNT.12"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "general fraction division (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.QNT.14",
+   "course": "ELEM",
+   "strand": "QNT",
+   "name": "Decimal operations",
+   "desc": "Add, subtract, multiply, and divide decimals to hundredths using place-value strategies.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.QNT.3",
+    "ELEM.QNT.6",
+    "ELEM.QNT.10"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "decimal operations fluency with standard algorithms (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.PRP.1",
+   "course": "ELEM",
+   "strand": "PRP",
+   "name": "Equivalent fractions",
+   "desc": "Generate and recognize equivalent fractions using visual models and multiplication.",
+   "grade": "3–4",
+   "prereq_ids": [
+    "ELEM.QNT.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "equivalent ratios (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.PRP.2",
+   "course": "ELEM",
+   "strand": "PRP",
+   "name": "Compare fractions",
+   "desc": "Compare fractions with different numerators and denominators using benchmarks and common denominators.",
+   "grade": "3–4",
+   "prereq_ids": [
+    "ELEM.PRP.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "comparing rational numbers (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.PRP.3",
+   "course": "ELEM",
+   "strand": "PRP",
+   "name": "Multiplicative comparison",
+   "desc": "Interpret and solve problems where one quantity is a whole-number times as much as another.",
+   "grade": "4",
+   "prereq_ids": [
+    "ELEM.QNT.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "ratio concepts and language (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.PRP.4",
+   "course": "ELEM",
+   "strand": "PRP",
+   "name": "Relate fractions and decimals",
+   "desc": "Write fractions with denominators 10 and 100 as decimals and compare quantities across notations.",
+   "grade": "4",
+   "prereq_ids": [
+    "ELEM.PRP.1",
+    "ELEM.QNT.10"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "percent as a rate per 100 (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.PRP.5",
+   "course": "ELEM",
+   "strand": "PRP",
+   "name": "Fraction scaling",
+   "desc": "Interpret multiplication as scaling and predict whether a product is larger or smaller than its factors.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.QNT.12"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "proportional relationships and constant of proportionality (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.PRP.6",
+   "course": "ELEM",
+   "strand": "PRP",
+   "name": "Convert measurement units",
+   "desc": "Convert among units within the same measurement system to solve multi-step problems.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.QNT.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "unit rates and rate conversion (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.EQV.1",
+   "course": "ELEM",
+   "strand": "EQV",
+   "name": "Meaning of equality",
+   "desc": "Interpret the equal sign as 'has the same value as' and decide whether equations are true or false.",
+   "grade": "3",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "addition and subtraction within 20 (K–2)"
+   ],
+   "next_desc": [
+    "solving one-step equations (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.EQV.2",
+   "course": "ELEM",
+   "strand": "EQV",
+   "name": "Properties of operations",
+   "desc": "Apply commutative, associative, and distributive properties to compute flexibly and check results.",
+   "grade": "3",
+   "prereq_ids": [
+    "ELEM.QNT.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "generating equivalent algebraic expressions (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.EQV.3",
+   "course": "ELEM",
+   "strand": "EQV",
+   "name": "Unknowns in equations",
+   "desc": "Find the unknown whole number in addition, subtraction, multiplication, or division equations.",
+   "grade": "3",
+   "prereq_ids": [
+    "ELEM.EQV.1",
+    "ELEM.QNT.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "one-step equations with variables (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.EQV.4",
+   "course": "ELEM",
+   "strand": "EQV",
+   "name": "Two-step word problems",
+   "desc": "Represent two-step word problems with equations using a letter for the unknown and assess reasonableness.",
+   "grade": "3–4",
+   "prereq_ids": [
+    "ELEM.EQV.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "writing and solving two-step equations (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.EQV.5",
+   "course": "ELEM",
+   "strand": "EQV",
+   "name": "Order of operations",
+   "desc": "Evaluate numerical expressions containing parentheses, brackets, and braces.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.EQV.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "evaluating algebraic expressions with exponents (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.EQV.6",
+   "course": "ELEM",
+   "strand": "EQV",
+   "name": "Interpret numerical expressions",
+   "desc": "Write and interpret numerical expressions from verbal descriptions without evaluating them.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.EQV.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "writing algebraic expressions from context (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.FNC.1",
+   "course": "ELEM",
+   "strand": "FNC",
+   "name": "Arithmetic patterns",
+   "desc": "Identify and explain arithmetic patterns in addition and multiplication tables.",
+   "grade": "3",
+   "prereq_ids": [
+    "ELEM.QNT.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "analyzing two-variable relationships (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.FNC.2",
+   "course": "ELEM",
+   "strand": "FNC",
+   "name": "Generate number patterns",
+   "desc": "Generate a number or shape pattern that follows a given rule and identify features of the pattern.",
+   "grade": "4",
+   "prereq_ids": [
+    "ELEM.FNC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "sequences as functions (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.FNC.3",
+   "course": "ELEM",
+   "strand": "FNC",
+   "name": "Input-output rules",
+   "desc": "Complete input-output tables and describe the rule relating inputs to outputs.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.FNC.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "independent and dependent variables (MS)",
+    "function concept (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.FNC.4",
+   "course": "ELEM",
+   "strand": "FNC",
+   "name": "Relate two patterns",
+   "desc": "Generate two numerical patterns from rules and identify relationships between corresponding terms.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.FNC.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "proportional relationships in tables (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.FNC.5",
+   "course": "ELEM",
+   "strand": "FNC",
+   "name": "Graph pattern pairs",
+   "desc": "Form ordered pairs from two related patterns and graph them in the first quadrant.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.FNC.4",
+    "ELEM.SPC.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "graphing proportional and linear relationships (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.1",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Shape attributes",
+   "desc": "Classify quadrilaterals and other polygons by shared attributes such as sides and angles.",
+   "grade": "3",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "naming and composing basic shapes (K–2)"
+   ],
+   "next_desc": [
+    "classifying figures by angle and side relationships (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.2",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Perimeter",
+   "desc": "Find perimeters of polygons, including finding an unknown side length from the perimeter.",
+   "grade": "3",
+   "prereq_ids": [
+    "ELEM.SPC.1"
+   ],
+   "prereq_desc": [
+    "measuring lengths with rulers (K–2)"
+   ],
+   "next_desc": [
+    "circumference of circles (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.3",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Area of rectangles",
+   "desc": "Understand area as covering with unit squares and find rectangle areas by multiplying side lengths.",
+   "grade": "3",
+   "prereq_ids": [
+    "ELEM.QNT.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "areas of triangles, quadrilaterals, and composite figures (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.4",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Lines and angles",
+   "desc": "Identify points, lines, rays, parallel and perpendicular lines, and acute, right, and obtuse angles.",
+   "grade": "4",
+   "prereq_ids": [
+    "ELEM.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "angle relationships with parallel lines (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.5",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Measure angles",
+   "desc": "Measure and sketch angles in degrees and solve additive angle problems.",
+   "grade": "4",
+   "prereq_ids": [
+    "ELEM.SPC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "complementary, supplementary, and vertical angles (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.6",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Line symmetry",
+   "desc": "Identify lines of symmetry and complete or draw figures with line symmetry.",
+   "grade": "4",
+   "prereq_ids": [
+    "ELEM.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "reflections and rigid transformations (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.7",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Classify two-dimensional figures",
+   "desc": "Classify two-dimensional figures in a hierarchy based on their properties.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.SPC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "definitions and figure properties in proofs (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.8",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Volume of prisms",
+   "desc": "Understand volume as packing unit cubes and compute volumes of rectangular prisms.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.SPC.3",
+    "ELEM.QNT.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "prism volume with fractional edges (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.SPC.9",
+   "course": "ELEM",
+   "strand": "SPC",
+   "name": "Coordinate plane basics",
+   "desc": "Graph and interpret points in the first quadrant of the coordinate plane.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.QNT.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "graphing in all four quadrants (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.DTA.1",
+   "course": "ELEM",
+   "strand": "DTA",
+   "name": "Bar and picture graphs",
+   "desc": "Draw and interpret scaled picture graphs and bar graphs and solve one- and two-step data questions.",
+   "grade": "3",
+   "prereq_ids": [
+    "ELEM.QNT.4"
+   ],
+   "prereq_desc": [
+    "sorting and counting objects in categories (K–2)"
+   ],
+   "next_desc": [
+    "histograms and box plots (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.DTA.2",
+   "course": "ELEM",
+   "strand": "DTA",
+   "name": "Line plots",
+   "desc": "Make line plots with fractional measurements and answer questions using operations on the data.",
+   "grade": "4–5",
+   "prereq_ids": [
+    "ELEM.DTA.1",
+    "ELEM.QNT.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "dot plots and describing distributions (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.DTA.3",
+   "course": "ELEM",
+   "strand": "DTA",
+   "name": "Interpret line graphs",
+   "desc": "Read and interpret line graphs that show how a quantity changes over time.",
+   "grade": "5",
+   "prereq_ids": [
+    "ELEM.DTA.1",
+    "ELEM.SPC.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "scatter plots and bivariate data (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ELEM.DTA.4",
+   "course": "ELEM",
+   "strand": "DTA",
+   "name": "Describe likelihood",
+   "desc": "Describe events as certain, likely, unlikely, or impossible and compare chances informally.",
+   "grade": "3–5",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "everyday chance language (K–2)"
+   ],
+   "next_desc": [
+    "numerical probability of events (MS)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.QNT.1",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Decimal operations fluency",
+   "desc": "Fluently add, subtract, multiply, and divide multi-digit decimals using standard algorithms.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "decimal operations to hundredths (ELEM)"
+   ],
+   "next_desc": [
+    "rational approximations and precision (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.14"
+   ]
+  },
+  {
+   "skill_id": "MS.QNT.2",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Fraction division",
+   "desc": "Divide fractions by fractions using models and algorithms and interpret quotients in context.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "dividing with unit fractions (ELEM)",
+    "fraction multiplication (ELEM)"
+   ],
+   "next_desc": [
+    "complex fractions in unit rates (MS)",
+    "rational expressions (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.9",
+    "ELEM.PRP.5"
+   ]
+  },
+  {
+   "skill_id": "MS.QNT.3",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "GCF and LCM",
+   "desc": "Find greatest common factors and least common multiples and use the distributive property to rewrite sums.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "factors, multiples, and primes (ELEM)"
+   ],
+   "next_desc": [
+    "factoring polynomials by GCF (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.8"
+   ]
+  },
+  {
+   "skill_id": "MS.QNT.4",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Integer concepts",
+   "desc": "Understand positive and negative numbers, opposites, and absolute value on the number line.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "whole numbers and fractions on the number line (ELEM)"
+   ],
+   "next_desc": [
+    "absolute value equations and inequalities (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.9"
+   ]
+  },
+  {
+   "skill_id": "MS.QNT.5",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Compare rational numbers",
+   "desc": "Order and compare rational numbers and interpret inequality statements in real-world contexts.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.QNT.4"
+   ],
+   "prereq_desc": [
+    "comparing fractions and decimals (ELEM)"
+   ],
+   "next_desc": [
+    "interval notation and number-line solution sets (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.PRP.4"
+   ]
+  },
+  {
+   "skill_id": "MS.QNT.6",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Add subtract integers",
+   "desc": "Add and subtract integers and other signed rationals using number lines and additive inverses.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.QNT.4"
+   ],
+   "prereq_desc": [
+    "multi-digit addition and subtraction (ELEM)"
+   ],
+   "next_desc": [
+    "operations with polynomials (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.3"
+   ]
+  },
+  {
+   "skill_id": "MS.QNT.7",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Multiply divide integers",
+   "desc": "Multiply and divide signed numbers and apply sign rules to evaluate expressions.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.QNT.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "simplifying signed algebraic expressions (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.QNT.8",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Rational number operations",
+   "desc": "Solve multi-step problems using the four operations on positive and negative rational numbers.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.QNT.1",
+    "MS.QNT.2",
+    "MS.QNT.6",
+    "MS.QNT.7"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "evaluating functions at rational inputs (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.QNT.9",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Integer exponent properties",
+   "desc": "Apply properties of integer exponents, including negative exponents, to generate equivalent expressions.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.QNT.7"
+   ],
+   "prereq_desc": [
+    "whole-number exponents in expressions (ELEM order of operations)"
+   ],
+   "next_desc": [
+    "rational exponents (ALG2)",
+    "exponential functions (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.1"
+   ]
+  },
+  {
+   "skill_id": "MS.QNT.10",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Scientific notation",
+   "desc": "Express and compute with very large and very small quantities using scientific notation.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.QNT.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "significant precision in modeling (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.QNT.11",
+   "course": "MS",
+   "strand": "QNT",
+   "name": "Roots and irrationals",
+   "desc": "Evaluate square and cube roots and classify and approximate irrational numbers on the number line.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.QNT.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "simplifying radical expressions (ALG1)",
+    "complex numbers (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.PRP.1",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Ratio concepts",
+   "desc": "Understand ratios and use ratio language to describe relationships between quantities.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "multiplicative comparison (ELEM)",
+    "equivalent fractions (ELEM)"
+   ],
+   "next_desc": [
+    "trigonometric ratios (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.PRP.3",
+    "ELEM.PRP.1"
+   ]
+  },
+  {
+   "skill_id": "MS.PRP.2",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Equivalent ratios",
+   "desc": "Generate and use equivalent ratios with tables, tape diagrams, and double number lines.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.PRP.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "direct variation (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.PRP.3",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Unit rates",
+   "desc": "Compute and interpret unit rates, including rates with fractional quantities.",
+   "grade": "6–7",
+   "prereq_ids": [
+    "MS.PRP.1",
+    "MS.QNT.2"
+   ],
+   "prereq_desc": [
+    "converting measurement units (ELEM)"
+   ],
+   "next_desc": [
+    "slope as a rate of change (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.PRP.6"
+   ]
+  },
+  {
+   "skill_id": "MS.PRP.4",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Percent of a quantity",
+   "desc": "Find a percent of a quantity and find the whole given a part and the percent.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.PRP.2"
+   ],
+   "prereq_desc": [
+    "relating fractions and decimals (ELEM)"
+   ],
+   "next_desc": [
+    "exponential growth and decay rates (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.PRP.4"
+   ]
+  },
+  {
+   "skill_id": "MS.PRP.5",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Proportional relationships",
+   "desc": "Decide whether two quantities are proportional and identify the constant of proportionality.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.PRP.2",
+    "MS.PRP.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "direct and inverse variation (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.PRP.6",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Solve proportions",
+   "desc": "Write and solve proportion equations for multi-step real-world ratio problems.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.PRP.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "solving rational equations (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.PRP.7",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Multi-step percent problems",
+   "desc": "Solve percent problems involving tax, tip, discount, markup, simple interest, and percent change.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.PRP.4",
+    "MS.PRP.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "compound interest and exponential models (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.PRP.8",
+   "course": "MS",
+   "strand": "PRP",
+   "name": "Scale drawings",
+   "desc": "Solve problems involving scale drawings, computing actual lengths and areas from a scale factor.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.PRP.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "dilations and similar figures (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.EQV.1",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Algebraic expressions",
+   "desc": "Write, read, and evaluate algebraic expressions with variables, including whole-number exponents.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "order of operations and interpreting numerical expressions (ELEM)"
+   ],
+   "next_desc": [
+    "polynomial expressions (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.EQV.5"
+   ]
+  },
+  {
+   "skill_id": "MS.EQV.2",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Equivalent expressions",
+   "desc": "Apply properties of operations to generate equivalent expressions and combine like terms.",
+   "grade": "6–7",
+   "prereq_ids": [
+    "MS.EQV.1"
+   ],
+   "prereq_desc": [
+    "properties of operations (ELEM)"
+   ],
+   "next_desc": [
+    "polynomial arithmetic and structure (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.EQV.2"
+   ]
+  },
+  {
+   "skill_id": "MS.EQV.3",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "One-step equations",
+   "desc": "Solve one-step equations in one variable and check solutions by substitution.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.EQV.1"
+   ],
+   "prereq_desc": [
+    "unknowns in equations (ELEM)"
+   ],
+   "next_desc": [
+    "literal equations (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.EQV.3"
+   ]
+  },
+  {
+   "skill_id": "MS.EQV.4",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Inequality basics",
+   "desc": "Write, interpret, and graph simple inequalities of the form x > c or x < c on the number line.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.EQV.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "compound inequalities (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.EQV.5",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Two-step equations",
+   "desc": "Solve two-step equations, including equations with rational number coefficients.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.EQV.3",
+    "MS.QNT.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "equations from function rules (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.EQV.6",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Expand and factor",
+   "desc": "Expand and factor linear expressions with rational coefficients using the distributive property.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.EQV.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "factoring quadratics (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.EQV.7",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Two-step inequalities",
+   "desc": "Solve and graph two-step inequalities and interpret the solution set in context.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.EQV.4",
+    "MS.EQV.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "multi-step and compound inequalities (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.EQV.8",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Multi-step linear equations",
+   "desc": "Solve linear equations with variables on both sides, including cases with no or infinitely many solutions.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.EQV.5",
+    "MS.EQV.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "literal equations and formula rearrangement (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.EQV.9",
+   "course": "MS",
+   "strand": "EQV",
+   "name": "Systems of equations",
+   "desc": "Solve pairs of simultaneous linear equations by graphing and substitution and interpret solutions.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.EQV.8",
+    "MS.FNC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "systems by elimination and applications (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.FNC.1",
+   "course": "MS",
+   "strand": "FNC",
+   "name": "Two-variable relationships",
+   "desc": "Analyze relationships between independent and dependent variables using tables, graphs, and equations.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "input-output rules and graphing pattern pairs (ELEM)"
+   ],
+   "next_desc": [
+    "domain and range (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.FNC.3"
+   ]
+  },
+  {
+   "skill_id": "MS.FNC.2",
+   "course": "MS",
+   "strand": "FNC",
+   "name": "Function concept",
+   "desc": "Understand a function as a rule that assigns exactly one output to each input.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.FNC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "function notation f(x) (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.FNC.3",
+   "course": "MS",
+   "strand": "FNC",
+   "name": "Slope",
+   "desc": "Interpret slope as a unit rate and derive it from graphs, tables, and similar triangles.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.FNC.1",
+    "MS.PRP.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "slope formula and parallel/perpendicular lines (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.FNC.4",
+   "course": "MS",
+   "strand": "FNC",
+   "name": "Graph linear equations",
+   "desc": "Graph and interpret linear equations in the form y = mx + b, identifying slope and intercept.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.FNC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "point-slope and standard forms (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.FNC.5",
+   "course": "MS",
+   "strand": "FNC",
+   "name": "Compare functions",
+   "desc": "Compare properties of two functions each represented in a different way, such as table versus graph.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.FNC.2",
+    "MS.FNC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "average rate of change comparisons (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.FNC.6",
+   "course": "MS",
+   "strand": "FNC",
+   "name": "Linear versus nonlinear",
+   "desc": "Classify functions as linear or nonlinear and sketch or describe qualitative graph behavior.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.FNC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "quadratic and exponential function families (ALG1)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.SPC.1",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Area of polygons",
+   "desc": "Find areas of triangles, special quadrilaterals, and composite figures by composing and decomposing.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "area of rectangles (ELEM)"
+   ],
+   "next_desc": [
+    "area in coordinate proofs (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.SPC.3"
+   ]
+  },
+  {
+   "skill_id": "MS.SPC.2",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Nets and surface area",
+   "desc": "Represent solids with nets and compute surface areas of prisms and pyramids.",
+   "grade": "6–7",
+   "prereq_ids": [
+    "MS.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "surface area of cylinders and cones (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.SPC.3",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Prism volume",
+   "desc": "Find volumes of right rectangular prisms with fractional edge lengths using V = lwh.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "volume of prisms with whole-number edges (ELEM)",
+    "fraction multiplication (ELEM)"
+   ],
+   "next_desc": [
+    "volumes of oblique solids and Cavalieri's principle (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.1",
+    "ELEM.PRP.5"
+   ]
+  },
+  {
+   "skill_id": "MS.SPC.4",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Four-quadrant coordinate plane",
+   "desc": "Graph points in all four quadrants and find distances between points that share a coordinate.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.QNT.4"
+   ],
+   "prereq_desc": [
+    "first-quadrant graphing (ELEM)"
+   ],
+   "next_desc": [
+    "distance and midpoint formulas (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.FNC.5"
+   ]
+  },
+  {
+   "skill_id": "MS.SPC.5",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Angle relationships",
+   "desc": "Use complementary, supplementary, vertical, and adjacent angles, triangle angle sums, and parallel-line transversal angles to find unknown measures.",
+   "grade": "7–8",
+   "prereq_ids": [
+    "MS.EQV.5"
+   ],
+   "prereq_desc": [
+    "measuring angles in degrees (ELEM)"
+   ],
+   "next_desc": [
+    "angle theorems and proofs (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.SPC.5"
+   ]
+  },
+  {
+   "skill_id": "MS.SPC.6",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Circles",
+   "desc": "Know and apply the formulas for circumference and area of a circle.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "arc length and sector area (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.SPC.7",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Transformations and similarity",
+   "desc": "Describe translations, rotations, reflections, and dilations, including coordinate effects, and use them to establish congruence and similarity.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.SPC.4",
+    "MS.PRP.8"
+   ],
+   "prereq_desc": [
+    "line symmetry (ELEM)"
+   ],
+   "next_desc": [
+    "transformation-based proofs (GEO)",
+    "similar triangle criteria (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.SPC.6"
+   ]
+  },
+  {
+   "skill_id": "MS.SPC.8",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Pythagorean theorem",
+   "desc": "Apply the Pythagorean theorem to find side lengths and distances in the coordinate plane.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.QNT.11",
+    "MS.SPC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "distance formula (GEO)",
+    "right-triangle trigonometry (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.SPC.9",
+   "course": "MS",
+   "strand": "SPC",
+   "name": "Cylinders cones spheres",
+   "desc": "Use volume formulas for cylinders, cones, and spheres to solve real-world problems.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.SPC.3",
+    "MS.SPC.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "solids, cross-sections, and volume derivations (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.DTA.1",
+   "course": "MS",
+   "strand": "DTA",
+   "name": "Statistical questions",
+   "desc": "Recognize statistical questions and describe distributions by center, spread, and overall shape.",
+   "grade": "6",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "reading bar graphs and line plots (ELEM)"
+   ],
+   "next_desc": [
+    "study design and sampling methods (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.DTA.1"
+   ]
+  },
+  {
+   "skill_id": "MS.DTA.2",
+   "course": "MS",
+   "strand": "DTA",
+   "name": "Data displays",
+   "desc": "Display numerical data in dot plots, histograms, and box plots and choose an appropriate display.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.DTA.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "normal distributions and density curves (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.DTA.3",
+   "course": "MS",
+   "strand": "DTA",
+   "name": "Center and variability",
+   "desc": "Compute and interpret mean, median, range, interquartile range, and mean absolute deviation.",
+   "grade": "6",
+   "prereq_ids": [
+    "MS.DTA.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "standard deviation (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.DTA.4",
+   "course": "MS",
+   "strand": "DTA",
+   "name": "Sampling and inference",
+   "desc": "Use data from random samples to draw and compare informal inferences about populations.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.DTA.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "margin of error and simulation-based inference (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.DTA.5",
+   "course": "MS",
+   "strand": "DTA",
+   "name": "Probability of events",
+   "desc": "Find and interpret probabilities of simple events and compare predictions with experimental results.",
+   "grade": "7",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "describing likelihood informally (ELEM)",
+    "fraction and percent understanding (ELEM)"
+   ],
+   "next_desc": [
+    "conditional probability (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.DTA.4",
+    "ELEM.QNT.1"
+   ]
+  },
+  {
+   "skill_id": "MS.DTA.6",
+   "course": "MS",
+   "strand": "DTA",
+   "name": "Compound probability",
+   "desc": "Find probabilities of compound events using organized lists, tables, tree diagrams, and simulation.",
+   "grade": "7",
+   "prereq_ids": [
+    "MS.DTA.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "counting principles and independence (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "MS.DTA.7",
+   "course": "MS",
+   "strand": "DTA",
+   "name": "Bivariate data",
+   "desc": "Construct and interpret scatter plots and two-way tables and informally fit lines to linear data.",
+   "grade": "8",
+   "prereq_ids": [
+    "MS.DTA.2",
+    "MS.FNC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "correlation, residuals, and regression (ALG1/ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.QNT.1",
+   "course": "ALG1",
+   "strand": "QNT",
+   "name": "Rational vs irrational",
+   "desc": "Classify real numbers as rational or irrational and reason about sums and products of the two types.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "rational number operations (MS)",
+    "square roots of perfect squares (MS)"
+   ],
+   "next_desc": [
+    "simplifying radicals (ALG1)",
+    "complex numbers (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.QNT.8",
+    "MS.QNT.11"
+   ]
+  },
+  {
+   "skill_id": "ALG1.QNT.2",
+   "course": "ALG1",
+   "strand": "QNT",
+   "name": "Exponent properties",
+   "desc": "Apply product, quotient, power, zero, and negative exponent rules to simplify expressions with integer exponents.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "whole-number exponents and order of operations (MS)"
+   ],
+   "next_desc": [
+    "rational exponents (ALG2)",
+    "exponential functions (ALG1)"
+   ],
+   "cross_prereq_ids": [
+    "MS.EQV.1"
+   ]
+  },
+  {
+   "skill_id": "ALG1.QNT.3",
+   "course": "ALG1",
+   "strand": "QNT",
+   "name": "Simplify square roots",
+   "desc": "Rewrite square roots in simplest radical form by extracting perfect-square factors.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.QNT.1"
+   ],
+   "prereq_desc": [
+    "prime factorization (MS)"
+   ],
+   "next_desc": [
+    "exact answers in special right triangles (GEO)",
+    "higher-index radicals (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.QNT.8"
+   ]
+  },
+  {
+   "skill_id": "ALG1.QNT.4",
+   "course": "ALG1",
+   "strand": "QNT",
+   "name": "Operations with radicals",
+   "desc": "Add, subtract, and multiply square-root expressions, combining like radicals and simplifying products.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.QNT.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "radical measures in geometry (GEO)",
+    "complex number arithmetic (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.PRP.1",
+   "course": "ALG1",
+   "strand": "PRP",
+   "name": "Dimensional analysis",
+   "desc": "Convert rates and units using conversion factors and choose appropriate units when modeling.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "unit rates and ratio tables (MS)"
+   ],
+   "next_desc": [
+    "measurement conversions for area and volume (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.3"
+   ]
+  },
+  {
+   "skill_id": "ALG1.PRP.2",
+   "course": "ALG1",
+   "strand": "PRP",
+   "name": "Slope as rate",
+   "desc": "Compute slope from graphs, tables, and points and interpret it as a unit rate in context.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.PRP.1"
+   ],
+   "prereq_desc": [
+    "proportional relationships and constant of proportionality (MS)"
+   ],
+   "next_desc": [
+    "slope in coordinate proofs (GEO)",
+    "average rate of change (PREC/CALC)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.5"
+   ]
+  },
+  {
+   "skill_id": "ALG1.PRP.3",
+   "course": "ALG1",
+   "strand": "PRP",
+   "name": "Direct variation",
+   "desc": "Identify, write, and solve direct variation models y = kx from tables, graphs, and word problems.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.PRP.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "inverse and joint variation (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.PRP.4",
+   "course": "ALG1",
+   "strand": "PRP",
+   "name": "Percent change models",
+   "desc": "Compute repeated percent increase or decrease and express it with growth or decay factors.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.PRP.1"
+   ],
+   "prereq_desc": [
+    "percent problems (MS)"
+   ],
+   "next_desc": [
+    "compound interest models (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.7"
+   ]
+  },
+  {
+   "skill_id": "ALG1.EQV.1",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Multi-step linear equations",
+   "desc": "Solve linear equations with distribution, fractions, and variables on both sides, identifying no-solution and identity cases.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "two-step equations and combining like terms (MS)"
+   ],
+   "next_desc": [
+    "algebraic proofs (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "MS.EQV.5"
+   ]
+  },
+  {
+   "skill_id": "ALG1.EQV.2",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Literal equations",
+   "desc": "Solve a formula or literal equation for a specified variable.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "rearranging perimeter, area, and volume formulas (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.3",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "One-variable inequalities",
+   "desc": "Solve and graph multi-step linear inequalities, reversing the symbol when multiplying or dividing by a negative.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.1"
+   ],
+   "prereq_desc": [
+    "inequality notation and number lines (MS)"
+   ],
+   "next_desc": [
+    "quadratic and absolute value inequalities (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.QNT.6"
+   ]
+  },
+  {
+   "skill_id": "ALG1.EQV.4",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Compound inequalities",
+   "desc": "Solve and graph conjunction (and) and disjunction (or) compound inequalities in one variable.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "interval notation for domains (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.5",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Absolute value equations",
+   "desc": "Solve absolute value equations by splitting into two cases and checking for extraneous results.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.1"
+   ],
+   "prereq_desc": [
+    "absolute value as distance (MS)"
+   ],
+   "next_desc": [
+    "absolute value inequalities (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.QNT.4"
+   ]
+  },
+  {
+   "skill_id": "ALG1.EQV.6",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Systems by graphing",
+   "desc": "Solve systems of two linear equations by graphing and classify them as one solution, none, or infinitely many.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.1",
+    "ALG1.FNC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.7",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Systems by substitution",
+   "desc": "Solve linear systems by substitution, including setting up systems from word problems.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "nonlinear systems (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.8",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Systems by elimination",
+   "desc": "Solve linear systems by elimination, multiplying one or both equations when needed.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.7"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "three-variable systems (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.9",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Add subtract polynomials",
+   "desc": "Add and subtract polynomials by combining like terms and writing results in standard form.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "combining like terms and distributive property (MS)"
+   ],
+   "next_desc": [
+    "higher-degree polynomial operations (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.QNT.3"
+   ]
+  },
+  {
+   "skill_id": "ALG1.EQV.10",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Multiply polynomials",
+   "desc": "Multiply monomials, binomials, and trinomials, including squaring binomials.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.9",
+    "ALG1.QNT.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "binomial expansion (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.11",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Factor GCF grouping",
+   "desc": "Factor out the greatest common monomial factor and factor four-term polynomials by grouping.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.10"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.12",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Factor simple trinomials",
+   "desc": "Factor trinomials of the form x^2 + bx + c, including those with negative coefficients.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.13",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Factor a>1 trinomials",
+   "desc": "Factor trinomials ax^2 + bx + c with a > 1 using the ac method or guess-and-check.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.12"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "factoring higher-degree polynomials (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.14",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Factor special products",
+   "desc": "Recognize and factor differences of squares and perfect-square trinomials.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.12"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "sum and difference of cubes (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.15",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Solve by factoring",
+   "desc": "Solve quadratic equations using factoring and the zero product property.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.13",
+    "ALG1.EQV.14"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "solving polynomial equations (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.16",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Complete the square",
+   "desc": "Solve quadratics by taking square roots and by completing the square, giving exact radical answers.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.15",
+    "ALG1.QNT.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "circle equations (GEO)",
+    "vertex form and conics (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.EQV.17",
+   "course": "ALG1",
+   "strand": "EQV",
+   "name": "Quadratic formula",
+   "desc": "Solve quadratics with the quadratic formula and use the discriminant to count real solutions.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.16"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "complex solutions of quadratics (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.1",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Function notation",
+   "desc": "Decide whether a relation is a function and evaluate and interpret f(x) notation in context.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "input-output tables and graphing points (MS)"
+   ],
+   "next_desc": [
+    "function operations and composition (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.FNC.2"
+   ]
+  },
+  {
+   "skill_id": "ALG1.FNC.2",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Domain and range",
+   "desc": "Determine the domain and range of a function from graphs, tables, and contexts.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "domains of radical and rational functions (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.3",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Graph linear functions",
+   "desc": "Graph linear functions from slope-intercept and standard form, identifying slope and intercepts.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.1",
+    "ALG1.PRP.2"
+   ],
+   "prereq_desc": [
+    "graphing proportional relationships (MS)"
+   ],
+   "next_desc": [
+    "slope criteria for parallel and perpendicular lines (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.5"
+   ]
+  },
+  {
+   "skill_id": "ALG1.FNC.4",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Write linear equations",
+   "desc": "Write equations of lines from a slope and point, two points, or parallel and perpendicular conditions.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "equations of lines in coordinate proofs (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.5",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Graph linear inequalities",
+   "desc": "Graph two-variable linear inequalities and systems of inequalities, identifying the solution region.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.3",
+    "ALG1.EQV.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "linear programming ideas (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.6",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Arithmetic sequences",
+   "desc": "Write recursive and explicit rules for arithmetic sequences and connect them to linear functions.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.1"
+   ],
+   "prereq_desc": [
+    "numeric patterns (MS)"
+   ],
+   "next_desc": [
+    "arithmetic series (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ELEM.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "ALG1.FNC.7",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Geometric sequences",
+   "desc": "Write recursive and explicit rules for geometric sequences and connect them to exponential functions.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "geometric series (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.8",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Exponential growth decay",
+   "desc": "Write and evaluate exponential growth and decay functions y = a(b)^x from contexts.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.7",
+    "ALG1.PRP.4",
+    "ALG1.QNT.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "continuous growth and logarithms (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.9",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Graph exponential functions",
+   "desc": "Graph exponential functions, identifying intercepts, asymptotes, and end behavior.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.8"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "logarithmic functions as inverses (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.10",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Graph quadratic functions",
+   "desc": "Graph quadratics, identifying vertex, axis of symmetry, intercepts, and maximum or minimum.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.3",
+    "ALG1.EQV.15"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "parabolas via focus and directrix (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.11",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Function transformations",
+   "desc": "Describe and graph vertical and horizontal shifts, reflections, and stretches of parent functions.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.10",
+    "ALG1.FNC.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "general transformations across families (ALG2)",
+    "coordinate transformation rules (GEO)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.FNC.12",
+   "course": "ALG1",
+   "strand": "FNC",
+   "name": "Average rate change",
+   "desc": "Compute average rate of change over an interval and compare linear, exponential, and quadratic growth.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.10",
+    "ALG1.FNC.9",
+    "ALG1.PRP.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "difference quotient (PREC)",
+    "derivative as instantaneous rate (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.SPC.1",
+   "course": "ALG1",
+   "strand": "SPC",
+   "name": "Distance and midpoint",
+   "desc": "Use the distance and midpoint formulas to compute lengths and midpoints in the coordinate plane.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "Pythagorean theorem (MS)"
+   ],
+   "next_desc": [
+    "coordinate proofs (GEO)",
+    "circle and conic equations (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.SPC.8"
+   ]
+  },
+  {
+   "skill_id": "ALG1.SPC.2",
+   "course": "ALG1",
+   "strand": "SPC",
+   "name": "Polynomial geometry models",
+   "desc": "Represent perimeter, area, and volume of figures with polynomial expressions and evaluate them.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.EQV.10"
+   ],
+   "prereq_desc": [
+    "area and volume formulas (MS)"
+   ],
+   "next_desc": [
+    "modeling with area and volume (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "MS.SPC.6"
+   ]
+  },
+  {
+   "skill_id": "ALG1.DTA.1",
+   "course": "ALG1",
+   "strand": "DTA",
+   "name": "Describe data distributions",
+   "desc": "Compare distributions using shape, center, spread, standard deviation, and the effect of outliers.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "dot plots, histograms, and box plots (MS)"
+   ],
+   "next_desc": [
+    "normal distributions and z-scores (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.DTA.2"
+   ]
+  },
+  {
+   "skill_id": "ALG1.DTA.2",
+   "course": "ALG1",
+   "strand": "DTA",
+   "name": "Two-way frequency tables",
+   "desc": "Build two-way tables and interpret joint, marginal, and conditional relative frequencies.",
+   "grade": "9",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "percent of a quantity (MS)"
+   ],
+   "next_desc": [
+    "conditional probability from tables (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.4"
+   ]
+  },
+  {
+   "skill_id": "ALG1.DTA.3",
+   "course": "ALG1",
+   "strand": "DTA",
+   "name": "Scatter plots fit",
+   "desc": "Make scatter plots, fit a linear model, and interpret its slope and intercept in context.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.FNC.4",
+    "ALG1.DTA.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "exponential and quadratic regression (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG1.DTA.4",
+   "course": "ALG1",
+   "strand": "DTA",
+   "name": "Residuals and correlation",
+   "desc": "Use residuals and the correlation coefficient to judge fit, and distinguish correlation from causation.",
+   "grade": "9",
+   "prereq_ids": [
+    "ALG1.DTA.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "study design and inference (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.QNT.1",
+   "course": "GEO",
+   "strand": "QNT",
+   "name": "Radical measures",
+   "desc": "Compute exact lengths and areas involving square roots and simplify radical answers.",
+   "grade": "9-10",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "operations with radicals (ALG1)"
+   ],
+   "next_desc": [
+    "exact trig values on the unit circle (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.QNT.4"
+   ]
+  },
+  {
+   "skill_id": "GEO.QNT.2",
+   "course": "GEO",
+   "strand": "QNT",
+   "name": "Measurement conversions",
+   "desc": "Convert linear, square, and cubic units and report answers with appropriate precision.",
+   "grade": "9-10",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "dimensional analysis (ALG1)"
+   ],
+   "next_desc": [
+    "density and design modeling (GEO)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.PRP.1"
+   ]
+  },
+  {
+   "skill_id": "GEO.PRP.1",
+   "course": "GEO",
+   "strand": "PRP",
+   "name": "Dilations",
+   "desc": "Perform dilations from a center, find scale factors, and describe their effect on segments and angles.",
+   "grade": "9-10",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "scale drawings (MS)",
+    "graphing points (ALG1)"
+   ],
+   "next_desc": [
+    "nonrigid transformations of function graphs (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.8",
+    "ALG1.PRP.2"
+   ]
+  },
+  {
+   "skill_id": "GEO.PRP.2",
+   "course": "GEO",
+   "strand": "PRP",
+   "name": "Similar polygons",
+   "desc": "Use similarity statements and proportional side lengths to find missing measures in similar figures.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.PRP.1"
+   ],
+   "prereq_desc": [
+    "solving proportions (MS)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.PRP.6"
+   ]
+  },
+  {
+   "skill_id": "GEO.PRP.3",
+   "course": "GEO",
+   "strand": "PRP",
+   "name": "Triangle similarity criteria",
+   "desc": "Establish triangle similarity with AA, SAS, and SSS criteria and use it to solve for unknown lengths.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.PRP.2",
+    "GEO.EQV.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "slope and similar triangles (ALG2 review)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.PRP.4",
+   "course": "GEO",
+   "strand": "PRP",
+   "name": "Proportional segment theorems",
+   "desc": "Apply the side-splitter, midsegment, and angle-bisector proportionality theorems.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.PRP.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.PRP.5",
+   "course": "GEO",
+   "strand": "PRP",
+   "name": "Right triangle trig",
+   "desc": "Use sine, cosine, and tangent ratios to find missing side lengths in right triangles.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.PRP.3",
+    "GEO.SPC.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "unit circle and radian measure (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.PRP.6",
+   "course": "GEO",
+   "strand": "PRP",
+   "name": "Inverse trig angles",
+   "desc": "Use inverse trig ratios to find angles, including angle-of-elevation and depression problems.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.PRP.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "inverse trig functions (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.PRP.7",
+   "course": "GEO",
+   "strand": "PRP",
+   "name": "Scaling area volume",
+   "desc": "Predict how a scale factor k changes perimeter, area, and volume of similar figures and solids.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.PRP.2",
+    "GEO.SPC.18"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "power functions and scaling (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.1",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Conditional statements",
+   "desc": "Write and evaluate conditionals, converses, inverses, contrapositives, and biconditionals.",
+   "grade": "9-10",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "general algebraic reasoning (ALG1)"
+   ],
+   "next_desc": [
+    "logical structure of proofs across mathematics"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.2",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Inductive deductive reasoning",
+   "desc": "Form conjectures from patterns, find counterexamples, and apply the laws of detachment and syllogism.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.3",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Algebraic proofs",
+   "desc": "Justify each step of solving an equation using properties of equality in two-column form.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.2"
+   ],
+   "prereq_desc": [
+    "multi-step linear equations (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "ALG1.EQV.1"
+   ]
+  },
+  {
+   "skill_id": "GEO.EQV.4",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Segment angle proofs",
+   "desc": "Prove basic theorems about segments and angles, such as vertical angles and congruent supplements.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.3",
+    "GEO.SPC.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.5",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Parallel line proofs",
+   "desc": "Prove and apply theorems about angles formed by parallel lines and transversals, including converses.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.4",
+    "GEO.SPC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.6",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Triangle congruence criteria",
+   "desc": "Decide whether triangles are congruent using SSS, SAS, ASA, AAS, and HL, connecting each to rigid motions.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.5",
+    "GEO.SPC.7"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.7",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Congruence proofs CPCTC",
+   "desc": "Write triangle congruence proofs and use CPCTC to prove segments and angles congruent.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "proof habits for identities and theorems (ALG2/PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.8",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Quadrilateral proofs",
+   "desc": "Prove properties of parallelograms and the tests that classify special quadrilaterals.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.7",
+    "GEO.SPC.10"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.EQV.9",
+   "course": "GEO",
+   "strand": "EQV",
+   "name": "Coordinate proofs",
+   "desc": "Use slope, distance, and midpoint to prove properties of figures placed on the coordinate plane.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.EQV.8"
+   ],
+   "prereq_desc": [
+    "distance and midpoint formulas (ALG1)",
+    "writing linear equations (ALG1)"
+   ],
+   "next_desc": [
+    "analytic arguments with conics (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.SPC.1",
+    "ALG1.EQV.1"
+   ]
+  },
+  {
+   "skill_id": "GEO.FNC.1",
+   "course": "GEO",
+   "strand": "FNC",
+   "name": "Transformation coordinate rules",
+   "desc": "Represent translations, reflections, rotations, and dilations as coordinate functions (x, y) -> (x', y').",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.7",
+    "GEO.PRP.1"
+   ],
+   "prereq_desc": [
+    "function notation (ALG1)"
+   ],
+   "next_desc": [
+    "transformations of function graphs (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "GEO.FNC.2",
+   "course": "GEO",
+   "strand": "FNC",
+   "name": "Geometric modeling functions",
+   "desc": "Express area, volume, or cost as a function of a single dimension and use it to optimize a design.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.19",
+    "GEO.QNT.2"
+   ],
+   "prereq_desc": [
+    "evaluating functions (ALG1)"
+   ],
+   "next_desc": [
+    "optimization with calculus (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.FNC.3"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.1",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Segments and angles",
+   "desc": "Compute lengths and angle measures using segment addition, angle addition, and bisectors.",
+   "grade": "9-10",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "measuring angles and basic constructions (MS)",
+    "solving linear equations (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.SPC.5",
+    "ALG1.EQV.1"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.2",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Angle pair relationships",
+   "desc": "Solve problems using complementary, supplementary, vertical, and linear-pair angle relationships.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.3",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Parallel lines angles",
+   "desc": "Find angle measures formed by parallel lines and transversals using alternate, corresponding, and co-interior angles.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.2"
+   ],
+   "prereq_desc": [
+    "angle relationships (MS)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.SPC.5"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.4",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Triangle angle theorems",
+   "desc": "Apply the triangle angle-sum and exterior-angle theorems, including with isosceles and equilateral triangles.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.5",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Triangle inequalities",
+   "desc": "Use the triangle inequality and side-angle relationships to test side lengths and order sides and angles.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.6",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Bisectors and centers",
+   "desc": "Apply perpendicular bisector and angle bisector theorems and locate the centroid, circumcenter, and incenter.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.7",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Rigid transformations",
+   "desc": "Perform and identify translations, reflections, and rotations that carry a figure onto another.",
+   "grade": "9-10",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "informal transformations (MS)",
+    "coordinate plane fluency (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.SPC.7",
+    "ALG1.SPC.1"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.8",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Symmetry and composition",
+   "desc": "Compose transformations and identify line and rotational symmetry of figures.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.7"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "function composition (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.9",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Polygon angle sums",
+   "desc": "Compute interior and exterior angle measures and sums for polygons.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.10",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Parallelogram properties",
+   "desc": "Use properties of parallelograms, rectangles, rhombi, squares, trapezoids, and kites to find measures.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.11",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Pythagorean applications",
+   "desc": "Apply the Pythagorean theorem and its converse to solve problems and classify triangles.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.4"
+   ],
+   "prereq_desc": [
+    "Pythagorean theorem (MS)"
+   ],
+   "next_desc": [
+    "distance formula connections (ALG2 conics)"
+   ],
+   "cross_prereq_ids": [
+    "MS.SPC.8"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.12",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Special right triangles",
+   "desc": "Use 45-45-90 and 30-60-90 relationships to find exact side lengths.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.11",
+    "GEO.QNT.1"
+   ],
+   "prereq_desc": [
+    "simplifying square roots (ALG1)"
+   ],
+   "next_desc": [
+    "exact unit-circle values (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.QNT.3"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.13",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Arcs and chords",
+   "desc": "Find measures of central angles, inscribed angles, arcs, and chords in circles.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.2"
+   ],
+   "prereq_desc": [
+    "circle vocabulary (MS)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.SPC.6"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.14",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Tangents secants segments",
+   "desc": "Apply angle and segment relationships formed by tangents, secants, and chords.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.13"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.15",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Arc length sectors",
+   "desc": "Compute arc length and sector area and describe radian measure as a ratio of arc to radius.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.13"
+   ],
+   "prereq_desc": [
+    "circumference and circle area (MS)"
+   ],
+   "next_desc": [
+    "radian measure and the unit circle (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "MS.SPC.6"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.16",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Circle equations",
+   "desc": "Write and graph circle equations (x-h)^2 + (y-k)^2 = r^2, completing the square when needed.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.13"
+   ],
+   "prereq_desc": [
+    "completing the square (ALG1)",
+    "distance formula (ALG1)"
+   ],
+   "next_desc": [
+    "conic sections (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.EQV.16",
+    "ALG1.EQV.2"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.17",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Areas of polygons",
+   "desc": "Find areas of triangles, quadrilaterals, regular polygons, and composite figures.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.9",
+    "GEO.SPC.12"
+   ],
+   "prereq_desc": [
+    "area formulas (MS)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.SPC.6"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.18",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Prisms and cylinders",
+   "desc": "Compute surface area and volume of prisms and cylinders, including composite solids.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.17"
+   ],
+   "prereq_desc": [
+    "volume of rectangular prisms (MS)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.SPC.3"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.19",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Pyramids cones spheres",
+   "desc": "Compute surface area and volume of pyramids, cones, and spheres.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.18"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "volume by slicing (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.SPC.20",
+   "course": "GEO",
+   "strand": "SPC",
+   "name": "Cross sections revolutions",
+   "desc": "Identify cross-sections of solids, solids of revolution, and apply Cavalieri's principle.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.SPC.19"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "solids of revolution volumes (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.DTA.1",
+   "course": "GEO",
+   "strand": "DTA",
+   "name": "Probability foundations",
+   "desc": "Describe sample spaces and compute theoretical and experimental probabilities and complements.",
+   "grade": "9-10",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "simple probability (MS)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.DTA.5"
+   ]
+  },
+  {
+   "skill_id": "GEO.DTA.2",
+   "course": "GEO",
+   "strand": "DTA",
+   "name": "Compound events",
+   "desc": "Compute probabilities of unions, intersections, and independent or dependent events using addition and multiplication rules.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.DTA.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "binomial probability (ALG2)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "GEO.DTA.3",
+   "course": "GEO",
+   "strand": "DTA",
+   "name": "Conditional probability",
+   "desc": "Compute conditional probabilities from two-way tables and test events for independence.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.DTA.2"
+   ],
+   "prereq_desc": [
+    "two-way frequency tables (ALG1)"
+   ],
+   "next_desc": [
+    "statistical inference (ALG2)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.DTA.2"
+   ]
+  },
+  {
+   "skill_id": "GEO.DTA.4",
+   "course": "GEO",
+   "strand": "DTA",
+   "name": "Geometric probability",
+   "desc": "Compute probabilities as ratios of lengths, areas, or angle measures.",
+   "grade": "9-10",
+   "prereq_ids": [
+    "GEO.DTA.1",
+    "GEO.SPC.17"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.QNT.1",
+   "course": "ALG2",
+   "strand": "QNT",
+   "name": "Nth roots radicals",
+   "desc": "Evaluate and simplify nth roots and higher-index radical expressions.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "simplifying square roots (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "ALG1.QNT.3"
+   ]
+  },
+  {
+   "skill_id": "ALG2.QNT.2",
+   "course": "ALG2",
+   "strand": "QNT",
+   "name": "Rational exponents",
+   "desc": "Convert between radical and rational-exponent forms and simplify using exponent properties.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.QNT.1"
+   ],
+   "prereq_desc": [
+    "integer exponent properties (ALG1)"
+   ],
+   "next_desc": [
+    "exponential functions with any base (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.QNT.2"
+   ]
+  },
+  {
+   "skill_id": "ALG2.QNT.3",
+   "course": "ALG2",
+   "strand": "QNT",
+   "name": "Radical operations",
+   "desc": "Add, multiply, and divide radical expressions, rationalizing denominators including conjugates.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.QNT.1"
+   ],
+   "prereq_desc": [
+    "operations with square roots (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "ALG1.QNT.3"
+   ]
+  },
+  {
+   "skill_id": "ALG2.QNT.4",
+   "course": "ALG2",
+   "strand": "QNT",
+   "name": "Imaginary unit i",
+   "desc": "Simplify square roots of negative numbers and evaluate powers of i.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.QNT.1"
+   ],
+   "prereq_desc": [
+    "rational vs irrational classification (ALG1)"
+   ],
+   "next_desc": [
+    "polar form of complex numbers (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.QNT.1"
+   ]
+  },
+  {
+   "skill_id": "ALG2.QNT.5",
+   "course": "ALG2",
+   "strand": "QNT",
+   "name": "Complex arithmetic",
+   "desc": "Add, subtract, multiply, and divide complex numbers using conjugates.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.QNT.4",
+    "ALG2.QNT.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "complex plane and De Moivre (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.PRP.1",
+   "course": "ALG2",
+   "strand": "PRP",
+   "name": "Inverse joint variation",
+   "desc": "Write and solve inverse, joint, and combined variation models from data and contexts.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "direct variation (ALG1)"
+   ],
+   "next_desc": [
+    "rational function behavior (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.PRP.3"
+   ]
+  },
+  {
+   "skill_id": "ALG2.PRP.2",
+   "course": "ALG2",
+   "strand": "PRP",
+   "name": "Compound interest models",
+   "desc": "Compute compound interest with n compoundings and continuously, comparing effective growth rates.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "percent change and growth factors (ALG1)"
+   ],
+   "next_desc": [
+    "logistic and other growth models (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.PRP.4"
+   ]
+  },
+  {
+   "skill_id": "ALG2.PRP.3",
+   "course": "ALG2",
+   "strand": "PRP",
+   "name": "Rational rate problems",
+   "desc": "Set up and solve work, mixture, and motion problems that lead to rational equations.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.PRP.1",
+    "ALG2.EQV.15"
+   ],
+   "prereq_desc": [
+    "unit rates and dimensional analysis (ALG1)"
+   ],
+   "next_desc": [
+    "related rates (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.PRP.1"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.1",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Absolute value inequalities",
+   "desc": "Solve absolute value inequalities and express solutions in interval notation.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "absolute value equations and compound inequalities (ALG1)"
+   ],
+   "next_desc": [
+    "epsilon-style distance arguments (CALC limits)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.EQV.5"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.2",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Three-variable systems",
+   "desc": "Solve systems of three linear equations in three variables by elimination and substitution.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "systems by elimination (ALG1)"
+   ],
+   "next_desc": [
+    "matrices and Gaussian ideas (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.EQV.8"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.3",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Complete the square",
+   "desc": "Complete the square to solve quadratics and to convert between standard and vertex form.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "completing the square introduction (ALG1)"
+   ],
+   "next_desc": [
+    "conic sections in standard form (ALG2/PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.EQV.16"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.4",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Complex quadratic solutions",
+   "desc": "Solve quadratics with the quadratic formula, including complex solutions, and interpret the discriminant.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.3",
+    "ALG2.QNT.5"
+   ],
+   "prereq_desc": [
+    "quadratic formula (ALG1)"
+   ],
+   "next_desc": [
+    "fundamental theorem of algebra (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.EQV.17"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.5",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Quadratic inequalities",
+   "desc": "Solve quadratic inequalities in one variable using critical values and sign analysis.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "polynomial and rational inequalities (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.6",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Nonlinear systems",
+   "desc": "Solve linear-quadratic and quadratic-quadratic systems algebraically and graphically.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.4"
+   ],
+   "prereq_desc": [
+    "systems by substitution (ALG1)"
+   ],
+   "next_desc": [
+    "intersections of conics (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "MS.EQV.9"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.7",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Polynomial operations",
+   "desc": "Add, subtract, and multiply higher-degree polynomials, including binomial expansion with Pascal's triangle.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "polynomial multiplication (ALG1)"
+   ],
+   "next_desc": [
+    "binomial theorem (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.SPC.2"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.8",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Polynomial division",
+   "desc": "Divide polynomials using long division and synthetic division.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.7"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "slant asymptotes (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.9",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Remainder factor theorems",
+   "desc": "Apply the remainder and factor theorems to evaluate polynomials and verify factors.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.8"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.10",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Factor higher-degree polynomials",
+   "desc": "Factor cubics and quartics using grouping, sum and difference of cubes, and quadratic form.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.7"
+   ],
+   "prereq_desc": [
+    "trinomial and special-product factoring (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "ALG1.EQV.15"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.11",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Solve polynomial equations",
+   "desc": "Solve polynomial equations by factoring and the rational root theorem, counting roots with multiplicity.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.9",
+    "ALG2.EQV.10"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "fundamental theorem of algebra (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.12",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Radical equations",
+   "desc": "Solve radical and rational-exponent equations, identifying extraneous solutions.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.QNT.2",
+    "ALG2.QNT.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.13",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Simplify rational expressions",
+   "desc": "Simplify, multiply, and divide rational expressions, stating excluded values.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.10"
+   ],
+   "prereq_desc": [
+    "fraction operations (MS)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "MS.QNT.1"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.14",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Add rational expressions",
+   "desc": "Add and subtract rational expressions with unlike denominators and simplify complex fractions.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.13"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "partial fractions (PREC/CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.15",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Rational equations",
+   "desc": "Solve rational equations by clearing denominators and rejecting extraneous solutions.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.14"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.16",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Exponential equations",
+   "desc": "Solve exponential equations by matching common bases and by taking logarithms.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.10",
+    "ALG2.QNT.2"
+   ],
+   "prereq_desc": [
+    "exponential growth and decay (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "ALG1.FNC.8"
+   ]
+  },
+  {
+   "skill_id": "ALG2.EQV.17",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Logarithm properties",
+   "desc": "Expand and condense logarithmic expressions using product, quotient, power, and change-of-base rules.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "logarithmic differentiation (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.EQV.18",
+   "course": "ALG2",
+   "strand": "EQV",
+   "name": "Logarithmic equations",
+   "desc": "Solve logarithmic equations using properties of logs and check for extraneous solutions.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.17",
+    "ALG2.EQV.16"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "solving transcendental equations (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.1",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Function operations",
+   "desc": "Add, subtract, multiply, and divide functions and evaluate the results, attending to domain.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "function notation and domain (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "ALG1.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "ALG2.FNC.2",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Function composition",
+   "desc": "Compose functions, evaluate compositions, and decompose a function into simpler parts.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "chain rule (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.3",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Inverse functions",
+   "desc": "Find and verify inverse functions algebraically and graphically, restricting domains when needed.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "inverse trig functions (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.4",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Function transformations",
+   "desc": "Graph a f(b(x - h)) + k transformations across parent function families.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.1"
+   ],
+   "prereq_desc": [
+    "transformations of quadratics and exponentials (ALG1)",
+    "coordinate transformation rules (GEO)"
+   ],
+   "next_desc": [
+    "transforming trig graphs (ALG2/PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.EQV.16",
+    "GEO.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "ALG2.FNC.5",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Piecewise functions",
+   "desc": "Evaluate and graph piecewise-defined, step, and absolute value functions.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.1"
+   ],
+   "prereq_desc": [
+    "graphing linear functions (ALG1)"
+   ],
+   "next_desc": [
+    "continuity and limits (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.EQV.6"
+   ]
+  },
+  {
+   "skill_id": "ALG2.FNC.6",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Polynomial end behavior",
+   "desc": "Predict end behavior of polynomial graphs from degree and leading coefficient.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.7"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "limits at infinity (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.7",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Zeros and multiplicity",
+   "desc": "Sketch polynomial graphs using zeros, multiplicity, and turning points.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.6",
+    "ALG2.EQV.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "curve sketching with derivatives (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.8",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Graph radical functions",
+   "desc": "Graph square-root and cube-root functions and determine their domains and ranges.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.4",
+    "ALG2.QNT.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.9",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Graph rational functions",
+   "desc": "Graph rational functions, identifying vertical and horizontal asymptotes, holes, and intercepts.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.4",
+    "ALG2.EQV.13"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "limits and asymptotic behavior (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.10",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Exponential functions",
+   "desc": "Graph and analyze exponential functions, including base e, growth versus decay, and asymptotes.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.4"
+   ],
+   "prereq_desc": [
+    "exponential growth and decay functions (ALG1)"
+   ],
+   "next_desc": [],
+   "cross_prereq_ids": [
+    "ALG1.FNC.8"
+   ]
+  },
+  {
+   "skill_id": "ALG2.FNC.11",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Logarithmic functions",
+   "desc": "Define logarithms as inverses of exponentials, evaluate logs, and graph logarithmic functions.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.10",
+    "ALG2.FNC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "derivative of ln x (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.12",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Exponential log modeling",
+   "desc": "Model half-life, doubling time, and continuous growth, solving for time with logarithms.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.11",
+    "ALG2.EQV.16",
+    "ALG2.PRP.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "differential equation models (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.13",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Series and sigma",
+   "desc": "Evaluate arithmetic, finite geometric, and convergent infinite geometric series using sigma notation.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "arithmetic and geometric sequences (ALG1)"
+   ],
+   "next_desc": [
+    "Riemann sums and series (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.FNC.6"
+   ]
+  },
+  {
+   "skill_id": "ALG2.FNC.14",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Unit circle radians",
+   "desc": "Convert between degrees and radians and evaluate sine, cosine, and tangent at unit-circle angles.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "right triangle trig ratios (GEO)",
+    "special right triangles (GEO)",
+    "arc length and radian idea (GEO)"
+   ],
+   "next_desc": [
+    "all six trig functions and identities (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.5",
+    "GEO.SPC.12",
+    "GEO.SPC.15"
+   ]
+  },
+  {
+   "skill_id": "ALG2.FNC.15",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Graph sine cosine",
+   "desc": "Graph sine and cosine functions, identifying amplitude, period, midline, and phase shift.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.14",
+    "ALG2.FNC.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "graphs of all trig functions (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.FNC.16",
+   "course": "ALG2",
+   "strand": "FNC",
+   "name": "Periodic modeling",
+   "desc": "Write sinusoidal models for periodic phenomena and interpret their parameters.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.FNC.15"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "harmonic motion models (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.SPC.1",
+   "course": "ALG2",
+   "strand": "SPC",
+   "name": "Parabola focus directrix",
+   "desc": "Derive and use the equation of a parabola from its focus and directrix.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.EQV.3"
+   ],
+   "prereq_desc": [
+    "quadratic graphs (ALG1)",
+    "distance formula (ALG1)"
+   ],
+   "next_desc": [
+    "full conics treatment (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.PRP.2",
+    "ALG1.EQV.2"
+   ]
+  },
+  {
+   "skill_id": "ALG2.SPC.2",
+   "course": "ALG2",
+   "strand": "SPC",
+   "name": "Circles ellipses hyperbolas",
+   "desc": "Write and graph equations of circles, ellipses, and hyperbolas by completing the square.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.SPC.1",
+    "ALG2.EQV.3"
+   ],
+   "prereq_desc": [
+    "circle equations (GEO)"
+   ],
+   "next_desc": [
+    "polar and parametric curves (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.SPC.16"
+   ]
+  },
+  {
+   "skill_id": "ALG2.DTA.1",
+   "course": "ALG2",
+   "strand": "DTA",
+   "name": "Study design",
+   "desc": "Distinguish surveys, experiments, and observational studies and identify sources of bias in sampling.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "random sampling ideas (MS)"
+   ],
+   "next_desc": [
+    "formal inference (AP Statistics)"
+   ],
+   "cross_prereq_ids": [
+    "MS.DTA.4"
+   ]
+  },
+  {
+   "skill_id": "ALG2.DTA.2",
+   "course": "ALG2",
+   "strand": "DTA",
+   "name": "Normal distributions",
+   "desc": "Use the empirical rule and z-scores to estimate proportions under a normal curve.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "standard deviation and distributions (ALG1)"
+   ],
+   "next_desc": [
+    "sampling distributions (AP Statistics)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.DTA.1"
+   ]
+  },
+  {
+   "skill_id": "ALG2.DTA.3",
+   "course": "ALG2",
+   "strand": "DTA",
+   "name": "Simulation and inference",
+   "desc": "Use simulation to estimate margins of error and judge whether a difference is plausibly due to chance.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.DTA.1",
+    "ALG2.DTA.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "hypothesis testing (AP Statistics)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "ALG2.DTA.4",
+   "course": "ALG2",
+   "strand": "DTA",
+   "name": "Permutations combinations",
+   "desc": "Count outcomes using the fundamental counting principle, permutations, and combinations.",
+   "grade": "10-11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "compound events (GEO)"
+   ],
+   "next_desc": [
+    "binomial theorem coefficients (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.DTA.2"
+   ]
+  },
+  {
+   "skill_id": "ALG2.DTA.5",
+   "course": "ALG2",
+   "strand": "DTA",
+   "name": "Binomial probability",
+   "desc": "Compute binomial probabilities with combinations and find the expected value of a random process.",
+   "grade": "10-11",
+   "prereq_ids": [
+    "ALG2.DTA.4"
+   ],
+   "prereq_desc": [
+    "independent events (GEO)"
+   ],
+   "next_desc": [
+    "random variables and distributions (AP Statistics)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.DTA.2"
+   ]
+  },
+  {
+   "skill_id": "PREC.QNT.1",
+   "course": "PREC",
+   "strand": "QNT",
+   "name": "Complex number operations",
+   "desc": "Add, subtract, multiply, and divide complex numbers, including powers of i and use of conjugates.",
+   "grade": "11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "complex number arithmetic (ALG2)"
+   ],
+   "next_desc": [
+    "complex polar form (PREC)",
+    "complex zeros of polynomials (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.QNT.5"
+   ]
+  },
+  {
+   "skill_id": "PREC.QNT.2",
+   "course": "PREC",
+   "strand": "QNT",
+   "name": "Complex polar form",
+   "desc": "Plot complex numbers in the complex plane, find modulus and argument, and convert between rectangular and trigonometric form.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.QNT.1",
+    "PREC.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "De Moivre's theorem (PREC)",
+    "Euler's formula (college)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.QNT.3",
+   "course": "PREC",
+   "strand": "QNT",
+   "name": "De Moivre's theorem",
+   "desc": "Use De Moivre's theorem to compute powers and nth roots of complex numbers in polar form.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.QNT.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "complex exponentials and roots of unity (college)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.PRP.1",
+   "course": "PREC",
+   "strand": "PRP",
+   "name": "Radian measure",
+   "desc": "Define the radian as an arc-to-radius ratio, convert between degrees and radians, and compute arc length s = rθ.",
+   "grade": "11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "circle circumference and arc length proportions (GEO)"
+   ],
+   "next_desc": [
+    "unit circle values (PREC)",
+    "trig limits in radians (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.SPC.15"
+   ]
+  },
+  {
+   "skill_id": "PREC.PRP.2",
+   "course": "PREC",
+   "strand": "PRP",
+   "name": "Angular and linear speed",
+   "desc": "Relate angular speed and linear speed for circular motion and solve rate problems involving rotating objects.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.PRP.1"
+   ],
+   "prereq_desc": [
+    "unit rates and conversions (MS)"
+   ],
+   "next_desc": [
+    "parametric motion (PREC)",
+    "related rates (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.3"
+   ]
+  },
+  {
+   "skill_id": "PREC.PRP.3",
+   "course": "PREC",
+   "strand": "PRP",
+   "name": "Law of Sines",
+   "desc": "Use the Law of Sines to solve oblique triangles, including analysis of the ambiguous case.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.1"
+   ],
+   "prereq_desc": [
+    "right-triangle trigonometry (GEO)"
+   ],
+   "next_desc": [
+    "vector applications (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.5"
+   ]
+  },
+  {
+   "skill_id": "PREC.PRP.4",
+   "course": "PREC",
+   "strand": "PRP",
+   "name": "Law of Cosines",
+   "desc": "Use the Law of Cosines and the area formula (1/2)ab·sin C to solve and measure oblique triangles.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.1"
+   ],
+   "prereq_desc": [
+    "right-triangle trigonometry (GEO)",
+    "Pythagorean theorem (GEO)"
+   ],
+   "next_desc": [
+    "vector magnitude and direction problems (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.5",
+    "GEO.SPC.11"
+   ]
+  },
+  {
+   "skill_id": "PREC.EQV.1",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Polynomial division theorems",
+   "desc": "Divide polynomials using long or synthetic division and apply the Remainder and Factor Theorems.",
+   "grade": "11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "polynomial operations and factoring (ALG2)"
+   ],
+   "next_desc": [
+    "complex polynomial zeros (PREC)",
+    "slant asymptotes (PREC)",
+    "rewriting integrands (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.EQV.7"
+   ]
+  },
+  {
+   "skill_id": "PREC.EQV.2",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Complex polynomial zeros",
+   "desc": "Find all real and complex zeros of a polynomial using the Fundamental Theorem of Algebra and conjugate pairs.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.EQV.1",
+    "PREC.QNT.1"
+   ],
+   "prereq_desc": [
+    "quadratic formula and discriminant (ALG2)"
+   ],
+   "next_desc": [
+    "factoring in limit evaluation (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.EQV.4"
+   ]
+  },
+  {
+   "skill_id": "PREC.EQV.3",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Polynomial rational inequalities",
+   "desc": "Solve polynomial and rational inequalities using sign charts and zero/undefined boundary analysis.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.EQV.1"
+   ],
+   "prereq_desc": [
+    "linear and quadratic inequalities (ALG2)"
+   ],
+   "next_desc": [
+    "sign analysis of derivatives (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.EQV.5"
+   ]
+  },
+  {
+   "skill_id": "PREC.EQV.4",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Logarithm properties",
+   "desc": "Expand, condense, and evaluate logarithmic expressions using product, quotient, power, and change-of-base rules.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "exponential and log equations (PREC)",
+    "logarithmic differentiation ideas (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.EQV.5",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Exponential log equations",
+   "desc": "Solve exponential and logarithmic equations, checking for extraneous solutions from domain restrictions.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.EQV.4"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "separation of variables with initial conditions (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.EQV.6",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Fundamental trig identities",
+   "desc": "Simplify expressions and verify identities using Pythagorean, reciprocal, quotient, and even-odd identities.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "angle sum formulas (PREC)",
+    "rewriting trig integrands (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.EQV.7",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Angle sum formulas",
+   "desc": "Apply sum, difference, and double-angle formulas to evaluate expressions and verify identities.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.EQV.6"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "trig equations (PREC)",
+    "derivations of trig derivative limits (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.EQV.8",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Trigonometric equations",
+   "desc": "Solve trigonometric equations on a given interval and express general solutions using periodicity.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.EQV.6",
+    "PREC.FNC.13"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "finding critical points of trig functions (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.EQV.9",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Matrix operations",
+   "desc": "Add, scale, and multiply matrices, attending to dimension compatibility and non-commutativity.",
+   "grade": "11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "solving linear systems (ALG2)"
+   ],
+   "next_desc": [
+    "matrix inverses and systems (PREC)",
+    "matrix transformations (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "MS.EQV.9"
+   ]
+  },
+  {
+   "skill_id": "PREC.EQV.10",
+   "course": "PREC",
+   "strand": "EQV",
+   "name": "Matrix inverses and systems",
+   "desc": "Compute 2×2 determinants and inverses and use inverse matrices to solve linear systems.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.EQV.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "linear algebra (college)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.1",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Rates of change",
+   "desc": "Compute average rates of change over intervals and describe where functions increase, decrease, or change concavity.",
+   "grade": "11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "slope of a line (ALG1)",
+    "function notation and graphs (ALG2)"
+   ],
+   "next_desc": [
+    "difference quotients and derivative definition (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.PRP.2",
+    "ALG2.EQV.1"
+   ]
+  },
+  {
+   "skill_id": "PREC.FNC.2",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Function transformations",
+   "desc": "Graph and write functions built from parent functions using combined shifts, stretches, and reflections.",
+   "grade": "11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "parent functions and single transformations (ALG2)"
+   ],
+   "next_desc": [
+    "sinusoidal graphs (PREC)",
+    "conic sections (PREC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.FNC.4"
+   ]
+  },
+  {
+   "skill_id": "PREC.FNC.3",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Function composition",
+   "desc": "Compose functions, determine domains of compositions, and decompose a function into simpler components.",
+   "grade": "11",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "function operations (ALG2)"
+   ],
+   "next_desc": [
+    "inverse functions (PREC)",
+    "chain rule (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "PREC.FNC.4",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Inverse functions",
+   "desc": "Find and verify inverse functions, restrict domains for invertibility, and relate graphs across the line y = x.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "logarithmic functions (PREC)",
+    "inverse trig functions (PREC)",
+    "inverse function derivatives (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.5",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Polynomial function graphs",
+   "desc": "Analyze polynomial graphs using end behavior with limit notation, zeros with multiplicity, and local extrema.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.1"
+   ],
+   "prereq_desc": [
+    "quadratic functions and factoring (ALG2)"
+   ],
+   "next_desc": [
+    "rational function graphs (PREC)",
+    "limits at infinity (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.EQV.4"
+   ]
+  },
+  {
+   "skill_id": "PREC.FNC.6",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Rational function graphs",
+   "desc": "Graph rational functions by identifying holes, vertical and horizontal or slant asymptotes, and intercepts.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.5",
+    "PREC.EQV.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "infinite limits and asymptotes (CALC)",
+    "removable discontinuities (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.7",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Power functions",
+   "desc": "Analyze power functions with rational exponents, including inverse variation, symmetry, and end behavior.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.2"
+   ],
+   "prereq_desc": [
+    "exponent rules and radicals (ALG2)"
+   ],
+   "next_desc": [
+    "power rule for derivatives (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.QNT.1"
+   ]
+  },
+  {
+   "skill_id": "PREC.FNC.8",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Exponential functions",
+   "desc": "Graph and interpret exponential growth and decay functions, including base e and compound interest models.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.2"
+   ],
+   "prereq_desc": [
+    "exponential expressions and geometric patterns (ALG2)"
+   ],
+   "next_desc": [
+    "logarithmic functions (PREC)",
+    "exponential growth models (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.EQV.2"
+   ]
+  },
+  {
+   "skill_id": "PREC.FNC.9",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Logarithmic functions",
+   "desc": "Define logarithms as inverses of exponentials, evaluate logs, and graph logarithmic functions with domain analysis.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.4",
+    "PREC.FNC.8"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "logarithm properties (PREC)",
+    "derivative of ln x (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.10",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Sequences as functions",
+   "desc": "Write explicit forms of arithmetic and geometric sequences and connect them to linear and exponential functions.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.8"
+   ],
+   "prereq_desc": [
+    "arithmetic and geometric sequences (ALG2)"
+   ],
+   "next_desc": [
+    "Riemann sum notation (CALC)",
+    "series (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.FNC.13"
+   ]
+  },
+  {
+   "skill_id": "PREC.FNC.11",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Sinusoidal graphs",
+   "desc": "Graph sine and cosine functions and identify amplitude, period, midline, and phase shift from graphs or equations.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.1",
+    "PREC.FNC.2"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "sinusoidal modeling (PREC)",
+    "derivatives of sine and cosine (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.12",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Other trig graphs",
+   "desc": "Graph tangent, cotangent, secant, and cosecant functions, identifying period, asymptotes, and range.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "derivatives of all six trig functions (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.13",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Inverse trig functions",
+   "desc": "Evaluate inverse sine, cosine, and tangent using restricted domains and compose trig with inverse trig functions.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.4",
+    "PREC.FNC.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "trig equations (PREC)",
+    "inverse trig derivatives (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.14",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Parametric functions",
+   "desc": "Graph parametric curves, eliminate the parameter, and interpret parametric equations as planar motion.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "particle motion (CALC)",
+    "parametric calculus (BC calculus)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.FNC.15",
+   "course": "PREC",
+   "strand": "FNC",
+   "name": "Polar function graphs",
+   "desc": "Graph polar functions such as circles, roses, and limaçons and describe how r changes as θ varies.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.2",
+    "PREC.FNC.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "polar area and curves (BC calculus)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.SPC.1",
+   "course": "PREC",
+   "strand": "SPC",
+   "name": "Unit circle values",
+   "desc": "Use the unit circle to find exact sine, cosine, and tangent values for special angles in all quadrants.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.PRP.1"
+   ],
+   "prereq_desc": [
+    "right-triangle trig ratios (GEO)",
+    "special right triangles (GEO)"
+   ],
+   "next_desc": [
+    "sinusoidal graphs (PREC)",
+    "trig identities (PREC)",
+    "trig limits (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.5",
+    "GEO.SPC.12"
+   ]
+  },
+  {
+   "skill_id": "PREC.SPC.2",
+   "course": "PREC",
+   "strand": "SPC",
+   "name": "Polar coordinates",
+   "desc": "Plot points in polar coordinates and convert points and simple equations between rectangular and polar form.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "polar function graphs (PREC)",
+    "complex polar form (PREC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.SPC.3",
+   "course": "PREC",
+   "strand": "SPC",
+   "name": "Vector components",
+   "desc": "Express vectors in component form, compute magnitude and direction, and perform addition and scalar multiplication.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.1"
+   ],
+   "prereq_desc": [
+    "Pythagorean theorem and distance formula (GEO)"
+   ],
+   "next_desc": [
+    "vector applications (PREC)",
+    "vector-valued motion (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.SPC.11"
+   ]
+  },
+  {
+   "skill_id": "PREC.SPC.4",
+   "course": "PREC",
+   "strand": "SPC",
+   "name": "Vector applications",
+   "desc": "Use unit vectors, dot products, and vector sums to model force, velocity, and navigation problems.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.SPC.3"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "physics vector analysis (college)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.SPC.5",
+   "course": "PREC",
+   "strand": "SPC",
+   "name": "Matrix transformations",
+   "desc": "Interpret 2×2 matrices as linear transformations of the plane and the determinant as an area scaling factor.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.EQV.9",
+    "PREC.SPC.3"
+   ],
+   "prereq_desc": [
+    "transformations in the plane (GEO)"
+   ],
+   "next_desc": [
+    "linear algebra (college)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.EQV.9"
+   ]
+  },
+  {
+   "skill_id": "PREC.SPC.6",
+   "course": "PREC",
+   "strand": "SPC",
+   "name": "Conic sections",
+   "desc": "Identify and graph circles, ellipses, parabolas, and hyperbolas from standard-form equations.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.2"
+   ],
+   "prereq_desc": [
+    "completing the square (ALG2)",
+    "distance formula (GEO)"
+   ],
+   "next_desc": [
+    "implicit differentiation of curves (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.SPC.2",
+    "GEO.EQV.9"
+   ]
+  },
+  {
+   "skill_id": "PREC.DTA.1",
+   "course": "PREC",
+   "strand": "DTA",
+   "name": "Function model selection",
+   "desc": "Choose an appropriate function type for a data set or context using growth patterns, residuals, and domain constraints.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.5",
+    "PREC.FNC.8"
+   ],
+   "prereq_desc": [
+    "linear and quadratic regression (ALG2)"
+   ],
+   "next_desc": [
+    "exponential model fitting (PREC)",
+    "modeling with differential equations (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.EQV.6"
+   ]
+  },
+  {
+   "skill_id": "PREC.DTA.2",
+   "course": "PREC",
+   "strand": "DTA",
+   "name": "Exponential model fitting",
+   "desc": "Fit exponential models to data and use semi-log plots to recognize and linearize exponential relationships.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.DTA.1",
+    "PREC.FNC.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "exponential growth and decay solutions (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "PREC.DTA.3",
+   "course": "PREC",
+   "strand": "DTA",
+   "name": "Sinusoidal modeling",
+   "desc": "Build sinusoidal models from periodic data or contexts such as tides and temperatures, and use them to predict values.",
+   "grade": "11",
+   "prereq_ids": [
+    "PREC.FNC.11",
+    "PREC.DTA.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "rates of change of periodic models (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.QNT.1",
+   "course": "CALC",
+   "strand": "QNT",
+   "name": "Growth rate comparison",
+   "desc": "Compare the relative magnitudes of logarithmic, polynomial, and exponential expressions in limits at infinity.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.4"
+   ],
+   "prereq_desc": [
+    "end behavior of function families (PREC)"
+   ],
+   "next_desc": [
+    "L'Hopital's rule (CALC)",
+    "convergence tests (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.5"
+   ]
+  },
+  {
+   "skill_id": "CALC.QNT.2",
+   "course": "CALC",
+   "strand": "QNT",
+   "name": "L'Hopital's rule",
+   "desc": "Recognize 0/0 and ∞/∞ indeterminate forms and apply L'Hopital's rule after verifying its conditions.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.QNT.1",
+    "CALC.FNC.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "improper integrals and series limits (BC calculus)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.PRP.1",
+   "course": "CALC",
+   "strand": "PRP",
+   "name": "Derivatives in context",
+   "desc": "Interpret the meaning and units of a derivative in applied contexts as an instantaneous rate of change.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.7"
+   ],
+   "prereq_desc": [
+    "unit rates and unit analysis (MS)"
+   ],
+   "next_desc": [
+    "related rates (CALC)",
+    "accumulation in context (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "MS.PRP.3"
+   ]
+  },
+  {
+   "skill_id": "CALC.PRP.2",
+   "course": "CALC",
+   "strand": "PRP",
+   "name": "Related rates",
+   "desc": "Set up equations relating changing quantities and differentiate with respect to time to solve related-rates problems.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.EQV.3",
+    "CALC.PRP.1"
+   ],
+   "prereq_desc": [
+    "area, volume, and similarity formulas (GEO)",
+    "angular and linear speed (PREC)"
+   ],
+   "next_desc": [
+    "multivariable rate problems (college)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.7",
+    "PREC.PRP.2"
+   ]
+  },
+  {
+   "skill_id": "CALC.PRP.3",
+   "course": "CALC",
+   "strand": "PRP",
+   "name": "Linearization and differentials",
+   "desc": "Use tangent-line approximations and differentials to estimate values and classify over- or underestimates via concavity.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.9",
+    "CALC.FNC.18"
+   ],
+   "prereq_desc": [
+    "point-slope form of a line (ALG1)"
+   ],
+   "next_desc": [
+    "Euler's method and Taylor polynomials (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "ALG1.FNC.3"
+   ]
+  },
+  {
+   "skill_id": "CALC.EQV.1",
+   "course": "CALC",
+   "strand": "EQV",
+   "name": "Algebraic limit evaluation",
+   "desc": "Evaluate limits by factoring, rationalizing, and combining fractions to resolve 0/0 indeterminate forms algebraically.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.2"
+   ],
+   "prereq_desc": [
+    "factoring and rational expression simplification (ALG2)",
+    "polynomial division (PREC)"
+   ],
+   "next_desc": [
+    "derivative limit definition (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.EQV.11",
+    "PREC.EQV.1"
+   ]
+  },
+  {
+   "skill_id": "CALC.EQV.2",
+   "course": "CALC",
+   "strand": "EQV",
+   "name": "Piecewise parameter problems",
+   "desc": "Solve for parameter values that make piecewise-defined functions continuous or differentiable at a boundary.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.5",
+    "CALC.FNC.8"
+   ],
+   "prereq_desc": [
+    "piecewise functions (ALG2)"
+   ],
+   "next_desc": [
+    "continuity and differentiability justifications on the AP exam (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.FNC.5"
+   ]
+  },
+  {
+   "skill_id": "CALC.EQV.3",
+   "course": "CALC",
+   "strand": "EQV",
+   "name": "Implicit differentiation",
+   "desc": "Differentiate relations defined implicitly, solve for dy/dx, and find tangent lines to implicit curves.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.11"
+   ],
+   "prereq_desc": [
+    "conic section equations (PREC)"
+   ],
+   "next_desc": [
+    "related rates (CALC)",
+    "inverse function derivatives (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.SPC.6"
+   ]
+  },
+  {
+   "skill_id": "CALC.EQV.4",
+   "course": "CALC",
+   "strand": "EQV",
+   "name": "Rewriting integrands",
+   "desc": "Rewrite integrands using algebraic manipulation, long division, and identities to match basic antiderivative forms.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.21"
+   ],
+   "prereq_desc": [
+    "exponent rules and trig identities (PREC)"
+   ],
+   "next_desc": [
+    "integration by parts and partial fractions (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.EQV.6"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.1",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Estimating limits",
+   "desc": "Estimate limits and one-sided limits from graphs and tables and decide when a limit fails to exist.",
+   "grade": "12",
+   "prereq_ids": [],
+   "prereq_desc": [
+    "function families and graph reading (PREC)"
+   ],
+   "next_desc": [
+    "limit laws (CALC)",
+    "continuity (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.2"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.2",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Limit laws",
+   "desc": "Evaluate limits using limit properties, direct substitution, and limits of composite functions.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "algebraic limit techniques (CALC)",
+    "derivative definition (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.3",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Squeeze theorem",
+   "desc": "Apply the squeeze theorem and the special limits of sin(x)/x and (1−cos x)/x as x approaches 0.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.2"
+   ],
+   "prereq_desc": [
+    "unit circle trigonometry in radians (PREC)"
+   ],
+   "next_desc": [
+    "derivatives of sine and cosine (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.SPC.1"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.4",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Limits involving infinity",
+   "desc": "Evaluate infinite limits and limits at infinity and connect them to vertical and horizontal asymptotes.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.2"
+   ],
+   "prereq_desc": [
+    "rational function asymptotes (PREC)"
+   ],
+   "next_desc": [
+    "growth rate comparison (CALC)",
+    "curve analysis (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.6"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.5",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Continuity",
+   "desc": "Apply the three-part definition of continuity and classify removable, jump, and infinite discontinuities.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.2",
+    "CALC.FNC.4"
+   ],
+   "prereq_desc": [
+    "piecewise function evaluation (ALG2)"
+   ],
+   "next_desc": [
+    "Intermediate Value Theorem (CALC)",
+    "differentiability (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.6",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Intermediate Value Theorem",
+   "desc": "Use the Intermediate Value Theorem to justify the existence of solutions on an interval for continuous functions.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.5"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "existence theorem justifications on the AP exam (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.7",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Derivative definition",
+   "desc": "Define the derivative as a limit of difference quotients and compute derivatives at a point and as a function.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.2"
+   ],
+   "prereq_desc": [
+    "average rate of change (PREC)"
+   ],
+   "next_desc": [
+    "derivative rules (CALC)",
+    "derivative estimates from tables (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.8",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Differentiability and graphs",
+   "desc": "Determine where a function is differentiable, relate differentiability to continuity, and sketch f′ from the graph of f.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.5",
+    "CALC.FNC.7"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "Mean Value Theorem (CALC)",
+    "connecting function graphs (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.9",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Basic derivative rules",
+   "desc": "Differentiate using power, sum, and constant-multiple rules along with derivatives of sin x, cos x, e^x, and ln x.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.7"
+   ],
+   "prereq_desc": [
+    "exponent rules for rewriting radicals and quotients (ALG2)"
+   ],
+   "next_desc": [
+    "product and quotient rules (CALC)",
+    "antiderivatives (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "ALG2.QNT.1"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.10",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Product quotient rules",
+   "desc": "Differentiate products and quotients of functions, including the remaining trigonometric derivatives.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.9"
+   ],
+   "prereq_desc": [
+    "tangent and reciprocal trig functions (PREC)"
+   ],
+   "next_desc": [
+    "chain rule (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.12"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.11",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Chain rule",
+   "desc": "Differentiate composite functions with the chain rule, including combinations with product and quotient rules.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.10"
+   ],
+   "prereq_desc": [
+    "function composition and decomposition (PREC)"
+   ],
+   "next_desc": [
+    "implicit differentiation (CALC)",
+    "u-substitution (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.3"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.12",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Inverse function derivatives",
+   "desc": "Differentiate inverse functions using the reciprocal relationship and find derivatives of inverse trig functions.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.11"
+   ],
+   "prereq_desc": [
+    "inverse and inverse trig functions (PREC)"
+   ],
+   "next_desc": [
+    "antiderivatives yielding inverse trig forms (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.13"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.13",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Higher-order derivatives",
+   "desc": "Compute and notate second and higher derivatives and interpret the second derivative as the rate of change of a rate.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.10"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "concavity (CALC)",
+    "acceleration in motion problems (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.14",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Straight-line motion",
+   "desc": "Analyze position, velocity, acceleration, and speed for particles in rectilinear motion using derivatives.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.13"
+   ],
+   "prereq_desc": [
+    "parametric motion ideas (PREC)"
+   ],
+   "next_desc": [
+    "displacement and distance via integrals (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.14"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.15",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Mean Value Theorem",
+   "desc": "Verify hypotheses and apply the Mean Value Theorem and Rolle's Theorem to draw conclusions about derivatives.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.8"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "first derivative test justifications (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.16",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Absolute extrema",
+   "desc": "Find critical points and use the Extreme Value Theorem and candidates test to locate absolute extrema on closed intervals.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.5",
+    "CALC.FNC.9"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "optimization (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.17",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "First derivative test",
+   "desc": "Use the sign of f′ to determine intervals of increase and decrease and classify relative extrema.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.16"
+   ],
+   "prereq_desc": [
+    "sign chart analysis of inequalities (PREC)"
+   ],
+   "next_desc": [
+    "concavity and second derivative test (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.EQV.3"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.18",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Concavity and inflection",
+   "desc": "Use the sign of f″ to determine concavity and inflection points and apply the second derivative test.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.13",
+    "CALC.FNC.17"
+   ],
+   "prereq_desc": [
+    "concavity from graphs (PREC)"
+   ],
+   "next_desc": [
+    "connecting function graphs (CALC)",
+    "over- and underestimate analysis (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.19",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Connecting function graphs",
+   "desc": "Move among the graphs and behaviors of f, f′, and f″ to sketch curves and justify features of each.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.18"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "accumulation function graph analysis (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.20",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Optimization",
+   "desc": "Model applied problems with a function of one variable and use derivative tests to find and justify optimal values.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.16",
+    "CALC.FNC.17"
+   ],
+   "prereq_desc": [
+    "geometric formulas for area, volume, and perimeter (GEO)"
+   ],
+   "next_desc": [
+    "multivariable optimization (college)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.7"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.21",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Antiderivatives",
+   "desc": "Find general antiderivatives using basic rules and solve for constants of integration from initial conditions.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.11"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "Fundamental Theorem of Calculus (CALC)",
+    "slope fields (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.22",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Definite integral definition",
+   "desc": "Express definite integrals as limits of Riemann sums and apply linearity and interval-splitting properties.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.DTA.2"
+   ],
+   "prereq_desc": [
+    "summation notation and sequences (PREC)"
+   ],
+   "next_desc": [
+    "Fundamental Theorem of Calculus (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.5"
+   ]
+  },
+  {
+   "skill_id": "CALC.FNC.23",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Fundamental Theorem",
+   "desc": "Evaluate definite integrals using antiderivatives via the Fundamental Theorem of Calculus.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.21",
+    "CALC.FNC.22"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "accumulation functions (CALC)",
+    "area between curves (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.24",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Accumulation functions",
+   "desc": "Analyze functions defined by integrals, using FTC Part 1 to differentiate them and integrand graphs to describe behavior.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.19",
+    "CALC.FNC.23"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "graph-based accumulation free-response problems (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.25",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "U-substitution",
+   "desc": "Evaluate indefinite and definite integrals by substitution, including changing limits of integration.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.11",
+    "CALC.FNC.23"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "separation of variables (CALC)",
+    "advanced integration techniques (BC calculus)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.26",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Average value",
+   "desc": "Compute the average value of a function on an interval and connect it to the Mean Value Theorem for integrals.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.23"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "average versus instantaneous comparisons in applications (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.27",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Slope fields",
+   "desc": "Verify solutions to differential equations and sketch or match slope fields to equations and solution curves.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.21"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "separation of variables (CALC)",
+    "Euler's method (BC calculus)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.FNC.28",
+   "course": "CALC",
+   "strand": "FNC",
+   "name": "Separation of variables",
+   "desc": "Solve separable differential equations with initial conditions, including exponential growth and decay models dy/dt = ky.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.25",
+    "CALC.FNC.27"
+   ],
+   "prereq_desc": [
+    "exponential and log equation solving (PREC)"
+   ],
+   "next_desc": [
+    "logistic models (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.EQV.5"
+   ]
+  },
+  {
+   "skill_id": "CALC.SPC.1",
+   "course": "CALC",
+   "strand": "SPC",
+   "name": "Accumulation in context",
+   "desc": "Interpret definite integrals of rates as net change and solve rate-in/rate-out accumulation problems.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.23",
+    "CALC.PRP.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "AP accumulation free-response problems (CALC)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.SPC.2",
+   "course": "CALC",
+   "strand": "SPC",
+   "name": "Motion with integrals",
+   "desc": "Use integrals of velocity and acceleration to find displacement, total distance traveled, and position.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.14",
+    "CALC.SPC.1"
+   ],
+   "prereq_desc": [],
+   "next_desc": [
+    "planar motion with parametrics (BC calculus)"
+   ],
+   "cross_prereq_ids": []
+  },
+  {
+   "skill_id": "CALC.SPC.3",
+   "course": "CALC",
+   "strand": "SPC",
+   "name": "Area between curves",
+   "desc": "Set up and evaluate integrals for regions between curves, integrating with respect to x or y as appropriate.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.23"
+   ],
+   "prereq_desc": [
+    "graphing intersecting functions (PREC)"
+   ],
+   "next_desc": [
+    "volume problems (CALC)",
+    "polar area (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "PREC.FNC.1"
+   ]
+  },
+  {
+   "skill_id": "CALC.SPC.4",
+   "course": "CALC",
+   "strand": "SPC",
+   "name": "Cross-section volumes",
+   "desc": "Compute volumes of solids with known cross sections such as squares, semicircles, and triangles on a planar base.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.SPC.3"
+   ],
+   "prereq_desc": [
+    "area formulas for basic shapes (GEO)"
+   ],
+   "next_desc": [
+    "volumes of revolution (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.7"
+   ]
+  },
+  {
+   "skill_id": "CALC.SPC.5",
+   "course": "CALC",
+   "strand": "SPC",
+   "name": "Volumes of revolution",
+   "desc": "Compute volumes of solids of revolution using disk and washer methods about horizontal and vertical axes.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.SPC.3"
+   ],
+   "prereq_desc": [
+    "circle area and cylinder volume (GEO)"
+   ],
+   "next_desc": [
+    "shell method and arc length (BC calculus)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.PRP.7"
+   ]
+  },
+  {
+   "skill_id": "CALC.DTA.1",
+   "course": "CALC",
+   "strand": "DTA",
+   "name": "Table derivative estimates",
+   "desc": "Estimate derivatives from tabular data using difference quotients over the smallest available intervals.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.FNC.7"
+   ],
+   "prereq_desc": [
+    "reading data tables (MS)"
+   ],
+   "next_desc": [
+    "Riemann sum approximation (CALC)",
+    "AP table-based free-response problems (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "MS.DTA.7"
+   ]
+  },
+  {
+   "skill_id": "CALC.DTA.2",
+   "course": "CALC",
+   "strand": "DTA",
+   "name": "Riemann sum approximation",
+   "desc": "Approximate definite integrals from tables or graphs using left, right, midpoint, and trapezoidal sums, classifying over- and underestimates.",
+   "grade": "12",
+   "prereq_ids": [
+    "CALC.DTA.1"
+   ],
+   "prereq_desc": [
+    "areas of rectangles and trapezoids (GEO)"
+   ],
+   "next_desc": [
+    "definite integral as a limit (CALC)"
+   ],
+   "cross_prereq_ids": [
+    "GEO.SPC.10"
+   ]
+  }
+ ]
+}
