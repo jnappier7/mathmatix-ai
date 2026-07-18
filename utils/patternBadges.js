@@ -2,6 +2,18 @@
 // Master Mode: Pattern-Based Badge System
 // Patterns persist K-12, tiers represent abstraction height
 
+const { canonicalSkillId } = require('./skillCanonicalizer');
+
+// Read a mastery entry from a Map|object by canonical (unified) skill id, with a
+// legacy fallback — so tier/milestone checks against pattern-config skillIds keep
+// resolving whether the user's stored keys are unified (new) or legacy (historical).
+function readMasteryEntry(store, skillId) {
+  if (!store || !skillId) return null;
+  const get = (k) => (typeof store.get === 'function' ? store.get(k) : store[k]);
+  const canon = canonicalSkillId(skillId);
+  return get(canon) ?? (canon !== skillId ? get(skillId) : null) ?? null;
+}
+
 /**
  * PATTERN BADGE ARCHITECTURE
  *
@@ -1257,7 +1269,7 @@ function getCurrentTier(patternId, userSkillMastery) {
       // Check if any skillId in this milestone is mastered
       return milestone.skillIds.some(skillId => {
         // Handle both Map and Object types
-        const mastery = userSkillMastery.get?.(skillId) || userSkillMastery[skillId];
+        const mastery = readMasteryEntry(userSkillMastery, skillId);
         return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
       });
     }).length;
@@ -1288,7 +1300,7 @@ function getNextMilestone(patternId, currentTier, userSkillMastery) {
   for (const milestone of tier.milestones) {
     const completed = milestone.skillIds.every(skillId => {
       // Handle both Map and Object types
-      const mastery = userSkillMastery?.get?.(skillId) || userSkillMastery?.[skillId];
+      const mastery = readMasteryEntry(userSkillMastery, skillId);
       return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
     });
 
@@ -1315,7 +1327,7 @@ function calculatePatternProgress(patternId, currentTier, userSkillMastery) {
   const completedCount = milestones.filter(milestone => {
     return milestone.skillIds.every(skillId => {
       // Handle both Map and Object types
-      const mastery = userSkillMastery?.get?.(skillId) || userSkillMastery?.[skillId];
+      const mastery = readMasteryEntry(userSkillMastery, skillId);
       return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
     });
   }).length;

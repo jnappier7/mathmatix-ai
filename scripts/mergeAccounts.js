@@ -22,6 +22,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
+const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 
 // Parse CLI arguments
 const args = process.argv.slice(2);
@@ -172,9 +173,10 @@ async function main() {
       if (source.skillMastery) {
         if (!target.skillMastery) target.skillMastery = new Map();
         for (const [skillId, sourceSkill] of source.skillMastery) {
-          const targetSkill = target.skillMastery.get(skillId);
+          const key = canonicalSkillId(skillId);
+          const targetSkill = target.skillMastery.get(key);
           if (!targetSkill || (sourceSkill.masteryScore || 0) > (targetSkill.masteryScore || 0)) {
-            target.skillMastery.set(skillId, sourceSkill);
+            target.skillMastery.set(key, sourceSkill);
           }
         }
         changes.push(`Merged skill mastery from ${source.email}`);

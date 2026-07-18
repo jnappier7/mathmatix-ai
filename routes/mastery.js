@@ -17,7 +17,18 @@ const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = requi
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
-const { isSkillMastered } = require('../utils/masteryGuard');
+const { isSkillMastered, resolveMasteryKey } = require('../utils/masteryGuard');
+const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+
+// Read a mastery entry from a Map|object by canonical (unified) skill id, falling
+// back to a legacy key so historical data still resolves during the migration.
+// Used for milestone/tier checks whose skillIds come from pattern-badge config.
+function readMasteryEntry(store, skillId) {
+  if (!store || !skillId) return null;
+  const get = (k) => (typeof store.get === 'function' ? store.get(k) : store[k]);
+  const canon = canonicalSkillId(skillId);
+  return get(canon) ?? (canon !== skillId ? get(skillId) : null) ?? null;
+}
 // ============================================================================
 // MASTERY BADGES
 // ============================================================================
@@ -1311,12 +1322,13 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Get skill data
-    let skillMastery = user.skillMastery.get(skillId);
+    // Get skill data (canonical unified key, legacy fallback, for a clean read/write)
+    const masteryKey = resolveMasteryKey(user, skillId);
+    let skillMastery = user.skillMastery.get(masteryKey);
     if (!skillMastery) {
       // Initialize skill mastery if not exists
       const { initializeSkillMastery } = require('../utils/masteryEngine');
-      skillMastery = initializeSkillMastery(skillId);
+      skillMastery = initializeSkillMastery(masteryKey);
       skillMastery.status = 'ready';
     }
 
@@ -1335,7 +1347,7 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
     updatedSkill.status = calculateMasteryState(updatedSkill, user.skillMastery);
 
     // Update user's skill mastery
-    user.skillMastery.set(skillId, updatedSkill);
+    user.skillMastery.set(masteryKey, updatedSkill);
 
     // Update streak tracking
     updateStreakTracking(user);
@@ -1381,7 +1393,7 @@ router.get('/skill-mastery/:skillId', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const skillMastery = user.skillMastery.get(skillId);
+    const skillMastery = readMasteryEntry(user.skillMastery, skillId);
     if (!skillMastery) {
       return res.status(404).json({ error: 'Skill mastery not found' });
     }
@@ -1618,7 +1630,8 @@ router.post('/retention-check', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const skillMastery = user.skillMastery.get(skillId);
+    const masteryKey = resolveMasteryKey(user, skillId);
+    const skillMastery = user.skillMastery.get(masteryKey);
     if (!skillMastery) {
       return res.status(404).json({ error: 'Skill mastery not found' });
     }
@@ -1633,7 +1646,7 @@ router.post('/retention-check', isAuthenticated, async (req, res) => {
     });
 
     // Update user
-    user.skillMastery.set(skillId, updatedSkill);
+    user.skillMastery.set(masteryKey, updatedSkill);
     await user.save();
 
     res.json({
@@ -1849,12 +1862,12 @@ router.get('/pattern/:patternId', isAuthenticated, async (req, res) => {
     for (const tier of pattern.tiers) {
       for (const milestone of tier.milestones) {
         const completed = milestone.skillIds.every(skillId => {
-          const mastery = user.skillMastery.get(skillId);
+          const mastery = readMasteryEntry(user.skillMastery, skillId);
           return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
         });
 
         const masteryType = milestone.skillIds.some(skillId => {
-          const mastery = user.skillMastery.get(skillId);
+          const mastery = readMasteryEntry(user.skillMastery, skillId);
           return mastery && mastery.masteryType === 'inferred';
         }) ? 'inferred' : 'verified';
 
@@ -1914,7 +1927,7 @@ router.post('/update-pattern-progress', isAuthenticated, async (req, res) => {
     }
 
     const patternId = skill.patternId;
-    const skillMastery = user.skillMastery.get(skillId);
+    const skillMastery = readMasteryEntry(user.skillMastery, skillId);
 
     // Check if should trigger inference
     if (shouldTriggerInference(skillMastery)) {
@@ -2085,7 +2098,7 @@ function getPatternProgress(patternId, skillMastery) {
     tier.milestones.forEach(milestone => {
       totalMilestones++;
       const allSkillsMastered = milestone.skillIds.every(skillId => {
-        const mastery = skillMastery[skillId] || skillMastery.get?.(skillId);
+        const mastery = readMasteryEntry(skillMastery, skillId);
         return mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred');
       });
       if (allSkillsMastered) {
@@ -2128,7 +2141,7 @@ function getMilestoneProgress(patternId, milestoneId, skillMastery) {
   let masteredSkills = 0;
 
   milestone.skillIds.forEach(skillId => {
-    const mastery = skillMastery[skillId] || skillMastery.get?.(skillId);
+    const mastery = readMasteryEntry(skillMastery, skillId);
     if (mastery && (mastery.status === 'mastered' || mastery.masteryType === 'inferred')) {
       masteredSkills++;
     }

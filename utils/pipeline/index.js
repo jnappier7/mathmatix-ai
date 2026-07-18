@@ -33,6 +33,7 @@ const { assembleEvidence } = require('./evidenceAccumulator');
 
 // New data-driven engines
 const { updateBKT, initializeBKT } = require('../knowledgeTracer');
+const { canonicalSkillId } = require('../skillCanonicalizer');
 const { updateCard, initializeCard, rateAttempt, RATINGS } = require('../fsrsScheduler');
 const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDifficulty } = require('../consistencyScorer');
 
@@ -270,26 +271,25 @@ async function runPipeline(message, ctx) {
         : 0,
     };
 
+    // Read per-skill engine state keyed by the canonical (unified) skill id to
+    // match how updateLearningEngines writes it; fall back to the raw id so
+    // historical legacy-keyed state still resolves. Handles Map or plain object.
+    const readEngine = (store, id) => {
+      if (!store || !id) return null;
+      const get = (k) => (typeof store.get === 'function' ? store.get(k) : store[k]);
+      const canon = canonicalSkillId(id);
+      return get(canon) ?? (canon !== id ? get(id) : null) ?? null;
+    };
+    const activeSkillId = ctx.activeSkill ? ctx.activeSkill.skillId : null;
+
     // Get BKT state for active skill (from user's learningEngines data)
-    const bktState = ctx.activeSkill && ctx.user.learningEngines?.bkt
-      ? (ctx.user.learningEngines.bkt.get
-        ? ctx.user.learningEngines.bkt.get(ctx.activeSkill.skillId)
-        : ctx.user.learningEngines.bkt[ctx.activeSkill.skillId])
-      : null;
+    const bktState = readEngine(ctx.user.learningEngines?.bkt, activeSkillId);
 
     // Get FSRS card for active skill
-    const fsrsCard = ctx.activeSkill && ctx.user.learningEngines?.fsrs
-      ? (ctx.user.learningEngines.fsrs.get
-        ? ctx.user.learningEngines.fsrs.get(ctx.activeSkill.skillId)
-        : ctx.user.learningEngines.fsrs[ctx.activeSkill.skillId])
-      : null;
+    const fsrsCard = readEngine(ctx.user.learningEngines?.fsrs, activeSkillId);
 
     // Get consistency state for active skill
-    const consistencyState = ctx.activeSkill && ctx.user.learningEngines?.consistency
-      ? (ctx.user.learningEngines.consistency.get
-        ? ctx.user.learningEngines.consistency.get(ctx.activeSkill.skillId)
-        : ctx.user.learningEngines.consistency[ctx.activeSkill.skillId])
-      : null;
+    const consistencyState = readEngine(ctx.user.learningEngines?.consistency, activeSkillId);
 
     // Get misconception history
     const misconceptionHistory = ctx.user.masteryProgress?.activeBadge?.misconceptionsAddressed || [];
@@ -1658,6 +1658,9 @@ async function runPipeline(message, ctx) {
  * @param {Object} observation - Observation result
  */
 function updateLearningEngines(user, skillId, diagnosis, observation) {
+  // key BKT / FSRS / consistency state on the canonical unified skill id, so a
+  // concept's learning state never splits across a legacy id and its unified id
+  skillId = canonicalSkillId(skillId);
   const isCorrect = diagnosis.isCorrect === true;
   const hintUsed = observation.contextSignals?.some(s => s.type === 'uncertainty') || false;
 

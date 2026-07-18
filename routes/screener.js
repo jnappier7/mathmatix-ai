@@ -30,6 +30,7 @@ const { assessOptions } = require('../utils/distractorQuality');
 const { selectSkill, formatScoringLog } = require('../utils/skillSelector');
 const { calculateProgress } = require('../utils/catConvergence');
 const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
+const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 
 // Warm up cache on module load
 warmupCache().catch(err => console.error('[Screener] Cache warmup failed:', err));
@@ -724,9 +725,10 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     report.gradeLevel = gradeLevelResult.gradeLevel;
     report.gradeLevelDescription = gradeLevelResult.description;
 
-    // Update user's skill mastery based on screener results
-    for (const skillId of report.masteredSkills) {
-      user.skillMastery.set(skillId, {
+    // Update user's skill mastery based on screener results (keyed on the
+    // canonical unified skill id so placement shares the tutor's mastery keys)
+    for (const rawId of report.masteredSkills) {
+      user.skillMastery.set(canonicalSkillId(rawId), {
         status: 'mastered',
         masteryScore: 1.0,
         masteredDate: new Date(),
@@ -734,8 +736,8 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       });
     }
 
-    for (const skillId of report.learningSkills) {
-      user.skillMastery.set(skillId, {
+    for (const rawId of report.learningSkills) {
+      user.skillMastery.set(canonicalSkillId(rawId), {
         status: 'learning',
         masteryScore: 0.5,
         learningStarted: new Date(),
@@ -743,8 +745,8 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       });
     }
 
-    for (const skillId of report.readySkills) {
-      user.skillMastery.set(skillId, {
+    for (const rawId of report.readySkills) {
+      user.skillMastery.set(canonicalSkillId(rawId), {
         status: 'ready',
         masteryScore: 0,
         notes: 'Ready to learn based on screener'
