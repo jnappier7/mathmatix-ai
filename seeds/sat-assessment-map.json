@@ -1,0 +1,1235 @@
+{
+  "1": {
+    "week": 1,
+    "title": "Heart of Algebra",
+    "itemCount": 22,
+    "mcCount": 17,
+    "sprCount": 5,
+    "items": [
+      {
+        "problemId": "sat-math-w1q1",
+        "n": 1,
+        "domain": "ALG",
+        "skill": "Linear equations in one variable",
+        "skillId": "ALG1.EQV.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w1q2",
+        "n": 2,
+        "domain": "ALG",
+        "skill": "Linear functions",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w1q3",
+        "n": 3,
+        "domain": "PSDA",
+        "skill": "Ratios, rates, proportional relationships & units",
+        "skillId": "MS.PRP.5",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w1q4",
+        "n": 4,
+        "domain": "ALG",
+        "skill": "Linear equations in two variables",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w1q5",
+        "n": 5,
+        "domain": "GEO",
+        "skill": "Area & volume",
+        "skillId": "GEO.SPC.18",
+        "type": "spr",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w1q6",
+        "n": 6,
+        "domain": "ALG",
+        "skill": "Linear inequalities in one variable",
+        "skillId": "ALG1.EQV.3",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w1q7",
+        "n": 7,
+        "domain": "PSDA",
+        "skill": "Percentages",
+        "skillId": "MS.PRP.7",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w1q8",
+        "n": 8,
+        "domain": "ALG",
+        "skill": "Linear functions",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q9",
+        "n": 9,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations",
+        "skillId": "ALG1.EQV.7",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q10",
+        "n": 10,
+        "domain": "ADV",
+        "skill": "Equivalent expressions",
+        "skillId": "ALG1.EQV.10",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q11",
+        "n": 11,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations",
+        "skillId": "ALG1.EQV.7",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q12",
+        "n": 12,
+        "domain": "PSDA",
+        "skill": "Two-variable data: scatterplots & models",
+        "skillId": "ALG1.DTA.3",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q13",
+        "n": 13,
+        "domain": "ALG",
+        "skill": "Linear equations in two variables",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q14",
+        "n": 14,
+        "domain": "GEO",
+        "skill": "Lines, angles & triangles",
+        "skillId": "GEO.SPC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q15",
+        "n": 15,
+        "domain": "ALG",
+        "skill": "Linear functions",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q16",
+        "n": 16,
+        "domain": "ADV",
+        "skill": "Nonlinear equations",
+        "skillId": "ALG1.EQV.15",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q17",
+        "n": 17,
+        "domain": "ALG",
+        "skill": "Linear inequalities in two variables",
+        "skillId": "ALG1.FNC.5",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w1q18",
+        "n": 18,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations",
+        "skillId": "ALG1.EQV.7",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w1q19",
+        "n": 19,
+        "domain": "GEO",
+        "skill": "Right triangles & trigonometry",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w1q20",
+        "n": 20,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (exponential)",
+        "skillId": "ALG1.FNC.8",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w1q21",
+        "n": 21,
+        "domain": "ALG",
+        "skill": "Linear equations in two variables",
+        "skillId": "ALG1.FNC.4",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w1q22",
+        "n": 22,
+        "domain": "ADV",
+        "skill": "Nonlinear equations & systems",
+        "skillId": "ALG2.EQV.6",
+        "type": "mc",
+        "difficulty": "H"
+      }
+    ]
+  },
+  "2": {
+    "week": 2,
+    "title": "Advanced Math",
+    "itemCount": 22,
+    "mcCount": 17,
+    "sprCount": 5,
+    "items": [
+      {
+        "problemId": "sat-math-w2q1",
+        "n": 1,
+        "domain": "ADV",
+        "skill": "Equivalent expressions",
+        "skillId": "ALG1.EQV.10",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w2q2",
+        "n": 2,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (exponential)",
+        "skillId": "ALG1.FNC.8",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w2q3",
+        "n": 3,
+        "domain": "ALG",
+        "skill": "Linear functions",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w2q4",
+        "n": 4,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (quadratic)",
+        "skillId": "ALG1.FNC.10",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w2q5",
+        "n": 5,
+        "domain": "PSDA",
+        "skill": "Percentages",
+        "skillId": "MS.PRP.7",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w2q6",
+        "n": 6,
+        "domain": "GEO",
+        "skill": "Circles (area)",
+        "skillId": "MS.SPC.6",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w2q7",
+        "n": 7,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (radical)",
+        "skillId": "ALG2.EQV.12",
+        "type": "spr",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w2q8",
+        "n": 8,
+        "domain": "ADV",
+        "skill": "Equivalent expressions (rational)",
+        "skillId": "ALG2.EQV.13",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q9",
+        "n": 9,
+        "domain": "ALG",
+        "skill": "Linear functions (interpretation)",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q10",
+        "n": 10,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations",
+        "skillId": "ALG1.EQV.7",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q11",
+        "n": 11,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (quadratic maximum)",
+        "skillId": "ALG1.FNC.10",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q12",
+        "n": 12,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (exponential)",
+        "skillId": "ALG2.EQV.16",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q13",
+        "n": 13,
+        "domain": "PSDA",
+        "skill": "Two-variable data (scatterplots & models)",
+        "skillId": "ALG1.DTA.3",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q14",
+        "n": 14,
+        "domain": "GEO",
+        "skill": "Right triangles & trigonometry",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q15",
+        "n": 15,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (exponential growth)",
+        "skillId": "ALG1.FNC.8",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q16",
+        "n": 16,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (polynomial)",
+        "skillId": "ALG2.FNC.6",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q17",
+        "n": 17,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (rational)",
+        "skillId": "ALG2.EQV.15",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w2q18",
+        "n": 18,
+        "domain": "ADV",
+        "skill": "Nonlinear systems (discriminant)",
+        "skillId": "ALG2.EQV.6",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w2q19",
+        "n": 19,
+        "domain": "GEO",
+        "skill": "Circles (equation in the xy-plane)",
+        "skillId": "GEO.SPC.16",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w2q20",
+        "n": 20,
+        "domain": "PSDA",
+        "skill": "Inference & margin of error",
+        "skillId": "ALG2.DTA.3",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w2q21",
+        "n": 21,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations (infinitely many solutions)",
+        "skillId": "ALG1.EQV.7",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w2q22",
+        "n": 22,
+        "domain": "ADV",
+        "skill": "Equivalent expressions (identifying constants)",
+        "skillId": "ALG1.EQV.10",
+        "type": "spr",
+        "difficulty": "H"
+      }
+    ]
+  },
+  "3": {
+    "week": 3,
+    "title": "Data & Problem-Solving",
+    "itemCount": 22,
+    "mcCount": 17,
+    "sprCount": 5,
+    "items": [
+      {
+        "problemId": "sat-math-w3q1",
+        "n": 1,
+        "domain": "PSDA",
+        "skill": "Ratios, rates, proportional relationships, and units",
+        "skillId": "MS.PRP.5",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w3q2",
+        "n": 2,
+        "domain": "PSDA",
+        "skill": "Percentages",
+        "skillId": "MS.PRP.7",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w3q3",
+        "n": 3,
+        "domain": "PSDA",
+        "skill": "One-variable data: center and spread",
+        "skillId": "ALG1.DTA.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w3q4",
+        "n": 4,
+        "domain": "PSDA",
+        "skill": "One-variable data: center and spread",
+        "skillId": "ALG1.DTA.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w3q5",
+        "n": 5,
+        "domain": "ALG",
+        "skill": "Linear equations in one variable",
+        "skillId": "ALG1.EQV.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w3q6",
+        "n": 6,
+        "domain": "PSDA",
+        "skill": "Probability and conditional probability",
+        "skillId": "ALG1.DTA.2",
+        "type": "spr",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w3q7",
+        "n": 7,
+        "domain": "GEO",
+        "skill": "Area and volume",
+        "skillId": "GEO.SPC.18",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w3q8",
+        "n": 8,
+        "domain": "ALG",
+        "skill": "Linear functions",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q9",
+        "n": 9,
+        "domain": "PSDA",
+        "skill": "Probability and conditional probability",
+        "skillId": "ALG1.DTA.2",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q10",
+        "n": 10,
+        "domain": "PSDA",
+        "skill": "Percentages",
+        "skillId": "MS.PRP.7",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q11",
+        "n": 11,
+        "domain": "PSDA",
+        "skill": "Ratios, rates, proportional relationships, and units",
+        "skillId": "MS.PRP.5",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q12",
+        "n": 12,
+        "domain": "PSDA",
+        "skill": "Two-variable data: scatterplots and models",
+        "skillId": "ALG1.DTA.3",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q13",
+        "n": 13,
+        "domain": "PSDA",
+        "skill": "One-variable data: center and spread",
+        "skillId": "ALG1.DTA.1",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q14",
+        "n": 14,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations",
+        "skillId": "ALG1.EQV.7",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q15",
+        "n": 15,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (exponential)",
+        "skillId": "ALG1.FNC.8",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q16",
+        "n": 16,
+        "domain": "PSDA",
+        "skill": "Inference and margin of error",
+        "skillId": "ALG2.DTA.3",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q17",
+        "n": 17,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (quadratic)",
+        "skillId": "ALG1.EQV.15",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w3q18",
+        "n": 18,
+        "domain": "PSDA",
+        "skill": "Evaluating statistical claims",
+        "skillId": "ALG2.DTA.1",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w3q19",
+        "n": 19,
+        "domain": "GEO",
+        "skill": "Right triangles and trigonometry",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w3q20",
+        "n": 20,
+        "domain": "ALG",
+        "skill": "Linear inequalities in one or two variables",
+        "skillId": "ALG1.FNC.5",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w3q21",
+        "n": 21,
+        "domain": "GEO",
+        "skill": "Area and volume",
+        "skillId": "GEO.SPC.18",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w3q22",
+        "n": 22,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (exponential)",
+        "skillId": "ALG2.EQV.16",
+        "type": "spr",
+        "difficulty": "H"
+      }
+    ]
+  },
+  "4": {
+    "week": 4,
+    "title": "Geometry & Trig + retention",
+    "itemCount": 22,
+    "mcCount": 17,
+    "sprCount": 5,
+    "items": [
+      {
+        "problemId": "sat-math-w4q1",
+        "n": 1,
+        "domain": "GEO",
+        "skill": "Lines, angles, and triangles",
+        "skillId": "GEO.SPC.4",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w4q2",
+        "n": 2,
+        "domain": "GEO",
+        "skill": "Area and volume",
+        "skillId": "GEO.SPC.18",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w4q3",
+        "n": 3,
+        "domain": "ALG",
+        "skill": "Linear equations in one variable",
+        "skillId": "ALG1.EQV.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w4q4",
+        "n": 4,
+        "domain": "ALG",
+        "skill": "Linear functions",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w4q5",
+        "n": 5,
+        "domain": "GEO",
+        "skill": "Lines, angles, and triangles",
+        "skillId": "GEO.SPC.4",
+        "type": "spr",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w4q6",
+        "n": 6,
+        "domain": "ADV",
+        "skill": "Equivalent expressions",
+        "skillId": "ALG1.EQV.10",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w4q7",
+        "n": 7,
+        "domain": "PSDA",
+        "skill": "Ratios, rates, proportional relationships, and units",
+        "skillId": "MS.PRP.5",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w4q8",
+        "n": 8,
+        "domain": "GEO",
+        "skill": "Area and volume",
+        "skillId": "GEO.SPC.18",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q9",
+        "n": 9,
+        "domain": "GEO",
+        "skill": "Lines, angles, and triangles",
+        "skillId": "GEO.SPC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q10",
+        "n": 10,
+        "domain": "GEO",
+        "skill": "Right triangles and trigonometry",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q11",
+        "n": 11,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations",
+        "skillId": "ALG1.EQV.7",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q12",
+        "n": 12,
+        "domain": "GEO",
+        "skill": "Right triangles and trigonometry",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q13",
+        "n": 13,
+        "domain": "PSDA",
+        "skill": "Percentages",
+        "skillId": "MS.PRP.7",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q14",
+        "n": 14,
+        "domain": "GEO",
+        "skill": "Circles",
+        "skillId": "MS.SPC.6",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q15",
+        "n": 15,
+        "domain": "ADV",
+        "skill": "Nonlinear functions",
+        "skillId": "ALG1.FNC.10",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q16",
+        "n": 16,
+        "domain": "ALG",
+        "skill": "Linear inequalities in one or two variables",
+        "skillId": "ALG1.FNC.5",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q17",
+        "n": 17,
+        "domain": "ADV",
+        "skill": "Nonlinear functions",
+        "skillId": "ALG1.FNC.10",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w4q18",
+        "n": 18,
+        "domain": "GEO",
+        "skill": "Circles",
+        "skillId": "MS.SPC.6",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w4q19",
+        "n": 19,
+        "domain": "ADV",
+        "skill": "Nonlinear equations and systems",
+        "skillId": "ALG2.EQV.6",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w4q20",
+        "n": 20,
+        "domain": "GEO",
+        "skill": "Right triangles and trigonometry",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w4q21",
+        "n": 21,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations",
+        "skillId": "ALG1.EQV.7",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w4q22",
+        "n": 22,
+        "domain": "ADV",
+        "skill": "Nonlinear equations and systems",
+        "skillId": "ALG2.EQV.6",
+        "type": "mc",
+        "difficulty": "H"
+      }
+    ]
+  },
+  "5": {
+    "week": 5,
+    "title": "Exit (full section)",
+    "itemCount": 44,
+    "mcCount": 33,
+    "sprCount": 11,
+    "items": [
+      {
+        "problemId": "sat-math-w5q1",
+        "n": 1,
+        "domain": "ALG",
+        "skill": "Linear equations in one variable",
+        "skillId": "ALG1.EQV.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q2",
+        "n": 2,
+        "domain": "ADV",
+        "skill": "Equivalent expressions (binomial product)",
+        "skillId": "ALG1.EQV.10",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q3",
+        "n": 3,
+        "domain": "ALG",
+        "skill": "Linear functions (evaluation)",
+        "skillId": "ALG1.FNC.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q4",
+        "n": 4,
+        "domain": "ADV",
+        "skill": "Equivalent expressions (exponent rules)",
+        "skillId": "MS.QNT.9",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q5",
+        "n": 5,
+        "domain": "GEO",
+        "skill": "Area and volume",
+        "skillId": "GEO.SPC.18",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q6",
+        "n": 6,
+        "domain": "ALG",
+        "skill": "Linear equations in one variable (distribution)",
+        "skillId": "ALG1.EQV.1",
+        "type": "spr",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q7",
+        "n": 7,
+        "domain": "PSDA",
+        "skill": "Percentages",
+        "skillId": "MS.PRP.7",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q8",
+        "n": 8,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (exponential evaluation)",
+        "skillId": "ALG1.FNC.8",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q9",
+        "n": 9,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations (word problem)",
+        "skillId": "ALG1.EQV.7",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q10",
+        "n": 10,
+        "domain": "ALG",
+        "skill": "Linear functions (interpretation of slope)",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q11",
+        "n": 11,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (quadratic by factoring)",
+        "skillId": "ALG1.EQV.15",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q12",
+        "n": 12,
+        "domain": "PSDA",
+        "skill": "Probability and conditional probability (two-way table)",
+        "skillId": "ALG1.DTA.2",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q13",
+        "n": 13,
+        "domain": "ALG",
+        "skill": "Linear inequalities in one variable",
+        "skillId": "ALG1.EQV.3",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q14",
+        "n": 14,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (exponential, equal bases)",
+        "skillId": "ALG2.EQV.16",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q15",
+        "n": 15,
+        "domain": "GEO",
+        "skill": "Right triangles and trigonometry (ratios)",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q16",
+        "n": 16,
+        "domain": "PSDA",
+        "skill": "Two-variable data: scatterplots and models",
+        "skillId": "ALG1.DTA.3",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q17",
+        "n": 17,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (radical)",
+        "skillId": "ALG2.EQV.12",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q18",
+        "n": 18,
+        "domain": "ALG",
+        "skill": "Linear equations in two variables (equation from two points)",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q19",
+        "n": 19,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations (no solution)",
+        "skillId": "ALG1.EQV.7",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q20",
+        "n": 20,
+        "domain": "ADV",
+        "skill": "Nonlinear systems (tangency via discriminant)",
+        "skillId": "ALG2.EQV.6",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q21",
+        "n": 21,
+        "domain": "GEO",
+        "skill": "Circles (equation, completing the square)",
+        "skillId": "GEO.SPC.16",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q22",
+        "n": 22,
+        "domain": "PSDA",
+        "skill": "Inference and margin of error",
+        "skillId": "ALG2.DTA.3",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q23",
+        "n": 23,
+        "domain": "ALG",
+        "skill": "Linear equations in two variables (intercepts)",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q24",
+        "n": 24,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (quadratic evaluation)",
+        "skillId": "ALG1.FNC.10",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q25",
+        "n": 25,
+        "domain": "PSDA",
+        "skill": "One-variable data (bar graph)",
+        "skillId": "ALG1.DTA.1",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q26",
+        "n": 26,
+        "domain": "GEO",
+        "skill": "Lines, angles, and triangles",
+        "skillId": "GEO.SPC.4",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q27",
+        "n": 27,
+        "domain": "ALG",
+        "skill": "Linear equations in one variable (variable on both sides)",
+        "skillId": "ALG1.EQV.1",
+        "type": "spr",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q28",
+        "n": 28,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (choosing an exponential model)",
+        "skillId": "ALG1.FNC.8",
+        "type": "mc",
+        "difficulty": "E"
+      },
+      {
+        "problemId": "sat-math-w5q29",
+        "n": 29,
+        "domain": "PSDA",
+        "skill": "One-variable data: center and spread (outlier effect)",
+        "skillId": "ALG1.DTA.1",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q30",
+        "n": 30,
+        "domain": "ALG",
+        "skill": "Systems of two linear equations (substitution)",
+        "skillId": "ALG1.EQV.7",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q31",
+        "n": 31,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (rational)",
+        "skillId": "ALG2.EQV.15",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q32",
+        "n": 32,
+        "domain": "GEO",
+        "skill": "Area and volume (cylinder)",
+        "skillId": "GEO.SPC.18",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q33",
+        "n": 33,
+        "domain": "ALG",
+        "skill": "Linear inequalities in two variables",
+        "skillId": "ALG1.FNC.5",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q34",
+        "n": 34,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (quadratic maximum)",
+        "skillId": "ALG1.FNC.10",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q35",
+        "n": 35,
+        "domain": "ADV",
+        "skill": "Equivalent expressions (squaring a binomial)",
+        "skillId": "ALG1.EQV.10",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q36",
+        "n": 36,
+        "domain": "ALG",
+        "skill": "Linear functions (perpendicular lines)",
+        "skillId": "ALG1.FNC.4",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q37",
+        "n": 37,
+        "domain": "ADV",
+        "skill": "Nonlinear systems (line and parabola)",
+        "skillId": "ALG2.EQV.6",
+        "type": "mc",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q38",
+        "n": 38,
+        "domain": "GEO",
+        "skill": "Right triangles (Pythagorean theorem)",
+        "skillId": "GEO.SPC.11",
+        "type": "spr",
+        "difficulty": "M"
+      },
+      {
+        "problemId": "sat-math-w5q39",
+        "n": 39,
+        "domain": "ALG",
+        "skill": "Linear equations in one variable (infinitely many solutions)",
+        "skillId": "ALG1.EQV.1",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q40",
+        "n": 40,
+        "domain": "ADV",
+        "skill": "Nonlinear equations (quadratic, relation between roots)",
+        "skillId": "ALG1.EQV.15",
+        "type": "spr",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q41",
+        "n": 41,
+        "domain": "PSDA",
+        "skill": "Percentages (successive percent change)",
+        "skillId": "MS.PRP.7",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q42",
+        "n": 42,
+        "domain": "GEO",
+        "skill": "Right triangles and trigonometry (complementary angles)",
+        "skillId": "GEO.PRP.5",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q43",
+        "n": 43,
+        "domain": "ADV",
+        "skill": "Nonlinear functions (quadratic model, zeros)",
+        "skillId": "ALG1.FNC.10",
+        "type": "mc",
+        "difficulty": "H"
+      },
+      {
+        "problemId": "sat-math-w5q44",
+        "n": 44,
+        "domain": "ALG",
+        "skill": "Linear functions (rate from two data points)",
+        "skillId": "ALG1.FNC.4",
+        "type": "spr",
+        "difficulty": "H"
+      }
+    ]
+  }
+}
