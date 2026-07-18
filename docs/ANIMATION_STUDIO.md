@@ -118,6 +118,16 @@ clips scheduled on top, plus an optional voiceover. The right-panel
 Sequence JSON evaluates through `RigCore.evaluateSequence(seq, clips, t)`, so
 the runtime can play the same composition live later.
 
+## Scene backdrops
+
+Load any set image (e.g. the branded classroom) in the left panel's **Scene
+backdrop** section. During playback, sequence previews, and **every export**
+(clip WebM, sequence WebM, PNG), the character is composited over the backdrop
+— export dimensions become the backdrop's (capped at 1920 wide). Position /
+Size / Floor knobs place the character in the set (placement persists per rig;
+the image itself is session-only — reload it after a refresh). Paused editing
+keeps the plain background so picking and IK stay exact.
+
 ## The life layers (what makes it not look like a puppet)
 
 Two procedural layers run during playback and export (viewport toggles
@@ -148,5 +158,13 @@ The `RigPlayer` runtime applies both automatically (`player.secondaryMotion` /
   cheer) / `wave.json`.
 - If a joint shows a seam at an extreme angle, back the angle off or nudge the
   child's `x`/`y` a couple of px at that key.
+- **Hand pose slots** (v6): `hand_L` / `hand_R` slots swap the hand sprite —
+  states `rest`, `point` (index finger), `thumb` (thumbs-up), `spread` (open
+  fingers). Variants declare `transformAs` so they follow the base hand's
+  animation. point/tap/point_up key the finger, wave keys the spread palm,
+  celebrate keys double thumbs; `thumbs_up` is its own gesture clip. The
+  sprites were aligned from pose renders (wristband anchored to the hand
+  pivot; thumb sprites oriented so the thumb is upright at the gesture's
+  chain rotation of ≈±135°) — see the scratch tool notes in the PR.
 - To add a rig: drop `public/rigs/<id>/` with the same structure and add it to the
   `RIGS` list at the top of `public/js/animation-studio.js`.

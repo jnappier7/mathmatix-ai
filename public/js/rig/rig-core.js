@@ -198,7 +198,10 @@
       if (stack.has(name)) return out.root; // cycle guard
       stack.add(name);
       const parent = resolve(part.parent && rig.parts[part.parent] ? part.parent : 'root', stack);
-      const ch = channelsFor(pose, name);
+      // Slot variants (e.g. a pointing-hand swap) can declare transformAs to
+      // inherit the base part's animation channels, so "hand_L.rotation"
+      // drives the variant while the slot controls which sprite is visible.
+      const ch = channelsFor(pose, part.transformAs || name);
       out[name] = {
         matrix: matMul(parent.matrix, localMatrix(part.pivot, ch)),
         opacity: parent.opacity * ch.opacity,

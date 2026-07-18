@@ -24,7 +24,7 @@ function isTeacherOrAdmin(req, res, next) {
   return res.status(403).json({ success: false, message: 'Forbidden: Teachers or admins only.' });
 }
 
-const GESTURES = ['none', 'wave', 'nod', 'thinking', 'celebrate', 'point', 'point_up', 'present', 'tap', 'explain'];
+const GESTURES = ['none', 'wave', 'nod', 'thinking', 'celebrate', 'point', 'point_up', 'present', 'tap', 'explain', 'thumbs_up'];
 
 const SCRIPT_FORMAT = {
   type: 'json_schema',
@@ -88,7 +88,8 @@ router.post('/script', isTeacherOrAdmin, async (req, res) => {
         + 'introducing the example or problem; "point" when directing attention to the work '
         + '("look at this step"); "tap" for emphasis on a specific detail; "point_up" for the one '
         + 'key tip or rule; "thinking" when posing a question to the viewer; "nod" for '
-        + 'affirmations; "explain" for a longer stretch of instruction; "celebrate" only on the '
+        + 'affirmations; "thumbs_up" for praising the viewer after a solved step; "explain" for a '
+        + 'longer stretch of instruction; "celebrate" only on the '
         + 'final wrap-up segment; otherwise "none".',
     },
     {

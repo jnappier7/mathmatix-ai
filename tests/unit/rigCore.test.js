@@ -206,6 +206,19 @@ describe('computeWorldTransforms (FK)', () => {
     expect(world.arm.opacity).toBeCloseTo(0.5);
   });
 
+  test('transformAs variants inherit the base part\'s channels', () => {
+    const rig = {
+      canvas: [1000, 1000],
+      parts: {
+        hand: { pivot: [200, 300], z: 1, parent: 'root' },
+        hand_point: { pivot: [200, 300], z: 1, parent: 'root', hidden: true, transformAs: 'hand' },
+      },
+    };
+    const pose = { 'hand.rotation': 90 };
+    const world = Core.computeWorldTransforms(rig, pose);
+    expect(world.hand_point.matrix).toEqual(world.hand.matrix);
+  });
+
   test('an unknown or cyclic parent falls back to root instead of crashing', () => {
     const rig = {
       canvas: [100, 100],

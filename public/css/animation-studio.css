@@ -167,6 +167,13 @@ input[type="color"] { border: 1px solid var(--border); border-radius: 6px; backg
 .timeline-host { height: 190px; overflow-y: auto; overflow-x: hidden; position: relative; }
 #timeline { display: block; width: 100%; }
 
+/* ------------------------------------------------------------------ scene */
+.scene-panel { display: flex; flex-direction: column; gap: 6px; }
+.scene-panel input[type="file"] { width: 100%; font-size: 11px; color: var(--text-dim); }
+.scene-slider { display: grid; grid-template-columns: 58px 1fr; gap: 6px; align-items: center; }
+.scene-slider > span { color: var(--text-dim); font-size: 12px; }
+.scene-slider input[type="range"] { width: 100%; accent-color: var(--accent-2); }
+
 /* ---------------------------------------------------------------- producer */
 .producer { display: flex; flex-direction: column; gap: 7px; }
 .producer textarea {
