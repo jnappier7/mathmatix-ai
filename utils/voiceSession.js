@@ -305,7 +305,7 @@ class VoiceSession {
         // Don't null this.stt — sendFrame will see isOpen()===false and lazy-reopen
     }
 
-    _onPartial(text) {
+    _onPartial(text, confidence) {
         this._lastPartialAt = Date.now();
         // If AI is currently speaking, partial transcripts on student channel
         // are how the server confirms a barge-in even if the client missed it.
@@ -313,17 +313,23 @@ class VoiceSession {
         if (this.currentTurn && this.currentTurn.status === 'speaking' && text.length > 2) {
             this._abortCurrentTurn('user_barge_in_server_detected');
         }
-        this._send({ type: 'transcript_partial', text });
+        // Confidence rides along so the client can decline to display
+        // low-confidence guesses (Whisper fallback sends none — omit).
+        const msg = { type: 'transcript_partial', text };
+        if (typeof confidence === 'number') msg.confidence = confidence;
+        this._send(msg);
     }
 
     _accumulatedFinal = '';
-    _onFinal(text) {
+    _onFinal(text, confidence) {
         // Concatenate "is_final" segments — Deepgram emits multiple finals
         // per utterance (one per phrase). We commit on UtteranceEnd.
         this._accumulatedFinal = this._accumulatedFinal
             ? `${this._accumulatedFinal} ${text}`
             : text;
-        this._send({ type: 'transcript_final_segment', text });
+        const msg = { type: 'transcript_final_segment', text };
+        if (typeof confidence === 'number') msg.confidence = confidence;
+        this._send(msg);
     }
 
     _onUtteranceEnd() {
