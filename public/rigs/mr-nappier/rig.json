@@ -1,7 +1,7 @@
 {
   "name": "Mr. Nappier",
   "id": "mr-nappier",
-  "version": 6,
+  "version": 7,
   "canvas": [
     1024,
     1536
@@ -414,10 +414,10 @@
       "hidden": true,
       "transformAs": "hand_L",
       "bbox": [
-        744,
-        692,
-        836,
-        878
+        756,
+        684,
+        852,
+        880
       ]
     },
     "hand_L_thumb": {
@@ -431,10 +431,10 @@
       "hidden": true,
       "transformAs": "hand_L",
       "bbox": [
-        720,
-        688,
-        886,
-        848
+        742,
+        684,
+        832,
+        808
       ]
     },
     "hand_L_spread": {
@@ -448,10 +448,10 @@
       "hidden": true,
       "transformAs": "hand_L",
       "bbox": [
-        720,
-        692,
-        846,
-        880
+        750,
+        684,
+        872,
+        872
       ]
     },
     "hand_R_point": {
@@ -465,10 +465,10 @@
       "hidden": true,
       "transformAs": "hand_R",
       "bbox": [
-        160,
-        704,
-        248,
-        894
+        144,
+        698,
+        234,
+        860
       ]
     },
     "hand_R_thumb": {
@@ -482,10 +482,10 @@
       "hidden": true,
       "transformAs": "hand_R",
       "bbox": [
-        142,
-        700,
-        280,
-        898
+        154,
+        698,
+        244,
+        810
       ]
     },
     "hand_R_spread": {
@@ -499,10 +499,10 @@
       "hidden": true,
       "transformAs": "hand_R",
       "bbox": [
-        122,
-        704,
-        264,
-        898
+        124,
+        698,
+        242,
+        860
       ]
     }
   },
