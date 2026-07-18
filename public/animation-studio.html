@@ -150,6 +150,10 @@
           </label>
           <label class="toggle"><input type="checkbox" id="clipLoop"> Loop</label>
         </div>
+        <div class="clip-gen">
+          <textarea id="clipPrompt" rows="2" placeholder="Describe a motion… e.g. shrug, then lean in and tap the board twice"></textarea>
+          <button id="btnClipGen" class="wide" title="The AI authors keyframes for this rig from your description; the result lands as an editable clip">✨ Generate clip from prompt</button>
+        </div>
 
         <h3>Producer · topic → video</h3>
         <div class="producer">
@@ -172,7 +176,8 @@
             <span>Voice</span>
             <select id="prodTutor"></select>
           </label>
-          <button id="btnProdScript" class="wide">✍️ Write script</button>
+          <button id="btnProdBuild" class="wide primary" title="One click: write the script, voice it with the tutor's TTS, lip-sync, schedule gestures, and start the preview">⚡ Build video from prompt</button>
+          <button id="btnProdScript" class="wide">✍️ Write script only</button>
           <textarea id="prodScript" rows="7" hidden
             placeholder="gesture | narration — one segment per line"></textarea>
           <button id="btnProdAssemble" class="wide primary" hidden

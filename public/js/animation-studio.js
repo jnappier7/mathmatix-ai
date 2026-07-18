@@ -74,7 +74,8 @@
     'helpModal', 'btnHelpClose',
     'seqBase', 'seqDuration', 'seqEvents', 'btnSeqAdd', 'seqAudio', 'seqAudioInfo',
     'btnSeqLipsync', 'btnSeqAuto', 'btnSeqPreview', 'btnSeqExport', 'seqStatus',
-    'prodTopic', 'prodGrade', 'prodLength', 'prodTutor', 'btnProdScript',
+    'prodTopic', 'prodGrade', 'prodLength', 'prodTutor', 'btnProdScript', 'btnProdBuild',
+    'clipPrompt', 'btnClipGen',
     'prodScript', 'btnProdAssemble', 'prodStatus',
     'sceneFile', 'sceneInfo', 'sceneX', 'sceneH', 'sceneFoot', 'btnSceneClear',
   ].forEach((id) => { els[id] = $(id); });
@@ -1652,7 +1653,7 @@
 
   async function producerScript() {
     const topic = els.prodTopic.value.trim();
-    if (!topic) { els.prodStatus.textContent = 'Enter a topic first.'; return; }
+    if (!topic) { els.prodStatus.textContent = 'Enter a topic first.'; return false; }
     els.btnProdScript.disabled = true;
     els.prodStatus.textContent = 'Writing script…';
     try {
@@ -1668,8 +1669,10 @@
       els.prodScript.hidden = false;
       els.btnProdAssemble.hidden = false;
       els.prodStatus.textContent = `Script ready: "${title}" — edit lines, then Voice & assemble.`;
+      return true;
     } catch (e) {
       els.prodStatus.textContent = e.message;
+      return false;
     } finally {
       els.btnProdScript.disabled = false;
     }
@@ -1695,7 +1698,7 @@
 
   async function producerAssemble() {
     const segments = textToSegments(els.prodScript.value);
-    if (!segments.length) { els.prodStatus.textContent = 'Script is empty.'; return; }
+    if (!segments.length) { els.prodStatus.textContent = 'Script is empty.'; return false; }
     const voiceId = els.prodTutor.value;
     els.btnProdAssemble.disabled = true;
     const actx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1744,11 +1747,53 @@
       generateLipSync(); // adds the lipsync clip + event, saves, rebuilds UI
       els.prodStatus.textContent =
         `Assembled: ${segments.length} segments, ${(total / rate).toFixed(1)}s. Preview or Export below.`;
+      return true;
     } catch (e) {
       els.prodStatus.textContent = e.message;
+      return false;
     } finally {
       actx.close();
       els.btnProdAssemble.disabled = false;
+    }
+  }
+
+  // One click: script → voice → lip-sync → gestures → preview rolling.
+  async function producerBuild() {
+    els.btnProdBuild.disabled = true;
+    try {
+      if (!await producerScript()) return;
+      if (!await producerAssemble()) return;
+      if (!S.seqPlay) toggleSequencePreview();
+      els.prodStatus.textContent += ' Previewing — Export sequence video when happy.';
+    } finally {
+      els.btnProdBuild.disabled = false;
+    }
+  }
+
+  // Text-to-animation: the server LLM authors keyframes for this rig;
+  // the result lands as an ordinary editable clip and starts playing.
+  async function generateClipFromPrompt() {
+    const prompt = els.clipPrompt.value.trim();
+    if (!prompt) { els.prodStatus.textContent = 'Describe the motion first.'; return; }
+    els.btnClipGen.disabled = true;
+    els.btnClipGen.textContent = '✨ Authoring keyframes…';
+    try {
+      const res = await api('/api/animation-studio/clip', { prompt });
+      const { clip } = await res.json();
+      let name = clip.name;
+      let n = 2;
+      while (S.presets[name]) name = clip.name + '-' + n++;
+      clip.name = name;
+      S.clips[name] = clip;
+      scheduleSave();
+      selectClip(name);
+      setPlaying(true);
+    } catch (e) {
+      els.prodStatus.textContent = e.message;
+      refreshSoon();
+    } finally {
+      els.btnClipGen.disabled = false;
+      els.btnClipGen.textContent = '✨ Generate clip from prompt';
     }
   }
 
@@ -1756,6 +1801,8 @@
     producerInit();
     els.btnProdScript.addEventListener('click', producerScript);
     els.btnProdAssemble.addEventListener('click', () => producerAssemble());
+    els.btnProdBuild.addEventListener('click', producerBuild);
+    els.btnClipGen.addEventListener('click', generateClipFromPrompt);
   }
 
   function bindSequencer() {

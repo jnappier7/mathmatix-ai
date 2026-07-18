@@ -68,10 +68,27 @@ rig packages, and export them as WebM videos (the tutor-cam format in
    — drop the WebM next to the existing tutor videos in `public/videos/`. Video and
    PNG exports render at 2× and downscale for crisper edges.
 
+## Prompt → animation (text-to-motion)
+
+The Clip panel's **✨ Generate clip from prompt** box is true text-to-animation
+on the rig: describe a motion ("shrug, then lean in and tap the board twice")
+and `POST /api/animation-studio/clip` has the LLM (gpt-4o, strict structured
+output) author actual keyframes against a rig-aware motion brief — bone list
+with per-side rotation conventions and ranges, slot states, easing semantics,
+and craft rules (anticipation, overshoot, return-to-rest, loop continuity).
+The server parses, clamps (rotation ±170°, scales 0.5–1.5, duration ≤8s),
+and validates against `rig.json` via `RigCore.validateClip`, with one repair
+round that feeds validation errors back. The result lands as an ordinary
+editable clip and starts playing.
+
 ## Producer — topic in, finished video out
 
 The Agent-Opus-style flow, using the app's own AI stack. The **Producer** panel
-(teacher/admin login required — it calls the authed API):
+(teacher/admin login required — it calls the authed API).
+
+**⚡ Build video from prompt** does the whole thing in one click: script →
+per-segment TTS → stitched voiceover → lip-sync → gestures → preview rolling.
+The step-by-step buttons remain for finer control:
 
 1. Type a topic, pick grade level, length (60/75/90s), and a tutor voice.
 2. **Write script** → `POST /api/animation-studio/script`
