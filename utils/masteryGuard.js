@@ -12,6 +12,7 @@
  */
 
 const TutorPlan = require('../models/tutorPlan');
+const { canonicalSkillId } = require('./skillCanonicalizer');
 
 // If a badge has been attempted this many times its requirement without
 // being earned, we consider it stuck and clear it so the student can pick
@@ -19,12 +20,33 @@ const TutorPlan = require('../models/tutorPlan');
 // of room for normal struggle before intervening.
 const STUCK_BADGE_ATTEMPT_MULTIPLIER = 2;
 
+// Central read accessor for a user's per-skill mastery entry. Canonicalizes the
+// requested skillId to its unified id (so a lookup by a legacy kebab id finds the
+// unified-keyed entry that new writes produce), then falls back to the raw id so
+// historical legacy-keyed entries still resolve during the migration — no data
+// backfill required. Every keyed read of skillMastery should go through here.
 function getSkillMasteryEntry(user, skillId) {
   if (!user || !skillId) return null;
   const sm = user.skillMastery;
   if (!sm) return null;
-  if (typeof sm.get === 'function') return sm.get(skillId) || null;
-  return sm[skillId] || null;
+  const read = (k) => (typeof sm.get === 'function' ? sm.get(k) : sm[k]) || null;
+  const canon = canonicalSkillId(skillId);
+  return read(canon) || (canon !== skillId ? read(skillId) : null);
+}
+
+// Resolve the skillMastery KEY to use for a read-modify-write on `skillId`.
+// Prefers the canonical unified id; if no entry exists there but one exists under
+// the raw (legacy) id, returns that so we update the historical entry in place
+// instead of creating a duplicate; otherwise defaults to canonical (new entry).
+function resolveMasteryKey(user, skillId) {
+  if (!skillId) return skillId;
+  const canon = canonicalSkillId(skillId);
+  const sm = user && user.skillMastery;
+  if (!sm) return canon;
+  const present = (k) => (typeof sm.get === 'function' ? sm.get(k) != null : sm[k] != null);
+  if (present(canon)) return canon;
+  if (canon !== skillId && present(skillId)) return skillId;
+  return canon;
 }
 
 /**
@@ -86,6 +108,8 @@ function clearActiveBadge(user, reason) {
 
 module.exports = {
   STUCK_BADGE_ATTEMPT_MULTIPLIER,
+  getSkillMasteryEntry,
+  resolveMasteryKey,
   isSkillMastered,
   isBadgeStuck,
   clearActiveBadge,

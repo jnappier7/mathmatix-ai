@@ -13,6 +13,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
+const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { checkConsent } = require('../utils/consentManager');
 const { requireActiveConsent } = require('../middleware/consentGate');
@@ -2530,9 +2531,12 @@ router.post('/merge-accounts', isAdmin, async (req, res) => {
     if (smStrategy === 'merge' && source.skillMastery) {
       if (!target.skillMastery) target.skillMastery = new Map();
       for (const [skillId, sourceSkill] of source.skillMastery) {
-        const targetSkill = target.skillMastery.get(skillId);
+        // canonicalize on merge so legacy + unified entries for one concept
+        // collapse onto a single unified key instead of duplicating
+        const key = canonicalSkillId(skillId);
+        const targetSkill = target.skillMastery.get(key);
         if (!targetSkill || (sourceSkill.masteryScore || 0) > (targetSkill.masteryScore || 0)) {
-          target.skillMastery.set(skillId, sourceSkill);
+          target.skillMastery.set(key, sourceSkill);
         }
       }
       audit.changes.push('Merged skill mastery data (kept highest scores)');

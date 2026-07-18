@@ -5,6 +5,7 @@ const Skill = require('../models/skill');
 const Conversation = require('../models/conversation');
 const aiService = require('../services/aiService');
 const { calculateBaselineModifier } = require('../utils/adaptiveFluency');
+const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 
 // Grade-to-skill mapping for starting point
 const GRADE_STARTING_SKILLS = {
@@ -304,9 +305,9 @@ async function completeAssessment(user, conversation, aiResponse) {
       });
     }
 
-    // Update user's skill mastery
-    for (const skillId of masteredSkills) {
-      user.skillMastery.set(skillId, {
+    // Update user's skill mastery (canonical unified skill ids)
+    for (const rawId of masteredSkills) {
+      user.skillMastery.set(canonicalSkillId(rawId), {
         status: 'mastered',
         masteryScore: 1.0,
         masteredDate: new Date(),
@@ -314,8 +315,8 @@ async function completeAssessment(user, conversation, aiResponse) {
       });
     }
 
-    for (const skillId of learningSkills) {
-      user.skillMastery.set(skillId, {
+    for (const rawId of learningSkills) {
+      user.skillMastery.set(canonicalSkillId(rawId), {
         status: 'learning',
         masteryScore: 0.5,
         learningStarted: new Date(),
@@ -323,8 +324,8 @@ async function completeAssessment(user, conversation, aiResponse) {
       });
     }
 
-    for (const skillId of readySkills) {
-      user.skillMastery.set(skillId, {
+    for (const rawId of readySkills) {
+      user.skillMastery.set(canonicalSkillId(rawId), {
         status: 'ready',
         masteryScore: 0,
         notes: 'Prerequisites met, ready to learn'

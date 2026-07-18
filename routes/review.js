@@ -23,6 +23,7 @@ const {
   assessQuality
 } = require('../utils/spacedRepetition');
 const { buildSmartQueue, getReviewSummary } = require('../utils/smartReviewQueue');
+const { resolveMasteryKey } = require('../utils/masteryGuard');
 const logger = require('../utils/catLogger');
 
 // ===========================================================================
@@ -259,7 +260,10 @@ router.post('/submit', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const skillData = user.skillMastery.get(skillId);
+    // resolve to the stored key (canonical unified id, or a legacy key if that's
+    // where this user's historical entry lives) for a duplicate-free read/write
+    const masteryKey = resolveMasteryKey(user, skillId);
+    const skillData = user.skillMastery.get(masteryKey);
     if (!skillData) {
       return res.status(404).json({ error: 'Skill not found in mastery data' });
     }
@@ -300,7 +304,7 @@ router.post('/submit', isAuthenticated, async (req, res) => {
       skillData.status = 'mastered';
     }
 
-    user.skillMastery.set(skillId, skillData);
+    user.skillMastery.set(masteryKey, skillData);
     user.markModified('skillMastery');
     await user.save();
 
@@ -347,7 +351,8 @@ router.post('/skip', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const skillData = user.skillMastery.get(skillId);
+    const masteryKey = resolveMasteryKey(user, skillId);
+    const skillData = user.skillMastery.get(masteryKey);
     if (!skillData?.reviewSchedule) {
       return res.status(404).json({ error: 'No review schedule for this skill' });
     }
@@ -357,7 +362,7 @@ router.post('/skip', isAuthenticated, async (req, res) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     skillData.reviewSchedule.nextReviewDate = tomorrow;
 
-    user.skillMastery.set(skillId, skillData);
+    user.skillMastery.set(masteryKey, skillData);
     user.markModified('skillMastery');
     await user.save();
 

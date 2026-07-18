@@ -13,6 +13,8 @@
  * @module utils/sessionPatternDetector
  */
 
+const { canonicalSkillId } = require('./skillCanonicalizer');
+
 // ── Pattern types ──
 const PATTERN_TYPES = {
   RECURRING_STRUGGLE: 'recurring_struggle',
@@ -331,9 +333,9 @@ function detectRetentionDecay(skillMastery, recent, patterns, notes, planUpdates
       .filter(Boolean);
 
     for (const skillId of incorrectSkills) {
-      const mastery = skillMastery instanceof Map
-        ? skillMastery.get(skillId)
-        : skillMastery?.[skillId];
+      const canonId = canonicalSkillId(skillId);
+      const read = (k) => (skillMastery instanceof Map ? skillMastery.get(k) : skillMastery?.[k]);
+      const mastery = read(canonId) ?? (canonId !== skillId ? read(skillId) : null);
 
       if (mastery && (mastery.status === 'mastered' || mastery.masteryScore >= 70)) {
         decayingSkills.push(skillId);

@@ -24,6 +24,7 @@ const { canonicalProblemId, contentHash, recordShownProblem } = require('../prob
 const { getNextActions } = require('../nextActionSuggestions');
 const { checkForInterventionAlert } = require('../interventionAlerts');
 const { getReviewSummary } = require('../smartReviewQueue');
+const { canonicalSkillId } = require('../skillCanonicalizer');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -161,7 +162,9 @@ async function persist(params) {
 
   if (extracted.skillStarted) {
     user.skillMastery = user.skillMastery || new Map();
-    user.skillMastery.set(extracted.skillStarted, {
+    // key on the canonical (unified) skill id so learning/mastery state for one
+    // concept never splits across a legacy id and its unified id
+    user.skillMastery.set(canonicalSkillId(extracted.skillStarted), {
       status: 'learning',
       masteryScore: 0.3,
       learningStarted: new Date(),
@@ -584,8 +587,11 @@ async function persist(params) {
  * Update skill mastery from a <SKILL_MASTERED:skillId> tag.
  * Records it as evidence for the 4-pillar system.
  */
-function updateSkillMastery(user, skillId, observation, conversation) {
+function updateSkillMastery(user, rawSkillId, observation, conversation) {
   user.skillMastery = user.skillMastery || new Map();
+  // Canonicalize to the unified skill id for storage/lookup; keep the original
+  // id only for deriving a readable "recent win" label below.
+  const skillId = canonicalSkillId(rawSkillId);
   const existing = user.skillMastery.get(skillId) || {};
 
   const pillars = existing.pillars || {
@@ -647,7 +653,8 @@ function updateSkillMastery(user, skillId, observation, conversation) {
   // Add to recent wins if newly mastered
   if (newStatus === 'mastered' && existing.status !== 'mastered') {
     if (!user.learningProfile.recentWins) user.learningProfile.recentWins = [];
-    const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    // derive the label from the original (kebab) id — nicer than a dotted unified id
+    const displayName = rawSkillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     user.learningProfile.recentWins.unshift({ skill: skillId, description: `Mastered ${displayName}`, date: new Date() });
     user.learningProfile.recentWins = user.learningProfile.recentWins.slice(0, 10);
     user.markModified('learningProfile');
@@ -738,8 +745,8 @@ function updateBadgeProgress(user, wasCorrect) {
   user.xp = (user.xp || 0) + 500; // Badge XP bonus
   user.markModified('badges');
 
-  // Unlock skill on skill map
-  const skillId = badge.skillId;
+  // Unlock skill on skill map (canonical unified id)
+  const skillId = canonicalSkillId(badge.skillId);
   if (!user.skillMastery) user.skillMastery = new Map();
   if (!user.skillMastery.get(skillId) || user.skillMastery.get(skillId).status !== 'mastered') {
     user.skillMastery.set(skillId, {

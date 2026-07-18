@@ -12,6 +12,7 @@
  */
 
 const { calculateOverallProgress } = require('../coursePrompt');
+const { canonicalSkillId } = require('../skillCanonicalizer');
 
 // ── Phase labels for breadcrumb display ──
 const PHASE_LABELS = {
@@ -312,9 +313,11 @@ function processModuleComplete(courseSession) {
  * @param {Object} user - Mongoose user document
  * @param {string} skillId - Skill ID from <SKILL_MASTERED:skillId>
  */
-function processSkillMastery(user, skillId) {
-  if (!skillId) return;
+function processSkillMastery(user, rawSkillId) {
+  if (!rawSkillId) return;
 
+  // canonicalize to the unified skill id so course + chat mastery share one key
+  const skillId = canonicalSkillId(rawSkillId);
   user.skillMastery = user.skillMastery || new Map();
   const existing = user.skillMastery.get(skillId) || {};
   const pillars = existing.pillars || {
