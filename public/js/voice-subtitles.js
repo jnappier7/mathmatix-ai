@@ -149,13 +149,32 @@
   }
 
   // --- Student echo --------------------------------------------------------
-  function showStudent(text, interim) {
+  // Low-confidence partials are how a mishear becomes a jump-scare: Deepgram
+  // guessing at mumble/background noise has rendered genuinely disturbing
+  // text on a kid's screen. Below this, the pill holds its last text (or an
+  // ellipsis) instead of echoing the guess. Display-only — the server still
+  // receives the full transcript.
+  const ECHO_MIN_CONFIDENCE = 0.55;
+  // Displayed-echo mask for violent/self-harm mishears. Deliberately tiny:
+  // masking hides the mishear from the student (the echo pill's whole job),
+  // so only words that should never render in a kids' product qualify.
+  const ECHO_MASK_RE = /\b(die|dies|died|dying|dead|death|kill|kills|killed|killing|suicide|gun|guns|knife|stab)\b/i;
+
+  function showStudent(text, interim, confidence) {
     if (!els.student || !els.studentText) return;
+    if (interim && typeof confidence === 'number' && confidence < ECHO_MIN_CONFIDENCE) {
+      if (els.student.hidden || !els.studentText.textContent) {
+        els.student.hidden = false;
+        els.student.classList.add('is-interim');
+        els.studentText.textContent = '…';
+      }
+      return;
+    }
     const t = sanitize(text);
     if (!t) return;
     els.student.hidden = false;
     els.student.classList.toggle('is-interim', !!interim);
-    els.studentText.textContent = t;
+    els.studentText.textContent = ECHO_MASK_RE.test(t) ? '…' : t;
   }
 
   function hideStudent() {
@@ -211,11 +230,11 @@
         break;
 
       case 'transcript_partial':
-        showStudent(ev.text, true);
+        showStudent(ev.text, true, ev.confidence);
         break;
 
       case 'transcript_final':
-        showStudent(ev.text, false);
+        showStudent(ev.text, false, ev.confidence);
         break;
 
       case 'turn_start':

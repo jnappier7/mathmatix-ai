@@ -22,6 +22,36 @@
     /* One knob for the cam height; the thread's top padding tracks it. */
     --mm-cam-h: clamp(150px, 24dvh, 208px);
     --mm-cam-top: calc(env(safe-area-inset-top, 0px) + 58px);
+    /* Visible cam height — the pill state shrinks it (see section 3);
+       the header backdrop band tracks this, not --mm-cam-h. */
+    --mm-cam-vis-h: var(--mm-cam-h);
+  }
+
+  /* ---- 0. Opaque header band ----------------------------------------- */
+  /* The thread scroll container spans the full viewport (only padded to
+     clear the cam), so a scrolled conversation rides up through the
+     topbar band and the cam's side gutters. This band paints the app
+     background from the viewport top to just under the cam.
+     Stacking: main.sidebar-layout is a z1 stacking context that caps the
+     whole stage — the band must live INSIDE it or it covers the cam.
+     .cr-stage::before paints before the (later-DOM) hero at the same z3,
+     so: chat z2 < band < cam. Out-of-flow, so the grid ignores it. */
+  body.cr-mode .cr-stage::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--mm-cam-top) + var(--mm-cam-vis-h) + 26px);
+    background: linear-gradient(180deg,
+        var(--mlt-bg, #F5F3FB) calc(100% - 16px),
+        rgba(var(--mlt-scrim-rgb, 245, 243, 251), 0) 100%);
+    z-index: 3;
+    pointer-events: none;
+    transition: height 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body.cr-mode .cr-stage::before { transition: none; }
   }
 
   /* ---- 1. Poster → docked cam card ---------------------------------- */
@@ -93,6 +123,7 @@
   }
 
   /* ---- 3. Pill state (typing) ---------------------------------------- */
+  body.cr-mode.mm-tutor-pill { --mm-cam-vis-h: 46px; }
   body.cr-mode.mm-tutor-pill .cr-tutor-hero {
     height: 46px !important;
     border-radius: 999px !important;
@@ -152,6 +183,73 @@
     height: 130% !important;
     transform: translate(-50%, -50%) scale(calc(0.85 + var(--voice-amp, 0) * 0.4)) !important;
   }
+
+  /* ---- 5. Voice mode: the WORKSPACE is the stage ---------------------- */
+  /* Voice on a phone = cam stays the docked card (presence + captions),
+     the math workspace fills the center, mic dock owns the bottom.
+     "Voice explains, board shows" — the board gets the room. */
+
+  /* Chat records but doesn't render; the workspace replaces it. */
+  body.cr-mode.cr-voice #chat-container { display: none !important; }
+
+  /* Drawer chrome retires — the workspace isn't a drawer here. */
+  body.cr-mode.cr-voice .cr-ws-fab,
+  body.cr-mode.cr-voice .cr-ws-backdrop { display: none !important; }
+
+  /* Workspace: out of the drawer, pinned between cam and mic dock.
+     Overrides workspace.css's mobile drawer (translateX(105%), z900 —
+     which would bury the mic orb at z6). */
+  body.cr-mode.cr-voice #cr-workspace {
+    position: fixed !important;
+    top: calc(var(--mm-cam-top) + var(--mm-cam-h) + 10px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 122px) !important;
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+    transition: none !important;
+    border-radius: 18px !important;
+    border: 1px solid var(--mlt-line, rgba(35, 39, 65, 0.10)) !important;
+    background: var(--mlt-surface, #FFFFFF) !important;
+    box-shadow: var(--mlt-card-shadow, 0 6px 22px rgba(60, 50, 120, 0.13)) !important;
+    overflow: hidden !important;
+    z-index: 4 !important;
+  }
+
+  /* Captions: a lower-third inside the cam card (the desktop stage lays
+     them out under the cam; on a phone they'd overflow the fixed,
+     overflow-hidden card — pin them over the video instead). */
+  body.cr-mode.cr-voice #mm-voice-captions {
+    position: absolute !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    top: auto !important;
+    margin: 0 !important;
+    gap: 6px !important;
+    z-index: 4 !important;
+  }
+  body.cr-mode.cr-voice .mm-vc-tutor {
+    font-size: 13.5px;
+    padding: 7px 11px;
+    max-height: calc(1.45em * 2 + 14px);   /* 2-line window on a phone */
+  }
+  body.cr-mode.cr-voice .mm-vc-student {
+    font-size: 11.5px;
+    padding: 5px 11px;
+    max-width: 100%;
+  }
+  /* Replay/History are desktop-stage affordances; the phone keeps the
+     surface minimal (History's chat drawer isn't staged here). */
+  body.cr-mode.cr-voice .mm-vc-actions { display: none !important; }
+
+  /* State chip does the live-status job; the badge would double it. */
+  body.cr-mode.cr-voice .cr-live-badge { display: none !important; }
+
+  /* Orb status caption: poster-era mint on dark; unreadable on the
+     light theme. */
+  body.cr-mode.cr-voice #voice-status { color: var(--mlt-ink-dim, #6C7386) !important; }
 
   @media (prefers-reduced-motion: reduce) {
     body.cr-mode .cr-tutor-hero,
