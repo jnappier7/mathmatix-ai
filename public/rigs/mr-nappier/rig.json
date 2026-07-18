@@ -431,10 +431,10 @@
       "hidden": true,
       "transformAs": "hand_L",
       "bbox": [
-        760,
-        656,
-        946,
-        806
+        720,
+        688,
+        886,
+        848
       ]
     },
     "hand_L_spread": {
@@ -482,10 +482,10 @@
       "hidden": true,
       "transformAs": "hand_R",
       "bbox": [
-        84,
-        668,
-        236,
-        838
+        142,
+        700,
+        280,
+        898
       ]
     },
     "hand_R_spread": {
