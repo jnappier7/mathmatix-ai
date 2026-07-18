@@ -106,3 +106,99 @@ describe('POST /script', () => {
     expect(res.status).toBe(502);
   });
 });
+
+describe('POST /clip (text-to-animation)', () => {
+  const validRaw = {
+    name: 'shrug',
+    duration: 1.5,
+    loop: false,
+    tracks: [
+      {
+        track: 'upper_arm_L.rotation',
+        keys: [
+          { t: 0, v: '0', e: 'outCubic' },
+          { t: 0.4, v: '-25.333', e: 'inOutCubic' },
+          { t: 1.5, v: '0', e: 'linear' },
+        ],
+      },
+      {
+        track: 'slots.brow_L',
+        keys: [{ t: 0, v: 'raised', e: 'step' }, { t: 1.2, v: 'rest', e: 'step' }],
+      },
+    ],
+  };
+
+  test('requires a prompt', async () => {
+    const res = await request(appAs(teacher)).post('/api/animation-studio/clip').send({});
+    expect(res.status).toBe(400);
+    expect(callLLMStructured).not.toHaveBeenCalled();
+  });
+
+  test('parses string values, keeps slots stepped, rounds numbers', async () => {
+    callLLMStructured.mockResolvedValue(validRaw);
+    const res = await request(appAs(teacher))
+      .post('/api/animation-studio/clip').send({ prompt: 'shrug' });
+    expect(res.status).toBe(200);
+    const clip = res.body.clip;
+    expect(clip.tracks['upper_arm_L.rotation'][1].v).toBeCloseTo(-25.33);
+    expect(clip.tracks['slots.brow_L'].every((k) => k.e === 'step')).toBe(true);
+    expect(clip.fps).toBe(30);
+  });
+
+  test('clamps extreme values and drops junk keys', async () => {
+    callLLMStructured.mockResolvedValue({
+      name: 'wild', duration: 99, loop: false,
+      tracks: [{
+        track: 'head.rotation',
+        keys: [
+          { t: -5, v: '9999', e: 'linear' },   // t floors to 0, v clamps
+          { t: 1, v: 'garbage', e: 'linear' }, // non-numeric on numeric track → dropped
+          { t: 2, v: '0', e: 'nope' },         // unknown easing → default easing
+        ],
+      }],
+    });
+    const res = await request(appAs(teacher))
+      .post('/api/animation-studio/clip').send({ prompt: 'x' });
+    expect(res.status).toBe(200);
+    const clip = res.body.clip;
+    expect(clip.duration).toBe(8); // duration clamped to max
+    const keys = clip.tracks['head.rotation'];
+    expect(keys).toHaveLength(2);
+    expect(keys[0].t).toBe(0);
+    expect(keys[0].v).toBe(170); // rotation clamp
+    expect(keys[1].e).toBeUndefined();
+  });
+
+  test('retries once with validation feedback, then succeeds', async () => {
+    callLLMStructured
+      .mockResolvedValueOnce({
+        name: 'bad', duration: 1, loop: false,
+        tracks: [{ track: 'nose.rotation', keys: [{ t: 0, v: '1', e: 'linear' }] }],
+      })
+      .mockResolvedValueOnce(validRaw);
+    const res = await request(appAs(teacher))
+      .post('/api/animation-studio/clip').send({ prompt: 'shrug' });
+    expect(res.status).toBe(200);
+    expect(callLLMStructured).toHaveBeenCalledTimes(2);
+    // the repair round got the validation errors appended
+    const secondMessages = callLLMStructured.mock.calls[1][1];
+    expect(secondMessages[secondMessages.length - 1].content).toContain('failed validation');
+    expect(res.body.clip.name).toBe('shrug');
+  });
+
+  test('unfixable output maps to 502', async () => {
+    callLLMStructured.mockResolvedValue({
+      name: 'bad', duration: 1, loop: false,
+      tracks: [{ track: 'nose.rotation', keys: [{ t: 0, v: '1', e: 'linear' }] }],
+    });
+    const res = await request(appAs(teacher))
+      .post('/api/animation-studio/clip').send({ prompt: 'x' });
+    expect(res.status).toBe(502);
+    expect(callLLMStructured).toHaveBeenCalledTimes(2);
+  });
+
+  test('students are rejected', async () => {
+    const res = await request(appAs(student)).post('/api/animation-studio/clip').send({ prompt: 'x' });
+    expect(res.status).toBe(403);
+  });
+});

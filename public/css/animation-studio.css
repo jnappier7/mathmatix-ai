@@ -150,6 +150,12 @@ input[type="color"] { border: 1px solid var(--border); border-radius: 6px; backg
 .ch-key.on-key { background: var(--key); color: #241d02; border-color: var(--key); }
 
 .key-editor { display: flex; flex-direction: column; gap: 7px; }
+.clip-gen { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.clip-gen textarea {
+  background: var(--bg-inset); color: var(--text);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 8px; font: inherit; font-size: 12px; resize: vertical;
+}
 .key-info { font-size: 12px; color: var(--accent-2); }
 .clip-props { display: flex; flex-direction: column; gap: 7px; }
 
