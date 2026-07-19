@@ -5,6 +5,57 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
     // ============================================
+    // UPGRADE / TRIAL PROMPT
+    // Deep-linked from the "your child hit their free limit" email
+    // (parent-dashboard.html?upgrade=1). Gives the parent — the card holder —
+    // a one-click way to start the child's 7-day Mathmatix+ trial.
+    // ============================================
+    (function initParentUpgradePrompt() {
+        const params = new URLSearchParams(window.location.search);
+
+        async function startTrial(btn) {
+            if (btn) { btn.disabled = true; btn.textContent = 'Starting…'; }
+            try {
+                const res = await csrfFetch('/api/billing/create-checkout-session', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pack: 'unlimited', trial: true }), credentials: 'include'
+                });
+                const data = await res.json();
+                if (data && data.url) { window.location.href = data.url; return; }
+                throw new Error((data && data.message) || 'checkout failed');
+            } catch (e) {
+                if (typeof showToast === 'function') showToast('Could not start checkout. Please try again.', 'error');
+                if (btn) { btn.disabled = false; btn.textContent = 'Start 7-day free trial'; }
+            }
+        }
+
+        function openUpgrade() {
+            if (document.getElementById('parent-upgrade-modal')) return;
+            const modal = document.createElement('div');
+            modal.id = 'parent-upgrade-modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:10000;';
+            modal.innerHTML = `
+                <div style="background:#fff;border-radius:16px;padding:32px;max-width:420px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+                    <h2 style="margin:0 0 8px;color:#0d9488;">Unlock unlimited tutoring</h2>
+                    <p style="color:#555;margin:0 0 16px;line-height:1.5;">Give your child unlimited 24/7 AI tutoring, voice sessions, and homework help. Free for 7 days, then $9.95/month. Cancel anytime.</p>
+                    <button id="parent-start-trial" style="background:#0d9488;color:#fff;border:none;padding:14px 28px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">Start 7-day free trial</button>
+                    <button id="parent-upgrade-close" style="background:transparent;color:#888;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:8px;">Maybe later</button>
+                    <div style="color:#999;font-size:12px;margin-top:10px;">Card required. We'll remind you before the trial ends — no surprise charges.</div>
+                </div>`;
+            document.body.appendChild(modal);
+            document.getElementById('parent-start-trial').addEventListener('click', (e) => startTrial(e.currentTarget));
+            const close = () => modal.remove();
+            document.getElementById('parent-upgrade-close').addEventListener('click', close);
+            modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+        }
+
+        // Auto-open when the parent arrives from the email deep link.
+        if (params.get('upgrade') === '1') openUpgrade();
+        // Expose a hook so any "Upgrade" button on the page can reuse it.
+        window.openParentUpgrade = openUpgrade;
+    })();
+
+    // ============================================
     // TOAST NOTIFICATION SYSTEM
     // ============================================
 

@@ -39,6 +39,9 @@ export async function checkBillingStatus() {
             if (manageLink) manageLink.style.display = '';
         }
 
+        // Trial countdown banner for users currently in a Mathmatix+ trial
+        updateTrialBanner(data);
+
         // Show time indicator for students on free/pack tiers only.
         // Teachers, parents, and admins have unlimited access (Infinity) — skip indicator for them.
         if (data.tier !== 'unlimited' && data.usage && data.usage.secondsRemaining !== null && isFinite(data.usage.secondsRemaining)) {
@@ -55,6 +58,33 @@ export async function checkBillingStatus() {
         console.error('[Billing] Status check failed:', e.message);
         return null;
     }
+}
+
+/**
+ * Show a small, non-blocking banner while a Mathmatix+ trial is active, counting
+ * down the days left. Reassures rather than nags — the point is transparency so
+ * the eventual charge is never a surprise. Removed automatically once the trial
+ * converts (isTrialing false).
+ */
+export function updateTrialBanner(data) {
+    const existing = document.getElementById('trial-banner');
+    if (!data || !data.isTrialing) {
+        if (existing) existing.remove();
+        return;
+    }
+    const days = data.trialDaysRemaining || 1;
+    const dayWord = days === 1 ? 'day' : 'days';
+    let banner = existing;
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'trial-banner';
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;padding:7px 14px;font-size:13px;text-align:center;z-index:1800;box-shadow:0 2px 8px rgba(0,0,0,0.25);';
+        document.body.appendChild(banner);
+    }
+    banner.innerHTML = `✨ Mathmatix+ trial: <strong>${days} ${dayWord} left</strong> of full access. `
+        + '<span id="trial-banner-manage" role="button" style="text-decoration:underline;cursor:pointer;">Manage subscription</span>';
+    const manage = banner.querySelector('#trial-banner-manage');
+    if (manage) manage.addEventListener('click', () => showManageSubscription());
 }
 
 /**
@@ -168,10 +198,27 @@ export async function showUpgradePrompt(errorData) {
 
     const isFeatureBlock = errorData.premiumFeatureBlocked;
     const isLimitReached = errorData.usageLimitReached;
-    const title = promo
+
+    // Card-required free trial: offered to students who haven't trialed yet.
+    // At the 30-min wall this is the primary CTA \u2014 highest-intent moment.
+    const trialAvailable = !!(window._billingStatus && window._billingStatus.trialAvailable);
+    const trialDays = (window._billingStatus && window._billingStatus.trialDays) || 7;
+
+    // Students usually can't pay themselves — surface an "ask a parent" path so the
+    // offer reaches the person who holds the card.
+    const cu = window.currentUser || {};
+    const isStudentUser = cu.role === 'student' || (Array.isArray(cu.roles) && cu.roles.includes('student'));
+
+    const title = trialAvailable
+        ? `Try Mathmatix+ free for ${trialDays} days`
+        : promo
         ? 'Pi Day Special \u2014 $3.14 Off!'
         : 'Get Mathmatix+';
-    const subtitle = isFeatureBlock
+    const subtitle = trialAvailable
+        ? (isLimitReached
+            ? `Out of free minutes? Unlock everything free for ${trialDays} days. Card required \u2014 no charge until then, cancel anytime.`
+            : `Full access to everything, free for ${trialDays} days. Card required \u2014 then $9.95/mo, cancel anytime.`)
+        : isFeatureBlock
         ? `${errorData.feature} requires Mathmatix+.`
         : isLimitReached
         ? "You've used your free minutes this month. Upgrade for unlimited tutoring."
@@ -179,7 +226,10 @@ export async function showUpgradePrompt(errorData) {
 
     // Price display
     let priceHtml;
-    if (promo && promo.prices.unlimited) {
+    if (trialAvailable) {
+        priceHtml = `<div style="font-size:34px;font-weight:bold;color:#00d4ff;margin:4px 0;">Free<span style="font-size:16px;color:#aaa;font-weight:normal"> for ${trialDays} days</span></div>
+                     <div style="color:#888;font-size:13px;">then $9.95/mo &mdash; cancel anytime before then and pay nothing</div>`;
+    } else if (promo && promo.prices.unlimited) {
         const promoPrice = (promo.prices.unlimited.promo / 100).toFixed(2);
         priceHtml = `<div style="font-size:16px;color:#888;text-decoration:line-through;">$9.95/mo</div>
                      <div style="font-size:36px;font-weight:bold;color:#00d4ff;margin:4px 0;">$${promoPrice}<span style="font-size:16px;color:#aaa;font-weight:normal">/mo</span></div>
@@ -204,19 +254,34 @@ export async function showUpgradePrompt(errorData) {
                 <li>\u2713 Show My Work grading</li>
                 <li>\u2713 All features unlocked</li>
             </ul>
-            <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">Get Mathmatix+</button>
-            ${isLimitReached
+            <button id="upgrade-go" style="background:linear-gradient(135deg,#00d4ff,#7b2ff7);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%;">${trialAvailable ? `Start my ${trialDays}-day free trial` : 'Get Mathmatix+'}</button>
+            ${trialAvailable
+                ? `<div style="color:#888;font-size:12px;margin-top:12px;">We'll email you before your trial ends so you're never surprised. Cancel anytime — no charge until day ${trialDays}.</div>`
+                : isLimitReached
                 ? '<div style="color:#666;font-size:12px;margin-top:12px;">Your free minutes reset monthly. Upgrade for uninterrupted learning.</div>'
                 : '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:10px;">Keep free plan (30 min/week)</button>'
             }
+            ${trialAvailable && !isLimitReached
+                ? '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:6px;">Maybe later</button>'
+                : ''
+            }
+            ${isStudentUser ? `
+            <div style="border-top:1px solid #333;margin:16px 0 12px;"></div>
+            <button id="ask-parent-btn" style="background:transparent;color:#00d4ff;border:1px solid #00d4ff;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🙋 Ask a parent to unlock this</button>
+            <div id="ask-parent-status" style="color:#8fd; font-size:12px;margin-top:8px;display:none;"></div>
+            <div id="parent-email-form" style="display:none;margin-top:10px;">
+                <input id="parent-email-input" type="email" placeholder="parent@email.com" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #444;background:#12121f;color:#fff;font-size:14px;" />
+                <button id="parent-email-send" style="background:#0d9488;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:8px;">Send my parent an invite</button>
+            </div>` : ''}
         </div>`;
     document.body.appendChild(modal);
 
-    document.getElementById('upgrade-go').addEventListener('click', () => initiateUpgrade('unlimited'));
+    document.getElementById('upgrade-go').addEventListener('click', () => initiateUpgrade('unlimited', { trial: trialAvailable }));
     const dismissBtn = document.getElementById('upgrade-dismiss');
     if (dismissBtn) {
         dismissBtn.addEventListener('click', () => modal.remove());
     }
+    if (isStudentUser) wireAskParent();
     // Only allow clicking outside to dismiss if it's not a usage limit block
     if (!isLimitReached) {
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
@@ -224,14 +289,94 @@ export async function showUpgradePrompt(errorData) {
 }
 
 /**
+ * Wire the "Ask a parent to unlock" flow inside the upgrade modal (students only).
+ * Linked parent → notify them (server emails + notifies). No linked parent →
+ * collect a parent email → send an invite. Gets the offer to the person with the card.
+ */
+function wireAskParent() {
+    const btn = document.getElementById('ask-parent-btn');
+    const statusEl = document.getElementById('ask-parent-status');
+    const form = document.getElementById('parent-email-form');
+    if (!btn) return;
+
+    const showStatus = (msg, ok = true) => {
+        if (!statusEl) return;
+        statusEl.textContent = msg;
+        statusEl.style.color = ok ? '#8fd' : '#ffb3b3';
+        statusEl.style.display = '';
+    };
+    const resetBtn = () => { btn.disabled = false; btn.textContent = '🙋 Ask a parent to unlock this'; };
+
+    btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        btn.textContent = 'Asking…';
+        try {
+            const res = await csrfFetch('/api/student/request-parent-upgrade', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: '{}', credentials: 'include'
+            });
+            const data = await res.json();
+            if (data && data.linked === false) {
+                // No parent linked yet — collect an email to invite one.
+                btn.style.display = 'none';
+                if (form) form.style.display = '';
+                showStatus("Add your parent's email and we'll send them the invite.");
+            } else if (data && data.success) {
+                btn.style.display = 'none';
+                showStatus(data.message || 'We let your parent know!');
+            } else {
+                resetBtn();
+                showStatus((data && data.message) || 'Could not reach your parent right now.', false);
+            }
+        } catch (e) {
+            resetBtn();
+            showStatus('Something went wrong. Please try again.', false);
+        }
+    });
+
+    const sendBtn = document.getElementById('parent-email-send');
+    if (sendBtn) sendBtn.addEventListener('click', async () => {
+        const input = document.getElementById('parent-email-input');
+        const email = ((input && input.value) || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showStatus('Please enter a valid email address.', false);
+            return;
+        }
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Sending…';
+        try {
+            const res = await csrfFetch('/api/student/invite-parent', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ parentEmail: email }), credentials: 'include'
+            });
+            const data = await res.json();
+            if (data && data.success) {
+                if (form) form.style.display = 'none';
+                showStatus(data.message || `Invite sent to ${email}.`);
+            } else {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send my parent an invite';
+                showStatus((data && data.message) || 'Could not send the invite.', false);
+            }
+        } catch (e) {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send my parent an invite';
+            showStatus('Something went wrong. Please try again.', false);
+        }
+    });
+}
+
+/**
  * Redirect to Stripe checkout for a pack upgrade
  */
-export async function initiateUpgrade(pack) {
+export async function initiateUpgrade(pack, opts = {}) {
     try {
+        const body = { pack };
+        if (opts.trial) body.trial = true;
         const res = await csrfFetch('/api/billing/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pack }),
+            body: JSON.stringify(body),
             credentials: 'include'
         });
         if (!res.ok) throw new Error('Failed to create checkout session');

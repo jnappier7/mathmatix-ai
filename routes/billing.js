@@ -24,13 +24,14 @@ const User = require('../models/user');
 const Affiliate = require('../models/affiliate');
 const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
-const { sendCancellationConfirmation } = require('../utils/emailService');
+const { sendCancellationConfirmation, sendTrialEndingReminder } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'billing' });
 
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per reset period (now monthly) for all students
 const FREE_QUOTA_RESET_DAYS = 30;    // free-AI-minute quota window — keep in sync with middleware/usageGate.js
+const TRIAL_DAYS = 7;                // card-required Mathmatix+ free-trial length
 
 // Active plan — Mathmatix+ is the only paid tier for new purchases
 const PACKS = {
@@ -105,7 +106,7 @@ if (BILLING_ENABLED && process.env.STRIPE_SECRET_KEY) {
 router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
   if (!stripe) return res.status(503).json({ message: 'Billing is not configured' });
   try {
-    const { pack, couponCode } = req.body;
+    const { pack, couponCode, trial } = req.body;
     if (pack !== 'unlimited') {
       return res.status(400).json({ message: 'Only the Unlimited plan is available for new purchases.' });
     }
@@ -117,6 +118,11 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
     if (user.subscriptionTier === 'unlimited') {
       return res.status(400).json({ message: 'Already subscribed to Unlimited' });
     }
+
+    // Card-required free trial: honor the trial request only if this user has
+    // never trialed before (one trial per user). A repeat requester just checks
+    // out as a normal paid subscription.
+    const wantsTrial = trial === true && !user.hasUsedTrial;
 
     // Create or reuse Stripe customer
     let customerId = user.stripeCustomerId;
@@ -180,15 +186,28 @@ router.post('/create-checkout-session', isAuthenticated, async (req, res) => {
       metadata.affiliateId = affiliateId;
       metadata.affiliateCoupon = affiliateCoupon;
     }
+    if (wantsTrial) metadata.trial = 'true';
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams = {
       customer: customerId,
       mode: packConfig.mode,
       line_items: [lineItem],
       success_url: `${baseUrl}/chat.html?upgraded=true`,
       cancel_url: `${baseUrl}/chat.html`,
       metadata
-    });
+    };
+
+    // Card-required trial: collect the card now, don't charge for TRIAL_DAYS,
+    // then auto-convert to the paid plan unless the user cancels. Stripe manages
+    // the trial→bill transition and (per dashboard setting) the trial-ending
+    // reminder email; we also send our own via the trial_will_end webhook.
+    if (wantsTrial) {
+      sessionParams.subscription_data = { trial_period_days: TRIAL_DAYS };
+      // Force card capture during the trial (default would let a trial skip it).
+      sessionParams.payment_method_collection = 'always';
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     res.json({ url: session.url });
   } catch (error) {
@@ -246,10 +265,30 @@ router.post('/webhook', async (req, res) => {
         user.subscriptionStartDate = new Date();
 
         if (packConfig.mode === 'subscription') {
-          // Unlimited monthly
+          // Unlimited monthly (may be starting in a trial)
           user.subscriptionTier = 'unlimited';
           user.stripeSubscriptionId = session.subscription;
-          logger.info('User subscribed to Unlimited', { userId: user._id.toString() });
+
+          // If this checkout started a free trial, record the trial window and
+          // burn the one-trial-per-user flag. We retrieve the subscription so the
+          // trial_end comes from Stripe (source of truth), not our own clock.
+          if (session.metadata?.trial === 'true' && session.subscription) {
+            try {
+              const sub = await stripe.subscriptions.retrieve(session.subscription);
+              if (sub.status === 'trialing' && sub.trial_end) {
+                user.trialEndsAt = new Date(sub.trial_end * 1000);
+              }
+            } catch (subErr) {
+              logger.warn('Could not retrieve subscription for trial info', { error: subErr.message });
+            }
+            user.hasUsedTrial = true;
+            logger.info('User started Mathmatix+ trial', {
+              userId: user._id.toString(),
+              trialEndsAt: user.trialEndsAt?.toISOString()
+            });
+          } else {
+            logger.info('User subscribed to Unlimited', { userId: user._id.toString() });
+          }
 
           // Attribute conversion to affiliate if coupon was used
           const affId = session.metadata?.affiliateId;
@@ -322,6 +361,7 @@ router.post('/webhook', async (req, res) => {
         user.subscriptionTier = 'free';
         user.stripeSubscriptionId = null;
         user.subscriptionEndDate = new Date();
+        user.trialEndsAt = null; // trial cancelled before converting, or paid sub ended
         await user.save();
 
         logger.info('User cancelled Unlimited — downgraded to Free', { userId: user._id.toString() });
@@ -338,14 +378,42 @@ router.post('/webhook', async (req, res) => {
         }
         if (!user) break;
 
-        if (subscription.status === 'active') {
+        if (subscription.status === 'trialing') {
+          // Trial in progress — full access, keep the trial window in sync.
           user.subscriptionTier = 'unlimited';
           user.stripeSubscriptionId = subscription.id;
+          user.hasUsedTrial = true;
+          if (subscription.trial_end) user.trialEndsAt = new Date(subscription.trial_end * 1000);
+        } else if (subscription.status === 'active') {
+          // Active (incl. a trial that just converted) — clear the trial marker.
+          user.subscriptionTier = 'unlimited';
+          user.stripeSubscriptionId = subscription.id;
+          user.trialEndsAt = null;
         } else if (['past_due', 'unpaid', 'canceled'].includes(subscription.status)) {
           user.subscriptionTier = 'free';
           user.subscriptionEndDate = new Date();
+          user.trialEndsAt = null;
         }
         await user.save();
+        break;
+      }
+
+      case 'customer.subscription.trial_will_end': {
+        // Fires ~3 days before a trial converts. Send our own branded reminder so
+        // the parent knows a charge is coming and how to cancel — this is what
+        // keeps the trial brand-safe and chargeback-light.
+        const subscription = event.data.object;
+        let user = await User.findOne({ stripeSubscriptionId: subscription.id });
+        if (!user) user = await User.findOne({ stripeCustomerId: subscription.customer });
+        if (!user) break;
+
+        const trialEnd = subscription.trial_end ? new Date(subscription.trial_end * 1000) : user.trialEndsAt;
+        try {
+          await sendTrialEndingReminder(user, trialEnd);
+          logger.info('Trial-ending reminder sent', { userId: user._id.toString() });
+        } catch (mailErr) {
+          logger.error('Trial-ending reminder failed', { userId: user._id.toString(), error: mailErr.message });
+        }
         break;
       }
 
@@ -641,13 +709,20 @@ router.get('/status', isAuthenticated, async (req, res) => {
     const tier = user.subscriptionTier || 'free';
     const now = new Date();
 
-    // Unlimited users
+    // Unlimited users (paid OR in a card-required trial)
     if (tier === 'unlimited') {
+      const isTrialing = !!(user.trialEndsAt && user.trialEndsAt > now);
+      const trialDaysRemaining = isTrialing
+        ? Math.max(1, Math.ceil((user.trialEndsAt - now) / (1000 * 60 * 60 * 24)))
+        : 0;
       return res.json({
         success: true,
         billingEnabled: true,
         tier: 'unlimited',
         hasAccess: true,
+        isTrialing,
+        trialEndsAt: isTrialing ? user.trialEndsAt : null,
+        trialDaysRemaining,
         usage: { secondsRemaining: Infinity, limitReached: false },
         subscription: {
           startDate: user.subscriptionStartDate,
@@ -751,6 +826,11 @@ router.get('/status', isAuthenticated, async (req, res) => {
       tier: 'free',
       hasAccess: !limitReached,
       hasSeenPricing: user.hasSeenPricing || false,
+      // Whether this free student can still start a card-required Mathmatix+ trial
+      // (one per user). Frontend uses this to show "Start 7-day free trial" vs a
+      // plain upgrade CTA — especially at the 30-min wall.
+      trialAvailable: !user.hasUsedTrial,
+      trialDays: TRIAL_DAYS,
       usage: {
         secondsRemaining: freeRemaining,
         minutesRemaining: Math.floor(freeRemaining / 60),

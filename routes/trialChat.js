@@ -18,6 +18,7 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const { runPipeline } = require('../utils/pipeline');
 const { callLLM } = require('../utils/llmGateway');
 const { samplePoints } = require('../utils/trialGraphPoints');
+const { recordConversionEvent } = require('../utils/conversionEvents');
 
 const MAX_TURNS = 4; // 1 greeting + 3 student messages
 const MAX_MESSAGE_LENGTH = 500;
@@ -405,6 +406,16 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     // Increment server-side turn count AFTER successful response
     bumpTrialTurns(req);
     const newTurnCount = serverTurns + 1;
+
+    // Funnel telemetry — fire once when the anonymous trial first hits its cap.
+    // sessionID is an opaque, anonymized key (never an IP or name).
+    if (newTurnCount >= MAX_TURNS && req.session && !req.session.__trialExhaustedLogged) {
+      req.session.__trialExhaustedLogged = true;
+      recordConversionEvent('trial_exhausted', {
+        sessionKey: req.sessionID,
+        context: { tutorId, turns: newTurnCount },
+      });
+    }
 
     res.json({
       reply,
