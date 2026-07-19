@@ -129,6 +129,36 @@ html[data-theme="dark"] .lws-root {
 .lws-dv-block { padding: 10px 0; }
 .lws-dv-block > * { max-width: 100%; }
 
+/* Spoken-step spotlight. Voice ships the board cumulatively, so the step that
+   arrived this turn IS the step being talked about — it lights up while the
+   tutor speaks and settles into the stack when they stop. Attention direction
+   only: it never adds or hides information. */
+.lws-dv-line { border-left: 2px solid transparent; padding-left: 4px; transition: border-color .25s ease, background-color .25s ease; }
+.lws-dv-root.is-speaking .lws-dv-fresh {
+  border-left-color: var(--lws-accent);
+  background: color-mix(in srgb, var(--lws-accent) 7%, transparent);
+  border-radius: 0 7px 7px 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lws-dv-line { transition: none; }
+}
+
+/* Caption strip — the tutor's karaoke line, docked under the derivation so
+   the words and the math they describe read as one surface. */
+.lws-dv-caption {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 4;
+  padding: 8px 12px; border-radius: 12px;
+  background: color-mix(in srgb, var(--lws-card-bg) 92%, transparent);
+  border: 1px solid var(--lws-card-border);
+  color: var(--lws-card-ink);
+  font-size: calc(14px * var(--lws-dv-scale)); line-height: 1.45;
+  max-height: calc(1.45em * 3 + 16px); overflow: hidden;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.lws-dv-caption[hidden] { display: none; }
+/* The strip floats over the scroll area — keep the last line reachable. */
+.lws-dv-root:has(.lws-dv-caption:not([hidden])) .lws-dv-inner { padding-bottom: 68px; }
+
 /* Text-size control (accessibility): scale all board text up/down. Pinned to
    the board corner, fixed while the derivation scrolls beneath it. */
 .lws-dv-az {
