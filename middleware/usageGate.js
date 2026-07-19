@@ -14,6 +14,7 @@
 
 const User = require('../models/user');
 const SchoolLicense = require('../models/schoolLicense');
+const { recordConversionEvent } = require('../utils/conversionEvents');
 
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 // NOTE: constant/field names keep the "weekly" prefix for backward compatibility
@@ -169,6 +170,19 @@ async function usageGate(req, res, next) {
     const upgradeLine = inCourse
       ? `Upgrade to Mathmatix+ to keep going in your course without waiting, or ask your teacher about a school license!`
       : `Upgrade to Unlimited for non-stop tutoring, or ask your teacher about a school license!`;
+
+    // Funnel telemetry — the free wall is the primary conversion moment. Throttle
+    // to once/hour per session so a user retrying a blocked action doesn't inflate
+    // counts; distinct-user totals come from userId at analysis time.
+    const nowMs = Date.now();
+    const lastEvt = (req.session && req.session.__quotaEvtAt) || 0;
+    if (nowMs - lastEvt > 60 * 60 * 1000) {
+      if (req.session) req.session.__quotaEvtAt = nowMs;
+      recordConversionEvent('free_quota_exhausted', {
+        userId: user._id,
+        context: { inCourse, daysUntilReset, tier: user.subscriptionTier || 'free' },
+      });
+    }
 
     return res.status(402).json({
       message: `You've used your 30 free minutes this month. Your minutes reset in ${daysUntilReset} day${daysUntilReset !== 1 ? 's' : ''}. ${upgradeLine}`,
