@@ -109,15 +109,43 @@
   }
 
   // --- Tutor karaoke -------------------------------------------------------
+  // The caption belongs next to the math it describes, so when the board
+  // offers a caption target (the Living Workspace mounts one) the tutor's
+  // words render THERE and the cam-side caption stands down. Looked up per
+  // render, not cached at init — the workspace mounts lazily and can swap.
+  // DOM contract only; no module coupling either way.
+  function boardCaptionTarget() {
+    if (!voiceModeOn) return null;
+    return document.querySelector('[data-mm-voice-caption-target]');
+  }
+
   function renderTutor() {
-    if (!els.tutor) return;
     const text = tutorWords.slice(0, revealed).join(' ');
+    const board = boardCaptionTarget();
+    if (board) {
+      // Board owns the caption — keep the cam-side node empty so the same
+      // words never appear twice on one screen.
+      if (els.tutor) { els.tutor.hidden = true; els.tutor.textContent = ''; }
+      board.textContent = text;
+      board.hidden = !text;
+      board.scrollTop = board.scrollHeight;
+      return;
+    }
+    if (!els.tutor) return;
     if (!text) { els.tutor.hidden = true; els.tutor.textContent = ''; return; }
     els.tutor.hidden = false;
     els.tutor.textContent = text;
     // Trailing-window subtitles: keep the tail visible, let the head
     // scroll away under the clamp.
     els.tutor.scrollTop = els.tutor.scrollHeight;
+  }
+
+  // Light up the step that arrived this turn while the tutor talks about it.
+  function setBoardSpeaking(on) {
+    const lws = window.LWS_CHAT;
+    if (lws && typeof lws.setSpeaking === 'function') {
+      try { lws.setSpeaking(on); } catch (_) { /* board absent */ }
+    }
   }
 
   function startReveal() {
@@ -187,6 +215,11 @@
     revealed = 0;
     speaking = false;
     if (els.tutor) { els.tutor.hidden = true; els.tutor.textContent = ''; }
+    // Clear the board strip directly: on exit voiceModeOn is already false, so
+    // boardCaptionTarget() declines and renderTutor can't reach it.
+    const strip = document.querySelector('[data-mm-voice-caption-target]');
+    if (strip) { strip.textContent = ''; strip.hidden = true; }
+    setBoardSpeaking(false);
     hideStudent();
     setState('idle');
   }
@@ -269,12 +302,14 @@
         speaking = true;
         setState('speaking');
         hideStudent();
+        setBoardSpeaking(true);
         startReveal();
         break;
 
       case 'ai_speaking_ended':
         speaking = false;
         revealAll();
+        setBoardSpeaking(false);
         setState(listening ? 'listening' : 'idle');
         break;
 
@@ -282,6 +317,7 @@
       case 'interrupted':
         speaking = false;
         stopReveal();
+        setBoardSpeaking(false);
         if (revealed > 0 && revealed < tutorWords.length) {
           // Freeze the caption where the voice stopped.
           tutorWords = tutorWords.slice(0, revealed).concat(['—']);

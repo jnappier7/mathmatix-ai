@@ -61,3 +61,38 @@ describe('derivationView.classify', () => {
     expect(classify('nope')).toBeNull();
   });
 });
+
+// Voice ships the board cumulatively — each turn resends every step and only
+// the last is typically new. The spoken-step spotlight keys off exactly that:
+// whatever arrived THIS turn is what the tutor is talking about.
+describe('derivationView.freshNodes', () => {
+  const { freshNodes } = require('../../../public/js/living-workspace/dom/derivationView.js');
+
+  it('marks only the step appended this turn', () => {
+    const a = { n: 'a' }, b = { n: 'b' }, c = { n: 'c' };
+    expect(freshNodes([a, b], [a, b, c])).toEqual([c]);
+  });
+
+  it('marks nothing when the turn re-sends an unchanged board', () => {
+    const a = { n: 'a' }, b = { n: 'b' };
+    expect(freshNodes([a, b], [a, b])).toEqual([]);
+  });
+
+  it('marks every line after a new problem wipes the stack', () => {
+    // The regression an index count would cause: the new stack is SHORTER than
+    // the old one, so "past the old length" marks nothing at all.
+    const oldA = { n: 'old1' }, oldB = { n: 'old2' }, oldC = { n: 'old3' };
+    const newA = { n: 'new1' };
+    expect(freshNodes([oldA, oldB, oldC], [newA])).toEqual([newA]);
+  });
+
+  it('marks multiple steps when a turn lands several at once', () => {
+    const a = { n: 'a' }, b = { n: 'b' }, c = { n: 'c' };
+    expect(freshNodes([a], [a, b, c])).toEqual([b, c]);
+  });
+
+  it('handles the first turn on an empty board', () => {
+    const a = { n: 'a' };
+    expect(freshNodes([], [a])).toEqual([a]);
+  });
+});

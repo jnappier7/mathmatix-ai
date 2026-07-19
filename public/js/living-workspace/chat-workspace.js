@@ -48,6 +48,10 @@
     isOn: function () { return ON; },
     applyBoardCommands: function () {},
     applyVoiceBoard: function () {},
+    // Voice caption/spotlight hooks — see derivationView.setSpeaking. No-ops
+    // until the view mounts, so the caption layer can call them unguarded.
+    setSpeaking: function () {},
+    setCaption: function () {},
     setContext: function (c) { if (c && typeof c === 'object') { if (c.conversationId != null) ctx.conversationId = c.conversationId; if (c.workspaceId != null) ctx.workspaceId = c.workspaceId; } },
   };
   window.LWS_CHAT = api;
@@ -57,7 +61,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260716b';
+  var ASSET_V = '?v=20260718a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -197,6 +201,16 @@
     try { cmds = window.LWS.voiceToBoardCommands(payload); }
     catch (e) { console.error('[LWS_CHAT] voice translate failed', e); return; }
     if (Array.isArray(cmds) && cmds.length) render(cmds);
+  };
+
+  api.setSpeaking = function (on) {
+    if (!dv) return;
+    try { dv.setSpeaking(on); } catch (_) { /* view torn down */ }
+  };
+
+  api.setCaption = function (text) {
+    if (!dv) return;
+    try { dv.setCaption(text); } catch (_) { /* view torn down */ }
   };
 
   function boot() {

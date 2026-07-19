@@ -135,6 +135,20 @@
     target.textContent = tex;
   }
 
+  function toArray(nodeList) {
+    var out = [];
+    for (var i = 0; i < nodeList.length; i++) out.push(nodeList[i]);
+    return out;
+  }
+
+  // Which lines arrived this turn — by node identity, NOT by index count.
+  // _setProblem wipes the stack when a new problem is posed, so "everything
+  // past the old length" would mark nothing on a reset turn (the new, shorter
+  // stack is entirely new). Identity handles wipe, append, and no-op alike.
+  function freshNodes(before, after) {
+    return after.filter(function (n) { return before.indexOf(n) === -1; });
+  }
+
   function DerivationView(container, opts) {
     opts = opts || {};
     this.doc = container.ownerDocument || document;
@@ -159,10 +173,36 @@
     rootEl.appendChild(scroll);
     container.appendChild(rootEl);
 
-    this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, problem: problem, lines: lines };
+    // Caption strip: in voice mode the tutor's karaoke caption renders HERE,
+    // under the derivation, instead of under the tutor cam. The words being
+    // spoken are about a step on this board — keeping them in one place stops
+    // the student's eyes bouncing between two surfaces. voice-subtitles.js
+    // finds it by the data attribute (DOM contract, no module coupling).
+    var caption = d.createElement('div');
+    caption.className = 'lws-dv-caption';
+    caption.setAttribute('data-mm-voice-caption-target', '');
+    caption.hidden = true;
+    rootEl.appendChild(caption);
+
+    this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, problem: problem, lines: lines, caption: caption };
     this._mountTextScale(rootEl);
     this._refreshEmpty();
   }
+
+  // Voice turns ship the board CUMULATIVELY — each turn resends every step and
+  // typically only the last is new. So "the step being spoken about" is simply
+  // the step that arrived this turn; no prompt change or model cooperation
+  // needed. Lines added by one apply() are tagged fresh, and the root carries
+  // `is-speaking` while the tutor talks, which is what lights them up.
+  DerivationView.prototype._clearFresh = function () {
+    var prev = this.el.lines.querySelectorAll('.lws-dv-fresh');
+    for (var i = 0; i < prev.length; i++) prev[i].classList.remove('lws-dv-fresh');
+  };
+
+  DerivationView.prototype.setSpeaking = function (on) {
+    this.el.root.classList.toggle('is-speaking', !!on);
+    if (!on) this._clearFresh();
+  };
 
   // Accessibility: a small A−/A+ control that scales ALL board text via the
   // --lws-dv-scale token (see living-workspace.css). Persisted per browser so a
@@ -240,6 +280,9 @@
     var d = this.doc;
     var row = d.createElement('div');
     row.className = 'lws-dv-line lws-dv-' + kind;
+    // The adapter synthesises a per-element id (e.g. lgc3-1-resolve); keep it
+    // so a line stays addressable after render.
+    if (element && element.id) row.setAttribute('data-lws-id', element.id);
     if (kind === 'operation') {
       var op = (element.semantic && (element.semantic.op || element.semantic.plain)) || '';
       if (!op) { var probe = d.createElement('span'); typeset(probe, element.semantic && element.semantic.latex); op = probe.textContent || ''; }
@@ -272,6 +315,8 @@
     if (clear) this.clear();
     if (!Array.isArray(elements)) { this._refreshEmpty(); return; }
     var self = this;
+    this._clearFresh();
+    var seen = toArray(this.el.lines.childNodes);
     elements.forEach(function (el) {
       var kind = classify(el);
       if (!kind) return;
@@ -279,8 +324,20 @@
       else if (kind === 'block') self._addBlock(el);
       else self._addLine(el, kind);
     });
+    freshNodes(seen, toArray(this.el.lines.childNodes)).forEach(function (n) {
+      if (n.classList) n.classList.add('lws-dv-fresh');
+    });
     this._refreshEmpty();
     this._scrollToEnd();
+  };
+
+  // Caption strip API — text only; the karaoke pointer lives in the caption
+  // layer, this just paints what it's told and hides when empty.
+  DerivationView.prototype.setCaption = function (text) {
+    var c = this.el.caption;
+    var t = (text == null ? '' : String(text));
+    c.textContent = t;
+    c.hidden = !t;
   };
 
   DerivationView.prototype._scrollToEnd = function () {
@@ -292,6 +349,7 @@
   DerivationView.cleanLatex = cleanLatex;
   DerivationView.looksLikeProse = looksLikeProse;
   DerivationView.unwrapText = unwrapText;
+  DerivationView.freshNodes = freshNodes;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes };
 })(typeof self !== 'undefined' ? self : this);
