@@ -692,6 +692,9 @@ const userSchema = new Schema({
   // trialEndsAt is what distinguishes "trialing" from "paid unlimited".
   trialEndsAt: { type: Date, default: null },       // future = actively trialing
   hasUsedTrial: { type: Boolean, default: false },  // one trial per user — blocks re-trialing
+  // Throttle for "ask a parent to unlock" requests (student → linked parent),
+  // so a kid hitting the wall repeatedly can't spam their parent.
+  lastParentUpgradeRequestAt: { type: Date, default: null },
 
   /* Affiliate / Referral tracking */
   referredByAffiliateId: { type: Schema.Types.ObjectId, ref: 'Affiliate', default: null },  // Which affiliate referred this user

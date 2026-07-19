@@ -204,6 +204,11 @@ export async function showUpgradePrompt(errorData) {
     const trialAvailable = !!(window._billingStatus && window._billingStatus.trialAvailable);
     const trialDays = (window._billingStatus && window._billingStatus.trialDays) || 7;
 
+    // Students usually can't pay themselves — surface an "ask a parent" path so the
+    // offer reaches the person who holds the card.
+    const cu = window.currentUser || {};
+    const isStudentUser = cu.role === 'student' || (Array.isArray(cu.roles) && cu.roles.includes('student'));
+
     const title = trialAvailable
         ? `Try Mathmatix+ free for ${trialDays} days`
         : promo
@@ -260,6 +265,14 @@ export async function showUpgradePrompt(errorData) {
                 ? '<button id="upgrade-dismiss" style="background:transparent;color:#666;border:none;padding:10px;cursor:pointer;font-size:13px;width:100%;margin-top:6px;">Maybe later</button>'
                 : ''
             }
+            ${isStudentUser ? `
+            <div style="border-top:1px solid #333;margin:16px 0 12px;"></div>
+            <button id="ask-parent-btn" style="background:transparent;color:#00d4ff;border:1px solid #00d4ff;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🙋 Ask a parent to unlock this</button>
+            <div id="ask-parent-status" style="color:#8fd; font-size:12px;margin-top:8px;display:none;"></div>
+            <div id="parent-email-form" style="display:none;margin-top:10px;">
+                <input id="parent-email-input" type="email" placeholder="parent@email.com" style="width:100%;box-sizing:border-box;padding:10px;border-radius:8px;border:1px solid #444;background:#12121f;color:#fff;font-size:14px;" />
+                <button id="parent-email-send" style="background:#0d9488;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:8px;">Send my parent an invite</button>
+            </div>` : ''}
         </div>`;
     document.body.appendChild(modal);
 
@@ -268,10 +281,89 @@ export async function showUpgradePrompt(errorData) {
     if (dismissBtn) {
         dismissBtn.addEventListener('click', () => modal.remove());
     }
+    if (isStudentUser) wireAskParent();
     // Only allow clicking outside to dismiss if it's not a usage limit block
     if (!isLimitReached) {
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
     }
+}
+
+/**
+ * Wire the "Ask a parent to unlock" flow inside the upgrade modal (students only).
+ * Linked parent → notify them (server emails + notifies). No linked parent →
+ * collect a parent email → send an invite. Gets the offer to the person with the card.
+ */
+function wireAskParent() {
+    const btn = document.getElementById('ask-parent-btn');
+    const statusEl = document.getElementById('ask-parent-status');
+    const form = document.getElementById('parent-email-form');
+    if (!btn) return;
+
+    const showStatus = (msg, ok = true) => {
+        if (!statusEl) return;
+        statusEl.textContent = msg;
+        statusEl.style.color = ok ? '#8fd' : '#ffb3b3';
+        statusEl.style.display = '';
+    };
+    const resetBtn = () => { btn.disabled = false; btn.textContent = '🙋 Ask a parent to unlock this'; };
+
+    btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        btn.textContent = 'Asking…';
+        try {
+            const res = await csrfFetch('/api/student/request-parent-upgrade', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: '{}', credentials: 'include'
+            });
+            const data = await res.json();
+            if (data && data.linked === false) {
+                // No parent linked yet — collect an email to invite one.
+                btn.style.display = 'none';
+                if (form) form.style.display = '';
+                showStatus("Add your parent's email and we'll send them the invite.");
+            } else if (data && data.success) {
+                btn.style.display = 'none';
+                showStatus(data.message || 'We let your parent know!');
+            } else {
+                resetBtn();
+                showStatus((data && data.message) || 'Could not reach your parent right now.', false);
+            }
+        } catch (e) {
+            resetBtn();
+            showStatus('Something went wrong. Please try again.', false);
+        }
+    });
+
+    const sendBtn = document.getElementById('parent-email-send');
+    if (sendBtn) sendBtn.addEventListener('click', async () => {
+        const input = document.getElementById('parent-email-input');
+        const email = ((input && input.value) || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showStatus('Please enter a valid email address.', false);
+            return;
+        }
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Sending…';
+        try {
+            const res = await csrfFetch('/api/student/invite-parent', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ parentEmail: email }), credentials: 'include'
+            });
+            const data = await res.json();
+            if (data && data.success) {
+                if (form) form.style.display = 'none';
+                showStatus(data.message || `Invite sent to ${email}.`);
+            } else {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send my parent an invite';
+                showStatus((data && data.message) || 'Could not send the invite.', false);
+            }
+        } catch (e) {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Send my parent an invite';
+            showStatus('Something went wrong. Please try again.', false);
+        }
+    });
 }
 
 /**

@@ -363,6 +363,54 @@ async function sendTrialEndingReminder(user, trialEndsAt) {
   }
 }
 
+/**
+ * "Your child hit their free limit" → parent upgrade nudge. Sent when a student
+ * with a linked parent asks the parent to unlock unlimited (via the wall CTA).
+ * Frames it around a free trial so the parent's first action is low-risk.
+ * @param {String} parentEmail
+ * @param {String} childName
+ * @param {String} actionUrl - deep link into the parent dashboard / upgrade
+ */
+async function sendParentUpgradeRequest(parentEmail, childName, actionUrl) {
+  const transport = initializeTransporter();
+  if (!transport) {
+    console.warn('Email not configured - skipping parent upgrade request');
+    return { success: false, error: 'Email not configured' };
+  }
+  if (!parentEmail) return { success: false, error: 'No parent email' };
+
+  try {
+    const emailConfig = getEmailConfig();
+    const safeName = childName || 'Your child';
+    const html = `
+      <div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a;">
+        <h2 style="color:#0d9488;">${safeName} wants to keep learning on Mathmatix</h2>
+        <p>${safeName} used up their free tutoring time this month and asked you to unlock more.</p>
+        <p>You can start a <strong>7-day free trial of Mathmatix+</strong> — unlimited 24/7 AI tutoring, voice sessions, homework help, and your parent dashboard. It's free for the first week, then $9.95/month, and you can cancel anytime.</p>
+        <p style="text-align:center;margin:28px 0;">
+          <a href="${actionUrl}" style="background:#0d9488;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block;">Start ${safeName}'s free trial</a>
+        </p>
+        <p style="font-size:0.85rem;color:#666;">If the button doesn't work, copy and paste this link into your browser:<br><a href="${actionUrl}">${actionUrl}</a></p>
+        <p style="font-size:0.8rem;color:#999;">You're receiving this because ${safeName} requested it from their Mathmatix account. No charge is made unless you start the trial.</p>
+      </div>`;
+
+    const mailOptions = {
+      from: getFromAddress(),
+      replyTo: emailConfig.replyTo,
+      to: parentEmail,
+      subject: `${safeName} asked you to unlock more Mathmatix tutoring`,
+      html
+    };
+
+    const info = await transport.sendMail(mailOptions);
+    console.log(`✅ Parent upgrade request sent to ${parentEmail}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('❌ Error sending parent upgrade request:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 async function sendPasswordResetEmail(email, resetToken) {
   const transport = initializeTransporter();
   if (!transport) {
@@ -1785,6 +1833,7 @@ module.exports = {
   sendWaitlistConfirmation,
   sendCancellationConfirmation,
   sendTrialEndingReminder,
+  sendParentUpgradeRequest,
   initializeTransporter,
   getEmailConfig
 };

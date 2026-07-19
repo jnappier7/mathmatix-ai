@@ -208,6 +208,82 @@ router.post('/invite-parent', isAuthenticated, isStudent, async (req, res) => {
     }
 });
 
+// POST /api/student/request-parent-upgrade
+// Student hits the paywall and asks a linked parent to unlock Mathmatix+.
+//   - Linked parent(s): notify each (in-app notification + trial-framed email).
+//   - No linked parent: return linked:false so the client can prompt for a
+//     parent email, which flows into POST /invite-parent.
+router.post('/request-parent-upgrade', isAuthenticated, isStudent, async (req, res) => {
+    try {
+        const student = await User.findById(req.user._id);
+        if (!student) {
+            return res.status(404).json({ success: false, message: 'Student not found.' });
+        }
+
+        const parentIds = student.parentIds || [];
+        if (parentIds.length === 0) {
+            return res.json({ success: true, linked: false, message: 'No parent is linked yet.' });
+        }
+
+        // Throttle — at most one nudge per 12 hours so a kid re-hitting the wall
+        // can't spam their parent's inbox.
+        const THROTTLE_MS = 12 * 60 * 60 * 1000;
+        const last = student.lastParentUpgradeRequestAt ? new Date(student.lastParentUpgradeRequestAt).getTime() : 0;
+        if (Date.now() - last < THROTTLE_MS) {
+            return res.json({ success: true, linked: true, alreadySent: true, message: "We already let your parent know — hang tight!" });
+        }
+
+        const parents = await User.find({ _id: { $in: parentIds } })
+            .select('email firstName subscriptionTier').lean();
+
+        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        const actionUrl = `${baseUrl}/parent-dashboard.html?upgrade=1&child=${student._id}`;
+        const Notification = require('../models/notification');
+        const { sendParentUpgradeRequest } = require('../utils/emailService');
+
+        let notified = 0;
+        for (const parent of parents) {
+            // Skip parents who already have unlimited — the child is already covered.
+            if (parent.subscriptionTier === 'unlimited') continue;
+            try {
+                await Notification.create({
+                    recipientId: parent._id,
+                    recipientRole: 'parent',
+                    subjectUserId: student._id,
+                    type: 'help_request',
+                    data: {
+                        kind: 'upgrade_request',
+                        childId: student._id.toString(),
+                        childName: student.firstName,
+                        title: `${student.firstName} wants to keep learning`,
+                        message: `${student.firstName} hit their free tutoring limit and asked you to unlock Mathmatix+.`,
+                        actionUrl
+                    }
+                });
+            } catch (nErr) {
+                console.error('Failed to create parent upgrade notification:', nErr.message);
+            }
+            if (parent.email) {
+                try { await sendParentUpgradeRequest(parent.email, student.firstName, actionUrl); }
+                catch (mErr) { console.error('Failed to email parent upgrade request:', mErr.message); }
+            }
+            notified++;
+        }
+
+        student.lastParentUpgradeRequestAt = new Date();
+        await student.save();
+
+        if (notified === 0) {
+            // Every linked parent already has unlimited → child should already have access.
+            return res.json({ success: true, linked: true, alreadyCovered: true, message: "Good news — you're already covered by a parent's plan. Try reloading!" });
+        }
+        return res.json({ success: true, linked: true, notified, message: "We let your parent know! They'll get an email to unlock unlimited tutoring." });
+    } catch (error) {
+        console.error('ERROR: request-parent-upgrade failed:', error);
+        res.status(500).json({ success: false, message: 'Could not reach your parent right now.' });
+    }
+});
+
 // GET /api/student/progress
 // Returns student's learning progress (mastered, learning, ready skills)
 router.get('/progress', isAuthenticated, isStudent, async (req, res) => {
