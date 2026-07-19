@@ -687,6 +687,11 @@ const userSchema = new Schema({
   // Subscription cancellation tracking
   cancellationReason: { type: String, default: null },
   cancellationDate: { type: Date, default: null },
+  // Card-required Mathmatix+ free trial (Stripe-managed). During a trial the
+  // subscriptionTier is set to 'unlimited' (so all access gates pass); a future
+  // trialEndsAt is what distinguishes "trialing" from "paid unlimited".
+  trialEndsAt: { type: Date, default: null },       // future = actively trialing
+  hasUsedTrial: { type: Boolean, default: false },  // one trial per user — blocks re-trialing
 
   /* Affiliate / Referral tracking */
   referredByAffiliateId: { type: Schema.Types.ObjectId, ref: 'Affiliate', default: null },  // Which affiliate referred this user

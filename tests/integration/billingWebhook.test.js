@@ -10,6 +10,7 @@ process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test_mock';
 
 global.__stripeWebhookConstruct = jest.fn();
 global.__stripeBillingPortal = jest.fn();
+global.__stripeSubRetrieve = jest.fn();
 
 jest.mock('stripe', () => () => ({
   webhooks: {
@@ -20,7 +21,7 @@ jest.mock('stripe', () => () => ({
   },
   checkout: { sessions: { create: jest.fn() } },
   customers:   { create: jest.fn(), retrieve: jest.fn() },
-  subscriptions: { update: jest.fn(), cancel: jest.fn(), retrieve: jest.fn() },
+  subscriptions: { update: jest.fn(), cancel: jest.fn(), retrieve: (...a) => global.__stripeSubRetrieve(...a) },
   prices:      { list: jest.fn() }
 }));
 
@@ -38,13 +39,15 @@ jest.mock('../../models/webhookEvent', () => ({
 }));
 
 jest.mock('../../utils/emailService', () => ({
-  sendCancellationConfirmation: jest.fn()
+  sendCancellationConfirmation: jest.fn(),
+  sendTrialEndingReminder: jest.fn().mockResolvedValue({ success: true })
 }));
 
 const express = require('express');
 const supertest = require('supertest');
 const User = require('../../models/user');
 const WebhookEvent = require('../../models/webhookEvent');
+const emailService = require('../../utils/emailService');
 const router = require('../../routes/billing');
 
 const constructEvent = global.__stripeWebhookConstruct;
@@ -66,6 +69,8 @@ beforeEach(() => {
   WebhookEvent.create.mockResolvedValue({});
   User.findById.mockReset();
   User.findOne.mockReset();
+  global.__stripeSubRetrieve.mockReset();
+  emailService.sendTrialEndingReminder.mockClear();
 });
 
 describe('POST /api/billing/webhook — signature verification', () => {
@@ -181,6 +186,117 @@ describe('checkout.session.completed', () => {
     expect(user.subscriptionTier).toBe('pack_60');
     expect(user.packSecondsRemaining).toBe(60 * 60);
     expect(user.packExpiresAt).toBeInstanceOf(Date);
+  });
+});
+
+describe('checkout.session.completed — free trial', () => {
+  test('starting a trial records trialEndsAt and burns hasUsedTrial', async () => {
+    constructEvent.mockReturnValue({
+      id: 'evt_trial', type: 'checkout.session.completed',
+      data: { object: {
+        id: 'cs_t', customer: 'cus_1', subscription: 'sub_t',
+        metadata: { userId: 'u1', pack: 'unlimited', trial: 'true' }
+      } }
+    });
+    const trialEndUnix = Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60;
+    global.__stripeSubRetrieve.mockResolvedValue({ status: 'trialing', trial_end: trialEndUnix });
+    const user = { _id: 'u1', firstName: 'Sam', lastName: 'L', save: jest.fn().mockResolvedValue() };
+    User.findById.mockResolvedValue(user);
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(r.status).toBe(200);
+    expect(user.subscriptionTier).toBe('unlimited');
+    expect(user.stripeSubscriptionId).toBe('sub_t');
+    expect(user.hasUsedTrial).toBe(true);
+    expect(user.trialEndsAt).toBeInstanceOf(Date);
+    expect(user.trialEndsAt.getTime()).toBe(trialEndUnix * 1000);
+  });
+
+  test('non-trial subscription does not retrieve the subscription or set trial fields', async () => {
+    constructEvent.mockReturnValue({
+      id: 'evt_notrial', type: 'checkout.session.completed',
+      data: { object: {
+        id: 'cs_n', customer: 'cus_1', subscription: 'sub_n',
+        metadata: { userId: 'u1', pack: 'unlimited' }
+      } }
+    });
+    const user = { _id: 'u1', firstName: 'A', lastName: 'B', save: jest.fn().mockResolvedValue() };
+    User.findById.mockResolvedValue(user);
+
+    await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(global.__stripeSubRetrieve).not.toHaveBeenCalled();
+    expect(user.hasUsedTrial).toBeUndefined();
+  });
+});
+
+describe('customer.subscription.updated — trialing', () => {
+  test('status=trialing grants unlimited and syncs trialEndsAt', async () => {
+    const trialEndUnix = Math.floor(Date.now() / 1000) + 5 * 24 * 60 * 60;
+    constructEvent.mockReturnValue({
+      id: 'evt_ut', type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', customer: 'cus_1', status: 'trialing', trial_end: trialEndUnix } }
+    });
+    const user = { save: jest.fn().mockResolvedValue() };
+    User.findOne.mockResolvedValueOnce(user);
+
+    await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(user.subscriptionTier).toBe('unlimited');
+    expect(user.hasUsedTrial).toBe(true);
+    expect(user.trialEndsAt.getTime()).toBe(trialEndUnix * 1000);
+  });
+
+  test('status=active clears the trial marker (trial converted)', async () => {
+    constructEvent.mockReturnValue({
+      id: 'evt_ua', type: 'customer.subscription.updated',
+      data: { object: { id: 'sub_1', customer: 'cus_1', status: 'active' } }
+    });
+    const user = { trialEndsAt: new Date(), save: jest.fn().mockResolvedValue() };
+    User.findOne.mockResolvedValueOnce(user);
+
+    await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(user.subscriptionTier).toBe('unlimited');
+    expect(user.trialEndsAt).toBeNull();
+  });
+});
+
+describe('customer.subscription.trial_will_end', () => {
+  test('sends the trial-ending reminder email', async () => {
+    const trialEndUnix = Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60;
+    constructEvent.mockReturnValue({
+      id: 'evt_twe', type: 'customer.subscription.trial_will_end',
+      data: { object: { id: 'sub_1', customer: 'cus_1', trial_end: trialEndUnix } }
+    });
+    const user = { _id: 'u1', email: 'p@x.com', firstName: 'Pat' };
+    User.findOne.mockResolvedValueOnce(user);
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(r.status).toBe(200);
+    expect(emailService.sendTrialEndingReminder).toHaveBeenCalledTimes(1);
+    expect(emailService.sendTrialEndingReminder.mock.calls[0][0]).toBe(user);
+  });
+
+  test('no-op when the user cannot be found', async () => {
+    constructEvent.mockReturnValue({
+      id: 'evt_twe2', type: 'customer.subscription.trial_will_end',
+      data: { object: { id: 'sub_x', customer: 'cus_x' } }
+    });
+    User.findOne.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(r.status).toBe(200);
+    expect(emailService.sendTrialEndingReminder).not.toHaveBeenCalled();
   });
 });
 
