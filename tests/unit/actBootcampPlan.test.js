@@ -3,7 +3,7 @@
 // plan: skip mastered domains, rank the rest by leverage (weakness x exam-weight),
 // and pick a prerequisite-aware starting module. Pure — no DB.
 
-const { buildActPlan, CATEGORY_MODULE } = require('../../utils/actBootcampPlan');
+const { buildActPlan, planStartModule, planSummary, CATEGORY_MODULE } = require('../../utils/actBootcampPlan');
 
 describe('buildActPlan — great-tutor triage', () => {
   test('skips a domain the student already mastered (fast-pass, not a target)', () => {
@@ -67,5 +67,42 @@ describe('buildActPlan — great-tutor triage', () => {
     expect(allMastered.summary.masteredCategories).toContain('algebra');
     // an unrecognized category is ignored, never crashes
     expect(() => buildActPlan({ 'unknown': { correct: 0, total: 3 } })).not.toThrow();
+  });
+});
+
+describe('planStartModule — retarget only at course start', () => {
+  const plan = { startModuleId: 'geometry' };
+  const modules = (statuses) => statuses.map((s, i) => ({ moduleId: ['number_quantity', 'algebra', 'geometry'][i], status: s }));
+
+  test('retargets a fresh course (no progress, no module begun)', () => {
+    const cs = { currentModuleId: 'number_quantity', overallProgress: 0, modules: modules(['available', 'locked', 'locked']) };
+    expect(planStartModule(cs, plan)).toBe('geometry');
+  });
+
+  test('does NOT retarget once a module is in progress', () => {
+    const cs = { currentModuleId: 'number_quantity', overallProgress: 0, modules: modules(['in_progress', 'locked', 'locked']) };
+    expect(planStartModule(cs, plan)).toBeNull();
+  });
+
+  test('does NOT retarget once there is progress', () => {
+    const cs = { currentModuleId: 'number_quantity', overallProgress: 12, modules: modules(['completed', 'available', 'locked']) };
+    expect(planStartModule(cs, plan)).toBeNull();
+  });
+
+  test('no-op when already on the target module, or target missing', () => {
+    const onTarget = { currentModuleId: 'geometry', overallProgress: 0, modules: modules(['available', 'locked', 'available']) };
+    expect(planStartModule(onTarget, plan)).toBeNull();
+    const noSuch = { currentModuleId: 'number_quantity', overallProgress: 0, modules: modules(['available', 'locked', 'locked']) };
+    expect(planStartModule(noSuch, { startModuleId: 'not_a_module' })).toBeNull();
+    expect(planStartModule(onTarget, { startModuleId: null })).toBeNull();
+  });
+
+  test('planSummary is a compact stashable descriptor', () => {
+    const p = buildActPlan({ 'algebra': { correct: 3, total: 8 }, 'number-quantity': { correct: 5, total: 5 } });
+    const s = planSummary(p, null);
+    expect(s.focusCategories).toContain('algebra');
+    expect(s.masteredCategories).toContain('number-quantity');
+    expect(s).toHaveProperty('startModuleId');
+    expect(s).toHaveProperty('takenAt');
   });
 });

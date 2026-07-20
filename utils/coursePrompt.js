@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { CATEGORY_LABEL } = require('./actBootcampPlan');
 
 /**
  * Build the complete course-mode system prompt.
@@ -778,6 +779,19 @@ Keep it SHORT. DO NOT ask what they want to work on. Resume the lesson.`;
     if (currentPhase.type === 'explanation' && currentPhase.text) {
       instruction += `\nTeach this concept: ${currentPhase.text.substring(0, 500)}`;
     }
+  }
+
+  // Diagnostic recap: if a practice test set a plan on this session, have the
+  // tutor open by acknowledging the results and framing the focus — so the
+  // course visibly reflects the student's real gaps instead of a generic march.
+  const dp = courseSession.diagnosticPlan;
+  if (dp && ((dp.focusCategories && dp.focusCategories.length) || (dp.masteredCategories && dp.masteredCategories.length))) {
+    const list = (arr) => (arr || []).map(c => CATEGORY_LABEL[c] || c).join(', ');
+    const strong = (dp.masteredCategories || []).length
+      ? `They were already strong on ${list(dp.masteredCategories)} — move fast / spot-check there. ` : '';
+    const focus = (dp.focusCategories || []).length
+      ? `Focus this bootcamp on their weak areas: ${list(dp.focusCategories)}. ` : '';
+    instruction += `\n\nPRACTICE-ACT RESULTS — the student took a full practice ACT. Open your greeting by briefly recapping it IN YOUR VOICE (1-2 sentences): ${strong}${focus}Frame today's module ("${moduleTitle}") as the highest-priority place to start based on their results, then continue. Do NOT dump the full breakdown or list every score.`;
   }
 
   instruction += `\n\nREMINDER: All math MUST use LaTeX: \\\\( x + 3 \\\\) for inline, \\\\[ x^2 \\\\] for display. Never write bare math.`;

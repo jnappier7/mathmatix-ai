@@ -60,6 +60,12 @@ const courseSessionSchema = new Schema({
   // Checkpoint state (transient — cleared when checkpoint completes)
   checkpointState: { type: Object, default: null },
 
+  // Diagnostic plan from a completed practice test (e.g. the ACT bootcamp).
+  // Shape: { focusCategories: [], masteredCategories: [], startModuleId, takenAt }.
+  // Used to open the course on the highest-leverage weak module and to recap the
+  // result in the greeting. Set at practice-test completion; null otherwise.
+  diagnosticPlan: { type: Schema.Types.Mixed, default: null },
+
   // Overall progress
   overallProgress: { type: Number, default: 0, min: 0, max: 100 },
 
