@@ -109,10 +109,27 @@
     var region = document.getElementById('cr-workspace');
     if (region) {
       region.classList.add('lws-swapped');
-      // Hide the old tabbed board tools, keep them in the DOM (reversible).
+      // Hide the old tabbed board tools, keep them in the DOM (reversible) —
+      // EXCEPT the drawer's close button. On mobile #cr-workspace is a
+      // full-width slide-in drawer; that X is the only way back to chat (the
+      // tap-to-close backdrop sits hidden behind the full-width drawer and the
+      // FAB is hidden while it's open). Hiding it stranded phone users in the
+      // workspace with no exit. Keep it visible, lift it above the derivation's
+      // sticky problem card / caption (z-index 3 / 4), and make sure it closes
+      // the drawer even if workspace.js hasn't wired it.
       for (var i = 0; i < region.children.length; i++) {
-        region.children[i].setAttribute('data-lws-hidden', '1');
-        region.children[i].style.display = 'none';
+        var child = region.children[i];
+        if (child.classList && child.classList.contains('cr-ws-close')) {
+          child.style.zIndex = '6';
+          child.addEventListener('click', function () {
+            if (window.MathWorkspace && typeof window.MathWorkspace.close === 'function') {
+              window.MathWorkspace.close();
+            }
+          });
+          continue;
+        }
+        child.setAttribute('data-lws-hidden', '1');
+        child.style.display = 'none';
       }
       var mountIn = document.createElement('div');
       mountIn.id = 'lws-chat-mount';
