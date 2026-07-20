@@ -17,7 +17,7 @@ const { generatePhaseProblem, recordPhaseAttempt, getPhaseInstructions } = requi
 const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = require('../utils/hintSystem'); // TEACHING ENHANCEMENT
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
-const { isSkillMastered, resolveMasteryKey } = require('../utils/masteryGuard');
+const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
 
@@ -1325,7 +1325,7 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
 
     // Get skill data (canonical unified key, legacy fallback, for a clean read/write)
     const masteryKey = resolveMasteryKey(user, skillId);
-    let skillMastery = user.skillMastery.get(masteryKey);
+    let skillMastery = getSkillMasteryEntry(user, masteryKey);
     if (!skillMastery) {
       // Initialize skill mastery if not exists
       const { initializeSkillMastery } = require('../utils/masteryEngine');
@@ -1346,16 +1346,17 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
 
     // updateSkillMastery now owns the rung and keeps `status` in step with it.
     // calculateMasteryState still runs so the prerequisite/locked and re-fragile
-    // branches apply, but it must not overwrite a rung-derived 'mastered'.
+    // branches apply, but it must not overwrite a rung-derived 'mastered'. It reads
+    // prerequisites by dotted id, so it gets the decoded view of the store.
     const justProved = updatedSkill.__justProved;
     delete updatedSkill.__justProved;
-    const derivedState = calculateMasteryState(updatedSkill, user.skillMastery);
+    const derivedState = calculateMasteryState(updatedSkill, decodedMasteryMap(user));
     if (updatedSkill.status !== 'mastered' || derivedState === 're-fragile' || derivedState === 'locked') {
       updatedSkill.status = derivedState;
     }
 
     // Update user's skill mastery
-    user.skillMastery.set(masteryKey, updatedSkill);
+    setSkillMasteryEntry(user, masteryKey, updatedSkill);
 
     // ★ CASCADE ★ Proving a skill clears everything beneath it in the graph, so a
     // student never re-grinds a prerequisite they have just demonstrated they own.
@@ -1368,8 +1369,14 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
           3600
         );
         if (allSkills.length) {
-          const result = applyProofCascade(buildGraph(allSkills), user.skillMastery, masteryKey);
+          // Closure reasons in dotted ids; operate on the decoded view and write
+          // newly-cleared entries back through the encoder.
+          const decoded = decodedMasteryMap(user);
+          const result = applyProofCascade(buildGraph(allSkills), decoded, masteryKey);
           cleared = result.cleared;
+          for (const clearedId of cleared) {
+            setSkillMasteryEntry(user, clearedId, decoded.get(clearedId));
+          }
         }
       } catch (cascadeError) {
         // A cascade failure must not cost the student the attempt they just made.
@@ -1661,7 +1668,7 @@ router.post('/retention-check', isAuthenticated, async (req, res) => {
     }
 
     const masteryKey = resolveMasteryKey(user, skillId);
-    const skillMastery = user.skillMastery.get(masteryKey);
+    const skillMastery = getSkillMasteryEntry(user, masteryKey);
     if (!skillMastery) {
       return res.status(404).json({ error: 'Skill mastery not found' });
     }
@@ -1676,7 +1683,7 @@ router.post('/retention-check', isAuthenticated, async (req, res) => {
     });
 
     // Update user
-    user.skillMastery.set(masteryKey, updatedSkill);
+    setSkillMasteryEntry(user, masteryKey, updatedSkill);
     await user.save();
 
     res.json({
@@ -2662,7 +2669,8 @@ router.get('/map', isAuthenticated, async (req, res) => {
     // and closure must still traverse them — but they are not shown to students
     // until their standards alignment is verified.
     const graph = buildGraph(skills);
-    const mastery = user.skillMastery || {};
+    // The board reasons in dotted ids, so it reads the decoded view of the store.
+    const mastery = decodedMasteryMap(user);
     const states = boardStates(graph, mastery);
     const visible = skills.filter((s) => !s.provisional);
     const hidden = new Set(skills.filter((s) => s.provisional).map((s) => s.skillId));

@@ -13,6 +13,8 @@
 
 const { calculateOverallProgress } = require('../coursePrompt');
 const { canonicalSkillId } = require('../skillCanonicalizer');
+const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } = require('../masteryEngine');
+const { getSkillMasteryEntry, setSkillMasteryEntry } = require('../masteryGuard');
 
 // ── Phase labels for breadcrumb display ──
 const PHASE_LABELS = {
@@ -319,32 +321,17 @@ function processSkillMastery(user, rawSkillId) {
   // canonicalize to the unified skill id so course + chat mastery share one key
   const skillId = canonicalSkillId(rawSkillId);
   user.skillMastery = user.skillMastery || new Map();
-  const existing = user.skillMastery.get(skillId) || {};
-  const pillars = existing.pillars || {
-    accuracy: { correct: 0, total: 0, percentage: 0, threshold: 0.90 },
-    independence: { hintsUsed: 0, hintsAvailable: 15, hintThreshold: 3 },
-    transfer: { contextsAttempted: [], contextsRequired: 3 },
-    retention: { retentionChecks: [], failed: false },
-  };
 
-  pillars.accuracy.correct += 1;
-  pillars.accuracy.total += 1;
-  pillars.accuracy.percentage = pillars.accuracy.correct / pillars.accuracy.total;
-
-  const accuracyScore = Math.min(pillars.accuracy.percentage / 0.90, 1.0);
-  const independenceScore = pillars.independence.hintsUsed <= pillars.independence.hintThreshold ? 1.0
-    : Math.max(0, 1.0 - (pillars.independence.hintsUsed - pillars.independence.hintThreshold) * 0.15);
-  const transferScore = Math.min(pillars.transfer.contextsAttempted.length / pillars.transfer.contextsRequired, 1.0);
-  const masteryScore = Math.round(((accuracyScore + independenceScore + transferScore) / 3) * 100);
-
-  const meetsAll = pillars.accuracy.percentage >= 0.90 && pillars.accuracy.total >= 3
-    && pillars.independence.hintsUsed <= pillars.independence.hintThreshold
-    && pillars.transfer.contextsAttempted.length >= pillars.transfer.contextsRequired;
-
-  const newStatus = meetsAll ? 'mastered' : pillars.accuracy.total >= 2 ? 'practicing' : 'learning';
-
-  user.skillMastery.set(skillId, { ...existing, status: newStatus, pillars, masteryScore, lastPracticed: new Date() });
-  user.markModified('skillMastery');
+  // This was a THIRD independent reimplementation of the mastery model — same
+  // `total >= 3` bar as the old chat path, on the course flow. It now delegates
+  // to the one engine, which owns the rung and its gates. Same one-sided-evidence
+  // caveat as the chat path applies: this is only called on a success, so
+  // accuracy is 1.0 by construction and the real bar here is "N demonstrations
+  // across 3 contexts".
+  const existing = getSkillMasteryEntry(user, skillId) || initializeSkillMastery(skillId);
+  const updated = engineUpdateSkillMastery(existing, { correct: true, hintUsed: false });
+  delete updated.__justProved;
+  setSkillMasteryEntry(user, skillId, updated);
 }
 
 // ── NOTE: Stall detection (shouldAutoAdvance) has been removed. ──

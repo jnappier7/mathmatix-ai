@@ -14,7 +14,7 @@ const mongoose = require('mongoose');
 const { computeWeeklyAccuracy } = require('../utils/weeklyAccuracy');
 const { deriveProgressCardState } = require('../utils/progressCardState');
 const { getReviewSummary } = require('../utils/smartReviewQueue');
-const { resolveMasteryKey } = require('../utils/masteryGuard');
+const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
@@ -643,7 +643,7 @@ router.post('/start-skill', isAuthenticated, isStudent, async (req, res) => {
 
         // Check current status (canonical unified key, legacy fallback)
         const masteryKey = resolveMasteryKey(student, skillId);
-        const currentStatus = student.skillMastery.get(masteryKey);
+        const currentStatus = getSkillMasteryEntry(student, masteryKey);
 
         if (currentStatus?.status === 'mastered') {
             return res.json({
@@ -653,14 +653,13 @@ router.post('/start-skill', isAuthenticated, isStudent, async (req, res) => {
         }
 
         // Set to learning
-        student.skillMastery.set(masteryKey, {
+        setSkillMasteryEntry(student, masteryKey, {
             status: 'learning',
+            rung: currentStatus?.rung || 'learned',
             masteryScore: currentStatus?.masteryScore || 0.1,
             learningStarted: currentStatus?.learningStarted || new Date(),
             lastPracticed: new Date()
         });
-
-        student.markModified('skillMastery');
         await student.save();
 
         res.json({

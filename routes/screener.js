@@ -31,6 +31,7 @@ const { selectSkill, formatScoringLog } = require('../utils/skillSelector');
 const { calculateProgress } = require('../utils/catConvergence');
 const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { setSkillMasteryEntry } = require('../utils/masteryGuard');
 
 // Warm up cache on module load
 warmupCache().catch(err => console.error('[Screener] Cache warmup failed:', err));
@@ -728,8 +729,12 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Update user's skill mastery based on screener results (keyed on the
     // canonical unified skill id so placement shares the tutor's mastery keys)
     for (const rawId of report.masteredSkills) {
-      user.skillMastery.set(canonicalSkillId(rawId), {
+      setSkillMasteryEntry(user, rawId, {
         status: 'mastered',
+        // The adaptive screener is a real demonstration, so placement lands as a
+        // proved rung (provenBy 'placement') rather than an un-evidenced status.
+        rung: 'proved',
+        provenBy: 'placement',
         masteryScore: 1.0,
         masteredDate: new Date(),
         notes: 'Demonstrated in adaptive screener'
@@ -737,8 +742,9 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     }
 
     for (const rawId of report.learningSkills) {
-      user.skillMastery.set(canonicalSkillId(rawId), {
+      setSkillMasteryEntry(user, rawId, {
         status: 'learning',
+        rung: 'learned',
         masteryScore: 0.5,
         learningStarted: new Date(),
         notes: 'Partial mastery in screener'
@@ -746,7 +752,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     }
 
     for (const rawId of report.readySkills) {
-      user.skillMastery.set(canonicalSkillId(rawId), {
+      setSkillMasteryEntry(user, rawId, {
         status: 'ready',
         masteryScore: 0,
         notes: 'Ready to learn based on screener'

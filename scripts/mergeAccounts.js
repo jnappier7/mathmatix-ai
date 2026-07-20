@@ -23,6 +23,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { decodeMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 
 // Parse CLI arguments
 const args = process.argv.slice(2);
@@ -172,11 +173,13 @@ async function main() {
     for (const source of sources) {
       if (source.skillMastery) {
         if (!target.skillMastery) target.skillMastery = new Map();
-        for (const [skillId, sourceSkill] of source.skillMastery) {
-          const key = canonicalSkillId(skillId);
-          const targetSkill = target.skillMastery.get(key);
+        for (const [storedKey, sourceSkill] of source.skillMastery) {
+          // Stored keys are encoded (dots -> "_"); decode to the logical id so the
+          // accessors can canonicalize and dedup, then write through the encoder.
+          const logicalId = decodeMasteryKey(storedKey);
+          const targetSkill = getSkillMasteryEntry(target, logicalId);
           if (!targetSkill || (sourceSkill.masteryScore || 0) > (targetSkill.masteryScore || 0)) {
-            target.skillMastery.set(key, sourceSkill);
+            setSkillMasteryEntry(target, logicalId, sourceSkill);
           }
         }
         changes.push(`Merged skill mastery from ${source.email}`);

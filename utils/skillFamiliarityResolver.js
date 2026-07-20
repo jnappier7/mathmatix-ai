@@ -18,6 +18,7 @@
  */
 
 const Skill = require('../models/skill');
+const { encodeMasteryKey } = require('./masteryGuard');
 const TutorPlan = require('../models/tutorPlan');
 
 // ── Familiarity levels ──
@@ -45,9 +46,12 @@ const INSTRUCTIONAL_MODES = {
  * @returns {string} One of the FAMILIARITY values
  */
 function assessFamiliarity(skillMastery, skillId) {
-  const entry = skillMastery instanceof Map
-    ? skillMastery.get(skillId)
-    : skillMastery?.[skillId];
+  // skillMastery may be a Mongoose Map whose keys are ENCODED (dots -> "_"), so
+  // read by the encoded key first, then fall back to the raw id for a plain map
+  // or a pre-fix legacy entry.
+  const enc = encodeMasteryKey(skillId);
+  const read = (k) => (skillMastery instanceof Map ? skillMastery.get(k) : skillMastery?.[k]);
+  const entry = read(enc) || read(skillId);
 
   return TutorPlan.inferFamiliarity(entry || null);
 }

@@ -369,9 +369,13 @@ describe('coursePersist: processSkillMastery', () => {
     const skill = user.skillMastery.get('test-skill');
     expect(skill.pillars.accuracy.correct).toBe(3);
     expect(skill.pillars.accuracy.total).toBe(3);
-    // 3 correct, 3 total → 100% accuracy >= 90%, total >= 3
-    // But transfer requires 3 contexts, so not mastered yet
-    expect(skill.status).toBe('practicing');
+    // processSkillMastery now delegates to the one mastery engine instead of its
+    // own `total >= 2 -> practicing` rule. With no transfer contexts the weighted
+    // score stays below the practicing threshold, so this is 'learning' — and,
+    // crucially, NOT 'mastered', which the old course-path duplicate would have
+    // been one context away from awarding on a `total >= 3` bar.
+    expect(skill.status).toBe('learning');
+    expect(skill.rung).not.toBe('proved');
   });
 
   test('no-ops on null skillId', () => {
