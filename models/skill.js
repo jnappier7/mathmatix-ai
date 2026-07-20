@@ -155,6 +155,17 @@ const skillSchema = new mongoose.Schema({
     required: false  // Optional for backward compatibility
   },
 
+  // Plain-language name for the student: what appears on the progress board and
+  // what the tutor says out loud. `displayName` stays formal — teachers write IEP
+  // goals against it and the standards codes align to it — so this is an everyday
+  // name alongside the precise one, never a replacement. Falls back to
+  // displayName when absent. Pitched at the level the skill sits at: an ELEM
+  // label must be readable by the student, a CALC label keeps real terminology.
+  studentLabel: {
+    type: String,
+    required: false
+  },
+
   // Unified "Map of Mathmatix" taxonomy (seeds/unified-taxonomy/math_taxonomy.json).
   // strand = one of the six cross-cutting through-lines (QNT/PRP/EQV/FNC/SPC/DTA);
   // courseLevel = the taxonomy course code (ELEM/MS/ALG1/GEO/ALG2/PREC/CALC).

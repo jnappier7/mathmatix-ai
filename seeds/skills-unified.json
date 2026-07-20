@@ -2,6 +2,7 @@
   {
     "skillId": "ELEM.QNT.1",
     "displayName": "Whole number place value",
+    "studentLabel": "Whole number place value",
     "description": "Read, write, compare, and order multi-digit whole numbers using place-value understanding.",
     "category": "number-system",
     "strand": "QNT",
@@ -33,6 +34,7 @@
   {
     "skillId": "ELEM.QNT.2",
     "displayName": "Round whole numbers",
+    "studentLabel": "Round whole numbers",
     "description": "Round whole numbers to any place and use rounding to estimate sums and differences.",
     "category": "number-system",
     "strand": "QNT",
@@ -57,6 +59,7 @@
   {
     "skillId": "ELEM.QNT.3",
     "displayName": "Multi-digit addition subtraction",
+    "studentLabel": "Multi-digit addition subtraction",
     "description": "Fluently add and subtract multi-digit whole numbers using the standard algorithm.",
     "category": "number-system",
     "strand": "QNT",
@@ -84,6 +87,7 @@
   {
     "skillId": "ELEM.QNT.4",
     "displayName": "Multiplication concepts and facts",
+    "studentLabel": "Multiplication concepts and facts",
     "description": "Interpret multiplication as equal groups and arrays and fluently recall products of one-digit factors.",
     "category": "number-system",
     "strand": "QNT",
@@ -116,6 +120,7 @@
   {
     "skillId": "ELEM.QNT.5",
     "displayName": "Division concepts and facts",
+    "studentLabel": "Division concepts and facts",
     "description": "Interpret division as equal sharing or grouping and use fact families to divide within 100.",
     "category": "number-system",
     "strand": "QNT",
@@ -145,6 +150,7 @@
   {
     "skillId": "ELEM.QNT.6",
     "displayName": "Multi-digit multiplication",
+    "studentLabel": "Multi-digit multiplication",
     "description": "Multiply multi-digit whole numbers using place-value strategies and the standard algorithm.",
     "category": "number-system",
     "strand": "QNT",
@@ -175,6 +181,7 @@
   {
     "skillId": "ELEM.QNT.7",
     "displayName": "Multi-digit division",
+    "studentLabel": "Multi-digit division",
     "description": "Divide multi-digit whole numbers by one- and two-digit divisors and interpret remainders in context.",
     "category": "number-system",
     "strand": "QNT",
@@ -200,6 +207,7 @@
   {
     "skillId": "ELEM.QNT.8",
     "displayName": "Factors and multiples",
+    "studentLabel": "Factors and multiples",
     "description": "Find factor pairs and multiples and classify whole numbers as prime or composite.",
     "category": "number-system",
     "strand": "QNT",
@@ -228,6 +236,7 @@
   {
     "skillId": "ELEM.QNT.9",
     "displayName": "Fractions as numbers",
+    "studentLabel": "Fractions as numbers",
     "description": "Understand unit fractions as equal parts of a whole and locate fractions on the number line.",
     "category": "number-system",
     "strand": "QNT",
@@ -257,6 +266,7 @@
   {
     "skillId": "ELEM.QNT.10",
     "displayName": "Decimal place value",
+    "studentLabel": "Decimal place value",
     "description": "Read, write, compare, and round decimals to thousandths using place-value understanding.",
     "category": "number-system",
     "strand": "QNT",
@@ -285,6 +295,7 @@
   {
     "skillId": "ELEM.QNT.11",
     "displayName": "Add subtract fractions",
+    "studentLabel": "Add subtract fractions",
     "description": "Add and subtract fractions and mixed numbers, including with unlike denominators.",
     "category": "number-system",
     "strand": "QNT",
@@ -312,6 +323,7 @@
   {
     "skillId": "ELEM.QNT.12",
     "displayName": "Multiply fractions",
+    "studentLabel": "Multiply fractions",
     "description": "Multiply fractions by whole numbers and by fractions, including in area contexts.",
     "category": "number-system",
     "strand": "QNT",
@@ -340,6 +352,7 @@
   {
     "skillId": "ELEM.QNT.13",
     "displayName": "Divide with unit fractions",
+    "studentLabel": "Divide with unit fractions",
     "description": "Divide unit fractions by whole numbers and whole numbers by unit fractions using models.",
     "category": "number-system",
     "strand": "QNT",
@@ -365,6 +378,7 @@
   {
     "skillId": "ELEM.QNT.14",
     "displayName": "Decimal operations",
+    "studentLabel": "Decimal operations",
     "description": "Add, subtract, multiply, and divide decimals to hundredths using place-value strategies.",
     "category": "number-system",
     "strand": "QNT",
@@ -393,6 +407,7 @@
   {
     "skillId": "ELEM.PRP.1",
     "displayName": "Equivalent fractions",
+    "studentLabel": "Equivalent fractions",
     "description": "Generate and recognize equivalent fractions using visual models and multiplication.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -422,6 +437,7 @@
   {
     "skillId": "ELEM.PRP.2",
     "displayName": "Compare fractions",
+    "studentLabel": "Compare fractions",
     "description": "Compare fractions with different numerators and denominators using benchmarks and common denominators.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -446,6 +462,7 @@
   {
     "skillId": "ELEM.PRP.3",
     "displayName": "Multiplicative comparison",
+    "studentLabel": "Multiplicative comparison",
     "description": "Interpret and solve problems where one quantity is a whole-number times as much as another.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -472,6 +489,7 @@
   {
     "skillId": "ELEM.PRP.4",
     "displayName": "Relate fractions and decimals",
+    "studentLabel": "Relate fractions and decimals",
     "description": "Write fractions with denominators 10 and 100 as decimals and compare quantities across notations.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -500,6 +518,7 @@
   {
     "skillId": "ELEM.PRP.5",
     "displayName": "Fraction scaling",
+    "studentLabel": "Fraction scaling",
     "description": "Interpret multiplication as scaling and predict whether a product is larger or smaller than its factors.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -527,6 +546,7 @@
   {
     "skillId": "ELEM.PRP.6",
     "displayName": "Convert measurement units",
+    "studentLabel": "Convert measurement units",
     "description": "Convert among units within the same measurement system to solve multi-step problems.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -553,6 +573,7 @@
   {
     "skillId": "ELEM.EQV.1",
     "displayName": "Meaning of equality",
+    "studentLabel": "Meaning of equality",
     "description": "Interpret the equal sign as 'has the same value as' and decide whether equations are true or false.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -577,6 +598,7 @@
   {
     "skillId": "ELEM.EQV.2",
     "displayName": "Properties of operations",
+    "studentLabel": "Properties of operations",
     "description": "Apply commutative, associative, and distributive properties to compute flexibly and check results.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -604,6 +626,7 @@
   {
     "skillId": "ELEM.EQV.3",
     "displayName": "Unknowns in equations",
+    "studentLabel": "Unknowns in equations",
     "description": "Find the unknown whole number in addition, subtraction, multiplication, or division equations.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -632,6 +655,7 @@
   {
     "skillId": "ELEM.EQV.4",
     "displayName": "Two-step word problems",
+    "studentLabel": "Two-step word problems",
     "description": "Represent two-step word problems with equations using a letter for the unknown and assess reasonableness.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -656,6 +680,7 @@
   {
     "skillId": "ELEM.EQV.5",
     "displayName": "Order of operations",
+    "studentLabel": "Order of operations",
     "description": "Evaluate numerical expressions containing parentheses, brackets, and braces.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -683,6 +708,7 @@
   {
     "skillId": "ELEM.EQV.6",
     "displayName": "Interpret numerical expressions",
+    "studentLabel": "Interpret numerical expressions",
     "description": "Write and interpret numerical expressions from verbal descriptions without evaluating them.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -707,6 +733,7 @@
   {
     "skillId": "ELEM.FNC.1",
     "displayName": "Arithmetic patterns",
+    "studentLabel": "Arithmetic patterns",
     "description": "Identify and explain arithmetic patterns in addition and multiplication tables.",
     "category": "functions",
     "strand": "FNC",
@@ -734,6 +761,7 @@
   {
     "skillId": "ELEM.FNC.2",
     "displayName": "Generate number patterns",
+    "studentLabel": "Generate number patterns",
     "description": "Generate a number or shape pattern that follows a given rule and identify features of the pattern.",
     "category": "functions",
     "strand": "FNC",
@@ -761,6 +789,7 @@
   {
     "skillId": "ELEM.FNC.3",
     "displayName": "Input-output rules",
+    "studentLabel": "Input-output rules",
     "description": "Complete input-output tables and describe the rule relating inputs to outputs.",
     "category": "functions",
     "strand": "FNC",
@@ -787,6 +816,7 @@
   {
     "skillId": "ELEM.FNC.4",
     "displayName": "Relate two patterns",
+    "studentLabel": "Relate two patterns",
     "description": "Generate two numerical patterns from rules and identify relationships between corresponding terms.",
     "category": "functions",
     "strand": "FNC",
@@ -813,6 +843,7 @@
   {
     "skillId": "ELEM.FNC.5",
     "displayName": "Graph pattern pairs",
+    "studentLabel": "Graph pattern pairs",
     "description": "Form ordered pairs from two related patterns and graph them in the first quadrant.",
     "category": "functions",
     "strand": "FNC",
@@ -840,6 +871,7 @@
   {
     "skillId": "ELEM.SPC.1",
     "displayName": "Shape attributes",
+    "studentLabel": "Shape attributes",
     "description": "Classify quadrilaterals and other polygons by shared attributes such as sides and angles.",
     "category": "geometry",
     "strand": "SPC",
@@ -866,6 +898,7 @@
   {
     "skillId": "ELEM.SPC.2",
     "displayName": "Perimeter",
+    "studentLabel": "Perimeter",
     "description": "Find perimeters of polygons, including finding an unknown side length from the perimeter.",
     "category": "geometry",
     "strand": "SPC",
@@ -890,6 +923,7 @@
   {
     "skillId": "ELEM.SPC.3",
     "displayName": "Area of rectangles",
+    "studentLabel": "Area of rectangles",
     "description": "Understand area as covering with unit squares and find rectangle areas by multiplying side lengths.",
     "category": "geometry",
     "strand": "SPC",
@@ -917,6 +951,7 @@
   {
     "skillId": "ELEM.SPC.4",
     "displayName": "Lines and angles",
+    "studentLabel": "Lines and angles",
     "description": "Identify points, lines, rays, parallel and perpendicular lines, and acute, right, and obtuse angles.",
     "category": "geometry",
     "strand": "SPC",
@@ -944,6 +979,7 @@
   {
     "skillId": "ELEM.SPC.5",
     "displayName": "Measure angles",
+    "studentLabel": "Measure angles",
     "description": "Measure and sketch angles in degrees and solve additive angle problems.",
     "category": "geometry",
     "strand": "SPC",
@@ -970,6 +1006,7 @@
   {
     "skillId": "ELEM.SPC.6",
     "displayName": "Line symmetry",
+    "studentLabel": "Line symmetry",
     "description": "Identify lines of symmetry and complete or draw figures with line symmetry.",
     "category": "geometry",
     "strand": "SPC",
@@ -996,6 +1033,7 @@
   {
     "skillId": "ELEM.SPC.7",
     "displayName": "Classify two-dimensional figures",
+    "studentLabel": "Classify two-dimensional figures",
     "description": "Classify two-dimensional figures in a hierarchy based on their properties.",
     "category": "geometry",
     "strand": "SPC",
@@ -1020,6 +1058,7 @@
   {
     "skillId": "ELEM.SPC.8",
     "displayName": "Volume of prisms",
+    "studentLabel": "Volume of prisms",
     "description": "Understand volume as packing unit cubes and compute volumes of rectangular prisms.",
     "category": "geometry",
     "strand": "SPC",
@@ -1045,6 +1084,7 @@
   {
     "skillId": "ELEM.SPC.9",
     "displayName": "Coordinate plane basics",
+    "studentLabel": "Coordinate plane basics",
     "description": "Graph and interpret points in the first quadrant of the coordinate plane.",
     "category": "geometry",
     "strand": "SPC",
@@ -1072,6 +1112,7 @@
   {
     "skillId": "ELEM.DTA.1",
     "displayName": "Bar and picture graphs",
+    "studentLabel": "Bar and picture graphs",
     "description": "Draw and interpret scaled picture graphs and bar graphs and solve one- and two-step data questions.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -1100,6 +1141,7 @@
   {
     "skillId": "ELEM.DTA.2",
     "displayName": "Line plots",
+    "studentLabel": "Line plots",
     "description": "Make line plots with fractional measurements and answer questions using operations on the data.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -1125,6 +1167,7 @@
   {
     "skillId": "ELEM.DTA.3",
     "displayName": "Interpret line graphs",
+    "studentLabel": "Interpret line graphs",
     "description": "Read and interpret line graphs that show how a quantity changes over time.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -1150,6 +1193,7 @@
   {
     "skillId": "ELEM.DTA.4",
     "displayName": "Describe likelihood",
+    "studentLabel": "Describe likelihood",
     "description": "Describe events as certain, likely, unlikely, or impossible and compare chances informally.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -1174,6 +1218,7 @@
   {
     "skillId": "MS.QNT.1",
     "displayName": "Decimal operations fluency",
+    "studentLabel": "Decimal operations fluency",
     "description": "Fluently add, subtract, multiply, and divide multi-digit decimals using standard algorithms.",
     "category": "number-system",
     "strand": "QNT",
@@ -1201,6 +1246,7 @@
   {
     "skillId": "MS.QNT.2",
     "displayName": "Fraction division",
+    "studentLabel": "Fraction division",
     "description": "Divide fractions by fractions using models and algorithms and interpret quotients in context.",
     "category": "number-system",
     "strand": "QNT",
@@ -1229,6 +1275,7 @@
   {
     "skillId": "MS.QNT.3",
     "displayName": "GCF and LCM",
+    "studentLabel": "GCF and LCM",
     "description": "Find greatest common factors and least common multiples and use the distributive property to rewrite sums.",
     "category": "number-system",
     "strand": "QNT",
@@ -1255,6 +1302,7 @@
   {
     "skillId": "MS.QNT.4",
     "displayName": "Integer concepts",
+    "studentLabel": "Integer concepts",
     "description": "Understand positive and negative numbers, opposites, and absolute value on the number line.",
     "category": "number-system",
     "strand": "QNT",
@@ -1284,6 +1332,7 @@
   {
     "skillId": "MS.QNT.5",
     "displayName": "Compare rational numbers",
+    "studentLabel": "Compare rational numbers",
     "description": "Order and compare rational numbers and interpret inequality statements in real-world contexts.",
     "category": "number-system",
     "strand": "QNT",
@@ -1310,6 +1359,7 @@
   {
     "skillId": "MS.QNT.6",
     "displayName": "Add subtract integers",
+    "studentLabel": "Add subtract integers",
     "description": "Add and subtract integers and other signed rationals using number lines and additive inverses.",
     "category": "number-system",
     "strand": "QNT",
@@ -1341,6 +1391,7 @@
   {
     "skillId": "MS.QNT.7",
     "displayName": "Multiply divide integers",
+    "studentLabel": "Multiply divide integers",
     "description": "Multiply and divide signed numbers and apply sign rules to evaluate expressions.",
     "category": "number-system",
     "strand": "QNT",
@@ -1368,6 +1419,7 @@
   {
     "skillId": "MS.QNT.8",
     "displayName": "Rational number operations",
+    "studentLabel": "Rational number operations",
     "description": "Solve multi-step problems using the four operations on positive and negative rational numbers.",
     "category": "number-system",
     "strand": "QNT",
@@ -1397,6 +1449,7 @@
   {
     "skillId": "MS.QNT.9",
     "displayName": "Integer exponent properties",
+    "studentLabel": "Integer exponent properties",
     "description": "Apply properties of integer exponents, including negative exponents, to generate equivalent expressions.",
     "category": "number-system",
     "strand": "QNT",
@@ -1426,6 +1479,7 @@
   {
     "skillId": "MS.QNT.10",
     "displayName": "Scientific notation",
+    "studentLabel": "Scientific notation",
     "description": "Express and compute with very large and very small quantities using scientific notation.",
     "category": "number-system",
     "strand": "QNT",
@@ -1450,6 +1504,7 @@
   {
     "skillId": "MS.QNT.11",
     "displayName": "Roots and irrationals",
+    "studentLabel": "Roots and irrationals",
     "description": "Evaluate square and cube roots and classify and approximate irrational numbers on the number line.",
     "category": "number-system",
     "strand": "QNT",
@@ -1477,6 +1532,7 @@
   {
     "skillId": "MS.PRP.1",
     "displayName": "Ratio concepts",
+    "studentLabel": "Ratio concepts",
     "description": "Understand ratios and use ratio language to describe relationships between quantities.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1505,6 +1561,7 @@
   {
     "skillId": "MS.PRP.2",
     "displayName": "Equivalent ratios",
+    "studentLabel": "Equivalent ratios",
     "description": "Generate and use equivalent ratios with tables, tape diagrams, and double number lines.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1532,6 +1589,7 @@
   {
     "skillId": "MS.PRP.3",
     "displayName": "Unit rates",
+    "studentLabel": "Unit rates",
     "description": "Compute and interpret unit rates, including rates with fractional quantities.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1564,6 +1622,7 @@
   {
     "skillId": "MS.PRP.4",
     "displayName": "Percent of a quantity",
+    "studentLabel": "Percent of a quantity",
     "description": "Find a percent of a quantity and find the whole given a part and the percent.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1593,6 +1652,7 @@
   {
     "skillId": "MS.PRP.5",
     "displayName": "Proportional relationships",
+    "studentLabel": "Proportional relationships",
     "description": "Decide whether two quantities are proportional and identify the constant of proportionality.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1623,6 +1683,7 @@
   {
     "skillId": "MS.PRP.6",
     "displayName": "Solve proportions",
+    "studentLabel": "Solve proportions",
     "description": "Write and solve proportion equations for multi-step real-world ratio problems.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1651,6 +1712,7 @@
   {
     "skillId": "MS.PRP.7",
     "displayName": "Multi-step percent problems",
+    "studentLabel": "Multi-step percent problems",
     "description": "Solve percent problems involving tax, tip, discount, markup, simple interest, and percent change.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1678,6 +1740,7 @@
   {
     "skillId": "MS.PRP.8",
     "displayName": "Scale drawings",
+    "studentLabel": "Scale drawings",
     "description": "Solve problems involving scale drawings, computing actual lengths and areas from a scale factor.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -1705,6 +1768,7 @@
   {
     "skillId": "MS.EQV.1",
     "displayName": "Algebraic expressions",
+    "studentLabel": "Algebraic expressions",
     "description": "Write, read, and evaluate algebraic expressions with variables, including whole-number exponents.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1733,6 +1797,7 @@
   {
     "skillId": "MS.EQV.2",
     "displayName": "Equivalent expressions",
+    "studentLabel": "Equivalent expressions",
     "description": "Apply properties of operations to generate equivalent expressions and combine like terms.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1761,6 +1826,7 @@
   {
     "skillId": "MS.EQV.3",
     "displayName": "One-step equations",
+    "studentLabel": "One-step equations",
     "description": "Solve one-step equations in one variable and check solutions by substitution.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1790,6 +1856,7 @@
   {
     "skillId": "MS.EQV.4",
     "displayName": "Inequality basics",
+    "studentLabel": "Inequality basics",
     "description": "Write, interpret, and graph simple inequalities of the form x > c or x < c on the number line.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1816,6 +1883,7 @@
   {
     "skillId": "MS.EQV.5",
     "displayName": "Two-step equations",
+    "studentLabel": "Two-step equations",
     "description": "Solve two-step equations, including equations with rational number coefficients.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1846,6 +1914,7 @@
   {
     "skillId": "MS.EQV.6",
     "displayName": "Expand and factor",
+    "studentLabel": "Expand and factor",
     "description": "Expand and factor linear expressions with rational coefficients using the distributive property.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1872,6 +1941,7 @@
   {
     "skillId": "MS.EQV.7",
     "displayName": "Two-step inequalities",
+    "studentLabel": "Two-step inequalities",
     "description": "Solve and graph two-step inequalities and interpret the solution set in context.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1897,6 +1967,7 @@
   {
     "skillId": "MS.EQV.8",
     "displayName": "Multi-step linear equations",
+    "studentLabel": "Multi-step linear equations",
     "description": "Solve linear equations with variables on both sides, including cases with no or infinitely many solutions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1924,6 +1995,7 @@
   {
     "skillId": "MS.EQV.9",
     "displayName": "Systems of equations",
+    "studentLabel": "Systems of equations",
     "description": "Solve pairs of simultaneous linear equations by graphing and substitution and interpret solutions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -1952,6 +2024,7 @@
   {
     "skillId": "MS.FNC.1",
     "displayName": "Two-variable relationships",
+    "studentLabel": "Two-variable relationships",
     "description": "Analyze relationships between independent and dependent variables using tables, graphs, and equations.",
     "category": "functions",
     "strand": "FNC",
@@ -1979,6 +2052,7 @@
   {
     "skillId": "MS.FNC.2",
     "displayName": "Function concept",
+    "studentLabel": "Function concept",
     "description": "Understand a function as a rule that assigns exactly one output to each input.",
     "category": "functions",
     "strand": "FNC",
@@ -2006,6 +2080,7 @@
   {
     "skillId": "MS.FNC.3",
     "displayName": "Slope",
+    "studentLabel": "Slope",
     "description": "Interpret slope as a unit rate and derive it from graphs, tables, and similar triangles.",
     "category": "functions",
     "strand": "FNC",
@@ -2033,6 +2108,7 @@
   {
     "skillId": "MS.FNC.4",
     "displayName": "Graph linear equations",
+    "studentLabel": "Graph linear equations",
     "description": "Graph and interpret linear equations in the form y = mx + b, identifying slope and intercept.",
     "category": "functions",
     "strand": "FNC",
@@ -2062,6 +2138,7 @@
   {
     "skillId": "MS.FNC.5",
     "displayName": "Compare functions",
+    "studentLabel": "Compare functions",
     "description": "Compare properties of two functions each represented in a different way, such as table versus graph.",
     "category": "functions",
     "strand": "FNC",
@@ -2087,6 +2164,7 @@
   {
     "skillId": "MS.FNC.6",
     "displayName": "Linear versus nonlinear",
+    "studentLabel": "Linear versus nonlinear",
     "description": "Classify functions as linear or nonlinear and sketch or describe qualitative graph behavior.",
     "category": "functions",
     "strand": "FNC",
@@ -2111,6 +2189,7 @@
   {
     "skillId": "MS.SPC.1",
     "displayName": "Area of polygons",
+    "studentLabel": "Area of polygons",
     "description": "Find areas of triangles, special quadrilaterals, and composite figures by composing and decomposing.",
     "category": "geometry",
     "strand": "SPC",
@@ -2138,6 +2217,7 @@
   {
     "skillId": "MS.SPC.2",
     "displayName": "Nets and surface area",
+    "studentLabel": "Nets and surface area",
     "description": "Represent solids with nets and compute surface areas of prisms and pyramids.",
     "category": "geometry",
     "strand": "SPC",
@@ -2162,6 +2242,7 @@
   {
     "skillId": "MS.SPC.3",
     "displayName": "Prism volume",
+    "studentLabel": "Prism volume",
     "description": "Find volumes of right rectangular prisms with fractional edge lengths using V = lwh.",
     "category": "geometry",
     "strand": "SPC",
@@ -2190,6 +2271,7 @@
   {
     "skillId": "MS.SPC.4",
     "displayName": "Four-quadrant coordinate plane",
+    "studentLabel": "Four-quadrant coordinate plane",
     "description": "Graph points in all four quadrants and find distances between points that share a coordinate.",
     "category": "geometry",
     "strand": "SPC",
@@ -2219,6 +2301,7 @@
   {
     "skillId": "MS.SPC.5",
     "displayName": "Angle relationships",
+    "studentLabel": "Angle relationships",
     "description": "Use complementary, supplementary, vertical, and adjacent angles, triangle angle sums, and parallel-line transversal angles to find unknown measures.",
     "category": "geometry",
     "strand": "SPC",
@@ -2248,6 +2331,7 @@
   {
     "skillId": "MS.SPC.6",
     "displayName": "Circles",
+    "studentLabel": "Circles",
     "description": "Know and apply the formulas for circumference and area of a circle.",
     "category": "geometry",
     "strand": "SPC",
@@ -2278,6 +2362,7 @@
   {
     "skillId": "MS.SPC.7",
     "displayName": "Transformations and similarity",
+    "studentLabel": "Transformations and similarity",
     "description": "Describe translations, rotations, reflections, and dilations, including coordinate effects, and use them to establish congruence and similarity.",
     "category": "geometry",
     "strand": "SPC",
@@ -2307,6 +2392,7 @@
   {
     "skillId": "MS.SPC.8",
     "displayName": "Pythagorean theorem",
+    "studentLabel": "Pythagorean theorem",
     "description": "Apply the Pythagorean theorem to find side lengths and distances in the coordinate plane.",
     "category": "geometry",
     "strand": "SPC",
@@ -2335,6 +2421,7 @@
   {
     "skillId": "MS.SPC.9",
     "displayName": "Cylinders cones spheres",
+    "studentLabel": "Cylinders cones spheres",
     "description": "Use volume formulas for cylinders, cones, and spheres to solve real-world problems.",
     "category": "geometry",
     "strand": "SPC",
@@ -2360,6 +2447,7 @@
   {
     "skillId": "MS.DTA.1",
     "displayName": "Statistical questions",
+    "studentLabel": "Statistical questions",
     "description": "Recognize statistical questions and describe distributions by center, spread, and overall shape.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -2386,6 +2474,7 @@
   {
     "skillId": "MS.DTA.2",
     "displayName": "Data displays",
+    "studentLabel": "Data displays",
     "description": "Display numerical data in dot plots, histograms, and box plots and choose an appropriate display.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -2414,6 +2503,7 @@
   {
     "skillId": "MS.DTA.3",
     "displayName": "Center and variability",
+    "studentLabel": "Center and variability",
     "description": "Compute and interpret mean, median, range, interquartile range, and mean absolute deviation.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -2440,6 +2530,7 @@
   {
     "skillId": "MS.DTA.4",
     "displayName": "Sampling and inference",
+    "studentLabel": "Sampling and inference",
     "description": "Use data from random samples to draw and compare informal inferences about populations.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -2466,6 +2557,7 @@
   {
     "skillId": "MS.DTA.5",
     "displayName": "Probability of events",
+    "studentLabel": "Probability of events",
     "description": "Find and interpret probabilities of simple events and compare predictions with experimental results.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -2494,6 +2586,7 @@
   {
     "skillId": "MS.DTA.6",
     "displayName": "Compound probability",
+    "studentLabel": "Compound probability",
     "description": "Find probabilities of compound events using organized lists, tables, tree diagrams, and simulation.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -2518,6 +2611,7 @@
   {
     "skillId": "MS.DTA.7",
     "displayName": "Bivariate data",
+    "studentLabel": "Bivariate data",
     "description": "Construct and interpret scatter plots and two-way tables and informally fit lines to linear data.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -2545,6 +2639,7 @@
   {
     "skillId": "ALG1.QNT.1",
     "displayName": "Rational vs irrational",
+    "studentLabel": "Rational vs irrational",
     "description": "Classify real numbers as rational or irrational and reason about sums and products of the two types.",
     "category": "number-system",
     "strand": "QNT",
@@ -2573,6 +2668,7 @@
   {
     "skillId": "ALG1.QNT.2",
     "displayName": "Exponent properties",
+    "studentLabel": "Exponent properties",
     "description": "Apply product, quotient, power, zero, and negative exponent rules to simplify expressions with integer exponents.",
     "category": "number-system",
     "strand": "QNT",
@@ -2601,6 +2697,7 @@
   {
     "skillId": "ALG1.QNT.3",
     "displayName": "Simplify square roots",
+    "studentLabel": "Simplify square roots",
     "description": "Rewrite square roots in simplest radical form by extracting perfect-square factors.",
     "category": "number-system",
     "strand": "QNT",
@@ -2633,6 +2730,7 @@
   {
     "skillId": "ALG1.QNT.4",
     "displayName": "Operations with radicals",
+    "studentLabel": "Operations with radicals",
     "description": "Add, subtract, and multiply square-root expressions, combining like radicals and simplifying products.",
     "category": "number-system",
     "strand": "QNT",
@@ -2659,6 +2757,7 @@
   {
     "skillId": "ALG1.PRP.1",
     "displayName": "Dimensional analysis",
+    "studentLabel": "Dimensional analysis",
     "description": "Convert rates and units using conversion factors and choose appropriate units when modeling.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -2688,6 +2787,7 @@
   {
     "skillId": "ALG1.PRP.2",
     "displayName": "Slope as rate",
+    "studentLabel": "Slope as rate",
     "description": "Compute slope from graphs, tables, and points and interpret it as a unit rate in context.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -2721,6 +2821,7 @@
   {
     "skillId": "ALG1.PRP.3",
     "displayName": "Direct variation",
+    "studentLabel": "Direct variation",
     "description": "Identify, write, and solve direct variation models y = kx from tables, graphs, and word problems.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -2747,6 +2848,7 @@
   {
     "skillId": "ALG1.PRP.4",
     "displayName": "Percent change models",
+    "studentLabel": "Percent change models",
     "description": "Compute repeated percent increase or decrease and express it with growth or decay factors.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -2776,6 +2878,7 @@
   {
     "skillId": "ALG1.EQV.1",
     "displayName": "Multi-step linear equations",
+    "studentLabel": "Multi-step linear equations",
     "description": "Solve linear equations with distribution, fractions, and variables on both sides, identifying no-solution and identity cases.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2808,6 +2911,7 @@
   {
     "skillId": "ALG1.EQV.2",
     "displayName": "Literal equations",
+    "studentLabel": "Literal equations",
     "description": "Solve a formula or literal equation for a specified variable.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2835,6 +2939,7 @@
   {
     "skillId": "ALG1.EQV.3",
     "displayName": "One-variable inequalities",
+    "studentLabel": "One-variable inequalities",
     "description": "Solve and graph multi-step linear inequalities, reversing the symbol when multiplying or dividing by a negative.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2864,6 +2969,7 @@
   {
     "skillId": "ALG1.EQV.4",
     "displayName": "Compound inequalities",
+    "studentLabel": "Compound inequalities",
     "description": "Solve and graph conjunction (and) and disjunction (or) compound inequalities in one variable.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2888,6 +2994,7 @@
   {
     "skillId": "ALG1.EQV.5",
     "displayName": "Absolute value equations",
+    "studentLabel": "Absolute value equations",
     "description": "Solve absolute value equations by splitting into two cases and checking for extraneous results.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2916,6 +3023,7 @@
   {
     "skillId": "ALG1.EQV.6",
     "displayName": "Systems by graphing",
+    "studentLabel": "Systems by graphing",
     "description": "Solve systems of two linear equations by graphing and classify them as one solution, none, or infinitely many.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2944,6 +3052,7 @@
   {
     "skillId": "ALG1.EQV.7",
     "displayName": "Systems by substitution",
+    "studentLabel": "Systems by substitution",
     "description": "Solve linear systems by substitution, including setting up systems from word problems.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2970,6 +3079,7 @@
   {
     "skillId": "ALG1.EQV.8",
     "displayName": "Systems by elimination",
+    "studentLabel": "Systems by elimination",
     "description": "Solve linear systems by elimination, multiplying one or both equations when needed.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -2996,6 +3106,7 @@
   {
     "skillId": "ALG1.EQV.9",
     "displayName": "Add subtract polynomials",
+    "studentLabel": "Add subtract polynomials",
     "description": "Add and subtract polynomials by combining like terms and writing results in standard form.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3022,6 +3133,7 @@
   {
     "skillId": "ALG1.EQV.10",
     "displayName": "Multiply polynomials",
+    "studentLabel": "Multiply polynomials",
     "description": "Multiply monomials, binomials, and trinomials, including squaring binomials.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3050,6 +3162,7 @@
   {
     "skillId": "ALG1.EQV.11",
     "displayName": "Factor GCF grouping",
+    "studentLabel": "Factor GCF grouping",
     "description": "Factor out the greatest common monomial factor and factor four-term polynomials by grouping.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3076,6 +3189,7 @@
   {
     "skillId": "ALG1.EQV.12",
     "displayName": "Factor simple trinomials",
+    "studentLabel": "Factor simple trinomials",
     "description": "Factor trinomials of the form x^2 + bx + c, including those with negative coefficients.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3103,6 +3217,7 @@
   {
     "skillId": "ALG1.EQV.13",
     "displayName": "Factor a>1 trinomials",
+    "studentLabel": "Factor a>1 trinomials",
     "description": "Factor trinomials ax^2 + bx + c with a > 1 using the ac method or guess-and-check.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3129,6 +3244,7 @@
   {
     "skillId": "ALG1.EQV.14",
     "displayName": "Factor special products",
+    "studentLabel": "Factor special products",
     "description": "Recognize and factor differences of squares and perfect-square trinomials.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3155,6 +3271,7 @@
   {
     "skillId": "ALG1.EQV.15",
     "displayName": "Solve by factoring",
+    "studentLabel": "Solve by factoring",
     "description": "Solve quadratic equations using factoring and the zero product property.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3184,6 +3301,7 @@
   {
     "skillId": "ALG1.EQV.16",
     "displayName": "Complete the square",
+    "studentLabel": "Complete the square",
     "description": "Solve quadratics by taking square roots and by completing the square, giving exact radical answers.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3214,6 +3332,7 @@
   {
     "skillId": "ALG1.EQV.17",
     "displayName": "Quadratic formula",
+    "studentLabel": "Quadratic formula",
     "description": "Solve quadratics with the quadratic formula and use the discriminant to count real solutions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3240,6 +3359,7 @@
   {
     "skillId": "ALG1.FNC.1",
     "displayName": "Function notation",
+    "studentLabel": "Function notation",
     "description": "Decide whether a relation is a function and evaluate and interpret f(x) notation in context.",
     "category": "functions",
     "strand": "FNC",
@@ -3270,6 +3390,7 @@
   {
     "skillId": "ALG1.FNC.2",
     "displayName": "Domain and range",
+    "studentLabel": "Domain and range",
     "description": "Determine the domain and range of a function from graphs, tables, and contexts.",
     "category": "functions",
     "strand": "FNC",
@@ -3294,6 +3415,7 @@
   {
     "skillId": "ALG1.FNC.3",
     "displayName": "Graph linear functions",
+    "studentLabel": "Graph linear functions",
     "description": "Graph linear functions from slope-intercept and standard form, identifying slope and intercepts.",
     "category": "functions",
     "strand": "FNC",
@@ -3328,6 +3450,7 @@
   {
     "skillId": "ALG1.FNC.4",
     "displayName": "Write linear equations",
+    "studentLabel": "Write linear equations",
     "description": "Write equations of lines from a slope and point, two points, or parallel and perpendicular conditions.",
     "category": "functions",
     "strand": "FNC",
@@ -3354,6 +3477,7 @@
   {
     "skillId": "ALG1.FNC.5",
     "displayName": "Graph linear inequalities",
+    "studentLabel": "Graph linear inequalities",
     "description": "Graph two-variable linear inequalities and systems of inequalities, identifying the solution region.",
     "category": "functions",
     "strand": "FNC",
@@ -3379,6 +3503,7 @@
   {
     "skillId": "ALG1.FNC.6",
     "displayName": "Arithmetic sequences",
+    "studentLabel": "Arithmetic sequences",
     "description": "Write recursive and explicit rules for arithmetic sequences and connect them to linear functions.",
     "category": "functions",
     "strand": "FNC",
@@ -3408,6 +3533,7 @@
   {
     "skillId": "ALG1.FNC.7",
     "displayName": "Geometric sequences",
+    "studentLabel": "Geometric sequences",
     "description": "Write recursive and explicit rules for geometric sequences and connect them to exponential functions.",
     "category": "functions",
     "strand": "FNC",
@@ -3434,6 +3560,7 @@
   {
     "skillId": "ALG1.FNC.8",
     "displayName": "Exponential growth decay",
+    "studentLabel": "Exponential growth decay",
     "description": "Write and evaluate exponential growth and decay functions y = a(b)^x from contexts.",
     "category": "functions",
     "strand": "FNC",
@@ -3464,6 +3591,7 @@
   {
     "skillId": "ALG1.FNC.9",
     "displayName": "Graph exponential functions",
+    "studentLabel": "Graph exponential functions",
     "description": "Graph exponential functions, identifying intercepts, asymptotes, and end behavior.",
     "category": "functions",
     "strand": "FNC",
@@ -3491,6 +3619,7 @@
   {
     "skillId": "ALG1.FNC.10",
     "displayName": "Graph quadratic functions",
+    "studentLabel": "Graph quadratic functions",
     "description": "Graph quadratics, identifying vertex, axis of symmetry, intercepts, and maximum or minimum.",
     "category": "functions",
     "strand": "FNC",
@@ -3519,6 +3648,7 @@
   {
     "skillId": "ALG1.FNC.11",
     "displayName": "Function transformations",
+    "studentLabel": "Function transformations",
     "description": "Describe and graph vertical and horizontal shifts, reflections, and stretches of parent functions.",
     "category": "functions",
     "strand": "FNC",
@@ -3544,6 +3674,7 @@
   {
     "skillId": "ALG1.FNC.12",
     "displayName": "Average rate change",
+    "studentLabel": "Average rate change",
     "description": "Compute average rate of change over an interval and compare linear, exponential, and quadratic growth.",
     "category": "functions",
     "strand": "FNC",
@@ -3570,6 +3701,7 @@
   {
     "skillId": "ALG1.SPC.1",
     "displayName": "Distance and midpoint",
+    "studentLabel": "Distance and midpoint",
     "description": "Use the distance and midpoint formulas to compute lengths and midpoints in the coordinate plane.",
     "category": "geometry",
     "strand": "SPC",
@@ -3597,6 +3729,7 @@
   {
     "skillId": "ALG1.SPC.2",
     "displayName": "Polynomial geometry models",
+    "studentLabel": "Polynomial geometry models",
     "description": "Represent perimeter, area, and volume of figures with polynomial expressions and evaluate them.",
     "category": "geometry",
     "strand": "SPC",
@@ -3625,6 +3758,7 @@
   {
     "skillId": "ALG1.DTA.1",
     "displayName": "Describe data distributions",
+    "studentLabel": "Describe data distributions",
     "description": "Compare distributions using shape, center, spread, standard deviation, and the effect of outliers.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -3652,6 +3786,7 @@
   {
     "skillId": "ALG1.DTA.2",
     "displayName": "Two-way frequency tables",
+    "studentLabel": "Two-way frequency tables",
     "description": "Build two-way tables and interpret joint, marginal, and conditional relative frequencies.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -3678,6 +3813,7 @@
   {
     "skillId": "ALG1.DTA.3",
     "displayName": "Scatter plots fit",
+    "studentLabel": "Scatter plots fit",
     "description": "Make scatter plots, fit a linear model, and interpret its slope and intercept in context.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -3705,6 +3841,7 @@
   {
     "skillId": "ALG1.DTA.4",
     "displayName": "Residuals and correlation",
+    "studentLabel": "Residuals and correlation",
     "description": "Use residuals and the correlation coefficient to judge fit, and distinguish correlation from causation.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -3729,6 +3866,7 @@
   {
     "skillId": "GEO.QNT.1",
     "displayName": "Radical measures",
+    "studentLabel": "Radical measures",
     "description": "Compute exact lengths and areas involving square roots and simplify radical answers.",
     "category": "number-system",
     "strand": "QNT",
@@ -3755,6 +3893,7 @@
   {
     "skillId": "GEO.QNT.2",
     "displayName": "Measurement conversions",
+    "studentLabel": "Measurement conversions",
     "description": "Convert linear, square, and cubic units and report answers with appropriate precision.",
     "category": "number-system",
     "strand": "QNT",
@@ -3781,6 +3920,7 @@
   {
     "skillId": "GEO.PRP.1",
     "displayName": "Dilations",
+    "studentLabel": "Dilations",
     "description": "Perform dilations from a center, find scale factors, and describe their effect on segments and angles.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -3809,6 +3949,7 @@
   {
     "skillId": "GEO.PRP.2",
     "displayName": "Similar polygons",
+    "studentLabel": "Similar polygons",
     "description": "Use similarity statements and proportional side lengths to find missing measures in similar figures.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -3838,6 +3979,7 @@
   {
     "skillId": "GEO.PRP.3",
     "displayName": "Triangle similarity criteria",
+    "studentLabel": "Triangle similarity criteria",
     "description": "Establish triangle similarity with AA, SAS, and SSS criteria and use it to solve for unknown lengths.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -3866,6 +4008,7 @@
   {
     "skillId": "GEO.PRP.4",
     "displayName": "Proportional segment theorems",
+    "studentLabel": "Proportional segment theorems",
     "description": "Apply the side-splitter, midsegment, and angle-bisector proportionality theorems.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -3890,6 +4033,7 @@
   {
     "skillId": "GEO.PRP.5",
     "displayName": "Right triangle trig",
+    "studentLabel": "Right triangle trig",
     "description": "Use sine, cosine, and tangent ratios to find missing side lengths in right triangles.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -3921,6 +4065,7 @@
   {
     "skillId": "GEO.PRP.6",
     "displayName": "Inverse trig angles",
+    "studentLabel": "Inverse trig angles",
     "description": "Use inverse trig ratios to find angles, including angle-of-elevation and depression problems.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -3945,6 +4090,7 @@
   {
     "skillId": "GEO.PRP.7",
     "displayName": "Scaling area volume",
+    "studentLabel": "Scaling area volume",
     "description": "Predict how a scale factor k changes perimeter, area, and volume of similar figures and solids.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -3975,6 +4121,7 @@
   {
     "skillId": "GEO.EQV.1",
     "displayName": "Conditional statements",
+    "studentLabel": "Conditional statements",
     "description": "Write and evaluate conditionals, converses, inverses, contrapositives, and biconditionals.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -3999,6 +4146,7 @@
   {
     "skillId": "GEO.EQV.2",
     "displayName": "Inductive deductive reasoning",
+    "studentLabel": "Inductive deductive reasoning",
     "description": "Form conjectures from patterns, find counterexamples, and apply the laws of detachment and syllogism.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4026,6 +4174,7 @@
   {
     "skillId": "GEO.EQV.3",
     "displayName": "Algebraic proofs",
+    "studentLabel": "Algebraic proofs",
     "description": "Justify each step of solving an equation using properties of equality in two-column form.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4054,6 +4203,7 @@
   {
     "skillId": "GEO.EQV.4",
     "displayName": "Segment angle proofs",
+    "studentLabel": "Segment angle proofs",
     "description": "Prove basic theorems about segments and angles, such as vertical angles and congruent supplements.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4081,6 +4231,7 @@
   {
     "skillId": "GEO.EQV.5",
     "displayName": "Parallel line proofs",
+    "studentLabel": "Parallel line proofs",
     "description": "Prove and apply theorems about angles formed by parallel lines and transversals, including converses.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4108,6 +4259,7 @@
   {
     "skillId": "GEO.EQV.6",
     "displayName": "Triangle congruence criteria",
+    "studentLabel": "Triangle congruence criteria",
     "description": "Decide whether triangles are congruent using SSS, SAS, ASA, AAS, and HL, connecting each to rigid motions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4136,6 +4288,7 @@
   {
     "skillId": "GEO.EQV.7",
     "displayName": "Congruence proofs CPCTC",
+    "studentLabel": "Congruence proofs CPCTC",
     "description": "Write triangle congruence proofs and use CPCTC to prove segments and angles congruent.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4162,6 +4315,7 @@
   {
     "skillId": "GEO.EQV.8",
     "displayName": "Quadrilateral proofs",
+    "studentLabel": "Quadrilateral proofs",
     "description": "Prove properties of parallelograms and the tests that classify special quadrilaterals.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4189,6 +4343,7 @@
   {
     "skillId": "GEO.EQV.9",
     "displayName": "Coordinate proofs",
+    "studentLabel": "Coordinate proofs",
     "description": "Use slope, distance, and midpoint to prove properties of figures placed on the coordinate plane.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -4219,6 +4374,7 @@
   {
     "skillId": "GEO.FNC.1",
     "displayName": "Transformation coordinate rules",
+    "studentLabel": "Transformation coordinate rules",
     "description": "Represent translations, reflections, rotations, and dilations as coordinate functions (x, y) -> (x', y').",
     "category": "functions",
     "strand": "FNC",
@@ -4248,6 +4404,7 @@
   {
     "skillId": "GEO.FNC.2",
     "displayName": "Geometric modeling functions",
+    "studentLabel": "Geometric modeling functions",
     "description": "Express area, volume, or cost as a function of a single dimension and use it to optimize a design.",
     "category": "functions",
     "strand": "FNC",
@@ -4275,6 +4432,7 @@
   {
     "skillId": "GEO.SPC.1",
     "displayName": "Segments and angles",
+    "studentLabel": "Segments and angles",
     "description": "Compute lengths and angle measures using segment addition, angle addition, and bisectors.",
     "category": "geometry",
     "strand": "SPC",
@@ -4302,6 +4460,7 @@
   {
     "skillId": "GEO.SPC.2",
     "displayName": "Angle pair relationships",
+    "studentLabel": "Angle pair relationships",
     "description": "Solve problems using complementary, supplementary, vertical, and linear-pair angle relationships.",
     "category": "geometry",
     "strand": "SPC",
@@ -4330,6 +4489,7 @@
   {
     "skillId": "GEO.SPC.3",
     "displayName": "Parallel lines angles",
+    "studentLabel": "Parallel lines angles",
     "description": "Find angle measures formed by parallel lines and transversals using alternate, corresponding, and co-interior angles.",
     "category": "geometry",
     "strand": "SPC",
@@ -4359,6 +4519,7 @@
   {
     "skillId": "GEO.SPC.4",
     "displayName": "Triangle angle theorems",
+    "studentLabel": "Triangle angle theorems",
     "description": "Apply the triangle angle-sum and exterior-angle theorems, including with isosceles and equilateral triangles.",
     "category": "geometry",
     "strand": "SPC",
@@ -4387,6 +4548,7 @@
   {
     "skillId": "GEO.SPC.5",
     "displayName": "Triangle inequalities",
+    "studentLabel": "Triangle inequalities",
     "description": "Use the triangle inequality and side-angle relationships to test side lengths and order sides and angles.",
     "category": "geometry",
     "strand": "SPC",
@@ -4413,6 +4575,7 @@
   {
     "skillId": "GEO.SPC.6",
     "displayName": "Bisectors and centers",
+    "studentLabel": "Bisectors and centers",
     "description": "Apply perpendicular bisector and angle bisector theorems and locate the centroid, circumcenter, and incenter.",
     "category": "geometry",
     "strand": "SPC",
@@ -4437,6 +4600,7 @@
   {
     "skillId": "GEO.SPC.7",
     "displayName": "Rigid transformations",
+    "studentLabel": "Rigid transformations",
     "description": "Perform and identify translations, reflections, and rotations that carry a figure onto another.",
     "category": "geometry",
     "strand": "SPC",
@@ -4466,6 +4630,7 @@
   {
     "skillId": "GEO.SPC.8",
     "displayName": "Symmetry and composition",
+    "studentLabel": "Symmetry and composition",
     "description": "Compose transformations and identify line and rotational symmetry of figures.",
     "category": "geometry",
     "strand": "SPC",
@@ -4490,6 +4655,7 @@
   {
     "skillId": "GEO.SPC.9",
     "displayName": "Polygon angle sums",
+    "studentLabel": "Polygon angle sums",
     "description": "Compute interior and exterior angle measures and sums for polygons.",
     "category": "geometry",
     "strand": "SPC",
@@ -4517,6 +4683,7 @@
   {
     "skillId": "GEO.SPC.10",
     "displayName": "Parallelogram properties",
+    "studentLabel": "Parallelogram properties",
     "description": "Use properties of parallelograms, rectangles, rhombi, squares, trapezoids, and kites to find measures.",
     "category": "geometry",
     "strand": "SPC",
@@ -4544,6 +4711,7 @@
   {
     "skillId": "GEO.SPC.11",
     "displayName": "Pythagorean applications",
+    "studentLabel": "Pythagorean applications",
     "description": "Apply the Pythagorean theorem and its converse to solve problems and classify triangles.",
     "category": "geometry",
     "strand": "SPC",
@@ -4575,6 +4743,7 @@
   {
     "skillId": "GEO.SPC.12",
     "displayName": "Special right triangles",
+    "studentLabel": "Special right triangles",
     "description": "Use 45-45-90 and 30-60-90 relationships to find exact side lengths.",
     "category": "geometry",
     "strand": "SPC",
@@ -4606,6 +4775,7 @@
   {
     "skillId": "GEO.SPC.13",
     "displayName": "Arcs and chords",
+    "studentLabel": "Arcs and chords",
     "description": "Find measures of central angles, inscribed angles, arcs, and chords in circles.",
     "category": "geometry",
     "strand": "SPC",
@@ -4636,6 +4806,7 @@
   {
     "skillId": "GEO.SPC.14",
     "displayName": "Tangents secants segments",
+    "studentLabel": "Tangents secants segments",
     "description": "Apply angle and segment relationships formed by tangents, secants, and chords.",
     "category": "geometry",
     "strand": "SPC",
@@ -4660,6 +4831,7 @@
   {
     "skillId": "GEO.SPC.15",
     "displayName": "Arc length sectors",
+    "studentLabel": "Arc length sectors",
     "description": "Compute arc length and sector area and describe radian measure as a ratio of arc to radius.",
     "category": "geometry",
     "strand": "SPC",
@@ -4689,6 +4861,7 @@
   {
     "skillId": "GEO.SPC.16",
     "displayName": "Circle equations",
+    "studentLabel": "Circle equations",
     "description": "Write and graph circle equations (x-h)^2 + (y-k)^2 = r^2, completing the square when needed.",
     "category": "geometry",
     "strand": "SPC",
@@ -4718,6 +4891,7 @@
   {
     "skillId": "GEO.SPC.17",
     "displayName": "Areas of polygons",
+    "studentLabel": "Areas of polygons",
     "description": "Find areas of triangles, quadrilaterals, regular polygons, and composite figures.",
     "category": "geometry",
     "strand": "SPC",
@@ -4748,6 +4922,7 @@
   {
     "skillId": "GEO.SPC.18",
     "displayName": "Prisms and cylinders",
+    "studentLabel": "Prisms and cylinders",
     "description": "Compute surface area and volume of prisms and cylinders, including composite solids.",
     "category": "geometry",
     "strand": "SPC",
@@ -4777,6 +4952,7 @@
   {
     "skillId": "GEO.SPC.19",
     "displayName": "Pyramids cones spheres",
+    "studentLabel": "Pyramids cones spheres",
     "description": "Compute surface area and volume of pyramids, cones, and spheres.",
     "category": "geometry",
     "strand": "SPC",
@@ -4804,6 +4980,7 @@
   {
     "skillId": "GEO.SPC.20",
     "displayName": "Cross sections revolutions",
+    "studentLabel": "Cross sections revolutions",
     "description": "Identify cross-sections of solids, solids of revolution, and apply Cavalieri's principle.",
     "category": "geometry",
     "strand": "SPC",
@@ -4828,6 +5005,7 @@
   {
     "skillId": "GEO.DTA.1",
     "displayName": "Probability foundations",
+    "studentLabel": "Probability foundations",
     "description": "Describe sample spaces and compute theoretical and experimental probabilities and complements.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -4855,6 +5033,7 @@
   {
     "skillId": "GEO.DTA.2",
     "displayName": "Compound events",
+    "studentLabel": "Compound events",
     "description": "Compute probabilities of unions, intersections, and independent or dependent events using addition and multiplication rules.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -4883,6 +5062,7 @@
   {
     "skillId": "GEO.DTA.3",
     "displayName": "Conditional probability",
+    "studentLabel": "Conditional probability",
     "description": "Compute conditional probabilities from two-way tables and test events for independence.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -4909,6 +5089,7 @@
   {
     "skillId": "GEO.DTA.4",
     "displayName": "Geometric probability",
+    "studentLabel": "Geometric probability",
     "description": "Compute probabilities as ratios of lengths, areas, or angle measures.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -4934,6 +5115,7 @@
   {
     "skillId": "ALG2.QNT.1",
     "displayName": "Nth roots radicals",
+    "studentLabel": "Nth roots radicals",
     "description": "Evaluate and simplify nth roots and higher-index radical expressions.",
     "category": "number-system",
     "strand": "QNT",
@@ -4965,6 +5147,7 @@
   {
     "skillId": "ALG2.QNT.2",
     "displayName": "Rational exponents",
+    "studentLabel": "Rational exponents",
     "description": "Convert between radical and rational-exponent forms and simplify using exponent properties.",
     "category": "number-system",
     "strand": "QNT",
@@ -4994,6 +5177,7 @@
   {
     "skillId": "ALG2.QNT.3",
     "displayName": "Radical operations",
+    "studentLabel": "Radical operations",
     "description": "Add, multiply, and divide radical expressions, rationalizing denominators including conjugates.",
     "category": "number-system",
     "strand": "QNT",
@@ -5023,6 +5207,7 @@
   {
     "skillId": "ALG2.QNT.4",
     "displayName": "Imaginary unit i",
+    "studentLabel": "Imaginary unit i",
     "description": "Simplify square roots of negative numbers and evaluate powers of i.",
     "category": "number-system",
     "strand": "QNT",
@@ -5051,6 +5236,7 @@
   {
     "skillId": "ALG2.QNT.5",
     "displayName": "Complex arithmetic",
+    "studentLabel": "Complex arithmetic",
     "description": "Add, subtract, multiply, and divide complex numbers using conjugates.",
     "category": "number-system",
     "strand": "QNT",
@@ -5079,6 +5265,7 @@
   {
     "skillId": "ALG2.PRP.1",
     "displayName": "Inverse joint variation",
+    "studentLabel": "Inverse joint variation",
     "description": "Write and solve inverse, joint, and combined variation models from data and contexts.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -5105,6 +5292,7 @@
   {
     "skillId": "ALG2.PRP.2",
     "displayName": "Compound interest models",
+    "studentLabel": "Compound interest models",
     "description": "Compute compound interest with n compoundings and continuously, comparing effective growth rates.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -5131,6 +5319,7 @@
   {
     "skillId": "ALG2.PRP.3",
     "displayName": "Rational rate problems",
+    "studentLabel": "Rational rate problems",
     "description": "Set up and solve work, mixture, and motion problems that lead to rational equations.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -5158,6 +5347,7 @@
   {
     "skillId": "ALG2.EQV.1",
     "displayName": "Absolute value inequalities",
+    "studentLabel": "Absolute value inequalities",
     "description": "Solve absolute value inequalities and express solutions in interval notation.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5184,6 +5374,7 @@
   {
     "skillId": "ALG2.EQV.2",
     "displayName": "Three-variable systems",
+    "studentLabel": "Three-variable systems",
     "description": "Solve systems of three linear equations in three variables by elimination and substitution.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5208,6 +5399,7 @@
   {
     "skillId": "ALG2.EQV.3",
     "displayName": "Complete the square",
+    "studentLabel": "Complete the square",
     "description": "Complete the square to solve quadratics and to convert between standard and vertex form.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5236,6 +5428,7 @@
   {
     "skillId": "ALG2.EQV.4",
     "displayName": "Complex quadratic solutions",
+    "studentLabel": "Complex quadratic solutions",
     "description": "Solve quadratics with the quadratic formula, including complex solutions, and interpret the discriminant.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5268,6 +5461,7 @@
   {
     "skillId": "ALG2.EQV.5",
     "displayName": "Quadratic inequalities",
+    "studentLabel": "Quadratic inequalities",
     "description": "Solve quadratic inequalities in one variable using critical values and sign analysis.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5294,6 +5488,7 @@
   {
     "skillId": "ALG2.EQV.6",
     "displayName": "Nonlinear systems",
+    "studentLabel": "Nonlinear systems",
     "description": "Solve linear-quadratic and quadratic-quadratic systems algebraically and graphically.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5322,6 +5517,7 @@
   {
     "skillId": "ALG2.EQV.7",
     "displayName": "Polynomial operations",
+    "studentLabel": "Polynomial operations",
     "description": "Add, subtract, and multiply higher-degree polynomials, including binomial expansion with Pascal's triangle.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5351,6 +5547,7 @@
   {
     "skillId": "ALG2.EQV.8",
     "displayName": "Polynomial division",
+    "studentLabel": "Polynomial division",
     "description": "Divide polynomials using long division and synthetic division.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5377,6 +5574,7 @@
   {
     "skillId": "ALG2.EQV.9",
     "displayName": "Remainder factor theorems",
+    "studentLabel": "Remainder factor theorems",
     "description": "Apply the remainder and factor theorems to evaluate polynomials and verify factors.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5403,6 +5601,7 @@
   {
     "skillId": "ALG2.EQV.10",
     "displayName": "Factor higher-degree polynomials",
+    "studentLabel": "Factor higher-degree polynomials",
     "description": "Factor cubics and quartics using grouping, sum and difference of cubes, and quadratic form.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5432,6 +5631,7 @@
   {
     "skillId": "ALG2.EQV.11",
     "displayName": "Solve polynomial equations",
+    "studentLabel": "Solve polynomial equations",
     "description": "Solve polynomial equations by factoring and the rational root theorem, counting roots with multiplicity.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5460,6 +5660,7 @@
   {
     "skillId": "ALG2.EQV.12",
     "displayName": "Radical equations",
+    "studentLabel": "Radical equations",
     "description": "Solve radical and rational-exponent equations, identifying extraneous solutions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5485,6 +5686,7 @@
   {
     "skillId": "ALG2.EQV.13",
     "displayName": "Simplify rational expressions",
+    "studentLabel": "Simplify rational expressions",
     "description": "Simplify, multiply, and divide rational expressions, stating excluded values.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5514,6 +5716,7 @@
   {
     "skillId": "ALG2.EQV.14",
     "displayName": "Add rational expressions",
+    "studentLabel": "Add rational expressions",
     "description": "Add and subtract rational expressions with unlike denominators and simplify complex fractions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5540,6 +5743,7 @@
   {
     "skillId": "ALG2.EQV.15",
     "displayName": "Rational equations",
+    "studentLabel": "Rational equations",
     "description": "Solve rational equations by clearing denominators and rejecting extraneous solutions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5566,6 +5770,7 @@
   {
     "skillId": "ALG2.EQV.16",
     "displayName": "Exponential equations",
+    "studentLabel": "Exponential equations",
     "description": "Solve exponential equations by matching common bases and by taking logarithms.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5596,6 +5801,7 @@
   {
     "skillId": "ALG2.EQV.17",
     "displayName": "Logarithm properties",
+    "studentLabel": "Logarithm properties",
     "description": "Expand and condense logarithmic expressions using product, quotient, power, and change-of-base rules.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5622,6 +5828,7 @@
   {
     "skillId": "ALG2.EQV.18",
     "displayName": "Logarithmic equations",
+    "studentLabel": "Logarithmic equations",
     "description": "Solve logarithmic equations using properties of logs and check for extraneous solutions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -5647,6 +5854,7 @@
   {
     "skillId": "ALG2.FNC.1",
     "displayName": "Function operations",
+    "studentLabel": "Function operations",
     "description": "Add, subtract, multiply, and divide functions and evaluate the results, attending to domain.",
     "category": "functions",
     "strand": "FNC",
@@ -5677,6 +5885,7 @@
   {
     "skillId": "ALG2.FNC.2",
     "displayName": "Function composition",
+    "studentLabel": "Function composition",
     "description": "Compose functions, evaluate compositions, and decompose a function into simpler parts.",
     "category": "functions",
     "strand": "FNC",
@@ -5703,6 +5912,7 @@
   {
     "skillId": "ALG2.FNC.3",
     "displayName": "Inverse functions",
+    "studentLabel": "Inverse functions",
     "description": "Find and verify inverse functions algebraically and graphically, restricting domains when needed.",
     "category": "functions",
     "strand": "FNC",
@@ -5729,6 +5939,7 @@
   {
     "skillId": "ALG2.FNC.4",
     "displayName": "Function transformations",
+    "studentLabel": "Function transformations",
     "description": "Graph a f(b(x - h)) + k transformations across parent function families.",
     "category": "functions",
     "strand": "FNC",
@@ -5762,6 +5973,7 @@
   {
     "skillId": "ALG2.FNC.5",
     "displayName": "Piecewise functions",
+    "studentLabel": "Piecewise functions",
     "description": "Evaluate and graph piecewise-defined, step, and absolute value functions.",
     "category": "functions",
     "strand": "FNC",
@@ -5790,6 +6002,7 @@
   {
     "skillId": "ALG2.FNC.6",
     "displayName": "Polynomial end behavior",
+    "studentLabel": "Polynomial end behavior",
     "description": "Predict end behavior of polynomial graphs from degree and leading coefficient.",
     "category": "functions",
     "strand": "FNC",
@@ -5816,6 +6029,7 @@
   {
     "skillId": "ALG2.FNC.7",
     "displayName": "Zeros and multiplicity",
+    "studentLabel": "Zeros and multiplicity",
     "description": "Sketch polynomial graphs using zeros, multiplicity, and turning points.",
     "category": "functions",
     "strand": "FNC",
@@ -5841,6 +6055,7 @@
   {
     "skillId": "ALG2.FNC.8",
     "displayName": "Graph radical functions",
+    "studentLabel": "Graph radical functions",
     "description": "Graph square-root and cube-root functions and determine their domains and ranges.",
     "category": "functions",
     "strand": "FNC",
@@ -5866,6 +6081,7 @@
   {
     "skillId": "ALG2.FNC.9",
     "displayName": "Graph rational functions",
+    "studentLabel": "Graph rational functions",
     "description": "Graph rational functions, identifying vertical and horizontal asymptotes, holes, and intercepts.",
     "category": "functions",
     "strand": "FNC",
@@ -5891,6 +6107,7 @@
   {
     "skillId": "ALG2.FNC.10",
     "displayName": "Exponential functions",
+    "studentLabel": "Exponential functions",
     "description": "Graph and analyze exponential functions, including base e, growth versus decay, and asymptotes.",
     "category": "functions",
     "strand": "FNC",
@@ -5920,6 +6137,7 @@
   {
     "skillId": "ALG2.FNC.11",
     "displayName": "Logarithmic functions",
+    "studentLabel": "Logarithmic functions",
     "description": "Define logarithms as inverses of exponentials, evaluate logs, and graph logarithmic functions.",
     "category": "functions",
     "strand": "FNC",
@@ -5948,6 +6166,7 @@
   {
     "skillId": "ALG2.FNC.12",
     "displayName": "Exponential log modeling",
+    "studentLabel": "Exponential log modeling",
     "description": "Model half-life, doubling time, and continuous growth, solving for time with logarithms.",
     "category": "functions",
     "strand": "FNC",
@@ -5974,6 +6193,7 @@
   {
     "skillId": "ALG2.FNC.13",
     "displayName": "Series and sigma",
+    "studentLabel": "Series and sigma",
     "description": "Evaluate arithmetic, finite geometric, and convergent infinite geometric series using sigma notation.",
     "category": "functions",
     "strand": "FNC",
@@ -6000,6 +6220,7 @@
   {
     "skillId": "ALG2.FNC.14",
     "displayName": "Unit circle radians",
+    "studentLabel": "Unit circle radians",
     "description": "Convert between degrees and radians and evaluate sine, cosine, and tangent at unit-circle angles.",
     "category": "functions",
     "strand": "FNC",
@@ -6028,6 +6249,7 @@
   {
     "skillId": "ALG2.FNC.15",
     "displayName": "Graph sine cosine",
+    "studentLabel": "Graph sine cosine",
     "description": "Graph sine and cosine functions, identifying amplitude, period, midline, and phase shift.",
     "category": "functions",
     "strand": "FNC",
@@ -6055,6 +6277,7 @@
   {
     "skillId": "ALG2.FNC.16",
     "displayName": "Periodic modeling",
+    "studentLabel": "Periodic modeling",
     "description": "Write sinusoidal models for periodic phenomena and interpret their parameters.",
     "category": "functions",
     "strand": "FNC",
@@ -6079,6 +6302,7 @@
   {
     "skillId": "ALG2.SPC.1",
     "displayName": "Parabola focus directrix",
+    "studentLabel": "Parabola focus directrix",
     "description": "Derive and use the equation of a parabola from its focus and directrix.",
     "category": "geometry",
     "strand": "SPC",
@@ -6108,6 +6332,7 @@
   {
     "skillId": "ALG2.SPC.2",
     "displayName": "Circles ellipses hyperbolas",
+    "studentLabel": "Circles ellipses hyperbolas",
     "description": "Write and graph equations of circles, ellipses, and hyperbolas by completing the square.",
     "category": "geometry",
     "strand": "SPC",
@@ -6137,6 +6362,7 @@
   {
     "skillId": "ALG2.DTA.1",
     "displayName": "Study design",
+    "studentLabel": "Study design",
     "description": "Distinguish surveys, experiments, and observational studies and identify sources of bias in sampling.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -6163,6 +6389,7 @@
   {
     "skillId": "ALG2.DTA.2",
     "displayName": "Normal distributions",
+    "studentLabel": "Normal distributions",
     "description": "Use the empirical rule and z-scores to estimate proportions under a normal curve.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -6189,6 +6416,7 @@
   {
     "skillId": "ALG2.DTA.3",
     "displayName": "Simulation and inference",
+    "studentLabel": "Simulation and inference",
     "description": "Use simulation to estimate margins of error and judge whether a difference is plausibly due to chance.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -6214,6 +6442,7 @@
   {
     "skillId": "ALG2.DTA.4",
     "displayName": "Permutations combinations",
+    "studentLabel": "Permutations combinations",
     "description": "Count outcomes using the fundamental counting principle, permutations, and combinations.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -6240,6 +6469,7 @@
   {
     "skillId": "ALG2.DTA.5",
     "displayName": "Binomial probability",
+    "studentLabel": "Binomial probability",
     "description": "Compute binomial probabilities with combinations and find the expected value of a random process.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -6266,6 +6496,7 @@
   {
     "skillId": "PREC.QNT.1",
     "displayName": "Complex number operations",
+    "studentLabel": "Complex number operations",
     "description": "Add, subtract, multiply, and divide complex numbers, including powers of i and use of conjugates.",
     "category": "number-system",
     "strand": "QNT",
@@ -6293,6 +6524,7 @@
   {
     "skillId": "PREC.QNT.2",
     "displayName": "Complex polar form",
+    "studentLabel": "Complex polar form",
     "description": "Plot complex numbers in the complex plane, find modulus and argument, and convert between rectangular and trigonometric form.",
     "category": "number-system",
     "strand": "QNT",
@@ -6320,6 +6552,7 @@
   {
     "skillId": "PREC.QNT.3",
     "displayName": "De Moivre's theorem",
+    "studentLabel": "De Moivre's theorem",
     "description": "Use De Moivre's theorem to compute powers and nth roots of complex numbers in polar form.",
     "category": "number-system",
     "strand": "QNT",
@@ -6344,6 +6577,7 @@
   {
     "skillId": "PREC.PRP.1",
     "displayName": "Radian measure",
+    "studentLabel": "Radian measure",
     "description": "Define the radian as an arc-to-radius ratio, convert between degrees and radians, and compute arc length s = rθ.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -6371,6 +6605,7 @@
   {
     "skillId": "PREC.PRP.2",
     "displayName": "Angular and linear speed",
+    "studentLabel": "Angular and linear speed",
     "description": "Relate angular speed and linear speed for circular motion and solve rate problems involving rotating objects.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -6399,6 +6634,7 @@
   {
     "skillId": "PREC.PRP.3",
     "displayName": "Law of Sines",
+    "studentLabel": "Law of Sines",
     "description": "Use the Law of Sines to solve oblique triangles, including analysis of the ambiguous case.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -6425,6 +6661,7 @@
   {
     "skillId": "PREC.PRP.4",
     "displayName": "Law of Cosines",
+    "studentLabel": "Law of Cosines",
     "description": "Use the Law of Cosines and the area formula (1/2)ab·sin C to solve and measure oblique triangles.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -6452,6 +6689,7 @@
   {
     "skillId": "PREC.EQV.1",
     "displayName": "Polynomial division theorems",
+    "studentLabel": "Polynomial division theorems",
     "description": "Divide polynomials using long or synthetic division and apply the Remainder and Factor Theorems.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6481,6 +6719,7 @@
   {
     "skillId": "PREC.EQV.2",
     "displayName": "Complex polynomial zeros",
+    "studentLabel": "Complex polynomial zeros",
     "description": "Find all real and complex zeros of a polynomial using the Fundamental Theorem of Algebra and conjugate pairs.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6508,6 +6747,7 @@
   {
     "skillId": "PREC.EQV.3",
     "displayName": "Polynomial rational inequalities",
+    "studentLabel": "Polynomial rational inequalities",
     "description": "Solve polynomial and rational inequalities using sign charts and zero/undefined boundary analysis.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6536,6 +6776,7 @@
   {
     "skillId": "PREC.EQV.4",
     "displayName": "Logarithm properties",
+    "studentLabel": "Logarithm properties",
     "description": "Expand, condense, and evaluate logarithmic expressions using product, quotient, power, and change-of-base rules.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6562,6 +6803,7 @@
   {
     "skillId": "PREC.EQV.5",
     "displayName": "Exponential log equations",
+    "studentLabel": "Exponential log equations",
     "description": "Solve exponential and logarithmic equations, checking for extraneous solutions from domain restrictions.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6588,6 +6830,7 @@
   {
     "skillId": "PREC.EQV.6",
     "displayName": "Fundamental trig identities",
+    "studentLabel": "Fundamental trig identities",
     "description": "Simplify expressions and verify identities using Pythagorean, reciprocal, quotient, and even-odd identities.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6616,6 +6859,7 @@
   {
     "skillId": "PREC.EQV.7",
     "displayName": "Angle sum formulas",
+    "studentLabel": "Angle sum formulas",
     "description": "Apply sum, difference, and double-angle formulas to evaluate expressions and verify identities.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6640,6 +6884,7 @@
   {
     "skillId": "PREC.EQV.8",
     "displayName": "Trigonometric equations",
+    "studentLabel": "Trigonometric equations",
     "description": "Solve trigonometric equations on a given interval and express general solutions using periodicity.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6665,6 +6910,7 @@
   {
     "skillId": "PREC.EQV.9",
     "displayName": "Matrix operations",
+    "studentLabel": "Matrix operations",
     "description": "Add, scale, and multiply matrices, attending to dimension compatibility and non-commutativity.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6692,6 +6938,7 @@
   {
     "skillId": "PREC.EQV.10",
     "displayName": "Matrix inverses and systems",
+    "studentLabel": "Matrix inverses and systems",
     "description": "Compute 2×2 determinants and inverses and use inverse matrices to solve linear systems.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -6716,6 +6963,7 @@
   {
     "skillId": "PREC.FNC.1",
     "displayName": "Rates of change",
+    "studentLabel": "Rates of change",
     "description": "Compute average rates of change over intervals and describe where functions increase, decrease, or change concavity.",
     "category": "functions",
     "strand": "FNC",
@@ -6746,6 +6994,7 @@
   {
     "skillId": "PREC.FNC.2",
     "displayName": "Function transformations",
+    "studentLabel": "Function transformations",
     "description": "Graph and write functions built from parent functions using combined shifts, stretches, and reflections.",
     "category": "functions",
     "strand": "FNC",
@@ -6776,6 +7025,7 @@
   {
     "skillId": "PREC.FNC.3",
     "displayName": "Function composition",
+    "studentLabel": "Function composition",
     "description": "Compose functions, determine domains of compositions, and decompose a function into simpler components.",
     "category": "functions",
     "strand": "FNC",
@@ -6803,6 +7053,7 @@
   {
     "skillId": "PREC.FNC.4",
     "displayName": "Inverse functions",
+    "studentLabel": "Inverse functions",
     "description": "Find and verify inverse functions, restrict domains for invertibility, and relate graphs across the line y = x.",
     "category": "functions",
     "strand": "FNC",
@@ -6830,6 +7081,7 @@
   {
     "skillId": "PREC.FNC.5",
     "displayName": "Polynomial function graphs",
+    "studentLabel": "Polynomial function graphs",
     "description": "Analyze polynomial graphs using end behavior with limit notation, zeros with multiplicity, and local extrema.",
     "category": "functions",
     "strand": "FNC",
@@ -6861,6 +7113,7 @@
   {
     "skillId": "PREC.FNC.6",
     "displayName": "Rational function graphs",
+    "studentLabel": "Rational function graphs",
     "description": "Graph rational functions by identifying holes, vertical and horizontal or slant asymptotes, and intercepts.",
     "category": "functions",
     "strand": "FNC",
@@ -6888,6 +7141,7 @@
   {
     "skillId": "PREC.FNC.7",
     "displayName": "Power functions",
+    "studentLabel": "Power functions",
     "description": "Analyze power functions with rational exponents, including inverse variation, symmetry, and end behavior.",
     "category": "functions",
     "strand": "FNC",
@@ -6914,6 +7168,7 @@
   {
     "skillId": "PREC.FNC.8",
     "displayName": "Exponential functions",
+    "studentLabel": "Exponential functions",
     "description": "Graph and interpret exponential growth and decay functions, including base e and compound interest models.",
     "category": "functions",
     "strand": "FNC",
@@ -6944,6 +7199,7 @@
   {
     "skillId": "PREC.FNC.9",
     "displayName": "Logarithmic functions",
+    "studentLabel": "Logarithmic functions",
     "description": "Define logarithms as inverses of exponentials, evaluate logs, and graph logarithmic functions with domain analysis.",
     "category": "functions",
     "strand": "FNC",
@@ -6972,6 +7228,7 @@
   {
     "skillId": "PREC.FNC.10",
     "displayName": "Sequences as functions",
+    "studentLabel": "Sequences as functions",
     "description": "Write explicit forms of arithmetic and geometric sequences and connect them to linear and exponential functions.",
     "category": "functions",
     "strand": "FNC",
@@ -6998,6 +7255,7 @@
   {
     "skillId": "PREC.FNC.11",
     "displayName": "Sinusoidal graphs",
+    "studentLabel": "Sinusoidal graphs",
     "description": "Graph sine and cosine functions and identify amplitude, period, midline, and phase shift from graphs or equations.",
     "category": "functions",
     "strand": "FNC",
@@ -7028,6 +7286,7 @@
   {
     "skillId": "PREC.FNC.12",
     "displayName": "Other trig graphs",
+    "studentLabel": "Other trig graphs",
     "description": "Graph tangent, cotangent, secant, and cosecant functions, identifying period, asymptotes, and range.",
     "category": "functions",
     "strand": "FNC",
@@ -7054,6 +7313,7 @@
   {
     "skillId": "PREC.FNC.13",
     "displayName": "Inverse trig functions",
+    "studentLabel": "Inverse trig functions",
     "description": "Evaluate inverse sine, cosine, and tangent using restricted domains and compose trig with inverse trig functions.",
     "category": "functions",
     "strand": "FNC",
@@ -7082,6 +7342,7 @@
   {
     "skillId": "PREC.FNC.14",
     "displayName": "Parametric functions",
+    "studentLabel": "Parametric functions",
     "description": "Graph parametric curves, eliminate the parameter, and interpret parametric equations as planar motion.",
     "category": "functions",
     "strand": "FNC",
@@ -7108,6 +7369,7 @@
   {
     "skillId": "PREC.FNC.15",
     "displayName": "Polar function graphs",
+    "studentLabel": "Polar function graphs",
     "description": "Graph polar functions such as circles, roses, and limaçons and describe how r changes as θ varies.",
     "category": "functions",
     "strand": "FNC",
@@ -7133,6 +7395,7 @@
   {
     "skillId": "PREC.SPC.1",
     "displayName": "Unit circle values",
+    "studentLabel": "Unit circle values",
     "description": "Use the unit circle to find exact sine, cosine, and tangent values for special angles in all quadrants.",
     "category": "geometry",
     "strand": "SPC",
@@ -7170,6 +7433,7 @@
   {
     "skillId": "PREC.SPC.2",
     "displayName": "Polar coordinates",
+    "studentLabel": "Polar coordinates",
     "description": "Plot points in polar coordinates and convert points and simple equations between rectangular and polar form.",
     "category": "geometry",
     "strand": "SPC",
@@ -7196,6 +7460,7 @@
   {
     "skillId": "PREC.SPC.3",
     "displayName": "Vector components",
+    "studentLabel": "Vector components",
     "description": "Express vectors in component form, compute magnitude and direction, and perform addition and scalar multiplication.",
     "category": "geometry",
     "strand": "SPC",
@@ -7225,6 +7490,7 @@
   {
     "skillId": "PREC.SPC.4",
     "displayName": "Vector applications",
+    "studentLabel": "Vector applications",
     "description": "Use unit vectors, dot products, and vector sums to model force, velocity, and navigation problems.",
     "category": "geometry",
     "strand": "SPC",
@@ -7249,6 +7515,7 @@
   {
     "skillId": "PREC.SPC.5",
     "displayName": "Matrix transformations",
+    "studentLabel": "Matrix transformations",
     "description": "Interpret 2×2 matrices as linear transformations of the plane and the determinant as an area scaling factor.",
     "category": "geometry",
     "strand": "SPC",
@@ -7276,6 +7543,7 @@
   {
     "skillId": "PREC.SPC.6",
     "displayName": "Conic sections",
+    "studentLabel": "Conic sections",
     "description": "Identify and graph circles, ellipses, parabolas, and hyperbolas from standard-form equations.",
     "category": "geometry",
     "strand": "SPC",
@@ -7305,6 +7573,7 @@
   {
     "skillId": "PREC.DTA.1",
     "displayName": "Function model selection",
+    "studentLabel": "Function model selection",
     "description": "Choose an appropriate function type for a data set or context using growth patterns, residuals, and domain constraints.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -7335,6 +7604,7 @@
   {
     "skillId": "PREC.DTA.2",
     "displayName": "Exponential model fitting",
+    "studentLabel": "Exponential model fitting",
     "description": "Fit exponential models to data and use semi-log plots to recognize and linearize exponential relationships.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -7360,6 +7630,7 @@
   {
     "skillId": "PREC.DTA.3",
     "displayName": "Sinusoidal modeling",
+    "studentLabel": "Sinusoidal modeling",
     "description": "Build sinusoidal models from periodic data or contexts such as tides and temperatures, and use them to predict values.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -7385,6 +7656,7 @@
   {
     "skillId": "CALC.QNT.1",
     "displayName": "Growth rate comparison",
+    "studentLabel": "Growth rate comparison",
     "description": "Compare the relative magnitudes of logarithmic, polynomial, and exponential expressions in limits at infinity.",
     "category": "number-system",
     "strand": "QNT",
@@ -7413,6 +7685,7 @@
   {
     "skillId": "CALC.QNT.2",
     "displayName": "L'Hopital's rule",
+    "studentLabel": "L'Hopital's rule",
     "description": "Recognize 0/0 and ∞/∞ indeterminate forms and apply L'Hopital's rule after verifying its conditions.",
     "category": "number-system",
     "strand": "QNT",
@@ -7438,6 +7711,7 @@
   {
     "skillId": "CALC.PRP.1",
     "displayName": "Derivatives in context",
+    "studentLabel": "Derivatives in context",
     "description": "Interpret the meaning and units of a derivative in applied contexts as an instantaneous rate of change.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -7467,6 +7741,7 @@
   {
     "skillId": "CALC.PRP.2",
     "displayName": "Related rates",
+    "studentLabel": "Related rates",
     "description": "Set up equations relating changing quantities and differentiate with respect to time to solve related-rates problems.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -7495,6 +7770,7 @@
   {
     "skillId": "CALC.PRP.3",
     "displayName": "Linearization and differentials",
+    "studentLabel": "Linearization and differentials",
     "description": "Use tangent-line approximations and differentials to estimate values and classify over- or underestimates via concavity.",
     "category": "ratios-proportions",
     "strand": "PRP",
@@ -7522,6 +7798,7 @@
   {
     "skillId": "CALC.EQV.1",
     "displayName": "Algebraic limit evaluation",
+    "studentLabel": "Algebraic limit evaluation",
     "description": "Evaluate limits by factoring, rationalizing, and combining fractions to resolve 0/0 indeterminate forms algebraically.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -7549,6 +7826,7 @@
   {
     "skillId": "CALC.EQV.2",
     "displayName": "Piecewise parameter problems",
+    "studentLabel": "Piecewise parameter problems",
     "description": "Solve for parameter values that make piecewise-defined functions continuous or differentiable at a boundary.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -7576,6 +7854,7 @@
   {
     "skillId": "CALC.EQV.3",
     "displayName": "Implicit differentiation",
+    "studentLabel": "Implicit differentiation",
     "description": "Differentiate relations defined implicitly, solve for dy/dx, and find tangent lines to implicit curves.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -7604,6 +7883,7 @@
   {
     "skillId": "CALC.EQV.4",
     "displayName": "Rewriting integrands",
+    "studentLabel": "Rewriting integrands",
     "description": "Rewrite integrands using algebraic manipulation, long division, and identities to match basic antiderivative forms.",
     "category": "expressions-equations",
     "strand": "EQV",
@@ -7630,6 +7910,7 @@
   {
     "skillId": "CALC.FNC.1",
     "displayName": "Estimating limits",
+    "studentLabel": "Estimating limits",
     "description": "Estimate limits and one-sided limits from graphs and tables and decide when a limit fails to exist.",
     "category": "functions",
     "strand": "FNC",
@@ -7656,6 +7937,7 @@
   {
     "skillId": "CALC.FNC.2",
     "displayName": "Limit laws",
+    "studentLabel": "Limit laws",
     "description": "Evaluate limits using limit properties, direct substitution, and limits of composite functions.",
     "category": "functions",
     "strand": "FNC",
@@ -7686,6 +7968,7 @@
   {
     "skillId": "CALC.FNC.3",
     "displayName": "Squeeze theorem",
+    "studentLabel": "Squeeze theorem",
     "description": "Apply the squeeze theorem and the special limits of sin(x)/x and (1−cos x)/x as x approaches 0.",
     "category": "functions",
     "strand": "FNC",
@@ -7712,6 +7995,7 @@
   {
     "skillId": "CALC.FNC.4",
     "displayName": "Limits involving infinity",
+    "studentLabel": "Limits involving infinity",
     "description": "Evaluate infinite limits and limits at infinity and connect them to vertical and horizontal asymptotes.",
     "category": "functions",
     "strand": "FNC",
@@ -7741,6 +8025,7 @@
   {
     "skillId": "CALC.FNC.5",
     "displayName": "Continuity",
+    "studentLabel": "Continuity",
     "description": "Apply the three-part definition of continuity and classify removable, jump, and infinite discontinuities.",
     "category": "functions",
     "strand": "FNC",
@@ -7773,6 +8058,7 @@
   {
     "skillId": "CALC.FNC.6",
     "displayName": "Intermediate Value Theorem",
+    "studentLabel": "Intermediate Value Theorem",
     "description": "Use the Intermediate Value Theorem to justify the existence of solutions on an interval for continuous functions.",
     "category": "functions",
     "strand": "FNC",
@@ -7797,6 +8083,7 @@
   {
     "skillId": "CALC.FNC.7",
     "displayName": "Derivative definition",
+    "studentLabel": "Derivative definition",
     "description": "Define the derivative as a limit of difference quotients and compute derivatives at a point and as a function.",
     "category": "functions",
     "strand": "FNC",
@@ -7828,6 +8115,7 @@
   {
     "skillId": "CALC.FNC.8",
     "displayName": "Differentiability and graphs",
+    "studentLabel": "Differentiability and graphs",
     "description": "Determine where a function is differentiable, relate differentiability to continuity, and sketch f′ from the graph of f.",
     "category": "functions",
     "strand": "FNC",
@@ -7856,6 +8144,7 @@
   {
     "skillId": "CALC.FNC.9",
     "displayName": "Basic derivative rules",
+    "studentLabel": "Basic derivative rules",
     "description": "Differentiate using power, sum, and constant-multiple rules along with derivatives of sin x, cos x, e^x, and ln x.",
     "category": "functions",
     "strand": "FNC",
@@ -7886,6 +8175,7 @@
   {
     "skillId": "CALC.FNC.10",
     "displayName": "Product quotient rules",
+    "studentLabel": "Product quotient rules",
     "description": "Differentiate products and quotients of functions, including the remaining trigonometric derivatives.",
     "category": "functions",
     "strand": "FNC",
@@ -7915,6 +8205,7 @@
   {
     "skillId": "CALC.FNC.11",
     "displayName": "Chain rule",
+    "studentLabel": "Chain rule",
     "description": "Differentiate composite functions with the chain rule, including combinations with product and quotient rules.",
     "category": "functions",
     "strand": "FNC",
@@ -7947,6 +8238,7 @@
   {
     "skillId": "CALC.FNC.12",
     "displayName": "Inverse function derivatives",
+    "studentLabel": "Inverse function derivatives",
     "description": "Differentiate inverse functions using the reciprocal relationship and find derivatives of inverse trig functions.",
     "category": "functions",
     "strand": "FNC",
@@ -7973,6 +8265,7 @@
   {
     "skillId": "CALC.FNC.13",
     "displayName": "Higher-order derivatives",
+    "studentLabel": "Higher-order derivatives",
     "description": "Compute and notate second and higher derivatives and interpret the second derivative as the rate of change of a rate.",
     "category": "functions",
     "strand": "FNC",
@@ -8000,6 +8293,7 @@
   {
     "skillId": "CALC.FNC.14",
     "displayName": "Straight-line motion",
+    "studentLabel": "Straight-line motion",
     "description": "Analyze position, velocity, acceleration, and speed for particles in rectilinear motion using derivatives.",
     "category": "functions",
     "strand": "FNC",
@@ -8028,6 +8322,7 @@
   {
     "skillId": "CALC.FNC.15",
     "displayName": "Mean Value Theorem",
+    "studentLabel": "Mean Value Theorem",
     "description": "Verify hypotheses and apply the Mean Value Theorem and Rolle's Theorem to draw conclusions about derivatives.",
     "category": "functions",
     "strand": "FNC",
@@ -8052,6 +8347,7 @@
   {
     "skillId": "CALC.FNC.16",
     "displayName": "Absolute extrema",
+    "studentLabel": "Absolute extrema",
     "description": "Find critical points and use the Extreme Value Theorem and candidates test to locate absolute extrema on closed intervals.",
     "category": "functions",
     "strand": "FNC",
@@ -8080,6 +8376,7 @@
   {
     "skillId": "CALC.FNC.17",
     "displayName": "First derivative test",
+    "studentLabel": "First derivative test",
     "description": "Use the sign of f′ to determine intervals of increase and decrease and classify relative extrema.",
     "category": "functions",
     "strand": "FNC",
@@ -8109,6 +8406,7 @@
   {
     "skillId": "CALC.FNC.18",
     "displayName": "Concavity and inflection",
+    "studentLabel": "Concavity and inflection",
     "description": "Use the sign of f″ to determine concavity and inflection points and apply the second derivative test.",
     "category": "functions",
     "strand": "FNC",
@@ -8139,6 +8437,7 @@
   {
     "skillId": "CALC.FNC.19",
     "displayName": "Connecting function graphs",
+    "studentLabel": "Connecting function graphs",
     "description": "Move among the graphs and behaviors of f, f′, and f″ to sketch curves and justify features of each.",
     "category": "functions",
     "strand": "FNC",
@@ -8165,6 +8464,7 @@
   {
     "skillId": "CALC.FNC.20",
     "displayName": "Optimization",
+    "studentLabel": "Optimization",
     "description": "Model applied problems with a function of one variable and use derivative tests to find and justify optimal values.",
     "category": "functions",
     "strand": "FNC",
@@ -8192,6 +8492,7 @@
   {
     "skillId": "CALC.FNC.21",
     "displayName": "Antiderivatives",
+    "studentLabel": "Antiderivatives",
     "description": "Find general antiderivatives using basic rules and solve for constants of integration from initial conditions.",
     "category": "functions",
     "strand": "FNC",
@@ -8220,6 +8521,7 @@
   {
     "skillId": "CALC.FNC.22",
     "displayName": "Definite integral definition",
+    "studentLabel": "Definite integral definition",
     "description": "Express definite integrals as limits of Riemann sums and apply linearity and interval-splitting properties.",
     "category": "functions",
     "strand": "FNC",
@@ -8248,6 +8550,7 @@
   {
     "skillId": "CALC.FNC.23",
     "displayName": "Fundamental Theorem",
+    "studentLabel": "Fundamental Theorem",
     "description": "Evaluate definite integrals using antiderivatives via the Fundamental Theorem of Calculus.",
     "category": "functions",
     "strand": "FNC",
@@ -8279,6 +8582,7 @@
   {
     "skillId": "CALC.FNC.24",
     "displayName": "Accumulation functions",
+    "studentLabel": "Accumulation functions",
     "description": "Analyze functions defined by integrals, using FTC Part 1 to differentiate them and integrand graphs to describe behavior.",
     "category": "functions",
     "strand": "FNC",
@@ -8304,6 +8608,7 @@
   {
     "skillId": "CALC.FNC.25",
     "displayName": "U-substitution",
+    "studentLabel": "U-substitution",
     "description": "Evaluate indefinite and definite integrals by substitution, including changing limits of integration.",
     "category": "functions",
     "strand": "FNC",
@@ -8331,6 +8636,7 @@
   {
     "skillId": "CALC.FNC.26",
     "displayName": "Average value",
+    "studentLabel": "Average value",
     "description": "Compute the average value of a function on an interval and connect it to the Mean Value Theorem for integrals.",
     "category": "functions",
     "strand": "FNC",
@@ -8355,6 +8661,7 @@
   {
     "skillId": "CALC.FNC.27",
     "displayName": "Slope fields",
+    "studentLabel": "Slope fields",
     "description": "Verify solutions to differential equations and sketch or match slope fields to equations and solution curves.",
     "category": "functions",
     "strand": "FNC",
@@ -8381,6 +8688,7 @@
   {
     "skillId": "CALC.FNC.28",
     "displayName": "Separation of variables",
+    "studentLabel": "Separation of variables",
     "description": "Solve separable differential equations with initial conditions, including exponential growth and decay models dy/dt = ky.",
     "category": "functions",
     "strand": "FNC",
@@ -8408,6 +8716,7 @@
   {
     "skillId": "CALC.SPC.1",
     "displayName": "Accumulation in context",
+    "studentLabel": "Accumulation in context",
     "description": "Interpret definite integrals of rates as net change and solve rate-in/rate-out accumulation problems.",
     "category": "geometry",
     "strand": "SPC",
@@ -8435,6 +8744,7 @@
   {
     "skillId": "CALC.SPC.2",
     "displayName": "Motion with integrals",
+    "studentLabel": "Motion with integrals",
     "description": "Use integrals of velocity and acceleration to find displacement, total distance traveled, and position.",
     "category": "geometry",
     "strand": "SPC",
@@ -8460,6 +8770,7 @@
   {
     "skillId": "CALC.SPC.3",
     "displayName": "Area between curves",
+    "studentLabel": "Area between curves",
     "description": "Set up and evaluate integrals for regions between curves, integrating with respect to x or y as appropriate.",
     "category": "geometry",
     "strand": "SPC",
@@ -8489,6 +8800,7 @@
   {
     "skillId": "CALC.SPC.4",
     "displayName": "Cross-section volumes",
+    "studentLabel": "Cross-section volumes",
     "description": "Compute volumes of solids with known cross sections such as squares, semicircles, and triangles on a planar base.",
     "category": "geometry",
     "strand": "SPC",
@@ -8515,6 +8827,7 @@
   {
     "skillId": "CALC.SPC.5",
     "displayName": "Volumes of revolution",
+    "studentLabel": "Volumes of revolution",
     "description": "Compute volumes of solids of revolution using disk and washer methods about horizontal and vertical axes.",
     "category": "geometry",
     "strand": "SPC",
@@ -8541,6 +8854,7 @@
   {
     "skillId": "CALC.DTA.1",
     "displayName": "Table derivative estimates",
+    "studentLabel": "Table derivative estimates",
     "description": "Estimate derivatives from tabular data using difference quotients over the smallest available intervals.",
     "category": "statistics-probability",
     "strand": "DTA",
@@ -8569,6 +8883,7 @@
   {
     "skillId": "CALC.DTA.2",
     "displayName": "Riemann sum approximation",
+    "studentLabel": "Riemann sum approximation",
     "description": "Approximate definite integrals from tables or graphs using left, right, midpoint, and trapezoidal sums, classifying over- and underestimates.",
     "category": "statistics-probability",
     "strand": "DTA",

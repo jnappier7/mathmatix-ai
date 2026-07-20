@@ -24,6 +24,7 @@ ROOT = os.path.dirname(HERE)
 TAX = os.path.join(ROOT, "seeds", "unified-taxonomy", "math_taxonomy.json")
 OUT = os.path.join(ROOT, "seeds", "skills-unified.json")
 STD = os.path.join(ROOT, "seeds", "unified-taxonomy", "standards-alignment.json")
+LAB = os.path.join(ROOT, "seeds", "unified-taxonomy", "student-labels.json")
 
 # strand → a representative Skill.category enum value (BKT parameter lookup).
 STRAND_CATEGORY = {
@@ -63,6 +64,13 @@ def main():
     if os.path.exists(STD):
         standards = json.load(open(STD))
 
+    # Plain-language student-facing names, keyed by skillId. Reviewed copy — see
+    # seeds/unified-taxonomy/student-labels.json. Absent labels fall back to the
+    # formal displayName at read time.
+    labels = {}
+    if os.path.exists(LAB):
+        labels = json.load(open(LAB)).get("labels", {})
+
     docs = []
     for s in skills:
         course_name, grade_band, diff = COURSE.get(s["course"], (s["course"], "8-12", 5))
@@ -74,6 +82,7 @@ def main():
         docs.append({
             "skillId": s["skill_id"],
             "displayName": s["name"],
+            "studentLabel": labels.get(s["skill_id"], s["name"]),
             "description": s.get("desc") or s["name"],
             "category": STRAND_CATEGORY[s["strand"]],
             "strand": s["strand"],
@@ -116,6 +125,8 @@ def main():
     print("  skills without standards alignment: %d" % len(no_std))
     if no_std:
         print("   ", no_std[:6])
+    no_lab = [d["skillId"] for d in docs if d["studentLabel"] == d["displayName"]]
+    print("  skills still using the formal name as the student label: %d" % len(no_lab))
 
 
 if __name__ == "__main__":
