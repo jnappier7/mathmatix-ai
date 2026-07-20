@@ -20,7 +20,8 @@ const router = express.Router();
 const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
-const { buildActPlan } = require('../utils/actBootcampPlan');
+const { buildActPlan, planStartModule, planSummary } = require('../utils/actBootcampPlan');
+const CourseSession = require('../models/courseSession');
 
 // skillId → human-readable name, so the report can name EXACT weak skills
 // (e.g. "Quadratic Equations") rather than just the broad category.
@@ -246,6 +247,22 @@ router.post('/complete', async (req, res) => {
     session.rawScore = raw;
     session.scaledScore = scaled ? scaled.scaled : null;
     await session.save();
+
+    // ── Retarget the ACT course from the pretest ──
+    // If the student is enrolled in the ACT course and hasn't started a module
+    // yet, open it on the highest-leverage weak domain (prereq-aware) and stash
+    // the plan so the greeting can recap it. Additive and non-fatal.
+    try {
+      const cs = await CourseSession.findOne({ userId: req.user._id, courseId: 'act-prep', status: 'active' });
+      if (cs) {
+        const jumpTo = planStartModule(cs, plan);
+        if (jumpTo) cs.currentModuleId = jumpTo;
+        cs.diagnosticPlan = planSummary(plan, session.completedAt);
+        await cs.save();
+      }
+    } catch (retargetErr) {
+      console.error('[actTest] course retarget error (non-fatal):', retargetErr.message);
+    }
 
     // ── Personalize from the pretest ──
     // Seed the exact weak skills into the student's tutor plan (worst first), so

@@ -37,6 +37,16 @@ const FOUNDATION_ORDER = {
   'statistics-probability': 3,
 };
 
+// Human-readable domain labels for the greeting recap.
+const CATEGORY_LABEL = {
+  'number-quantity': 'Number & Quantity',
+  'algebra': 'Algebra',
+  'functions': 'Functions',
+  'geometry': 'Geometry',
+  'statistics-probability': 'Statistics & Probability',
+  'integrating-essential-skills': 'Essential Skills',
+};
+
 const MASTERED_ACCURACY = 0.85; // aced this domain on the practice test -> skip/fast-pass
 const MAX_TARGETS = 3;           // a focused plan, not a laundry list
 
@@ -108,9 +118,41 @@ function buildActPlan(byCategory, opts = {}) {
   };
 }
 
+/**
+ * Should a course session be retargeted to open on the plan's starting module?
+ * Only at the very START of the course — never yank a student who has begun a
+ * module. Returns the moduleId to jump to, or null (no change).
+ *
+ * @param {Object} courseSession Mongoose CourseSession (modules[], currentModuleId, overallProgress)
+ * @param {Object} plan buildActPlan() output
+ */
+function planStartModule(courseSession, plan) {
+  if (!courseSession || !plan || !plan.startModuleId) return null;
+  const mods = courseSession.modules || [];
+  const untouched = (courseSession.overallProgress || 0) === 0
+    && mods.every(m => m.status !== 'in_progress' && m.status !== 'completed');
+  if (!untouched) return null;
+  if (!mods.some(m => m.moduleId === plan.startModuleId)) return null; // must be a real module
+  if (plan.startModuleId === courseSession.currentModuleId) return null; // already there
+  return plan.startModuleId;
+}
+
+/** Compact plan summary to stash on the course session for the greeting recap. */
+function planSummary(plan, takenAt) {
+  return {
+    focusCategories: (plan.summary?.focusCategories || []),
+    masteredCategories: (plan.summary?.masteredCategories || []),
+    startModuleId: plan.startModuleId || null,
+    takenAt: takenAt || null,
+  };
+}
+
 module.exports = {
   buildActPlan,
+  planStartModule,
+  planSummary,
   CATEGORY_MODULE,
+  CATEGORY_LABEL,
   FOUNDATION_ORDER,
   MASTERED_ACCURACY,
 };
