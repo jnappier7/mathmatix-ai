@@ -20,6 +20,7 @@ const router = express.Router();
 const ActTestSession = require('../models/actTestSession');
 const Problem = require('../models/problem');
 const { assembleForm, rawToScaled, getBlueprint } = require('../utils/actTestAssembler');
+const { buildActPlan } = require('../utils/actBootcampPlan');
 
 // skillId → human-readable name, so the report can name EXACT weak skills
 // (e.g. "Quadratic Equations") rather than just the broad category.
@@ -235,6 +236,11 @@ router.post('/complete', async (req, res) => {
       }))
       .sort((a, b) => (b.missed / b.total) - (a.missed / a.total) || b.missed - a.missed);
 
+    // "Great tutor" triage: skip mastered domains, rank the rest by leverage
+    // (weakness x ACT exam-weight), and pick a prerequisite-aware starting module.
+    // This is the plan the course opening + module ordering consume (next step).
+    const plan = buildActPlan(byCategory);
+
     session.status = 'completed';
     session.completedAt = new Date();
     session.rawScore = raw;
@@ -275,6 +281,7 @@ router.post('/complete', async (req, res) => {
         byCategory,
         weakSkills,
         plannedSkills,
+        plan,
         durationMinutes: session.startedAt
           ? Math.round((session.completedAt - session.startedAt) / 60000)
           : null,
