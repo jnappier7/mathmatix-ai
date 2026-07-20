@@ -235,6 +235,24 @@ describe('unified skill graph', () => {
     unaligned.forEach((id) => expect(EXPECTED_NO_CCSS).toContain(id));
   });
 
+  test('every CCSS code cited resolves to real standard text', () => {
+    // The whole point of the audit is that a code is traceable. A code we cannot
+    // look up is indistinguishable from one that was invented.
+    const ccssRef = JSON.parse(
+      fs.readFileSync(path.join(__dirname, '../../seeds/unified-taxonomy/ccss-reference.json'), 'utf8')
+    );
+    const isCcss = /^(K|[1-8]|HS[A-Z]{1,2})[.-]/;
+    const unresolved = [];
+    SKILLS.forEach((s) => {
+      (s.standardsAlignment || []).forEach((c) => {
+        if (!isCcss.test(c)) return;              // AP/Ohio codes are not in this reference
+        const parent = c.replace(/\.[a-z]$/, ''); // sub-part text lives under its parent
+        if (!ccssRef[c] && !ccssRef[parent]) unresolved.push(`${s.skillId}: ${c}`);
+      });
+    });
+    expect(unresolved).toEqual([]);
+  });
+
   test('a grade-band code is never attached to a skill levels away from it', () => {
     // A K-8 code on a calculus skill means the alignment was guessed.
     const LEVEL_FLOOR = { ELEM: 0, MS: 5, ALG1: 7, GEO: 7, ALG2: 8, PREC: 8, CALC: 9 };
