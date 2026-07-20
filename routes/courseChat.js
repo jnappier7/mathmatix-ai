@@ -319,6 +319,8 @@ router.post('/', async (req, res) => {
                     : null,
                 // Interactive tools
                 graphTool: graphToolConfig,
+                // Launch the real practice-ACT runner when the tutor signalled it
+                launchPracticeAct: courseResult.launchPracticeAct || false,
                 // Course-specific fields
                 courseContext: courseResult.courseContext,
                 courseProgress: courseProgressUpdate,

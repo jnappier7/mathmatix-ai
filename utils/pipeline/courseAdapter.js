@@ -167,6 +167,17 @@ async function postProcessCourseResult(pipelineResult, courseContext, conversati
     delete graphToolConfig._source;
   }
 
+  // ── Practice-ACT launch detection ──
+  // The ACT tutor emits <LAUNCH_PRACTICE_ACT> (only after the student confirms)
+  // to open the REAL timed test — instead of improvising its own quiz, which
+  // produces no ActTestSession and feeds none of the bootcamp targeting. Strip
+  // the tag and signal the client to launch the runner.
+  let launchPracticeAct = false;
+  if (/<LAUNCH_PRACTICE_ACT\s*>/i.test(pipelineResult.text || '')) {
+    launchPracticeAct = true;
+    pipelineResult.text = pipelineResult.text.replace(/<LAUNCH_PRACTICE_ACT\s*>/gi, '').trim();
+  }
+
   // ── Step evaluation and scaffold advancement ──
   const currentScaffoldIdx = courseSession.currentScaffoldIndex || 0;
   const currentScaffoldStep = (moduleData?.scaffold || [])[currentScaffoldIdx];
@@ -250,6 +261,7 @@ async function postProcessCourseResult(pipelineResult, courseContext, conversati
     ...pipelineResult,
     courseProgressUpdate,
     graphToolConfig,
+    launchPracticeAct,
     progressUpdate,
     courseContext: {
       courseId: courseSession.courseId,

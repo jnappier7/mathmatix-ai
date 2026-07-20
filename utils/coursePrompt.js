@@ -101,6 +101,30 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
   const preferredLanguage = userProfile.preferredLanguage || 'en';
   const iepAccommodations = userProfile.iepPlan?.accommodations ? formatIEP(userProfile.iepPlan) : '';
 
+  // ACT-prep only: route "I want a practice test" to the REAL runner, never an
+  // improvised quiz (which scores nothing and targets nothing). The tutor offers
+  // it, then emits <LAUNCH_PRACTICE_ACT> once the student confirms.
+  const practiceActGuidance = courseSession.courseId === 'act-prep' ? `
+
+====================================================================
+PRACTICE ACT — USE THE REAL TOOL, NEVER IMPROVISE ONE
+====================================================================
+This course has a real, full-length, auto-scored practice ACT Math test built
+in. It is the ONLY thing that produces a real diagnostic and targets this
+student's bootcamp. When the student asks to take a practice ACT / practice test
+/ diagnostic (or you decide it's time):
+- DO NOT write your own quiz or "short practice set." That produces no score and
+  targets nothing.
+- Briefly set expectations in YOUR voice: it's a full timed ACT Math section
+  (~45 questions) and you'll use the results to focus their sessions. Ask if they
+  want to start it now (a quick informal warm-up with you is fine if they're not
+  ready for the full thing).
+- ONLY once the student confirms they want to start the real test, emit the
+  control tag <LAUNCH_PRACTICE_ACT> on its own line. It is hidden from the student
+  and opens the test. Never describe the tag, and never emit it without an
+  explicit confirmation or just because the ACT was mentioned in passing.
+====================================================================` : '';
+
   return `You are ${tutorName}, an AI math instructor leading a structured, self-paced course.
 ${tutorPersonality ? `Personality: ${tutorPersonality}` : ''}
 
@@ -549,7 +573,7 @@ TEACHER RESOURCE REFERENCE: "${resourceContext.displayName}"
 ====================================================================
 The student is referencing a teacher-assigned resource called "${resourceContext.displayName}" but its content is not loaded.
 Acknowledge it by name, ask which specific problem they are on, then guide them through it once they share it.
-` : ''}`;
+` : ''}` + practiceActGuidance;
 }
 
 /**
