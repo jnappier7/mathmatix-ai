@@ -16,6 +16,11 @@
   "HSS-ID.C.8",
   "HSS-ID.C.9"
  ],
+ "ALG1.DTA.5": [
+  "HSS-ID.B.6",
+  "HSS-ID.B.6a",
+  "HSS-ID.B.6b"
+ ],
  "ALG1.EQV.1": [
   "HSA-CED.A.1",
   "HSA-REI.A.1",
@@ -187,6 +192,9 @@
   "HSS-IC.A.1",
   "HSS-IC.B.3"
  ],
+ "ALG2.DTA.10": [
+  "HSS-IC.B.6"
+ ],
  "ALG2.DTA.2": [
   "HSS-ID.A.4"
  ],
@@ -201,6 +209,21 @@
  "ALG2.DTA.5": [
   "HSS-MD.A.2",
   "HSS-MD.A.3"
+ ],
+ "ALG2.DTA.6": [
+  "HSS-MD.A.1"
+ ],
+ "ALG2.DTA.7": [
+  "HSS-MD.A.4"
+ ],
+ "ALG2.DTA.8": [
+  "HSS-MD.B.5",
+  "HSS-MD.B.5a"
+ ],
+ "ALG2.DTA.9": [
+  "HSS-MD.B.5b",
+  "HSS-MD.B.6",
+  "HSS-MD.B.7"
  ],
  "ALG2.EQV.1": [
   "HSA-CED.A.1",
@@ -940,6 +963,9 @@
   "8.SP.A.3",
   "8.SP.A.4"
  ],
+ "MS.DTA.8": [
+  "7.SP.C.7"
+ ],
  "MS.EQV.1": [
   "6.EE.A.1",
   "6.EE.A.2"
@@ -1269,5 +1295,103 @@
   "HSG-GPE.A.1",
   "HSG-GPE.A.2",
   "HSG-GPE.A.3"
+ ],
+ "STAT.DTA.1": [
+  "AP-STATS:UNIT-3",
+  "HSS-IC.B.3"
+ ],
+ "STAT.DTA.10": [
+  "AP-STATS:UNIT-5"
+ ],
+ "STAT.DTA.11": [
+  "AP-STATS:UNIT-5"
+ ],
+ "STAT.DTA.12": [
+  "AP-STATS:UNIT-5"
+ ],
+ "STAT.DTA.13": [
+  "AP-STATS:UNIT-6",
+  "HSS-IC.B.4"
+ ],
+ "STAT.DTA.14": [
+  "AP-STATS:UNIT-7",
+  "HSS-IC.B.4"
+ ],
+ "STAT.DTA.15": [
+  "AP-STATS:UNIT-6",
+  "HSS-IC.B.4",
+  "HSS-IC.B.6"
+ ],
+ "STAT.DTA.16": [
+  "AP-STATS:UNIT-5",
+  "HSS-IC.A.2",
+  "HSS-IC.B.5"
+ ],
+ "STAT.DTA.17": [
+  "AP-STATS:UNIT-6",
+  "HSS-IC.A.2"
+ ],
+ "STAT.DTA.18": [
+  "AP-STATS:UNIT-6",
+  "HSS-IC.A.2"
+ ],
+ "STAT.DTA.19": [
+  "AP-STATS:UNIT-7",
+  "HSS-IC.A.2"
+ ],
+ "STAT.DTA.2": [
+  "AP-STATS:UNIT-3",
+  "HSS-IC.A.1"
+ ],
+ "STAT.DTA.20": [
+  "AP-STATS:UNIT-6"
+ ],
+ "STAT.DTA.21": [
+  "AP-STATS:UNIT-6",
+  "HSS-IC.B.5"
+ ],
+ "STAT.DTA.22": [
+  "AP-STATS:UNIT-7",
+  "HSS-IC.B.5"
+ ],
+ "STAT.DTA.23": [
+  "AP-STATS:UNIT-7"
+ ],
+ "STAT.DTA.24": [
+  "AP-STATS:UNIT-8"
+ ],
+ "STAT.DTA.25": [
+  "AP-STATS:UNIT-8"
+ ],
+ "STAT.DTA.26": [
+  "AP-STATS:UNIT-9"
+ ],
+ "STAT.DTA.3": [
+  "AP-STATS:UNIT-2",
+  "HSS-ID.B.6",
+  "HSS-ID.B.6b",
+  "HSS-ID.C.7",
+  "HSS-ID.C.8"
+ ],
+ "STAT.DTA.4": [
+  "AP-STATS:UNIT-2"
+ ],
+ "STAT.DTA.5": [
+  "AP-STATS:UNIT-4",
+  "HSS-MD.A.2"
+ ],
+ "STAT.DTA.6": [
+  "AP-STATS:UNIT-4"
+ ],
+ "STAT.DTA.7": [
+  "AP-STATS:UNIT-4",
+  "HSS-MD.A.3"
+ ],
+ "STAT.DTA.8": [
+  "AP-STATS:UNIT-1",
+  "HSS-ID.A.4"
+ ],
+ "STAT.DTA.9": [
+  "AP-STATS:UNIT-5"
  ]
 }

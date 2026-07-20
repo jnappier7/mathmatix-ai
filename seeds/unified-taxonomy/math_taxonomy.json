@@ -14,6 +14,7 @@
     "GEO",
     "ALG2",
     "PREC",
+    "STAT",
     "CALC"
   ],
   "skills": [
@@ -3087,7 +3088,8 @@
       ],
       "next_desc": [],
       "cross_prereq_ids": [
-        "MS.DTA.5"
+        "MS.DTA.5",
+        "MS.DTA.8"
       ]
     },
     {
@@ -3973,7 +3975,9 @@
       "next_desc": [
         "hypothesis testing (AP Statistics)"
       ],
-      "cross_prereq_ids": []
+      "cross_prereq_ids": [
+        "MS.DTA.8"
+      ]
     },
     {
       "skill_id": "ALG2.DTA.4",
@@ -4001,7 +4005,8 @@
       "desc": "Compute binomial probabilities with combinations and find the expected value of a random process.",
       "grade": "10-11",
       "prereq_ids": [
-        "ALG2.DTA.4"
+        "ALG2.DTA.4",
+        "ALG2.DTA.6"
       ],
       "prereq_desc": [
         "independent events (GEO)"
@@ -4749,7 +4754,8 @@
         "modeling with differential equations (CALC)"
       ],
       "cross_prereq_ids": [
-        "ALG2.EQV.6"
+        "ALG2.EQV.6",
+        "ALG1.DTA.5"
       ]
     },
     {
@@ -5637,6 +5643,584 @@
       "cross_prereq_ids": [
         "GEO.SPC.10"
       ]
+    },
+    {
+      "skill_id": "MS.DTA.8",
+      "course": "MS",
+      "strand": "DTA",
+      "name": "Probability models",
+      "desc": "Develop uniform and non-uniform probability models, use them to find probabilities of events, and compare model predictions with observed frequencies.",
+      "grade": "7",
+      "prereq_ids": [
+        "MS.DTA.5"
+      ],
+      "prereq_desc": [],
+      "next_desc": [
+        "random variables and probability distributions (ALG2)"
+      ],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "ALG1.DTA.5",
+      "course": "ALG1",
+      "strand": "DTA",
+      "name": "Quadratic and exponential fits",
+      "desc": "Fit quadratic and exponential functions to scatter plot data, choose between model types, and use the fitted function to answer questions in context.",
+      "grade": "9",
+      "prereq_ids": [
+        "ALG1.DTA.3",
+        "ALG1.DTA.4",
+        "ALG1.FNC.8",
+        "ALG1.FNC.10"
+      ],
+      "prereq_desc": [],
+      "next_desc": [
+        "function model selection (PREC)",
+        "transformations to achieve linearity (STAT)"
+      ],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "ALG2.DTA.6",
+      "course": "ALG2",
+      "strand": "DTA",
+      "name": "Random variables",
+      "desc": "Define a random variable by assigning a numerical value to each outcome in a sample space and graph its probability distribution.",
+      "grade": "10-11",
+      "prereq_ids": [
+        "ALG2.DTA.4"
+      ],
+      "prereq_desc": [
+        "sample spaces and theoretical probability (GEO)"
+      ],
+      "next_desc": [
+        "sampling distributions (STAT)"
+      ],
+      "cross_prereq_ids": [
+        "GEO.DTA.1"
+      ]
+    },
+    {
+      "skill_id": "ALG2.DTA.7",
+      "course": "ALG2",
+      "strand": "DTA",
+      "name": "Empirical probability distributions",
+      "desc": "Build a probability distribution for a random variable from observed data, assign probabilities empirically, and find and interpret its expected value.",
+      "grade": "10-11",
+      "prereq_ids": [
+        "ALG2.DTA.6",
+        "ALG2.DTA.5"
+      ],
+      "prereq_desc": [],
+      "next_desc": [
+        "sampling distribution of a statistic (STAT)"
+      ],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "ALG2.DTA.8",
+      "course": "ALG2",
+      "strand": "DTA",
+      "name": "Expected payoff",
+      "desc": "Weigh the outcomes of a decision by assigning probabilities to payoff values and finding expected values, including the expected payoff of a game of chance.",
+      "grade": "10-11",
+      "prereq_ids": [
+        "ALG2.DTA.7"
+      ],
+      "prereq_desc": [],
+      "next_desc": [
+        "comparing strategies by expected value (ALG2)"
+      ],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "ALG2.DTA.9",
+      "course": "ALG2",
+      "strand": "DTA",
+      "name": "Decisions using probability",
+      "desc": "Compare strategies on the basis of expected value, use probability to make fair decisions, and analyze decisions such as product testing or medical testing.",
+      "grade": "10-11",
+      "prereq_ids": [
+        "ALG2.DTA.8",
+        "ALG2.DTA.3"
+      ],
+      "prereq_desc": [
+        "conditional probability from two-way tables (GEO)"
+      ],
+      "next_desc": [
+        "Type I and Type II error (STAT)"
+      ],
+      "cross_prereq_ids": [
+        "GEO.DTA.3"
+      ]
+    },
+    {
+      "skill_id": "ALG2.DTA.10",
+      "course": "ALG2",
+      "strand": "DTA",
+      "name": "Evaluate data reports",
+      "desc": "Critique published reports and media claims based on data by examining the study design, the sampling method, the displays used, and whether the conclusions follow.",
+      "grade": "10-11",
+      "prereq_ids": [
+        "ALG2.DTA.1",
+        "ALG2.DTA.3"
+      ],
+      "prereq_desc": [
+        "correlation versus causation (ALG1)"
+      ],
+      "next_desc": [
+        "scope of inference and conclusions (STAT)"
+      ],
+      "cross_prereq_ids": [
+        "ALG1.DTA.4"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.1",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Study design and randomization",
+      "desc": "Distinguish random sampling methods and experimental designs, and identify confounding, blocking, and the role of randomization in each.",
+      "grade": "11-12",
+      "prereq_ids": [],
+      "prereq_desc": [
+        "surveys, experiments, and observational studies (ALG2)"
+      ],
+      "next_desc": [
+        "scope of inference (STAT)"
+      ],
+      "cross_prereq_ids": [
+        "ALG2.DTA.1"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.2",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Scope of inference",
+      "desc": "Decide what a study permits by linking random selection to generalization and random assignment to causal claims.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.1"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.DTA.10"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.3",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Least-squares regression",
+      "desc": "Compute and interpret the least-squares regression line, r, and r-squared, and use residual plots and influential points to assess the fit.",
+      "grade": "11-12",
+      "prereq_ids": [],
+      "prereq_desc": [
+        "residuals and correlation (ALG1)"
+      ],
+      "next_desc": [
+        "inference for regression slope (STAT)"
+      ],
+      "cross_prereq_ids": [
+        "ALG1.DTA.4",
+        "ALG2.DTA.2"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.4",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Transformations to achieve linearity",
+      "desc": "Apply logarithmic and power transformations to curved bivariate data and interpret regression output on the transformed scale.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.3"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.EQV.17",
+        "ALG1.DTA.5"
+      ],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.5",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Discrete random variables",
+      "desc": "Compute and interpret the mean and standard deviation of a discrete random variable from its probability distribution.",
+      "grade": "11-12",
+      "prereq_ids": [],
+      "prereq_desc": [
+        "random variables and expected value (ALG2)"
+      ],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.DTA.6",
+        "ALG2.DTA.7"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.6",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Combining random variables",
+      "desc": "Find the mean and standard deviation of sums and differences of random variables, using independence where it applies.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.5"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.7",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Binomial and geometric distributions",
+      "desc": "Identify binomial and geometric settings and compute their probabilities, means, and standard deviations.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.5"
+      ],
+      "prereq_desc": [
+        "binomial probability (ALG2)"
+      ],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.DTA.5"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.8",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Normal distribution calculations",
+      "desc": "Find probabilities, percentiles, and cutoff values for normal models using z-scores with technology or tables, and judge when a normal model is appropriate.",
+      "grade": "11-12",
+      "prereq_ids": [],
+      "prereq_desc": [
+        "empirical rule and z-scores (ALG2)"
+      ],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.DTA.2"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.9",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Sampling variability",
+      "desc": "Explain why a statistic varies from sample to sample, describe the sampling distribution of a statistic, and distinguish bias from variability.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.1"
+      ],
+      "prereq_desc": [],
+      "next_desc": [
+        "sampling distribution of a proportion (STAT)",
+        "sampling distribution of a mean (STAT)"
+      ],
+      "cross_prereq_ids": [
+        "ALG2.DTA.7",
+        "MS.DTA.4"
+      ],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.10",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Sampling distribution of a proportion",
+      "desc": "Describe the shape, center, and standard deviation of the sampling distribution of a sample proportion and check the conditions for a normal approximation.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.9",
+        "STAT.DTA.7",
+        "STAT.DTA.8"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.11",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Sampling distribution of a mean",
+      "desc": "Describe the sampling distribution of a sample mean and apply the Central Limit Theorem to judge when a normal model is reasonable.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.9",
+        "STAT.DTA.8",
+        "STAT.DTA.5"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.12",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Sampling distributions of differences",
+      "desc": "Describe the sampling distributions of a difference of two sample proportions and of two sample means.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.10",
+        "STAT.DTA.11",
+        "STAT.DTA.6"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.13",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Confidence interval for a proportion",
+      "desc": "Construct and interpret a confidence interval for a population proportion, checking conditions and reporting the margin of error.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.10"
+      ],
+      "prereq_desc": [
+        "margin of error by simulation (ALG2)"
+      ],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.DTA.3"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.14",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Confidence interval for a mean",
+      "desc": "Construct and interpret a t confidence interval for a population mean, checking conditions and explaining why t replaces z.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.11"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.DTA.3"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.15",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Interpreting confidence intervals",
+      "desc": "Interpret confidence level correctly, explain what changing sample size or confidence level does to interval width, and identify common misinterpretations.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.13",
+        "STAT.DTA.14"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "STAT.DTA.16",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Simulation-based inference",
+      "desc": "Use randomization and resampling simulations to build a distribution of a statistic under a null model and judge whether an observed result is surprising.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.9"
+      ],
+      "prereq_desc": [],
+      "next_desc": [
+        "logic of significance testing (STAT)"
+      ],
+      "cross_prereq_ids": [
+        "ALG2.DTA.3"
+      ]
+    },
+    {
+      "skill_id": "STAT.DTA.17",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Logic of significance testing",
+      "desc": "State null and alternative hypotheses, define a test statistic and p-value, and draw a conclusion in context against a significance level.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.16"
+      ],
+      "prereq_desc": [],
+      "next_desc": [
+        "test for a proportion (STAT)",
+        "test for a mean (STAT)"
+      ],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "STAT.DTA.18",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Test for a proportion",
+      "desc": "Carry out a one-sample z test for a population proportion, checking conditions and interpreting the p-value in context.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.17",
+        "STAT.DTA.10"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "STAT.DTA.19",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Test for a mean",
+      "desc": "Carry out a one-sample t test for a population mean, checking conditions and interpreting the p-value in context.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.17",
+        "STAT.DTA.11",
+        "STAT.DTA.14"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "STAT.DTA.20",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Errors and power",
+      "desc": "Distinguish Type I and Type II errors, describe their consequences in context, and explain what affects the power of a test.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.18",
+        "STAT.DTA.19"
+      ],
+      "prereq_desc": [
+        "decisions using probability (ALG2)"
+      ],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG2.DTA.9"
+      ],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.21",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Two-proportion inference",
+      "desc": "Construct confidence intervals and carry out significance tests for the difference between two population proportions.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.12",
+        "STAT.DTA.18"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "STAT.DTA.22",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Two-sample mean inference",
+      "desc": "Construct confidence intervals and carry out two-sample t tests for the difference between two population means.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.12",
+        "STAT.DTA.19"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": []
+    },
+    {
+      "skill_id": "STAT.DTA.23",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Paired data inference",
+      "desc": "Recognize paired designs and analyze them with one-sample procedures applied to the differences.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.22",
+        "STAT.DTA.19",
+        "STAT.DTA.1"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.24",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Chi-square goodness of fit",
+      "desc": "Test whether a categorical distribution matches a hypothesized model using a chi-square goodness-of-fit test.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.17"
+      ],
+      "prereq_desc": [
+        "comparing a probability model to observed frequencies (MS)"
+      ],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "MS.DTA.8"
+      ],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.25",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Chi-square tests for two-way tables",
+      "desc": "Use chi-square tests of independence and of homogeneity to assess association between two categorical variables, choosing the test from the study design.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.24"
+      ],
+      "prereq_desc": [
+        "two-way frequency tables (ALG1)",
+        "conditional probability and independence (GEO)"
+      ],
+      "next_desc": [],
+      "cross_prereq_ids": [
+        "ALG1.DTA.2",
+        "GEO.DTA.3"
+      ],
+      "provisional": true
+    },
+    {
+      "skill_id": "STAT.DTA.26",
+      "course": "STAT",
+      "strand": "DTA",
+      "name": "Inference for regression slope",
+      "desc": "Construct confidence intervals and carry out t tests for the slope of a least-squares regression line, checking the conditions for regression inference.",
+      "grade": "11-12",
+      "prereq_ids": [
+        "STAT.DTA.3",
+        "STAT.DTA.19"
+      ],
+      "prereq_desc": [],
+      "next_desc": [],
+      "cross_prereq_ids": [],
+      "provisional": true
     }
   ]
 }

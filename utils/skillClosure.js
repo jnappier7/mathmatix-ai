@@ -214,12 +214,17 @@ function invalidateFrom(graph, mastery, skillId, { now = new Date() } = {}) {
  * few skills remain, so the UI can say "2 skills from closing Proportional
  * Reasoning at Algebra 1" without recomputing anything.
  */
-function bandProgress(graph, mastery) {
+function bandProgress(graph, mastery, { hidden } = {}) {
   const bands = new Map();
+  // `hidden` skills stay in the graph for closure but must not appear in a band
+  // total or be offered as the next thing to attack — a student cannot be "2
+  // away" from a band whose remainder they are never shown.
+  const isHidden = (id) => (hidden ? hidden.has(id) : false);
 
   graph.ids().forEach((id) => {
     const skill = graph.byId.get(id);
     if (!skill.strand || !skill.courseLevel) return;
+    if (isHidden(id)) return;
     const key = `${skill.courseLevel}|${skill.strand}`;
     if (!bands.has(key)) {
       bands.set(key, { courseLevel: skill.courseLevel, strand: skill.strand, total: 0, owned: 0, remaining: [], attackable: [] });
@@ -289,8 +294,8 @@ function isInferredEntry(entry) {
 }
 
 /** The single nearest band the student can actually close, or null. */
-function nearestClosableBand(graph, mastery, { maxRemaining = 3 } = {}) {
-  const best = bandProgress(graph, mastery).find(
+function nearestClosableBand(graph, mastery, { maxRemaining = 3, hidden } = {}) {
+  const best = bandProgress(graph, mastery, { hidden }).find(
     (b) => b.remaining.length > 0 && b.remaining.length <= maxRemaining && b.attackable.length > 0
   );
   return best || null;

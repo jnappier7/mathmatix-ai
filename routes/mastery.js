@@ -2629,11 +2629,16 @@ router.get('/map', isAuthenticated, async (req, res) => {
       return res.json({ seeded: false, skills: [], bands: [], nearest: null });
     }
 
+    // Provisional skills stay in the graph — their prerequisite edges are real
+    // and closure must still traverse them — but they are not shown to students
+    // until their standards alignment is verified.
     const graph = buildGraph(skills);
     const mastery = user.skillMastery || {};
     const states = boardStates(graph, mastery);
+    const visible = skills.filter((s) => !s.provisional);
+    const hidden = new Set(skills.filter((s) => s.provisional).map((s) => s.skillId));
 
-    const nodes = skills.map((s) => {
+    const nodes = visible.map((s) => {
       const state = states.get(s.skillId) || 'locked';
       return {
         skillId: s.skillId,
@@ -2649,7 +2654,7 @@ router.get('/map', isAuthenticated, async (req, res) => {
       };
     });
 
-    const bands = bandProgress(graph, mastery).map((b) => ({
+    const bands = bandProgress(graph, mastery, { hidden }).map((b) => ({
       strand: b.strand,
       courseLevel: b.courseLevel,
       total: b.total,
@@ -2659,7 +2664,7 @@ router.get('/map', isAuthenticated, async (req, res) => {
       attackable: b.attackable.length
     }));
 
-    const near = nearestClosableBand(graph, mastery);
+    const near = nearestClosableBand(graph, mastery, { hidden });
     const nearest = near
       ? {
         strand: near.strand,
@@ -2667,7 +2672,7 @@ router.get('/map', isAuthenticated, async (req, res) => {
         remaining: near.remaining.length,
         // The one to point the student at, named the way they will read it.
         nextSkillId: near.attackable[0],
-        nextLabel: (skills.find((s) => s.skillId === near.attackable[0]) || {}).studentLabel || null
+        nextLabel: (visible.find((s) => s.skillId === near.attackable[0]) || {}).studentLabel || null
       }
       : null;
 

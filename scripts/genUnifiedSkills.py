@@ -48,6 +48,10 @@ COURSE = {
     "GEO":  ("Geometry", "8-12", 4),
     "ALG2": ("Algebra 2", "8-12", 5),
     "PREC": ("Precalculus", "8-12", 6),
+    # STAT and CALC are peers, not a sequence — a student takes AP Statistics or
+    # AP Calculus or both, and Statistics requires no calculus. STAT is listed
+    # first only because the level order validates prerequisite direction.
+    "STAT": ("AP Statistics", "8-12", 6),
     "CALC": ("AP Calculus AB", "Calculus", 7),
 }
 
@@ -92,6 +96,9 @@ def main():
             "gradeBand": grade_band,
             "prerequisites": prereqs,
             "crossPrereqs": cross,
+            # Present in the graph, withheld from student-facing surfaces until
+            # its standards are verified against a retrievable source.
+            "provisional": bool(s.get("provisional")),
             "enables": [],
             "standardsAlignment": standards.get(s["skill_id"], []),
             "difficultyLevel": diff,
