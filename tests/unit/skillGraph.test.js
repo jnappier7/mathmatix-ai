@@ -17,7 +17,10 @@ const SKILLS = JSON.parse(
 
 // Ascending order of abstraction. A cross-level prerequisite must point strictly
 // downward in this list — that is what makes a strand readable as one through-line.
-const COURSE_ORDER = ['ELEM', 'MS', 'ALG1', 'GEO', 'ALG2', 'PREC', 'CALC'];
+// Ascending abstraction, used ONLY to validate that prerequisite edges point
+// downward. STAT and CALC are peers in reality — AP Statistics requires no
+// calculus — so their relative position here carries no pedagogical claim.
+const COURSE_ORDER = ['ELEM', 'MS', 'ALG1', 'GEO', 'ALG2', 'PREC', 'STAT', 'CALC'];
 const STRANDS = ['QNT', 'PRP', 'EQV', 'FNC', 'SPC', 'DTA'];
 
 const byId = new Map(SKILLS.map((s) => [s.skillId, s]));
@@ -246,7 +249,9 @@ describe('unified skill graph', () => {
     SKILLS.forEach((s) => {
       (s.standardsAlignment || []).forEach((c) => {
         if (!isCcss.test(c)) return;              // AP/Ohio codes are not in this reference
-        const parent = c.replace(/\.[a-z]$/, ''); // sub-part text lives under its parent
+        // Sub-part text lives under its parent, and CCSS writes sub-parts both
+        // ways: "7.RP.A.2.b" and "HSS-ID.B.6a". Strip either form.
+        const parent = c.replace(/\.[a-z]$/, '').replace(/(\d)[a-z]$/, '$1');
         if (!ccssRef[c] && !ccssRef[parent]) unresolved.push(`${s.skillId}: ${c}`);
       });
     });

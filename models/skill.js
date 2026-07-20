@@ -284,6 +284,16 @@ const skillSchema = new mongoose.Schema({
     default: true
   },
 
+  // Present in the graph but withheld from student-facing surfaces. Distinct
+  // from isActive: a provisional skill is real and its prerequisite edges still
+  // count for closure — we just will not offer it to a student until its
+  // standards alignment is verified against a retrievable source. Currently the
+  // 11 AP Statistics skills whose CED topic codes could not be confirmed.
+  provisional: {
+    type: Boolean,
+    default: false
+  },
+
   // CAT Navigation fields (from skill graph)
   // NOTE: `strand` is declared once, above, with its QNT/PRP/EQV/FNC/SPC/DTA enum.
   // A second bare `strand: { type: String }` used to sit here; being later in the

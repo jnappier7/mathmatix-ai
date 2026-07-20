@@ -19,7 +19,7 @@ const { analyzeError, generateReteaching, recordMisconception, markMisconception
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey } = require('../utils/masteryGuard');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
-const { buildGraph, boardStates, bandProgress, nearestClosableBand } = require('../utils/skillClosure');
+const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
 // back to a legacy key so historical data still resolves during the migration.
@@ -1344,11 +1344,38 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
       responseTime
     });
 
-    // Recalculate state
-    updatedSkill.status = calculateMasteryState(updatedSkill, user.skillMastery);
+    // updateSkillMastery now owns the rung and keeps `status` in step with it.
+    // calculateMasteryState still runs so the prerequisite/locked and re-fragile
+    // branches apply, but it must not overwrite a rung-derived 'mastered'.
+    const justProved = updatedSkill.__justProved;
+    delete updatedSkill.__justProved;
+    const derivedState = calculateMasteryState(updatedSkill, user.skillMastery);
+    if (updatedSkill.status !== 'mastered' || derivedState === 're-fragile' || derivedState === 'locked') {
+      updatedSkill.status = derivedState;
+    }
 
     // Update user's skill mastery
     user.skillMastery.set(masteryKey, updatedSkill);
+
+    // ★ CASCADE ★ Proving a skill clears everything beneath it in the graph, so a
+    // student never re-grinds a prerequisite they have just demonstrated they own.
+    let cleared = [];
+    if (justProved) {
+      try {
+        const allSkills = await configCache.getOrSet(
+          'skills:unified',
+          () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+          3600
+        );
+        if (allSkills.length) {
+          const result = applyProofCascade(buildGraph(allSkills), user.skillMastery, masteryKey);
+          cleared = result.cleared;
+        }
+      } catch (cascadeError) {
+        // A cascade failure must not cost the student the attempt they just made.
+        console.error('[mastery] cascade failed for %s:', masteryKey, cascadeError);
+      }
+    }
 
     // Update streak tracking
     updateStreakTracking(user);
@@ -1372,7 +1399,9 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
         pillars: pillarProgress,
         message: getMasteryMessage(updatedSkill.status, updatedSkill.currentTier)
       },
-      tierUpgrade: tierUpgrade.upgraded ? tierUpgrade : null
+      tierUpgrade: tierUpgrade.upgraded ? tierUpgrade : null,
+      // The payoff moment: everything this proof closed beneath it.
+      clearedFromAbove: cleared
     });
 
   } catch (error) {
@@ -2629,11 +2658,16 @@ router.get('/map', isAuthenticated, async (req, res) => {
       return res.json({ seeded: false, skills: [], bands: [], nearest: null });
     }
 
+    // Provisional skills stay in the graph — their prerequisite edges are real
+    // and closure must still traverse them — but they are not shown to students
+    // until their standards alignment is verified.
     const graph = buildGraph(skills);
     const mastery = user.skillMastery || {};
     const states = boardStates(graph, mastery);
+    const visible = skills.filter((s) => !s.provisional);
+    const hidden = new Set(skills.filter((s) => s.provisional).map((s) => s.skillId));
 
-    const nodes = skills.map((s) => {
+    const nodes = visible.map((s) => {
       const state = states.get(s.skillId) || 'locked';
       return {
         skillId: s.skillId,
@@ -2649,7 +2683,7 @@ router.get('/map', isAuthenticated, async (req, res) => {
       };
     });
 
-    const bands = bandProgress(graph, mastery).map((b) => ({
+    const bands = bandProgress(graph, mastery, { hidden }).map((b) => ({
       strand: b.strand,
       courseLevel: b.courseLevel,
       total: b.total,
@@ -2659,7 +2693,7 @@ router.get('/map', isAuthenticated, async (req, res) => {
       attackable: b.attackable.length
     }));
 
-    const near = nearestClosableBand(graph, mastery);
+    const near = nearestClosableBand(graph, mastery, { hidden });
     const nearest = near
       ? {
         strand: near.strand,
@@ -2667,7 +2701,7 @@ router.get('/map', isAuthenticated, async (req, res) => {
         remaining: near.remaining.length,
         // The one to point the student at, named the way they will read it.
         nextSkillId: near.attackable[0],
-        nextLabel: (skills.find((s) => s.skillId === near.attackable[0]) || {}).studentLabel || null
+        nextLabel: (visible.find((s) => s.skillId === near.attackable[0]) || {}).studentLabel || null
       }
       : null;
 

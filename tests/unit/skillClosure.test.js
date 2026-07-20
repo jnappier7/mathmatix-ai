@@ -342,6 +342,25 @@ describe('band progress — the proximity hook', () => {
     if (nearest) expect(nearest.attackable.length).toBeGreaterThan(0);
   });
 
+  test('hidden skills are excluded from band totals and never offered', () => {
+    // Provisional skills stay in the graph so closure still traverses them, but
+    // a student cannot be "2 away" from a band whose remainder they never see.
+    const statIds = SKILLS.filter((s) => s.courseLevel === 'STAT').map((s) => s.skillId);
+    expect(statIds.length).toBeGreaterThan(0);
+    const hidden = new Set(statIds);
+
+    const withAll = bandProgress(graph, emptyMastery());
+    const withHidden = bandProgress(graph, emptyMastery(), { hidden });
+
+    const statBandAll = withAll.filter((b) => b.courseLevel === 'STAT');
+    const statBandHidden = withHidden.filter((b) => b.courseLevel === 'STAT');
+    expect(statBandAll.length).toBeGreaterThan(0);
+    expect(statBandHidden).toEqual([]);
+
+    const nearest = nearestClosableBand(graph, emptyMastery(), { hidden });
+    if (nearest) nearest.attackable.forEach((id) => expect(hidden.has(id)).toBe(false));
+  });
+
   test('a fully owned band is never the hook', () => {
     const mastery = emptyMastery();
     SKILLS.filter((s) => s.courseLevel === 'ELEM' && s.strand === 'PRP').forEach((s) =>

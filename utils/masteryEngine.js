@@ -2,6 +2,7 @@
 // Master Mode: Mastery State Machine & 4-Pillar Calculation Engine
 
 const { initializeReviewSchedule, calculateNextReview, assessQuality, QUALITY_THRESHOLDS } = require('./spacedRepetition');
+const { currentRung, clearsPrerequisites, advanceRung } = require('./skillRung');
 
 /**
  * MASTERY STATE MACHINE
@@ -72,11 +73,14 @@ function calculateMasteryScore(pillars) {
  * Determine mastery state based on pillars and prerequisites
  */
 function calculateMasteryState(skill, userSkillMastery) {
-  // Check prerequisites
+  // Check prerequisites. Reads through skillRung so a skill cleared by
+  // prerequisite closure (rung 'proved', provenBy 'inference') counts — under
+  // the old `status === 'mastered'` test it did not, so inferred skills silently
+  // failed to unlock anything above them.
   const prerequisites = skill.prerequisites || [];
   const allPrerequisitesMastered = prerequisites.every(prereqId => {
     const prereqSkill = userSkillMastery.get(prereqId);
-    return prereqSkill && prereqSkill.status === 'mastered';
+    return clearsPrerequisites(prereqSkill);
   });
 
   if (!allPrerequisitesMastered) {
@@ -100,10 +104,14 @@ function calculateMasteryState(skill, userSkillMastery) {
   const meetsAccuracy = (skill.pillars?.accuracy?.percentage || 0) >= 0.90;
   const meetsIndependence = (skill.pillars?.independence?.hintsUsed || 0) <= 3;
   const meetsTransfer = (skill.pillars?.transfer?.contextsAttempted?.length || 0) >= 3;
-  const meetsRetention = skill.pillars?.retention?.retentionChecks?.length > 0 &&
-    skill.pillars.retention.retentionChecks.every(c => c.passed);
 
-  if (meetsAccuracy && meetsIndependence && meetsTransfer && meetsRetention) {
+  // Retention is DECAY, not a gate. This used to also require a passed retention
+  // check before mastery — but a retention check is only scheduled after mastery,
+  // so the condition could essentially never be satisfied and almost nothing
+  // legitimately reached 'mastered'. The UI filled that vacuum by inventing its
+  // own label. Mastery is granted on the evidence; the `re-fragile` branch above
+  // takes it away if it does not hold.
+  if (meetsAccuracy && meetsIndependence && meetsTransfer) {
     return 'mastered';
   }
 
@@ -261,6 +269,43 @@ function updateSkillMastery(skill, attemptData) {
 
   // Update tier
   skill.currentTier = checkTierEligibility(skill);
+
+  // ★ THE LADDER ★
+  // This function updated the pillars and the score but never assigned a rung or
+  // a status, while reading `skill.status` below to drive spaced repetition. The
+  // student-facing surface filled the gap by inventing a label — production
+  // showed "100% mastered" beside a "Continue" button off four first-try wins.
+  //
+  // Rung transitions go through skillRung, which owns the gates and writes the
+  // receipt. Ordinary practice earns `learned` on first contact and `proved`
+  // once the accumulated pillar record satisfies the evidence bar.
+  if (currentRung(skill) === 'none') {
+    advanceRung(skill, 'learned', { via: 'lesson' });
+    delete skill.__rungResult;
+  }
+  advanceRung(skill, 'proved', {
+    via: 'practice',
+    evidence: {
+      correct: skill.pillars.accuracy.correct,
+      total: skill.pillars.accuracy.total,
+      hintsUsed: skill.pillars.independence.hintsUsed || 0,
+      contexts: skill.pillars.transfer.contextsAttempted.length
+    }
+  });
+  const justProved = skill.__rungResult && skill.__rungResult.changed;
+  delete skill.__rungResult;
+
+  // Keep the legacy `status` field in step with the rung. Fourteen read sites
+  // still key off it, so the two must not disagree.
+  if (currentRung(skill) === 'proved' || currentRung(skill) === 'taught') {
+    skill.status = 'mastered';
+    skill.masteredDate = skill.masteredDate || new Date();
+  } else if (skill.masteryScore >= 70) {
+    skill.status = 'practicing';
+  } else {
+    skill.status = 'learning';
+  }
+  skill.__justProved = justProved;   // consumed by the caller to fire the cascade
 
   // Schedule next retention check (legacy system)
   skill.pillars.retention.nextRetentionCheck = scheduleRetentionCheck(

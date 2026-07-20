@@ -18,7 +18,8 @@
  * THE RUNGS
  *   none    - not started, or knocked back down
  *   learned - worked through with the tutor (I-do / we-do / you-do)
- *   proved  - demonstrated independently: a challenge run or a fluency run.
+ *   proved  - demonstrated independently: a challenge run, a fluency run, or
+ *             enough accumulated practice to constitute the same evidence.
  *             A student may skip `learned` entirely and go straight here — that
  *             is the test-out path, for skills they already own.
  *   taught  - explained it back while the tutor played the confused student.
@@ -38,6 +39,16 @@ const GATES = {
   PROVE_MIN_ACCURACY: 0.9,   // pillars.accuracy.threshold
   PROVE_MIN_ATTEMPTS: 4,     // a "5 problems, no hints" run, allowing one miss
   PROVE_MAX_HINTS: 3,        // pillars.independence.hintThreshold
+  // Practice proves by accumulation rather than by a single run, so it must also
+  // show transfer — the same bar the four-pillar model always intended, minus
+  // retention, which is now decay rather than a gate.
+  PRACTICE_MIN_CONTEXTS: 3,  // pillars.transfer.contextsRequired
+  // Ambient practice needs MORE evidence than a challenge run, not less. A
+  // challenge is controlled: opt-in, five problems, no hints, one shot. Practice
+  // is noisy — mixed difficulty, repeats, help available — so four clean
+  // attempts is not the same claim. The production bug lived at exactly this
+  // size ("4 first-try wins · 5 practiced this week").
+  PRACTICE_MIN_ATTEMPTS: 6,
   TEACH_MIN_RUBRIC: 3,       // on the 0-4 teach-back rubric
   TEACH_RUBRIC_MAX: 4
 };
@@ -88,7 +99,7 @@ function canAdvance(entry, to, via) {
   }
 
   if (to === 'proved') {
-    if (!['challenge', 'fluency', 'inference'].includes(via)) {
+    if (!['challenge', 'fluency', 'practice', 'inference'].includes(via)) {
       return { ok: false, reason: `cannot prove a skill via ${via}` };
     }
     return { ok: true };
@@ -123,6 +134,26 @@ function evidenceSupports(to, via, evidence = {}) {
     }
     if (total === 0 || correct / total < GATES.PROVE_MIN_ACCURACY) {
       return { ok: false, reason: `accuracy below ${Math.round(GATES.PROVE_MIN_ACCURACY * 100)}%` };
+    }
+    return { ok: true };
+  }
+
+  if (to === 'proved' && via === 'practice') {
+    // The accumulated pillar record IS the evidence. Stricter than a single
+    // challenge run because practice naturally spans representations, so it is
+    // fair to require the transfer the four-pillar model always asked for.
+    const { correct = 0, total = 0, hintsUsed = 0, contexts = 0 } = evidence;
+    if (total < GATES.PRACTICE_MIN_ATTEMPTS) {
+      return { ok: false, reason: `only ${total} attempts so far` };
+    }
+    if (correct / total < GATES.PROVE_MIN_ACCURACY) {
+      return { ok: false, reason: `accuracy below ${Math.round(GATES.PROVE_MIN_ACCURACY * 100)}%` };
+    }
+    if (hintsUsed > GATES.PROVE_MAX_HINTS) {
+      return { ok: false, reason: `used ${hintsUsed} hints; proving allows ${GATES.PROVE_MAX_HINTS}` };
+    }
+    if (contexts < GATES.PRACTICE_MIN_CONTEXTS) {
+      return { ok: false, reason: `seen in ${contexts} context(s); needs ${GATES.PRACTICE_MIN_CONTEXTS}` };
     }
     return { ok: true };
   }

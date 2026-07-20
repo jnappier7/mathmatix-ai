@@ -12,6 +12,7 @@
     "gradeBand": "K-5",
     "prerequisites": [],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.2",
       "ELEM.QNT.3",
@@ -52,6 +53,7 @@
       "ELEM.QNT.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "3.NBT.A.1",
@@ -80,6 +82,7 @@
       "ELEM.QNT.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.14",
       "MS.QNT.6"
@@ -110,6 +113,7 @@
     "gradeBand": "K-5",
     "prerequisites": [],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.5",
       "ELEM.QNT.6",
@@ -149,6 +153,7 @@
       "ELEM.QNT.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.7",
       "ELEM.QNT.8",
@@ -184,6 +189,7 @@
       "ELEM.QNT.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.7",
       "ELEM.QNT.14",
@@ -218,6 +224,7 @@
       "ELEM.QNT.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "4.NBT.B.6",
@@ -247,6 +254,7 @@
       "ELEM.QNT.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.QNT.3",
       "ALG1.QNT.3"
@@ -275,6 +283,7 @@
     "gradeBand": "K-5",
     "prerequisites": [],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.10",
       "ELEM.QNT.11",
@@ -311,6 +320,7 @@
       "ELEM.QNT.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.14",
       "ELEM.PRP.4"
@@ -345,6 +355,7 @@
       "ELEM.PRP.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.DTA.2"
     ],
@@ -377,6 +388,7 @@
       "ELEM.QNT.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.13",
       "ELEM.PRP.5"
@@ -410,6 +422,7 @@
       "ELEM.QNT.12"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "5.NF.B.7"
@@ -439,6 +452,7 @@
       "ELEM.QNT.10"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.QNT.1"
     ],
@@ -468,6 +482,7 @@
       "ELEM.QNT.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.QNT.11",
       "ELEM.PRP.2",
@@ -501,6 +516,7 @@
       "ELEM.PRP.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "3.NF.A.3",
@@ -529,6 +545,7 @@
       "ELEM.QNT.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.PRP.1"
     ],
@@ -560,6 +577,7 @@
       "ELEM.QNT.10"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.QNT.5",
       "MS.PRP.4"
@@ -592,6 +610,7 @@
       "ELEM.QNT.12"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.QNT.2",
       "MS.SPC.3"
@@ -622,6 +641,7 @@
       "ELEM.QNT.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.PRP.3"
     ],
@@ -651,6 +671,7 @@
     "gradeBand": "K-5",
     "prerequisites": [],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.EQV.3"
     ],
@@ -681,6 +702,7 @@
       "ELEM.QNT.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.EQV.5",
       "MS.EQV.2"
@@ -714,6 +736,7 @@
       "ELEM.QNT.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.EQV.4",
       "MS.EQV.3"
@@ -745,6 +768,7 @@
       "ELEM.EQV.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "3.OA.D.8"
@@ -772,6 +796,7 @@
       "ELEM.EQV.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.EQV.6",
       "MS.EQV.1"
@@ -802,6 +827,7 @@
       "ELEM.EQV.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "5.OA.A.2"
@@ -829,6 +855,7 @@
       "ELEM.QNT.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.FNC.2",
       "ALG1.FNC.6"
@@ -860,6 +887,7 @@
       "ELEM.FNC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.FNC.3",
       "ELEM.FNC.4"
@@ -890,6 +918,7 @@
       "ELEM.FNC.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.FNC.1"
     ],
@@ -920,6 +949,7 @@
       "ELEM.FNC.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.FNC.5"
     ],
@@ -950,6 +980,7 @@
       "ELEM.SPC.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.SPC.4"
     ],
@@ -979,6 +1010,7 @@
     "gradeBand": "K-5",
     "prerequisites": [],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.SPC.2",
       "ELEM.SPC.4",
@@ -1012,6 +1044,7 @@
       "ELEM.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "3.MD.D.8",
@@ -1040,6 +1073,7 @@
       "ELEM.QNT.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.SPC.8",
       "MS.SPC.1"
@@ -1073,6 +1107,7 @@
       "ELEM.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.SPC.5",
       "ELEM.SPC.7"
@@ -1103,6 +1138,7 @@
       "ELEM.SPC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.SPC.5"
     ],
@@ -1134,6 +1170,7 @@
       "ELEM.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.SPC.7"
     ],
@@ -1163,6 +1200,7 @@
       "ELEM.SPC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "5.G.B.3",
@@ -1192,6 +1230,7 @@
       "ELEM.QNT.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "5.MD.C.3",
@@ -1221,6 +1260,7 @@
       "ELEM.QNT.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.FNC.5",
       "ELEM.DTA.3"
@@ -1252,6 +1292,7 @@
       "ELEM.QNT.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ELEM.DTA.2",
       "ELEM.DTA.3",
@@ -1285,6 +1326,7 @@
       "ELEM.QNT.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "3.MD.B.4",
@@ -1315,6 +1357,7 @@
       "ELEM.SPC.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [],
     "difficultyLevel": 2,
@@ -1338,6 +1381,7 @@
     "gradeBand": "K-5",
     "prerequisites": [],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.DTA.5"
     ],
@@ -1365,6 +1409,7 @@
     "crossPrereqs": [
       "ELEM.QNT.14"
     ],
+    "provisional": false,
     "enables": [
       "MS.QNT.8",
       "ALG2.EQV.13"
@@ -1397,6 +1442,7 @@
       "ELEM.QNT.9",
       "ELEM.PRP.5"
     ],
+    "provisional": false,
     "enables": [
       "MS.QNT.8",
       "MS.PRP.3"
@@ -1427,6 +1473,7 @@
     "crossPrereqs": [
       "ELEM.QNT.8"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.11"
     ],
@@ -1456,6 +1503,7 @@
     "crossPrereqs": [
       "ELEM.QNT.9"
     ],
+    "provisional": false,
     "enables": [
       "MS.QNT.5",
       "MS.QNT.6",
@@ -1492,6 +1540,7 @@
     "crossPrereqs": [
       "ELEM.PRP.4"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "6.NS.C.7"
@@ -1521,6 +1570,7 @@
     "crossPrereqs": [
       "ELEM.QNT.3"
     ],
+    "provisional": false,
     "enables": [
       "MS.QNT.7",
       "MS.QNT.8",
@@ -1553,6 +1603,7 @@
       "MS.QNT.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.QNT.8",
       "MS.QNT.9"
@@ -1586,6 +1637,7 @@
       "MS.QNT.7"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.QNT.1"
     ],
@@ -1618,6 +1670,7 @@
     "crossPrereqs": [
       "ELEM.QNT.1"
     ],
+    "provisional": false,
     "enables": [
       "MS.QNT.10",
       "MS.QNT.11",
@@ -1649,6 +1702,7 @@
       "MS.QNT.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "8.EE.A.3",
@@ -1677,6 +1731,7 @@
       "MS.QNT.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.SPC.8",
       "ALG1.QNT.1"
@@ -1710,6 +1765,7 @@
       "ELEM.PRP.3",
       "ELEM.PRP.1"
     ],
+    "provisional": false,
     "enables": [
       "MS.PRP.2",
       "MS.PRP.3"
@@ -1740,6 +1796,7 @@
       "MS.PRP.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.PRP.4",
       "MS.PRP.5"
@@ -1773,6 +1830,7 @@
     "crossPrereqs": [
       "ELEM.PRP.6"
     ],
+    "provisional": false,
     "enables": [
       "MS.PRP.5",
       "ALG1.PRP.1",
@@ -1809,6 +1867,7 @@
     "crossPrereqs": [
       "ELEM.PRP.4"
     ],
+    "provisional": false,
     "enables": [
       "MS.PRP.7",
       "ALG1.DTA.2"
@@ -1840,6 +1899,7 @@
       "MS.PRP.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.PRP.6",
       "MS.FNC.3",
@@ -1873,6 +1933,7 @@
       "MS.PRP.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.PRP.7",
       "MS.PRP.8",
@@ -1906,6 +1967,7 @@
       "MS.PRP.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.PRP.4"
     ],
@@ -1935,6 +1997,7 @@
       "MS.PRP.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.SPC.7",
       "GEO.PRP.1"
@@ -1965,6 +2028,7 @@
     "crossPrereqs": [
       "ELEM.EQV.5"
     ],
+    "provisional": false,
     "enables": [
       "MS.EQV.2",
       "MS.EQV.3"
@@ -1998,6 +2062,7 @@
     "crossPrereqs": [
       "ELEM.EQV.2"
     ],
+    "provisional": false,
     "enables": [
       "MS.EQV.6",
       "ALG1.EQV.9"
@@ -2032,6 +2097,7 @@
     "crossPrereqs": [
       "ELEM.EQV.3"
     ],
+    "provisional": false,
     "enables": [
       "MS.EQV.4",
       "MS.EQV.5"
@@ -2064,6 +2130,7 @@
       "MS.EQV.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.EQV.7"
     ],
@@ -2094,6 +2161,7 @@
       "MS.QNT.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.EQV.7",
       "MS.EQV.8",
@@ -2126,6 +2194,7 @@
       "MS.EQV.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.EQV.8"
     ],
@@ -2157,6 +2226,7 @@
       "MS.EQV.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "7.EE.B.4"
@@ -2185,6 +2255,7 @@
       "MS.EQV.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.EQV.9"
     ],
@@ -2215,6 +2286,7 @@
       "MS.FNC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.6",
       "PREC.EQV.9"
@@ -2245,6 +2317,7 @@
     "crossPrereqs": [
       "ELEM.FNC.3"
     ],
+    "provisional": false,
     "enables": [
       "MS.FNC.2",
       "MS.FNC.3"
@@ -2275,6 +2348,7 @@
       "MS.FNC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.FNC.5",
       "ALG1.FNC.1"
@@ -2306,6 +2380,7 @@
       "MS.PRP.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.FNC.4"
     ],
@@ -2336,6 +2411,7 @@
       "MS.FNC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.EQV.9",
       "MS.FNC.5",
@@ -2370,6 +2446,7 @@
       "MS.FNC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "8.F.A.2"
@@ -2397,6 +2474,7 @@
       "MS.FNC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "8.F.A.3",
@@ -2425,6 +2503,7 @@
     "crossPrereqs": [
       "ELEM.SPC.3"
     ],
+    "provisional": false,
     "enables": [
       "MS.SPC.2",
       "MS.SPC.6"
@@ -2456,6 +2535,7 @@
       "MS.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "6.G.A.4",
@@ -2485,6 +2565,7 @@
       "ELEM.QNT.1",
       "ELEM.PRP.5"
     ],
+    "provisional": false,
     "enables": [
       "MS.SPC.9",
       "GEO.SPC.18"
@@ -2517,6 +2598,7 @@
     "crossPrereqs": [
       "ELEM.FNC.5"
     ],
+    "provisional": false,
     "enables": [
       "MS.SPC.7",
       "MS.SPC.8"
@@ -2551,6 +2633,7 @@
     "crossPrereqs": [
       "ELEM.SPC.5"
     ],
+    "provisional": false,
     "enables": [
       "GEO.SPC.1",
       "GEO.SPC.3"
@@ -2582,6 +2665,7 @@
       "MS.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.SPC.9",
       "ALG1.SPC.2",
@@ -2618,6 +2702,7 @@
     "crossPrereqs": [
       "ELEM.SPC.6"
     ],
+    "provisional": false,
     "enables": [
       "GEO.SPC.7"
     ],
@@ -2652,6 +2737,7 @@
       "MS.SPC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.SPC.1",
       "GEO.SPC.11"
@@ -2685,6 +2771,7 @@
       "MS.SPC.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "8.G.C.9"
@@ -2712,6 +2799,7 @@
     "crossPrereqs": [
       "ELEM.DTA.1"
     ],
+    "provisional": false,
     "enables": [
       "MS.DTA.2"
     ],
@@ -2742,6 +2830,7 @@
       "MS.DTA.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.DTA.3",
       "MS.DTA.7",
@@ -2773,6 +2862,7 @@
       "MS.DTA.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "MS.DTA.4"
     ],
@@ -2805,8 +2895,10 @@
       "MS.DTA.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
-      "ALG2.DTA.1"
+      "ALG2.DTA.1",
+      "STAT.DTA.9"
     ],
     "standardsAlignment": [
       "7.SP.A.1",
@@ -2836,9 +2928,11 @@
       "ELEM.DTA.4",
       "ELEM.QNT.1"
     ],
+    "provisional": false,
     "enables": [
       "MS.DTA.6",
-      "GEO.DTA.1"
+      "GEO.DTA.1",
+      "MS.DTA.8"
     ],
     "standardsAlignment": [
       "7.SP.C.5",
@@ -2867,6 +2961,7 @@
       "MS.DTA.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "7.SP.C.8"
@@ -2895,6 +2990,7 @@
       "MS.FNC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.DTA.1"
     ],
@@ -2928,6 +3024,7 @@
       "MS.QNT.8",
       "MS.QNT.11"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.QNT.3",
       "ALG2.QNT.4"
@@ -2958,6 +3055,7 @@
     "crossPrereqs": [
       "MS.QNT.9"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.10",
       "ALG1.FNC.8",
@@ -2991,6 +3089,7 @@
     "crossPrereqs": [
       "ELEM.QNT.8"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.QNT.4",
       "ALG1.EQV.16",
@@ -3025,6 +3124,7 @@
       "ALG1.QNT.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.QNT.1"
     ],
@@ -3054,6 +3154,7 @@
     "crossPrereqs": [
       "MS.PRP.3"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.PRP.4",
       "GEO.QNT.2",
@@ -3087,6 +3188,7 @@
     "crossPrereqs": [
       "MS.PRP.5"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.3",
       "ALG1.FNC.12",
@@ -3123,6 +3225,7 @@
     "crossPrereqs": [
       "MS.PRP.5"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.PRP.2",
       "ALG2.PRP.1"
@@ -3157,6 +3260,7 @@
     "crossPrereqs": [
       "MS.PRP.7"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.8",
       "ALG2.PRP.2"
@@ -3189,6 +3293,7 @@
     "crossPrereqs": [
       "MS.EQV.5"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.2",
       "ALG1.EQV.3",
@@ -3226,6 +3331,7 @@
       "ALG1.EQV.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.SPC.16",
       "ALG2.SPC.1"
@@ -3259,6 +3365,7 @@
     "crossPrereqs": [
       "MS.QNT.6"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.4",
       "ALG1.FNC.5"
@@ -3290,6 +3397,7 @@
       "ALG1.EQV.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-CED.A.1",
@@ -3320,6 +3428,7 @@
     "crossPrereqs": [
       "MS.QNT.4"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.1"
     ],
@@ -3351,6 +3460,7 @@
       "ALG1.FNC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.7",
       "ALG2.FNC.5"
@@ -3383,6 +3493,7 @@
       "ALG1.EQV.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.8"
     ],
@@ -3413,6 +3524,7 @@
       "ALG1.EQV.7"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.2"
     ],
@@ -3443,6 +3555,7 @@
     "crossPrereqs": [
       "MS.EQV.2"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.10"
     ],
@@ -3474,6 +3587,7 @@
       "ALG1.QNT.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.11",
       "ALG1.SPC.2",
@@ -3508,6 +3622,7 @@
     "crossPrereqs": [
       "MS.QNT.3"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.12"
     ],
@@ -3538,6 +3653,7 @@
       "ALG1.EQV.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.13",
       "ALG1.EQV.14"
@@ -3569,6 +3685,7 @@
       "ALG1.EQV.12"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.15"
     ],
@@ -3599,6 +3716,7 @@
       "ALG1.EQV.12"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.15"
     ],
@@ -3630,6 +3748,7 @@
       "ALG1.EQV.14"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.16",
       "ALG1.FNC.10",
@@ -3664,6 +3783,7 @@
       "ALG1.QNT.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.17",
       "GEO.SPC.16",
@@ -3697,6 +3817,7 @@
       "ALG1.EQV.16"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.4"
     ],
@@ -3726,6 +3847,7 @@
     "crossPrereqs": [
       "MS.FNC.2"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.2",
       "ALG1.FNC.3",
@@ -3760,6 +3882,7 @@
       "ALG1.FNC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-IF.A.1",
@@ -3791,6 +3914,7 @@
     "crossPrereqs": [
       "MS.PRP.5"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.EQV.6",
       "ALG1.FNC.4",
@@ -3827,6 +3951,7 @@
       "ALG1.FNC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.DTA.3"
     ],
@@ -3859,6 +3984,7 @@
       "ALG1.EQV.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-CED.A.3",
@@ -3889,6 +4015,7 @@
     "crossPrereqs": [
       "ELEM.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.7",
       "ALG2.FNC.13"
@@ -3921,6 +4048,7 @@
       "ALG1.FNC.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.8"
     ],
@@ -3954,10 +4082,12 @@
       "ALG1.QNT.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.9",
       "ALG2.EQV.16",
-      "ALG2.FNC.10"
+      "ALG2.FNC.10",
+      "ALG1.DTA.5"
     ],
     "standardsAlignment": [
       "HSA-SSE.B.3",
@@ -3988,6 +4118,7 @@
       "ALG1.FNC.8"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.11",
       "ALG1.FNC.12"
@@ -4020,9 +4151,11 @@
       "ALG1.EQV.15"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG1.FNC.11",
-      "ALG1.FNC.12"
+      "ALG1.FNC.12",
+      "ALG1.DTA.5"
     ],
     "standardsAlignment": [
       "HSA-SSE.B.3",
@@ -4053,6 +4186,7 @@
       "ALG1.FNC.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-BF.B.3"
@@ -4082,6 +4216,7 @@
       "ALG1.PRP.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-IF.B.6",
@@ -4111,6 +4246,7 @@
     "crossPrereqs": [
       "MS.SPC.8"
     ],
+    "provisional": false,
     "enables": [
       "GEO.EQV.9",
       "GEO.SPC.7"
@@ -4145,6 +4281,7 @@
     "crossPrereqs": [
       "MS.SPC.6"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-SSE.A.1",
@@ -4174,6 +4311,7 @@
     "crossPrereqs": [
       "MS.DTA.2"
     ],
+    "provisional": false,
     "enables": [
       "ALG1.DTA.3",
       "ALG2.DTA.2"
@@ -4206,8 +4344,10 @@
     "crossPrereqs": [
       "MS.PRP.4"
     ],
+    "provisional": false,
     "enables": [
-      "GEO.DTA.3"
+      "GEO.DTA.3",
+      "STAT.DTA.25"
     ],
     "standardsAlignment": [
       "HSS-ID.B.5"
@@ -4236,8 +4376,10 @@
       "ALG1.DTA.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
-      "ALG1.DTA.4"
+      "ALG1.DTA.4",
+      "ALG1.DTA.5"
     ],
     "standardsAlignment": [
       "HSS-ID.B.6",
@@ -4266,7 +4408,12 @@
       "ALG1.DTA.3"
     ],
     "crossPrereqs": [],
-    "enables": [],
+    "provisional": false,
+    "enables": [
+      "ALG1.DTA.5",
+      "ALG2.DTA.10",
+      "STAT.DTA.3"
+    ],
     "standardsAlignment": [
       "HSS-ID.B.6",
       "HSS-ID.C.8",
@@ -4295,6 +4442,7 @@
     "crossPrereqs": [
       "ALG1.QNT.4"
     ],
+    "provisional": false,
     "enables": [
       "GEO.SPC.12"
     ],
@@ -4325,6 +4473,7 @@
     "crossPrereqs": [
       "ALG1.PRP.1"
     ],
+    "provisional": false,
     "enables": [
       "GEO.FNC.2"
     ],
@@ -4356,6 +4505,7 @@
       "MS.PRP.8",
       "ALG1.PRP.2"
     ],
+    "provisional": false,
     "enables": [
       "GEO.PRP.2",
       "GEO.FNC.1"
@@ -4390,6 +4540,7 @@
     "crossPrereqs": [
       "MS.PRP.6"
     ],
+    "provisional": false,
     "enables": [
       "GEO.PRP.3",
       "GEO.PRP.7"
@@ -4423,6 +4574,7 @@
       "GEO.EQV.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.PRP.4",
       "GEO.PRP.5"
@@ -4456,6 +4608,7 @@
       "GEO.PRP.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSG-CO.C.10",
@@ -4485,6 +4638,7 @@
       "GEO.SPC.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.PRP.6",
       "ALG2.FNC.14",
@@ -4520,6 +4674,7 @@
       "GEO.PRP.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSG-SRT.C.8"
@@ -4548,6 +4703,7 @@
       "GEO.SPC.18"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.PRP.2",
       "CALC.FNC.20",
@@ -4580,6 +4736,7 @@
     "gradeBand": "8-12",
     "prerequisites": [],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.2"
     ],
@@ -4607,6 +4764,7 @@
       "GEO.EQV.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.3"
     ],
@@ -4636,6 +4794,7 @@
     "crossPrereqs": [
       "ALG1.EQV.1"
     ],
+    "provisional": false,
     "enables": [
       "GEO.EQV.4"
     ],
@@ -4666,6 +4825,7 @@
       "GEO.SPC.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.5"
     ],
@@ -4696,6 +4856,7 @@
       "GEO.SPC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.6"
     ],
@@ -4726,6 +4887,7 @@
       "GEO.SPC.7"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.PRP.3",
       "GEO.EQV.7"
@@ -4758,6 +4920,7 @@
       "GEO.EQV.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.8"
     ],
@@ -4789,6 +4952,7 @@
       "GEO.SPC.10"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.9"
     ],
@@ -4821,6 +4985,7 @@
       "ALG1.SPC.1",
       "ALG1.EQV.1"
     ],
+    "provisional": false,
     "enables": [
       "PREC.SPC.5",
       "PREC.SPC.6"
@@ -4856,6 +5021,7 @@
     "crossPrereqs": [
       "ALG1.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.4"
     ],
@@ -4890,6 +5056,7 @@
     "crossPrereqs": [
       "ALG1.FNC.3"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-CED.A.2",
@@ -4920,6 +5087,7 @@
       "MS.SPC.5",
       "ALG1.EQV.1"
     ],
+    "provisional": false,
     "enables": [
       "GEO.SPC.2"
     ],
@@ -4950,6 +5118,7 @@
       "GEO.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.4",
       "GEO.SPC.3",
@@ -4984,6 +5153,7 @@
     "crossPrereqs": [
       "MS.SPC.5"
     ],
+    "provisional": false,
     "enables": [
       "GEO.EQV.5",
       "GEO.SPC.4"
@@ -5015,6 +5185,7 @@
       "GEO.SPC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.SPC.5",
       "GEO.SPC.9",
@@ -5047,6 +5218,7 @@
       "GEO.SPC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.SPC.6"
     ],
@@ -5076,6 +5248,7 @@
       "GEO.SPC.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSG-C.A.3",
@@ -5106,6 +5279,7 @@
       "MS.SPC.7",
       "ALG1.SPC.1"
     ],
+    "provisional": false,
     "enables": [
       "GEO.EQV.6",
       "GEO.FNC.1",
@@ -5140,6 +5314,7 @@
       "GEO.SPC.7"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSG-CO.A.3",
@@ -5168,6 +5343,7 @@
       "GEO.SPC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.SPC.10",
       "GEO.SPC.17"
@@ -5199,6 +5375,7 @@
       "GEO.SPC.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.EQV.8",
       "CALC.DTA.2"
@@ -5231,6 +5408,7 @@
     "crossPrereqs": [
       "MS.SPC.8"
     ],
+    "provisional": false,
     "enables": [
       "GEO.PRP.5",
       "GEO.SPC.12",
@@ -5268,6 +5446,7 @@
     "crossPrereqs": [
       "ALG1.QNT.3"
     ],
+    "provisional": false,
     "enables": [
       "GEO.SPC.17",
       "ALG2.FNC.14",
@@ -5302,6 +5481,7 @@
     "crossPrereqs": [
       "MS.SPC.6"
     ],
+    "provisional": false,
     "enables": [
       "GEO.SPC.14",
       "GEO.SPC.15",
@@ -5334,6 +5514,7 @@
       "GEO.SPC.13"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSG-C.A.2",
@@ -5364,6 +5545,7 @@
     "crossPrereqs": [
       "MS.SPC.6"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.14",
       "PREC.PRP.1"
@@ -5398,6 +5580,7 @@
       "ALG1.EQV.16",
       "ALG1.EQV.2"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.SPC.2"
     ],
@@ -5430,6 +5613,7 @@
     "crossPrereqs": [
       "MS.SPC.6"
     ],
+    "provisional": false,
     "enables": [
       "GEO.SPC.18",
       "GEO.DTA.4"
@@ -5464,6 +5648,7 @@
     "crossPrereqs": [
       "MS.SPC.3"
     ],
+    "provisional": false,
     "enables": [
       "GEO.PRP.7",
       "GEO.SPC.19"
@@ -5496,6 +5681,7 @@
       "GEO.SPC.18"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.FNC.2",
       "GEO.SPC.20"
@@ -5528,6 +5714,7 @@
       "GEO.SPC.19"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "7.G.A.3",
@@ -5555,11 +5742,14 @@
     "gradeBand": "8-12",
     "prerequisites": [],
     "crossPrereqs": [
-      "MS.DTA.5"
+      "MS.DTA.5",
+      "MS.DTA.8"
     ],
+    "provisional": false,
     "enables": [
       "GEO.DTA.2",
-      "GEO.DTA.4"
+      "GEO.DTA.4",
+      "ALG2.DTA.6"
     ],
     "standardsAlignment": [
       "7.SP.C.7",
@@ -5588,6 +5778,7 @@
       "GEO.DTA.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "GEO.DTA.3",
       "ALG2.DTA.4",
@@ -5623,7 +5814,11 @@
     "crossPrereqs": [
       "ALG1.DTA.2"
     ],
-    "enables": [],
+    "provisional": false,
+    "enables": [
+      "ALG2.DTA.9",
+      "STAT.DTA.25"
+    ],
     "standardsAlignment": [
       "HSS-CP.A.3",
       "HSS-CP.A.4",
@@ -5654,6 +5849,7 @@
       "GEO.SPC.17"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [],
     "difficultyLevel": 4,
@@ -5679,6 +5875,7 @@
     "crossPrereqs": [
       "ALG1.QNT.3"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.QNT.2",
       "ALG2.QNT.3",
@@ -5716,6 +5913,7 @@
     "crossPrereqs": [
       "ALG1.QNT.2"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.12",
       "ALG2.EQV.16"
@@ -5749,6 +5947,7 @@
     "crossPrereqs": [
       "ALG1.QNT.3"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.QNT.5",
       "ALG2.EQV.12"
@@ -5781,6 +5980,7 @@
     "crossPrereqs": [
       "ALG1.QNT.1"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.QNT.5"
     ],
@@ -5811,6 +6011,7 @@
       "ALG2.QNT.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.4",
       "PREC.QNT.1"
@@ -5842,6 +6043,7 @@
     "crossPrereqs": [
       "ALG1.PRP.3"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.PRP.3"
     ],
@@ -5872,6 +6074,7 @@
     "crossPrereqs": [
       "ALG1.PRP.4"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.12"
     ],
@@ -5907,6 +6110,7 @@
     "crossPrereqs": [
       "ALG1.PRP.1"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-CED.A.1",
@@ -5935,6 +6139,7 @@
     "crossPrereqs": [
       "ALG1.EQV.5"
     ],
+    "provisional": false,
     "enables": [
       "PREC.FNC.1"
     ],
@@ -5965,6 +6170,7 @@
     "crossPrereqs": [
       "ALG1.EQV.8"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-REI.C.6",
@@ -5993,6 +6199,7 @@
     "crossPrereqs": [
       "ALG1.EQV.16"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.4",
       "ALG2.SPC.1",
@@ -6029,6 +6236,7 @@
     "crossPrereqs": [
       "ALG1.EQV.17"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.5",
       "ALG2.EQV.6",
@@ -6062,6 +6270,7 @@
       "ALG2.EQV.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.EQV.3"
     ],
@@ -6094,6 +6303,7 @@
     "crossPrereqs": [
       "MS.EQV.9"
     ],
+    "provisional": false,
     "enables": [
       "PREC.DTA.1"
     ],
@@ -6124,6 +6334,7 @@
     "crossPrereqs": [
       "ALG1.EQV.10"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.8",
       "ALG2.EQV.10",
@@ -6157,6 +6368,7 @@
       "ALG2.EQV.7"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.9"
     ],
@@ -6187,6 +6399,7 @@
       "ALG2.EQV.8"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.11"
     ],
@@ -6219,6 +6432,7 @@
     "crossPrereqs": [
       "ALG1.EQV.15"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.11",
       "ALG2.EQV.13"
@@ -6251,6 +6465,7 @@
       "ALG2.EQV.10"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.7",
       "CALC.EQV.1"
@@ -6284,6 +6499,7 @@
       "ALG2.QNT.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-REI.A.2",
@@ -6315,6 +6531,7 @@
     "crossPrereqs": [
       "MS.QNT.1"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.14",
       "ALG2.FNC.9"
@@ -6346,6 +6563,7 @@
       "ALG2.EQV.13"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.15"
     ],
@@ -6375,6 +6593,7 @@
       "ALG2.EQV.14"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.PRP.3"
     ],
@@ -6407,6 +6626,7 @@
     "crossPrereqs": [
       "ALG1.FNC.8"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.18",
       "ALG2.FNC.12"
@@ -6439,8 +6659,10 @@
       "ALG2.FNC.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
-      "ALG2.EQV.18"
+      "ALG2.EQV.18",
+      "STAT.DTA.4"
     ],
     "standardsAlignment": [
       "HSF-BF.B.5",
@@ -6470,6 +6692,7 @@
       "ALG2.EQV.16"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-REI.A.2",
@@ -6498,6 +6721,7 @@
     "crossPrereqs": [
       "ALG1.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.2",
       "ALG2.FNC.4",
@@ -6531,6 +6755,7 @@
       "ALG2.FNC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.3"
     ],
@@ -6560,6 +6785,7 @@
       "ALG2.FNC.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.11"
     ],
@@ -6592,6 +6818,7 @@
       "ALG1.EQV.16",
       "GEO.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.8",
       "ALG2.FNC.9",
@@ -6628,6 +6855,7 @@
     "crossPrereqs": [
       "ALG1.EQV.6"
     ],
+    "provisional": false,
     "enables": [
       "CALC.EQV.2"
     ],
@@ -6657,6 +6885,7 @@
       "ALG2.EQV.7"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.7"
     ],
@@ -6688,6 +6917,7 @@
       "ALG2.EQV.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-APR.B.3",
@@ -6717,6 +6947,7 @@
       "ALG2.QNT.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-IF.B.5",
@@ -6746,6 +6977,7 @@
       "ALG2.EQV.13"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-APR.D.6",
@@ -6776,6 +7008,7 @@
     "crossPrereqs": [
       "ALG1.FNC.8"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.16",
       "ALG2.FNC.11",
@@ -6810,6 +7043,7 @@
       "ALG2.FNC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.EQV.17",
       "ALG2.FNC.12"
@@ -6844,6 +7078,7 @@
       "ALG2.PRP.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-SSE.B.3",
@@ -6874,6 +7109,7 @@
     "crossPrereqs": [
       "ALG1.FNC.6"
     ],
+    "provisional": false,
     "enables": [
       "PREC.FNC.10"
     ],
@@ -6906,6 +7142,7 @@
       "GEO.SPC.12",
       "GEO.SPC.15"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.15"
     ],
@@ -6938,6 +7175,7 @@
       "ALG2.FNC.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "ALG2.FNC.16"
     ],
@@ -6968,6 +7206,7 @@
       "ALG2.FNC.15"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-IF.B.4",
@@ -6999,6 +7238,7 @@
       "ALG1.PRP.2",
       "ALG1.EQV.2"
     ],
+    "provisional": false,
     "enables": [
       "ALG2.SPC.2"
     ],
@@ -7031,6 +7271,7 @@
     "crossPrereqs": [
       "GEO.SPC.16"
     ],
+    "provisional": false,
     "enables": [
       "PREC.SPC.6"
     ],
@@ -7061,8 +7302,11 @@
     "crossPrereqs": [
       "MS.DTA.4"
     ],
+    "provisional": false,
     "enables": [
-      "ALG2.DTA.3"
+      "ALG2.DTA.3",
+      "ALG2.DTA.10",
+      "STAT.DTA.1"
     ],
     "standardsAlignment": [
       "HSS-IC.A.1",
@@ -7091,8 +7335,11 @@
     "crossPrereqs": [
       "ALG1.DTA.1"
     ],
+    "provisional": false,
     "enables": [
-      "ALG2.DTA.3"
+      "ALG2.DTA.3",
+      "STAT.DTA.3",
+      "STAT.DTA.8"
     ],
     "standardsAlignment": [
       "HSS-ID.A.4"
@@ -7120,8 +7367,17 @@
       "ALG2.DTA.1",
       "ALG2.DTA.2"
     ],
-    "crossPrereqs": [],
-    "enables": [],
+    "crossPrereqs": [
+      "MS.DTA.8"
+    ],
+    "provisional": false,
+    "enables": [
+      "ALG2.DTA.9",
+      "ALG2.DTA.10",
+      "STAT.DTA.13",
+      "STAT.DTA.14",
+      "STAT.DTA.16"
+    ],
     "standardsAlignment": [
       "HSS-IC.A.2",
       "HSS-IC.B.4",
@@ -7150,8 +7406,10 @@
     "crossPrereqs": [
       "GEO.DTA.2"
     ],
+    "provisional": false,
     "enables": [
-      "ALG2.DTA.5"
+      "ALG2.DTA.5",
+      "ALG2.DTA.6"
     ],
     "standardsAlignment": [
       "HSS-CP.B.9"
@@ -7176,12 +7434,17 @@
     "unit": "Data & Chance",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.DTA.4"
+      "ALG2.DTA.4",
+      "ALG2.DTA.6"
     ],
     "crossPrereqs": [
       "GEO.DTA.2"
     ],
-    "enables": [],
+    "provisional": false,
+    "enables": [
+      "ALG2.DTA.7",
+      "STAT.DTA.7"
+    ],
     "standardsAlignment": [
       "HSS-MD.A.2",
       "HSS-MD.A.3"
@@ -7209,6 +7472,7 @@
     "crossPrereqs": [
       "ALG2.QNT.5"
     ],
+    "provisional": false,
     "enables": [
       "PREC.QNT.2",
       "PREC.EQV.2"
@@ -7241,6 +7505,7 @@
       "PREC.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.QNT.3"
     ],
@@ -7270,6 +7535,7 @@
       "PREC.QNT.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSN-CN.B.5"
@@ -7297,6 +7563,7 @@
     "crossPrereqs": [
       "GEO.SPC.15"
     ],
+    "provisional": false,
     "enables": [
       "PREC.PRP.2",
       "PREC.SPC.1"
@@ -7330,6 +7597,7 @@
     "crossPrereqs": [
       "MS.PRP.3"
     ],
+    "provisional": false,
     "enables": [
       "CALC.PRP.2"
     ],
@@ -7362,6 +7630,7 @@
     "crossPrereqs": [
       "GEO.PRP.5"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSG-SRT.D.10",
@@ -7393,6 +7662,7 @@
       "GEO.PRP.5",
       "GEO.SPC.11"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSG-SRT.D.10",
@@ -7422,6 +7692,7 @@
     "crossPrereqs": [
       "ALG2.EQV.7"
     ],
+    "provisional": false,
     "enables": [
       "PREC.EQV.2",
       "PREC.EQV.3",
@@ -7458,6 +7729,7 @@
     "crossPrereqs": [
       "ALG2.EQV.4"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-APR.B.3",
@@ -7489,6 +7761,7 @@
     "crossPrereqs": [
       "ALG2.EQV.5"
     ],
+    "provisional": false,
     "enables": [
       "CALC.FNC.17"
     ],
@@ -7519,6 +7792,7 @@
       "PREC.FNC.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.EQV.5"
     ],
@@ -7549,6 +7823,7 @@
       "PREC.EQV.4"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.28"
     ],
@@ -7580,6 +7855,7 @@
       "PREC.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.EQV.7",
       "PREC.EQV.8",
@@ -7611,6 +7887,7 @@
       "PREC.EQV.6"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-TF.C.9"
@@ -7639,6 +7916,7 @@
       "PREC.FNC.13"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-TF.B.7"
@@ -7666,6 +7944,7 @@
     "crossPrereqs": [
       "MS.EQV.9"
     ],
+    "provisional": false,
     "enables": [
       "PREC.EQV.10",
       "PREC.SPC.5"
@@ -7698,6 +7977,7 @@
       "PREC.EQV.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSA-REI.C.8",
@@ -7729,6 +8009,7 @@
       "ALG1.PRP.2",
       "ALG2.EQV.1"
     ],
+    "provisional": false,
     "enables": [
       "PREC.FNC.5",
       "CALC.FNC.7",
@@ -7762,6 +8043,7 @@
     "crossPrereqs": [
       "ALG2.FNC.4"
     ],
+    "provisional": false,
     "enables": [
       "PREC.FNC.7",
       "PREC.FNC.8",
@@ -7796,6 +8078,7 @@
     "crossPrereqs": [
       "ALG2.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "PREC.FNC.4",
       "CALC.FNC.11"
@@ -7826,6 +8109,7 @@
       "PREC.FNC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.FNC.9",
       "PREC.FNC.13"
@@ -7858,6 +8142,7 @@
     "crossPrereqs": [
       "ALG2.EQV.4"
     ],
+    "provisional": false,
     "enables": [
       "PREC.FNC.6",
       "PREC.DTA.1",
@@ -7893,6 +8178,7 @@
       "PREC.EQV.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.4"
     ],
@@ -7926,6 +8212,7 @@
     "crossPrereqs": [
       "ALG2.QNT.1"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-IF.C.7",
@@ -7957,6 +8244,7 @@
     "crossPrereqs": [
       "ALG2.FNC.10"
     ],
+    "provisional": false,
     "enables": [
       "PREC.FNC.9",
       "PREC.FNC.10",
@@ -7991,6 +8279,7 @@
       "PREC.FNC.8"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.EQV.4",
       "PREC.DTA.2"
@@ -8025,6 +8314,7 @@
     "crossPrereqs": [
       "ALG2.FNC.13"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-BF.A.2",
@@ -8055,6 +8345,7 @@
       "PREC.FNC.2"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.FNC.12",
       "PREC.FNC.13",
@@ -8089,6 +8380,7 @@
       "PREC.FNC.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.10"
     ],
@@ -8120,6 +8412,7 @@
       "PREC.FNC.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.EQV.8",
       "CALC.FNC.12"
@@ -8151,6 +8444,7 @@
       "PREC.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.14"
     ],
@@ -8179,6 +8473,7 @@
       "PREC.FNC.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [],
     "difficultyLevel": 6,
@@ -8207,6 +8502,7 @@
       "GEO.PRP.5",
       "GEO.SPC.12"
     ],
+    "provisional": false,
     "enables": [
       "PREC.QNT.2",
       "PREC.PRP.3",
@@ -8247,6 +8543,7 @@
       "PREC.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "PREC.FNC.15"
     ],
@@ -8279,6 +8576,7 @@
     "crossPrereqs": [
       "GEO.SPC.11"
     ],
+    "provisional": false,
     "enables": [
       "PREC.SPC.4",
       "PREC.SPC.5"
@@ -8313,6 +8611,7 @@
       "PREC.SPC.3"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSN-VM.A.3",
@@ -8345,6 +8644,7 @@
     "crossPrereqs": [
       "GEO.EQV.9"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-PRECALC:4.12",
@@ -8377,6 +8677,7 @@
       "ALG2.SPC.2",
       "GEO.EQV.9"
     ],
+    "provisional": false,
     "enables": [
       "CALC.EQV.3"
     ],
@@ -8410,8 +8711,10 @@
       "PREC.FNC.8"
     ],
     "crossPrereqs": [
-      "ALG2.EQV.6"
+      "ALG2.EQV.6",
+      "ALG1.DTA.5"
     ],
+    "provisional": false,
     "enables": [
       "PREC.DTA.2",
       "PREC.DTA.3"
@@ -8445,6 +8748,7 @@
       "PREC.FNC.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-LE.A.4",
@@ -8474,6 +8778,7 @@
       "PREC.DTA.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "HSF-TF.B.5"
@@ -8503,6 +8808,7 @@
     "crossPrereqs": [
       "PREC.FNC.5"
     ],
+    "provisional": false,
     "enables": [
       "CALC.QNT.2"
     ],
@@ -8533,6 +8839,7 @@
       "CALC.FNC.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:4.7"
@@ -8562,6 +8869,7 @@
     "crossPrereqs": [
       "MS.PRP.3"
     ],
+    "provisional": false,
     "enables": [
       "CALC.PRP.2",
       "CALC.SPC.1"
@@ -8597,6 +8905,7 @@
       "GEO.PRP.7",
       "PREC.PRP.2"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:4.4",
@@ -8628,6 +8937,7 @@
     "crossPrereqs": [
       "ALG1.FNC.3"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:4.6"
@@ -8658,6 +8968,7 @@
       "ALG2.EQV.11",
       "PREC.EQV.1"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:1.6",
@@ -8689,6 +9000,7 @@
     "crossPrereqs": [
       "ALG2.FNC.5"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:1.11",
@@ -8720,6 +9032,7 @@
     "crossPrereqs": [
       "PREC.SPC.6"
     ],
+    "provisional": false,
     "enables": [
       "CALC.PRP.2"
     ],
@@ -8752,6 +9065,7 @@
     "crossPrereqs": [
       "PREC.EQV.6"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:6.10",
@@ -8780,6 +9094,7 @@
     "crossPrereqs": [
       "PREC.FNC.2"
     ],
+    "provisional": false,
     "enables": [
       "CALC.FNC.2"
     ],
@@ -8811,6 +9126,7 @@
       "CALC.FNC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.EQV.1",
       "CALC.FNC.3",
@@ -8847,6 +9163,7 @@
     "crossPrereqs": [
       "PREC.SPC.1"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:1.8"
@@ -8876,6 +9193,7 @@
     "crossPrereqs": [
       "PREC.FNC.6"
     ],
+    "provisional": false,
     "enables": [
       "CALC.QNT.1",
       "CALC.FNC.5"
@@ -8910,6 +9228,7 @@
     "crossPrereqs": [
       "ALG2.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "CALC.EQV.2",
       "CALC.FNC.6",
@@ -8944,6 +9263,7 @@
       "CALC.FNC.5"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:1.16"
@@ -8973,6 +9293,7 @@
     "crossPrereqs": [
       "PREC.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "CALC.PRP.1",
       "CALC.FNC.8",
@@ -9008,6 +9329,7 @@
       "CALC.FNC.7"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.EQV.2",
       "CALC.FNC.15"
@@ -9041,6 +9363,7 @@
     "crossPrereqs": [
       "ALG2.QNT.1"
     ],
+    "provisional": false,
     "enables": [
       "CALC.PRP.3",
       "CALC.FNC.10",
@@ -9076,6 +9399,7 @@
     "crossPrereqs": [
       "PREC.FNC.12"
     ],
+    "provisional": false,
     "enables": [
       "CALC.FNC.11",
       "CALC.FNC.13"
@@ -9110,6 +9434,7 @@
     "crossPrereqs": [
       "PREC.FNC.3"
     ],
+    "provisional": false,
     "enables": [
       "CALC.QNT.2",
       "CALC.EQV.3",
@@ -9146,6 +9471,7 @@
     "crossPrereqs": [
       "PREC.FNC.13"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:3.3",
@@ -9174,6 +9500,7 @@
       "CALC.FNC.10"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.14",
       "CALC.FNC.18"
@@ -9206,6 +9533,7 @@
     "crossPrereqs": [
       "PREC.FNC.14"
     ],
+    "provisional": false,
     "enables": [
       "CALC.SPC.2"
     ],
@@ -9236,6 +9564,7 @@
       "CALC.FNC.8"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:5.1"
@@ -9264,6 +9593,7 @@
       "CALC.FNC.9"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.17",
       "CALC.FNC.20"
@@ -9297,6 +9627,7 @@
     "crossPrereqs": [
       "PREC.EQV.3"
     ],
+    "provisional": false,
     "enables": [
       "CALC.FNC.18",
       "CALC.FNC.20"
@@ -9331,6 +9662,7 @@
     "crossPrereqs": [
       "PREC.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "CALC.PRP.3",
       "CALC.FNC.19"
@@ -9362,6 +9694,7 @@
       "CALC.FNC.18"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.24"
     ],
@@ -9395,6 +9728,7 @@
     "crossPrereqs": [
       "GEO.PRP.7"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:5.10",
@@ -9423,6 +9757,7 @@
       "CALC.FNC.11"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.EQV.4",
       "CALC.FNC.23",
@@ -9457,6 +9792,7 @@
     "crossPrereqs": [
       "PREC.FNC.5"
     ],
+    "provisional": false,
     "enables": [
       "CALC.FNC.23"
     ],
@@ -9489,6 +9825,7 @@
       "CALC.FNC.22"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.24",
       "CALC.FNC.25",
@@ -9523,6 +9860,7 @@
       "CALC.FNC.23"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:6.4",
@@ -9552,6 +9890,7 @@
       "CALC.FNC.23"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.28"
     ],
@@ -9581,6 +9920,7 @@
       "CALC.FNC.23"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:8.1"
@@ -9608,6 +9948,7 @@
       "CALC.FNC.21"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.FNC.28"
     ],
@@ -9642,6 +9983,7 @@
     "crossPrereqs": [
       "PREC.EQV.5"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:7.6",
@@ -9672,6 +10014,7 @@
       "CALC.PRP.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [
       "CALC.SPC.2"
     ],
@@ -9703,6 +10046,7 @@
       "CALC.SPC.1"
     ],
     "crossPrereqs": [],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:8.2"
@@ -9732,6 +10076,7 @@
     "crossPrereqs": [
       "PREC.FNC.1"
     ],
+    "provisional": false,
     "enables": [
       "CALC.SPC.4",
       "CALC.SPC.5"
@@ -9766,6 +10111,7 @@
     "crossPrereqs": [
       "GEO.PRP.7"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:8.7",
@@ -9796,6 +10142,7 @@
     "crossPrereqs": [
       "GEO.PRP.7"
     ],
+    "provisional": false,
     "enables": [],
     "standardsAlignment": [
       "AP-CALC:8.10",
@@ -9828,6 +10175,7 @@
     "crossPrereqs": [
       "MS.DTA.7"
     ],
+    "provisional": false,
     "enables": [
       "CALC.DTA.2"
     ],
@@ -9859,6 +10207,7 @@
     "crossPrereqs": [
       "GEO.SPC.10"
     ],
+    "provisional": false,
     "enables": [
       "CALC.FNC.22"
     ],
@@ -9867,6 +10216,1085 @@
       "AP-CALC:6.3"
     ],
     "difficultyLevel": 7,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "MS.DTA.8",
+    "displayName": "Probability models",
+    "studentLabel": "Building a probability model",
+    "description": "Develop uniform and non-uniform probability models, use them to find probabilities of events, and compare model predictions with observed frequencies.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "MS",
+    "course": "Middle School Math",
+    "unit": "Data & Chance",
+    "gradeBand": "5-8",
+    "prerequisites": [
+      "MS.DTA.5"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "GEO.DTA.1",
+      "ALG2.DTA.3",
+      "STAT.DTA.24"
+    ],
+    "standardsAlignment": [
+      "7.SP.C.7"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "ALG1.DTA.5",
+    "displayName": "Quadratic and exponential fits",
+    "studentLabel": "Fitting curves to data",
+    "description": "Fit quadratic and exponential functions to scatter plot data, choose between model types, and use the fitted function to answer questions in context.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "ALG1",
+    "course": "Algebra 1",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "ALG1.DTA.3",
+      "ALG1.DTA.4",
+      "ALG1.FNC.8",
+      "ALG1.FNC.10"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "PREC.DTA.1",
+      "STAT.DTA.4"
+    ],
+    "standardsAlignment": [
+      "HSS-ID.B.6",
+      "HSS-ID.B.6a",
+      "HSS-ID.B.6b"
+    ],
+    "difficultyLevel": 4,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "ALG2.DTA.6",
+    "displayName": "Random variables",
+    "studentLabel": "Defining a random variable",
+    "description": "Define a random variable by assigning a numerical value to each outcome in a sample space and graph its probability distribution.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "ALG2",
+    "course": "Algebra 2",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "ALG2.DTA.4"
+    ],
+    "crossPrereqs": [
+      "GEO.DTA.1"
+    ],
+    "provisional": false,
+    "enables": [
+      "ALG2.DTA.5",
+      "ALG2.DTA.7",
+      "STAT.DTA.5"
+    ],
+    "standardsAlignment": [
+      "HSS-MD.A.1"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "ALG2.DTA.7",
+    "displayName": "Empirical probability distributions",
+    "studentLabel": "Distributions from real data",
+    "description": "Build a probability distribution for a random variable from observed data, assign probabilities empirically, and find and interpret its expected value.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "ALG2",
+    "course": "Algebra 2",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "ALG2.DTA.6",
+      "ALG2.DTA.5"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "ALG2.DTA.8",
+      "STAT.DTA.5",
+      "STAT.DTA.9"
+    ],
+    "standardsAlignment": [
+      "HSS-MD.A.4"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "ALG2.DTA.8",
+    "displayName": "Expected payoff",
+    "studentLabel": "Expected value of a bet",
+    "description": "Weigh the outcomes of a decision by assigning probabilities to payoff values and finding expected values, including the expected payoff of a game of chance.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "ALG2",
+    "course": "Algebra 2",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "ALG2.DTA.7"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "ALG2.DTA.9"
+    ],
+    "standardsAlignment": [
+      "HSS-MD.B.5",
+      "HSS-MD.B.5a"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "ALG2.DTA.9",
+    "displayName": "Decisions using probability",
+    "studentLabel": "Choosing the better strategy",
+    "description": "Compare strategies on the basis of expected value, use probability to make fair decisions, and analyze decisions such as product testing or medical testing.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "ALG2",
+    "course": "Algebra 2",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "ALG2.DTA.8",
+      "ALG2.DTA.3"
+    ],
+    "crossPrereqs": [
+      "GEO.DTA.3"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.20"
+    ],
+    "standardsAlignment": [
+      "HSS-MD.B.5b",
+      "HSS-MD.B.6",
+      "HSS-MD.B.7"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "ALG2.DTA.10",
+    "displayName": "Evaluate data reports",
+    "studentLabel": "Judging a claim from data",
+    "description": "Critique published reports and media claims based on data by examining the study design, the sampling method, the displays used, and whether the conclusions follow.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "ALG2",
+    "course": "Algebra 2",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "ALG2.DTA.1",
+      "ALG2.DTA.3"
+    ],
+    "crossPrereqs": [
+      "ALG1.DTA.4"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.2"
+    ],
+    "standardsAlignment": [
+      "HSS-IC.B.6"
+    ],
+    "difficultyLevel": 5,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.1",
+    "displayName": "Study design and randomization",
+    "studentLabel": "Designing a study",
+    "description": "Distinguish random sampling methods and experimental designs, and identify confounding, blocking, and the role of randomization in each.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [],
+    "crossPrereqs": [
+      "ALG2.DTA.1"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.2",
+      "STAT.DTA.9",
+      "STAT.DTA.23"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-3",
+      "HSS-IC.B.3"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.2",
+    "displayName": "Scope of inference",
+    "studentLabel": "What a study can prove",
+    "description": "Decide what a study permits by linking random selection to generalization and random assignment to causal claims.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.1"
+    ],
+    "crossPrereqs": [
+      "ALG2.DTA.10"
+    ],
+    "provisional": false,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-3",
+      "HSS-IC.A.1"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.3",
+    "displayName": "Least-squares regression",
+    "studentLabel": "Fitting the least-squares line",
+    "description": "Compute and interpret the least-squares regression line, r, and r-squared, and use residual plots and influential points to assess the fit.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [],
+    "crossPrereqs": [
+      "ALG1.DTA.4",
+      "ALG2.DTA.2"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.4",
+      "STAT.DTA.26"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-2",
+      "HSS-ID.B.6",
+      "HSS-ID.B.6b",
+      "HSS-ID.C.7",
+      "HSS-ID.C.8"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.4",
+    "displayName": "Transformations to achieve linearity",
+    "studentLabel": "Straightening curved data",
+    "description": "Apply logarithmic and power transformations to curved bivariate data and interpret regression output on the transformed scale.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.3"
+    ],
+    "crossPrereqs": [
+      "ALG2.EQV.17",
+      "ALG1.DTA.5"
+    ],
+    "provisional": true,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-2"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.5",
+    "displayName": "Discrete random variables",
+    "studentLabel": "Summarizing a random variable",
+    "description": "Compute and interpret the mean and standard deviation of a discrete random variable from its probability distribution.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [],
+    "crossPrereqs": [
+      "ALG2.DTA.6",
+      "ALG2.DTA.7"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.6",
+      "STAT.DTA.7",
+      "STAT.DTA.11"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-4",
+      "HSS-MD.A.2"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.6",
+    "displayName": "Combining random variables",
+    "studentLabel": "Adding random variables",
+    "description": "Find the mean and standard deviation of sums and differences of random variables, using independence where it applies.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.5"
+    ],
+    "crossPrereqs": [],
+    "provisional": true,
+    "enables": [
+      "STAT.DTA.12"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-4"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.7",
+    "displayName": "Binomial and geometric distributions",
+    "studentLabel": "Binomial and geometric models",
+    "description": "Identify binomial and geometric settings and compute their probabilities, means, and standard deviations.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.5"
+    ],
+    "crossPrereqs": [
+      "ALG2.DTA.5"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.10"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-4",
+      "HSS-MD.A.3"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.8",
+    "displayName": "Normal distribution calculations",
+    "studentLabel": "Normal curve calculations",
+    "description": "Find probabilities, percentiles, and cutoff values for normal models using z-scores with technology or tables, and judge when a normal model is appropriate.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [],
+    "crossPrereqs": [
+      "ALG2.DTA.2"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.10",
+      "STAT.DTA.11"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-1",
+      "HSS-ID.A.4"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.9",
+    "displayName": "Sampling variability",
+    "studentLabel": "Why samples differ",
+    "description": "Explain why a statistic varies from sample to sample, describe the sampling distribution of a statistic, and distinguish bias from variability.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.1"
+    ],
+    "crossPrereqs": [
+      "ALG2.DTA.7",
+      "MS.DTA.4"
+    ],
+    "provisional": true,
+    "enables": [
+      "STAT.DTA.10",
+      "STAT.DTA.11",
+      "STAT.DTA.16"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-5"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.10",
+    "displayName": "Sampling distribution of a proportion",
+    "studentLabel": "Sampling distribution of a proportion",
+    "description": "Describe the shape, center, and standard deviation of the sampling distribution of a sample proportion and check the conditions for a normal approximation.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.9",
+      "STAT.DTA.7",
+      "STAT.DTA.8"
+    ],
+    "crossPrereqs": [],
+    "provisional": true,
+    "enables": [
+      "STAT.DTA.12",
+      "STAT.DTA.13",
+      "STAT.DTA.18"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-5"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.11",
+    "displayName": "Sampling distribution of a mean",
+    "studentLabel": "Sampling distribution of a mean",
+    "description": "Describe the sampling distribution of a sample mean and apply the Central Limit Theorem to judge when a normal model is reasonable.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.9",
+      "STAT.DTA.8",
+      "STAT.DTA.5"
+    ],
+    "crossPrereqs": [],
+    "provisional": true,
+    "enables": [
+      "STAT.DTA.12",
+      "STAT.DTA.14",
+      "STAT.DTA.19"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-5"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.12",
+    "displayName": "Sampling distributions of differences",
+    "studentLabel": "Comparing two sampling distributions",
+    "description": "Describe the sampling distributions of a difference of two sample proportions and of two sample means.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.10",
+      "STAT.DTA.11",
+      "STAT.DTA.6"
+    ],
+    "crossPrereqs": [],
+    "provisional": true,
+    "enables": [
+      "STAT.DTA.21",
+      "STAT.DTA.22"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-5"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.13",
+    "displayName": "Confidence interval for a proportion",
+    "studentLabel": "Estimating a population proportion",
+    "description": "Construct and interpret a confidence interval for a population proportion, checking conditions and reporting the margin of error.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.10"
+    ],
+    "crossPrereqs": [
+      "ALG2.DTA.3"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.15"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-6",
+      "HSS-IC.B.4"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.14",
+    "displayName": "Confidence interval for a mean",
+    "studentLabel": "Estimating a population mean",
+    "description": "Construct and interpret a t confidence interval for a population mean, checking conditions and explaining why t replaces z.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.11"
+    ],
+    "crossPrereqs": [
+      "ALG2.DTA.3"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.15",
+      "STAT.DTA.19"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-7",
+      "HSS-IC.B.4"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.15",
+    "displayName": "Interpreting confidence intervals",
+    "studentLabel": "Reading a confidence interval",
+    "description": "Interpret confidence level correctly, explain what changing sample size or confidence level does to interval width, and identify common misinterpretations.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.13",
+      "STAT.DTA.14"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-6",
+      "HSS-IC.B.4",
+      "HSS-IC.B.6"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.16",
+    "displayName": "Simulation-based inference",
+    "studentLabel": "Testing a claim by simulation",
+    "description": "Use randomization and resampling simulations to build a distribution of a statistic under a null model and judge whether an observed result is surprising.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.9"
+    ],
+    "crossPrereqs": [
+      "ALG2.DTA.3"
+    ],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.17"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-5",
+      "HSS-IC.A.2",
+      "HSS-IC.B.5"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.17",
+    "displayName": "Logic of significance testing",
+    "studentLabel": "How a significance test works",
+    "description": "State null and alternative hypotheses, define a test statistic and p-value, and draw a conclusion in context against a significance level.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.16"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.18",
+      "STAT.DTA.19",
+      "STAT.DTA.24"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-6",
+      "HSS-IC.A.2"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.18",
+    "displayName": "Test for a proportion",
+    "studentLabel": "Testing a claim about a proportion",
+    "description": "Carry out a one-sample z test for a population proportion, checking conditions and interpreting the p-value in context.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.17",
+      "STAT.DTA.10"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.20",
+      "STAT.DTA.21"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-6",
+      "HSS-IC.A.2"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.19",
+    "displayName": "Test for a mean",
+    "studentLabel": "Testing a claim about a mean",
+    "description": "Carry out a one-sample t test for a population mean, checking conditions and interpreting the p-value in context.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.17",
+      "STAT.DTA.11",
+      "STAT.DTA.14"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.20",
+      "STAT.DTA.22",
+      "STAT.DTA.23",
+      "STAT.DTA.26"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-7",
+      "HSS-IC.A.2"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.20",
+    "displayName": "Errors and power",
+    "studentLabel": "Type I and Type II errors",
+    "description": "Distinguish Type I and Type II errors, describe their consequences in context, and explain what affects the power of a test.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.18",
+      "STAT.DTA.19"
+    ],
+    "crossPrereqs": [
+      "ALG2.DTA.9"
+    ],
+    "provisional": true,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-6"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.21",
+    "displayName": "Two-proportion inference",
+    "studentLabel": "Comparing two proportions",
+    "description": "Construct confidence intervals and carry out significance tests for the difference between two population proportions.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.12",
+      "STAT.DTA.18"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-6",
+      "HSS-IC.B.5"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.22",
+    "displayName": "Two-sample mean inference",
+    "studentLabel": "Comparing two means",
+    "description": "Construct confidence intervals and carry out two-sample t tests for the difference between two population means.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.12",
+      "STAT.DTA.19"
+    ],
+    "crossPrereqs": [],
+    "provisional": false,
+    "enables": [
+      "STAT.DTA.23"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-7",
+      "HSS-IC.B.5"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.23",
+    "displayName": "Paired data inference",
+    "studentLabel": "Analyzing paired data",
+    "description": "Recognize paired designs and analyze them with one-sample procedures applied to the differences.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.22",
+      "STAT.DTA.19",
+      "STAT.DTA.1"
+    ],
+    "crossPrereqs": [],
+    "provisional": true,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-7"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.24",
+    "displayName": "Chi-square goodness of fit",
+    "studentLabel": "Chi-square goodness of fit",
+    "description": "Test whether a categorical distribution matches a hypothesized model using a chi-square goodness-of-fit test.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.17"
+    ],
+    "crossPrereqs": [
+      "MS.DTA.8"
+    ],
+    "provisional": true,
+    "enables": [
+      "STAT.DTA.25"
+    ],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-8"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.25",
+    "displayName": "Chi-square tests for two-way tables",
+    "studentLabel": "Testing two-way tables",
+    "description": "Use chi-square tests of independence and of homogeneity to assess association between two categorical variables, choosing the test from the study design.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.24"
+    ],
+    "crossPrereqs": [
+      "ALG1.DTA.2",
+      "GEO.DTA.3"
+    ],
+    "provisional": true,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-8"
+    ],
+    "difficultyLevel": 6,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "STAT.DTA.26",
+    "displayName": "Inference for regression slope",
+    "studentLabel": "Testing a regression slope",
+    "description": "Construct confidence intervals and carry out t tests for the slope of a least-squares regression line, checking the conditions for regression inference.",
+    "category": "statistics-probability",
+    "strand": "DTA",
+    "courseLevel": "STAT",
+    "course": "AP Statistics",
+    "unit": "Data & Chance",
+    "gradeBand": "8-12",
+    "prerequisites": [
+      "STAT.DTA.3",
+      "STAT.DTA.19"
+    ],
+    "crossPrereqs": [],
+    "provisional": true,
+    "enables": [],
+    "standardsAlignment": [
+      "AP-STATS:UNIT-9"
+    ],
+    "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
       "fluencyType": "process",
