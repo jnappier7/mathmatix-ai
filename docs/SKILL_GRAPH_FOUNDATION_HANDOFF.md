@@ -55,6 +55,14 @@ Interactive prototype exists (published artifact, built from the real taxonomy).
 |--------|------|
 | `fa0ae1bd` | **Skill graph repaired.** See below. |
 | `86a8dfa1` | **`studentLabel`** added to `models/skill.js` + generator plumbing. |
+| `44d6f6e2` | CCSS reference (337 codes) + this handoff. |
+| `e9f3fc07` | **Step 2 — the ladder.** `utils/skillRung.js`, 31 tests. |
+| `34cbd8e0` | **Student labels for all 315**, 4 copy-guard tests. |
+| `3000a930` | **Step 3 — closure + cascade.** `utils/skillClosure.js`, 24 tests. |
+
+> **Status:** steps 1-3 of the five-step plan are done. Suite at **3937 pass /
+> 242 suites**, eslint clean. The new modules are **islands** — nothing in the
+> live pipeline calls them yet. That wiring is step 4 and wants review first.
 
 ### `fa0ae1bd` — three defects, one root cause (seeded as a list, not a graph)
 
@@ -97,20 +105,62 @@ fractions; "Adding fractions" is plainer and wrong.
 
 ---
 
-## 3. What is IN FLIGHT (not done — agents were killed)
+## 2b. Steps 2 and 3 — what landed
 
-Four background research agents were launched and **all four died when the
-process exited. None wrote its deliverable.** Relaunch from scratch.
+### `e9f3fc07` — the ladder (`utils/skillRung.js`)
 
-| Deliverable (none exist yet) | Scope |
-|---|---|
-| `seeds/unified-taxonomy/standards-alignment.json` | `{skillId: [codes]}` for all 315 |
-| `seeds/unified-taxonomy/student-labels.json` | `{"labels": {skillId: "plain name"}}` for all 315 |
+`rung` / `provenBy` / `rungHistory` on `skillMastery`, with this module as the
+**single writer** of all three. `canAdvance()` governs what may be attempted;
+`evidenceSupports()` governs whether the attempt cleared the bar — separated so a
+student can be told "you may try this" and "you did not make it" as different
+things. Gates pinned to the existing pillar thresholds (0.90 accuracy, 3 hints) so
+the two systems cannot drift.
 
-The generator **already reads both** and falls back safely per skill, so they drop
-in as pure data with no code change. `scripts/genUnifiedSkills.py` reports
-`skills without standards alignment: 315` and `skills still using the formal name
-as the student label: 315` — those counters go to zero when the files land.
+Test named after the production bug: *"four first-try wins in a week is not a
+mastery claim."*
+
+### `3000a930` — closure (`utils/skillClosure.js`)
+
+Pure functions over a graph + mastery map, so they test against the real 315
+skills with no database.
+
+- `applyProofCascade` — proving clears everything beneath. Proving separation of
+  variables clears 20+ skills down to third-grade multiplication facts.
+- `invalidateFrom` — contradiction travels up, withdrawing **inferred** rungs
+  only. A skill the student proved themselves survives.
+- `availability` — the attackable frontier. `learned` does not unlock; only
+  `proved` or better does.
+- `bandProgress` / `nearestClosableBand` — the proximity hook. A band is offered
+  only when its remainder is actually startable.
+
+Two cascade guards: an already-proved skill is skipped, not overwritten (receipt
+stays `challenge`); an `explicitlyFailed` skill is never re-granted.
+
+---
+
+## 3. What is IN FLIGHT
+
+### Done
+`seeds/unified-taxonomy/student-labels.json` — **all 315 landed** (`34cbd8e0`).
+~200 changed substantively; 26 keep the formal name (almost all PREC/CALC, where
+the real term is what the student already owns).
+
+**Carried forward for review, not acted on:**
+- **24 skills flagged as possible splits** — strongest: `MS.QNT.8` (four
+  operations over signed fractions and decimals), `MS.SPC.7` (rigid motions and
+  dilations bundled), `GEO.SPC.19` (four formula families), `ALG2.FNC.13`
+  (arithmetic, finite and infinite series), `ALG1.EQV.11` (GCF vs grouping).
+- **`PREC.EQV.4` and `ALG2.EQV.17`** appear to be the same skill with identical
+  formal names in the same strand — likely a redundant taxonomy entry.
+- **`GEO.SPC.10`** — formal `displayName` "Parallelogram properties" is narrower
+  than the skill (description covers rectangles, rhombi, squares, trapezoids,
+  kites). Proposed rename to "Quadrilateral properties".
+
+### Still owed
+`seeds/unified-taxonomy/standards-alignment.json` — `{skillId: [codes]}` for all
+315. Three audit agents running. The generator already reads it with per-skill
+fallback and reports `skills without standards alignment: 315`; that counter goes
+to zero when the file lands. **No code change needed.**
 
 **Salvaged:** `seeds/unified-taxonomy/ccss-reference.json` — 337 CCSS-M codes with
 full standard text, scraped and cleaned (trailing footnote markers stripped).
@@ -151,30 +201,31 @@ fix on top of the foundation is not a rework; the tests guard it.
 
 ---
 
-## 4. What is NEXT (designed, not started)
+## 4. What is NEXT
 
-Ordered. Steps 2-3 are invisible and are the whole ballgame; step 4 is where a
-student feels it.
+**4 — Wire it in, then the proof endpoints.** ⚠️ **The step-2/3 modules are
+islands — no production code calls them yet.** Wiring is the first genuinely
+risky change on this branch and should be reviewed before it lands.
 
-**2 — The ladder in the schema.** `rung` (`none|learned|proved|taught`) +
-`provenBy` (`challenge|fluency|teachback|inference`) on `skillMastery`. Keep the
-4 pillars — they become the *evidence behind* rung 2, not a parallel system.
-**Single writer owns every rung transition, logged with its receipt.** Today
-`masteryEngine.updateSkillMastery` (L215) updates pillars and score but **never
-assigns `status`** — which is why the UI invented a "mastered" label off ~5
-problems.
+Order within step 4:
+1. **Make `masteryEngine.updateSkillMastery` (L215) delegate rung transitions to
+   `skillRung`.** It currently updates pillars and score but never assigns
+   `status`, which is why the UI invented "mastered" off ~5 problems. This is the
+   single highest-value wiring change and the one that fixes the screenshot.
+2. **Call `applyProofCascade` from the mastery write path** (`utils/pipeline/persist.js`
+   `updateSkillMastery`, `routes/mastery.js` `/record-mastery-attempt`), and
+   `invalidateFrom` + `markExplicitFailure` when a cleared skill is missed.
+3. **Retire the double bookkeeping:** `masteryEngine.calculateMasteryState`
+   currently demands a passed retention check *before* mastery. Under the ladder,
+   retention is decay — proving grants the rung and FSRS demotes later.
+4. **`POST /api/mastery/attempt/:skillId`** with mode `challenge | fluency`, plus
+   a band-level `teachback` as a pipeline mode with a rubric. Today "test-out" is
+   **keyword matching in `routes/chat.js:1296`** and nothing else; teach-back does
+   not exist at all.
 
-**3 — Closure + inference.** Transitive prerequisite closure on prove (does not
-exist anywhere today — only single-hop read-time checks). Revive
-`utils/masteryInference.js`, which is **dead code**: L27 reads `skill.patternId`
-and `skill.tier`, neither of which is on the Skill schema, so it returns `[]` for
-every real skill. Plus demote-on-contradiction (the cascade-invalidation gap
-`CLAUDE.md` flags).
-
-**4 — Proof endpoints.** `POST /api/mastery/attempt/:skillId` with mode
-`challenge | fluency`, and a band-level `teachback` running as a pipeline mode
-with a rubric. Today "test-out" is **keyword matching in `routes/chat.js:1296`**
-and nothing else. Teach-back does not exist at all.
+**Read-only first.** `GET /api/mastery/map` (graph + rungs + band progress) is
+additive and changes no existing behaviour — safe to land ahead of the write-path
+wiring, and it is what step 5's board consumes.
 
 **5 — The board.** Replace the D3 force graph in `public/js/skill-map.js` with
 the towers. Note `/api/mastery/skill-graph` (`routes/mastery.js:2414`) currently
