@@ -171,19 +171,31 @@ const skillSchema = new mongoose.Schema({
     index: true
   },
 
-  // Skills that must be mastered before this one
+  // Skills that must be mastered before this one, within the same course level.
   prerequisites: [{
     type: String,
     ref: 'Skill'
   }],
 
-  // Skills unlocked by mastering this one
+  // Prerequisites that live at a LOWER course level — the same idea at a more
+  // concrete level of abstraction (e.g. ALG1.PRP.2 "slope as rate" reaches back
+  // to MS.PRP.5 "proportional relationships"). Kept separate from `prerequisites`
+  // because these are the edges that make a strand readable as one through-line.
+  crossPrereqs: [{
+    type: String,
+    ref: 'Skill'
+  }],
+
+  // Skills unlocked by mastering this one. Derived — the reverse of
+  // prerequisites + crossPrereqs across the whole graph. Do not hand-edit.
   enables: [{
     type: String,
     ref: 'Skill'
   }],
 
-  // Standards alignment
+  // Standards alignment. Bare CCSS-M codes are self-identifying ("7.RP.A.2",
+  // "HSF.IF.B.4"); anything else carries a framework prefix ("AP-CALC:2.1",
+  // "OH:7.RP.2"). Verified against the published progressions, not inferred.
   standardsAlignment: [String],
 
   // Guidance for AI teaching (not scripted lessons)
@@ -262,11 +274,9 @@ const skillSchema = new mongoose.Schema({
   },
 
   // CAT Navigation fields (from skill graph)
-  strand: {
-    type: String,
-    index: true
-  },
-
+  // NOTE: `strand` is declared once, above, with its QNT/PRP/EQV/FNC/SPC/DTA enum.
+  // A second bare `strand: { type: String }` used to sit here; being later in the
+  // object literal it overwrote the enum, so strand was never validated.
   depth: {
     type: Number,
     min: 0

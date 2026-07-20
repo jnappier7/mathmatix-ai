@@ -10,7 +10,18 @@
     "unit": "Quantity & Operations",
     "gradeBand": "K-5",
     "prerequisites": [],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.2",
+      "ELEM.QNT.3",
+      "ELEM.QNT.6",
+      "ELEM.QNT.10",
+      "ELEM.SPC.9",
+      "MS.QNT.9",
+      "MS.SPC.3",
+      "MS.DTA.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -32,7 +43,9 @@
     "prerequisites": [
       "ELEM.QNT.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -54,7 +67,12 @@
     "prerequisites": [
       "ELEM.QNT.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.14",
+      "MS.QNT.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -74,7 +92,19 @@
     "unit": "Quantity & Operations",
     "gradeBand": "K-5",
     "prerequisites": [],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.5",
+      "ELEM.QNT.6",
+      "ELEM.QNT.8",
+      "ELEM.QNT.12",
+      "ELEM.PRP.3",
+      "ELEM.EQV.2",
+      "ELEM.FNC.1",
+      "ELEM.SPC.3",
+      "ELEM.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -96,7 +126,14 @@
     "prerequisites": [
       "ELEM.QNT.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.7",
+      "ELEM.QNT.8",
+      "ELEM.QNT.13",
+      "ELEM.EQV.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -119,7 +156,14 @@
       "ELEM.QNT.1",
       "ELEM.QNT.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.7",
+      "ELEM.QNT.14",
+      "ELEM.PRP.6",
+      "ELEM.SPC.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -142,7 +186,9 @@
       "ELEM.QNT.5",
       "ELEM.QNT.6"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -165,7 +211,12 @@
       "ELEM.QNT.4",
       "ELEM.QNT.5"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.QNT.3",
+      "ALG1.QNT.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -185,7 +236,16 @@
     "unit": "Quantity & Operations",
     "gradeBand": "K-5",
     "prerequisites": [],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.10",
+      "ELEM.QNT.11",
+      "ELEM.QNT.12",
+      "ELEM.PRP.1",
+      "MS.QNT.2",
+      "MS.QNT.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -208,7 +268,12 @@
       "ELEM.QNT.1",
       "ELEM.QNT.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.14",
+      "ELEM.PRP.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -231,7 +296,11 @@
       "ELEM.QNT.9",
       "ELEM.PRP.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.DTA.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -254,7 +323,12 @@
       "ELEM.QNT.4",
       "ELEM.QNT.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.13",
+      "ELEM.PRP.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -277,7 +351,9 @@
       "ELEM.QNT.5",
       "ELEM.QNT.12"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -301,7 +377,11 @@
       "ELEM.QNT.6",
       "ELEM.QNT.10"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.QNT.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -323,7 +403,14 @@
     "prerequisites": [
       "ELEM.QNT.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.QNT.11",
+      "ELEM.PRP.2",
+      "ELEM.PRP.4",
+      "MS.PRP.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -345,7 +432,9 @@
     "prerequisites": [
       "ELEM.PRP.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -367,7 +456,11 @@
     "prerequisites": [
       "ELEM.QNT.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.PRP.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -390,7 +483,12 @@
       "ELEM.PRP.1",
       "ELEM.QNT.10"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.QNT.5",
+      "MS.PRP.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -412,7 +510,12 @@
     "prerequisites": [
       "ELEM.QNT.12"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.QNT.2",
+      "MS.SPC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -434,7 +537,11 @@
     "prerequisites": [
       "ELEM.QNT.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.PRP.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -454,7 +561,11 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "K-5",
     "prerequisites": [],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.EQV.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -476,7 +587,12 @@
     "prerequisites": [
       "ELEM.QNT.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.EQV.5",
+      "MS.EQV.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -499,7 +615,12 @@
       "ELEM.EQV.1",
       "ELEM.QNT.5"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.EQV.4",
+      "MS.EQV.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -521,7 +642,9 @@
     "prerequisites": [
       "ELEM.EQV.3"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -543,7 +666,12 @@
     "prerequisites": [
       "ELEM.EQV.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.EQV.6",
+      "MS.EQV.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -565,7 +693,9 @@
     "prerequisites": [
       "ELEM.EQV.5"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -587,7 +717,12 @@
     "prerequisites": [
       "ELEM.QNT.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.FNC.2",
+      "ALG1.FNC.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -609,7 +744,12 @@
     "prerequisites": [
       "ELEM.FNC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.FNC.3",
+      "ELEM.FNC.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -631,7 +771,11 @@
     "prerequisites": [
       "ELEM.FNC.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.FNC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -653,7 +797,11 @@
     "prerequisites": [
       "ELEM.FNC.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.FNC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -676,7 +824,11 @@
       "ELEM.FNC.4",
       "ELEM.SPC.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.SPC.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -696,7 +848,13 @@
     "unit": "Space & Measure",
     "gradeBand": "K-5",
     "prerequisites": [],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.SPC.2",
+      "ELEM.SPC.4",
+      "ELEM.SPC.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -718,7 +876,9 @@
     "prerequisites": [
       "ELEM.SPC.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -740,7 +900,12 @@
     "prerequisites": [
       "ELEM.QNT.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.SPC.8",
+      "MS.SPC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -762,7 +927,12 @@
     "prerequisites": [
       "ELEM.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.SPC.5",
+      "ELEM.SPC.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -784,7 +954,11 @@
     "prerequisites": [
       "ELEM.SPC.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.SPC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -806,7 +980,11 @@
     "prerequisites": [
       "ELEM.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.SPC.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -828,7 +1006,9 @@
     "prerequisites": [
       "ELEM.SPC.4"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -851,7 +1031,9 @@
       "ELEM.SPC.3",
       "ELEM.QNT.6"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -873,7 +1055,12 @@
     "prerequisites": [
       "ELEM.QNT.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.FNC.5",
+      "ELEM.DTA.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -895,7 +1082,13 @@
     "prerequisites": [
       "ELEM.QNT.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ELEM.DTA.2",
+      "ELEM.DTA.3",
+      "MS.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -918,7 +1111,9 @@
       "ELEM.DTA.1",
       "ELEM.QNT.11"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -941,7 +1136,9 @@
       "ELEM.DTA.1",
       "ELEM.SPC.9"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -961,7 +1158,11 @@
     "unit": "Data & Chance",
     "gradeBand": "K-5",
     "prerequisites": [],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.DTA.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 2,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -980,10 +1181,15 @@
     "course": "Middle School Math",
     "unit": "Quantity & Operations",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.QNT.14"
     ],
-    "enables": [],
+    "enables": [
+      "MS.QNT.8",
+      "ALG2.EQV.13"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1002,11 +1208,16 @@
     "course": "Middle School Math",
     "unit": "Quantity & Operations",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.QNT.9",
       "ELEM.PRP.5"
     ],
-    "enables": [],
+    "enables": [
+      "MS.QNT.8",
+      "MS.PRP.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1025,10 +1236,14 @@
     "course": "Middle School Math",
     "unit": "Quantity & Operations",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.QNT.8"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.EQV.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1047,10 +1262,17 @@
     "course": "Middle School Math",
     "unit": "Quantity & Operations",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.QNT.9"
     ],
-    "enables": [],
+    "enables": [
+      "MS.QNT.5",
+      "MS.QNT.6",
+      "MS.SPC.4",
+      "ALG1.EQV.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1070,10 +1292,13 @@
     "unit": "Quantity & Operations",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.QNT.4",
+      "MS.QNT.4"
+    ],
+    "crossPrereqs": [
       "ELEM.PRP.4"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1093,10 +1318,18 @@
     "unit": "Quantity & Operations",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.QNT.4",
+      "MS.QNT.4"
+    ],
+    "crossPrereqs": [
       "ELEM.QNT.3"
     ],
-    "enables": [],
+    "enables": [
+      "MS.QNT.7",
+      "MS.QNT.8",
+      "MS.EQV.5",
+      "ALG1.EQV.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1118,7 +1351,12 @@
     "prerequisites": [
       "MS.QNT.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.QNT.8",
+      "MS.QNT.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1143,7 +1381,11 @@
       "MS.QNT.6",
       "MS.QNT.7"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.QNT.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1163,10 +1405,16 @@
     "unit": "Quantity & Operations",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.QNT.7",
+      "MS.QNT.7"
+    ],
+    "crossPrereqs": [
       "ELEM.QNT.1"
     ],
-    "enables": [],
+    "enables": [
+      "MS.QNT.10",
+      "MS.QNT.11"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1188,7 +1436,9 @@
     "prerequisites": [
       "MS.QNT.9"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1210,7 +1460,12 @@
     "prerequisites": [
       "MS.QNT.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.SPC.8",
+      "ALG1.QNT.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1229,11 +1484,16 @@
     "course": "Middle School Math",
     "unit": "Proportional Reasoning",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.PRP.3",
       "ELEM.PRP.1"
     ],
-    "enables": [],
+    "enables": [
+      "MS.PRP.2",
+      "MS.PRP.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1255,7 +1515,12 @@
     "prerequisites": [
       "MS.PRP.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.PRP.4",
+      "MS.PRP.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1276,10 +1541,18 @@
     "gradeBand": "5-8",
     "prerequisites": [
       "MS.PRP.1",
-      "MS.QNT.2",
+      "MS.QNT.2"
+    ],
+    "crossPrereqs": [
       "ELEM.PRP.6"
     ],
-    "enables": [],
+    "enables": [
+      "MS.PRP.5",
+      "ALG1.PRP.1",
+      "PREC.PRP.2",
+      "CALC.PRP.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1299,10 +1572,16 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.PRP.2",
+      "MS.PRP.2"
+    ],
+    "crossPrereqs": [
       "ELEM.PRP.4"
     ],
-    "enables": [],
+    "enables": [
+      "MS.PRP.7",
+      "ALG1.DTA.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1325,7 +1604,14 @@
       "MS.PRP.2",
       "MS.PRP.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.PRP.6",
+      "MS.FNC.3",
+      "ALG1.PRP.2",
+      "ALG1.FNC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1347,7 +1633,13 @@
     "prerequisites": [
       "MS.PRP.5"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.PRP.7",
+      "MS.PRP.8",
+      "GEO.PRP.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1370,7 +1662,11 @@
       "MS.PRP.4",
       "MS.PRP.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.PRP.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1392,7 +1688,12 @@
     "prerequisites": [
       "MS.PRP.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.SPC.7",
+      "GEO.PRP.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1411,10 +1712,16 @@
     "course": "Middle School Math",
     "unit": "Equivalence & Structure",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.EQV.5"
     ],
-    "enables": [],
+    "enables": [
+      "MS.EQV.2",
+      "MS.EQV.3",
+      "ALG1.QNT.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1434,10 +1741,15 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.EQV.1",
+      "MS.EQV.1"
+    ],
+    "crossPrereqs": [
       "ELEM.EQV.2"
     ],
-    "enables": [],
+    "enables": [
+      "MS.EQV.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1457,10 +1769,16 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.EQV.1",
+      "MS.EQV.1"
+    ],
+    "crossPrereqs": [
       "ELEM.EQV.3"
     ],
-    "enables": [],
+    "enables": [
+      "MS.EQV.4",
+      "MS.EQV.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1482,7 +1800,11 @@
     "prerequisites": [
       "MS.EQV.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.EQV.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1505,7 +1827,14 @@
       "MS.EQV.3",
       "MS.QNT.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.EQV.7",
+      "MS.EQV.8",
+      "MS.SPC.5",
+      "ALG1.EQV.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1527,7 +1856,11 @@
     "prerequisites": [
       "MS.EQV.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.EQV.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1550,7 +1883,9 @@
       "MS.EQV.4",
       "MS.EQV.5"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1573,7 +1908,11 @@
       "MS.EQV.5",
       "MS.EQV.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.EQV.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1596,7 +1935,12 @@
       "MS.EQV.8",
       "MS.FNC.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.6",
+      "PREC.EQV.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1615,10 +1959,15 @@
     "course": "Middle School Math",
     "unit": "Functional Dependence",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.FNC.3"
     ],
-    "enables": [],
+    "enables": [
+      "MS.FNC.2",
+      "MS.FNC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1640,7 +1989,12 @@
     "prerequisites": [
       "MS.FNC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.FNC.5",
+      "ALG1.FNC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1663,7 +2017,11 @@
       "MS.FNC.1",
       "MS.PRP.5"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.FNC.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1685,7 +2043,14 @@
     "prerequisites": [
       "MS.FNC.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.EQV.9",
+      "MS.FNC.5",
+      "MS.FNC.6",
+      "MS.DTA.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1708,7 +2073,9 @@
       "MS.FNC.2",
       "MS.FNC.4"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1730,7 +2097,9 @@
     "prerequisites": [
       "MS.FNC.4"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1749,10 +2118,15 @@
     "course": "Middle School Math",
     "unit": "Space & Measure",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.SPC.3"
     ],
-    "enables": [],
+    "enables": [
+      "MS.SPC.2",
+      "MS.SPC.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1774,7 +2148,9 @@
     "prerequisites": [
       "MS.SPC.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1793,11 +2169,16 @@
     "course": "Middle School Math",
     "unit": "Space & Measure",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.QNT.1",
       "ELEM.PRP.5"
     ],
-    "enables": [],
+    "enables": [
+      "MS.SPC.9",
+      "GEO.SPC.18"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1817,10 +2198,16 @@
     "unit": "Space & Measure",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.QNT.4",
+      "MS.QNT.4"
+    ],
+    "crossPrereqs": [
       "ELEM.FNC.5"
     ],
-    "enables": [],
+    "enables": [
+      "MS.SPC.7",
+      "MS.SPC.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1840,10 +2227,16 @@
     "unit": "Space & Measure",
     "gradeBand": "5-8",
     "prerequisites": [
-      "MS.EQV.5",
+      "MS.EQV.5"
+    ],
+    "crossPrereqs": [
       "ELEM.SPC.5"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.SPC.1",
+      "GEO.SPC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1865,7 +2258,15 @@
     "prerequisites": [
       "MS.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.SPC.9",
+      "ALG1.SPC.2",
+      "GEO.SPC.13",
+      "GEO.SPC.15",
+      "GEO.SPC.17"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1886,10 +2287,15 @@
     "gradeBand": "5-8",
     "prerequisites": [
       "MS.SPC.4",
-      "MS.PRP.8",
+      "MS.PRP.8"
+    ],
+    "crossPrereqs": [
       "ELEM.SPC.6"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.SPC.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1912,7 +2318,12 @@
       "MS.QNT.11",
       "MS.SPC.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.SPC.1",
+      "GEO.SPC.11"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1935,7 +2346,9 @@
       "MS.SPC.3",
       "MS.SPC.6"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1954,10 +2367,14 @@
     "course": "Middle School Math",
     "unit": "Data & Chance",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.DTA.1"
     ],
-    "enables": [],
+    "enables": [
+      "MS.DTA.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -1979,7 +2396,13 @@
     "prerequisites": [
       "MS.DTA.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.DTA.3",
+      "MS.DTA.7",
+      "ALG1.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2001,7 +2424,11 @@
     "prerequisites": [
       "MS.DTA.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "MS.DTA.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2023,7 +2450,11 @@
     "prerequisites": [
       "MS.DTA.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2042,11 +2473,16 @@
     "course": "Middle School Math",
     "unit": "Data & Chance",
     "gradeBand": "5-8",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ELEM.DTA.4",
       "ELEM.QNT.1"
     ],
-    "enables": [],
+    "enables": [
+      "MS.DTA.6",
+      "GEO.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2068,7 +2504,9 @@
     "prerequisites": [
       "MS.DTA.5"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2091,7 +2529,11 @@
       "MS.DTA.2",
       "MS.FNC.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 3,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2110,11 +2552,16 @@
     "course": "Algebra 1",
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.QNT.8",
       "MS.QNT.11"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.QNT.3",
+      "ALG2.QNT.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2133,10 +2580,16 @@
     "course": "Algebra 1",
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.EQV.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.EQV.10",
+      "ALG1.FNC.8",
+      "ALG2.QNT.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2156,10 +2609,19 @@
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.QNT.1",
+      "ALG1.QNT.1"
+    ],
+    "crossPrereqs": [
       "ELEM.QNT.8"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.QNT.4",
+      "ALG1.EQV.16",
+      "GEO.SPC.12",
+      "ALG2.QNT.1",
+      "ALG2.QNT.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2181,7 +2643,11 @@
     "prerequisites": [
       "ALG1.QNT.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.QNT.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2200,10 +2666,17 @@
     "course": "Algebra 1",
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.PRP.3"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.PRP.2",
+      "ALG1.PRP.4",
+      "GEO.QNT.2",
+      "ALG2.PRP.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2223,10 +2696,20 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.PRP.1",
+      "ALG1.PRP.1"
+    ],
+    "crossPrereqs": [
       "MS.PRP.5"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.PRP.3",
+      "ALG1.FNC.3",
+      "ALG1.FNC.12",
+      "GEO.PRP.1",
+      "ALG2.SPC.1",
+      "PREC.FNC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2248,7 +2731,11 @@
     "prerequisites": [
       "ALG1.PRP.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.PRP.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2268,10 +2755,16 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.PRP.1",
+      "ALG1.PRP.1"
+    ],
+    "crossPrereqs": [
       "MS.PRP.7"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.FNC.8",
+      "ALG2.PRP.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2290,10 +2783,20 @@
     "course": "Algebra 1",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.EQV.5"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.EQV.2",
+      "ALG1.EQV.3",
+      "ALG1.EQV.5",
+      "ALG1.EQV.6",
+      "GEO.EQV.3",
+      "GEO.EQV.9",
+      "GEO.SPC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2315,7 +2818,12 @@
     "prerequisites": [
       "ALG1.EQV.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.SPC.16",
+      "ALG2.SPC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2335,10 +2843,16 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.EQV.1",
+      "ALG1.EQV.1"
+    ],
+    "crossPrereqs": [
       "MS.QNT.6"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.EQV.4",
+      "ALG1.FNC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2360,7 +2874,9 @@
     "prerequisites": [
       "ALG1.EQV.3"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2380,10 +2896,15 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.EQV.1",
+      "ALG1.EQV.1"
+    ],
+    "crossPrereqs": [
       "MS.QNT.4"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2406,7 +2927,12 @@
       "ALG1.EQV.1",
       "ALG1.FNC.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.7",
+      "ALG2.FNC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2428,7 +2954,11 @@
     "prerequisites": [
       "ALG1.EQV.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2450,7 +2980,11 @@
     "prerequisites": [
       "ALG1.EQV.7"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2469,10 +3003,14 @@
     "course": "Algebra 1",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.QNT.3"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.EQV.10"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2495,7 +3033,12 @@
       "ALG1.EQV.9",
       "ALG1.QNT.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.11",
+      "ALG1.SPC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2517,7 +3060,11 @@
     "prerequisites": [
       "ALG1.EQV.10"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2539,7 +3086,12 @@
     "prerequisites": [
       "ALG1.EQV.11"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.13",
+      "ALG1.EQV.14"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2561,7 +3113,11 @@
     "prerequisites": [
       "ALG1.EQV.12"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.15"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2583,7 +3139,11 @@
     "prerequisites": [
       "ALG1.EQV.12"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.15"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2606,7 +3166,13 @@
       "ALG1.EQV.13",
       "ALG1.EQV.14"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.16",
+      "ALG1.FNC.10",
+      "ALG2.EQV.10"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2629,7 +3195,14 @@
       "ALG1.EQV.15",
       "ALG1.QNT.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.EQV.17",
+      "GEO.SPC.16",
+      "ALG2.EQV.3",
+      "ALG2.FNC.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2651,7 +3224,11 @@
     "prerequisites": [
       "ALG1.EQV.16"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2670,10 +3247,18 @@
     "course": "Algebra 1",
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.FNC.2"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.FNC.2",
+      "ALG1.FNC.3",
+      "ALG1.FNC.6",
+      "GEO.FNC.1",
+      "ALG2.FNC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2695,7 +3280,9 @@
     "prerequisites": [
       "ALG1.FNC.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2716,10 +3303,20 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "ALG1.FNC.1",
-      "ALG1.PRP.2",
+      "ALG1.PRP.2"
+    ],
+    "crossPrereqs": [
       "MS.PRP.5"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.EQV.6",
+      "ALG1.FNC.4",
+      "ALG1.FNC.5",
+      "ALG1.FNC.10",
+      "GEO.FNC.2",
+      "CALC.PRP.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2741,7 +3338,11 @@
     "prerequisites": [
       "ALG1.FNC.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.DTA.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2764,7 +3365,9 @@
       "ALG1.FNC.3",
       "ALG1.EQV.3"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2784,10 +3387,16 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.FNC.1",
+      "ALG1.FNC.1"
+    ],
+    "crossPrereqs": [
       "ELEM.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.FNC.7",
+      "ALG2.FNC.13"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2809,7 +3418,11 @@
     "prerequisites": [
       "ALG1.FNC.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.FNC.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2833,7 +3446,13 @@
       "ALG1.PRP.4",
       "ALG1.QNT.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.FNC.9",
+      "ALG2.EQV.16",
+      "ALG2.FNC.10"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2855,7 +3474,12 @@
     "prerequisites": [
       "ALG1.FNC.8"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.FNC.11",
+      "ALG1.FNC.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2878,7 +3502,12 @@
       "ALG1.FNC.3",
       "ALG1.EQV.15"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.FNC.11",
+      "ALG1.FNC.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2901,7 +3530,9 @@
       "ALG1.FNC.10",
       "ALG1.FNC.9"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2925,7 +3556,9 @@
       "ALG1.FNC.9",
       "ALG1.PRP.2"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2944,10 +3577,15 @@
     "course": "Algebra 1",
     "unit": "Space & Measure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.SPC.8"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.EQV.9",
+      "GEO.SPC.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2967,10 +3605,15 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.EQV.10",
+      "ALG1.EQV.10"
+    ],
+    "crossPrereqs": [
       "MS.SPC.6"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -2989,10 +3632,15 @@
     "course": "Algebra 1",
     "unit": "Data & Chance",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.DTA.2"
     ],
-    "enables": [],
+    "enables": [
+      "ALG1.DTA.3",
+      "ALG2.DTA.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3011,10 +3659,14 @@
     "course": "Algebra 1",
     "unit": "Data & Chance",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.PRP.4"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.DTA.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3037,7 +3689,11 @@
       "ALG1.FNC.4",
       "ALG1.DTA.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG1.DTA.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3059,7 +3715,9 @@
     "prerequisites": [
       "ALG1.DTA.3"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3078,10 +3736,14 @@
     "course": "Geometry",
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.QNT.4"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.SPC.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3100,10 +3762,14 @@
     "course": "Geometry",
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.PRP.1"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.FNC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3122,11 +3788,16 @@
     "course": "Geometry",
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.PRP.8",
       "ALG1.PRP.2"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.PRP.2",
+      "GEO.FNC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3146,10 +3817,16 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.PRP.1",
+      "GEO.PRP.1"
+    ],
+    "crossPrereqs": [
       "MS.PRP.6"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.PRP.3",
+      "GEO.PRP.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3172,7 +3849,12 @@
       "GEO.PRP.2",
       "GEO.EQV.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.PRP.4",
+      "GEO.PRP.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3194,7 +3876,9 @@
     "prerequisites": [
       "GEO.PRP.3"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3217,7 +3901,15 @@
       "GEO.PRP.3",
       "GEO.SPC.11"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.PRP.6",
+      "ALG2.FNC.14",
+      "PREC.PRP.3",
+      "PREC.PRP.4",
+      "PREC.SPC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3239,7 +3931,9 @@
     "prerequisites": [
       "GEO.PRP.5"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3262,7 +3956,14 @@
       "GEO.PRP.2",
       "GEO.SPC.18"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.PRP.2",
+      "CALC.FNC.20",
+      "CALC.SPC.4",
+      "CALC.SPC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3282,7 +3983,11 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3304,7 +4009,12 @@
     "prerequisites": [
       "GEO.EQV.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.3",
+      "PREC.FNC.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3324,10 +4034,15 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.EQV.2",
+      "GEO.EQV.2"
+    ],
+    "crossPrereqs": [
       "ALG1.EQV.1"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.EQV.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3350,7 +4065,11 @@
       "GEO.EQV.3",
       "GEO.SPC.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3373,7 +4092,11 @@
       "GEO.EQV.4",
       "GEO.SPC.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3396,7 +4119,12 @@
       "GEO.EQV.5",
       "GEO.SPC.7"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.PRP.3",
+      "GEO.EQV.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3418,7 +4146,11 @@
     "prerequisites": [
       "GEO.EQV.6"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3441,7 +4173,11 @@
       "GEO.EQV.7",
       "GEO.SPC.10"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3461,11 +4197,17 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.EQV.8",
+      "GEO.EQV.8"
+    ],
+    "crossPrereqs": [
       "ALG1.SPC.1",
       "ALG1.EQV.1"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.SPC.5",
+      "PREC.SPC.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3486,10 +4228,15 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "GEO.SPC.7",
-      "GEO.PRP.1",
+      "GEO.PRP.1"
+    ],
+    "crossPrereqs": [
       "ALG1.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.FNC.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3510,10 +4257,13 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "GEO.SPC.19",
-      "GEO.QNT.2",
+      "GEO.QNT.2"
+    ],
+    "crossPrereqs": [
       "ALG1.FNC.3"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3532,11 +4282,15 @@
     "course": "Geometry",
     "unit": "Space & Measure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.SPC.5",
       "ALG1.EQV.1"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.SPC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3558,7 +4312,13 @@
     "prerequisites": [
       "GEO.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.4",
+      "GEO.SPC.3",
+      "GEO.SPC.13"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3578,10 +4338,16 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.SPC.2",
+      "GEO.SPC.2"
+    ],
+    "crossPrereqs": [
       "MS.SPC.5"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.EQV.5",
+      "GEO.SPC.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3603,7 +4369,13 @@
     "prerequisites": [
       "GEO.SPC.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.SPC.5",
+      "GEO.SPC.9",
+      "GEO.SPC.11"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3625,7 +4397,11 @@
     "prerequisites": [
       "GEO.SPC.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.SPC.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3647,7 +4423,9 @@
     "prerequisites": [
       "GEO.SPC.5"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3666,11 +4444,17 @@
     "course": "Geometry",
     "unit": "Space & Measure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.SPC.7",
       "ALG1.SPC.1"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.EQV.6",
+      "GEO.FNC.1",
+      "GEO.SPC.8"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3692,7 +4476,9 @@
     "prerequisites": [
       "GEO.SPC.7"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3714,7 +4500,12 @@
     "prerequisites": [
       "GEO.SPC.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.SPC.10",
+      "GEO.SPC.17"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3736,7 +4527,12 @@
     "prerequisites": [
       "GEO.SPC.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.EQV.8",
+      "CALC.DTA.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3756,10 +4552,18 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.SPC.4",
+      "GEO.SPC.4"
+    ],
+    "crossPrereqs": [
       "MS.SPC.8"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.PRP.5",
+      "GEO.SPC.12",
+      "PREC.PRP.4",
+      "PREC.SPC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3780,10 +4584,17 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "GEO.SPC.11",
-      "GEO.QNT.1",
+      "GEO.QNT.1"
+    ],
+    "crossPrereqs": [
       "ALG1.QNT.3"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.SPC.17",
+      "ALG2.FNC.14",
+      "PREC.SPC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3803,10 +4614,17 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.SPC.2",
+      "GEO.SPC.2"
+    ],
+    "crossPrereqs": [
       "MS.SPC.6"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.SPC.14",
+      "GEO.SPC.15",
+      "GEO.SPC.16"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3828,7 +4646,9 @@
     "prerequisites": [
       "GEO.SPC.13"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3848,10 +4668,16 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.SPC.13",
+      "GEO.SPC.13"
+    ],
+    "crossPrereqs": [
       "MS.SPC.6"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.FNC.14",
+      "PREC.PRP.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3871,11 +4697,16 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.SPC.13",
+      "GEO.SPC.13"
+    ],
+    "crossPrereqs": [
       "ALG1.EQV.16",
       "ALG1.EQV.2"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.SPC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3896,10 +4727,16 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "GEO.SPC.9",
-      "GEO.SPC.12",
+      "GEO.SPC.12"
+    ],
+    "crossPrereqs": [
       "MS.SPC.6"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.SPC.18",
+      "GEO.DTA.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3919,10 +4756,16 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.SPC.17",
+      "GEO.SPC.17"
+    ],
+    "crossPrereqs": [
       "MS.SPC.3"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.PRP.7",
+      "GEO.SPC.19"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3944,7 +4787,12 @@
     "prerequisites": [
       "GEO.SPC.18"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.FNC.2",
+      "GEO.SPC.20"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3966,7 +4814,9 @@
     "prerequisites": [
       "GEO.SPC.19"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -3985,10 +4835,15 @@
     "course": "Geometry",
     "unit": "Data & Chance",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.DTA.5"
     ],
-    "enables": [],
+    "enables": [
+      "GEO.DTA.2",
+      "GEO.DTA.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4010,7 +4865,13 @@
     "prerequisites": [
       "GEO.DTA.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "GEO.DTA.3",
+      "ALG2.DTA.4",
+      "ALG2.DTA.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4030,10 +4891,13 @@
     "unit": "Data & Chance",
     "gradeBand": "8-12",
     "prerequisites": [
-      "GEO.DTA.2",
+      "GEO.DTA.2"
+    ],
+    "crossPrereqs": [
       "ALG1.DTA.2"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4056,7 +4920,9 @@
       "GEO.DTA.1",
       "GEO.SPC.17"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 4,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4075,10 +4941,19 @@
     "course": "Algebra 2",
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.QNT.3"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.QNT.2",
+      "ALG2.QNT.3",
+      "ALG2.QNT.4",
+      "ALG2.FNC.8",
+      "PREC.FNC.7",
+      "CALC.FNC.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4098,10 +4973,16 @@
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.QNT.1",
+      "ALG2.QNT.1"
+    ],
+    "crossPrereqs": [
       "ALG1.QNT.2"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.12",
+      "ALG2.EQV.16"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4121,10 +5002,16 @@
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.QNT.1",
+      "ALG2.QNT.1"
+    ],
+    "crossPrereqs": [
       "ALG1.QNT.3"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.QNT.5",
+      "ALG2.EQV.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4144,10 +5031,15 @@
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.QNT.1",
+      "ALG2.QNT.1"
+    ],
+    "crossPrereqs": [
       "ALG1.QNT.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.QNT.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4170,7 +5062,12 @@
       "ALG2.QNT.4",
       "ALG2.QNT.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.4",
+      "PREC.QNT.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4189,10 +5086,14 @@
     "course": "Algebra 2",
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.PRP.3"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.PRP.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4211,10 +5112,14 @@
     "course": "Algebra 2",
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.PRP.4"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.FNC.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4235,10 +5140,13 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "ALG2.PRP.1",
-      "ALG2.EQV.15",
+      "ALG2.EQV.15"
+    ],
+    "crossPrereqs": [
       "ALG1.PRP.1"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4257,10 +5165,14 @@
     "course": "Algebra 2",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.EQV.5"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.FNC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4279,10 +5191,12 @@
     "course": "Algebra 2",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.EQV.8"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4301,10 +5215,16 @@
     "course": "Algebra 2",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.EQV.16"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.4",
+      "ALG2.SPC.1",
+      "ALG2.SPC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4325,10 +5245,18 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "ALG2.EQV.3",
-      "ALG2.QNT.5",
+      "ALG2.QNT.5"
+    ],
+    "crossPrereqs": [
       "ALG1.EQV.17"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.5",
+      "ALG2.EQV.6",
+      "PREC.EQV.2",
+      "PREC.FNC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4350,7 +5278,11 @@
     "prerequisites": [
       "ALG2.EQV.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.EQV.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4370,10 +5302,15 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.EQV.4",
+      "ALG2.EQV.4"
+    ],
+    "crossPrereqs": [
       "MS.EQV.9"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4392,10 +5329,17 @@
     "course": "Algebra 2",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.SPC.2"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.8",
+      "ALG2.EQV.10",
+      "ALG2.FNC.6",
+      "PREC.EQV.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4417,7 +5361,11 @@
     "prerequisites": [
       "ALG2.EQV.7"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4439,7 +5387,11 @@
     "prerequisites": [
       "ALG2.EQV.8"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.11"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4459,10 +5411,16 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.EQV.7",
+      "ALG2.EQV.7"
+    ],
+    "crossPrereqs": [
       "ALG1.EQV.15"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.11",
+      "ALG2.EQV.13"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4485,7 +5443,12 @@
       "ALG2.EQV.9",
       "ALG2.EQV.10"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.FNC.7",
+      "CALC.EQV.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4508,7 +5471,9 @@
       "ALG2.QNT.2",
       "ALG2.QNT.3"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4528,10 +5493,16 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.EQV.10",
+      "ALG2.EQV.10"
+    ],
+    "crossPrereqs": [
       "MS.QNT.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.14",
+      "ALG2.FNC.9"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4553,7 +5524,11 @@
     "prerequisites": [
       "ALG2.EQV.13"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.15"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4575,7 +5550,11 @@
     "prerequisites": [
       "ALG2.EQV.14"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.PRP.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4596,10 +5575,16 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "ALG2.FNC.10",
-      "ALG2.QNT.2",
+      "ALG2.QNT.2"
+    ],
+    "crossPrereqs": [
       "ALG1.FNC.8"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.18",
+      "ALG2.FNC.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4621,7 +5606,11 @@
     "prerequisites": [
       "ALG2.FNC.11"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.18"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4644,7 +5633,9 @@
       "ALG2.EQV.17",
       "ALG2.EQV.16"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4663,10 +5654,18 @@
     "course": "Algebra 2",
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.FNC.2",
+      "ALG2.FNC.4",
+      "ALG2.FNC.5",
+      "PREC.FNC.3",
+      "CALC.FNC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4688,7 +5687,11 @@
     "prerequisites": [
       "ALG2.FNC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.FNC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4710,7 +5713,11 @@
     "prerequisites": [
       "ALG2.FNC.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.FNC.11"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4730,11 +5737,20 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.FNC.1",
+      "ALG2.FNC.1"
+    ],
+    "crossPrereqs": [
       "ALG1.EQV.16",
       "GEO.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.FNC.8",
+      "ALG2.FNC.9",
+      "ALG2.FNC.10",
+      "ALG2.FNC.15",
+      "PREC.FNC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4754,10 +5770,15 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.FNC.1",
+      "ALG2.FNC.1"
+    ],
+    "crossPrereqs": [
       "ALG1.EQV.6"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.EQV.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4779,7 +5800,11 @@
     "prerequisites": [
       "ALG2.EQV.7"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.FNC.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4802,7 +5827,9 @@
       "ALG2.FNC.6",
       "ALG2.EQV.11"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4825,7 +5852,9 @@
       "ALG2.FNC.4",
       "ALG2.QNT.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4848,7 +5877,9 @@
       "ALG2.FNC.4",
       "ALG2.EQV.13"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4868,10 +5899,16 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.FNC.4",
+      "ALG2.FNC.4"
+    ],
+    "crossPrereqs": [
       "ALG1.FNC.8"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.EQV.16",
+      "ALG2.FNC.11"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4894,7 +5931,12 @@
       "ALG2.FNC.10",
       "ALG2.FNC.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.EQV.17",
+      "ALG2.FNC.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4918,7 +5960,9 @@
       "ALG2.EQV.16",
       "ALG2.PRP.2"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4937,10 +5981,14 @@
     "course": "Algebra 2",
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.FNC.6"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.FNC.10"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4959,12 +6007,16 @@
     "course": "Algebra 2",
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "GEO.PRP.5",
       "GEO.SPC.12",
       "GEO.SPC.15"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.FNC.15"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -4987,7 +6039,11 @@
       "ALG2.FNC.14",
       "ALG2.FNC.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "ALG2.FNC.16"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5009,7 +6065,9 @@
     "prerequisites": [
       "ALG2.FNC.15"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5029,11 +6087,16 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.EQV.3",
+      "ALG2.EQV.3"
+    ],
+    "crossPrereqs": [
       "ALG1.PRP.2",
       "ALG1.EQV.2"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.SPC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5054,10 +6117,15 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "ALG2.SPC.1",
-      "ALG2.EQV.3",
+      "ALG2.EQV.3"
+    ],
+    "crossPrereqs": [
       "GEO.SPC.16"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.SPC.6"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5076,10 +6144,14 @@
     "course": "Algebra 2",
     "unit": "Data & Chance",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.DTA.4"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.DTA.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5098,10 +6170,14 @@
     "course": "Algebra 2",
     "unit": "Data & Chance",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.DTA.1"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.DTA.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5124,7 +6200,9 @@
       "ALG2.DTA.1",
       "ALG2.DTA.2"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5143,10 +6221,14 @@
     "course": "Algebra 2",
     "unit": "Data & Chance",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "GEO.DTA.2"
     ],
-    "enables": [],
+    "enables": [
+      "ALG2.DTA.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5166,10 +6248,13 @@
     "unit": "Data & Chance",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG2.DTA.4",
+      "ALG2.DTA.4"
+    ],
+    "crossPrereqs": [
       "GEO.DTA.2"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 5,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5188,10 +6273,15 @@
     "course": "Precalculus",
     "unit": "Quantity & Operations",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG2.QNT.5"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.QNT.2",
+      "PREC.EQV.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5214,7 +6304,11 @@
       "PREC.QNT.1",
       "PREC.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.QNT.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5236,7 +6330,9 @@
     "prerequisites": [
       "PREC.QNT.2"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5255,10 +6351,15 @@
     "course": "Precalculus",
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "GEO.SPC.15"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.PRP.2",
+      "PREC.SPC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5278,10 +6379,15 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.PRP.1",
+      "PREC.PRP.1"
+    ],
+    "crossPrereqs": [
       "MS.PRP.3"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.PRP.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5301,10 +6407,13 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.SPC.1",
+      "PREC.SPC.1"
+    ],
+    "crossPrereqs": [
       "GEO.PRP.5"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5324,11 +6433,14 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.SPC.1",
+      "PREC.SPC.1"
+    ],
+    "crossPrereqs": [
       "GEO.PRP.5",
       "GEO.SPC.11"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5347,10 +6459,17 @@
     "course": "Precalculus",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG2.EQV.7"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.EQV.2",
+      "PREC.EQV.3",
+      "PREC.FNC.6",
+      "CALC.EQV.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5371,10 +6490,13 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "PREC.EQV.1",
-      "PREC.QNT.1",
+      "PREC.QNT.1"
+    ],
+    "crossPrereqs": [
       "ALG2.EQV.4"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5394,10 +6516,15 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.EQV.1",
+      "PREC.EQV.1"
+    ],
+    "crossPrereqs": [
       "ALG2.EQV.5"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.FNC.17"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5419,7 +6546,11 @@
     "prerequisites": [
       "PREC.FNC.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.EQV.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5441,7 +6572,11 @@
     "prerequisites": [
       "PREC.EQV.4"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.28"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5463,7 +6598,13 @@
     "prerequisites": [
       "PREC.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.EQV.7",
+      "PREC.EQV.8",
+      "CALC.EQV.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5485,7 +6626,9 @@
     "prerequisites": [
       "PREC.EQV.6"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5508,7 +6651,9 @@
       "PREC.EQV.6",
       "PREC.FNC.13"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5527,10 +6672,15 @@
     "course": "Precalculus",
     "unit": "Equivalence & Structure",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "MS.EQV.9"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.EQV.10",
+      "PREC.SPC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5552,7 +6702,9 @@
     "prerequisites": [
       "PREC.EQV.9"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5571,11 +6723,18 @@
     "course": "Precalculus",
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG1.PRP.2",
       "ALG2.EQV.1"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.FNC.5",
+      "CALC.FNC.7",
+      "CALC.FNC.18",
+      "CALC.SPC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5594,10 +6753,18 @@
     "course": "Precalculus",
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG2.FNC.4"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.FNC.7",
+      "PREC.FNC.8",
+      "PREC.FNC.11",
+      "PREC.SPC.6",
+      "CALC.FNC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5616,10 +6783,15 @@
     "course": "Precalculus",
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "ALG2.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.FNC.4",
+      "CALC.FNC.11"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5641,7 +6813,12 @@
     "prerequisites": [
       "PREC.FNC.3"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.FNC.9",
+      "PREC.FNC.13"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5661,10 +6838,18 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.FNC.1",
+      "PREC.FNC.1"
+    ],
+    "crossPrereqs": [
       "ALG2.EQV.4"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.FNC.6",
+      "PREC.DTA.1",
+      "CALC.QNT.1",
+      "CALC.FNC.22"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5687,7 +6872,11 @@
       "PREC.FNC.5",
       "PREC.EQV.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.4"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5707,10 +6896,13 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.FNC.2",
+      "PREC.FNC.2"
+    ],
+    "crossPrereqs": [
       "ALG2.QNT.1"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5730,10 +6922,17 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.FNC.2",
+      "PREC.FNC.2"
+    ],
+    "crossPrereqs": [
       "GEO.EQV.2"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.FNC.9",
+      "PREC.FNC.10",
+      "PREC.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5756,7 +6955,12 @@
       "PREC.FNC.4",
       "PREC.FNC.8"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.EQV.4",
+      "PREC.DTA.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5776,10 +6980,13 @@
     "unit": "Functional Dependence",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.FNC.8",
+      "PREC.FNC.8"
+    ],
+    "crossPrereqs": [
       "ALG2.FNC.13"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5802,7 +7009,14 @@
       "PREC.SPC.1",
       "PREC.FNC.2"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.FNC.12",
+      "PREC.FNC.13",
+      "PREC.FNC.15",
+      "PREC.DTA.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5824,7 +7038,11 @@
     "prerequisites": [
       "PREC.FNC.11"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.10"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5847,7 +7065,12 @@
       "PREC.FNC.4",
       "PREC.FNC.11"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.EQV.8",
+      "CALC.FNC.12"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5869,7 +7092,11 @@
     "prerequisites": [
       "PREC.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.14"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5892,7 +7119,9 @@
       "PREC.SPC.2",
       "PREC.FNC.11"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5912,11 +7141,24 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.PRP.1",
+      "PREC.PRP.1"
+    ],
+    "crossPrereqs": [
       "GEO.PRP.5",
       "GEO.SPC.12"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.QNT.2",
+      "PREC.PRP.3",
+      "PREC.PRP.4",
+      "PREC.EQV.6",
+      "PREC.FNC.11",
+      "PREC.FNC.14",
+      "PREC.SPC.2",
+      "PREC.SPC.3",
+      "CALC.FNC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5938,7 +7180,11 @@
     "prerequisites": [
       "PREC.SPC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "PREC.FNC.15"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5958,10 +7204,16 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.SPC.1",
+      "PREC.SPC.1"
+    ],
+    "crossPrereqs": [
       "GEO.SPC.11"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.SPC.4",
+      "PREC.SPC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -5983,7 +7235,9 @@
     "prerequisites": [
       "PREC.SPC.3"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6004,10 +7258,13 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "PREC.EQV.9",
-      "PREC.SPC.3",
+      "PREC.SPC.3"
+    ],
+    "crossPrereqs": [
       "GEO.EQV.9"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6027,11 +7284,16 @@
     "unit": "Space & Measure",
     "gradeBand": "8-12",
     "prerequisites": [
-      "PREC.FNC.2",
+      "PREC.FNC.2"
+    ],
+    "crossPrereqs": [
       "ALG2.SPC.2",
       "GEO.EQV.9"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.EQV.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6052,10 +7314,16 @@
     "gradeBand": "8-12",
     "prerequisites": [
       "PREC.FNC.5",
-      "PREC.FNC.8",
+      "PREC.FNC.8"
+    ],
+    "crossPrereqs": [
       "ALG2.EQV.6"
     ],
-    "enables": [],
+    "enables": [
+      "PREC.DTA.2",
+      "PREC.DTA.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6078,7 +7346,9 @@
       "PREC.DTA.1",
       "PREC.FNC.9"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6101,7 +7371,9 @@
       "PREC.FNC.11",
       "PREC.DTA.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 6,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6121,10 +7393,15 @@
     "unit": "Quantity & Operations",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.4",
+      "CALC.FNC.4"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.5"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.QNT.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6147,7 +7424,9 @@
       "CALC.QNT.1",
       "CALC.FNC.11"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6167,10 +7446,16 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.7",
+      "CALC.FNC.7"
+    ],
+    "crossPrereqs": [
       "MS.PRP.3"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.PRP.2",
+      "CALC.SPC.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6191,11 +7476,14 @@
     "gradeBand": "Calculus",
     "prerequisites": [
       "CALC.EQV.3",
-      "CALC.PRP.1",
+      "CALC.PRP.1"
+    ],
+    "crossPrereqs": [
       "GEO.PRP.7",
       "PREC.PRP.2"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6216,10 +7504,13 @@
     "gradeBand": "Calculus",
     "prerequisites": [
       "CALC.FNC.9",
-      "CALC.FNC.18",
+      "CALC.FNC.18"
+    ],
+    "crossPrereqs": [
       "ALG1.FNC.3"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6239,11 +7530,14 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.2",
+      "CALC.FNC.2"
+    ],
+    "crossPrereqs": [
       "ALG2.EQV.11",
       "PREC.EQV.1"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6264,10 +7558,13 @@
     "gradeBand": "Calculus",
     "prerequisites": [
       "CALC.FNC.5",
-      "CALC.FNC.8",
+      "CALC.FNC.8"
+    ],
+    "crossPrereqs": [
       "ALG2.FNC.5"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6287,10 +7584,15 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.11",
+      "CALC.FNC.11"
+    ],
+    "crossPrereqs": [
       "PREC.SPC.6"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.PRP.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6310,10 +7612,13 @@
     "unit": "Equivalence & Structure",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.21",
+      "CALC.FNC.21"
+    ],
+    "crossPrereqs": [
       "PREC.EQV.6"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6332,10 +7637,14 @@
     "course": "AP Calculus AB",
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
-    "prerequisites": [
+    "prerequisites": [],
+    "crossPrereqs": [
       "PREC.FNC.2"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.FNC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6357,7 +7666,15 @@
     "prerequisites": [
       "CALC.FNC.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.EQV.1",
+      "CALC.FNC.3",
+      "CALC.FNC.4",
+      "CALC.FNC.5",
+      "CALC.FNC.7"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6377,10 +7694,13 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.2",
+      "CALC.FNC.2"
+    ],
+    "crossPrereqs": [
       "PREC.SPC.1"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6400,10 +7720,16 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.2",
+      "CALC.FNC.2"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.6"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.QNT.1",
+      "CALC.FNC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6424,10 +7750,18 @@
     "gradeBand": "Calculus",
     "prerequisites": [
       "CALC.FNC.2",
-      "CALC.FNC.4",
+      "CALC.FNC.4"
+    ],
+    "crossPrereqs": [
       "ALG2.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.EQV.2",
+      "CALC.FNC.6",
+      "CALC.FNC.8",
+      "CALC.FNC.16"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6449,7 +7783,9 @@
     "prerequisites": [
       "CALC.FNC.5"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6469,10 +7805,18 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.2",
+      "CALC.FNC.2"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.PRP.1",
+      "CALC.FNC.8",
+      "CALC.FNC.9",
+      "CALC.DTA.1"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6495,7 +7839,12 @@
       "CALC.FNC.5",
       "CALC.FNC.7"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.EQV.2",
+      "CALC.FNC.15"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6515,10 +7864,17 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.7",
+      "CALC.FNC.7"
+    ],
+    "crossPrereqs": [
       "ALG2.QNT.1"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.PRP.3",
+      "CALC.FNC.10",
+      "CALC.FNC.16"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6538,10 +7894,16 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.9",
+      "CALC.FNC.9"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.12"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.FNC.11",
+      "CALC.FNC.13"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6561,10 +7923,19 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.10",
+      "CALC.FNC.10"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.3"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.QNT.2",
+      "CALC.EQV.3",
+      "CALC.FNC.12",
+      "CALC.FNC.21",
+      "CALC.FNC.25"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6584,10 +7955,13 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.11",
+      "CALC.FNC.11"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.13"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6609,7 +7983,12 @@
     "prerequisites": [
       "CALC.FNC.10"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.14",
+      "CALC.FNC.18"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6629,10 +8008,15 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.13",
+      "CALC.FNC.13"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.14"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.SPC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6654,7 +8038,9 @@
     "prerequisites": [
       "CALC.FNC.8"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6677,7 +8063,12 @@
       "CALC.FNC.5",
       "CALC.FNC.9"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.17",
+      "CALC.FNC.20"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6697,10 +8088,16 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.16",
+      "CALC.FNC.16"
+    ],
+    "crossPrereqs": [
       "PREC.EQV.3"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.FNC.18",
+      "CALC.FNC.20"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6721,10 +8118,16 @@
     "gradeBand": "Calculus",
     "prerequisites": [
       "CALC.FNC.13",
-      "CALC.FNC.17",
+      "CALC.FNC.17"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.PRP.3",
+      "CALC.FNC.19"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6746,7 +8149,11 @@
     "prerequisites": [
       "CALC.FNC.18"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.24"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6767,10 +8174,13 @@
     "gradeBand": "Calculus",
     "prerequisites": [
       "CALC.FNC.16",
-      "CALC.FNC.17",
+      "CALC.FNC.17"
+    ],
+    "crossPrereqs": [
       "GEO.PRP.7"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6792,7 +8202,13 @@
     "prerequisites": [
       "CALC.FNC.11"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.EQV.4",
+      "CALC.FNC.23",
+      "CALC.FNC.27"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6812,10 +8228,15 @@
     "unit": "Functional Dependence",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.DTA.2",
+      "CALC.DTA.2"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.5"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.FNC.23"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6838,7 +8259,15 @@
       "CALC.FNC.21",
       "CALC.FNC.22"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.24",
+      "CALC.FNC.25",
+      "CALC.FNC.26",
+      "CALC.SPC.1",
+      "CALC.SPC.3"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6861,7 +8290,9 @@
       "CALC.FNC.19",
       "CALC.FNC.23"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6884,7 +8315,11 @@
       "CALC.FNC.11",
       "CALC.FNC.23"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.28"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6906,7 +8341,9 @@
     "prerequisites": [
       "CALC.FNC.23"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6928,7 +8365,11 @@
     "prerequisites": [
       "CALC.FNC.21"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.FNC.28"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6949,10 +8390,13 @@
     "gradeBand": "Calculus",
     "prerequisites": [
       "CALC.FNC.25",
-      "CALC.FNC.27",
+      "CALC.FNC.27"
+    ],
+    "crossPrereqs": [
       "PREC.EQV.5"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6975,7 +8419,11 @@
       "CALC.FNC.23",
       "CALC.PRP.1"
     ],
-    "enables": [],
+    "crossPrereqs": [],
+    "enables": [
+      "CALC.SPC.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -6998,7 +8446,9 @@
       "CALC.FNC.14",
       "CALC.SPC.1"
     ],
+    "crossPrereqs": [],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -7018,10 +8468,16 @@
     "unit": "Space & Measure",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.23",
+      "CALC.FNC.23"
+    ],
+    "crossPrereqs": [
       "PREC.FNC.1"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.SPC.4",
+      "CALC.SPC.5"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -7041,10 +8497,13 @@
     "unit": "Space & Measure",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.SPC.3",
+      "CALC.SPC.3"
+    ],
+    "crossPrereqs": [
       "GEO.PRP.7"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -7064,10 +8523,13 @@
     "unit": "Space & Measure",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.SPC.3",
+      "CALC.SPC.3"
+    ],
+    "crossPrereqs": [
       "GEO.PRP.7"
     ],
     "enables": [],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -7087,10 +8549,15 @@
     "unit": "Data & Chance",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.FNC.7",
+      "CALC.FNC.7"
+    ],
+    "crossPrereqs": [
       "MS.DTA.7"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.DTA.2"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,
@@ -7110,10 +8577,15 @@
     "unit": "Data & Chance",
     "gradeBand": "Calculus",
     "prerequisites": [
-      "CALC.DTA.1",
+      "CALC.DTA.1"
+    ],
+    "crossPrereqs": [
       "GEO.SPC.10"
     ],
-    "enables": [],
+    "enables": [
+      "CALC.FNC.22"
+    ],
+    "standardsAlignment": [],
     "difficultyLevel": 7,
     "fluencyMetadata": {
       "baseFluencyTime": 30,

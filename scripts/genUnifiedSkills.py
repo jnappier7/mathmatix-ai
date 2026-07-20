@@ -23,6 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 TAX = os.path.join(ROOT, "seeds", "unified-taxonomy", "math_taxonomy.json")
 OUT = os.path.join(ROOT, "seeds", "skills-unified.json")
+STD = os.path.join(ROOT, "seeds", "unified-taxonomy", "standards-alignment.json")
 
 # strand → a representative Skill.category enum value (BKT parameter lookup).
 STRAND_CATEGORY = {
@@ -55,10 +56,21 @@ def main():
     skills = tax["skills"]
     ids = {s["skill_id"] for s in skills}
 
+    # Verified CCSS-M / AP alignments, keyed by skillId. Produced by the standards
+    # audit (see docs/SKILL_STANDARDS_AUDIT.md) — every code traced to a published
+    # standard, never inferred from the skill name.
+    standards = {}
+    if os.path.exists(STD):
+        standards = json.load(open(STD))
+
     docs = []
     for s in skills:
         course_name, grade_band, diff = COURSE.get(s["course"], (s["course"], "8-12", 5))
-        prereqs = list(dict.fromkeys((s.get("prereq_ids") or []) + (s.get("cross_prereq_ids") or [])))
+        # Kept separate: same-level prerequisites vs the lower-level ancestor that
+        # is the same idea less abstractly. Both gate mastery; only the second
+        # tells you a strand is one continuous through-line.
+        prereqs = list(dict.fromkeys(s.get("prereq_ids") or []))
+        cross = [p for p in dict.fromkeys(s.get("cross_prereq_ids") or []) if p not in prereqs]
         docs.append({
             "skillId": s["skill_id"],
             "displayName": s["name"],
@@ -70,22 +82,40 @@ def main():
             "unit": STRAND_NAME[s["strand"]],
             "gradeBand": grade_band,
             "prerequisites": prereqs,
+            "crossPrereqs": cross,
             "enables": [],
+            "standardsAlignment": standards.get(s["skill_id"], []),
             "difficultyLevel": diff,
             "fluencyMetadata": {"baseFluencyTime": 30, "fluencyType": "process", "toleranceFactor": 2.5},
             "source": "unified-taxonomy",
         })
 
+    # Derive `enables` as the reverse of every prerequisite edge. It was previously
+    # left empty for all 315 skills, which silently zeroed the downstream-impact
+    # term in utils/retentionProbe.js.
+    by_id = {d["skillId"]: d for d in docs}
+    for d in docs:
+        for p in d["prerequisites"] + d["crossPrereqs"]:
+            if p in by_id and d["skillId"] not in by_id[p]["enables"]:
+                by_id[p]["enables"].append(d["skillId"])
+
     # sanity: prereqs resolve within the taxonomy
-    bad = [(d["skillId"], p) for d in docs for p in d["prerequisites"] if p not in ids]
+    bad = [(d["skillId"], p) for d in docs for p in d["prerequisites"] + d["crossPrereqs"] if p not in ids]
+    no_std = [d["skillId"] for d in docs if not d["standardsAlignment"]]
 
     json.dump(docs, open(OUT, "w"), indent=2, ensure_ascii=False)
     print("Wrote %d unified Skill docs -> %s" % (len(docs), os.path.relpath(OUT, os.getcwd())))
     print("  by course:", dict(Counter(d["courseLevel"] for d in docs)))
     print("  by strand:", dict(Counter(d["strand"] for d in docs)))
+    print("  prereq edges: %d same-level, %d cross-level" % (
+        sum(len(d["prerequisites"]) for d in docs), sum(len(d["crossPrereqs"]) for d in docs)))
+    print("  enables edges derived:", sum(len(d["enables"]) for d in docs))
     print("  unresolved prerequisite refs:", len(bad))
     if bad:
         print("   ", bad[:6])
+    print("  skills without standards alignment: %d" % len(no_std))
+    if no_std:
+        print("   ", no_std[:6])
 
 
 if __name__ == "__main__":
