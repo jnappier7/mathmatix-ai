@@ -3035,6 +3035,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Launch the real practice-ACT runner when the course tutor signalled
+            // it (student confirmed). Opens the timed, auto-scored test that feeds
+            // the bootcamp plan — instead of the tutor improvising questions.
+            if (data.launchPracticeAct && window.openActTest) {
+                setTimeout(() => window.openActTest(), 400); // let the tutor's confirming reply render first
+            }
+
             // Render interactive graph tool if AI requested one
             if (data.graphTool && window.GraphTool) {
                 const messageElements = document.querySelectorAll('.message.ai');
