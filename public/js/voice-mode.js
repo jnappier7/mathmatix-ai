@@ -94,10 +94,21 @@
     // Kick off the voice engine. The click that called enter() is a
     // user gesture, so getUserMedia inside startListening() is allowed.
     var vc = window.voiceController;
-    if (vc && !vc.isListening && typeof vc.startListening === 'function') {
-      Promise.resolve()
-        .then(function () { return vc.startListening(); })
-        .catch(function () { /* mic denied or unavailable — mode still usable */ });
+    if (vc) {
+      // Voice mode is a hands-free, call-style conversation — NOT push-to-talk.
+      // Turning on the controller's hands-free flag makes the legacy path
+      // auto-restart listening after the tutor finishes speaking, instead of
+      // stranding the student on "idle" until they tap the orb again between
+      // every turn. VAD already auto-sends on silence in all modes, so with
+      // this the legacy loop runs listen → send → speak → listen unattended.
+      // (No effect on the premium streaming path, which is already continuous
+      // and ignores this flag.)
+      vc.handsFreeMode = true;
+      if (!vc.isListening && typeof vc.startListening === 'function') {
+        Promise.resolve()
+          .then(function () { return vc.startListening(); })
+          .catch(function () { /* mic denied or unavailable — mode still usable */ });
+      }
     }
   }
 
@@ -109,6 +120,9 @@
 
     var vc = window.voiceController;
     if (vc) {
+      // Leaving the call — hand the controller back to push-to-talk so the
+      // standalone orb (outside voice mode) doesn't keep auto-restarting the mic.
+      vc.handsFreeMode = false;
       try { if (typeof vc.stopListening === 'function') vc.stopListening(); } catch (e) { /* noop */ }
       try { if (typeof vc.stopSpeaking === 'function') vc.stopSpeaking(); } catch (e) { /* noop */ }
     }
