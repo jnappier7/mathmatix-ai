@@ -382,6 +382,30 @@ router.post('/:id/activate', async (req, res) => {
 });
 
 /* ============================================================
+   GET /api/course-sessions/:id/diagnostic
+   Day-one diagnostic descriptor for a session (or null). Lets the client
+   surface the practice-ACT / starting-point card when a returning student loads
+   straight into an already-active course — i.e. neither the enroll/resume splash
+   nor an explicit activate fired, so the card would otherwise never appear.
+   ============================================================ */
+router.get('/:id/diagnostic', async (req, res) => {
+  try {
+    const session = await CourseSession.findOne({
+      _id: req.params.id,
+      userId: req.user._id
+    });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Course session not found' });
+    }
+    const diagnostic = await buildCourseDiagnostic(req.user, session.courseId);
+    res.json({ success: true, diagnostic });
+  } catch (err) {
+    console.error('[CourseSession] diagnostic lookup failed (non-fatal):', err.message);
+    res.status(500).json({ success: false, diagnostic: null });
+  }
+});
+
+/* ============================================================
    POST /api/course-sessions/deactivate
    Clear active course session (return to general tutoring)
    ============================================================ */
