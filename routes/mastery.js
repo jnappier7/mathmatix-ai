@@ -19,7 +19,7 @@ const { analyzeError, generateReteaching, recordMisconception, markMisconception
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey } = require('../utils/masteryGuard');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
-const { buildGraph, boardStates, bandProgress, nearestClosableBand } = require('../utils/skillClosure');
+const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
 // back to a legacy key so historical data still resolves during the migration.
@@ -1344,11 +1344,38 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
       responseTime
     });
 
-    // Recalculate state
-    updatedSkill.status = calculateMasteryState(updatedSkill, user.skillMastery);
+    // updateSkillMastery now owns the rung and keeps `status` in step with it.
+    // calculateMasteryState still runs so the prerequisite/locked and re-fragile
+    // branches apply, but it must not overwrite a rung-derived 'mastered'.
+    const justProved = updatedSkill.__justProved;
+    delete updatedSkill.__justProved;
+    const derivedState = calculateMasteryState(updatedSkill, user.skillMastery);
+    if (updatedSkill.status !== 'mastered' || derivedState === 're-fragile' || derivedState === 'locked') {
+      updatedSkill.status = derivedState;
+    }
 
     // Update user's skill mastery
     user.skillMastery.set(masteryKey, updatedSkill);
+
+    // ★ CASCADE ★ Proving a skill clears everything beneath it in the graph, so a
+    // student never re-grinds a prerequisite they have just demonstrated they own.
+    let cleared = [];
+    if (justProved) {
+      try {
+        const allSkills = await configCache.getOrSet(
+          'skills:unified',
+          () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+          3600
+        );
+        if (allSkills.length) {
+          const result = applyProofCascade(buildGraph(allSkills), user.skillMastery, masteryKey);
+          cleared = result.cleared;
+        }
+      } catch (cascadeError) {
+        // A cascade failure must not cost the student the attempt they just made.
+        console.error('[mastery] cascade failed for %s:', masteryKey, cascadeError);
+      }
+    }
 
     // Update streak tracking
     updateStreakTracking(user);
@@ -1372,7 +1399,9 @@ router.post('/record-mastery-attempt', isAuthenticated, async (req, res) => {
         pillars: pillarProgress,
         message: getMasteryMessage(updatedSkill.status, updatedSkill.currentTier)
       },
-      tierUpgrade: tierUpgrade.upgraded ? tierUpgrade : null
+      tierUpgrade: tierUpgrade.upgraded ? tierUpgrade : null,
+      // The payoff moment: everything this proof closed beneath it.
+      clearedFromAbove: cleared
     });
 
   } catch (error) {
