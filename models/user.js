@@ -237,6 +237,35 @@ const skillMasterySchema = new Schema({
   },
   masteryScore: { type: Number, min: 0, max: 100, default: 0 },  // Changed to 0-100 scale
   masteryType: { type: String, enum: ['verified', 'inferred', 'fragile-inferred'], default: 'verified' },
+
+  // ★ THE LADDER: learn it -> prove it -> teach it ★
+  // The authoritative statement of how well a student owns a skill. `status`
+  // above is the older lifecycle field and is kept for the existing read sites;
+  // `rung` is what the progress board renders and what closure/unlock reads.
+  // Only utils/skillRung.js may write these three fields — see that file for why.
+  rung: {
+    type: String,
+    enum: ['none', 'learned', 'proved', 'taught'],
+    default: 'none'
+  },
+  // How the CURRENT rung was earned. 'inference' means the system granted it by
+  // prerequisite closure rather than the student demonstrating it, which is why
+  // an inference-proved skill cannot advance to 'taught'.
+  provenBy: {
+    type: String,
+    enum: ['lesson', 'challenge', 'fluency', 'teachback', 'inference'],
+    required: false
+  },
+  // The receipt for every transition. A rung claim we cannot show evidence for
+  // is a claim we should not be making to a student or a parent.
+  rungHistory: [{
+    from: String,
+    to: String,
+    via: String,
+    at: { type: Date, default: Date.now },
+    evidence: Schema.Types.Mixed,   // accuracy/hints/rubric/source skill
+    reason: String                  // set on demotions
+  }],
   lastPracticed: { type: Date },
   consecutiveCorrect: { type: Number, default: 0 },
   totalAttempts: { type: Number, default: 0 },
