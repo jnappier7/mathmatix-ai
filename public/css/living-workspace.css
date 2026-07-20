@@ -179,6 +179,39 @@ html[data-theme="dark"] .lws-root {
 .lws-dv-az button:disabled { opacity: .35; cursor: default; background: transparent; }
 .lws-dv-az .az-dn { font-size: 12px; }
 .lws-dv-az .az-up { font-size: 17px; }
+
+/* Back-to-chat pill (mobile only). On phones/tablets the swapped workspace is
+   a full-screen drawer with no other way out — this is the exit. Pinned
+   TOP-LEFT so it never collides with the text-size control (.lws-dv-az,
+   top-right). Hidden on desktop, where the workspace is a persistent column
+   beside the chat and needs no exit. Uses the chat design tokens (not --lws-*,
+   which are scoped to .lws-root) so it stays readable in either theme. */
+.lws-chat-exit { display: none; }
+@media (max-width: 1200px) {
+  .lws-swapped .lws-chat-exit {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 10px);
+    left: 12px;
+    z-index: 7;
+    height: 32px;
+    padding: 0 14px 0 10px;
+    border: 1px solid var(--cr-border, rgba(15, 26, 36, 0.14));
+    border-radius: 999px;
+    background: var(--cr-bg-panel, #ffffff);
+    color: var(--cr-text, #0f1a24);
+    font: 700 13px/1 Inter, system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 10px rgba(7, 9, 15, 0.22);
+    cursor: pointer;
+  }
+  .lws-swapped .lws-chat-exit i { font-size: 12px; }
+  /* Reserve headroom so the floating exit / text-size pills don't cover the
+     first line of the derivation once a problem is posed. */
+  .lws-swapped .lws-dv { padding-top: 54px; }
+}
 .lws-dv-az .az-lab { font-size: 10px; opacity: .7; min-width: 34px; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
 
 /* ── equation card ── */
