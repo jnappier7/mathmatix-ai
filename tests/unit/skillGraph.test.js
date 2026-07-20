@@ -172,6 +172,37 @@ describe('unified skill graph', () => {
     expect(orphans).toEqual([]);
   });
 
+  test('every skill has a student-facing label', () => {
+    const missing = SKILLS.filter((s) => !s.studentLabel || !s.studentLabel.trim());
+    expect(missing.map((s) => s.skillId)).toEqual([]);
+  });
+
+  test('student labels are short enough to read on a board', () => {
+    const wordy = SKILLS.filter((s) => s.studentLabel.split(/\s+/).length > 8);
+    expect(wordy.map((s) => `${s.skillId}: ${s.studentLabel}`)).toEqual([]);
+  });
+
+  test('student labels are distinct within a strand', () => {
+    const collisions = [];
+    STRANDS.forEach((strand) => {
+      const seen = new Map();
+      SKILLS.filter((s) => s.strand === strand).forEach((s) => {
+        const key = s.studentLabel.toLowerCase();
+        if (seen.has(key)) collisions.push(`${strand}: ${seen.get(key)} / ${s.skillId} both "${s.studentLabel}"`);
+        seen.set(key, s.skillId);
+      });
+    });
+    expect(collisions).toEqual([]);
+  });
+
+  test('student labels avoid the filler the formal names lean on', () => {
+    // "...concepts", "...basics", "properties of X" are category nouns; the label
+    // is supposed to name what the student does.
+    const filler = /\b(concepts|basics)\s*$|^properties of\b/i;
+    const offenders = SKILLS.filter((s) => filler.test(s.studentLabel));
+    expect(offenders.map((s) => `${s.skillId}: ${s.studentLabel}`)).toEqual([]);
+  });
+
   test('prerequisite depth stays within a teachable chain length', () => {
     // A smoke alarm on graph shape, not a pedagogical limit. The genuine deepest
     // chain is 22 hops: ELEM.QNT.4 (multiplication facts, grade 3) down through
