@@ -251,6 +251,12 @@ class CourseManager {
             if (window.lessonTracker) {
                 window.lessonTracker.rehydrate(match._id);
             }
+
+            // Day-one diagnostic (e.g. ACT-prep practice test): when a student
+            // loads straight into an already-active course, neither the enroll
+            // splash nor an explicit activate fires — so surface the card here
+            // too. Server gates it (returns null once they've taken it).
+            this.maybeShowActiveDiagnostic(match._id);
         } else {
             wrapper.style.display = 'none';
             this.activeCourseSessionId = null;
@@ -1124,6 +1130,22 @@ class CourseManager {
                     font-weight:700; font-size:14px; cursor:pointer;
                 "><i class="fas fa-play" style="margin-right:6px;"></i>${this.escapeHtml(diag.cta)}</button>
             </div>`;
+    }
+
+    // Fetch + show the day-one diagnostic for an already-active course on page
+    // load (checkActiveProgressBar). Non-fatal; the server returns null once the
+    // student has completed the diagnostic, so the card stops appearing.
+    async maybeShowActiveDiagnostic(sessionId) {
+        try {
+            const res = await csrfFetch(`/api/course-sessions/${sessionId}/diagnostic`, {
+                credentials: 'include'
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && data.diagnostic) this.showDiagnosticCard(data.diagnostic);
+        } catch {
+            /* non-fatal — diagnostic is a nudge, never blocks the course */
+        }
     }
 
     // Show the diagnostic card on its own (returning students who re-open the
