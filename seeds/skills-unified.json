@@ -1428,7 +1428,7 @@
       "ELEM.QNT.8"
     ],
     "enables": [
-      "ALG1.EQV.9"
+      "ALG1.EQV.11"
     ],
     "standardsAlignment": [
       "6.NS.B.4"
@@ -1620,7 +1620,8 @@
     ],
     "enables": [
       "MS.QNT.10",
-      "MS.QNT.11"
+      "MS.QNT.11",
+      "ALG1.QNT.2"
     ],
     "standardsAlignment": [
       "8.EE.A.1"
@@ -1843,6 +1844,7 @@
       "MS.PRP.6",
       "MS.FNC.3",
       "ALG1.PRP.2",
+      "ALG1.PRP.3",
       "ALG1.FNC.3"
     ],
     "standardsAlignment": [
@@ -1965,8 +1967,7 @@
     ],
     "enables": [
       "MS.EQV.2",
-      "MS.EQV.3",
-      "ALG1.QNT.2"
+      "MS.EQV.3"
     ],
     "standardsAlignment": [
       "6.EE.A.1",
@@ -1998,7 +1999,8 @@
       "ELEM.EQV.2"
     ],
     "enables": [
-      "MS.EQV.6"
+      "MS.EQV.6",
+      "ALG1.EQV.9"
     ],
     "standardsAlignment": [
       "6.EE.A.3",
@@ -2954,7 +2956,7 @@
     "gradeBand": "8-12",
     "prerequisites": [],
     "crossPrereqs": [
-      "MS.EQV.1"
+      "MS.QNT.9"
     ],
     "enables": [
       "ALG1.EQV.10",
@@ -3053,7 +3055,6 @@
       "MS.PRP.3"
     ],
     "enables": [
-      "ALG1.PRP.2",
       "ALG1.PRP.4",
       "GEO.QNT.2",
       "ALG2.PRP.3"
@@ -3081,13 +3082,12 @@
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
     "prerequisites": [
-      "ALG1.PRP.1"
+      "ALG1.PRP.3"
     ],
     "crossPrereqs": [
       "MS.PRP.5"
     ],
     "enables": [
-      "ALG1.PRP.3",
       "ALG1.FNC.3",
       "ALG1.FNC.12",
       "GEO.PRP.1",
@@ -3119,11 +3119,12 @@
     "course": "Algebra 1",
     "unit": "Proportional Reasoning",
     "gradeBand": "8-12",
-    "prerequisites": [
-      "ALG1.PRP.2"
+    "prerequisites": [],
+    "crossPrereqs": [
+      "MS.PRP.5"
     ],
-    "crossPrereqs": [],
     "enables": [
+      "ALG1.PRP.2",
       "ALG2.PRP.1"
     ],
     "standardsAlignment": [
@@ -3440,7 +3441,7 @@
     "gradeBand": "8-12",
     "prerequisites": [],
     "crossPrereqs": [
-      "MS.QNT.3"
+      "MS.EQV.2"
     ],
     "enables": [
       "ALG1.EQV.10"
@@ -3475,7 +3476,8 @@
     "crossPrereqs": [],
     "enables": [
       "ALG1.EQV.11",
-      "ALG1.SPC.2"
+      "ALG1.SPC.2",
+      "ALG2.EQV.7"
     ],
     "standardsAlignment": [
       "HSA-APR.A.1",
@@ -3503,7 +3505,9 @@
     "prerequisites": [
       "ALG1.EQV.10"
     ],
-    "crossPrereqs": [],
+    "crossPrereqs": [
+      "MS.QNT.3"
+    ],
     "enables": [
       "ALG1.EQV.12"
     ],
@@ -4141,9 +4145,7 @@
     "crossPrereqs": [
       "MS.SPC.6"
     ],
-    "enables": [
-      "ALG2.EQV.7"
-    ],
+    "enables": [],
     "standardsAlignment": [
       "HSA-SSE.A.1",
       "HSG-MG.A.1",
@@ -4606,8 +4608,7 @@
     ],
     "crossPrereqs": [],
     "enables": [
-      "GEO.EQV.3",
-      "PREC.FNC.8"
+      "GEO.EQV.3"
     ],
     "standardsAlignment": [],
     "difficultyLevel": 4,
@@ -6121,7 +6122,7 @@
     "gradeBand": "8-12",
     "prerequisites": [],
     "crossPrereqs": [
-      "ALG1.SPC.2"
+      "ALG1.EQV.10"
     ],
     "enables": [
       "ALG2.EQV.8",
@@ -6777,7 +6778,8 @@
     ],
     "enables": [
       "ALG2.EQV.16",
-      "ALG2.FNC.11"
+      "ALG2.FNC.11",
+      "PREC.FNC.8"
     ],
     "standardsAlignment": [
       "HSF-IF.C.7",
@@ -7953,7 +7955,7 @@
       "PREC.FNC.2"
     ],
     "crossPrereqs": [
-      "GEO.EQV.2"
+      "ALG2.FNC.10"
     ],
     "enables": [
       "PREC.FNC.9",

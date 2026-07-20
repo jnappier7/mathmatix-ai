@@ -276,10 +276,14 @@ describe('unified skill graph', () => {
 
   test('prerequisite depth stays within a teachable chain length', () => {
     // A smoke alarm on graph shape, not a pedagogical limit. The genuine deepest
-    // chain is 22 hops: ELEM.QNT.4 (multiplication facts, grade 3) down through
-    // factoring and transformations to CALC.FNC.28 (separation of variables).
-    // That length is real and load-bearing — it is what lets a calculus failure
-    // bridge back to the actual gap. A jump well past it means a bad edge.
+    // chain is 23 hops: ELEM.QNT.4 (times tables, grade 3) up through combining
+    // like terms, polynomials, factoring and transformations to CALC.FNC.28
+    // (separable differential equations). That length is real and load-bearing —
+    // it is what lets a calculus failure bridge back to the actual gap.
+    //
+    // It was 22 before the audit fixes, but by a partly bogus route: adding
+    // polynomials hung off GCF/LCM rather than off combining like terms. The
+    // chain is now both longer and correct. A jump well past this means a bad edge.
     const depth = new Map();
     const compute = (id) => {
       if (depth.has(id)) return depth.get(id);
