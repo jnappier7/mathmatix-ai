@@ -8,7 +8,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middleware/auth');
+const { isAuthenticated, aiEndpointLimiter } = require('../middleware/auth');
 const User = require('../models/user');
 const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
@@ -20,6 +20,8 @@ const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
+const { currentRung, isInferred, canAdvance, advanceRung } = require('../utils/skillRung');
+const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
 // back to a legacy key so historical data still resolves during the migration.
@@ -2728,6 +2730,112 @@ router.get('/map', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('[mastery/map] failed:', error);
     res.status(500).json({ error: 'Failed to load skill map' });
+  }
+});
+
+// ============================================================================
+// TEACH-BACK — the top rung: prove it by teaching it
+// ============================================================================
+
+/**
+ * Begin a teach-back. Returns the confused-student opener the student must
+ * respond to. Read-only, no LLM, cheap — the student can only reach this for a
+ * skill they have already proved (rung enforcement happens on scoring).
+ * GET /api/mastery/teachback/:skillId
+ */
+router.get('/teachback/:skillId', isAuthenticated, async (req, res) => {
+  try {
+    const skillId = canonicalSkillId(req.params.skillId);
+    const skill = await Skill.findOne({ skillId }).lean();
+    if (!skill) return res.status(404).json({ error: 'Skill not found' });
+
+    const user = await User.findById(req.user._id).lean();
+    const entry = getSkillMasteryEntry(user, skillId);
+    const rung = currentRung(entry);
+    // Teaching is the rung above proved. An inference-cleared skill must be proved
+    // directly first (see skillRung.canAdvance), so surface that as guidance.
+    const eligible = rung === 'proved' && !isInferred(entry);
+
+    const opener = confusedStudentOpener(skill);
+    res.json({
+      skillId,
+      label: skill.studentLabel || skill.displayName,
+      eligible,
+      reason: eligible ? null
+        : rung === 'taught' ? 'already taught'
+          : isInferred(entry) ? 'prove it directly before teaching it'
+            : 'prove it before you can teach it',
+      opener: opener.prompt,
+      misconception: opener.misconception
+    });
+  } catch (err) {
+    console.error('[mastery/teachback GET] failed:', err);
+    res.status(500).json({ error: 'Failed to start teach-back' });
+  }
+});
+
+/**
+ * Submit a teach-back explanation for scoring. On a passing, mathematically-correct
+ * explanation the skill advances to rung 'taught'. A scorer outage returns
+ * scored:false and changes nothing — teaching is the top rung, so we never grant
+ * or deny it on infrastructure failure.
+ * POST /api/mastery/teachback/:skillId  { explanation, misconception? }
+ */
+router.post('/teachback/:skillId', isAuthenticated, aiEndpointLimiter, async (req, res) => {
+  try {
+    const { explanation, misconception } = req.body || {};
+    if (!explanation || typeof explanation !== 'string') {
+      return res.status(400).json({ error: 'Missing explanation' });
+    }
+
+    const skillId = canonicalSkillId(req.params.skillId);
+    const skill = await Skill.findOne({ skillId }).lean();
+    if (!skill) return res.status(404).json({ error: 'Skill not found' });
+
+    const user = await User.findById(req.user._id);
+    const entry = getSkillMasteryEntry(user, skillId);
+
+    // Gate before scoring so we do not spend an LLM call on an ineligible attempt.
+    const gate = canAdvance(entry, 'taught', 'teachback');
+    if (!gate.ok) {
+      return res.status(409).json({ error: 'Not eligible to teach this yet', reason: gate.reason });
+    }
+
+    const result = await scoreTeachBack({ skill, explanation, misconception, user }, { user });
+
+    if (!result.scored) {
+      // Fail-safe: could not reach a verdict. Nothing changes; invite a retry.
+      return res.status(200).json({ scored: false, retry: true, message: 'I could not grade that just now — try explaining it again.' });
+    }
+    if (!result.passed) {
+      return res.status(200).json({
+        scored: true, passed: false,
+        score: result.score, feedback: result.feedback,
+        message: 'Close — not quite a full teach-back yet.'
+      });
+    }
+
+    // Passed: advance to the top rung. skillRung.evidenceSupports gates 'taught'
+    // on `rubricScore`, so the field name must match — a mismatch would silently
+    // refuse the advance and leave the rung at proved.
+    advanceRung(entry, 'taught', { via: 'teachback', evidence: { rubricScore: result.score, dimensions: result.dimensions } });
+    const changed = entry.__rungResult && entry.__rungResult.changed;
+    delete entry.__rungResult;
+    if (changed) {
+      entry.status = 'mastered';
+      setSkillMasteryEntry(user, skillId, entry);
+      await user.save();
+    }
+
+    res.json({
+      scored: true, passed: true,
+      score: result.score, dimensions: result.dimensions, feedback: result.feedback,
+      rung: 'taught',
+      message: `You taught it. ${skill.studentLabel || skill.displayName} is at the top rung.`
+    });
+  } catch (err) {
+    console.error('[mastery/teachback POST] failed:', err);
+    res.status(500).json({ error: 'Failed to score teach-back' });
   }
 });
 
