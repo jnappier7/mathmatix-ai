@@ -14,6 +14,7 @@ const Conversation = require('../models/conversation');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAdmin } = require('../middleware/auth');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { decodeMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { checkConsent } = require('../utils/consentManager');
 const { requireActiveConsent } = require('../middleware/consentGate');
@@ -2530,13 +2531,14 @@ router.post('/merge-accounts', isAdmin, async (req, res) => {
     const smStrategy = conflictResolution.skillMastery || 'merge';
     if (smStrategy === 'merge' && source.skillMastery) {
       if (!target.skillMastery) target.skillMastery = new Map();
-      for (const [skillId, sourceSkill] of source.skillMastery) {
-        // canonicalize on merge so legacy + unified entries for one concept
-        // collapse onto a single unified key instead of duplicating
-        const key = canonicalSkillId(skillId);
-        const targetSkill = target.skillMastery.get(key);
+      for (const [storedKey, sourceSkill] of source.skillMastery) {
+        // Stored keys are encoded (dots -> "_"); decode to the logical id so the
+        // accessors canonicalize and dedup, then write back through the encoder.
+        // legacy + unified entries for one concept collapse onto one key.
+        const logicalId = decodeMasteryKey(storedKey);
+        const targetSkill = getSkillMasteryEntry(target, logicalId);
         if (!targetSkill || (sourceSkill.masteryScore || 0) > (targetSkill.masteryScore || 0)) {
-          target.skillMastery.set(key, sourceSkill);
+          setSkillMasteryEntry(target, logicalId, sourceSkill);
         }
       }
       audit.changes.push('Merged skill mastery data (kept highest scores)');

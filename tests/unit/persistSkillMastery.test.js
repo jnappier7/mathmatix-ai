@@ -12,12 +12,14 @@
 
 const { updateSkillMastery } = require('../../utils/pipeline/persist');
 const { currentRung } = require('../../utils/skillRung');
+const { getSkillMasteryEntry } = require('../../utils/masteryGuard');
+const User = require('../../models/user');
 
-const makeUser = () => ({
-  skillMastery: new Map(),
-  learningProfile: { recentWins: [] },
-  markModified: jest.fn()
-});
+// A REAL Mongoose document, so the encoded-key storage path is exercised. A plain
+// {skillMastery: new Map()} would silently accept dotted keys and hide the very
+// bug this file guards.
+const makeUser = () => new User({ username: 'p', email: 'p@example.com', firstName: 'P' });
+const entryOf = (user, id) => getSkillMasteryEntry(user, id);
 
 const convo = (msgs = []) => ({ messages: msgs });
 const askedForHelp = convo([{ role: 'user', content: "I'm stuck, can I get a hint?" }]);
@@ -37,7 +39,7 @@ describe('the chat path no longer runs its own mastery model', () => {
     const user = makeUser();
     demonstrate(user, 'ALG1.EQV.1', 3, { contexts: ['numeric', 'graphical', 'word-problem'] });
 
-    const entry = user.skillMastery.get('ALG1.EQV.1');
+    const entry = entryOf(user, 'ALG1.EQV.1');
     expect(currentRung(entry)).not.toBe('proved');
     expect(entry.status).not.toBe('mastered');
   });
@@ -46,7 +48,7 @@ describe('the chat path no longer runs its own mastery model', () => {
     const user = makeUser();
     demonstrate(user, 'ALG1.EQV.1', 8, { contexts: ['numeric', 'graphical', 'word-problem'] });
 
-    const entry = user.skillMastery.get('ALG1.EQV.1');
+    const entry = entryOf(user, 'ALG1.EQV.1');
     expect(currentRung(entry)).toBe('proved');
     expect(entry.status).toBe('mastered');
   });
@@ -67,7 +69,7 @@ describe('the chat path no longer runs its own mastery model', () => {
     const user = makeUser();
     demonstrate(user, 'ALG1.EQV.1', 8, { contexts: ['numeric', 'graphical', 'word-problem'] });
 
-    const entry = user.skillMastery.get('ALG1.EQV.1');
+    const entry = entryOf(user, 'ALG1.EQV.1');
     const proof = entry.rungHistory.find((h) => h.to === 'proved');
     expect(proof).toBeDefined();
     expect(proof.via).toBe('practice');
@@ -76,7 +78,7 @@ describe('the chat path no longer runs its own mastery model', () => {
   test('repeated identical practice does not prove transfer', () => {
     const user = makeUser();
     demonstrate(user, 'ALG1.EQV.1', 12, { contexts: ['numeric'] });
-    expect(currentRung(user.skillMastery.get('ALG1.EQV.1'))).toBe('learned');
+    expect(currentRung(entryOf(user, 'ALG1.EQV.1'))).toBe('learned');
   });
 
   test('asking for help repeatedly blocks the independence pillar', () => {
@@ -85,7 +87,7 @@ describe('the chat path no longer runs its own mastery model', () => {
       contexts: ['numeric', 'graphical', 'word-problem'],
       conversation: askedForHelp
     });
-    expect(currentRung(user.skillMastery.get('ALG1.EQV.1'))).not.toBe('proved');
+    expect(currentRung(entryOf(user, 'ALG1.EQV.1'))).not.toBe('proved');
   });
 
   test('skill ids are canonicalized so one concept is one entry', () => {
@@ -113,12 +115,12 @@ describe('existing evidence is never clobbered', () => {
   test('a prior entry keeps its pillars and history across a new demonstration', () => {
     const user = makeUser();
     demonstrate(user, 'ALG1.EQV.1', 8, { contexts: ['numeric', 'graphical', 'word-problem'] });
-    const before = user.skillMastery.get('ALG1.EQV.1');
+    const before = entryOf(user, 'ALG1.EQV.1');
     const historyLength = before.rungHistory.length;
     const attemptsBefore = before.pillars.accuracy.total;
 
     demonstrate(user, 'ALG1.EQV.1', 1);
-    const after = user.skillMastery.get('ALG1.EQV.1');
+    const after = entryOf(user, 'ALG1.EQV.1');
 
     expect(after.rungHistory.length).toBeGreaterThanOrEqual(historyLength);
     expect(after.pillars.accuracy.total).toBe(attemptsBefore + 1);

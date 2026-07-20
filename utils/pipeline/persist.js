@@ -27,6 +27,7 @@ const { getReviewSummary } = require('../smartReviewQueue');
 const { canonicalSkillId } = require('../skillCanonicalizer');
 const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } = require('../masteryEngine');
 const { advanceRung, currentRung, clearsPrerequisites } = require('../skillRung');
+const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../masteryGuard');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -177,7 +178,7 @@ async function persist(params) {
     // key on the canonical (unified) skill id so learning/mastery state for one
     // concept never splits across a legacy id and its unified id
     const startedId = canonicalSkillId(extracted.skillStarted);
-    const prior = user.skillMastery.get(startedId);
+    const prior = getSkillMasteryEntry(user, startedId);
     // MERGE, never replace. This used to assign a fresh object, so revisiting a
     // skill the student had already worked on wiped its pillars, rung and
     // rungHistory — silently destroying the evidence behind an earned rung.
@@ -187,15 +188,13 @@ async function persist(params) {
       delete entry.__rungResult;
       entry.masteryScore = 0.3;
       entry.notes = 'Currently learning with AI';
-      user.skillMastery.set(startedId, entry);
-      user.markModified('skillMastery');
+      setSkillMasteryEntry(user, startedId, entry);
     } else if (currentRung(prior) === 'none') {
       advanceRung(prior, 'learned', { via: 'lesson' });
       delete prior.__rungResult;
       prior.status = prior.status === 'ready' || !prior.status ? 'learning' : prior.status;
       prior.notes = 'Currently learning with AI';
-      user.skillMastery.set(startedId, prior);
-      user.markModified('skillMastery');
+      setSkillMasteryEntry(user, startedId, prior);
     }
     // A skill already at learned-or-better needs no downgrade for being revisited.
   }
@@ -634,8 +633,15 @@ async function cascadeBeneath(user, skillId) {
   );
   if (!skills.length) return [];
 
-  const { cleared } = applyProofCascade(buildGraph(skills), user.skillMastery, skillId);
-  if (cleared.length) user.markModified('skillMastery');
+  // The closure engine reasons in logical (dotted) ids, so it operates on a
+  // decoded view. Entry objects are shared with the stored subdocuments, so
+  // in-place mutations already land; newly-cleared keys are written back through
+  // the encoder so the Mongoose Map never sees a dot.
+  const decoded = decodedMasteryMap(user);
+  const { cleared } = applyProofCascade(buildGraph(skills), decoded, skillId);
+  for (const clearedId of cleared) {
+    setSkillMasteryEntry(user, clearedId, decoded.get(clearedId));
+  }
   return cleared;
 }
 
@@ -667,7 +673,7 @@ function updateSkillMastery(user, rawSkillId, observation, conversation) {
   // Canonicalize to the unified skill id for storage/lookup; keep the original
   // id only for deriving a readable "recent win" label below.
   const skillId = canonicalSkillId(rawSkillId);
-  const existing = user.skillMastery.get(skillId) || initializeSkillMastery(skillId);
+  const existing = getSkillMasteryEntry(user, skillId) || initializeSkillMastery(skillId);
   const wasOwned = clearsPrerequisites(existing);
 
   // Independence proxy: the student asking for help in recent turns. Weaker than
@@ -689,7 +695,7 @@ function updateSkillMastery(user, rawSkillId, observation, conversation) {
   const acc = updated.pillars?.accuracy || {};
   updated.notes = `AI-verified demonstration (${acc.correct || 0}/${acc.total || 0} correct)`;
 
-  user.skillMastery.set(skillId, updated);
+  setSkillMasteryEntry(user, skillId, updated);
 
   // Add to recent wins the first time the skill is genuinely owned.
   if (justProved && !wasOwned) {
@@ -790,7 +796,7 @@ function updateBadgeProgress(user, wasCorrect) {
   // Unlock skill on skill map (canonical unified id)
   const skillId = canonicalSkillId(badge.skillId);
   if (!user.skillMastery) user.skillMastery = new Map();
-  const entry = user.skillMastery.get(skillId) || initializeSkillMastery(skillId);
+  const entry = getSkillMasteryEntry(user, skillId) || initializeSkillMastery(skillId);
   if (!clearsPrerequisites(entry)) {
     // MERGE, never replace. This used to assign a bare object, so earning a badge
     // destroyed the skill's pillars, rung and rungHistory — wiping the receipts
@@ -809,8 +815,7 @@ function updateBadgeProgress(user, wasCorrect) {
     });
     delete entry.__rungResult;
     if (clearsPrerequisites(entry)) entry.status = 'mastered';
-    user.skillMastery.set(skillId, entry);
-    user.markModified('skillMastery');
+    setSkillMasteryEntry(user, skillId, entry);
   }
 
   return {

@@ -14,6 +14,7 @@
  */
 
 const { canonicalSkillId } = require('./skillCanonicalizer');
+const { encodeMasteryKey } = require('./masteryGuard');
 
 // ── Pattern types ──
 const PATTERN_TYPES = {
@@ -334,7 +335,12 @@ function detectRetentionDecay(skillMastery, recent, patterns, notes, planUpdates
 
     for (const skillId of incorrectSkills) {
       const canonId = canonicalSkillId(skillId);
-      const read = (k) => (skillMastery instanceof Map ? skillMastery.get(k) : skillMastery?.[k]);
+      // Stored keys are ENCODED (dots -> "_"); read by the encoded key, with a
+      // raw fallback for a plain map or a pre-fix legacy entry.
+      const read = (k) => {
+        if (!(skillMastery instanceof Map)) return skillMastery?.[encodeMasteryKey(k)] ?? skillMastery?.[k];
+        return skillMastery.get(encodeMasteryKey(k)) ?? skillMastery.get(k);
+      };
       const mastery = read(canonId) ?? (canonId !== skillId ? read(skillId) : null);
 
       if (mastery && (mastery.status === 'mastered' || mastery.masteryScore >= 70)) {

@@ -14,6 +14,32 @@
 const TutorPlan = require('../models/tutorPlan');
 const { canonicalSkillId } = require('./skillCanonicalizer');
 
+// ── STORAGE KEY ENCODING ────────────────────────────────────────────────────
+// user.skillMastery is a Mongoose Map, and Mongoose Maps THROW on keys that
+// contain "." (they collide with MongoDB dot-notation). Every unified skill id
+// is dotted — "ALG1.EQV.1" — so a naive `skillMastery.set('ALG1.EQV.1', …)`
+// throws, the surrounding persist stage is caught non-fatally, and the write
+// silently vanishes. That is a live data-loss bug for every crosswalked skill.
+//
+// Fix: store an ENCODED key ("ALG1_EQV_1") and keep the dotted id as the single
+// logical id everywhere else (graph, board, closure, canonicalizer). No skill id
+// in the catalog contains "_", so "." <-> "_" is a clean bijection; encode()
+// asserts that, so if an id ever does contain "_" this fails loudly at the write
+// instead of corrupting a key. No data migration is needed because the bug meant
+// no dotted key was ever successfully stored.
+function encodeMasteryKey(id) {
+  if (id == null) return id;
+  const s = String(id);
+  if (s.includes('_')) {
+    throw new Error(`skill id "${s}" contains "_", which the mastery key encoding reserves as the "." substitute`);
+  }
+  return s.replace(/\./g, '_');
+}
+
+function decodeMasteryKey(key) {
+  return key == null ? key : String(key).replace(/_/g, '.');
+}
+
 // If a badge has been attempted this many times its requirement without
 // being earned, we consider it stuck and clear it so the student can pick
 // (or be routed to) a fresh target. 2x is conservative — it gives plenty
@@ -29,9 +55,47 @@ function getSkillMasteryEntry(user, skillId) {
   if (!user || !skillId) return null;
   const sm = user.skillMastery;
   if (!sm) return null;
-  const read = (k) => (typeof sm.get === 'function' ? sm.get(k) : sm[k]) || null;
+  // Read by the encoded storage key. Also try the un-encoded key so any entry
+  // written before this fix (only possible for non-dotted legacy ids) still
+  // resolves.
+  const read = (k) => {
+    if (typeof sm.get === 'function') return sm.get(encodeMasteryKey(k)) || sm.get(k) || null;
+    return sm[encodeMasteryKey(k)] || sm[k] || null;
+  };
   const canon = canonicalSkillId(skillId);
   return read(canon) || (canon !== skillId ? read(skillId) : null);
+}
+
+// Write accessor — the single place a keyed skillMastery entry is stored.
+// Resolves the logical key (canonical, or a present legacy key), encodes it for
+// the Mongoose Map, sets it, and flags the path modified. Every `.set(` on
+// skillMastery should go through here so the dot problem cannot recur.
+function setSkillMasteryEntry(user, skillId, entry) {
+  if (!user || !skillId) return entry;
+  if (!user.skillMastery) user.skillMastery = new Map();
+  const logicalKey = resolveMasteryKey(user, skillId);
+  const storageKey = encodeMasteryKey(logicalKey);
+  if (typeof user.skillMastery.set === 'function') user.skillMastery.set(storageKey, entry);
+  else user.skillMastery[storageKey] = entry;
+  if (typeof user.markModified === 'function') user.markModified('skillMastery');
+  return entry;
+}
+
+function hasSkillMasteryEntry(user, skillId) {
+  return getSkillMasteryEntry(user, skillId) != null;
+}
+
+// A plain, decoded (dotted-key) view of a user's skillMastery, for the closure /
+// board / cascade code that reasons over the graph in logical ids. Mutating an
+// entry object mutates the stored subdocument (same reference); NEW keys or rung
+// changes produced by a cascade must be written back with setSkillMasteryEntry.
+function decodedMasteryMap(user) {
+  const out = new Map();
+  const sm = user && user.skillMastery;
+  if (!sm) return out;
+  const iter = typeof sm.entries === 'function' ? sm.entries() : Object.entries(sm || {});
+  for (const [k, v] of iter) out.set(decodeMasteryKey(k), v);
+  return out;
 }
 
 // Resolve the skillMastery KEY to use for a read-modify-write on `skillId`.
@@ -43,7 +107,14 @@ function resolveMasteryKey(user, skillId) {
   const canon = canonicalSkillId(skillId);
   const sm = user && user.skillMastery;
   if (!sm) return canon;
-  const present = (k) => (typeof sm.get === 'function' ? sm.get(k) != null : sm[k] != null);
+  // Presence is checked against the ENCODED storage key (with a fallback to the
+  // raw key for pre-fix legacy entries). Returns the LOGICAL (dotted) id; callers
+  // that write must encode it — setSkillMasteryEntry does.
+  const present = (k) => {
+    const enc = encodeMasteryKey(k);
+    if (typeof sm.get === 'function') return sm.get(enc) != null || sm.get(k) != null;
+    return sm[enc] != null || sm[k] != null;
+  };
   if (present(canon)) return canon;
   if (canon !== skillId && present(skillId)) return skillId;
   return canon;
@@ -108,7 +179,12 @@ function clearActiveBadge(user, reason) {
 
 module.exports = {
   STUCK_BADGE_ATTEMPT_MULTIPLIER,
+  encodeMasteryKey,
+  decodeMasteryKey,
   getSkillMasteryEntry,
+  setSkillMasteryEntry,
+  hasSkillMasteryEntry,
+  decodedMasteryMap,
   resolveMasteryKey,
   isSkillMastered,
   isBadgeStuck,

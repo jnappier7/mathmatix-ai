@@ -257,7 +257,7 @@ const skillMasterySchema = new Schema({
   // but not on what evidence, because the old path recorded none.
   provenBy: {
     type: String,
-    enum: ['lesson', 'challenge', 'fluency', 'practice', 'teachback', 'inference', 'legacy'],
+    enum: ['lesson', 'challenge', 'fluency', 'practice', 'teachback', 'inference', 'placement', 'legacy'],
     required: false
   },
   // The receipt for every transition. A rung claim we cannot show evidence for
