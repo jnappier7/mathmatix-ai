@@ -1,0 +1,1306 @@
+{
+ "bad_edges": [
+  {
+   "skill_id": "MS.QNT.2",
+   "edge": "ELEM.PRP.5->MS.QNT.2",
+   "verdict": "spurious",
+   "note": "Fraction scaling (5.NF.B.5, 'is the product bigger or smaller than the factor?') is a reasoning check, not a prerequisite for dividing fractions. Neither 6.NS.A.1 nor the Fractions Progression routes division-of-fractions through 5.NF.B.5."
+  },
+  {
+   "skill_id": "ALG1.PRP.2",
+   "edge": "ALG1.PRP.1->ALG1.PRP.2",
+   "verdict": "spurious",
+   "note": "Dimensional analysis (HSN-Q.A.1) is NOT a prerequisite for computing or interpreting slope. Nothing in 8.EE.B.5, 8.F.B.4 or the RP/Functions progressions routes slope through unit conversion. This edge appears to exist only because PRP.1 happens to be the first skill in the ALG1.PRP sequence."
+  },
+  {
+   "skill_id": "ALG1.PRP.3",
+   "edge": "ALG1.PRP.2->ALG1.PRP.3",
+   "verdict": "wrong-direction",
+   "note": "CCSS orders these the other way. y = kx (7.RP.A.2c, grade 7) comes BEFORE slope of a general line (8.EE.B.5/8.EE.B.6, grade 8), and 8.EE.B.5-6 explicitly derive y = mx + b by generalizing FROM the proportional case y = mx. The RP Progression: 'Proportional relationships are a major type of linear function; they are those linear functions that have a positive rate of change and take 0 to 0.' Direct variation is the SPECIAL CASE that motivates slope, not a consequence of it."
+  },
+  {
+   "skill_id": "ALG1.PRP.4",
+   "edge": "ALG1.PRP.1->ALG1.PRP.4",
+   "verdict": "spurious",
+   "note": "Same pattern as ALG1.PRP.2: dimensional analysis is not a prerequisite for repeated percent change. No CCSS or progression support."
+  },
+  {
+   "skill_id": "GEO.PRP.1",
+   "edge": "ALG1.PRP.2->GEO.PRP.1",
+   "verdict": "spurious",
+   "note": "Slope is not a prerequisite for performing dilations. The only slope-adjacent content in HSG-SRT.A.1a is that a dilation maps a line not through the center to a PARALLEL line — a parallelism fact, not a rate-of-change fact. No progression routes dilation through slope."
+  },
+  {
+   "skill_id": "ALG1.EQV.9",
+   "edge": "ALG1.EQV.9->MS.QNT.3",
+   "verdict": "spurious",
+   "note": "SERIOUS. MS.QNT.3 is GCF/LCM. Greatest common factor has nothing to do with adding polynomials -- it is the prerequisite for FACTORING (ALG1.EQV.11). The real ancestor of adding polynomials is combining like terms, MS.EQV.2 (6.EE.A.3 / 7.EE.A.1). EE Progression: 'Collecting like terms... should be seen as an application of the distributive law, not as a separate method.' As currently wired, the platform's own flagship structural claim -- combining like terms == adding polynomials -- is absent from the graph, and a student who fails polynomial addition will be remediated to GCF, which will not help them."
+  },
+  {
+   "skill_id": "ALG1.EQV.15",
+   "edge": "ALG1.EQV.15->ALG1.EQV.13",
+   "verdict": "spurious",
+   "note": "gating solve-by-factoring on the ac-method for a>1 is too strict. A-REI.B.4b requires solving 'by... factoring, as appropriate to the initial form of the equation'; nothing requires a>1 competence first. Recommend downgrading to a soft edge -- as written this blocks students unnecessarily."
+  },
+  {
+   "skill_id": "ALG2.EQV.7",
+   "edge": "ALG2.EQV.7->ALG1.SPC.2",
+   "verdict": "spurious",
+   "note": "ALG1.SPC.2 is 'Polynomial geometry models' (perimeter/area as polynomial expressions). That is an APPLICATION of polynomial arithmetic, not its prerequisite. The correct cross-prerequisites are ALG1.EQV.9 (add/subtract polynomials) and ALG1.EQV.10 (multiply polynomials). As wired, ALG2.EQV.7 has no path back to the Algebra 1 polynomial skills at all -- a break in the very spine the product thesis is built on."
+  },
+  {
+   "skill_id": "ALG2.EQV.13",
+   "edge": "ALG2.EQV.13->MS.QNT.1",
+   "verdict": "spurious",
+   "note": "MS.QNT.1 is decimal-operations fluency. Decimals are irrelevant here. The intended ancestor is fraction arithmetic -- rational expressions are 'analogous to the rational numbers' per A-APR.D.7 -- so this should point at the fraction-operations skill (5.NF domain / MS fraction node), not decimals."
+  },
+  {
+   "skill_id": "ALG2.FNC.5",
+   "edge": "ALG2.FNC.5->ALG1.EQV.6",
+   "verdict": "spurious",
+   "note": "ALG1.EQV.6 is 'systems by graphing'. Solving systems is not a prerequisite for evaluating or graphing a piecewise function. The operative ancestors are ALG1.FNC.2 (domain and range -- piecewise functions are defined by domain restriction) and ALG1.EQV.5/ALG1.EQV.3 (absolute value, inequality notation for the branches)."
+  },
+  {
+   "skill_id": "PREC.FNC.1",
+   "edge": "PREC.FNC.1->ALG2.EQV.1",
+   "verdict": "spurious",
+   "note": "ALG2.EQV.1 is absolute value inequalities. There is no connection to average rate of change, increase/decrease, or concavity. The correct ancestor is ALG1.FNC.12 (average rate of change, F-IF.B.6), which is not linked."
+  },
+  {
+   "skill_id": "PREC.FNC.8",
+   "edge": "PREC.FNC.8->GEO.EQV.2",
+   "verdict": "spurious",
+   "note": "SERIOUS. GEO.EQV.2 is 'Inductive deductive reasoning' (laws of detachment and syllogism). It has no bearing on exponential functions whatsoever. This looks like a data-entry error. The correct cross-prerequisite is ALG2.FNC.10 (graph and analyze exponential functions, including base e), which is the identical skill one level down and is not linked at all."
+  },
+  {
+   "skill_id": "ELEM.SPC.2",
+   "edge": "ELEM.SPC.1->ELEM.SPC.2",
+   "verdict": "spurious",
+   "note": "Perimeter (3.MD.D.8) is a Measurement & Data standard built on iterated length units and addition (2.MD.A/B), not on polygon classification. The Geometric Measurement Progression roots perimeter in length measurement, not in shape taxonomy."
+  },
+  {
+   "skill_id": "ELEM.SPC.9",
+   "edge": "ELEM.QNT.1->ELEM.SPC.9",
+   "verdict": "spurious",
+   "note": "Multi-digit whole-number place value is not what 5.G.A.1 requires; it requires number-line structure and ordered-pair convention. ELEM.FNC.5 (5.OA.B.3, forming and graphing ordered pairs) is the standard-aligned companion and is absent."
+  },
+  {
+   "skill_id": "MS.SPC.3",
+   "edge": "ELEM.QNT.1->MS.SPC.3",
+   "verdict": "spurious",
+   "note": "Whole-number place value has no bearing on 6.G.A.2, which is about packing unit cubes with fractional edge lengths. This looks like a placeholder edge."
+  },
+  {
+   "skill_id": "MS.DTA.5",
+   "edge": "ELEM.QNT.1->MS.DTA.5",
+   "verdict": "spurious",
+   "note": "Whole-number place value is not a prerequisite for 7.SP.C.5-6. What is actually needed is fraction/decimal/percent equivalence and placing a number between 0 and 1, i.e. MS.PRP.4 or the grade-6 rational-number skills."
+  },
+  {
+   "skill_id": "GEO.SPC.16",
+   "edge": "GEO.SPC.13->GEO.SPC.16",
+   "verdict": "spurious",
+   "note": "Arcs, chords and inscribed angles are not needed for the coordinate equation of a circle. The actual dependency is the distance formula / Pythagorean theorem (ALG1.SPC.1, GEO.SPC.11) plus completing the square, which is already listed."
+  },
+  {
+   "skill_id": "CALC.DTA.1",
+   "edge": "MS.DTA.7->CALC.DTA.1",
+   "verdict": "spurious",
+   "note": "Scatter plots and two-way tables (8.SP) have nothing to do with difference quotients over tabular data. This edge appears to exist only to give the DTA strand a lower-level ancestor."
+  },
+  {
+   "skill_id": "CALC.DTA.2",
+   "edge": "GEO.SPC.10->CALC.DTA.2",
+   "verdict": "spurious",
+   "note": "Parallelogram properties are not a prerequisite for trapezoidal sums. If a geometric ancestor is wanted it is the trapezoid AREA formula (MS.SPC.1 / GEO.SPC.17), not parallelogram congruence properties."
+  }
+ ],
+ "missing_prereqs": [
+  {
+   "skill_id": "ELEM.QNT.14",
+   "should_require": "ELEM.QNT.7"
+  },
+  {
+   "skill_id": "ELEM.PRP.6",
+   "should_require": "ELEM.PRP.3"
+  },
+  {
+   "skill_id": "MS.QNT.2",
+   "should_require": "ELEM.QNT.13"
+  },
+  {
+   "skill_id": "MS.QNT.7",
+   "should_require": "MS.QNT.2"
+  },
+  {
+   "skill_id": "MS.QNT.11",
+   "should_require": "MS.QNT.5"
+  },
+  {
+   "skill_id": "ALG1.QNT.2",
+   "should_require": "MS.QNT.9"
+  },
+  {
+   "skill_id": "ALG1.QNT.3",
+   "should_require": "MS.QNT.11"
+  },
+  {
+   "skill_id": "ALG1.PRP.2",
+   "should_require": "MS.PRP.3"
+  },
+  {
+   "skill_id": "ALG1.PRP.3",
+   "should_require": "MS.PRP.5"
+  },
+  {
+   "skill_id": "ALG1.PRP.4",
+   "should_require": "ALG1.QNT.2"
+  },
+  {
+   "skill_id": "GEO.QNT.2",
+   "should_require": "GEO.PRP.7"
+  },
+  {
+   "skill_id": "GEO.PRP.1",
+   "should_require": "MS.PRP.5"
+  },
+  {
+   "skill_id": "ALG2.QNT.3",
+   "should_require": "ALG1.QNT.4"
+  },
+  {
+   "skill_id": "ALG2.PRP.3",
+   "should_require": "MS.PRP.3"
+  },
+  {
+   "skill_id": "PREC.PRP.1",
+   "should_require": "MS.PRP.5"
+  },
+  {
+   "skill_id": "CALC.PRP.1",
+   "should_require": "ALG1.PRP.2"
+  },
+  {
+   "skill_id": "CALC.PRP.1",
+   "should_require": "HSF-IF.B.6-equivalent (no skill in this taxonomy covers AVERAGE rate of change on an interval)"
+  },
+  {
+   "skill_id": "CALC.PRP.3",
+   "should_require": "ALG1.PRP.2"
+  },
+  {
+   "skill_id": "MS.EQV.1",
+   "should_require": "ELEM.EQV.6"
+  },
+  {
+   "skill_id": "MS.EQV.4",
+   "should_require": "MS.QNT.4"
+  },
+  {
+   "skill_id": "MS.EQV.6",
+   "should_require": "MS.QNT.3"
+  },
+  {
+   "skill_id": "MS.FNC.1",
+   "should_require": "MS.EQV.1"
+  },
+  {
+   "skill_id": "MS.FNC.6",
+   "should_require": "MS.FNC.2"
+  },
+  {
+   "skill_id": "ALG1.EQV.1",
+   "should_require": "MS.EQV.8"
+  },
+  {
+   "skill_id": "ALG1.EQV.3",
+   "should_require": "MS.EQV.7"
+  },
+  {
+   "skill_id": "ALG1.EQV.6",
+   "should_require": "MS.EQV.9"
+  },
+  {
+   "skill_id": "ALG1.EQV.9",
+   "should_require": "MS.EQV.2"
+  },
+  {
+   "skill_id": "ALG1.EQV.9",
+   "should_require": "MS.EQV.6"
+  },
+  {
+   "skill_id": "ALG1.EQV.10",
+   "should_require": "MS.EQV.6"
+  },
+  {
+   "skill_id": "ALG1.EQV.11",
+   "should_require": "MS.QNT.3"
+  },
+  {
+   "skill_id": "ALG1.EQV.11",
+   "should_require": "MS.EQV.6"
+  },
+  {
+   "skill_id": "ALG1.EQV.13",
+   "should_require": "ALG1.EQV.11"
+  },
+  {
+   "skill_id": "ALG1.EQV.14",
+   "should_require": "ALG1.EQV.10"
+  },
+  {
+   "skill_id": "ALG1.EQV.15",
+   "should_require": "ALG1.EQV.12"
+  },
+  {
+   "skill_id": "ALG1.EQV.16",
+   "should_require": "ALG1.EQV.14"
+  },
+  {
+   "skill_id": "ALG1.EQV.17",
+   "should_require": "ALG1.EQV.2"
+  },
+  {
+   "skill_id": "ALG1.FNC.3",
+   "should_require": "MS.FNC.4"
+  },
+  {
+   "skill_id": "ALG1.FNC.6",
+   "should_require": "ALG1.FNC.3"
+  },
+  {
+   "skill_id": "ALG1.FNC.7",
+   "should_require": "ALG1.QNT.2"
+  },
+  {
+   "skill_id": "ALG1.FNC.9",
+   "should_require": "ALG1.FNC.2"
+  },
+  {
+   "skill_id": "ALG1.FNC.10",
+   "should_require": "ALG1.EQV.16"
+  },
+  {
+   "skill_id": "ALG1.FNC.11",
+   "should_require": "ALG1.FNC.2"
+  },
+  {
+   "skill_id": "GEO.EQV.9",
+   "should_require": "ALG1.PRP.2"
+  },
+  {
+   "skill_id": "GEO.FNC.2",
+   "should_require": "ALG1.FNC.10"
+  },
+  {
+   "skill_id": "GEO.FNC.2",
+   "should_require": "ALG1.EQV.10"
+  },
+  {
+   "skill_id": "ALG2.EQV.1",
+   "should_require": "ALG1.EQV.4"
+  },
+  {
+   "skill_id": "ALG2.EQV.2",
+   "should_require": "ALG1.EQV.7"
+  },
+  {
+   "skill_id": "ALG2.EQV.3",
+   "should_require": "ALG1.EQV.14"
+  },
+  {
+   "skill_id": "ALG2.EQV.5",
+   "should_require": "ALG1.FNC.10"
+  },
+  {
+   "skill_id": "ALG2.EQV.6",
+   "should_require": "ALG1.EQV.7"
+  },
+  {
+   "skill_id": "ALG2.EQV.7",
+   "should_require": "ALG1.EQV.9"
+  },
+  {
+   "skill_id": "ALG2.EQV.7",
+   "should_require": "ALG1.EQV.10"
+  },
+  {
+   "skill_id": "ALG2.EQV.8",
+   "should_require": "ALG1.EQV.11"
+  },
+  {
+   "skill_id": "ALG2.EQV.10",
+   "should_require": "ALG1.EQV.11"
+  },
+  {
+   "skill_id": "ALG2.EQV.10",
+   "should_require": "ALG1.EQV.14"
+  },
+  {
+   "skill_id": "ALG2.EQV.10",
+   "should_require": "ALG2.EQV.9"
+  },
+  {
+   "skill_id": "ALG2.EQV.12",
+   "should_require": "ALG1.EQV.15"
+  },
+  {
+   "skill_id": "ALG2.EQV.12",
+   "should_require": "ALG2.EQV.4"
+  },
+  {
+   "skill_id": "ALG2.EQV.13",
+   "should_require": "ALG1.EQV.12"
+  },
+  {
+   "skill_id": "ALG2.EQV.13",
+   "should_require": "ALG1.EQV.14"
+  },
+  {
+   "skill_id": "ALG2.EQV.14",
+   "should_require": "MS.QNT.3"
+  },
+  {
+   "skill_id": "ALG2.EQV.15",
+   "should_require": "ALG1.EQV.15"
+  },
+  {
+   "skill_id": "ALG2.EQV.15",
+   "should_require": "ALG2.EQV.12"
+  },
+  {
+   "skill_id": "ALG2.EQV.16",
+   "should_require": "ALG2.FNC.11"
+  },
+  {
+   "skill_id": "ALG2.EQV.17",
+   "should_require": "ALG1.QNT.2"
+  },
+  {
+   "skill_id": "ALG2.FNC.1",
+   "should_require": "ALG1.FNC.2"
+  },
+  {
+   "skill_id": "ALG2.FNC.3",
+   "should_require": "ALG1.EQV.2"
+  },
+  {
+   "skill_id": "ALG2.FNC.4",
+   "should_require": "ALG1.FNC.11"
+  },
+  {
+   "skill_id": "ALG2.FNC.5",
+   "should_require": "ALG1.FNC.2"
+  },
+  {
+   "skill_id": "ALG2.FNC.5",
+   "should_require": "ALG1.EQV.3"
+  },
+  {
+   "skill_id": "ALG2.FNC.8",
+   "should_require": "ALG2.FNC.3"
+  },
+  {
+   "skill_id": "ALG2.FNC.9",
+   "should_require": "ALG2.EQV.8"
+  },
+  {
+   "skill_id": "ALG2.FNC.10",
+   "should_require": "ALG1.FNC.9"
+  },
+  {
+   "skill_id": "ALG2.FNC.13",
+   "should_require": "ALG1.FNC.7"
+  },
+  {
+   "skill_id": "PREC.EQV.1",
+   "should_require": "ALG2.EQV.8"
+  },
+  {
+   "skill_id": "PREC.EQV.1",
+   "should_require": "ALG2.EQV.9"
+  },
+  {
+   "skill_id": "PREC.EQV.2",
+   "should_require": "ALG2.EQV.11"
+  },
+  {
+   "skill_id": "PREC.EQV.3",
+   "should_require": "PREC.FNC.6"
+  },
+  {
+   "skill_id": "PREC.EQV.4",
+   "should_require": "ALG2.EQV.17"
+  },
+  {
+   "skill_id": "PREC.EQV.5",
+   "should_require": "ALG2.EQV.18"
+  },
+  {
+   "skill_id": "PREC.EQV.6",
+   "should_require": "ALG2.FNC.14"
+  },
+  {
+   "skill_id": "PREC.EQV.6",
+   "should_require": "ALG2.EQV.13"
+  },
+  {
+   "skill_id": "PREC.EQV.8",
+   "should_require": "PREC.EQV.7"
+  },
+  {
+   "skill_id": "PREC.EQV.10",
+   "should_require": "ALG2.EQV.2"
+  },
+  {
+   "skill_id": "PREC.FNC.1",
+   "should_require": "ALG1.FNC.12"
+  },
+  {
+   "skill_id": "PREC.FNC.3",
+   "should_require": "ALG2.FNC.2"
+  },
+  {
+   "skill_id": "PREC.FNC.3",
+   "should_require": "ALG1.FNC.2"
+  },
+  {
+   "skill_id": "PREC.FNC.4",
+   "should_require": "ALG2.FNC.3"
+  },
+  {
+   "skill_id": "PREC.FNC.5",
+   "should_require": "ALG2.FNC.6"
+  },
+  {
+   "skill_id": "PREC.FNC.5",
+   "should_require": "ALG2.FNC.7"
+  },
+  {
+   "skill_id": "PREC.FNC.6",
+   "should_require": "ALG2.FNC.9"
+  },
+  {
+   "skill_id": "PREC.FNC.6",
+   "should_require": "ALG2.EQV.13"
+  },
+  {
+   "skill_id": "PREC.FNC.7",
+   "should_require": "ALG2.QNT.2"
+  },
+  {
+   "skill_id": "PREC.FNC.7",
+   "should_require": "ALG2.FNC.8"
+  },
+  {
+   "skill_id": "PREC.FNC.8",
+   "should_require": "ALG2.FNC.10"
+  },
+  {
+   "skill_id": "PREC.FNC.8",
+   "should_require": "ALG1.FNC.8"
+  },
+  {
+   "skill_id": "PREC.FNC.9",
+   "should_require": "ALG2.FNC.11"
+  },
+  {
+   "skill_id": "PREC.FNC.10",
+   "should_require": "ALG1.FNC.6"
+  },
+  {
+   "skill_id": "PREC.FNC.10",
+   "should_require": "ALG1.FNC.7"
+  },
+  {
+   "skill_id": "PREC.FNC.11",
+   "should_require": "ALG2.FNC.15"
+  },
+  {
+   "skill_id": "PREC.FNC.12",
+   "should_require": "PREC.EQV.6"
+  },
+  {
+   "skill_id": "PREC.FNC.14",
+   "should_require": "PREC.FNC.11"
+  },
+  {
+   "skill_id": "CALC.EQV.1",
+   "should_require": "ALG2.QNT.3"
+  },
+  {
+   "skill_id": "CALC.EQV.1",
+   "should_require": "ALG2.EQV.14"
+  },
+  {
+   "skill_id": "CALC.EQV.1",
+   "should_require": "ALG1.EQV.14"
+  },
+  {
+   "skill_id": "CALC.EQV.2",
+   "should_require": "ALG1.EQV.1"
+  },
+  {
+   "skill_id": "CALC.EQV.3",
+   "should_require": "ALG1.EQV.2"
+  },
+  {
+   "skill_id": "CALC.EQV.4",
+   "should_require": "ALG2.EQV.8"
+  },
+  {
+   "skill_id": "CALC.EQV.4",
+   "should_require": "ALG1.EQV.16"
+  },
+  {
+   "skill_id": "CALC.FNC.1",
+   "should_require": "PREC.FNC.5"
+  },
+  {
+   "skill_id": "CALC.FNC.1",
+   "should_require": "PREC.FNC.6"
+  },
+  {
+   "skill_id": "CALC.FNC.2",
+   "should_require": "PREC.FNC.3"
+  },
+  {
+   "skill_id": "CALC.FNC.5",
+   "should_require": "ALG2.FNC.5"
+  },
+  {
+   "skill_id": "CALC.FNC.9",
+   "should_require": "ALG2.QNT.2"
+  },
+  {
+   "skill_id": "CALC.FNC.9",
+   "should_require": "PREC.FNC.9"
+  },
+  {
+   "skill_id": "CALC.FNC.10",
+   "should_require": "PREC.EQV.6"
+  },
+  {
+   "skill_id": "CALC.FNC.12",
+   "should_require": "PREC.FNC.4"
+  },
+  {
+   "skill_id": "CALC.FNC.13",
+   "should_require": "CALC.FNC.11"
+  },
+  {
+   "skill_id": "CALC.FNC.15",
+   "should_require": "CALC.FNC.9"
+  },
+  {
+   "skill_id": "CALC.FNC.16",
+   "should_require": "CALC.FNC.11"
+  },
+  {
+   "skill_id": "CALC.FNC.19",
+   "should_require": "CALC.FNC.8"
+  },
+  {
+   "skill_id": "CALC.FNC.20",
+   "should_require": "GEO.FNC.2"
+  },
+  {
+   "skill_id": "CALC.FNC.20",
+   "should_require": "ALG1.EQV.2"
+  },
+  {
+   "skill_id": "CALC.FNC.21",
+   "should_require": "CALC.FNC.9"
+  },
+  {
+   "skill_id": "CALC.FNC.22",
+   "should_require": "ALG2.FNC.13"
+  },
+  {
+   "skill_id": "CALC.FNC.22",
+   "should_require": "CALC.FNC.2"
+  },
+  {
+   "skill_id": "CALC.FNC.24",
+   "should_require": "CALC.FNC.11"
+  },
+  {
+   "skill_id": "CALC.FNC.26",
+   "should_require": "CALC.FNC.15"
+  },
+  {
+   "skill_id": "CALC.FNC.27",
+   "should_require": "CALC.EQV.3"
+  },
+  {
+   "skill_id": "ELEM.SPC.2",
+   "should_require": "ELEM.QNT.2"
+  },
+  {
+   "skill_id": "ELEM.SPC.7",
+   "should_require": "ELEM.SPC.1"
+  },
+  {
+   "skill_id": "ELEM.SPC.9",
+   "should_require": "ELEM.FNC.5"
+  },
+  {
+   "skill_id": "MS.SPC.3",
+   "should_require": "ELEM.SPC.8"
+  },
+  {
+   "skill_id": "MS.SPC.4",
+   "should_require": "ELEM.SPC.9"
+  },
+  {
+   "skill_id": "MS.SPC.8",
+   "should_require": "MS.SPC.1"
+  },
+  {
+   "skill_id": "MS.DTA.2",
+   "should_require": "ELEM.DTA.2"
+  },
+  {
+   "skill_id": "MS.DTA.5",
+   "should_require": "MS.PRP.4"
+  },
+  {
+   "skill_id": "ALG1.SPC.2",
+   "should_require": "MS.SPC.1"
+  },
+  {
+   "skill_id": "ALG1.DTA.1",
+   "should_require": "MS.DTA.3"
+  },
+  {
+   "skill_id": "ALG1.DTA.2",
+   "should_require": "MS.DTA.7"
+  },
+  {
+   "skill_id": "ALG1.DTA.3",
+   "should_require": "MS.DTA.7"
+  },
+  {
+   "skill_id": "GEO.SPC.5",
+   "should_require": "MS.SPC.7"
+  },
+  {
+   "skill_id": "GEO.SPC.6",
+   "should_require": "GEO.SPC.7"
+  },
+  {
+   "skill_id": "GEO.SPC.10",
+   "should_require": "GEO.SPC.8"
+  },
+  {
+   "skill_id": "GEO.SPC.10",
+   "should_require": "GEO.EQV.6"
+  },
+  {
+   "skill_id": "GEO.SPC.11",
+   "should_require": "GEO.PRP.3"
+  },
+  {
+   "skill_id": "GEO.SPC.12",
+   "should_require": "GEO.PRP.2"
+  },
+  {
+   "skill_id": "GEO.SPC.13",
+   "should_require": "GEO.SPC.7"
+  },
+  {
+   "skill_id": "GEO.SPC.15",
+   "should_require": "GEO.PRP.2"
+  },
+  {
+   "skill_id": "GEO.SPC.16",
+   "should_require": "ALG1.SPC.1"
+  },
+  {
+   "skill_id": "GEO.SPC.17",
+   "should_require": "MS.SPC.1"
+  },
+  {
+   "skill_id": "GEO.SPC.18",
+   "should_require": "MS.SPC.2"
+  },
+  {
+   "skill_id": "GEO.SPC.19",
+   "should_require": "MS.SPC.9"
+  },
+  {
+   "skill_id": "GEO.DTA.2",
+   "should_require": "MS.DTA.6"
+  },
+  {
+   "skill_id": "ALG2.SPC.1",
+   "should_require": "ALG1.SPC.1"
+  },
+  {
+   "skill_id": "ALG2.SPC.1",
+   "should_require": "GEO.SPC.16"
+  },
+  {
+   "skill_id": "PREC.SPC.5",
+   "should_require": "GEO.SPC.7"
+  },
+  {
+   "skill_id": "PREC.SPC.5",
+   "should_require": "GEO.PRP.1"
+  },
+  {
+   "skill_id": "PREC.DTA.1",
+   "should_require": "ALG1.DTA.4"
+  },
+  {
+   "skill_id": "PREC.DTA.2",
+   "should_require": "ALG1.DTA.3"
+  },
+  {
+   "skill_id": "CALC.SPC.4",
+   "should_require": "GEO.SPC.20"
+  },
+  {
+   "skill_id": "CALC.SPC.5",
+   "should_require": "GEO.SPC.20"
+  },
+  {
+   "skill_id": "CALC.SPC.5",
+   "should_require": "GEO.SPC.18"
+  },
+  {
+   "skill_id": "CALC.DTA.2",
+   "should_require": "MS.SPC.1"
+  }
+ ],
+ "grade_errors": [
+  {
+   "skill_id": "MS.QNT.1",
+   "note": "grade 6 — taxonomy says '5-8', which contains it but is loose. CCSS pins multi-digit decimal fluency to grade 6 exactly."
+  },
+  {
+   "skill_id": "MS.QNT.2",
+   "note": "grade 6 — '5-8' is loose but contains it."
+  },
+  {
+   "skill_id": "MS.QNT.3",
+   "note": "grade 6 — '5-8' loose but contains it."
+  },
+  {
+   "skill_id": "MS.QNT.4",
+   "note": "grade 6 — ok within '5-8'."
+  },
+  {
+   "skill_id": "MS.QNT.5",
+   "note": "grade 6 — ok."
+  },
+  {
+   "skill_id": "MS.QNT.6",
+   "note": "grade 7 — ok within '5-8'."
+  },
+  {
+   "skill_id": "MS.QNT.7",
+   "note": "grade 7 — ok."
+  },
+  {
+   "skill_id": "MS.QNT.8",
+   "note": "grade 7 — ok."
+  },
+  {
+   "skill_id": "MS.QNT.9",
+   "note": "grade 8 — ok within '5-8'."
+  },
+  {
+   "skill_id": "MS.QNT.10",
+   "note": "grade 8 — ok."
+  },
+  {
+   "skill_id": "MS.QNT.11",
+   "note": "grade 8 — ok."
+  },
+  {
+   "skill_id": "MS.PRP.1",
+   "note": "grade 6 — ok within '5-8'. (Note: 6.RP.A.1 was one of the codes missing from ccss-reference.json before this audit.)"
+  },
+  {
+   "skill_id": "MS.PRP.2",
+   "note": "grade 6 — ok."
+  },
+  {
+   "skill_id": "MS.PRP.4",
+   "note": "grade 6 — ok."
+  },
+  {
+   "skill_id": "MS.PRP.5",
+   "note": "grade 7 — ok. This is the pivot standard of the whole PRP strand."
+  },
+  {
+   "skill_id": "MS.PRP.6",
+   "note": "grade 7 — ok."
+  },
+  {
+   "skill_id": "MS.PRP.7",
+   "note": "grade 7 — ok. 7.RP.A.3 names simple interest, tax, markups/markdowns, gratuities, commissions, fees, percent increase/decrease, percent error — matching the skill description item for item."
+  },
+  {
+   "skill_id": "MS.PRP.8",
+   "note": "grade 7 — ok."
+  },
+  {
+   "skill_id": "ALG1.QNT.2",
+   "note": "NOT ok as written — CCSS places integer-exponent properties squarely in GRADE 8 (8.EE.A.1), not in the 8-12 high-school band. High school (HSN-RN.A.1/A.2) only extends to RATIONAL exponents. Recommend gradeBand 5-8 (review at ALG1) or explicitly label this skill as remediation."
+  },
+  {
+   "skill_id": "ALG1.QNT.3",
+   "note": "medium — CCSS has no standard that says 'write radicals in simplest form'. 8.EE.A.2 covers root symbols and HSN-RN.A.2 covers rewriting radical/rational-exponent forms; simplest-radical-form is a conventional curricular topic that CCSS does not name."
+  },
+  {
+   "skill_id": "ALG1.QNT.4",
+   "note": "low-confidence — CCSS never states an 'operations with radicals' standard. HSN-RN.A.2 ('rewrite expressions involving radicals and rational exponents using the properties of exponents') is the closest anchor. This is a legitimate curricular skill with weak CCSS grounding; flagging rather than forcing a code."
+  },
+  {
+   "skill_id": "ALG1.PRP.2",
+   "note": "CCSS introduces slope-as-unit-rate in GRADE 8 (8.EE.B.5: 'Graph proportional relationships, interpreting the unit rate as the slope of the graph'). The '8-12' band is acceptable only if read as 'grade 8 onward'; if read as high-school-only it is one year late."
+  },
+  {
+   "skill_id": "ALG1.PRP.3",
+   "note": "NOT ok — y = kx is GRADE 7 content (7.RP.A.2c: 'Represent proportional relationships by equations... t = pn'). Placing 'Direct variation' in an 8-12 band inverts the CCSS sequence. The high-school-worthy part is only the modeling/'constant of variation' vocabulary."
+  },
+  {
+   "skill_id": "GEO.QNT.1",
+   "note": "medium — CCSS has no standard that says 'simplify radical answers in geometry'. 8.G.B.7 and HSG-SRT.C.8 are where exact radical lengths actually arise (Pythagorean/right-triangle work). Flagging the weak anchor rather than inventing a code."
+  },
+  {
+   "skill_id": "GEO.PRP.7",
+   "note": "medium — NO CCSS standard states the k / k^2 / k^3 scaling law for similar figures. 7.G.A.1 covers computing actual AREAS from a scale drawing (the closest explicit statement); HSG-GMD/HSG-MG are volume/modeling contexts where it is applied. Recommend recording this as a curricular extension, not a CCSS-aligned skill."
+  },
+  {
+   "skill_id": "ALG2.QNT.3",
+   "note": "medium — CCSS does not name rationalizing denominators or conjugate rationalization. HSN-RN.A.2 is the nearest anchor."
+  },
+  {
+   "skill_id": "ALG2.PRP.1",
+   "note": "low-confidence — CCSS contains NO standard using the words inverse/joint/combined variation. This is traditional Algebra-2 curriculum that CCSS deliberately did not codify. HSA-CED.A.2/A.4 (create and rearrange equations in two or more variables) is the closest honest anchor. Do not present a variation-specific CCSS code; there isn't one."
+  },
+  {
+   "skill_id": "PREC.PRP.2",
+   "note": "medium — CCSS has no angular-speed/linear-speed standard. HSN-Q.A.1 (derived units) plus HSF-TF.A.1 (radian measure) is the honest anchor; do not claim a dedicated code."
+  },
+  {
+   "skill_id": "GEO.EQV.2",
+   "note": "same as GEO.EQV.1 -- laws of detachment and syllogism have no CCSS code. Counterexample reasoning is closest to MP3 (a Practice, not a Content standard)."
+  },
+  {
+   "skill_id": "ALG2.FNC.13",
+   "note": "partial. A-SSE.B.4 covers FINITE geometric series (and derives the formula). CCSS-M has NO standard for arithmetic series formulas and NO standard for convergent INFINITE geometric series -- infinite series first appears in AP Calculus BC (CED Unit 10). Sigma notation appears in CCSS only incidentally. Flag: this node bundles one CCSS standard with two non-CCSS extensions."
+  },
+  {
+   "skill_id": "PREC.FNC.14",
+   "note": "CCSS-M has NO parametric-equations standard. This is an AP Precalculus topic (Unit 4, parametric functions) and appears in AP Calculus BC (CED Unit 9). Course placement in Precalculus is correct; CCSS alignment is not available."
+  },
+  {
+   "skill_id": "PREC.FNC.15",
+   "note": "CCSS-M has NO polar-coordinates or polar-graphing standard (N-CN.B.4(+) covers the polar FORM of a complex number, which is a different thing and would be a stretch to cite here). AP Precalculus Unit 3 covers polar functions. Course placement correct; no CCSS alignment."
+  },
+  {
+   "skill_id": "ELEM.DTA.3",
+   "note": "DIVERGENT - CCSS-M has no K-5 standard for line graphs or change over time. The K-5 Measurement and Data Progression deliberately restricts elementary data displays to categorical picture/bar graphs and measurement line plots; time-series line graphs are not a CCSS expectation at any grade. Ohio 2017 likewise has no such standard. Retain only as an explicitly local enrichment skill, or retire it."
+  },
+  {
+   "skill_id": "ELEM.DTA.4",
+   "note": "WRONG BAND - should be grade 7 (MS / 5-8), not K-5. CCSS-M introduces probability for the first time at 7.SP.C.5, which defines the probability of a chance event as a number between 0 and 1 and uses exactly the unlikely/likely language this skill describes. The Statistics and Probability Progression states that probability begins in Grade 7; there is no K-6 probability standard. Ohio 2017 matches CCSS here. Note this skill is also a graph root with zero prerequisites, which is fine only because it currently sits (wrongly) in K-5."
+  },
+  {
+   "skill_id": "ALG1.SPC.1",
+   "note": "MINOR DIVERGENCE - the distance formula is grade 8 (8.G.B.8) and its HS home is the Geometry conceptual category (G-GPE.B), not Algebra 1. CCSS has no midpoint-formula standard; the nearest is G-GPE.B.6 (partition a directed segment in a given ratio), of which midpoint is the ratio-1:1 case. Placing it in ALG1 is a common course-design choice (and Ohio Algebra 1 does not include G-GPE), so treat as acceptable local sequencing, not a CCSS match."
+  },
+  {
+   "skill_id": "GEO.SPC.2",
+   "note": "DIVERGENT (mild) - computing with complementary/supplementary/vertical/linear pairs is grade 7 (7.G.B.5), not HS. The HS standard G-CO.C.9 is about PROVING these (vertical angles are congruent), and that proof work is correctly located in GEO.EQV.4 in this taxonomy. As a computation skill this is grade-7 review."
+  },
+  {
+   "skill_id": "GEO.SPC.3",
+   "note": "DIVERGENT (mild) - finding transversal angle measures is 8.G.A.5; the HS expectation (G-CO.C.9) is the proof, handled in GEO.EQV.5. Same pattern as GEO.SPC.2."
+  },
+  {
+   "skill_id": "GEO.SPC.5",
+   "note": "PARTIAL - the triangle inequality and the side-angle (hinge) ordering relationships are NOT explicitly named in CCSS-M. G-CO.C.10 lists specific theorems and the triangle inequality is not among them; 7.G.A.2 touches the related idea of when three measures determine a triangle. Treat as a traditional-course skill with no exact CCSS code rather than assigning a code confidently."
+  },
+  {
+   "skill_id": "GEO.SPC.9",
+   "note": "PARTIAL - CCSS-M has no standard that names the polygon interior/exterior angle-sum formulas. 8.G.A.5 covers triangles only; G-CO.C.11 covers parallelograms. Do not assign a code with confidence; this is a traditional-course skill."
+  },
+  {
+   "skill_id": "GEO.DTA.4",
+   "note": "DIVERGENT - geometric probability (probability as a ratio of lengths/areas/angles) is NOT a CCSS-M standard. It was in many pre-CCSS Geometry texts and survives in some state frameworks, but it appears in neither CCSS-M nor Ohio 2017/2021. Keep as a local enrichment skill; do not claim a code."
+  },
+  {
+   "skill_id": "ALG2.SPC.1",
+   "note": "MINOR DIVERGENCE - G-GPE.A.2 is a Geometry conceptual-category standard, placed here in Algebra 2. This is a very common course placement (conics are traditionally Algebra 2) and Ohio also treats conics in Algebra 2; acceptable local sequencing."
+  }
+ ],
+ "coverage_gaps": [
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-MD.A.1",
+   "what_is_missing": "No skill defines a RANDOM VARIABLE or graphs a probability distribution. ALG2.DTA.5 jumps straight to binomial computation and expected value without ever introducing the random-variable object. This is the foundational concept for all of HSS-MD and for AP Statistics; its absence is the largest single hole in the strand.",
+   "severity": "critical"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-MD.A.4",
+   "what_is_missing": "No skill develops an EMPIRICAL probability distribution from observed data and finds its expected value. Only the theoretical case (S-MD.A.3, via ALG2.DTA.5 binomial) is present.",
+   "severity": "high"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-MD.B.5",
+   "what_is_missing": "No skill on weighing outcomes of a decision by assigning probabilities to payoff values - expected payoff, fair price of a game of chance, insurance/warranty reasoning. The entire \"Using Probability to Make Decisions\" application cluster is absent.",
+   "severity": "high"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-MD.B.6",
+   "what_is_missing": "No skill on using probability to make FAIR decisions (random assignment, drawing lots, random number generators).",
+   "severity": "medium"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-MD.B.7",
+   "what_is_missing": "No skill on analyzing decisions and strategies using probability (product testing, medical testing / false positives, strategy analysis). Medical-testing false-positive reasoning is the canonical payoff of conditional probability and is missing.",
+   "severity": "high"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-IC.B.6",
+   "what_is_missing": "No skill on EVALUATING REPORTS BASED ON DATA - reading a published statistical claim and critiquing its design, sampling, and conclusions. This is a full CCSS standard with zero coverage and is the standard most often cited as the statistical-literacy capstone.",
+   "severity": "high"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-ID.B.6.a",
+   "what_is_missing": "Fitting a NON-LINEAR function to data is only partially covered. ALG1.DTA.3/DTA.4 are linear-only; PREC.DTA.1/DTA.2 cover model selection and exponential fitting. There is no QUADRATIC regression / quadratic-model-fitting skill anywhere, which S-ID.B.6a explicitly calls for and which is standard Algebra 1/2 content.",
+   "severity": "medium"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "7.SP.C.7",
+   "what_is_missing": "No skill on DEVELOPING A PROBABILITY MODEL - assigning probabilities to outcomes, distinguishing a uniform model from a non-uniform empirically-derived model, and comparing model predictions to observed frequencies to diagnose discrepancy. MS.DTA.5 covers 7.SP.C.5-6 only; MS.DTA.6 covers 7.SP.C.8. 7.SP.C.7 (and both its sub-parts a and b) falls through the gap.",
+   "severity": "high"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "6.SP.B.5",
+   "what_is_missing": "Partially covered by MS.DTA.3. The reporting components of 6.SP.B.5 - number of observations, describing the nature of the attribute under investigation including units of measurement, and relating the choice of measure of center to the SHAPE of the distribution - are not represented as anything a student is assessed on.",
+   "severity": "low"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "HSS-CP (whole category)",
+   "what_is_missing": "Actually well covered by GEO.DTA.1-3 + ALG2.DTA.4, and Ohio 2021 confirms S.CP.1-7 belong in Geometry/Math 2, so this placement is correct. Noted here only to record that HSS-CP is NOT a gap.",
+   "severity": "none"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "STRAND-LEVEL: no inferential statistics",
+   "what_is_missing": "There is no sampling distribution skill, no confidence interval skill, no hypothesis test / p-value skill, and no chi-square or two-sample comparison skill. ALG2.DTA.3 is simulation-based inference only, which satisfies CCSS S-IC but is the floor, not a course. Ohio 2021 defines an Algebra-2-equivalent Statistics and Probability course precisely to go beyond this.",
+   "severity": "critical"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "STRAND-LEVEL: no statistics course level exists",
+   "what_is_missing": "The taxonomy has course levels ELEM, MS, ALG1, GEO, ALG2, PREC, CALC. There is no STAT or AP-STAT level. The 29 DTA skills are scattered across the other courses as supporting topics. CONCLUSION: this strand CANNOT support a standalone statistics course. It covers CCSS 6.SP, 7.SP (except 7.SP.C.7), 8.SP, HSS-ID, HSS-CP, and most of HSS-IC adequately, but HSS-MD is barely touched (2 of 7 standards), and nothing in AP Statistics beyond descriptive statistics and basic probability is representable. If a statistics course is a product goal, roughly 25-40 new skills are needed, not adjustments to the existing 29.",
+   "severity": "critical"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "STRAND-LEVEL: CALC.DTA.1 / CALC.DTA.2 are misfiled",
+   "what_is_missing": "Both are numerical-methods skills (difference quotients from tables, Riemann/trapezoidal sums) with no statistical content. Counting them inflates the DTA strand from an effective 27 statistics skills to 29. Their crossPrereqs into MS.DTA.7 and GEO.SPC.10 are spurious edges created to connect them to the strand.",
+   "severity": "medium"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "standard": "ELEM.DTA.3 / ELEM.DTA.4 / GEO.DTA.4 have no CCSS anchor",
+   "what_is_missing": "Three of the 29 DTA skills (10 percent of the strand) map to no CCSS-M standard at all: K-5 line graphs, K-5 informal likelihood (probability does not start until 7.SP.C.5), and geometric probability. The effective CCSS-aligned DTA strand is therefore closer to 24 skills.",
+   "severity": "medium"
+  }
+ ],
+ "low_confidence": [
+  {
+   "skill_id": "ALG1.QNT.4",
+   "sources": [
+    "https://www.thecorestandards.org/wp-content/uploads/Math_Standards1.pdf"
+   ]
+  },
+  {
+   "skill_id": "ALG2.PRP.1",
+   "sources": [
+    "https://www.thecorestandards.org/wp-content/uploads/Math_Standards1.pdf"
+   ]
+  },
+  {
+   "skill_id": "ELEM.FNC.3",
+   "sources": [
+    "https://www.isbe.net/Documents/expressions-equations-6-8.pdf",
+    "https://www.isbe.net/Documents/algebra-9-12.pdf",
+    "http://www.corestandards.org/Math/"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.5",
+   "sources": [
+    "https://www.thecorestandards.org/Math/"
+   ]
+  },
+  {
+   "skill_id": "GEO.SPC.9",
+   "sources": [
+    "https://www.thecorestandards.org/Math/"
+   ]
+  }
+ ],
+ "unverified_codes": [
+  {
+   "skill_id": "MS.DTA.1",
+   "code": "6.SP.A.1",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.1",
+   "code": "6.SP.A.2",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.2",
+   "code": "6.SP.B.4",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.3",
+   "code": "6.SP.A.3",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.3",
+   "code": "6.SP.B.5",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.7",
+   "code": "8.SP.A.1",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.7",
+   "code": "8.SP.A.2",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.7",
+   "code": "8.SP.A.3",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "MS.DTA.7",
+   "code": "8.SP.A.4",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.SPC.6",
+   "code": "HSG-C.A.3",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.SPC.13",
+   "code": "HSG-C.A.2",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.SPC.13",
+   "code": "HSG-C.A.3",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.SPC.14",
+   "code": "HSG-C.A.2",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.SPC.14",
+   "code": "HSG-C.A.4",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.1",
+   "code": "HSS-CP.A.1",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.2",
+   "code": "HSS-CP.A.2",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.2",
+   "code": "HSS-CP.B.7",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.2",
+   "code": "HSS-CP.B.8",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.3",
+   "code": "HSS-CP.A.3",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.3",
+   "code": "HSS-CP.A.4",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.3",
+   "code": "HSS-CP.A.5",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "GEO.DTA.3",
+   "code": "HSS-CP.B.6",
+   "why": "not present in ccss-reference.json"
+  },
+  {
+   "skill_id": "ALG2.DTA.4",
+   "code": "HSS-CP.B.9",
+   "why": "not present in ccss-reference.json"
+  }
+ ],
+ "notes": [
+  {
+   "source": "standards-QNT-PRP.json",
+   "claim": "Ratio -> unit rate: the unit rate is defined as an attribute of a ratio, not a separate idea.",
+   "verdict": "supported",
+   "citation": "CCSS 6.RP.A.2: 'Understand the concept of a unit rate a/b associated with a ratio a:b with b != 0, and use rate language in the context of a ratio relationship.' The RP Progression (Univ. of Arizona, 26 Dec 2011, p.8) adds: 'As in tables, unit rates appear paired with 1.' Taxonomy edge MS.PRP.1 -> MS.PRP.3 is correct. Source: https://www.thecorestandards.org/wp-content/uploads/Math_Standards1.pdf ; https://commoncoretools.files.wordpress.com/2012/02/ccss_progression_rp_67_2011_11_12_corrected.pdf"
+  },
+  {
+   "source": "standards-QNT-PRP.json",
+   "claim": "Unit rate -> constant of proportionality: these are the SAME quantity, not merely analogous.",
+   "verdict": "supported",
+   "citation": "This is the strongest link in the chain and CCSS states it parenthetically. 7.RP.A.2b: 'Identify the CONSTANT OF PROPORTIONALITY (UNIT RATE) in tables, graphs, equations, diagrams, and verbal descriptions.' The RP Progression p.9: 'students write equations of the form y = cx, where c is a constant of proportionality, i.e., a unit rate.' The word 'i.e.' is the writing team's own equation of the two terms. Taxonomy edge MS.PRP.3 -> MS.PRP.5 is correct and well placed. Source: https://commoncoretools.files.wordpress.com/2012/02/ccss_progression_rp_67_2011_11_12_corrected.pdf"
+  },
+  {
+   "source": "standards-QNT-PRP.json",
+   "claim": "Constant of proportionality -> slope: the same number, now read off a graph.",
+   "verdict": "supported",
+   "citation": "CCSS 8.EE.B.5: 'Graph proportional relationships, INTERPRETING THE UNIT RATE AS THE SLOPE of the graph.' RP Progression p.8: 'A collection of equivalent ratios can be graphed in the coordinate plane. The graph represents a proportional relationship. The unit rate appears in the equation and graph as the SLOPE of the line, and in the coordinate pair with first coordinate 1.' The progression even names the pedagogical device: students 'recognize the unit rate as the vertical increase in a \"unit rate triangle\" or \"slope triangle\" with horizontal side of length 1'. Taxonomy edge MS.PRP.5 -> ALG1.PRP.2 is correct. Source: https://commoncoretools.files.wordpress.com/2012/02/ccss_progression_rp_67_2011_11_12_corrected.pdf ; https://www.thecorestandards.org/wp-content/uploads/Math_Standards1.pdf"
+  },
+  {
+   "source": "standards-QNT-PRP.json",
+   "claim": "Slope -> derivative: the derivative is the same idea at a higher level of abstraction.",
+   "verdict": "partial",
+   "citation": "The progressions ANTICIPATE calculus by name, which is more than most curricula can claim. RP Progression, Overview p.1: 'Students use ratios when they work with situations involving constant rates of change, AND LATER IN CALCULUS WHEN THEY WORK WITH AVERAGE AND INSTANTANEOUS RATES OF CHANGE OF FUNCTIONS.' The progression's closing section adds: 'Linear functions are characterized by having a constant rate of change... Proportional relationships are a major type of linear function; they are those linear functions that have a positive rate of change and take 0 to 0.' So the conceptual lineage is authored, not invented by this product. WHERE IT OVERREACHES: the progression frames calculus as a DESTINATION of ratio reasoning, never as the same idea. The step from constant rate of change to instantaneous rate requires the limit -- a genuinely new mathematical object with no ratio antecedent. AP CED Topic 2.1 is titled 'Defining Average and Instantaneous Rates of Change at a Point' precisely because the two must be distinguished. 'Rising levels of abstraction' is fair; 'the same idea' is not. Sources: https://commoncoretools.files.wordpress.com/2012/02/ccss_progression_rp_67_2011_11_12_corrected.pdf ; https://apcentral.collegeboard.org/media/pdf/ap-calculus-ab-and-bc-course-and-exam-description.pdf"
+  },
+  {
+   "source": "standards-QNT-PRP.json",
+   "claim": "The taxonomy's own encoding of the thesis -- CALC.PRP.1 'Derivatives in context' lists MS.PRP.3 'Unit rates' as a cross-level prerequisite.",
+   "verdict": "partial",
+   "citation": "Justifiable as a UNITS/meaning prerequisite: AP CED Topic 4.1 is 'Interpreting the Meaning of the Derivative in Context', and interpreting dy/dx as 'tons per hour' is unit-rate reasoning applied to a limit. But the edge is a four-rung jump presented as one rung. The taxonomy encodes MS.PRP.3 -> MS.PRP.5 -> ALG1.PRP.2 correctly and then, at the calculus boundary, ABANDONS its own ladder: CALC.PRP.1 does NOT crossPrereq ALG1.PRP.2 (slope as rate), and no skill anywhere in the taxonomy covers AVERAGE rate of change over an interval (HSF-IF.B.6 / AP CED 2.1) -- the actual bridge from slope to derivative. The product markets a continuous thread but the graph jumps the last two rungs. Concrete repair: add ALG1.PRP.2 as a crossPrereq of CALC.PRP.1, and add an 'average rate of change' skill (HSF-IF.B.6) between ALG1.PRP.2 and CALC.PRP.1. Sources: https://apcentral.collegeboard.org/media/pdf/ap-calculus-ab-and-bc-course-and-exam-description.pdf ; https://commoncoretools.files.wordpress.com/2012/02/ccss_progression_rp_67_2011_11_12_corrected.pdf"
+  },
+  {
+   "source": "standards-QNT-PRP.json",
+   "claim": "Bonus, unclaimed by the product: the same constant-of-proportionality idea also generates the RADIAN and the TRIGONOMETRIC RATIO.",
+   "verdict": "supported",
+   "citation": "CCSS HSG-C.B.5 verbatim: 'Derive using similarity the fact that the length of the arc intercepted by an angle is proportional to the radius, and DEFINE THE RADIAN MEASURE OF THE ANGLE AS THE CONSTANT OF PROPORTIONALITY.' And HSG-SRT.C.6: 'Understand that BY SIMILARITY, SIDE RATIOS in right triangles are properties of the angles in the triangle, LEADING TO DEFINITIONS OF TRIGONOMETRIC RATIOS.' The RP Progression Overview anticipates both: 'Students use ratios in geometry and in algebra when they study similar figures and slopes of lines, and later when they study sine, cosine, tangent, and other trigonometric ratios in high school.' These are two additional branches of the same trunk, more tightly supported by standards text than the derivative branch. The taxonomy currently does NOT link PREC.PRP.1 (radian measure) to MS.PRP.5 -- a missed opportunity that is also a genuine missing prerequisite. Sources: https://www.thecorestandards.org/wp-content/uploads/Math_Standards1.pdf ; https://commoncoretools.files.wordpress.com/2012/02/ccss_progression_rp_67_2011_11_12_corrected.pdf"
+  },
+  {
+   "source": "standards-EQV-FNC.json",
+   "claim": "Combining like terms (gr 6-7) and adding polynomials (Alg 1) are the same operation.",
+   "verdict": "supported",
+   "citation": "EE Progression 6-8, p.4: 'Collecting like terms, e.g., 5b + 3b = (5+3)b = 8b, should be seen as an application of the distributive law, not as a separate method.' The HS Algebra Progression makes the same move upward via A-APR.1: 'Understand that polynomials form a system analogous to the integers.' Both are the distributive property run over a sum of terms; only the terms' complexity changes. Source: https://www.isbe.net/Documents/expressions-equations-6-8.pdf ; https://www.isbe.net/Documents/algebra-9-12.pdf"
+  },
+  {
+   "source": "standards-EQV-FNC.json",
+   "claim": "Solving a linear equation and solving a formula for a variable are the same operation.",
+   "verdict": "supported",
+   "citation": "CCSS A-REI.B.3 itself reads 'Solve linear equations and inequalities in one variable, INCLUDING EQUATIONS WITH COEFFICIENTS REPRESENTED BY LETTERS' -- literal equations are not a separate standard, they are the same standard. The Algebra Progression frames all of it as the same reversible-step logic: 'solving linear equations involves only steps that are reversible.' A-CED.A.4 ('Rearrange formulas to highlight a quantity of interest, using the same reasoning as in solving equations') states the identity almost verbatim. Source: https://www.isbe.net/Documents/algebra-9-12.pdf ; http://www.corestandards.org/Math/"
+  },
+  {
+   "source": "standards-EQV-FNC.json",
+   "claim": "Function composition and the chain rule are the same operation.",
+   "verdict": "partial",
+   "citation": "Structurally related but not identical. AP Calculus CED Topic 3.1 (The Chain Rule) is explicitly about derivatives of composite functions, and decomposition (F-BF.A.1c, 'Compose functions') is a genuine prerequisite -- the taxonomy's own CALC.FNC.11 -> PREC.FNC.3 crossPrereq is correct and well-motivated. But composition is an operation on functions while the chain rule is a theorem about derivatives of compositions; recognizing the decomposition is one step of the chain rule, not the whole of it. Treat 'same operation' as a useful pedagogical framing, not a mathematical identity. Source: apcentral.collegeboard.org AP Calculus AB/BC CED, Unit 3 Topic 3.1"
+  },
+  {
+   "source": "standards-EQV-FNC.json",
+   "claim": "Structurally identical operations recur across levels (the general thesis).",
+   "verdict": "supported",
+   "citation": "The Algebra Progression states the design principle directly: 'Rather than focusing on a few topics, students in high school focus on a few seed ideas that lead to many different techniques,' and describes the middle grades as building 'a ramp from arithmetic expressions in elementary school to more sophisticated work with algebraic expressions in high school.' A-SSE.A.2 ('Use the structure of an expression to identify ways to rewrite it') is the recurrence made into a standard. Source: https://www.isbe.net/Documents/algebra-9-12.pdf"
+  },
+  {
+   "source": "standards-EQV-FNC.json",
+   "claim": "Factoring, completing the square, and the quadratic formula are distinct skills deserving separate mastery nodes.",
+   "verdict": "contradicted",
+   "citation": "The Algebra Progression explicitly pushes back: 'It is traditional for students to spend a lot of time on various techniques of solving quadratic equations, which are often presented as if they are completely unrelated (factoring, completing the square, the quadratic formula). In fact, as we have seen, the key step in completing the square involves at its heart factoring. And the quadratic formula is nothing more than an encapsulation of the method of completing the square... Rather than long drills on techniques of dubious value, students with an understanding of the underlying reasoning behind all these methods are opportunistic in their application.' The taxonomy's split into ALG1.EQV.12/13/14/15/16/17 as six sequential gated nodes is the pattern the Progression warns against. This is where the product thesis OVERREACHES in its own data: it claims recurrence, then models quadratics as six unrelated techniques. Source: https://www.isbe.net/Documents/algebra-9-12.pdf"
+  },
+  {
+   "source": "standards-EQV-FNC.json",
+   "claim": "Rational expressions in Alg 2 are the same operation as fraction arithmetic in grades 4-6.",
+   "verdict": "supported",
+   "citation": "A-APR.D.7(+): 'Understand that rational expressions form a system analogous to the rational numbers, closed under addition, subtraction, multiplication, and division by a nonzero rational expression.' Algebra Progression: 'Polynomials are analogous to the integers; rational expressions are analogous to the rational numbers.' Source: https://www.isbe.net/Documents/algebra-9-12.pdf"
+  },
+  {
+   "source": "standards-EQV-FNC.json",
+   "claim": "The 22-hop chain ELEM.QNT.4 -> MS.QNT.3 -> ALG1.EQV.9-16 -> CALC is correctly ordered.",
+   "verdict": "partial",
+   "citation": "The endpoints are right and the spine is real, but the chain is wired through the wrong node at its middle joint. ALG1.EQV.9 (add/subtract polynomials) lists MS.QNT.3 (GCF/LCM) as its only cross-prerequisite. GCF is not a prerequisite for combining like terms -- it is a prerequisite for FACTORING (ALG1.EQV.11). The correct ancestor of ALG1.EQV.9 is MS.EQV.2 (combine like terms, 6.EE.A.3/7.EE.A.1). As written, the platform's flagship structural claim is not actually encoded in its own graph. Source: https://www.isbe.net/Documents/expressions-equations-6-8.pdf ; https://www.isbe.net/Documents/algebra-9-12.pdf"
+  },
+  {
+   "source": "standards-SPC-DTA.json",
+   "transformations_verdict": {
+    "rooted_in_transformations": true,
+    "verdict_summary": "YES, but only along the EQV/PRP spine - the SPC strand itself bypasses it.",
+    "explanation": "The taxonomy DOES take the CCSS stance, and does so deliberately in two places. (1) Congruence: GEO.EQV.6 'Triangle congruence criteria' is described as 'connecting each to rigid motions' and lists GEO.SPC.7 (rigid transformations) as a direct prerequisite. That is exactly HSG-CO.B.7/B.8, which derive SSS/SAS/ASA from the rigid-motion definition of congruence. GEO.EQV.6 then feeds GEO.EQV.7 (CPCTC proofs) and GEO.EQV.8 (quadrilateral proofs). (2) Similarity: GEO.PRP.1 'Dilations' -> GEO.PRP.2 'Similar polygons' -> GEO.PRP.3 'Triangle similarity criteria (AA, SAS, SSS)'. Similarity criteria are therefore derived from dilations, matching HSG-SRT.A.1-3. (3) At middle school, MS.SPC.7 correctly bundles 8.G.A.1-5, where congruence and similarity are DEFINED by existence of a transformation sequence, and it feeds GEO.SPC.7. So the answer to 'is it backwards?' is NO at the level of the definitions. \n\nHOWEVER there are four real defects, three of which are load-bearing:\n(a) SIMILARITY HAS NO TRANSFORMATION ROOT. GEO.PRP.1 (Dilations) has prerequisites [] with crossPrereqs [MS.PRP.8 scale drawings, ALG1.PRP.2 slope as rate] - purely proportional-reasoning ancestors. It has NO edge from GEO.SPC.7 or MS.SPC.7. A dilation is a transformation of the plane (8.G.A.3, G-SRT.A.1), and in CCSS the similarity cluster G-SRT.A sits immediately after and depends on G-CO. As drawn, a student can reach the entire similarity/trig subtree without ever meeting a transformation. This is the single most important missing edge in the strand.\n(b) THE SPC STRAND ITSELF ROUTES AROUND THE TRANSFORMATION NODE. GEO.SPC.7 -> GEO.SPC.8 is a two-node island whose only external consumers are GEO.EQV.6 and GEO.FNC.1. The classical theorem chain GEO.SPC.1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 9 -> 10 (segments/angles -> angle pairs -> parallel lines -> triangle angle theorems -> inequalities -> bisectors and centers -> polygon angle sums -> parallelogram properties) never touches GEO.SPC.7. Several of these are CCSS G-CO cluster C standards (G-CO.C.9 vertical angles and the perpendicular-bisector locus, G-CO.C.10 isosceles base angles, G-CO.C.11 parallelograms) whose CCSS proofs go through rigid motions. This is defensible ONLY because the SPC versions are worded as computation ('find angle measures', 'use properties to find measures') while the proofs live in GEO.EQV.4/5/8. If the SPC nodes are ever used as proof skills, the ordering is wrong.\n(c) GEO.SPC.8 (Symmetry and composition, G-CO.A.3) is a LEAF with an empty enables list. In CCSS, G-CO.A.3 is the standard that motivates the rectangle/rhombus/regular-polygon results in G-CO.C.11. Symmetry is currently taught and then never used by anything.\n(d) The proof chain GEO.EQV.4 (segment/angle proofs, G-CO.C.9) -> GEO.EQV.5 (parallel line proofs, G-CO.C.9) -> GEO.EQV.6 (congruence criteria, G-CO.B.7-8) inverts the CCSS cluster order: cluster B precedes cluster C. This is the traditional textbook order and is only a mild divergence (vertical-angle proofs genuinely do not need triangle congruence), but it should be a conscious choice, not an accident.\n\nMISSING TRANSFORMATION-RELATED SKILLS ENTIRELY: HSG-CO.A.1 (precise definitions from undefined notions) has no skill; HSG-CO.D.12 and HSG-CO.D.13 (formal compass-and-straightedge constructions) have NO skill anywhere in the taxonomy, in any strand - a whole CCSS cluster with zero coverage; HSG-C.A.1 (prove all circles are similar, a dilation argument) has no skill; HSG-SRT.B.5 (use congruence AND similarity criteria together to prove relationships) is only partially covered; 7.G.A.2 (draw shapes with given conditions / when three measures determine a unique triangle) has no skill; 7.G.A.3 (slicing solids) has no MS skill.",
+    "edges_to_reverse": [],
+    "edges_to_add": [
+     {
+      "edge": "GEO.SPC.7 -> GEO.PRP.1",
+      "why": "CRITICAL. Dilations must descend from the transformation node so that similarity (G-SRT.A.1-3) is rooted in transformations rather than only in proportional reasoning. Alternatively/additionally MS.SPC.7 -> GEO.PRP.1."
+     },
+     {
+      "edge": "MS.SPC.7 -> GEO.PRP.1",
+      "why": "8.G.A.3/8.G.A.4 already introduce dilation and define similarity via transformation sequences; that grade-8 root is currently unused by GEO.PRP.1."
+     },
+     {
+      "edge": "GEO.SPC.8 -> GEO.SPC.10",
+      "why": "G-CO.A.3 (symmetries carrying a rectangle/parallelogram onto itself) is the CCSS motivation for the quadrilateral diagonal/angle properties in G-CO.C.11. Also fixes GEO.SPC.8 being a dead-end leaf."
+     },
+     {
+      "edge": "GEO.EQV.6 -> GEO.SPC.10",
+      "why": "G-CO.C.11 parallelogram theorems are proved from triangle congruence criteria (G-CO.B.7-8) in CCSS. GEO.SPC.10 currently has no congruence or transformation ancestor at all."
+     },
+     {
+      "edge": "GEO.SPC.7 -> GEO.SPC.6",
+      "why": "The perpendicular-bisector locus theorem in G-CO.C.9 is proved by reflection."
+     },
+     {
+      "edge": "GEO.PRP.3 -> GEO.SPC.11",
+      "why": "G-SRT.B.4 proves the Pythagorean Theorem USING triangle similarity; GEO.SPC.11 currently descends only from GEO.SPC.4 (triangle angle sum)."
+     },
+     {
+      "edge": "GEO.PRP.2 -> GEO.SPC.15",
+      "why": "G-C.B.5 says derive the arc-length proportionality USING SIMILARITY."
+     },
+     {
+      "edge": "GEO.PRP.2 -> GEO.SPC.12",
+      "why": "G-SRT.C.6 derives the constant special-right-triangle side ratios from similarity."
+     },
+     {
+      "edge": "GEO.SPC.7 -> GEO.SPC.13",
+      "why": "G-C.A.1 (all circles are similar, proved by dilation) is the transformation-based entry to the circle cluster; it currently has no skill at all."
+     }
+    ]
+   }
+  }
+ ]
+}

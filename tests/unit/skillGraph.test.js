@@ -203,6 +203,59 @@ describe('unified skill graph', () => {
     expect(offenders.map((s) => `${s.skillId}: ${s.studentLabel}`)).toEqual([]);
   });
 
+  test('standards codes are well formed', () => {
+    // Bare CCSS-M codes are self-identifying; anything outside CCSS must carry a
+    // framework prefix so a reader never has to guess which system a code is in.
+    const ccss = /^(K|[1-8]|HS[A-Z]{1,2})[.-][A-Z]{1,3}(\.[A-Z])?(\.\d+[a-z]?)?(\.[a-z])?$/;
+    const prefixed = /^(AP-CALC|AP-PRECALC|AP-STATS|OH):[\w.-]+$/;
+    const malformed = [];
+    SKILLS.forEach((s) => {
+      (s.standardsAlignment || []).forEach((c) => {
+        if (!ccss.test(c) && !prefixed.test(c)) malformed.push(`${s.skillId}: ${c}`);
+      });
+    });
+    expect(malformed).toEqual([]);
+  });
+
+  test('only the skills CCSS genuinely does not cover lack an alignment', () => {
+    // These were marked `no-ccss` by the audit with a stated reason rather than
+    // force-fitting a code. The Geometry logic unit (laws of detachment and
+    // syllogism) is the clearest case: CCSS omits it, and Ohio follows CCSS.
+    const EXPECTED_NO_CCSS = [
+      'ELEM.DTA.3',   // line graphs — no CCSS anchor
+      'ELEM.DTA.4',   // likelihood — CCSS has no probability before 7.SP.C.5
+      'GEO.DTA.4',    // geometric probability
+      'GEO.EQV.1',    // logic: conditional statements
+      'GEO.EQV.2',    // logic: detachment and syllogism
+      'PREC.FNC.14',  // parametric curves — AP Precalculus, outside CCSS
+      'PREC.FNC.15'   // polar graphs — AP Precalculus, outside CCSS
+    ];
+    const unaligned = SKILLS.filter((s) => !(s.standardsAlignment || []).length).map((s) => s.skillId);
+    expect(unaligned.sort()).toEqual(expect.arrayContaining([]));
+    unaligned.forEach((id) => expect(EXPECTED_NO_CCSS).toContain(id));
+  });
+
+  test('a grade-band code is never attached to a skill levels away from it', () => {
+    // A K-8 code on a calculus skill means the alignment was guessed.
+    const LEVEL_FLOOR = { ELEM: 0, MS: 5, ALG1: 7, GEO: 7, ALG2: 8, PREC: 8, CALC: 9 };
+    const gradeOf = (code) => {
+      const m = /^([K1-8])[.-]/.exec(code);
+      if (!m) return null;              // HS or prefixed — no numeric grade
+      return m[1] === 'K' ? 0 : Number(m[1]);
+    };
+    const suspicious = [];
+    SKILLS.forEach((s) => {
+      (s.standardsAlignment || []).forEach((c) => {
+        const g = gradeOf(c);
+        if (g === null) return;
+        // A cross-level prerequisite legitimately reaches down, but the skill's
+        // OWN alignment should not sit more than a band below its level.
+        if (g < LEVEL_FLOOR[s.courseLevel] - 3) suspicious.push(`${s.skillId} (${s.courseLevel}) <- ${c}`);
+      });
+    });
+    expect(suspicious).toEqual([]);
+  });
+
   test('prerequisite depth stays within a teachable chain length', () => {
     // A smoke alarm on graph shape, not a pedagogical limit. The genuine deepest
     // chain is 22 hops: ELEM.QNT.4 (multiplication facts, grade 3) down through
