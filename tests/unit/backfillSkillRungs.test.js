@@ -7,36 +7,9 @@
  */
 
 const { GATES } = require('../../utils/skillRung');
-
-// Mirrors scripts/backfillSkillRungs.js. Kept in step by the tests below.
-const IN_PROGRESS = ['learning', 'practicing', 'needs-review', 're-fragile'];
-
-function evidenceSupportsMastery(entry) {
-  const p = entry.pillars || {};
-  const total = p.accuracy?.total || 0;
-  const correct = p.accuracy?.correct || 0;
-  const hints = p.independence?.hintsUsed || 0;
-  const contexts = p.transfer?.contextsAttempted?.length || 0;
-  if (total < GATES.PRACTICE_MIN_ATTEMPTS) return false;
-  if (correct / total < GATES.PROVE_MIN_ACCURACY) return false;
-  if (hints > GATES.PROVE_MAX_HINTS) return false;
-  return contexts >= GATES.PRACTICE_MIN_CONTEXTS;
-}
-
-function plan(entry, { demote = false } = {}) {
-  if (entry.rung) return null;
-  const wasInferred = entry.masteryType === 'inferred' || entry.masteryType === 'fragile-inferred';
-
-  if (entry.status === 'mastered') {
-    const supported = evidenceSupportsMastery(entry);
-    if (!supported && demote) return { rung: 'learned', provenBy: 'legacy', supported: false, demoted: true };
-    return { rung: 'proved', provenBy: wasInferred ? 'inference' : 'legacy', supported, demoted: false };
-  }
-  if (IN_PROGRESS.includes(entry.status)) {
-    return { rung: 'learned', provenBy: 'legacy', supported: null, demoted: false };
-  }
-  return { rung: 'none', provenBy: null, supported: null, demoted: false };
-}
+// Imported from the script itself — an earlier version of this file re-declared
+// these, so the script could drift and every test would still pass.
+const { plan, evidenceSupportsMastery, IN_PROGRESS } = require('../../scripts/backfillSkillRungs');
 
 const solid = {
   status: 'mastered',

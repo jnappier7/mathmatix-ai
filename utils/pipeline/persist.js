@@ -25,6 +25,8 @@ const { getNextActions } = require('../nextActionSuggestions');
 const { checkForInterventionAlert } = require('../interventionAlerts');
 const { getReviewSummary } = require('../smartReviewQueue');
 const { canonicalSkillId } = require('../skillCanonicalizer');
+const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } = require('../masteryEngine');
+const { advanceRung, currentRung, clearsPrerequisites } = require('../skillRung');
 
 /**
  * Persist all state changes from a pipeline run.
@@ -157,20 +159,45 @@ async function persist(params) {
 
   // ── 3. Skill mastery tracking ──
   if (extracted.skillMastered) {
-    updateSkillMastery(user, extracted.skillMastered, observation, conversation);
+    const { skillId, justProved } = updateSkillMastery(user, extracted.skillMastered, observation, conversation);
+    // Proving a skill clears everything beneath it, so a student never re-grinds
+    // a prerequisite they have just demonstrated they own. Awaited but guarded:
+    // a cascade failure must never cost the student the turn they just earned.
+    if (justProved) {
+      try {
+        await cascadeBeneath(user, skillId);
+      } catch (err) {
+        console.error('[Persist] cascade failed for %s:', skillId, err);
+      }
+    }
   }
 
   if (extracted.skillStarted) {
     user.skillMastery = user.skillMastery || new Map();
     // key on the canonical (unified) skill id so learning/mastery state for one
     // concept never splits across a legacy id and its unified id
-    user.skillMastery.set(canonicalSkillId(extracted.skillStarted), {
-      status: 'learning',
-      masteryScore: 0.3,
-      learningStarted: new Date(),
-      notes: 'Currently learning with AI',
-    });
-    user.markModified('skillMastery');
+    const startedId = canonicalSkillId(extracted.skillStarted);
+    const prior = user.skillMastery.get(startedId);
+    // MERGE, never replace. This used to assign a fresh object, so revisiting a
+    // skill the student had already worked on wiped its pillars, rung and
+    // rungHistory — silently destroying the evidence behind an earned rung.
+    if (!prior) {
+      const entry = initializeSkillMastery(startedId);
+      advanceRung(entry, 'learned', { via: 'lesson' });
+      delete entry.__rungResult;
+      entry.masteryScore = 0.3;
+      entry.notes = 'Currently learning with AI';
+      user.skillMastery.set(startedId, entry);
+      user.markModified('skillMastery');
+    } else if (currentRung(prior) === 'none') {
+      advanceRung(prior, 'learned', { via: 'lesson' });
+      delete prior.__rungResult;
+      prior.status = prior.status === 'ready' || !prior.status ? 'learning' : prior.status;
+      prior.notes = 'Currently learning with AI';
+      user.skillMastery.set(startedId, prior);
+      user.markModified('skillMastery');
+    }
+    // A skill already at learned-or-better needs no downgrade for being revisited.
   }
 
   // ── 4. Learning insight ──
@@ -587,71 +614,85 @@ async function persist(params) {
  * Update skill mastery from a <SKILL_MASTERED:skillId> tag.
  * Records it as evidence for the 4-pillar system.
  */
+/**
+ * Clear every prerequisite beneath a newly-proved skill.
+ *
+ * Loads the unified catalog through the shared cache so the graph is the same
+ * one the closure engine and the board read. Returns the ids cleared, so the
+ * caller can surface the cascade ("Slope unlocked 6 skills") rather than having
+ * it happen invisibly.
+ */
+async function cascadeBeneath(user, skillId) {
+  const { configCache } = require('../cache');
+  const Skill = require('../../models/skill');
+  const { buildGraph, applyProofCascade } = require('../skillClosure');
+
+  const skills = await configCache.getOrSet(
+    'skills:unified',
+    () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+    3600
+  );
+  if (!skills.length) return [];
+
+  const { cleared } = applyProofCascade(buildGraph(skills), user.skillMastery, skillId);
+  if (cleared.length) user.markModified('skillMastery');
+  return cleared;
+}
+
+/**
+ * Record a verified skill demonstration from a chat turn.
+ *
+ * This used to be a second, independent implementation of the whole mastery
+ * model — its own pillars, its own scoring formula (unweighted mean of three,
+ * against masteryEngine's weighted four), and its own thresholds. Its bar was
+ * `accuracy >= 0.90 && total >= 3`, so THREE demonstrations was mastery. That is
+ * the path that produced "100% mastered" beside a "Continue" button in
+ * production, and it is the main tutoring flow — every chat turn runs it.
+ *
+ * It now delegates to masteryEngine.updateSkillMastery, which delegates rung
+ * transitions to utils/skillRung. One model, one set of gates, one receipt.
+ *
+ * ONE-SIDED EVIDENCE — READ THIS BEFORE TRUSTING `accuracy` HERE.
+ * This function is only ever called on `extracted.skillMastered`, i.e. on a
+ * success. Incorrect attempts from chat are never recorded against a skill, so
+ * `pillars.accuracy.percentage` on this path is 1.0 by construction and the
+ * accuracy gate is vacuous. What the ladder actually requires here is therefore
+ * "N verified demonstrations across 3 contexts with few hints" — a real bar, but
+ * not the one the field name implies. Wiring the diagnose stage's incorrect
+ * ANSWER_ATTEMPTs through to the pillars is the fix; until then this comment is
+ * the honest description.
+ */
 function updateSkillMastery(user, rawSkillId, observation, conversation) {
   user.skillMastery = user.skillMastery || new Map();
   // Canonicalize to the unified skill id for storage/lookup; keep the original
   // id only for deriving a readable "recent win" label below.
   const skillId = canonicalSkillId(rawSkillId);
-  const existing = user.skillMastery.get(skillId) || {};
+  const existing = user.skillMastery.get(skillId) || initializeSkillMastery(skillId);
+  const wasOwned = clearsPrerequisites(existing);
 
-  const pillars = existing.pillars || {
-    accuracy: { correct: 0, total: 0, percentage: 0, threshold: 0.90 },
-    independence: { hintsUsed: 0, hintsAvailable: 15, hintThreshold: 3, autoStepUsed: false },
-    transfer: { contextsAttempted: [], contextsRequired: 3, formatVariety: false },
-    retention: { retentionChecks: [], failed: false },
-  };
-
-  // Record correct demonstration
-  pillars.accuracy.correct = (pillars.accuracy.correct || 0) + 1;
-  pillars.accuracy.total = (pillars.accuracy.total || 0) + 1;
-  pillars.accuracy.percentage = pillars.accuracy.total > 0
-    ? pillars.accuracy.correct / pillars.accuracy.total : 0;
-
-  // Independence: check if hints were used recently
+  // Independence proxy: the student asking for help in recent turns. Weaker than
+  // a real hint counter — it reads the student's words, not the tutor's actions.
   const recentMsgs = conversation.messages.slice(-6);
   const usedHint = recentMsgs.some(msg =>
     msg.role === 'user' && /\b(hint|help|stuck|don'?t know|idk|confused)\b/i.test(msg.content)
   );
-  if (usedHint) pillars.independence.hintsUsed = (pillars.independence.hintsUsed || 0) + 1;
 
-  // Transfer: detect context type
-  if (observation?.problemContext && !pillars.transfer.contextsAttempted.includes(observation.problemContext)) {
-    pillars.transfer.contextsAttempted.push(observation.problemContext);
-  }
-
-  // Calculate mastery score
-  const accuracyScore = Math.min(pillars.accuracy.percentage / 0.90, 1.0);
-  const independenceScore = pillars.independence.hintsUsed <= pillars.independence.hintThreshold ? 1.0
-    : Math.max(0, 1.0 - (pillars.independence.hintsUsed - pillars.independence.hintThreshold) * 0.15);
-  const transferScore = Math.min(pillars.transfer.contextsAttempted.length / pillars.transfer.contextsRequired, 1.0);
-  const masteryScore = Math.round(((accuracyScore + independenceScore + transferScore) / 3) * 100);
-
-  // Determine status
-  const meetsAccuracy = pillars.accuracy.percentage >= 0.90 && pillars.accuracy.total >= 3;
-  const meetsIndependence = pillars.independence.hintsUsed <= pillars.independence.hintThreshold;
-  const meetsTransfer = pillars.transfer.contextsAttempted.length >= pillars.transfer.contextsRequired;
-  const allPillarsMet = meetsAccuracy && meetsIndependence && meetsTransfer;
-
-  let newStatus = existing.status || 'practicing';
-  if (allPillarsMet) newStatus = 'mastered';
-  else if (pillars.accuracy.total >= 2) newStatus = 'practicing';
-  else newStatus = 'learning';
-
-  user.skillMastery.set(skillId, {
-    ...existing,
-    status: newStatus,
-    masteryScore,
-    masteryType: 'verified',
-    lastPracticed: new Date(),
-    consecutiveCorrect: (existing.consecutiveCorrect || 0) + 1,
-    totalAttempts: (existing.totalAttempts || 0) + 1,
-    masteredDate: newStatus === 'mastered' ? (existing.masteredDate || new Date()) : existing.masteredDate,
-    pillars,
-    notes: `AI-verified demonstration (${pillars.accuracy.correct}/${pillars.accuracy.total} correct)`,
+  const updated = engineUpdateSkillMastery(existing, {
+    correct: true,
+    hintUsed: usedHint,
+    problemContext: observation?.problemContext,
+    responseTime: observation?.responseTime
   });
 
-  // Add to recent wins if newly mastered
-  if (newStatus === 'mastered' && existing.status !== 'mastered') {
+  const justProved = !!updated.__justProved;
+  delete updated.__justProved;
+  const acc = updated.pillars?.accuracy || {};
+  updated.notes = `AI-verified demonstration (${acc.correct || 0}/${acc.total || 0} correct)`;
+
+  user.skillMastery.set(skillId, updated);
+
+  // Add to recent wins the first time the skill is genuinely owned.
+  if (justProved && !wasOwned) {
     if (!user.learningProfile.recentWins) user.learningProfile.recentWins = [];
     // derive the label from the original (kebab) id — nicer than a dotted unified id
     const displayName = rawSkillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -661,6 +702,7 @@ function updateSkillMastery(user, rawSkillId, observation, conversation) {
   }
 
   user.markModified('skillMastery');
+  return { skillId, justProved };
 }
 
 /**
@@ -748,13 +790,26 @@ function updateBadgeProgress(user, wasCorrect) {
   // Unlock skill on skill map (canonical unified id)
   const skillId = canonicalSkillId(badge.skillId);
   if (!user.skillMastery) user.skillMastery = new Map();
-  if (!user.skillMastery.get(skillId) || user.skillMastery.get(skillId).status !== 'mastered') {
-    user.skillMastery.set(skillId, {
-      status: 'mastered',
-      masteredDate: new Date(),
-      accuracy,
-      attempts: badge.problemsCompleted,
+  const entry = user.skillMastery.get(skillId) || initializeSkillMastery(skillId);
+  if (!clearsPrerequisites(entry)) {
+    // MERGE, never replace. This used to assign a bare object, so earning a badge
+    // destroyed the skill's pillars, rung and rungHistory — wiping the receipts
+    // for work the student had actually done.
+    //
+    // A completed badge is a real, gated demonstration (see badgePhaseController),
+    // so it proves the skill via 'challenge' rather than being asserted.
+    advanceRung(entry, 'proved', {
+      via: 'challenge',
+      evidence: {
+        correct: Math.round(accuracy * (badge.problemsCompleted || 0)),
+        total: badge.problemsCompleted || 0,
+        hintsUsed: entry.pillars?.independence?.hintsUsed || 0,
+        badgeId: badge.badgeId
+      }
     });
+    delete entry.__rungResult;
+    if (clearsPrerequisites(entry)) entry.status = 'mastered';
+    user.skillMastery.set(skillId, entry);
     user.markModified('skillMastery');
   }
 
