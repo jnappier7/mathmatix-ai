@@ -19,6 +19,7 @@ const { analyzeError, generateReteaching, recordMisconception, markMisconception
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey } = require('../utils/masteryGuard');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { buildGraph, boardStates, bandProgress, nearestClosableBand } = require('../utils/skillClosure');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
 // back to a legacy key so historical data still resolves during the migration.
@@ -2592,6 +2593,99 @@ router.get('/unplugged-badges', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('[Unplugged Badges] Error:', error);
     res.status(500).json({ error: 'Failed to load unplugged badge progress' });
+  }
+});
+
+// ============================================================================
+// THE MAP — strand x course-level board
+// ============================================================================
+
+/**
+ * The student's position on the unified skill graph.
+ * GET /api/mastery/map
+ *
+ * Read-only projection for the progress board: every skill with its rung, the
+ * strand/level band it belongs to, and how close each band is to closing.
+ *
+ * Deliberately NOT the older /skill-graph endpoint, which builds nodes from the
+ * hardcoded pattern-badge config and edges from the hardcoded
+ * prerequisiteMapper — neither of which is the graph the closure engine reasons
+ * over. This reads Mongo, so what the student sees and what the engine unlocks
+ * are the same thing.
+ */
+router.get('/map', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).lean();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const skills = await configCache.getOrSet(
+      'skills:unified',
+      () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+      3600
+    );
+    if (!skills.length) {
+      // The unified catalog has not been seeded in this environment. Say so
+      // rather than rendering an empty board that looks like zero progress.
+      return res.json({ seeded: false, skills: [], bands: [], nearest: null });
+    }
+
+    const graph = buildGraph(skills);
+    const mastery = user.skillMastery || {};
+    const states = boardStates(graph, mastery);
+
+    const nodes = skills.map((s) => {
+      const state = states.get(s.skillId) || 'locked';
+      return {
+        skillId: s.skillId,
+        label: s.studentLabel || s.displayName,
+        formalName: s.displayName,
+        strand: s.strand,
+        courseLevel: s.courseLevel,
+        state,
+        // Only surface a proof route for work the student can actually attempt.
+        canAttempt: state === 'open' || state === 'learned',
+        canTeach: state === 'proved',
+        standards: s.standardsAlignment || []
+      };
+    });
+
+    const bands = bandProgress(graph, mastery).map((b) => ({
+      strand: b.strand,
+      courseLevel: b.courseLevel,
+      total: b.total,
+      owned: b.owned,
+      pct: b.pct,
+      remaining: b.remaining.length,
+      attackable: b.attackable.length
+    }));
+
+    const near = nearestClosableBand(graph, mastery);
+    const nearest = near
+      ? {
+        strand: near.strand,
+        courseLevel: near.courseLevel,
+        remaining: near.remaining.length,
+        // The one to point the student at, named the way they will read it.
+        nextSkillId: near.attackable[0],
+        nextLabel: (skills.find((s) => s.skillId === near.attackable[0]) || {}).studentLabel || null
+      }
+      : null;
+
+    res.json({
+      seeded: true,
+      counts: {
+        total: nodes.length,
+        proved: nodes.filter((n) => n.state === 'proved' || n.state === 'above').length,
+        taught: nodes.filter((n) => n.state === 'taught').length,
+        open: nodes.filter((n) => n.state === 'open').length
+      },
+      skills: nodes,
+      bands,
+      nearest
+    });
+  } catch (error) {
+    console.error('[mastery/map] failed:', error);
+    res.status(500).json({ error: 'Failed to load skill map' });
   }
 });
 

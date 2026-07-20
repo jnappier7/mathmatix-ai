@@ -243,6 +243,61 @@ describe('invalidateFrom — contradiction travels upward', () => {
   });
 });
 
+describe('boardStates — what the student sees', () => {
+  const { boardStates } = require('../../utils/skillClosure');
+
+  test('a fresh student sees open roots and everything else locked', () => {
+    const states = boardStates(graph, emptyMastery());
+    const counts = [...states.values()].reduce((acc, s) => ({ ...acc, [s]: (acc[s] || 0) + 1 }), {});
+    expect(counts.open).toBeGreaterThan(0);
+    expect(counts.locked).toBeGreaterThan(0);
+    expect(counts.proved || 0).toBe(0);
+    expect(counts.taught || 0).toBe(0);
+  });
+
+  test('demonstrated and cleared-from-above are different states', () => {
+    // The distinction the old UI could not draw, and the reason a student was
+    // shown "100% mastered" for something they had never been tested on.
+    const mastery = emptyMastery();
+    prove(mastery, 'ALG1.PRP.2');
+    applyProofCascade(graph, mastery, 'ALG1.PRP.2');
+    const states = boardStates(graph, mastery);
+
+    expect(states.get('ALG1.PRP.2')).toBe('proved');
+    expect(states.get('MS.PRP.3')).toBe('above');
+  });
+
+  test('learned is distinct from proved and does not read as owned', () => {
+    const mastery = emptyMastery();
+    const entry = {};
+    advanceRung(entry, 'learned', { via: 'lesson' });
+    delete entry.__rungResult;
+    mastery.set('ELEM.QNT.4', entry);
+
+    expect(boardStates(graph, mastery).get('ELEM.QNT.4')).toBe('learned');
+  });
+
+  test('taught outranks proved on the board', () => {
+    const mastery = emptyMastery();
+    const entry = prove(mastery, 'ELEM.QNT.1');
+    advanceRung(entry, 'taught', { via: 'teachback', evidence: { rubricScore: 4 } });
+    delete entry.__rungResult;
+
+    expect(boardStates(graph, mastery).get('ELEM.QNT.1')).toBe('taught');
+  });
+
+  test('every skill gets exactly one state', () => {
+    const mastery = emptyMastery();
+    prove(mastery, 'ALG1.PRP.2');
+    applyProofCascade(graph, mastery, 'ALG1.PRP.2');
+    const states = boardStates(graph, mastery);
+
+    expect(states.size).toBe(SKILLS.length);
+    const valid = ['taught', 'proved', 'above', 'learned', 'open', 'locked'];
+    [...states.values()].forEach((s) => expect(valid).toContain(s));
+  });
+});
+
 describe('band progress — the proximity hook', () => {
   test('reports every populated strand-band with a completion fraction', () => {
     const bands = bandProgress(graph, emptyMastery());

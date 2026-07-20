@@ -249,6 +249,45 @@ function bandProgress(graph, mastery) {
     });
 }
 
+/**
+ * What each skill looks like on the board.
+ *
+ * Six states, because the board has to distinguish two things the old UI could
+ * not: whether a skill was demonstrated or merely cleared from above, and
+ * whether a student has been taught it versus taught it to someone else.
+ *
+ *   taught  - explained it back (top rung)
+ *   proved  - demonstrated independently
+ *   above   - cleared by closure; fills the board, does not earn the top rung
+ *   learned - worked through with the tutor, not yet proved
+ *   open    - every prerequisite met; can be started now
+ *   locked  - still behind a prerequisite
+ */
+function boardStates(graph, mastery) {
+  const { open, inProgress } = availability(graph, mastery);
+  const openSet = new Set(open);
+  const inProgressSet = new Set(inProgress);
+  const states = new Map();
+
+  graph.ids().forEach((id) => {
+    const entry = readEntry(mastery, id);
+    const rung = currentRung(entry);
+
+    if (rung === 'taught') states.set(id, 'taught');
+    else if (rung === 'proved') states.set(id, isInferredEntry(entry) ? 'above' : 'proved');
+    else if (rung === 'learned' || inProgressSet.has(id)) states.set(id, 'learned');
+    else if (openSet.has(id)) states.set(id, 'open');
+    else states.set(id, 'locked');
+  });
+
+  return states;
+}
+
+// Local alias so this module does not need a circular-looking re-import.
+function isInferredEntry(entry) {
+  return !!entry && entry.provenBy === 'inference';
+}
+
 /** The single nearest band the student can actually close, or null. */
 function nearestClosableBand(graph, mastery, { maxRemaining = 3 } = {}) {
   const best = bandProgress(graph, mastery).find(
@@ -263,6 +302,7 @@ module.exports = {
   applyProofCascade,
   availability,
   invalidateFrom,
+  boardStates,
   bandProgress,
   nearestClosableBand
 };
