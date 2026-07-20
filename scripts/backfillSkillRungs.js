@@ -28,8 +28,6 @@
 //   node scripts/backfillSkillRungs.js --apply --demote-unsupported
 //   node scripts/backfillSkillRungs.js --limit 100            # sample a subset
 
-require('dotenv').config();
-const mongoose = require('mongoose');
 const { GATES } = require('../utils/skillRung');
 
 const APPLY = process.argv.includes('--apply');
@@ -52,8 +50,11 @@ function evidenceSupportsMastery(entry) {
   return contexts >= GATES.PRACTICE_MIN_CONTEXTS;
 }
 
-/** Decide the rung for one legacy entry. Returns null when nothing should change. */
-function plan(entry) {
+/**
+ * Decide the rung for one legacy entry. Returns null when nothing should change.
+ * Exported so the tests exercise THIS function rather than a copy of it.
+ */
+function plan(entry, { demote = DEMOTE } = {}) {
   if (entry.rung) return null;                       // already migrated
 
   const status = entry.status;
@@ -61,7 +62,7 @@ function plan(entry) {
 
   if (status === 'mastered') {
     const supported = evidenceSupportsMastery(entry);
-    if (!supported && DEMOTE) {
+    if (!supported && demote) {
       return { rung: 'learned', provenBy: 'legacy', supported: false, demoted: true };
     }
     return {
@@ -104,6 +105,8 @@ function receipt(entry, decision) {
 }
 
 async function main() {
+  require('dotenv').config();
+  const mongoose = require('mongoose');
   if (!process.env.MONGO_URI) throw new Error('MONGO_URI is not set');
   await mongoose.connect(process.env.MONGO_URI);
   const User = require('../models/user');
@@ -171,7 +174,13 @@ async function main() {
   await mongoose.disconnect();
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+module.exports = { plan, evidenceSupportsMastery, receipt, IN_PROGRESS };
+
+// Only connect to a database when run directly, so the decision logic above can
+// be imported and tested without Mongo.
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
