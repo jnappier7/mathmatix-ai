@@ -251,9 +251,13 @@ const skillMasterySchema = new Schema({
   // How the CURRENT rung was earned. 'inference' means the system granted it by
   // prerequisite closure rather than the student demonstrating it, which is why
   // an inference-proved skill cannot advance to 'taught'.
+  // 'legacy' marks a rung reconstructed from pre-ladder data by
+  // scripts/backfillSkillRungs.js. It is deliberately distinguishable from a
+  // demonstrated proof: we know the student reached the old 'mastered' state,
+  // but not on what evidence, because the old path recorded none.
   provenBy: {
     type: String,
-    enum: ['lesson', 'challenge', 'fluency', 'teachback', 'inference'],
+    enum: ['lesson', 'challenge', 'fluency', 'practice', 'teachback', 'inference', 'legacy'],
     required: false
   },
   // The receipt for every transition. A rung claim we cannot show evidence for
