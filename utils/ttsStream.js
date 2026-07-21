@@ -1,5 +1,5 @@
 // utils/ttsStream.js
-// Cartesia Sonic-2 streaming TTS over WebSocket.
+// Cartesia Sonic-3.5 streaming TTS over WebSocket.
 // Send text as it streams from the LLM; receive PCM audio chunks
 // the moment they're synthesized. First-chunk latency ~75ms.
 
@@ -9,7 +9,7 @@ const logger = require('./logger').child({ module: 'ttsStream' });
 
 const CARTESIA_API_KEY = process.env.CARTESIA_API_KEY;
 const CARTESIA_VERSION = '2025-04-16';
-const CARTESIA_MODEL = process.env.CARTESIA_MODEL || 'sonic-2';
+const CARTESIA_MODEL = process.env.CARTESIA_MODEL || 'sonic-3.5';
 const CARTESIA_WS_URL = `wss://api.cartesia.ai/tts/websocket?api_key=${encodeURIComponent(CARTESIA_API_KEY || '')}&cartesia_version=${CARTESIA_VERSION}`;
 
 // Output format: raw PCM s16 mono 22050Hz.

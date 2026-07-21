@@ -15,7 +15,7 @@ const COST = {
     sttPerMinute: 0.0043,           // Deepgram Nova-3 streaming
     llmInputPer1KTokens: 0.00015,   // gpt-4o-mini input
     llmOutputPer1KTokens: 0.0006,   // gpt-4o-mini output
-    ttsPerCharacter: 0.000020,      // Cartesia Sonic-2 streaming (~$0.020/min ≈ $0.0000133/char @ 150wpm)
+    ttsPerCharacter: 0.000020,      // Cartesia Sonic-3.5 streaming (~$0.020/min ≈ $0.0000133/char @ 150wpm)
 };
 
 function newTurn(sessionId, userId, tutorId) {
