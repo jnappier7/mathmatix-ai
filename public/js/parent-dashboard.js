@@ -791,11 +791,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             }).join('') || '<p style="color: var(--color-text-muted); font-size: 0.85em;">No recent sessions with summaries.</p>'
         : '<p style="color: var(--color-text-muted); font-size: 0.85em;">No recent sessions with summaries.</p>';
 
+        const childAvatarHtml = window.AvatarFullBody
+            ? `<div class="child-avatar-fb">${window.AvatarFullBody.html(progress, { size: 'sm', readOnly: true, emptyLabel: 'No character yet' })}</div>`
+            : '';
+
         card.innerHTML = `
             <div class="child-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                <div>
-                    <h3>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h3>
-                    <span style="font-size: 0.85em; color: var(--color-text-secondary);">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    ${childAvatarHtml}
+                    <div>
+                        <h3>${progress.firstName || 'Unknown'} ${progress.lastName || 'Child'}</h3>
+                        <span style="font-size: 0.85em; color: var(--color-text-secondary);">Level ${progress.level || '1'} — ${progress.xp || '0'} XP</span>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <button class="learning-report-btn btn" data-childid="${progress._id}" data-childname="${progress.firstName || 'Child'}" title="View ${progress.firstName || 'your child'}'s learning report" aria-label="View learning report for ${progress.firstName || 'child'}" style="background: var(--color-primary); color: white; font-size: 0.85em; padding: 8px 14px;">

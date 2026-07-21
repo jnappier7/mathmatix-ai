@@ -1,6 +1,6 @@
-// public/js/pick-avatar.js  –  DiceBear avatar gallery (no preset avatars)
-// Users customize their avatar using the DiceBear builder.
-// Gallery holds up to 3 saved custom avatars.
+// public/js/pick-avatar.js  –  Full-body character select.
+// DiceBear is retired: students choose one of the polished full-body preset
+// characters (the `student.*` catalog). No custom builder, no gallery.
 document.addEventListener('DOMContentLoaded', () => {
   let currentUser  = null;
   const avatarSelectionGrid  = document.getElementById('avatar-selection-grid');
@@ -21,21 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       renderAvatars();
-
-      // Check if returning from avatar builder
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('avatar') === 'custom' && currentUser.avatarGallery?.length > 0) {
-        const latestIndex = currentUser.avatarGallery.length - 1;
-        setTimeout(() => {
-          const card = document.querySelector(`.avatar-card[data-avatar-id="gallery-${latestIndex}"]`);
-          if (card) {
-            card.classList.add('selected');
-            selectedAvatarId = `gallery-${latestIndex}`;
-            completeSelectionBtn.disabled = false;
-          }
-        }, 100);
-        window.history.replaceState({}, '', '/pick-avatar.html');
-      }
     } catch (err) {
       console.error('Error fetching initial data:', err);
       avatarSelectionGrid.innerHTML = '<p>Error loading avatars. Please refresh.</p>';
@@ -47,55 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!avatarSelectionGrid || !currentUser) return;
     avatarSelectionGrid.innerHTML = '';
 
-    // "Create Custom Avatar" card
-    const galleryCount = (currentUser.avatarGallery || []).length;
-    const customCard = document.createElement('div');
-    customCard.classList.add('avatar-card', 'unlocked', 'create-custom');
-    customCard.dataset.avatarId = 'custom';
-    customCard.innerHTML =
-      '<div class="avatar-card-image"><i class="fas fa-magic"></i></div>' +
-      '<h4 class="avatar-card-name">Create Your Own!</h4>' +
-      '<p class="avatar-card-description">' + (galleryCount < 3 ? (3 - galleryCount) + ' slots left' : 'Replace oldest') + '</p>';
-    avatarSelectionGrid.appendChild(customCard);
-
-    // HTML escape helper to prevent XSS from user-created avatar names/URLs
+    // HTML escape helper to prevent XSS from avatar names.
     function esc(str) {
       const el = document.createElement('span');
       el.textContent = str || '';
       return el.innerHTML;
     }
 
-    // Show gallery avatars
-    if (currentUser.avatarGallery && currentUser.avatarGallery.length > 0) {
-      currentUser.avatarGallery.forEach((avatar, index) => {
-        const card = document.createElement('div');
-        card.classList.add('avatar-card', 'unlocked');
-        card.dataset.avatarId = 'gallery-' + index;
-        card.dataset.galleryIndex = index;
-        card.innerHTML =
-          '<div class="avatar-card-image"><img src="' + esc(avatar.dicebearUrl) + '" alt="' + esc(avatar.name) + '" loading="lazy"></div>' +
-          '<h4 class="avatar-card-name">' + esc(avatar.name) + '</h4>' +
-          '<p class="avatar-card-description">Custom avatar</p>';
-        avatarSelectionGrid.appendChild(card);
-      });
-    }
-
-    // Show current default DiceBear avatar if no gallery items
-    if (currentUser.avatar?.dicebearUrl && galleryCount === 0) {
-      const defaultCard = document.createElement('div');
-      defaultCard.classList.add('avatar-card', 'unlocked', 'selected');
-      defaultCard.dataset.avatarId = 'dicebear-default';
-      selectedAvatarId = 'dicebear-default';
-      completeSelectionBtn.disabled = false;
-      defaultCard.innerHTML =
-        '<div class="avatar-card-image"><img src="' + esc(currentUser.avatar.dicebearUrl) + '" alt="My Avatar" loading="lazy"></div>' +
-        '<h4 class="avatar-card-name">Current Avatar</h4>' +
-        '<p class="avatar-card-description">Your default look</p>';
-      avatarSelectionGrid.appendChild(defaultCard);
-    }
-
-    // Catalog avatars (creatures/characters) — coexist with DiceBear. Free ones
-    // unlock at level 1; creatures unlock by level as a progression reward.
+    // The full-body preset character lineup is the only avatar choice.
     renderCatalogAvatars(esc);
   }
 
@@ -139,11 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
   avatarSelectionGrid.addEventListener('click', e => {
     const card = e.target.closest('.avatar-card');
     if (!card || card.classList.contains('locked')) return;
-
-    if (card.dataset.avatarId === 'custom') {
-      window.location.href = '/avatar-builder.html?from=pick-avatar';
-      return;
-    }
 
     document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');

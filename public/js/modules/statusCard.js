@@ -97,7 +97,7 @@ function buildModal() {
           <div class="sc-identity">
             <div class="sc-name"></div>
             <div class="sc-rank"></div>
-            <a class="sc-lab-cta" href="/pick-avatar.html">🎨 Design in the Creation Lab</a>
+            <a class="sc-lab-cta" href="/pick-avatar.html">🎨 Choose your character</a>
             <button type="button" class="sc-shop-cta">🛍️ Open Shop</button>
           </div>
         </div>
