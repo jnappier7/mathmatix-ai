@@ -38,6 +38,9 @@ function makeUserDoc(fields = {}) {
     startingPointOffered: false,
     startingPointOfferedAt: null,
     nextGrowthCheckDue: null,
+    // Default: already has a full-body character, so the choose-character nudge
+    // stays out of route-plumbing assertions unrelated to avatars.
+    selectedAvatarId: 'student.navy',
     nudgeState: undefined,
     markModified: jest.fn(),
     save: jest.fn().mockResolvedValue(undefined),
@@ -78,6 +81,16 @@ describe('GET /api/nudges', () => {
     expect(res.body.nudges).toEqual([]);
     expect(user.save).not.toHaveBeenCalled();
   });
+
+  test('surfaces choose-character nudge for a student without a full-body character', async () => {
+    const user = makeUserDoc({ assessmentCompleted: true, nextGrowthCheckDue: null, selectedAvatarId: '' });
+    User.findById.mockResolvedValue(user);
+    const res = await supertest(makeApp({ _id: 'u-1' })).get('/api/nudges');
+    expect(res.status).toBe(200);
+    expect(res.body.nudges).toHaveLength(1);
+    expect(res.body.nudges[0].type).toBe('choose-character');
+    expect(user.nudgeState.chooseCharacter.promptedAt).toBeInstanceOf(Date);
+  });
 });
 
 describe('POST /api/nudges/:type/dismiss', () => {
@@ -107,6 +120,15 @@ describe('POST /api/nudges/:type/dismiss', () => {
     const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/growth-check/dismiss');
     expect(res.status).toBe(200);
     expect(res.body.dismissCount).toBe(3);
+  });
+
+  test('records dismissal for choose-character under its own state key', async () => {
+    const user = makeUserDoc({ selectedAvatarId: '' });
+    User.findById.mockResolvedValue(user);
+    const res = await supertest(makeApp({ _id: 'u-1' })).post('/api/nudges/choose-character/dismiss');
+    expect(res.status).toBe(200);
+    expect(res.body.dismissCount).toBe(1);
+    expect(user.nudgeState.chooseCharacter.dismissedAt).toBeInstanceOf(Date);
   });
 
   test('returns 404 when user disappears', async () => {

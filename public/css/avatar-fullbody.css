@@ -1,0 +1,142 @@
+/* avatar-fullbody.css — the big full-body student character render.
+ * Used on the progress page, chat sidebar, and parent dashboard via
+ * window.AvatarFullBody.html(). Portrait (small circular) avatars are unaffected.
+ */
+
+.fba {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.fba-stage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Sizes (stage height; the image scales to fit, preserving aspect + transparency). */
+.fba-sm .fba-stage { height: 96px; }
+.fba-md .fba-stage { height: 168px; }
+.fba-lg .fba-stage { height: 240px; }
+
+.fba-img {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
+  transition: transform 200ms ease;
+}
+.fba:hover .fba-img { transform: translateY(-3px); }
+
+/* Soft "ground" shadow so the character feels planted, not floating. */
+.fba-shadow {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 62%;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0) 70%);
+  z-index: 0;
+}
+.fba-img { position: relative; z-index: 1; }
+
+/* Empty / choose states. */
+.fba-empty-icon {
+  font-size: 3rem;
+  line-height: 1;
+  opacity: 0.5;
+  filter: grayscale(0.3);
+  position: relative;
+  z-index: 1;
+}
+.fba-empty-label,
+.fba-choose-label {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+.fba-empty-label { color: var(--cr-text-dim, #7a8794); }
+
+.fba-choose {
+  cursor: pointer;
+}
+.fba-choose .fba-stage {
+  border: 2px dashed var(--cr-border, #d5dde3);
+  border-radius: 14px;
+  background: var(--cr-pill-bg, rgba(18, 179, 179, 0.08));
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.fba-choose:hover .fba-stage {
+  border-color: var(--cr-accent, #12b3b3);
+  background: var(--cr-pill-bg-hover, rgba(18, 179, 179, 0.16));
+}
+.fba-choose .fba-choose-label { color: var(--cr-accent-strong, #0f8a8a); }
+.fba-choose:hover .fba-empty-icon { opacity: 0.8; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fba-img { transition: none; }
+  .fba:hover .fba-img { transform: none; }
+}
+
+/* ---- Progress page hero ---- */
+.progress-avatar-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 4px auto 18px;
+}
+.progress-avatar-hero .pah-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--cr-text, #18202b);
+}
+.progress-avatar-hero .pah-level {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cr-accent-strong, #0f8a8a);
+  background: var(--cr-pill-bg, rgba(18, 179, 179, 0.1));
+  padding: 2px 12px;
+  border-radius: 999px;
+}
+
+/* ---- Chat sidebar panel ---- */
+.sidebar-avatar-panel {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 10px;
+}
+.sidebar-avatar-panel .fba-choose-label,
+.sidebar-avatar-panel .fba-empty-label { font-size: 0.75rem; }
+
+/* ---- Student dashboard header ---- */
+.dashboard-header--with-avatar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.dashboard-header--with-avatar .dashboard-avatar { flex: 0 0 auto; }
+.dashboard-header--with-avatar .dashboard-header-text { min-width: 0; }
+@media (max-width: 560px) {
+  .dashboard-header--with-avatar { gap: 12px; }
+  .dashboard-header--with-avatar .fba-md .fba-stage { height: 120px; }
+}
+
+/* ---- Parent dashboard child card ---- */
+.child-avatar-fb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.child-avatar-fb .fba-choose-label,
+.child-avatar-fb .fba-empty-label { font-size: 0.72rem; }

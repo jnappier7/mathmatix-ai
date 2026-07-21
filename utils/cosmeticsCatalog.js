@@ -12,19 +12,59 @@
  * @module cosmeticsCatalog
  */
 
-const SLOTS = ['theme', 'board', 'calculator', 'header'];
+const SLOTS = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'header'];
 
-// v1 starter catalog. Token-based themes work with no new art; pattern skins
-// (cheetah/camo/etc.) reference art that ships with the shop UI later.
+// Cosmetics catalog. Everything here renders from PURE CSS (public/css/cosmetics.css)
+// keyed off body attributes — no art assets required — so equipping anything
+// produces an instant, visible change on the chat surface. That's the whole point:
+// it's the "hey, how did you get that?!" flex a friend notices over your shoulder.
+//
+// Item shape: { slot, name, price, rarity, skinClass, unlockLevel? }
+//   • price      — Coins (utils/coinEngine.js). Roughly rarity-tiered.
+//   • rarity     — common | rare | epic | legendary (drives the card shimmer).
+//   • unlockLevel— optional level gate; pairs the store chase with the XP chase.
+//   • skinClass  — legacy descriptor; the live styling keys off the catalog id
+//                  attribute (data-skin-*), so this is documentation only.
 const CATALOG = {
-    'theme.sunset':   { slot: 'theme',      name: 'Sunset',              price: 250, rarity: 'rare',   skinClass: 'theme-sunset' },
-    'theme.neon':     { slot: 'theme',      name: 'Neon Night',          price: 400, rarity: 'epic',   skinClass: 'theme-neon' },
+    // ---- Whole-UI accent themes (data-theme-skin) ----
+    'theme.bubblegum': { slot: 'theme', name: 'Bubblegum',   price: 200, rarity: 'common',    skinClass: 'theme-bubblegum' },
+    'theme.forest':    { slot: 'theme', name: 'Deep Forest',  price: 200, rarity: 'common',    skinClass: 'theme-forest' },
+    'theme.sunset':    { slot: 'theme', name: 'Sunset',       price: 250, rarity: 'rare',      skinClass: 'theme-sunset' },
+    'theme.ocean':     { slot: 'theme', name: 'Ocean',        price: 250, rarity: 'rare',      skinClass: 'theme-ocean' },
+    'theme.neon':      { slot: 'theme', name: 'Neon Night',   price: 400, rarity: 'epic',      skinClass: 'theme-neon' },
+    'theme.galaxy':    { slot: 'theme', name: 'Galaxy',       price: 500, rarity: 'epic',      skinClass: 'theme-galaxy' },
+    'theme.gold':      { slot: 'theme', name: 'Solid Gold',   price: 900, rarity: 'legendary', skinClass: 'theme-gold', unlockLevel: 10 },
+
+    // ---- Your chat bubbles (data-skin-bubble) — the student's own messages ----
+    'bubble.gradient': { slot: 'bubble', name: 'Gradient Pop',   price: 150, rarity: 'common',    skinClass: 'skin-bubble-gradient' },
+    'bubble.glass':    { slot: 'bubble', name: 'Frosted Glass',  price: 250, rarity: 'rare',      skinClass: 'skin-bubble-glass' },
+    'bubble.gold':     { slot: 'bubble', name: 'Gold Trim',      price: 450, rarity: 'epic',      skinClass: 'skin-bubble-gold' },
+    'bubble.holo':     { slot: 'bubble', name: 'Holographic',    price: 900, rarity: 'legendary', skinClass: 'skin-bubble-holo', unlockLevel: 15 },
+
+    // ---- Avatar frames (data-skin-avatarframe) — ring around your avatar ----
+    'frame.silver':    { slot: 'avatarFrame', name: 'Silver Ring',   price: 150, rarity: 'common',    skinClass: 'skin-frame-silver' },
+    'frame.gold':      { slot: 'avatarFrame', name: 'Gold Ring',     price: 300, rarity: 'rare',      skinClass: 'skin-frame-gold' },
+    'frame.neon':      { slot: 'avatarFrame', name: 'Neon Pulse',    price: 450, rarity: 'epic',      skinClass: 'skin-frame-neon' },
+    'frame.rainbow':   { slot: 'avatarFrame', name: 'Rainbow Halo',  price: 800, rarity: 'legendary', skinClass: 'skin-frame-rainbow', unlockLevel: 12 },
+
+    // ---- Board skins (data-skin-board) ----
+    'board.grid':     { slot: 'board',      name: 'Blueprint Grid',      price: 150, rarity: 'common', skinClass: 'skin-board-grid' },
+    'board.chalk':    { slot: 'board',      name: 'Chalkboard',          price: 200, rarity: 'common', skinClass: 'skin-board-chalk' },
     'board.cheetah':  { slot: 'board',      name: 'Cheetah Print Board', price: 250, rarity: 'rare',   skinClass: 'skin-board-cheetah' },
+
+    // ---- Calculator skins (data-skin-calculator) ----
     'calc.hotpink':   { slot: 'calculator', name: 'Hot Pink Calculator', price: 150, rarity: 'common', skinClass: 'skin-calc-hotpink' },
+    'calc.carbon':    { slot: 'calculator', name: 'Carbon Fiber',         price: 250, rarity: 'rare',   skinClass: 'skin-calc-carbon' },
+
+    // ---- Header skins (data-skin-header) ----
     'header.camo':    { slot: 'header',      name: 'Camo Header',         price: 200, rarity: 'common', skinClass: 'skin-header-camo' },
+    'header.wave':    { slot: 'header',      name: 'Wave Header',         price: 200, rarity: 'common', skinClass: 'skin-header-wave' },
 };
 
-const DEFAULT_LOADOUT = { theme: 'default', board: 'default', calculator: 'default', header: 'default' };
+const DEFAULT_LOADOUT = {
+    theme: 'default', bubble: 'default', avatarFrame: 'default',
+    board: 'default', calculator: 'default', header: 'default',
+};
 
 function getItem(itemId) {
     return CATALOG[itemId] || null;

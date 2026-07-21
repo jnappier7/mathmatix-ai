@@ -33,7 +33,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 | DB | MongoDB + Mongoose 8 (`connect-mongo` session store) |
 | **LLM (runtime)** | **OpenAI only** — `gpt-4o-mini` (chat/teaching), `gpt-4o` (vision grading). See §7. |
 | Voice STT | Deepgram (`nova-2`/`nova-3`), Whisper-1 fallback |
-| Voice TTS | Cartesia (`sonic-2`), streaming over WebSocket |
+| Voice TTS | Cartesia (`sonic-3.5`), streaming over WebSocket |
 | Math OCR | Mathpix (`/v3/text`, `/v3/pdf`) |
 | Math render | KaTeX + MathLive (client); JSXGraph for interactive diagrams |
 | Auth | Passport (local, Google, Microsoft, Clever SSO) |

@@ -162,7 +162,7 @@ router.post('/accept-invite', isAuthenticated, isParent, async (req, res) => {
 router.get('/children', isAuthenticated, isParent, async (req, res) => {
     const parentId = req.user._id;
     try {
-        const parent = await User.findById(parentId).populate('children', 'firstName lastName username gradeLevel mathCourse totalActiveTutoringMinutes');
+        const parent = await User.findById(parentId).populate('children', 'firstName lastName username gradeLevel mathCourse totalActiveTutoringMinutes selectedAvatarId level');
         if (!parent) {
             return res.status(404).json({ message: "Parent not found." });
         }
@@ -326,6 +326,7 @@ router.get('/child/:childId/progress', isAuthenticated, isParent, logRecordAcces
             _id: child._id,
             firstName: child.firstName,
             lastName: child.lastName,
+            selectedAvatarId: child.selectedAvatarId || null,
             level: child.level || 1,
             xp: child.xp || 0,
             gradeLevel: child.gradeLevel,

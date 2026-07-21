@@ -31,7 +31,19 @@ const GROWTH_CHECK_OVERDUE_DAYS = 7;
 const NUDGE_TYPES = Object.freeze({
   STARTING_POINT: 'starting-point',
   GROWTH_CHECK: 'growth-check',
+  CHOOSE_CHARACTER: 'choose-character',
 });
+
+// A student "has a character" once they've picked a full-body preset
+// (selectedAvatarId === 'student.<x>'). DiceBear / empty selections do not count
+// — DiceBear is retired, so those students are nudged to choose one.
+function isStudentRole(user) {
+  if (Array.isArray(user.roles) && user.roles.length) return user.roles.includes('student');
+  return user.role === 'student';
+}
+function hasFullBodyCharacter(user) {
+  return typeof user.selectedAvatarId === 'string' && user.selectedAvatarId.indexOf('student.') === 0;
+}
 
 /**
  * @typedef {Object} Nudge
@@ -157,6 +169,31 @@ function buildGrowthCheckNudge(user, now) {
   };
 }
 
+function buildChooseCharacterNudge(user, now) {
+  // Only students, and only until they've chosen a full-body character.
+  if (!isStudentRole(user)) return null;
+  if (hasFullBodyCharacter(user)) return null;
+
+  // Quiet period after a dismissal.
+  if (snoozeActive(user.nudgeState?.chooseCharacter, now)) return null;
+
+  return {
+    type: NUDGE_TYPES.CHOOSE_CHARACTER,
+    severity: 'recommended',
+    title: 'Choose your character',
+    message: "Pick a full-body character — it shows up on your dashboard, chat, and progress page.",
+    action: {
+      label: 'Choose now',
+      href: '/pick-avatar.html',
+    },
+    dismissible: true,
+    autoLaunch: false,
+    meta: {
+      dismissCount: user.nudgeState?.chooseCharacter?.dismissCount || 0,
+    },
+  };
+}
+
 /**
  * Compute the nudges a given user should see right now.
  *
@@ -172,6 +209,7 @@ function computeNudges(user, opts = {}) {
   const nudges = [
     buildGrowthCheckNudge(user, now),
     buildStartingPointNudge(user, now),
+    buildChooseCharacterNudge(user, now),
   ].filter(Boolean);
 
   // Order: overdue → due → recommended

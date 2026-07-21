@@ -86,9 +86,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Personal status card modal (Progress button) -->
   <link rel="stylesheet" href="/css/status-card.css" />
   <!-- Cosmetics: equipped skins + shop modal -->
-  <link rel="stylesheet" href="/dist/css/chat-css2.20673ca0.css" />
+  <link rel="stylesheet" href="/dist/css/chat-css2.03bfa896.css" />
+  <!-- Coin surfacing: sidebar counter + fly-in reward animation -->
+  <link rel="stylesheet" href="/css/coin-fx.css" />
+  <!-- Full-body student character render -->
+  <link rel="stylesheet" href="/css/avatar-fullbody.css" />
 <!-- Interactive math workspace (chat right slot) -->
   <link rel="stylesheet" href="/css/workspace.css?v=20260711" />
+  <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
+  <link rel="stylesheet" href="/css/adjustable-panels.css?v=20260721" />
   <!-- Voice mode (layout mode of the chat stage) -->
   <link rel="stylesheet" href="/css/voice-mode.css?v=3" />
   <!-- Fresh styling for rendered math (equation cards) -->
@@ -389,8 +395,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- Compact Progress Card — motivational, not actionable, so at the bottom -->
     <div class="sidebar-section sidebar-section-compact" style="margin-top: auto;">
+      <div class="sidebar-avatar-panel" id="sidebar-avatar-panel"></div>
       <div class="sidebar-progress">
-        <div class="sidebar-progress-level"><span data-i18n="misc.level">Level</span> <span id="sidebar-level">1</span></div>
+        <div class="sidebar-progress-topline">
+          <div class="sidebar-progress-level"><span data-i18n="misc.level">Level</span> <span id="sidebar-level">1</span></div>
+          <button type="button" id="sidebar-coins-btn" class="sidebar-coins-pill" title="Open Shop" aria-label="Coins — open shop">
+            <span class="sidebar-coins-icon" aria-hidden="true">🪙</span>
+            <span id="sidebar-coins" class="sidebar-coins-val">0</span>
+          </button>
+        </div>
         <div class="sidebar-progress-bar">
           <div id="sidebar-progress-fill" class="sidebar-progress-fill" style="width: 0%;"></div>
         </div>
@@ -2344,8 +2357,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/dist/js/chat-js1.b97aead7.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
+  <script src="/js/avatarFullBody.js"></script>
 <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
   <script defer src="/js/chat-redesign.js?v=20260717"></script>
+  <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
+  <script defer src="/js/adjustable-panels.js?v=20260721"></script>
   <!-- Drive the "Live with <tutor>" pill bars from real TTS playback -->
   <script type="module" src="/js/chat-voice-meter.js"></script>
   <script src="/dist/js/chat-js2.dacbff7b.js"></script>
