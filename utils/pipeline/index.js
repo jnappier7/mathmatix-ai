@@ -1182,7 +1182,12 @@ async function runPipeline(message, ctx) {
   } else {
     // ── Update learning engines (BKT, FSRS, ConsistencyScorer) ──
     // These run BEFORE persist so the updated states are saved with the user document.
-    if (ctx.activeSkill && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
+    // Require an actual skill id, not just an activeSkill object. Without the
+    // id the engines key every state onto the literal string "undefined" —
+    // BKT/FSRS/consistency for unrelated turns pile into one bogus bucket while
+    // the real skills get nothing. The logs show it as "[LearningEngines] BKT
+    // undefined: P(L)=…".
+    if (ctx.activeSkill?.skillId && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
       try {
         updateLearningEngines(ctx.user, ctx.activeSkill.skillId, diagnosis, observation);
       } catch (err) {
@@ -1661,6 +1666,10 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
   // key BKT / FSRS / consistency state on the canonical unified skill id, so a
   // concept's learning state never splits across a legacy id and its unified id
   skillId = canonicalSkillId(skillId);
+  // Belt and braces with the caller's guard: every write below is `state[skillId]`,
+  // so a nullish id would silently create an "undefined" bucket that no skill can
+  // ever read back.
+  if (!skillId) return;
   const isCorrect = diagnosis.isCorrect === true;
   const hintUsed = observation.contextSignals?.some(s => s.type === 'uncertainty') || false;
 

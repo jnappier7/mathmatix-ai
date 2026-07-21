@@ -28,6 +28,7 @@
  */
 
 const TutorPlan = require('../models/tutorPlan');
+const { decodedMasteryMap } = require('./masteryGuard');
 const { addSkillToFocus } = require('./tutorPlanManager');
 
 // Priority by familiarity for in-progress (not-yet-due) skills. Review-due
@@ -67,8 +68,15 @@ function refreshSkillFocus(plan, user, opts = {}) {
   );
   if (hasActive) return plan;
 
-  const mastery = user.skillMastery;
-  if (!mastery || typeof mastery.forEach !== 'function') return plan;
+  // Iterate by LOGICAL (dotted) skill id, not by storage key. skillMastery is
+  // keyed by the encoded form ("MS_QNT_8" for "MS.QNT.8" — Mongoose Maps reject
+  // dots), so a raw forEach seeds the focus queue with encoded keys. The next
+  // encodeMasteryKey() on one of those throws ('contains "_"'), the whole
+  // TutorPlan load is swallowed by its non-fatal catch, and the tutor loses its
+  // persistent model of the student on EVERY turn. decodedMasteryMap is the
+  // shared helper for exactly this.
+  const mastery = decodedMasteryMap(user);
+  if (!mastery.size) return plan;
 
   const now = opts.now || new Date();
   const candidates = [];

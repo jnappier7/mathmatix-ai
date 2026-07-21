@@ -321,6 +321,28 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
       });
     }
 
+    // Headers already flushed — almost always a streaming (SSE) chat turn that
+    // failed mid-flight, since the stream sets its headers before the pipeline
+    // runs. Calling res.status()/json() here throws ERR_HTTP_HEADERS_SENT, and
+    // that crash is what surfaces in the logs INSTEAD of the real error, while
+    // the client's stream is left hanging open. Send a terminal error event on
+    // the stream the client is already reading, then close it.
+    if (res.headersSent) {
+      const isSse = String(res.getHeader('Content-Type') || '').includes('text/event-stream');
+      if (isSse) {
+        try {
+          res.write(`data: ${JSON.stringify({
+            type: 'error',
+            error: isServerError ? 'Internal server error' : err.message,
+          })}\n\n`);
+        } catch (writeErr) {
+          logger.warn('Could not write SSE error event', { requestId: req.requestId, error: writeErr.message });
+        }
+      }
+      try { res.end(); } catch { /* socket already torn down */ }
+      return;
+    }
+
     if (req.path.startsWith('/api/')) {
       return res.status(status).json({
         error: isServerError ? 'Internal server error' : err.message,

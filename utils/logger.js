@@ -37,11 +37,15 @@ winston.addColors(colors);
 function sanitize(obj) {
   if (!obj || typeof obj !== 'object') return obj;
 
+  // Compared against key.toLowerCase(), so these MUST be lowercase — a
+  // camelCase entry can never match and silently redacts nothing. Most had a
+  // lowercase substring covering them by luck ('accessToken' → 'token'), but
+  // 'apiKey' and 'creditCard' had none and were being logged in the clear.
   const sensitiveKeys = [
-    'password', 'passwordHash', 'newPassword', 'oldPassword', 'confirmPassword',
-    'token', 'accessToken', 'refreshToken', 'apiKey', 'api_key', 'secret',
-    'authorization', 'cookie', 'session', 'sessionId', 'csrf', 'csrfToken',
-    'ssn', 'creditCard', 'cvv', 'pin'
+    'password', 'passwordhash', 'newpassword', 'oldpassword', 'confirmpassword',
+    'token', 'accesstoken', 'refreshtoken', 'apikey', 'api_key', 'secret',
+    'authorization', 'cookie', 'session', 'sessionid', 'csrf', 'csrftoken',
+    'ssn', 'creditcard', 'cvv', 'pin'
   ];
 
   const sanitized = Array.isArray(obj) ? [] : {};
@@ -94,14 +98,21 @@ const developmentFormat = winston.format.combine(
 /**
  * Custom format for production (JSON with sanitization)
  */
+// Two things here are load-bearing and were previously wrong, which made EVERY
+// production log line come out as a bare "undefined":
+//   1. ORDER — sanitize must run BEFORE json(), or the serialized payload is
+//      built from unredacted fields and the redaction never reaches the output.
+//   2. MUTATE, don't replace — winston carries the rendered line on the symbol
+//      properties Symbol.for('level') / Symbol.for('message'). sanitize() builds
+//      a fresh object with a string-keyed for..in loop, so returning it dropped
+//      those symbols; the Console transport then wrote info[MESSAGE] === undefined.
+//      Object.assign copies the sanitized fields back onto the SAME info object,
+//      leaving winston's symbols intact.
 const productionFormat = winston.format.combine(
   winston.format.timestamp(),
   winston.format.errors({ stack: true }),
-  winston.format.json(),
-  winston.format((info) => {
-    // Sanitize the entire log object
-    return sanitize(info);
-  })()
+  winston.format((info) => Object.assign(info, sanitize(info)))(),
+  winston.format.json()
 );
 
 /**
@@ -302,3 +313,10 @@ log.errorLogger = (err, req, res, next) => {
 
 // Export logger
 module.exports = log;
+
+// Exposed for tests only. The existing logger suite mocks winston.createLogger,
+// so the FORMAT pipeline is never exercised there — which is how a production
+// format that rendered every line as "undefined" shipped unnoticed. These let a
+// test drive the real format end to end.
+module.exports._productionFormat = productionFormat;
+module.exports._sanitize = sanitize;
