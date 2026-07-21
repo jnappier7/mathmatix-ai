@@ -1,0 +1,175 @@
+/* ============================================================
+   adjustable-panels.css — resizable work board + minimizable tutor
+
+   Two chat-stage affordances layered on top of chat-redesign.css:
+
+   1. A drag handle sitting in the gap between the chat column and the
+      workspace (work board). Dragging it left grows the board and shrinks
+      chat; right does the reverse. It drives --cr-side-w, so the whole
+      grid reflows. Desktop only (below 1200px the board is a slide-in
+      drawer — see workspace.css — so there's nothing to resize against).
+
+   2. A minimize button on the tutor hero. Minimizing collapses the hero
+      column entirely and drops a small "Show tutor" pill in its place,
+      handing that space to chat + board. Works at every width.
+
+   Both preferences persist in localStorage (see adjustable-panels.js).
+   ============================================================ */
+
+/* The stage becomes the positioning context for the injected handle +
+   restore pill (both absolutely positioned children). */
+body.cr-mode .cr-stage { position: relative; }
+
+/* ----- Work board resize handle ----- */
+/* Anchored to the stage's right content edge, offset inward by the board
+   width so it always lands in the 18px gap between chat and the board —
+   the same calc() pattern the tour button uses (chat-redesign.css:110).
+   No JS needed to keep it aligned as the board resizes or the window
+   changes. */
+.cr-ws-resizer {
+  position: absolute;
+  top: 16px;
+  bottom: 60px;
+  right: calc(var(--cr-side-w) + 4px);
+  width: 12px;
+  z-index: 20;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* The visible grip: a short rounded bar that lights up on hover / drag. */
+.cr-ws-resizer::before {
+  content: "";
+  width: 3px;
+  height: 46px;
+  border-radius: 3px;
+  background: var(--cr-border);
+  transition: background 0.15s var(--cr-ease), height 0.15s var(--cr-ease);
+}
+.cr-ws-resizer:hover::before,
+body.cr-resizing .cr-ws-resizer::before {
+  background: var(--cr-accent);
+  height: 74px;
+}
+.cr-ws-resizer:focus-visible { outline: none; }
+.cr-ws-resizer:focus-visible::before {
+  background: var(--cr-accent);
+  height: 74px;
+  box-shadow: 0 0 0 3px rgba(139, 123, 255, 0.30);
+}
+
+/* While dragging: page-wide col-resize cursor, no text selection, and
+   freeze pointer events on the two panels so an iframe/canvas inside them
+   can't swallow the drag. */
+body.cr-resizing { cursor: col-resize; user-select: none; }
+body.cr-resizing #chat-container,
+body.cr-resizing .cr-workspace { pointer-events: none; }
+
+/* The board is a drawer (or hidden) below 1200px / with the board flag off —
+   nothing to drag against, so hide the handle. */
+@media (max-width: 1200px) { .cr-ws-resizer { display: none; } }
+html.mm-board-hidden .cr-ws-resizer { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-ws-resizer::before { transition: none; }
+}
+
+/* ----- Tutor hero: minimize button ----- */
+.cr-hero-min-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 6;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(15, 20, 35, 0.55);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: background 0.15s var(--cr-ease);
+}
+.cr-hero-min-btn:hover { background: rgba(15, 20, 35, 0.85); }
+.cr-hero-min-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(139, 123, 255, 0.45);
+}
+/* Phones already dock the tutor to a compact cam (mobile-tutor-cam.css),
+   so the minimize button would just crowd it — hide it there. A state
+   minimized on desktop still restores fine via the pill below. */
+@media (max-width: 900px) { .cr-hero-min-btn { display: none; } }
+
+/* ----- Minimized state ----- */
+/* Hide the whole hero column and reflow the grid so chat (and the board)
+   reclaim the space. The grid overrides are width-scoped to match the base
+   layout in chat-redesign.css:
+     >1200px : chat | board
+     901-1200: chat only (board is a drawer)
+     <=900   : already a single 1fr column — hiding the hero is enough. */
+body.cr-hero-min .cr-hero-col { display: none !important; }
+
+@media (min-width: 1201px) {
+  body.cr-hero-min .cr-stage {
+    grid-template-columns: minmax(0, 1fr) var(--cr-side-w);
+  }
+  html.mm-board-hidden body.cr-hero-min .cr-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (min-width: 901px) and (max-width: 1200px) {
+  body.cr-hero-min .cr-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ----- "Show tutor" restore pill (shown only while minimized) ----- */
+.cr-hero-restore {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  z-index: 25;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px 7px 7px;
+  border: 1px solid var(--cr-border);
+  border-radius: 999px;
+  background: var(--cr-bg-panel);
+  color: var(--cr-text);
+  box-shadow: var(--cr-shadow-md);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: filter 0.15s var(--cr-ease);
+}
+.cr-hero-restore:hover { filter: brightness(1.08); }
+.cr-hero-restore:focus-visible {
+  outline: none;
+  box-shadow: var(--cr-shadow-md), 0 0 0 3px rgba(139, 123, 255, 0.40);
+}
+body.cr-hero-min .cr-hero-restore { display: inline-flex; }
+.cr-hero-restore img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  flex-shrink: 0;
+}
+.cr-hero-restore .cr-hero-restore-fallback { color: var(--cr-accent); }
+
+@media (max-width: 900px) {
+  .cr-hero-restore { top: 8px; left: 8px; padding: 6px 11px 6px 6px; }
+}
