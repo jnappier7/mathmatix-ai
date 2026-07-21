@@ -11,6 +11,7 @@
  */
 
 const logger = require('../utils/logger');
+const TUTOR_CONFIG = require('../utils/tutorConfig');
 
 // Patterns that indicate prompt injection attempts
 // Organized by category for easier maintenance and logging
@@ -178,7 +179,7 @@ function promptInjectionFilter(req, res, next) {
       userLevel: req.user?.level || 1,
       xpNeeded: 200,
       specialXpAwarded: "",
-      voiceId: "default",
+      voiceId: TUTOR_CONFIG.default.cartesiaVoiceId,
       newlyUnlockedTutors: [],
       drawingSequence: null,
       promptInjectionBlocked: true // Flag for analytics/debugging

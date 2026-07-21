@@ -468,7 +468,7 @@ router.get('/voice-preview/:tutorId', voicePreviewLimiter, async (req, res) => {
   }
 
   const tutor = TUTOR_CONFIG[tutorId];
-  const voiceId = ttsProvider.resolveVoiceId(tutor.cartesiaVoiceId || tutor.voiceId);
+  const voiceId = ttsProvider.resolveVoiceId(tutor.cartesiaVoiceId);
 
   try {
     const audioBuffer = await ttsProvider.generateAudio(tutor.voicePreview, voiceId);
@@ -543,7 +543,7 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
   }
 
   const tutor = TUTOR_CONFIG[tutorId];
-  const voiceId = ttsProvider.resolveVoiceId(tutor.cartesiaVoiceId || tutor.voiceId);
+  const voiceId = ttsProvider.resolveVoiceId(tutor.cartesiaVoiceId);
 
   try {
     const audioBuffer = await ttsProvider.generateAudio(cleaned, voiceId);
