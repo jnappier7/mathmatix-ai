@@ -226,8 +226,22 @@ function detectPosedArithmetic(text) {
   const re = /(?<![\w.$])-?\d+(?:\.\d+)?(?:\s*[*+/-]\s*-?\d+(?:\.\d+)?)+(?![\w.])/g;
   const m = s.match(re);
   if (!m || !m.length) return null;
-  const expr = m[m.length - 1].replace(/\s+/g, '');
+  const raw = m[m.length - 1];
+  const expr = raw.replace(/\s+/g, '');
   if (!/\d[*+/]-?\d|\d-\d/.test(expr)) return null;   // needs a real binary operator
+
+  // An expression that already states its own result is a STATEMENT, not a
+  // posed question — typically the tutor quoting the student's work back at
+  // them ("then you wrote 4/5 = 0.8"). Treating it as posed made the student's
+  // own wrong answer the grading target: they restated 4/5 as 0.8, it "matched"
+  // the quoted arithmetic, and a wrong answer was confirmed as correct.
+  //
+  // Checked by position rather than by rebuilding a pattern from `expr` — the
+  // expression contains regex metacharacters (`*`, `+`) and escaping it into a
+  // new RegExp is how this threw "Nothing to repeat" on "50 * 3".
+  const at = s.lastIndexOf(raw);
+  if (at !== -1 && /^\s*=\s*-?\d/.test(s.slice(at + raw.length))) return null;
+
   return expr;
 }
 

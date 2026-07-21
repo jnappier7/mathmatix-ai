@@ -10,6 +10,7 @@ const { sendSafetyConcernAlert } = require('../utils/emailService');
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const { isSessionStale, touchSession } = require('../utils/sessionWindow');
 const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
@@ -347,7 +348,8 @@ async function runStudentTurn(req, res) {
             if (user.activeMasteryConversationId) {
                 activeConversation = await Conversation.findById(user.activeMasteryConversationId);
             }
-            if (!activeConversation || !activeConversation.isActive || !activeConversation.isMastery) {
+            if (!activeConversation || !activeConversation.isActive || !activeConversation.isMastery
+                || isSessionStale(activeConversation)) {
                 const activeBadge = user.masteryProgress.activeBadge;
                 activeConversation = new Conversation({
                     userId: user._id,
@@ -365,8 +367,10 @@ async function runStudentTurn(req, res) {
             if (user.activeConversationId) {
                 activeConversation = await Conversation.findById(user.activeConversationId);
             }
-            // Create new conversation if: no conversation, inactive, OR it's a mastery conversation
-            if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery) {
+            // Create new conversation if: no conversation, inactive, a mastery
+            // conversation, OR the last one went idle past the session window.
+            if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery
+                || isSessionStale(activeConversation)) {
                 // IMPROVED: End the old session properly before creating a new one
                 if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
                     try {
@@ -394,6 +398,14 @@ async function runStudentTurn(req, res) {
                 await user.save();
             }
         }
+
+        // Mark the session as live NOW. Nothing on the main chat path was writing
+        // this field — it only defaulted at creation — so it read as "last active
+        // when the conversation was created". That broke two things at once: the
+        // staleness check above would roll a busy session 30 minutes after it
+        // started, and routes/parent.js already keys its "working right now"
+        // indicator off a 30-minute lastActivity window that never moved.
+        touchSession(activeConversation);
 
         // CRITICAL FIX: Validate user message before saving
         // File uploads may have no text message — use a default prompt

@@ -20,8 +20,11 @@ const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
-const { currentRung, isInferred, canAdvance, advanceRung } = require('../utils/skillRung');
+const { currentRung, isInferred, canAdvance, advanceRung, clearsPrerequisites } = require('../utils/skillRung');
 const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
+const Problem = require('../models/problem');
+const { initializeSkillMastery: initializeSkillMasteryEntry } = require('../utils/masteryEngine');
+const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
 // back to a legacy key so historical data still resolves during the migration.
@@ -2730,6 +2733,141 @@ router.get('/map', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('[mastery/map] failed:', error);
     res.status(500).json({ error: 'Failed to load skill map' });
+  }
+});
+
+// ============================================================================
+// CHALLENGE — "think you've got this? prove it"
+// ============================================================================
+
+/**
+ * Serve a challenge: a fixed set of problems, no hints, one shot.
+ * GET /api/mastery/challenge/:skillId
+ *
+ * Answers are stripped from the payload — the client never receives them, and
+ * grading happens server-side on submit.
+ */
+router.get('/challenge/:skillId', isAuthenticated, async (req, res) => {
+  try {
+    const skillId = canonicalSkillId(req.params.skillId);
+    const skill = await Skill.findOne({ skillId }).lean();
+    if (!skill) return res.status(404).json({ error: 'Skill not found' });
+
+    const user = await User.findById(req.user._id).lean();
+    const entry = getSkillMasteryEntry(user, skillId);
+    if (clearsPrerequisites(entry) && !isInferred(entry)) {
+      return res.status(409).json({ error: 'Already proved', reason: 'you already own this one' });
+    }
+
+    const problems = await Problem.aggregate([
+      { $match: { skillId, isActive: { $ne: false } } },
+      { $sample: { size: CHALLENGE_SIZE } }
+    ]);
+    if (problems.length < MIN_ITEMS) {
+      // Be explicit rather than serving a challenge that cannot possibly pass.
+      return res.status(409).json({
+        error: 'Not enough problems to run a challenge for this skill',
+        available: problems.length,
+        needed: MIN_ITEMS
+      });
+    }
+
+    res.json({
+      skillId,
+      label: skill.studentLabel || skill.displayName,
+      instructions: 'Five problems, no hints, one shot. Miss it and we find the gap — nothing lost.',
+      problems: problems.map((p) => ({
+        problemId: String(p._id),
+        prompt: p.prompt,
+        answerType: p.answerType,
+        options: p.options || undefined   // never p.answer / p.correctOption
+      }))
+    });
+  } catch (err) {
+    console.error('[mastery/challenge GET] failed:', err);
+    res.status(500).json({ error: 'Failed to start challenge' });
+  }
+});
+
+/**
+ * Submit a challenge. The client sends ANSWERS; the server grades them.
+ * POST /api/mastery/challenge/:skillId  { submissions: [{ problemId, answer }] }
+ *
+ * On a pass the skill advances to 'proved' and the cascade clears everything
+ * beneath it. On a miss nothing is lost — the response names the gap.
+ */
+router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
+  try {
+    const { submissions } = req.body || {};
+    if (!Array.isArray(submissions) || !submissions.length) {
+      return res.status(400).json({ error: 'Missing submissions' });
+    }
+
+    const skillId = canonicalSkillId(req.params.skillId);
+    const skill = await Skill.findOne({ skillId }).lean();
+    if (!skill) return res.status(404).json({ error: 'Skill not found' });
+
+    // Re-fetch the served problems by id so grading uses stored answers, never
+    // anything the client sent about correctness.
+    const ids = submissions.map((s) => s.problemId).filter(Boolean);
+    const problems = await Problem.find({ _id: { $in: ids }, skillId }).lean();
+    const result = gradeChallenge(problems, submissions);
+
+    const user = await User.findById(req.user._id);
+    const entry = getSkillMasteryEntry(user, skillId) || initializeSkillMasteryEntry(skillId);
+
+    if (!result.passed) {
+      // Failing a challenge is free. Record nothing punitive; hand back the gap.
+      return res.json({
+        passed: false,
+        correct: result.correct,
+        total: result.total,
+        missedProblemIds: result.missedProblemIds,
+        message: result.total < MIN_ITEMS
+          ? 'Not enough graded answers to call it — try again.'
+          : `${result.correct} of ${result.total}. Found the gap — let's close it.`
+      });
+    }
+
+    advanceRung(entry, 'proved', { via: 'challenge', evidence: toRungEvidence(result) });
+    const changed = entry.__rungResult && entry.__rungResult.changed;
+    delete entry.__rungResult;
+
+    let cleared = [];
+    if (changed) {
+      entry.status = 'mastered';
+      setSkillMasteryEntry(user, skillId, entry);
+      try {
+        const allSkills = await configCache.getOrSet(
+          'skills:unified',
+          () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+          3600
+        );
+        if (allSkills.length) {
+          const decoded = decodedMasteryMap(user);
+          const cascade = applyProofCascade(buildGraph(allSkills), decoded, skillId);
+          cleared = cascade.cleared;
+          for (const id of cleared) setSkillMasteryEntry(user, id, decoded.get(id));
+        }
+      } catch (cascadeErr) {
+        console.error('[mastery/challenge] cascade failed for %s:', skillId, cascadeErr);
+      }
+      await user.save();
+    }
+
+    res.json({
+      passed: true,
+      correct: result.correct,
+      total: result.total,
+      rung: 'proved',
+      clearedFromAbove: cleared,
+      message: cleared.length
+        ? `Proved it — and that closed ${cleared.length} skill${cleared.length === 1 ? '' : 's'} beneath it.`
+        : 'Proved it.'
+    });
+  } catch (err) {
+    console.error('[mastery/challenge POST] failed:', err);
+    res.status(500).json({ error: 'Failed to score challenge' });
   }
 });
 
