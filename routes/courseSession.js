@@ -11,6 +11,15 @@ const Conversation = require('../models/conversation');
 const User = require('../models/user');
 const ActTestSession = require('../models/actTestSession');
 const { calculateOverallProgress } = require('../utils/coursePrompt');
+const { isAuthenticated } = require('../middleware/auth');
+const Problem = require('../models/problem');
+const Skill = require('../models/skill');
+const { configCache } = require('../utils/cache');
+const { courseSkills, buildBlueprint, scoreBySkill, recommendedStart } = require('../utils/coursePreAssessment');
+const { gradeOne } = require('../utils/skillChallenge');
+const { advanceRung } = require('../utils/skillRung');
+const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
+const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 const { buildProgressUpdate } = require('../utils/progressState');
 
 // Day-one diagnostic prompt shown as a card on course entry, so the tutor can
@@ -26,6 +35,20 @@ const STARTING_POINT_CARD = {
   body: 'Take a short adaptive placement first — no studying needed. Your tutor uses it to '
     + 'start you at exactly the right level and focus each session on what you actually need.',
   cta: 'Take the Starting Point',
+};
+// Every course opens with a pre-assessment. A course is prep and readiness, not
+// the whole curriculum, so the first thing it should do is establish what the
+// student already owns — then clear those skills and aim the course at what is
+// left. Courses with a purpose-built diagnostic keep it; everything else gets the
+// course pre-assessment, which tests that course's OWN skills rather than a
+// generic placement.
+const PRE_ASSESSMENT_CARD = {
+  type: 'course-preassessment',
+  title: 'Start with a quick check',
+  body: 'Answer a few questions first so this course can skip what you already know '
+    + 'and spend its time on what you actually need. Anything you get right is marked '
+    + 'as yours — you will not be taught it again.',
+  cta: 'Start the check',
 };
 const COURSE_DIAGNOSTICS = {
   'act-prep': {
@@ -43,8 +66,24 @@ const COURSE_DIAGNOSTICS = {
 };
 
 async function buildCourseDiagnostic(user, courseId) {
-  const card = COURSE_DIAGNOSTICS[courseId];
+  // Default rather than an allowlist — a course with no entry used to open with
+  // no diagnostic at all, which is how a student ends up being taught a module
+  // they could already pass.
+  const card = COURSE_DIAGNOSTICS[courseId] || PRE_ASSESSMENT_CARD;
   if (!card || !user) return null;
+  if (card.type === 'course-preassessment') {
+    // Only once per course: a completed session's pre-assessment stands.
+    try {
+      const done = await CourseSession.countDocuments({
+        userId: user._id, courseId, preAssessmentCompletedAt: { $ne: null }
+      });
+      if (done > 0) return null;
+    } catch (err) {
+      console.error('[CourseSession] pre-assessment check failed (non-fatal):', err.message);
+      return null;
+    }
+    return { type: card.type, title: card.title, body: card.body, cta: card.cta, courseId };
+  }
   try {
     if (card.type === 'act-practice') {
       const taken = await ActTestSession.countDocuments({ userId: user._id, status: 'completed' });
@@ -691,6 +730,188 @@ router.post('/:id/drop', async (req, res) => {
   } catch (err) {
     console.error('[CourseSession] Error dropping:', err);
     res.status(500).json({ success: false, message: 'Failed to drop course' });
+  }
+});
+
+/* ============================================================
+   COURSE PRE-ASSESSMENT
+   Every course opens by finding out what the student already owns.
+   ============================================================ */
+
+function loadPathwayByCourseId(courseId) {
+  const resourcesDir = path.join(__dirname, '..', 'public', 'resources');
+  const files = fs.readdirSync(resourcesDir).filter(f => f.endsWith('-pathway.json'));
+  for (const file of files) {
+    try {
+      const pathway = JSON.parse(fs.readFileSync(path.join(resourcesDir, file), 'utf8'));
+      const cid = pathway.courseId || file.replace('-pathway.json', '');
+      if (cid === courseId) return pathway;
+    } catch (_) { /* skip an unreadable pathway rather than fail the request */ }
+  }
+  return null;
+}
+
+/**
+ * Serve the pre-assessment for a course.
+ * GET /api/course-sessions/:id/preassessment
+ *
+ * Answers are never included — grading is server-side, same as a challenge.
+ */
+router.get('/:id/preassessment', isAuthenticated, async (req, res) => {
+  try {
+    const session = await CourseSession.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!session) return res.status(404).json({ error: 'Course session not found' });
+
+    const pathway = loadPathwayByCourseId(session.courseId);
+    if (!pathway) return res.status(404).json({ error: 'Course pathway not found' });
+
+    const skills = courseSkills(pathway).map(s => s.skillId);
+    // How many usable items exist per skill, so the blueprint only tests what
+    // the bank can actually support.
+    const counts = await Problem.aggregate([
+      { $match: { skillId: { $in: skills }, isActive: { $ne: false } } },
+      { $group: { _id: '$skillId', n: { $sum: 1 } } }
+    ]);
+    const available = {};
+    counts.forEach(c => { available[c._id] = c.n; });
+
+    const blueprint = buildBlueprint(pathway, available);
+    if (!blueprint.skills.length) {
+      // Be explicit rather than serving an empty form.
+      return res.status(409).json({
+        error: 'No pre-assessment available for this course yet',
+        totalCourseSkills: blueprint.totalCourseSkills
+      });
+    }
+
+    const problems = [];
+    for (const s of blueprint.skills) {
+      const items = await Problem.aggregate([
+        { $match: { skillId: s.skillId, isActive: { $ne: false } } },
+        { $sample: { size: blueprint.itemsPerSkill } }
+      ]);
+      items.forEach(p => problems.push({
+        problemId: String(p._id),
+        skillId: s.skillId,
+        prompt: p.prompt,
+        answerType: p.answerType,
+        options: p.options || undefined      // never p.answer / p.correctOption
+      }));
+    }
+
+    res.json({
+      courseId: session.courseId,
+      title: pathway.title || session.courseId,
+      instructions: 'Anything you get right here is marked as yours — this course will not teach it again.',
+      problems,
+      // Honest about what this can and cannot tell them.
+      coverage: blueprint.coverage,
+      totalCourseSkills: blueprint.totalCourseSkills,
+      skillsAssessed: blueprint.skills.length
+    });
+  } catch (err) {
+    console.error('[CourseSession] pre-assessment GET failed:', err);
+    res.status(500).json({ error: 'Failed to build pre-assessment' });
+  }
+});
+
+/**
+ * Grade a pre-assessment, clear what the student demonstrated, and aim the course.
+ * POST /api/course-sessions/:id/preassessment  { submissions: [{ problemId, answer }] }
+ *
+ * A credited skill is proved at rung 2 with provenBy 'placement', which cascades
+ * to clear its prerequisites — so one good pre-assessment can retire a large part
+ * of a course before the first lesson.
+ */
+router.post('/:id/preassessment', isAuthenticated, async (req, res) => {
+  try {
+    const { submissions } = req.body || {};
+    if (!Array.isArray(submissions) || !submissions.length) {
+      return res.status(400).json({ error: 'Missing submissions' });
+    }
+
+    const session = await CourseSession.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!session) return res.status(404).json({ error: 'Course session not found' });
+    const pathway = loadPathwayByCourseId(session.courseId);
+    if (!pathway) return res.status(404).json({ error: 'Course pathway not found' });
+
+    const ids = submissions.map(s => s.problemId).filter(Boolean);
+    const problems = await Problem.find({ _id: { $in: ids } }).lean();
+    const byId = new Map(problems.map(p => [String(p._id), p]));
+
+    // Grade each item server-side, then roll up per skill.
+    const results = [];
+    submissions.forEach(sub => {
+      const problem = byId.get(String(sub.problemId));
+      if (!problem) return;                       // ignore unknown ids
+      const graded = gradeOne(problem, sub.answer);
+      results.push({ skillId: problem.skillId, correct: graded.correct });
+    });
+    const scored = scoreBySkill(results);
+
+    const user = await User.findById(req.user._id);
+    const cleared = [];
+    let graph = null;
+    try {
+      const allSkills = await configCache.getOrSet(
+        'skills:unified',
+        () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+        3600
+      );
+      if (allSkills.length) graph = buildGraph(allSkills);
+    } catch (err) {
+      console.error('[CourseSession] pre-assessment graph load failed:', err.message);
+    }
+
+    scored.credited.forEach(skillId => {
+      const entry = getSkillMasteryEntry(user, skillId) || {};
+      advanceRung(entry, 'proved', { via: 'placement' });
+      if (entry.__rungResult && entry.__rungResult.changed) {
+        delete entry.__rungResult;
+        entry.status = 'mastered';
+        setSkillMasteryEntry(user, skillId, entry);
+      } else {
+        delete entry.__rungResult;
+      }
+    });
+
+    // Cascade once, after all credits, so prerequisites beneath everything the
+    // student demonstrated are cleared together.
+    if (graph) {
+      const decoded = decodedMasteryMap(user);
+      scored.credited.forEach(skillId => {
+        const result = applyProofCascade(graph, decoded, skillId);
+        result.cleared.forEach(id => {
+          if (cleared.indexOf(id) === -1) cleared.push(id);
+          setSkillMasteryEntry(user, id, decoded.get(id));
+        });
+      });
+    }
+    await user.save();
+
+    const start = recommendedStart(pathway, scored.credited);
+    session.preAssessmentCompletedAt = new Date();
+    session.preAssessment = {
+      credited: scored.credited,
+      notCredited: scored.notCredited,
+      clearedFromAbove: cleared,
+      startModuleId: start ? start.moduleId : null
+    };
+    if (start && start.moduleId) session.currentModuleId = start.moduleId;
+    await session.save();
+
+    res.json({
+      credited: scored.credited,
+      notCredited: scored.notCredited,
+      clearedFromAbove: cleared,
+      start,
+      message: start
+        ? `You already own ${scored.credited.length} of these. Starting you at ${start.title}.`
+        : 'You cleared everything this check covered — you may not need this course.'
+    });
+  } catch (err) {
+    console.error('[CourseSession] pre-assessment POST failed:', err);
+    res.status(500).json({ error: 'Failed to score pre-assessment' });
   }
 });
 
