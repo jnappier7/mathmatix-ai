@@ -174,9 +174,10 @@ const BRAND_CONFIG = {
     // enforces the daily cap. See docs/COSMETICS_SHOP_DESIGN.md.
     coinRewards: {
         dailyCap: 500,            // max coins earnable per UTC day (anti-abuse)
-        levelUp: 20,              // per level gained
-        questComplete: 15,        // per daily quest completed
-        challengeComplete: 75,    // per weekly challenge completed (wiring TBD)
+        welcomeBonus: 100,        // one-time starter grant so students begin with a spendable balance (day 1)
+        levelUp: 30,              // per level gained
+        questComplete: 25,        // per daily quest completed
+        challengeComplete: 100,   // per weekly challenge completed
         masteryBadge: 100         // per mastery badge earned (wiring TBD)
     },
 
