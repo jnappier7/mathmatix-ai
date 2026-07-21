@@ -501,6 +501,34 @@ function registerUserRoutes(app) {
         await User.updateOne({ _id: req.user._id }, { $set: updates });
       }
 
+      // One-time welcome coins so students begin with a spendable balance on
+      // day 1 (enough to grab a cosmetic and feel the earn→spend loop). Granted
+      // once, gated by wallet.welcomeGrantedAt; bypasses the daily earn cap since
+      // it's a starter gift, not earned currency.
+      const isStudent = Array.isArray(userObj.roles) && userObj.roles.length
+        ? userObj.roles.includes('student')
+        : userObj.role === 'student';
+      if (isStudent && !(userObj.wallet && userObj.wallet.welcomeGrantedAt)) {
+        const grant = (BRAND_CONFIG.coinRewards && BRAND_CONFIG.coinRewards.welcomeBonus) || 100;
+        const now = new Date();
+        // Atomic + idempotent: the `welcomeGrantedAt: null` filter matches both an
+        // unset and a null field, so only ONE concurrent /user call can win.
+        const result = await User.updateOne(
+          { _id: req.user._id, 'wallet.welcomeGrantedAt': null },
+          {
+            $inc: { 'wallet.coins': grant, 'wallet.lifetimeEarned': grant },
+            $set: { 'wallet.welcomeGrantedAt': now },
+          }
+        );
+        if (result.modifiedCount === 1) {
+          // Reflect it in this response so the balance shows immediately.
+          userObj.wallet = userObj.wallet || { coins: 0, lifetimeEarned: 0, dailyEarned: 0 };
+          userObj.wallet.coins = (userObj.wallet.coins || 0) + grant;
+          userObj.wallet.lifetimeEarned = (userObj.wallet.lifetimeEarned || 0) + grant;
+          userObj.wallet.welcomeGrantedAt = now;
+        }
+      }
+
       const level = userObj.level || 1;
       const xpStart = BRAND_CONFIG.cumulativeXpForLevel(level);
       userObj.xpForCurrentLevel = Math.max(0, (userObj.xp || 0) - xpStart);
