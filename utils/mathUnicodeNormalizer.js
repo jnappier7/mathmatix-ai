@@ -128,6 +128,19 @@ const UNICODE_REGEX = new RegExp('[' + Object.keys(ALL_CHARS).join('') + ']', 'g
 // "(1/2)" in place of "½".
 const OPERATOR_REGEX = new RegExp('[' + Object.keys(OPERATOR_MAP).join('') + ']', 'g');
 
+// The LaTeX spellings of the same operators. The tutor and MathLive both emit
+// these, and the regex-based engine's character classes can't see them: it
+// stopped at the backslash, so "3 \times 4 + 2" parsed as "4 + 2" and graded
+// as 6 — a confidently WRONG answer rather than a failure to parse. \b keeps
+// "\divide" and friends from matching a prefix.
+const LATEX_OPERATOR_MAP = {
+  '\\div': '/',
+  '\\times': '*',
+  '\\cdot': '*',
+  '\\ast': '*',
+};
+const LATEX_OPERATOR_REGEX = /\\(?:div|times|cdot|ast)\b/g;
+
 /**
  * Normalize ONLY Unicode math operators and signs to ASCII (minus, ×, ÷, dots,
  * comparison operators, √, and their fullwidth/variant forms). Leaves
@@ -142,7 +155,9 @@ const OPERATOR_REGEX = new RegExp('[' + Object.keys(OPERATOR_MAP).join('') + ']'
  */
 function normalizeMathOperators(str) {
   if (!str || typeof str !== 'string') return str || '';
-  return str.replace(OPERATOR_REGEX, ch => OPERATOR_MAP[ch] || ch);
+  return str
+    .replace(OPERATOR_REGEX, ch => OPERATOR_MAP[ch] || ch)
+    .replace(LATEX_OPERATOR_REGEX, cmd => LATEX_OPERATOR_MAP[cmd] || cmd);
 }
 
 /**

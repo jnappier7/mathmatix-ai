@@ -34,7 +34,13 @@ const { evalExpression, expressionValue } = require('./rationalEvaluator');
  */
 function isolateNumericExpression(text) {
     if (!text) return null;
-    const rx = /(?<![\w.^])-?\d[\d\s.+\-*/^()]*\d(?![\w.^])/g;
+    // The trailing guard must reject a DECIMAL point ("3.5" mid-number) without
+    // rejecting a SENTENCE period. `(?![\w.^])` did both: on "24 - 6 / 2 + 3."
+    // it failed at "3", backtracked to the previous digit, and returned the
+    // truncated "24 - 6 / 2" — which then became the board's PROBLEM card and,
+    // worse, the answer the grader checked against (21 instead of 24). Only a
+    // period followed by a digit is part of the number.
+    const rx = /(?<![\w.^])-?\d[\d\s.+\-*/^()]*\d(?!\.?\d|[\w^])/g;
     let m;
     while ((m = rx.exec(text)) !== null) {
         const expr = m[0].trim();
@@ -569,7 +575,11 @@ function detectMathProblem(message) {
     // floating drift). Placed AFTER the two-operand and fraction-pair patterns so those
     // keep their dedicated types; fires only when the expression has parentheses OR
     // 2+ operators, so simple two-operand arithmetic is left alone.
-    const chainForm = message.replace(/\s+/g, ''); // operators already ASCII-normalized above
+    // Drop a sentence-final period before parsing: "24 - 6 / 2 + 3." is the
+    // expression plus punctuation, and carrying the "." into `expression` puts
+    // it on the board's PROBLEM card verbatim. A decimal point always has a
+    // digit after it, so this can only ever remove punctuation.
+    const chainForm = message.replace(/\s+/g, '').replace(/\.+$/, ''); // operators already ASCII-normalized above
     const isPureNumericExpr = /^[\d.+\-*/^()]+$/.test(chainForm) && /[+\-*/^]/.test(chainForm);
     const hasParens = /[()]/.test(chainForm);
     const hasTwoPlusOps = /^-?\d+\.?\d*(?:[+\-*/^]\d+\.?\d*){2,}$/.test(chainForm);
