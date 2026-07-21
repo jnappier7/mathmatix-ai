@@ -10,6 +10,7 @@ import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMe
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
 import './modules/statusCard.js'; // registers window.openStatusCard (Progress button)
 import './modules/shop.js'; // registers window.openShop (cosmetics shop)
+import { showCoinReward } from './modules/coinFx.js'; // coin fly-in + count-up + chime
 import { resolveAvatarUrl } from './modules/avatarResolver.js';
 import { applyCosmetics } from './modules/cosmeticsApply.js';
 import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js';
@@ -447,6 +448,15 @@ document.addEventListener("DOMContentLoaded", () => {
         try { initIdentityChip(currentUser); } catch (e) { console.warn('Identity chip init failed', e); }
         // Apply any equipped cosmetics (no-op until the student equips something).
         try { applyCosmetics(currentUser); } catch (e) { console.warn('Apply cosmetics failed', e); }
+        // Sidebar coin counter → shop (closes the earn→spend loop right where
+        // students watch their balance grow).
+        const coinsBtn = document.getElementById('sidebar-coins-btn');
+        if (coinsBtn && !coinsBtn.dataset.wired) {
+            coinsBtn.dataset.wired = '1';
+            coinsBtn.addEventListener('click', () => {
+                if (typeof window.openShop === 'function') window.openShop();
+            });
+        }
     }
 
     
@@ -3224,6 +3234,25 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.coins !== undefined) {
                 if (!currentUser.wallet) currentUser.wallet = {};
                 currentUser.wallet.coins = data.coins;
+                // Reflect the balance immediately ONLY when nothing was awarded.
+                // If coins WERE awarded, leave the counter on its old value so the
+                // coinFx count-up below can tick it up to the new total.
+                if (!(data.coinsAwarded > 0)) updateGamificationDisplay();
+            }
+
+            // Coins earned this turn (e.g. a level-up) — make it VISIBLE: coins
+            // fly to the counter, it ticks up, and a cha-ching plays.
+            if (data.coinsAwarded > 0) {
+                try {
+                    const sendBtn = document.getElementById('send-button') || document.getElementById('sendBtn');
+                    let origin;
+                    if (sendBtn) {
+                        const r = sendBtn.getBoundingClientRect();
+                        origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+                    }
+                    // Delay a beat so it lands after the XP/level-up flourish.
+                    setTimeout(() => showCoinReward(data.coinsAwarded, origin, data.coins), 600);
+                } catch (e) { console.warn('Coin reward FX failed', e); }
             }
 
             // Combo meter: advance/cool off the verified problem result (D1).

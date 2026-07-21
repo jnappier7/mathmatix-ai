@@ -52,6 +52,23 @@
 .shop-rarity-epic      { border-top-color: #7c4dff; }
 .shop-rarity-legendary { border-top-color: #ffc24b; }
 
+.shop-swatch {
+  width: 100%; height: 46px; border-radius: 9px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-size: 12px 12px;
+}
+.shop-swatch-legendary {
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 0 1px #ffc24b, 0 0 10px rgba(255, 194, 75, 0.5);
+}
+.shop-swatch-legendary::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.75) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: shop-shine 2.6s ease-in-out infinite;
+}
+@keyframes shop-shine { to { transform: translateX(100%); } }
+
 .shop-item-name { font-size: 0.95rem; font-weight: 800; color: #18202b; }
 .shop-item-rarity { font-size: 0.7rem; text-transform: capitalize; color: #5b6876; }
 
@@ -65,9 +82,11 @@
 .shop-btn-buy { background: #fff8e6; color: #b8860b; }
 .shop-btn-equip { background: #12b3b3; color: #fff; }
 .shop-btn-equipped { background: rgba(18, 179, 179, 0.14); color: #0f8a8a; }
+.shop-btn-locked { background: #f1f3f5; color: #8a97a3; }
 
 @media (prefers-reduced-motion: reduce) {
   .shop-backdrop, .shop-card { transition: none; }
+  .shop-swatch-legendary::after { animation: none; }
 }
 @media (max-width: 480px) {
   .shop-card { border-radius: 16px; }

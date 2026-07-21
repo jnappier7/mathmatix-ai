@@ -86,7 +86,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Personal status card modal (Progress button) -->
   <link rel="stylesheet" href="/css/status-card.css" />
   <!-- Cosmetics: equipped skins + shop modal -->
-  <link rel="stylesheet" href="/dist/css/chat-css2.20673ca0.css" />
+  <link rel="stylesheet" href="/dist/css/chat-css2.03bfa896.css" />
+  <!-- Coin surfacing: sidebar counter + fly-in reward animation -->
+  <link rel="stylesheet" href="/css/coin-fx.css" />
 <!-- Interactive math workspace (chat right slot) -->
   <link rel="stylesheet" href="/css/workspace.css?v=20260711" />
   <!-- Voice mode (layout mode of the chat stage) -->
@@ -390,7 +392,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Compact Progress Card — motivational, not actionable, so at the bottom -->
     <div class="sidebar-section sidebar-section-compact" style="margin-top: auto;">
       <div class="sidebar-progress">
-        <div class="sidebar-progress-level"><span data-i18n="misc.level">Level</span> <span id="sidebar-level">1</span></div>
+        <div class="sidebar-progress-topline">
+          <div class="sidebar-progress-level"><span data-i18n="misc.level">Level</span> <span id="sidebar-level">1</span></div>
+          <button type="button" id="sidebar-coins-btn" class="sidebar-coins-pill" title="Open Shop" aria-label="Coins — open shop">
+            <span class="sidebar-coins-icon" aria-hidden="true">🪙</span>
+            <span id="sidebar-coins" class="sidebar-coins-val">0</span>
+          </button>
+        </div>
         <div class="sidebar-progress-bar">
           <div id="sidebar-progress-fill" class="sidebar-progress-fill" style="width: 0%;"></div>
         </div>

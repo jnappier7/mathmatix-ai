@@ -678,10 +678,12 @@ const userSchema = new Schema({
      Purely visual; nothing here affects tutoring/grading/XP. */
   ownedCosmetics:    { type: [String], default: [] },       // catalog item ids owned
   equippedCosmetics: {
-    theme:      { type: String, default: 'default' },
-    board:      { type: String, default: 'default' },
-    calculator: { type: String, default: 'default' },
-    header:     { type: String, default: 'default' }
+    theme:       { type: String, default: 'default' },
+    bubble:      { type: String, default: 'default' },  // student's own chat bubble skin
+    avatarFrame: { type: String, default: 'default' },  // ring around the avatar
+    board:       { type: String, default: 'default' },
+    calculator:  { type: String, default: 'default' },
+    header:      { type: String, default: 'default' }
   },
 
   totalActiveTutoringMinutes:  { type: Number, default: 0 },

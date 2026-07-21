@@ -10,6 +10,8 @@
 
 const SLOT_ATTR = {
     theme: 'data-theme-skin',      // avoid clashing with the base `theme` mode
+    bubble: 'data-skin-bubble',    // student's own chat message bubbles
+    avatarFrame: 'data-skin-avatarframe', // ring around the avatar
     board: 'data-skin-board',
     calculator: 'data-skin-calculator',
     header: 'data-skin-header',
