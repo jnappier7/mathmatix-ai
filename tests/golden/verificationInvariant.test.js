@@ -164,6 +164,30 @@ describe('Verification invariant: assertion detection (fast path)', () => {
   });
 });
 
+// Pushback must be visible to the pipeline. It is deliberately a SIGNAL rather
+// than only a message type: a student can dispute while frustrated, or while
+// restating their answer, and the correctness consequence has to apply in all
+// of those — not just when "you're wrong" is the entire message.
+describe('Verification invariant: dispute detection', () => {
+  for (const fx of fixtures.disputes || []) {
+    test(fx.name, () => {
+      const obs = observe(fx.message, { recentAssistantMessages: [], recentUserMessages: [] });
+      expect(obs.isDispute).toBe(fx.expectDispute);
+    });
+  }
+
+  test('a dispute inside a frustrated message is still seen as a dispute', () => {
+    const obs = observe('ugh you are wrong', {
+      recentAssistantMessages: [],
+      recentUserMessages: [],
+    });
+    // Frustration wins the message TYPE — acknowledging the feeling is good
+    // tutoring — but the dispute signal must survive so the verdict is reopened.
+    expect(obs.messageType).toBe('frustration');
+    expect(obs.isDispute).toBe(true);
+  });
+});
+
 describe('Verification invariant: the rule itself', () => {
   for (const fx of fixtures.invariant || []) {
     test(fx.name, () => {

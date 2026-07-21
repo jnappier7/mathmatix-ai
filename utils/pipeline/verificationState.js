@@ -128,6 +128,27 @@ const ASSERTS_CORRECT = /^(that'?s\s+(?:right|correct|it)\b|correct\b|exactly\b|
 
 const ASSERTS_INCORRECT = /(\bnot\s+(?:quite|right|correct)\b|\bthat'?s\s+not\s+(?:it|right|correct)\b|\bincorrect\b|\bwrong\b|\bclose[,!.]\s*but\b|\bnice\s+try\b|\bgood\s+try\b|\byou\s+made\s+an?\s+(?:error|mistake)\b|\bthere'?s\s+an?\s+(?:error|mistake)\b|\bcheck\s+(?:that|your)\s+(?:again|work|arithmetic)\b)/i;
 
+// High-RECALL, low-precision pre-filter: could this response be making a
+// correctness judgement at all? Deliberately over-triggers. Anything it misses
+// is never checked, so it is written to be generous; the false positives it
+// creates cost one cheap classifier call, which is the right way round. This is
+// the layer that must catch openers like "Whoa, hold up" — not by naming them,
+// but by treating evaluative and corrective register broadly.
+const MAYBE_ASSERTION = /\b(right|wrong|correct|incorrect|mistake|error|off|close|exactly|actually|hold\s*(?:up|on)|whoa|wait|hmm+|oops|nope|careful|almost|recheck|re-?check|check|revisit|reconsider|sure\s+about|think\s+again|try\s+again|look\s+again|walk\s+me\s+through|where\s+did|how\s+did\s+you\s+get|not\s+(?:quite|it)|let'?s\s+(?:see|look|check))\b|[?!]/i;
+
+/**
+ * Could this response be asserting anything about correctness? Used to decide
+ * whether the expensive classifier is worth running at all. A false here means
+ * the response is treated as making no claim, so it errs generous.
+ *
+ * @param {string} text
+ * @returns {boolean}
+ */
+function mayAssertCorrectness(text) {
+  if (!text || typeof text !== 'string') return false;
+  return MAYBE_ASSERTION.test(text);
+}
+
 /**
  * Cheap syntactic guess at whether a tutor response asserts a correctness
  * judgement. Returns null when it cannot tell — the caller must then escalate
@@ -194,8 +215,10 @@ module.exports = {
   hasMathematicalContent,
   deriveVerificationState,
   classifyAssertionFast,
+  mayAssertCorrectness,
   checkInvariant,
   // exported for tests
   ASSERTS_CORRECT,
   ASSERTS_INCORRECT,
+  MAYBE_ASSERTION,
 };

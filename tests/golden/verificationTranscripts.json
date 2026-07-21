@@ -77,6 +77,24 @@
     { "name": "a neutral prompt is judged as no assertion or escalated", "reply": "Walk me through your thinking on that first step.", "expectFastPathOneOf": ["asserts_nothing", "escalate"] }
   ],
 
+  "_disputesREADME": "Every one of these classified as general_math at 0.5 confidence before the DISPUTE type existed, which told the tutor 'the student stated a math problem — guide them into the first step'. A student saying 'you are wrong' got the same handling as one pasting homework.",
+
+  "disputes": [
+    { "name": "flat contradiction", "message": "you are wrong", "expectDispute": true },
+    { "name": "contraction form", "message": "you're wrong", "expectDispute": true },
+    { "name": "denial of the tutor's claim", "message": "that is not correct", "expectDispute": true },
+    { "name": "shorter denial", "message": "that's not right", "expectDispute": true },
+    { "name": "explicit disagreement", "message": "i disagree", "expectDispute": true },
+    { "name": "repetition complaint", "message": "i already said that", "expectDispute": true },
+    { "name": "asks the tutor to re-check", "message": "check it again", "expectDispute": true },
+
+    { "name": "a wrong answer is not a dispute", "message": "x = 5", "expectDispute": false },
+    { "name": "a question is not a dispute", "message": "how do I start?", "expectDispute": false },
+    { "name": "self-correction is not a dispute", "message": "wait I think I made a mistake", "expectDispute": false },
+    { "name": "frustration alone is not a dispute", "message": "this is stupid", "expectDispute": false },
+    { "name": "confirming the tutor is not a dispute", "message": "yeah that's right", "expectDispute": false }
+  ],
+
   "invariant": [
     { "name": "rejecting verified-correct work is a violation", "assertion": "asserts_incorrect", "state": "verified_correct", "expectOk": false },
     { "name": "rejecting with no verdict is a violation", "assertion": "asserts_incorrect", "state": "unverified", "expectOk": false },

@@ -137,7 +137,14 @@ function resolveProblemExpression(context) {
   }
 
   for (const c of candidates) {
-    const expr = String(c).replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').trim();
+    const expr = String(c)
+      .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
+      .trim()
+      // Sentence punctuation swept up by the scan ("…24-6/2+3." -> "24-6/2+3").
+      // mathjs tolerates a trailing dot, but only by luck — a trailing operator
+      // or comma would fail the parse and silently cost us a verdict.
+      .replace(/[.,;:]+$/, '')
+      .trim();
     // Equations are out of scope here. A solving step on an equation is not
     // value-equivalent to the original (2x+3=13 -> 2x=10 changes both sides),
     // so treating it as such would produce confident nonsense.
@@ -181,7 +188,10 @@ async function diagnoseTransformation(observation, context) {
     verificationSource: null,
   };
 
-  const studentExpr = extractBareExpression(rawText);
+  // On a dispute turn the message itself carries no math ("you are wrong"), so
+  // the caller supplies the submission being disputed. Re-checking it is what
+  // gives the turn a verdict instead of leaving the tutor to restate its claim.
+  const studentExpr = extractBareExpression(rawText) || context.verificationCandidate || null;
   if (!studentExpr) return noWork;
 
   const problemExpr = resolveProblemExpression(context);

@@ -17,7 +17,7 @@
  */
 
 const { observe, MESSAGE_TYPES } = require('./observe');
-const { diagnose } = require('./diagnose');
+const { diagnose, extractBareExpression } = require('./diagnose');
 const { decide, ACTIONS } = require('./decide');
 const { generate, assemblePrompt } = require('./generate');
 const { attachVerifiedTwin } = require('../twinGenerator');
@@ -25,6 +25,7 @@ const { verify } = require('./verify');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { persist } = require('./persist');
 const { verifyWithEscalation, pickProblemContext } = require('./llmVerifier');
+const { deriveVerificationState, hasMathematicalContent } = require('./verificationState');
 const verifyMetrics = require('../verifyMetrics');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
@@ -114,23 +115,72 @@ async function runPipeline(message, ctx) {
     hasRecentUpload: ctx.hasRecentUpload || false,
   });
 
+  // The most recent thing the student actually submitted as math, newest-first.
+  // Used to re-open a verdict when they dispute one.
+  function lastStudentMathSubmission(messages) {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const content = messages[i] && messages[i].content;
+      if (!content) continue;
+      const expr = extractBareExpression(content);
+      if (expr) return expr;
+      // A bare number ("-3") is a submission too, and is what a student most
+      // often defends when they disagree.
+      const bare = String(content).trim();
+      if (/^-?\d+(?:\.\d+)?$/.test(bare)) return bare;
+    }
+    return null;
+  }
+
   console.log(`[Pipeline] Observe: ${observation.messageType} (confidence: ${observation.confidence})`);
 
   // ── Parallel: LLM answer verification ──
-  // Fire a small, focused verification call alongside the main pipeline
-  // whenever the student is attempting an answer. The deterministic solver
-  // in diagnose covers ~30% of math topics — for everything else (calculus,
-  // trig identities, proofs, word problems) this fills the gap with a fresh
-  // LLM verdict the pipeline can trust. Returns in ~200ms, well before
-  // generate finishes, so the latency cost is zero.
+  // Fire a small, focused verification call alongside the main pipeline. The
+  // deterministic solver in diagnose covers ~30% of math topics — for everything
+  // else (calculus, trig identities, proofs, word problems) this fills the gap
+  // with a fresh LLM verdict the pipeline can trust. Returns in ~200ms, well
+  // before generate finishes, so the latency cost is zero.
+  //
+  // THE GATE USED TO BE `messageType === ANSWER_ATTEMPT`, which made the whole
+  // verification stack opt-in behind observe's answer regex. A student writing a
+  // correct step the regex didn't recognise ("24-3+3") got no solver, no CAS and
+  // no verifier, and the tutor filled the silence by guessing. Widening that
+  // regex was the standing fix and it never converged, because the gate was the
+  // bug.
+  //
+  // So the trigger is now "did the student submit something checkable", not
+  // "does this look like an answer". Two things it must NOT become:
+  //   - It cannot fire on arbitrary prose. The verifier computes the problem's
+  //     answer and compares; hand it "how do I do 24-6/2?" and it reports NOT
+  //     equivalent, i.e. a false INCORRECT verdict that would license the tutor
+  //     to reject a question. So the candidate must be a real answer or a real
+  //     expression, never the raw message.
+  //   - It cannot fire on a bare problem drop. That's homework being handed
+  //     over, not work to grade.
+  // Failing to fire is now safe in a way it wasn't before: no verdict means
+  // UNVERIFIED, and under the invariant the tutor must ask rather than assert.
+  //
+  // A DISPUTE re-opens the previous verdict. "You are wrong" carries no math of
+  // its own, so with nothing to check the tutor would simply restate its claim —
+  // which is what turned one bad call into a five-turn argument. Re-verifying
+  // the student's last mathematical submission gives this turn a real verdict,
+  // and the assertion invariant then stops the tutor repeating a rejection it
+  // can no longer support. Note what this deliberately is NOT: pushback alone
+  // never earns a concession. The tutor concedes only if verification says so.
   let llmVerificationPromise = null;
-  if (observation.messageType === MESSAGE_TYPES.ANSWER_ATTEMPT && observation.answer?.value) {
+  const disputedSubmission = observation.isDispute
+    ? lastStudentMathSubmission(recentUserMessages)
+    : null;
+  const verificationCandidate = observation.answer?.value
+    || (!observation.isBareProblemDrop ? extractBareExpression(message) : null)
+    || disputedSubmission;
+
+  if (verificationCandidate) {
     const problemText = pickProblemContext(
       recentAssistantMessages.map(msg => ({ content: msg.content, problemInfo: msg.problemInfo || null }))
     );
     if (problemText) {
       const verifyStart = Date.now();
-      llmVerificationPromise = verifyWithEscalation(problemText, observation.answer.value)
+      llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate)
         .then(verdict => {
           const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;
           if (verdict.isCorrect !== null) {
@@ -170,12 +220,25 @@ async function runPipeline(message, ctx) {
     user: ctx.user,
     lastProblemState: ctx.conversation?.lastProblemState || null,
     pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+    verificationCandidate,
     llmVerificationPromise,
   });
+
+  // ── The tutor's licence to make a correctness claim ──
+  // Attached to the diagnosis so every downstream stage reads one value rather
+  // than re-deriving "did anything verify this?" from isCorrect/type/source.
+  // UNVERIFIED is a RESTRICTION, not an absence: it is what the generate stage
+  // must be told so it asks instead of guessing, and what the verify stage
+  // enforces against on the way out.
+  diagnosis.verificationState = deriveVerificationState(
+    diagnosis,
+    hasMathematicalContent(message)
+  );
 
   if (diagnosis.type !== 'no_answer') {
     console.log(`[Pipeline] Diagnose: ${diagnosis.type} (answer: ${diagnosis.answer}, correct: ${diagnosis.correctAnswer})`);
   }
+  console.log(`[Pipeline] Verification state: ${diagnosis.verificationState}${diagnosis.verificationSource ? ` (${diagnosis.verificationSource})` : ''}`);
 
   // ── Session mood (emotional arc across the conversation) ──
   const sessionMood = computeSessionMood(ctx.conversation.messages, {
@@ -453,6 +516,7 @@ async function runPipeline(message, ctx) {
     messageType: observation.messageType,
     correctAnswer: diagnosis.correctAnswer || null,
     diagnosisType: diagnosis.type,
+    verificationState: diagnosis.verificationState,
     hasRecentUpload: ctx.hasRecentUpload || false,
     isWorksheetFollowUp: observation.isWorksheetFollowUp || false,
     isBareProblemDrop: observation.isBareProblemDrop || false,
