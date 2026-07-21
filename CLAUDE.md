@@ -281,6 +281,16 @@ npm run seed:playground / seed:test / seed:skills   # seed data
 - **`render.yaml` ≠ prod config** — it's documentation; real config/crons live in the Render dashboard.
 - **Known doc↔code drift** (see `docs/SCREENER_STATE_ANALYSIS.md`): screener grade-based start / theta-reset,
   IEP UI vs schema mismatch, pattern-skill coverage incomplete (~59 of ~204).
+- **Never `git add -A` / `git add .` here.** More than one session can be editing this working tree at
+  once, so a blanket stage sweeps up someone else's in-flight work and commits it under your message.
+  This has already happened: a 14-file TTS refactor was swept into an unrelated UI commit, then split
+  back out — and the split left the branch broken mid-refactor for two commits. **Stage explicit paths**
+  (`git add path/a path/b`) and check `git status` before committing: files you don't recognise are
+  probably not yours.
+- **A green suite can hide a half-applied refactor.** Jest reads the working tree, so a change that is
+  uncommitted still passes locally while the committed branch is broken. When a test fails and then
+  "goes away", don't call it flaky — `git stash -u` and run against the branch as committed before
+  concluding anything.
 
 ---
 
