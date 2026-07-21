@@ -64,6 +64,44 @@ function isClaudeModel(model) {
 // Claude takes it as a top-level `system` string. Pull all system messages
 // out, concatenate them, and pass the rest through. Merge consecutive
 // same-role turns (Claude is stricter about alternation than OpenAI).
+// Translate one OpenAI content block into Claude's shape.
+// The important case is images: OpenAI uses
+//   { type: 'image_url', image_url: { url } }
+// and Claude uses
+//   { type: 'image', source: { type: 'base64'|'url', ... } }
+// Passing OpenAI's shape through unchanged makes the API reject the whole
+// request with "Input tag 'image_url' ... does not match any of the expected
+// tags", which is what happened on EVERY turn once a photo entered the history:
+// the streaming call 400'd and silently fell back to non-streaming, costing a
+// wasted call and the streaming UX on every subsequent message of the session.
+function translateContentBlock(block) {
+  if (!block || typeof block !== 'object') return block;
+  if (block.type !== 'image_url') return block;
+
+  const url = block.image_url && block.image_url.url;
+  if (typeof url !== 'string' || !url) return null;
+
+  const dataUrl = /^data:([^;,]+);base64,(.*)$/.exec(url);
+  if (dataUrl) {
+    return { type: 'image', source: { type: 'base64', media_type: dataUrl[1], data: dataUrl[2] } };
+  }
+  if (/^https?:\/\//i.test(url)) {
+    return { type: 'image', source: { type: 'url', url } };
+  }
+  // Anything else (blob:, relative paths) Claude cannot fetch — drop it rather
+  // than fail the whole request over one unusable attachment.
+  return null;
+}
+
+function translateContent(content) {
+  if (typeof content === 'string') return content;
+  if (!Array.isArray(content)) return content;
+  const blocks = content.map(translateContentBlock).filter(Boolean);
+  // A message whose only content was an unusable image would otherwise be an
+  // empty array, which Claude rejects.
+  return blocks.length ? blocks : '(attachment omitted)';
+}
+
 function splitSystemAndMessages(messages) {
   const systemParts = [];
   const convo = [];
@@ -74,7 +112,7 @@ function splitSystemAndMessages(messages) {
       continue;
     }
     const role = m.role === 'assistant' ? 'assistant' : 'user';
-    const content = typeof m.content === 'string' ? m.content : m.content;
+    const content = translateContent(m.content);
     const last = convo[convo.length - 1];
     if (last && last.role === role && typeof last.content === 'string' && typeof content === 'string') {
       last.content += `\n\n${content}`;
