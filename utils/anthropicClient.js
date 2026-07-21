@@ -59,49 +59,65 @@ function isClaudeModel(model) {
   return typeof model === 'string' && model.toLowerCase().startsWith('claude');
 }
 
+// ── Content translation (vision) ────────────────────────────────────
+// OpenAI vision blocks are {type:'image_url', image_url:{url}}; Claude wants
+// {type:'image', source:{...}}. Passing an image_url block straight through
+// 400s the whole call ("Input tag 'image_url' ... does not match any of the
+// expected tags"), which is what broke tutor turns that carry an uploaded
+// image. Convert here; text blocks and plain strings pass through untouched.
+const CLAUDE_IMAGE_MEDIA_TYPES = new Set([
+  'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+]);
+
+// Turn an OpenAI image_url `url` into a Claude image `source`, or null if it
+// can't be represented (non-base64 data URL, or a media type Claude vision
+// doesn't accept — e.g. HEIC/SVG). Callers drop unconvertible images rather
+// than fail the request.
+function imageUrlToClaudeSource(url) {
+  if (typeof url !== 'string' || !url) return null;
+  const dataMatch = /^data:([^;,]+)?(;base64)?,([\s\S]*)$/i.exec(url);
+  if (dataMatch) {
+    if (!dataMatch[2]) return null; // Claude needs base64 for inline data: images
+    let mediaType = (dataMatch[1] || '').toLowerCase();
+    if (mediaType === 'image/jpg') mediaType = 'image/jpeg';
+    if (!CLAUDE_IMAGE_MEDIA_TYPES.has(mediaType)) return null;
+    const data = dataMatch[3] || '';
+    if (!data) return null;
+    return { type: 'base64', media_type: mediaType, data };
+  }
+  if (/^https?:\/\//i.test(url)) {
+    return { type: 'url', url };
+  }
+  return null;
+}
+
+// Normalize a message's `content` (string | OpenAI block[]) to what Claude's
+// Messages API accepts. Strings pass through; arrays are mapped block-by-block.
+function toAnthropicContent(content) {
+  if (typeof content === 'string' || !Array.isArray(content)) return content;
+  const out = [];
+  for (const block of content) {
+    if (!block || typeof block !== 'object') continue;
+    if (block.type === 'text' && typeof block.text === 'string') {
+      out.push({ type: 'text', text: block.text });
+    } else if (block.type === 'image_url') {
+      const source = imageUrlToClaudeSource(block.image_url && block.image_url.url);
+      if (source) out.push({ type: 'image', source }); // else drop, don't 400 the call
+    } else if (block.type === 'image' && block.source) {
+      out.push(block); // already Claude-shaped
+    }
+    // unknown block types are dropped
+  }
+  // Claude rejects an empty content array — fall back to a single space so a
+  // turn that was nothing but an unconvertible image still keeps the slot.
+  return out.length ? out : ' ';
+}
+
 // ── Message translation ─────────────────────────────────────────────
 // OpenAI carries the system prompt as a role:"system" message in the array.
 // Claude takes it as a top-level `system` string. Pull all system messages
 // out, concatenate them, and pass the rest through. Merge consecutive
 // same-role turns (Claude is stricter about alternation than OpenAI).
-// Translate one OpenAI content block into Claude's shape.
-// The important case is images: OpenAI uses
-//   { type: 'image_url', image_url: { url } }
-// and Claude uses
-//   { type: 'image', source: { type: 'base64'|'url', ... } }
-// Passing OpenAI's shape through unchanged makes the API reject the whole
-// request with "Input tag 'image_url' ... does not match any of the expected
-// tags", which is what happened on EVERY turn once a photo entered the history:
-// the streaming call 400'd and silently fell back to non-streaming, costing a
-// wasted call and the streaming UX on every subsequent message of the session.
-function translateContentBlock(block) {
-  if (!block || typeof block !== 'object') return block;
-  if (block.type !== 'image_url') return block;
-
-  const url = block.image_url && block.image_url.url;
-  if (typeof url !== 'string' || !url) return null;
-
-  const dataUrl = /^data:([^;,]+);base64,(.*)$/.exec(url);
-  if (dataUrl) {
-    return { type: 'image', source: { type: 'base64', media_type: dataUrl[1], data: dataUrl[2] } };
-  }
-  if (/^https?:\/\//i.test(url)) {
-    return { type: 'image', source: { type: 'url', url } };
-  }
-  // Anything else (blob:, relative paths) Claude cannot fetch — drop it rather
-  // than fail the whole request over one unusable attachment.
-  return null;
-}
-
-function translateContent(content) {
-  if (typeof content === 'string') return content;
-  if (!Array.isArray(content)) return content;
-  const blocks = content.map(translateContentBlock).filter(Boolean);
-  // A message whose only content was an unusable image would otherwise be an
-  // empty array, which Claude rejects.
-  return blocks.length ? blocks : '(attachment omitted)';
-}
-
 function splitSystemAndMessages(messages) {
   const systemParts = [];
   const convo = [];
@@ -112,7 +128,7 @@ function splitSystemAndMessages(messages) {
       continue;
     }
     const role = m.role === 'assistant' ? 'assistant' : 'user';
-    const content = translateContent(m.content);
+    const content = toAnthropicContent(m.content);
     const last = convo[convo.length - 1];
     if (last && last.role === role && typeof last.content === 'string' && typeof content === 'string') {
       last.content += `\n\n${content}`;
@@ -286,6 +302,7 @@ module.exports = {
   callLLMStream,
   // exposed for unit tests
   splitSystemAndMessages,
+  toAnthropicContent,
   sanitizeSchema,
   toClaudeOutputConfig,
   mapStopReason,

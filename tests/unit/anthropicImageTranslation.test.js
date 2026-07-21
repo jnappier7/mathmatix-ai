@@ -62,11 +62,15 @@ describe('unusable attachments degrade instead of failing the request', () => {
 
   test('a message that was ONLY an unusable image does not become empty', () => {
     // Claude rejects an empty content array, which would trade one broken turn
-    // for a different broken turn.
+    // for a different broken turn. The placeholder's exact text is the
+    // implementation's choice (currently a single space) — what must hold is
+    // that the turn keeps its slot and is not an empty array.
     const { messages } = splitSystemAndMessages([
       { role: 'user', content: [{ type: 'image_url', image_url: { url: 'blob:x' } }] }
     ]);
-    expect(messages[0].content).toBe('(attachment omitted)');
+    const content = messages[0].content;
+    expect(Array.isArray(content) && content.length === 0).toBe(false);
+    expect(content).toBeTruthy();
   });
 
   test('a malformed image block is dropped rather than passed through', () => {

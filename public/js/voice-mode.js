@@ -91,13 +91,34 @@
     paintButton();
     paintComposerEntry();
 
-    // Kick off the voice engine. The click that called enter() is a
-    // user gesture, so getUserMedia inside startListening() is allowed.
+    // Kick off the voice engine. enter() runs inside the tap handler, so this
+    // MUST call startListening() synchronously — not from a Promise.resolve()
+    // microtask. On iOS Safari the user-activation that lets us create/resume
+    // the AudioContext and open the mic is only valid within the gesture task;
+    // deferring even one microtask forfeits it, so the AudioContext is born
+    // suspended and the tutor's audio stays silent until the student taps
+    // again to "resume" it — which is exactly the tap-per-stage bug on iPhone.
+    // startListening() is async, but its synchronous prefix (new AudioContext,
+    // getUserMedia) fires in-gesture when called directly; only await the tail.
     var vc = window.voiceController;
-    if (vc && !vc.isListening && typeof vc.startListening === 'function') {
-      Promise.resolve()
-        .then(function () { return vc.startListening(); })
-        .catch(function () { /* mic denied or unavailable — mode still usable */ });
+    if (vc) {
+      // Voice mode is a hands-free, call-style conversation — NOT push-to-talk.
+      // Turning on the controller's hands-free flag makes the legacy path
+      // auto-restart listening after the tutor finishes speaking, instead of
+      // stranding the student on "idle" until they tap the orb again between
+      // every turn. VAD already auto-sends on silence in all modes, so with
+      // this the legacy loop runs listen → send → speak → listen unattended.
+      // (No effect on the premium streaming path, which is already continuous
+      // and ignores this flag.)
+      vc.handsFreeMode = true;
+      if (!vc.isListening && typeof vc.startListening === 'function') {
+        try {
+          var p = vc.startListening();
+          if (p && typeof p.catch === 'function') {
+            p.catch(function () { /* mic denied or unavailable — mode still usable */ });
+          }
+        } catch (_) { /* engine not ready — mode still usable */ }
+      }
     }
   }
 
@@ -109,6 +130,9 @@
 
     var vc = window.voiceController;
     if (vc) {
+      // Leaving the call — hand the controller back to push-to-talk so the
+      // standalone orb (outside voice mode) doesn't keep auto-restarting the mic.
+      vc.handsFreeMode = false;
       try { if (typeof vc.stopListening === 'function') vc.stopListening(); } catch (e) { /* noop */ }
       try { if (typeof vc.stopSpeaking === 'function') vc.stopSpeaking(); } catch (e) { /* noop */ }
     }

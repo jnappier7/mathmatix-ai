@@ -7,6 +7,7 @@ const LocalStrategy       = require("passport-local").Strategy;
 const User                = require("../models/user");
 const bcrypt              = require("bcryptjs");
 const { generateUniqueStudentLinkCode } = require("../routes/student");
+const logger              = require("../utils/logger");
 
 /**
  * Generate a unique username from a display name
@@ -38,16 +39,19 @@ async function generateUniqueUsername(displayName, providerId) {
 
 /* --------------------------  SESSION HANDLING  -------------------------- */
 passport.serializeUser((user, done) => {
-  console.log("LOG: serializeUser called. User ID:", user.id);
+  // debug-level: these fire on every authenticated request (many per page load
+  // via parallel asset/API calls). Winston suppresses debug in production, so
+  // this no longer floods prod logs while staying available in dev.
+  logger.debug(`serializeUser called. User ID: ${user.id}`);
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  console.log("LOG: deserializeUser called. User ID:", id);
+  logger.debug(`deserializeUser called. User ID: ${id}`);
   try {
     const user = await User.findById(id);
     if (user) {
-      console.log("LOG: deserializeUser found user:", user.username, "Role:", user.role);
+      logger.debug(`deserializeUser found user: ${user.username} Role: ${user.role}`);
     } else {
       console.warn("WARN: deserializeUser could not find user for ID:", id);
     }

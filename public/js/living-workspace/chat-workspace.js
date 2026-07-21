@@ -61,7 +61,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260718a';
+  var ASSET_V = '?v=20260720b';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -119,6 +119,25 @@
       mountIn.style.cssText = 'position:absolute;inset:0;';
       if (getComputedStyle(region).position === 'static') region.style.position = 'relative';
       region.appendChild(mountIn);
+      // Way back to chat. On mobile the swapped workspace is a FULL-SCREEN
+      // drawer, and the old close X is hidden with the rest of the legacy board
+      // chrome — leaving phone students with no exit. A dedicated, clearly
+      // labeled "‹ Chat" pill fixes that. Deliberately TOP-LEFT: the
+      // derivation's own text-size control (.lws-dv-az) floats top-right, so the
+      // right corner is taken. Appended after the mount (and z-index'd in CSS)
+      // so it sits above the board; shown only on the mobile drawer (CSS), since
+      // on desktop the workspace is a persistent column that needs no exit.
+      var exit = document.createElement('button');
+      exit.type = 'button';
+      exit.className = 'lws-chat-exit';
+      exit.setAttribute('aria-label', 'Close workspace and return to chat');
+      exit.innerHTML = '<i class="fas fa-chevron-left" aria-hidden="true"></i><span>Chat</span>';
+      exit.addEventListener('click', function () {
+        if (window.MathWorkspace && typeof window.MathWorkspace.close === 'function') {
+          window.MathWorkspace.close();
+        }
+      });
+      region.appendChild(exit);
       return mountIn;
     }
 
