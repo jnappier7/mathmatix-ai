@@ -118,6 +118,48 @@
     if (!found) target.textContent = unwrapText(tex);   // pure prose, no math
   }
 
+  // The blank tokens a scaffold card may use, mirroring texHasBlank() in
+  // utils/boardCommandGuard.js — that guard REJECTS a scaffold with no blank,
+  // so these are a contract between server and board, not a guess.
+  var BLANK_TOKEN = /\\boxed\s*\{\s*(?:\\(?:[;,:!\s]|quad|qquad|phantom\s*\{[^{}]*\}|hspace\s*\{[^{}]*\})\s*)*\}|\\square\b|(?:\\_){3,}|_{3,}/g;
+
+  // Split tex into alternating rendered math and student-fillable holes.
+  // Pure; exported for tests.
+  function splitBlanks(latex) {
+    var t = String(latex == null ? '' : latex);
+    var out = [];
+    var last = 0;
+    var m;
+    BLANK_TOKEN.lastIndex = 0;
+    while ((m = BLANK_TOKEN.exec(t)) !== null) {
+      if (m.index > last) out.push({ type: 'tex', value: t.slice(last, m.index) });
+      out.push({ type: 'blank', value: m[0] });
+      last = m.index + m[0].length;
+    }
+    if (last < t.length) out.push({ type: 'tex', value: t.slice(last) });
+    return out;
+  }
+
+  function hasBlank(latex) {
+    BLANK_TOKEN.lastIndex = 0;
+    return BLANK_TOKEN.test(String(latex == null ? '' : latex));
+  }
+
+  // Render one tex fragment. Splitting at blanks can leave a fragment that is
+  // not standalone-valid ("x^2 + 4x +"); KaTeX would paint that as red error
+  // source, so throwOnError is ON here and a failure degrades to plain text.
+  function typesetFragment(span, frag) {
+    var katex = root.katex;
+    var tex = cleanLatex(frag);
+    if (!tex) return false;
+    if (katex && typeof katex.render === 'function') {
+      try { katex.render(tex, span, { throwOnError: true, displayMode: false }); return true; }
+      catch (_) { /* not standalone-valid — show it as text */ }
+    }
+    span.textContent = tex;
+    return true;
+  }
+
   function typeset(target, latex) {
     var katex = root.katex;
     var tex = cleanLatex(latex);
@@ -149,16 +191,46 @@
     return after.filter(function (n) { return before.indexOf(n) === -1; });
   }
 
+  // How many finished problems stay reachable from the rail. Older ones fall
+  // off the left: the rail is a session's worth of recent work, not an archive.
+  var MAX_ARCHIVE = 12;
+
+  // Did this derivation reach an answer? Drives the ✓ on the thumbnail — a
+  // `verify` card is the only thing that closes a problem out. Pure; exported
+  // for tests.
+  function hasSolution(elements) {
+    return (Array.isArray(elements) ? elements : []).some(function (e) {
+      return classify(e) === 'solution';
+    });
+  }
+
   function DerivationView(container, opts) {
     opts = opts || {};
     this.doc = container.ownerDocument || document;
     this.renderers = opts.renderers || {};
+    // Called with (text, latex) when a student fills a scaffold's blanks.
+    // Returning false means "not sent" and leaves the line editable.
+    this.onBlankSubmit = typeof opts.onBlankSubmit === 'function' ? opts.onBlankSubmit : null;
     this._blocks = [];        // live block renderers (for destroy on clear)
     this._problemTex = null;
+    // The adapted elements making up the CURRENT derivation, kept so a finished
+    // problem can be archived as data and re-rendered on demand. Snapshotting
+    // data (not detaching live DOM) is what makes reopening safe: block
+    // renderers like the JSXGraph board do not survive being pulled out of the
+    // document and put back, so archived blocks are destroyed and rebuilt.
+    this._elements = [];
+    this._archive = [];       // [{ problemTex, elements, solved }] — oldest first
+    this._seq = 0;
+    this._overlayBlocks = [];
 
     var d = this.doc;
     var rootEl = d.createElement('div');
     rootEl.className = 'lws-root lws-dv-root';        // inherits --lws-* tokens + theme
+    var rail = d.createElement('div');
+    rail.className = 'lws-dv-rail';
+    rail.setAttribute('role', 'list');
+    rail.setAttribute('aria-label', 'Finished problems');
+    rail.hidden = true;
     var scroll = d.createElement('div'); scroll.className = 'lws-dv';
     var empty = d.createElement('div'); empty.className = 'lws-dv-empty'; empty.setAttribute('aria-hidden', 'true');
     empty.innerHTML =
@@ -170,6 +242,7 @@
     var lines = d.createElement('div'); lines.className = 'lws-dv-lines';
     inner.appendChild(problem); inner.appendChild(lines);
     scroll.appendChild(empty); scroll.appendChild(inner);
+    rootEl.appendChild(rail);
     rootEl.appendChild(scroll);
     container.appendChild(rootEl);
 
@@ -184,7 +257,7 @@
     caption.hidden = true;
     rootEl.appendChild(caption);
 
-    this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, problem: problem, lines: lines, caption: caption };
+    this.el = { root: rootEl, scroll: scroll, empty: empty, inner: inner, problem: problem, lines: lines, caption: caption, rail: rail };
     this._mountTextScale(rootEl);
     this._refreshEmpty();
   }
@@ -250,21 +323,170 @@
     this._blocks = [];
   };
 
-  DerivationView.prototype.clear = function () {
+  // Wipe the working surface WITHOUT touching the rail. Both ways a problem
+  // ends (an explicit `clear` card, or a different `pose` arriving) funnel
+  // through here after the outgoing work has been archived.
+  DerivationView.prototype._wipeCurrent = function () {
     this._destroyBlocks();
     this.el.lines.textContent = '';
     this.el.problem.textContent = '';
     this.el.problem.style.display = 'none';
     this._problemTex = null;
+    this._elements = [];
     this._refreshEmpty();
+  };
+
+  // Park the finished derivation on the rail. Called when the problem in focus
+  // is being replaced — by a `clear` card (problem done / start over) or by a
+  // `pose` of genuinely different math. Previously both cases just deleted the
+  // work; now it shrinks to a thumbnail the student can click back into.
+  DerivationView.prototype._archiveCurrent = function () {
+    if (this._problemTex == null) return;                 // nothing in focus
+    if (!this._elements.length && !this.el.lines.childNodes.length) {
+      return;                                             // posed but never worked
+    }
+    var solved = hasSolution(this._elements);
+    this._archive.push({
+      id: 'lws-arch-' + (++this._seq),
+      problemTex: this._problemTex,
+      elements: this._elements.slice(),
+      solved: solved,
+    });
+    while (this._archive.length > MAX_ARCHIVE) this._archive.shift();
+    this._renderRail();
+  };
+
+  DerivationView.prototype._renderRail = function () {
+    var self = this;
+    var d = this.doc;
+    var rail = this.el.rail;
+    rail.textContent = '';
+    rail.hidden = this._archive.length === 0;
+    this.el.root.classList.toggle('has-rail', this._archive.length > 0);
+    this._archive.forEach(function (entry, i) {
+      var b = d.createElement('button');
+      b.type = 'button';
+      b.className = 'lws-dv-thumb' + (entry.solved ? ' is-solved' : '');
+      b.setAttribute('role', 'listitem');
+      b.setAttribute('data-lws-archive-id', entry.id);
+      var label = 'Problem ' + (i + 1) + (entry.solved ? ', solved' : ', not finished');
+      b.setAttribute('aria-label', 'Reopen ' + label);
+      b.title = 'Reopen ' + label;
+
+      var num = d.createElement('span'); num.className = 'lws-dv-thumb-n'; num.textContent = String(i + 1);
+      var tex = d.createElement('span'); tex.className = 'lws-dv-thumb-tex';
+      typeset(tex, entry.problemTex);
+      b.appendChild(num);
+      b.appendChild(tex);
+      if (entry.solved) {
+        var tick = d.createElement('span'); tick.className = 'lws-dv-thumb-tick'; tick.textContent = '✓';
+        tick.setAttribute('aria-hidden', 'true');
+        b.appendChild(tick);
+      }
+      b.addEventListener('click', function () { self.openArchived(entry.id); });
+      rail.appendChild(b);
+    });
+    // Newest thumbnail sits at the right edge — keep it in view.
+    try { rail.scrollLeft = rail.scrollWidth; } catch (_) { /* not laid out yet */ }
+  };
+
+  // Reopen an archived problem in a read-only overlay above the live board, so
+  // looking back never disturbs the work in progress.
+  DerivationView.prototype.openArchived = function (id) {
+    var entry = null;
+    for (var i = 0; i < this._archive.length; i++) {
+      if (this._archive[i].id === id) { entry = this._archive[i]; break; }
+    }
+    if (!entry) return;
+    this.closeArchived();
+
+    var self = this;
+    var d = this.doc;
+    var ov = d.createElement('div');
+    ov.className = 'lws-dv-ov';
+    ov.setAttribute('role', 'dialog');
+    ov.setAttribute('aria-modal', 'false');
+    ov.setAttribute('aria-label', 'A problem you already finished');
+
+    var bar = d.createElement('div'); bar.className = 'lws-dv-ov-bar';
+    var tag = d.createElement('span'); tag.className = 'lws-dv-ov-tag'; tag.textContent = 'Earlier problem';
+    var back = d.createElement('button');
+    back.type = 'button'; back.className = 'lws-dv-ov-back';
+    back.textContent = 'Back to my work';
+    back.addEventListener('click', function () { self.closeArchived(); });
+    bar.appendChild(tag); bar.appendChild(back);
+
+    var body = d.createElement('div'); body.className = 'lws-dv-ov-body';
+    var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
+    var problem = d.createElement('div'); problem.className = 'lws-dv-problem';
+    var plab = d.createElement('div'); plab.className = 'lws-dv-plabel'; plab.textContent = 'Problem';
+    var ptex = d.createElement('div'); ptex.className = 'lws-dv-ptex';
+    typeset(ptex, entry.problemTex);
+    problem.appendChild(plab); problem.appendChild(ptex);
+    var lines = d.createElement('div'); lines.className = 'lws-dv-lines';
+    inner.appendChild(problem); inner.appendChild(lines);
+    body.appendChild(inner);
+
+    // Rebuild the steps from the archived elements. Blocks get fresh renderers
+    // (tracked separately so closing the overlay disposes them).
+    entry.elements.forEach(function (el) {
+      var kind = classify(el);
+      if (!kind || kind === 'problem') return;
+      if (kind === 'block') self._addBlock(el, lines, self._overlayBlocks);
+      else self._addLine(el, kind, lines);
+    });
+
+    ov.appendChild(bar); ov.appendChild(body);
+    this.el.root.appendChild(ov);
+    this._overlay = ov;
+    this._escHandler = function (ev) { if (ev.key === 'Escape') self.closeArchived(); };
+    d.addEventListener('keydown', this._escHandler);
+    try { back.focus(); } catch (_) { /* not focusable yet */ }
+
+    var btn = this.el.rail.querySelector('[data-lws-archive-id="' + id + '"]');
+    if (btn) btn.classList.add('is-open');
+  };
+
+  DerivationView.prototype.closeArchived = function () {
+    if (this._escHandler) {
+      this.doc.removeEventListener('keydown', this._escHandler);
+      this._escHandler = null;
+    }
+    this._overlayBlocks.forEach(function (b) { try { b && b.destroy && b.destroy(); } catch (_) {} });
+    this._overlayBlocks = [];
+    if (this._overlay && this._overlay.parentNode) this._overlay.parentNode.removeChild(this._overlay);
+    this._overlay = null;
+    var open = this.el.rail.querySelectorAll('.is-open');
+    for (var i = 0; i < open.length; i++) open[i].classList.remove('is-open');
+  };
+
+  // A `clear` card means "this problem is done, moving on" (the server guard
+  // only lets it through after a verify, before a pose, or on an explicit
+  // start-over). So it archives rather than deletes.
+  DerivationView.prototype.clear = function () {
+    this._archiveCurrent();
+    this._wipeCurrent();
+  };
+
+  // Session-level reset: nothing from the previous session survives, rail
+  // included. Used when the server rolls the conversation over.
+  DerivationView.prototype.resetAll = function () {
+    this.closeArchived();
+    this._archive = [];
+    this._renderRail();
+    this._wipeCurrent();
+    this.setCaption('');
   };
 
   DerivationView.prototype._setProblem = function (element) {
     var latex = (element.semantic && element.semantic.latex) || '';
-    // A genuinely different problem starts a fresh derivation (one in focus).
+    // A genuinely different problem starts a fresh derivation (one in focus) —
+    // the outgoing one shrinks to a thumbnail instead of being thrown away.
     if (this._problemTex != null && norm(latex) !== norm(this._problemTex)) {
+      this._archiveCurrent();
       this._destroyBlocks();
       this.el.lines.textContent = '';
+      this._elements = [];
     }
     this._problemTex = latex;
     this.el.problem.textContent = '';
@@ -276,7 +498,9 @@
     this.el.problem.style.display = '';
   };
 
-  DerivationView.prototype._addLine = function (element, kind) {
+  // `target` defaults to the live line stack; the archive overlay passes its
+  // own container so a reopened problem renders through the same code path.
+  DerivationView.prototype._addLine = function (element, kind, target) {
     var d = this.doc;
     var row = d.createElement('div');
     row.className = 'lws-dv-line lws-dv-' + kind;
@@ -289,25 +513,111 @@
       var tag = d.createElement('span'); tag.className = 'lws-dv-op'; tag.textContent = op;
       row.appendChild(tag);
     } else {
-      var tex = d.createElement('div'); tex.className = 'lws-dv-tex';
-      typeset(tex, element.semantic && element.semantic.latex);
-      row.appendChild(tex);
+      var latex = element.semantic && element.semantic.latex;
+      // A scaffold's empty \boxed{} slots are the student's to fill — the whole
+      // point of the card. Render them as real inputs on the live board; a
+      // reopened archive is a look-back, so it stays static.
+      var live = !target || target === this.el.lines;
+      if (live && this.onBlankSubmit && hasBlank(latex)) {
+        // The tutor's question for this blank ("What does 20 − 4 leave you
+        // with?"). A box with no question is a guessing game, so fall back to
+        // a generic prompt when the model omits one.
+        var ask = (element.semantic && element.semantic.caption) || 'Your turn — fill in the blank.';
+        var askEl = d.createElement('div');
+        askEl.className = 'lws-dv-ask';
+        askEl.textContent = ask;
+        row.appendChild(askEl);
+        row.appendChild(this._buildFillLine(latex));
+      } else {
+        var tex = d.createElement('div'); tex.className = 'lws-dv-tex';
+        typeset(tex, latex);
+        row.appendChild(tex);
+      }
     }
-    this.el.lines.appendChild(row);
+    (target || this.el.lines).appendChild(row);
   };
 
-  DerivationView.prototype._addBlock = function (element) {
+  // Build a fill-in-the-blank line: the fixed math renders, each blank becomes
+  // a focusable input, and submitting sends the student's value through the
+  // ordinary chat path so the existing diagnose/verify pipeline grades it.
+  DerivationView.prototype._buildFillLine = function (latex) {
+    var self = this;
+    var d = this.doc;
+    var wrap = d.createElement('div');
+    wrap.className = 'lws-dv-tex lws-dv-fill';
+
+    var inputs = [];
+    splitBlanks(latex).forEach(function (seg) {
+      if (seg.type === 'tex') {
+        var span = d.createElement('span');
+        span.className = 'lws-dv-fill-tex';
+        if (typesetFragment(span, seg.value)) wrap.appendChild(span);
+        return;
+      }
+      var inp = d.createElement('input');
+      inp.type = 'text';
+      inp.className = 'lws-dv-blank';
+      inp.setAttribute('inputmode', 'text');
+      inp.setAttribute('autocomplete', 'off');
+      inp.setAttribute('autocapitalize', 'off');
+      inp.spellcheck = false;
+      inp.size = 3;
+      inp.setAttribute('aria-label', 'Fill in the blank');
+      inp.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') { ev.preventDefault(); submit(); }
+      });
+      // Grow with the answer so long values stay readable.
+      inp.addEventListener('input', function () {
+        inp.size = Math.max(3, Math.min(18, inp.value.length + 1));
+        wrap.classList.remove('is-incomplete');
+      });
+      inputs.push(inp);
+      wrap.appendChild(inp);
+    });
+
+    var btn = d.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lws-dv-fill-go';
+    btn.textContent = 'Check';
+    btn.setAttribute('aria-label', 'Check my answer');
+    btn.addEventListener('click', submit);
+    wrap.appendChild(btn);
+
+    function submit() {
+      var values = inputs.map(function (i) { return i.value.trim(); });
+      var firstEmpty = values.indexOf('');
+      if (firstEmpty !== -1) {
+        wrap.classList.add('is-incomplete');
+        try { inputs[firstEmpty].focus(); } catch (_) { /* detached */ }
+        return;
+      }
+      var sent = false;
+      try { sent = self.onBlankSubmit(values.join(', '), latex) !== false; }
+      catch (e) { console.error('[LWS] blank submit failed', e); sent = false; }
+      if (!sent) return;
+      // Lock the line: it is now part of the transcript, and the tutor's reply
+      // will redraw the board anyway.
+      wrap.classList.add('is-sent');
+      inputs.forEach(function (i) { i.disabled = true; });
+      btn.disabled = true;
+      btn.textContent = 'Sent';
+    }
+
+    return wrap;
+  };
+
+  DerivationView.prototype._addBlock = function (element, target, blockSink) {
     var d = this.doc;
     var wrap = d.createElement('div'); wrap.className = 'lws-dv-line lws-dv-block';
     var factory = this.renderers[element.type];
     if (typeof factory === 'function') {
       try {
         var r = factory(element, { host: wrap, viewport: null });
-        if (r && r.node) { wrap.appendChild(r.node); this._blocks.push(r); }
+        if (r && r.node) { wrap.appendChild(r.node); (blockSink || this._blocks).push(r); }
         else { wrap.textContent = '[' + element.type + ']'; }
       } catch (_) { wrap.textContent = '[' + element.type + ']'; }
     } else { wrap.textContent = '[' + element.type + ']'; }
-    this.el.lines.appendChild(wrap);
+    (target || this.el.lines).appendChild(wrap);
   };
 
   // Render one turn's adapted elements. `clear` wipes the board first.
@@ -320,9 +630,13 @@
     elements.forEach(function (el) {
       var kind = classify(el);
       if (!kind) return;
-      if (kind === 'problem') self._setProblem(el);
+      if (kind === 'problem') self._setProblem(el);        // may archive + reset _elements
       else if (kind === 'block') self._addBlock(el);
       else self._addLine(el, kind);
+      // Keep the data behind the current derivation so it can be archived and
+      // re-rendered later. Recorded AFTER _setProblem so a pose that starts a
+      // new problem lands in the new list, not the one just archived.
+      self._elements.push(el);
     });
     freshNodes(seen, toArray(this.el.lines.childNodes)).forEach(function (n) {
       if (n.classList) n.classList.add('lws-dv-fresh');
@@ -350,6 +664,10 @@
   DerivationView.looksLikeProse = looksLikeProse;
   DerivationView.unwrapText = unwrapText;
   DerivationView.freshNodes = freshNodes;
+  DerivationView.hasSolution = hasSolution;
+  DerivationView.MAX_ARCHIVE = MAX_ARCHIVE;
+  DerivationView.splitBlanks = splitBlanks;
+  DerivationView.hasBlank = hasBlank;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, MAX_ARCHIVE: MAX_ARCHIVE, splitBlanks: splitBlanks, hasBlank: hasBlank };
 })(typeof self !== 'undefined' ? self : this);

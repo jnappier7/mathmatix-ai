@@ -47,6 +47,15 @@ describe('boardTagParser', () => {
       expect(cleanedText).toBe('Try this. What goes in the boxes?');
     });
 
+    it('carries the scaffold caption — the question naming what goes in the blank', () => {
+      // Without this the student sees a box and no idea what belongs in it,
+      // which is how the blanks read as arbitrary.
+      const input = '<BOARD action="scaffold" tex="2x = \\boxed{}" caption="What does 20 - 4 leave you with?" />';
+      expect(parseBoardTags(input).boardCommands).toEqual([
+        { action: 'scaffold', tex: '2x = \\boxed{}', caption: 'What does 20 - 4 leave you with?' },
+      ]);
+    });
+
     it('drops a scaffold tag with no tex', () => {
       expect(parseBoardTags('<BOARD action="scaffold" />').boardCommands).toEqual([]);
     });

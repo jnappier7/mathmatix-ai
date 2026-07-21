@@ -60,7 +60,7 @@ function mapCommand(cmd) {
         ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'solution', cmd.check ? { check: cmd.check } : null) }
         : null;
     case 'scaffold':
-      return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'scaffold') } : null;
+      return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'scaffold', cmd.caption ? { caption: cmd.caption } : null) } : null;
     case 'example':
       return cmd.tex
         ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'example', cmd.caption ? { caption: cmd.caption } : null) }
