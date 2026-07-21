@@ -54,9 +54,15 @@ const COURSE_DIAGNOSTICS = {
   'act-prep': {
     type: 'act-practice',
     title: 'Start with a full Practice ACT',
-    body: 'Take a timed practice ACT Math test first. Your tutor uses the results to pinpoint '
-      + 'exactly which skills to focus your bootcamp on — so every session targets your real gaps.',
+    body: 'Take a timed practice ACT Math test first — this is your baseline. Your tutor uses '
+      + 'the results to pinpoint exactly which skills to focus your bootcamp on, and anything '
+      + 'you already ace is marked as yours so the bootcamp skips it.',
     cta: 'Take the Practice ACT',
+    // ACT prep BEGINS with a full timed baseline. Unlike a short warm-up check,
+    // the point is the real thing under real conditions: the scaled score is the
+    // number the student is trying to move, so a partial substitute would give
+    // them nothing to measure against.
+    required: true,
   },
   'algebra-1': STARTING_POINT_CARD,
   'algebra-2': STARTING_POINT_CARD,
@@ -82,7 +88,10 @@ async function buildCourseDiagnostic(user, courseId) {
       console.error('[CourseSession] pre-assessment check failed (non-fatal):', err.message);
       return null;
     }
-    return { type: card.type, title: card.title, body: card.body, cta: card.cta, courseId };
+    return {
+      type: card.type, title: card.title, body: card.body, cta: card.cta,
+      courseId, required: true
+    };
   }
   try {
     if (card.type === 'act-practice') {
@@ -96,7 +105,12 @@ async function buildCourseDiagnostic(user, courseId) {
     console.error('[CourseSession] diagnostic check failed (non-fatal):', err.message);
     return null;
   }
-  return { type: card.type, title: card.title, body: card.body, cta: card.cta };
+  // `required` tells the UI to gate course entry rather than render a dismissible
+  // nudge. A baseline the student can click past is not a baseline.
+  return {
+    type: card.type, title: card.title, body: card.body, cta: card.cta,
+    required: !!card.required
+  };
 }
 
 /* ============================================================

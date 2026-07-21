@@ -129,3 +129,34 @@ describe('recommendedStart', () => {
     expect(P.recommendedStart(pathway, ['a'])).toMatchObject({ moduleId: 'm1' });
   });
 });
+
+describe('creditFromTallies — shared with the ACT baseline', () => {
+  test('credits a skill answered cleanly', () => {
+    expect(P.creditFromTallies({ a: { correct: 3, total: 3 } }).credited).toEqual(['a']);
+  });
+
+  test('does not credit a partial run', () => {
+    const r = P.creditFromTallies({ a: { correct: 2, total: 3 } });
+    expect(r.credited).toEqual([]);
+    expect(r.notCredited).toEqual(['a']);
+  });
+
+  test('agrees with scoreBySkill — one definition of "demonstrated"', () => {
+    // A baseline ACT and a course pre-assessment must not disagree about what
+    // counts as owned.
+    const items = [
+      { skillId: 'a', correct: true }, { skillId: 'a', correct: true },
+      { skillId: 'b', correct: true }, { skillId: 'b', correct: false }
+    ];
+    const viaItems = P.scoreBySkill(items);
+    const viaTallies = P.creditFromTallies({ a: { correct: 2, total: 2 }, b: { correct: 1, total: 2 } });
+    expect(viaTallies.credited).toEqual(viaItems.credited);
+    expect(viaTallies.notCredited).toEqual(viaItems.notCredited);
+  });
+
+  test('a skill with no attempts is neither credited nor faulted', () => {
+    const r = P.creditFromTallies({ a: { correct: 0, total: 0 } });
+    expect(r.credited).toEqual([]);
+    expect(r.notCredited).toEqual([]);
+  });
+});

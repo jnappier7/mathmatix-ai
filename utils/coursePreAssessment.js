@@ -138,6 +138,29 @@ function scoreBySkill(results, options) {
  * student cleared everything tested — the caller decides what to say about a
  * course they may not need.
  */
+/**
+ * Credit skills from already-tallied results — { skillId: { correct, total } }.
+ *
+ * Same threshold as scoreBySkill, deliberately sharing this module so there is
+ * ONE definition of "the student demonstrated this". A baseline ACT and a course
+ * pre-assessment must not be able to disagree about what counts as owned.
+ */
+function creditFromTallies(bySkill, options) {
+  const threshold = (options && options.creditAccuracy) || CREDIT_ACCURACY;
+  const credited = [];
+  const notCredited = [];
+  Object.keys(bySkill || {}).forEach(function (rawId) {
+    const t = bySkill[rawId] || {};
+    const total = t.total || 0;
+    const correct = t.correct || 0;
+    if (total <= 0) return;
+    const id = canonicalSkillId(rawId);
+    if (correct / total >= threshold) credited.push(id);
+    else notCredited.push(id);
+  });
+  return { credited: credited, notCredited: notCredited };
+}
+
 function recommendedStart(pathway, credited) {
   const creditedSet = new Set(credited || []);
   const modules = (pathway && pathway.modules) || [];
@@ -158,5 +181,6 @@ module.exports = {
   courseSkills,
   buildBlueprint,
   scoreBySkill,
+  creditFromTallies,
   recommendedStart
 };

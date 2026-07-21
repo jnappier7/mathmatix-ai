@@ -248,6 +248,69 @@ router.post('/complete', async (req, res) => {
     session.scaledScore = scaled ? scaled.scaled : null;
     await session.save();
 
+    // ── Credit what the baseline PROVED ──
+    // The pretest already knows which skills the student answered cleanly, but
+    // only the weak ones were ever used. A baseline that establishes strength and
+    // then throws it away makes the student re-earn skills they just demonstrated
+    // on a full timed test — the exact re-grinding the skill map exists to stop.
+    // Credited skills are proved at rung 2 (provenBy 'placement') and cascade to
+    // clear their prerequisites, same as a course pre-assessment.
+    //
+    // ⚠️ LIMITED UNTIL THE ACT CROSSWALK LANDS. ACT items carry legacy `act-*`
+    // skill ids and seeds/unified-taxonomy/ has no act-crosswalk.json, so
+    // canonicalSkillId passes them through unchanged. The credit is real and
+    // carries a receipt, but it is stored under an act-* key and will NOT light
+    // up the unified skill map until that crosswalk is added — at which point
+    // this starts working with no code change (skillCanonicalizer auto-discovers
+    // crosswalks).
+    let creditedSkills = [];
+    let clearedFromBaseline = [];
+    try {
+      const { creditFromTallies } = require('../utils/coursePreAssessment');
+      const { advanceRung } = require('../utils/skillRung');
+      const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
+      const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
+      const { configCache } = require('../utils/cache');
+      const Skill = require('../models/skill');
+      const User = require('../models/user');
+
+      const { credited } = creditFromTallies(bySkill);
+      if (credited.length) {
+        const user = await User.findById(req.user._id);
+        credited.forEach((skillId) => {
+          const entry = getSkillMasteryEntry(user, skillId) || {};
+          advanceRung(entry, 'proved', { via: 'placement' });
+          const changed = entry.__rungResult && entry.__rungResult.changed;
+          delete entry.__rungResult;
+          if (changed) {
+            entry.status = 'mastered';
+            setSkillMasteryEntry(user, skillId, entry);
+            creditedSkills.push(skillId);
+          }
+        });
+
+        const allSkills = await configCache.getOrSet(
+          'skills:unified',
+          () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
+          3600
+        );
+        if (allSkills.length && creditedSkills.length) {
+          const graph = buildGraph(allSkills);
+          const decoded = decodedMasteryMap(user);
+          creditedSkills.forEach((skillId) => {
+            applyProofCascade(graph, decoded, skillId).cleared.forEach((id) => {
+              if (clearedFromBaseline.indexOf(id) === -1) clearedFromBaseline.push(id);
+              setSkillMasteryEntry(user, id, decoded.get(id));
+            });
+          });
+        }
+        await user.save();
+      }
+    } catch (creditErr) {
+      // Never cost the student their test result over a bookkeeping failure.
+      console.error('[actTest] baseline credit error (non-fatal):', creditErr.message);
+    }
+
     // ── Retarget the ACT course from the pretest ──
     // If the student is enrolled in the ACT course and hasn't started a module
     // yet, open it on the highest-leverage weak domain (prereq-aware) and stash
