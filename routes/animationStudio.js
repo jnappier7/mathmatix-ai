@@ -63,7 +63,7 @@ router.get('/tutors', isTeacherOrAdmin, (req, res) => {
   const tutors = Object.entries(TUTOR_CONFIG).map(([id, t]) => ({
     id,
     name: t.name,
-    voiceId: t.voiceId,
+    voiceId: t.cartesiaVoiceId,
   }));
   res.json({ tutors });
 });

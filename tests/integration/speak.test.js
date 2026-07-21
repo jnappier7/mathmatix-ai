@@ -29,6 +29,9 @@ function makeApp(user) {
 beforeEach(() => {
   jest.clearAllMocks();
   ttsProvider.isConfigured.mockReturnValue(true);
+  // The route hands the client's voice id straight to the provider; the provider
+  // owns the fallback for missing/unknown ids.
+  ttsProvider.resolveVoiceId.mockImplementation((id) => id || 'cartesia-default');
 });
 
 describe('POST /api/speak', () => {
@@ -92,7 +95,7 @@ describe('POST /api/speak', () => {
     expect(ttsProvider.generateAudio).toHaveBeenCalledWith('cleaned:hello', expect.any(String), 'en');
   });
 
-  test('uses requested voiceId when provided, default otherwise', async () => {
+  test('passes the requested voiceId to the provider, and defers the fallback to it', async () => {
     ttsProvider.generateAudio.mockResolvedValue(Buffer.from('a'));
     await supertest(makeApp({ _id: 'u1' })).post('/api/speak').send({ text: 'hi', voiceId: 'voice-9' });
     expect(ttsProvider.resolveVoiceId).toHaveBeenCalledWith('voice-9');
@@ -100,8 +103,9 @@ describe('POST /api/speak', () => {
     jest.clearAllMocks();
     ttsProvider.isConfigured.mockReturnValue(true);
     ttsProvider.generateAudio.mockResolvedValue(Buffer.from('a'));
-    ttsProvider.resolveVoiceId.mockImplementation((id) => id);
+    ttsProvider.resolveVoiceId.mockImplementation((id) => id || 'cartesia-default');
     await supertest(makeApp({ _id: 'u1' })).post('/api/speak').send({ text: 'hi' });
-    expect(ttsProvider.resolveVoiceId).toHaveBeenCalledWith('2eFQnnNM32GDnZkCfkSm');
+    expect(ttsProvider.resolveVoiceId).toHaveBeenCalledWith(undefined);
+    expect(ttsProvider.generateAudio).toHaveBeenCalledWith('cleaned:hi', 'cartesia-default', 'en');
   });
 });

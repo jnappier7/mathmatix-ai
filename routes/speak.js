@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
   }
 
   // Resolve voice ID for the active provider
-  const resolvedVoiceId = ttsProvider.resolveVoiceId(voiceId || "2eFQnnNM32GDnZkCfkSm");
+  const resolvedVoiceId = ttsProvider.resolveVoiceId(voiceId);
 
   // Synthesize in the student's preferred language so non-English text (e.g.
   // German) isn't read with English phonetics. Defaults to 'en'.
