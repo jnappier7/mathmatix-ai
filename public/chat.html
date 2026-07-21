@@ -197,6 +197,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="cr-flame" aria-hidden="true">🔥</span>
           <span id="cr-streak-value">Start your streak</span>
         </span>
+        <!-- XP meter — progress to next level -->
+        <div class="cr-xp-meter" id="cr-xp-meter" title="XP to next level" aria-label="XP progress">
+          <div class="cr-xp-bar"><div id="sidebar-progress-fill" class="cr-xp-fill" style="width: 0%;"></div></div>
+          <span class="cr-xp-text" id="sidebar-xp">0 / 100 XP</span>
+        </div>
+        <!-- Coin balance — click to open the shop; earned coins fly up here -->
+        <button type="button" id="sidebar-coins-btn" class="sidebar-coins-pill cr-header-pill" title="Open Shop" aria-label="Coins — open shop">
+          <span class="sidebar-coins-icon" aria-hidden="true">🪙</span>
+          <span id="sidebar-coins" class="sidebar-coins-val">0</span>
+        </button>
         <button id="cr-progress-btn" class="cr-progress-btn" type="button" aria-label="Open progress panel">
           <i class="fas fa-chart-bar"></i>
           <span>Progress</span>
@@ -393,23 +403,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
 
-    <!-- Compact Progress Card — motivational, not actionable, so at the bottom -->
-    <div class="sidebar-section sidebar-section-compact" style="margin-top: auto;">
-      <div class="sidebar-avatar-panel" id="sidebar-avatar-panel"></div>
-      <div class="sidebar-progress">
-        <div class="sidebar-progress-topline">
-          <div class="sidebar-progress-level"><span data-i18n="misc.level">Level</span> <span id="sidebar-level">1</span></div>
-          <button type="button" id="sidebar-coins-btn" class="sidebar-coins-pill" title="Open Shop" aria-label="Coins — open shop">
-            <span class="sidebar-coins-icon" aria-hidden="true">🪙</span>
-            <span id="sidebar-coins" class="sidebar-coins-val">0</span>
-          </button>
-        </div>
-        <div class="sidebar-progress-bar">
-          <div id="sidebar-progress-fill" class="sidebar-progress-fill" style="width: 0%;"></div>
-        </div>
-        <div class="sidebar-progress-xp" id="sidebar-xp">0 / 100 XP</div>
-      </div>
-    </div>
+    <!-- Level / XP / Coins now live in the header; the full-body character lives
+         in the right-hand workspace card. This keeps the crowded left rail clear. -->
 
   </aside>
 
@@ -1174,6 +1169,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="cr-ws-close" type="button" aria-label="Close workspace">
           <i class="fas fa-times" aria-hidden="true"></i>
         </button>
+        <!-- Player card — full-body character + name (roomy right rail) -->
+        <div class="cr-player-card" id="cr-player-card">
+          <div class="cr-player-avatar" id="sidebar-avatar-panel"></div>
+          <div class="cr-player-name" id="cr-player-name"></div>
+        </div>
         <div class="cr-ws-tabs" role="tablist" aria-label="Workspace tools">
           <!-- Board is the home base. Graph / Tiles / Calc are excursions
                the tutor (or student) can drive into. -->

@@ -109,14 +109,28 @@
   border-radius: 999px;
 }
 
-/* ---- Chat sidebar panel ---- */
-.sidebar-avatar-panel {
+/* ---- Chat right-rail player card (top of the math workspace) ---- */
+.cr-player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--cr-border, #eef2f4);
+}
+.cr-player-card .cr-player-avatar {
+  width: 100%;
   display: flex;
   justify-content: center;
-  padding: 4px 0 10px;
 }
-.sidebar-avatar-panel .fba-choose-label,
-.sidebar-avatar-panel .fba-empty-label { font-size: 0.75rem; }
+.cr-player-card .cr-player-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--cr-text, #18202b);
+}
+.cr-player-card .fba-choose-label,
+.cr-player-card .fba-empty-label { font-size: 0.75rem; }
 
 /* ---- Student dashboard header ---- */
 .dashboard-header--with-avatar {
