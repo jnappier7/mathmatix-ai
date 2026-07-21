@@ -173,7 +173,14 @@ function detectMathProblem(message) {
     const hasX = /\bx\b/i.test(message) || /\dx/i.test(message);
     const hasQuadratic = /x[\^²]2?|x\s*\^?\s*2/i.test(message);
     const hasFactorKeyword = /\bfactor/i.test(message);
-    if (hasEquals && hasX && !hasQuadratic && !hasFactorKeyword) {
+    // A proportion ("x/4 = 3/8") is now parseable as a linear equation, since
+    // parseSingleTerm understands x-over-a-number. It must still be CLASSIFIED as
+    // a proportion: the type drives which teaching path runs, and a proportion is
+    // taught by cross-multiplication, not by isolating a fractional coefficient.
+    // Let that shape fall through to the proportion detector below.
+    const looksLikeProportion = /(?:\d+\.?\d*|x)\s*\/\s*(?:\d+\.?\d*|x)\s*=\s*(?:\d+\.?\d*|x)\s*\/\s*(?:\d+\.?\d*|x)/i.test(message);
+
+    if (hasEquals && hasX && !hasQuadratic && !hasFactorKeyword && !looksLikeProportion) {
         // Extract the equation part (strip "solve", "solve for x:", etc.)
         const eqText = message.replace(/^.*?(?:solve(?:\s+for\s+x)?\s*:?\s*|find\s+x\s*:?\s*)/i, '').trim();
         const sides = eqText.split('=');
@@ -873,10 +880,33 @@ function parseSingleTerm(term) {
         return { hasX: true, coefficient: coeff, value: 0 };
     }
 
-    // Constant term
+    // Term with x over a number: "x/5", "3x/4", "-x/2".
+    // Without this the whole expression failed to parse, solveGeneralLinear
+    // never ran, and a fallback path returned a WRONG answer instead of no
+    // answer — "x/5 + 6 = 10" graded as 11 rather than 20. Silently mis-solving
+    // one of the most common Algebra 1 forms is worse than declining to solve,
+    // so this is the parse that closes it.
+    const xOverNum = t.match(/^([+-]?\d*\.?\d*)x\/(\d+\.?\d*)$/);
+    if (xOverNum) {
+        let numer = xOverNum[1];
+        if (numer === '' || numer === '+') numer = 1;
+        else if (numer === '-') numer = -1;
+        else numer = parseFloat(numer);
+        const denom = parseFloat(xOverNum[2]);
+        if (!denom) return null;                 // x/0 — decline, never guess
+        return { hasX: true, coefficient: numer / denom, value: 0 };
+    }
+
+    // Constant term, including a simple fraction like "3/4".
     const numMatch = t.match(/^([+-]?\d+\.?\d*)$/);
     if (numMatch) {
         return { hasX: false, coefficient: 0, value: parseFloat(numMatch[1]) };
+    }
+    const fracMatch = t.match(/^([+-]?\d+\.?\d*)\/(\d+\.?\d*)$/);
+    if (fracMatch) {
+        const denom = parseFloat(fracMatch[2]);
+        if (!denom) return null;
+        return { hasX: false, coefficient: 0, value: parseFloat(fracMatch[1]) / denom };
     }
 
     return null;

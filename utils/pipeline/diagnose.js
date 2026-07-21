@@ -191,6 +191,49 @@ async function diagnose(observation, context = {}) {
     } catch (_) { /* fall through to the scan result */ }
   }
 
+  // ── Step 1b: The pin outranks an intermediate ──
+  // The scan above takes the LAST assistant message that parses as a solvable
+  // problem. While a tutor discusses a student's WRONG work it will often write
+  // that wrong arithmetic down ("you had x/5 = 4, then you wrote 4/5 = 0.8"),
+  // which parses and becomes the grading target. In production this graded a
+  // student against the intermediate instead of their own problem, with damage
+  // in both directions: the wrong answer 0.8 was confirmed as correct, AND the
+  // genuinely correct answer 20 would have been marked wrong.
+  //
+  // So: when a pinned problem exists and solves, it is canonical.
+  //   - answer matches the pin  -> grade against the pin (authoritative)
+  //   - answer does not match, and the scanned target disagrees with the pin
+  //     -> the scan found an intermediate. Emit NO verdict from it; fall through
+  //        to the symbolic sub-question check and then the LLM verifier, which
+  //        see the full conversation. Deferring is right here — a bare number
+  //        may legitimately answer a tutor sub-question ("what's 50 x 3?"), and
+  //        that path is handled below.
+  if (context.pinnedProblemTex) {
+    try {
+      const pinned = parseCleanProblem(context.pinnedProblemTex);
+      const pinnedAnswer = pinned?.solution?.success ? pinned.solution.answer : null;
+      if (pinnedAnswer != null) {
+        const matchesPin = verifyAnswer(studentAnswer, pinnedAnswer).isCorrect;
+        if (matchesPin) {
+          problemInfo = {
+            problemType: pinned.problem.type,
+            correctAnswer: pinnedAnswer,
+            roots: Array.isArray(pinned.solution.roots) ? pinned.solution.roots : null,
+            steps: pinned.solution.steps || [],
+            content: context.pinnedProblemTex,
+          };
+        } else if (
+          problemInfo
+          && problemInfo.correctAnswer != null
+          && !verifyAnswer(problemInfo.correctAnswer, pinnedAnswer).isCorrect
+        ) {
+          console.log(`[Diagnose] Scanned target "${problemInfo.correctAnswer}" disagrees with pin "${pinnedAnswer}" — deferring`);
+          problemInfo = null;
+        }
+      }
+    } catch (_) { /* fall through to the scan result */ }
+  }
+
   // ── Step 2: Verify the answer ──
   let isCorrect = null;
   let correctAnswer = null;
