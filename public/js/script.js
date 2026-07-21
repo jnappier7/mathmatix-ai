@@ -448,6 +448,15 @@ document.addEventListener("DOMContentLoaded", () => {
         try { initIdentityChip(currentUser); } catch (e) { console.warn('Identity chip init failed', e); }
         // Apply any equipped cosmetics (no-op until the student equips something).
         try { applyCosmetics(currentUser); } catch (e) { console.warn('Apply cosmetics failed', e); }
+        // Full-body character in the sidebar ("this is me"). Falls back to a
+        // "Choose your character" CTA when they haven't picked one yet.
+        try {
+            const avatarPanel = document.getElementById('sidebar-avatar-panel');
+            if (avatarPanel && window.AvatarFullBody) {
+                avatarPanel.innerHTML = window.AvatarFullBody.html(currentUser, { size: 'sm' });
+            }
+        } catch (e) { console.warn('Sidebar avatar render failed', e); }
+
         // Sidebar coin counter → shop (closes the earn→spend loop right where
         // students watch their balance grow).
         const coinsBtn = document.getElementById('sidebar-coins-btn');

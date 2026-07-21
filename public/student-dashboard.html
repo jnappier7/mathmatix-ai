@@ -16,7 +16,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/css/dark-mode.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
   <link rel="stylesheet" href="/css/age-adaptive.css" />
+  <link rel="stylesheet" href="/css/avatar-fullbody.css" />
   <script src="/js/csrf.js"></script>
+  <script src="/js/avatarFullBody.js"></script>
   <script src="/js/age-tier-standalone.js"></script>
   <script src="/js/i18n-translations.js"></script>
   <script src="/js/i18n.js"></script>
@@ -379,9 +381,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <div id="dashboard-content" style="display: none;">
-      <div class="dashboard-header">
-        <h1>Welcome back, <span id="student-name">Student</span>!</h1>
-        <p id="welcome-subtitle" data-i18n="dash.readyToLearn">Ready to learn?</p>
+      <div class="dashboard-header dashboard-header--with-avatar">
+        <div class="dashboard-avatar" id="dashboard-avatar"></div>
+        <div class="dashboard-header-text">
+          <h1>Welcome back, <span id="student-name">Student</span>!</h1>
+          <p id="welcome-subtitle" data-i18n="dash.readyToLearn">Ready to learn?</p>
+        </div>
       </div>
 
       <!-- Hero: Continue Where You Left Off -->
@@ -605,6 +610,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         currentUserId = user._id;
         document.getElementById('student-name').textContent = user.firstName || 'Student';
+
+        // Full-body character next to the welcome (or a "Choose your character"
+        // prompt if they haven't picked one yet).
+        try {
+          const avEl = document.getElementById('dashboard-avatar');
+          if (avEl && window.AvatarFullBody) {
+            avEl.innerHTML = window.AvatarFullBody.html(user, { size: 'md' });
+          }
+        } catch (e) { console.warn('Dashboard avatar render failed', e); }
 
         // Apply age-adaptive UI tier
         if (window.applyAgeTierFromGrade) window.applyAgeTierFromGrade(user.gradeLevel);

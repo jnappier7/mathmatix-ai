@@ -25,6 +25,9 @@ function newStudent(overrides = {}) {
     startingPointOffered: false,
     startingPointOfferedAt: null,
     nextGrowthCheckDue: null,
+    // Default fixtures already have a full-body character so the
+    // choose-character nudge doesn't fire in tests unrelated to avatars.
+    selectedAvatarId: 'student.navy',
     nudgeState: undefined,
     ...overrides,
   };
@@ -230,6 +233,61 @@ describe('computeNudges — snoozedUntil semantics', () => {
     const n = computeNudges(user, { now: NOW }).find(x => x.type === NUDGE_TYPES.GROWTH_CHECK);
     expect(n).toBeDefined();
     expect(n.severity).toBe('overdue');
+  });
+});
+
+describe('computeNudges — choose-character', () => {
+  // A settled student (assessment done, no growth check due) so the only
+  // nudge in play is choose-character.
+  function settled(overrides = {}) {
+    return newStudent({
+      assessmentCompleted: true,
+      startingPointOffered: true,
+      startingPointOfferedAt: daysAgo(120),
+      nextGrowthCheckDue: null,
+      ...overrides,
+    });
+  }
+  const find = (u) => computeNudges(u, { now: NOW }).find(n => n.type === NUDGE_TYPES.CHOOSE_CHARACTER);
+
+  test('student without a full-body character gets the nudge', () => {
+    const n = find(settled({ selectedAvatarId: '' }));
+    expect(n).toBeDefined();
+    expect(n.severity).toBe('recommended');
+    expect(n.dismissible).toBe(true);
+    expect(n.action.href).toBe('/pick-avatar.html');
+  });
+
+  test('student on a DiceBear avatar (no student.* id) still gets the nudge', () => {
+    const n = find(settled({ selectedAvatarId: undefined, avatar: { dicebearUrl: 'https://x/y.svg' } }));
+    expect(n).toBeDefined();
+  });
+
+  test('student with a full-body preset gets NO nudge', () => {
+    expect(find(settled({ selectedAvatarId: 'student.gold' }))).toBeUndefined();
+  });
+
+  test('non-students never get the nudge', () => {
+    expect(find(settled({ role: 'teacher', selectedAvatarId: '' }))).toBeUndefined();
+    expect(find(settled({ role: 'parent', roles: ['parent'], selectedAvatarId: '' }))).toBeUndefined();
+  });
+
+  test('roles[] array takes precedence over legacy role', () => {
+    expect(find(settled({ role: 'teacher', roles: ['student'], selectedAvatarId: '' }))).toBeDefined();
+  });
+
+  test('recently dismissed (within snooze) suppresses; past snooze re-prompts', () => {
+    const dismissed = settled({
+      selectedAvatarId: '',
+      nudgeState: { chooseCharacter: { dismissedAt: daysAgo(SNOOZE_DAYS - 1), dismissCount: 1 } },
+    });
+    expect(find(dismissed)).toBeUndefined();
+
+    const expired = settled({
+      selectedAvatarId: '',
+      nudgeState: { chooseCharacter: { dismissedAt: daysAgo(SNOOZE_DAYS + 1), dismissCount: 1 } },
+    });
+    expect(find(expired)).toBeDefined();
   });
 });
 

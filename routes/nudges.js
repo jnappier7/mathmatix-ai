@@ -22,8 +22,14 @@ const HOUR_MS = 60 * 60 * 1000;
 // hitting "Skip for today" daily.
 const MAX_SNOOZE_HOURS = 24 * 7;
 
+const STATE_KEYS = {
+  [NUDGE_TYPES.STARTING_POINT]: 'screener',
+  [NUDGE_TYPES.GROWTH_CHECK]: 'growthCheck',
+  [NUDGE_TYPES.CHOOSE_CHARACTER]: 'chooseCharacter',
+};
+
 function stateKeyForType(type) {
-  return type === NUDGE_TYPES.STARTING_POINT ? 'screener' : 'growthCheck';
+  return STATE_KEYS[type] || 'growthCheck';
 }
 
 function ensureNudgeState(user, key) {

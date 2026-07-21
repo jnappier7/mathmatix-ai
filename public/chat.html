@@ -89,6 +89,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="/dist/css/chat-css2.03bfa896.css" />
   <!-- Coin surfacing: sidebar counter + fly-in reward animation -->
   <link rel="stylesheet" href="/css/coin-fx.css" />
+  <!-- Full-body student character render -->
+  <link rel="stylesheet" href="/css/avatar-fullbody.css" />
 <!-- Interactive math workspace (chat right slot) -->
   <link rel="stylesheet" href="/css/workspace.css?v=20260711" />
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->
@@ -393,6 +395,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- Compact Progress Card — motivational, not actionable, so at the bottom -->
     <div class="sidebar-section sidebar-section-compact" style="margin-top: auto;">
+      <div class="sidebar-avatar-panel" id="sidebar-avatar-panel"></div>
       <div class="sidebar-progress">
         <div class="sidebar-progress-topline">
           <div class="sidebar-progress-level"><span data-i18n="misc.level">Level</span> <span id="sidebar-level">1</span></div>
@@ -2354,6 +2357,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/dist/js/chat-js1.b97aead7.js"></script>
   <script src="/js/tutor-config-data.js"></script>
   <script src="/js/avatar-config-data.js"></script>
+  <script src="/js/avatarFullBody.js"></script>
 <!-- Redesigned chat shell behavior (tutor swap, quick actions, header pills) -->
   <script defer src="/js/chat-redesign.js?v=20260717"></script>
   <!-- Adjustable panels: resizable work board + minimizable tutor hero -->

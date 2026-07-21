@@ -13,6 +13,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <title>M∆THM∆TIΧ AI - Your Math Journey</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/css/ux-enhancements.css" />
+  <link rel="stylesheet" href="/css/avatar-fullbody.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <style>
     * { box-sizing: border-box; }
@@ -481,6 +482,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </button>
       </div>
 
+      <div class="progress-avatar-hero" id="progress-avatar-hero"></div>
+
       <div class="stats-row">
         <div class="stat-card mastered-card">
           <div class="stat-ring">
@@ -556,6 +559,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 
 <script src="/js/csrf.js"></script>
+  <script src="/js/avatarFullBody.js"></script>
   <script>
     const CIRCUMFERENCE = 2 * Math.PI * 34; // ~213.6
 
@@ -584,6 +588,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         await loadProgress();
+
+        // Full-body character hero (survives the normal render; the empty-state
+        // branch replaces progress-content, so guard on the element existing).
+        try {
+          const heroEl = document.getElementById('progress-avatar-hero');
+          if (heroEl && window.AvatarFullBody) {
+            heroEl.innerHTML =
+              window.AvatarFullBody.html(user, { size: 'lg' }) +
+              '<div class="pah-meta">' +
+                '<div class="pah-name"></div>' +
+                '<div class="pah-level">Level ' + (user.level || 1) + '</div>' +
+              '</div>';
+            // Set the name via textContent to avoid any injection.
+            heroEl.querySelector('.pah-name').textContent = user.firstName || 'Mathematician';
+          }
+        } catch (e) { console.warn('Avatar hero render failed', e); }
 
         document.getElementById('loading-state').style.display = 'none';
         document.getElementById('progress-content').style.display = 'block';
