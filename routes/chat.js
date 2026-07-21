@@ -283,7 +283,7 @@ async function runStudentTurn(req, res) {
             userLevel: 1,
             xpNeeded: 200,
             specialXpAwarded: "",
-            voiceId: "default",
+            voiceId: TUTOR_CONFIG.default.cartesiaVoiceId,
             newlyUnlockedTutors: [],
             drawingSequence: null,
             safetyFilter: true
@@ -312,7 +312,7 @@ async function runStudentTurn(req, res) {
                 userLevel: user.level || 1,
                 xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level || 1),
                 specialXpAwarded: "",
-                voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].voiceId,
+                voiceId: TUTOR_CONFIG[user.selectedTutorId || "default"].cartesiaVoiceId,
                 newlyUnlockedTutors: [],
                 drawingSequence: null,
                 triggerAssessment: false
@@ -448,7 +448,7 @@ async function runStudentTurn(req, res) {
 
                 const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
                 const userXpInCurrentLevel = Math.max(0, (user.xp || 0) - xpForLevelStart);
-                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.voiceId || 'default';
+                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.cartesiaVoiceId || TUTOR_CONFIG.default.cartesiaVoiceId;
 
                 return res.json({
                     text: tutorReply,
@@ -503,7 +503,7 @@ async function runStudentTurn(req, res) {
 
                 const xpForLevelStart = BRAND_CONFIG.cumulativeXpForLevel(user.level);
                 const userXpInCurrentLevel = Math.max(0, (user.xp || 0) - xpForLevelStart);
-                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.voiceId || 'default';
+                const tutorVoice = TUTOR_CONFIG[user.selectedTutorId || 'default']?.cartesiaVoiceId || TUTOR_CONFIG.default.cartesiaVoiceId;
 
                 return res.json({
                     text: tutorReply,
@@ -1618,7 +1618,7 @@ async function runStudentTurn(req, res) {
             userXp: userXpInCurrentLevel,
             userLevel: user.level,
             xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
-            voiceId: currentTutor.voiceId,
+            voiceId: currentTutor.cartesiaVoiceId,
             newlyUnlockedTutors: pipelineResult.tutorsUnlocked,
             avatarBuilderUnlocked: pipelineResult.avatarBuilderUnlocked || false,
             drawingSequence: pipelineResult.drawingSequence,
@@ -1804,7 +1804,7 @@ async function handleParentChat(req, res, parentId, childId, message) {
             userLevel: 0,
             xpNeeded: 0,
             specialXpAwarded: "",
-            voiceId: currentTutor.voiceId,
+            voiceId: currentTutor.cartesiaVoiceId,
             tutorName: currentTutor.name,
             tutorImage: currentTutor.image,
             newlyUnlockedTutors: [],
@@ -2324,7 +2324,7 @@ async function handleGreetingRequest(req, res, userId) {
                     res.setHeader('Connection', 'keep-alive');
                     res.setHeader('X-Accel-Buffering', 'no');
                     res.flushHeaders();
-                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
+                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.cartesiaVoiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
                     return res.end();
                 }
                 // QA P1-6: send WITHIN-level XP (and a level reconciled from
@@ -2336,7 +2336,7 @@ async function handleGreetingRequest(req, res, userId) {
                     continued: true,
                     conversationId: activeConversation._id,
                     messages: visibleMessages,
-                    voiceId: contTutor.voiceId,
+                    voiceId: contTutor.cartesiaVoiceId,
                     isGreeting: true,
                     userXp: contXp.xpForCurrentLevel,
                     userLevel: contXp.level,
@@ -2377,7 +2377,7 @@ async function handleGreetingRequest(req, res, userId) {
                 res.setHeader('Connection', 'keep-alive');
                 res.setHeader('X-Accel-Buffering', 'no');
                 res.flushHeaders();
-                res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.voiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
+                res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.cartesiaVoiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
                 return res.end();
             }
             return res.json({
@@ -2385,7 +2385,7 @@ async function handleGreetingRequest(req, res, userId) {
                 continued: true,
                 conversationId: activeConversation._id,
                 messages: visibleMessages,
-                voiceId: contTutor.voiceId,
+                voiceId: contTutor.cartesiaVoiceId,
                 isGreeting: true,
                 userXp: user.xp || 0,
                 userLevel: user.level || 1,
@@ -2425,12 +2425,12 @@ async function handleGreetingRequest(req, res, userId) {
                     res.setHeader('X-Accel-Buffering', 'no');
                     res.flushHeaders();
                     res.write(`data: ${JSON.stringify({ chunk: lastAiMsg.content })}\n\n`);
-                    res.write(`data: ${JSON.stringify({ done: true, voiceId: currentTutor.voiceId, isGreeting: true })}\n\n`);
+                    res.write(`data: ${JSON.stringify({ done: true, voiceId: currentTutor.cartesiaVoiceId, isGreeting: true })}\n\n`);
                     return res.end();
                 }
                 return res.json({
                     text: lastAiMsg.content,
-                    voiceId: currentTutor.voiceId,
+                    voiceId: currentTutor.cartesiaVoiceId,
                     isGreeting: true,
                     userXp: user.xp || 0,
                     userLevel: user.level || 1,
@@ -2866,7 +2866,7 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
                 // Send completion with metadata
                 const streamDonePayload = {
                     done: true,
-                    voiceId: currentTutor.voiceId,
+                    voiceId: currentTutor.cartesiaVoiceId,
                     isGreeting: true,
                 };
                 if (openerResult?.suggestionChips) {
@@ -2940,7 +2940,7 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
 
             const greetingResponse = {
                 text: greetingText,
-                voiceId: currentTutor.voiceId,
+                voiceId: currentTutor.cartesiaVoiceId,
                 isGreeting: true,
                 userXp: user.xp || 0,
                 userLevel: user.level || 1,
@@ -2968,7 +2968,7 @@ The student has an overdue Growth Check (${timingPhrase} since their last one). 
 
         res.json({
             text: fallback,
-            voiceId: 'default',
+            voiceId: TUTOR_CONFIG.default.cartesiaVoiceId,
             isGreeting: true,
             error: 'Greeting generation failed'
         });

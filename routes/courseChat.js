@@ -269,7 +269,7 @@ router.post('/', async (req, res) => {
             // Parent response: clean, no gamification
             responseData = {
                 text: aiResponseText,
-                voiceId: currentTutor.voiceId,
+                voiceId: currentTutor.cartesiaVoiceId,
                 aiTimeUsed: aiProcessingSeconds,
                 courseContext: courseResult.courseContext,
                 courseProgress: courseProgressUpdate,
@@ -295,7 +295,7 @@ router.post('/', async (req, res) => {
                 userXp: xpInLevel,
                 userLevel: user.level,
                 xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
-                voiceId: currentTutor.voiceId,
+                voiceId: currentTutor.cartesiaVoiceId,
                 newlyUnlockedTutors: tutorsJustUnlocked,
                 avatarBuilderUnlocked,
                 iepFeatures,
@@ -425,7 +425,7 @@ async function handleCourseGreeting(req, res, userId) {
                 });
                 return res.json({
                     text: lastMsg.content,
-                    voiceId: currentTutor.voiceId,
+                    voiceId: currentTutor.cartesiaVoiceId,
                     isGreeting: true,
                     courseContext: {
                         courseId: courseSession.courseId,
@@ -593,7 +593,7 @@ async function handleCourseGreeting(req, res, userId) {
 
         res.json({
             text: isCheckpointModule ? null : greetingText,
-            voiceId: currentTutor.voiceId,
+            voiceId: currentTutor.cartesiaVoiceId,
             isGreeting: true,
             isCheckpoint: isCheckpointModule || false,
             checkpointTitle: isCheckpointModule ? (moduleData?.title || 'Checkpoint') : undefined,
