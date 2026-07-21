@@ -5,7 +5,6 @@ const TUTOR_CONFIG = {
   // --- UNLOCKED STARTING TUTORS ---
  "bob": {
     name: "Bob",
-    voiceId: "UgBBYS2sOqTuMpoF3BR0",
     cartesiaVoiceId: "86e30c1d-714b-4074-a1f2-1cb6b552fb49",
     image: "bob.png",
     catchphrase: "Bringing math concepts to life!",
@@ -20,7 +19,6 @@ const TUTOR_CONFIG = {
 
 	"maya": {
     name: "Maya",
-    voiceId: "umKoJK6tP1ALjO0zo1EE",
     cartesiaVoiceId: "f9836c6e-a0bd-460e-9d3c-f7299fa60f94",
     image: "maya.png",
     catchphrase: "Learning math, your way!",
@@ -35,7 +33,6 @@ const TUTOR_CONFIG = {
 
 	"ms-maria": {
     name: "Ms. Maria",
-    voiceId: "kcQkGnn0HAT2JRDQ4Ljp",
     cartesiaVoiceId: "7f71145b-ef1f-413b-a7fd-ad73514587c3",
     image: "ms-maria.png",
     catchphrase: "Structured math learning for solid results.",
@@ -50,8 +47,7 @@ const TUTOR_CONFIG = {
 
  "mr-nappier": {
     name: "Mr. Nappier",
-    voiceId: "2eFQnnNM32GDnZkCfkSm",
-    cartesiaVoiceId: "a8521a77-7e0c-4c33-a6d7-3c706c9fac2b",
+    cartesiaVoiceId: "8376fc2e-95d3-4a7b-a99c-d2e7726e232e",
     image: "mr-nappier.png",
     catchphrase: "Math is about patterns! Once you see the patterns math becomes EASY",
     personality: "You are Mr. Nappier, the cool, modern teacher who makes math feel like an adventure. Your CORE BELIEF is that 'Math is all about patterns,' and you say this frequently. You love pointing out patterns, saying things like 'Do you see the pattern here?' and 'Once you spot the pattern, everything clicks!' You're positive and energizing, often saying 'Nice work!' and 'You're getting it!' You treat math like a puzzle to solve together, not a test to pass. You believe every student can succeed if they see the right pattern. Your catchphrase is 'Once you see the pattern, math becomes EASY!' You're patient, encouraging, and make students feel like pattern-spotting detectives.",
@@ -70,7 +66,6 @@ const TUTOR_CONFIG = {
   "ms-rashida": {
     name: "Ms. Rashida",
     active: false,
-    voiceId: "03vEurziQfq3V8WZhQvn",
     cartesiaVoiceId: "607167f6-9bf2-473c-accc-ac7b3b66b30b",
     image: "ms-rashida.png",
     catchphrase: "Let's build your confidence together.",
@@ -91,7 +86,6 @@ const TUTOR_CONFIG = {
   "mr-sierawski": {
     name: "Mr. Sierawski",
     active: false,
-    voiceId: "Eo4lLlaFSMCbef4YVmc6",
     cartesiaVoiceId: "34575e71-908f-4ab6-ab54-b08c95d6597d",
     image: "mr-sierawski.png",
     catchphrase: "There we go!",
@@ -112,7 +106,6 @@ const TUTOR_CONFIG = {
   "prof-davies": {
     name: "Prof. Davies",
     active: false,
-    voiceId: "jn34bTlmmOgOJU9XfPuy",
     cartesiaVoiceId: "34d923aa-c3b5-4f21-aac7-2c1f12730d4b",
     image: "prof-davies.png",
     catchphrase: "Let's explore the 'why' behind the numbers.",
@@ -133,7 +126,6 @@ const TUTOR_CONFIG = {
   "ms-alex": {
     name: "Ms. Alex",
     active: false,
-    voiceId: "8DzKSPdgEQPaK5vKG0Rs",
     cartesiaVoiceId: "a33f7a4c-100f-41cf-a1fd-5822e8fc253f",
     image: "ms-alex.png",
     catchphrase: "A fresh perspective on any problem.",
@@ -154,7 +146,6 @@ const TUTOR_CONFIG = {
   "mr-lee": {
     name: "Mr. Lee",
     active: false,
-    voiceId: "dZUDKQDfSHNzYzM1epKR",
     cartesiaVoiceId: "16212f18-4955-4be9-a6cd-2196ce2c11d1",
     image: "mr-lee.png",
     catchphrase: "Precision and practice make perfect.",
@@ -175,7 +166,6 @@ const TUTOR_CONFIG = {
   "dr-g": {
     name: "Dr. G",
     active: false,
-    voiceId: "Iz2kaKkJmFf0yaZAMDTV",
     cartesiaVoiceId: "0ad65e7f-006c-47cf-bd31-52279d487913",
     image: "dr-g.png",
     catchphrase: "Strength in numbers.",
@@ -196,7 +186,6 @@ const TUTOR_CONFIG = {
   "mr-wiggles": {
     name: "Mr. Wiggles",
     active: false,
-    voiceId: "52d3CDIZuiBA0XXTytxR",
     cartesiaVoiceId: "fb26447f-308b-471e-8b00-8e9f04284eb5",
     image: "wiggles.png",
     catchphrase: "Why was the equals sign so humble? Because he knew he wasn't less than or greater than anyone else!",
@@ -218,8 +207,7 @@ const TUTOR_CONFIG = {
   // --- DEFAULT FALLBACK ---
   "default": {
     name: "Mr. Nappier",
-    voiceId: "2eFQnnNM32GDnZkCfkSm",
-    cartesiaVoiceId: "a8521a77-7e0c-4c33-a6d7-3c706c9fac2b",
+    cartesiaVoiceId: "8376fc2e-95d3-4a7b-a99c-d2e7726e232e",
     image: "mr-nappier.png",
     catchphrase: "Math is about patterns! Once you see the patterns math becomes EASY",
     personality: "You are Mr. Nappier, the cool, modern teacher who makes math feel like an adventure. Your CORE BELIEF is that 'Math is all about patterns,' and you say this frequently. You love pointing out patterns, saying things like 'Do you see the pattern here?' and 'Once you spot the pattern, everything clicks!' You're positive and energizing, often saying 'Nice work!' and 'You're getting it!' You treat math like a puzzle to solve together, not a test to pass. You believe every student can succeed if they see the right pattern. Your catchphrase is 'Once you see the pattern, math becomes EASY!' You're patient, encouraging, and make students feel like pattern-spotting detectives.",

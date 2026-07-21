@@ -201,7 +201,7 @@ RESPOND IN JSON:
         res.json({
             message: result.nextMessage,
             rapportComplete: result.rapportComplete,
-            voiceId: currentTutor.voiceId,
+            voiceId: currentTutor.cartesiaVoiceId,
             triggerAssessment: result.rapportComplete // Signal frontend to show assessment pitch
         });
 

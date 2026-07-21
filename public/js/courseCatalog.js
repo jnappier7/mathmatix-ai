@@ -1111,19 +1111,28 @@ class CourseManager {
         // type → the client launcher invoked by the CTA. Starting Point mirrors
         // the existing inline-CTA path (floatingScreener, falling back to
         // window.openStartingPoint). Unknown types render nothing.
+        const sessionId = this.activeCourseSessionId || '';
         const launchers = {
             'act-practice': 'if (window.openActTest) { window.openActTest(); }',
             'starting-point': "if (window.floatingScreener) { Promise.resolve(window.floatingScreener.checkAssessmentStatus()).then(function(){ window.floatingScreener.open(); }).catch(function(){}); } else if (window.openStartingPoint) { window.openStartingPoint(); }",
+            'course-preassessment': `if (window.openCoursePreAssessment) { window.openCoursePreAssessment('${sessionId}', { required: ${!!diag.required} }); }`,
         };
         const launch = launchers[diag.type];
         if (!launch) return '';
-        const dismiss = "(this.closest('.course-welcome-splash') || this.closest('.course-diagnostic-wrap') || this.closest('.course-diagnostic-card'))?.remove();";
+        // A REQUIRED diagnostic (the ACT baseline, a course pre-assessment) must
+        // not remove its own card on click. If the student closes the test
+        // without finishing, the card has to still be there — otherwise "required"
+        // means "required until you click it once".
+        const dismiss = diag.required
+            ? ''
+            : "(this.closest('.course-welcome-splash') || this.closest('.course-diagnostic-wrap') || this.closest('.course-diagnostic-card'))?.remove();";
         return `
             <div class="course-diagnostic-card" style="margin-top:16px; padding:16px; border-radius:12px; background:linear-gradient(135deg,#eef2ff,#faf5ff); border:1px solid #c7d2fe;">
                 <div style="font-size:14px; font-weight:700; color:#4338ca; margin-bottom:6px;">
                     <i class="fas fa-clipboard-check" style="margin-right:6px;"></i>${this.escapeHtml(diag.title)}
                 </div>
                 <div style="font-size:12px; color:#555; line-height:1.5; margin-bottom:12px;">${this.escapeHtml(diag.body)}</div>
+                ${diag.required ? '<div style="font-size:11px; font-weight:700; color:#b45309; margin-bottom:10px;"><i class="fas fa-lock" style="margin-right:5px;"></i>Start here — this sets your baseline.</div>' : ''}
                 <button class="course-diagnostic-cta" onclick="${dismiss} ${launch}" style="
                     width:100%; padding:12px; border:none; border-radius:10px;
                     background:linear-gradient(135deg,#4f46e5,#7c3aed); color:white;

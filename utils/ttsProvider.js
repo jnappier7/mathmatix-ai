@@ -39,28 +39,26 @@ function getProviderName() {
  * Used by voice.js where the tutor profile is loaded server-side.
  */
 function getVoiceId(tutorProfile) {
-    if (TTS_PROVIDER === 'cartesia') {
-        return tutorProfile.cartesiaVoiceId || null;
-    }
-    return tutorProfile.voiceId;
+    return tutorProfile.cartesiaVoiceId || null;
 }
 
 /**
  * Resolve a voice ID from a client request.
- * Maps client-sent voice IDs to the corresponding Cartesia voice ID.
+ * The client sends a Cartesia voice id straight from TUTOR_CONFIG, but a stale
+ * tab (or the literal "default" some callers still send) can send something we
+ * don't recognize — fall back to the default tutor rather than handing Cartesia
+ * an id it will reject.
  * Used by speak.js where the voiceId comes from the client.
  */
 function resolveVoiceId(clientVoiceId) {
     const TUTOR_CONFIG = require('./tutorConfig');
-    for (const tutor of Object.values(TUTOR_CONFIG)) {
-        if (tutor.voiceId === clientVoiceId && tutor.cartesiaVoiceId) {
-            return tutor.cartesiaVoiceId;
-        }
-    }
+    const known = Object.values(TUTOR_CONFIG).some(
+        (tutor) => tutor.cartesiaVoiceId === clientVoiceId
+    );
+    if (known) return clientVoiceId;
 
-    // No mapping found — return original
-    console.warn(`⚠️ [TTS] No Cartesia voice mapping found for voice: ${clientVoiceId}`);
-    return clientVoiceId;
+    console.warn(`⚠️ [TTS] Unknown voice id "${clientVoiceId}" — falling back to the default tutor.`);
+    return TUTOR_CONFIG.default.cartesiaVoiceId;
 }
 
 /**

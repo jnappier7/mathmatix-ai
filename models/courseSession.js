@@ -66,6 +66,14 @@ const courseSessionSchema = new Schema({
   // result in the greeting. Set at practice-test completion; null otherwise.
   diagnosticPlan: { type: Schema.Types.Mixed, default: null },
 
+  // Course pre-assessment: every course opens by establishing what the student
+  // already owns, so it can skip that content instead of re-teaching it. Set
+  // once, on completion; the diagnostic card stops appearing after that.
+  // Shape: { credited: [skillId], notCredited: [skillId], clearedFromAbove: [skillId],
+  //          startModuleId, coverage, totalCourseSkills, skippedForNoItems: [skillId] }.
+  preAssessmentCompletedAt: { type: Date, default: null },
+  preAssessment: { type: Schema.Types.Mixed, default: null },
+
   // Overall progress
   overallProgress: { type: Number, default: 0, min: 0, max: 100 },
 
