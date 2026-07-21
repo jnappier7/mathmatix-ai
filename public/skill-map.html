@@ -10,74 +10,104 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill Map | MATHMATIX AI</title>
+    <title>Your Climb | MATHMATIX AI</title>
     <link rel="stylesheet" href="/css/skill-map.css">
     <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-    <a href="#graph-container" class="skip-to-content">Skip to main content</a>
+    <a href="#board" class="skip-to-content">Skip to main content</a>
 
-    <!-- Full-viewport map canvas -->
-    <div id="graph-container"></div>
-
-    <!-- Floating info box (top-left) — minimal stats -->
-    <div id="infoBox" class="info-box">
-        <div class="info-content">
-            <div class="info-title">THE MATHEMATICAL UNIVERSE</div>
-            <div class="info-subtitle">A Skill Map of Patterns & Connections</div>
-            <div class="info-stats">
-                <span class="info-stat"><strong id="masteredCount">0</strong> mastered</span>
-                <span class="info-stat-sep">/</span>
-                <span class="info-stat"><strong id="totalSkills">0</strong> skills</span>
+    <div class="wrap">
+        <header class="top">
+            <div class="brandline">
+                <div class="eyebrow">Map of Mathmatix</div>
+                <h1>Your climb <em>&mdash; learn it, prove it, teach it</em></h1>
             </div>
+            <div class="tally" aria-live="polite">
+                <div><b id="t-proved">0</b><span>proved</span></div>
+                <div><b id="t-taught">0</b><span>taught</span></div>
+                <div><b id="t-open">0</b><span>open now</span></div>
+            </div>
+            <nav class="nav-float">
+                <a href="/chat.html" class="nav-btn">&larr; Chat</a>
+            </nav>
+        </header>
+
+        <!-- Proximity hook: the nearest band the student can actually close -->
+        <div class="hook" id="hook" hidden>
+            <i class="pip" aria-hidden="true"></i>
+            <p id="hook-text"></p>
+            <button class="act" id="hook-btn" type="button">Prove it</button>
+        </div>
+
+        <div id="status" class="status" role="status"></div>
+
+        <main class="board" id="board" hidden>
+            <div class="towers" id="towers"></div>
+        </main>
+
+        <div class="legend" id="legend" hidden>
+            <span><i class="swatch s-locked"></i>Locked</span>
+            <span><i class="swatch s-open"></i>Open</span>
+            <span><i class="swatch s-learned"></i>Learned it</span>
+            <span><i class="swatch s-above"></i>Cleared from above</span>
+            <span><i class="swatch s-proved"></i>Proved it</span>
+            <span><i class="swatch s-taught"></i>Taught it</span>
         </div>
     </div>
 
-    <!-- Floating nav (top-right) -->
-    <div class="nav-float">
-        <a href="/chat.html" class="nav-btn" title="Back to Chat">&larr; Chat</a>
-        <button id="resetZoom" class="nav-btn" title="Reset View (R)">Reset</button>
-        <button id="showHelp" class="nav-btn" title="Keyboard Shortcuts (?)">?</button>
-    </div>
+    <!-- Skill drawer -->
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <div class="drawer-inner">
+            <div class="dhead">
+                <div>
+                    <h2 id="d-label"></h2>
+                    <div class="meta" id="d-meta"></div>
+                </div>
+                <button class="ghost" id="d-close" type="button" aria-label="Close">Close</button>
+            </div>
+            <p class="d-state" id="d-state"></p>
+            <div class="proofs" id="d-proofs"></div>
 
-    <!-- Node detail panel — slides in from right on click -->
-    <div id="nodeDetail" class="node-detail hidden">
-        <button id="closeDetail" class="detail-close">&times;</button>
-        <div class="detail-body">
-            <h2 id="detailTitle"></h2>
-            <div class="detail-meta">
-                <div class="detail-row">
-                    <span class="detail-label">Pattern</span>
-                    <span id="detailPattern" class="detail-value"></span>
+            <!-- Challenge runner -->
+            <section class="runner" id="runner" hidden>
+                <h3>Prove it</h3>
+                <p class="runner-sub" id="runner-sub"></p>
+                <ol class="qs" id="runner-qs"></ol>
+                <div class="runner-actions">
+                    <button class="act" id="runner-submit" type="button">Submit</button>
+                    <button class="ghost" id="runner-cancel" type="button">Cancel</button>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Tier</span>
-                    <span id="detailTier" class="detail-value"></span>
+                <p class="runner-result" id="runner-result" hidden></p>
+            </section>
+
+            <!-- Teach-back -->
+            <section class="runner" id="teach" hidden>
+                <h3>Teach it back</h3>
+                <p class="runner-sub" id="teach-prompt"></p>
+                <textarea id="teach-input" rows="6" placeholder="Explain it in your own words &mdash; and say WHY it works, not just the steps."></textarea>
+                <div class="runner-actions">
+                    <button class="act" id="teach-submit" type="button">Submit</button>
+                    <button class="ghost" id="teach-cancel" type="button">Cancel</button>
                 </div>
-                <div class="detail-row">
-                    <span class="detail-label">Milestone</span>
-                    <span id="detailMilestone" class="detail-value"></span>
-                </div>
-            </div>
-            <div class="detail-status-section">
-                <span id="detailStatus" class="status-badge"></span>
-                <div class="progress-track">
-                    <div id="detailProgressBar" class="progress-fill"></div>
-                </div>
-                <span id="detailProgressText" class="progress-text">0%</span>
-            </div>
-            <button id="practiceBtn" class="practice-btn">Start Practice</button>
+                <p class="runner-result" id="teach-result" hidden></p>
+            </section>
         </div>
+    </aside>
+
+    <div class="toast" id="toast" hidden>
+        <div class="big" id="toast-big"></div>
+        <div class="sub" id="toast-sub"></div>
     </div>
 
     <script src="js/storage-utils.js"></script>
     <script src="js/csrf.js"></script>
     <script src="js/logout.js"></script>
+    <script src="js/skillMapModel.js"></script>
     <script src="js/skill-map.js"></script>
 </body>
 </html>
