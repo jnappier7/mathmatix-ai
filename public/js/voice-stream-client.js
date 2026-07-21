@@ -170,6 +170,17 @@
                 this.audioCtx = new (window.AudioContext || window.webkitAudioContext)({
                     latencyHint: 'interactive',
                 });
+                // Unlock IMMEDIATELY, before the async worklet fetch below. iOS
+                // Safari only honors resume() inside the user gesture that
+                // reached here (the orb tap / voice-mode entry). The worklet
+                // addModule() is a network load that ends the gesture window, so
+                // resuming AFTER it leaves the context suspended — AI audio then
+                // stays silent until the student taps again, which reads as
+                // "tap to advance". Kick resume() off synchronously now; the
+                // statechange handler and _playPcmS16 cover any later re-suspend.
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume().catch(() => { /* gesture lost — retried on next tap */ });
+                }
                 this.outGain = this.audioCtx.createGain();
                 this.outGain.gain.value = 1.0;
                 // outGain → analyser → destination, mirroring modules/audio.js,

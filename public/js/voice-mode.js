@@ -91,8 +91,15 @@
     paintButton();
     paintComposerEntry();
 
-    // Kick off the voice engine. The click that called enter() is a
-    // user gesture, so getUserMedia inside startListening() is allowed.
+    // Kick off the voice engine. enter() runs inside the tap handler, so this
+    // MUST call startListening() synchronously — not from a Promise.resolve()
+    // microtask. On iOS Safari the user-activation that lets us create/resume
+    // the AudioContext and open the mic is only valid within the gesture task;
+    // deferring even one microtask forfeits it, so the AudioContext is born
+    // suspended and the tutor's audio stays silent until the student taps
+    // again to "resume" it — which is exactly the tap-per-stage bug on iPhone.
+    // startListening() is async, but its synchronous prefix (new AudioContext,
+    // getUserMedia) fires in-gesture when called directly; only await the tail.
     var vc = window.voiceController;
     if (vc) {
       // Voice mode is a hands-free, call-style conversation — NOT push-to-talk.
@@ -105,9 +112,12 @@
       // and ignores this flag.)
       vc.handsFreeMode = true;
       if (!vc.isListening && typeof vc.startListening === 'function') {
-        Promise.resolve()
-          .then(function () { return vc.startListening(); })
-          .catch(function () { /* mic denied or unavailable — mode still usable */ });
+        try {
+          var p = vc.startListening();
+          if (p && typeof p.catch === 'function') {
+            p.catch(function () { /* mic denied or unavailable — mode still usable */ });
+          }
+        } catch (_) { /* engine not ready — mode still usable */ }
       }
     }
   }
