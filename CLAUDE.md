@@ -31,7 +31,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 |-------|------|
 | Backend | Node.js ≥20.14 (pinned 20.11.1) / Express 4 |
 | DB | MongoDB + Mongoose 8 (`connect-mongo` session store) |
-| **LLM (runtime)** | **OpenAI only** — `gpt-4o-mini` (chat/teaching), `gpt-4o` (vision grading). See §7. |
+| **LLM (runtime)** | **Dual-provider.** OpenAI by default (`gpt-4o-mini` chat, `gpt-4o` vision grading, `text-embedding-3-small`); the tutor's generate stage runs **Claude** when `TUTOR_MODEL` is set — production currently runs `claude-sonnet-5`. See §7. |
 | Voice STT | Deepgram (`nova-2`/`nova-3`), Whisper-1 fallback |
 | Voice TTS | Cartesia (`sonic-3.5`), streaming over WebSocket |
 | Math OCR | Mathpix (`/v3/text`, `/v3/pdf`) |
@@ -44,9 +44,18 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 | Frontend | **Vanilla JS + Vite** (multi-page, no SPA framework) |
 | Hosting | Render (Docker); Puppeteer headless-shell + Python3/matplotlib in image |
 
-> ⚠️ `ANTHROPIC_API_KEY_*` appears in `.env.example`, but **Claude is not wired in at runtime** —
-> the only reference (`utils/pipeline/llmVerifier.js`) is a comment about a *future* swap. Treat the
-> app as OpenAI-only until that path is actually built.
+> **Claude IS wired in at runtime** (this note previously said the opposite — it was stale, and it
+> misleads anyone reasoning about the pipeline). `utils/pipeline/generate.js` reads
+> `PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini'`, and `utils/openaiClient.js`
+> dispatches to `utils/anthropicClient.js` whenever the model id starts with `claude`. That adapter is
+> a full drop-in for `callLLM` / `callLLMStream` / `callLLMStructured` and normalizes Claude's
+> request/response/stream shapes into the OpenAI ones the rest of the app consumes, so the pipeline
+> stays provider-agnostic. It also prepends a **child-safety system prompt** on every Claude call
+> (Anthropic requires it for products serving minors) — provider-scoped, the OpenAI path is unchanged.
+>
+> Still OpenAI regardless of `TUTOR_MODEL`: **vision grading** (deliberately — `llmGateway` calls the
+> OpenAI SDK directly for it), **embeddings**, and `llmGateway`'s `DEFAULT_MODELS` for any caller that
+> doesn't pass a model explicitly.
 
 ---
 
@@ -159,7 +168,14 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
   names → `[Student]` → rehydrates) before/after the API call. Routes/pipeline should call this, **not**
   `openaiClient` directly.
 - **`utils/openaiClient.js`** wraps the OpenAI SDK (retry/backoff, 90s timeout, structured outputs,
-  `max_completion_tokens` vs `max_tokens` per model). 35 files import one of these two.
+  `max_completion_tokens` vs `max_tokens` per model). 35 files import one of these two. It is also the
+  **provider router**: a model id starting with `claude` is dispatched to `anthropicClient`, with a
+  transient-error fallback back to `TUTOR_FALLBACK_MODEL` (default `gpt-4o-mini`).
+- **`utils/anthropicClient.js`** is the Claude adapter — message translation (system messages hoisted
+  to Claude's top-level `system`; consecutive same-role turns merged; **OpenAI `image_url` blocks
+  converted to Claude `image` sources**), schema sanitizing for structured output, and stop-reason
+  mapping. The image conversion is load-bearing: without it every turn after a photo upload 400s and
+  silently falls back to non-streaming.
 
 ### Prompts (token-sensitive)
 - `utils/prompt.js` delegates to **`utils/promptCompact.js`** (the live, ~3-4K-token builder). The

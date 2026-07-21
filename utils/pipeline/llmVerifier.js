@@ -27,9 +27,13 @@
 const { callLLM } = require('../llmGateway');
 const { symbolicVerify } = require('./symbolicVerifier');
 
-// Small, fast model. Matches the existing PRIMARY_CHAT_MODEL in verify.js so
-// we stay within the OpenAI-only contract of openaiClient.js. A swap to
-// Claude Haiku 4.5 would require adding an anthropic client path.
+// Small, fast model, held on OpenAI deliberately. openaiClient now routes any
+// `claude*` id to anthropicClient, so a swap to Claude Haiku is a one-line
+// change here rather than new plumbing — but the verifier is the second opinion
+// that checks the tutor's own answer, and the tutor generate stage already runs
+// Claude in production (TUTOR_MODEL). Keeping the verifier on a different
+// provider is the point: two independent models are a real cross-check, one
+// model grading itself is not.
 const VERIFIER_MODEL = 'gpt-4o-mini';
 
 // If the equivalence judge returns below this confidence, we treat the
