@@ -36,6 +36,80 @@ describe('anthropicClient.splitSystemAndMessages', () => {
   });
 });
 
+describe('anthropicClient.toAnthropicContent', () => {
+  test('passes plain string content through unchanged', () => {
+    expect(a.toAnthropicContent('hello')).toBe('hello');
+  });
+
+  test('keeps text blocks and converts a base64 image_url to a Claude image', () => {
+    const out = a.toAnthropicContent([
+      { type: 'text', text: 'look at this' },
+      { type: 'image_url', image_url: { url: 'data:image/png;base64,AAAA', detail: 'high' } },
+    ]);
+    expect(out).toEqual([
+      { type: 'text', text: 'look at this' },
+      { type: 'image', source: { type: 'base64', media_type: 'image/png', data: 'AAAA' } },
+    ]);
+  });
+
+  test('normalizes image/jpg to image/jpeg', () => {
+    const out = a.toAnthropicContent([
+      { type: 'image_url', image_url: { url: 'data:image/jpg;base64,ZZ' } },
+    ]);
+    expect(out).toEqual([{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: 'ZZ' } }]);
+  });
+
+  test('converts an http(s) image_url to a Claude url source', () => {
+    const out = a.toAnthropicContent([
+      { type: 'image_url', image_url: { url: 'https://cdn.example.com/w.png' } },
+    ]);
+    expect(out).toEqual([{ type: 'image', source: { type: 'url', url: 'https://cdn.example.com/w.png' } }]);
+  });
+
+  test('drops an unsupported image type but keeps the text', () => {
+    const out = a.toAnthropicContent([
+      { type: 'text', text: 'my work' },
+      { type: 'image_url', image_url: { url: 'data:image/heic;base64,QQ' } },
+    ]);
+    expect(out).toEqual([{ type: 'text', text: 'my work' }]);
+  });
+
+  test('falls back to a space when every block is unconvertible', () => {
+    const out = a.toAnthropicContent([
+      { type: 'image_url', image_url: { url: 'data:image/svg+xml;base64,QQ' } },
+    ]);
+    expect(out).toBe(' ');
+  });
+
+  test('leaves an already Claude-shaped image block intact', () => {
+    const block = { type: 'image', source: { type: 'base64', media_type: 'image/png', data: 'BB' } };
+    expect(a.toAnthropicContent([block])).toEqual([block]);
+  });
+});
+
+describe('anthropicClient.splitSystemAndMessages (vision)', () => {
+  test('converts an image_url block inside a user turn to Claude shape', () => {
+    const { messages } = a.splitSystemAndMessages([
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'grade this' },
+          { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,II', detail: 'high' } },
+        ],
+      },
+    ]);
+    expect(messages).toEqual([
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'grade this' },
+          { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: 'II' } },
+        ],
+      },
+    ]);
+  });
+});
+
 describe('anthropicClient.sanitizeSchema', () => {
   test('strips unsupported constraint keywords recursively', () => {
     const clean = a.sanitizeSchema({
