@@ -248,3 +248,39 @@ describe('clearsPrerequisites', () => {
     expect(clearsPrerequisites(e)).toBe(false);
   });
 });
+
+describe('placement — screener, course pre-assessment, baseline test', () => {
+  test('a placement result proves the skill', () => {
+    // REGRESSION: 'placement' was missing from the allowed via-list, so
+    // advanceRung silently refused and both the ACT baseline credit and the
+    // course pre-assessment credit wrote nothing at all. Unit tests covered the
+    // scoring math; only an integration test caught that the write was a no-op.
+    const e = advanceRung({}, 'proved', { via: 'placement' });
+    expect(e.__rungResult.changed).toBe(true);
+    expect(currentRung(e)).toBe('proved');
+    expect(e.provenBy).toBe('placement');
+  });
+
+  test('placement is a demonstration, not an inference', () => {
+    // The student answered the items. Unlike a cascade-cleared skill, this one
+    // carries real evidence — so it must NOT be flagged inferred.
+    const e = advanceRung({}, 'proved', { via: 'placement' });
+    expect(isInferred(e)).toBe(false);
+    expect(e.masteryType).toBe('verified');
+  });
+
+  test('a placement-proved skill can still be taught', () => {
+    const e = advanceRung({}, 'proved', { via: 'placement' });
+    const t = advanceRung(e, 'taught', { via: 'teachback', evidence: { rubricScore: 4 } });
+    expect(t.__rungResult.changed).toBe(true);
+    expect(currentRung(t)).toBe('taught');
+  });
+
+  test('placement needs no per-item evidence — the assessment already adjudicated', () => {
+    expect(evidenceSupports('proved', 'placement', {}).ok).toBe(true);
+  });
+
+  test('placement still cannot skip straight to taught', () => {
+    expect(canAdvance({}, 'taught', 'placement').ok).toBe(false);
+  });
+});

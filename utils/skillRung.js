@@ -99,7 +99,10 @@ function canAdvance(entry, to, via) {
   }
 
   if (to === 'proved') {
-    if (!['challenge', 'fluency', 'practice', 'inference'].includes(via)) {
+    // 'placement' = a screener, a course pre-assessment, or a baseline practice
+    // test. Unlike 'inference' it IS a demonstration — the student answered the
+    // items — so a placement-proved skill can go on to be taught.
+    if (!['challenge', 'fluency', 'practice', 'placement', 'inference'].includes(via)) {
       return { ok: false, reason: `cannot prove a skill via ${via}` };
     }
     return { ok: true };
@@ -122,7 +125,11 @@ function canAdvance(entry, to, via) {
  * "you may attempt this" and "you did not clear the bar" as different things.
  */
 function evidenceSupports(to, via, evidence = {}) {
-  if (to === 'learned' || via === 'inference') return { ok: true };
+  // 'placement' arrives pre-adjudicated: the assessment already applied its own
+  // credit rule (a clean run on that skill's items — see
+  // utils/coursePreAssessment.CREDIT_ACCURACY) before calling here, so there is
+  // no per-item evidence left to re-check.
+  if (to === 'learned' || via === 'inference' || via === 'placement') return { ok: true };
 
   if (to === 'proved' && via === 'challenge') {
     const { correct = 0, total = 0, hintsUsed = 0 } = evidence;
