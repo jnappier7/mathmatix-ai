@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function playVoice(btn) {
     const t = tutorById(selectedTutorId);
-    if (!t || !t.voiceId) return;
+    if (!t || !t.cartesiaVoiceId) return;
     stopVoice();
 
     btn.disabled = true;
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const resp = await csrfFetch('/api/speak', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ text: t.voicePreview, voiceId: t.voiceId }),
+        body:    JSON.stringify({ text: t.voicePreview, voiceId: t.cartesiaVoiceId }),
         credentials: 'include'
       });
       if (!resp.ok) throw new Error(await resp.text());

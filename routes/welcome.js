@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
                                ? user.selectedTutorId
                                : "default";
         const currentTutor = TUTOR_CONFIG[selectedTutorKey];
-        const voiceIdForWelcome = currentTutor.voiceId;
+        const voiceIdForWelcome = currentTutor.cartesiaVoiceId;
         const tutorNameForPrompt = currentTutor.name;
 
         // Load or create active conversation to save welcome message

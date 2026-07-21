@@ -1734,7 +1734,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 playBtn.classList.add('is-loading');
                 const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
                 const speakableText = generateSpeakableText(text);
-                playAudio(speakableText, tutor.voiceId, bubble.id);
+                playAudio(speakableText, tutor.cartesiaVoiceId, bubble.id);
             });
             bubble.appendChild(playBtn);
 
@@ -1822,7 +1822,7 @@ document.addEventListener("DOMContentLoaded", () => {
                  }
                  const tutor = window.TUTOR_CONFIG[currentUser.selectedTutorId] || window.TUTOR_CONFIG['default'];
                  const speakableText = generateSpeakableText(text);
-                 playAudio(speakableText, tutor.voiceId, bubble.id);
+                 playAudio(speakableText, tutor.cartesiaVoiceId, bubble.id);
             }
         }
 
@@ -2232,7 +2232,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 playBtn.classList.add('is-loading');
                 const tutor = window.TUTOR_CONFIG?.[currentUser?.selectedTutorId] || window.TUTOR_CONFIG?.['default'];
                 const speakableText = generateSpeakableText(fullText);
-                playAudio(speakableText, tutor?.voiceId, messageRef.bubble.id);
+                playAudio(speakableText, tutor?.cartesiaVoiceId, messageRef.bubble.id);
             });
             messageRef.bubble.appendChild(playBtn);
         }
@@ -3034,7 +3034,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const rawText = latest.dataset.rawText || latest.querySelector('.message-text')?.textContent || '';
                     const speakableText = generateSpeakableText(rawText);
                     if (speakableText) {
-                        setTimeout(() => playAudio(speakableText, tutor?.voiceId, latest.id), 400);
+                        setTimeout(() => playAudio(speakableText, tutor?.cartesiaVoiceId, latest.id), 400);
                     }
                 }
             }
