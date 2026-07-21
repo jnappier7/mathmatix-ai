@@ -153,6 +153,13 @@ export function updateGamificationDisplay(currentUser) {
         sidebarProgressFill.style.width = `${Math.min(100, percentage)}%`;
     }
 
+    // Coin balance (persistent sidebar counter). Set directly — the animated
+    // count-up on a fresh award is handled separately by coinFx.showCoinReward.
+    const sidebarCoins = document.getElementById("sidebar-coins");
+    if (sidebarCoins && currentUser.wallet && currentUser.wallet.coins != null) {
+        sidebarCoins.textContent = String(currentUser.wallet.coins);
+    }
+
     // Legacy elements
     const levelSpan = document.getElementById("current-level");
     const xpSpan = document.getElementById("current-xp");
@@ -339,9 +346,15 @@ export function processGamificationEvents(gamification) {
     // where coins come from.
     const rewardText = (xp, coins) => `+${xp} XP${coins > 0 ? ` · +${coins} 🪙` : ''}`;
 
+    // Total coins earned across all completions this turn — drive one coin
+    // celebration (fly-in + count-up + cha-ching) so the reward is felt, not
+    // just read in a toast.
+    let coinsThisTurn = 0;
+
     // Show quest completion toasts
     if (gamification.questsCompleted && gamification.questsCompleted.length > 0) {
         for (const quest of gamification.questsCompleted) {
+            coinsThisTurn += quest.coinsEarned || 0;
             showToast(`${quest.icon || '🎯'} Quest Complete: ${quest.name} (${rewardText(quest.xpEarned, quest.coinsEarned)})`, 5000);
         }
     }
@@ -349,6 +362,7 @@ export function processGamificationEvents(gamification) {
     // Show challenge completion toasts
     if (gamification.challengesCompleted && gamification.challengesCompleted.length > 0) {
         for (const challenge of gamification.challengesCompleted) {
+            coinsThisTurn += challenge.coinsEarned || 0;
             showToast(`${challenge.icon || '⭐'} Challenge Complete: ${challenge.name} (${rewardText(challenge.xpEarned, challenge.coinsEarned)})`, 6000);
             if (challenge.specialReward) {
                 setTimeout(() => {
@@ -357,6 +371,11 @@ export function processGamificationEvents(gamification) {
             }
         }
         triggerConfetti();
+    }
+
+    if (coinsThisTurn > 0 && typeof window.showCoinReward === 'function') {
+        // Slight delay so it lands with the toast, not on top of the send action.
+        setTimeout(() => window.showCoinReward(coinsThisTurn), 400);
     }
 
     // Refresh quest/challenge display in sidebar
