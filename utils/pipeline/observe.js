@@ -28,6 +28,7 @@ const MESSAGE_TYPES = {
   PARROTING: 'parroting',
   EVASIVE_AFFIRMATIVE: 'evasive_affirmative',
   PROGRESS_REPORT: 'progress_report',
+  DISPUTE: 'dispute',
 };
 
 // ── Context signal categories ──
@@ -106,6 +107,13 @@ const PATTERNS = {
 
   // Off-task (non-math)
   offTask: /\b(play\s*(a\s*game|roblox|fortnite|minecraft)|tell\s*(me\s*)?a\s*(joke|story)|what'?s\s*your\s*(name|favorite)|who\s*(are|made)\s*you|sing|rap|poem)\b/i,
+
+  // The student is challenging something the TUTOR said. Previously these
+  // classified as general_math at 0.5 confidence — the pipeline had no way to
+  // represent "the student says I'm wrong", so a student pushing back twice
+  // against a mistaken tutor changed nothing about what happened next, and the
+  // tutor restated its claim with mounting concreteness.
+  dispute: /\b(you(?:'?re|\s+are)\s+(?:wrong|mistaken|incorrect|not\s+listening)|that'?s\s+(?:not\s+(?:correct|right|true)|wrong|incorrect)|that\s+is\s+not\s+(?:correct|right|true)|no\s+it'?s\s+not|i\s+disagree|i\s+already\s+(?:said|told\s+you)|that'?s\s+not\s+what\s+i\s+(?:said|meant)|you\s+made\s+a\s+mistake|check\s+it\s+again|look\s+again|it\s+is\s+(?:too|so))\b/i,
 };
 
 /**
@@ -564,6 +572,15 @@ function observe(message, context = {}) {
   let confidence = 1.0;
   let answer = null;
 
+  // Disputes are computed as a SIGNAL independently of the type chain, because a
+  // student can push back while also being frustrated, asking a question, or
+  // restating their answer — and the correctness consequence (re-verify, and do
+  // not repeat an unverified claim) must apply in all of those cases, not only
+  // when "you're wrong" happens to be the whole message. Same principle as the
+  // verification gate: classification chooses the teaching action, it must never
+  // decide whether correctness gets re-examined.
+  const isDispute = PATTERNS.dispute.test(lower);
+
   if (PATTERNS.giveUp.test(lower)) {
     messageType = MESSAGE_TYPES.GIVE_UP;
   } else if (PATTERNS.idk.test(lower) && text.length < 50) {
@@ -577,6 +594,9 @@ function observe(message, context = {}) {
     messageType = MESSAGE_TYPES.HELP_REQUEST;
   } else if (PATTERNS.offTask.test(lower)) {
     messageType = MESSAGE_TYPES.OFF_TASK;
+  } else if (isDispute) {
+    messageType = MESSAGE_TYPES.DISPUTE;
+    confidence = 0.9;
   } else if (PATTERNS.question.test(lower) && !PATTERNS.proposedAnswer.test(text)) {
     // A question word normally means "asking", EXCEPT when the student is
     // self-checking a concrete answer ("is it 5/12?", "would it be 3/4?") — that's
@@ -647,6 +667,7 @@ function observe(message, context = {}) {
       recentWrongCount,
     },
     problemContext: detectProblemContext(text),
+    isDispute,            // true if the student is challenging something the tutor said
     isWorksheetFollowUp,  // true if student is asking for multiple worksheet problems
     isBareProblemDrop,    // true if student handed over a new problem with no attempt
     hasRecentUpload,      // forwarded for decide stage
