@@ -976,6 +976,12 @@ const userSchema = new Schema({
       dismissedAt: { type: Date },
       snoozedUntil: { type: Date },
       dismissCount: { type: Number, default: 0 }
+    },
+    chooseCharacter: {
+      promptedAt: { type: Date },
+      dismissedAt: { type: Date },
+      snoozedUntil: { type: Date },
+      dismissCount: { type: Number, default: 0 }
     }
   },
 

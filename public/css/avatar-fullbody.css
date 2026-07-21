@@ -118,6 +118,19 @@
 .sidebar-avatar-panel .fba-choose-label,
 .sidebar-avatar-panel .fba-empty-label { font-size: 0.75rem; }
 
+/* ---- Student dashboard header ---- */
+.dashboard-header--with-avatar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.dashboard-header--with-avatar .dashboard-avatar { flex: 0 0 auto; }
+.dashboard-header--with-avatar .dashboard-header-text { min-width: 0; }
+@media (max-width: 560px) {
+  .dashboard-header--with-avatar { gap: 12px; }
+  .dashboard-header--with-avatar .fba-md .fba-stage { height: 120px; }
+}
+
 /* ---- Parent dashboard child card ---- */
 .child-avatar-fb {
   display: flex;

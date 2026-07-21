@@ -57,6 +57,18 @@
   font-size: 0.72rem; font-weight: 800; line-height: 22px; text-align: center;
   box-shadow: 0 0 0 2px #fff;
 }
+/* Full-body character variant: drop the circular frame + ring, let the
+   character stand, and re-anchor the level badge under it. */
+.sc-avatar-wrap.sc-fullbody { width: auto; height: auto; flex: 0 0 auto; }
+.sc-avatar-wrap.sc-fullbody .sc-ring { display: none; }
+.sc-avatar-wrap.sc-fullbody .sc-avatar {
+  position: static; width: auto; height: auto;
+  border-radius: 0; overflow: visible; background: none;
+}
+.sc-avatar-wrap.sc-fullbody .sc-level-badge {
+  bottom: -2px; right: 50%; transform: translateX(50%);
+}
+
 .sc-identity { flex: 1; min-width: 0; }
 .sc-name { font-size: 1.15rem; font-weight: 800; color: #18202b; }
 .sc-rank { font-size: 0.85rem; font-weight: 700; color: #12b3b3; margin-top: 1px; }

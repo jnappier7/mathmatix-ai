@@ -141,7 +141,16 @@ function populate(modal, user) {
     if (!user) return;
     const q = (sel) => modal.querySelector(sel);
 
-    q('.sc-avatar').innerHTML = avatarMarkup(user);
+    // Full-body character in the hero when they've chosen one; otherwise the
+    // circular portrait + XP ring.
+    const wrap = q('.sc-avatar-wrap');
+    if (window.AvatarFullBody && window.AvatarFullBody.hasFullBody(user)) {
+        q('.sc-avatar').innerHTML = window.AvatarFullBody.html(user, { size: 'sm' });
+        if (wrap) wrap.classList.add('sc-fullbody');
+    } else {
+        q('.sc-avatar').innerHTML = avatarMarkup(user);
+        if (wrap) wrap.classList.remove('sc-fullbody');
+    }
     q('.sc-name').textContent = user.firstName || 'Mathematician';
     q('.sc-level-num').textContent = String(user.level || 1);
 
