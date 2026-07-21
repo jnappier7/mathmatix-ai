@@ -1,0 +1,89 @@
+{
+  "_README": "Replay fixtures for the verification invariant. Unlike transcripts.json — which INJECTS a diagnosis to test decide() — these replay real student turns through the LIVE observe+diagnose path and assert the verification state the pipeline actually reaches. That distinction is the point: the injected-diagnosis suite cannot catch 'verification never ran', which is the failure mode these exist for. Add a case by copying a block; see ./README.md.",
+
+  "transcripts": [
+    {
+      "name": "order of operations — a correct rewrite is verified, not rejected",
+      "_incident": "2026-07-21 production. Student answered 24-6/2+3 with the correct first step '24-3+3'. observe's extractAnswer matched no pattern, so messageType was general_math with answer=null, diagnose returned no_answer at line 78, and index.js never fired the LLM verifier (it required ANSWER_ATTEMPT). The tutor received zero correctness signal, invented an error, and defended it across five turns while the student pushed back twice.",
+      "pinnedProblem": "24-6/2+3",
+      "turns": [
+        {
+          "tutor": "Let's do one: 24-6÷2+3. What's the first move you'd make here — what do you do first?",
+          "student": "24-3+3",
+          "expectState": "verified_correct",
+          "regressionReply": "Whoa, hold up — walk me through that. You've got 24-6÷2+3, and I want to hear what you did with the 6÷2 part. What did you get when you divided 6÷2?",
+          "regressionReplyFastPath": "escalate",
+          "_why": "The CAS proves 24-3+3 == 24-6/2+3, so the state must be verified_correct and any rejection is a violation. Note regressionReplyFastPath: 'escalate' — the shipped opener matches NO rejection pattern, which is exactly why the old regex-only guard let it through. Widening the regex to catch 'Whoa, hold up' would repeat that mistake; the LLM classifier is the backstop, and this fixture pins that this phrasing needs it."
+        }
+      ]
+    },
+    {
+      "name": "order of operations — a genuinely wrong rewrite is not silently affirmed",
+      "pinnedProblem": "24-6/2+3",
+      "turns": [
+        {
+          "tutor": "Let's do one: 24-6÷2+3. What's the first move?",
+          "student": "18/2+3",
+          "expectStateOneOf": ["verified_incorrect", "unverified"],
+          "_why": "Subtracting before dividing. Must never reach verified_correct — the guard against the inverse failure, where a permissive gate rubber-stamps wrong work."
+        }
+      ]
+    },
+    {
+      "name": "equivalent rewrite with different notation is still correct",
+      "pinnedProblem": "3*(4+2)-5",
+      "turns": [
+        {
+          "tutor": "Try 3(4+2)-5. What's your first step?",
+          "student": "3*6-5",
+          "expectState": "verified_correct"
+        }
+      ]
+    },
+    {
+      "name": "a final answer still verifies through the ordinary path",
+      "pinnedProblem": "24-6/2+3",
+      "turns": [
+        {
+          "tutor": "So what does 24-6÷2+3 come out to?",
+          "student": "24",
+          "expectState": "verified_correct"
+        }
+      ]
+    },
+    {
+      "name": "non-mathematical turn is not applicable — nothing to verify",
+      "pinnedProblem": null,
+      "turns": [
+        {
+          "tutor": "Ready to start?",
+          "student": "hey whats up",
+          "expectState": "not_applicable",
+          "_why": "No math content. The tutor makes no correctness claim, so the invariant is satisfied trivially — but the state must be NOT_APPLICABLE, never a silent no_answer that reads as licence."
+        }
+      ]
+    }
+  ],
+
+  "_assertionDetectionREADME": "These pin the FAST PATH only (classifyAssertionFast). It is an optimisation, not the guarantee — it may return 'escalate' (null) for anything it cannot judge confidently, and the LLM classifier decides those. What it must never do is return a CONFIDENT WRONG label. So 'escalate' is a legitimate expectation here and is not a gap to be closed by adding patterns.",
+
+  "assertionDetection": [
+    { "name": "the shipped regression opener needs the LLM tier", "reply": "Whoa, hold up — walk me through that. What did you get when you divided 6÷2?", "expectFastPath": "escalate" },
+    { "name": "classic rejection opener", "reply": "Not quite — let's look at that again.", "expectFastPath": "asserts_incorrect" },
+    { "name": "explicit wrongness", "reply": "That's not right, check your arithmetic.", "expectFastPath": "asserts_incorrect" },
+    { "name": "affirmation", "reply": "That's right! Nice work.", "expectFastPath": "asserts_correct" },
+    { "name": "nailed it is an affirmation", "reply": "Exactly — you nailed it.", "expectFastPath": "asserts_correct" },
+    { "name": "a pure question is judged as no assertion or escalated", "reply": "What do you get when you divide 6 by 2?", "expectFastPathOneOf": ["asserts_nothing", "escalate"] },
+    { "name": "a neutral prompt is judged as no assertion or escalated", "reply": "Walk me through your thinking on that first step.", "expectFastPathOneOf": ["asserts_nothing", "escalate"] }
+  ],
+
+  "invariant": [
+    { "name": "rejecting verified-correct work is a violation", "assertion": "asserts_incorrect", "state": "verified_correct", "expectOk": false },
+    { "name": "rejecting with no verdict is a violation", "assertion": "asserts_incorrect", "state": "unverified", "expectOk": false },
+    { "name": "affirming with no verdict is a violation", "assertion": "asserts_correct", "state": "unverified", "expectOk": false },
+    { "name": "affirming verified-incorrect work is a violation", "assertion": "asserts_correct", "state": "verified_incorrect", "expectOk": false },
+    { "name": "rejecting verified-incorrect work is allowed", "assertion": "asserts_incorrect", "state": "verified_incorrect", "expectOk": true },
+    { "name": "affirming verified-correct work is allowed", "assertion": "asserts_correct", "state": "verified_correct", "expectOk": true },
+    { "name": "asserting nothing is always allowed", "assertion": "asserts_nothing", "state": "unverified", "expectOk": true }
+  ]
+}
