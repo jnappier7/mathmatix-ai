@@ -7,7 +7,7 @@
 // Buying/equipping never trust the client — the server validates and returns the
 // new balance/loadout, which we reflect locally.
 
-import { applyCosmetics } from './cosmeticsApply.js';
+import { applyCosmetics, applyLoadout } from './cosmeticsApply.js';
 
 const MODAL_ID = 'shop-modal';
 const SLOT_LABELS = {
@@ -17,6 +17,7 @@ const SLOT_LABELS = {
 const SLOT_ORDER = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'header'];
 
 let state = { catalog: {}, coins: 0, owned: [], equipped: {} };
+let preview = null; // { slot, id } while a "try-on" is active, else null
 
 function esc(s) {
     const el = document.createElement('span');
@@ -54,11 +55,24 @@ function buildModal() {
           <button class="shop-close" type="button" aria-label="Close" data-shop-close>&times;</button>
         </div>
         <div class="shop-body" id="shop-body"></div>
+      </div>
+      <div class="shop-preview-bar" hidden>
+        <span class="shop-preview-label" aria-live="polite"></span>
+        <div class="shop-preview-actions">
+          <button class="shop-btn shop-preview-action" type="button" data-preview-action></button>
+          <button class="shop-btn shop-preview-done" type="button" data-preview-done>Done</button>
+        </div>
       </div>`;
     document.body.appendChild(modal);
     modal.querySelectorAll('[data-shop-close]').forEach(el => el.addEventListener('click', closeShop));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeShop(); });
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape' || modal.hidden) return;
+        // Escape backs out of a preview first, then closes the shop.
+        if (preview) stopPreview(); else closeShop();
+    });
     modal.querySelector('#shop-body').addEventListener('click', onBodyClick);
+    modal.querySelector('[data-preview-done]').addEventListener('click', stopPreview);
+    modal.querySelector('[data-preview-action]').addEventListener('click', onPreviewAction);
     return modal;
 }
 
@@ -112,12 +126,19 @@ function itemCardHTML(id, item) {
                     🪙 ${item.price}${affordable ? '' : ' — need more'}
                   </button>`;
     }
+    // "Try on" is offered for anything not already equipped — students can see a
+    // cosmetic live on their real screen before spending. Level-locked items can
+    // still be previewed (try before you grind), just not bought yet.
+    const tryOn = equipped ? '' :
+        `<button class="shop-btn shop-btn-preview" data-act="preview" data-id="${esc(id)}">👀 Try it on</button>`;
+
     return `
-      <div class="shop-item shop-rarity-${esc(item.rarity)}">
+      <div class="shop-item shop-rarity-${esc(item.rarity)}${preview && preview.id === id ? ' is-previewing' : ''}">
         ${swatchHTML(id, item.rarity)}
         <div class="shop-item-name">${esc(item.name)}</div>
         <div class="shop-item-rarity">${esc(item.rarity)}</div>
         ${action}
+        ${tryOn}
       </div>`;
 }
 
@@ -149,6 +170,7 @@ async function onBodyClick(e) {
     const btn = e.target.closest('button[data-act]');
     if (!btn) return;
     const act = btn.dataset.act;
+    if (act === 'preview') { startPreview(btn.dataset.id); return; }
     btn.disabled = true;
     try {
         if (act === 'buy') {
@@ -183,6 +205,97 @@ function flash(btn, msg) {
     setTimeout(() => { btn.textContent = orig; render(); }, 1200);
 }
 
+// ---- Live "try on" preview ----------------------------------------------
+// Stamps the previewed item onto the REAL page (via applyLoadout) and collapses
+// the shop to a slim bar so the student sees their actual screen. Client-only —
+// nothing is bought or equipped until they choose to. Reverts on Done/Escape/close.
+
+function startPreview(id) {
+    const item = state.catalog[id];
+    if (!item) return;
+    preview = { slot: item.slot, id };
+    // Overlay the previewed item on top of the real equipped loadout.
+    applyLoadout({ ...state.equipped, [item.slot]: id });
+
+    const modal = buildModal();
+    modal.classList.add('shop-previewing');
+    const bar = modal.querySelector('.shop-preview-bar');
+    bar.querySelector('.shop-preview-label').textContent = `Previewing ${item.name}`;
+
+    const actionBtn = bar.querySelector('[data-preview-action]');
+    const owned = state.owned.includes(id);
+    const level = (window.currentUser && window.currentUser.level) || 1;
+    const locked = item.unlockLevel && level < item.unlockLevel && !owned;
+    if (owned) {
+        actionBtn.textContent = 'Equip this';
+        actionBtn.className = 'shop-btn shop-btn-equip shop-preview-action';
+        actionBtn.disabled = false;
+    } else if (locked) {
+        actionBtn.textContent = `🔒 Reach Level ${item.unlockLevel}`;
+        actionBtn.className = 'shop-btn shop-btn-locked shop-preview-action';
+        actionBtn.disabled = true;
+    } else {
+        const affordable = state.coins >= item.price;
+        actionBtn.textContent = affordable ? `🪙 ${item.price} — Buy & wear` : `🪙 ${item.price} — need more`;
+        actionBtn.className = 'shop-btn shop-btn-buy shop-preview-action';
+        actionBtn.disabled = !affordable;
+    }
+    bar.hidden = false;
+}
+
+function stopPreview() {
+    if (!preview) return;
+    preview = null;
+    applyLoadout(state.equipped); // revert to what they actually own/equip
+    const modal = document.getElementById(MODAL_ID);
+    if (!modal) return;
+    modal.classList.remove('shop-previewing');
+    modal.querySelector('.shop-preview-bar').hidden = true;
+    render();
+}
+
+// Buy (if needed) then equip the previewed item, so a preview converts in one tap.
+async function onPreviewAction() {
+    if (!preview) return;
+    const { slot, id } = preview;
+    const owned = state.owned.includes(id);
+    const bar = document.getElementById(MODAL_ID).querySelector('.shop-preview-bar');
+    const actionBtn = bar.querySelector('[data-preview-action]');
+    actionBtn.disabled = true;
+    try {
+        if (!owned) {
+            const res = await post('/api/cosmetics/purchase', { itemId: id });
+            const data = await res.json();
+            if (!res.ok || !data.success) { actionBtn.disabled = false; return flashEl(actionBtn, data.error === 'insufficient_coins' ? 'Not enough' : 'Failed'); }
+            state.coins = data.coins;
+            state.owned = data.owned || state.owned.concat(id);
+            if (window.currentUser) { window.currentUser.wallet = window.currentUser.wallet || {}; window.currentUser.wallet.coins = data.coins; }
+        }
+        const res = await post('/api/cosmetics/equip', { slot, itemId: id });
+        const data = await res.json();
+        if (!res.ok || !data.success) { actionBtn.disabled = false; return flashEl(actionBtn, 'Failed'); }
+        state.equipped = data.equipped || { ...state.equipped, [slot]: id };
+        if (window.currentUser) window.currentUser.equippedCosmetics = state.equipped;
+        // It's now really equipped — keep it on screen and close the preview.
+        preview = null;
+        applyCosmetics(window.currentUser);
+        const modal = document.getElementById(MODAL_ID);
+        modal.classList.remove('shop-previewing');
+        bar.hidden = true;
+        render();
+    } catch (err) {
+        console.warn('Preview purchase/equip failed', err);
+        actionBtn.disabled = false;
+        flashEl(actionBtn, 'Error');
+    }
+}
+
+function flashEl(btn, msg) {
+    const orig = btn.textContent;
+    btn.textContent = msg;
+    setTimeout(() => { btn.textContent = orig; }, 1200);
+}
+
 export async function openShop() {
     const modal = buildModal();
     modal.querySelector('#shop-body').innerHTML = `<div class="shop-empty">Loading…</div>`;
@@ -204,6 +317,7 @@ export async function openShop() {
 export function closeShop() {
     const modal = document.getElementById(MODAL_ID);
     if (!modal) return;
+    if (preview) stopPreview(); // revert a live try-on before leaving
     modal.classList.remove('shop-open');
     setTimeout(() => { modal.hidden = true; }, 200);
 }
