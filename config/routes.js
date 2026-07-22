@@ -307,7 +307,13 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   });
 
   // Global error handler — must be last middleware (4 args)
-  app.use((err, req, res, _next) => {
+  app.use((err, req, res, next) => {
+    // If the response already started (e.g. an error thrown after an SSE stream
+    // began or after res.json), we cannot send another response. Delegate to
+    // Express's built-in handler, which just aborts the connection. Without this
+    // guard, res.json/sendFile below throw ERR_HTTP_HEADERS_SENT and spam the logs.
+    if (res.headersSent) return next(err);
+
     const status = err.status || 500;
     const isServerError = status >= 500;
 
