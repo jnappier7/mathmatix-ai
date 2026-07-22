@@ -1246,9 +1246,15 @@ async function runPipeline(message, ctx) {
   } else {
     // ── Update learning engines (BKT, FSRS, ConsistencyScorer) ──
     // These run BEFORE persist so the updated states are saved with the user document.
-    if (ctx.activeSkill && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
+    // Resolve the skill in focus the same way the tutor-plan/badge updates do
+    // (activeSkill, else the current tutor-plan target). Using ctx.activeSkill.skillId
+    // directly keyed BKT/FSRS/SmartScore state under "undefined" whenever activeSkill
+    // lacked a skillId but a target existed — so a whole session's mastery evidence
+    // pooled into one bogus bucket instead of the skill being taught.
+    const engineSkillId = ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId;
+    if (engineSkillId && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
       try {
-        updateLearningEngines(ctx.user, ctx.activeSkill.skillId, diagnosis, observation);
+        updateLearningEngines(ctx.user, engineSkillId, diagnosis, observation);
       } catch (err) {
         console.error('[Pipeline] Learning engine update error (non-fatal):', err.message);
       }
@@ -1725,6 +1731,9 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
   // key BKT / FSRS / consistency state on the canonical unified skill id, so a
   // concept's learning state never splits across a legacy id and its unified id
   skillId = canonicalSkillId(skillId);
+  // Safety net: never key per-skill learning state under an undefined id. Callers
+  // should pass a resolved skill, but if none is in focus there's nothing to track.
+  if (!skillId) return;
   const isCorrect = diagnosis.isCorrect === true;
   const hintUsed = observation.contextSignals?.some(s => s.type === 'uncertainty') || false;
 
