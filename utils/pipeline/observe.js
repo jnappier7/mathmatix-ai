@@ -557,6 +557,14 @@ function observe(message, context = {}) {
   const recentWrongCount = (context.recentAssistantMessages || [])
     .filter(msg => msg.problemResult === 'incorrect').length;
 
+  // Count recent correct answers — the symmetric "on a roll" signal. Without
+  // this the pipeline could only ever ratchet support UP (on wrong streaks)
+  // and never DOWN, so a fluent student kept getting the same problem broken
+  // into micro-steps (the "over-scaffolding" failure). decide's CONFIRM_CORRECT
+  // branch reads this to advance / gather data / teach-back instead.
+  const recentCorrectCount = (context.recentAssistantMessages || [])
+    .filter(msg => msg.problemResult === 'correct').length;
+
   // ── Classify: check high-confidence intent signals FIRST ──
   //
   // Intent detection (explicit keywords like "help", "skip", "how do I")
@@ -665,6 +673,7 @@ function observe(message, context = {}) {
       idkCount: streaks.idkCount,
       giveUpCount: streaks.giveUpCount,
       recentWrongCount,
+      recentCorrectCount,
     },
     problemContext: detectProblemContext(text),
     isDispute,            // true if the student is challenging something the tutor said
