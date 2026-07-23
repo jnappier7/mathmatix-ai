@@ -49,12 +49,21 @@
         } catch (e) { /* silent */ }
     }
 
+    // Sentence-case the caption's first letter. The model emits these reasons
+    // lowercase (e.g. "caught your own mistake"), which reads as sloppy when it
+    // floats up on its own. Only the first character is touched, so acronyms and
+    // proper nouns mid-phrase are left intact.
+    function sentenceCase(s) {
+        s = String(s == null ? '' : s).trim();
+        return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+    }
+
     function showCeremonyCaption(text, size) {
         if (!text || typeof document === 'undefined') return;
         try {
             var el = document.createElement('div');
             el.className = 'cr-xp-caption cr-xp-caption--' + (size || 'medium');
-            el.textContent = text;
+            el.textContent = sentenceCase(text);
             el.setAttribute('role', 'status');
             el.setAttribute('aria-live', 'polite');
             document.body.appendChild(el);
