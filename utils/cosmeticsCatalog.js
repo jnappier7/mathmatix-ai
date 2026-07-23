@@ -66,6 +66,12 @@ const DEFAULT_LOADOUT = {
     board: 'default', calculator: 'default', header: 'default',
 };
 
+// How long after buying a cosmetic the student can still Undo it (full refund).
+// Long enough to fix a misclick or buyer's remorse; short enough that you can't
+// "rent" a legendary for a session and refund it. Undo only ever targets the most
+// recent purchase.
+const REFUND_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
+
 function getItem(itemId) {
     return CATALOG[itemId] || null;
 }
@@ -101,12 +107,62 @@ function applyPurchase(user, itemId) {
     user.wallet.coins = Math.max(0, (user.wallet.coins || 0) - item.price);
     if (!Array.isArray(user.ownedCosmetics)) user.ownedCosmetics = [];
     user.ownedCosmetics.push(itemId);
+    // Record the buy so it can be undone (one-tap refund of the most recent purchase).
+    user.wallet.lastPurchase = { itemId, price: item.price, at: new Date() };
 
     if (typeof user.markModified === 'function') {
         user.markModified('wallet');
         user.markModified('ownedCosmetics');
     }
     return { ok: true, coins: user.wallet.coins, owned: user.ownedCosmetics };
+}
+
+/**
+ * Is the given item currently undoable (i.e. it's the most recent purchase and
+ * still inside the refund window)? Pure check, no mutation.
+ * @param {number} [now=Date.now()]
+ * @returns {{ok:boolean, reason?:string}}
+ */
+function canRefund(user, itemId, now = Date.now()) {
+    if (!user) return { ok: false, reason: 'no_user' };
+    const lp = user.wallet && user.wallet.lastPurchase;
+    if (!lp || !lp.itemId) return { ok: false, reason: 'nothing_to_undo' };
+    if (lp.itemId !== itemId) return { ok: false, reason: 'not_last_purchase' };
+    if (!(user.ownedCosmetics || []).includes(itemId)) return { ok: false, reason: 'not_owned' };
+    const at = lp.at ? new Date(lp.at).getTime() : 0;
+    if (!at || (now - at) > REFUND_WINDOW_MS) return { ok: false, reason: 'window_expired' };
+    return { ok: true };
+}
+
+/**
+ * Undo the most recent purchase: refund the coins, drop ownership, unequip it if
+ * worn, and clear the undo record. Validates first; no-op on failure.
+ * @returns {{ok:boolean, reason?:string, coins:number, owned?:string[], equipped?:object, refundedItemId?:string}}
+ */
+function applyRefund(user, itemId, now = Date.now()) {
+    const check = canRefund(user, itemId, now);
+    if (!check.ok) return { ok: false, reason: check.reason, coins: (user && user.wallet && user.wallet.coins) || 0 };
+
+    const item = getItem(itemId);
+    const price = (user.wallet.lastPurchase && user.wallet.lastPurchase.price) || (item ? item.price : 0);
+
+    // Refund coins.
+    user.wallet.coins = (user.wallet.coins || 0) + price;
+    // Drop ownership.
+    user.ownedCosmetics = (user.ownedCosmetics || []).filter(id => id !== itemId);
+    // Unequip if it was worn.
+    if (item && user.equippedCosmetics && user.equippedCosmetics[item.slot] === itemId) {
+        user.equippedCosmetics[item.slot] = 'default';
+    }
+    // Consume the undo — only the single most recent purchase is ever refundable.
+    user.wallet.lastPurchase = { itemId: null, price: 0, at: null };
+
+    if (typeof user.markModified === 'function') {
+        user.markModified('wallet');
+        user.markModified('ownedCosmetics');
+        user.markModified('equippedCosmetics');
+    }
+    return { ok: true, coins: user.wallet.coins, owned: user.ownedCosmetics, equipped: user.equippedCosmetics, refundedItemId: itemId };
 }
 
 /**
@@ -141,9 +197,12 @@ module.exports = {
     SLOTS,
     CATALOG,
     DEFAULT_LOADOUT,
+    REFUND_WINDOW_MS,
     getItem,
     canPurchase,
     applyPurchase,
+    canRefund,
+    applyRefund,
     canEquip,
     applyEquip,
 };

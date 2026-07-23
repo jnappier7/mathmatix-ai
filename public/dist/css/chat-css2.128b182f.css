@@ -398,9 +398,37 @@ body[data-skin-header="header.wave"] .landing-header {
   .shop-modal.shop-previewing .shop-preview-bar { animation: none; }
 }
 
+/* "Are you sure?" armed state — the second tap confirms a spend. */
+.shop-btn-confirm { background: #ff3b7f !important; color: #fff !important; }
+
+/* Post-purchase Undo bar (refund the most recent buy). Toast-style, bottom-center. */
+.shop-undo-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 3200;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(440px, calc(100vw - 32px));
+  padding: 12px 16px;
+  background: #18202b;
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.38);
+  font-family: Inter, sans-serif;
+  animation: shop-preview-rise 200ms ease;
+}
+.shop-undo-bar[hidden] { display: none; }
+.shop-undo-label { flex: 1; font-weight: 700; font-size: 0.9rem; }
+.shop-undo-btn { width: auto; margin-top: 0; background: #12b3b3; color: #fff; white-space: nowrap; }
+.shop-undo-btn:hover:not(:disabled) { filter: brightness(1.05); }
+
 @media (prefers-reduced-motion: reduce) {
   .shop-backdrop, .shop-card { transition: none; }
   .shop-swatch-legendary::after { animation: none; }
+  .shop-undo-bar { animation: none; }
 }
 @media (max-width: 480px) {
   .shop-card { border-radius: 16px; }
