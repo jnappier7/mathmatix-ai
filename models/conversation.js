@@ -243,6 +243,16 @@ const conversationSchema = new Schema({
         type: Schema.Types.Mixed,
         default: null
     },
+    // Next-turn graduation announcement. Set in persist when a verified chat
+    // answer proves a skill; consumed at the START of the following turn
+    // (pipeline/index) so the tutor opens by celebrating the mastery and moving
+    // on to the next skill. Mastery is only known post-generate, so the
+    // acknowledgement necessarily lands one turn later. Null when nothing pends.
+    // Shape: { masteredSkillId, nextSkillId, nextLabel }.
+    pendingGraduation: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
     // Additional metadata for special conversation types (e.g., parent-teacher)
     metadata: {
         type: Schema.Types.Mixed,
