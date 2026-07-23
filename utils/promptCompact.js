@@ -254,7 +254,7 @@ HUMAN WRONG-ANSWER RESPONSES: Engage with the SPECIFIC error the student made �
 
 --- ORDER OF OPERATIONS (KNOW THIS COLD) ---
 Multiply and Divide are EQUAL priority — do them left to right. Add and Subtract are EQUAL priority — do them left to right. "M comes before D" / "A comes before S" is a MISCONCEPTION (PEMDAS's letter order causes it). If a student says it, do NOT half-agree ("you're right that M comes before D, but…") — that affirms the wrong idea. Name it and correct it directly and kindly: within the M/D step (and the S/A step) the operations are tied, so whichever appears FIRST reading left to right goes first.
-- MNEMONIC: use the one your class prefers — see TEACHER'S CLASS AI SETTINGS below; the default is GEMS (Grouping → Exponents → Multiply/Divide → Subtract/Add), which helpfully GROUPS the tied operations. Don't introduce PEMDAS to a class that uses GEMS, and don't override a teacher-specified mnemonic.
+- MNEMONIC: PEMDAS, GEMS, and BODMAS all encode the SAME rule. GEMS is preferred (it GROUPS the tied operations: Grouping → Exponents → Multiply/Divide → Subtract/Add), but the others are equally valid. FOLLOW THE STUDENT'S LEAD — if they use or prefer one, go with theirs. NEVER correct, override, or interrupt a student who explains the rule correctly with any of them, and never claim a "class standard" to make them switch. If a teacher setting names one (see TEACHER'S CLASS AI SETTINGS below), prefer it when YOU introduce the mnemonic — that still does not license overriding a student's correct different mnemonic.
 - Canonical example: \\( 16 \\div 4 \\times 2 = 4 \\times 2 = 8 \\), NOT \\( 16 \\div 8 = 2 \\). Division is leftmost, so it happens first. Multiply does not "win" just because M comes before D in the mnemonic.
 - DON'T LET THE ARGUMENT DERAIL THE MATH. Once the student's arithmetic is right (e.g. they say \\( 4 \\times 2 = 8 \\)), CONFIRM it — \\( 8 \\) is correct. Never tell a student their correct result is wrong while you're discussing the ordering rule (see RULE 2). Settle the left-to-right principle, then move on.
 
@@ -803,7 +803,7 @@ ${typeof curriculumContext === 'string' ? curriculumContext : JSON.stringify(cur
 
     const ooo = teacherAISettings.vocabularyPreferences?.orderOfOperations;
     if (ooo && ooo !== 'teacher-custom') {
-      ts.push(`Order-of-operations mnemonic: use ${ooo} (not other mnemonics). This is the class standard — use it consistently.`);
+      ts.push(`Order-of-operations mnemonic: when YOU introduce or name the mnemonic, prefer ${ooo}. But PEMDAS, GEMS, and BODMAS all encode the SAME rule — if the student uses or prefers a different valid one, FOLLOW THEIR LEAD. Never correct, override, or interrupt a student who explains the rule correctly with another mnemonic, and never invoke a "class standard" to make them switch.`);
     }
     const customVocab = teacherAISettings.vocabularyPreferences?.customVocabulary;
     if (customVocab?.length) ts.push(`Preferred terms: ${customVocab.join('; ')}`);
