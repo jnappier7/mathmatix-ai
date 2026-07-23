@@ -20,7 +20,11 @@ const { callLLM } = require('../../utils/llmGateway');
 const { verify } = require('../../utils/pipeline/verify');
 const { VERIFICATION_STATES } = require('../../utils/pipeline/verificationState');
 
-const REWRITE = 'You are right — nice work on that step. Now what comes next?';
+// No em dash: the verify stage now normalises em dashes to commas across all
+// student-facing text (utils/dashNormalizer.js, shipped with the em-dash ban),
+// so the canned rewrite lands with a comma. Keep these fixtures em-dash-free so
+// they assert the assertion-invariant behaviour, not the dash normaliser.
+const REWRITE = 'You are right, nice work on that step. Now what comes next?';
 
 /**
  * Route mocked LLM calls by which prompt they carry, so a test can assert on
@@ -77,7 +81,7 @@ describe('rejecting work the system verified as CORRECT', () => {
   test('a plain rejection is caught by the fast path and rewritten', async () => {
     mockLLM();
     const result = await verify(
-      "Not quite — let's look at that again.",
+      "Not quite, let's look at that again.",
       baseContext({ verificationState: VERIFICATION_STATES.VERIFIED_CORRECT })
     );
 
@@ -89,7 +93,7 @@ describe('rejecting work the system verified as CORRECT', () => {
   test('affirming verified-correct work is left alone', async () => {
     mockLLM();
     const result = await verify(
-      "That's right! Nice work — on to the next one.",
+      "That's right! Nice work, on to the next one.",
       baseContext({ verificationState: VERIFICATION_STATES.VERIFIED_CORRECT })
     );
 
@@ -146,7 +150,7 @@ describe('phrasings no pattern list would catch', () => {
     mockLLM({ classifierVerdict: 'incorrect' });
 
     const result = await verify(
-      "Whoa, hold up — walk me through that. You've got 24-6÷2+3, and I want to hear what you did with the 6÷2 part.",
+      "Whoa, hold up, walk me through that. You've got 24-6÷2+3, and I want to hear what you did with the 6÷2 part.",
       baseContext({ verificationState: VERIFICATION_STATES.VERIFIED_CORRECT })
     );
 
@@ -162,7 +166,7 @@ describe('phrasings no pattern list would catch', () => {
 
   test('the classifier failing degrades to no rewrite, never a spurious one', async () => {
     mockLLM({ classifierThrows: true });
-    const original = 'Whoa, hold up — walk me through that one more time.';
+    const original = 'Whoa, hold up, walk me through that one more time.';
 
     const result = await verify(
       original,
@@ -179,7 +183,7 @@ describe('guard scoping', () => {
   test('NOT_APPLICABLE turns skip the guard entirely — no classifier call', async () => {
     mockLLM({ classifierVerdict: 'incorrect' });
     await verify(
-      "Not quite — let's look at that again.",
+      "Not quite, let's look at that again.",
       baseContext({
         verificationState: VERIFICATION_STATES.NOT_APPLICABLE,
         diagnosisType: 'no_answer',
@@ -199,7 +203,7 @@ describe('guard scoping', () => {
     jest.doMock('../../utils/llmGateway', () => ({ callLLM: jest.fn() }));
     const { verify: verifyOff } = require('../../utils/pipeline/verify');
 
-    const original = "Not quite — let's look at that again.";
+    const original = "Not quite, let's look at that again.";
     const result = await verifyOff(
       original,
       baseContext({ verificationState: VERIFICATION_STATES.VERIFIED_CORRECT })
