@@ -9,6 +9,8 @@
  * @module utils/mathTTS
  */
 
+const { replaceDashes } = require('./dashNormalizer');
+
 /**
  * Convert LaTeX math notation to natural speech.
  *
@@ -20,6 +22,13 @@
  */
 function convertLatexToSpeech(latex) {
   let speech = latex;
+
+  // Degrees: 45^\circ, 45^{\circ}, 45° → "45 degrees". Must run before the
+  // superscript handling below, otherwise \circ is spoken as "to the power".
+  speech = speech.replace(/\^\s*(?:\{\s*)?\\circ(?:\s*\})?/g, ' degrees');
+  speech = speech.replace(/(\d)\s*\\circ\b/g, '$1 degrees');
+  speech = speech.replace(/°/g, ' degrees');
+  speech = speech.replace(/\\degrees?\b/gi, ' degrees');
 
   // Fractions: \frac{a}{b} → spoken fraction
   speech = speech.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, (_, num, den) => {
@@ -96,12 +105,16 @@ function convertLatexToSpeech(latex) {
   speech = speech.replace(/\\rightarrow/g, ' leads to ');
   speech = speech.replace(/\\Rightarrow/g, ' therefore ');
 
+  // Plus/minus in expressions: make them speakable. A "-" that has no
+  // operand before it (start of expression, or after "(", "=", another
+  // operator) is a negative sign; everything else is subtraction. Runs
+  // before "=" is turned into a word, so "= -5" is still seen as negative.
+  speech = speech.replace(/\s*\+\s*/g, ' plus ');
+  speech = speech.replace(/(^|[^\w).\s])\s*-\s*(?=[\d.]|[A-Za-z])/g, '$1negative ');
+  speech = speech.replace(/\s*-\s*/g, ' minus ');
+
   // Equals — but only isolated = signs, not inside words
   speech = speech.replace(/\s*=\s*/g, ' equals ');
-
-  // Plus/minus in expressions: make them speakable
-  speech = speech.replace(/\s*\+\s*/g, ' plus ');
-  speech = speech.replace(/\s*-\s*/g, ' minus ');
 
   // Parentheses
   speech = speech.replace(/\\left\(/g, '(');
@@ -187,6 +200,14 @@ function cleanTextForTTS(text) {
   cleaned = cleaned.replace(/\\\(([^)]+)\\\)/g, (_, latex) => convertLatexToSpeech(latex));
   cleaned = cleaned.replace(/(?<![\\$])\$([^$\n]+?)\$/g, (_, latex) => convertLatexToSpeech(latex));
 
+  // Degrees: 45°, 45^\circ, 45^{\circ}, \degree → "45 degrees". Must run
+  // before the generic LaTeX-command strip below, which would otherwise
+  // delete \circ and leave a stray "^".
+  cleaned = cleaned.replace(/\^\s*(?:\{\s*)?\\?circ(?:\s*\})?/g, ' degrees');
+  cleaned = cleaned.replace(/(\d)\s*\\circ\b/g, '$1 degrees');
+  cleaned = cleaned.replace(/°/g, ' degrees');
+  cleaned = cleaned.replace(/\\degrees?\b/gi, ' degrees');
+
   // Remove any remaining LaTeX commands
   cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
 
@@ -194,8 +215,6 @@ function cleanTextForTTS(text) {
   // Function notation: f(x) → "f of x", g(2) → "g of 2", f'(x) → "f prime of x"
   cleaned = cleaned.replace(/\b([a-zA-Z])'\(([^)]+)\)/g, '$1 prime of $2');
   cleaned = cleaned.replace(/\b([a-zA-Z])\(([^)]{1,20})\)/g, '$1 of $2');
-  // Equals sign in math context: "x = 5" → "x equals 5"
-  cleaned = cleaned.replace(/(\w)\s*=\s*(\w)/g, '$1 equals $2');
   // Caret exponents: x^2 → "x squared", y^3 → "y cubed", n^{k+1} → "n to the k+1 power"
   cleaned = cleaned.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
   cleaned = cleaned.replace(/\^2(?=\b|[^0-9]|$)/g, ' squared');
@@ -207,6 +226,23 @@ function cleanTextForTTS(text) {
   cleaned = cleaned.replace(/_(\d)/g, ' sub $1');
   // Remove leftover curly braces
   cleaned = cleaned.replace(/[{}]/g, '');
+
+  // ── Spoken math operators for undelimited notation ──
+  // (Delimited math already went through convertLatexToSpeech above.)
+  // Otherwise a TTS engine reads "=" as "equal sign" and "-" as a bare pause.
+  // Equals — but not <=, >=, !=, ==.
+  cleaned = cleaned.replace(/(?<![<>=!])=(?!=)/g, ' equals ');
+  // Subtraction: only between math operands (digit, ")", or a single-letter
+  // variable), so word hyphens like "well-done" or "x-ray" stay intact.
+  cleaned = cleaned.replace(/(\d|\))\s*-\s*(?=\d|\(|[A-Za-z]\b)/g, '$1 minus ');
+  cleaned = cleaned.replace(/\b([A-Za-z])\s*-\s*(?=\d|\(|[A-Za-z]\b)/g, '$1 minus ');
+  // Whatever "-" is left in front of a number/variable (after "(", "=", an
+  // operator, or at the start) is a negative sign, not a pause.
+  cleaned = cleaned.replace(/(^|[\s(=+*/,:])-\s*(?=[\d.]|[A-Za-z]\b)/g, '$1negative ');
+
+  // Em dash → comma (a natural spoken pause). Leaves en dashes and hyphens
+  // alone so "8 – 3" / "-7" still read as subtraction / a negative.
+  cleaned = replaceDashes(cleaned);
 
   // Strip emoji — TTS engines read them as names ("party popper", "sparkles", etc.)
   cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, '');

@@ -10,6 +10,7 @@ const { generateSystemPrompt } = require('./prompt');
 const { callLLM, callLLMStream } = require('./llmGateway');
 const { verify: pipelineVerify } = require('./pipeline');
 const { checkReadingLevel } = require('./readability');
+const { replaceDashes } = require('./dashNormalizer');
 const { ensureBoardCarriesSpokenMath } = require('./voiceBoardGuard');
 const sttStream = require('./sttStream');
 const ttsStream = require('./ttsStream');
@@ -998,6 +999,10 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         // are caught when the closing ']' arrives.
         text = this._stripVisualDirectives(text);
         if (!text) return;
+        // Em dash reads as a minus in speech ("that's right minus 7"); swap
+        // for a comma pause. En dashes / hyphens (real subtraction and
+        // negatives) are left alone.
+        text = replaceDashes(text);
         turn.spokenAcc += text;
         // Emit a streamed-text event so client transcript renders incrementally
         this._send({
