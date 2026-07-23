@@ -115,7 +115,7 @@ async function persist(params) {
   const {
     user, conversation, extracted, diagnosis, observation,
     decision, responseText, originalMessage, aiProcessingSeconds,
-    sessionMood, evidence,
+    sessionMood, evidence, masteryAttempt,
   } = params;
 
   const results = {
@@ -159,14 +159,32 @@ async function persist(params) {
   }
 
   // ── 3. Skill mastery tracking ──
-  if (extracted.skillMastered) {
-    const { skillId, justProved } = updateSkillMastery(user, extracted.skillMastered, observation, conversation);
+  // Driven by the VERIFIED answer (masteryAttempt), not an LLM tag. The
+  // <SKILL_MASTERED> tag path is disabled (sidecar tells the model never to emit
+  // it), and even on success the old path recorded only wins — so the
+  // pillar/rung machine got no reliable chat input and the progress card never
+  // advanced. Record every verified answer attempt, correct or not, against the
+  // skill in focus. Fall back to the tag only if a deterministic attempt is absent.
+  const masterySkillId = masteryAttempt?.skillId || extracted.skillMastered;
+  if (masterySkillId) {
+    const attemptCorrect = masteryAttempt ? masteryAttempt.correct === true : true;
+    const { skillId, justProved } = updateSkillMastery(user, masterySkillId, observation, conversation, attemptCorrect);
     // Proving a skill clears everything beneath it, so a student never re-grinds
     // a prerequisite they have just demonstrated they own. Awaited but guarded:
     // a cascade failure must never cost the student the turn they just earned.
     if (justProved) {
       try {
-        await cascadeBeneath(user, skillId);
+        const { next, masteredLabel } = await cascadeBeneath(user, skillId);
+        // Flag a next-turn graduation announcement (consumed in pipeline/index).
+        // Mastery is only known here, after the tutor has already spoken, so the
+        // celebration + move-on lands at the start of the following turn.
+        conversation.pendingGraduation = {
+          masteredSkillId: skillId,
+          masteredLabel: masteredLabel || null,
+          nextSkillId: next?.skillId || null,
+          nextLabel: next?.label || null,
+        };
+        conversation.markModified('pendingGraduation');
       } catch (err) {
         console.error('[Persist] cascade failed for %s:', skillId, err);
       }
@@ -624,25 +642,47 @@ async function persist(params) {
 async function cascadeBeneath(user, skillId) {
   const { configCache } = require('../cache');
   const Skill = require('../../models/skill');
-  const { buildGraph, applyProofCascade } = require('../skillClosure');
+  const { buildGraph, applyProofCascade, nearestClosableBand } = require('../skillClosure');
 
   const skills = await configCache.getOrSet(
     'skills:unified',
     () => Skill.find({ isActive: true, source: 'unified-taxonomy' }).lean(),
     3600
   );
-  if (!skills.length) return [];
+  if (!skills.length) return { cleared: [], next: null };
 
   // The closure engine reasons in logical (dotted) ids, so it operates on a
   // decoded view. Entry objects are shared with the stored subdocuments, so
   // in-place mutations already land; newly-cleared keys are written back through
   // the encoder so the Mongoose Map never sees a dot.
+  const graph = buildGraph(skills);
   const decoded = decodedMasteryMap(user);
-  const { cleared } = applyProofCascade(buildGraph(skills), decoded, skillId);
+  const { cleared } = applyProofCascade(graph, decoded, skillId);
   for (const clearedId of cleared) {
     setSkillMasteryEntry(user, clearedId, decoded.get(clearedId));
   }
-  return cleared;
+
+  // A readable name for the skill just mastered, so the spoken handoff never
+  // parrots a raw dotted id.
+  const masteredLabel = (skills.find((s) => s.skillId === skillId) || {}).studentLabel || null;
+
+  // Name the next skill to graduate to, reusing the graph and the now-updated
+  // mastery view — same source the skill map (/api/mastery/map) reads, so the
+  // card and the tutor's spoken handoff always agree.
+  let next = null;
+  try {
+    const hidden = new Set(skills.filter((s) => s.provisional).map((s) => s.skillId));
+    const near = nearestClosableBand(graph, decoded, { hidden });
+    const nextId = near && near.attackable[0];
+    if (nextId) {
+      const label = (skills.find((s) => s.skillId === nextId) || {}).studentLabel || null;
+      next = { skillId: nextId, label };
+    }
+  } catch (err) {
+    console.error('[Persist] next-skill lookup failed (non-fatal):', err.message);
+  }
+
+  return { cleared, next, masteredLabel };
 }
 
 /**
@@ -658,17 +698,12 @@ async function cascadeBeneath(user, skillId) {
  * It now delegates to masteryEngine.updateSkillMastery, which delegates rung
  * transitions to utils/skillRung. One model, one set of gates, one receipt.
  *
- * ONE-SIDED EVIDENCE — READ THIS BEFORE TRUSTING `accuracy` HERE.
- * This function is only ever called on `extracted.skillMastered`, i.e. on a
- * success. Incorrect attempts from chat are never recorded against a skill, so
- * `pillars.accuracy.percentage` on this path is 1.0 by construction and the
- * accuracy gate is vacuous. What the ladder actually requires here is therefore
- * "N verified demonstrations across 3 contexts with few hints" — a real bar, but
- * not the one the field name implies. Wiring the diagnose stage's incorrect
- * ANSWER_ATTEMPTs through to the pillars is the fix; until then this comment is
- * the honest description.
+ * TWO-SIDED EVIDENCE. `correct` is now passed through from the verified
+ * diagnosis, so incorrect chat attempts land in `pillars.accuracy` too and the
+ * accuracy gate is real — not the vacuous 1.0-by-construction it was when this
+ * only fired on the (now disabled) <SKILL_MASTERED> success tag.
  */
-function updateSkillMastery(user, rawSkillId, observation, conversation) {
+function updateSkillMastery(user, rawSkillId, observation, conversation, correct = true) {
   user.skillMastery = user.skillMastery || new Map();
   // Canonicalize to the unified skill id for storage/lookup; keep the original
   // id only for deriving a readable "recent win" label below.
@@ -684,7 +719,7 @@ function updateSkillMastery(user, rawSkillId, observation, conversation) {
   );
 
   const updated = engineUpdateSkillMastery(existing, {
-    correct: true,
+    correct: correct !== false,
     hintUsed: usedHint,
     problemContext: observation?.problemContext,
     responseTime: observation?.responseTime

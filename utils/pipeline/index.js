@@ -422,6 +422,23 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // Graduation announcement: a verified answer proved a skill on the PREVIOUS
+  // turn (flagged in persist, which is the first point mastery is known — after
+  // the tutor has already spoken). Open THIS turn by celebrating it and moving
+  // on, so the handoff feels like a live tutor rather than a silent status flip.
+  if (ctx.conversation?.pendingGraduation) {
+    const g = ctx.conversation.pendingGraduation;
+    const masteredName = g.masteredLabel || 'the skill they were working on';
+    const nextClause = g.nextLabel
+      ? `then invite them to start ${g.nextLabel}`
+      : `then ask what they'd like to work on next`;
+    decision.directives.push(
+      `GRADUATION: The student just proved mastery of ${masteredName}. Open your reply by celebrating that — warm, specific, brief — ${nextClause}. Do not re-teach the skill they just mastered.`
+    );
+    ctx.conversation.pendingGraduation = null;
+    ctx.conversation.markModified('pendingGraduation');
+  }
+
   console.log(`[Pipeline] Decide: ${decision.action}${decision.phase ? ` (phase: ${decision.phase})` : ''}`);
 
   // ── Verified twin (anti-cheat co-solve) ──
@@ -1252,11 +1269,20 @@ async function runPipeline(message, ctx) {
     // lacked a skillId but a target existed — so a whole session's mastery evidence
     // pooled into one bogus bucket instead of the skill being taught.
     const engineSkillId = ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId;
+    // The verified answer feeds skillMastery's pillars/rung too, not just BKT.
+    // This replaces the disabled <SKILL_MASTERED> tag path — without it, chat
+    // practice never advanced skillMastery and the progress card sat frozen.
+    let masteryAttempt = null;
     if (engineSkillId && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
       try {
         updateLearningEngines(ctx.user, engineSkillId, diagnosis, observation);
       } catch (err) {
         console.error('[Pipeline] Learning engine update error (non-fatal):', err.message);
+      }
+      // Only a completed attempt counts as evidence — a correct-but-partial
+      // answer is still in progress (mirrors persist's problemAnswered gate).
+      if (diagnosis.type !== 'correct_partial') {
+        masteryAttempt = { skillId: engineSkillId, correct: diagnosis.isCorrect === true };
       }
     }
 
@@ -1273,6 +1299,7 @@ async function runPipeline(message, ctx) {
         aiProcessingSeconds,
         sessionMood,
         evidence,
+        masteryAttempt,
       });
     } catch (persistErr) {
       console.error('[Pipeline] Persist stage failed (non-fatal):', persistErr.message);
