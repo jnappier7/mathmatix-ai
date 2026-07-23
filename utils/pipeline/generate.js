@@ -85,7 +85,8 @@ function buildActionPrompt(decision) {
       } else if (diagnosis.hasExplanation) {
         parts.push('The student embedded their answer in an explanation. Acknowledge their reasoning and confirm correctness.');
       } else {
-        parts.push('Confirm their answer naturally — the way a human tutor would when they know the student got it right. Then continue the lesson.');
+        parts.push('Confirm their answer naturally — the way a human tutor would when they know the student got it right.');
+        parts.push('Then move FORWARD — do NOT rebuild this same problem step-by-step or re-ask a part they already got. Pick one: advance to a harder problem, give one more at this level to confirm the pattern, or flip it into a teach-back: "Let me play the student who hasn\'t learned this yet — can you teach me how you did it?"');
       }
       break;
 

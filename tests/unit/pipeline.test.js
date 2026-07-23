@@ -73,6 +73,19 @@ describe('Pipeline: Observe Stage', () => {
       expect(result.answer).not.toBeNull();
     });
 
+    test('counts recent correct answers into streaks.recentCorrectCount', () => {
+      const result = observe('7', {
+        recentAssistantMessages: [
+          { content: 'nice', problemResult: 'correct' },
+          { content: 'yep', problemResult: 'correct' },
+          { content: 'not quite', problemResult: 'incorrect' },
+          { content: 'chatter with no result' },
+        ],
+      });
+      expect(result.streaks.recentCorrectCount).toBe(2);
+      expect(result.streaks.recentWrongCount).toBe(1);
+    });
+
     test('classifies IDK', () => {
       expect(observe('idk').messageType).toBe(MESSAGE_TYPES.IDK);
       expect(observe("i don't know").messageType).toBe(MESSAGE_TYPES.IDK);
@@ -442,6 +455,42 @@ describe('Pipeline: Decide Stage', () => {
     const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
     const dec = decide(obs, correctDiag, {});
     expect(dec.action).toBe(ACTIONS.CONFIRM_CORRECT);
+  });
+
+  test('bare correct answer → forward-move menu, no over-scaffolding', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
+    const dec = decide(obs, correctDiag, {});
+    expect(dec.action).toBe(ACTIONS.CONFIRM_CORRECT);
+    expect(dec.directives).toContainEqual(expect.stringContaining('DO NOT OVER-SCAFFOLD'));
+    expect(dec.directives).toContainEqual(expect.stringContaining('TEACH-BACK'));
+  });
+
+  test('correct answer WITH demonstrated reasoning → advance, no over-scaffold menu', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
+    const dec = decide(obs, { ...correctDiag, demonstratedReasoning: true }, {});
+    expect(dec.action).toBe(ACTIONS.CONFIRM_CORRECT);
+    expect(dec.directives).toContainEqual(expect.stringContaining('DEMONSTRATED UNDERSTANDING'));
+    // The reasoning path advances on its own — don't double up with the bare-answer menu.
+    expect(dec.directives).not.toContainEqual(expect.stringContaining('DO NOT OVER-SCAFFOLD'));
+  });
+
+  test('correct streak with no misses → bias toward advancing / teach-back', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, {
+      answer: { value: '7' },
+      streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0, recentCorrectCount: 3 },
+    });
+    const dec = decide(obs, correctDiag, {});
+    expect(dec.action).toBe(ACTIONS.CONFIRM_CORRECT);
+    expect(dec.directives).toContainEqual(expect.stringContaining('CORRECT STREAK'));
+  });
+
+  test('single correct (no streak) → no CORRECT STREAK directive', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, {
+      answer: { value: '7' },
+      streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0, recentCorrectCount: 0 },
+    });
+    const dec = decide(obs, correctDiag, {});
+    expect(dec.directives).not.toContainEqual(expect.stringContaining('CORRECT STREAK'));
   });
 
   test('incorrect answer → guide_incorrect', () => {

@@ -352,11 +352,34 @@ function decideCore(observation, diagnosis, context) {
           'Do NOT walk them through steps they already explained.',
           'Do NOT ask them to re-derive or re-explain what they clearly understand.'
         );
-      } else if (diagnosis.hasExplanation) {
+      } else {
+        // Bare correct answer (with or without a brief explanation), no full
+        // reasoning shown. This is the over-scaffolding trap: the tutor breaks
+        // the SAME just-solved problem into micro-steps ("what did you do
+        // first?", "what's 8+2?") or re-asks a part with doubt-toned language
+        // ("wait, slow down, are you sure?"). A student who solved it cleanly
+        // does not need it disassembled. Affirm, then move FORWARD.
+        if (diagnosis.hasExplanation) {
+          decision.directives.push(
+            'Student provided their answer within an explanation.',
+            'Acknowledge what they said and confirm correctness concisely.'
+          );
+        }
         decision.directives.push(
-          'Student provided their answer within an explanation.',
-          'Acknowledge what they said and confirm correctness concisely.'
+          'DO NOT OVER-SCAFFOLD: they solved it. Do NOT break this same problem into smaller sub-steps, do NOT re-ask a part they already answered, and do NOT cast doubt on a correct answer with "wait", "slow down", "are you sure", or "try it on your fingers".',
+          'After affirming (and the XP that goes with it), pick ONE forward move that fits the moment: (a) ADVANCE to the next, appropriately harder problem; (b) GATHER DATA with one more problem of similar difficulty to confirm the pattern; or (c) TEACH-BACK — e.g. "Let\'s try something on this one. I\'m going to pretend I\'m a student who hasn\'t learned this yet. Can you teach me how you did it?"'
         );
+
+        // On a correct streak with no recent misses, the student is clearly
+        // ready for more — bias away from another same-level problem and toward
+        // leveling up or a teach-back, not more support.
+        const onCorrectStreak =
+          (streaks.recentCorrectCount || 0) >= 2 && (streaks.recentWrongCount || 0) === 0;
+        if (onCorrectStreak) {
+          decision.directives.push(
+            'CORRECT STREAK: multiple right in a row with no misses. Lean toward ADVANCING difficulty or a TEACH-BACK. Do NOT add scaffolding — they are past needing it here.'
+          );
+        }
       }
 
       // Update phase state via evidence-based evaluator
