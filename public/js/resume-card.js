@@ -30,15 +30,28 @@
     return new Date(dateStr).toLocaleDateString();
   }
 
-  // Fetch both endpoints in parallel
+  // Fetch endpoints in parallel
   async function fetchResumeData() {
-    const [returningRes, summaryRes] = await Promise.all([
+    const [returningRes, summaryRes, mapRes] = await Promise.all([
       fetch('/api/conversations/returning-user-data', { credentials: 'include' }).catch(() => null),
       fetch('/api/student/progress/summary', { credentials: 'include' }).catch(() => null),
+      fetch('/api/mastery/map', { credentials: 'include' }).catch(() => null),
     ]);
 
     const returning = returningRes?.ok ? await returningRes.json() : null;
     const summary = summaryRes?.ok ? await summaryRes.json() : null;
+    const map = mapRes?.ok ? await mapRes.json() : null;
+
+    // The graph frontier is the live "what's next" source. summary.nextReady
+    // comes from a status bucket frozen at placement that never refills after a
+    // mastery, so graduation could never surface a next skill. Fall back to the
+    // closure engine's nearest attackable skill.
+    if (summary && map?.nearest?.nextSkillId) {
+      summary.graphNext = {
+        skillId: map.nearest.nextSkillId,
+        displayName: map.nearest.nextLabel || 'your next skill',
+      };
+    }
 
     return { returning, summary };
   }
@@ -82,9 +95,15 @@
   }
 
   // Progress bar toward mastery of a skill
-  function masteryBar(displayName, pct, labelText) {
+  function masteryBar(displayName, pct, labelText, isMastered) {
     const p = Math.max(0, Math.min(100, Math.round(pct || 0)));
-    const state = p >= 100 ? 'mastered' : (p >= 50 ? 'halfway to mastery' : 'building it up');
+    // Only the dedicated mastery state may say "mastered". A skill still in
+    // progress must never claim the verdict just because its bar reached 100% —
+    // that mislabel (a 'learning' skill reading "mastered · 100%") is exactly
+    // the bug this guards against.
+    const state = isMastered
+      ? 'mastered'
+      : (p >= 90 ? 'almost there' : (p >= 50 ? 'halfway to mastery' : 'building it up'));
     return `
       <div class="rc-hero-label">${esc(labelText || 'Working toward mastery')}</div>
       <div class="rc-hero-skill">${esc(displayName)}</div>
@@ -115,11 +134,11 @@
     // MASTERY — celebrate, then open the next door.
     if (summary.cardState === 'mastery') {
       const mastered = summary.recentMastery;
-      const next = summary.nextReady;
+      const next = summary.nextReady || summary.graphNext;
       return `
         <div class="rc-hero">
           <div class="rc-hero-badge">★ skill mastered</div>
-          ${masteryBar(mastered ? mastered.displayName : 'Your skill', 100, 'You just mastered')}
+          ${masteryBar(mastered ? mastered.displayName : 'Your skill', 100, 'You just mastered', true)}
           <div class="rc-hero-copy">Ready for something new.</div>
           ${next
             ? ctaButton(`Start ${next.displayName}`, `I'm ready to start ${next.displayName}.`)
@@ -157,6 +176,9 @@
     if (reviewDue > 0) {
       parts.push(ctaButton(`${reviewDue} skill${reviewDue === 1 ? '' : 's'} ready to review`, "Let's review what I've learned.", 'alt'));
     }
+    // The card is also an entry point to the ladder — a native link (not a chat
+    // prompt), so it navigates to the skill map rather than messaging the tutor.
+    parts.push('<a class="rc-hero-alt" href="/skill-map.html">See your skill map<span class="rc-hero-arrow">→</span></a>');
     return `<div class="rc-hero">${parts.join('')}</div>`;
   }
 
