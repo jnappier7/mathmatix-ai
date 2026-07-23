@@ -15,6 +15,7 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../readability
 const { enforceVisualTeaching } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
 const { processAIResponse } = require('../chatBoardParser');
+const { replaceDashes } = require('../dashNormalizer');
 const { callLLM } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
@@ -1008,6 +1009,12 @@ async function verify(responseText, context = {}) {
   text = text.replace(/\n\s*([?!.])\s*$/gm, '$1');
   // Collapse runs of 3+ newlines to a double newline
   text = text.replace(/\n{3,}/g, '\n\n');
+
+  // ── 8d. Ban em/en dashes (dash-vs-minus confusion) ──
+  // "That's right — 7" reads to a student as "that's right minus 7". Replace
+  // with a comma across all student-facing prose. Runs after math has been
+  // normalized into LaTeX, where minus is '-', so real math is untouched.
+  text = replaceDashes(text);
 
   // ── 9. Validate non-empty (after all stripping) ──
   if (!text || text.trim() === '') {
