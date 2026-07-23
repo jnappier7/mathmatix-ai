@@ -114,7 +114,11 @@
     if (region) {
       region.classList.add('lws-swapped');
       // Hide the old tabbed board tools, keep them in the DOM (reversible).
+      // EXCEPTION: the student player card stays visible — it's pinned to the
+      // bottom of the rail (workspace.css) so the swapped board never covers or
+      // eliminates the student's avatar; the mount is inset above it.
       for (var i = 0; i < region.children.length; i++) {
+        if (region.children[i].id === 'cr-player-card') continue;
         region.children[i].setAttribute('data-lws-hidden', '1');
         region.children[i].style.display = 'none';
       }

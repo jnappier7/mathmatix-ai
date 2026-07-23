@@ -46,45 +46,56 @@ body.cr-voice .cr-voice-toggle {
    the hero + courses card), not .cr-tutor-hero — ordering the hero
    directly stopped working when the wrapper landed. */
 @media (min-width: 1201px) {
+  /* Voice mode INVERTS the chat-mode stage:
+       chat  → transcript centre stage, work board top-right
+       voice → work board centre stage, transcript top-right
+     The tutor cam holds the left column; the board takes the floor (order 2),
+     and the still-recording transcript becomes an always-visible panel pinned
+     to the top-right (in chat mode it's the reverse). */
   body.cr-voice .cr-stage {
     grid-template-columns: minmax(300px, 30%) minmax(0, 1fr);
   }
-  body.cr-voice .cr-hero-col    { order: 1; }
-  body.cr-voice #cr-workspace   { order: 2; }   /* centre stage */
+  body.cr-voice .cr-hero-col  { order: 1; }   /* tutor cam, left */
+  body.cr-voice #cr-workspace { order: 2; }   /* work board, centre stage */
 
-  /* No running transcript in voice — captions carry the words. */
-  body.cr-voice #chat-container { display: none; }
-
-  /* The cam is the whole left column: courses + encouragement step aside,
-     captions take the bottom of the hero. */
+  /* The cam is the whole left column: courses + encouragement step aside. */
   body.cr-voice .cr-courses-card { display: none !important; }
   body.cr-voice .cr-encourage-card { display: none; }
 
-  /* History drawer: peek the (still-recording) transcript on demand. */
-  body.cr-voice.cr-voice-history #chat-container {
+  /* Transcript → top-right panel. Out of grid flow (so the board fills the
+     centre) and always visible in voice — previously it was hidden and only
+     peeked as a drawer via the History control. */
+  body.cr-voice #chat-container {
     display: flex;
     position: fixed;
     top: 76px;
     right: 18px;
     bottom: 96px;
-    width: 400px;
+    width: 360px;
     max-width: calc(100vw - 36px);
     z-index: 60;
     margin: 0 !important;
     max-height: none;
+    border-radius: var(--cr-radius-lg, 16px);
     box-shadow: 0 24px 64px rgba(15, 26, 36, 0.28);
     opacity: 1;
   }
-  body.cr-voice.cr-voice-history #chat-messages-container { font-size: 13px; }
-}
+  body.cr-voice #chat-messages-container { font-size: 13px; }
 
-/* Board flag off → no workspace to center. Keep the chat visible so
-   voice mode never renders an empty stage. */
-@media (min-width: 1201px) {
+  /* Board flag off → no board to centre. Drop the transcript back into normal
+     grid flow (centre) so voice never renders an empty stage. */
   html.mm-board-hidden body.cr-voice .cr-stage {
     grid-template-columns: minmax(300px, 30%) minmax(0, 1fr);
   }
-  html.mm-board-hidden body.cr-voice #chat-container { display: flex; }
+  html.mm-board-hidden body.cr-voice #chat-container {
+    position: static;
+    inset: auto;
+    width: auto;
+    max-width: none;
+    box-shadow: none;
+    border-radius: 0;
+    order: 2;
+  }
 }
 
 /* ---- Voice presence: the tutor hero reads as "live" ----
