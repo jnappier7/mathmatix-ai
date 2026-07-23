@@ -672,7 +672,12 @@ const userSchema = new Schema({
     dailyEarned:    { type: Number, default: 0 },          // anti-abuse daily cap counter
     lastCoinReset:  { type: Date, default: Date.now },      // anchors the daily reset
     retroLevelGrantedAt: { type: Date, default: null },     // set once by scripts/grantRetroactiveLevelCoins.js so the backfill is idempotent
-    welcomeGrantedAt: { type: Date, default: null }         // set once when the day-1 welcome bonus is granted (idempotent)
+    welcomeGrantedAt: { type: Date, default: null },        // set once when the day-1 welcome bonus is granted (idempotent)
+    lastPurchase: {                                         // most recent cosmetic buy — powers one-tap Undo
+      itemId: { type: String, default: null },
+      price:  { type: Number, default: 0 },
+      at:     { type: Date,   default: null }
+    }
   },
 
   /* Cosmetics ownership + equipped loadout (see utils/cosmeticsCatalog.js).

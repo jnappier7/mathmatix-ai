@@ -18,6 +18,7 @@ const SLOT_ORDER = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'he
 
 let state = { catalog: {}, coins: 0, owned: [], equipped: {} };
 let preview = null; // { slot, id } while a "try-on" is active, else null
+let undoTimer = null; // auto-hide timer for the post-purchase Undo bar
 
 function esc(s) {
     const el = document.createElement('span');
@@ -62,6 +63,10 @@ function buildModal() {
           <button class="shop-btn shop-preview-action" type="button" data-preview-action></button>
           <button class="shop-btn shop-preview-done" type="button" data-preview-done>Done</button>
         </div>
+      </div>
+      <div class="shop-undo-bar" hidden role="status">
+        <span class="shop-undo-label" aria-live="polite"></span>
+        <button class="shop-btn shop-undo-btn" type="button" data-undo>↩ Undo</button>
       </div>`;
     document.body.appendChild(modal);
     modal.querySelectorAll('[data-shop-close]').forEach(el => el.addEventListener('click', closeShop));
@@ -73,6 +78,7 @@ function buildModal() {
     modal.querySelector('#shop-body').addEventListener('click', onBodyClick);
     modal.querySelector('[data-preview-done]').addEventListener('click', stopPreview);
     modal.querySelector('[data-preview-action]').addEventListener('click', onPreviewAction);
+    modal.querySelector('[data-undo]').addEventListener('click', onUndo);
     return modal;
 }
 
@@ -174,13 +180,19 @@ async function onBodyClick(e) {
     btn.disabled = true;
     try {
         if (act === 'buy') {
-            const res = await post('/api/cosmetics/purchase', { itemId: btn.dataset.id });
+            // "Are you sure?" — first tap arms the button, second tap buys.
+            if (btn.dataset.armed !== '1') { armBuy(btn); return; }
+            disarmBuy(btn);
+            const id = btn.dataset.id;
+            const item = state.catalog[id] || {};
+            const res = await post('/api/cosmetics/purchase', { itemId: id });
             const data = await res.json();
             if (!res.ok || !data.success) return flash(btn, data.error === 'insufficient_coins' ? 'Not enough' : 'Failed');
             state.coins = data.coins;
-            state.owned = data.owned || state.owned.concat(btn.dataset.id);
+            state.owned = data.owned || state.owned.concat(id);
             if (window.currentUser) { window.currentUser.wallet = window.currentUser.wallet || {}; window.currentUser.wallet.coins = data.coins; }
             render();
+            showUndo(data.undo, item.name || 'that');
         } else if (act === 'equip' || act === 'unequip') {
             const slot = btn.dataset.slot;
             const itemId = act === 'equip' ? btn.dataset.id : 'default';
@@ -203,6 +215,72 @@ function flash(btn, msg) {
     btn.textContent = msg;
     btn.disabled = false;
     setTimeout(() => { btn.textContent = orig; render(); }, 1200);
+}
+
+// ---- "Are you sure?" — a second tap confirms a spend --------------------
+function armBuy(btn) {
+    // Only one buy armed at a time.
+    document.querySelectorAll('#shop-body [data-act="buy"][data-armed="1"]').forEach(disarmBuy);
+    btn.dataset.armed = '1';
+    btn.dataset.orig = btn.innerHTML;
+    btn.classList.add('shop-btn-confirm');
+    btn.innerHTML = 'Sure? Tap again';
+    clearTimeout(btn._armTimer);
+    btn._armTimer = setTimeout(() => disarmBuy(btn), 3500);
+}
+function disarmBuy(btn) {
+    if (!btn) return;
+    clearTimeout(btn._armTimer);
+    if (btn.dataset.armed === '1' && btn.dataset.orig != null) btn.innerHTML = btn.dataset.orig;
+    btn.dataset.armed = '';
+    btn.classList.remove('shop-btn-confirm');
+}
+
+// ---- Undo the most recent purchase (server-authoritative refund) ---------
+function showUndo(undo, itemName) {
+    if (!undo || !undo.itemId) return;
+    const modal = document.getElementById(MODAL_ID);
+    if (!modal) return;
+    const bar = modal.querySelector('.shop-undo-bar');
+    bar.dataset.itemId = undo.itemId;
+    bar.querySelector('.shop-undo-label').textContent = `Bought ${itemName}.`;
+    bar.querySelector('[data-undo]').innerHTML = `↩ Undo (🪙${undo.price} back)`;
+    bar.querySelector('[data-undo]').disabled = false;
+    bar.hidden = false;
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => { bar.hidden = true; }, 12000);
+}
+
+async function onUndo() {
+    const modal = document.getElementById(MODAL_ID);
+    if (!modal) return;
+    const bar = modal.querySelector('.shop-undo-bar');
+    const itemId = bar.dataset.itemId;
+    if (!itemId) return;
+    const btn = bar.querySelector('[data-undo]');
+    btn.disabled = true;
+    try {
+        const res = await post('/api/cosmetics/refund', { itemId });
+        const data = await res.json();
+        if (!res.ok || !data.success) { btn.disabled = false; return flashEl(btn, data.error === 'window_expired' ? 'Too late' : 'Failed'); }
+        state.coins = data.coins;
+        state.owned = data.owned || state.owned.filter(x => x !== itemId);
+        if (data.equipped) state.equipped = data.equipped;
+        if (window.currentUser) {
+            window.currentUser.wallet = window.currentUser.wallet || {};
+            window.currentUser.wallet.coins = data.coins;
+            if (data.equipped) window.currentUser.equippedCosmetics = data.equipped;
+        }
+        applyCosmetics(window.currentUser); // revert if the refunded item was equipped
+        clearTimeout(undoTimer);
+        bar.hidden = true;
+        bar.dataset.itemId = '';
+        render();
+    } catch (err) {
+        console.warn('Undo failed', err);
+        btn.disabled = false;
+        flashEl(btn, 'Error');
+    }
 }
 
 // ---- Live "try on" preview ----------------------------------------------
@@ -259,9 +337,30 @@ async function onPreviewAction() {
     if (!preview) return;
     const { slot, id } = preview;
     const owned = state.owned.includes(id);
+    const item = state.catalog[id] || {};
     const bar = document.getElementById(MODAL_ID).querySelector('.shop-preview-bar');
     const actionBtn = bar.querySelector('[data-preview-action]');
+
+    // Confirm before SPENDING. Equipping an item you already own needs no confirm.
+    if (!owned && actionBtn.dataset.armed !== '1') {
+        actionBtn.dataset.armed = '1';
+        actionBtn.dataset.orig = actionBtn.textContent;
+        actionBtn.textContent = 'Sure? Tap again';
+        actionBtn.classList.add('shop-btn-confirm');
+        clearTimeout(actionBtn._armTimer);
+        actionBtn._armTimer = setTimeout(() => {
+            actionBtn.dataset.armed = '';
+            actionBtn.classList.remove('shop-btn-confirm');
+            if (actionBtn.dataset.orig != null) actionBtn.textContent = actionBtn.dataset.orig;
+        }, 3500);
+        return;
+    }
+    clearTimeout(actionBtn._armTimer);
+    actionBtn.dataset.armed = '';
+    actionBtn.classList.remove('shop-btn-confirm');
     actionBtn.disabled = true;
+
+    let undo = null;
     try {
         if (!owned) {
             const res = await post('/api/cosmetics/purchase', { itemId: id });
@@ -269,6 +368,7 @@ async function onPreviewAction() {
             if (!res.ok || !data.success) { actionBtn.disabled = false; return flashEl(actionBtn, data.error === 'insufficient_coins' ? 'Not enough' : 'Failed'); }
             state.coins = data.coins;
             state.owned = data.owned || state.owned.concat(id);
+            undo = data.undo;
             if (window.currentUser) { window.currentUser.wallet = window.currentUser.wallet || {}; window.currentUser.wallet.coins = data.coins; }
         }
         const res = await post('/api/cosmetics/equip', { slot, itemId: id });
@@ -283,6 +383,7 @@ async function onPreviewAction() {
         modal.classList.remove('shop-previewing');
         bar.hidden = true;
         render();
+        if (undo) showUndo(undo, item.name || 'that');
     } catch (err) {
         console.warn('Preview purchase/equip failed', err);
         actionBtn.disabled = false;
@@ -308,6 +409,9 @@ export async function openShop() {
         if (!res.ok || !data.success) throw new Error('catalog');
         state = { catalog: data.catalog || {}, coins: data.coins || 0, owned: data.owned || [], equipped: data.equipped || {} };
         render();
+        // A purchase from a moment ago is still undoable — surface it on open.
+        if (data.undo) showUndo(data.undo, state.catalog[data.undo.itemId]?.name || 'that');
+        else { const bar = modal.querySelector('.shop-undo-bar'); if (bar) bar.hidden = true; }
     } catch (err) {
         console.warn('Shop load failed', err);
         modal.querySelector('#shop-body').innerHTML = `<div class="shop-empty">Couldn't load the shop. Try again.</div>`;
