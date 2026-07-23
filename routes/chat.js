@@ -342,6 +342,12 @@ async function runStudentTurn(req, res) {
         // chat history stays clean. The `mastery` flag comes from the frontend.
         const isMasteryMode = mastery && !!user.masteryProgress?.activeBadge;
         let activeConversation;
+        // True when this turn abandoned an existing conversation and started a
+        // fresh one (idle past the session window, or it was closed out). The
+        // browser needs to hear about it: a tab left open across the gap still
+        // shows the old transcript and the old board, and would silently paint
+        // this turn on top of work that belongs to a session that has ended.
+        let sessionRolled = false;
 
         if (isMasteryMode) {
             // Load existing mastery conversation
@@ -350,6 +356,7 @@ async function runStudentTurn(req, res) {
             }
             if (!activeConversation || !activeConversation.isActive || !activeConversation.isMastery
                 || isSessionStale(activeConversation)) {
+                if (activeConversation) sessionRolled = true;
                 const activeBadge = user.masteryProgress.activeBadge;
                 activeConversation = new Conversation({
                     userId: user._id,
@@ -371,6 +378,7 @@ async function runStudentTurn(req, res) {
             // conversation, OR the last one went idle past the session window.
             if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery
                 || isSessionStale(activeConversation)) {
+                if (activeConversation) sessionRolled = true;
                 // IMPROVED: End the old session properly before creating a new one
                 if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
                     try {
@@ -1215,6 +1223,14 @@ async function runStudentTurn(req, res) {
             // dead and the client's "thinking…" indicator spins forever.
             sseKeepalive = createKeepalive(res);
             sseKeepalive.start();
+            // Announce a session rollover BEFORE the reply streams, so a tab
+            // left open across the idle gap clears the previous session's
+            // transcript and board up front instead of after the answer has
+            // finished painting on top of it. Same fact also rides `complete`
+            // (responseData.sessionRolled) for the non-streaming path.
+            if (sessionRolled) {
+                res.write(`data: ${JSON.stringify({ type: 'session_rolled', data: { conversationId: String(activeConversation._id) } })}\n\n`);
+            }
             req.on('close', () => {
                 clientDisconnected = true;
                 if (sseKeepalive) sseKeepalive.stop();
@@ -1615,6 +1631,10 @@ async function runStudentTurn(req, res) {
 
         const responseData = {
             text: aiResponseText,
+            // Tells the browser this turn belongs to a NEW session, so it can
+            // drop the previous one's transcript and board before painting.
+            sessionRolled,
+            conversationId: String(activeConversation._id),
             userXp: userXpInCurrentLevel,
             userLevel: user.level,
             xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
@@ -2258,7 +2278,6 @@ async function handleGreetingRequest(req, res, userId) {
         // Demo clones always start fresh — their pre-seeded conversations are
         // for teacher/parent dashboard views, not the student's own chat.
         let activeConversation = null;
-        const REUSE_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
 
         if (user.activeConversationId && !user.isDemoClone) {
             const existing = await Conversation.findById(user.activeConversationId);
@@ -2267,7 +2286,11 @@ async function handleGreetingRequest(req, res, userId) {
                 existing.isActive &&
                 !existing.isMastery &&
                 existing.conversationType !== 'course' &&
-                (Date.now() - new Date(existing.lastActivity || existing.startDate).getTime()) < REUSE_WINDOW_MS
+                // Same boundary the message path uses (isSessionStale). This was
+                // a second, hand-rolled 30-minute constant; two copies of the
+                // session window can drift apart, and then the greeting and the
+                // first message disagree about which conversation this is.
+                !isSessionStale(existing)
             ) {
                 // Recent, non-course, non-mastery conversation — reuse it
                 activeConversation = existing;

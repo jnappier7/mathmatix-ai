@@ -62,6 +62,71 @@ describe('derivationView.classify', () => {
   });
 });
 
+// A scaffold card is DEFINED by its empty slots — utils/boardCommandGuard.js
+// rejects one without a blank (`scaffold_has_no_blank`). The board never
+// implemented the other half of that contract, so the blanks rendered as dead
+// boxes. splitBlanks is what turns them into real inputs.
+describe('derivationView.splitBlanks / hasBlank', () => {
+  const { splitBlanks, hasBlank } = require('../../../public/js/living-workspace/dom/derivationView.js');
+
+  it('splits the schema\'s own scaffold example into fixed math and holes', () => {
+    // From boardResponseSchema.js: "x^2 + 4x + \boxed{} = 12 + \boxed{}"
+    const segs = splitBlanks('x^2 + 4x + \\boxed{} = 12 + \\boxed{}');
+    expect(segs.map((s) => s.type)).toEqual(['tex', 'blank', 'tex', 'blank']);
+    expect(segs[0].value).toBe('x^2 + 4x + ');
+    expect(segs[2].value).toBe(' = 12 + ');
+  });
+
+  it('recognises every blank form the guard accepts', () => {
+    expect(hasBlank('\\boxed{}')).toBe(true);
+    expect(hasBlank('\\boxed{\\;\\;}')).toBe(true);   // spacing-only counts as empty
+    expect(hasBlank('\\square = 6 \\div 2')).toBe(true);
+    expect(hasBlank('x = ___')).toBe(true);
+    expect(hasBlank('x = \\_\\_\\_')).toBe(true);
+  });
+
+  it('a blank can lead the line', () => {
+    const segs = splitBlanks('\\square = 6 \\div 2');
+    expect(segs[0]).toEqual({ type: 'blank', value: '\\square' });
+    expect(segs[1].value).toBe(' = 6 \\div 2');
+  });
+
+  it('a FILLED box is not a blank — that would be an answer, not a scaffold', () => {
+    expect(hasBlank('\\boxed{5} = 5')).toBe(false);
+  });
+
+  it('leaves ordinary math (and subscripts) alone', () => {
+    expect(hasBlank('x^2 - 4x + 3')).toBe(false);
+    expect(hasBlank('a_{ij} + b_{12}')).toBe(false);
+    expect(splitBlanks('x^2 - 4x + 3')).toEqual([{ type: 'tex', value: 'x^2 - 4x + 3' }]);
+  });
+
+  it('handles junk', () => {
+    expect(hasBlank(null)).toBe(false);
+    expect(splitBlanks(null)).toEqual([]);
+  });
+});
+
+// A finished problem shrinks to a thumbnail rather than being deleted, and the
+// ✓ on it means the derivation actually reached an answer.
+describe('derivationView.hasSolution', () => {
+  const { hasSolution } = require('../../../public/js/living-workspace/dom/derivationView.js');
+  const eq = (role) => ({ type: 'equation', semantic: { latex: 'x=1', role } });
+
+  it('is true once a verify card closed the problem out', () => {
+    expect(hasSolution([eq('problem'), eq('step'), eq('solution')])).toBe(true);
+  });
+
+  it('is false for a problem abandoned mid-derivation', () => {
+    expect(hasSolution([eq('problem'), eq('step'), eq('scaffold')])).toBe(false);
+  });
+
+  it('handles empty / junk', () => {
+    expect(hasSolution([])).toBe(false);
+    expect(hasSolution(null)).toBe(false);
+  });
+});
+
 // Voice ships the board cumulatively — each turn resends every step and only
 // the last is typically new. The spoken-step spotlight keys off exactly that:
 // whatever arrived THIS turn is what the tutor is talking about.

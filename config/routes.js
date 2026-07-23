@@ -307,13 +307,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   });
 
   // Global error handler — must be last middleware (4 args)
-  app.use((err, req, res, next) => {
-    // If the response already started (e.g. an error thrown after an SSE stream
-    // began or after res.json), we cannot send another response. Delegate to
-    // Express's built-in handler, which just aborts the connection. Without this
-    // guard, res.json/sendFile below throw ERR_HTTP_HEADERS_SENT and spam the logs.
-    if (res.headersSent) return next(err);
-
+  app.use((err, req, res, _next) => {
     const status = err.status || 500;
     const isServerError = status >= 500;
 
@@ -325,6 +319,32 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
         method: req.method,
         url: req.originalUrl,
       });
+    }
+
+    // Headers already flushed — almost always a streaming (SSE) chat turn that
+    // failed mid-flight, since the stream sets its headers before the pipeline
+    // runs. Calling res.status()/json() below would throw ERR_HTTP_HEADERS_SENT,
+    // and that crash is what surfaces in the logs INSTEAD of the real error.
+    // Rather than delegate to Express's default handler (which just aborts the
+    // socket and leaves the client's "thinking…" spinner hanging), send a
+    // terminal error event on the stream the client is already reading — the
+    // chat SSE loop handles { type:'error', message } (script.js) — then close.
+    // `message` (not `error`) matches both the client and the normal streaming
+    // error the pipeline emits in routes/chat.js.
+    if (res.headersSent) {
+      const isSse = String(res.getHeader('Content-Type') || '').includes('text/event-stream');
+      if (isSse) {
+        try {
+          res.write(`data: ${JSON.stringify({
+            type: 'error',
+            message: isServerError ? 'Something went wrong. Please try again.' : err.message,
+          })}\n\n`);
+        } catch (writeErr) {
+          logger.warn('Could not write SSE error event', { requestId: req.requestId, error: writeErr.message });
+        }
+      }
+      try { res.end(); } catch { /* socket already torn down */ }
+      return;
     }
 
     if (req.path.startsWith('/api/')) {

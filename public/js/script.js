@@ -2385,6 +2385,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }).join('');
     }
 
+    // Programmatic send for surfaces outside the composer — today, the math
+    // workspace's fill-in-the-blank scaffolds. Routing through sendMessage()
+    // rather than POSTing directly is deliberate: a blank answer then travels
+    // the exact path a typed one does (usage gate, diagnose/verify, XP,
+    // transcript), so there is no second grading path to keep honest.
+    // Returns false when the send could not happen, which leaves the caller's
+    // UI editable rather than falsely reporting success.
+    window.mmSendChatMessage = function (text) {
+        const t = String(text == null ? '' : text).trim();
+        if (!t || !userInput) return false;
+        try {
+            userInput.textContent = t;
+            sendMessage();
+            return true;
+        } catch (err) {
+            console.error('[chat] programmatic send failed:', err);
+            return false;
+        }
+    };
+
     function sendMessage() {
         // Seal any active inline equation boxes so their data-latex is set
         if (window.InlineEquationBox) {
@@ -2867,6 +2887,12 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
                                 fullText += event.content;
                                 appendStreamingChunk(streamRef, event.content);
+                            } else if (event.type === 'session_rolled') {
+                                // The idle gap outlived the session window: the
+                                // server started a new conversation. Drop the
+                                // previous one's transcript and board before the
+                                // reply lands on top of them.
+                                applySessionRollover(event.data && event.data.conversationId);
                             } else if (event.type === 'replacement' && event.content) {
                                 // Server sent a replacement (e.g., after streaming fallback)
                                 if (!streamRef) {
@@ -2957,6 +2983,12 @@ document.addEventListener("DOMContentLoaded", () => {
             // Process AI response (same logic as original sendMessage)
             let aiText = data.text || '';
             const wasStreamed = contentType.includes('text/event-stream');
+
+            // Non-streaming turns learn about a session rollover here; streaming
+            // ones already got the `session_rolled` event before the first chunk.
+            if (!wasStreamed && data.sessionRolled) {
+                applySessionRollover(data.conversationId);
+            }
             let graphData = null;
             const graphRegex = /\[GRAPH:(\{[^}]*\})\]/;
             const graphMatch = aiText.match(graphRegex);
@@ -5369,6 +5401,49 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('Error saving reaction:', error);
             showToast('Failed to save reaction', 3500);
         }
+    }
+
+    /**
+     * The server started a new conversation because the previous one went idle
+     * past the session window (utils/sessionWindow.js). The tab may have been
+     * open the whole time, still showing that session's transcript and still
+     * holding its work on the board — none of which belongs to the new session.
+     *
+     * Everything before the message the student just sent is removed, so their
+     * own turn survives and the reply lands on a clean surface.
+     */
+    function applySessionRollover(conversationId) {
+        if (conversationId) window.currentConversationId = conversationId;
+
+        if (chatBox) {
+            // The student's just-sent bubble is the boundary: it already belongs
+            // to the NEW session, so keep it and everything after it.
+            const containers = chatBox.querySelectorAll('.message-container');
+            let boundary = null;
+            for (let i = containers.length - 1; i >= 0; i--) {
+                if (containers[i].classList.contains('user')) { boundary = containers[i]; break; }
+            }
+            if (boundary) {
+                while (boundary.previousSibling) chatBox.removeChild(boundary.previousSibling);
+            } else {
+                chatBox.innerHTML = '';
+            }
+            try { updateChatWatermark(); } catch { /* non-blocking */ }
+        }
+
+        // Combo streaks are per-session, same as on an explicit switch.
+        try { resetCombo(); } catch { /* non-blocking */ }
+
+        // The board is the other surface holding the old session's work.
+        if (window.LWS_CHAT && typeof window.LWS_CHAT.reset === 'function') {
+            try { window.LWS_CHAT.reset(); } catch (err) { console.error('[chat] board reset failed:', err); }
+        }
+        // Legacy board, for the flag-off case (it's hidden when LWS owns the slot).
+        if (window.BoardCommandHandler && typeof window.BoardCommandHandler.executeBoardCommands === 'function') {
+            try { window.BoardCommandHandler.executeBoardCommands([{ action: 'clear' }]); } catch { /* board not mounted */ }
+        }
+
+        console.log('[chat] session rolled over — cleared previous session from view');
     }
 
     /**

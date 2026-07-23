@@ -129,4 +129,48 @@ describe('skillFocusBuilder.refreshSkillFocus', () => {
     expect(() => refreshSkillFocus(plan, {}, { now: NOW })).not.toThrow();
     expect(plan.skillFocus).toHaveLength(0);
   });
+
+  // Seen in production on every single turn:
+  //   TutorPlan load error (non-fatal): skill id "MS_QNT_8" contains "_",
+  //   which the mastery key encoding reserves as the "." substitute
+  // skillMastery is a Mongoose Map, which rejects dots, so "MS.QNT.8" is
+  // STORED as "MS_QNT_8". Seeding the focus queue straight from the map keys
+  // put that storage key in the plan as a logical skill id; the next
+  // encodeMasteryKey() on it threw, the pipeline's non-fatal catch swallowed
+  // the whole TutorPlan load, and the tutor lost its persistent model of the
+  // student every turn.
+  describe('storage-key decoding (the "MS_QNT_8" regression)', () => {
+    const { encodeMasteryKey } = require('../../utils/masteryGuard');
+
+    test('seeds the LOGICAL dotted id, not the encoded storage key', () => {
+      const plan = makePlan();
+      const user = { skillMastery: masteryMap({
+        'MS_QNT_8': { status: 'learning', totalAttempts: 4 },
+      }) };
+      refreshSkillFocus(plan, user, { now: NOW });
+      expect(plan.skillFocus.map(s => s.skillId)).toEqual(['MS.QNT.8']);
+    });
+
+    test('every seeded id survives a round-trip back through encodeMasteryKey', () => {
+      const plan = makePlan();
+      const user = { skillMastery: masteryMap({
+        'MS_QNT_8': { status: 'learning', totalAttempts: 4 },
+        'ALG1_EQV_1': { status: 'learning', totalAttempts: 5 },
+      }) };
+      refreshSkillFocus(plan, user, { now: NOW });
+      expect(plan.skillFocus.length).toBeGreaterThan(0);
+      for (const sf of plan.skillFocus) {
+        expect(() => encodeMasteryKey(sf.skillId)).not.toThrow();
+      }
+    });
+
+    test('leaves a legacy kebab id (no underscore) untouched', () => {
+      const plan = makePlan();
+      const user = { skillMastery: masteryMap({
+        'add-fractions': { status: 'learning', totalAttempts: 4 },
+      }) };
+      refreshSkillFocus(plan, user, { now: NOW });
+      expect(plan.skillFocus.map(s => s.skillId)).toEqual(['add-fractions']);
+    });
+  });
 });

@@ -91,6 +91,11 @@ function parseBoardTags(aiResponseText) {
             // Optional short step label, e.g. caption="Trig substitution".
             command.caption = captionAttr;
         }
+        if (action === 'scaffold' && captionAttr) {
+            // The question naming what belongs in the blank. Without it the
+            // student gets a box and no idea what goes in it.
+            command.caption = captionAttr;
+        }
         if (action === 'apply') {
             const op = opAttr || innerTrim || null;
             if (!op) continue;

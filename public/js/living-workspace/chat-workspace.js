@@ -53,6 +53,10 @@
     setSpeaking: function () {},
     setCaption: function () {},
     setContext: function (c) { if (c && typeof c === 'object') { if (c.conversationId != null) ctx.conversationId = c.conversationId; if (c.workspaceId != null) ctx.workspaceId = c.workspaceId; } },
+    // Wipe the board back to its empty state, thumbnail rail included. Called
+    // when the server rolls the conversation over after an idle gap — the new
+    // session must not open onto the previous one's work.
+    reset: function () {},
   };
   window.LWS_CHAT = api;
   if (!ON) return;
@@ -61,7 +65,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260720b';
+  var ASSET_V = '?v=20260721a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -232,12 +236,26 @@
     try { dv.setCaption(text); } catch (_) { /* view torn down */ }
   };
 
+  api.reset = function () {
+    pending = null;                 // don't let a queued turn repaint the old session
+    if (!dv) return;
+    try { dv.resetAll(); } catch (e) { console.error('[LWS_CHAT] reset failed', e); }
+  };
+
+  // A student filling a scaffold's blanks is answering the tutor — send it as a
+  // chat message so it is graded by the same pipeline as anything they type.
+  // Returning false leaves the inputs editable (chat engine not ready yet).
+  function submitBlanks(text) {
+    if (typeof window.mmSendChatMessage !== 'function') return false;
+    return window.mmSendChatMessage(text) !== false;
+  }
+
   function boot() {
     injectCss();
     loadNext(0, function () {
       if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
       var mount = buildPanel();
-      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers() });
+      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers(), onBlankSubmit: submitBlanks });
       ready = true;
       if (pending) { var p = pending; pending = null; render(p); }
       console.log('[LWS_CHAT] mounted (derivation, mode=' + MODE + ')');

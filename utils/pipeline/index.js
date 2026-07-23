@@ -1733,6 +1733,7 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
   skillId = canonicalSkillId(skillId);
   // Safety net: never key per-skill learning state under an undefined id. Callers
   // should pass a resolved skill, but if none is in focus there's nothing to track.
+  // (Belt and braces with the caller's guard — every write below is state[skillId].)
   if (!skillId) return;
   const isCorrect = diagnosis.isCorrect === true;
   const hintUsed = observation.contextSignals?.some(s => s.type === 'uncertainty') || false;

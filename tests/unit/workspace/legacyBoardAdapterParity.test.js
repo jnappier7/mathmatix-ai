@@ -12,6 +12,9 @@ const TURNS = [
   [{ action: 'resolve', tex: '2x = 16' }],
   [{ action: 'verify', tex: 'x = 8', check: '2(8)+4 = 20' }],
   [{ action: 'scaffold', tex: 'x^2 + 4x + \\boxed{} = 12' }],
+  // caption is the question naming what goes in the blank — both adapters
+  // must carry it, or the board shows a box with nothing asked.
+  [{ action: 'scaffold', tex: '2x = \\boxed{}', caption: 'What does 20 - 4 leave you with?' }],
   [{ action: 'example', tex: '\\int x^2 dx', caption: 'Power rule' }],
   [{ action: 'graph', fn: 'x^2 - 4', caption: 'Zeros' }],
   [{ action: 'image', query: 'unit circle', caption: 'Ref' }],

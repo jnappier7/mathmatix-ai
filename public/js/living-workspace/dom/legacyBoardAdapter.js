@@ -41,7 +41,7 @@
       case 'pose':     return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'problem') } : null;
       case 'resolve':  return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'step') } : null;
       case 'verify':   return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'solution', cmd.check ? { check: cmd.check } : null) } : null;
-      case 'scaffold': return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'scaffold') } : null;
+      case 'scaffold': return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'scaffold', cmd.caption ? { caption: cmd.caption } : null) } : null;
       case 'example':  return cmd.tex ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(cmd.tex, 'example', cmd.caption ? { caption: cmd.caption } : null) } : null;
       case 'apply':    return cmd.op  ? { type: ELEMENT_TYPES.EQUATION, semantic: equationSemantic(texText(cmd.op), 'operation', { op: cmd.op }) } : null;
       case 'graph':    return cmd.fn  ? { type: ELEMENT_TYPES.GRAPH, semantic: Object.assign({ fn: cmd.fn }, cmd.caption ? { caption: cmd.caption } : null) } : null;
