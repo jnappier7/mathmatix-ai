@@ -823,8 +823,11 @@ function updateBadgeProgress(user, wasCorrect) {
     success: true,
     badgeAwarded: {
       badgeId: badge.badgeId,
-      badgeName: badge.badgeName,
-      tier: badge.tier,
+      // Not every badge source sets badgeName/tier consistently — fall back so
+      // the client never renders "undefined". A missing tier is left null (the
+      // skill-practice path has a numeric milestone, not a bronze/silver tier).
+      badgeName: badge.badgeName || badge.name || 'New Badge',
+      tier: badge.tier || null,
       xpBonus: 500,
       totalBadges: user.badges.length,
     },

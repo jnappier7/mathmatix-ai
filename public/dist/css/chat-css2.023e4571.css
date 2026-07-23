@@ -20,81 +20,88 @@
  * THEMES  (data-theme-skin) — retint accents/panels app-wide via --cr-* tokens
  * ========================================================================= */
 
-/* ---- Bubblegum (playful pink/purple) ---- */
+/* Themes color the FRAMING only — the page backdrop behind and between the
+ * panels (--cr-bg-0) plus the accent buttons. The tutor window, chat panels, and
+ * content cards keep their normal color (we deliberately do NOT touch --cr-bg-1/2,
+ * --cr-bg-panel, text, or bubbles), so legibility is untouched and only the
+ * surrounding frame takes on the theme. Skins live on body[data-theme-skin], below
+ * :root, so --cr-bg-0 here overrides the base backdrop token. */
+
+/* ---- Bubblegum (playful pink) ---- */
 body[data-theme-skin="theme.bubblegum"] {
-  --cr-accent: #ff5db1;
-  --cr-accent-strong: #ff2e93;
+  --cr-accent: #ff2e93;
+  --cr-accent-strong: #d81b7a;
   --cr-accent-grad: linear-gradient(135deg, #ff5db1, #a855f7);
-  --cr-panel-grad-from: #fff0f7;
-  --cr-panel-grad-to: #fbe4ff;
-  --cr-pill-bg: rgba(255, 93, 177, 0.12);
-  --cr-pill-bg-hover: rgba(255, 93, 177, 0.22);
+  --cr-bg-0: #f9c1e0;
+  --cr-pill-bg: rgba(255, 46, 147, 0.1); --cr-pill-bg-hover: rgba(255, 46, 147, 0.2);
 }
 
 /* ---- Deep Forest (calm green) ---- */
 body[data-theme-skin="theme.forest"] {
-  --cr-accent: #2fae66;
-  --cr-accent-strong: #1e8a4d;
+  --cr-accent: #1e8a4d;
+  --cr-accent-strong: #166b3c;
   --cr-accent-grad: linear-gradient(135deg, #2fae66, #16a34a);
-  --cr-panel-grad-from: #eef7f0;
-  --cr-panel-grad-to: #e0f0e6;
-  --cr-pill-bg: rgba(47, 174, 102, 0.12);
-  --cr-pill-bg-hover: rgba(47, 174, 102, 0.22);
+  --cr-bg-0: #a8d5ba;
+  --cr-pill-bg: rgba(30, 138, 77, 0.1); --cr-pill-bg-hover: rgba(30, 138, 77, 0.2);
 }
 
 /* ---- Sunset (warm) ---- */
 body[data-theme-skin="theme.sunset"] {
-  --cr-accent: #ff7a3b;
-  --cr-accent-strong: #ff5a1f;
+  --cr-accent: #ef5a1f;
+  --cr-accent-strong: #c9440f;
   --cr-accent-grad: linear-gradient(135deg, #ff7a3b, #ff3b7f);
-  --cr-panel-grad-from: #fff4ee;
-  --cr-panel-grad-to: #ffe6d8;
-  --cr-pill-bg: rgba(255, 122, 59, 0.12);
-  --cr-pill-bg-hover: rgba(255, 122, 59, 0.2);
+  --cr-bg-0: #ffc9a3;
+  --cr-pill-bg: rgba(239, 90, 31, 0.1); --cr-pill-bg-hover: rgba(239, 90, 31, 0.2);
 }
 
 /* ---- Ocean (cool blue/teal) ---- */
 body[data-theme-skin="theme.ocean"] {
-  --cr-accent: #0ea5e9;
-  --cr-accent-strong: #0284c7;
+  --cr-accent: #0284c7;
+  --cr-accent-strong: #036aa0;
   --cr-accent-grad: linear-gradient(135deg, #06b6d4, #3b82f6);
-  --cr-panel-grad-from: #eef6fb;
-  --cr-panel-grad-to: #dcedf7;
-  --cr-pill-bg: rgba(14, 165, 233, 0.12);
-  --cr-pill-bg-hover: rgba(14, 165, 233, 0.22);
+  --cr-bg-0: #a9d6f0;
+  --cr-pill-bg: rgba(2, 132, 199, 0.1); --cr-pill-bg-hover: rgba(2, 132, 199, 0.2);
 }
 
-/* ---- Neon Night (cool, deeper panels) ---- */
+/* ---- Neon Night (dark framing) ---- */
 body[data-theme-skin="theme.neon"] {
   --cr-accent: #00e5ff;
   --cr-accent-strong: #00b8d4;
   --cr-accent-grad: linear-gradient(135deg, #00e5ff, #7c4dff);
-  --cr-panel-grad-from: #141a24;
-  --cr-panel-grad-to: #0e131b;
-  --cr-pill-bg: rgba(0, 229, 255, 0.14);
-  --cr-pill-bg-hover: rgba(0, 229, 255, 0.24);
+  --cr-bg-0: #071018;
+  --cr-pill-bg: rgba(0, 229, 255, 0.14); --cr-pill-bg-hover: rgba(0, 229, 255, 0.24);
 }
 
-/* ---- Galaxy (deep indigo, animated accent) ---- */
+/* ---- Galaxy (deep indigo framing) ---- */
 body[data-theme-skin="theme.galaxy"] {
   --cr-accent: #a78bfa;
-  --cr-accent-strong: #7c3aed;
+  --cr-accent-strong: #8b5cf6;
   --cr-accent-grad: linear-gradient(135deg, #7c3aed, #ec4899 55%, #22d3ee);
-  --cr-panel-grad-from: #171429;
-  --cr-panel-grad-to: #0e0b1c;
-  --cr-pill-bg: rgba(167, 139, 250, 0.16);
-  --cr-pill-bg-hover: rgba(167, 139, 250, 0.28);
+  --cr-bg-0: #0e0a22;
+  --cr-pill-bg: rgba(167, 139, 250, 0.16); --cr-pill-bg-hover: rgba(167, 139, 250, 0.28);
 }
 
 /* ---- Solid Gold (legendary flex) ---- */
 body[data-theme-skin="theme.gold"] {
-  --cr-accent: #e0a92e;
-  --cr-accent-strong: #b8860b;
+  --cr-accent: #b8860b;
+  --cr-accent-strong: #946a08;
   --cr-accent-grad: linear-gradient(135deg, #f6d365 0%, #d4af37 45%, #b8860b 100%);
-  --cr-panel-grad-from: #fffaf0;
-  --cr-panel-grad-to: #fcefc7;
-  --cr-pill-bg: rgba(212, 175, 55, 0.16);
-  --cr-pill-bg-hover: rgba(212, 175, 55, 0.28);
+  --cr-bg-0: #f0d98a;
+  --cr-pill-bg: rgba(184, 134, 11, 0.12); --cr-pill-bg-hover: rgba(184, 134, 11, 0.22);
+}
+
+/* =========================================================================
+ * THEME WASH — a light, subtle tint on the chat window and the tutor's bubbles,
+ * so the equipped theme carries into them too. color-mix blends a little of the
+ * theme accent INTO the base surface, so it stays legible in both light and dark
+ * base modes; browsers without color-mix simply keep the base color. Applies
+ * whenever any theme is equipped ([data-theme-skin] present).
+ * ========================================================================= */
+body.cr-mode[data-theme-skin] #chat-container {
+  background: color-mix(in srgb, var(--cr-accent) 5%, var(--cr-bg-panel));
+}
+body.cr-mode[data-theme-skin] .message.ai {
+  background: color-mix(in srgb, var(--cr-accent) 8%, var(--cr-bubble-ai));
 }
 
 /* =========================================================================
