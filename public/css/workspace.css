@@ -38,15 +38,23 @@
   border-bottom: none;
   border-top: 1px solid var(--cr-border, #eef2f4);
   margin: 0;
+  /* Sink the card to the bottom of the flex column. Without this it is the
+     only in-flow child once the board overlay mounts (siblings hidden, the
+     overlay is absolute), so it would pin to the TOP of the rail. */
+  margin-top: auto;
   padding: 8px 8px 10px;
 }
 #cr-player-card .fba-stage { height: 96px; }   /* compact vs the md 168px default */
 #cr-player-card .cr-player-name { font-size: 0.9rem; }
 
-.cr-workspace.lws-swapped #lws-chat-mount {
+/* Dock the card to the bottom whenever the Living Workspace overlay is
+   mounted. Keyed on the overlay EXISTING (:has(#lws-chat-mount)) rather than
+   on the .lws-swapped class settling, so a rehydration/ordering gap in the
+   class can't leave the avatar floating mid-rail. */
+.cr-workspace:has(#lws-chat-mount) #lws-chat-mount {
   inset: 0 0 var(--cr-player-card-h) 0 !important;
 }
-.cr-workspace.lws-swapped #cr-player-card {
+.cr-workspace:has(#lws-chat-mount) #cr-player-card {
   position: absolute;
   left: 0;
   right: 0;

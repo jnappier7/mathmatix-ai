@@ -390,11 +390,12 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
                 if (data.status === 'mastered' && data.masteredDate) {
                     mastered.push({ skillId, displayName, date: data.masteredDate });
                 } else if (data.status === 'learning') {
-                    learning.push({
-                        skillId,
-                        displayName,
-                        progress: Math.round((data.masteryScore || 0) * 100)
-                    });
+                    // masteryScore is dual-scale: placement seeds it 0-1, the
+                    // pillar engine writes it 0-100. Blindly *100 turned a 40
+                    // into 4000 → clamped to a fake "100% mastered". Normalize.
+                    const raw = Number(data.masteryScore) || 0;
+                    const progress = Math.round(raw <= 1 ? raw * 100 : raw);
+                    learning.push({ skillId, displayName, progress });
                 } else if (data.status === 'ready') {
                     ready.push({ skillId, displayName });
                 }
