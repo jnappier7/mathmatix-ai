@@ -568,7 +568,7 @@ async function verify(responseText, context = {}) {
   // (action === CONFIRM_CORRECT) but the LLM's response implies the
   // answer is wrong, flag it for regeneration.
   if (!regeneratedThisPass && context.action === ACTIONS.CONFIRM_CORRECT) {
-    if (falseRejectionOpener.test(text.trim())) {
+    if (falseRejectionOpener.test(text.trim()) || leadsWithDoubtOnCorrect(text)) {
       flags.push('false_rejection_detected');
       console.log(`[Verify] FALSE REJECTION detected on verified-correct answer — regenerating`);
 
@@ -652,7 +652,7 @@ async function verify(responseText, context = {}) {
     // LLM says RIGHT, response is rejecting → regenerate as confirmation.
     else if (context.llmVerdict.isCorrect === true
              && !alreadyGatedCorrect
-             && falseRejectionOpener.test(text.trim())) {
+             && (falseRejectionOpener.test(text.trim()) || leadsWithDoubtOnCorrect(text))) {
       flags.push('llm_false_rejection_detected');
       console.log(`[Verify] LLM-verdict FALSE REJECTION (student: "${context.studentAnswer}" confirmed correct) — regenerating`);
 
@@ -1296,8 +1296,52 @@ function normalizeLatex(text) {
   return result;
 }
 
+// Ways a tutor affirms a correct answer. Bounded and conventional on purpose —
+// unlike doubt, which has unlimited phrasings, affirmation is a small, stable
+// vocabulary. That asymmetry is why we detect the ABSENCE of this rather than
+// enumerate doubt. Keep this list generous; a missing entry only costs a
+// low-harm regeneration (see leadsWithDoubtOnCorrect).
+const AFFIRMATION_OPENER = /\b(right|correct(?:ly)?|exact(?:ly)?|nailed|perfect|yes|yep|yup|nice|great|awesome|excellent|boom|there\s+(?:it|you)\s+(?:is|go)|that'?s\s+(?:it|right|the\s+one)|you\s+(?:(?:got|nailed)\s+it|did\s+it)|spot\s+on|clean|love\s+it|beautiful|bingo|solid|well\s+done|good\s+(?:job|work|call)|way\s+to\s+go|bang\s+on|✓|💯)\b|^\s*(?:yeah|yea|yup|mm+-?hm+|ding)\b/i;
+
+/**
+ * On a turn we've VERIFIED correct, does the reply FAIL to affirm up front?
+ *
+ * The §2d false-rejection guard regenerates a CONFIRM_CORRECT turn whose text
+ * implies the student is wrong. It used to match a fixed list of doubt openers
+ * ("not quite", "are you sure", "hold up", "walk me back through") — brittle,
+ * because the model expresses doubt in unlimited ways ("not so fast", "pump the
+ * brakes", "really? show me") that no list can enumerate. Each novel phrasing
+ * slipped through and made a student re-justify a correct answer — worse, it
+ * invited the tutor to invent a mistake the student never made.
+ *
+ * So we INVERT the test. On a known-correct turn the rule is "confirm first,
+ * then deepen", which gives a phrasing-agnostic signal: the opening clause must
+ * AFFIRM. If it doesn't, the reply is leading with a question, a hedge, or
+ * doubt — regardless of exact wording — and gets regenerated into a clean
+ * confirmation.
+ *
+ * Scope guards against false positives:
+ *   - Only the FIRST sentence/clause is checked (≤120 chars). A reply that
+ *     affirms then legitimately asks a follow-up passes on the affirmation.
+ *   - False positives are low-harm: regenerating an already-affirming reply
+ *     just yields another affirming reply. Ways to affirm are conventional and
+ *     bounded, so the miss rate on real confirmations is small.
+ *
+ * @param {string} text
+ * @returns {boolean} true if the opening clause affirms nothing (→ regenerate)
+ */
+function leadsWithDoubtOnCorrect(text) {
+  if (!text || typeof text !== 'string') return false;
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  // First sentence/clause only — split on the first sentence break or newline.
+  const opening = trimmed.split(/(?<=[.!?\n])\s/)[0].slice(0, 120);
+  return !AFFIRMATION_OPENER.test(opening);
+}
+
 module.exports = {
   verify,
   extractSystemTags,
   normalizeLatex,
+  leadsWithDoubtOnCorrect,
 };

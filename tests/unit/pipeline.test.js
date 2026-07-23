@@ -22,7 +22,7 @@ const { observe, MESSAGE_TYPES, PATTERNS, extractAnswer, detectContextSignals } 
 const { estimateIndependence, diagnose } = require('../../utils/pipeline/diagnose');
 const { decide, ACTIONS } = require('../../utils/pipeline/decide');
 const { buildActionPrompt, buildVerificationContext, buildStreakWarning, assemblePrompt } = require('../../utils/pipeline/generate');
-const { extractSystemTags, normalizeLatex, verify } = require('../../utils/pipeline/verify');
+const { extractSystemTags, normalizeLatex, verify, leadsWithDoubtOnCorrect } = require('../../utils/pipeline/verify');
 const { callLLM } = require('../../utils/llmGateway');
 const { buildSidecar, mergeLlmSignals, getSidecarInstruction, getSignalStats } = require('../../utils/pipeline/sidecar');
 const { buildSlimRules, CORE_RULES } = require('../../utils/pipeline/promptSlim');
@@ -1270,6 +1270,57 @@ describe('Pipeline: normalizeLatex', () => {
 // The fix: gate the loose answer-key detector behind upload context.
 // When it fires (only in upload context), regenerate in voice via
 // socraticRegenerate instead of swapping in canned worksheet text.
+describe('Pipeline: Verify Stage — doubt-on-correct guard (leadsWithDoubtOnCorrect)', () => {
+  // The guard is phrasing-agnostic: on a verified-correct turn it flags any
+  // reply whose opening clause fails to AFFIRM, rather than enumerating doubt.
+  test('flags replies that open without affirmation — the observed transcript cases', () => {
+    const doubts = [
+      "Hold up, let's slow down on that one for a sec. Walk me back through it, what'd you add first?",
+      'Wait, hold on, Jason, let\'s look at that division again.',
+      "Let's confirm it's not a fluke, what's 57+36?",
+      'Okay, walk me through it with me, Jason, what\'d you do first?',
+      "Hold up — wait, let's slow down here. What's 8+2 actually equal?",
+    ];
+    for (const d of doubts) {
+      expect(leadsWithDoubtOnCorrect(d)).toBe(true);
+    }
+  });
+
+  test('flags NOVEL doubt phrasings a fixed list would miss (the whole point of inverting)', () => {
+    const novel = [
+      'Not so fast, what did you do first?',
+      'Pump the brakes a sec, how did you get there?',
+      'Before you lock that in, are you positive?',
+      'Hmm, before we celebrate, let me test that.',
+      'Really? Show me how you got it.',
+    ];
+    for (const n of novel) {
+      expect(leadsWithDoubtOnCorrect(n)).toBe(true);
+    }
+  });
+
+  test('does NOT flag replies that affirm FIRST, then deepen (confirm-then-teach-back)', () => {
+    const affirmed = [
+      '93, nailed it! Now walk me through how you pulled that off.',
+      "8 — right on, Jason. Let's look at the next one.",
+      "Exactly right. Let's confirm the pattern holds — what's 57+36?",
+      'Perfect. Want to teach me how you did it?',
+      'Boom. On to the next one.',
+      'You got it. Want a harder one?',
+    ];
+    for (const a of affirmed) {
+      expect(leadsWithDoubtOnCorrect(a)).toBe(false);
+    }
+  });
+
+  test('does NOT flag a clean confirmation; handles empty/nullish input', () => {
+    expect(leadsWithDoubtOnCorrect('32, that\'s it. You stacked the tens and ones right there.')).toBe(false);
+    expect(leadsWithDoubtOnCorrect('')).toBe(false);
+    expect(leadsWithDoubtOnCorrect(null)).toBe(false);
+    expect(leadsWithDoubtOnCorrect(undefined)).toBe(false);
+  });
+});
+
 describe('Pipeline: Verify Stage — Answer-key guard', () => {
   // A response that LOOKS like an answer key under the strict detector:
   // three numbered lines, sequential, each starting with a digit so the
@@ -1401,12 +1452,20 @@ describe('Pipeline: Verify Stage — Answer-leak guard on tutor-posed problems',
   });
 
   test('action is CONFIRM_CORRECT (not a wrong-answer turn) → guard does not fire', async () => {
-    const result = await verify(leakedAnswer, {
+    // Affirms up front so the false-rejection guard (which fires on a
+    // verified-correct turn that opens without affirmation) stays out of the
+    // way — this test isolates the answer-leak guard, which must not treat an
+    // affirmation of a correct answer as a leak.
+    const affirmedCorrect =
+      'Exactly right, the vertex x-coordinate is 2! You worked ' +
+      't = -(-8)/(2·2) = 8/4 = 2 cleanly. Now substitute it back in.';
+    const result = await verify(affirmedCorrect, {
       userId: 'u1',
       action: ACTIONS.CONFIRM_CORRECT,
       messageType: MESSAGE_TYPES.ANSWER_ATTEMPT,
     });
     expect(result.flags).not.toContain('answer_leak_on_tutor_posed_detected');
+    expect(result.flags).not.toContain('false_rejection_detected');
     expect(callLLM).not.toHaveBeenCalled();
   });
 
