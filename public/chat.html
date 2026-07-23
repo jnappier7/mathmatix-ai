@@ -174,6 +174,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script defer src="/js/i18n.js"></script>
 </head>
 <body class="landing-page-body cr-mode">
+  <!-- No-flash: apply the persisted adjustable-panel prefs (minimized tutor
+       hero + custom work-board width) BEFORE the chat stage paints, so it
+       never renders its default 3-column layout for a frame and then jump to
+       the saved one (the "avatar flashes then the board takes over" bug).
+       adjustable-panels.js re-applies + wires the controls once it loads;
+       this only pre-paints the layout. Runs here (not <head>) because it
+       needs document.body, and still executes before .cr-stage is parsed. -->
+  <script>
+    (function () {
+      // Keep these constants in sync with adjustable-panels.js (MIN_W / MAX_W /
+      // MIN_CHAT and the default --cr-hero-w in design-system.css). The width is
+      // clamped here exactly as the JS clamps it, so the pre-paint value already
+      // equals the value the JS will settle on — no load-time reflow.
+      var MIN_W = 240, MAX_W = 960, MIN_CHAT = 360, HERO_W = 320, GAPS = 36;
+      try {
+        var heroMin = localStorage.getItem('mm_hero_min') === '1';
+        if (heroMin) document.body.classList.add('cr-hero-min');
+
+        // The board width only drives the grid above 1200px (below that the
+        // board is a fixed drawer — see workspace.css — and --cr-side-w is
+        // unused). Applying it narrower just risks a needless reflow, so skip.
+        var w = parseInt(localStorage.getItem('mm_ws_width'), 10);
+        if (w && window.innerWidth > 1200) {
+          var heroW = heroMin ? 0 : HERO_W;
+          var ceil = Math.min(MAX_W, window.innerWidth - heroW - MIN_CHAT - GAPS);
+          ceil = Math.max(MIN_W, ceil);
+          w = Math.max(MIN_W, Math.min(ceil, w));
+          document.documentElement.style.setProperty('--cr-side-w', w + 'px');
+        }
+      } catch (e) { /* localStorage unavailable — fall back to defaults */ }
+    })();
+  </script>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WDF79L47"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
