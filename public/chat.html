@@ -1201,11 +1201,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="cr-ws-close" type="button" aria-label="Close workspace">
           <i class="fas fa-times" aria-hidden="true"></i>
         </button>
-        <!-- Player card — full-body character + name (roomy right rail) -->
-        <div class="cr-player-card" id="cr-player-card">
-          <div class="cr-player-avatar" id="sidebar-avatar-panel"></div>
-          <div class="cr-player-name" id="cr-player-name"></div>
-        </div>
         <div class="cr-ws-tabs" role="tablist" aria-label="Workspace tools">
           <!-- Board is the home base. Graph / Tiles / Calc are excursions
                the tutor (or student) can drive into. -->
@@ -1223,6 +1218,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </button>
         </div>
         <div class="cr-ws-body" id="cr-ws-body"></div>
+        <!-- Player card — full-body character + name. Pinned to the BOTTOM of
+             the right rail so the work board sits up top; kept visible even when
+             the Living Workspace swaps in (see chat-workspace.js + workspace.css). -->
+        <div class="cr-player-card" id="cr-player-card">
+          <div class="cr-player-avatar" id="sidebar-avatar-panel"></div>
+          <div class="cr-player-name" id="cr-player-name"></div>
+        </div>
       </aside>
     </div><!-- /.cr-stage -->
 

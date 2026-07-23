@@ -24,6 +24,41 @@
   overflow: hidden;
 }
 
+/* ---- Student player card: pinned to the BOTTOM of the rail ----
+   Reordered in chat.html to sit below #cr-ws-body so the work board is up top.
+   A compact avatar keeps the bottom strip small. The Living Workspace swap
+   mounts an absolute overlay (#lws-chat-mount, inset:0) that would otherwise
+   cover the card and its hide-loop would eliminate it; chat-workspace.js now
+   skips the card, and here we inset the board mount above it and pin the card
+   to the bottom, so the workspace never covers or removes the student avatar. */
+:root { --cr-player-card-h: 152px; }
+
+#cr-player-card.cr-player-card {
+  flex: 0 0 auto;
+  border-bottom: none;
+  border-top: 1px solid var(--cr-border, #eef2f4);
+  margin: 0;
+  padding: 8px 8px 10px;
+}
+#cr-player-card .fba-stage { height: 96px; }   /* compact vs the md 168px default */
+#cr-player-card .cr-player-name { font-size: 0.9rem; }
+
+.cr-workspace.lws-swapped #lws-chat-mount {
+  inset: 0 0 var(--cr-player-card-h) 0 !important;
+}
+.cr-workspace.lws-swapped #cr-player-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--cr-player-card-h);
+  z-index: 3;
+  box-sizing: border-box;
+  overflow: hidden;
+  justify-content: center;
+  background: var(--cr-bg-panel);
+}
+
 /* ---- Tab bar ---- */
 .cr-ws-tabs {
   display: flex;

@@ -46,45 +46,21 @@ body.cr-voice .cr-voice-toggle {
    the hero + courses card), not .cr-tutor-hero — ordering the hero
    directly stopped working when the wrapper landed. */
 @media (min-width: 1201px) {
-  body.cr-voice .cr-stage {
-    grid-template-columns: minmax(300px, 30%) minmax(0, 1fr);
-  }
-  body.cr-voice .cr-hero-col    { order: 1; }
-  body.cr-voice #cr-workspace   { order: 2; }   /* centre stage */
+  /* Voice mode keeps the normal THREE-column stage — tutor cam on the left,
+     the (still-recording) transcript in the centre, and the work board on the
+     right — so nothing swaps places when voice turns on. (Earlier voice mode
+     collapsed to [cam | board]: it hid the transcript and slid the board into
+     the centre, which read as the chat and board trading places.) The cam still
+     reads as "live" via the teal glow/rim below; no grid reflow needed.
+     .cr-stage inherits the default columns from chat-redesign.css. */
+  body.cr-voice .cr-hero-col    { order: 0; }
+  body.cr-voice #chat-container { order: 0; display: flex; }   /* transcript stays centre */
+  body.cr-voice #cr-workspace   { order: 0; }                  /* board stays on the right */
 
-  /* No running transcript in voice — captions carry the words. */
-  body.cr-voice #chat-container { display: none; }
-
-  /* The cam is the whole left column: courses + encouragement step aside,
-     captions take the bottom of the hero. */
+  /* Keep the courses card + encouragement out of the way so the cam reads
+     cleanly (unchanged from before). */
   body.cr-voice .cr-courses-card { display: none !important; }
   body.cr-voice .cr-encourage-card { display: none; }
-
-  /* History drawer: peek the (still-recording) transcript on demand. */
-  body.cr-voice.cr-voice-history #chat-container {
-    display: flex;
-    position: fixed;
-    top: 76px;
-    right: 18px;
-    bottom: 96px;
-    width: 400px;
-    max-width: calc(100vw - 36px);
-    z-index: 60;
-    margin: 0 !important;
-    max-height: none;
-    box-shadow: 0 24px 64px rgba(15, 26, 36, 0.28);
-    opacity: 1;
-  }
-  body.cr-voice.cr-voice-history #chat-messages-container { font-size: 13px; }
-}
-
-/* Board flag off → no workspace to center. Keep the chat visible so
-   voice mode never renders an empty stage. */
-@media (min-width: 1201px) {
-  html.mm-board-hidden body.cr-voice .cr-stage {
-    grid-template-columns: minmax(300px, 30%) minmax(0, 1fr);
-  }
-  html.mm-board-hidden body.cr-voice #chat-container { display: flex; }
 }
 
 /* ---- Voice presence: the tutor hero reads as "live" ----
