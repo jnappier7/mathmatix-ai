@@ -13,6 +13,7 @@
 const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSolver');
 const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
+const { hasMathematicalContent } = require('./verificationState');
 
 /**
  * Strip LaTeX delimiters from text so regex-based math detection works.
@@ -73,17 +74,204 @@ function arithmeticMatchesAnswer(arithmeticResult, studentAnswer) {
   const answerNum = Number(String(studentAnswer).trim());
   return Number.isFinite(answerNum) && Math.abs(arithmeticResult - answerNum) < 0.001;
 }
-async function diagnose(observation, context = {}) {
-  // Only run diagnosis on answer attempts
-  if (!observation.answer) {
+/**
+ * Is this message, in its entirety, a bare mathematical expression?
+ *
+ * Used to recognise a student REWRITING the problem — "24-3+3" as the first step
+ * of 24-6÷2+3 — which is work, not an answer, and which `extractAnswer` was
+ * never built to catch (its algebraic pattern requires a letter, so a purely
+ * numeric expression matched nothing at all).
+ *
+ * Deliberately strict: the whole message must be math, with at least one
+ * operator and one digit. Prose containing an incidental number must not reach
+ * the equivalence check, because a false "equivalent" here would affirm work the
+ * student never did.
+ *
+ * @param {string} text
+ * @returns {string|null} the expression, or null
+ */
+function extractBareExpression(text) {
+  if (!text || typeof text !== 'string') return null;
+  const stripped = stripLatexDelimiters(text).trim().replace(/[.!?]+$/, '');
+  if (!stripped) return null;
+  // Only math characters: digits, operators, parens, decimals, spaces, and
+  // single letters for variables.
+  if (!/^[-+*/^()[\]{}\d\s.,=×÷−a-z]+$/i.test(stripped)) return null;
+  // Reject prose that happens to be all-letters ("so it is").
+  if (!/\d/.test(stripped)) return null;
+  // Must actually combine terms — a bare number is an answer, not a rewrite,
+  // and is already handled by the answer path.
+  if (!/[-+*/^×÷−]/.test(stripped.slice(1))) return null;
+  // Any run of 2+ letters is a word, not a variable.
+  if (/[a-z]{2,}/i.test(stripped)) return null;
+  return stripped.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+}
+
+/**
+ * Find the expression the student is currently working on.
+ *
+ * Prefers the pinned board problem (canonical). Falls back to scanning recent
+ * tutor turns for a posed expression, because in chat-only sessions the tutor
+ * frequently poses a problem inline and nothing ever gets pinned — which is the
+ * common case for mental-math topics like order of operations.
+ *
+ * Returning null is safe: the caller then produces no verdict, the turn stays
+ * UNVERIFIED, and the strict output rule makes the tutor ask rather than assert.
+ * That is the intended failure direction.
+ *
+ * @returns {string|null}
+ */
+function resolveProblemExpression(context) {
+  const candidates = [];
+  if (context.pinnedProblemTex) candidates.push(context.pinnedProblemTex);
+
+  const recentAI = context.recentAssistantMessages || [];
+  for (let i = recentAI.length - 1; i >= 0; i--) {
+    const content = stripLatexDelimiters(recentAI[i] && recentAI[i].content);
+    if (!content) continue;
+    // Pull math-looking substrings out of the tutor's prose. Longest first —
+    // "24-6/2+3" beats the "6/2" fragment the tutor quoted while discussing it.
+    const found = content.match(/[-+]?[\d.]+(?:\s*[-+*/^×÷−]\s*[-+]?[(]?[\d.]+[)]?)+/g) || [];
+    found.sort((a, b) => b.replace(/\s/g, '').length - a.replace(/\s/g, '').length);
+    for (const f of found) candidates.push(f);
+  }
+
+  for (const c of candidates) {
+    const expr = String(c)
+      .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
+      .trim()
+      // Sentence punctuation swept up by the scan ("…24-6/2+3." -> "24-6/2+3").
+      // mathjs tolerates a trailing dot, but only by luck — a trailing operator
+      // or comma would fail the parse and silently cost us a verdict.
+      .replace(/[.,;:]+$/, '')
+      .trim();
+    // Equations are out of scope here. A solving step on an equation is not
+    // value-equivalent to the original (2x+3=13 -> 2x=10 changes both sides),
+    // so treating it as such would produce confident nonsense.
+    if (expr.includes('=')) continue;
+    if (/\d/.test(expr) && /[-+*/^]/.test(expr.slice(1))) return expr;
+  }
+  return null;
+}
+
+/**
+ * Diagnose a turn that carries math but produced no extractable ANSWER —
+ * typically the student rewriting the problem mid-solution.
+ *
+ * This path exists because the pipeline used to bail out here entirely
+ * (`return {type:'no_answer'}`), which meant no solver, no CAS, and no LLM
+ * verifier ever saw the turn. The tutor was then handed a blank correctness
+ * signal and filled it in by guessing.
+ *
+ * Verdicts are asymmetric on purpose:
+ *   - equivalent to the problem  -> CORRECT (the CAS is exact; this is safe)
+ *   - not equivalent             -> NO verdict from here. It may be a later step,
+ *     an answer to a sub-question, or a genuine error, and the CAS cannot tell
+ *     which. Defer to the LLM verifier; if that also declines, the turn stays
+ *     unverifiable and the tutor must ask instead of accuse.
+ */
+async function diagnoseTransformation(observation, context) {
+  const rawText = observation.raw || '';
+
+  // `no_answer` means "the student submitted no work of their own" — a question,
+  // a pasted problem, a restatement. `unverifiable` means "they DID submit work
+  // and verification could not decide". decide() keys teaching actions off this
+  // distinction (a bare problem drop must still route to ELICIT_FIRST), so only
+  // the second case may claim `unverifiable`.
+  const noWork = {
+    type: 'no_answer',
+    isCorrect: null,
+    answer: null,
+    correctAnswer: null,
+    misconception: null,
+    evidence: null,
+    verificationSource: null,
+  };
+
+  // On a dispute turn the message itself carries no math ("you are wrong"), so
+  // the caller supplies the submission being disputed. Re-checking it is what
+  // gives the turn a verdict instead of leaving the tutor to restate its claim.
+  const studentExpr = extractBareExpression(rawText) || context.verificationCandidate || null;
+  if (!studentExpr) return noWork;
+
+  const problemExpr = resolveProblemExpression(context);
+  if (!problemExpr) return noWork;
+
+  // The student restating the problem verbatim is not a step — don't award it.
+  const norm = (s) => s.replace(/[\s()]/g, '');
+  if (norm(studentExpr) === norm(problemExpr)) return noWork;
+
+  // From here on the student HAS submitted work and we are attempting to verify
+  // it, so an undecided outcome is genuinely `unverifiable`.
+  const noVerdict = { ...noWork, type: 'unverifiable' };
+
+  let isEquivalent = null;
+  try {
+    isEquivalent = equivalent(studentExpr, problemExpr);
+  } catch (_) { /* never break diagnosis */ }
+
+  if (isEquivalent === true) {
+    // Equivalence also settles a genuine ambiguity: in isolation, a rewrite step
+    // ("3*6-5") is textually indistinguishable from a pasted new problem, and
+    // observe's bare-problem-drop heuristic reads many steps as drops. A newly
+    // dropped problem being numerically equivalent to the one already on the
+    // table is vanishingly unlikely, so equivalence wins over that heuristic.
+    console.log(`[Diagnose] Step equivalence: "${studentExpr}" == "${problemExpr}" — valid transformation`);
     return {
-      type: 'no_answer',
-      isCorrect: null,
-      answer: null,
-      correctAnswer: null,
+      type: 'correct',
+      isCorrect: true,
+      answer: studentExpr,
+      correctAnswer: null, // a step, not the final answer — nothing to reveal
       misconception: null,
-      evidence: null,
+      evidence: {
+        isCorrect: true,
+        independenceLevel: estimateIndependence(observation, context),
+        misconceptionHit: null,
+        responseTimeCategory: null,
+        problemContext: observation.problemContext,
+        timestamp: new Date(),
+      },
+      verificationSource: 'symbolic:step_equivalence',
+      isTransformation: true,
     };
+  }
+
+  // Not equivalent. Now honour the bare-drop reading: with no equivalence to the
+  // live problem, a lone expression really is most likely a new problem handed
+  // over, not work to be graded. Emitting `unverifiable` here would misroute
+  // decide() away from ELICIT_FIRST.
+  if (observation.isBareProblemDrop) return noWork;
+
+  // Not equivalent — see if the LLM verifier (fired in parallel) can resolve it.
+  if (context.llmVerificationPromise) {
+    try {
+      const verdict = await context.llmVerificationPromise;
+      if (verdict && verdict.isCorrect !== null) {
+        console.log(`[Diagnose] Step LLM fallback: ${verdict.isCorrect ? 'correct' : 'incorrect'} (confidence: ${verdict.confidence.toFixed(2)})`);
+        return {
+          ...noVerdict,
+          type: verdict.isCorrect ? 'correct' : 'incorrect',
+          isCorrect: verdict.isCorrect,
+          answer: studentExpr,
+          correctAnswer: verdict.modelAnswer || null,
+          verificationSource: 'llm:step',
+          isTransformation: true,
+        };
+      }
+    } catch (err) {
+      console.error('[Diagnose] Step LLM verification failed:', err.message);
+    }
+  }
+
+  return { ...noVerdict, answer: studentExpr, isTransformation: true };
+}
+
+async function diagnose(observation, context = {}) {
+  // No extractable answer does NOT mean nothing to verify. A student rewriting
+  // the problem ("24-3+3") is doing verifiable work; bailing out here is what
+  // left the tutor guessing. Route it through transformation diagnosis instead.
+  if (!observation.answer) {
+    return diagnoseTransformation(observation, context);
   }
 
   const studentAnswer = observation.answer.value;
@@ -527,4 +715,8 @@ module.exports = {
   estimateIndependence,
   hasLibraryMisconceptions,
   arithmeticMatchesAnswer,
+  // Exported for testing
+  diagnoseTransformation,
+  extractBareExpression,
+  resolveProblemExpression,
 };

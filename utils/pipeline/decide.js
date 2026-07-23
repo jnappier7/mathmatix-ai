@@ -23,6 +23,7 @@ const {
 } = require('../phaseEvidenceEvaluator');
 
 const { MESSAGE_TYPES, messageStatesProblem } = require('./observe');
+const { VERIFICATION_STATES } = require('./verificationState');
 
 // ── Tutoring actions the engine can choose ──
 const ACTIONS = {
@@ -550,6 +551,45 @@ function decideCore(observation, diagnosis, context) {
       'ONE problem at a time. If they ask about multiple, pick the first and ask them to focus on it.',
       'Do NOT ask "what have you tried?" — start tutoring immediately with a guiding question.'
     );
+    return decision;
+  }
+
+  // ── Student disputes something the tutor said ──
+  //
+  // These messages used to land in GENERAL_MATH at 0.5 confidence, which told the
+  // tutor "the student stated a math problem — guide them into the first step".
+  // So a student saying "you are wrong" got the same treatment as one pasting
+  // homework: the tutor re-asked its question, and when that failed, the
+  // approach-switch machinery escalated it to concrete manipulatives — candies,
+  // then counters — re-teaching a point the student had right all along.
+  //
+  // The tutor is not always right, and a student who says so is holding
+  // information the pipeline needs. But pushback is not evidence either: caving
+  // to it would teach students that persistence beats correctness. So the rule
+  // is neither defend nor concede — RE-EXAMINE. The pipeline has already
+  // re-verified the disputed submission by the time this runs; the verdict, not
+  // the disagreement, decides who was right.
+  if (msgType === MESSAGE_TYPES.DISPUTE || observation.isDispute) {
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'The student is telling you that YOU are wrong. Take that seriously — you may well be.',
+      'Do NOT repeat your previous claim, and do NOT re-ask the same question in different words or with a more concrete analogy. Restating a disputed claim more simply is not re-examining it.',
+      'Actually re-work the specific step under dispute from scratch, and say plainly what you find.',
+      'If you were wrong: say so directly and simply ("You\'re right, I made a mistake — ..."). Do not bury it or soften it into a teaching moment. Then continue from their correct work.',
+      'If you are confident you were right, and the system has verified it, explain the specific point of disagreement — do not just assert it again.',
+      'Never imply the student is being difficult, and never treat disagreement itself as a misconception to correct.'
+    );
+
+    if (diagnosis.verificationState === VERIFICATION_STATES.VERIFIED_CORRECT) {
+      decision.directives.push(
+        'RE-VERIFIED: the student\'s work is CORRECT. You were wrong. Concede clearly and move on.'
+      );
+    } else if (diagnosis.verificationState === VERIFICATION_STATES.UNVERIFIED) {
+      decision.directives.push(
+        'RE-VERIFICATION WAS INCONCLUSIVE — you do NOT have grounds to maintain that they are wrong. Do not repeat the claim. Ask them to walk you through their reasoning, and follow it honestly.'
+      );
+    }
+
     return decision;
   }
 

@@ -18,8 +18,105 @@ const { processAIResponse } = require('../chatBoardParser');
 const { callLLM } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { MESSAGE_TYPES, detectBareProblemDrop } = require('./observe');
+const {
+  VERIFICATION_STATES,
+  ASSERTIONS,
+  classifyAssertionFast,
+  mayAssertCorrectness,
+  checkInvariant,
+} = require('./verificationState');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
+
+// Small, fast model for the assertion classifier. It reads only the tutor's own
+// output and answers one question, so it needs no persona, no history, and no
+// reasoning capacity beyond reading comprehension.
+const ASSERTION_CLASSIFIER_MODEL = 'gpt-4o-mini';
+
+// Escape hatch. The invariant changes tutor behaviour on every unverifiable turn
+// (it must ask rather than assert), so it is worth being able to switch off in
+// production without a deploy while its effect on real sessions is measured.
+// Default ON — the failure it prevents is worse than the caution it adds.
+const ASSERTION_GUARD_ENABLED = process.env.ASSERTION_GUARD !== 'off';
+
+/**
+ * Does this tutor response claim the student's work is right or wrong?
+ *
+ * Semantic, not syntactic. The guard this replaces keyed on a list of rejection
+ * OPENERS; the response that caused the incident began "Whoa, hold up —" and
+ * matched none of them. Any fixed list has that hole, so the decision is handed
+ * to a model that reads the sentence instead of matching its prefix.
+ *
+ * Fails CLOSED: on error or unparseable output it returns NONE, so a classifier
+ * outage degrades to today's behaviour rather than regenerating every turn.
+ *
+ * @param {string} text - the tutor's response
+ * @param {string|null} studentAnswer - what the student submitted, for context
+ * @returns {Promise<string>} an ASSERTIONS value
+ */
+async function classifyAssertionLLM(text, studentAnswer) {
+  try {
+    const completion = await callLLM(ASSERTION_CLASSIFIER_MODEL, [
+      {
+        role: 'system',
+        content:
+          'You classify a math tutor\'s reply. Answer ONE question: does the reply tell the student their work is CORRECT, tell them it is INCORRECT, or make no claim either way?\n\n' +
+          'Count as INCORRECT: any claim of an error, correction, doubt, or challenge to the work — including soft or indirect forms ("hold up", "walk me through that", "are you sure?", "let\'s double-check that", "where did that come from?") when they imply the student made a mistake.\n' +
+          'Count as CORRECT: any affirmation the work is right, including implicit ones ("exactly", "now move to the next step").\n' +
+          'Count as NEITHER: teaching, explaining, or asking a genuine question that carries no verdict — including asking the student to show their reasoning when nothing suggests they erred.\n\n' +
+          'Respond with JSON ONLY: {"verdict":"correct|incorrect|neither","confidence":<0.0-1.0>}',
+      },
+      {
+        role: 'user',
+        content:
+          (studentAnswer ? `The student submitted: ${String(studentAnswer).slice(0, 200)}\n\n` : '') +
+          `Tutor reply:\n${String(text).slice(0, 1500)}`,
+      },
+    ], { temperature: 0, max_tokens: 60, response_format: { type: 'json_object' } });
+
+    const raw = completion?.choices?.[0]?.message?.content?.trim() || '';
+    const parsed = JSON.parse(raw);
+    const confidence = typeof parsed.confidence === 'number' ? parsed.confidence : 0;
+
+    // A weak signal must not trigger a rewrite — regenerating a perfectly good
+    // reply is its own kind of damage.
+    if (confidence < 0.6) return ASSERTIONS.NONE;
+    if (parsed.verdict === 'correct') return ASSERTIONS.CORRECT;
+    if (parsed.verdict === 'incorrect') return ASSERTIONS.INCORRECT;
+    return ASSERTIONS.NONE;
+  } catch (err) {
+    console.error('[Verify] Assertion classifier failed:', err.message);
+    return ASSERTIONS.NONE;
+  }
+}
+
+/**
+ * Build the corrective instruction for a response that broke the invariant.
+ * Each case names what the tutor wrongly claimed and what it is permitted to
+ * say instead — a rewrite instruction, not a scolding.
+ */
+function buildInvariantCorrectionPrompt(state, assertion, context) {
+  const submitted = context.studentAnswer
+    ? ` The student submitted: "${String(context.studentAnswer).slice(0, 200)}".`
+    : '';
+
+  if (state === VERIFICATION_STATES.VERIFIED_CORRECT) {
+    return 'CRITICAL: Your previous response implied the student made an error. An independent math verifier has confirmed their work is CORRECT.' + submitted +
+      ' You were wrong, not them. Rewrite: acknowledge their work is right, and move the lesson forward. Do NOT ask them to re-justify or re-explain the step you just wrongly challenged — that is how a student ends up defending correct work against a tutor who will not listen.';
+  }
+
+  if (state === VERIFICATION_STATES.VERIFIED_INCORRECT) {
+    return 'CRITICAL: Your previous response affirmed the student\'s work, but an independent math verifier found it INCORRECT.' + submitted +
+      (context.correctAnswer ? ` The correct answer is "${context.correctAnswer}".` : '') +
+      ' Rewrite: do not affirm it. Guide them toward finding the error themselves with a Socratic question, and NEVER reveal the answer.';
+  }
+
+  // UNVERIFIED — the case the whole invariant exists for.
+  const claimed = assertion === ASSERTIONS.CORRECT ? 'is correct' : 'made an error';
+  return 'CRITICAL: Your previous response told the student their work ' + claimed + '. You do not actually know that — our math engine could NOT verify this work, and nothing has established whether it is right or wrong.' + submitted +
+    ' Asserting a verdict you do not have is the most damaging thing you can do here: telling a student they are wrong when they are right destroys their trust in their own reasoning.' +
+    ' Rewrite WITHOUT any claim about correctness. Instead ask them to show or explain their step, or work through it together so the answer emerges. You may still teach — you may not pronounce a verdict.';
+}
 
 /**
  * Regenerate a tutor reply in voice when post-checks (answer-key pattern,
@@ -631,6 +728,77 @@ async function verify(responseText, context = {}) {
       } catch (err) {
         console.error('[Verify] Self-contradiction regeneration failed:', err.message);
         flags.push('self_contradiction_regeneration_failed');
+      }
+    }
+  }
+
+  // ── 2f. THE ASSERTION INVARIANT (general post-condition) ──
+  //
+  // Guards 2c/2d and their llm variants are all conditional in ways that let the
+  // real incident through: they require a verdict to already exist
+  // (`llmVerdict.isCorrect !== null`), and they only recognise a rejection if it
+  // opens with a phrase on a fixed list. The production failure had neither — no
+  // verdict had been computed at all, and it opened with "Whoa, hold up", which
+  // is on nobody's list. It sailed past every one of them.
+  //
+  // This is the general form, and it inverts both conditions. It runs whether or
+  // not a verdict exists (having none is precisely when assertions are most
+  // dangerous), and it identifies assertions semantically rather than by opener,
+  // so it cannot be defeated by rephrasing.
+  //
+  //   THE RULE: the tutor may claim the student's work is right or wrong ONLY
+  //   when the pipeline holds a matching verdict.
+  //
+  // Three tiers, cheapest first:
+  //   1. mayAssertCorrectness — high-recall filter. Most turns stop here.
+  //   2. classifyAssertionFast — high-precision patterns settle the clear cases.
+  //   3. an LLM classifier adjudicates the rest. This is the tier that catches
+  //      novel phrasings, and the reason this guard does not decay as the tutor's
+  //      wording changes.
+  if (!regeneratedThisPass
+      && ASSERTION_GUARD_ENABLED
+      && context.verificationState
+      && context.verificationState !== VERIFICATION_STATES.NOT_APPLICABLE
+      && mayAssertCorrectness(text)) {
+    let assertion = classifyAssertionFast(text);
+
+    if (assertion === null) {
+      assertion = await classifyAssertionLLM(text, context.studentAnswer);
+    }
+
+    const { ok, reason } = checkInvariant(assertion, context.verificationState);
+
+    if (!ok) {
+      flags.push('assertion_invariant_violated');
+      console.log(`[Verify] ASSERTION INVARIANT: ${reason} (state=${context.verificationState}, assertion=${assertion}) — regenerating`);
+
+      try {
+        const correctionPrompt = buildInvariantCorrectionPrompt(
+          context.verificationState,
+          assertion,
+          context
+        );
+        const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+          [{ role: 'system', content: correctionPrompt },
+           { role: 'assistant', content: text },
+           { role: 'user', content: 'Rewrite your response following that constraint exactly. Keep your personality and teaching style.' }],
+          { temperature: 0.5, max_tokens: 1500 }
+        );
+        const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+        if (regeneratedText && regeneratedText.length > 10) {
+          text = regeneratedText;
+          flags.push('assertion_invariant_regenerated');
+          regeneratedThisPass = true;
+
+          if (context.isStreaming && context.res) {
+            try {
+              context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+            } catch (e) { /* client disconnected */ }
+          }
+        }
+      } catch (err) {
+        console.error('[Verify] Assertion-invariant regeneration failed:', err.message);
+        flags.push('assertion_invariant_regeneration_failed');
       }
     }
   }

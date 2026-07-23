@@ -395,23 +395,37 @@ export function processBadgeAward(badgeAwarded) {
 
     triggerConfetti();
 
+    // Guard every field: not all badge sources populate name/tier (e.g. the
+    // skill-practice path uses a numeric milestone, not a bronze/silver tier),
+    // and interpolating an undefined value printed the literal word "undefined".
+    const esc = (s) => { const d = document.createElement('span'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
+    const name = badgeAwarded.badgeName || 'New Badge';
+    const tier = badgeAwarded.tier;                 // may be absent — hide the line if so
+    const xp = Number(badgeAwarded.xpBonus) || 0;
+    const total = Number(badgeAwarded.totalBadges) || null;
+
     const modal = document.createElement('div');
     modal.className = 'badge-celebration-modal';
+    // Self-contained styling — the .badge-celebration-* stylesheet (animations.css)
+    // is NOT loaded on chat.html, so the modal must not depend on it.
+    modal.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(10,15,26,0.72);font-family:Inter,system-ui,sans-serif';
     modal.innerHTML = `
-        <div class="badge-celebration-content">
-            <div class="badge-celebration-icon">🏆</div>
-            <h2>Badge Earned!</h2>
-            <h3>${badgeAwarded.badgeName}</h3>
-            <p class="badge-tier">${badgeAwarded.tier} Tier</p>
-            <p class="badge-xp">+${badgeAwarded.xpBonus} XP</p>
-            <p class="badge-count">Total Badges: ${badgeAwarded.totalBadges}</p>
-            <div class="badge-celebration-actions">
-                <button onclick="this.closest('.badge-celebration-modal').remove(); window.location.href='/badge-map.html'">Choose Next Badge</button>
-                <button onclick="this.closest('.badge-celebration-modal').remove()">Continue</button>
+        <div style="background:#fff;color:#18202b;border-radius:20px;padding:28px 32px;max-width:min(420px,calc(100vw - 32px));text-align:center;box-shadow:0 24px 70px rgba(0,0,0,0.4)">
+            <div style="font-size:3rem;line-height:1">🏆</div>
+            <h2 style="margin:8px 0 4px;font-size:1.5rem;color:#12b3b3">Badge Earned!</h2>
+            <h3 style="margin:0 0 6px;font-size:1.2rem;font-weight:800">${esc(name)}</h3>
+            ${tier ? `<p style="margin:0 0 6px;text-transform:capitalize;color:#5b6876;font-weight:700">${esc(tier)} Tier</p>` : ''}
+            <p style="margin:6px 0;font-size:1.05rem;font-weight:800;color:#b8860b">+${xp} XP</p>
+            ${total != null ? `<p style="margin:0 0 14px;color:#5b6876;font-size:0.9rem">Total Badges: ${total}</p>` : ''}
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+                <button data-badge-next style="background:#12b3b3;color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer">Choose Next Badge</button>
+                <button data-badge-continue style="background:#eef2f4;color:#5b6876;border:none;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer">Continue</button>
             </div>
         </div>
     `;
-    modal.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);animation:fadeIn 0.3s ease';
+    modal.querySelector('[data-badge-next]').addEventListener('click', () => { modal.remove(); window.location.href = '/badge-map.html'; });
+    modal.querySelector('[data-badge-continue]').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
     document.body.appendChild(modal);
 
     // Auto-dismiss after 15 seconds

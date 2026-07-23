@@ -23,12 +23,19 @@ function setAttr(name, value) {
     else b.setAttribute(name, value); // full catalog id, e.g. "theme.sunset"
 }
 
+/** Apply a loadout object ({ slot: itemId }) directly. Used for live shop
+ *  previews, where we stamp a temporary loadout without touching the server. */
+export function applyLoadout(equipped) {
+    const eq = equipped || {};
+    Object.keys(SLOT_ATTR).forEach(slot => setAttr(SLOT_ATTR[slot], eq[slot]));
+}
+
 /** Apply the user's equipped loadout. Safe to call repeatedly. */
 export function applyCosmetics(user) {
-    const eq = (user && user.equippedCosmetics) || {};
-    Object.keys(SLOT_ATTR).forEach(slot => setAttr(SLOT_ATTR[slot], eq[slot]));
+    applyLoadout((user && user.equippedCosmetics) || {});
 }
 
 if (typeof window !== 'undefined') {
     window.applyCosmetics = applyCosmetics;
+    window.applyLoadout = applyLoadout;
 }

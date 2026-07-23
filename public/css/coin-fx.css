@@ -49,6 +49,49 @@
   100% { transform: scale(1); box-shadow: none; }
 }
 
+/* ---- Header XP meter (progress to next level) ---- */
+.cr-xp-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--cr-pill-bg);
+  border: 1px solid var(--cr-border);
+  white-space: nowrap;
+}
+.cr-xp-bar {
+  width: 84px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--cr-border, rgba(0, 0, 0, 0.12));
+  overflow: hidden;
+}
+.cr-xp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--cr-accent-grad, linear-gradient(90deg, #12b3b3, #7c4dff));
+  transition: width 500ms ease;
+}
+.cr-xp-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cr-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Header coin pill (moved from the sidebar) ---- */
+.sidebar-coins-pill.cr-header-pill {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* Header is tight on small screens — drop the XP meter there (mobile has its
+   own progress drawer); keep the coin pill, which stays compact. */
+@media (max-width: 860px) {
+  .cr-xp-meter { display: none; }
+}
+
 /* ---- Flying coins (mounted on <body>, position:fixed) ---- */
 .coin-fly {
   position: fixed;

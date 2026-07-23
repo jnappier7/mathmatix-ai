@@ -14,6 +14,7 @@ const { callLLM, callLLMStream, callLLMStructured } = require('../llmGateway');
 const { ACTIONS } = require('./decide');
 const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCompact');
 const { buildSlimRules } = require('./promptSlim');
+const { VERIFICATION_STATES } = require('./verificationState');
 const { formatVerifiedTwinInstruction } = require('../worksheetGuard');
 const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../visualTools');
 const { parseBoardTags } = require('../boardTagParser');
@@ -283,14 +284,31 @@ function buildActionPrompt(decision) {
  * The LLM should treat this as a known fact, not something to evaluate.
  */
 function buildVerificationDirective(diagnosis) {
-  if (!diagnosis || diagnosis.type === 'no_answer') return null;
+  if (!diagnosis) return null;
 
   if (diagnosis.isCorrect === true) {
+    // A verified TRANSFORMATION is a valid step, not a final answer. Saying
+    // "the answer is X" here would both be false and hand over the destination.
+    if (diagnosis.isTransformation) {
+      return `--- WORK VERIFICATION RESULT (FROM MATH ENGINE) ---\nThe student's step "${diagnosis.answer}" is a VALID transformation of the problem — our math engine confirmed it is mathematically equivalent to what they started with. This is a verified fact. They have NOT made an error here. Acknowledge the step is right and move them forward to the next one. Do NOT ask them to justify or re-explain a step we have already verified, and do NOT imply doubt.`;
+    }
     return `--- ANSWER VERIFICATION RESULT (FROM MATH ENGINE) ---\nThe student's answer "${diagnosis.answer}" is CORRECT. Our math engine computed the answer as "${diagnosis.correctAnswer}" and confirmed a match. This is a verified fact. Respond as a tutor who knows the student is right.`;
   }
 
   if (diagnosis.isCorrect === false) {
     return `--- ANSWER VERIFICATION RESULT (FROM MATH ENGINE) ---\nThe student's answer "${diagnosis.answer}" is INCORRECT. The correct answer is "${diagnosis.correctAnswer}". This is a verified fact. Guide the student without revealing the answer.`;
+  }
+
+  // ── No verdict ──
+  // This branch used to `return null`, which put NOTHING in the prompt and left
+  // the model to infer correctness from persona and tone. That silence is how a
+  // correct step got called an error and then defended for five turns.
+  //
+  // Absence of a verdict is a restriction, so say so explicitly. The tutor can
+  // still teach — ask, probe, work it through together — it just may not
+  // pronounce a verdict it does not have.
+  if (diagnosis.verificationState === VERIFICATION_STATES.UNVERIFIED) {
+    return `--- ANSWER VERIFICATION RESULT (FROM MATH ENGINE) ---\nUNVERIFIED. Our math engine could NOT determine whether the student's work is right or wrong.\n\nYou therefore do NOT know if they are correct. You MUST NOT state or imply that their work is right OR wrong — no "not quite", no "hold up", no "that's right", no correcting an error you have not confirmed. Treating an unverified answer as wrong is the single worst failure mode here: it makes a student defend correct work against a tutor who will not listen.\n\nInstead: ask them to show or explain their step, or work through it WITH them so the answer emerges. If their reasoning turns out to be sound, say so plainly.`;
   }
 
   return null;
@@ -301,14 +319,22 @@ function buildVerificationDirective(diagnosis) {
  * This is the hidden answer verification the AI uses for grading.
  */
 function buildVerificationContext(diagnosis) {
-  if (!diagnosis || diagnosis.type === 'no_answer') return null;
+  if (!diagnosis) return null;
 
   if (diagnosis.isCorrect === true) {
+    if (diagnosis.isTransformation) {
+      return `[ANSWER_PRE_CHECK: VERIFIED VALID STEP. The student's step "${diagnosis.answer}" is mathematically equivalent to the problem — it is correct work. Acknowledge it and move to the next step. Do NOT say "hold up", "not quite", or ask them to justify a step we already verified.]`;
+    }
     return `[ANSWER_PRE_CHECK: VERIFIED CORRECT. The student's answer "${diagnosis.answer}" matches the correct answer "${diagnosis.correctAnswer}". Confirm they are correct immediately. Do NOT say "let's check", "almost", "not quite", or imply any doubt.]`;
   }
 
   if (diagnosis.isCorrect === false) {
     return `[ANSWER_PRE_CHECK: VERIFIED INCORRECT. The student answered "${diagnosis.answer}" but the correct answer is "${diagnosis.correctAnswer}". Guide them toward the correct answer using Socratic method. NEVER reveal the answer.]`;
+  }
+
+  // No verdict — an explicit restriction, not silence. See buildVerificationDirective.
+  if (diagnosis.verificationState === VERIFICATION_STATES.UNVERIFIED) {
+    return `[ANSWER_PRE_CHECK: UNVERIFIED. We could not determine whether this is right or wrong. Do NOT assert either. Ask the student to show their step, or work it through with them.]`;
   }
 
   return null;
