@@ -173,7 +173,18 @@
         done.textContent = 'Start the course';
         done.style.cssText = 'padding:11px 20px; border:none; border-radius:8px; background:#2e9268;'
           + 'color:#fff; font-weight:700; cursor:pointer; margin-top:12px;';
-        done.addEventListener('click', function () { close(); window.location.reload(); });
+        done.addEventListener('click', function () {
+          close();
+          // The pre-assessment just retargeted the course (credited skills,
+          // moved the start module). Begin teaching now — the greeting the enroll
+          // flow held back fires here, adapted. Reload only as a fallback if the
+          // course manager is not on the page.
+          if (window.courseManager && typeof window.courseManager.onBaselineComplete === 'function') {
+            window.courseManager.onBaselineComplete();
+          } else {
+            window.location.reload();
+          }
+        });
         out.parentNode.appendChild(done);
       })
       .catch(function () {
