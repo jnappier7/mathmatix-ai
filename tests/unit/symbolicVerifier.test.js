@@ -7,6 +7,18 @@ describe('symbolicVerifier — posed-arithmetic detection (the 50x3 fumble)', ()
     expect(detectPosedArithmetic('what is 50 + 50 + 50?')).toBe('50+50+50');
     expect(detectPosedArithmetic('so what is 4 − 1?')).toBe('4-1');
   });
+  it('extracts LaTeX-formatted sub-steps (the 15÷5 doubt-loop)', () => {
+    // The system prompt mandates LaTeX for all math, so tutor sub-steps are
+    // stored as \div / \times / \cdot, not the unicode operators. These MUST
+    // resolve or the student's correct answer goes unverified and the tutor loops.
+    expect(detectPosedArithmetic("What's \\( 15 \\div 5 \\)?")).toBe('15/5');
+    expect(detectPosedArithmetic('so \\( 3 \\times 2 \\)?')).toBe('3*2');
+    expect(detectPosedArithmetic('what is \\( 6 \\cdot 4 \\)?')).toBe('6*4');
+    // A \div sub-step buried after the \frac problem still wins (last match).
+    expect(detectPosedArithmetic("you've got \\( \\frac{5}{15} \\times 2 \\). What's \\( 15 \\div 5 \\)?")).toBe('15/5');
+    // End-to-end: student's bare "3" verifies against the LaTeX division.
+    expect(equivalent(detectPosedArithmetic("What's \\( 15 \\div 5 \\)?"), bareNumericAnswer('3'))).toBe(true);
+  });
   it('does NOT fire on algebra, dimensions, or list numbers (no false positives)', () => {
     expect(detectPosedArithmetic('the derivative of x^4 is 4x^3')).toBeNull();      // algebra
     expect(detectPosedArithmetic('a prism has length 7 cm and width 2.6 cm')).toBeNull(); // list, no operator

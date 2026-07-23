@@ -222,7 +222,15 @@ function symbolicVerify(p) {
 // last such expression (the question usually trails the message), or null.
 function detectPosedArithmetic(text) {
   if (text == null) return null;
-  const s = String(text).replace(/×/g, '*').replace(/·/g, '*').replace(/÷/g, '/').replace(/[−–—]/g, '-');
+  const s = String(text)
+    // LaTeX operators FIRST — the system prompt mandates LaTeX for all math, so a
+    // sub-step the tutor poses is stored as "15 \div 5", not "15 ÷ 5". Without this
+    // normalization the regex below never matched a \div/\times/\cdot sub-step, the
+    // student's correct answer went unverified, and the tutor looped doubting it.
+    .replace(/\\times/g, '*').replace(/\\cdot/g, '*').replace(/\\div/g, '/')
+    .replace(/\\left|\\right/g, '')
+    .replace(/\\[()[\]]/g, ' ')   // strip \( \) \[ \] delimiters
+    .replace(/×/g, '*').replace(/·/g, '*').replace(/÷/g, '/').replace(/[−–—]/g, '-');
   const re = /(?<![\w.$])-?\d+(?:\.\d+)?(?:\s*[*+/-]\s*-?\d+(?:\.\d+)?)+(?![\w.])/g;
   const m = s.match(re);
   if (!m || !m.length) return null;
