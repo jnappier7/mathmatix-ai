@@ -297,11 +297,15 @@ npm run seed:playground / seed:test / seed:skills   # seed data
 - **`render.yaml` ≠ prod config** — it's documentation; real config/crons live in the Render dashboard.
 - **Known doc↔code drift** (see `docs/SCREENER_STATE_ANALYSIS.md`): screener grade-based start / theta-reset,
   IEP UI vs schema mismatch, pattern-skill coverage incomplete (~59 of ~204).
-- **One session per worktree — never two sessions in the same checkout.** A branch name is not
-  isolation: branches share the tree, the index, and HEAD, so two concurrent sessions in one directory
-  overwrite each other's files with no conflict and no merge to adjudicate it. Cloud sessions get this
-  right for free (own container, own clone, land via PR); local sessions must ask for it. Start each one
-  with its own tree, rooted at freshly-fetched main:
+- **A NEW WORKTREE FOR EVERY SESSION, ALWAYS — no exceptions (owner's standing rule).** Never run two
+  sessions in one checkout, ever, even for a "quick" change. A branch name is NOT isolation: branches
+  share the tree, the index, and HEAD, so two concurrent sessions in one directory overwrite each
+  other's files with no conflict and no merge to adjudicate it — and the branch gets switched under a
+  running session without warning. This has already bitten repeatedly: a session's commit landing on
+  another session's branch, uncommitted work from a third session sitting in the tree mid-edit, the
+  checked-out branch changing three times inside a single turn. Cloud sessions get isolation for free
+  (own container, own clone, land via PR); a local session's FIRST action is to create its own tree,
+  rooted at freshly-fetched main, and run everything from there:
 
   ```bash
   git fetch origin
@@ -311,6 +315,10 @@ npm run seed:playground / seed:test / seed:skills   # seed data
 
   **Pass `origin/main` explicitly.** Omit it and git roots the new branch at whatever HEAD currently is —
   you inherit another session's in-flight branch instead of starting clean.
+
+  **If you find yourself in a shared checkout with someone else's uncommitted changes in the tree, STOP.**
+  Do not stash, commit, or branch — you would carry or clobber their work. Make your own worktree off
+  origin/main and move there before touching anything.
 - **Never `git add -A` / `git add .` here.** The fallback for when you're sharing a tree anyway. A blanket
   stage sweeps up someone else's in-flight work and commits it under your message. This has already
   happened: a 14-file TTS refactor was swept into an unrelated UI commit, then split back out — and the

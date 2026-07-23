@@ -164,6 +164,13 @@
     close() {
       this._stopTimer();
       if (this.overlay) this.overlay.style.display = 'none';
+      // If this was a completed baseline, let the course begin teaching now —
+      // adapted to the results. Guarded by _completed so cancelling the test
+      // (the X, or closing before finishing) never starts the course early.
+      if (this._completed && window.courseManager && typeof window.courseManager.onBaselineComplete === 'function') {
+        this._completed = false;
+        window.courseManager.onBaselineComplete();
+      }
     }
 
     _startTimer() {
@@ -244,6 +251,10 @@
       this.el('actt-body').innerHTML = '<div class="actt-center">Scoring…</div>';
       try {
         const data = await api('/api/act-test/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sessionId: this.sessionId }) });
+        // The baseline is now scored and the course retargeted server-side. Mark
+        // it so close() lets the course begin teaching — only on a real
+        // completion, never on a cancelled/closed test.
+        this._completed = true;
         const r = (data && data.report) || {};
         const cats = Object.entries(r.byCategory || {}).map(([k, v]) => {
           const pct = v.total ? Math.round((v.correct / v.total) * 100) : 0;

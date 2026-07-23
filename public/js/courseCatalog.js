@@ -896,8 +896,13 @@ class CourseManager {
                 this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
             }
 
-            // Fire course greeting — AI introduces the first module
-            this.sendCourseGreeting();
+            // Begin teaching — UNLESS a required baseline (ACT practice test,
+            // course pre-assessment) is pending. A course is prep and readiness,
+            // so it must find out what the student already knows BEFORE it starts
+            // teaching; otherwise it opens every student at module 1 ("what is a
+            // real number") and the baseline never adapts the plan. The greeting
+            // fires from onBaselineComplete() once the test is done.
+            this.beginTeachingUnlessBaselinePending(data.welcomeData && data.welcomeData.diagnostic);
 
         } catch (err) {
             console.error('[CourseManager] Enrollment error:', err);
@@ -943,12 +948,42 @@ class CourseManager {
             // who never took the practice test) — shown as a standalone card.
             if (data.diagnostic) this.showDiagnosticCard(data.diagnostic);
 
-            // Fire silent course greeting — AI introduces the course/module
-            this.sendCourseGreeting();
+            // Same gate as enroll: no teaching until a required baseline is done.
+            this.beginTeachingUnlessBaselinePending(data.diagnostic);
 
         } catch (err) {
             console.error('[CourseManager] Failed to activate course:', err);
         }
+    }
+
+    // --------------------------------------------------
+    // --------------------------------------------------
+    // Begin teaching, unless a required baseline is still pending.
+    //
+    // The tutor greeting introduces module 1 and starts teaching. It must NOT
+    // fire while a `required` diagnostic (ACT practice test, course
+    // pre-assessment) is unanswered — the whole point of the baseline is to run
+    // FIRST and adapt the plan. When one is pending we stay quiet and let the
+    // diagnostic card lead; onBaselineComplete() fires the greeting afterward,
+    // by which time the course has been retargeted to the student's real level.
+    // --------------------------------------------------
+    beginTeachingUnlessBaselinePending(diagnostic) {
+        if (diagnostic && diagnostic.required) {
+            this._baselinePending = true;
+            return;
+        }
+        this._baselinePending = false;
+        this.sendCourseGreeting();
+    }
+
+    // Called by the ACT test and the pre-assessment when their baseline finishes.
+    // Fires the greeting that beginTeachingUnlessBaselinePending() held back, now
+    // that the course knows the student's level. Guarded so a stray call (e.g. a
+    // cancelled test) or a course that never gated cannot double-greet.
+    onBaselineComplete() {
+        if (!this._baselinePending) return;
+        this._baselinePending = false;
+        this.sendCourseGreeting();
     }
 
     // --------------------------------------------------
@@ -1355,3 +1390,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('[CourseManager] Module loaded');
+
+// Exposed for unit tests (node). Harmless in the browser, where `module` is
+// undefined. The class is never auto-instantiated on require — that happens only
+// inside the DOMContentLoaded handler above.
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { CourseManager };
+}
