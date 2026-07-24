@@ -457,6 +457,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             const playerName = document.getElementById('cr-player-name');
             if (playerName) playerName.textContent = currentUser.firstName || '';
+            // Enrich the card into a stats band + expand-up progress panel.
+            // Instant stats come from currentUser; the panel and accuracy/solved
+            // chips lazy-load from /api/student/progress/summary on first paint.
+            if (window.PlayerStatsCard) window.PlayerStatsCard.init(currentUser);
         } catch (e) { console.warn('Player card render failed', e); }
 
         // Sidebar coin counter → shop (closes the earn→spend loop right where
@@ -3265,6 +3269,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateGamificationDisplay();
                 // Identity chip: refresh level ring + rank title from the fresh XP state.
                 try { updateIdentityChip(currentUser); } catch (e) { console.warn('Identity chip update failed', e); }
+                // Player card band: same fresh XP/level/streak, live after the turn.
+                try { if (window.PlayerStatsCard) window.PlayerStatsCard.refresh(currentUser); } catch (e) { console.warn('Player card refresh failed', e); }
 
                 // Show unlock proximity teaser (after level-up or when close)
                 if (data.xpLadder?.leveledUp) {
