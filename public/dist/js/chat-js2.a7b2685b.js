@@ -171,6 +171,17 @@
                 this.audioCtx = new (window.AudioContext || window.webkitAudioContext)({
                     latencyHint: 'interactive',
                 });
+                // Unlock IMMEDIATELY, before the async worklet fetch below. iOS
+                // Safari only honors resume() inside the user gesture that
+                // reached here (the orb tap / voice-mode entry). The worklet
+                // addModule() is a network load that ends the gesture window, so
+                // resuming AFTER it leaves the context suspended — AI audio then
+                // stays silent until the student taps again, which reads as
+                // "tap to advance". Kick resume() off synchronously now; the
+                // statechange handler and _playPcmS16 cover any later re-suspend.
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume().catch(() => { /* gesture lost — retried on next tap */ });
+                }
                 this.outGain = this.audioCtx.createGain();
                 this.outGain.gain.value = 1.0;
                 // outGain → analyser → destination, mirroring modules/audio.js,
@@ -743,7 +754,7 @@ class VoiceController {
                 console.warn('[Voice] stream disconnected — falling back to legacy path');
                 this.useStreamingPipeline = false;
                 this.streamClient = null;
-                this.updateUI('idle');
+                this._resumeOnLegacyAfterFallback();
                 break;
 
             case 'error':
@@ -758,10 +769,32 @@ class VoiceController {
                         try { this.streamClient.disconnect(); } catch (_) {}
                         this.streamClient = null;
                     }
-                    if (this.isListening || this.isAISpeaking) this.updateUI('idle');
+                    this._resumeOnLegacyAfterFallback();
                 }
                 break;
         }
+    }
+
+    // Streaming just died (e.g. Deepgram 429 rate-limit, or a worklet load
+    // failure). If the student was mid-session — actively listening, or in the
+    // full voice-mode call — seamlessly re-open the mic on the LEGACY path
+    // instead of dropping to "Click to start voice" and making them tap to
+    // continue. Legacy STT is a different provider (Whisper), so it keeps
+    // working while Deepgram is rate-limited. If they weren't engaged (or the
+    // tutor is mid-utterance), just settle to idle. No loop risk: the legacy
+    // path never emits these stream events, and a legacy failure lands on idle.
+    _resumeOnLegacyAfterFallback() {
+        const inVoiceMode = typeof document !== 'undefined' &&
+            document.body && document.body.classList.contains('cr-voice');
+        const wasEngaged = this.isListening || inVoiceMode;
+        this.isListening = false; // clear the dead streaming session's flag
+        if (this.isAISpeaking || !wasEngaged) {
+            this.updateUI('idle');
+            return;
+        }
+        Promise.resolve()
+            .then(() => this.startListening())   // useStreamingPipeline is now false → legacy
+            .catch(() => this.updateUI('idle'));
     }
 
     /**

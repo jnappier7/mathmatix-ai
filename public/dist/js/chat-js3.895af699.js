@@ -3183,6 +3183,12 @@ class CourseManager {
             if (window.lessonTracker) {
                 window.lessonTracker.rehydrate(match._id);
             }
+
+            // Day-one diagnostic (e.g. ACT-prep practice test): when a student
+            // loads straight into an already-active course, neither the enroll
+            // splash nor an explicit activate fires — so surface the card here
+            // too. Server gates it (returns null once they've taken it).
+            this.maybeShowActiveDiagnostic(match._id);
         } else {
             wrapper.style.display = 'none';
             this.activeCourseSessionId = null;
@@ -3822,8 +3828,13 @@ class CourseManager {
                 this.showToast(`Enrolled in ${data.session.courseName}! Let's get started.`);
             }
 
-            // Fire course greeting — AI introduces the first module
-            this.sendCourseGreeting();
+            // Begin teaching — UNLESS a required baseline (ACT practice test,
+            // course pre-assessment) is pending. A course is prep and readiness,
+            // so it must find out what the student already knows BEFORE it starts
+            // teaching; otherwise it opens every student at module 1 ("what is a
+            // real number") and the baseline never adapts the plan. The greeting
+            // fires from onBaselineComplete() once the test is done.
+            this.beginTeachingUnlessBaselinePending(data.welcomeData && data.welcomeData.diagnostic);
 
         } catch (err) {
             console.error('[CourseManager] Enrollment error:', err);
@@ -3865,12 +3876,46 @@ class CourseManager {
             // Switch sidebar to course context (hides sessions, leaderboard, quests)
             if (window.sidebar) window.sidebar.setContext('course');
 
-            // Fire silent course greeting — AI introduces the course/module
-            this.sendCourseGreeting();
+            // Day-one diagnostic nudge for returning students (e.g. ACT-prep student
+            // who never took the practice test) — shown as a standalone card.
+            if (data.diagnostic) this.showDiagnosticCard(data.diagnostic);
+
+            // Same gate as enroll: no teaching until a required baseline is done.
+            this.beginTeachingUnlessBaselinePending(data.diagnostic);
 
         } catch (err) {
             console.error('[CourseManager] Failed to activate course:', err);
         }
+    }
+
+    // --------------------------------------------------
+    // --------------------------------------------------
+    // Begin teaching, unless a required baseline is still pending.
+    //
+    // The tutor greeting introduces module 1 and starts teaching. It must NOT
+    // fire while a `required` diagnostic (ACT practice test, course
+    // pre-assessment) is unanswered — the whole point of the baseline is to run
+    // FIRST and adapt the plan. When one is pending we stay quiet and let the
+    // diagnostic card lead; onBaselineComplete() fires the greeting afterward,
+    // by which time the course has been retargeted to the student's real level.
+    // --------------------------------------------------
+    beginTeachingUnlessBaselinePending(diagnostic) {
+        if (diagnostic && diagnostic.required) {
+            this._baselinePending = true;
+            return;
+        }
+        this._baselinePending = false;
+        this.sendCourseGreeting();
+    }
+
+    // Called by the ACT test and the pre-assessment when their baseline finishes.
+    // Fires the greeting that beginTeachingUnlessBaselinePending() held back, now
+    // that the course knows the student's level. Guarded so a stray call (e.g. a
+    // cancelled test) or a course that never gated cannot double-greet.
+    onBaselineComplete() {
+        if (!this._baselinePending) return;
+        this._baselinePending = false;
+        this.sendCourseGreeting();
     }
 
     // --------------------------------------------------
@@ -3894,6 +3939,16 @@ class CourseManager {
             if (window.showThinkingIndicator) window.showThinkingIndicator(false);
 
             const data = await res.json();
+
+            // The server withheld the greeting because a required baseline is not
+            // done. Show the baseline card and teach nothing — the server is the
+            // source of truth here, so even if the client gate was bypassed (or
+            // its bundle failed to load), no greeting is rendered or persisted.
+            if (data.baselineRequired) {
+                this._baselinePending = true;
+                if (data.diagnostic) this.showDiagnosticCard(data.diagnostic);
+                return;
+            }
 
             // If the current module is a checkpoint, open the card-based UI instead of chat
             if (data.isCheckpoint && window.floatingCheckpoint) {
@@ -4024,6 +4079,77 @@ class CourseManager {
     }
 
     // --------------------------------------------------
+    // Day-one diagnostic card (e.g. ACT prep → "Take the Practice ACT"). The CTA
+    // launches the practice test; the button removes whichever card container it
+    // lives in (the welcome splash when embedded, or its own card when standalone).
+    // --------------------------------------------------
+    diagnosticCardHtml(diag) {
+        if (!diag || !diag.type) return '';
+        // type → the client launcher invoked by the CTA. Starting Point mirrors
+        // the existing inline-CTA path (floatingScreener, falling back to
+        // window.openStartingPoint). Unknown types render nothing.
+        const sessionId = this.activeCourseSessionId || '';
+        const launchers = {
+            'act-practice': 'if (window.openActTest) { window.openActTest(); }',
+            'starting-point': "if (window.floatingScreener) { Promise.resolve(window.floatingScreener.checkAssessmentStatus()).then(function(){ window.floatingScreener.open(); }).catch(function(){}); } else if (window.openStartingPoint) { window.openStartingPoint(); }",
+            'course-preassessment': `if (window.openCoursePreAssessment) { window.openCoursePreAssessment('${sessionId}', { required: ${!!diag.required} }); }`,
+        };
+        const launch = launchers[diag.type];
+        if (!launch) return '';
+        // A REQUIRED diagnostic (the ACT baseline, a course pre-assessment) must
+        // not remove its own card on click. If the student closes the test
+        // without finishing, the card has to still be there — otherwise "required"
+        // means "required until you click it once".
+        const dismiss = diag.required
+            ? ''
+            : "(this.closest('.course-welcome-splash') || this.closest('.course-diagnostic-wrap') || this.closest('.course-diagnostic-card'))?.remove();";
+        return `
+            <div class="course-diagnostic-card" style="margin-top:16px; padding:16px; border-radius:12px; background:linear-gradient(135deg,#eef2ff,#faf5ff); border:1px solid #c7d2fe;">
+                <div style="font-size:14px; font-weight:700; color:#4338ca; margin-bottom:6px;">
+                    <i class="fas fa-clipboard-check" style="margin-right:6px;"></i>${this.escapeHtml(diag.title)}
+                </div>
+                <div style="font-size:12px; color:#555; line-height:1.5; margin-bottom:12px;">${this.escapeHtml(diag.body)}</div>
+                ${diag.required ? '<div style="font-size:11px; font-weight:700; color:#b45309; margin-bottom:10px;"><i class="fas fa-lock" style="margin-right:5px;"></i>Start here — this sets your baseline.</div>' : ''}
+                <button class="course-diagnostic-cta" onclick="${dismiss} ${launch}" style="
+                    width:100%; padding:12px; border:none; border-radius:10px;
+                    background:linear-gradient(135deg,#4f46e5,#7c3aed); color:white;
+                    font-weight:700; font-size:14px; cursor:pointer;
+                "><i class="fas fa-play" style="margin-right:6px;"></i>${this.escapeHtml(diag.cta)}</button>
+            </div>`;
+    }
+
+    // Fetch + show the day-one diagnostic for an already-active course on page
+    // load (checkActiveProgressBar). Non-fatal; the server returns null once the
+    // student has completed the diagnostic, so the card stops appearing.
+    async maybeShowActiveDiagnostic(sessionId) {
+        try {
+            const res = await csrfFetch(`/api/course-sessions/${sessionId}/diagnostic`, {
+                credentials: 'include'
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data && data.diagnostic) this.showDiagnosticCard(data.diagnostic);
+        } catch {
+            /* non-fatal — diagnostic is a nudge, never blocks the course */
+        }
+    }
+
+    // Show the diagnostic card on its own (returning students who re-open the
+    // course from the sidebar, i.e. activateCourse — no welcome splash there).
+    showDiagnosticCard(diag) {
+        const html = this.diagnosticCardHtml(diag);
+        if (!html) return;
+        const chatBox = document.getElementById('chat-messages-container');
+        if (!chatBox) return;
+        if (chatBox.querySelector('.course-diagnostic-card')) return; // don't stack duplicates
+        const wrap = document.createElement('div');
+        wrap.className = 'course-diagnostic-wrap';
+        wrap.style.cssText = 'margin:16px auto; max-width:520px; animation:catalogSlideIn 0.4s ease;';
+        wrap.innerHTML = html;
+        chatBox.appendChild(wrap);
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     // Welcome splash (shown in chat after enrollment)
     // --------------------------------------------------
     showWelcomeSplash(welcome, isResume = false) {
@@ -4045,6 +4171,10 @@ class CourseManager {
                 <span style="font-size:13px; color:${i === 0 ? '#333' : '#666'}; font-weight:${i === 0 ? '600' : '400'};">${this.escapeHtml(u)}</span>
             </div>`
         ).join('');
+
+        // Day-one diagnostic card (e.g. ACT prep → take a full practice ACT first),
+        // embedded in the welcome splash. See diagnosticCardHtml().
+        const diagnosticHtml = this.diagnosticCardHtml(welcome.diagnostic);
 
         // Course mini-tour tips (shown below the learning path for first-time enrollees)
         const courseTipsHtml = isResume ? '' : `
@@ -4090,15 +4220,20 @@ class CourseManager {
                 ${unitListHtml}
                 ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}
                 ${courseTipsHtml}
+                ${diagnosticHtml}
                 <div style="margin-top: 16px; padding: 8px 12px; background: #fef9c3; border: 1px solid #fde68a; border-radius: 8px; font-size: 11px; color: #b45309; display: flex; align-items: flex-start; gap: 6px;">
                     <i class="fas fa-circle-exclamation" style="margin-top: 1px; flex-shrink: 0;"></i>
                     <span><strong>Disclaimer:</strong> These courses do not count for academic credit and are not meant to replace in-person instruction.</span>
                 </div>
                 <button onclick="this.closest('.course-welcome-splash').remove()" style="
-                    margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 10px;
-                    background: linear-gradient(135deg, #667eea, #764ba2); color: white;
+                    margin-top: 16px; width: 100%; padding: 12px; border-radius: 10px;
+                    ${diagnosticHtml
+                        ? 'border: 1px solid #c7d2fe; background: white; color: #4f46e5;'
+                        : 'border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white;'}
                     font-weight: 700; font-size: 14px; cursor: pointer;
-                "><i class="fas fa-play" style="margin-right: 6px;"></i>${isResume ? 'Continue Learning' : `Start ${this.escapeHtml(welcome.firstModuleTitle)}`}</button>
+                "><i class="fas fa-play" style="margin-right: 6px;"></i>${diagnosticHtml
+                        ? `Skip for now — start ${this.escapeHtml(welcome.firstModuleTitle)}`
+                        : (isResume ? 'Continue Learning' : `Start ${this.escapeHtml(welcome.firstModuleTitle)}`)}</button>
             </div>
         `;
 
@@ -4197,6 +4332,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('[CourseManager] Module loaded');
+
+// Exposed for unit tests (node). Harmless in the browser, where `module` is
+// undefined. The class is never auto-instantiated on require — that happens only
+// inside the DOMContentLoaded handler above.
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { CourseManager };
+}
 
 ;
 /* --- /js/lessonTracker.js --- */

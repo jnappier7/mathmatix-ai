@@ -1,7 +1,7 @@
 {
   "css": [
     {
-      "href": "/dist/css/chat-css0.2422dcfc.css",
+      "href": "/dist/css/chat-css0.9b2fba38.css",
       "files": [
         "/css/file-upload.css",
         "/css/calculator.css",
@@ -62,14 +62,14 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js2.dacbff7b.js",
+      "src": "/dist/js/chat-js2.a7b2685b.js",
       "files": [
         "/js/voice-stream-client.js?v=3",
         "/js/voice-controller.js"
       ]
     },
     {
-      "src": "/dist/js/chat-js3.babd546b.js",
+      "src": "/dist/js/chat-js3.895af699.js",
       "files": [
         "/js/chat-board-integration.js",
         "/js/floating-screener.js",
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js4.c195e962.js",
+      "src": "/dist/js/chat-js4.301bba99.js",
       "files": [
         "/js/diagram-display.js",
         "/js/inlineChatVisuals.js"
@@ -119,7 +119,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js8.2b53a001.js",
+      "src": "/dist/js/chat-js8.105c8817.js",
       "files": [
         "/js/student-resources.js",
         "/js/settings.js",
