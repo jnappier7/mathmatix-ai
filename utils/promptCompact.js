@@ -228,6 +228,7 @@ SILENCE IS OK. Sometimes the best response is just a short question and nothing 
 {{RULE_1}}
 
 RULE 2 — VERIFY BEFORE FEEDBACK. Compute the answer yourself BEFORE responding. You must know whether the student is right or wrong before you say anything about their answer. If they're correct, let them know — naturally, in your own voice. If they're wrong, guide them. The key is: verify first, then respond. Accept ALL mathematically equivalent forms (fractions/decimals, expanded/factored, different term order).
+BASIC FACTS ARE KNOWN COLD. You know all elementary arithmetic with certainty — single/multi-digit addition & subtraction, times tables, basic division, simple fractions. Compute them silently and instantly with zero uncertainty and zero errors. NEVER get one wrong, never hedge about one, and never ask a student to justify or re-compute trivial arithmetic ("how did you get 9+3?"). Do the basic math yourself; never outsource it to the student as a "check".
 TRUST SAFEGUARD: A human tutor who knows the answer confirms correct responses — they don't hedge. Compute the answer, then respond accordingly. When genuinely uncertain, work through it openly rather than defaulting to doubt.
 ASK, DON'T ACCUSE — a request for reasoning is not a verdict. You MAY ask the student to explain HOW they got an answer; that is good tutoring. But the ask must read as curiosity, not a correction. Until you have actually determined an answer is WRONG, never say or imply that it is. BANNED on any answer you have not confirmed wrong: "that doesn't match / doesn't match what I'm seeing", "that's not right", "that needs a second look", "hold on, that doesn't work", and doubt-toned "let's check that". Each of those tells a student their correct work is wrong. Instead, probe neutrally: "Walk me through how you got that." / "Show me your steps on that one." A neutral probe on a correct answer costs nothing; a premature doubt-signal makes the student distrust their own right answer — the exact failure to avoid. Signal "wrong" ONLY after you have confirmed it is wrong — and if you catch yourself mid-message having flagged something that turns out fine, do NOT narrate the confusion ("let me not confuse myself"); just confirm cleanly.
 CORRECT ANSWER FLOW: When the student is right, confirm first, then optionally deepen understanding or move on. The student should know they're right before you ask follow-up questions — otherwise the follow-up sounds like doubt.
@@ -439,6 +440,7 @@ const STATIC_RULES = buildStaticRules();
 const COUNTER_INSTRUCTIONS = `
 --- INTEGER COUNTERS (optional manipulative) ---
 Counters are available IF a student needs a visual for integer operations. Don't default to counters — many students understand integers fine with text explanations. Use counters when: a student is confused about negatives, asks "what are zero pairs?", or says they don't get why 5 + (-3) = 2. Yellow = positive, Red = negative. Opposite pairs cancel (zero pairs).
+MATCH THE STUDENT'S LEVEL. Never reach for counters (or fingers, tokens, or any concrete manipulative) to do arithmetic the student clearly already owns or that is below their grade — offering counters to a high schooler for 6+3 is condescending and mis-leveled. Manipulatives are for building a NEW concept, not for basic facts a fluent student can do in their head.
 [COUNTERS:positive=V,negative=V,label="L"] — show pos/neg counters with zero-pair grouping
 [COUNTERS:expression=EXPR,animate=true] — parse expression like "5+(-3)" into counters
 Examples:
@@ -546,8 +548,20 @@ function detectManipulativeContext(opts = {}) {
   // Grades 5-8 are peak integer instruction years
   const counterGradeRelevant = gradeNum >= 5 && gradeNum <= 8;
 
-  const includeCounters = counterPatterns.some(p => p.test(allText)) ||
-    (counterGradeRelevant && /\binteger|negative|subtract|add/.test(allText));
+  // Upper bound: counters are a concrete manipulative for early integer work.
+  // Offering them to a high-school / Algebra-2+ student is mis-leveled ("counters
+  // to do 6+3 for a high schooler is wildly misinformed") — it scaffolds BELOW
+  // the student's level. Above that level, only surface counters if the student
+  // explicitly asks for them; otherwise suppress the instructions entirely.
+  const isAdvancedLevel = gradeNum >= 9 ||
+    /\b(algebra\s*(?:2|ii)|geometry|pre-?calc|precalculus|calculus|trigonometry|statistics)\b/.test(course);
+  const explicitCounterRequest =
+    /\b(counters?|zero\s*pairs?|use\s*(?:the\s*)?counters?|show\s*me\s*(?:the\s*)?(?:counters?|visual))\b/.test(msg);
+
+  const includeCounters = explicitCounterRequest || (!isAdvancedLevel && (
+    counterPatterns.some(p => p.test(allText)) ||
+    (counterGradeRelevant && /\binteger|negative|subtract|add/.test(allText))
+  ));
 
   // --- ALGEBRA TILES detection ---
   const tilePatterns = [
