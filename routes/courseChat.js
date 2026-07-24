@@ -17,6 +17,7 @@ const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
 const { detectAndFetchResource, detectResourceMention } = require('../utils/resourceDetector');
 const { buildProgressUpdate } = require('../utils/progressState');
+const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 const { buildCoursePipelineContext, postProcessCourseResult } = require('../utils/pipeline/courseAdapter');
 const { FREE_WEEKLY_SECONDS } = require('../middleware/usageGate');
@@ -371,6 +372,38 @@ async function handleCourseGreeting(req, res, userId) {
         const courseSession = await CourseSession.findById(user.activeCourseSessionId);
         if (!courseSession || courseSession.status !== 'active') {
             return res.status(400).json({ message: 'Course session not found or inactive.' });
+        }
+
+        // ── BASELINE GATE ───────────────────────────────────────────────────
+        // The tutor must not start teaching until a REQUIRED baseline (the full
+        // ACT practice test, a course pre-assessment) is done — the baseline is
+        // what adapts the plan to the student. This is enforced here, on the
+        // server, because the client-side gate cannot be trusted: production has
+        // shipped a chat bundle that 404s, and a stale tab or a second client
+        // path would otherwise leak a premature "let's learn what a real number
+        // is" and PERSIST it into the conversation. Refusing here means no
+        // premature greeting is ever generated or saved, whatever the client does.
+        try {
+            const { pending, diagnostic } = await isRequiredBaselinePending(user, courseSession.courseId);
+            if (pending) {
+                console.log(`📚 [CourseGreeting] ${user.firstName} → baseline pending for ${courseSession.courseId}, withholding greeting`);
+                return res.json({
+                    baselineRequired: true,
+                    diagnostic,
+                    isGreeting: true,
+                    courseContext: {
+                        courseId: courseSession.courseId,
+                        courseName: courseSession.courseName,
+                        currentModuleId: courseSession.currentModuleId,
+                        overallProgress: courseSession.overallProgress
+                    }
+                });
+            }
+        } catch (gateErr) {
+            // A gate failure must not brick the course. Log and fall through to
+            // the normal greeting rather than leaving the student staring at a
+            // silent tutor.
+            console.error('[CourseGreeting] baseline gate failed (non-fatal):', gateErr.message);
         }
 
         // Load pathway + module
