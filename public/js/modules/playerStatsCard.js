@@ -114,6 +114,14 @@
     var host = document.getElementById('cr-player-card');
     if (!elProfile || !host) return;
     elProfile.hidden = !on;
+    // Drive inline display ourselves. The Living Workspace swap stamps inline
+    // display:none on every region child except the switcher; if init raced
+    // ahead of that swap, our panel inherited it, and neither the `hidden`
+    // attribute nor CSS can override an inline style. Setting display here
+    // (and clearing the swap's marker) makes opening the panel win regardless
+    // of which ran first.
+    elProfile.style.display = on ? 'block' : 'none';
+    elProfile.removeAttribute('data-lws-hidden');
     if (host._segMe) host._segMe.classList.toggle('is-active', on);
     if (host._segBoard) host._segBoard.classList.toggle('is-active', !on);
     if (host._segMe) host._segMe.setAttribute('aria-selected', on ? 'true' : 'false');

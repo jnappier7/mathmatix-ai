@@ -65,7 +65,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260721a';
+  var ASSET_V = '?v=20260724a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -114,11 +114,16 @@
     if (region) {
       region.classList.add('lws-swapped');
       // Hide the old tabbed board tools, keep them in the DOM (reversible).
-      // EXCEPTION: the student player card stays visible — it's pinned to the
-      // bottom of the rail (workspace.css) so the swapped board never covers or
-      // eliminates the student's avatar; the mount is inset above it.
+      // EXCEPTIONS that stay visible: the student player card / progress switcher
+      // (#cr-player-card, pinned to the bottom of the rail) and the "My Progress"
+      // profile overlay (#psc-profile). Both belong to the rail, not the legacy
+      // board. #psc-profile is created by playerStatsCard.js AFTER the /user
+      // fetch, which can race ahead of this swap — if it does, this loop would
+      // stamp inline display:none on it and the panel could never paint, no
+      // matter what the toggle does. Skipping it here keeps the toggle honest.
       for (var i = 0; i < region.children.length; i++) {
-        if (region.children[i].id === 'cr-player-card') continue;
+        var cid = region.children[i].id;
+        if (cid === 'cr-player-card' || cid === 'psc-profile') continue;
         region.children[i].setAttribute('data-lws-hidden', '1');
         region.children[i].style.display = 'none';
       }
