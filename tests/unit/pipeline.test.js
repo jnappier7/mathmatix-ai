@@ -563,6 +563,72 @@ describe('Pipeline: Decide Stage', () => {
 });
 
 // ============================================================================
+// BACK-OFF MODE (student asserts competence / rejects scaffolding)
+// ============================================================================
+
+describe('Pipeline: back-off mode', () => {
+  const correctDiag = { type: 'correct', isCorrect: true, answer: '7', correctAnswer: '7', misconception: null };
+  const makeObs = (type, overrides = {}) => ({
+    messageType: type,
+    answer: null,
+    contextSignals: [],
+    streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0, recentCorrectCount: 0 },
+    ...overrides,
+  });
+
+  describe('observe — signal detection', () => {
+    test('flags the transcript competence assertions', () => {
+      const hits = [
+        'I know the steps. this is too easy for me',
+        "I don't NEED HELP! I know this stuff already. Can we MOVE ON",
+        'WHY ARE YOU ASKING ME ABOUT 9+3! Do you think I am a 2nd grader?',
+        'I can do those too!',
+      ];
+      for (const m of hits) expect(observe(m).assertsCompetence).toBe(true);
+    });
+
+    test('does NOT flag genuine help requests or "I know this is hard"', () => {
+      expect(observe('I know this is hard').assertsCompetence).toBe(false);
+      expect(observe('I need help with this').assertsCompetence).toBe(false);
+      expect(observe('can you help me').assertsCompetence).toBe(false);
+    });
+
+    test('"I don\'t need help" is NOT misclassified as HELP_REQUEST', () => {
+      expect(observe("I don't need help, I know this stuff").messageType).not.toBe(MESSAGE_TYPES.HELP_REQUEST);
+    });
+
+    test('backOffMode persists across the recent user window', () => {
+      const o = observe('32', { recentUserMessages: [{ content: 'this is too easy for me' }, { content: 'ok' }] });
+      expect(o.backOffMode).toBe(true);
+      expect(o.messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT); // still an answer, but back-off is live
+    });
+  });
+
+  describe('decide — behavior under back-off', () => {
+    test('correct answer → confirm, minimal scaffold, BACK OFF directive', () => {
+      const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' }, backOffMode: true });
+      const dec = decide(obs, correctDiag, {});
+      expect(dec.action).toBe(ACTIONS.CONFIRM_CORRECT);
+      expect(dec.scaffoldLevel).toBeLessThanOrEqual(2);
+      expect(dec.directives).toContainEqual(expect.stringContaining('BACK OFF'));
+      expect(dec.directives).toContainEqual(expect.stringContaining('do NOT re-check trivial sub-steps'));
+    });
+
+    test('a comprehension check is downgraded to presenting a harder problem', () => {
+      const obs = makeObs(MESSAGE_TYPES.SKIP_REQUEST, { backOffMode: true });
+      const dec = decide(obs, { type: 'no_answer' }, { phaseState: { currentPhase: 'we-do' } });
+      expect(dec.action).toBe(ACTIONS.PRESENT_PROBLEM);
+    });
+
+    test('no back-off signal → no BACK OFF directive (guard is inert by default)', () => {
+      const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
+      const dec = decide(obs, correctDiag, {});
+      expect(dec.directives).not.toContainEqual(expect.stringContaining('BACK OFF'));
+    });
+  });
+});
+
+// ============================================================================
 // GENERATE STAGE (prompt assembly only, no LLM calls)
 // ============================================================================
 

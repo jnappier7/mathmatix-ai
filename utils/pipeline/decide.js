@@ -96,6 +96,11 @@ function decide(observation, diagnosis, context = {}) {
     applyEvidenceModifiers(decision, context.evidence);
   }
 
+  // Back-off runs AFTER evidence on purpose: an explicit student directive
+  // ("I know this", "too easy", "stop asking") outranks any inferred signal,
+  // including a BKT "possible guessing" nudge that would re-inject probing.
+  applyBackOffModifiers(decision, observation);
+
   return decision;
 }
 
@@ -928,6 +933,39 @@ function applyInstructionalMode(decision, context) {
     default:
       return null;
   }
+}
+
+/**
+ * Apply durable back-off modifiers when the student has asserted competence /
+ * rejected scaffolding ("I know this", "too easy", "I don't need help", "stop
+ * asking", "why are you asking me?").
+ *
+ * This is the fix for the documented "won't take the hint" spiral: the tutor
+ * would say "I hear you!" and then interrogate the very next correct answer,
+ * driving the student to "Christ!!!". Acknowledging feedback once is not
+ * honoring it — the behavior has to change and STAY changed. observe.backOffMode
+ * persists the signal across the recent window so this applies for the rest of
+ * the session (fading only if the student later goes quiet or actually struggles).
+ *
+ * Runs LAST in decide() so it overrides any inferred nudge (mood, BKT guessing)
+ * that would re-inject probing.
+ */
+function applyBackOffModifiers(decision, observation) {
+  if (!observation || !observation.backOffMode) return;
+
+  decision.scaffoldLevel = Math.min(decision.scaffoldLevel, 2);
+
+  // Never run a comprehension check on a student who's telling us to back off.
+  if (decision.action === ACTIONS.CHECK_UNDERSTANDING) {
+    decision.action = ACTIONS.PRESENT_PROBLEM;
+  }
+
+  decision.directives.push(
+    'BACK OFF (student asserted competence): they have explicitly told you they know this / it is too easy / to stop asking. Honor it for the rest of the session unless they actually struggle.',
+    'Do NOT ask them to explain, justify, or walk through a CORRECT answer, and do NOT re-check trivial sub-steps (e.g. "how did you get 9+3?"). Confirm briefly and move on.',
+    'Raise the difficulty to something that respects their level.',
+    'You may acknowledge their point ONCE, briefly and without defensiveness, then just teach at the harder level. Never re-run the probing they just pushed back on.'
+  );
 }
 
 /**
