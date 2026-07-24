@@ -40,13 +40,14 @@
   function num(v, f) { var n = Number(v); return Number.isFinite(n) ? n : (f == null ? 0 : f); }
   function txt(el, s) { if (el) el.textContent = (s == null ? '' : String(s)); }
 
-  // Friendly level-tier title (cosmetic label, not a data claim).
+  // Friendly level-tier title (cosmetic label, not a data claim). One word so
+  // it fits the rank pill in the narrow hero identity row.
   function rankFor(level) {
     var l = num(level, 1);
-    if (l >= 40) return 'Math Master';
-    if (l >= 25) return 'Math Explorer';
-    if (l >= 15) return 'Problem Solver';
-    if (l >= 6) return 'Rising Star';
+    if (l >= 40) return 'Master';
+    if (l >= 25) return 'Explorer';
+    if (l >= 15) return 'Solver';
+    if (l >= 6) return 'Riser';
     return 'Rookie';
   }
   function streakSub(d) { d = num(d); return d >= 14 ? 'On fire!' : d >= 5 ? 'Keep it up!' : d >= 1 ? 'Nice start!' : 'Start today!'; }
@@ -114,6 +115,14 @@
     var host = document.getElementById('cr-player-card');
     if (!elProfile || !host) return;
     elProfile.hidden = !on;
+    // Drive inline display ourselves. The Living Workspace swap stamps inline
+    // display:none on every region child except the switcher; if init raced
+    // ahead of that swap, our panel inherited it, and neither the `hidden`
+    // attribute nor CSS can override an inline style. Setting display here
+    // (and clearing the swap's marker) makes opening the panel win regardless
+    // of which ran first.
+    elProfile.style.display = on ? 'block' : 'none';
+    elProfile.removeAttribute('data-lws-hidden');
     if (host._segMe) host._segMe.classList.toggle('is-active', on);
     if (host._segBoard) host._segBoard.classList.toggle('is-active', !on);
     if (host._segMe) host._segMe.setAttribute('aria-selected', on ? 'true' : 'false');
@@ -135,20 +144,30 @@
     var full = elProfile.querySelector('.psc-full');
     full.textContent = '';
 
-    // header: character + greeting
-    var head = h('div', 'psc-head');
-    if (avatar) head.appendChild(avatar); else head.appendChild(h('div', 'psc-head-ava'));
-    var greet = h('div', 'psc-head-txt',
+    // Hybrid layout (the rail is too narrow for a tall character BESIDE all the
+    // content): the full-body character stands on the left of a TOP block —
+    // greeting + hero + stat tiles — and the skill lists + CTA run FULL WIDTH
+    // below it. That gives the character real height without squeezing the
+    // rows to ellipsis.
+    var top = h('div', 'psc-top');
+    var avatarCol = h('div', 'psc-avatar-col');
+    if (avatar) avatarCol.appendChild(avatar); else avatarCol.appendChild(h('div', 'psc-head-ava'));
+    var body = h('div', 'psc-top-right');   // top-right stack, beside the character
+    top.appendChild(avatarCol);
+    top.appendChild(body);
+    full.appendChild(top);
+
+    // greeting at the top of the right stack
+    var greet = h('div', 'psc-greet',
       '<div class="psc-head-name"></div><div class="psc-head-sub">Keep learning, keep growing 💜</div>');
     txt(greet.querySelector('.psc-head-name'), nameText);
-    head.appendChild(greet);
-    full.appendChild(head);
+    body.appendChild(greet);
 
     // hero
     var hero = h('div', 'psc-hero');
     var badge = h('div', 'psc-badge',
       '<div class="psc-badge-shield">🛡️</div>' +
-      '<div class="psc-badge-lvl">Level <b></b></div>' +
+      '<div class="psc-badge-lvl">Lv <b></b></div>' +
       '<div class="psc-badge-rank"></div>');
     txt(badge.querySelector('.psc-badge-lvl b'), hd.level);
     txt(badge.querySelector('.psc-badge-rank'), rankFor(hd.level));
@@ -160,21 +179,21 @@
     txt(mid.querySelector('.psc-hero-xpval b'), hd.cur.toLocaleString());
     txt(mid.querySelector('.psc-hero-xpval small'), '/ ' + hd.need.toLocaleString());
     mid.querySelector('.psc-hero-fill').style.width = hd.pct.toFixed(1) + '%';
-    txt(mid.querySelector('.psc-hero-sub'), '📈 ' + hd.remaining.toLocaleString() + ' XP to Lv ' + (hd.level + 1));
+    txt(mid.querySelector('.psc-hero-sub'), '📈 ' + hd.remaining.toLocaleString() + ' XP to go');
     hero.appendChild(badge);
     hero.appendChild(mid);
     hero.appendChild(h('div', 'psc-trophy', '🏆'));
-    full.appendChild(hero);
+    body.appendChild(hero);
 
     // stat tiles
     var tiles = h('div', 'psc-tiles');
     tiles.appendChild(tile('streak', 'fa-fire', 'Streak', streakOf(user), 'days', streakSub(streakOf(user))));
     tiles.appendChild(tile('solved', 'fa-magnifying-glass', 'Problems', pre ? 0 : num(ws.problemsSolved, 0), '/wk', solvedSub(ws.problemsSolved)));
     tiles.appendChild(tile('acc', 'fa-bullseye', 'Accuracy', (ws.accuracy == null ? '—' : ws.accuracy), (ws.accuracy == null ? '' : '%'), accSub(ws.accuracy)));
-    full.appendChild(tiles);
+    body.appendChild(tiles);
 
     if (pre) {
-      full.appendChild(h('div', 'psc-empty',
+      full.appendChild(h("div", "psc-empty",
         '<div class="psc-empty-ic">📋</div>' +
         '<div class="psc-empty-t">Take your placement to unlock progress</div>' +
         '<div class="psc-empty-s">Once you start solving, your mastered skills and next steps show up here.</div>'));
@@ -239,7 +258,7 @@
     }
 
     if (!mastered.length && !next.length) {
-      full.appendChild(h('div', 'psc-empty',
+      full.appendChild(h("div", "psc-empty",
         '<div class="psc-empty-ic">✍️</div>' +
         '<div class="psc-empty-t">Your progress is warming up</div>' +
         '<div class="psc-empty-s">Solve a few problems and your mastered skills and next steps appear here.</div>'));
@@ -271,19 +290,32 @@
     var s = String(name || '').replace(/[^A-Za-z0-9]/g, '');
     return (s.slice(0, 2) || '▸').toUpperCase();
   }
-  function appendCta(full) {
+  // The CTA closes the loop: it drops the student back on the Board and, when we
+  // know what's next, launches that skill with the tutor (via the same
+  // programmatic-send path a typed message uses). Falls back to just focusing
+  // the composer when there's no next skill or the send hook isn't present.
+  function appendCta(mount) {
+    var next = summaryCache && (summaryCache.currentLearning || summaryCache.nextReady);
+    var skill = next && next.displayName;
     var cta = h('div', 'psc-cta',
       '<div class="psc-cta-star">⭐</div>' +
       '<div class="psc-cta-body"><div class="psc-cta-t">You’re on a roll!</div>' +
-      '<div class="psc-cta-s">Every problem you solve makes you stronger.</div></div>');
+      '<div class="psc-cta-s"></div></div>');
+    txt(cta.querySelector('.psc-cta-s'),
+      skill ? ('Next up: ' + skill) : 'Every problem you solve makes you stronger.');
     var btn = h('button', 'psc-cta-btn', 'Let’s Go 🚀');
     btn.type = 'button';
     btn.addEventListener('click', function () {
+      showProfile(false);   // back to the board so the tutor's reply is visible
+      if (skill && typeof window.mmSendChatMessage === 'function') {
+        window.mmSendChatMessage("Let's work on " + skill + '.');
+        return;
+      }
       var input = document.getElementById('user-input');
       if (input) { try { input.focus(); input.scrollIntoView({ block: 'center' }); } catch (_) {} }
     });
     cta.appendChild(btn);
-    full.appendChild(cta);
+    mount.appendChild(cta);
   }
 
   // ── summary fetch (once, cached) ────────────────────────────────────────
