@@ -51,6 +51,20 @@ RUN npm ci --omit=dev
 # 7. Copy the rest of your application code
 COPY . .
 
+# 7b. Regenerate the chat JS/CSS bundles FROM THE SOURCE THAT IS DEPLOYING.
+#     public/dist/js/chat-js*.js are pre-built bundles committed to the repo, but
+#     the deploy runs no build step — so every edit to a bundled source file
+#     (e.g. inlineChatVisuals.js, courseCatalog.js) drifted the committed bundle
+#     from chat.html and from the source. That shipped two silent failures:
+#       - chat.html referenced a bundle hash whose file was never recommitted
+#         after the edit  ->  chat-js4 404'd, killing that whole chunk.
+#       - a bundle whose source changed but hash didn't  ->  stale behaviour
+#         (a merged courseCatalog.js fix that never actually ran).
+#     Rebuilding here regenerates each bundle from public/js and rewrites
+#     chat.html to the matching hashes, so the deployed artifacts can never drift
+#     from the source in the same image. node builtins only — no dev deps needed.
+RUN node scripts/buildChatBundles.js
+
 # 8. Create non-root user and set ownership
 RUN groupadd --system appgroup && useradd --system --gid appgroup appuser \
     && chown -R appuser:appgroup /usr/src/app

@@ -811,41 +811,53 @@ class InlineChatVisuals {
         let html = message;
         let hasVisuals = false;
 
+        // Token params can nest ONE level of brackets — points=[-2,0,3],
+        // jumps=[(0,3),(3,7)]. The grammar (which fixes the truncation bug that
+        // made every number line with points render nothing) lives in
+        // visualTokenParser.js so it is testable in node with no DOM. Fall back to
+        // a local builder if that script did not load, so a missing dependency
+        // degrades to the previous behaviour rather than throwing.
+        const VTP = (typeof window !== 'undefined' && window.VisualTokenParser) || null;
+        const P = VTP ? VTP.PARAM : '(?:[^\\[\\]]|\\[[^\\]]*\\])';
+        const tok = VTP
+            ? (name) => VTP.tokenRegex(name)
+            : (name) => new RegExp('\\[' + name + ':(' + P + '+)\\]', 'g');
+
         // Process each visual type
         const visualTypes = [
-            { regex: /\[\s*FUNCTION_GRAPH\s*:\s*([^\]]+)\]/g, handler: this.createFunctionGraph.bind(this) },
-            { regex: /\[NUMBER_LINE:([^\]]+)\]/g, handler: this.createNumberLine.bind(this) },
-            { regex: /\[FRACTION:([^\]]+)\]/g, handler: this.createFraction.bind(this) },
-            { regex: /\[PIE_CHART:([^\]]+)\]/g, handler: this.createPieChart.bind(this) },
-            { regex: /\[BAR_CHART:([^\]]+)\]/g, handler: this.createBarChart.bind(this) },
-            { regex: /\[POINTS:([^\]]+)\]/g, handler: this.createPointsPlot.bind(this) },
-            { regex: /\[SLIDER_GRAPH:([^\]]+)\]/g, handler: this.createSliderGraph.bind(this) },
-            { regex: /\[UNIT_CIRCLE:?([^\]]*)\]/g, handler: this.createUnitCircle.bind(this) },
-            { regex: /\[AREA_MODEL:([^\]]+)\]/g, handler: this.createAreaModel.bind(this) },
-            { regex: /\[COMPARISON:([^\]]+)\]/g, handler: this.createComparison.bind(this) },
+            { regex: VTP ? VTP.tokenRegex('FUNCTION_GRAPH', { pad: true }) : new RegExp('\\[\\s*FUNCTION_GRAPH\\s*:\\s*(' + P + '+)\\]', 'g'), handler: this.createFunctionGraph.bind(this) },
+            { regex: tok('NUMBER_LINE'), handler: this.createNumberLine.bind(this) },
+            { regex: tok('FRACTION'), handler: this.createFraction.bind(this) },
+            { regex: tok('PIE_CHART'), handler: this.createPieChart.bind(this) },
+            { regex: tok('BAR_CHART'), handler: this.createBarChart.bind(this) },
+            { regex: tok('POINTS'), handler: this.createPointsPlot.bind(this) },
+            { regex: tok('SLIDER_GRAPH'), handler: this.createSliderGraph.bind(this) },
+            { regex: VTP ? VTP.tokenRegex('UNIT_CIRCLE', { star: true, optionalColon: true }) : new RegExp('\\[UNIT_CIRCLE:?(' + P + '*)\\]', 'g'), handler: this.createUnitCircle.bind(this) },
+            { regex: tok('AREA_MODEL'), handler: this.createAreaModel.bind(this) },
+            { regex: tok('COMPARISON'), handler: this.createComparison.bind(this) },
             // New enhanced visualizations
-            { regex: /\[PYTHAGOREAN:([^\]]+)\]/g, handler: this.createPythagorean.bind(this) },
-            { regex: /\[ANGLE:([^\]]+)\]/g, handler: this.createAngle.bind(this) },
-            { regex: /\[REGULAR_POLYGON:([^\]]+)\]/g, handler: this.createRegularPolygon.bind(this) },
-            { regex: /\[SLOPE:([^\]]+)\]/g, handler: this.createSlope.bind(this) },
-            { regex: /\[PERCENT_BAR:([^\]]+)\]/g, handler: this.createPercentBar.bind(this) },
-            { regex: /\[PLACE_VALUE:([^\]]+)\]/g, handler: this.createPlaceValue.bind(this) },
-            { regex: /\[RIGHT_TRIANGLE:([^\]]+)\]/g, handler: this.createRightTriangle.bind(this) },
-            { regex: /\[INEQUALITY:([^\]]+)\]/g, handler: this.createInequality.bind(this) },
+            { regex: tok('PYTHAGOREAN'), handler: this.createPythagorean.bind(this) },
+            { regex: tok('ANGLE'), handler: this.createAngle.bind(this) },
+            { regex: tok('REGULAR_POLYGON'), handler: this.createRegularPolygon.bind(this) },
+            { regex: tok('SLOPE'), handler: this.createSlope.bind(this) },
+            { regex: tok('PERCENT_BAR'), handler: this.createPercentBar.bind(this) },
+            { regex: tok('PLACE_VALUE'), handler: this.createPlaceValue.bind(this) },
+            { regex: tok('RIGHT_TRIANGLE'), handler: this.createRightTriangle.bind(this) },
+            { regex: tok('INEQUALITY'), handler: this.createInequality.bind(this) },
             // Algebra tiles inline preview + launcher
-            { regex: /\[ALGEBRA_TILES:([^\]]+)\]/g, handler: this.createAlgebraTilesInline.bind(this) },
+            { regex: tok('ALGEBRA_TILES'), handler: this.createAlgebraTilesInline.bind(this) },
             // Integer counters (pos/neg with zero-pair cancellation)
-            { regex: /\[COUNTERS:([^\]]+)\]/g, handler: this.createCounters.bind(this) },
+            { regex: tok('COUNTERS'), handler: this.createCounters.bind(this) },
             // Multi-representation linked views
-            { regex: /\[MULTI_REP:([^\]]+)\]/g, handler: this.createMultiRepresentation.bind(this) },
+            { regex: tok('MULTI_REP'), handler: this.createMultiRepresentation.bind(this) },
             // Calculus: Derivative overlay (f(x) + f'(x) with interactive tangent)
-            { regex: /\[DERIVATIVE_GRAPH:([^\]]+)\]/g, handler: this.createDerivativeGraph.bind(this) },
+            { regex: tok('DERIVATIVE_GRAPH'), handler: this.createDerivativeGraph.bind(this) },
             // Rational function graph (HA, VA, holes auto-detected)
-            { regex: /\[RATIONAL_GRAPH:([^\]]+)\]/g, handler: this.createRationalGraph.bind(this) },
+            { regex: tok('RATIONAL_GRAPH'), handler: this.createRationalGraph.bind(this) },
             // Physics: Position/Velocity/Acceleration overlay
-            { regex: /\[VELOCITY_GRAPH:([^\]]+)\]/g, handler: this.createVelocityGraph.bind(this) },
+            { regex: tok('VELOCITY_GRAPH'), handler: this.createVelocityGraph.bind(this) },
             // Circle geometry: chords, secants, tangents, inscribed/central angles
-            { regex: /\[CIRCLE_DIAGRAM:([^\]]+)\]/g, handler: this.createCircleDiagram.bind(this) }
+            { regex: tok('CIRCLE_DIAGRAM'), handler: this.createCircleDiagram.bind(this) }
         ];
 
         for (const { regex, handler } of visualTypes) {
