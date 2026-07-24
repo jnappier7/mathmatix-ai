@@ -97,7 +97,7 @@ function buildPlanLayer(tutorPlan, options = {}) {
       const tag = n.category !== 'general' ? `[${n.category}]` : '';
       return `  ${tag} ${n.content}`;
     }).join('\n');
-    parts.push(`TUTOR NOTES:\n${noteLines}`);
+    parts.push(`TUTOR NOTES (PRIVATE — for your eyes only, never recited to the student):\n${noteLines}\nUse these to steer your teaching silently. Do NOT open the session by narrating them or by diagnosing a weakness ("looking at my notes, here's what trips you up"). Lead with what the student can already do; raise a noted difficulty only if and when it actually surfaces in the work.`);
   }
 
   // ── Student Signals (quick-access behavioral data) ──
