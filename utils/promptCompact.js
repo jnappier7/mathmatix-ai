@@ -439,6 +439,7 @@ const STATIC_RULES = buildStaticRules();
 const COUNTER_INSTRUCTIONS = `
 --- INTEGER COUNTERS (optional manipulative) ---
 Counters are available IF a student needs a visual for integer operations. Don't default to counters — many students understand integers fine with text explanations. Use counters when: a student is confused about negatives, asks "what are zero pairs?", or says they don't get why 5 + (-3) = 2. Yellow = positive, Red = negative. Opposite pairs cancel (zero pairs).
+MATCH THE STUDENT'S LEVEL. Never reach for counters (or fingers, tokens, or any concrete manipulative) to do arithmetic the student clearly already owns or that is below their grade — offering counters to a high schooler for 6+3 is condescending and mis-leveled. Manipulatives are for building a NEW concept, not for basic facts a fluent student can do in their head.
 [COUNTERS:positive=V,negative=V,label="L"] — show pos/neg counters with zero-pair grouping
 [COUNTERS:expression=EXPR,animate=true] — parse expression like "5+(-3)" into counters
 Examples:
@@ -546,8 +547,20 @@ function detectManipulativeContext(opts = {}) {
   // Grades 5-8 are peak integer instruction years
   const counterGradeRelevant = gradeNum >= 5 && gradeNum <= 8;
 
-  const includeCounters = counterPatterns.some(p => p.test(allText)) ||
-    (counterGradeRelevant && /\binteger|negative|subtract|add/.test(allText));
+  // Upper bound: counters are a concrete manipulative for early integer work.
+  // Offering them to a high-school / Algebra-2+ student is mis-leveled ("counters
+  // to do 6+3 for a high schooler is wildly misinformed") — it scaffolds BELOW
+  // the student's level. Above that level, only surface counters if the student
+  // explicitly asks for them; otherwise suppress the instructions entirely.
+  const isAdvancedLevel = gradeNum >= 9 ||
+    /\b(algebra\s*(?:2|ii)|geometry|pre-?calc|precalculus|calculus|trigonometry|statistics)\b/.test(course);
+  const explicitCounterRequest =
+    /\b(counters?|zero\s*pairs?|use\s*(?:the\s*)?counters?|show\s*me\s*(?:the\s*)?(?:counters?|visual))\b/.test(msg);
+
+  const includeCounters = explicitCounterRequest || (!isAdvancedLevel && (
+    counterPatterns.some(p => p.test(allText)) ||
+    (counterGradeRelevant && /\binteger|negative|subtract|add/.test(allText))
+  ));
 
   // --- ALGEBRA TILES detection ---
   const tilePatterns = [
