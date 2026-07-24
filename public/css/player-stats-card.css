@@ -55,54 +55,68 @@
 @keyframes psc-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { #psc-profile { animation: none; } }
 
-.psc-full { display: flex; flex-direction: column; gap: 14px; padding: 14px; }
+.psc-full { display: flex; flex-direction: column; gap: 12px; padding: 12px; }
 
-/* ── header: character + greeting ───────────────────────────────── */
-.psc-head { display: flex; align-items: center; gap: 12px; }
-.psc-head #sidebar-avatar-panel, .psc-head-ava { flex: 0 0 auto; width: auto; display: flex; justify-content: center; }
-.psc-head .fba-stage { height: 88px !important; }
-.psc-head-txt { min-width: 0; }
-.psc-head-name { font: 800 18px/1.1 Inter, system-ui, sans-serif; color: var(--cr-text, #18202b); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.psc-head-sub { font: 600 11.5px/1.3 Inter, system-ui, sans-serif; color: var(--cr-text-dim, #5b6876); margin-top: 2px; }
+/* ── top block: full-body character on the LEFT, identity stack on the right.
+   Skill lists + CTA run full width BELOW this block (in .psc-full). ── */
+.psc-top { display: flex; align-items: stretch; gap: 10px; }
+.psc-avatar-col {
+  flex: 0 0 96px;
+  align-self: stretch;               /* match the identity stack's height */
+  display: flex; align-items: flex-end; justify-content: center;
+  min-height: 230px;                 /* a standing figure, not a thumbnail */
+}
+.psc-avatar-col #sidebar-avatar-panel, .psc-head-ava { width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+/* Let the full-body render fill the column instead of the old 88px header size. */
+.psc-avatar-col .fba-stage { height: auto !important; max-height: 100%; width: 100%; }
+.psc-avatar-col img, .psc-avatar-col svg { max-width: 100%; height: auto; }
 
-/* ── hero: gradient Level / XP / trophy ─────────────────────────── */
+.psc-top-right { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 9px; }
+.psc-greet { margin-bottom: 1px; }
+.psc-head-name { font: 800 16px/1.1 Inter, system-ui, sans-serif; color: var(--cr-text, #18202b); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psc-head-sub { font: 600 10.5px/1.3 Inter, system-ui, sans-serif; color: var(--cr-text-dim, #5b6876); margin-top: 2px; }
+
+/* ── hero: gradient Level / XP (trophy dropped — the right column is narrow) ── */
+/* Stacked vertically: identity row (shield · Level · rank) on top, XP full
+   width below — the narrow column can't fit them side by side. */
 .psc-hero {
   position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 20px;
+  display: flex; flex-direction: column;
+  gap: 9px;
+  padding: 13px;
+  border-radius: 18px;
   color: #fff;
   background:
     radial-gradient(120% 140% at 100% 0%, rgba(255,255,255,.28), transparent 55%),
     linear-gradient(135deg, #8b7bff 0%, #6c5ce7 60%, #5a49d6 100%);
-  box-shadow: 0 10px 26px rgba(108, 92, 231, .35);
+  box-shadow: 0 8px 20px rgba(108, 92, 231, .32);
   overflow: hidden;
 }
+.psc-trophy { display: none; }
 .psc-badge {
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  text-align: center; min-width: 72px;
+  display: flex; flex-direction: row; align-items: center; gap: 8px;
+  min-width: 0;
 }
 .psc-badge-shield {
-  width: 56px; height: 56px; border-radius: 16px;
+  flex: 0 0 auto;
+  width: 38px; height: 38px; border-radius: 11px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 26px;
+  font-size: 19px;
   background: rgba(255,255,255,.18);
   border: 1px solid rgba(255,255,255,.3);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
 }
-.psc-badge-lvl { font: 800 11px/1 Inter, system-ui, sans-serif; opacity: .92; }
+.psc-badge-lvl { flex: 0 0 auto; font: 800 12px/1 Inter, system-ui, sans-serif; opacity: .95; }
 .psc-badge-lvl b { font-size: 15px; }
 .psc-badge-rank {
   font: 800 9.5px/1.1 Inter, system-ui, sans-serif; letter-spacing: .02em;
-  padding: 3px 8px; border-radius: 999px;
+  padding: 4px 9px; border-radius: 999px;
   background: rgba(255,255,255,.2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .psc-hero-mid { min-width: 0; }
 .psc-hero-xplabel { font: 800 10px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; opacity: .85; }
-.psc-hero-xpval { font: 800 22px/1.1 Inter, system-ui, sans-serif; margin: 2px 0 8px; }
+.psc-hero-xpval { font: 800 22px/1.1 Inter, system-ui, sans-serif; margin: 2px 0 8px; white-space: nowrap; }
 .psc-hero-xpval small { font-size: 13px; opacity: .8; font-weight: 700; }
 .psc-hero-bar { height: 9px; border-radius: 999px; background: rgba(255,255,255,.25); overflow: hidden; }
 .psc-hero-fill { height: 100%; border-radius: 999px; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.6); transition: width .6s cubic-bezier(.2,1,.3,1); }
@@ -110,20 +124,22 @@
 .psc-trophy { font-size: 40px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.25)); }
 
 /* ── stat tiles ─────────────────────────────────────────────────── */
-.psc-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+/* Stacked beside the character: each tile is a compact horizontal row
+   [icon+label] .......... [value] · [subtitle]. */
+.psc-tiles { display: flex; flex-direction: column; gap: 6px; }
 .psc-tile {
-  display: flex; flex-direction: column; gap: 2px;
-  padding: 12px 10px;
-  border-radius: 16px;
+  display: flex; flex-direction: row; align-items: center; gap: 8px;
+  padding: 7px 10px;
+  border-radius: 12px;
   background: var(--cr-bg-panel, #fff);
   border: 1px solid var(--cr-border, #eef2f4);
-  box-shadow: 0 4px 12px rgba(15, 26, 36, .05);
+  box-shadow: 0 3px 9px rgba(15, 26, 36, .05);
 }
-.psc-tile-top { display: flex; align-items: center; gap: 5px; font: 800 10px/1 Inter, system-ui, sans-serif; color: var(--cr-text-dim, #5b6876); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.psc-tile-top i { font-size: 11px; flex: 0 0 auto; }
-.psc-tile-val { font: 800 21px/1 Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.psc-tile-val small { font-size: 10px; font-weight: 700; color: var(--cr-text-dim, #5b6876); }
-.psc-tile-sub { font: 700 9.5px/1.1 Inter, system-ui, sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psc-tile-top { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; font: 800 10.5px/1 Inter, system-ui, sans-serif; color: var(--cr-text-dim, #5b6876); }
+.psc-tile-top i { font-size: 11px; }
+.psc-tile-val { margin-left: auto; font: 800 16px/1 Inter, system-ui, sans-serif; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.psc-tile-val small { font-size: 9.5px; font-weight: 700; color: var(--cr-text-dim, #5b6876); }
+.psc-tile-sub { flex: 0 0 auto; font: 700 9.5px/1.1 Inter, system-ui, sans-serif; white-space: nowrap; }
 .psc-tile[data-c="streak"] .psc-tile-val, .psc-tile[data-c="streak"] i { color: #f5842a; }
 .psc-tile[data-c="streak"] .psc-tile-sub { color: #f5842a; }
 .psc-tile[data-c="solved"] .psc-tile-val, .psc-tile[data-c="solved"] i { color: #2fa96a; }
