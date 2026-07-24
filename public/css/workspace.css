@@ -1049,3 +1049,14 @@
   .cr-ws-board-card { transition: none; }
   .cr-ws-board-card--enter { opacity: 1; transform: none; }
 }
+
+/* ── Living Workspace pre-hide (MM_FEATURES.livingWorkspace='live' → html.mm-lws-live) ──
+   chat-workspace.js swaps the new board in over #cr-workspace by hiding the
+   legacy tabbed chrome IN JAVASCRIPT, after its modules load — so the old 4-tab
+   board painted first and flashed before being covered. Hide that chrome from
+   first paint instead. The player card stays (pinned bottom); the new surface
+   mounts into #lws-chat-mount, which is intentionally NOT matched here. Scoped to
+   'live' only — the 'off' kill switch leaves the legacy board untouched. */
+html.mm-lws-live #cr-workspace > .cr-ws-close,
+html.mm-lws-live #cr-workspace > .cr-ws-tabs,
+html.mm-lws-live #cr-workspace > #cr-ws-body { display: none; }
