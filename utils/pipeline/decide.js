@@ -96,6 +96,11 @@ function decide(observation, diagnosis, context = {}) {
     applyEvidenceModifiers(decision, context.evidence);
   }
 
+  // Back-off runs AFTER evidence on purpose: an explicit student directive
+  // ("I know this", "too easy", "stop asking") outranks any inferred signal,
+  // including a BKT "possible guessing" nudge that would re-inject probing.
+  applyBackOffModifiers(decision, observation);
+
   return decision;
 }
 
@@ -472,15 +477,29 @@ function decideCore(observation, diagnosis, context) {
         }
       }
     } else {
-      // Unverifiable — pipeline couldn't parse the problem to verify.
-      // The LLM must compute the answer itself before responding.
+      // Unverifiable — pipeline couldn't parse the problem to verify (garbled
+      // LaTeX, a nested/complex expression, a fraction-bar problem). The LLM
+      // must compute the answer itself before responding. The failure to guard
+      // against here is the tutor treating "I couldn't auto-verify" as license
+      // to interrogate the student's trivial sub-steps ("how did you get 9+3?")
+      // on a perfectly correct answer — the documented spiral into "WHY ARE YOU
+      // ASKING ME ABOUT 9+3! Do you think I am a 2nd grader?".
       decision.action = ACTIONS.CONTINUE_CONVERSATION;
       decision.directives.push(
-        'ANSWER VERIFICATION REQUIRED: Our math engine could not verify this answer automatically.',
-        'You must compute the correct answer yourself BEFORE responding — work it out, then respond accordingly.',
-        'If correct: confirm naturally. If wrong: guide with Socratic method without revealing the answer.',
+        'ANSWER VERIFICATION REQUIRED: Our math engine could not auto-verify this answer (the problem was hard to parse). Work the whole thing out YOURSELF before responding.',
+        'If you determine it is correct: confirm briefly and move on. Do NOT ask the student to explain, justify, or re-derive a correct answer.',
+        'NEVER ask the student to re-compute trivial sub-steps that are obviously below their level (single-digit sums, basic times-tables like 3×2 or 9+3, dividing small numbers). Check those silently yourself.',
+        'Only ask about a specific step if YOU found a genuine error in it — name that step. Absent a found error, a correct answer gets a brief confirmation, not an interrogation.',
         'When genuinely uncertain, say "Let me think about that..." and work through it. Do not default to implying the student is wrong.'
       );
+
+      // A student on a clean correct streak has earned the benefit of the doubt:
+      // keep it moving instead of probing an answer you merely couldn't auto-check.
+      if ((streaks.recentCorrectCount || 0) >= 2 && (streaks.recentWrongCount || 0) === 0) {
+        decision.directives.push(
+          'CORRECT STREAK: this student has been right repeatedly with no misses. Verify silently and keep advancing — do not slow them down to justify an answer you just could not auto-check.'
+        );
+      }
     }
     return decision;
   }
@@ -928,6 +947,39 @@ function applyInstructionalMode(decision, context) {
     default:
       return null;
   }
+}
+
+/**
+ * Apply durable back-off modifiers when the student has asserted competence /
+ * rejected scaffolding ("I know this", "too easy", "I don't need help", "stop
+ * asking", "why are you asking me?").
+ *
+ * This is the fix for the documented "won't take the hint" spiral: the tutor
+ * would say "I hear you!" and then interrogate the very next correct answer,
+ * driving the student to "Christ!!!". Acknowledging feedback once is not
+ * honoring it — the behavior has to change and STAY changed. observe.backOffMode
+ * persists the signal across the recent window so this applies for the rest of
+ * the session (fading only if the student later goes quiet or actually struggles).
+ *
+ * Runs LAST in decide() so it overrides any inferred nudge (mood, BKT guessing)
+ * that would re-inject probing.
+ */
+function applyBackOffModifiers(decision, observation) {
+  if (!observation || !observation.backOffMode) return;
+
+  decision.scaffoldLevel = Math.min(decision.scaffoldLevel, 2);
+
+  // Never run a comprehension check on a student who's telling us to back off.
+  if (decision.action === ACTIONS.CHECK_UNDERSTANDING) {
+    decision.action = ACTIONS.PRESENT_PROBLEM;
+  }
+
+  decision.directives.push(
+    'BACK OFF (student asserted competence): they have explicitly told you they know this / it is too easy / to stop asking. Honor it for the rest of the session unless they actually struggle.',
+    'Do NOT ask them to explain, justify, or walk through a CORRECT answer, and do NOT re-check trivial sub-steps (e.g. "how did you get 9+3?"). Confirm briefly and move on.',
+    'Raise the difficulty to something that respects their level.',
+    'You may acknowledge their point ONCE, briefly and without defensiveness, then just teach at the harder level. Never re-run the probing they just pushed back on.'
+  );
 }
 
 /**

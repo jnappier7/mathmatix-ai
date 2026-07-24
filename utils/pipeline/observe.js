@@ -114,6 +114,15 @@ const PATTERNS = {
   // against a mistaken tutor changed nothing about what happened next, and the
   // tutor restated its claim with mounting concreteness.
   dispute: /\b(you(?:'?re|\s+are)\s+(?:wrong|mistaken|incorrect|not\s+listening)|that'?s\s+(?:not\s+(?:correct|right|true)|wrong|incorrect)|that\s+is\s+not\s+(?:correct|right|true)|no\s+it'?s\s+not|i\s+disagree|i\s+already\s+(?:said|told\s+you)|that'?s\s+not\s+what\s+i\s+(?:said|meant)|you\s+made\s+a\s+mistake|check\s+it\s+again|look\s+again|it\s+is\s+(?:too|so))\b/i,
+
+  // The student is asserting competence / rejecting scaffolding: "I know this",
+  // "too easy", "I don't need help", "stop asking", "why are you asking me",
+  // "do you think I'm a 2nd grader". High precision on purpose — a false hit
+  // suppresses scaffolding, so bare "I know" and "I can do this" are excluded;
+  // only unambiguous "back off" phrasings match. Drives a DURABLE back-off mode
+  // (see observe(): once asserted, the tutor stops probing correct answers and
+  // raises difficulty for the rest of the session).
+  competenceAssertion: /\b(too\s+easy|this\s+is\s+(?:so\s+|way\s+)?easy|i\s+(?:already\s+)?know\s+(?:this\s+stuff|the\s+steps|how\s+to|it\s+already|this\s+already)|i\s+know\s+this\s+already|i\s+(?:don'?t|do\s+not)\s+need\s+(?:the\s+)?help|stop\s+(?:asking|explaining|quizzing)|quit\s+asking|i\s+got\s+this|i\s+can\s+do\s+(?:these|those|them|this\s+too)|(?:2nd|second)\s+grader|why\s+are\s+you\s+(?:asking|quizzing)\s+me)\b/i,
 };
 
 /**
@@ -589,6 +598,13 @@ function observe(message, context = {}) {
   // decide whether correctness gets re-examined.
   const isDispute = PATTERNS.dispute.test(lower);
 
+  // Competence assertion / scaffolding rejection — computed as a SIGNAL (like
+  // isDispute) because it co-occurs with answers, skips, and frustration. It
+  // also GUARDS the help-request branch below: "I don't NEED HELP" contains
+  // "help" and was misclassified as HELP_REQUEST, so the tutor handed a hint to
+  // a student demanding the opposite.
+  const assertsCompetence = PATTERNS.competenceAssertion.test(lower);
+
   if (PATTERNS.giveUp.test(lower)) {
     messageType = MESSAGE_TYPES.GIVE_UP;
   } else if (PATTERNS.idk.test(lower) && text.length < 50) {
@@ -598,7 +614,7 @@ function observe(message, context = {}) {
   } else if (PATTERNS.frustration.test(lower)) {
     messageType = MESSAGE_TYPES.FRUSTRATION;
     confidence = 0.8;
-  } else if (PATTERNS.helpRequest.test(lower)) {
+  } else if (PATTERNS.helpRequest.test(lower) && !assertsCompetence) {
     messageType = MESSAGE_TYPES.HELP_REQUEST;
   } else if (PATTERNS.offTask.test(lower)) {
     messageType = MESSAGE_TYPES.OFF_TASK;
@@ -663,6 +679,16 @@ function observe(message, context = {}) {
     text, messageType, !!answer, context.recentAssistantMessages
   );
 
+  // ── Durable back-off mode ──
+  // Once a student asserts competence / rejects scaffolding, the tutor must not
+  // revert to probing on the very next turn (the documented "I hear you!" then
+  // re-interrogate failure that drove a student to "Christ!!!"). Re-derive the
+  // mode each turn from the recent user window so it persists as long as the
+  // signal is live, and fades naturally if they later go quiet or struggle.
+  const backOffMode = assertsCompetence ||
+    (context.recentUserMessages || [])
+      .some(m => PATTERNS.competenceAssertion.test((m.content || '').toLowerCase()));
+
   return {
     messageType,
     confidence,
@@ -677,6 +703,8 @@ function observe(message, context = {}) {
     },
     problemContext: detectProblemContext(text),
     isDispute,            // true if the student is challenging something the tutor said
+    assertsCompetence,    // true if THIS message asserts competence / rejects scaffolding
+    backOffMode,          // durable: student has signaled "I know this" recently — stop probing, raise difficulty
     isWorksheetFollowUp,  // true if student is asking for multiple worksheet problems
     isBareProblemDrop,    // true if student handed over a new problem with no attempt
     hasRecentUpload,      // forwarded for decide stage
