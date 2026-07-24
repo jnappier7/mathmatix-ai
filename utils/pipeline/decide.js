@@ -477,15 +477,29 @@ function decideCore(observation, diagnosis, context) {
         }
       }
     } else {
-      // Unverifiable — pipeline couldn't parse the problem to verify.
-      // The LLM must compute the answer itself before responding.
+      // Unverifiable — pipeline couldn't parse the problem to verify (garbled
+      // LaTeX, a nested/complex expression, a fraction-bar problem). The LLM
+      // must compute the answer itself before responding. The failure to guard
+      // against here is the tutor treating "I couldn't auto-verify" as license
+      // to interrogate the student's trivial sub-steps ("how did you get 9+3?")
+      // on a perfectly correct answer — the documented spiral into "WHY ARE YOU
+      // ASKING ME ABOUT 9+3! Do you think I am a 2nd grader?".
       decision.action = ACTIONS.CONTINUE_CONVERSATION;
       decision.directives.push(
-        'ANSWER VERIFICATION REQUIRED: Our math engine could not verify this answer automatically.',
-        'You must compute the correct answer yourself BEFORE responding — work it out, then respond accordingly.',
-        'If correct: confirm naturally. If wrong: guide with Socratic method without revealing the answer.',
+        'ANSWER VERIFICATION REQUIRED: Our math engine could not auto-verify this answer (the problem was hard to parse). Work the whole thing out YOURSELF before responding.',
+        'If you determine it is correct: confirm briefly and move on. Do NOT ask the student to explain, justify, or re-derive a correct answer.',
+        'NEVER ask the student to re-compute trivial sub-steps that are obviously below their level (single-digit sums, basic times-tables like 3×2 or 9+3, dividing small numbers). Check those silently yourself.',
+        'Only ask about a specific step if YOU found a genuine error in it — name that step. Absent a found error, a correct answer gets a brief confirmation, not an interrogation.',
         'When genuinely uncertain, say "Let me think about that..." and work through it. Do not default to implying the student is wrong.'
       );
+
+      // A student on a clean correct streak has earned the benefit of the doubt:
+      // keep it moving instead of probing an answer you merely couldn't auto-check.
+      if ((streaks.recentCorrectCount || 0) >= 2 && (streaks.recentWrongCount || 0) === 0) {
+        decision.directives.push(
+          'CORRECT STREAK: this student has been right repeatedly with no misses. Verify silently and keep advancing — do not slow them down to justify an answer you just could not auto-check.'
+        );
+      }
     }
     return decision;
   }

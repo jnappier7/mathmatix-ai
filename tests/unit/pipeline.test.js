@@ -449,7 +449,25 @@ describe('Pipeline: Decide Stage', () => {
 
   const correctDiag = { type: 'correct', isCorrect: true, answer: '7', correctAnswer: '7', misconception: null };
   const incorrectDiag = { type: 'incorrect', isCorrect: false, answer: '5', correctAnswer: '7', misconception: null };
+  const unverifiableDiag = { type: 'unverifiable', isCorrect: null, answer: '26', correctAnswer: null, misconception: null };
   const noDiag = { type: 'no_answer' };
+
+  test('unverifiable answer → verify silently, do NOT interrogate trivial sub-steps', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '26' } });
+    const dec = decide(obs, unverifiableDiag, {});
+    expect(dec.action).toBe(ACTIONS.CONTINUE_CONVERSATION);
+    expect(dec.directives).toContainEqual(expect.stringContaining('NEVER ask the student to re-compute trivial sub-steps'));
+    expect(dec.directives).toContainEqual(expect.stringContaining('brief confirmation, not an interrogation'));
+  });
+
+  test('unverifiable + correct streak → keep advancing, no probing', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, {
+      answer: { value: '26' },
+      streaks: { idkCount: 0, giveUpCount: 0, recentWrongCount: 0, recentCorrectCount: 3 },
+    });
+    const dec = decide(obs, unverifiableDiag, {});
+    expect(dec.directives).toContainEqual(expect.stringContaining('CORRECT STREAK'));
+  });
 
   test('correct answer → confirm_correct', () => {
     const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
