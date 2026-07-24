@@ -24,6 +24,7 @@ const {
 
 const { MESSAGE_TYPES, messageStatesProblem } = require('./observe');
 const { VERIFICATION_STATES } = require('./verificationState');
+const { getSkillMasteryEntry } = require('../masteryGuard');
 
 // ── Tutoring actions the engine can choose ──
 const ACTIONS = {
@@ -84,6 +85,53 @@ const INSTRUCTIONAL_MODES = {
  * @param {Object} context.modeTransition - From modeTransitionDetector (optional)
  * @returns {Object} Decision: { action, phase, phasePrompt, scaffoldLevel, diagnosis, directives }
  */
+// Student-facing names for the transfer "contexts" that detectProblemContext
+// tags (observe.js). Keyed by those exact tags so seen/unseen math is reliable.
+const REPRESENTATION_FORMS = {
+  'numeric': 'a bare computation',
+  'word-problem': 'a word problem / real-world scenario',
+  'graphical': 'a graph or coordinate representation',
+  'visual': 'a diagram or visual model',
+  'conceptual': 'a "why does this work?" explain-it prompt',
+};
+
+/**
+ * Build-transfer nudge for a SUCCEEDING student.
+ *
+ * Mastery requires the skill be demonstrated across ≥3 distinct representations
+ * (the transfer pillar). A student can nail one format indefinitely and never
+ * cross that gate — so once they're succeeding but have seen the skill in only
+ * 1–2 forms, the forward move is a NEW representation, not another rep of the
+ * same one. This returns a directive naming the forms already seen and pointing
+ * at an unseen one; null when there's no focused skill, no transfer data, or the
+ * gate is already met (leave a proven-transfer student alone).
+ *
+ * Distinct from the failure-driven representation switch (approachEffectiveness):
+ * that fires when an approach ISN'T working; this fires when it IS, to broaden.
+ */
+function buildTransferDirective(context) {
+  const skillId = context.activeSkill?.skillId || context.tutorPlan?.currentTarget?.skillId;
+  if (!skillId || !context.user) return null;
+
+  const entry = getSkillMasteryEntry(context.user, skillId);
+  const transfer = entry?.pillars?.transfer;
+  if (!transfer || !Array.isArray(transfer.contextsAttempted)) return null;
+
+  const required = transfer.contextsRequired || 3;
+  const seen = [...new Set(transfer.contextsAttempted)];
+  // Nudge only in the middle band: they've shown it in at least one form but
+  // haven't yet transferred across the required number.
+  if (seen.length < 1 || seen.length >= required) return null;
+
+  const unseen = Object.keys(REPRESENTATION_FORMS).filter((f) => !seen.includes(f));
+  const seenLabels = seen.map((f) => REPRESENTATION_FORMS[f] || f).join(', ');
+  const suggestion = unseen.length
+    ? REPRESENTATION_FORMS[unseen[0]]
+    : 'a representation they have not used yet';
+
+  return `BUILD TRANSFER: they've shown this skill in ${seen.length} of ${required} representations so far (${seenLabels}). To move them toward mastery, pose the NEXT problem in a form they HAVEN'T used for this skill — e.g. ${suggestion}. Same skill, new representation. Repeating the format they've already nailed will not prove transfer and cannot complete mastery.`;
+}
+
 function decide(observation, diagnosis, context = {}) {
   const decision = decideCore(observation, diagnosis, context);
 
@@ -381,6 +429,14 @@ function decideCore(observation, diagnosis, context) {
           );
         }
       }
+
+      // Shape the forward move toward TRANSFER: a succeeding student who has only
+      // seen the skill in 1–2 representations needs a new form next, not another
+      // rep of the same one — that variety is what completes mastery. Applies
+      // whether or not they showed reasoning (a clean reasoned solve is exactly
+      // who's ready to transfer).
+      const transferDirective = buildTransferDirective(context);
+      if (transferDirective) decision.directives.push(transferDirective);
 
       // Update phase state via evidence-based evaluator
       if (phaseState) {

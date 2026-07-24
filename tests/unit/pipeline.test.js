@@ -484,6 +484,42 @@ describe('Pipeline: Decide Stage', () => {
     expect(dec.directives).toContainEqual(expect.stringContaining('CORRECT STREAK'));
   });
 
+  // ── Build-transfer nudge (representation variety toward the 3-context gate) ──
+  const ctxWithContexts = (contexts) => ({
+    activeSkill: { skillId: 'frac-add' },
+    user: {
+      skillMastery: new Map([
+        ['frac-add', { pillars: { transfer: { contextsAttempted: contexts, contextsRequired: 3 } } }],
+      ]),
+    },
+  });
+
+  test('correct + skill seen in only 1 representation → BUILD TRANSFER, names an unseen form', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
+    const dec = decide(obs, correctDiag, ctxWithContexts(['numeric']));
+    expect(dec.directives).toContainEqual(expect.stringContaining('BUILD TRANSFER'));
+    // 'numeric' is seen → it must steer toward a form NOT yet used.
+    expect(dec.directives).toContainEqual(expect.stringContaining('word problem'));
+  });
+
+  test('correct but transfer gate already met (3 contexts) → no BUILD TRANSFER', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
+    const dec = decide(obs, correctDiag, ctxWithContexts(['numeric', 'word-problem', 'graphical']));
+    expect(dec.directives).not.toContainEqual(expect.stringContaining('BUILD TRANSFER'));
+  });
+
+  test('INCORRECT answer never triggers BUILD TRANSFER (only shape a succeeding move)', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '5' } });
+    const dec = decide(obs, incorrectDiag, ctxWithContexts(['numeric']));
+    expect(dec.directives).not.toContainEqual(expect.stringContaining('BUILD TRANSFER'));
+  });
+
+  test('correct with no focused-skill transfer data → no BUILD TRANSFER, no crash', () => {
+    const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, { answer: { value: '7' } });
+    const dec = decide(obs, correctDiag, {});
+    expect(dec.directives).not.toContainEqual(expect.stringContaining('BUILD TRANSFER'));
+  });
+
   test('single correct (no streak) → no CORRECT STREAK directive', () => {
     const obs = makeObs(MESSAGE_TYPES.ANSWER_ATTEMPT, {
       answer: { value: '7' },
