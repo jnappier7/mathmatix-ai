@@ -221,46 +221,54 @@ body[data-skin-avatarframe="frame.rainbow"] .sc-avatar-img {
  * of the work itself is never touched.
  * ========================================================================= */
 
-/* ---- Board (data-skin-board) — applies to the whiteboard frame when present ---- */
-body[data-skin-board="board.grid"] .board-frame {
+/* ---- Board (data-skin-board) — skins the math workspace panel (#cr-workspace),
+ * the surface the tutor's board/graph/tiles live on. The panel background shows
+ * around and behind the work cards, never behind the math itself. ---- */
+body[data-skin-board="board.grid"] #cr-workspace {
+  background-color: #eef4ff;
   background-image:
-    linear-gradient(rgba(59, 130, 246, 0.18) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.18) 1px, transparent 1px);
+    linear-gradient(rgba(59, 130, 246, 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.28) 1px, transparent 1px);
   background-size: 22px 22px;
 }
-body[data-skin-board="board.chalk"] .board-frame {
+body[data-skin-board="board.chalk"] #cr-workspace {
   background-color: #24322b;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 6px 6px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 7px 7px;
 }
-body[data-skin-board="board.cheetah"] .board-frame {
+body[data-skin-board="board.cheetah"] #cr-workspace {
   background-color: #f2c14e;
   background-image:
-    radial-gradient(circle at 20% 30%, #5b3a1a 8%, transparent 9%),
-    radial-gradient(circle at 60% 70%, #5b3a1a 7%, transparent 8%),
-    radial-gradient(circle at 80% 25%, #5b3a1a 6%, transparent 7%),
-    radial-gradient(circle at 35% 80%, #5b3a1a 7%, transparent 8%);
-  background-size: 60px 60px;
+    radial-gradient(circle at 20% 30%, #5b3a1a 9%, transparent 10%),
+    radial-gradient(circle at 62% 68%, #5b3a1a 8%, transparent 9%),
+    radial-gradient(circle at 82% 22%, #5b3a1a 7%, transparent 8%),
+    radial-gradient(circle at 35% 82%, #5b3a1a 8%, transparent 9%);
+  background-size: 64px 64px;
 }
 
-/* ---- Calculator (data-skin-calculator) — accents the floating calculator ---- */
+/* ---- Calculator (data-skin-calculator) — skins the floating calculator (shows
+ * when the student opens it). Real markup: #floating-calculator >
+ * .calculator-header-bar + .calculator-body. ---- */
 body[data-skin-calculator="calc.hotpink"] #floating-calculator {
   border: 2px solid #ff2e93 !important;
   box-shadow: 0 8px 30px rgba(255, 46, 147, 0.4) !important;
 }
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .calc-header,
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .floating-calc-header {
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-header-bar {
   background: linear-gradient(135deg, #ff5db1, #ff2e93) !important;
   color: #fff !important;
 }
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-body {
+  background: #fff0f7 !important;
+}
 body[data-skin-calculator="calc.carbon"] #floating-calculator {
   border: 2px solid #2b2f36 !important;
-  background-image: repeating-linear-gradient(45deg, #2b2f36 0 4px, #23262c 4px 8px) !important;
 }
-body[data-skin-calculator="calc.carbon"] #floating-calculator .calc-header,
-body[data-skin-calculator="calc.carbon"] #floating-calculator .floating-calc-header {
+body[data-skin-calculator="calc.carbon"] #floating-calculator .calculator-header-bar {
   background: #16181c !important;
   color: #e5e7eb !important;
+}
+body[data-skin-calculator="calc.carbon"] #floating-calculator .calculator-body {
+  background: repeating-linear-gradient(45deg, #23262c 0 5px, #1e2126 5px 10px) !important;
 }
 
 /* ---- Header (data-skin-header) — patterns the top bar strip ---- */
