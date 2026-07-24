@@ -22,96 +22,16 @@ const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = requir
 const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 const { buildProgressUpdate } = require('../utils/progressState');
 
-// Day-one diagnostic prompt shown as a card on course entry, so the tutor can
-// target the course to the student's real level. Per course:
-//   - ACT prep → a full practice ACT (window.openActTest), gated on having taken one.
-//   - Algebra / Calculus / Precalc → the adaptive Starting Point placement
-//     (window.openStartingPoint), gated on user.assessmentCompleted.
-// Persists until the student completes it. Returns a welcomeData.diagnostic
-// descriptor, or null. Extend by adding a course entry below.
-const STARTING_POINT_CARD = {
-  type: 'starting-point',
-  title: 'Find your Starting Point',
-  body: 'Take a short adaptive placement first — no studying needed. Your tutor uses it to '
-    + 'start you at exactly the right level and focus each session on what you actually need.',
-  cta: 'Take the Starting Point',
-};
-// Every course opens with a pre-assessment. A course is prep and readiness, not
-// the whole curriculum, so the first thing it should do is establish what the
-// student already owns — then clear those skills and aim the course at what is
-// left. Courses with a purpose-built diagnostic keep it; everything else gets the
-// course pre-assessment, which tests that course's OWN skills rather than a
-// generic placement.
-const PRE_ASSESSMENT_CARD = {
-  type: 'course-preassessment',
-  title: 'Start with a quick check',
-  body: 'Answer a few questions first so this course can skip what you already know '
-    + 'and spend its time on what you actually need. Anything you get right is marked '
-    + 'as yours — you will not be taught it again.',
-  cta: 'Start the check',
-};
-const COURSE_DIAGNOSTICS = {
-  'act-prep': {
-    type: 'act-practice',
-    title: 'Start with a full Practice ACT',
-    body: 'Take a timed practice ACT Math test first — this is your baseline. Your tutor uses '
-      + 'the results to pinpoint exactly which skills to focus your bootcamp on, and anything '
-      + 'you already ace is marked as yours so the bootcamp skips it.',
-    cta: 'Take the Practice ACT',
-    // ACT prep BEGINS with a full timed baseline. Unlike a short warm-up check,
-    // the point is the real thing under real conditions: the scaled score is the
-    // number the student is trying to move, so a partial substitute would give
-    // them nothing to measure against.
-    required: true,
-  },
-  'algebra-1': STARTING_POINT_CARD,
-  'algebra-2': STARTING_POINT_CARD,
-  'ap-calculus-ab': STARTING_POINT_CARD,
-  'calculus-bc': STARTING_POINT_CARD,
-  'precalculus': STARTING_POINT_CARD,
-};
-
-async function buildCourseDiagnostic(user, courseId) {
-  // Default rather than an allowlist — a course with no entry used to open with
-  // no diagnostic at all, which is how a student ends up being taught a module
-  // they could already pass.
-  const card = COURSE_DIAGNOSTICS[courseId] || PRE_ASSESSMENT_CARD;
-  if (!card || !user) return null;
-  if (card.type === 'course-preassessment') {
-    // Only once per course: a completed session's pre-assessment stands.
-    try {
-      const done = await CourseSession.countDocuments({
-        userId: user._id, courseId, preAssessmentCompletedAt: { $ne: null }
-      });
-      if (done > 0) return null;
-    } catch (err) {
-      console.error('[CourseSession] pre-assessment check failed (non-fatal):', err.message);
-      return null;
-    }
-    return {
-      type: card.type, title: card.title, body: card.body, cta: card.cta,
-      courseId, required: true
-    };
-  }
-  try {
-    if (card.type === 'act-practice') {
-      const taken = await ActTestSession.countDocuments({ userId: user._id, status: 'completed' });
-      if (taken > 0) return null;                 // already took a practice ACT
-    } else if (card.type === 'starting-point') {
-      const expired = user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) < new Date();
-      if (user.assessmentCompleted && !expired) return null; // already placed (and current)
-    }
-  } catch (err) {
-    console.error('[CourseSession] diagnostic check failed (non-fatal):', err.message);
-    return null;
-  }
-  // `required` tells the UI to gate course entry rather than render a dismissible
-  // nudge. A baseline the student can click past is not a baseline.
-  return {
-    type: card.type, title: card.title, body: card.body, cta: card.cta,
-    required: !!card.required
-  };
-}
+// The diagnostic-card definitions and the "is a baseline pending" logic moved to
+// utils/courseDiagnostic.js so the SERVER greeting path can share the exact same
+// rule (see that file). Re-exported names below keep the rest of this route
+// unchanged.
+const {
+  STARTING_POINT_CARD,
+  PRE_ASSESSMENT_CARD,
+  COURSE_DIAGNOSTICS,
+  buildCourseDiagnostic,
+} = require('../utils/courseDiagnostic');
 
 /* ============================================================
    GET /api/course-sessions/catalog

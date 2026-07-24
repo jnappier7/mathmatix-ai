@@ -1008,6 +1008,16 @@ class CourseManager {
 
             const data = await res.json();
 
+            // The server withheld the greeting because a required baseline is not
+            // done. Show the baseline card and teach nothing — the server is the
+            // source of truth here, so even if the client gate was bypassed (or
+            // its bundle failed to load), no greeting is rendered or persisted.
+            if (data.baselineRequired) {
+                this._baselinePending = true;
+                if (data.diagnostic) this.showDiagnosticCard(data.diagnostic);
+                return;
+            }
+
             // If the current module is a checkpoint, open the card-based UI instead of chat
             if (data.isCheckpoint && window.floatingCheckpoint) {
                 window.floatingCheckpoint.open({ title: data.checkpointTitle });
