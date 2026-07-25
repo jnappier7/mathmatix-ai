@@ -3099,6 +3099,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 setTimeout(() => window.openActTest(), 400); // let the tutor's confirming reply render first
             }
 
+            // Server withheld course teaching because a REQUIRED baseline (e.g. the
+            // ACT practice test) isn't done — surface the baseline card under the
+            // tutor's message so the student can start it. We do NOT auto-open the
+            // runner: its 45-min timer starts the instant it opens, so the student
+            // taps the card's CTA when ready. The card's CTA calls openActTest.
+            if (data.baselineRequired && data.diagnostic &&
+                window.courseManager && typeof window.courseManager.showDiagnosticCard === 'function') {
+                setTimeout(() => window.courseManager.showDiagnosticCard(data.diagnostic), 400);
+            }
+
             // Render interactive graph tool if AI requested one
             if (data.graphTool && window.GraphTool) {
                 const messageElements = document.querySelectorAll('.message.ai');

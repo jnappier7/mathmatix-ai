@@ -1037,6 +1037,42 @@ async function runStudentTurn(req, res) {
             };
         }
 
+        // ── PROACTIVE BASELINE GATE ──
+        // A REQUIRED baseline (currently the full practice ACT for act-prep) must
+        // be completed before ANY course teaching. The greeting gate in courseChat
+        // only covers course ENTRY — a student already inside the course who just
+        // types reaches THIS endpoint and would otherwise be taught without ever
+        // taking the baseline (the entry card is a dismissible nudge). Enforcing it
+        // here, on every course turn until it's done, is what makes "every enrollee
+        // gets a baseline" actually hold, no matter how they landed in the chat.
+        // Runs before the streaming headers below, so a plain JSON reply is safe;
+        // the finally at the end of the handler releases the per-user lock. Skipped
+        // for isGreeting (that path is already gated in routes/courseChat.js).
+        if (user.activeCourseSessionId && !isGreeting) {
+            try {
+                const CourseSession = require('../models/courseSession');
+                const gateSession = await CourseSession.findById(user.activeCourseSessionId);
+                if (gateSession && gateSession.status === 'active') {
+                    const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
+                    const { pending, diagnostic } = await isRequiredBaselinePending(user, gateSession.courseId);
+                    if (pending) {
+                        const gateText = diagnostic?.type === 'act-practice'
+                            ? "Before we dig into any lessons, let's lock in your baseline. Take the full practice ACT so I can see exactly where you're starting and aim your prep at what you actually need — tap **Take the Practice ACT** below to begin. Once it's done, we'll build your plan around your results."
+                            : "Let's start with a quick baseline check so this course can skip what you already know and spend its time on what you actually need. Tap the card below to begin.";
+                        logger.info('Baseline gate: withholding course teaching until baseline complete', { userId, courseId: gateSession.courseId });
+                        return res.json({
+                            text: gateText,
+                            baselineRequired: true,
+                            diagnostic,
+                            conversationId: (typeof activeConversation !== 'undefined' && activeConversation) ? String(activeConversation._id) : null
+                        });
+                    }
+                }
+            } catch (gateErr) {
+                logger.warn('Baseline gate check failed (non-fatal)', { error: gateErr.message });
+            }
+        }
+
         // Enrich with active course session data (if user is in a course)
         if (user.activeCourseSessionId) {
             try {
