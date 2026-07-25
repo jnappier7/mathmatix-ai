@@ -204,6 +204,18 @@
     });
   }
 
+  // Student-facing summary of a finished card (spec §4.5): completion +
+  // assistance in the student's own terms. Levels 1–4 of the §12 ladder are
+  // independent; 5+ means the tutor's thinking was in the loop. `assistance`
+  // is null for work recorded before the ladder existed (or live-session
+  // archives, where the level is server-side only) — say less, not wrong.
+  // Pure; exported for tests.
+  function assistanceSummary(solved, assistance) {
+    if (!solved) return 'Not finished yet';
+    if (assistance == null) return 'Solved';
+    return assistance <= 4 ? 'Solved it myself' : 'Solved with my tutor';
+  }
+
   function DerivationView(container, opts) {
     opts = opts || {};
     this.doc = container.ownerDocument || document;
@@ -333,6 +345,7 @@
     this.el.problem.style.display = 'none';
     this._problemTex = null;
     this._elements = [];
+    this.el.root.classList.remove('is-solved-current');
     this._refreshEmpty();
   };
 
@@ -356,6 +369,23 @@
     this._renderRail();
   };
 
+  // Zip per-problem metadata from the persisted ledger (assistance level,
+  // completedAt) onto the archive entries a hydration replay just produced.
+  // Alignment is positional — core/ledgerReplay.js guarantees ledgerMeta()
+  // filters the same entries ledgerToTurns() replays. Extra meta is ignored;
+  // entries beyond the meta list (e.g. live-session archives) stay bare.
+  DerivationView.prototype.annotateArchive = function (metaList) {
+    if (!Array.isArray(metaList) || !metaList.length) return;
+    var n = Math.min(this._archive.length, metaList.length);
+    for (var i = 0; i < n; i++) {
+      var m = metaList[i];
+      if (!m || typeof m !== 'object') continue;
+      if (m.assistance != null) this._archive[i].assistance = m.assistance;
+      if (m.completedAt != null) this._archive[i].completedAt = m.completedAt;
+    }
+    this._renderRail();
+  };
+
   DerivationView.prototype._renderRail = function () {
     var self = this;
     var d = this.doc;
@@ -366,10 +396,11 @@
     this._archive.forEach(function (entry, i) {
       var b = d.createElement('button');
       b.type = 'button';
-      b.className = 'lws-dv-thumb' + (entry.solved ? ' is-solved' : '');
+      var independent = entry.solved && entry.assistance != null && entry.assistance <= 4;
+      b.className = 'lws-dv-thumb' + (entry.solved ? ' is-solved' : '') + (independent ? ' is-independent' : '');
       b.setAttribute('role', 'listitem');
       b.setAttribute('data-lws-archive-id', entry.id);
-      var label = 'Problem ' + (i + 1) + (entry.solved ? ', solved' : ', not finished');
+      var label = 'Problem ' + (i + 1) + ' — ' + assistanceSummary(entry.solved, entry.assistance);
       b.setAttribute('aria-label', 'Reopen ' + label);
       b.title = 'Reopen ' + label;
 
@@ -416,6 +447,25 @@
     back.addEventListener('click', function () { self.closeArchived(); });
     bar.appendChild(tag); bar.appendChild(back);
 
+    // Collapsed-card summary (spec §4.5): how it ended and how much work it
+    // took, in the student's terms, before the full derivation below.
+    var stepCount = entry.elements.filter(function (e) {
+      var k = classify(e);
+      return k && k !== 'problem' && k !== 'operation';
+    }).length;
+    var sum = d.createElement('div');
+    sum.className = 'lws-dv-ov-sum' + (entry.solved ? ' is-solved' : '');
+    var sumStatus = d.createElement('span');
+    sumStatus.className = 'lws-dv-ov-sum-status';
+    sumStatus.textContent = assistanceSummary(entry.solved, entry.assistance);
+    sum.appendChild(sumStatus);
+    if (stepCount > 0) {
+      var sumSteps = d.createElement('span');
+      sumSteps.className = 'lws-dv-ov-sum-steps';
+      sumSteps.textContent = stepCount + (stepCount === 1 ? ' step' : ' steps');
+      sum.appendChild(sumSteps);
+    }
+
     var body = d.createElement('div'); body.className = 'lws-dv-ov-body';
     var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
     var problem = d.createElement('div'); problem.className = 'lws-dv-problem';
@@ -436,7 +486,7 @@
       else self._addLine(el, kind, lines);
     });
 
-    ov.appendChild(bar); ov.appendChild(body);
+    ov.appendChild(bar); ov.appendChild(sum); ov.appendChild(body);
     this.el.root.appendChild(ov);
     this._overlay = ov;
     this._escHandler = function (ev) { if (ev.key === 'Escape') self.closeArchived(); };
@@ -641,6 +691,10 @@
     freshNodes(seen, toArray(this.el.lines.childNodes)).forEach(function (n) {
       if (n.classList) n.classList.add('lws-dv-fresh');
     });
+    // §4.4 card state, kept deliberately subtle: once the derivation in focus
+    // reaches its solution, the pinned problem header shows a "Solved ✓" chip
+    // (CSS reads this class). Cleared by _wipeCurrent with everything else.
+    this.el.root.classList.toggle('is-solved-current', hasSolution(this._elements));
     this._refreshEmpty();
     this._scrollToEnd();
   };
@@ -665,9 +719,10 @@
   DerivationView.unwrapText = unwrapText;
   DerivationView.freshNodes = freshNodes;
   DerivationView.hasSolution = hasSolution;
+  DerivationView.assistanceSummary = assistanceSummary;
   DerivationView.MAX_ARCHIVE = MAX_ARCHIVE;
   DerivationView.splitBlanks = splitBlanks;
   DerivationView.hasBlank = hasBlank;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, MAX_ARCHIVE: MAX_ARCHIVE, splitBlanks: splitBlanks, hasBlank: hasBlank };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE, splitBlanks: splitBlanks, hasBlank: hasBlank };
 })(typeof self !== 'undefined' ? self : this);

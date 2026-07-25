@@ -19,7 +19,8 @@
 const { applyTurnToLedger } = require('../../../utils/pipeline/boardLedger');
 const { ledgerToTurns } = require('../../../public/js/living-workspace/core/ledgerReplay.js');
 const { adaptBoardCommands } = require('../../../public/js/living-workspace/dom/legacyBoardAdapter.js');
-const { classify, hasSolution } = require('../../../public/js/living-workspace/dom/derivationView.js');
+const { classify, hasSolution, assistanceSummary } = require('../../../public/js/living-workspace/dom/derivationView.js');
+const { ledgerMeta } = require('../../../public/js/living-workspace/core/ledgerReplay.js');
 
 const NOW = new Date('2026-07-25T12:00:00Z');
 
@@ -84,6 +85,29 @@ describe('board hydration round trip', () => {
     expect(board.focus).toBeNull();
     expect(board.rail).toHaveLength(1);
     expect(hasSolution(board.rail[0].elements)).toBe(true);
+  });
+
+  test('assistance recorded by the pipeline surfaces as the student-facing summary', () => {
+    // Problem 1 solved with heavy help (ladder 8); problem 2 solved unaided.
+    let ledger = null;
+    ledger = applyTurnToLedger(ledger, [{ action: 'pose', tex: 'a=1' }], NOW, 1);
+    ledger = applyTurnToLedger(ledger, [{ action: 'verify', tex: 'a=1' }], NOW, 8);
+    ledger = applyTurnToLedger(ledger, [{ action: 'pose', tex: 'b=2' }], NOW, 1);
+    ledger = applyTurnToLedger(ledger, [{ action: 'verify', tex: 'b=2' }], NOW, 2);
+    ledger = applyTurnToLedger(ledger, [{ action: 'clear' }], NOW, 1);
+
+    const meta = ledgerMeta(JSON.parse(JSON.stringify(ledger)));
+    expect(meta.map(m => assistanceSummary(m.solved, m.assistance))).toEqual([
+      'Solved with my tutor',
+      'Solved it myself',
+    ]);
+  });
+
+  test('assistanceSummary degrades honestly when the level is unknown', () => {
+    expect(assistanceSummary(true, null)).toBe('Solved');       // pre-ladder data
+    expect(assistanceSummary(false, 9)).toBe('Not finished yet');
+    expect(assistanceSummary(true, 4)).toBe('Solved it myself');
+    expect(assistanceSummary(true, 5)).toBe('Solved with my tutor');
   });
 
   test('every replayed step survives the adapter (nothing dropped in transport)', () => {
