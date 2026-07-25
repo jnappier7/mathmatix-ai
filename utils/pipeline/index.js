@@ -1608,6 +1608,9 @@ async function runPipeline(message, ctx) {
   // ── Return everything chat.js needs ──
   return {
     text: verified.text,
+    // Signals the client to open the timed practice-ACT runner. Extracted in
+    // verify (shared choke point) so it fires on both /api/chat and course-chat.
+    launchPracticeAct: verified.extracted?.launchPracticeAct || false,
     visualCommands: verified.visualCommands,
     boardCommands: verified.boardCommands || [],
     xpCommands: verified.xpCommands || [],

@@ -1631,6 +1631,11 @@ async function runStudentTurn(req, res) {
 
         const responseData = {
             text: aiResponseText,
+            // ACT-prep tutor confirmed the student wants the real practice test:
+            // tell the client to open the timed runner (script.js → openActTest).
+            // Set from the pipeline (verify extracts <LAUNCH_PRACTICE_ACT>); the
+            // tag itself is already stripped from aiResponseText.
+            launchPracticeAct: pipelineResult.launchPracticeAct || false,
             // Tells the browser this turn belongs to a NEW session, so it can
             // drop the previous one's transcript and board before painting.
             sessionRolled,

@@ -170,10 +170,11 @@ async function postProcessCourseResult(pipelineResult, courseContext, conversati
   // ── Practice-ACT launch detection ──
   // The ACT tutor emits <LAUNCH_PRACTICE_ACT> (only after the student confirms)
   // to open the REAL timed test — instead of improvising its own quiz, which
-  // produces no ActTestSession and feeds none of the bootcamp targeting. Strip
-  // the tag and signal the client to launch the runner.
-  let launchPracticeAct = false;
-  if (/<LAUNCH_PRACTICE_ACT\s*>/i.test(pipelineResult.text || '')) {
+  // produces no ActTestSession and feeds none of the bootcamp targeting. The
+  // shared pipeline (verify) now extracts + strips this tag, so honor that flag
+  // first; the regex is a defensive fallback in case the tag survives.
+  let launchPracticeAct = pipelineResult.launchPracticeAct || false;
+  if (!launchPracticeAct && /<LAUNCH_PRACTICE_ACT\s*>/i.test(pipelineResult.text || '')) {
     launchPracticeAct = true;
     pipelineResult.text = pipelineResult.text.replace(/<LAUNCH_PRACTICE_ACT\s*>/gi, '').trim();
   }
