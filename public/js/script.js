@@ -698,7 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.continued && Array.isArray(data.messages)) {
                 if (data.messages.length > 0 && typeof window.updateChatForSession === 'function') {
                     window.updateChatForSession(
-                        { _id: data.conversationId, conversationType: 'general' },
+                        { _id: data.conversationId, conversationType: 'general', boardLedger: data.boardLedger || null },
                         data.messages
                     );
                 }
@@ -5481,6 +5481,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
             // For course and general conversations, the caller handles the greeting
+        }
+
+        // Rebuild the workspace board to match this conversation: finished
+        // problems return to the rail, the in-progress one lands back in focus.
+        // A conversation with no board history hydrates to an empty board, so
+        // the previous session's work never bleeds across a switch.
+        if (window.LWS_CHAT && typeof window.LWS_CHAT.hydrate === 'function') {
+            try { window.LWS_CHAT.hydrate(conversation.boardLedger || null); }
+            catch (err) { console.error('[updateChatForSession] board hydrate failed:', err); }
         }
 
         console.log('[updateChatForSession] Loaded', messages?.length || 0, 'messages');

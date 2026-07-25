@@ -57,6 +57,9 @@
     // when the server rolls the conversation over after an idle gap — the new
     // session must not open onto the previous one's work.
     reset: function () {},
+    // Rebuild the board from a persisted conversation.boardLedger (session
+    // switch / page re-mount). No-op when the workspace is off.
+    hydrate: function () {},
   };
   window.LWS_CHAT = api;
   if (!ON) return;
@@ -65,11 +68,11 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260724a';
+  var ASSET_V = '?v=20260725a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
-    'core/snapshotManager.js', 'core/a11yCommands.js',
+    'core/snapshotManager.js', 'core/a11yCommands.js', 'core/ledgerReplay.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
     'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
     'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
@@ -82,6 +85,7 @@
   var dv = null;
   var ready = false;
   var pending = null;        // latest board_commands received before ready
+  var pendingLedger;         // ledger passed to hydrate() before ready (undefined = none)
   var turn = 0;
 
   function injectCss() {
@@ -247,8 +251,29 @@
 
   api.reset = function () {
     pending = null;                 // don't let a queued turn repaint the old session
+    pendingLedger = undefined;
     if (!dv) return;
     try { dv.resetAll(); } catch (e) { console.error('[LWS_CHAT] reset failed', e); }
+  };
+
+  // Rebuild the board from a persisted conversation.boardLedger: each finished
+  // problem replays and is parked on the rail, the in-progress one lands in
+  // focus. Replays run through the SAME adapter/render path as live turns, so
+  // hydration can't drift from live behavior. hydrate(null) is a plain reset
+  // (a conversation with no board history must show an empty board).
+  function doHydrate(ledger) {
+    try { dv.resetAll(); } catch (e) { console.error('[LWS_CHAT] hydrate reset failed', e); }
+    if (!ledger || typeof window.LWS.ledgerToTurns !== 'function') return;
+    var turns;
+    try { turns = window.LWS.ledgerToTurns(ledger); }
+    catch (e) { console.error('[LWS_CHAT] ledger replay failed', e); return; }
+    turns.forEach(render);
+  }
+
+  api.hydrate = function (ledger) {
+    pending = null;                 // queued live turns belong to the old view
+    if (!ready || !dv) { pendingLedger = ledger || null; return; }
+    doHydrate(ledger);
   };
 
   // A student filling a scaffold's blanks is answering the tutor — send it as a
@@ -266,6 +291,10 @@
       var mount = buildPanel();
       dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers(), onBlankSubmit: submitBlanks });
       ready = true;
+      // Queued work replays in arrival order: hydrate() clears any turn queued
+      // before it, so a `pending` that is still set alongside a pendingLedger
+      // arrived AFTER the hydrate and renders on top of the rebuilt board.
+      if (pendingLedger !== undefined) { var l = pendingLedger; pendingLedger = undefined; doHydrate(l); }
       if (pending) { var p = pending; pending = null; render(p); }
       console.log('[LWS_CHAT] mounted (derivation, mode=' + MODE + ')');
     });
