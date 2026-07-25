@@ -237,6 +237,16 @@ const conversationSchema = new Schema({
         type: Schema.Types.Mixed,
         default: null
     },
+    // Persistent Problem Card lifecycle for the Living Workspace board.
+    // { current: { problemTex, posedAt, steps:[boardCommand] } | null,
+    //   completed: [{ problemTex, steps, solved, completedAt }] } — capped
+    // (12 problems / 60 steps each) by utils/pipeline/boardLedger.js, which is
+    // the only writer. Replayed client-side on session switch / re-mount so
+    // the board survives a reload. Null until the first board command lands.
+    boardLedger: {
+        type: Schema.Types.Mixed,
+        default: null
+    },
     // Session summary: compact snapshot for cross-session pattern detection.
     // Written at periodic intervals (every 10 turns) by the pipeline.
     sessionSummary: {

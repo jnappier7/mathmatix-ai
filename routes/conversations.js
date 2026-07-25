@@ -416,7 +416,11 @@ router.post('/:id/switch', isAuthenticated, validateObjectId('id'), async (req, 
         topicEmoji: conversation.topicEmoji,
         name: conversation.conversationName || conversation.topic || 'General Chat',
         conversationType: conversation.conversationType,
-        currentTopic: conversation.currentTopic
+        currentTopic: conversation.currentTopic,
+        // Rides inside `conversation` (not a sibling) so sidebar.js can stay
+        // untouched — it forwards this object verbatim to updateChatForSession,
+        // which replays the board from it.
+        boardLedger: conversation.boardLedger || null
       },
       messages: recentMessages
     });

@@ -31,6 +31,7 @@ const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
 const { assembleEvidence } = require('./evidenceAccumulator');
+const { applyTurnToLedger } = require('./boardLedger');
 
 // New data-driven engines
 const { updateBKT, initializeBKT } = require('../knowledgeTracer');
@@ -1180,6 +1181,21 @@ async function runPipeline(message, ctx) {
     } else if (lastEmitted === 'verify' || lastEmitted === 'clear') {
       ctx.conversation.boardProblem = null;
       ctx.conversation.markModified?.('boardProblem');
+    }
+  }
+
+  // Persistent Problem Card lifecycle (Live Workspace spec §4, MVP #20): fold
+  // this turn's board into conversation.boardLedger so a reload / session
+  // switch can replay the board — the in-focus derivation AND the rail of
+  // finished problems — instead of coming back blank. ALL verified commands
+  // are folded (not just cycleCards): the client renders example/scaffold
+  // lines too, and a faithful replay must include them. Non-fatal by design.
+  if (verified.boardCommands.length > 0 && ctx.conversation) {
+    try {
+      ctx.conversation.boardLedger = applyTurnToLedger(ctx.conversation.boardLedger, verified.boardCommands);
+      ctx.conversation.markModified?.('boardLedger');
+    } catch (ledgerErr) {
+      boardLogger.warn('Board ledger update failed (non-fatal)', { error: ledgerErr.message });
     }
   }
 

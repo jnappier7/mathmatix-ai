@@ -2381,7 +2381,7 @@ async function handleGreetingRequest(req, res, userId) {
                     res.setHeader('Connection', 'keep-alive');
                     res.setHeader('X-Accel-Buffering', 'no');
                     res.flushHeaders();
-                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.cartesiaVoiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
+                    res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.cartesiaVoiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages, boardLedger: activeConversation.boardLedger || null })}\n\n`);
                     return res.end();
                 }
                 // QA P1-6: send WITHIN-level XP (and a level reconciled from
@@ -2393,6 +2393,7 @@ async function handleGreetingRequest(req, res, userId) {
                     continued: true,
                     conversationId: activeConversation._id,
                     messages: visibleMessages,
+                    boardLedger: activeConversation.boardLedger || null,
                     voiceId: contTutor.cartesiaVoiceId,
                     isGreeting: true,
                     userXp: contXp.xpForCurrentLevel,
@@ -2434,7 +2435,7 @@ async function handleGreetingRequest(req, res, userId) {
                 res.setHeader('Connection', 'keep-alive');
                 res.setHeader('X-Accel-Buffering', 'no');
                 res.flushHeaders();
-                res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.cartesiaVoiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages })}\n\n`);
+                res.write(`data: ${JSON.stringify({ done: true, voiceId: contTutor.cartesiaVoiceId, isGreeting: true, continued: true, conversationId: activeConversation._id, messages: visibleMessages, boardLedger: activeConversation.boardLedger || null })}\n\n`);
                 return res.end();
             }
             return res.json({
@@ -2442,6 +2443,7 @@ async function handleGreetingRequest(req, res, userId) {
                 continued: true,
                 conversationId: activeConversation._id,
                 messages: visibleMessages,
+                boardLedger: activeConversation.boardLedger || null,
                 voiceId: contTutor.cartesiaVoiceId,
                 isGreeting: true,
                 userXp: user.xp || 0,
