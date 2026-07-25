@@ -68,7 +68,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260725a';
+  var ASSET_V = '?v=20260725b';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -268,6 +268,12 @@
     try { turns = window.LWS.ledgerToTurns(ledger); }
     catch (e) { console.error('[LWS_CHAT] ledger replay failed', e); return; }
     turns.forEach(render);
+    // Commands can't carry per-problem metadata (assistance level etc.) —
+    // zip it onto the rail entries the replay just produced.
+    if (typeof window.LWS.ledgerMeta === 'function') {
+      try { dv.annotateArchive(window.LWS.ledgerMeta(ledger)); }
+      catch (e) { console.error('[LWS_CHAT] archive annotate failed', e); }
+    }
   }
 
   api.hydrate = function (ledger) {

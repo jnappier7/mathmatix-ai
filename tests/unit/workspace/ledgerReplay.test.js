@@ -7,7 +7,7 @@
  * explicit clear (parking them on the rail), and the in-progress problem
  * replays last with no clear, landing back in focus.
  */
-const { ledgerToTurns } = require('../../../public/js/living-workspace/core/ledgerReplay.js');
+const { ledgerToTurns, ledgerMeta } = require('../../../public/js/living-workspace/core/ledgerReplay.js');
 
 describe('ledgerToTurns', () => {
   test('null / malformed ledgers replay to nothing', () => {
@@ -64,5 +64,33 @@ describe('ledgerToTurns', () => {
       completed: [{ steps: [{ action: 'verify' }] }],  // no problemTex
     });
     expect(turns).toEqual([[{ action: 'pose', tex: 'y=x' }]]);
+  });
+});
+
+describe('ledgerMeta', () => {
+  test('aligns 1:1 with the completed entries ledgerToTurns replays — skips the same junk', () => {
+    const ledger = {
+      current: { problemTex: 'z=1', steps: [] },
+      completed: [
+        { problemTex: 'a=1', steps: [{ action: 'verify' }], solved: true, assistance: 3, completedAt: 'T1' },
+        { steps: [{ action: 'verify' }] },                       // no problemTex → replay skips it
+        { problemTex: 'b=2', steps: [{ action: 'resolve' }], solved: false, assistance: 9 },
+      ],
+    };
+    const meta = ledgerMeta(ledger);
+    // 2 replayable completed entries → 2 meta rows (junk skipped identically),
+    // and current is NOT in meta (it never lands on the rail).
+    expect(meta).toEqual([
+      { assistance: 3, solved: true, completedAt: 'T1' },
+      { assistance: 9, solved: false, completedAt: null },
+    ]);
+    // The invariant the rail zip depends on: meta rows == archived replays.
+    const clears = ledgerToTurns(ledger).filter(t => t[0].action === 'clear').length;
+    expect(meta).toHaveLength(clears);
+  });
+
+  test('null / malformed ledgers give empty meta', () => {
+    expect(ledgerMeta(null)).toEqual([]);
+    expect(ledgerMeta({})).toEqual([]);
   });
 });

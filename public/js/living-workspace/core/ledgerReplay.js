@@ -26,7 +26,10 @@
 (function (root, factory) {
   var mod = factory();
   if (typeof module !== 'undefined' && module.exports) module.exports = mod;
-  if (root) (root.LWS = root.LWS || {}).ledgerToTurns = mod.ledgerToTurns;
+  if (root) {
+    (root.LWS = root.LWS || {}).ledgerToTurns = mod.ledgerToTurns;
+    root.LWS.ledgerMeta = mod.ledgerMeta;
+  }
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
@@ -36,22 +39,42 @@
     return [{ action: 'pose', tex: entry.problemTex }].concat(steps);
   }
 
+  // The completed entries that will actually replay — ledgerToTurns and
+  // ledgerMeta MUST filter identically, or the metadata (assistance level
+  // etc.) zips onto the wrong rail thumbnails after hydration.
+  function replayableCompleted(ledger) {
+    if (!ledger || typeof ledger !== 'object') return [];
+    return (Array.isArray(ledger.completed) ? ledger.completed : [])
+      .filter(function (entry) { return !!problemTurn(entry); });
+  }
+
   function ledgerToTurns(ledger) {
     var turns = [];
-    if (!ledger || typeof ledger !== 'object') return turns;
 
-    (Array.isArray(ledger.completed) ? ledger.completed : []).forEach(function (entry) {
-      var t = problemTurn(entry);
-      if (!t) return;
-      turns.push(t);
+    replayableCompleted(ledger).forEach(function (entry) {
+      turns.push(problemTurn(entry));
       turns.push([{ action: 'clear' }]);   // park it on the rail
     });
 
-    var cur = problemTurn(ledger.current);
+    var cur = ledger && typeof ledger === 'object' ? problemTurn(ledger.current) : null;
     if (cur) turns.push(cur);              // back in focus, still open
 
     return turns;
   }
 
-  return { ledgerToTurns: ledgerToTurns };
+  // Per-problem metadata the replayed COMMANDS can't carry (recorded by the
+  // server per turn, not per card): the §12 assistance level, plus solved /
+  // completedAt. Ordered oldest-first, aligned 1:1 with the rail entries the
+  // replay produces — DerivationView.annotateArchive zips them together.
+  function ledgerMeta(ledger) {
+    return replayableCompleted(ledger).map(function (entry) {
+      return {
+        assistance: entry.assistance || null,
+        solved: !!entry.solved,
+        completedAt: entry.completedAt || null,
+      };
+    });
+  }
+
+  return { ledgerToTurns: ledgerToTurns, ledgerMeta: ledgerMeta };
 });
