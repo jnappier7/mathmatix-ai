@@ -149,6 +149,35 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
   // denies it exists. See routes/chat.js.
   const practiceActGuidance = buildActPracticeGuidance(courseSession);
 
+  // Skip-what-you-aced, at the SKILL level. The every-turn course prompt never
+  // read the student's mastery, so a baseline (or prior work) that PROVED a skill
+  // in this very module was still taught from scratch. Surface the module's
+  // already-proven skills so the tutor spot-checks instead of re-teaching. Reads
+  // the same skillMastery the practice-ACT crediting writes (now under course ids
+  // via the crosswalk), so the loop actually closes.
+  let provenSkillsGuidance = '';
+  try {
+    const { getSkillMasteryEntry } = require('./masteryGuard');
+    const moduleSkillIds = (scaffoldData?.skills || currentModule?.skills || [])
+      .map((s) => (typeof s === 'string' ? s : (s && (s.skillId || s.id))))
+      .filter(Boolean);
+    const proven = moduleSkillIds.filter((sid) => {
+      const e = getSkillMasteryEntry(userProfile, sid);
+      return !!(e && (e.status === 'mastered' || e.rung === 'proved' || e.rung === 'taught'));
+    });
+    if (proven.length) {
+      const label = (sid) => sid.replace(/^act-/, '').replace(/-/g, ' ');
+      provenSkillsGuidance = `\n\n====================================================================
+ALREADY PROVEN — DO NOT RE-TEACH FROM SCRATCH
+====================================================================
+This student already demonstrated these skills in THIS module (baseline or prior
+work): ${proven.map(label).join(', ')}. Confirm each with ONE quick check question,
+and if they nail it, move on — skipping ahead to what they have NOT proven. Never
+walk them through a full lesson on a skill they've already proved; that is the
+re-grinding this course exists to prevent.`;
+    }
+  } catch (e) { /* non-fatal: mastery is an enhancement, never blocks teaching */ }
+
   return `You are ${tutorName}, an AI math instructor leading a structured, self-paced course.
 ${tutorPersonality ? `Personality: ${tutorPersonality}` : ''}
 
@@ -597,7 +626,7 @@ TEACHER RESOURCE REFERENCE: "${resourceContext.displayName}"
 ====================================================================
 The student is referencing a teacher-assigned resource called "${resourceContext.displayName}" but its content is not loaded.
 Acknowledge it by name, ask which specific problem they are on, then guide them through it once they share it.
-` : ''}` + practiceActGuidance;
+` : ''}` + practiceActGuidance + provenSkillsGuidance;
 }
 
 /**

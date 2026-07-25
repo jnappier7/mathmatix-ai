@@ -267,6 +267,7 @@ router.post('/complete', async (req, res) => {
     let clearedFromBaseline = [];
     try {
       const { creditFromTallies } = require('../utils/coursePreAssessment');
+      const { mergeTalliesToCourse } = require('../utils/actCrosswalk');
       const { advanceRung } = require('../utils/skillRung');
       const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
       const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
@@ -274,7 +275,14 @@ router.post('/complete', async (req, res) => {
       const Skill = require('../models/skill');
       const User = require('../models/user');
 
-      const { credited } = creditFromTallies(bySkill);
+      // Credit under COURSE skill ids, not the baseline's finer ids: the ACT
+      // course teaches by course ids, so mastery stored under a baseline id it
+      // never references would be invisible ("skip what you aced" would silently
+      // do nothing). mergeTalliesToCourse re-keys + sums via seeds/act-crosswalk
+      // .json; a course skill is credited only if every baseline item under it
+      // was correct. Unmapped baseline ids fall away (no course home yet).
+      const courseBySkill = mergeTalliesToCourse(bySkill);
+      const { credited } = creditFromTallies(courseBySkill);
       if (credited.length) {
         const user = await User.findById(req.user._id);
         credited.forEach((skillId) => {
