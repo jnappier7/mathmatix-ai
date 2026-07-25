@@ -3375,7 +3375,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                     document.body.appendChild(a);
                                     a.click();
                                     document.body.removeChild(a);
-                                    URL.revokeObjectURL(url);
+                                    // Delay the revoke: Firefox/Safari start the download async,
+                                    // and a synchronous revoke can yield a failed/0-byte file.
+                                    setTimeout(() => URL.revokeObjectURL(url), 2000);
                                     if (typeof showToast === 'function') showToast('Practice Pack downloading! Print it and work the problems on paper.', 5000);
                                 })
                                 .catch(() => {

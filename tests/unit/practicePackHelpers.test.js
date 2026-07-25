@@ -69,3 +69,55 @@ describe('gradeLevelToBand', () => {
     expect(gradeLevelToBand(undefined)).toBeNull();
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// toPdfBuffer — the "PDF downloads but won't open" bug.
+//
+// Puppeteer v23+ returns page.pdf() as a Uint8Array. Express 4's res.send()
+// only treats Buffers as binary; a plain Uint8Array falls through to
+// res.json(), which serializes the PDF bytes as {"0":37,"1":80,...} under a
+// 200 + application/pdf header — so the client happily saves an unopenable
+// file. These tests pin the conversion AND reproduce the transport failure
+// mode against real express, so a Puppeteer/Express upgrade that changes the
+// contract fails loudly here instead of shipping corrupt downloads.
+// ─────────────────────────────────────────────────────────────────────────────
+const { toPdfBuffer } = router.__helpers;
+
+describe('toPdfBuffer', () => {
+  const PDF_MAGIC = Uint8Array.from([0x25, 0x50, 0x44, 0x46, 0x2d]); // "%PDF-"
+
+  test('converts a Uint8Array to a Buffer, bytes intact', () => {
+    const buf = toPdfBuffer(PDF_MAGIC);
+    expect(Buffer.isBuffer(buf)).toBe(true);
+    expect(buf.toString('latin1')).toBe('%PDF-');
+  });
+
+  test('passes a real Buffer through untouched', () => {
+    const b = Buffer.from('%PDF-');
+    expect(toPdfBuffer(b)).toBe(b);
+  });
+
+  test('res.send(raw Uint8Array) really does JSON-mangle a PDF — and toPdfBuffer fixes it', async () => {
+    const express = require('express');
+    const request = require('supertest');
+    const app = express();
+    app.get('/raw', (req, res) => {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.send(PDF_MAGIC);                 // the bug
+    });
+    app.get('/fixed', (req, res) => {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.send(toPdfBuffer(PDF_MAGIC));    // the fix
+    });
+
+    const raw = await request(app).get('/raw').buffer(true).parse((res, cb) => {
+      const chunks = []; res.on('data', c => chunks.push(c)); res.on('end', () => cb(null, Buffer.concat(chunks)));
+    });
+    expect(raw.body.toString()).toContain('"0":37');            // JSON byte map, not a PDF
+
+    const fixed = await request(app).get('/fixed').buffer(true).parse((res, cb) => {
+      const chunks = []; res.on('data', c => chunks.push(c)); res.on('end', () => cb(null, Buffer.concat(chunks)));
+    });
+    expect(fixed.body.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+  });
+});

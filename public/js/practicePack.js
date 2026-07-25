@@ -128,7 +128,9 @@ class PracticePackManager {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Delay the revoke: Firefox/Safari start the download async, and a
+      // synchronous revoke can yield a failed or 0-byte file.
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
 
       if (statusEl) {
         statusEl.textContent = 'PDF downloaded! Print it, work the problems on paper, then upload a photo.';

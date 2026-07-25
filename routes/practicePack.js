@@ -52,6 +52,16 @@ const BROWSER_LAUNCH_OPTIONS = {
   ],
 };
 
+// Puppeteer v23+ returns page.pdf() as a Uint8Array, NOT a Buffer. Express 4's
+// res.send() only treats Buffers as binary — a plain Uint8Array falls through
+// to res.json(), which serializes the PDF bytes as {"0":37,"1":80,...}. The
+// download then arrives as a .pdf full of JSON that no reader can open (the
+// Content-Type header survives, so nothing errors anywhere). Every pdf
+// response MUST go through this.
+function toPdfBuffer(bytes) {
+  return Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
+}
+
 // ============================================================================
 // PROBLEM SELECTION — Adaptive, personalized to student
 // ============================================================================
@@ -688,11 +698,11 @@ router.get('/generate', isAuthenticated, async (req, res) => {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    const pdfBuffer = await page.pdf({
+    const pdfBuffer = toPdfBuffer(await page.pdf({
       format: 'Letter',
       margin: { top: '0.5in', bottom: '0.5in', left: '0.75in', right: '0.75in' },
       printBackground: true,
-    });
+    }));
 
     await browser.close();
     browser = null;
@@ -860,11 +870,11 @@ router.get('/generate-for-child', isAuthenticated, async (req, res) => {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    const pdfBuffer = await page.pdf({
+    const pdfBuffer = toPdfBuffer(await page.pdf({
       format: 'Letter',
       margin: { top: '0.5in', bottom: '0.5in', left: '0.75in', right: '0.75in' },
       printBackground: true,
-    });
+    }));
 
     await browser.close();
     browser = null;
@@ -942,11 +952,11 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    const pdfBuffer = await page.pdf({
+    const pdfBuffer = toPdfBuffer(await page.pdf({
       format: 'Letter',
       margin: { top: '0.5in', bottom: '0.5in', left: '0.75in', right: '0.75in' },
       printBackground: true,
-    });
+    }));
 
     await browser.close();
     browser = null;
@@ -974,7 +984,8 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
 router.__helpers = {
   resolveTheta,
   gradeLevelToBand,
-  thetaToGradeBand
+  thetaToGradeBand,
+  toPdfBuffer
 };
 
 module.exports = router;
