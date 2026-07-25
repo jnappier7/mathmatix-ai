@@ -32,6 +32,7 @@ const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
 const { assembleEvidence } = require('./evidenceAccumulator');
 const { applyTurnToLedger } = require('./boardLedger');
+const { assistanceLevelForTurn } = require('./assistanceLadder');
 
 // New data-driven engines
 const { updateBKT, initializeBKT } = require('../knowledgeTracer');
@@ -1192,7 +1193,18 @@ async function runPipeline(message, ctx) {
   // lines too, and a faithful replay must include them. Non-fatal by design.
   if (verified.boardCommands.length > 0 && ctx.conversation) {
     try {
-      ctx.conversation.boardLedger = applyTurnToLedger(ctx.conversation.boardLedger, verified.boardCommands);
+      // How much help THIS turn gave (spec §12 ladder) — max-folded onto the
+      // problem in focus, so the completed card records the heaviest support
+      // the student needed anywhere in the problem. Read back by persist's
+      // mastery update: an answer reached at ladder ≥5 is not independent.
+      const turnAssistance = assistanceLevelForTurn({
+        decisionAction: decision?.action,
+        scaffoldLevel: decision?.scaffoldLevel,
+        boardCommands: verified.boardCommands,
+      });
+      ctx.conversation.boardLedger = applyTurnToLedger(
+        ctx.conversation.boardLedger, verified.boardCommands, new Date(), turnAssistance
+      );
       ctx.conversation.markModified?.('boardLedger');
     } catch (ledgerErr) {
       boardLogger.warn('Board ledger update failed (non-fatal)', { error: ledgerErr.message });
