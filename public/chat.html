@@ -37,6 +37,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (window.MM_FEATURES.boardPanel === false) {
       document.documentElement.classList.add('mm-board-hidden');
     }
+    // Living Workspace replaces the legacy tabbed board. Mark it SYNCHRONOUSLY,
+    // before the body paints, so CSS can hide the legacy board's chrome from the
+    // first frame. Without this the old 4-tab board renders and is only hidden
+    // later — in JS, once chat-workspace.js + its modules finish loading — which
+    // students saw as the legacy board flashing, then being covered by the new
+    // surface. The 'off' kill switch does not add the class, so the legacy board
+    // returns untouched.
+    if (window.MM_FEATURES.livingWorkspace === 'live') {
+      document.documentElement.classList.add('mm-lws-live');
+    }
 
     // Visual-board tool scripts (fabric + whiteboard/graph/calc) are ~680KB and
     // only needed when the board is enabled — which it is not by default. Load
