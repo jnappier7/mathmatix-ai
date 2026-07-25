@@ -171,6 +171,7 @@ const SYSTEM_TAG_PATTERNS = [
   /<BADGE_EARNED:([^>]+)>/g,
   /<\s*SCAFFOLD_ADVANCE\s*>/gi,
   /<\s*MODULE_COMPLETE\s*>/gi,
+  /<\s*LAUNCH_PRACTICE_ACT\s*>/gi,
   /<\s*ANSWER_RESULT\s+correct="(true|false)"\s+problem="\d+"\s*\/?\s*>/gi,
 ];
 
@@ -191,6 +192,7 @@ function extractSystemTags(responseText) {
     badgeProgress: null,
     scaffoldAdvance: false,
     moduleComplete: false,
+    launchPracticeAct: false,
   };
 
   let text = responseText;
@@ -270,6 +272,19 @@ function extractSystemTags(responseText) {
     extracted.moduleComplete = true; // kept for logging, not for progression
     text = text.replace(/<\s*MODULE_COMPLETE\s*>/gi, '').trim();
     console.log('[Verify] Note: AI emitted <MODULE_COMPLETE> (deprecated — backend evaluator now owns progression)');
+  }
+
+  // Launch the real practice ACT. The ACT-prep tutor emits this (only after the
+  // student confirms) to hand off to the timed, auto-scored runner instead of
+  // improvising questions. Handled HERE — the shared pipeline choke point — so it
+  // works on BOTH /api/chat (normal typed messages) and /api/course-chat. It used
+  // to be stripped only in courseAdapter, which /api/chat never runs, so a
+  // student who asked "can I take a practice ACT?" in normal chat got the raw tag
+  // leaked into the reply and the test never launched.
+  if (/<\s*LAUNCH_PRACTICE_ACT\s*>/i.test(text)) {
+    extracted.launchPracticeAct = true;
+    text = text.replace(/<\s*LAUNCH_PRACTICE_ACT\s*>/gi, '').trim();
+    console.log('[Verify] AI emitted <LAUNCH_PRACTICE_ACT> — signalling client to open the practice ACT runner');
   }
 
   return { text, extracted };
