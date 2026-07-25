@@ -118,48 +118,6 @@
     if (!found) target.textContent = unwrapText(tex);   // pure prose, no math
   }
 
-  // The blank tokens a scaffold card may use, mirroring texHasBlank() in
-  // utils/boardCommandGuard.js — that guard REJECTS a scaffold with no blank,
-  // so these are a contract between server and board, not a guess.
-  var BLANK_TOKEN = /\\boxed\s*\{\s*(?:\\(?:[;,:!\s]|quad|qquad|phantom\s*\{[^{}]*\}|hspace\s*\{[^{}]*\})\s*)*\}|\\square\b|(?:\\_){3,}|_{3,}/g;
-
-  // Split tex into alternating rendered math and student-fillable holes.
-  // Pure; exported for tests.
-  function splitBlanks(latex) {
-    var t = String(latex == null ? '' : latex);
-    var out = [];
-    var last = 0;
-    var m;
-    BLANK_TOKEN.lastIndex = 0;
-    while ((m = BLANK_TOKEN.exec(t)) !== null) {
-      if (m.index > last) out.push({ type: 'tex', value: t.slice(last, m.index) });
-      out.push({ type: 'blank', value: m[0] });
-      last = m.index + m[0].length;
-    }
-    if (last < t.length) out.push({ type: 'tex', value: t.slice(last) });
-    return out;
-  }
-
-  function hasBlank(latex) {
-    BLANK_TOKEN.lastIndex = 0;
-    return BLANK_TOKEN.test(String(latex == null ? '' : latex));
-  }
-
-  // Render one tex fragment. Splitting at blanks can leave a fragment that is
-  // not standalone-valid ("x^2 + 4x +"); KaTeX would paint that as red error
-  // source, so throwOnError is ON here and a failure degrades to plain text.
-  function typesetFragment(span, frag) {
-    var katex = root.katex;
-    var tex = cleanLatex(frag);
-    if (!tex) return false;
-    if (katex && typeof katex.render === 'function') {
-      try { katex.render(tex, span, { throwOnError: true, displayMode: false }); return true; }
-      catch (_) { /* not standalone-valid — show it as text */ }
-    }
-    span.textContent = tex;
-    return true;
-  }
-
   function typeset(target, latex) {
     var katex = root.katex;
     var tex = cleanLatex(latex);
@@ -220,9 +178,6 @@
     opts = opts || {};
     this.doc = container.ownerDocument || document;
     this.renderers = opts.renderers || {};
-    // Called with (text, latex) when a student fills a scaffold's blanks.
-    // Returning false means "not sent" and leaves the line editable.
-    this.onBlankSubmit = typeof opts.onBlankSubmit === 'function' ? opts.onBlankSubmit : null;
     this._blocks = [];        // live block renderers (for destroy on clear)
     this._problemTex = null;
     // The adapted elements making up the CURRENT derivation, kept so a finished
@@ -563,97 +518,15 @@
       var tag = d.createElement('span'); tag.className = 'lws-dv-op'; tag.textContent = op;
       row.appendChild(tag);
     } else {
-      var latex = element.semantic && element.semantic.latex;
-      // A scaffold's empty \boxed{} slots are the student's to fill — the whole
-      // point of the card. Render them as real inputs on the live board; a
-      // reopened archive is a look-back, so it stays static.
-      var live = !target || target === this.el.lines;
-      if (live && this.onBlankSubmit && hasBlank(latex)) {
-        // The tutor's question for this blank ("What does 20 − 4 leave you
-        // with?"). A box with no question is a guessing game, so fall back to
-        // a generic prompt when the model omits one.
-        var ask = (element.semantic && element.semantic.caption) || 'Your turn — fill in the blank.';
-        var askEl = d.createElement('div');
-        askEl.className = 'lws-dv-ask';
-        askEl.textContent = ask;
-        row.appendChild(askEl);
-        row.appendChild(this._buildFillLine(latex));
-      } else {
-        var tex = d.createElement('div'); tex.className = 'lws-dv-tex';
-        typeset(tex, latex);
-        row.appendChild(tex);
-      }
+      // Scaffold blanks (\boxed{}) render as KaTeX's empty box — a visual
+      // "your turn" cue the student answers IN CHAT, where the pipeline can
+      // see it. (Board-side inputs were removed: they submitted through a
+      // side door the tutor had no concept of.)
+      var tex = d.createElement('div'); tex.className = 'lws-dv-tex';
+      typeset(tex, element.semantic && element.semantic.latex);
+      row.appendChild(tex);
     }
     (target || this.el.lines).appendChild(row);
-  };
-
-  // Build a fill-in-the-blank line: the fixed math renders, each blank becomes
-  // a focusable input, and submitting sends the student's value through the
-  // ordinary chat path so the existing diagnose/verify pipeline grades it.
-  DerivationView.prototype._buildFillLine = function (latex) {
-    var self = this;
-    var d = this.doc;
-    var wrap = d.createElement('div');
-    wrap.className = 'lws-dv-tex lws-dv-fill';
-
-    var inputs = [];
-    splitBlanks(latex).forEach(function (seg) {
-      if (seg.type === 'tex') {
-        var span = d.createElement('span');
-        span.className = 'lws-dv-fill-tex';
-        if (typesetFragment(span, seg.value)) wrap.appendChild(span);
-        return;
-      }
-      var inp = d.createElement('input');
-      inp.type = 'text';
-      inp.className = 'lws-dv-blank';
-      inp.setAttribute('inputmode', 'text');
-      inp.setAttribute('autocomplete', 'off');
-      inp.setAttribute('autocapitalize', 'off');
-      inp.spellcheck = false;
-      inp.size = 3;
-      inp.setAttribute('aria-label', 'Fill in the blank');
-      inp.addEventListener('keydown', function (ev) {
-        if (ev.key === 'Enter') { ev.preventDefault(); submit(); }
-      });
-      // Grow with the answer so long values stay readable.
-      inp.addEventListener('input', function () {
-        inp.size = Math.max(3, Math.min(18, inp.value.length + 1));
-        wrap.classList.remove('is-incomplete');
-      });
-      inputs.push(inp);
-      wrap.appendChild(inp);
-    });
-
-    var btn = d.createElement('button');
-    btn.type = 'button';
-    btn.className = 'lws-dv-fill-go';
-    btn.textContent = 'Check';
-    btn.setAttribute('aria-label', 'Check my answer');
-    btn.addEventListener('click', submit);
-    wrap.appendChild(btn);
-
-    function submit() {
-      var values = inputs.map(function (i) { return i.value.trim(); });
-      var firstEmpty = values.indexOf('');
-      if (firstEmpty !== -1) {
-        wrap.classList.add('is-incomplete');
-        try { inputs[firstEmpty].focus(); } catch (_) { /* detached */ }
-        return;
-      }
-      var sent = false;
-      try { sent = self.onBlankSubmit(values.join(', '), latex) !== false; }
-      catch (e) { console.error('[LWS] blank submit failed', e); sent = false; }
-      if (!sent) return;
-      // Lock the line: it is now part of the transcript, and the tutor's reply
-      // will redraw the board anyway.
-      wrap.classList.add('is-sent');
-      inputs.forEach(function (i) { i.disabled = true; });
-      btn.disabled = true;
-      btn.textContent = 'Sent';
-    }
-
-    return wrap;
   };
 
   DerivationView.prototype._addBlock = function (element, target, blockSink) {
@@ -721,8 +594,6 @@
   DerivationView.hasSolution = hasSolution;
   DerivationView.assistanceSummary = assistanceSummary;
   DerivationView.MAX_ARCHIVE = MAX_ARCHIVE;
-  DerivationView.splitBlanks = splitBlanks;
-  DerivationView.hasBlank = hasBlank;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE, splitBlanks: splitBlanks, hasBlank: hasBlank };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, cleanLatex: cleanLatex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE };
 })(typeof self !== 'undefined' ? self : this);

@@ -246,47 +246,6 @@ html[data-theme="dark"] .lws-root {
 .lws-dv-block { padding: 10px 0; }
 .lws-dv-block > * { max-width: 100%; }
 
-/* ── fill-in-the-blank scaffolds ────────────────────────────────
-   A scaffold card is defined by its empty \boxed{} slots (the server guard
-   rejects one without them), so the blanks are the student's turn — they
-   render as real inputs, not painted boxes. Submitting sends the value
-   through the ordinary chat path, so it is graded like anything typed. */
-/* The question that names what belongs in the blank. */
-.lws-dv-ask {
-  font-size: calc(13px * var(--lws-dv-scale)); line-height: 1.4;
-  color: var(--lws-accent); opacity: .95; margin-bottom: 5px;
-}
-.lws-dv-fill { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
-.lws-dv-fill-tex { display: inline-flex; align-items: center; }
-.lws-dv-blank {
-  appearance: none; -webkit-appearance: none;
-  min-width: 2.6em; padding: 2px 7px;
-  font: inherit; font-size: calc(19px * var(--lws-dv-scale));
-  text-align: center; color: var(--lws-card-ink);
-  background: color-mix(in srgb, var(--lws-accent) 10%, transparent);
-  border: 1.5px dashed var(--lws-accent); border-radius: 8px;
-  transition: background-color .15s ease, border-color .15s ease;
-}
-.lws-dv-blank:hover:not(:disabled) { background: color-mix(in srgb, var(--lws-accent) 18%, transparent); }
-.lws-dv-blank:focus { outline: none; border-style: solid; background: color-mix(in srgb, var(--lws-accent) 20%, transparent); }
-.lws-dv-blank:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
-.lws-dv-blank:disabled { border-style: solid; opacity: .8; cursor: default; }
-.lws-dv-fill-go {
-  appearance: none; -webkit-appearance: none; cursor: pointer;
-  margin-left: 4px; padding: 5px 12px;
-  border: 1px solid var(--lws-accent); border-radius: 999px;
-  background: color-mix(in srgb, var(--lws-accent) 16%, transparent);
-  color: var(--lws-card-ink); font: 600 12px/1 system-ui, sans-serif;
-}
-.lws-dv-fill-go:hover:not(:disabled) { background: color-mix(in srgb, var(--lws-accent) 30%, transparent); }
-.lws-dv-fill-go:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
-.lws-dv-fill-go:disabled { opacity: .5; cursor: default; }
-/* Pressing Check with a blank still empty points at what is missing. */
-.lws-dv-fill.is-incomplete .lws-dv-blank:placeholder-shown,
-.lws-dv-fill.is-incomplete .lws-dv-blank:not(:disabled) { border-color: #e0a23c; }
-.lws-dv-fill.is-sent .lws-dv-blank { border-color: color-mix(in srgb, var(--lws-card-ink) 40%, transparent); background: transparent; }
-@media (prefers-reduced-motion: reduce) { .lws-dv-blank { transition: none; } }
-
 /* Spoken-step spotlight. Voice ships the board cumulatively, so the step that
    arrived this turn IS the step being talked about — it lights up while the
    tutor speaks and settles into the stack when they stop. Attention direction

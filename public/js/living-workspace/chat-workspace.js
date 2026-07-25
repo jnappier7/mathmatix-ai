@@ -68,7 +68,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260725b';
+  var ASSET_V = '?v=20260725c';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -282,20 +282,12 @@
     doHydrate(ledger);
   };
 
-  // A student filling a scaffold's blanks is answering the tutor — send it as a
-  // chat message so it is graded by the same pipeline as anything they type.
-  // Returning false leaves the inputs editable (chat engine not ready yet).
-  function submitBlanks(text) {
-    if (typeof window.mmSendChatMessage !== 'function') return false;
-    return window.mmSendChatMessage(text) !== false;
-  }
-
   function boot() {
     injectCss();
     loadNext(0, function () {
       if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
       var mount = buildPanel();
-      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers(), onBlankSubmit: submitBlanks });
+      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers() });
       ready = true;
       // Queued work replays in arrival order: hydrate() clears any turn queued
       // before it, so a `pending` that is still set alongside a pendingLedger
