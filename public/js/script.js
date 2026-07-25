@@ -3205,6 +3205,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Source Cards (spec §5.1): uploads that arrived on this turn dock
+            // onto the board instead of living only in the transcript.
+            if (window.LWS_CHAT && window.LWS_CHAT.isOn() && Array.isArray(data.sourceUploads) && data.sourceUploads.length > 0) {
+                try {
+                    window.LWS_CHAT.addSources(data.sourceUploads);
+                } catch (error) {
+                    console.error('[LWS_CHAT] addSources failed:', error);
+                }
+            }
+
             // Phase C: execute server-emitted <XP> ceremony commands
             // (confetti + optional gold caption). Pipeline caps the batch
             // at 3 so a runaway model can't confetti-bomb the chat.
@@ -5492,6 +5502,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (window.LWS_CHAT && typeof window.LWS_CHAT.hydrate === 'function') {
             try { window.LWS_CHAT.hydrate(conversation.boardLedger || null); }
             catch (err) { console.error('[updateChatForSession] board hydrate failed:', err); }
+        }
+        // Source Cards: this conversation's uploads dock onto the board,
+        // derived from the messages' attachment refs (spec §5.1).
+        if (window.LWS_CHAT && typeof window.LWS_CHAT.setSourcesFromMessages === 'function') {
+            try { window.LWS_CHAT.setSourcesFromMessages(messages || []); }
+            catch (err) { console.error('[updateChatForSession] source dock failed:', err); }
         }
 
         console.log('[updateChatForSession] Loaded', messages?.length || 0, 'messages');

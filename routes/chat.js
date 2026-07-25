@@ -1704,6 +1704,14 @@ async function runStudentTurn(req, res) {
             drawingSequence: pipelineResult.drawingSequence,
             visualCommands: pipelineResult.visualCommands,
             boardCommands: pipelineResult.boardCommands || [],
+            // Uploads that arrived on THIS turn, in servable form. The Living
+            // Workspace docks them as Source Cards (spec §5.1: files live on
+            // the board, not in a buried attachment tray). The full source list
+            // for a conversation is derived from messages[].attachments on
+            // history load; this is the live-turn delta.
+            sourceUploads: attachmentMeta.length > 0
+                ? attachmentMeta.map(a => ({ uploadId: String(a.uploadId), fileType: a.fileType, mimeType: a.mimeType }))
+                : [],
             xpCommands: pipelineResult.xpCommands || [],
             visualTabCommands: pipelineResult.visualTabCommands || [],
             boardContext: pipelineResult.boardContext,
@@ -2372,6 +2380,11 @@ async function handleGreetingRequest(req, res, userId) {
                         role: m.role,
                         content: m.content,
                         workCheckId: m.workCheckId || null,
+                        // Servable refs only — the server-side continuity payload
+                        // (extractedText/imageData) must never reach the client.
+                        ...(Array.isArray(m.attachments) && m.attachments.length > 0
+                            ? { attachments: m.attachments.map(a => ({ uploadId: a.uploadId, fileType: a.fileType, mimeType: a.mimeType })) }
+                            : {}),
                     }));
 
                 const useStreaming = req.query.stream === 'true';
@@ -2426,7 +2439,15 @@ async function handleGreetingRequest(req, res, userId) {
                     && typeof m.content === 'string'
                     && m.content.startsWith('[Voice session')
                 ))
-                .map(m => ({ role: m.role, content: m.content, workCheckId: m.workCheckId || null }));
+                .map(m => ({
+                    role: m.role,
+                    content: m.content,
+                    workCheckId: m.workCheckId || null,
+                    // Servable refs only — continuity payload stays server-side.
+                    ...(Array.isArray(m.attachments) && m.attachments.length > 0
+                        ? { attachments: m.attachments.map(a => ({ uploadId: a.uploadId, fileType: a.fileType, mimeType: a.mimeType })) }
+                        : {}),
+                }));
 
             const useStreaming = req.query.stream === 'true';
             if (useStreaming) {

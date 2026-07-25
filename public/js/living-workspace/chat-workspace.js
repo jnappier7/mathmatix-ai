@@ -60,6 +60,10 @@
     // Rebuild the board from a persisted conversation.boardLedger (session
     // switch / page re-mount). No-op when the workspace is off.
     hydrate: function () {},
+    // Source Cards (spec §5.1): set the dock from a conversation's messages
+    // (history load) or append this turn's uploads (live delta).
+    setSourcesFromMessages: function () {},
+    addSources: function () {},
   };
   window.LWS_CHAT = api;
   if (!ON) return;
@@ -68,11 +72,12 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260725c';
+  var ASSET_V = '?v=20260725d';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js', 'core/ledgerReplay.js',
+    'core/sourceList.js', 'dom/sourceDock.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
     'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
     'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
@@ -83,9 +88,11 @@
   // Build brick #1: the chat board renders as a FOCUSED DERIVATION
   // (dom/derivationView.js), not free-floating canvas cards. `dv` is that view.
   var dv = null;
+  var dock = null;           // SourceDock — uploads living on the board
   var ready = false;
   var pending = null;        // latest board_commands received before ready
   var pendingLedger;         // ledger passed to hydrate() before ready (undefined = none)
+  var pendingSources;        // source list set before ready (undefined = none)
   var turn = 0;
 
   function injectCss() {
@@ -252,8 +259,33 @@
   api.reset = function () {
     pending = null;                 // don't let a queued turn repaint the old session
     pendingLedger = undefined;
+    pendingSources = undefined;
+    if (dock) { try { dock.clear(); } catch (e) { console.error('[LWS_CHAT] dock clear failed', e); } }
     if (!dv) return;
     try { dv.resetAll(); } catch (e) { console.error('[LWS_CHAT] reset failed', e); }
+  };
+
+  var sources = [];
+  function paintSources() {
+    if (!dock) return;
+    try { dock.setSources(sources); } catch (e) { console.error('[LWS_CHAT] dock render failed', e); }
+  }
+
+  // History load: the full source list derives from messages[].attachments.
+  // Replaces whatever the dock held — a switch means a different conversation.
+  api.setSourcesFromMessages = function (messages) {
+    if (!window.LWS || typeof window.LWS.sourcesFromMessages !== 'function') { pendingSources = messages || []; return; }
+    sources = window.LWS.sourcesFromMessages(messages);
+    if (!ready) { pendingSources = messages || []; return; }
+    paintSources();
+  };
+
+  // Live turn: the response's sourceUploads delta appends to the dock.
+  api.addSources = function (delta) {
+    if (!Array.isArray(delta) || !delta.length) return;
+    if (!window.LWS || typeof window.LWS.mergeSources !== 'function' || !ready) return;
+    sources = window.LWS.mergeSources(sources, delta);
+    paintSources();
   };
 
   // Rebuild the board from a persisted conversation.boardLedger: each finished
@@ -288,7 +320,11 @@
       if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
       var mount = buildPanel();
       dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers() });
+      if (window.LWS.SourceDock) {
+        try { dock = new window.LWS.SourceDock(mount); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
+      }
       ready = true;
+      if (pendingSources !== undefined) { var ps = pendingSources; pendingSources = undefined; api.setSourcesFromMessages(ps); }
       // Queued work replays in arrival order: hydrate() clears any turn queued
       // before it, so a `pending` that is still set alongside a pendingLedger
       // arrived AFTER the hydrate and renders on top of the rebuilt board.

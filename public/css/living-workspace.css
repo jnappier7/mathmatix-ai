@@ -522,3 +522,92 @@ html[data-theme="dark"] .lws-root {
 .lws-empty-state .lws-empty-sub {
   font: 13px/1.45 Inter, system-ui, sans-serif; opacity: 0.82; max-width: 280px;
 }
+
+/* ── Source Cards dock (spec §5.1) ──────────────────────────────
+   Uploads live ON the board: a slim dock pinned to the board's bottom-left
+   (the supporting zone of the §14 layout) with one card per source. Cards
+   open full-board in a read-only overlay — the student's work underneath is
+   never disturbed. */
+.lws-sd {
+  position: absolute; left: 10px; bottom: 10px; z-index: 5;
+  max-width: min(62%, 420px);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.lws-sd-head {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px; border: 1px solid var(--lws-card-border); border-radius: 999px;
+  background: color-mix(in srgb, var(--lws-card-bg) 88%, transparent);
+  color: var(--lws-card-ink); font: 600 11px/1 system-ui, sans-serif;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.lws-sd-head:hover { border-color: var(--lws-accent); }
+.lws-sd-head:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+.lws-sd-strip {
+  display: flex; gap: 8px; overflow-x: auto; padding: 2px;
+  scrollbar-width: thin;
+}
+.lws-sd.is-collapsed .lws-sd-strip { display: none; }
+.lws-sd-card {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  width: 74px; padding: 5px;
+  border: 1px solid var(--lws-card-border); border-radius: 10px;
+  background: var(--lws-card-bg); color: var(--lws-card-ink);
+}
+.lws-sd-card:hover { border-color: var(--lws-accent); }
+.lws-sd-card:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+.lws-sd-card-img {
+  width: 62px; height: 44px; object-fit: cover; border-radius: 6px;
+  background: color-mix(in srgb, var(--lws-card-ink) 8%, transparent);
+}
+.lws-sd-card-pdf {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 62px; height: 44px; border-radius: 6px;
+  background: color-mix(in srgb, #d0453e 16%, transparent);
+  color: #d0453e; font: 700 12px/1 system-ui, sans-serif; letter-spacing: .08em;
+}
+.lws-sd-card-lab {
+  max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font: 500 10px/1.2 system-ui, sans-serif; opacity: .85;
+}
+
+/* Source viewer overlay — same contract as the archive overlay. */
+.lws-sd-ov {
+  position: absolute; inset: 0; z-index: 8;
+  display: flex; flex-direction: column;
+  background: var(--lws-grid-bg);
+  animation: lws-dv-ov-in .18s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) { .lws-sd-ov { animation: none; } }
+.lws-sd-ov-bar {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 9px 12px;
+  border-bottom: 1px solid var(--lws-card-border);
+  background: color-mix(in srgb, var(--lws-card-bg) 70%, transparent);
+}
+.lws-sd-ov-tag {
+  font: 600 10px/1 system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--lws-accent);
+}
+.lws-sd-ov-back {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  border: 1px solid var(--lws-card-border); border-radius: 999px;
+  background: var(--lws-card-bg); color: var(--lws-card-ink);
+  font: 600 12px/1 system-ui, sans-serif; padding: 7px 13px;
+}
+.lws-sd-ov-back:hover { border-color: var(--lws-accent); }
+.lws-sd-ov-back:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+.lws-sd-ov-zoom { display: inline-flex; gap: 6px; }
+.lws-sd-ov-zoom button {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 1px solid var(--lws-card-border);
+  background: var(--lws-card-bg); color: var(--lws-card-ink);
+  font: 700 15px/1 system-ui, sans-serif;
+}
+.lws-sd-ov-zoom button:disabled { opacity: .4; cursor: default; }
+.lws-sd-ov-zoom button:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+.lws-sd-ov-body { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 10px; }
+.lws-sd-ov-img { display: block; margin: 0 auto; border-radius: 8px; }
+.lws-sd-ov-frame { width: 100%; height: 100%; border: 0; border-radius: 8px; background: #fff; }
