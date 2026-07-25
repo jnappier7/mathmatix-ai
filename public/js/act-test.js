@@ -136,10 +136,35 @@
       this.el = (id) => this.overlay.querySelector('#' + id);
     }
 
+    // Intro / "Begin" screen. The timer starts only when the student clicks
+    // Begin — never on open() — so a baseline can be presented (or auto-opened as
+    // the course's registration step) without ambushing them into a running clock.
+    // No pause by design: pacing is part of what the ACT measures, so a pausable
+    // baseline would post an inflated score and mis-target the whole bootcamp.
     async open() {
       this._mount();
       this.overlay.style.display = 'flex';
-      this.el('actt-timer').style.display = '';   // restore (progress view hides it)
+      this.el('actt-timer').style.display = 'none';    // no clock on the intro
+      this.el('actt-foot').style.display = 'none';
+      this.el('actt-body').innerHTML = `
+        <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
+          <h2 style="margin:0 0 10px;font-size:20px">Your baseline ACT Math test</h2>
+          <p style="margin:0 0 14px;line-height:1.5">This is your <strong>baseline</strong> — a full, timed ACT Math section (about 45 minutes). Your tutor uses the results to focus your prep on exactly what you need, and marks anything you ace as done so you don't re-grind it.</p>
+          <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
+            <li><strong>It's timed and can't be paused</strong> — just like the real ACT. Pacing is part of the score.</li>
+            <li>Do it in <strong>one sitting</strong>. Find a quiet spot and grab scratch paper first.</li>
+            <li>Don't stress any single question — answer, move on, keep the clock moving.</li>
+          </ul>
+          <button id="actt-begin" style="width:100%;padding:13px 16px;font-size:16px;font-weight:700;border:0;border-radius:12px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6)">Begin when ready</button>
+        </div>`;
+      const beginBtn = this.overlay.querySelector('#actt-begin');
+      if (beginBtn) beginBtn.addEventListener('click', () => this._begin());
+    }
+
+    // Actually start (or resume) the test + the clock. Only reached via the
+    // Begin button, so the timer never starts behind the student's back.
+    async _begin() {
+      this.el('actt-timer').style.display = '';
       this.el('actt-body').innerHTML = '<div class="actt-center">Building your practice test…</div>';
       try {
         const data = await api('/api/act-test/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
