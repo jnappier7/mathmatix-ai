@@ -1055,10 +1055,16 @@ async function runStudentTurn(req, res) {
                 if (gateSession && gateSession.status === 'active') {
                     const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
                     const { pending, diagnostic } = await isRequiredBaselinePending(user, gateSession.courseId);
-                    if (pending) {
-                        const gateText = diagnostic?.type === 'act-practice'
-                            ? "Before we dig into any lessons, let's lock in your baseline. Take the full practice ACT so I can see exactly where you're starting and aim your prep at what you actually need — tap **Take the Practice ACT** below to begin. Once it's done, we'll build your plan around your results."
-                            : "Let's start with a quick baseline check so this course can skip what you already know and spend its time on what you actually need. Tap the card below to begin.";
+                    // SCOPED TO ACT-ONLY for now. isRequiredBaselinePending is true for
+                    // act-prep AND every unlisted course (they fall through to a required
+                    // pre-assessment), but only the ACT baseline runner is verified working
+                    // end-to-end. Hard-blocking a course behind an unverified pre-assessment
+                    // is exactly the half-working flow we keep getting burned by — so gate
+                    // only act-practice here. Widen to `pending` once each course's
+                    // pre-assessment is confirmed; the other courses keep their existing
+                    // (non-blocking) entry-card nudge until then.
+                    if (pending && diagnostic?.type === 'act-practice') {
+                        const gateText = "Before we dig into any lessons, let's lock in your baseline. Take the full practice ACT so I can see exactly where you're starting and aim your prep at what you actually need — tap **Take the Practice ACT** below to begin. Once it's done, we'll build your plan around your results.";
                         logger.info('Baseline gate: withholding course teaching until baseline complete', { userId, courseId: gateSession.courseId });
                         return res.json({
                             text: gateText,
