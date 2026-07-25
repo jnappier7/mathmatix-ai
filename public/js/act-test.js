@@ -115,6 +115,7 @@
           <div class="actt-head">
             <span class="actt-title">📐 ACT Math Practice Test</span>
             <span style="display:flex;align-items:center;gap:10px">
+              <button class="actt-x" id="actt-calc" aria-label="Calculator" title="Calculator (allowed on the ACT)" style="display:none;font-size:14px;font-weight:600;padding:2px 8px;border:1px solid rgba(255,255,255,.5);border-radius:8px">Calc</button>
               <span class="actt-timer" id="actt-timer">60:00</span>
               <button class="actt-x" id="actt-close" aria-label="Close">×</button>
             </span>
@@ -133,7 +134,27 @@
       this.overlay.querySelector('#actt-close').addEventListener('click', () => this.close());
       this.overlay.querySelector('#actt-skip').addEventListener('click', () => this.submit(true));
       this.overlay.querySelector('#actt-next').addEventListener('click', () => this.submit(false));
+      this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
       this.el = (id) => this.overlay.querySelector('#' + id);
+    }
+
+    // On-screen calculator for the baseline. The real ACT Math section permits a
+    // calculator on EVERY question, so the baseline must offer one or it
+    // understates the score and mis-targets the bootcamp. Reuses the app's
+    // scientific FloatingCalculator (no graphing/CAS — ACT-appropriate), forced
+    // available here regardless of the teacher/IEP tutoring-time restriction,
+    // because that restriction is a practice choice, not a test condition. Bumped
+    // above the runner overlay (z-index 10000) so it floats over the modal.
+    _toggleCalc() {
+      try {
+        const panel = document.getElementById('floating-calculator');
+        if (panel) panel.style.zIndex = '10002';
+        if (window.floatingCalc && typeof window.floatingCalc.toggleCalculator === 'function') {
+          window.floatingCalc.toggleCalculator();
+        } else if (panel) {
+          panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'flex' : 'none';
+        }
+      } catch (e) { /* non-fatal — the test never blocks on the calculator */ }
     }
 
     // Intro / "Begin" screen. The timer starts only when the student clicks
@@ -145,6 +166,7 @@
       this._mount();
       this.overlay.style.display = 'flex';
       this.el('actt-timer').style.display = 'none';    // no clock on the intro
+      this.el('actt-calc').style.display = 'none';     // calc appears with the test
       this.el('actt-foot').style.display = 'none';
       this.el('actt-body').innerHTML = `
         <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
@@ -165,6 +187,7 @@
     // Begin button, so the timer never starts behind the student's back.
     async _begin() {
       this.el('actt-timer').style.display = '';
+      this.el('actt-calc').style.display = '';
       this.el('actt-body').innerHTML = '<div class="actt-center">Building your practice test…</div>';
       try {
         const data = await api('/api/act-test/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
