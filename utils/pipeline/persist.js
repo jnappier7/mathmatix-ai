@@ -26,6 +26,8 @@ const { checkForInterventionAlert } = require('../interventionAlerts');
 const { getReviewSummary } = require('../smartReviewQueue');
 const { canonicalSkillId } = require('../skillCanonicalizer');
 const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } = require('../masteryEngine');
+const { problemAssistance } = require('./boardLedger');
+const { isIndependent } = require('./assistanceLadder');
 const { advanceRung, currentRung, clearsPrerequisites } = require('../skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../masteryGuard');
 
@@ -711,12 +713,18 @@ function updateSkillMastery(user, rawSkillId, observation, conversation, correct
   const existing = getSkillMasteryEntry(user, skillId) || initializeSkillMastery(skillId);
   const wasOwned = clearsPrerequisites(existing);
 
-  // Independence proxy: the student asking for help in recent turns. Weaker than
-  // a real hint counter — it reads the student's words, not the tutor's actions.
+  // Independence: primary signal is the assistance ladder (spec §12) — the
+  // tutor's RECORDED actions on this problem, max-folded into the board
+  // ledger. Ladder ≥5 (strategic question and up) means the thinking didn't
+  // happen unaided. The old word-scan proxy (the student asking for help)
+  // stays as a fallback: it still catches help requests on turns that never
+  // reached the board (ledger null), and costs nothing when the ladder fires.
   const recentMsgs = conversation.messages.slice(-6);
-  const usedHint = recentMsgs.some(msg =>
+  const askedForHelp = recentMsgs.some(msg =>
     msg.role === 'user' && /\b(hint|help|stuck|don'?t know|idk|confused)\b/i.test(msg.content)
   );
+  const assistance = problemAssistance(conversation.boardLedger);
+  const usedHint = (assistance != null) ? !isIndependent(assistance) || askedForHelp : askedForHelp;
 
   const updated = engineUpdateSkillMastery(existing, {
     correct: correct !== false,

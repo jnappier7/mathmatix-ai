@@ -72,6 +72,10 @@ function archiveCurrent(ledger, now) {
     problemTex: cur.problemTex,
     steps: cur.steps,
     solved: cur.steps.some(c => c && c.action === 'verify'),
+    // Max assistance level (spec §12 ladder) across the problem's turns —
+    // what the collapsed-card summary and teacher view read. Null when the
+    // ladder never reported (e.g. entries written before this field existed).
+    assistance: cur.assistance || null,
     completedAt: now,
   });
   while (ledger.completed.length > MAX_COMPLETED) ledger.completed.shift();
@@ -83,20 +87,24 @@ function archiveCurrent(ledger, now) {
  * @param {object|null} prev - conversation.boardLedger (may be null/malformed)
  * @param {Array} commands - the turn's verified board commands, in order
  * @param {Date} [now] - injectable clock for tests
+ * @param {number|null} [turnAssistance] - this turn's assistance level
+ *   (utils/pipeline/assistanceLadder.js); max-folded onto the problem in focus
  * @returns {object} a new ledger object
  */
-function applyTurnToLedger(prev, commands, now = new Date()) {
+function applyTurnToLedger(prev, commands, now = new Date(), turnAssistance = null) {
   const ledger = {
     current: prev && prev.current && prev.current.problemTex
       ? {
           problemTex: prev.current.problemTex,
           posedAt: prev.current.posedAt || now,
           steps: Array.isArray(prev.current.steps) ? prev.current.steps.slice() : [],
+          assistance: prev.current.assistance || null,
         }
       : null,
     completed: prev && Array.isArray(prev.completed) ? prev.completed.slice() : [],
   };
   if (!Array.isArray(commands)) return ledger;
+  const assist = Number(turnAssistance) > 0 ? Number(turnAssistance) : null;
 
   for (const raw of commands) {
     if (!raw || typeof raw !== 'object' || !raw.action) continue;
@@ -108,7 +116,7 @@ function applyTurnToLedger(prev, commands, now = new Date()) {
         continue; // same problem re-drawn (board-reference backstop etc.)
       }
       archiveCurrent(ledger, now);
-      ledger.current = { problemTex: cmd.tex, posedAt: now, steps: [] };
+      ledger.current = { problemTex: cmd.tex, posedAt: now, steps: [], assistance: null };
       continue;
     }
 
@@ -126,11 +134,33 @@ function applyTurnToLedger(prev, commands, now = new Date()) {
     // board would float it, but it is not part of any problem's lifecycle.
   }
 
+  // The turn's assistance belongs to whichever problem ended the turn in
+  // focus — max-folded, so one heavily-supported turn marks the whole problem.
+  if (ledger.current && assist) {
+    ledger.current.assistance = Math.max(ledger.current.assistance || 0, assist) || null;
+  }
+
   return ledger;
+}
+
+/**
+ * The assistance level of the problem the student is (or just was) working
+ * on: the one in focus, else the most recently completed. What the mastery
+ * engine reads when a verified answer lands. Null when nothing is known.
+ */
+function problemAssistance(ledger) {
+  if (!ledger || typeof ledger !== 'object') return null;
+  if (ledger.current && ledger.current.assistance) return ledger.current.assistance;
+  const done = Array.isArray(ledger.completed) ? ledger.completed : [];
+  for (let i = done.length - 1; i >= 0; i--) {
+    if (done[i] && done[i].assistance) return done[i].assistance;
+  }
+  return null;
 }
 
 module.exports = {
   applyTurnToLedger,
+  problemAssistance,
   emptyLedger,
   MAX_COMPLETED,
   MAX_STEPS,

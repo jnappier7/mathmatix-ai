@@ -6,7 +6,7 @@
  * completed rail; a re-pose of the same math is a redraw, not a new problem;
  * a problem posed but never worked is dropped, not archived.
  */
-const { applyTurnToLedger, MAX_COMPLETED, MAX_STEPS } = require('../../utils/pipeline/boardLedger');
+const { applyTurnToLedger, problemAssistance, MAX_COMPLETED, MAX_STEPS } = require('../../utils/pipeline/boardLedger');
 
 const NOW = new Date('2026-07-25T12:00:00Z');
 
@@ -108,6 +108,36 @@ describe('applyTurnToLedger', () => {
     const frozen = structuredClone(first);
     turn(first, [{ action: 'resolve', tex: '2x=8' }, { action: 'pose', tex: 'y=1' }]);
     expect(first).toEqual(frozen);
+  });
+
+  test('assistance max-folds across a problem and rides into the archive', () => {
+    let l = applyTurnToLedger(null, [{ action: 'pose', tex: '2x+5=13' }], NOW, 1);
+    l = applyTurnToLedger(l, [{ action: 'resolve', tex: '2x=8' }], NOW, 7);   // heavy help once
+    l = applyTurnToLedger(l, [{ action: 'verify', tex: 'x=4' }], NOW, 2);     // finish unaided
+    expect(l.current.assistance).toBe(7);                                     // max, not last
+    expect(problemAssistance(l)).toBe(7);
+    l = applyTurnToLedger(l, [{ action: 'clear' }], NOW, 1);
+    expect(l.completed[0].assistance).toBe(7);
+    expect(problemAssistance(l)).toBe(7);                                     // falls back to last completed
+  });
+
+  test('a new problem starts its assistance fresh (never inherited)', () => {
+    let l = applyTurnToLedger(null, [{ action: 'pose', tex: 'a=1' }], NOW, 9);
+    l = applyTurnToLedger(l, [{ action: 'resolve', tex: 'a' }], NOW, 9);
+    l = applyTurnToLedger(l, [{ action: 'pose', tex: 'b=2' }], NOW, 1);
+    // Level 1 is recorded affirmatively — "independent so far", not "unknown".
+    expect(l.current.assistance).toBe(1);
+    l = applyTurnToLedger(l, [{ action: 'resolve', tex: 'b' }], NOW, 5);
+    expect(l.current.assistance).toBe(5);         // not inherited from problem a (9)
+    expect(l.completed[0].assistance).toBe(9);    // a kept its own level
+  });
+
+  test('assistance omitted → untouched (older callers, voice path)', () => {
+    let l = applyTurnToLedger(null, [{ action: 'pose', tex: 'x=1' }], NOW);
+    l = applyTurnToLedger(l, [{ action: 'verify', tex: 'x=1' }], NOW);
+    expect(l.current.assistance).toBeNull();
+    expect(problemAssistance(l)).toBeNull();
+    expect(problemAssistance(null)).toBeNull();
   });
 
   test('tolerates malformed input: null commands, junk entries, malformed prev', () => {
