@@ -978,7 +978,9 @@ class CourseManager {
             // and calls onBaselineComplete(); the welcome splash + its card remain
             // behind the modal as the fallback if the student closes it early.
             // Other required diagnostics keep the existing card-only behaviour.
-            if (diagnostic.type === 'act-practice' && window.openActTest) {
+            // `typeof` guard: this file is also loaded in node by the unit tests,
+            // where `window` does not exist.
+            if (diagnostic.type === 'act-practice' && typeof window !== 'undefined' && window.openActTest) {
                 setTimeout(() => { try { window.openActTest(); } catch (e) {} }, 350);
             }
             return;
