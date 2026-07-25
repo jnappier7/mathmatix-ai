@@ -115,6 +115,7 @@
           <div class="actt-head">
             <span class="actt-title">📐 ACT Math Practice Test</span>
             <span style="display:flex;align-items:center;gap:10px">
+              <button class="actt-x" id="actt-calc" aria-label="Calculator" title="Calculator (allowed on the ACT)" style="display:none;font-size:14px;font-weight:600;padding:2px 8px;border:1px solid rgba(255,255,255,.5);border-radius:8px">Calc</button>
               <span class="actt-timer" id="actt-timer">60:00</span>
               <button class="actt-x" id="actt-close" aria-label="Close">×</button>
             </span>
@@ -133,13 +134,60 @@
       this.overlay.querySelector('#actt-close').addEventListener('click', () => this.close());
       this.overlay.querySelector('#actt-skip').addEventListener('click', () => this.submit(true));
       this.overlay.querySelector('#actt-next').addEventListener('click', () => this.submit(false));
+      this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
       this.el = (id) => this.overlay.querySelector('#' + id);
     }
 
+    // On-screen calculator for the baseline. The real ACT Math section permits a
+    // calculator on EVERY question, so the baseline must offer one or it
+    // understates the score and mis-targets the bootcamp. Reuses the app's
+    // scientific FloatingCalculator (no graphing/CAS — ACT-appropriate), forced
+    // available here regardless of the teacher/IEP tutoring-time restriction,
+    // because that restriction is a practice choice, not a test condition. Bumped
+    // above the runner overlay (z-index 10000) so it floats over the modal.
+    _toggleCalc() {
+      try {
+        const panel = document.getElementById('floating-calculator');
+        if (panel) panel.style.zIndex = '10002';
+        if (window.floatingCalc && typeof window.floatingCalc.toggleCalculator === 'function') {
+          window.floatingCalc.toggleCalculator();
+        } else if (panel) {
+          panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'flex' : 'none';
+        }
+      } catch (e) { /* non-fatal — the test never blocks on the calculator */ }
+    }
+
+    // Intro / "Begin" screen. The timer starts only when the student clicks
+    // Begin — never on open() — so a baseline can be presented (or auto-opened as
+    // the course's registration step) without ambushing them into a running clock.
+    // No pause by design: pacing is part of what the ACT measures, so a pausable
+    // baseline would post an inflated score and mis-target the whole bootcamp.
     async open() {
       this._mount();
       this.overlay.style.display = 'flex';
-      this.el('actt-timer').style.display = '';   // restore (progress view hides it)
+      this.el('actt-timer').style.display = 'none';    // no clock on the intro
+      this.el('actt-calc').style.display = 'none';     // calc appears with the test
+      this.el('actt-foot').style.display = 'none';
+      this.el('actt-body').innerHTML = `
+        <div style="max-width:520px;margin:0 auto;padding:6px 4px 4px">
+          <h2 style="margin:0 0 10px;font-size:20px">Your baseline ACT Math test</h2>
+          <p style="margin:0 0 14px;line-height:1.5">This is your <strong>baseline</strong> — a full, timed ACT Math section (about 45 minutes). Your tutor uses the results to focus your prep on exactly what you need, and marks anything you ace as done so you don't re-grind it.</p>
+          <ul style="margin:0 0 18px;padding-left:20px;line-height:1.6">
+            <li><strong>It's timed and can't be paused</strong> — just like the real ACT. Pacing is part of the score.</li>
+            <li>Do it in <strong>one sitting</strong>. Find a quiet spot and grab scratch paper first.</li>
+            <li>Don't stress any single question — answer, move on, keep the clock moving.</li>
+          </ul>
+          <button id="actt-begin" style="width:100%;padding:13px 16px;font-size:16px;font-weight:700;border:0;border-radius:12px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6)">Begin when ready</button>
+        </div>`;
+      const beginBtn = this.overlay.querySelector('#actt-begin');
+      if (beginBtn) beginBtn.addEventListener('click', () => this._begin());
+    }
+
+    // Actually start (or resume) the test + the clock. Only reached via the
+    // Begin button, so the timer never starts behind the student's back.
+    async _begin() {
+      this.el('actt-timer').style.display = '';
+      this.el('actt-calc').style.display = '';
       this.el('actt-body').innerHTML = '<div class="actt-center">Building your practice test…</div>';
       try {
         const data = await api('/api/act-test/start', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });

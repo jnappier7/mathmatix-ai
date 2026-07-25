@@ -970,6 +970,17 @@ class CourseManager {
     beginTeachingUnlessBaselinePending(diagnostic) {
         if (diagnostic && diagnostic.required) {
             this._baselinePending = true;
+            // Registration step: for the ACT baseline, take the student straight
+            // INTO the runner (which now lands on its Begin screen — no auto-timer)
+            // instead of just holding the greeting behind a dismissible card. The
+            // baseline becomes the door you walk through to reach the tutor, not a
+            // nag you can skip. The greeting stays held until the runner finishes
+            // and calls onBaselineComplete(); the welcome splash + its card remain
+            // behind the modal as the fallback if the student closes it early.
+            // Other required diagnostics keep the existing card-only behaviour.
+            if (diagnostic.type === 'act-practice' && window.openActTest) {
+                setTimeout(() => { try { window.openActTest(); } catch (e) {} }, 350);
+            }
             return;
         }
         this._baselinePending = false;
