@@ -157,6 +157,24 @@
       } catch (e) { /* non-fatal — the test never blocks on the calculator */ }
     }
 
+    // Dismiss the calculator. The FloatingCalculator is a SEPARATE overlay, so
+    // once the runner (and its Calc toggle) closes it would otherwise strand on
+    // screen — its own close button is clipped off by its float positioning, so
+    // the student has no way to get rid of it, even after the test. Force it
+    // hidden whenever the test closes or completes.
+    _hideCalc() {
+      try {
+        if (window.floatingCalc && typeof window.floatingCalc.hideCalculator === 'function') {
+          window.floatingCalc.hideCalculator();
+        }
+      } catch (e) { /* non-fatal */ }
+      try {
+        const panel = document.getElementById('floating-calculator');
+        if (panel) { panel.classList.remove('calc-entering', 'calc-exiting'); panel.style.display = 'none'; }
+        document.querySelectorAll('.calc-backdrop, .calculator-backdrop, #calculator-backdrop').forEach((el) => el.remove());
+      } catch (e) { /* non-fatal */ }
+    }
+
     // Intro / "Begin" screen. The timer starts only when the student clicks
     // Begin — never on open() — so a baseline can be presented (or auto-opened as
     // the course's registration step) without ambushing them into a running clock.
@@ -211,6 +229,7 @@
 
     close() {
       this._stopTimer();
+      this._hideCalc();
       if (this.overlay) this.overlay.style.display = 'none';
       // If this was a completed baseline, let the course begin teaching now —
       // adapted to the results. Guarded by _completed so cancelling the test
@@ -294,6 +313,7 @@
 
     async complete() {
       this._stopTimer();
+      this._hideCalc();   // done answering — the calc has no place on the results screen
       this.el('actt-progwrap').style.display = 'none';
       this.el('actt-foot').style.display = 'none';
       this.el('actt-body').innerHTML = '<div class="actt-center">Scoring…</div>';
