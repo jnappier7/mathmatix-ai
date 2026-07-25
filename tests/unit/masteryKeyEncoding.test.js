@@ -45,8 +45,15 @@ describe('encode / decode', () => {
     });
   });
 
-  test('fails loudly rather than corrupting if an id contains the sentinel', () => {
-    expect(() => encodeMasteryKey('BAD_ID')).toThrow(/reserves/);
+  test('is idempotent: re-encoding an already-encoded key is a no-op', () => {
+    // No canonical id contains "_", so a value that has one is already a storage
+    // key. Re-encoding must NOT throw or corrupt it — an encoded key leaking back
+    // into logical position (a stale tutorPlan.currentTarget.skillId of "MS_QNT_8")
+    // used to throw here and take the whole TutorPlan load down every turn.
+    const key = encodeMasteryKey('MS.QNT.8'); // -> "MS_QNT_8"
+    expect(key).toBe('MS_QNT_8');
+    expect(encodeMasteryKey(key)).toBe('MS_QNT_8'); // idempotent, no throw
+    expect(decodeMasteryKey(encodeMasteryKey(key))).toBe('MS.QNT.8');
   });
 
   test('leaves an already-safe legacy id unchanged', () => {

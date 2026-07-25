@@ -22,17 +22,21 @@ const { canonicalSkillId } = require('./skillCanonicalizer');
 // silently vanishes. That is a live data-loss bug for every crosswalked skill.
 //
 // Fix: store an ENCODED key ("ALG1_EQV_1") and keep the dotted id as the single
-// logical id everywhere else (graph, board, closure, canonicalizer). No skill id
-// in the catalog contains "_", so "." <-> "_" is a clean bijection; encode()
-// asserts that, so if an id ever does contain "_" this fails loudly at the write
-// instead of corrupting a key. No data migration is needed because the bug meant
-// no dotted key was ever successfully stored.
+// logical id everywhere else (graph, board, closure, canonicalizer). No canonical
+// skill id contains "_" (the namespace is dot- and hyphen-based: "MS.QNT.8",
+// "2d-shapes"), so "." <-> "_" is a clean bijection.
+//
+// encode() is IDEMPOTENT: a value that already contains "_" is an already-encoded
+// storage key, so it is returned unchanged. This matters because an encoded key
+// can leak back into logical-id position — e.g. a tutorPlan.currentTarget.skillId
+// persisted as "MS_QNT_8" by pre-fix code. An earlier version threw on that,
+// which took the whole (non-fatal-guarded) TutorPlan load down on EVERY turn and
+// silently stripped the tutor's persistent model of the student. Idempotence
+// makes the layer resilient to that stale data with no migration required.
 function encodeMasteryKey(id) {
   if (id == null) return id;
   const s = String(id);
-  if (s.includes('_')) {
-    throw new Error(`skill id "${s}" contains "_", which the mastery key encoding reserves as the "." substitute`);
-  }
+  if (s.includes('_')) return s; // already encoded — encode is a no-op
   return s.replace(/\./g, '_');
 }
 
