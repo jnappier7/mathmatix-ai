@@ -1,0 +1,53 @@
+{
+  "_README": "Baseline-ACT skill id -> ACT course-module skill id. The practice-ACT item bank (seeds/act-math-blueprint.json, 44 fine-grained skills) and the ACT course modules (public/modules/act-prep/*, 36 coarser skills) grew separate act-* taxonomies (only 8 ids matched). /api/act-test/complete credits mastery by BASELINE ids, but the course teaches by COURSE ids — so 'skip what you aced' never reached the course. This maps baseline -> course so credited mastery lands on the id the course actually reads. Many-to-one is expected (baseline is finer). `confidence`: high = same concept; med = close/subsumed; low = best-available bucket, REVIEW. Course strategy skills (backsolving, pacing, …) have no content-skill baseline equivalent and are intentionally absent. Keys with no course home are omitted (they credit nothing until the course adds a matching skill).",
+
+  "act-complex-numbers":                        { "course": "act-real-complex-numbers", "confidence": "high" },
+  "act-exponent-rules":                         { "course": "act-exponents-roots", "confidence": "high" },
+  "act-radicals-roots":                         { "course": "act-exponents-roots", "confidence": "high" },
+  "act-matrices-vectors":                       { "course": "act-matrices-vectors", "confidence": "high" },
+  "act-scientific-notation":                    { "course": "act-exponents-roots", "confidence": "low", "note": "scientific notation is exponent-based; no dedicated course skill" },
+
+  "act-linear-equations":                       { "course": "act-linear-equations", "confidence": "high" },
+  "act-linear-inequalities":                    { "course": "act-linear-equations", "confidence": "med" },
+  "act-absolute-value-equations-inequalities":  { "course": "act-linear-equations", "confidence": "low", "note": "no abs-value course skill; nearest is linear equations/inequalities" },
+  "act-systems-of-equations":                   { "course": "act-systems-of-equations", "confidence": "high" },
+  "act-quadratic-equations":                    { "course": "act-quadratic-equations", "confidence": "high" },
+  "act-polynomial-expressions":                 { "course": "act-polynomial-expressions", "confidence": "high" },
+  "act-radical-rational-equations":             { "course": "act-radical-rational-expressions", "confidence": "high" },
+  "act-variation-direct-inverse":               { "course": "act-radical-rational-expressions", "confidence": "low", "note": "inverse variation is rational; direct is linear — imperfect single bucket" },
+  "act-word-problems-modeling":                 { "course": "act-algebraic-reasoning-context", "confidence": "med" },
+
+  "act-function-evaluation-notation":           { "course": "act-function-notation-evaluation", "confidence": "high", "note": "same concept, name order differs" },
+  "act-function-composition":                   { "course": "act-function-notation-evaluation", "confidence": "med" },
+  "act-linear-functions-models":                { "course": "act-linear-functions", "confidence": "high" },
+  "act-quadratic-functions-parabolas":          { "course": "act-quadratic-functions", "confidence": "high" },
+  "act-exponential-models":                     { "course": "act-polynomial-exponential-log", "confidence": "high" },
+  "act-logarithms":                             { "course": "act-polynomial-exponential-log", "confidence": "high" },
+  "act-trigonometric-functions":                { "course": "act-trig-functions", "confidence": "high" },
+  "act-graph-transformations":                  { "course": "act-function-transformations", "confidence": "high" },
+  "act-sequences":                              { "course": "act-algebraic-reasoning-context", "confidence": "low", "note": "no sequences course skill; parked under algebraic reasoning" },
+
+  "act-angles-parallel-lines":                  { "course": "act-angles-lines-triangles", "confidence": "high" },
+  "act-triangles-angle-relationships":          { "course": "act-angles-lines-triangles", "confidence": "high" },
+  "act-triangles-pythagorean-theorem":          { "course": "act-right-triangle-trig", "confidence": "high" },
+  "act-right-triangle-trigonometry":            { "course": "act-right-triangle-trig", "confidence": "high" },
+  "act-law-of-sines-cosines":                   { "course": "act-right-triangle-trig", "confidence": "med" },
+  "act-similar-congruent-figures":              { "course": "act-congruence-similarity", "confidence": "high" },
+  "act-circles":                                { "course": "act-polygons-circles", "confidence": "high" },
+  "act-area-perimeter":                         { "course": "act-area-volume-surface-area", "confidence": "med" },
+  "act-volume-surface-area":                    { "course": "act-area-volume-surface-area", "confidence": "high" },
+  "act-coordinate-geometry":                    { "course": "act-coordinate-geometry", "confidence": "high" },
+
+  "act-center-spread":                          { "course": "act-center-spread", "confidence": "high" },
+  "act-probability":                            { "course": "act-probability", "confidence": "high" },
+  "act-conditional-probability":                { "course": "act-two-way-tables", "confidence": "med", "note": "conditional probability is commonly assessed via two-way tables" },
+  "act-expected-value":                         { "course": "act-probability", "confidence": "med" },
+  "act-counting-arrangements":                  { "course": "act-counting-techniques", "confidence": "high" },
+
+  "act-percentages":                            { "course": "act-percent-applications", "confidence": "high" },
+  "act-ratios-proportions":                     { "course": "act-multi-step-rate-proportion", "confidence": "high" },
+  "act-rates-unit-conversion":                  { "course": "act-measurement-unit-conversion", "confidence": "med" },
+  "act-multi-step-arithmetic":                  { "course": "act-multi-step-rate-proportion", "confidence": "med" },
+  "act-basic-geometry-measures":                { "course": "act-area-perimeter-composite", "confidence": "med" },
+  "act-time-schedule-arithmetic":               { "course": "act-measurement-unit-conversion", "confidence": "low", "note": "elapsed-time/schedule arithmetic; nearest is unit conversion / multi-step" }
+}
