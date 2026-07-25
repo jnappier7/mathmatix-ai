@@ -10,6 +10,46 @@ const path = require('path');
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
 
 /**
+ * The ACT-prep "use the real practice test" directive.
+ *
+ * Standalone + exported (not buried in buildCourseSystemPrompt) because several
+ * /api/chat prompt paths bypass that builder — generateSystemPrompt fallback,
+ * mastery/checkpoint modes — and when they do, the tutor has no idea the built-in
+ * timed test exists and openly refuses it ("your teacher or the ACT platform
+ * would set that up"). routes/chat.js appends this to the FINAL system prompt for
+ * any act-prep course turn, whichever builder produced it. Returns '' for every
+ * other course so it's safe to call unconditionally.
+ *
+ * @param {Object} courseSession – CourseSession document (needs .courseId)
+ * @returns {string} the directive, or '' when not an ACT-prep course
+ */
+function buildActPracticeGuidance(courseSession) {
+  if (!courseSession || courseSession.courseId !== 'act-prep') return '';
+  return `
+
+====================================================================
+PRACTICE ACT — USE THE REAL TOOL, NEVER IMPROVISE ONE
+====================================================================
+This course has a real, full-length, auto-scored practice ACT Math test built
+in. It is the ONLY thing that produces a real diagnostic and targets this
+student's bootcamp. When the student asks to take a practice ACT / practice test
+/ diagnostic (or you decide it's time):
+- DO NOT write your own quiz or "short practice set." That produces no score and
+  targets nothing.
+- NEVER say the test must be set up by a teacher or "the ACT platform" — it is
+  built into THIS chat and you launch it yourself.
+- Briefly set expectations in YOUR voice: it's a full timed ACT Math section
+  (~45 questions) and you'll use the results to focus their sessions. Ask if they
+  want to start it now (a quick informal warm-up with you is fine if they're not
+  ready for the full thing).
+- ONLY once the student confirms they want to start the real test, emit the
+  control tag <LAUNCH_PRACTICE_ACT> on its own line. It is hidden from the student
+  and opens the test. Never describe the tag, and never emit it without an
+  explicit confirmation or just because the ACT was mentioned in passing.
+====================================================================`;
+}
+
+/**
  * Build the complete course-mode system prompt.
  *
  * @param {Object} opts
@@ -102,28 +142,12 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
   const iepAccommodations = userProfile.iepPlan?.accommodations ? formatIEP(userProfile.iepPlan) : '';
 
   // ACT-prep only: route "I want a practice test" to the REAL runner, never an
-  // improvised quiz (which scores nothing and targets nothing). The tutor offers
-  // it, then emits <LAUNCH_PRACTICE_ACT> once the student confirms.
-  const practiceActGuidance = courseSession.courseId === 'act-prep' ? `
-
-====================================================================
-PRACTICE ACT — USE THE REAL TOOL, NEVER IMPROVISE ONE
-====================================================================
-This course has a real, full-length, auto-scored practice ACT Math test built
-in. It is the ONLY thing that produces a real diagnostic and targets this
-student's bootcamp. When the student asks to take a practice ACT / practice test
-/ diagnostic (or you decide it's time):
-- DO NOT write your own quiz or "short practice set." That produces no score and
-  targets nothing.
-- Briefly set expectations in YOUR voice: it's a full timed ACT Math section
-  (~45 questions) and you'll use the results to focus their sessions. Ask if they
-  want to start it now (a quick informal warm-up with you is fine if they're not
-  ready for the full thing).
-- ONLY once the student confirms they want to start the real test, emit the
-  control tag <LAUNCH_PRACTICE_ACT> on its own line. It is hidden from the student
-  and opens the test. Never describe the tag, and never emit it without an
-  explicit confirmation or just because the ACT was mentioned in passing.
-====================================================================` : '';
+  // improvised quiz. Extracted to buildActPracticeGuidance so it can ALSO be
+  // appended by the /api/chat prompt finalizer — this builder is bypassed by
+  // several live paths (generateSystemPrompt fallback, mastery/checkpoint), and
+  // when it is, the tutor loses all knowledge of the built-in test and flat-out
+  // denies it exists. See routes/chat.js.
+  const practiceActGuidance = buildActPracticeGuidance(courseSession);
 
   return `You are ${tutorName}, an AI math instructor leading a structured, self-paced course.
 ${tutorPersonality ? `Personality: ${tutorPersonality}` : ''}
@@ -1270,6 +1294,7 @@ Now begin. Present Problem 1.
 
 module.exports = {
   buildCourseSystemPrompt,
+  buildActPracticeGuidance,
   buildCheckpointPrompt,
   buildParentCourseSystemPrompt,
   buildCourseGreetingInstruction,

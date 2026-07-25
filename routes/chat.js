@@ -33,7 +33,7 @@ const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
 const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
-const { buildCourseSystemPrompt, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
+const { buildCourseSystemPrompt, buildActPracticeGuidance, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
 const { buildSystemPrompt: buildCompressedPrompt, determineTier, calculateXpBoostFactor } = require('../utils/promptCompressor');
@@ -1106,6 +1106,19 @@ async function runStudentTurn(req, res) {
 
         if (!systemPrompt) {
             systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
+        }
+
+        // Guarantee the ACT-prep "use the REAL practice test" directive is present
+        // on EVERY act-prep course turn — buildCourseSystemPrompt (which includes
+        // it) is bypassed by the generateSystemPrompt fallback and mastery paths,
+        // and without it the tutor denies the built-in test even exists ("your
+        // teacher or the ACT platform would set that up"). Append here, at the one
+        // point every path converges, guarded so it is never duplicated.
+        {
+            const courseIdForPrompt = conversationContextForPrompt?.courseSession?.courseId;
+            if (courseIdForPrompt === 'act-prep' && systemPrompt && !/LAUNCH_PRACTICE_ACT/.test(systemPrompt)) {
+                systemPrompt += buildActPracticeGuidance({ courseId: courseIdForPrompt });
+            }
         }
 
         // ── Inject step-context reminder into last user message ──
