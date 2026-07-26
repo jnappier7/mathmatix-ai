@@ -533,6 +533,11 @@ html[data-theme="dark"] .lws-root {
   max-width: min(62%, 420px);
   display: flex; flex-direction: column; gap: 6px;
 }
+/* display:flex above would defeat the `hidden` attribute (UA display:none
+   loses to any authored display) — the same guard the rail and caption have.
+   Without it an EMPTY dock painted its pill and clicking it did nothing. */
+.lws-sd[hidden] { display: none; }
+
 .lws-sd-head {
   appearance: none; -webkit-appearance: none; cursor: pointer;
   align-self: flex-start; display: inline-flex; align-items: center; gap: 6px;
