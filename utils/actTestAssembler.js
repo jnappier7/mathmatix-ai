@@ -151,6 +151,12 @@ function toGenerationSpec(slot) {
  * @param {Object} [opts.blueprint] - Override blueprint (defaults to seeds file)
  * @param {string|number} [opts.seed] - Reproducibility seed (string hashed)
  * @param {number} [opts.difficultyRange=1] - ± band passed to findNearDifficulty
+ * @param {string[]} [opts.excludeIds] - problemIds the student has already been
+ *   served (any prior session). Seeded into the exclusion set so no item ever
+ *   repeats across re-tests — repeats measure memory, not skill. As these deplete
+ *   a skill, the same-category fallback keeps drawing fresh items; when a whole
+ *   category is exhausted those slots become gaps (coverage drops), which the
+ *   caller surfaces honestly instead of silently repeating.
  * @returns {Promise<{items, gaps, coverage, meta}>}
  */
 async function assembleForm(opts = {}) {
@@ -162,7 +168,11 @@ async function assembleForm(opts = {}) {
   const Problem = require('../models/problem');
   const byCat = blueprint.skillsByCategory || {};
   const slots = buildSlots(blueprint, rng);
-  const usedProblemIds = [];
+  // Never re-serve an item the student has already seen (cross-session), on top
+  // of the within-form dedup this array already provides.
+  const excludeIds = Array.isArray(opts.excludeIds) ? opts.excludeIds : [];
+  const usedProblemIds = excludeIds.slice();
+  const excludedCount = usedProblemIds.length;
   const usedSignatures = new Map();   // prompt-shape -> count, to avoid look-alikes
   const items = [];
   const gaps = [];
@@ -226,6 +236,7 @@ async function assembleForm(opts = {}) {
       filled: items.length,
       missing: gaps.length,
       pct: slots.length ? Math.round((items.length / slots.length) * 100) : 0,
+      excluded: excludedCount,   // items withheld as already-seen (re-test freshness)
     },
     meta: {
       testId: blueprint.testId,
