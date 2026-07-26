@@ -3902,6 +3902,19 @@ class CourseManager {
     beginTeachingUnlessBaselinePending(diagnostic) {
         if (diagnostic && diagnostic.required) {
             this._baselinePending = true;
+            // Registration step: for the ACT baseline, take the student straight
+            // INTO the runner (which now lands on its Begin screen — no auto-timer)
+            // instead of just holding the greeting behind a dismissible card. The
+            // baseline becomes the door you walk through to reach the tutor, not a
+            // nag you can skip. The greeting stays held until the runner finishes
+            // and calls onBaselineComplete(); the welcome splash + its card remain
+            // behind the modal as the fallback if the student closes it early.
+            // Other required diagnostics keep the existing card-only behaviour.
+            // `typeof` guard: this file is also loaded in node by the unit tests,
+            // where `window` does not exist.
+            if (diagnostic.type === 'act-practice' && typeof window !== 'undefined' && window.openActTest) {
+                setTimeout(() => { try { window.openActTest(); } catch (e) {} }, 350);
+            }
             return;
         }
         this._baselinePending = false;
@@ -4425,6 +4438,20 @@ class LessonTracker {
     // --------------------------------------------------
 
     _render(pu) {
+        // ACT bootcamp: the course is a test→review→re-test loop, not a
+        // gradual-release scaffold, so render the loop view instead of the
+        // Warm-up/Learn/Practice stepper — for act-prep ALWAYS, even before the
+        // first baseline (pre-baseline shows a "start your baseline" state).
+        if (pu && pu.courseId === 'act-prep') {
+            return this._renderBootcamp(pu);
+        }
+        // Not in bootcamp mode — restore the standard tracker chrome if the
+        // bootcamp panel was showing.
+        const bcPanel = document.getElementById('lt-bootcamp');
+        if (bcPanel) bcPanel.style.display = 'none';
+        const ltContainer = document.querySelector('#lesson-tracker-wrapper .lt-container');
+        if (ltContainer) ltContainer.style.display = '';
+
         // Lesson breadcrumb (shows module > lesson context)
         this._renderBreadcrumb(pu);
 
@@ -4458,6 +4485,115 @@ class LessonTracker {
         if (wrapper && wrapper.style.display === 'none') {
             wrapper.style.display = 'block';
         }
+    }
+
+    // ── ACT bootcamp loop view (replaces the scaffold stepper for act-prep) ──
+    _renderBootcamp(pu) {
+        const wrapper = document.getElementById('lesson-tracker-wrapper');
+        if (!wrapper) return;
+        const ltContainer = wrapper.querySelector('.lt-container');
+        if (ltContainer) ltContainer.style.display = 'none';
+        let panel = document.getElementById('lt-bootcamp');
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.id = 'lt-bootcamp';
+            panel.style.padding = '4px 0';
+            wrapper.appendChild(panel);
+        }
+        panel.innerHTML = this._bootcampHtml(pu.bootcamp, pu.diagnosticPlan);
+        panel.style.display = 'block';
+        wrapper.style.display = 'block';
+        this._wireBootcamp();
+        this._loadBootcampScore();
+    }
+
+    _bootcampHtml(bc, dp) {
+        bc = bc || {};
+        const CAT = { 'integrating-essential-skills': 'Essential skills', 'number-quantity': 'Number & Quantity', algebra: 'Algebra', functions: 'Functions', geometry: 'Geometry', 'statistics-probability': 'Statistics & Probability' };
+        const label = (c) => CAT[c] || String(c || '').replace(/-/g, ' ');
+        const hasBaseline = !!bc.phase;   // bootcamp state only exists once a test is scored
+        const total = Array.isArray(bc.queue) ? bc.queue.length : 0;
+        const reviewed = Math.min(bc.index || 0, total);
+        const pct = total ? Math.round((100 * reviewed) / total) : 0;
+        const round = bc.round || 1;
+        const isReview = bc.phase === 'review' && total > 0;
+        const cur = isReview && Array.isArray(bc.queue) ? bc.queue[bc.index] : null;
+
+        const step = (icon, name, state) => {
+            const style = state === 'active'
+                ? 'background:rgba(255,255,255,.22);color:#fff;font-weight:600'
+                : state === 'done' ? 'color:rgba(255,255,255,.85)' : 'color:rgba(255,255,255,.5)';
+            return `<div style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;${style}"><i class="fas ${icon}"></i> ${name}</div>`;
+        };
+        const loop = `<div style="display:flex;gap:6px;margin:10px 0 14px">
+            ${step('fa-flag-checkered', 'Baseline', hasBaseline ? 'done' : 'active')}
+            ${step('fa-bullseye', 'Review', isReview ? 'active' : (hasBaseline ? 'done' : 'todo'))}
+            ${step('fa-clipboard-list', 'Re-test', bc.phase === 'reassess' ? 'active' : 'todo')}
+            ${step('fa-chart-line', 'Compare', 'todo')}
+          </div>`;
+
+        const phaseCard = !hasBaseline ? `
+            <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <span style="color:#fff;font-size:13.5px;font-weight:500">Start with your baseline ACT — a full timed test that sets your starting score and shows exactly what to work on.</span>
+              <button id="lt-bc-start" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Start baseline</button>
+            </div>` : isReview ? `
+            <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px">
+              <div style="display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:14px;font-weight:600;margin-bottom:8px"><span>Going over what you missed</span><span style="font-weight:500;font-size:12.5px;opacity:.85">${reviewed} of ${total} done</span></div>
+              <div style="height:7px;background:rgba(255,255,255,.22);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="width:${pct}%;height:100%;background:#fff;border-radius:5px"></div></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+                <span style="color:rgba(255,255,255,.9);font-size:12.5px">Up next: <strong>${cur ? label(cur.category) : '—'}</strong></span>
+                <button id="lt-bc-continue" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Continue in chat</button>
+              </div>
+            </div>` : `
+            <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <span style="color:#fff;font-size:13.5px;font-weight:500">You've reviewed your misses — take a fresh test to measure your gains.</span>
+              <button id="lt-bc-retest" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Take a fresh test</button>
+            </div>`;
+
+        const chips = (dp && (dp.focusCategories || dp.masteredCategories)) ? `
+            <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+              ${(dp.focusCategories || []).map((c) => `<span style="background:rgba(255,255,255,.2);color:#fff;font-size:11.5px;padding:3px 9px;border-radius:20px">${label(c)}</span>`).join('')}
+              ${(dp.masteredCategories || []).map((c) => `<span style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);font-size:11.5px;padding:3px 9px;border-radius:20px"><i class="fas fa-check" style="font-size:10px"></i> ${label(c)}</span>`).join('')}
+            </div>` : '';
+
+        return `
+          <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:14px;padding:14px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <span style="color:#fff;font-size:15px;font-weight:700">🎯 ACT bootcamp <span style="font-weight:500;font-size:12px;background:rgba(255,255,255,.2);padding:2px 9px;border-radius:20px;margin-left:4px">Round ${round}</span></span>
+              <span id="lt-bc-score" style="color:#fff;font-size:13px;opacity:.9"></span>
+            </div>
+            ${loop}
+            ${phaseCard}
+            ${chips}
+            ${hasBaseline ? `<div style="margin-top:12px;text-align:right"><a id="lt-bc-progress" href="#" style="color:#fff;font-size:12px;opacity:.9;text-decoration:none"><i class="fas fa-chart-line"></i> See your progress</a></div>` : ''}
+          </div>`;
+    }
+
+    _wireBootcamp() {
+        const cont = document.getElementById('lt-bc-continue');
+        if (cont) cont.addEventListener('click', () => {
+            const input = document.getElementById('user-input') || document.getElementById('chat-input');
+            if (input) input.focus();
+        });
+        const retest = document.getElementById('lt-bc-retest');
+        if (retest) retest.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
+        const start = document.getElementById('lt-bc-start');
+        if (start) start.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
+        const prog = document.getElementById('lt-bc-progress');
+        if (prog) prog.addEventListener('click', (e) => { e.preventDefault(); if (window.openActProgress) window.openActProgress(); });
+    }
+
+    async _loadBootcampScore() {
+        try {
+            const fetcher = window.csrfFetch || window.fetch;
+            const r = await fetcher('/api/act-test/history').then((x) => x.json()).catch(() => null);
+            const a = ((r && r.attempts) || []).filter((x) => x.scaledScore != null);
+            const el = document.getElementById('lt-bc-score');
+            if (!el || !a.length) return;
+            if (a.length === 1) { el.textContent = `Score ${a[0].scaledScore}`; return; }
+            const first = a[0].scaledScore, latest = a[a.length - 1].scaledScore, d = latest - first;
+            el.innerHTML = `${first} &rarr; ${latest}${d > 0 ? ` <span style="background:rgba(255,255,255,.25);padding:1px 7px;border-radius:20px;font-size:11px">&#9650; +${d}</span>` : ''}`;
+        } catch (e) { /* non-fatal */ }
     }
 
     _renderBreadcrumb(pu) {
