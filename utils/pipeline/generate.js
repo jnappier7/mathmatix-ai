@@ -432,6 +432,17 @@ function assemblePrompt(decision, promptContext) {
     );
   }
 
+  // ── Notebook idea offers (Live Workspace §7.6) ──
+  // Compact and always-on: the tutor may OFFER a reusable idea for the
+  // student's notebook; the student confirms client-side. Deliberately rare —
+  // the instruction sets a high bar so the notebook stays meaningful.
+  fullSystemPrompt += '\n\n--- NOTEBOOK ---\n'
+    + 'When a turn lands a genuinely reusable idea the student just grasped (a rule or '
+    + 'pattern worth keeping, e.g. "whatever you do to one side, do to the other"), you may '
+    + 'offer it for their notebook by appending: <NOTEBOOK_IDEA title="Short name">One sentence, '
+    + 'in the student\'s language.</NOTEBOOK_IDEA> — at most one per turn, only at real moments, '
+    + 'never for routine steps. The student chooses whether to save it.';
+
   // Inject phase-specific prompt if available
   if (decision.phasePrompt) {
     fullSystemPrompt += '\n\n' + decision.phasePrompt;

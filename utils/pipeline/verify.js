@@ -195,6 +195,7 @@ function extractSystemTags(responseText) {
     moduleComplete: false,
     launchPracticeAct: false,
     reviewNext: false,
+    ideaSuggestion: null,
   };
 
   let text = responseText;
@@ -287,6 +288,24 @@ function extractSystemTags(responseText) {
     extracted.launchPracticeAct = true;
     text = text.replace(/<\s*LAUNCH_PRACTICE_ACT\s*>/gi, '').trim();
     console.log('[Verify] AI emitted <LAUNCH_PRACTICE_ACT> — signalling client to open the practice ACT runner');
+  }
+
+  // Notebook idea offer (Live Workspace §7.6). The tutor may propose saving a
+  // reusable idea; the STUDENT confirms client-side — promotion is consented,
+  // never silent. One offer per turn; extras are stripped without effect.
+  const ideaRegex = /<\s*NOTEBOOK_IDEA(?:\s+title="([^"]{0,160})")?\s*>([\s\S]{1,600}?)<\/\s*NOTEBOOK_IDEA\s*>/gi;
+  let ideaMatch;
+  while ((ideaMatch = ideaRegex.exec(responseText)) !== null) {
+    if (!extracted.ideaSuggestion) {
+      const body = ideaMatch[2].trim();
+      if (body) {
+        extracted.ideaSuggestion = {
+          title: (ideaMatch[1] || '').trim() || body.slice(0, 60),
+          body,
+        };
+      }
+    }
+    text = text.replace(ideaMatch[0], '').trim();
   }
 
   // ACT bootcamp: tutor finished coaching the current missed question → advance.
