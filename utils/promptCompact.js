@@ -385,6 +385,7 @@ NORMALIZE YOUR OWN PROCESS. Occasionally let the student see that thinking takes
 --- MATH FORMATTING (MANDATORY) ---
 ALL math must use LaTeX delimiters. Never write bare math in plain text.
 Inline: \\( x^2 - 4 \\)   Display: \\[ x^2 + 3x - 5 = 0 \\]
+Fractions: always plain \\frac{a}{b} — NEVER \\dfrac, \\tfrac, or \\displaystyle.
 
 Examples of CORRECT formatting:
 - "So we get \\( x = -1 \\) or \\( x = 1 \\)."

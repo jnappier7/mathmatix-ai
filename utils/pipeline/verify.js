@@ -351,6 +351,15 @@ async function verify(responseText, context = {}) {
   let text = responseText;
   const flags = [];
 
+  // LaTeX repair (production, 2026-07-26): the tutor model sometimes writes
+  // \dfrac with a backslash spliced in — "\d\frac{5}{7}" — which KaTeX
+  // renders as a red unknown-macro \d before the fraction. Once one turn
+  // does it, history teaches every later turn to copy it. Rejoin the split
+  // command at the shared choke point so chat text, the board synthesizer
+  // (which poses verbatim from this text), and the ledger all stay clean.
+  text = text.replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2');
+  text = text.replace(/\\displaystyle\s*/g, '');
+
   // ── 1. Extract system tags (structured sidecar data) ──
   const { text: tagStrippedText, extracted } = extractSystemTags(text);
   text = tagStrippedText;
@@ -1181,8 +1190,14 @@ function normalizeLatex(text) {
     'sin', 'cos', 'tan', 'log', 'ln',
   ];
   // Match command names NOT preceded by a backslash, followed by { or a space-then-{
+  // The lookbehind must exclude LETTERS as well as the backslash: `frac`
+  // preceded by `d` is the tail of \dfrac, not a bare command — the old
+  // backslash-only lookbehind "repaired" \dfrac{5}{7} into \d\frac{5}{7}
+  // (a red unknown-macro \d on every card; production, 2026-07-26). Same
+  // class of bug for \tfrac/\cfrac/\arcsin/\arccos via their embedded
+  // command-word tails.
   const cmdPattern = new RegExp(
-    `(?<!\\\\)(${LATEX_COMMANDS.join('|')})(?=\\s*\\{)`, 'g'
+    `(?<![\\\\a-zA-Z])(${LATEX_COMMANDS.join('|')})(?=\\s*\\{)`, 'g'
   );
   result = result.replace(cmdPattern, '\\$1');
 
