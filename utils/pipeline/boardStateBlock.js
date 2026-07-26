@@ -92,6 +92,12 @@ function buildBoardStateBlock(ledger) {
     + '("look at the last line on your board"). If the problem is SOLVED, do not keep '
     + 'working it — celebrate briefly and move forward. When the student says "what\'s next", '
     + 'advance from the newest board line, not from the beginning.');
+  if (cur && cur.problemTex) {
+    lines.push('POINTING: To make the exact line you are discussing glow on the student\'s '
+      + 'board, append <BOARD_POINT step="N"/> (N from the numbering above) or '
+      + '<BOARD_POINT target="problem"/> / target="solution" / target="last". At most one '
+      + 'per turn, and only when you are referring to that specific line.');
+  }
 
   return lines.join('\n');
 }
