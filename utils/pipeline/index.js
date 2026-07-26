@@ -42,7 +42,7 @@ const { updateCard, initializeCard, rateAttempt, RATINGS } = require('../fsrsSch
 const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDifficulty } = require('../consistencyScorer');
 
 // Backbone: Tutor Plan + Skill Familiarity
-const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase } = require('../tutorPlanManager');
+const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase, recentPracticeSkillId } = require('../tutorPlanManager');
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
 const { reassessFamiliarity } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
@@ -1310,7 +1310,18 @@ async function runPipeline(message, ctx) {
     // directly keyed BKT/FSRS/SmartScore state under "undefined" whenever activeSkill
     // lacked a skillId but a target existed — so a whole session's mastery evidence
     // pooled into one bogus bucket instead of the skill being taught.
-    const engineSkillId = ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId;
+    const resolvedSkillId = ctx.activeSkill?.skillId || tutorPlan?.currentTarget?.skillId || null;
+    // Resilience (mode-A attribution): currentTarget goes transiently null — it's
+    // cleared when a skill reads as mastered (tutorPlanManager) and isn't re-set on
+    // a turn that resolves no skill. On such a turn a clean, verified solve would
+    // credit NOTHING and the progress bar wouldn't move. So fall back to the skill
+    // the student is plainly working on: the most-recently-worked in-progress skill
+    // in the plan. The verified-attempt gate below is unchanged, so this only ever
+    // routes a real completed problem to a real in-progress skill — never invents one.
+    const engineSkillId = resolvedSkillId || recentPracticeSkillId(tutorPlan);
+    if (!resolvedSkillId && engineSkillId) {
+      console.log(`[Pipeline] Attribution fallback: crediting to in-progress skill "${engineSkillId}" (no active target this turn)`);
+    }
     // The verified answer feeds skillMastery's pillars/rung too, not just BKT.
     // This replaces the disabled <SKILL_MASTERED> tag path — without it, chat
     // practice never advanced skillMastery and the progress card sat frozen.
