@@ -524,6 +524,12 @@ router.get('/:id/lesson-progress', async (req, res) => {
       showCheckpoint: false
     });
 
+    // Surface the ACT bootcamp state so the tracker can render the loop view
+    // (test → review misses → re-test → compare) instead of the scaffold stepper.
+    progressUpdate.courseId = session.courseId;
+    progressUpdate.bootcamp = session.bootcamp || null;
+    progressUpdate.diagnosticPlan = session.diagnosticPlan || null;
+
     res.json({ success: true, progressUpdate });
   } catch (err) {
     console.error('[CourseSession] Error fetching lesson progress:', err);
