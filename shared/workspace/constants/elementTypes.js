@@ -14,6 +14,8 @@ const ELEMENT_TYPES = Object.freeze({
   GRAPH:         'graph',          // draggable handles — P14 (AFTER visual-gate extension)
   GEOMETRY:      'geometry',       // narrow models only — P17
   IMAGE:         'image',          // pinned upload — P15
+  MODEL:         'model',          // interactive concept model (JSXGraph/tokens,
+                                   // CONCEPT_MODELS catalog) — linked representations, §6.8
 });
 
 const ELEMENT_TYPE_LIST = Object.freeze(Object.values(ELEMENT_TYPES));

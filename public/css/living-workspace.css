@@ -758,3 +758,10 @@ html[data-theme="dark"] .lws-root {
 .lws-nb-card-body { margin: 4px 0 0; white-space: pre-line; }
 .lws-nb-card-prob { margin: 6px 0 0; font-size: 12px; opacity: .7; overflow-wrap: anywhere; }
 .lws-nb-card-seen { margin: 6px 0 0; font: 600 11px/1 system-ui, sans-serif; color: #e0a23c; }
+
+/* ── interactive concept models embedded in the derivation (§6.8) ── */
+.lws-model { width: 100%; max-width: 560px; }
+.lws-model-unavailable {
+  padding: 10px 12px; border: 1px dashed var(--lws-card-border); border-radius: 10px;
+  color: var(--lws-card-ink); opacity: .7; font: 400 13px/1.4 system-ui, sans-serif;
+}

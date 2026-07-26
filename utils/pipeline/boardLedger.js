@@ -46,14 +46,18 @@ function emptyLedger() {
   return { current: null, completed: [] };
 }
 
-// Keep only the fields the client replay needs. Board commands are already
-// schema-checked upstream; this is belt-and-braces against oversized payloads
-// riding into Mongo (e.g. an unexpected extra field on a graph card).
+// Keep only the fields the client replay needs — the EXACT field names the
+// board schema emits (utils/boardResponseSchema.js) and the P5 adapter reads
+// (legacyBoardAdapter.mapCommand). Board commands are already schema-checked
+// upstream; this is belt-and-braces against oversized payloads riding into
+// Mongo. A field missing here silently breaks replay fidelity for its card
+// type (graphs once lost their `fn` this way), so keep the two lists in sync.
 const COMMAND_FIELDS = [
-  'action', 'tex', 'op', 'caption', 'label', 'plain',
-  // visual/block cards
-  'graphType', 'expression', 'expressions', 'points', 'window', 'imageQuery',
-  'shape', 'params', 'highlight', 'steps',
+  'action', 'tex', 'op', 'check', 'caption',
+  'fn',                              // graph
+  'query',                           // image
+  'diagram_type', 'diagram_params',  // diagram
+  'model', 'spec', 'prompt',         // interactive concept model
 ];
 function sanitizeCommand(cmd) {
   const out = {};

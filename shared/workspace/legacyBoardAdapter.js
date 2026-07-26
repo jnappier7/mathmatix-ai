@@ -14,9 +14,10 @@
      - It does NOT re-run the safety gauntlet. Guards / visual-gate /
        mirror-rule already ran UPSTREAM on the board_commands before they
        reached here; this only re-expresses already-approved content.
-     - It NEVER silently drops a command it can't map (e.g. concept
-       `model` cards, which have no workspace element yet) — those are
+     - It NEVER silently drops a command it can't map — those are
        reported in `unmapped` so coverage gaps are visible, not hidden.
+       (Concept `model` cards map to ELEMENT_TYPES.MODEL as of §6.8;
+       dom/modelElement.js renders them via ConceptModelRenderer.)
      - Elements are `provisional:false`: legacy content is tutor-authored
        and already verified; the provisional/"?" state is reserved for
        unverified STUDENT moves (spec §3.4).
@@ -85,8 +86,14 @@ function mapCommand(cmd) {
       return (cmd.diagram_type || cmd.diagram_params)
         ? { type: ELEMENT_TYPES.GEOMETRY, semantic: { diagramType: cmd.diagram_type || null, params: cmd.diagram_params || null } }
         : null;
+    case 'model':
+      // Interactive concept model (CONCEPT_MODELS): a curated name OR a full
+      // spec (JSON string, validated client-side before it can render).
+      return (cmd.model || cmd.spec)
+        ? { type: ELEMENT_TYPES.MODEL, semantic: { model: cmd.model || null, spec: cmd.spec || null, prompt: cmd.prompt || cmd.caption || null } }
+        : null;
     default:
-      return null; // 'clear' is a directive (handled by caller); 'model'/'spec' have no element yet
+      return null; // 'clear' is a directive (handled by caller)
   }
 }
 
@@ -119,9 +126,7 @@ function adaptBoardCommands(commands, opts) {
     if (!mapped) {
       result.unmapped.push({
         action: cmd.action,
-        reason: (cmd.action === 'model' || cmd.action === 'spec')
-          ? 'no-workspace-element-yet'
-          : 'empty-or-unsupported',
+        reason: 'empty-or-unsupported',
       });
       continue;
     }
