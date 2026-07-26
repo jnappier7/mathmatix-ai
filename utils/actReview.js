@@ -107,6 +107,30 @@ How to coach it:
 }
 
 /**
+ * The prompt section once every miss has been worked (bootcamp.phase ===
+ * 'reassess'). Closes the loop: the tutor offers a FRESH full practice ACT to
+ * measure improvement, reusing the existing launch flow (which now serves only
+ * unseen items). Emitting <LAUNCH_PRACTICE_ACT> after the student confirms opens
+ * the runner — same mechanism as the first baseline.
+ */
+function reassessPromptSection(bootcamp) {
+  const reviewed = (bootcamp && Array.isArray(bootcamp.queue)) ? bootcamp.queue.length : 0;
+  return `
+
+====================================================================
+BOOTCAMP — TIME TO RE-TEST
+====================================================================
+The student has now worked through all ${reviewed} question(s) they missed on
+their last practice ACT. Close the loop: it's time to measure whether it stuck.
+- Congratulate them briefly on finishing the review.
+- Offer a FRESH, full timed practice ACT — it draws all-new questions (nothing
+  they've seen), so the score is a real comparison to last time.
+- ONLY after they confirm they want to start it, emit <LAUNCH_PRACTICE_ACT> on
+  its own line to open the test. Never emit it without confirmation.
+====================================================================`;
+}
+
+/**
  * Advance the review pointer. Returns the new index and whether the queue is done.
  */
 function advanceReview(bootcamp) {
@@ -123,6 +147,7 @@ function currentMiss(bootcamp) {
 module.exports = {
   buildReviewQueue,
   reviewPromptSection,
+  reassessPromptSection,
   advanceReview,
   currentMiss,
   DEFAULT_CATEGORY_WEIGHTS,

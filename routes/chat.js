@@ -1183,10 +1183,14 @@ async function runStudentTurn(req, res) {
         // handled after the pipeline, below.
         {
             const bc = conversationContextForPrompt?.courseSession?.bootcamp;
-            if (bc && bc.phase === 'review' && Array.isArray(bc.queue) && systemPrompt) {
-                const { currentMiss, reviewPromptSection } = require('../utils/actReview');
-                const section = reviewPromptSection(currentMiss(bc), bc.index || 0, bc.queue.length);
-                if (section) systemPrompt += section;
+            if (bc && systemPrompt) {
+                const { currentMiss, reviewPromptSection, reassessPromptSection } = require('../utils/actReview');
+                if (bc.phase === 'review' && Array.isArray(bc.queue)) {
+                    const section = reviewPromptSection(currentMiss(bc), bc.index || 0, bc.queue.length);
+                    if (section) systemPrompt += section;
+                } else if (bc.phase === 'reassess') {
+                    systemPrompt += reassessPromptSection(bc);
+                }
             }
         }
 

@@ -3,7 +3,7 @@
  * Pure logic, so it's covered without a DB or LLM.
  */
 
-const { buildReviewQueue, reviewPromptSection, advanceReview, currentMiss } = require('../../utils/actReview');
+const { buildReviewQueue, reviewPromptSection, reassessPromptSection, advanceReview, currentMiss } = require('../../utils/actReview');
 
 const session = {
   items: [
@@ -62,6 +62,17 @@ describe('reviewPromptSection', () => {
   });
   test('empty for no miss', () => {
     expect(reviewPromptSection(null, 0, 0)).toBe('');
+  });
+});
+
+describe('reassessPromptSection (loop close)', () => {
+  test('offers a fresh re-test via the launch tag once misses are worked', () => {
+    const bc = { phase: 'reassess', queue: buildReviewQueue(session, problemsById) };
+    const s = reassessPromptSection(bc);
+    expect(s).toMatch(/TIME TO RE-TEST/);
+    expect(s).toMatch(/FRESH.*all-new questions|nothing.*seen|all-new/i);
+    expect(s).toMatch(/<LAUNCH_PRACTICE_ACT>/);
+    expect(s).toMatch(/2 question/); // reviewed count
   });
 });
 
