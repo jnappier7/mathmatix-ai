@@ -339,6 +339,60 @@ body[data-skin-avatarframe] .cr-player-card .cr-player-avatar > * {
   position: relative; z-index: 1;
 }
 
+/* =========================================================================
+ * BOARD SKINS on the LIVING WORKSPACE (owner: "the board skins also do not
+ * affect the live workspace"). The rules above paint #cr-workspace — but
+ * when the Living Workspace swaps in, .lws-root paints its own opaque
+ * --lws-grid-bg over the whole region, covering the skin entirely.
+ *
+ * Fix: each skin restyles the LWS through its token system — surface, cards,
+ * ink, accent — so the skin changes the board's whole character, not just a
+ * hidden backdrop. Selector is .lws-root.lws-dv-root (0,3,1) on purpose:
+ * living-workspace.css is injected AFTER this sheet, so its theme token
+ * setters (html[data-theme] .lws-root, 0,2,1) would win any tie — and a
+ * chalkboard you bought should look like a chalkboard in light OR dark mode.
+ * Overlays (source viewer, notebook) resolve the same tokens, so they match.
+ * ========================================================================= */
+
+/* Blueprint grid — engineering-paper blue. */
+body[data-skin-board="board.grid"] .lws-root.lws-dv-root {
+  --lws-grid-bg: #eef4ff;
+  --lws-card-bg: #ffffff;
+  --lws-card-border: rgba(30, 64, 175, 0.28);
+  --lws-card-ink: #18202b;
+  --lws-accent: #3b82f6;
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.22) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Chalkboard — deep green slate, chalk-white ink, mint accent. */
+body[data-skin-board="board.chalk"] .lws-root.lws-dv-root {
+  --lws-grid-bg: #24322b;
+  --lws-card-bg: #2d3f36;
+  --lws-card-border: rgba(255, 255, 255, 0.24);
+  --lws-card-ink: #f2f7f4;
+  --lws-accent: #a7f3d0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+
+/* Cheetah — amber with spots, warm dark ink. */
+body[data-skin-board="board.cheetah"] .lws-root.lws-dv-root {
+  --lws-grid-bg: #f2c14e;
+  --lws-card-bg: #fff7e6;
+  --lws-card-border: rgba(91, 58, 26, 0.38);
+  --lws-card-ink: #3c2a12;
+  --lws-accent: #b45309;
+  background-image:
+    radial-gradient(circle at 20% 30%, #5b3a1a 9%, transparent 10%),
+    radial-gradient(circle at 62% 68%, #5b3a1a 8%, transparent 9%),
+    radial-gradient(circle at 82% 22%, #5b3a1a 7%, transparent 8%),
+    radial-gradient(circle at 35% 82%, #5b3a1a 8%, transparent 9%);
+  background-size: 64px 64px;
+}
+
 /* --- /css/shop.css --- */
 /* shop.css — cosmetics shop modal. Brand: teal #12B3B3, hot pink #FF3B7F,
  * gold #FFC24B. Opened from the status card's Shop button. */
