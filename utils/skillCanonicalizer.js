@@ -114,4 +114,22 @@ function skillLookupCandidates(skillId) {
   return out;
 }
 
-module.exports = { canonicalSkillId, isUnifiedSkillId, skillLookupCandidates, _reset };
+/** $in-expansion of skillLookupCandidates over a list, deduped. */
+function expandSkillIds(ids) {
+  const out = [];
+  for (const id of Array.isArray(ids) ? ids : []) {
+    for (const c of skillLookupCandidates(id)) if (!out.includes(c)) out.push(c);
+  }
+  return out;
+}
+
+/**
+ * Find the catalog doc for a (possibly mastery-side) id among docs fetched
+ * with expandSkillIds — the doc may be keyed under any candidate form.
+ */
+function matchSkillDoc(docs, skillId) {
+  const cands = skillLookupCandidates(skillId);
+  return (Array.isArray(docs) ? docs : []).find(d => d && cands.includes(d.skillId)) || null;
+}
+
+module.exports = { canonicalSkillId, isUnifiedSkillId, skillLookupCandidates, expandSkillIds, matchSkillDoc, _reset };

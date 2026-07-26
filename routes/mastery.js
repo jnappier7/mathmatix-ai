@@ -18,7 +18,7 @@ const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = requir
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
-const { canonicalSkillId, skillLookupCandidates } = require('../utils/skillCanonicalizer');
+const { canonicalSkillId, skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
 const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
 const { currentRung, isInferred, canAdvance, advanceRung, clearsPrerequisites } = require('../utils/skillRung');
 const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
@@ -642,8 +642,8 @@ router.post('/start-skill-practice', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Get skill details
-    const skill = await Skill.findOne({ skillId }).lean();
+    // Get skill details (id may be mastery-side canonical or a bank id)
+    const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(skillId) } }).lean();
 
     if (!skill) {
       return res.status(404).json({ error: 'Skill not found' });
@@ -1627,10 +1627,11 @@ router.get('/retention-checks-due', isAuthenticated, async (req, res) => {
 
     // Get skill details
     const skillIds = skillsDue.map(s => s.skillId);
-    const skills = await Skill.find({ skillId: { $in: skillIds } }).lean();
+    // Retention keys are mastery-side; the catalog is bank-keyed (id seam).
+    const skills = await Skill.find({ skillId: { $in: expandSkillIds(skillIds) } }).lean();
 
     const enrichedSkillsDue = skillsDue.map(({ skillId, skill }) => {
-      const skillData = skills.find(s => s.skillId === skillId);
+      const skillData = matchSkillDoc(skills, skillId);
       return {
         skillId,
         skillName: skillData?.displayName || skillId,
@@ -1962,8 +1963,8 @@ router.post('/update-pattern-progress', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Get skill to determine pattern
-    const skill = await Skill.findOne({ skillId }).lean();
+    // Get skill to determine pattern (id-tolerant: see skillLookupCandidates)
+    const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(skillId) } }).lean();
     if (!skill || !skill.patternId || !skill.tier) {
       return res.json({ success: true, message: 'Skill not part of pattern system' });
     }
@@ -2814,7 +2815,10 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
     // Re-fetch the served problems by id so grading uses stored answers, never
     // anything the client sent about correctness.
     const ids = submissions.map((s) => s.problemId).filter(Boolean);
-    const problems = await Problem.find({ _id: { $in: ids }, skillId }).lean();
+    // Filter by the RESOLVED catalog doc's own key: the GET serves problems
+    // whose skillId is the bank id, which the canonical `skillId` var may not
+    // equal — filtering by it graded an empty set (#1333 follow-through).
+    const problems = await Problem.find({ _id: { $in: ids }, skillId: skill.skillId }).lean();
     const result = gradeChallenge(problems, submissions);
 
     const user = await User.findById(req.user._id);
@@ -2934,7 +2938,7 @@ router.post('/teachback/:skillId', isAuthenticated, aiEndpointLimiter, async (re
     }
 
     const skillId = canonicalSkillId(req.params.skillId);
-    const skill = await Skill.findOne({ skillId }).lean();
+    const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(req.params.skillId) } }).lean();
     if (!skill) return res.status(404).json({ error: 'Skill not found' });
 
     const user = await User.findById(req.user._id);
