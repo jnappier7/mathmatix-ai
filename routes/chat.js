@@ -61,7 +61,7 @@ const pdfOcr = require('../utils/pdfOcr');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { applyWorksheetGuard, isCheckWorkIntent } = require('../utils/worksheetGuard');
 const { UPLOAD_CONTEXT_REMINDER, WORKSHEET_REATTACH_REMINDER } = require('../utils/visualCapabilities');
-const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl, findWorksheetInMessages } = require('../utils/activeWorksheetImage');
+const { isImageStillActive, buildImageDataUrl, downscaleToDataUrl, findWorksheetInMessages, referencesWorksheet } = require('../utils/activeWorksheetImage');
 const { verifyStudentWork } = require('../utils/pipeline/checkWorkVerifier');
 
 // When a student shares their work and asks to be checked, nudge the tutor to
@@ -868,7 +868,19 @@ async function runStudentTurn(req, res) {
         // silently fall back to text-only continuity.
         let activeWorksheetImageUrl = null;
         const worksheetVisionEnabled = process.env.UNIFIED_WORKSHEET_VISION !== 'false';
-        if (worksheetVisionEnabled && !hasUploadedFiles) {
+        // Vision continuity is opt-in PER TURN, not unconditional for the TTL
+        // window. Re-threading on every turn rewrote plain answers ("yep",
+        // "11") into look-at-this-image vision messages, and the tutor spent
+        // four straight turns narrating a screenshot instead of processing the
+        // student's answers (production, 2026-07-26). Only re-thread when the
+        // current message is actually about the sheet; other turns keep the
+        // cheap text-only continuity (activeWorksheet pin above).
+        const turnReferencesSheet = referencesWorksheet(combinedMessage) || isCheckWorkIntent(combinedMessage);
+        if (worksheetVisionEnabled && !hasUploadedFiles && !turnReferencesSheet
+            && (msgWorksheet.imageDataUrl || activeWorksheetImageDoc)) {
+            logger.debug('[worksheetVision] active image available but current turn does not reference it — text-only continuity');
+        }
+        if (worksheetVisionEnabled && !hasUploadedFiles && turnReferencesSheet) {
             if (msgWorksheet.imageDataUrl) {
                 activeWorksheetImageUrl = msgWorksheet.imageDataUrl;
                 logger.info('[worksheetVision] re-threading worksheet image from conversation message (reliable source)');
@@ -1216,11 +1228,16 @@ async function runStudentTurn(req, res) {
         }
 
         // Determine if student has recent uploads (used below for worksheet guard
-        // injection AND passed to the pipeline's observe stage).
+        // injection AND passed to the pipeline's observe stage). Scoped to THIS
+        // conversation: recentUploads is a user-wide query (kept that way for the
+        // cross-session uploads summary), but classification signals like
+        // CHECK_MY_WORK / isWorksheetFollowUp must not flip on for a full day in
+        // every unrelated conversation because of one upload somewhere else.
         const hasRecentUpload = recentUploads && recentUploads.length > 0 &&
             recentUploads.some(u => {
                 const daysAgo = Math.floor((Date.now() - new Date(u.uploadedAt)) / (1000 * 60 * 60 * 24));
-                return daysAgo <= 1;
+                return daysAgo <= 1 &&
+                    u.conversationId && String(u.conversationId) === String(activeConversation._id);
             });
 
         // Resolve the independent check-work verdict (kicked off earlier) and

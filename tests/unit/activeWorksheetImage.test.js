@@ -176,3 +176,45 @@ describe('activeWorksheetImage — findWorksheetInMessages', () => {
     expect(findWorksheetInMessages(messages, NOW).text).toBeNull();
   });
 });
+
+describe('referencesWorksheet — per-turn gate for vision re-threading', () => {
+  const { referencesWorksheet } = require('../../utils/activeWorksheetImage');
+
+  // The production failure (2026-07-26): a screenshot re-threaded on EVERY
+  // turn for 60 minutes rewrote each of these plain answers into a
+  // look-at-this-image vision message, and the tutor spent four straight
+  // turns narrating the screenshot instead of processing the answers.
+  it.each([
+    'yep',
+    '11',
+    '-8-3=-11',
+    '5',
+    'I think it is 12',
+    'ok lets keep going',
+    'idk',
+  ])('plain answer / chatter does NOT reference the sheet: %s', (msg) => {
+    expect(referencesWorksheet(msg)).toBe(false);
+  });
+
+  it.each([
+    'check #7',
+    'can you check my answer to problem 3?',
+    'what does question 2 say',
+    'is my work right?',
+    'am I on track?',
+    'look at the picture I sent',
+    'the next one on the worksheet',
+    'what I uploaded earlier',
+    'grade my answers',
+    'whats on there',
+  ])('sheet-referencing turns DO re-thread: %s', (msg) => {
+    expect(referencesWorksheet(msg)).toBe(true);
+  });
+
+  it('is safe on empty / non-string input', () => {
+    expect(referencesWorksheet('')).toBe(false);
+    expect(referencesWorksheet(null)).toBe(false);
+    expect(referencesWorksheet(undefined)).toBe(false);
+    expect(referencesWorksheet(42)).toBe(false);
+  });
+});
