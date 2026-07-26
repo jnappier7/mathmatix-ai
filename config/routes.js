@@ -119,6 +119,7 @@ const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
+const notebookRoutes = require('../routes/notebook');
 const { desktopRouter: phoneLinkRoutes, phoneRouter: phoneUploadRoutes } = require('../routes/phoneLink');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
 const notificationsRoutes = require('../routes/notifications');
@@ -272,6 +273,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/iep-templates', isAuthenticated, isTeacher, iepTemplatesRoutes);
   app.use('/api/browser-lock', isAuthenticated, browserLockRoutes);
   app.use('/api/practice-pack', isAuthenticated, practicePackRoutes);
+  app.use('/api/notebook', isAuthenticated, notebookRoutes);
   // "Scan with your phone" desktop endpoints (session-authed). The public
   // phone-upload counterpart is registered earlier, before the /api auth
   // catch-alls (see the Public API routes block above).

@@ -3249,6 +3249,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Notebook cards minted this turn (spec §7): a captured AHA moment
+            // or an activated "Watch for This" reminder. Celebrate briefly —
+            // the cards themselves live in the notebook, not the chat.
+            if (Array.isArray(data.learningCards) && data.learningCards.length > 0 && typeof showToast === 'function') {
+                data.learningCards.forEach((card, i) => {
+                    const icon = card.type === 'aha' ? '✨' : '📌';
+                    setTimeout(() => {
+                        try { showToast(`${icon} Saved to your notebook — ${card.title}`, 5000); }
+                        catch (err) { console.error('[notebook] toast failed:', err); }
+                    }, i * 1200);
+                });
+            }
+
             // Phase C: execute server-emitted <XP> ceremony commands
             // (confetti + optional gold caption). Pipeline caps the batch
             // at 3 so a runaway model can't confetti-bomb the chat.
