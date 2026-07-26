@@ -61,10 +61,11 @@
    Skill lists + CTA run full width BELOW this block (in .psc-full). ── */
 .psc-top { display: flex; align-items: stretch; gap: 10px; }
 .psc-avatar-col {
-  flex: 0 0 96px;
+  flex: 0 0 130px;                   /* owner: 96px read as tiny — the column
+                                        width is what binds the figure's size */
   align-self: stretch;               /* match the identity stack's height */
   display: flex; align-items: flex-end; justify-content: center;
-  min-height: 230px;                 /* a standing figure, not a thumbnail */
+  min-height: 280px;                 /* a standing figure, not a thumbnail */
 }
 .psc-avatar-col #sidebar-avatar-panel, .psc-head-ava { width: 100%; display: flex; align-items: flex-end; justify-content: center; }
 /* Let the full-body render fill the column instead of the old 88px header size. */
