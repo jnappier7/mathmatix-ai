@@ -26,11 +26,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
        graph/tiles/calc tools) is hidden until it's polished; students keep chat
        with the tutor's work mirrored inline as cards. To bring the board back,
        set boardPanel: true (or delete this block). -->
+  <script src="/api/features.js"></script>
   <script>
     // livingWorkspace: 'live' — the Living Workspace replaces the legacy tabbed
     // board. boardPanel stays true so #cr-workspace (the mount slot) is visible;
     // the M-C swap hides the legacy tools *inside* it and mounts the new surface.
-    // Kill switch: set livingWorkspace:'off' here (legacy board returns untouched).
+    // Kill switch: set the `livingWorkspace` (or LIVING_WORKSPACE) env var on
+    // Render to 'off' — /api/features.js (loaded above) overrides this default
+    // from the dashboard, no code change needed. Editing here still works too.
     // courses: true — the "My Courses" sidebar entry point is live (structure-everywhere).
     // Kill switch: set courses:false here, or load with ?courses=0 to hide it for a session.
     window.MM_FEATURES = Object.assign({ boardPanel: true, livingWorkspace: 'live', courses: true }, window.MM_FEATURES || {});

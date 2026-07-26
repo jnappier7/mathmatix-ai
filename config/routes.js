@@ -120,6 +120,7 @@ const imageSearchRoutes = require('../routes/imageSearch');
 const browserLockRoutes = require('../routes/browserLock');
 const practicePackRoutes = require('../routes/practicePack');
 const notebookRoutes = require('../routes/notebook');
+const { buildFeaturesScript } = require('../utils/featureFlags');
 const { desktopRouter: phoneLinkRoutes, phoneRouter: phoneUploadRoutes } = require('../routes/phoneLink');
 const transcriptFlagsRoutes = require('../routes/transcriptFlags');
 const notificationsRoutes = require('../routes/notifications');
@@ -274,6 +275,15 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/browser-lock', isAuthenticated, browserLockRoutes);
   app.use('/api/practice-pack', isAuthenticated, practicePackRoutes);
   app.use('/api/notebook', isAuthenticated, notebookRoutes);
+  // Server-controlled client flags: a tiny synchronous script chat.html loads
+  // BEFORE seeding MM_FEATURES, so a Render env var (e.g. livingWorkspace=off)
+  // flips a flag from the dashboard — no code change, no redeploy semantics
+  // beyond Render's own env-save restart. no-store: flips apply on next load.
+  app.get('/api/features.js', (req, res) => {
+    res.set('Content-Type', 'application/javascript');
+    res.set('Cache-Control', 'no-store');
+    res.send(buildFeaturesScript());
+  });
   // "Scan with your phone" desktop endpoints (session-authed). The public
   // phone-upload counterpart is registered earlier, before the /api auth
   // catch-alls (see the Public API routes block above).
