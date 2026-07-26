@@ -1029,6 +1029,77 @@ document.addEventListener("DOMContentLoaded", async () => {
         openStudentProfile(studentId);
     }
 
+    // ── Live Workspace summary (spec §20) ──
+    // Injected into the overview tab: the student's board at a glance —
+    // problem in focus + status, independent-vs-supported solve counts (the
+    // §12 assistance ladder), and recent notebook cards (reminders double as
+    // the recent-misconception signal). Renders nothing for students who
+    // haven't touched the board.
+    const ASSISTANCE_LABELS = { 1: 'independent', 2: 'encouragement', 3: 'directions', 4: 'attention cue', 5: 'strategic question', 6: 'visual scaffold', 7: 'partial setup', 8: 'parallel example', 9: 'explicit instruction' };
+    const CARD_ICONS = { aha: '\u2728', reminder: '\ud83d\udccc', idea: '\ud83d\udca1', strategy: '\ud83e\udded', reflection: '\ud83e\ude9e' };
+
+    async function loadWorkspaceSummary(studentId) {
+        const tab = document.getElementById('profile-overview-tab');
+        if (!tab) return;
+        let section = document.getElementById('detail-workspace-section');
+        if (!section) {
+            section = document.createElement('div');
+            section.id = 'detail-workspace-section';
+            section.className = 'detail-section';
+            tab.appendChild(section);
+        }
+        section.innerHTML = '<h4 style="margin:14px 0 6px;">\ud83d\udcd0 Live Workspace</h4><p style="font-size:.85em;color:#95a5a6;">Loading\u2026</p>';
+
+        try {
+            const res = await fetch(`/api/teacher/students/${studentId}/workspace-summary`);
+            if (!res.ok) throw new Error(`workspace summary ${res.status}`);
+            const data = await res.json();
+            renderWorkspaceSummary(section, data);
+        } catch (err) {
+            console.error('[TeacherDashboard] workspace summary failed:', err);
+            section.innerHTML = '';
+        }
+    }
+
+    function renderWorkspaceSummary(section, data) {
+        const board = data.board || {};
+        const cards = Array.isArray(data.learningCards) ? data.learningCards : [];
+        const hasAnything = board.current || (board.completed && board.completed.length) || cards.length;
+        if (!hasAnything) { section.innerHTML = ''; return; }
+
+        const esc = (t) => { const d = document.createElement('div'); d.textContent = String(t == null ? '' : t); return d.innerHTML; };
+        const assistText = (a) => a == null ? '' : (ASSISTANCE_LABELS[a] || `level ${a}`);
+
+        let html = '<h4 style="margin:14px 0 6px;">\ud83d\udcd0 Live Workspace</h4>';
+
+        if (board.current) {
+            const status = board.current.solved ? '\u2705 solved' : `\u270f\ufe0f in progress \u00b7 ${board.current.stepCount} step${board.current.stepCount === 1 ? '' : 's'}`;
+            const assist = board.current.assistance != null ? ` \u00b7 support: ${esc(assistText(board.current.assistance))}` : '';
+            const src = board.current.fromWorksheet ? ' \u00b7 \ud83d\udcce from worksheet' : '';
+            html += `<p style="margin:4px 0;font-size:.9em;"><strong>Now:</strong> <code>${esc(board.current.problemTex)}</code><br><span style="color:#7f8c8d;font-size:.9em;">${status}${assist}${src}</span></p>`;
+        }
+
+        const solves = (board.independentSolves || 0) + (board.supportedSolves || 0);
+        if (solves > 0) {
+            html += `<p style="margin:4px 0;font-size:.85em;color:#7f8c8d;">Finished this session: ${board.completed.length} \u00b7 <strong>${board.independentSolves}</strong> solved independently, <strong>${board.supportedSolves}</strong> with support</p>`;
+        } else if (board.completed && board.completed.length) {
+            html += `<p style="margin:4px 0;font-size:.85em;color:#7f8c8d;">Finished this session: ${board.completed.length}</p>`;
+        }
+
+        if (cards.length) {
+            html += '<p style="margin:8px 0 2px;font-size:.85em;"><strong>Recent notebook cards</strong></p><ul style="margin:2px 0 0;padding-left:18px;font-size:.85em;">';
+            cards.slice(0, 5).forEach((c) => {
+                const icon = CARD_ICONS[c.type] || '\ud83d\udcd3';
+                const seen = c.type === 'reminder' && c.seenCount >= 2 ? ` <span style="color:#e0a23c;">(\u00d7${c.seenCount})</span>` : '';
+                const when = c.createdAt ? ` <span style="color:#95a5a6;">\u00b7 ${new Date(c.createdAt).toLocaleDateString()}</span>` : '';
+                html += `<li>${icon} ${esc(c.title)}${seen}${when}</li>`;
+            });
+            html += '</ul>';
+        }
+
+        section.innerHTML = html;
+    }
+
     async function openStudentProfile(studentId) {
         const student = currentStudentsData.find(s => s._id === studentId);
         if (!student) return;
@@ -1070,6 +1141,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Render sparkline (weekly activity trend)
         renderSparkline(student);
+
+        // Live Workspace summary (spec §20): the student's board at a glance.
+        loadWorkspaceSummary(studentId);
 
         // Load recent conversations (preview, 3 most recent)
         const conversationsDiv = document.getElementById('detail-conversations');
