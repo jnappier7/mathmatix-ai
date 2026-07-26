@@ -51,6 +51,25 @@ const ACT_SKILL_NAMES = (() => {
   return map;
 })();
 
+// Every problemId this student has ever been served, across ALL their ACT test
+// sessions (any status — an item shown in an abandoned test still "burns" it).
+// This is the seen-ledger the assembler excludes so no re-test ever repeats an
+// item. Computed on the fly from the sessions themselves — no separate store to
+// drift out of sync.
+async function seenProblemIdsForUser(userId) {
+  try {
+    const sessions = await ActTestSession.find({ userId }).select('items.problemId').lean();
+    const seen = new Set();
+    for (const s of sessions) {
+      for (const it of (s.items || [])) if (it && it.problemId) seen.add(it.problemId);
+    }
+    return [...seen];
+  } catch (err) {
+    console.error('[actTest] seen-ledger lookup failed (non-fatal, no exclusion):', err.message);
+    return [];   // fail open: better a possible repeat than a blocked test
+  }
+}
+
 // ── POST /start ─────────────────────────────────────────────
 router.post('/', async (req, res) => {
   return res.status(404).json({ message: 'Use POST /api/act-test/start' });
@@ -83,9 +102,25 @@ router.post('/start', async (req, res) => {
 
     const blueprint = getBlueprint();
     const seed = `${userId}-${Date.now()}`;
-    const form = await assembleForm({ seed });
+    // Every re-test must be FRESH — no item this student has already been served
+    // (any prior session) may reappear, or the re-test measures memory of the
+    // question, not the skill. Exclude their whole seen-history.
+    const excludeIds = await seenProblemIdsForUser(userId);
+    const form = await assembleForm({ seed, excludeIds });
 
     if (form.coverage.filled === 0) {
+      if (excludeIds.length > 0) {
+        // Not empty — EXHAUSTED. This student has now seen every item the bank
+        // can offer for the blueprint. Honest signal, distinct from "unseeded",
+        // so the UI can say "you've worked through everything" and content gen
+        // can be prioritized. Never silently re-serve seen items.
+        return res.status(409).json({
+          message: "You've worked through every ACT practice question we have — nice. Fresh questions are being added.",
+          exhausted: true,
+          seenCount: excludeIds.length,
+          coverage: form.coverage,
+        });
+      }
       // Honest failure: the ACT item bank isn't populated yet. The gaps array
       // is the generation worklist (skill + difficulty per missing slot).
       return res.status(503).json({
