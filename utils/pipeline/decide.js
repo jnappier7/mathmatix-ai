@@ -149,7 +149,36 @@ function decide(observation, diagnosis, context = {}) {
   // including a BKT "possible guessing" nudge that would re-inject probing.
   applyBackOffModifiers(decision, observation);
 
+  // One-ask rule runs LAST: whatever branch was chosen, if the tutor's
+  // PREVIOUS message already asked this student to explain their work, this
+  // reply must not ask again (owner-reported: chains of "can you walk me
+  // through it" on already-confirmed work read as distrust and stall the
+  // session — always heralded by a filler "Sure!" opener).
+  applyOneAskGuard(decision, context);
+
   return decision;
+}
+
+// The shapes an explanation-request takes in tutor replies. Deliberately
+// broad: catching an extra affirmation costs nothing (the directive still
+// produces a forward-moving reply); missing a probe chain costs trust.
+const EXPLAIN_PROBE_RX = /walk me through|talk me through|can you (?:show|explain|tell) me|how did you (?:arrive|get|do|handle)|explain (?:how|your|the|it)|show me how you|curious about your (?:thought|thinking|process)|what steps did you take/i;
+
+function applyOneAskGuard(decision, context) {
+  const msgs = context.conversation?.messages;
+  if (!Array.isArray(msgs) || !msgs.length) return;
+  let lastAssistant = null;
+  for (let i = msgs.length - 1; i >= 0; i--) {
+    const m = msgs[i];
+    if (m && m.role !== 'user' && typeof m.content === 'string' && m.content.trim()) { lastAssistant = m; break; }
+    // Stop at the previous user turn boundary only after passing the current
+    // one — the newest message may already be this turn's user message.
+    if (m && m.role === 'user' && lastAssistant) break;
+  }
+  if (!lastAssistant || !EXPLAIN_PROBE_RX.test(lastAssistant.content)) return;
+  decision.directives.push(
+    'ONE-ASK RULE: Your previous message already asked the student to explain or walk through this work — their current message IS that explanation. Do NOT ask them to explain, re-derive, or "walk through" anything again this turn. Accept what they gave, respond to its substance specifically, and MOVE FORWARD: state the result, take the next step, or pose the next problem. Never open with "Sure".'
+  );
 }
 
 /**

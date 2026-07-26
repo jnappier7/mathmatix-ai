@@ -429,6 +429,9 @@ async function runPipeline(message, ctx) {
     modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
     hasRecentUpload: ctx.hasRecentUpload || false,
     user: ctx.user || null,
+    // For the one-ask guard: decide reads the LAST assistant message to know
+    // whether the tutor already asked this student to explain this work.
+    conversation: ctx.conversation || null,
   });
 
   // Test-out: the challenge card is about to render below the tutor's reply, so
