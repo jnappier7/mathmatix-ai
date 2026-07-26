@@ -197,6 +197,26 @@ function getHighestPrioritySkill(plan) {
 }
 
 /**
+ * The skill the student is most likely working on RIGHT NOW: the active/in-progress
+ * focus entry with the most recent lastWorkedOn. Used as an attribution fallback
+ * when currentTarget is transiently null so a verified completed problem still
+ * credits the right skill instead of silently crediting nothing. Priority-order
+ * (getHighestPrioritySkill) answers "what's next"; this answers "what's now".
+ */
+function recentPracticeSkillId(plan) {
+  const focus = plan?.skillFocus;
+  if (!Array.isArray(focus)) return null;
+  let bestId = null;
+  let bestT = -1;
+  for (const sf of focus) {
+    if (!sf?.skillId || (sf.status !== 'in-progress' && sf.status !== 'active')) continue;
+    const t = sf.lastWorkedOn ? new Date(sf.lastWorkedOn).getTime() : 0;
+    if (t > bestT) { bestT = t; bestId = sf.skillId; }
+  }
+  return bestId;
+}
+
+/**
  * Determine the instruction phase for INSTRUCT mode.
  *
  * If the target hasn't changed and we were already in an instruction sequence,
@@ -400,4 +420,5 @@ module.exports = {
   advanceInstructionPhase,
   updatePlanAfterInteraction,
   addSkillToFocus,
+  recentPracticeSkillId,
 };
