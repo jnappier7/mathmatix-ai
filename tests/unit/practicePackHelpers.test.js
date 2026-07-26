@@ -121,3 +121,21 @@ describe('toPdfBuffer', () => {
     expect(fixed.body.subarray(0, 5).toString('latin1')).toBe('%PDF-');
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// The id-seam regression (owner-hit, 2026-07-26): an Absolute Value student's
+// "personalized" pack came back as fractions + integers, because the
+// skill-targeted Problem query used the mastery-side canonical id against a
+// bank keyed by legacy ids — zero matches → silent grade-band fallback.
+// Pin that the route sources its candidates from the shared resolver.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('skill-targeted selection uses id-tolerant lookup', () => {
+  test('practicePack routes problem queries through skillLookupCandidates', () => {
+    const fs = require('fs');
+    const src = fs.readFileSync(require.resolve('../../routes/practicePack'), 'utf8');
+    expect(src).toContain("require('../utils/skillCanonicalizer')");
+    expect(src).toContain('skillId: { $in: sidCandidates }');
+    // Both the banded and the any-difficulty query must use it.
+    expect(src.match(/skillId: \{ \$in: sidCandidates \}/g).length).toBe(2);
+  });
+});

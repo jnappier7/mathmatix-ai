@@ -19,6 +19,7 @@ const User = require('../models/user');
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const logger = require('../utils/logger').child({ route: 'practicePack' });
+const { skillLookupCandidates } = require('../utils/skillCanonicalizer');
 
 // Puppeteer for HTML → PDF rendering
 let puppeteer;
@@ -164,10 +165,17 @@ async function selectProblemsForPack(user, options = {}) {
     const remaining = count - problems.length;
     const needed = Math.min(problemsPerSkill, remaining);
 
+    // The problem bank is keyed by bank/legacy skill ids while skillMastery
+    // (where targetSkills come from) uses canonical unified ids — query under
+    // every id the bank might use, or the skill-targeted select silently
+    // matches nothing and the whole pack falls back to generic grade-band
+    // problems (owner-hit: an Absolute Value student got a fractions pack).
+    const sidCandidates = skillLookupCandidates(sid);
+
     // Try difficulty-banded first, then any difficulty for the skill — better
     // to give problems slightly off-level than to return an empty pack.
     let skillProblems = await Problem.find({
-      skillId: sid,
+      skillId: { $in: sidCandidates },
       isActive: true,
       problemId: { $nin: excludeIds },
       difficulty: {
@@ -178,7 +186,7 @@ async function selectProblemsForPack(user, options = {}) {
 
     if (skillProblems.length === 0) {
       skillProblems = await Problem.find({
-        skillId: sid,
+        skillId: { $in: sidCandidates },
         isActive: true,
         problemId: { $nin: excludeIds }
       }).limit(needed * 3);
