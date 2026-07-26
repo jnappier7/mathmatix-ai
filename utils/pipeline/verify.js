@@ -338,7 +338,9 @@ function extractSystemTags(responseText) {
 // The system prompt bans these, but the model slips them in regularly.
 // Stripped instead of regenerated (cheaper, faster).
 const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
-const CANNED_TRANSITIONS = /\b((?:now,?\s+)?let'?s\s+(?:break\s+this\s+down|tackle\s+this|work\s+through\s+this|dive\s+(?:right\s+)?in(?:to)?)|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)/gi;
+// "this|that|it" variants: production shipped "Let's work through it together…"
+// (2026-07-26 screenshot) because the ban only knew "work through this".
+const CANNED_TRANSITIONS = /\b((?:now,?\s+)?let'?s\s+(?:break\s+(?:this|that|it)\s+down|tackle\s+(?:this|that|it)|work\s+through\s+(?:this|that|it)(?:\s+together)?|dive\s+(?:right\s+)?in(?:to)?)|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)/gi;
 
 // Words that carry no content on their own — a sentence reduced to these
 // after phrase removal is packaging, not pedagogy, and gets dropped whole.
@@ -390,6 +392,11 @@ function sentenceEndIndex(text, from) {
  */
 function remainderHasContent(remainder, firstName) {
   if (/^\s*,\s*[A-Z][a-zA-Z]*\s*[!.?]*\s*$/.test(remainder.trim())) return false;
+  // A dangling purpose clause is packaging too: removing "let's work through
+  // it together" from "…together to ensure we understand each step clearly!"
+  // must not keep "To ensure we understand each step clearly!" as a sentence.
+  const lead = remainder.replace(/^[\s,;:]+/, '');
+  if (/^(?:to|so|in\s+order\s+to)\b/i.test(lead)) return false;
   const fn = (firstName || '').toLowerCase();
   const words = remainder.match(/[A-Za-z']+/g) || [];
   return words.some((w) => {
@@ -449,6 +456,7 @@ function stripCannedTransitions(text, firstName) {
     }
     out = out.slice(0, a) + replacement + tail;
   }
+  out = out.replace(/[ \t]+$/, '');
   return { text: out, changed: out !== text };
 }
 
@@ -785,6 +793,49 @@ async function verify(responseText, context = {}) {
         console.error('[Verify] False-rejection regeneration failed:', err.message);
         flags.push('false_rejection_regeneration_failed');
       }
+    }
+  }
+
+  // ── 2d-rejustify. Re-justification guard on demonstrated reasoning ──
+  // (production screenshot, 2026-07-26). The student wrote the full solution
+  // path ("120/4 = 30 mpg, and 10 gallons at 30 mpg is 300 miles") and the
+  // tutor still asked them to "walk me through how you got from 120 ÷ 4 to
+  // 30 … to ensure we understand each step clearly". decide.js already
+  // injects a directive forbidding exactly this on demonstrated-reasoning
+  // turns; this enforces it when the model ignores the directive. Gated on
+  // demonstratedReasoning so asking a bare-answer student to explain their
+  // thinking — legitimate data-gathering — is untouched.
+  const REJUSTIFY_REQUEST = /\b(?:walk|talk)\s+(?:me|us)\s+(?:back\s+)?through\b|\b(?:can|could)\s+you\s+(?:explain|show\s+me|tell\s+me)\s+how\s+you\s+(?:got|found|solved|arrived|figured)|\bhow\s+did\s+you\s+(?:get|arrive\s+at|come\s+up\s+with|figure\s+out)\b|\bexplain\s+(?:your|each)\s+(?:steps?|reasoning|thinking|work)\b/i;
+  if (!regeneratedThisPass
+      && context.action === ACTIONS.CONFIRM_CORRECT
+      && context.demonstratedReasoning
+      && REJUSTIFY_REQUEST.test(text)) {
+    flags.push('rejustification_detected');
+    console.log('[Verify] RE-JUSTIFICATION on demonstrated reasoning — student already showed verified-correct steps. Regenerating.');
+
+    try {
+      const correctionPrompt = 'The student solved the problem correctly AND wrote out their full reasoning — every step has been independently verified. Your previous response asked them to walk through or re-explain steps they already showed you. That is over-scaffolding: it signals doubt about verified-correct work and stalls their momentum. Rewrite: give specific praise naming what they did right (you can see their steps), then move the lesson FORWARD — a next problem, a slightly harder variant, or a transfer question. Do NOT ask them to repeat, re-explain, or walk through anything they already wrote.';
+      const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+        [{ role: 'system', content: correctionPrompt },
+         { role: 'assistant', content: text },
+         { role: 'user', content: 'Rewrite this response. Affirm the work they showed, then advance. No re-explaining requests.' }],
+        { temperature: 0.55, max_tokens: 1500 }
+      );
+      const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+      if (regeneratedText && regeneratedText.length > 10) {
+        text = regeneratedText;
+        flags.push('rejustification_regenerated');
+        regeneratedThisPass = true;
+
+        if (context.isStreaming && context.res) {
+          try {
+            context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+          } catch (e) { /* client disconnected */ }
+        }
+      }
+    } catch (err) {
+      console.error('[Verify] Re-justification regeneration failed:', err.message);
+      flags.push('rejustification_regeneration_failed');
     }
   }
 
@@ -1423,6 +1474,17 @@ function normalizeLatex(text) {
     protectedBlocks.push(match);
     return `@@PROTECTED_${protectedBlocks.length - 1}@@`;
   });
+
+  // ── 2c. Wrap bare operator math: "120 \div 4" → "\(120 \div 4\)" ──
+  // Pre-pass 1 converts unicode ÷/×/± to \div/\times/\pm but nothing below
+  // wraps them (step 4 only anchors on \frac-class commands), so the student
+  // saw literal "\div" in chat (production screenshot, 2026-07-26) — our own
+  // normalizer turned a readable "÷" into raw LaTeX source. Runs after the
+  // protection pass, so math already inside delimiters is never re-wrapped.
+  result = result.replace(
+    /\b(\d+(?:\.\d+)?(?:\s*\\(?:div|times|cdot|pm)\s*\d+(?:\.\d+)?)+(?:\s*=\s*-?\d+(?:\.\d+)?)?)/g,
+    '\\($1\\)'
+  );
 
   // ── 3. Fix bare parenthesized math: ( expr ) → \( expr \) ──
   result = result.replace(/(?<![\\a-zA-Z])\(\s*([^()]+?)\s*\)(?!\s*[=<>])/g, (match, inner) => {
