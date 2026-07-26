@@ -13,6 +13,7 @@ const { computeRiskScore, getInterventionTier, generateRecommendation } = requir
 const ScreenerSession = require('../models/screenerSession');
 const EnrollmentCode = require('../models/enrollmentCode');
 const Skill = require('../models/skill');
+const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 const { callLLMStream } = require('../utils/openaiClient');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
@@ -917,6 +918,7 @@ router.get('/students/:studentId/learning-curve', isTeacher, requireActiveConsen
     if (!student) return res.status(403).json({ message: 'Not authorized.' });
 
     const skillsOverview = [];
+    const skillNames = await resolveSkillDisplayNames(Object.keys(student.skillMastery || {}));
     for (const [skillId, skillData] of Object.entries(student.skillMastery || {})) {
       const practiceHistory = skillData.practiceHistory || [];
       const practiceCount = practiceHistory.length;
@@ -927,7 +929,7 @@ router.get('/students/:studentId/learning-curve', isTeacher, requireActiveConsen
 
       skillsOverview.push({
         skillId,
-        displayName: skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        displayName: skillNames[skillId],
         currentTheta,
         growth: currentTheta - firstTheta,
         practiceCount,
@@ -1520,6 +1522,12 @@ async function buildClassSnapshot(teacherId) {
   const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
   const twoDaysAgo = new Date(now - 2 * 24 * 60 * 60 * 1000);
 
+  // Names come from the Skill catalog by canonical id, resolved once for all
+  // students up front (the .map below is synchronous), never from the raw key.
+  const allSkillNames = await resolveSkillDisplayNames(
+    students.flatMap(s => (s.skillMastery ? Object.keys(s.skillMastery) : []))
+  );
+
   // Build individual student profiles
   const profiles = students.map(s => {
     const name = `${s.firstName || ''}`.trim() || 'Unknown';
@@ -1528,7 +1536,7 @@ async function buildClassSnapshot(teacherId) {
     const learningCount = mastery.filter(([, d]) => ['learning', 'practicing', 're-fragile', 'needs-review'].includes(d.status)).length;
     const strugglingSkills = mastery
       .filter(([, d]) => d.status === 'learning' && d.masteryScore !== undefined && d.masteryScore < 40)
-      .map(([id]) => id.replace(/-/g, ' '))
+      .map(([id]) => allSkillNames[id] || id)
       .slice(0, 3);
 
     // IEP info

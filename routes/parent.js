@@ -12,6 +12,7 @@ const { cleanupStaleSessions } = require('../services/sessionService');
 const ScreenerSession = require('../models/screenerSession');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { calculateRetrievability } = require('../utils/fsrsScheduler');
+const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 
 // Helper: verify parent has access to child
 async function verifyParentChildAccess(parentId, childId) {
@@ -529,6 +530,7 @@ router.get('/child/:childId/learning-curve', isAuthenticated, isParent, async (r
         if (!child) return res.status(403).json({ message: 'Not authorized to view this child.' });
 
         const skillsOverview = [];
+        const skillNames = await resolveSkillDisplayNames(Object.keys(child.skillMastery || {}));
         for (const [skillId, skillData] of Object.entries(child.skillMastery || {})) {
             const practiceCount = (skillData.practiceHistory || []).length;
             if (practiceCount === 0) continue;
@@ -538,7 +540,7 @@ router.get('/child/:childId/learning-curve', isAuthenticated, isParent, async (r
 
             skillsOverview.push({
                 skillId,
-                displayName: skillId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+                displayName: skillNames[skillId],
                 currentTheta,
                 growth: currentTheta - firstTheta,
                 practiceCount,

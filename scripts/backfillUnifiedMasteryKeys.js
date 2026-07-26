@@ -4,11 +4,13 @@
 // kebab skill ids to canonical unified "Map of Mathmatix" ids, so historical
 // data matches what the canonicalized read/write boundary now stores.
 //
-// Runtime code already canonicalizes at the mastery boundary (utils/skillCanonicalizer
-// via masteryGuard / persist / pipeline), so this backfill is OPTIONAL — reads
-// fall back to legacy keys, so nothing is broken without it. Running it just makes
-// stored keys uniform (one node per concept) and collapses any legacy+unified
-// duplicates a user accumulated across the transition.
+// Runtime code canonicalizes at the mastery WRITE boundary, but a user seeded
+// under a legacy key before that boundary existed ends up with TWO records for one
+// concept: the legacy "order-of-operations" (e.g. a screener seed, masteryScore
+// 0.5) and the canonical "MS_QNT_8" that practice accumulates into. Progress cards
+// pick the legacy one, so the bar sits frozen at the seed value no matter how much
+// the student practices. This backfill collapses those duplicates onto the single
+// canonical key — it is NOT cosmetic; it is what unfreezes those bars.
 //
 // Rewrites, per user:
 //   - skillMastery                (Map<skillId, entry>)
@@ -28,28 +30,41 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { encodeMasteryKey, decodeMasteryKey } = require('../utils/masteryGuard');
 
 const APPLY = process.argv.includes('--apply');
 
 function stronger(a, b) {
-  // return the mastery entry to keep when two collide
+  // return the mastery entry to keep when two collide. masteryScore is dual-scale
+  // (placement seeds it 0-1, the pillar engine writes 0-100), so a real practice
+  // record always outranks a 0.5 placement seed — which is exactly what we want.
   const rank = (e) => (e?.status === 'mastered' ? 1e9 : 0) + (Number(e?.masteryScore) || 0);
   return rank(a) >= rank(b) ? a : b;
 }
 
-// Rewrite a Map's keys to canonical ids. Returns { next: Map, remapped, merged }.
+// Rewrite a skillMastery Map's keys to the canonical ENCODED storage key.
+//
+// This must operate in ENCODED key-space, not logical space. Mongoose Maps store
+// dotted ids with dots swapped for "_" (masteryGuard.encodeMasteryKey), so the
+// canonical record for "order-of-operations" lives under the key "MS_QNT_8", not
+// "MS.QNT.8". An earlier version keyed the rebuilt map by canonicalSkillId(key)
+// alone — which yields the DOTTED "MS.QNT.8". That (a) never collides with the
+// runtime-written "MS_QNT_8", so legacy+unified duplicates were never merged (the
+// whole point), and (b) is an invalid Mongoose Map key. Decoding the stored key
+// first, then canonicalizing, then re-encoding, makes both the legacy kebab entry
+// and the runtime canonical entry land on the same valid "MS_QNT_8" and merge.
 function remapMap(map, mergeFn) {
   const next = new Map();
   let remapped = 0;
   let merged = 0;
   for (const [key, val] of map) {
-    const canon = canonicalSkillId(key);
-    if (canon !== key) remapped += 1;
-    if (next.has(canon)) {
+    const canonEncoded = encodeMasteryKey(canonicalSkillId(decodeMasteryKey(key)));
+    if (canonEncoded !== key) remapped += 1;
+    if (next.has(canonEncoded)) {
       merged += 1;
-      next.set(canon, mergeFn(next.get(canon), val));
+      next.set(canonEncoded, mergeFn(next.get(canonEncoded), val));
     } else {
-      next.set(canon, val);
+      next.set(canonEncoded, val);
     }
   }
   return { next, remapped, merged };
