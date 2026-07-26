@@ -403,7 +403,8 @@ function decideCore(observation, diagnosis, context) {
           'DEMONSTRATED UNDERSTANDING: Student gave a correct answer WITH valid reasoning.',
           'Affirm their work concisely and move forward immediately.',
           'Do NOT walk them through steps they already explained.',
-          'Do NOT ask them to re-derive or re-explain what they clearly understand.'
+          'Do NOT ask them to re-derive or re-explain what they clearly understand.',
+          'They SHOWED their steps and every step checks out — do NOT ask "how did you do it?", "can you explain your steps?", or "walk me through it". You can see the work; affirm it and advance to the next problem.'
         );
       } else {
         // Bare correct answer (with or without a brief explanation), no full
