@@ -5,6 +5,7 @@
 // ============================================
 
 const { parseAIDrawingCommands } = require('./aiDrawingTools');
+const { tokenRegex } = require('../public/js/visualTokenParser');
 
 /**
  * Parse all visual teaching commands from AI response
@@ -341,15 +342,16 @@ function parseVisualTeaching(aiResponseText) {
 
     // --- COUNTER COMMANDS ---
     // [COUNTERS:...] - Handled inline by inlineChatVisuals.js (key=value format).
-    // Strip any COUNTERS tags so they don't appear as raw text.
-    const countersRegex = /\[COUNTERS:[^\]]+\]/g;
-    cleanedText = cleanedText.replace(countersRegex, '');
+    // Strip any COUNTERS tags so they don't appear as raw text. Params can nest
+    // one level of brackets (points=[...], jumps=[(...)]) — tokenRegex captures
+    // the whole token; a bare [^\]]+ stops at the first inner "]" and leaves the
+    // tail (',label="..."]') in the student-visible text.
+    cleanedText = cleanedText.replace(tokenRegex('COUNTERS'), '');
 
     // --- MANIPULATIVE COMMANDS ---
     // [NUMBER_LINE:...] - Handled inline by inlineChatVisuals.js (key=value format).
     // Strip any NUMBER_LINE tags so they don't appear as raw text.
-    const numberLineRegex = /\[NUMBER_LINE:[^\]]+\]/g;
-    cleanedText = cleanedText.replace(numberLineRegex, '');
+    cleanedText = cleanedText.replace(tokenRegex('NUMBER_LINE'), '');
 
     // [FRACTION_BARS:numerator,denominator] - Show fraction visualization
     const fractionBarsRegex = /\[FRACTION_BARS:(\d+),(\d+)\]/g;
