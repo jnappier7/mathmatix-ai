@@ -178,8 +178,12 @@
     opts = opts || {};
     this.doc = container.ownerDocument || document;
     this.renderers = opts.renderers || {};
+    // Called with the sourceRef when the student clicks the problem header's
+    // "from my worksheet" chip — the integration opens the docked source.
+    this.onOpenSource = typeof opts.onOpenSource === 'function' ? opts.onOpenSource : null;
     this._blocks = [];        // live block renderers (for destroy on clear)
     this._problemTex = null;
+    this._problemSource = null;   // {uploadId, region} link of the problem in focus
     // The adapted elements making up the CURRENT derivation, kept so a finished
     // problem can be archived as data and re-rendered on demand. Snapshotting
     // data (not detaching live DOM) is what makes reopening safe: block
@@ -299,6 +303,7 @@
     this.el.problem.textContent = '';
     this.el.problem.style.display = 'none';
     this._problemTex = null;
+    this._problemSource = null;
     this._elements = [];
     this.el.root.classList.remove('is-solved-current');
     this._refreshEmpty();
@@ -319,6 +324,7 @@
       problemTex: this._problemTex,
       elements: this._elements.slice(),
       solved: solved,
+      sourceRef: this._problemSource || null,
     });
     while (this._archive.length > MAX_ARCHIVE) this._archive.shift();
     this._renderRail();
@@ -337,8 +343,31 @@
       if (!m || typeof m !== 'object') continue;
       if (m.assistance != null) this._archive[i].assistance = m.assistance;
       if (m.completedAt != null) this._archive[i].completedAt = m.completedAt;
+      if (m.sourceRef != null) this._archive[i].sourceRef = m.sourceRef;
     }
     this._renderRail();
+  };
+
+  // Link (or unlink, with null) the problem in focus to the docked source it
+  // was selected from (spec §5.4). Paints a small "From my worksheet" chip in
+  // the pinned header; clicking it hands the ref to the integration, which
+  // opens the source with the region highlighted. Called on the turn the
+  // server stamps the link, and on hydration from ledger.current.sourceRef.
+  DerivationView.prototype.setProblemSource = function (ref) {
+    this._problemSource = (ref && ref.uploadId) ? ref : null;
+    var old = this.el.problem.querySelector('.lws-dv-srcchip');
+    if (old) old.parentNode.removeChild(old);
+    if (!this._problemSource || this.el.problem.style.display === 'none') return;
+    var self = this;
+    var chip = this.doc.createElement('button');
+    chip.type = 'button';
+    chip.className = 'lws-dv-srcchip';
+    chip.textContent = '📎 From my worksheet';
+    chip.setAttribute('aria-label', 'Open the worksheet this problem came from');
+    chip.addEventListener('click', function () {
+      if (self.onOpenSource) { try { self.onOpenSource(self._problemSource); } catch (e) { console.error('[LWS] open source failed', e); } }
+    });
+    this.el.problem.appendChild(chip);
   };
 
   DerivationView.prototype._renderRail = function () {
@@ -420,6 +449,18 @@
       sumSteps.textContent = stepCount + (stepCount === 1 ? ' step' : ' steps');
       sum.appendChild(sumSteps);
     }
+    if (entry.sourceRef && entry.sourceRef.uploadId) {
+      var sumSrc = d.createElement('button');
+      sumSrc.type = 'button';
+      sumSrc.className = 'lws-dv-ov-sum-src';
+      sumSrc.textContent = '📎 From my worksheet';
+      sumSrc.setAttribute('aria-label', 'Open the worksheet this problem came from');
+      var srcRef = entry.sourceRef;
+      sumSrc.addEventListener('click', function () {
+        if (self.onOpenSource) { try { self.onOpenSource(srcRef); } catch (e) { console.error('[LWS] open source failed', e); } }
+      });
+      sum.appendChild(sumSrc);
+    }
 
     var body = d.createElement('div'); body.className = 'lws-dv-ov-body';
     var inner = d.createElement('div'); inner.className = 'lws-dv-inner';
@@ -492,6 +533,7 @@
       this._destroyBlocks();
       this.el.lines.textContent = '';
       this._elements = [];
+      this._problemSource = null;   // a new problem starts unlinked
     }
     this._problemTex = latex;
     this.el.problem.textContent = '';
@@ -501,6 +543,8 @@
     this.el.problem.appendChild(lab);
     this.el.problem.appendChild(body);
     this.el.problem.style.display = '';
+    // Re-poses rebuild the header from scratch — repaint a surviving link.
+    if (this._problemSource) this.setProblemSource(this._problemSource);
   };
 
   // `target` defaults to the live line stack; the archive overlay passes its

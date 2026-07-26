@@ -2409,6 +2409,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // Ask the tutor about a problem the student selected off a docked source
+    // (Living Workspace, spec §5.3). The crop rides the NORMAL chat path —
+    // upload, OCR, diagnose, transcript — plus a sourceRef so the posed
+    // problem links back to the worksheet region it came from.
+    window.mmAskAboutRegion = function (file, text, sourceRef) {
+        if (!file) return false;
+        try {
+            queueMessage(String(text || "Can we work on this problem from my worksheet?"), [file], null, { sourceRef: sourceRef || null });
+            return true;
+        } catch (err) {
+            console.error('[chat] region ask failed:', err);
+            return false;
+        }
+    };
+
     function sendMessage() {
         // Seal any active inline equation boxes so their data-latex is set
         if (window.InlineEquationBox) {
@@ -2539,6 +2554,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // (a scaffold the student completes + Checks): the tutor reacts to the
             // card's content without it looking like a typed chat message.
             silent: !!opts.silent,
+            // Problem-region selection: {uploadId, region} naming where on a
+            // docked source this turn's cropped image came from. Rides to the
+            // server so the posed problem links back to the worksheet.
+            sourceRef: opts.sourceRef || null,
             timestamp: Date.now()
         };
 
@@ -2744,6 +2763,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 formData.append('message', messageText);
                 formData.append('fileCount', queuedFiles.length);
+
+                if (queuedMsg.sourceRef) {
+                    formData.append('sourceRef', JSON.stringify(queuedMsg.sourceRef));
+                }
 
                 if (responseTime !== null) {
                     formData.append('responseTime', responseTime);
@@ -3212,6 +3235,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.LWS_CHAT.addSources(data.sourceUploads);
                 } catch (error) {
                     console.error('[LWS_CHAT] addSources failed:', error);
+                }
+            }
+
+            // Source↔problem link (spec §5.4): the server says whether the
+            // in-focus problem is tied to a worksheet region. Painted every
+            // turn, so it appears when stamped and never lingers stale.
+            if (window.LWS_CHAT && window.LWS_CHAT.isOn() && 'boardSource' in data) {
+                try {
+                    window.LWS_CHAT.setProblemSource(data.boardSource || null);
+                } catch (error) {
+                    console.error('[LWS_CHAT] setProblemSource failed:', error);
                 }
             }
 
