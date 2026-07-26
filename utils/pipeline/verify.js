@@ -172,6 +172,7 @@ const SYSTEM_TAG_PATTERNS = [
   /<\s*SCAFFOLD_ADVANCE\s*>/gi,
   /<\s*MODULE_COMPLETE\s*>/gi,
   /<\s*LAUNCH_PRACTICE_ACT\s*>/gi,
+  /<\s*REVIEW_NEXT\s*>/gi,
   /<\s*ANSWER_RESULT\s+correct="(true|false)"\s+problem="\d+"\s*\/?\s*>/gi,
 ];
 
@@ -193,6 +194,7 @@ function extractSystemTags(responseText) {
     scaffoldAdvance: false,
     moduleComplete: false,
     launchPracticeAct: false,
+    reviewNext: false,
   };
 
   let text = responseText;
@@ -285,6 +287,13 @@ function extractSystemTags(responseText) {
     extracted.launchPracticeAct = true;
     text = text.replace(/<\s*LAUNCH_PRACTICE_ACT\s*>/gi, '').trim();
     console.log('[Verify] AI emitted <LAUNCH_PRACTICE_ACT> — signalling client to open the practice ACT runner');
+  }
+
+  // ACT bootcamp: tutor finished coaching the current missed question → advance.
+  if (/<\s*REVIEW_NEXT\s*>/i.test(text)) {
+    extracted.reviewNext = true;
+    text = text.replace(/<\s*REVIEW_NEXT\s*>/gi, '').trim();
+    console.log('[Verify] AI emitted <REVIEW_NEXT> — advancing the ACT missed-items review');
   }
 
   return { text, extracted };
