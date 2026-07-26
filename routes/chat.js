@@ -1791,6 +1791,8 @@ async function runStudentTurn(req, res) {
             learningCards: pipelineResult.learningCards || [],
             // Tutor-proposed idea for the notebook (§7.6) — student confirms.
             ideaSuggestion: pipelineResult.ideaSuggestion || null,
+            // Tutor pointing at a board line (§8) — client highlights it.
+            boardPoint: pipelineResult.boardPoint || null,
             xpCommands: pipelineResult.xpCommands || [],
             visualTabCommands: pipelineResult.visualTabCommands || [],
             boardContext: pipelineResult.boardContext,

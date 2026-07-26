@@ -3302,6 +3302,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // Tutor pointing (§8): make the named board line glow. AFTER
+            // applyBoardCommands so a point at a line drawn THIS turn lands.
+            if (window.LWS_CHAT && window.LWS_CHAT.isOn() && data.boardPoint) {
+                try {
+                    window.LWS_CHAT.pointAt(data.boardPoint);
+                } catch (error) {
+                    console.error('[LWS_CHAT] pointAt failed:', error);
+                }
+            }
+
             // Tutor-offered notebook idea (§7.6): promotion is consented — the
             // student clicks to save, nothing is stored silently.
             if (data.ideaSuggestion && data.ideaSuggestion.body) {

@@ -765,3 +765,17 @@ html[data-theme="dark"] .lws-root {
   padding: 10px 12px; border: 1px dashed var(--lws-card-border); border-radius: 10px;
   color: var(--lws-card-ink); opacity: .7; font: 400 13px/1.4 system-ui, sans-serif;
 }
+
+/* ── tutor pointing (§8): the line being discussed glows ── */
+.lws-dv-pointed {
+  animation: lws-point-pulse 1.4s ease-in-out 3;
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px var(--lws-accent), 0 0 18px color-mix(in srgb, var(--lws-accent) 55%, transparent);
+}
+@keyframes lws-point-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--lws-accent), 0 0 18px color-mix(in srgb, var(--lws-accent) 55%, transparent); }
+  50% { box-shadow: 0 0 0 3px var(--lws-accent), 0 0 30px color-mix(in srgb, var(--lws-accent) 80%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lws-dv-pointed { animation: none; }
+}

@@ -14,6 +14,8 @@ const ScreenerSession = require('../models/screenerSession');
 const EnrollmentCode = require('../models/enrollmentCode');
 const Skill = require('../models/skill');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
+const { summarizeLedger } = require('../utils/pipeline/boardLedger');
+const LearningCard = require('../models/learningCard');
 const { callLLMStream } = require('../utils/openaiClient');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { logRecordAccess } = require('../middleware/ferpaAccessLog');
@@ -1919,6 +1921,53 @@ router.post('/intervention-alerts/:studentId/acknowledge', isTeacher, async (req
   } catch (err) {
     console.error('Error acknowledging intervention alert:', err);
     res.status(500).json({ message: 'Error acknowledging alert.' });
+  }
+});
+
+// ── Live Workspace summary (spec §20) ────────────────────────────────
+// What the student's board says: the problem in focus and its status, how
+// much support each finished problem took (the §12 assistance ladder), and
+// their recent notebook cards — reminders double as the "recent
+// misconception" signal. A progress read, not a transcript feed: no step
+// contents, no chat, no student quotes beyond card titles.
+router.get('/students/:studentId/workspace-summary', isTeacher, requireActiveConsent(), logRecordAccess('workspace_summary', 'academic_progress'), async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const teacherId = req.user._id;
+
+    const authorizedStudentIds = await getStudentIdsForTeacher(teacherId);
+    if (!authorizedStudentIds.includes(studentId)) {
+      return res.status(404).json({ message: 'Student not found or not assigned to this teacher.' });
+    }
+
+    const student = await User.findOne(
+      { _id: studentId, $or: [{ roles: 'student' }, { role: 'student' }] },
+      'activeConversationId'
+    ).lean();
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found or not assigned to this teacher.' });
+    }
+
+    const [conversation, cards] = await Promise.all([
+      student.activeConversationId
+        ? Conversation.findById(student.activeConversationId).select('boardLedger lastActivity currentTopic').lean()
+        : Promise.resolve(null),
+      LearningCard.find({ userId: studentId, archived: false })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .select('type title seenCount skillId createdAt')
+        .lean(),
+    ]);
+
+    res.json({
+      board: summarizeLedger(conversation?.boardLedger),
+      lastActivity: conversation?.lastActivity || null,
+      currentTopic: conversation?.currentTopic || null,
+      learningCards: cards,
+    });
+  } catch (err) {
+    console.error('Error fetching workspace summary:', err);
+    res.status(500).json({ message: 'Server error fetching workspace summary.' });
   }
 });
 

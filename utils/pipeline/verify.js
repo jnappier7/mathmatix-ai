@@ -196,6 +196,7 @@ function extractSystemTags(responseText) {
     launchPracticeAct: false,
     reviewNext: false,
     ideaSuggestion: null,
+    boardPoint: null,
   };
 
   let text = responseText;
@@ -306,6 +307,21 @@ function extractSystemTags(responseText) {
       }
     }
     text = text.replace(ideaMatch[0], '').trim();
+  }
+
+  // Board pointing (Live Workspace §8): the tutor names the exact line it is
+  // talking about; the client makes that line glow. Step numbers match the
+  // board-state block's numbering (the ledger's step order). One point per
+  // turn — a laser pointer, not a light show; extras are stripped inert.
+  const pointRegex = /<\s*BOARD_POINT\s+(?:step="(\d{1,2})"|target="(problem|solution|last)")\s*\/?\s*>/gi;
+  let pointMatch;
+  while ((pointMatch = pointRegex.exec(responseText)) !== null) {
+    if (!extracted.boardPoint) {
+      extracted.boardPoint = pointMatch[1]
+        ? { step: parseInt(pointMatch[1], 10) }
+        : { target: pointMatch[2].toLowerCase() };
+    }
+    text = text.replace(pointMatch[0], '').trim();
   }
 
   // ACT bootcamp: tutor finished coaching the current missed question → advance.
