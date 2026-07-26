@@ -83,8 +83,9 @@ class LessonTracker {
     _render(pu) {
         // ACT bootcamp: the course is a test→review→re-test loop, not a
         // gradual-release scaffold, so render the loop view instead of the
-        // Warm-up/Learn/Practice stepper. Only for act-prep with bootcamp state.
-        if (pu && pu.bootcamp && pu.courseId === 'act-prep') {
+        // Warm-up/Learn/Practice stepper — for act-prep ALWAYS, even before the
+        // first baseline (pre-baseline shows a "start your baseline" state).
+        if (pu && pu.courseId === 'act-prep') {
             return this._renderBootcamp(pu);
         }
         // Not in bootcamp mode — restore the standard tracker chrome if the
@@ -150,8 +151,10 @@ class LessonTracker {
     }
 
     _bootcampHtml(bc, dp) {
+        bc = bc || {};
         const CAT = { 'integrating-essential-skills': 'Essential skills', 'number-quantity': 'Number & Quantity', algebra: 'Algebra', functions: 'Functions', geometry: 'Geometry', 'statistics-probability': 'Statistics & Probability' };
         const label = (c) => CAT[c] || String(c || '').replace(/-/g, ' ');
+        const hasBaseline = !!bc.phase;   // bootcamp state only exists once a test is scored
         const total = Array.isArray(bc.queue) ? bc.queue.length : 0;
         const reviewed = Math.min(bc.index || 0, total);
         const pct = total ? Math.round((100 * reviewed) / total) : 0;
@@ -166,13 +169,17 @@ class LessonTracker {
             return `<div style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;${style}"><i class="fas ${icon}"></i> ${name}</div>`;
         };
         const loop = `<div style="display:flex;gap:6px;margin:10px 0 14px">
-            ${step('fa-flag-checkered', 'Baseline', 'done')}
-            ${step('fa-bullseye', 'Review', isReview ? 'active' : 'done')}
+            ${step('fa-flag-checkered', 'Baseline', hasBaseline ? 'done' : 'active')}
+            ${step('fa-bullseye', 'Review', isReview ? 'active' : (hasBaseline ? 'done' : 'todo'))}
             ${step('fa-clipboard-list', 'Re-test', bc.phase === 'reassess' ? 'active' : 'todo')}
             ${step('fa-chart-line', 'Compare', 'todo')}
           </div>`;
 
-        const phaseCard = isReview ? `
+        const phaseCard = !hasBaseline ? `
+            <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <span style="color:#fff;font-size:13.5px;font-weight:500">Start with your baseline ACT — a full timed test that sets your starting score and shows exactly what to work on.</span>
+              <button id="lt-bc-start" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Start baseline</button>
+            </div>` : isReview ? `
             <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px">
               <div style="display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:14px;font-weight:600;margin-bottom:8px"><span>Going over what you missed</span><span style="font-weight:500;font-size:12.5px;opacity:.85">${reviewed} of ${total} done</span></div>
               <div style="height:7px;background:rgba(255,255,255,.22);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="width:${pct}%;height:100%;background:#fff;border-radius:5px"></div></div>
@@ -201,7 +208,7 @@ class LessonTracker {
             ${loop}
             ${phaseCard}
             ${chips}
-            <div style="margin-top:12px;text-align:right"><a id="lt-bc-progress" href="#" style="color:#fff;font-size:12px;opacity:.9;text-decoration:none"><i class="fas fa-chart-line"></i> See your progress</a></div>
+            ${hasBaseline ? `<div style="margin-top:12px;text-align:right"><a id="lt-bc-progress" href="#" style="color:#fff;font-size:12px;opacity:.9;text-decoration:none"><i class="fas fa-chart-line"></i> See your progress</a></div>` : ''}
           </div>`;
     }
 
@@ -213,6 +220,8 @@ class LessonTracker {
         });
         const retest = document.getElementById('lt-bc-retest');
         if (retest) retest.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
+        const start = document.getElementById('lt-bc-start');
+        if (start) start.addEventListener('click', () => { if (window.openActTest) window.openActTest(); });
         const prog = document.getElementById('lt-bc-progress');
         if (prog) prog.addEventListener('click', (e) => { e.preventDefault(); if (window.openActProgress) window.openActProgress(); });
     }
