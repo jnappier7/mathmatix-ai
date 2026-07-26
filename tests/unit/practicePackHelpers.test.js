@@ -139,3 +139,12 @@ describe('skill-targeted selection uses id-tolerant lookup', () => {
     expect(src.match(/skillId: \{ \$in: sidCandidates \}/g).length).toBe(2);
   });
 });
+
+describe('pack size (owner: "a more substantial sheet, 15-20 problems")', () => {
+  test('defaults sit inside the owner range and the cap is its top end', () => {
+    const fs = require('fs');
+    const src = fs.readFileSync(require.resolve('../../routes/practicePack'), 'utf8');
+    expect(src).toContain('const MAX_PROBLEMS = 20;');
+    expect(src).toContain('const DEFAULT_PROBLEM_COUNT = 16;');
+  });
+});

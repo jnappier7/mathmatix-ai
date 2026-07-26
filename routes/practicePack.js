@@ -37,8 +37,12 @@ try {
   logger.warn('[PracticePack] qrcode package not available — QR codes disabled');
 }
 
-const MAX_PROBLEMS = 15;
-const DEFAULT_PROBLEM_COUNT = 8;
+// Owner call (2026-07-26): a worksheet should be "a more substantial sheet,
+// 15-20 practice problems" — 8 read as thin. Default sits inside the owner's
+// range; the cap is its top end. Problems render with page-break-inside:
+// avoid, so longer packs paginate cleanly.
+const MAX_PROBLEMS = 20;
+const DEFAULT_PROBLEM_COUNT = 16;
 
 // Launch options for headless PDF rendering. Uses chrome-headless-shell
 // (bundled by Puppeteer via .puppeteerrc.cjs) instead of the system chromium
