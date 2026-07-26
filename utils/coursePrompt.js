@@ -805,9 +805,59 @@ function formatScaffoldStep(step, index, total) {
  * Build the course-mode greeting instruction.
  * Replaces the generic "what do you want to work on?" greeting.
  */
+/**
+ * Greeting instruction for the ACT bootcamp. Frames the student's real
+ * practice-ACT results and hands into the current bootcamp phase (review the
+ * questions they missed, or take a fresh test) — never teaches a generic concept
+ * and never presents a problem in the greeting itself (the review loop on the
+ * next /api/chat turn pulls up the actual missed item).
+ */
+function buildActBootcampGreetingInstruction({ firstName, courseSession }) {
+  const bc = courseSession.bootcamp || {};
+  const dp = courseSession.diagnosticPlan || {};
+  const list = (arr) => (arr || []).map(c => CATEGORY_LABEL[c] || c).join(', ');
+  const focus = (dp.focusCategories || []).length ? list(dp.focusCategories) : '';
+  const strong = (dp.masteredCategories || []).length ? list(dp.masteredCategories) : '';
+
+  let instruction = `The student just opened their **ACT Math Prep** bootcamp. This is a diagnostic-driven bootcamp, NOT a lecture course — you already have their real practice-ACT results and you work from the questions THEY actually missed.
+
+HARD RULES for this greeting:
+- Do NOT open by teaching a generic concept or defining vocabulary (never "let's learn what a real number is").
+- Do NOT present or pose a math problem in this greeting.
+- Keep it to 2-3 sentences, in your own voice, then hand into the work.
+`;
+
+  if (bc.phase === 'reassess') {
+    instruction += `\nWHERE THEY ARE: They have finished going back over the questions they missed. The next move is a FRESH timed practice ACT to measure their gains. Your greeting: welcome ${firstName} back, tell them they've worked through their misses and it's time to re-test to see how much they've moved, and invite them to start the fresh test when ready. Do NOT teach anything.`;
+  } else if (bc.phase === 'review') {
+    const total = Array.isArray(bc.queue) ? bc.queue.length : 0;
+    const done = Math.min(bc.index || 0, total);
+    instruction += `\nWHERE THEY ARE: REVIEW phase — going back through the questions they missed on their practice ACT (${done} of ${total} done so far). Your greeting:
+1. Welcome ${firstName}${bc.round > 1 ? ' back' : ''} in one line.
+${strong ? `2. Give a quick nod to what they're already strong on (${strong}).\n` : ''}${focus ? `${strong ? '3' : '2'}. Name where you're focusing — ${focus} — because that's where they lost the most points.\n` : ''}Then tell them you'll go through their missed questions one at a time and invite them to say "ready" (or ask you anything) to pull up the first one. Do NOT present the question yourself — the next turn does that.`;
+  } else {
+    // Post-baseline but bootcamp state not populated yet (defensive).
+    instruction += `\nWHERE THEY ARE: Their practice ACT is scored and it's time to begin. Your greeting: welcome ${firstName}, ${focus ? `tell them you'll aim the bootcamp at ${focus}, ` : ''}and invite them to start going over what they missed. Do NOT teach a concept or present a problem.`;
+  }
+
+  instruction += `\n\nREMINDER: All math MUST use LaTeX: \\\\( x + 3 \\\\) for inline, \\\\[ x^2 \\\\] for display. Never write bare math.`;
+  return instruction;
+}
+
 function buildCourseGreetingInstruction({ userProfile, courseSession, pathway, scaffoldData, currentModule }) {
   const firstName = userProfile.firstName || 'Student';
   const courseName = pathway.track || courseSession.courseName;
+
+  // ACT prep is a diagnostic-driven BOOTCAMP, not a scaffold-and-lecture course.
+  // Its greeting must frame the student's own practice-ACT results and hand into
+  // the review loop — it must NEVER open by teaching pathway module 1 ("let's
+  // learn what a real number is"), which is exactly the off-key open the generic
+  // scaffold greeting below produces for act-prep. (Pre-baseline students never
+  // reach this — the server baseline gate withholds the greeting entirely.)
+  if (courseSession.courseId === 'act-prep') {
+    return buildActBootcampGreetingInstruction({ firstName, courseSession });
+  }
+
   const moduleTitle = currentModule?.title || courseSession.currentModuleId;
   const progress = courseSession.overallProgress || 0;
 
