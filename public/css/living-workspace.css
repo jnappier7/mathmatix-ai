@@ -576,7 +576,7 @@ html[data-theme="dark"] .lws-root {
 .lws-sd-ov {
   position: absolute; inset: 0; z-index: 8;
   display: flex; flex-direction: column;
-  background: var(--lws-grid-bg);
+  background: var(--lws-grid-bg, #0f1422);
   animation: lws-dv-ov-in .18s ease-out both;
 }
 @media (prefers-reduced-motion: reduce) { .lws-sd-ov { animation: none; } }
@@ -700,7 +700,7 @@ html[data-theme="dark"] .lws-root {
 .lws-nb-ov {
   position: absolute; inset: 0; z-index: 8;
   display: flex; flex-direction: column;
-  background: var(--lws-grid-bg);
+  background: var(--lws-grid-bg, #0f1422);
   animation: lws-dv-ov-in .18s ease-out both;
 }
 @media (prefers-reduced-motion: reduce) { .lws-nb-ov { animation: none; } }

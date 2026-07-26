@@ -64,11 +64,18 @@
     var t = String(s == null ? '' : s).trim();
     if (!t) return false;
     if (/^\\text\s*\{[\s\S]*\}$/.test(t)) return true;             // whole thing is \text{…}
-    // Strip LaTeX commands (\frac, \quad, \Rightarrow, \text …) and braces first
-    // so command names aren't mistaken for words — then count the genuine words
-    // left. Math is single-letter variables, digits and operators (none 3+ letter
-    // runs), so 3+ real words means prose, not an equation.
-    var stripped = t.replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}]/g, ' ');
+    // Words inside \text{…} are math-mode LABELS ("cups", "batches"), not
+    // prose — KaTeX renders them fine, and counting them here mis-routed
+    // ratios like \frac{3 \text{ cups}}{2 \text{ batches}} down the
+    // prose-with-inline-math path, whose splitter can't handle the nested
+    // braces and shipped raw "\frac3 cups2 batches" to production. Drop the
+    // whole \text groups BEFORE counting words.
+    var stripped = t.replace(/\\text\s*\{[^{}]*\}/g, ' ');
+    // Strip remaining LaTeX commands (\frac, \quad, \Rightarrow …) and braces
+    // so command names aren't mistaken for words — then count the genuine
+    // words left. Math is single-letter variables, digits and operators (no
+    // 3+ letter runs), so 3+ real words means prose, not an equation.
+    stripped = stripped.replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}]/g, ' ');
     return (stripped.match(/[A-Za-z]{3,}/g) || []).length >= 3;
   }
 
