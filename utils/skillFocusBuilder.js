@@ -13,9 +13,13 @@
  *     in-progress). These map to guide/strengthen/leverage modes, which stay
  *     Socratic-compatible. It never seeds `never-seen` frontier skills, so it
  *     can't trigger the answer-dumping INSTRUCT mode against an off-plan
- *     question. Proactive brand-new-skill introduction stays reactive /
- *     course-driven until the on-plan detector is proven (see
- *     docs/COURSES_IN_FLOW_DESIGN.md, open question #2).
+ *     question. (NOTE: this invariant used to be broken — `introduced` was
+ *     seeded here but mapped to INSTRUCT in familiarityToMode, which restarted
+ *     full ground-up teaching for returning students. familiarityToMode now
+ *     maps `introduced` → guide, making the claim above true.) Proactive
+ *     brand-new-skill introduction stays reactive / course-driven until the
+ *     on-plan detector is proven (see docs/COURSES_IN_FLOW_DESIGN.md, open
+ *     question #2).
  *   - Only runs when the active queue is EMPTY, so it never thrashes an
  *     in-flight plan or overrides course / teacher / student-set focus.
  *   - Skips course sessions entirely (the course drives its own queue).

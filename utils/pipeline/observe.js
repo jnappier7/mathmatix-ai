@@ -125,7 +125,12 @@ const PATTERNS = {
   // only unambiguous "back off" phrasings match. Drives a DURABLE back-off mode
   // (see observe(): once asserted, the tutor stops probing correct answers and
   // raises difficulty for the rest of the session).
-  competenceAssertion: /\b(too\s+easy|this\s+is\s+(?:so\s+|way\s+)?easy|i\s+(?:already\s+)?know\s+(?:this\s+stuff|the\s+steps|how\s+to|it\s+already|this\s+already)|i\s+know\s+this\s+already|i\s+(?:don'?t|do\s+not)\s+need\s+(?:the\s+)?help|stop\s+(?:asking|explaining|quizzing)|quit\s+asking|i\s+got\s+this|i\s+can\s+do\s+(?:these|those|them|this\s+too)|(?:2nd|second)\s+grader|why\s+are\s+you\s+(?:asking|quizzing)\s+me)\b/i,
+  // "why (are) we starting over" and "we already did this" are complaints
+  // about RE-TEACHING known material — the same back-off signal ("why we
+  // starting over?" — production, 2026-07-26, triggered nothing). Note the
+  // question form is required for starting-over: a bare "can we start over?"
+  // is a REQUEST to restart, not a complaint.
+  competenceAssertion: /\b(too\s+easy|this\s+is\s+(?:so\s+|way\s+)?easy|i\s+(?:already\s+)?know\s+(?:this\s+stuff|the\s+steps|how\s+to|it\s+already|this\s+already)|i\s+know\s+this\s+already|i\s+(?:don'?t|do\s+not)\s+need\s+(?:the\s+)?help|stop\s+(?:asking|explaining|quizzing)|quit\s+asking|i\s+got\s+this|i\s+can\s+do\s+(?:these|those|them|this\s+too)|(?:2nd|second)\s+grader|why\s+are\s+you\s+(?:asking|quizzing)\s+me|why\s+(?:are\s+)?(?:we|you)\s+start(?:ing)?\s+(?:this\s+)?over|we\s+(?:already\s+(?:did|learned|covered|went\s+over)\s+this|(?:did|learned|covered|went\s+over)\s+this\s+(?:already|before|last\s+time)))\b/i,
 };
 
 /**
@@ -598,17 +603,28 @@ function observe(message, context = {}) {
   // Detect streaks from recent history
   const streaks = detectStreaks(context.recentUserMessages || []);
 
-  // Count recent wrong answers
-  const recentWrongCount = (context.recentAssistantMessages || [])
-    .filter(msg => msg.problemResult === 'incorrect').length;
-
-  // Count recent correct answers — the symmetric "on a roll" signal. Without
-  // this the pipeline could only ever ratchet support UP (on wrong streaks)
-  // and never DOWN, so a fluent student kept getting the same problem broken
-  // into micro-steps (the "over-scaffolding" failure). decide's CONFIRM_CORRECT
-  // branch reads this to advance / gather data / teach-back instead.
-  const recentCorrectCount = (context.recentAssistantMessages || [])
-    .filter(msg => msg.problemResult === 'correct').length;
+  // Count recent wrong/correct answers over PROBLEM OUTCOMES, not raw
+  // messages. Probing turns ("walk me through how you got that") produce
+  // assistant messages with NO problemResult stamp, and under the old
+  // last-6-messages window each such turn evicted a real win from the
+  // streak — so the more the tutor probed, the less streak evidence it had
+  // to stop probing (self-reinforcing loop, production 2026-07-26: five
+  // first-try corrects and the tutor still demanded explanations).
+  // recentProblemResults, when provided, is the last 6 STAMPED outcomes
+  // regardless of how many unstamped turns sit between them.
+  //
+  // recentCorrectCount is the symmetric "on a roll" signal. Without it the
+  // pipeline could only ever ratchet support UP (on wrong streaks) and
+  // never DOWN, so a fluent student kept getting the same problem broken
+  // into micro-steps (the "over-scaffolding" failure). decide's
+  // CONFIRM_CORRECT branch reads this to advance / gather data / teach-back.
+  const stampedResults = context.recentProblemResults
+    || (context.recentAssistantMessages || [])
+      .filter(msg => msg.problemResult)
+      .map(msg => msg.problemResult);
+  const resultWindow = stampedResults.slice(-6);
+  const recentWrongCount = resultWindow.filter(r => r === 'incorrect').length;
+  const recentCorrectCount = resultWindow.filter(r => r === 'correct').length;
 
   // ── Classify: check high-confidence intent signals FIRST ──
   //

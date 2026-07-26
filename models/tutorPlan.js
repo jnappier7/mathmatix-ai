@@ -250,7 +250,14 @@ tutorPlanSchema.methods.getCurrentNotes = function (limit = 20) {
 tutorPlanSchema.statics.familiarityToMode = function (familiarity) {
   const mapping = {
     'never-seen': 'instruct',
-    'introduced': 'instruct',
+    // 'introduced' requires totalAttempts >= 1 (see inferFamiliarity) — the
+    // student HAS seen this skill. Mapping it to 'instruct' restarted the full
+    // gradual-release sequence at the 'vocabulary' phase for returning
+    // students, with the prompt asserting "they have NEVER seen it before"
+    // ("why we starting over?" — production, 2026-07-26). Guide mode is the
+    // right posture: activate prior knowledge, practice Socratically, and drop
+    // to direct instruction only if they turn out to be stuck.
+    'introduced': 'guide',
     'developing': 'guide',
     'proficient': 'strengthen',
     'mastered': 'leverage'

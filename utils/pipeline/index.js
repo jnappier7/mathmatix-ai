@@ -113,9 +113,19 @@ async function runPipeline(message, ctx) {
     .filter(msg => msg.role === 'assistant')
     .slice(-6);
 
+  // Streak evidence must survive probing turns: assistant messages with no
+  // problemResult stamp (explanation requests, encouragement) would otherwise
+  // push real wins out of the 6-message window. Hand observe the last 6
+  // STAMPED outcomes from the full conversation instead.
+  const recentProblemResults = ctx.conversation.messages
+    .filter(msg => msg.role === 'assistant' && msg.problemResult)
+    .slice(-6)
+    .map(msg => msg.problemResult);
+
   const observation = observe(message, {
     recentUserMessages,
     recentAssistantMessages,
+    recentProblemResults,
     hasRecentUpload: ctx.hasRecentUpload || false,
   });
 
@@ -363,7 +373,14 @@ async function runPipeline(message, ctx) {
       const canon = canonicalSkillId(id);
       return get(canon) ?? (canon !== id ? get(id) : null) ?? null;
     };
-    const activeSkillId = ctx.activeSkill ? ctx.activeSkill.skillId : null;
+    // Fall back to the plan's current target, mirroring the persist-side
+    // attribution (updateLearningEngines). Without the fallback, free chat —
+    // where ctx.activeSkill is always null — WRITES BKT/FSRS evidence under
+    // the plan target every turn but can never read it back, so the evidence
+    // layer runs blind on exactly the sessions that need it.
+    const activeSkillId = ctx.activeSkill?.skillId
+      || tutorPlan?.currentTarget?.skillId
+      || null;
 
     // Get BKT state for active skill (from user's learningEngines data)
     const bktState = readEngine(ctx.user.learningEngines?.bkt, activeSkillId);

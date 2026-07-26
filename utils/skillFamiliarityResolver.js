@@ -45,15 +45,17 @@ const INSTRUCTIONAL_MODES = {
  * @param {string} skillId - The skill to check
  * @returns {string} One of the FAMILIARITY values
  */
-function assessFamiliarity(skillMastery, skillId) {
+function readMasteryEntry(skillMastery, skillId) {
   // skillMastery may be a Mongoose Map whose keys are ENCODED (dots -> "_"), so
   // read by the encoded key first, then fall back to the raw id for a plain map
   // or a pre-fix legacy entry.
   const enc = encodeMasteryKey(skillId);
   const read = (k) => (skillMastery instanceof Map ? skillMastery.get(k) : skillMastery?.[k]);
-  const entry = read(enc) || read(skillId);
+  return read(enc) || read(skillId) || null;
+}
 
-  return TutorPlan.inferFamiliarity(entry || null);
+function assessFamiliarity(skillMastery, skillId) {
+  return TutorPlan.inferFamiliarity(readMasteryEntry(skillMastery, skillId));
 }
 
 /**
@@ -172,8 +174,22 @@ async function resolveSkill(skillId, skillMastery, options = {}) {
   const { skillCache = {} } = options;
 
   // 1. Assess the target skill itself
-  const familiarity = assessFamiliarity(skillMastery, skillId);
+  const masteryEntry = readMasteryEntry(skillMastery, skillId);
+  const familiarity = TutorPlan.inferFamiliarity(masteryEntry);
   const instructionalMode = familiarityToMode(familiarity);
+
+  // Concrete prior-progress facts for the prompt layer. Without these, the
+  // mode directive is the model's ONLY signal about history — and when it
+  // claimed "never seen it before" about a returning student, nothing in the
+  // prompt could contradict it.
+  const rawScore = typeof masteryEntry?.masteryScore === 'number' ? masteryEntry.masteryScore : null;
+  const priorEvidence = masteryEntry
+    ? {
+        totalAttempts: masteryEntry.totalAttempts || 0,
+        scorePct: rawScore === null ? null : Math.round(rawScore <= 1 ? rawScore * 100 : rawScore),
+        status: masteryEntry.status || null,
+      }
+    : null;
 
   // 2. Get the skill document for teaching guidance
   let skillDoc = skillCache[skillId];
@@ -196,6 +212,7 @@ async function resolveSkill(skillId, skillMastery, options = {}) {
     displayName: skillDoc?.displayName || skillId,
     familiarity,
     instructionalMode,
+    priorEvidence,
     prerequisites,
     teachingPlan,
     teachingGuidance: skillDoc?.teachingGuidance || null,
