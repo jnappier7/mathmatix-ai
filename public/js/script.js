@@ -3122,6 +3122,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 setTimeout(() => window.openActTest(), 400); // let the tutor's confirming reply render first
             }
 
+            // Test-out (Fix B): the student asked to prove they know this skill.
+            // Drop an in-chat challenge card under the tutor's set-up reply.
+            if (data.launchChallenge && data.launchChallenge.skillId && window.MMChallengeCard) {
+                const _sid = data.launchChallenge.skillId;
+                setTimeout(() => window.MMChallengeCard.launch(_sid), 400);
+            }
+
             // Server withheld course teaching because a REQUIRED baseline (e.g. the
             // ACT practice test) isn't done — surface the baseline card under the
             // tutor's message so the student can start it. We do NOT auto-open the

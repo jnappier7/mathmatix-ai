@@ -322,6 +322,8 @@ router.post('/', async (req, res) => {
                 graphTool: graphToolConfig,
                 // Launch the real practice-ACT runner when the tutor signalled it
                 launchPracticeAct: courseResult.launchPracticeAct || false,
+                // Fix B: open an in-chat challenge card so the student can test out
+                launchChallenge: pipelineResult.launchChallenge || null,
                 // Course-specific fields
                 courseContext: courseResult.courseContext,
                 courseProgress: courseProgressUpdate,
