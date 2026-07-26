@@ -87,7 +87,7 @@ async function loadActiveHistory(user, depth = VOICE_HISTORY_DEPTH) {
  * @param {Array<{role: string, content: string}>} turns
  * @returns {Promise<import('mongoose').Types.ObjectId|null>} conversationId written to, or null if nothing to write
  */
-async function appendToActiveConversation(user, turns) {
+async function appendToActiveConversation(user, turns, opts = {}) {
     const clean = (turns || [])
         .filter(t => t && t.content && String(t.content).trim().length > 0)
         .map(t => ({
@@ -98,16 +98,34 @@ async function appendToActiveConversation(user, turns) {
     if (!clean.length) return null;
 
     const { conversationId } = await resolveActiveConversationId(user);
+    const set = { lastActivity: new Date() };
+    // Voice turns fold their board output into the same ledger chat writes
+    // (Live Workspace): pass the updated ledger with the turn so a voice
+    // session's board survives reloads exactly like a typed one.
+    if (opts.boardLedger !== undefined) set.boardLedger = opts.boardLedger;
     await Conversation.updateOne(
         { _id: conversationId },
-        { $push: { messages: { $each: clean } }, $set: { lastActivity: new Date() } }
+        { $push: { messages: { $each: clean } }, $set: set }
     );
     return conversationId;
+}
+
+/**
+ * Read-only: the active conversation's board ledger (Live Workspace state),
+ * or null when there is none. Voice sessions seed from this at start so the
+ * board ghost and the ledger fold continue from whatever chat already built.
+ */
+async function loadActiveBoardLedger(user) {
+    const convId = user && user.activeConversationId;
+    if (!convId) return null;
+    const conv = await Conversation.findById(convId).select('boardLedger').lean();
+    return conv?.boardLedger || null;
 }
 
 module.exports = {
     VOICE_HISTORY_DEPTH,
     resolveActiveConversationId,
+    loadActiveBoardLedger,
     loadActiveHistory,
     appendToActiveConversation,
 };

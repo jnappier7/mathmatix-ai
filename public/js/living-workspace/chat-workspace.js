@@ -67,6 +67,8 @@
     // Source↔problem link (spec §5.4): paint/clear the in-focus problem's
     // "from my worksheet" chip. Fed by the response's boardSource field.
     setProblemSource: function () {},
+    // Tutor pointing (spec §8): highlight the board line the tutor named.
+    pointAt: function () {},
   };
   window.LWS_CHAT = api;
   if (!ON) return;
@@ -75,7 +77,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260725g';
+  var ASSET_V = '?v=20260726b';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -299,6 +301,11 @@
     try { dv.setProblemSource(ref || null); } catch (e) { console.error('[LWS_CHAT] problem source failed', e); }
   };
 
+  api.pointAt = function (ref) {
+    if (!ready || !dv) return;
+    try { dv.pointAt(ref); } catch (e) { console.error('[LWS_CHAT] pointAt failed', e); }
+  };
+
   // The problem header's chip → reopen the docked source with the problem's
   // region highlighted. Falls back to a bare open when the source has scrolled
   // off the dock (older than the cap) — the ref still names it servably.
@@ -362,11 +369,16 @@
       if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
       var mount = buildPanel();
       dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers(), onOpenSource: openLinkedSource });
+      // Docked widgets mount INSIDE the view's root, not beside it: every
+      // --lws-* token (colors, the overlays' opaque background) is defined ON
+      // .lws-root, so a sibling widget resolves them to nothing — which
+      // shipped as a transparent notebook overlay bleeding over the board.
+      var widgetHost = (dv.el && dv.el.root) || mount;
       if (window.LWS.SourceDock) {
-        try { dock = new window.LWS.SourceDock(mount, { onAskRegion: askAboutRegion }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
+        try { dock = new window.LWS.SourceDock(widgetHost, { onAskRegion: askAboutRegion }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
       }
       if (window.LWS.NotebookPanel) {
-        try { new window.LWS.NotebookPanel(mount); } catch (e) { console.error('[LWS_CHAT] notebook mount failed', e); }
+        try { new window.LWS.NotebookPanel(widgetHost); } catch (e) { console.error('[LWS_CHAT] notebook mount failed', e); }
       }
       ready = true;
       if (pendingSources !== undefined) { var ps = pendingSources; pendingSources = undefined; api.setSourcesFromMessages(ps); }

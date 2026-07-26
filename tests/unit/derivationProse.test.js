@@ -42,3 +42,25 @@ describe('unwrapText', () => {
     expect(unwrapText('Find the height of the screen')).toBe('Find the height of the screen');
   });
 });
+
+// Production regression (owner screenshot, 2026-07-25): ratio poses like
+// \frac{3 \text{ cups}}{2 \text{ batches}} were mis-detected as prose (the
+// \text labels counted as words), routed down the inline-math splitter that
+// can't handle their nested braces, and shipped raw "\frac3 cups2 batches"
+// onto the rail. \text contents are math-mode labels — KaTeX's job.
+describe('looksLikeProse × \\text labels', () => {
+  const { looksLikeProse } = require('../../public/js/living-workspace/dom/derivationView.js');
+
+  it('a ratio with \\text unit labels is MATH, not prose', () => {
+    expect(looksLikeProse('\\frac{3 \\text{ cups}}{2 \\text{ batches}} = \\frac{x \\text{ cups}}{5 \\text{ batches}}')).toBe(false);
+    expect(looksLikeProse('2 \\text{ batches of cookies}')).toBe(false);
+  });
+
+  it('a whole-sentence \\text{…} wrapper is still prose', () => {
+    expect(looksLikeProse('\\text{Sarah bakes 3 batches of cookies every morning}')).toBe(true);
+  });
+
+  it('bare word-problem sentences (no \\text) are still prose', () => {
+    expect(looksLikeProse('Sarah has 3 cups of flour and needs enough for 5 batches')).toBe(true);
+  });
+});

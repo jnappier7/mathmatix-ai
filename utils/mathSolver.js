@@ -10,7 +10,7 @@
  * @module mathSolver
  */
 
-const { normalizeMathOperators, normalizeSpokenNumbers } = require('./mathUnicodeNormalizer');
+const { normalizeMathOperators, normalizeMathUnicode, normalizeSpokenNumbers } = require('./mathUnicodeNormalizer');
 const { evalExpression, expressionValue } = require('./rationalEvaluator');
 
 /**
@@ -3849,6 +3849,31 @@ function _isTrustedProblem(problem, source) {
     return true;
 }
 
+// LaTeX problem → plain math the regex engine can parse. Board pins arrive as
+// the LLM's board-command tex (e.g. "\frac{5}{7} = \frac{x}{20}"), which none
+// of the regex patterns can see — so the pinned problem silently failed to
+// parse and every grading path that anchors on it (derivation target, pin
+// override, canonical root set) fell back to something worse. In the 2026-07-26
+// incident that fallback anchored a student's chain on their own first line and
+// graded their correct proportion answer wrong.
+//
+// Returns a rewritten string, or null when the input carries no LaTeX or still
+// carries LaTeX after rewriting (nested \frac etc.) — callers then behave
+// exactly as before, so this only ever ADDS parses.
+function _latexToPlainMath(text) {
+    if (!/\\[a-zA-Z(\[]/.test(text)) return null;
+    let s = String(text).replace(/\\[dt]frac\b/g, '\\frac');
+    // \frac{a}{b} → (a)/(b), strips \(…\) delimiters and \left/\right (shared
+    // normalizer), then LaTeX operator spellings (\times, \div, …).
+    s = normalizeMathUnicode(s);
+    s = normalizeMathOperators(s);
+    if (/\\/.test(s)) return null; // nested/unknown LaTeX survived — don't guess
+    // Unwrap parens around a lone number or variable: "(5)/(7) = (x)/(20)" →
+    // "5/7 = x/20", the shape the proportion/linear patterns expect.
+    s = s.replace(/\(\s*(-?\d+(?:\.\d+)?|[a-z])\s*\)/gi, '$1').trim();
+    return s || null;
+}
+
 function parseCleanProblem(text) {
     if (!text || typeof text !== 'string') return { hasMath: false };
 
@@ -3856,6 +3881,13 @@ function parseCleanProblem(text) {
     if (direct.hasMath && direct.solution?.success
         && _isTrustedProblem(direct.problem, text)) {
         return direct;
+    }
+
+    // LaTeX input (board pins, MathLive) — rewrite to plain math and retry.
+    const plain = _latexToPlainMath(text);
+    if (plain && plain !== text) {
+        const viaLatex = parseCleanProblem(plain);
+        if (viaLatex.hasMath) return viaLatex;
     }
 
     // Slow path: pull math substrings out of conversational prose and

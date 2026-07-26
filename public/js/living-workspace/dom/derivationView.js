@@ -53,6 +53,9 @@
     var t = String(s == null ? '' : s).trim();
     t = t.replace(/\\[()[\]]/g, ' ');        // \( \) \[ \] delimiters -> space
     t = t.replace(/^\$\$?/, '').replace(/\$\$?$/, ''); // $ … $ or $$ … $$
+    // Tolerate the tutor model's split \dfrac ("\d\frac{5}{7}") in tex that
+    // was ledgered before the server-side normalization existed.
+    t = t.replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2').replace(/\\displaystyle\s*/g, '');
     return t.trim();
   }
 
@@ -64,11 +67,18 @@
     var t = String(s == null ? '' : s).trim();
     if (!t) return false;
     if (/^\\text\s*\{[\s\S]*\}$/.test(t)) return true;             // whole thing is \text{…}
-    // Strip LaTeX commands (\frac, \quad, \Rightarrow, \text …) and braces first
-    // so command names aren't mistaken for words — then count the genuine words
-    // left. Math is single-letter variables, digits and operators (none 3+ letter
-    // runs), so 3+ real words means prose, not an equation.
-    var stripped = t.replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}]/g, ' ');
+    // Words inside \text{…} are math-mode LABELS ("cups", "batches"), not
+    // prose — KaTeX renders them fine, and counting them here mis-routed
+    // ratios like \frac{3 \text{ cups}}{2 \text{ batches}} down the
+    // prose-with-inline-math path, whose splitter can't handle the nested
+    // braces and shipped raw "\frac3 cups2 batches" to production. Drop the
+    // whole \text groups BEFORE counting words.
+    var stripped = t.replace(/\\text\s*\{[^{}]*\}/g, ' ');
+    // Strip remaining LaTeX commands (\frac, \quad, \Rightarrow …) and braces
+    // so command names aren't mistaken for words — then count the genuine
+    // words left. Math is single-letter variables, digits and operators (no
+    // 3+ letter runs), so 3+ real words means prose, not an equation.
+    stripped = stripped.replace(/\\[a-zA-Z]+/g, ' ').replace(/[{}]/g, ' ');
     return (stripped.match(/[A-Za-z]{3,}/g) || []).length >= 3;
   }
 
@@ -614,6 +624,32 @@
     this.el.root.classList.toggle('is-solved-current', hasSolution(this._elements));
     this._refreshEmpty();
     this._scrollToEnd();
+  };
+
+  // Tutor pointing (spec §8): make the exact line the tutor is discussing
+  // glow. `ref` is {step: N} (1-based, the board-state block's numbering —
+  // both count the same rendered rows in the same order) or {target:
+  // 'problem'|'solution'|'last'}. Out-of-range steps fall back to the newest
+  // line rather than pointing at nothing. The glow self-clears.
+  DerivationView.prototype.pointAt = function (ref) {
+    if (!ref || typeof ref !== 'object') return;
+    var rows = this.el.lines.children;
+    var node = null;
+    if (ref.target === 'problem') node = this.el.problem.style.display === 'none' ? null : this.el.problem;
+    else if (ref.target === 'solution') {
+      var sols = this.el.lines.querySelectorAll('.lws-dv-solution');
+      node = sols.length ? sols[sols.length - 1] : null;
+    } else if (ref.target === 'last') node = rows.length ? rows[rows.length - 1] : null;
+    else if (ref.step >= 1) node = rows[ref.step - 1] || (rows.length ? rows[rows.length - 1] : null);
+    if (!node) return;
+
+    var prev = this.el.root.querySelectorAll('.lws-dv-pointed');
+    for (var i = 0; i < prev.length; i++) prev[i].classList.remove('lws-dv-pointed');
+    if (this._pointTimer) { clearTimeout(this._pointTimer); this._pointTimer = null; }
+
+    node.classList.add('lws-dv-pointed');
+    try { node.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) { /* older browsers */ }
+    this._pointTimer = setTimeout(function () { node.classList.remove('lws-dv-pointed'); }, 7000);
   };
 
   // Caption strip API — text only; the karaoke pointer lives in the caption

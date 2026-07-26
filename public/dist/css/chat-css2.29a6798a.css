@@ -104,6 +104,18 @@ body.cr-mode[data-theme-skin] .message.ai {
   background: color-mix(in srgb, var(--cr-accent) 8%, var(--cr-bubble-ai));
 }
 
+/* Carry the theme into the top bar too — chat-redesign.css paints the header a
+ * fixed dark navy regardless of theme, so without this the most visible strip
+ * of chrome never changed and an equipped theme was easy to miss. Mixing the
+ * accent INTO the dark navy keeps the header dark enough for its forced-light
+ * text (see the --cr-text override in chat-redesign.css). An equipped header
+ * SKIN owns the header outright, hence :not([data-skin-header]). */
+body.cr-mode[data-theme-skin]:not([data-skin-header]) .landing-header {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--cr-accent) 32%, rgba(11, 15, 26, 0.92)),
+    color-mix(in srgb, var(--cr-accent) 14%, rgba(11, 15, 26, 0.80)));
+}
+
 /* =========================================================================
  * CHAT BUBBLES  (data-skin-bubble) — the STUDENT'S OWN messages only.
  * Scoped under body.cr-mode .message.user to beat chat-redesign.css defaults.
@@ -164,22 +176,22 @@ body[data-skin-avatarframe] .sc-avatar-img {
 /* Silver */
 body[data-skin-avatarframe="frame.silver"] .message-container.user .message-avatar img,
 body[data-skin-avatarframe="frame.silver"] .sc-avatar-img {
-  border: 2px solid #cbd5e1;
-  box-shadow: 0 0 0 1px #94a3b8, 0 0 6px rgba(203, 213, 225, 0.7);
+  border: 3px solid #cbd5e1;
+  box-shadow: 0 0 0 2px #94a3b8, 0 0 10px rgba(203, 213, 225, 0.95);
 }
 
 /* Gold */
 body[data-skin-avatarframe="frame.gold"] .message-container.user .message-avatar img,
 body[data-skin-avatarframe="frame.gold"] .sc-avatar-img {
-  border: 2px solid #f6d365;
-  box-shadow: 0 0 0 1px #d4af37, 0 0 8px rgba(212, 175, 55, 0.75);
+  border: 3px solid #f6d365;
+  box-shadow: 0 0 0 2px #d4af37, 0 0 12px rgba(212, 175, 55, 0.95);
 }
 
 /* Neon Pulse */
 body[data-skin-avatarframe="frame.neon"] .message-container.user .message-avatar img,
 body[data-skin-avatarframe="frame.neon"] .sc-avatar-img {
-  border: 2px solid #22d3ee;
-  box-shadow: 0 0 8px rgba(34, 211, 238, 0.9), 0 0 16px rgba(124, 77, 255, 0.6);
+  border: 3px solid #22d3ee;
+  box-shadow: 0 0 12px rgba(34, 211, 238, 1), 0 0 22px rgba(124, 77, 255, 0.8);
 }
 @media (prefers-reduced-motion: no-preference) {
   body[data-skin-avatarframe="frame.neon"] .message-container.user .message-avatar img,
@@ -221,9 +233,94 @@ body[data-skin-avatarframe="frame.rainbow"] .sc-avatar-img {
  * of the work itself is never touched.
  * ========================================================================= */
 
-/* ---- Board (data-skin-board) — skins the math workspace panel (#cr-workspace),
- * the surface the tutor's board/graph/tiles live on. The panel background shows
- * around and behind the work cards, never behind the math itself. ---- */
+/* ---- Board (data-skin-board) — skins the math workspace surface.
+ *
+ * The LIVE surface is the Living Workspace: chat-workspace.js mounts .lws-root
+ * inside #cr-workspace and it fully covers the panel (opaque background), so
+ * rules against #cr-workspace's own background are invisible while
+ * MM_FEATURES.livingWorkspace is 'live' (the default). The skins therefore
+ * repaint the LWS by overriding the --lws-* palette that BOTH the DOM
+ * derivation view and the canvas grid renderer read (getComputedStyle on
+ * .lws-root). Each skin ships a complete, contrast-safe palette (bg + grid
+ * lines + card + ink + accent), so it looks right in light and dark base mode
+ * alike — which is also why it's correct for the skin to outrank the
+ * html[data-theme] palettes in living-workspace.css: a chalkboard is dark even
+ * in light mode. That sheet is injected at runtime (cascades after this one),
+ * so the `html body` prefix here is load-bearing: it lifts specificity to
+ * (0,2,2), beating the (0,2,1) of `html[data-theme=…] .lws-root`.
+ * IEP / reduced-motion overrides are untouched (nothing here animates, and the
+ * accessibility sheets don't restyle .lws-*). */
+html body[data-skin-board="board.grid"] .lws-root {
+  /* True blueprint: deep drafting blue, pale grid lines. */
+  --lws-grid-bg: #123c78;
+  --lws-grid-minor: rgba(190, 214, 255, 0.22);
+  --lws-grid-major: rgba(190, 214, 255, 0.40);
+  --lws-grid-border: rgba(190, 214, 255, 0.55);
+  --lws-card-bg: #1a4c95;
+  --lws-card-border: rgba(190, 214, 255, 0.40);
+  --lws-card-ink: #eef4ff;
+  --lws-accent: #8db9ff;
+}
+html body[data-skin-board="board.chalk"] .lws-root {
+  /* Classroom slate green, chalk-white ink. */
+  --lws-grid-bg: #2a3d33;
+  --lws-grid-minor: rgba(255, 255, 255, 0.06);
+  --lws-grid-major: rgba(255, 255, 255, 0.12);
+  --lws-grid-border: rgba(255, 255, 255, 0.26);
+  --lws-card-bg: #35493e;
+  --lws-card-border: rgba(255, 255, 255, 0.20);
+  --lws-card-ink: #f2f7ef;
+  --lws-accent: #a7e8c0;
+}
+/* Chalkboards have chalk speckle, not graph lines — swap the derivation view's
+ * line grid for a fine dot texture (idea from the first LWS board pass, #1329). */
+html body[data-skin-board="board.chalk"] .lws-root .lws-dv {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+html body[data-skin-board="board.cheetah"] .lws-root {
+  /* Warm savanna tan behind the math (SOLID — §6: patterns never sit behind
+   * text); the actual spots live on chrome below. */
+  --lws-grid-bg: #eccf96;
+  --lws-grid-minor: rgba(91, 58, 26, 0.10);
+  --lws-grid-major: rgba(91, 58, 26, 0.18);
+  --lws-grid-border: rgba(91, 58, 26, 0.40);
+  --lws-card-bg: #f7e8c8;
+  --lws-card-border: rgba(91, 58, 26, 0.35);
+  --lws-card-ink: #3b2510;
+  --lws-accent: #c2410c;
+}
+/* Cheetah spots on CHROME only: a 14px frame band around the surface (a
+ * full-bleed ::before masked down to its outer edge) plus the finished-problem
+ * rail. The spot tile is sized to the band (small tile, chunky spots) so whole
+ * spots fit inside it instead of getting sliced into specks.
+ * pointer-events:none keeps panning/clicks working under the band. */
+html body[data-skin-board="board.cheetah"] .lws-root::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 8;
+  pointer-events: none;
+  padding: 14px;
+  background-color: #d9a441;
+  background-image:
+    radial-gradient(circle at 25% 35%, #5b3a1a 22%, transparent 24%),
+    radial-gradient(circle at 75% 72%, #5b3a1a 18%, transparent 20%),
+    radial-gradient(circle at 65% 18%, #7a4a1f 14%, transparent 16%);
+  background-size: 26px 26px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+html body[data-skin-board="board.cheetah"] .lws-root .lws-dv-rail {
+  background:
+    radial-gradient(circle at 22% 40%, rgba(91, 58, 26, 0.45) 8%, transparent 9%),
+    radial-gradient(circle at 70% 65%, rgba(91, 58, 26, 0.45) 7%, transparent 8%),
+    linear-gradient(180deg, rgba(236, 207, 150, 0.96), rgba(236, 207, 150, 0.80));
+  background-size: 48px 48px, 48px 48px, 100% 100%;
+}
+
+/* Legacy tabbed board (livingWorkspace:'off' kill switch only) — the panel
+ * background shows around and behind the work cards, never behind the math. */
 body[data-skin-board="board.grid"] #cr-workspace {
   background-color: #eef4ff;
   background-image:
@@ -257,18 +354,73 @@ body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-heade
   background: linear-gradient(135deg, #ff5db1, #ff2e93) !important;
   color: #fff !important;
 }
+/* .calculator-title carries its own color, so inheritance alone doesn't flip it. */
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-title {
+  color: #fff;
+}
 body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-body {
   background: #fff0f7 !important;
 }
+/* The keypad is most of the calculator's face — leaving the buttons in the
+ * default navy-slate made the skin read as "just a border". The #id in these
+ * selectors outspecifies calculator.css's class rules (incl. its :hover
+ * variants), so no !important is needed on the button overrides. */
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-number,
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-operator,
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-function {
+  background: linear-gradient(145deg, #ff9dcb, #ff5db1);
+  color: #5c0a33;
+}
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .calc-btn .primary {
+  color: #5c0a33;
+}
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .calc-btn .secondary {
+  color: #9c0f56;
+}
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-arrow {
+  background: linear-gradient(145deg, #ff77b9, #e94f9c);
+  color: #fff;
+  border-color: #c2367e;
+}
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-clear,
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-clear:hover {
+  background: linear-gradient(145deg, #8f0f4e, #6e0a3b);
+}
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-enter,
+body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-enter:hover {
+  background: linear-gradient(145deg, #ff2e93, #d81b7a);
+  color: #fff;
+}
+
+/* Carbon fiber: gunmetal weave + racing-red trim. The old version was a dark
+ * border on an already-dark calculator — invisible from two feet away. */
 body[data-skin-calculator="calc.carbon"] #floating-calculator {
-  border: 2px solid #2b2f36 !important;
+  border: 2px solid #14161a !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px #d90429 !important;
 }
 body[data-skin-calculator="calc.carbon"] #floating-calculator .calculator-header-bar {
   background: #16181c !important;
   color: #e5e7eb !important;
+  border-bottom: 2px solid #d90429 !important;
 }
 body[data-skin-calculator="calc.carbon"] #floating-calculator .calculator-body {
   background: repeating-linear-gradient(45deg, #23262c 0 5px, #1e2126 5px 10px) !important;
+}
+body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-number,
+body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-operator,
+body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-function {
+  background: linear-gradient(145deg, #31353c, #1c1f24);
+  color: #e5e7eb;
+}
+body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-arrow {
+  background: linear-gradient(145deg, #24272d, #17191d);
+  color: #ff4d5e;
+  border-color: #0e1013;
+}
+body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-enter,
+body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-enter:hover {
+  background: linear-gradient(145deg, #d90429, #a4031f);
+  color: #fff;
 }
 
 /* ---- Header (data-skin-header) — patterns the top bar strip ---- */
@@ -281,7 +433,91 @@ body[data-skin-header="header.camo"] .landing-header {
   background-size: 90px 90px, 120px 120px, 70px 70px, 100% 100%;
 }
 body[data-skin-header="header.wave"] .landing-header {
-  background-image: linear-gradient(135deg, #667eea, #22d3ee 50%, #06b6d4);
+  /* Deepened from the original #667eea→#22d3ee: the header's forced-light
+   * pills/text washed out on the bright cyan half. */
+  background-image: linear-gradient(135deg, #4f46e5, #0284c7 55%, #0e7490);
+}
+
+
+/* =========================================================================
+ * AVATAR FRAMES on the MARQUEE surfaces (owner: "cosmetics don't yield
+ * noticeable changes"). The old rules only ringed the ~32px chat-message
+ * avatar — invisible at that size — and the retired status card. The
+ * surfaces a student actually looks at are the full-body figure in
+ * My Progress (.psc-avatar-col) and the rail player card. Render the frame
+ * there as a glowing ground-ring pedestal under the standing figure.
+ * ========================================================================= */
+body[data-skin-avatarframe] .psc-avatar-col,
+body[data-skin-avatarframe] .cr-player-card .cr-player-avatar {
+  position: relative;
+}
+body[data-skin-avatarframe] .psc-avatar-col::after,
+body[data-skin-avatarframe] .cr-player-card .cr-player-avatar::after {
+  content: '';
+  position: absolute;
+  left: 50%; bottom: 2px;
+  width: 78%; height: 16px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+body[data-skin-avatarframe="frame.silver"] .psc-avatar-col::after,
+body[data-skin-avatarframe="frame.silver"] .cr-player-card .cr-player-avatar::after {
+  border: 3px solid #cbd5e1;
+  box-shadow: 0 0 14px rgba(203, 213, 225, 0.9), inset 0 0 8px rgba(148, 163, 184, 0.6);
+}
+body[data-skin-avatarframe="frame.gold"] .psc-avatar-col::after,
+body[data-skin-avatarframe="frame.gold"] .cr-player-card .cr-player-avatar::after {
+  border: 3px solid #f6d365;
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.95), inset 0 0 10px rgba(212, 175, 55, 0.65);
+}
+body[data-skin-avatarframe="frame.neon"] .psc-avatar-col::after,
+body[data-skin-avatarframe="frame.neon"] .cr-player-card .cr-player-avatar::after {
+  border: 3px solid #22d3ee;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 1), 0 0 30px rgba(124, 77, 255, 0.8), inset 0 0 12px rgba(34, 211, 238, 0.7);
+}
+@media (prefers-reduced-motion: no-preference) {
+  body[data-skin-avatarframe="frame.neon"] .psc-avatar-col::after,
+  body[data-skin-avatarframe="frame.neon"] .cr-player-card .cr-player-avatar::after {
+    animation: cosmetic-neon-breathe 2.2s ease-in-out infinite;
+  }
+  @keyframes cosmetic-neon-breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+}
+/* Rainbow Halo pedestal — the legendary frame was the only one with NO pedestal
+ * variant, so the most expensive frame had the weakest render. Conic ring via
+ * the mask-out-the-center trick (the pedestal's center must stay transparent —
+ * there's no known cover color to fake it with). Glow is a drop-shadow filter
+ * because a box-shadow would be clipped by the mask; the spin animation carries
+ * the same drop-shadow so it isn't lost while animating. */
+body[data-skin-avatarframe="frame.rainbow"] .psc-avatar-col::after,
+body[data-skin-avatarframe="frame.rainbow"] .cr-player-card .cr-player-avatar::after {
+  border: 4px solid transparent;
+  background: conic-gradient(from 0deg, #ff5db1, #ffd93b, #4ade80, #22d3ee, #a855f7, #ff5db1) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.75));
+}
+@media (prefers-reduced-motion: no-preference) {
+  body[data-skin-avatarframe="frame.rainbow"] .psc-avatar-col::after,
+  body[data-skin-avatarframe="frame.rainbow"] .cr-player-card .cr-player-avatar::after {
+    animation: cosmetic-rainbow-pedestal 3.5s linear infinite;
+  }
+  @keyframes cosmetic-rainbow-pedestal {
+    from { filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.75)) hue-rotate(0deg); }
+    to   { filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.75)) hue-rotate(360deg); }
+  }
+}
+
+/* The figure stands ON the ring, not behind it. */
+body[data-skin-avatarframe] .psc-avatar-col .fba-stage,
+body[data-skin-avatarframe] .cr-player-card .cr-player-avatar > * {
+  position: relative; z-index: 1;
 }
 
 /* --- /css/shop.css --- */

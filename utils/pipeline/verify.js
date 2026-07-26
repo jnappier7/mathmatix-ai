@@ -195,6 +195,8 @@ function extractSystemTags(responseText) {
     moduleComplete: false,
     launchPracticeAct: false,
     reviewNext: false,
+    ideaSuggestion: null,
+    boardPoint: null,
   };
 
   let text = responseText;
@@ -289,6 +291,39 @@ function extractSystemTags(responseText) {
     console.log('[Verify] AI emitted <LAUNCH_PRACTICE_ACT> — signalling client to open the practice ACT runner');
   }
 
+  // Notebook idea offer (Live Workspace §7.6). The tutor may propose saving a
+  // reusable idea; the STUDENT confirms client-side — promotion is consented,
+  // never silent. One offer per turn; extras are stripped without effect.
+  const ideaRegex = /<\s*NOTEBOOK_IDEA(?:\s+title="([^"]{0,160})")?\s*>([\s\S]{1,600}?)<\/\s*NOTEBOOK_IDEA\s*>/gi;
+  let ideaMatch;
+  while ((ideaMatch = ideaRegex.exec(responseText)) !== null) {
+    if (!extracted.ideaSuggestion) {
+      const body = ideaMatch[2].trim();
+      if (body) {
+        extracted.ideaSuggestion = {
+          title: (ideaMatch[1] || '').trim() || body.slice(0, 60),
+          body,
+        };
+      }
+    }
+    text = text.replace(ideaMatch[0], '').trim();
+  }
+
+  // Board pointing (Live Workspace §8): the tutor names the exact line it is
+  // talking about; the client makes that line glow. Step numbers match the
+  // board-state block's numbering (the ledger's step order). One point per
+  // turn — a laser pointer, not a light show; extras are stripped inert.
+  const pointRegex = /<\s*BOARD_POINT\s+(?:step="(\d{1,2})"|target="(problem|solution|last)")\s*\/?\s*>/gi;
+  let pointMatch;
+  while ((pointMatch = pointRegex.exec(responseText)) !== null) {
+    if (!extracted.boardPoint) {
+      extracted.boardPoint = pointMatch[1]
+        ? { step: parseInt(pointMatch[1], 10) }
+        : { target: pointMatch[2].toLowerCase() };
+    }
+    text = text.replace(pointMatch[0], '').trim();
+  }
+
   // ACT bootcamp: tutor finished coaching the current missed question → advance.
   if (/<\s*REVIEW_NEXT\s*>/i.test(text)) {
     extracted.reviewNext = true;
@@ -297,6 +332,132 @@ function extractSystemTags(responseText) {
   }
 
   return { text, extracted };
+}
+
+// ── Canned phrase patterns (§2f) ──
+// The system prompt bans these, but the model slips them in regularly.
+// Stripped instead of regenerated (cheaper, faster).
+const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
+// "this|that|it" variants: production shipped "Let's work through it together…"
+// (2026-07-26 screenshot) because the ban only knew "work through this".
+const CANNED_TRANSITIONS = /\b((?:now,?\s+)?let'?s\s+(?:break\s+(?:this|that|it)\s+down|tackle\s+(?:this|that|it)|work\s+through\s+(?:this|that|it)(?:\s+together)?|dive\s+(?:right\s+)?in(?:to)?)|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)/gi;
+
+// Words that carry no content on their own — a sentence reduced to these
+// after phrase removal is packaging, not pedagogy, and gets dropped whole.
+const TRANSITION_FILLER_WORDS = new Set([
+  'alright', 'okay', 'ok', 'so', 'now', 'well', 'then', 'and', 'but',
+  'together', 'great', 'awesome', 'everyone', 'team', 'folks', 'again',
+]);
+
+/**
+ * After a leading phrase has been stripped, the sentence head may be an
+ * orphan: ", Jason! You're suggesting…" (production, 2026-07-26). Drop the
+ * stray punctuation and re-capitalize — but only when the head is a real
+ * word, never a math variable like "x = 2".
+ */
+function repairStrippedHead(text) {
+  let t = String(text || '').replace(/^\s*[,;:]+\s*/, '').trim();
+  if (/^[a-z][a-z]/.test(t)) t = t.charAt(0).toUpperCase() + t.slice(1);
+  return t;
+}
+
+// Sentence boundary scanners for the transition scrub. A '.' only counts as
+// a boundary when followed by whitespace (or end), so decimals like 3.5
+// never split a sentence.
+function sentenceStartIndex(text, from) {
+  for (let j = from - 1; j >= 0; j--) {
+    const c = text[j];
+    if (c === '\n') return j + 1;
+    if ('.!?:'.includes(c) && /\s/.test(text[j + 1] || '')) {
+      let k = j + 1;
+      while (k < from && /\s/.test(text[k])) k++;
+      return k;
+    }
+  }
+  return 0;
+}
+
+function sentenceEndIndex(text, from) {
+  for (let j = from; j < text.length; j++) {
+    const c = text[j];
+    if (c === '\n') return j;
+    if ('.!?:'.includes(c) && (j + 1 === text.length || /\s/.test(text[j + 1]))) return j + 1;
+  }
+  return text.length;
+}
+
+/**
+ * Is anything left of this sentence once the banned phrase is gone?
+ * A bare vocative (", Jason!") and filler words are not content.
+ */
+function remainderHasContent(remainder, firstName) {
+  if (/^\s*,\s*[A-Z][a-zA-Z]*\s*[!.?]*\s*$/.test(remainder.trim())) return false;
+  // A dangling purpose clause is packaging too: removing "let's work through
+  // it together" from "…together to ensure we understand each step clearly!"
+  // must not keep "To ensure we understand each step clearly!" as a sentence.
+  const lead = remainder.replace(/^[\s,;:]+/, '');
+  if (/^(?:to|so|in\s+order\s+to)\b/i.test(lead)) return false;
+  const fn = (firstName || '').toLowerCase();
+  const words = remainder.match(/[A-Za-z']+/g) || [];
+  return words.some((w) => {
+    const lower = w.toLowerCase();
+    return !TRANSITION_FILLER_WORDS.has(lower) && lower !== fn;
+  });
+}
+
+/**
+ * Remove banned transition phrases WITHOUT mangling the sentence they sit in.
+ *
+ * The old scrub replaced the phrase with '' wherever it appeared. When the
+ * phrase was the spine of its sentence, deletion left the trimmings behind
+ * (two live examples, production 2026-07-26):
+ *   "Let's work through this, Jason! You're…"         → ", Jason! You're…"
+ *   "Alright, let's work through this together. You…" → "Alright, together. You…"
+ *
+ * So the scrub is sentence-aware: find the sentence containing the phrase,
+ * delete the phrase, and if what's left carries no content (filler words, a
+ * bare vocative) drop the whole sentence. If real content remains, keep it
+ * and repair the seams — orphaned commas, doubled spaces, capitalization.
+ */
+function stripCannedTransitions(text, firstName) {
+  const finder = new RegExp(CANNED_TRANSITIONS.source, 'gi');
+  const ranges = [];
+  let m;
+  while ((m = finder.exec(text)) !== null) {
+    const a = sentenceStartIndex(text, m.index);
+    const b = sentenceEndIndex(text, finder.lastIndex);
+    const last = ranges[ranges.length - 1];
+    if (last && a <= last.b) last.b = Math.max(last.b, b);
+    else ranges.push({ a, b });
+  }
+  if (ranges.length === 0) return { text, changed: false };
+
+  let out = text;
+  for (let i = ranges.length - 1; i >= 0; i--) {
+    const { a, b } = ranges[i];
+    const sentence = out.slice(a, b);
+    const remainder = sentence.replace(new RegExp(CANNED_TRANSITIONS.source, 'gi'), '');
+    let replacement = '';
+    if (remainderHasContent(remainder, firstName)) {
+      replacement = repairStrippedHead(
+        remainder
+          .replace(/\s*,(\s*,)+/g, ',')
+          .replace(/\s+([,.!?;:])/g, '$1')
+          .replace(/ {2,}/g, ' ')
+      );
+    }
+    let tail = out.slice(b);
+    if (!replacement) {
+      tail = tail.replace(/^[ \t]+/, '');
+      if (/\n\s*$/.test(out.slice(0, a))) tail = tail.replace(/^\s+/, '');
+      // The dropped sentence may have introduced the one that follows
+      // ("…break this down: first, …") — re-capitalize its head.
+      if (/^[a-z][a-z]/.test(tail)) tail = tail.charAt(0).toUpperCase() + tail.slice(1);
+    }
+    out = out.slice(0, a) + replacement + tail;
+  }
+  out = out.replace(/[ \t]+$/, '');
+  return { text: out, changed: out !== text };
 }
 
 /**
@@ -315,6 +476,15 @@ function extractSystemTags(responseText) {
 async function verify(responseText, context = {}) {
   let text = responseText;
   const flags = [];
+
+  // LaTeX repair (production, 2026-07-26): the tutor model sometimes writes
+  // \dfrac with a backslash spliced in — "\d\frac{5}{7}" — which KaTeX
+  // renders as a red unknown-macro \d before the fraction. Once one turn
+  // does it, history teaches every later turn to copy it. Rejoin the split
+  // command at the shared choke point so chat text, the board synthesizer
+  // (which poses verbatim from this text), and the ledger all stay clean.
+  text = text.replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2');
+  text = text.replace(/\\displaystyle\s*/g, '');
 
   // ── 1. Extract system tags (structured sidecar data) ──
   const { text: tagStrippedText, extracted } = extractSystemTags(text);
@@ -486,7 +656,8 @@ async function verify(responseText, context = {}) {
     if (noAnswerActions.includes(context.action) || noAnswerTypes.includes(context.messageType)) {
       const falseAffirmation = /^(that'?s\s+right[.!]*|correct[.!]*|exactly[.!]*|great\s+job[.!]*|perfect[.!]*|well\s+done[.!]*|yes[.!]*|you\s+got\s+it[.!]*|right\s+on[.!]*|bingo[.!]*)\s*/i;
       if (falseAffirmation.test(text.trim())) {
-        text = text.trim().replace(falseAffirmation, '').trim();
+        // repairStrippedHead: "Exactly, Jason! …" must not become ", Jason! …"
+        text = repairStrippedHead(text.trim().replace(falseAffirmation, ''));
         flags.push('false_affirmation_stripped');
         console.log(`[Verify] Stripped false affirmation (action: ${context.action}, messageType: ${context.messageType})`);
 
@@ -622,6 +793,49 @@ async function verify(responseText, context = {}) {
         console.error('[Verify] False-rejection regeneration failed:', err.message);
         flags.push('false_rejection_regeneration_failed');
       }
+    }
+  }
+
+  // ── 2d-rejustify. Re-justification guard on demonstrated reasoning ──
+  // (production screenshot, 2026-07-26). The student wrote the full solution
+  // path ("120/4 = 30 mpg, and 10 gallons at 30 mpg is 300 miles") and the
+  // tutor still asked them to "walk me through how you got from 120 ÷ 4 to
+  // 30 … to ensure we understand each step clearly". decide.js already
+  // injects a directive forbidding exactly this on demonstrated-reasoning
+  // turns; this enforces it when the model ignores the directive. Gated on
+  // demonstratedReasoning so asking a bare-answer student to explain their
+  // thinking — legitimate data-gathering — is untouched.
+  const REJUSTIFY_REQUEST = /\b(?:walk|talk)\s+(?:me|us)\s+(?:back\s+)?through\b|\b(?:can|could)\s+you\s+(?:explain|show\s+me|tell\s+me)\s+how\s+you\s+(?:got|found|solved|arrived|figured)|\bhow\s+did\s+you\s+(?:get|arrive\s+at|come\s+up\s+with|figure\s+out)\b|\bexplain\s+(?:your|each)\s+(?:steps?|reasoning|thinking|work)\b/i;
+  if (!regeneratedThisPass
+      && context.action === ACTIONS.CONFIRM_CORRECT
+      && context.demonstratedReasoning
+      && REJUSTIFY_REQUEST.test(text)) {
+    flags.push('rejustification_detected');
+    console.log('[Verify] RE-JUSTIFICATION on demonstrated reasoning — student already showed verified-correct steps. Regenerating.');
+
+    try {
+      const correctionPrompt = 'The student solved the problem correctly AND wrote out their full reasoning — every step has been independently verified. Your previous response asked them to walk through or re-explain steps they already showed you. That is over-scaffolding: it signals doubt about verified-correct work and stalls their momentum. Rewrite: give specific praise naming what they did right (you can see their steps), then move the lesson FORWARD — a next problem, a slightly harder variant, or a transfer question. Do NOT ask them to repeat, re-explain, or walk through anything they already wrote.';
+      const regenerated = await callLLM(PRIMARY_CHAT_MODEL,
+        [{ role: 'system', content: correctionPrompt },
+         { role: 'assistant', content: text },
+         { role: 'user', content: 'Rewrite this response. Affirm the work they showed, then advance. No re-explaining requests.' }],
+        { temperature: 0.55, max_tokens: 1500 }
+      );
+      const regeneratedText = regenerated.choices[0]?.message?.content?.trim();
+      if (regeneratedText && regeneratedText.length > 10) {
+        text = regeneratedText;
+        flags.push('rejustification_regenerated');
+        regeneratedThisPass = true;
+
+        if (context.isStreaming && context.res) {
+          try {
+            context.res.write(`data: ${JSON.stringify({ type: 'replacement', content: text })}\n\n`);
+          } catch (e) { /* client disconnected */ }
+        }
+      }
+    } catch (err) {
+      console.error('[Verify] Re-justification regeneration failed:', err.message);
+      flags.push('rejustification_regeneration_failed');
     }
   }
 
@@ -872,25 +1086,17 @@ async function verify(responseText, context = {}) {
   }
 
   // ── 2f. Canned phrase scrub ──
-  // The system prompt bans these, but GPT-4o-mini slips them in regularly.
-  // Strip the worst offenders instead of regenerating (cheaper, faster).
-  const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
-  const CANNED_TRANSITIONS = /\b((?:now,?\s+)?let'?s\s+(?:break\s+this\s+down|tackle\s+this|work\s+through\s+this|dive\s+(?:right\s+)?in(?:to)?)|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)/gi;
-
+  // Patterns and helpers live at module scope (see stripCannedTransitions).
+  // Removal is sentence-aware: naive phrase deletion shipped mangled heads
+  // like ", Jason! You're suggesting…" to production (2026-07-26).
   if (CANNED_OPENERS.test(text.trim())) {
-    text = text.trim().replace(CANNED_OPENERS, '').trim();
-    // Capitalize the new first character
-    if (text.length > 0) {
-      text = text.charAt(0).toUpperCase() + text.slice(1);
-    }
+    text = repairStrippedHead(text.trim().replace(CANNED_OPENERS, ''));
     flags.push('canned_opener_stripped');
   }
 
-  const transitionCount = (text.match(CANNED_TRANSITIONS) || []).length;
-  if (transitionCount > 0) {
-    text = text.replace(CANNED_TRANSITIONS, '');
-    // Clean up double spaces left behind
-    text = text.replace(/  +/g, ' ').replace(/\n +/g, '\n').trim();
+  const transitionScrub = stripCannedTransitions(text, context.firstName);
+  if (transitionScrub.changed) {
+    text = transitionScrub.text.replace(/\n +/g, '\n').trim();
     flags.push('canned_transitions_stripped');
   }
 
@@ -1040,6 +1246,17 @@ async function verify(responseText, context = {}) {
   // normalized into LaTeX, where minus is '-', so real math is untouched.
   text = replaceDashes(text);
 
+  // ── 8e. Orphaned sentence-head punctuation (production, 2026-07-26) ──
+  // Any strip above that eats the head of a sentence can leave its comma
+  // behind (", Jason! You're suggesting…"). The individual strips repair
+  // their own seams; this is the belt-and-braces pass so no path ships a
+  // sentence that opens with bare punctuation.
+  if (/^\s*[,;]/.test(text)) {
+    text = repairStrippedHead(text);
+    flags.push('orphaned_head_repaired');
+  }
+  text = text.replace(/([.!?])(\s+)[,;]+\s+(?=[A-Za-z])/g, '$1$2');
+
   // ── 9. Validate non-empty (after all stripping) ──
   if (!text || text.trim() === '') {
     text = "I'm having trouble generating a response right now. Could you please rephrase your question?";
@@ -1146,8 +1363,14 @@ function normalizeLatex(text) {
     'sin', 'cos', 'tan', 'log', 'ln',
   ];
   // Match command names NOT preceded by a backslash, followed by { or a space-then-{
+  // The lookbehind must exclude LETTERS as well as the backslash: `frac`
+  // preceded by `d` is the tail of \dfrac, not a bare command — the old
+  // backslash-only lookbehind "repaired" \dfrac{5}{7} into \d\frac{5}{7}
+  // (a red unknown-macro \d on every card; production, 2026-07-26). Same
+  // class of bug for \tfrac/\cfrac/\arcsin/\arccos via their embedded
+  // command-word tails.
   const cmdPattern = new RegExp(
-    `(?<!\\\\)(${LATEX_COMMANDS.join('|')})(?=\\s*\\{)`, 'g'
+    `(?<![\\\\a-zA-Z])(${LATEX_COMMANDS.join('|')})(?=\\s*\\{)`, 'g'
   );
   result = result.replace(cmdPattern, '\\$1');
 
@@ -1251,6 +1474,17 @@ function normalizeLatex(text) {
     protectedBlocks.push(match);
     return `@@PROTECTED_${protectedBlocks.length - 1}@@`;
   });
+
+  // ── 2c. Wrap bare operator math: "120 \div 4" → "\(120 \div 4\)" ──
+  // Pre-pass 1 converts unicode ÷/×/± to \div/\times/\pm but nothing below
+  // wraps them (step 4 only anchors on \frac-class commands), so the student
+  // saw literal "\div" in chat (production screenshot, 2026-07-26) — our own
+  // normalizer turned a readable "÷" into raw LaTeX source. Runs after the
+  // protection pass, so math already inside delimiters is never re-wrapped.
+  result = result.replace(
+    /\b(\d+(?:\.\d+)?(?:\s*\\(?:div|times|cdot|pm)\s*\d+(?:\.\d+)?)+(?:\s*=\s*-?\d+(?:\.\d+)?)?)/g,
+    '\\($1\\)'
+  );
 
   // ── 3. Fix bare parenthesized math: ( expr ) → \( expr \) ──
   result = result.replace(/(?<![\\a-zA-Z])\(\s*([^()]+?)\s*\)(?!\s*[=<>])/g, (match, inner) => {
@@ -1368,4 +1602,6 @@ module.exports = {
   extractSystemTags,
   normalizeLatex,
   leadsWithDoubtOnCorrect,
+  stripCannedTransitions,
+  repairStrippedHead,
 };

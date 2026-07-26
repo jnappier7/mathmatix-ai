@@ -195,10 +195,92 @@ function problemAssistance(ledger) {
   return null;
 }
 
+/**
+ * Teacher-facing summary of a student's board (Live Workspace spec §20):
+ * what they're working on, how it's going, and how much support each
+ * finished problem took — WITHOUT the step-by-step contents (that lives in
+ * the student's own board; the teacher view is a progress read, not a feed).
+ * Pure; null-safe for students who have never touched the board.
+ */
+function summarizeLedger(ledger) {
+  const empty = { current: null, completed: [], independentSolves: 0, supportedSolves: 0 };
+  if (!ledger || typeof ledger !== 'object') return empty;
+
+  const cur = ledger.current && ledger.current.problemTex ? {
+    problemTex: String(ledger.current.problemTex).slice(0, 200),
+    stepCount: Array.isArray(ledger.current.steps) ? ledger.current.steps.length : 0,
+    solved: Array.isArray(ledger.current.steps) && ledger.current.steps.some(c => c && c.action === 'verify'),
+    assistance: ledger.current.assistance || null,
+    fromWorksheet: !!ledger.current.sourceRef,
+  } : null;
+
+  const completed = (Array.isArray(ledger.completed) ? ledger.completed : [])
+    .filter(e => e && e.problemTex)
+    .map(e => ({
+      problemTex: String(e.problemTex).slice(0, 200),
+      solved: !!e.solved,
+      assistance: e.assistance || null,
+      fromWorksheet: !!e.sourceRef,
+      completedAt: e.completedAt || null,
+    }));
+
+  let independentSolves = 0;
+  let supportedSolves = 0;
+  for (const e of completed) {
+    if (!e.solved) continue;
+    if (e.assistance != null && e.assistance <= 4) independentSolves += 1;
+    else if (e.assistance != null) supportedSolves += 1;
+  }
+
+  return { current: cur, completed, independentSolves, supportedSolves };
+}
+
+/**
+ * Voice-turn preamble (Live Workspace): voice speaks only derivation lines —
+ * it has no pose concept. With no problem in focus the ledger drops every
+ * line as a stray, so a voice-FIRST session would persist nothing. When the
+ * board is empty, the first math line IS the problem being worked: promote
+ * it to a pose. No-op when a problem is already in focus (chat posed it, or
+ * an earlier voice turn did). Pure; returns a new array.
+ */
+function promoteLeadingResolveToPose(ledger, commands) {
+  const cmds = Array.isArray(commands) ? commands : [];
+  if (!cmds.length || !cmds[0] || cmds[0].action !== 'resolve' || !cmds[0].tex) return cmds;
+  if (ledger && ledger.current && ledger.current.problemTex) return cmds;
+  return [{ action: 'pose', tex: cmds[0].tex }].concat(cmds.slice(1));
+}
+
+/**
+ * Voice re-sends its board CUMULATIVELY every turn (its protocol: the full
+ * step list, typically one new line at the end). Folding that raw into the
+ * ledger would re-append the problem and every prior step each turn. Drop
+ * resolves that match the problem in focus or a step already ledgered;
+ * everything genuinely new passes through. Pure; returns a new array.
+ */
+function dedupeCumulativeResolves(ledger, commands) {
+  const cmds = Array.isArray(commands) ? commands : [];
+  const cur = ledger && ledger.current;
+  if (!cur || !cur.problemTex) return cmds;
+  const seen = new Set([normTex(cur.problemTex)]);
+  for (const st of Array.isArray(cur.steps) ? cur.steps : []) {
+    if (st && st.action === 'resolve' && st.tex) seen.add(normTex(st.tex));
+  }
+  return cmds.filter(c => {
+    if (!c || c.action !== 'resolve' || !c.tex) return true;
+    const k = normTex(c.tex);
+    if (seen.has(k)) return false;
+    seen.add(k);           // also collapses dupes within one turn
+    return true;
+  });
+}
+
 module.exports = {
   applyTurnToLedger,
+  promoteLeadingResolveToPose,
+  dedupeCumulativeResolves,
   problemAssistance,
   sanitizeSourceRef,
+  summarizeLedger,
   emptyLedger,
   MAX_COMPLETED,
   MAX_STEPS,

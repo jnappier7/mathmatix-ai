@@ -1789,6 +1789,10 @@ async function runStudentTurn(req, res) {
             // Notebook cards minted this turn (AHA moments, activated
             // reminders) — the client celebrates them (spec §7).
             learningCards: pipelineResult.learningCards || [],
+            // Tutor-proposed idea for the notebook (§7.6) — student confirms.
+            ideaSuggestion: pipelineResult.ideaSuggestion || null,
+            // Tutor pointing at a board line (§8) — client highlights it.
+            boardPoint: pipelineResult.boardPoint || null,
             xpCommands: pipelineResult.xpCommands || [],
             visualTabCommands: pipelineResult.visualTabCommands || [],
             boardContext: pipelineResult.boardContext,

@@ -533,6 +533,11 @@ html[data-theme="dark"] .lws-root {
   max-width: min(62%, 420px);
   display: flex; flex-direction: column; gap: 6px;
 }
+/* display:flex above would defeat the `hidden` attribute (UA display:none
+   loses to any authored display) — the same guard the rail and caption have.
+   Without it an EMPTY dock painted its pill and clicking it did nothing. */
+.lws-sd[hidden] { display: none; }
+
 .lws-sd-head {
   appearance: none; -webkit-appearance: none; cursor: pointer;
   align-self: flex-start; display: inline-flex; align-items: center; gap: 6px;
@@ -576,7 +581,7 @@ html[data-theme="dark"] .lws-root {
 .lws-sd-ov {
   position: absolute; inset: 0; z-index: 8;
   display: flex; flex-direction: column;
-  background: var(--lws-grid-bg);
+  background: var(--lws-grid-bg, #0f1422);
   animation: lws-dv-ov-in .18s ease-out both;
 }
 @media (prefers-reduced-motion: reduce) { .lws-sd-ov { animation: none; } }
@@ -700,7 +705,7 @@ html[data-theme="dark"] .lws-root {
 .lws-nb-ov {
   position: absolute; inset: 0; z-index: 8;
   display: flex; flex-direction: column;
-  background: var(--lws-grid-bg);
+  background: var(--lws-grid-bg, #0f1422);
   animation: lws-dv-ov-in .18s ease-out both;
 }
 @media (prefers-reduced-motion: reduce) { .lws-nb-ov { animation: none; } }
@@ -764,4 +769,18 @@ html[data-theme="dark"] .lws-root {
 .lws-model-unavailable {
   padding: 10px 12px; border: 1px dashed var(--lws-card-border); border-radius: 10px;
   color: var(--lws-card-ink); opacity: .7; font: 400 13px/1.4 system-ui, sans-serif;
+}
+
+/* ── tutor pointing (§8): the line being discussed glows ── */
+.lws-dv-pointed {
+  animation: lws-point-pulse 1.4s ease-in-out 3;
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px var(--lws-accent), 0 0 18px color-mix(in srgb, var(--lws-accent) 55%, transparent);
+}
+@keyframes lws-point-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--lws-accent), 0 0 18px color-mix(in srgb, var(--lws-accent) 55%, transparent); }
+  50% { box-shadow: 0 0 0 3px var(--lws-accent), 0 0 30px color-mix(in srgb, var(--lws-accent) 80%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lws-dv-pointed { animation: none; }
 }

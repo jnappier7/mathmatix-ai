@@ -864,3 +864,15 @@ body.cr-mode .inline-equation-palette {
 }
 .cr-encourage-title { color: #18202B; }
 .cr-encourage-body  { color: #5B6876; }
+
+/* ── notebook idea offer (Live Workspace §7.6) ──
+   Consent chip under a tutor message: save the offered idea, or wave it off. */
+.idea-offer { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.idea-offer-dismiss {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  border: none; background: transparent; padding: 4px 6px;
+  color: var(--cr-text-secondary, #5B6876); font: 500 12px/1 Inter, system-ui, sans-serif;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.idea-offer-dismiss:hover { color: var(--cr-text-primary, #14202b); }
+.idea-offer-dismiss:focus-visible { outline: 2px solid var(--cr-accent, #4a7dff); outline-offset: 2px; }

@@ -177,3 +177,41 @@ describe('applyTurnToLedger', () => {
     expect(l.current).toBeNull();
   });
 });
+
+describe('summarizeLedger (teacher view, spec §20)', () => {
+  const { summarizeLedger } = require('../../utils/pipeline/boardLedger');
+
+  test('null/empty ledgers summarize to an empty read', () => {
+    expect(summarizeLedger(null)).toEqual({ current: null, completed: [], independentSolves: 0, supportedSolves: 0 });
+    expect(summarizeLedger({}).current).toBeNull();
+  });
+
+  test('summarizes focus + support split WITHOUT step contents', () => {
+    let l = applyTurnToLedger(null, [{ action: 'pose', tex: 'a=1' }], NOW, 2);
+    l = applyTurnToLedger(l, [{ action: 'verify', tex: 'a=1' }], NOW, 2);      // independent (≤4)
+    l = applyTurnToLedger(l, [{ action: 'pose', tex: 'b=2' }], NOW, 1);
+    l = applyTurnToLedger(l, [{ action: 'verify', tex: 'b=2' }], NOW, 8);      // supported (≥5)
+    l = applyTurnToLedger(l, [{ action: 'pose', tex: 'c=3' }], NOW, 1);
+    l = applyTurnToLedger(l, [{ action: 'resolve', tex: 'c' }], NOW, 5);
+
+    const s = summarizeLedger(JSON.parse(JSON.stringify(l)));
+    expect(s.current).toMatchObject({ problemTex: 'c=3', stepCount: 1, solved: false, assistance: 5 });
+    expect(s.current.steps).toBeUndefined();               // a progress read, not a feed
+    expect(s.completed).toHaveLength(2);
+    expect(s.completed[0].steps).toBeUndefined();
+    expect(s.independentSolves).toBe(1);
+    expect(s.supportedSolves).toBe(1);
+  });
+
+  test('unsolved and unrated problems never count toward the solve split', () => {
+    let l = applyTurnToLedger(null, [{ action: 'pose', tex: 'x=1' }], NOW);
+    l = applyTurnToLedger(l, [{ action: 'verify', tex: 'x=1' }], NOW);          // solved, assistance unknown
+    l = applyTurnToLedger(l, [{ action: 'pose', tex: 'y=2' }], NOW);
+    l = applyTurnToLedger(l, [{ action: 'resolve', tex: 'y' }], NOW, 9);
+    l = applyTurnToLedger(l, [{ action: 'clear' }], NOW);                       // abandoned
+    const s = summarizeLedger(l);
+    expect(s.independentSolves).toBe(0);
+    expect(s.supportedSolves).toBe(0);
+    expect(s.completed).toHaveLength(2);
+  });
+});

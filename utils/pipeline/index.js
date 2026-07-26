@@ -429,6 +429,9 @@ async function runPipeline(message, ctx) {
     modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
     hasRecentUpload: ctx.hasRecentUpload || false,
     user: ctx.user || null,
+    // For the one-ask guard: decide reads the LAST assistant message to know
+    // whether the tutor already asked this student to explain this work.
+    conversation: ctx.conversation || null,
   });
 
   // Test-out: the challenge card is about to render below the tutor's reply, so
@@ -572,6 +575,7 @@ async function runPipeline(message, ctx) {
     messageType: observation.messageType,
     correctAnswer: diagnosis.correctAnswer || null,
     diagnosisType: diagnosis.type,
+    demonstratedReasoning: diagnosis.demonstratedReasoning || false,
     verificationState: diagnosis.verificationState,
     hasRecentUpload: ctx.hasRecentUpload || false,
     isWorksheetFollowUp: observation.isWorksheetFollowUp || false,
@@ -1690,6 +1694,10 @@ async function runPipeline(message, ctx) {
     // Signals the client to open the timed practice-ACT runner. Extracted in
     // verify (shared choke point) so it fires on both /api/chat and course-chat.
     launchPracticeAct: verified.extracted?.launchPracticeAct || false,
+    // Tutor-proposed notebook idea (§7.6) — the client asks the student.
+    ideaSuggestion: verified.extracted?.ideaSuggestion || null,
+    // Tutor pointing at a specific board line (§8) — the client makes it glow.
+    boardPoint: verified.extracted?.boardPoint || null,
     // Tutor finished coaching the current missed question → advance the ACT
     // bootcamp review queue (handled in routes/chat.js after the pipeline).
     reviewNext: verified.extracted?.reviewNext || false,

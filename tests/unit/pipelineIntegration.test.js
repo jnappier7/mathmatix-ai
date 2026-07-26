@@ -232,7 +232,10 @@ describe('Pipeline Integration: runPipeline', () => {
 
     const result = await runPipeline('I don\'t know how to do this', buildCtx(user, conversation));
 
-    expect(result.text).toContain('break it down');
+    // "Let's break it down" is a banned canned transition (verify §2f strips
+    // the filler sentence whole); the scaffolding question must survive.
+    expect(result.text).not.toContain('break it down');
+    expect(result.text).toContain('what operation can we use to get rid of the +5?');
     expect(result.xpBreakdown.tier1).toBe(2);
     expect(result.xpBreakdown.tier2).toBe(0);
   });

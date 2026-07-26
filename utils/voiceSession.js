@@ -12,6 +12,14 @@ const { verify: pipelineVerify } = require('./pipeline');
 const { checkReadingLevel } = require('./readability');
 const { replaceDashes } = require('./dashNormalizer');
 const { ensureBoardCarriesSpokenMath } = require('./voiceBoardGuard');
+// Voice board work joins the Live Workspace loop: the same translator the
+// client renders with (UMD, requireable in node), folded into the same
+// ledger chat writes, described to the model by the same board ghost.
+const { voiceToBoardCommands } = require('../public/js/living-workspace/dom/voiceBoardTranslate');
+const { applyTurnToLedger, promoteLeadingResolveToPose, dedupeCumulativeResolves } = require('./pipeline/boardLedger');
+const { assistanceLevelForTurn } = require('./pipeline/assistanceLadder');
+const { buildBoardStateBlock } = require('./pipeline/boardStateBlock');
+const { loadActiveBoardLedger } = require('./activeConversation');
 const sttStream = require('./sttStream');
 const ttsStream = require('./ttsStream');
 const ttsProvider = require('./ttsProvider');
@@ -181,6 +189,12 @@ class VoiceSession {
         // chat uses (user.activeConversationId), so a student who was just typing
         // continues seamlessly into voice.
         this.history = await loadActiveHistory(this.user, HISTORY_DEPTH);
+
+        // Seed the board ledger from the active conversation so voice continues
+        // the SAME board chat built (and vice versa). Never fatal — a voice
+        // session must start even if the ledger read hiccups.
+        try { this.boardLedger = await loadActiveBoardLedger(this.user); }
+        catch (err) { this.boardLedger = null; logger.warn('board ledger seed failed', { error: err.message }); }
 
         // Persistent Cartesia pool — one WS per session, context_id per turn.
         // Saves ~50–100ms handshake on every turn vs opening a fresh WS.
@@ -424,6 +438,14 @@ class VoiceSession {
 
         let systemContent = this.systemPrompt + modeInstructions;
 
+        // Board awareness (same ghost chat uses): what the student's board
+        // shows RIGHT NOW, so the voice tutor references lines instead of
+        // re-deriving them. Empty board contributes zero tokens.
+        try {
+            const boardBlock = buildBoardStateBlock(this.boardLedger);
+            if (boardBlock) systemContent += '\n\n' + boardBlock;
+        } catch (_) { /* non-fatal */ }
+
         // board-actions mode: enrich prompt with current whiteboard state
         if (this.mode === 'board-actions' && this.boardContext) {
             const ctx = this.boardContext;
@@ -592,6 +614,24 @@ class VoiceSession {
         if (this.history.length > HISTORY_DEPTH * 2) {
             this.history = this.history.slice(-HISTORY_DEPTH * 2);
         }
+        // Fold this turn's board output into the shared ledger (Live Workspace):
+        // the same translation the client renders is what gets remembered, so a
+        // voice session's board survives reloads exactly like a typed one.
+        try {
+            let cmds = voiceToBoardCommands({ mathSteps: mathStepsForBoard, boardActions: boardActionsForFinal });
+            cmds = promoteLeadingResolveToPose(this.boardLedger, cmds);
+            // Voice's protocol is cumulative (full board re-sent each turn) —
+            // only genuinely new lines may fold, or steps duplicate every turn.
+            cmds = dedupeCumulativeResolves(this.boardLedger, cmds);
+            if (cmds.length) {
+                this.boardLedger = applyTurnToLedger(this.boardLedger, cmds, new Date(), {
+                    assistance: assistanceLevelForTurn({ boardCommands: cmds }),
+                });
+            }
+        } catch (err) {
+            logger.warn('voice board ledger fold failed (non-fatal)', { error: err.message });
+        }
+
         this._persistTurn(turn.userMessage, assistantContent).catch(err => {
             logger.warn('persist failed', { error: err.message });
         });
@@ -639,7 +679,7 @@ not on the board is lost the moment it's said.
 Never speak math notation. Never include system tags. Always valid JSON.`;
 
         const messages = [
-            { role: 'system', content: this.systemPrompt + ORCH_VOICE_INSTRUCTIONS },
+            { role: 'system', content: this.systemPrompt + ORCH_VOICE_INSTRUCTIONS + this._boardGhost() },
             ...this.history,
             { role: 'user', content: turn.userMessage },
         ];
@@ -1151,10 +1191,20 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         // when the student switches back to text. resolveActiveConversationId
         // (inside the helper) also updates this.user.activeConversationId in
         // place, so a long-lived session keeps targeting the right document.
+        // The board ledger rides along so the voice session's board persists.
         await appendToActiveConversation(this.user, [
             { role: 'user', content: userMessage },
             { role: 'assistant', content: aiContent },
-        ]);
+        ], this.boardLedger ? { boardLedger: this.boardLedger } : {});
+    }
+
+    // The board ghost for prompt assembly — one guarded call site for the
+    // orchestrated path (the streaming path inlines the same block).
+    _boardGhost() {
+        try {
+            const block = buildBoardStateBlock(this.boardLedger);
+            return block ? '\n\n' + block : '';
+        } catch (_) { return ''; }
     }
 
     shutdown(reason = 'shutdown') {
