@@ -100,13 +100,13 @@ const PREVIEW = {
     'frame.gold':      'linear-gradient(135deg,#f6d365,#d4af37)',
     'frame.neon':      'linear-gradient(135deg,#22d3ee,#7c4dff)',
     'frame.rainbow':   'conic-gradient(from 0deg,#ff5db1,#ffd93b,#4ade80,#22d3ee,#a855f7,#ff5db1)',
-    'board.grid':      'repeating-linear-gradient(0deg,#e6f0ff 0 5px,#c7dbff 5px 6px)',
-    'board.chalk':     '#24322b',
-    'board.cheetah':   'radial-gradient(circle at 30% 30%,#5b3a1a 20%,transparent 21%),#f2c14e',
+    'board.grid':      'repeating-linear-gradient(0deg,#123c78 0 5px,#3f6cb4 5px 6px)',
+    'board.chalk':     '#2a3d33',
+    'board.cheetah':   'radial-gradient(circle at 30% 30%,#5b3a1a 20%,transparent 21%),#eccf96',
     'calc.hotpink':    'linear-gradient(135deg,#ff5db1,#ff2e93)',
-    'calc.carbon':     'repeating-linear-gradient(45deg,#2b2f36 0 4px,#23262c 4px 8px)',
+    'calc.carbon':     'linear-gradient(180deg,#d90429 0 12%,transparent 12%),repeating-linear-gradient(45deg,#2b2f36 0 4px,#23262c 4px 8px)',
     'header.camo':     'radial-gradient(circle at 30% 40%,#6b7d4f 30%,#5a6b42 31%)',
-    'header.wave':     'linear-gradient(135deg,#667eea,#22d3ee 50%,#06b6d4)',
+    'header.wave':     'linear-gradient(135deg,#4f46e5,#0284c7 55%,#0e7490)',
 };
 
 function swatchHTML(id, rarity) {
