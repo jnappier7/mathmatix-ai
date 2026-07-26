@@ -36,7 +36,7 @@
       ]
     },
     {
-      "href": "/dist/css/chat-css2.047b015f.css",
+      "href": "/dist/css/chat-css2.a13da437.css",
       "files": [
         "/css/cosmetics.css",
         "/css/shop.css"
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js3.895af699.js",
+      "src": "/dist/js/chat-js3.0987956a.js",
       "files": [
         "/js/chat-board-integration.js",
         "/js/floating-screener.js",
