@@ -14,6 +14,7 @@ const { parseCleanProblem, verifyAnswer, matchRootsInText } = require('../mathSo
 const { symbolicVerify, equivalent, detectPosedArithmetic, bareNumericAnswer } = require('./symbolicVerifier');
 const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require('../misconceptionDetector');
 const { hasMathematicalContent } = require('./verificationState');
+const { verifyDerivation } = require('../derivationVerifier');
 
 /**
  * Strip LaTeX delimiters from text so regex-based math detection works.
@@ -172,6 +173,37 @@ function resolveProblemExpression(context) {
  */
 async function diagnoseTransformation(observation, context) {
   const rawText = observation.raw || '';
+
+  // Multi-step shown work lands HERE — a derivation like "3x-5=16 / 3x=21 / x=7"
+  // has no single extractable answer, so observe tags it general_math and routes
+  // it to this transformation path. Grade the WHOLE chain before the single-step
+  // logic: every line of a correct solution keeps the same answer, so we verify
+  // each against the posed problem and pinpoint the first that breaks. A valid
+  // chain is demonstrated reasoning by definition (decide affirms + advances,
+  // never "how did you do it?"). correctAnswer stays null so nothing is revealed.
+  const chain = verifyDerivation(rawText, context.pinnedProblemTex);
+  if (chain.verifiable) {
+    console.log(`[Diagnose] Derivation ${chain.valid ? 'valid' : `broke at "${chain.firstBadStep}"`}`);
+    return {
+      type: chain.valid ? 'correct' : 'incorrect',
+      isCorrect: chain.valid,
+      answer: chain.finalAnswer,
+      correctAnswer: null,
+      misconception: null,
+      evidence: {
+        isCorrect: chain.valid,
+        independenceLevel: estimateIndependence(observation, context),
+        misconceptionHit: null,
+        responseTimeCategory: null,
+        problemContext: observation.problemContext,
+        timestamp: new Date(),
+      },
+      verificationSource: 'derivation',
+      demonstratedReasoning: chain.valid === true,
+      derivation: { valid: chain.valid, firstBadStep: chain.firstBadStep, finalAnswer: chain.finalAnswer },
+      isTransformation: true,
+    };
+  }
 
   // `no_answer` means "the student submitted no work of their own" — a question,
   // a pasted problem, a restatement. `unverifiable` means "they DID submit work
@@ -427,6 +459,7 @@ async function diagnose(observation, context = {}) {
   let correctAnswer = null;
   let verificationSource = null;
   let multiRoot = null;
+  let derivation = null; // set when the student showed a multi-step chain
 
   // ── Step 2a: Multi-root solution sets ──
   // A quadratic / absolute-value problem has more than one root. The student
@@ -442,10 +475,23 @@ async function diagnose(observation, context = {}) {
     correctAnswer = problemInfo.correctAnswer;
     verificationSource = 'root_set';
   } else if (problemInfo) {
-    const verification = verifyAnswer(studentAnswer, problemInfo.correctAnswer);
-    isCorrect = verification.isCorrect;
-    correctAnswer = problemInfo.correctAnswer;
-    verificationSource = 'solver';
+    // If the student SHOWED their work (a multi-line derivation), follow the
+    // whole chain instead of string-matching only their final line: every step
+    // of a correct solution keeps the same answer, so we grade each line against
+    // the posed answer and pinpoint the FIRST that breaks. This is what makes
+    // multi-step practice both grade correctly and get taught precisely.
+    const chain = verifyDerivation(rawText, context.pinnedProblemTex, problemInfo.correctAnswer);
+    if (chain.verifiable) {
+      isCorrect = chain.valid;
+      correctAnswer = problemInfo.correctAnswer;
+      verificationSource = 'derivation';
+      derivation = chain;
+    } else {
+      const verification = verifyAnswer(studentAnswer, problemInfo.correctAnswer);
+      isCorrect = verification.isCorrect;
+      correctAnswer = problemInfo.correctAnswer;
+      verificationSource = 'solver';
+    }
   }
 
   // Override: if the student's own arithmetic is provably correct but the
@@ -591,7 +637,12 @@ async function diagnose(observation, context = {}) {
   // When a student provides both a correct answer AND shows their work/reasoning,
   // that's strong evidence of understanding. The decide stage uses this to skip
   // unnecessary scaffolding steps and affirm immediately.
-  const demonstratedReasoning = isCorrect === true && observation.demonstratedReasoning === true;
+  // A verified multi-step chain IS shown reasoning by definition — the student
+  // laid out every step and each one checks out. So it counts as demonstrated
+  // reasoning even if the observe stage didn't separately flag it. This is what
+  // tells decide to affirm the work and move on — NOT ask "how did you do it?"
+  const demonstratedReasoning = isCorrect === true
+    && (observation.demonstratedReasoning === true || (derivation != null && derivation.valid === true));
   const hasExplanation = observation.answer?.hasExplanation === true;
 
   // A partial multi-root answer is "correct but incomplete" — its own type so
@@ -612,7 +663,15 @@ async function diagnose(observation, context = {}) {
     evidence,
     demonstratedReasoning,  // true = student gave correct answer + valid reasoning
     hasExplanation,         // true = answer was embedded in explanatory text
-    verificationSource,     // 'solver' | 'arithmetic_override' | 'llm' | 'root_set' | null
+    verificationSource,     // 'solver' | 'arithmetic_override' | 'derivation' | 'llm' | 'root_set' | null
+    // Multi-step chain result — present only when the student showed their work.
+    // firstBadStep is the exact line the reasoning broke on (null when valid), so
+    // decide/generate can point right at it instead of grading the whole thing wrong.
+    derivation: derivation ? {
+      valid: derivation.valid,
+      firstBadStep: derivation.firstBadStep,
+      finalAnswer: derivation.finalAnswer,
+    } : null,
     // Multi-root progress — present only while a solution set is being filled in.
     // foundRoots feeds the persist stage's cross-turn accumulator. rootsRemaining
     // is a COUNT only — never the unsaid root value (#1 anti-cheat rule).
