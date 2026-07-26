@@ -67,6 +67,8 @@
     // Source↔problem link (spec §5.4): paint/clear the in-focus problem's
     // "from my worksheet" chip. Fed by the response's boardSource field.
     setProblemSource: function () {},
+    // Tutor pointing (spec §8): highlight the board line the tutor named.
+    pointAt: function () {},
   };
   window.LWS_CHAT = api;
   if (!ON) return;
@@ -75,7 +77,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260725j';
+  var ASSET_V = '?v=20260725k';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -297,6 +299,11 @@
   api.setProblemSource = function (ref) {
     if (!ready || !dv) return;
     try { dv.setProblemSource(ref || null); } catch (e) { console.error('[LWS_CHAT] problem source failed', e); }
+  };
+
+  api.pointAt = function (ref) {
+    if (!ready || !dv) return;
+    try { dv.pointAt(ref); } catch (e) { console.error('[LWS_CHAT] pointAt failed', e); }
   };
 
   // The problem header's chip → reopen the docked source with the problem's

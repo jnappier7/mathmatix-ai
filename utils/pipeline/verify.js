@@ -195,6 +195,8 @@ function extractSystemTags(responseText) {
     moduleComplete: false,
     launchPracticeAct: false,
     reviewNext: false,
+    ideaSuggestion: null,
+    boardPoint: null,
   };
 
   let text = responseText;
@@ -287,6 +289,39 @@ function extractSystemTags(responseText) {
     extracted.launchPracticeAct = true;
     text = text.replace(/<\s*LAUNCH_PRACTICE_ACT\s*>/gi, '').trim();
     console.log('[Verify] AI emitted <LAUNCH_PRACTICE_ACT> — signalling client to open the practice ACT runner');
+  }
+
+  // Notebook idea offer (Live Workspace §7.6). The tutor may propose saving a
+  // reusable idea; the STUDENT confirms client-side — promotion is consented,
+  // never silent. One offer per turn; extras are stripped without effect.
+  const ideaRegex = /<\s*NOTEBOOK_IDEA(?:\s+title="([^"]{0,160})")?\s*>([\s\S]{1,600}?)<\/\s*NOTEBOOK_IDEA\s*>/gi;
+  let ideaMatch;
+  while ((ideaMatch = ideaRegex.exec(responseText)) !== null) {
+    if (!extracted.ideaSuggestion) {
+      const body = ideaMatch[2].trim();
+      if (body) {
+        extracted.ideaSuggestion = {
+          title: (ideaMatch[1] || '').trim() || body.slice(0, 60),
+          body,
+        };
+      }
+    }
+    text = text.replace(ideaMatch[0], '').trim();
+  }
+
+  // Board pointing (Live Workspace §8): the tutor names the exact line it is
+  // talking about; the client makes that line glow. Step numbers match the
+  // board-state block's numbering (the ledger's step order). One point per
+  // turn — a laser pointer, not a light show; extras are stripped inert.
+  const pointRegex = /<\s*BOARD_POINT\s+(?:step="(\d{1,2})"|target="(problem|solution|last)")\s*\/?\s*>/gi;
+  let pointMatch;
+  while ((pointMatch = pointRegex.exec(responseText)) !== null) {
+    if (!extracted.boardPoint) {
+      extracted.boardPoint = pointMatch[1]
+        ? { step: parseInt(pointMatch[1], 10) }
+        : { target: pointMatch[2].toLowerCase() };
+    }
+    text = text.replace(pointMatch[0], '').trim();
   }
 
   // ACT bootcamp: tutor finished coaching the current missed question → advance.

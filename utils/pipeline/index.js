@@ -1690,6 +1690,10 @@ async function runPipeline(message, ctx) {
     // Signals the client to open the timed practice-ACT runner. Extracted in
     // verify (shared choke point) so it fires on both /api/chat and course-chat.
     launchPracticeAct: verified.extracted?.launchPracticeAct || false,
+    // Tutor-proposed notebook idea (§7.6) — the client asks the student.
+    ideaSuggestion: verified.extracted?.ideaSuggestion || null,
+    // Tutor pointing at a specific board line (§8) — the client makes it glow.
+    boardPoint: verified.extracted?.boardPoint || null,
     // Tutor finished coaching the current missed question → advance the ACT
     // bootcamp review queue (handled in routes/chat.js after the pipeline).
     reviewNext: verified.extracted?.reviewNext || false,

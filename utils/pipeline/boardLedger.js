@@ -195,10 +195,51 @@ function problemAssistance(ledger) {
   return null;
 }
 
+/**
+ * Teacher-facing summary of a student's board (Live Workspace spec §20):
+ * what they're working on, how it's going, and how much support each
+ * finished problem took — WITHOUT the step-by-step contents (that lives in
+ * the student's own board; the teacher view is a progress read, not a feed).
+ * Pure; null-safe for students who have never touched the board.
+ */
+function summarizeLedger(ledger) {
+  const empty = { current: null, completed: [], independentSolves: 0, supportedSolves: 0 };
+  if (!ledger || typeof ledger !== 'object') return empty;
+
+  const cur = ledger.current && ledger.current.problemTex ? {
+    problemTex: String(ledger.current.problemTex).slice(0, 200),
+    stepCount: Array.isArray(ledger.current.steps) ? ledger.current.steps.length : 0,
+    solved: Array.isArray(ledger.current.steps) && ledger.current.steps.some(c => c && c.action === 'verify'),
+    assistance: ledger.current.assistance || null,
+    fromWorksheet: !!ledger.current.sourceRef,
+  } : null;
+
+  const completed = (Array.isArray(ledger.completed) ? ledger.completed : [])
+    .filter(e => e && e.problemTex)
+    .map(e => ({
+      problemTex: String(e.problemTex).slice(0, 200),
+      solved: !!e.solved,
+      assistance: e.assistance || null,
+      fromWorksheet: !!e.sourceRef,
+      completedAt: e.completedAt || null,
+    }));
+
+  let independentSolves = 0;
+  let supportedSolves = 0;
+  for (const e of completed) {
+    if (!e.solved) continue;
+    if (e.assistance != null && e.assistance <= 4) independentSolves += 1;
+    else if (e.assistance != null) supportedSolves += 1;
+  }
+
+  return { current: cur, completed, independentSolves, supportedSolves };
+}
+
 module.exports = {
   applyTurnToLedger,
   problemAssistance,
   sanitizeSourceRef,
+  summarizeLedger,
   emptyLedger,
   MAX_COMPLETED,
   MAX_STEPS,

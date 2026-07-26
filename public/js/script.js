@@ -770,6 +770,52 @@ document.addEventListener("DOMContentLoaded", () => {
     // Expose for other modules that append AI messages (e.g. streaming finalizer).
     window.attachInlineCtaToLatestMessage = attachInlineCtaToLatestMessage;
 
+    // ── Notebook idea offer (Live Workspace §7.6) ──
+    // The tutor proposed saving an idea; render a small consent chip under its
+    // message. Saving POSTs to the notebook; dismissing just removes the chip.
+    function appendIdeaSaveOffer(idea, skillId) {
+        const messages = document.querySelectorAll('.message.ai');
+        const latest = messages[messages.length - 1];
+        if (!latest || latest.querySelector('.idea-offer')) return;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'idea-offer';
+
+        const save = document.createElement('button');
+        save.type = 'button';
+        save.className = 'message-cta idea-offer-save';
+        save.textContent = `💡 Save to my notebook: “${idea.title}”`;
+        save.addEventListener('click', async () => {
+            save.disabled = true;
+            try {
+                const res = await csrfFetch('/api/notebook', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ type: 'idea', title: idea.title, body: idea.body, skillId }),
+                });
+                if (!res.ok) throw new Error(`save failed (${res.status})`);
+                save.textContent = '💡 Saved to your notebook!';
+                dismiss.remove();
+            } catch (err) {
+                console.error('[notebook] idea save failed:', err);
+                save.disabled = false;
+                if (typeof showToast === 'function') showToast('Could not save that — try again.', 3000);
+            }
+        });
+
+        const dismiss = document.createElement('button');
+        dismiss.type = 'button';
+        dismiss.className = 'idea-offer-dismiss';
+        dismiss.textContent = 'No thanks';
+        dismiss.setAttribute('aria-label', 'Don’t save this idea');
+        dismiss.addEventListener('click', () => wrap.remove());
+
+        wrap.appendChild(save);
+        wrap.appendChild(dismiss);
+        latest.appendChild(wrap);
+    }
+
     // ── Unified Markdown + Math renderer (marked + KaTeX) ──
     // Pipeline: protect LaTeX → marked.parse → restore with katex.renderToString
     // KaTeX renders synchronously — no FOUC, no debounce, no post-processing.
@@ -3254,6 +3300,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (error) {
                     console.error('[LWS_CHAT] setProblemSource failed:', error);
                 }
+            }
+
+            // Tutor pointing (§8): make the named board line glow. AFTER
+            // applyBoardCommands so a point at a line drawn THIS turn lands.
+            if (window.LWS_CHAT && window.LWS_CHAT.isOn() && data.boardPoint) {
+                try {
+                    window.LWS_CHAT.pointAt(data.boardPoint);
+                } catch (error) {
+                    console.error('[LWS_CHAT] pointAt failed:', error);
+                }
+            }
+
+            // Tutor-offered notebook idea (§7.6): promotion is consented — the
+            // student clicks to save, nothing is stored silently.
+            if (data.ideaSuggestion && data.ideaSuggestion.body) {
+                try { appendIdeaSaveOffer(data.ideaSuggestion, data.currentSkillId || null); }
+                catch (error) { console.error('[notebook] idea offer failed:', error); }
             }
 
             // Notebook cards minted this turn (spec §7): a captured AHA moment

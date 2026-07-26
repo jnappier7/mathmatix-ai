@@ -623,6 +623,32 @@
     this._scrollToEnd();
   };
 
+  // Tutor pointing (spec §8): make the exact line the tutor is discussing
+  // glow. `ref` is {step: N} (1-based, the board-state block's numbering —
+  // both count the same rendered rows in the same order) or {target:
+  // 'problem'|'solution'|'last'}. Out-of-range steps fall back to the newest
+  // line rather than pointing at nothing. The glow self-clears.
+  DerivationView.prototype.pointAt = function (ref) {
+    if (!ref || typeof ref !== 'object') return;
+    var rows = this.el.lines.children;
+    var node = null;
+    if (ref.target === 'problem') node = this.el.problem.style.display === 'none' ? null : this.el.problem;
+    else if (ref.target === 'solution') {
+      var sols = this.el.lines.querySelectorAll('.lws-dv-solution');
+      node = sols.length ? sols[sols.length - 1] : null;
+    } else if (ref.target === 'last') node = rows.length ? rows[rows.length - 1] : null;
+    else if (ref.step >= 1) node = rows[ref.step - 1] || (rows.length ? rows[rows.length - 1] : null);
+    if (!node) return;
+
+    var prev = this.el.root.querySelectorAll('.lws-dv-pointed');
+    for (var i = 0; i < prev.length; i++) prev[i].classList.remove('lws-dv-pointed');
+    if (this._pointTimer) { clearTimeout(this._pointTimer); this._pointTimer = null; }
+
+    node.classList.add('lws-dv-pointed');
+    try { node.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) { /* older browsers */ }
+    this._pointTimer = setTimeout(function () { node.classList.remove('lws-dv-pointed'); }, 7000);
+  };
+
   // Caption strip API — text only; the karaoke pointer lives in the caption
   // layer, this just paints what it's told and hides when empty.
   DerivationView.prototype.setCaption = function (text) {
