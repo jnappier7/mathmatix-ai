@@ -430,6 +430,16 @@
         // it so close() lets the course begin teaching — only on a real
         // completion, never on a cancelled/closed test.
         this._completed = true;
+        // On a RE-TEST the payoff is the COMPARISON, so lead with growth instead
+        // of a standalone score. (The first/baseline test has nothing to compare
+        // against, so it falls through to the single-test results below.)
+        try {
+          const hist = await api('/api/act-test/history');
+          if (hist && (hist.attempts || []).filter((a) => a.scaledScore != null).length >= 2) {
+            this.renderProgress(hist);
+            return;
+          }
+        } catch (e) { /* fall through to single-test results */ }
         const r = (data && data.report) || {};
         const cats = Object.entries(r.byCategory || {}).map(([k, v]) => {
           const pct = v.total ? Math.round((v.correct / v.total) * 100) : 0;
@@ -514,25 +524,40 @@
 
     renderProgress(data) {
       const attempts = (data.attempts || []).filter(a => a.scaledScore != null);
-      const backBtns = `<div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center">
-          <button class="actt-btn actt-next" id="actt-newtest">Take a test</button>
+      // Turn a history attempt into a report the tutor-handoff can use to open
+      // the missed-items review on the newest test's gaps — so the loop continues
+      // straight from the growth screen.
+      const reportFromAttempt = (a) => ({
+        scaledScore: a.scaledScore, rawScore: a.rawScore, totalItems: a.totalItems,
+        accuracy: a.totalItems ? Math.round((100 * a.rawScore) / a.totalItems) : 0,
+        byCategory: a.byCategory || {},
+        weakSkills: Object.entries(a.bySkill || {})
+          .filter(([, v]) => v.correct < v.total)
+          .map(([id, v]) => ({ skillId: id, name: v.name || id, missed: v.total - v.correct, total: v.total }))
+          .sort((x, y) => (y.missed / y.total) - (x.missed / x.total)),
+      });
+      const backBtns = (reviewReport) => `<div style="text-align:center;margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          ${reviewReport ? `<button class="actt-btn actt-next" id="actt-review">📤 Review misses with my tutor</button>` : ''}
+          <button class="actt-btn actt-skip" id="actt-newtest">Take a test</button>
           <button class="actt-btn actt-skip" id="actt-close2">Close</button>
         </div>`;
-      const wire = () => {
+      const wire = (reviewReport) => {
         this.el('actt-close2').addEventListener('click', () => this.close());
         this.el('actt-newtest').addEventListener('click', () => { this.sessionId = null; this.open(); });
+        if (reviewReport && this.el('actt-review')) this.el('actt-review').addEventListener('click', () => this.sendToTutor(reviewReport));
       };
 
       if (attempts.length === 0) {
-        this.el('actt-body').innerHTML = `<div class="actt-center">You haven't completed a practice test yet.<br><small>Take one to start tracking your growth.</small></div>${backBtns}`;
+        this.el('actt-body').innerHTML = `<div class="actt-center">You haven't completed a practice test yet.<br><small>Take one to start tracking your growth.</small></div>${backBtns()}`;
         return wire();
       }
       if (attempts.length === 1) {
         const a = attempts[0];
+        const rev = reportFromAttempt(a);
         this.el('actt-body').innerHTML = `
           <div class="actt-center"><div class="actt-score">${a.scaledScore}</div><div class="actt-scorelab">Your first ACT Math score (approx.)</div>
-          <div class="actt-sub">Take the test again after some practice to see your growth here.</div></div>${backBtns}`;
-        return wire();
+          <div class="actt-sub">Take the test again after some practice to see your growth here.</div></div>${backBtns(rev.weakSkills.length ? rev : null)}`;
+        return wire(rev.weakSkills.length ? rev : null);
       }
 
       const first = attempts[0], latest = attempts[attempts.length - 1];
@@ -569,8 +594,8 @@
         <div style="max-width:520px;margin:14px auto 0">
           <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:6px;text-align:center">By category · first → latest</div>
           ${catRows}
-        </div>${backBtns}`;
-      wire();
+        </div>${backBtns(reportFromAttempt(latest).weakSkills.length ? reportFromAttempt(latest) : null)}`;
+      wire(reportFromAttempt(latest).weakSkills.length ? reportFromAttempt(latest) : null);
     }
   }
 
