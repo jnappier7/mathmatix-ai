@@ -25,6 +25,7 @@ const { getNextActions } = require('../nextActionSuggestions');
 const { checkForInterventionAlert } = require('../interventionAlerts');
 const { getReviewSummary } = require('../smartReviewQueue');
 const { canonicalSkillId } = require('../skillCanonicalizer');
+const { prettifyLabel } = require('../skillDisplayNames');
 const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } = require('../masteryEngine');
 const { problemAssistance } = require('./boardLedger');
 const { isIndependent } = require('./assistanceLadder');
@@ -758,8 +759,10 @@ function updateSkillMastery(user, rawSkillId, observation, conversation, correct
   // Add to recent wins the first time the skill is genuinely owned.
   if (justProved && !wasOwned) {
     if (!user.learningProfile.recentWins) user.learningProfile.recentWins = [];
-    // derive the label from the original (kebab) id — nicer than a dotted unified id
-    const displayName = rawSkillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    // Normalize both kebab and dot-encoded unified ids to a readable label
+    // (sync path — no catalog lookup; the display readers resolve the formal
+    // catalog name at read time).
+    const displayName = prettifyLabel(rawSkillId);
     user.learningProfile.recentWins.unshift({ skill: skillId, description: `Mastered ${displayName}`, date: new Date() });
     user.learningProfile.recentWins = user.learningProfile.recentWins.slice(0, 10);
     user.markModified('learningProfile');

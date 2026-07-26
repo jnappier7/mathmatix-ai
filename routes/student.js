@@ -12,6 +12,7 @@ const { isAuthenticated, isStudent } = require('../middleware/auth'); // Import 
 const crypto = require('crypto'); // Node.js built-in module for cryptography
 const mongoose = require('mongoose');
 const { computeWeeklyAccuracy } = require('../utils/weeklyAccuracy');
+const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 const { deriveProgressCardState } = require('../utils/progressCardState');
 const { getReviewSummary } = require('../utils/smartReviewQueue');
 const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
@@ -307,9 +308,12 @@ router.get('/progress', isAuthenticated, isStudent, async (req, res) => {
         const ready = [];
 
         const skillEntries = student.skillMastery ? Object.entries(student.skillMastery) : [];
+        // Resolve names from the Skill catalog by canonical id, NOT from the storage
+        // key — canonical keys are dot-encoded ("MS_QNT_8") and would render "Ms Qnt 8".
+        const skillNames = await resolveSkillDisplayNames(skillEntries.map(([k]) => k));
         if (skillEntries.length > 0) {
             for (const [skillId, data] of skillEntries) {
-                const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                const displayName = skillNames[skillId];
 
                 const skillData = {
                     skillId,
@@ -384,8 +388,9 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
             const learning = [];
             const ready = [];
 
+            const skillNames = await resolveSkillDisplayNames(skillEntries.map(([k]) => k));
             for (const [skillId, data] of skillEntries) {
-                const displayName = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                const displayName = skillNames[skillId];
 
                 if (data.status === 'mastered' && data.masteredDate) {
                     mastered.push({ skillId, displayName, date: data.masteredDate });
