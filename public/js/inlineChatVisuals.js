@@ -191,7 +191,12 @@ class InlineChatVisuals {
             html = html.replace(regex, (match, params) => {
                 hasVisuals = true;
                 try {
-                    return handler(params);
+                    // Models write unicode minus/dashes in params (points=[−3,3]);
+                    // parseFloat('−3') is NaN, which made handlers reject valid
+                    // tags — the tag then leaked to the stripper half-eaten
+                    // (prod: ',label="−3 and 3…"]' in a student's chat). Params
+                    // are machine syntax, not prose: normalize to ASCII hyphen.
+                    return handler(String(params).replace(/[\u2212\u2013\u2014]/g, '-'));
                 } catch (error) {
                     console.error(`[InlineChatVisuals] Error rendering ${match}:`, error);
                     return `<div class="icv-error">⚠️ Could not render visual</div>`;

@@ -35,9 +35,12 @@
     'COMPARISON', 'INEQUALITY', 'ALGEBRA_TILES', 'MULTI_REP', 'SEARCH_IMAGE',
   ];
 
-  // [NAME] or [NAME:...anything-but-]...]. Anchored to the whitelist so plain
-  // brackets ([0, 3], [a, b]) and LaTeX are never touched.
-  const TAG_RE = new RegExp('\\[(?:' + VISUAL_COMMANDS.join('|') + ')(?::[^\\]]*)?\\]', 'g');
+  // [NAME] or [NAME:params]. Params may nest ONE level of brackets
+  // (points=[-3,3], jumps=[(0,3),(3,7)]) — same grammar as VisualTokenParser.
+  // The old first-']' pattern ate half a nested tag and left the tail
+  // (',label="…"]') in the student's message. Anchored to the whitelist so
+  // plain brackets ([0, 3], [a, b]) and LaTeX are never touched.
+  const TAG_RE = new RegExp('\\[(?:' + VISUAL_COMMANDS.join('|') + ')(?::(?:[^\\[\\]]|\\[[^\\]]*\\])*)?\\]', 'g');
 
   /**
    * Remove any leftover (unrendered) visual command tags from a message.

@@ -1300,8 +1300,11 @@ function normalizeLatex(text) {
     'INEQUALITY', 'ALGEBRA_TILES', 'MULTI_REP',
     'DERIVATIVE_GRAPH', 'RATIONAL_GRAPH', 'VELOCITY_GRAPH',
   ];
+  // Params may nest one level of brackets (points=[-3,3]) — the first-']'
+  // pattern protected only half the tag and exposed the tail to the LaTeX
+  // normalizer. Same grammar as VisualTokenParser / stripVisualTags.
   const visualCmdRegex = new RegExp(
-    `\\[(${VISUAL_CMD_NAMES.join('|')}):([^\\]]+)\\]`, 'g'
+    `\\[(${VISUAL_CMD_NAMES.join('|')}):((?:[^\\[\\]]|\\[[^\\]]*\\])+)\\]`, 'g'
   );
   result = result.replace(visualCmdRegex, (match) => {
     visualCmdBlocks.push(match);
