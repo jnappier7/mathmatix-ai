@@ -364,6 +364,34 @@ router.post('/complete', async (req, res) => {
         const jumpTo = planStartModule(cs, plan);
         if (jumpTo) cs.currentModuleId = jumpTo;
         cs.diagnosticPlan = planSummary(plan, session.completedAt);
+
+        // ── Build the missed-items review queue (bootcamp "work" phase) ──
+        // The student's misses become the material: the course now walks them
+        // through each wrong/skipped question — diagnose, reteach if needed,
+        // strategy — instead of a fixed scaffold. Look up the correct answer +
+        // explanation for each missed problem, build the ranked queue, and store
+        // it so the chat prompt can present one miss at a time and advance.
+        try {
+          const { buildReviewQueue } = require('../utils/actReview');
+          const missedIds = (session.responses || [])
+            .filter((r) => r && r.problemId && (r.correct === false || r.skipped === true))
+            .map((r) => r.problemId);
+          const problemsById = {};
+          if (missedIds.length) {
+            const probs = await Problem.find({ problemId: { $in: missedIds } })
+              .select('problemId correctOption answer explanation prompt options').lean();
+            probs.forEach((p) => { problemsById[p.problemId] = p; });
+          }
+          const queue = buildReviewQueue(session, problemsById);
+          const prevRound = (cs.bootcamp && cs.bootcamp.round) || 0;
+          cs.bootcamp = queue.length
+            ? { phase: 'review', round: prevRound + 1, testSessionId: String(session._id), queue, index: 0 }
+            : { phase: 'reassess', round: prevRound + 1, testSessionId: String(session._id), queue: [], index: 0 };
+          cs.markModified('bootcamp');
+        } catch (reviewErr) {
+          console.error('[actTest] review-queue build error (non-fatal):', reviewErr.message);
+        }
+
         await cs.save();
       }
     } catch (retargetErr) {

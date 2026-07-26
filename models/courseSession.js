@@ -66,6 +66,16 @@ const courseSessionSchema = new Schema({
   // result in the greeting. Set at practice-test completion; null otherwise.
   diagnosticPlan: { type: Schema.Types.Mixed, default: null },
 
+  // ACT bootcamp state — the test→work-misses→re-test→compare loop that replaces
+  // the gradual-release scaffold for ACT prep. Shape:
+  //   { phase: 'review'|'reassess', round, testSessionId,
+  //     queue: [ { problemId, skillId, category, prompt, options, theirAnswer,
+  //                correctOption, explanation, leverage, status } ],
+  //     index }.
+  // Set at practice-test completion (utils/actReview.buildReviewQueue); the chat
+  // prompt presents queue[index] and <REVIEW_NEXT> advances index.
+  bootcamp: { type: Schema.Types.Mixed, default: null },
+
   // Course pre-assessment: every course opens by establishing what the student
   // already owns, so it can skip that content instead of re-teaching it. Set
   // once, on completion; the diagnostic card stops appearing after that.

@@ -1109,7 +1109,8 @@ async function runStudentTurn(req, res) {
                             scaffold: courseCtx.scaffoldData?.scaffold || null,
                             skills: courseCtx.scaffoldData?.skills || courseCtx.currentModule?.skills || [],
                             essentialQuestions: courseCtx.currentModule?.essentialQuestions || [],
-                            aiInstructionModel: courseCtx.pathway.aiInstructionModel || null
+                            aiInstructionModel: courseCtx.pathway.aiInstructionModel || null,
+                            bootcamp: courseSession.bootcamp || null   // ACT missed-items review state
                         };
                         logger.debug('Course context loaded', { courseName: courseSession.courseName, moduleId: courseSession.currentModuleId });
                     }
@@ -1171,6 +1172,25 @@ async function runStudentTurn(req, res) {
             const courseIdForPrompt = conversationContextForPrompt?.courseSession?.courseId;
             if (courseIdForPrompt === 'act-prep' && systemPrompt && !/LAUNCH_PRACTICE_ACT/.test(systemPrompt)) {
                 systemPrompt += buildActPracticeGuidance({ courseId: courseIdForPrompt });
+            }
+        }
+
+        // ── ACT bootcamp: present the current missed question ──
+        // While in the review phase, inject the current miss so the tutor coaches
+        // that one question (diagnose → reteach-if-needed → strategy → advance),
+        // instead of a generic lesson. Appended at the finalizer so it survives
+        // whichever builder produced systemPrompt. Advancement (<REVIEW_NEXT>) is
+        // handled after the pipeline, below.
+        {
+            const bc = conversationContextForPrompt?.courseSession?.bootcamp;
+            if (bc && systemPrompt) {
+                const { currentMiss, reviewPromptSection, reassessPromptSection } = require('../utils/actReview');
+                if (bc.phase === 'review' && Array.isArray(bc.queue)) {
+                    const section = reviewPromptSection(currentMiss(bc), bc.index || 0, bc.queue.length);
+                    if (section) systemPrompt += section;
+                } else if (bc.phase === 'reassess') {
+                    systemPrompt += reassessPromptSection(bc);
+                }
             }
         }
 
@@ -1609,6 +1629,41 @@ async function runStudentTurn(req, res) {
 
         // Course scaffold progression (complex, stays in chat.js for now)
         let courseProgressUpdate = pipelineResult.courseProgressUpdate;
+
+        // ── ACT bootcamp: advance the missed-items review ──
+        // The tutor emits <REVIEW_NEXT> when the student has the current miss.
+        // Advance the queue pointer here, on /api/chat (the path that teaches) —
+        // NOT in courseAdapter, whose absence here is exactly why the old scaffold
+        // never advanced. When the queue is worked down, flip to reassess so the
+        // client offers a fresh (no-repeat) re-test.
+        if (pipelineResult.reviewNext && user.activeCourseSessionId &&
+            conversationContextForPrompt?.courseSession?.bootcamp?.phase === 'review') {
+            try {
+                const CourseSessionModel = require('../models/courseSession');
+                const { advanceReview } = require('../utils/actReview');
+                const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
+                const bc = csDoc && csDoc.bootcamp;
+                if (bc && bc.phase === 'review' && Array.isArray(bc.queue)) {
+                    const cur = bc.queue[bc.index || 0];
+                    if (cur) cur.status = 'reviewed';
+                    const { index, done, total } = advanceReview(bc);
+                    bc.index = index;
+                    if (done) {
+                        bc.phase = 'reassess';
+                        courseProgressUpdate = { event: 'review_complete', reviewedCount: total, readyToReassess: true };
+                    } else {
+                        courseProgressUpdate = { event: 'review_advanced', index, total };
+                    }
+                    csDoc.bootcamp = bc;
+                    csDoc.markModified('bootcamp');
+                    await csDoc.save();
+                    logger.info('ACT review advanced', { userId, index: bc.index, done, total });
+                }
+            } catch (advErr) {
+                logger.warn('ACT review advance error (non-fatal)', { error: advErr.message });
+            }
+        }
+
         if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
             try {
                 const CourseSessionModel = require('../models/courseSession');
