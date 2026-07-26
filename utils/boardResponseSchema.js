@@ -194,7 +194,13 @@ const TEX_FIELDS = new Set(['tex', 'check']);
  */
 function sanitizeBoardTex(tex) {
   if (typeof tex !== 'string') return tex;
-  return tex.trim().replace(/\\+\s*$/g, '').trim();
+  return tex.trim()
+    .replace(/\\+\s*$/g, '')
+    // Rejoin the model's split \dfrac/\tfrac ("\d\frac{5}{7}") and drop
+    // \displaystyle — both render as red junk on the card otherwise.
+    .replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2')
+    .replace(/\\displaystyle\s*/g, '')
+    .trim();
 }
 
 function normalizeBoardCommand(cmd) {

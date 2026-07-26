@@ -828,6 +828,9 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function renderKatex(math, displayMode) {
         if (!window.katex) return (displayMode ? '\\[' : '\\(') + math + (displayMode ? '\\]' : '\\)');
+        // Tolerate the tutor model's split \dfrac ("\d\frac{5}{7}") in
+        // already-stored history — new turns are normalized server-side.
+        math = String(math).replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2').replace(/\\displaystyle\s*/g, '');
         try {
             return window.katex.renderToString(math, { displayMode, throwOnError: false, strict: false, trust: true, errorColor: '#888888' });
         } catch (e) {

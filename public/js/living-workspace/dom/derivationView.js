@@ -53,6 +53,9 @@
     var t = String(s == null ? '' : s).trim();
     t = t.replace(/\\[()[\]]/g, ' ');        // \( \) \[ \] delimiters -> space
     t = t.replace(/^\$\$?/, '').replace(/\$\$?$/, ''); // $ … $ or $$ … $$
+    // Tolerate the tutor model's split \dfrac ("\d\frac{5}{7}") in tex that
+    // was ledgered before the server-side normalization existed.
+    t = t.replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2').replace(/\\displaystyle\s*/g, '');
     return t.trim();
   }
 
