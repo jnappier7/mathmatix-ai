@@ -18,7 +18,7 @@ const { generateHint, trackHintUsage, analyzeHintUsage, shouldReteach } = requir
 const { analyzeError, generateReteaching, recordMisconception, markMisconceptionAddressed, analyzeMisconceptionPattern } = require('../utils/misconceptionDetector'); // TEACHING ENHANCEMENT
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
-const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { canonicalSkillId, skillLookupCandidates } = require('../utils/skillCanonicalizer');
 const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
 const { currentRung, isInferred, canAdvance, advanceRung, clearsPrerequisites } = require('../utils/skillRung');
 const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
@@ -2750,7 +2750,10 @@ router.get('/map', isAuthenticated, async (req, res) => {
 router.get('/challenge/:skillId', isAuthenticated, async (req, res) => {
   try {
     const skillId = canonicalSkillId(req.params.skillId);
-    const skill = await Skill.findOne({ skillId }).lean();
+    // The catalog is keyed by bank/legacy ids while mastery keys are unified —
+    // look the skill up under every id it might live as (owner-hit bug: the
+    // test-out card died with "Skill not found" on a resolvable skill).
+    const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(req.params.skillId) } }).lean();
     if (!skill) return res.status(404).json({ error: 'Skill not found' });
 
     const user = await User.findById(req.user._id).lean();
@@ -2804,7 +2807,8 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
     }
 
     const skillId = canonicalSkillId(req.params.skillId);
-    const skill = await Skill.findOne({ skillId }).lean();
+    // Same id-tolerant lookup as the GET — see skillLookupCandidates.
+    const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(req.params.skillId) } }).lean();
     if (!skill) return res.status(404).json({ error: 'Skill not found' });
 
     // Re-fetch the served problems by id so grading uses stored answers, never
@@ -2884,7 +2888,10 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
 router.get('/teachback/:skillId', isAuthenticated, async (req, res) => {
   try {
     const skillId = canonicalSkillId(req.params.skillId);
-    const skill = await Skill.findOne({ skillId }).lean();
+    // The catalog is keyed by bank/legacy ids while mastery keys are unified —
+    // look the skill up under every id it might live as (owner-hit bug: the
+    // test-out card died with "Skill not found" on a resolvable skill).
+    const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(req.params.skillId) } }).lean();
     if (!skill) return res.status(404).json({ error: 'Skill not found' });
 
     const user = await User.findById(req.user._id).lean();
