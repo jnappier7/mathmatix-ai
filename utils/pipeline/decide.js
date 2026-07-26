@@ -149,6 +149,14 @@ function decide(observation, diagnosis, context = {}) {
   // including a BKT "possible guessing" nudge that would re-inject probing.
   applyBackOffModifiers(decision, observation);
 
+  // Demonstrated competence runs across ALL branches (owner: "the system
+  // doesn't need students to walk through EVERY problem — especially once
+  // it is clear that this kid knows what he is talking about"). Per-branch
+  // streak nudges exist, but the DEFAULT had to flip session-wide: on a
+  // clean streak, trust is the baseline and an error is what re-opens
+  // probing — not the other way around.
+  applyDemonstratedCompetence(decision, observation);
+
   // One-ask rule runs LAST: whatever branch was chosen, if the tutor's
   // PREVIOUS message already asked this student to explain their work, this
   // reply must not ask again (owner-reported: chains of "can you walk me
@@ -157,6 +165,26 @@ function decide(observation, diagnosis, context = {}) {
   applyOneAskGuard(decision, context);
 
   return decision;
+}
+
+// Three verified-correct in the recent window with zero misses = competence
+// is established for this stretch of work. (The window is the last 6
+// assistant turns, so this is "the session lately", not ancient history —
+// and any wrong answer resets the default back to normal support.)
+const COMPETENCE_STREAK = 3;
+
+function applyDemonstratedCompetence(decision, observation) {
+  const streaks = observation?.streaks || {};
+  const correct = streaks.recentCorrectCount || 0;
+  const wrong = streaks.recentWrongCount || 0;
+  if (correct < COMPETENCE_STREAK || wrong > 0) return;
+
+  // Trusted work is light-touch work: cap the scaffold intensity so the
+  // assistance ladder records these solves as what they are — independent.
+  decision.scaffoldLevel = Math.min(decision.scaffoldLevel || 3, 2);
+  decision.directives.push(
+    `DEMONSTRATED COMPETENCE: ${correct} verified-correct in a row, zero misses — this student knows what they are doing. TRUST IS THE DEFAULT NOW: do NOT ask them to explain, show work, walk through steps, or "check together" — a wrong answer is the only thing that re-opens probing. Affirm in one short clause, then keep the session MOVING: harder problem, a new twist, a transfer context, or the next skill. At most one brief strategic check every few problems, never on consecutive turns.`
+  );
 }
 
 // The shapes an explanation-request takes in tutor replies. Deliberately
