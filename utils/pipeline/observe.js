@@ -46,6 +46,9 @@ const PATTERNS = {
   justNumber: /^(-?\d+\.?\d*)$/,
   fraction: /^(-?\d+\s*\/\s*\d+)$/,
   varAssignment: /^[a-z]\s*=\s*(-?\d+\.?\d*(?:\/\d+)?)/i,
+  // The mirrored form — "100/7 = x" — is how students often end shown work
+  // (the value lands on the left because that's the side they computed).
+  valueAssignment: /^(-?\d+\.?\d*(?:\s*\/\s*\d+)?)\s*=\s*[a-z]\s*[.!?]*$/i,
   answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
   // Proposed / self-check answer: a number or fraction the student offers for
   // confirmation — "…right? 10/24", "isn't that equal to 10/24?", "is it 5/12?",
@@ -129,12 +132,45 @@ const PATTERNS = {
  * Extract a student's answer from their message.
  * Returns { value, raw } or null if not an answer attempt.
  */
+/**
+ * Try the strict single-line answer shapes on one line of text.
+ * Returns the extracted value string or null. Used for the final line of
+ * multi-line shown work, where only unambiguous answer forms may win —
+ * an equation line like "100=7x" is still work, not an answer.
+ */
+function matchAnswerLine(line) {
+  let match;
+  if ((match = line.match(PATTERNS.varAssignment))) return match[1];
+  if ((match = line.match(PATTERNS.valueAssignment))) return match[1].replace(/\s/g, '');
+  if ((match = line.match(PATTERNS.justNumber))) return match[1];
+  if ((match = line.match(PATTERNS.fraction))) return match[1].replace(/\s/g, '');
+  if ((match = line.match(PATTERNS.mixedNumber))) return `${match[1]} ${match[2].replace(/\s/g, '')}`;
+  if ((match = line.match(PATTERNS.algebraicExpr))) return match[1].replace(/\s/g, '');
+  return null;
+}
+
 function extractAnswer(message) {
   const raw = message.trim();
   // Normalize speech-to-text negatives/number-words to signed digits BEFORE matching,
   // so a spoken "negative six" is recognized as the answer -6 (the numeric PATTERNS
   // only understand digits). `raw` keeps the original text for downstream use.
   const text = normalizeSpokenNumbers(raw);
+
+  // Multi-line shown work: the LAST math-bearing line is the answer candidate;
+  // the lines above it are work, which diagnose grades as a chain (and which
+  // feeds demonstratedReasoning — never the graded value). Without this branch
+  // a multi-line solve matched no pattern at all, classified general_math, and
+  // could end up graded off its own first line (the "520=7x" false negative).
+  if (/\n/.test(text)) {
+    const mathLines = text
+      .split(/[\n\r]+/)
+      .map(l => l.trim().replace(/^\s*(?:step\s*\d+\s*[:.)-]?|\d+\s*[.)]|[-*•])\s*/i, ''))
+      .filter(l => l && /\d/.test(l));
+    if (mathLines.length >= 2) {
+      const value = matchAnswerLine(mathLines[mathLines.length - 1]);
+      if (value) return { value, raw, hasExplanation: true };
+    }
+  }
 
   // For short, direct answers (< 100 chars): try all patterns
   if (text.length <= 100) {
