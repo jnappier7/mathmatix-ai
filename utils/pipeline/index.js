@@ -575,6 +575,7 @@ async function runPipeline(message, ctx) {
     messageType: observation.messageType,
     correctAnswer: diagnosis.correctAnswer || null,
     diagnosisType: diagnosis.type,
+    demonstratedReasoning: diagnosis.demonstratedReasoning || false,
     verificationState: diagnosis.verificationState,
     hasRecentUpload: ctx.hasRecentUpload || false,
     isWorksheetFollowUp: observation.isWorksheetFollowUp || false,
