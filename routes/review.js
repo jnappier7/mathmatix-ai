@@ -11,6 +11,7 @@
  */
 
 const express = require('express');
+const { expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
@@ -59,11 +60,11 @@ router.get('/smart-queue', isAuthenticated, async (req, res) => {
     // Enrich queue with skill display names
     if (queue.length > 0) {
       const skillIds = queue.map(s => s.skillId);
-      const skills = await Skill.find({ skillId: { $in: skillIds } }).lean();
-      const skillMap = new Map(skills.map(s => [s.skillId, s]));
+      // Queue keys are mastery-side; the catalog is bank-keyed (id seam).
+      const skills = await Skill.find({ skillId: { $in: expandSkillIds(skillIds) } }).lean();
 
       for (const item of queue) {
-        const doc = skillMap.get(item.skillId);
+        const doc = matchSkillDoc(skills, item.skillId);
         item.displayName = doc?.displayName || item.skillId;
         item.category = doc?.category || 'unknown';
       }
@@ -161,12 +162,12 @@ router.get('/due', isAuthenticated, async (req, res) => {
 
     // Load skill display names
     const skillIds = dueSkills.map(s => s.skillId);
-    const skills = await Skill.find({ skillId: { $in: skillIds } }).lean();
-    const skillMap = new Map(skills.map(s => [s.skillId, s]));
+    // Same id seam as above: expand, then match per original id.
+    const skills = await Skill.find({ skillId: { $in: expandSkillIds(skillIds) } }).lean();
 
     // Enrich with display names and categories
     const enrichedSkills = dueSkills.map(s => {
-      const skillDoc = skillMap.get(s.skillId);
+      const skillDoc = matchSkillDoc(skills, s.skillId);
       return {
         ...s,
         displayName: skillDoc?.displayName || s.skillId,

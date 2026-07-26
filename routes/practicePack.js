@@ -952,8 +952,8 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'No problems available for this skill and tier.' });
     }
 
-    // Look up skill display name
-    const skill = await Skill.findOne({ skillId });
+    // Look up skill display name (id-tolerant: see skillLookupCandidates)
+    const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(skillId) } });
     const skillLabel = skill?.displayName || skillId.replace(/-/g, ' ');
     const tierLabel = { below: 'Approaching', onLevel: 'On Level', above: 'Advanced' }[tier] || tier;
     const title = `${skillLabel} — ${tierLabel}`;

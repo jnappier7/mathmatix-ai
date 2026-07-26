@@ -2,6 +2,7 @@
 // API endpoints for quarterly growth tracking and retention analytics
 
 const express = require('express');
+const { expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
 const router = express.Router();
 const User = require('../models/user');
 const Skill = require('../models/skill');
@@ -103,12 +104,12 @@ router.post('/checkpoint/:studentId', isTeacherOrAdmin, async (req, res) => {
     }
 
     // Load skill documents to get course/category info
-    const skillDocs = await Skill.find({ skillId: { $in: masteredSkillIds } });
-    const skillMap = new Map(skillDocs.map(s => [s.skillId, s]));
+    // Mastery keys vs bank-keyed catalog (id seam): expand + match.
+    const skillDocs = await Skill.find({ skillId: { $in: expandSkillIds(masteredSkillIds) } });
 
     for (const [skillId, data] of student.skillMastery) {
       if (data.status === 'mastered') {
-        const skillDoc = skillMap.get(skillId);
+        const skillDoc = matchSkillDoc(skillDocs, skillId);
         masteredSkills.push({
           skillId,
           masteredDate: data.masteredDate,
