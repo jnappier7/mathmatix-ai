@@ -334,6 +334,124 @@ function extractSystemTags(responseText) {
   return { text, extracted };
 }
 
+// ── Canned phrase patterns (§2f) ──
+// The system prompt bans these, but the model slips them in regularly.
+// Stripped instead of regenerated (cheaper, faster).
+const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
+const CANNED_TRANSITIONS = /\b((?:now,?\s+)?let'?s\s+(?:break\s+this\s+down|tackle\s+this|work\s+through\s+this|dive\s+(?:right\s+)?in(?:to)?)|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)/gi;
+
+// Words that carry no content on their own — a sentence reduced to these
+// after phrase removal is packaging, not pedagogy, and gets dropped whole.
+const TRANSITION_FILLER_WORDS = new Set([
+  'alright', 'okay', 'ok', 'so', 'now', 'well', 'then', 'and', 'but',
+  'together', 'great', 'awesome', 'everyone', 'team', 'folks', 'again',
+]);
+
+/**
+ * After a leading phrase has been stripped, the sentence head may be an
+ * orphan: ", Jason! You're suggesting…" (production, 2026-07-26). Drop the
+ * stray punctuation and re-capitalize — but only when the head is a real
+ * word, never a math variable like "x = 2".
+ */
+function repairStrippedHead(text) {
+  let t = String(text || '').replace(/^\s*[,;:]+\s*/, '').trim();
+  if (/^[a-z][a-z]/.test(t)) t = t.charAt(0).toUpperCase() + t.slice(1);
+  return t;
+}
+
+// Sentence boundary scanners for the transition scrub. A '.' only counts as
+// a boundary when followed by whitespace (or end), so decimals like 3.5
+// never split a sentence.
+function sentenceStartIndex(text, from) {
+  for (let j = from - 1; j >= 0; j--) {
+    const c = text[j];
+    if (c === '\n') return j + 1;
+    if ('.!?:'.includes(c) && /\s/.test(text[j + 1] || '')) {
+      let k = j + 1;
+      while (k < from && /\s/.test(text[k])) k++;
+      return k;
+    }
+  }
+  return 0;
+}
+
+function sentenceEndIndex(text, from) {
+  for (let j = from; j < text.length; j++) {
+    const c = text[j];
+    if (c === '\n') return j;
+    if ('.!?:'.includes(c) && (j + 1 === text.length || /\s/.test(text[j + 1]))) return j + 1;
+  }
+  return text.length;
+}
+
+/**
+ * Is anything left of this sentence once the banned phrase is gone?
+ * A bare vocative (", Jason!") and filler words are not content.
+ */
+function remainderHasContent(remainder, firstName) {
+  if (/^\s*,\s*[A-Z][a-zA-Z]*\s*[!.?]*\s*$/.test(remainder.trim())) return false;
+  const fn = (firstName || '').toLowerCase();
+  const words = remainder.match(/[A-Za-z']+/g) || [];
+  return words.some((w) => {
+    const lower = w.toLowerCase();
+    return !TRANSITION_FILLER_WORDS.has(lower) && lower !== fn;
+  });
+}
+
+/**
+ * Remove banned transition phrases WITHOUT mangling the sentence they sit in.
+ *
+ * The old scrub replaced the phrase with '' wherever it appeared. When the
+ * phrase was the spine of its sentence, deletion left the trimmings behind
+ * (two live examples, production 2026-07-26):
+ *   "Let's work through this, Jason! You're…"         → ", Jason! You're…"
+ *   "Alright, let's work through this together. You…" → "Alright, together. You…"
+ *
+ * So the scrub is sentence-aware: find the sentence containing the phrase,
+ * delete the phrase, and if what's left carries no content (filler words, a
+ * bare vocative) drop the whole sentence. If real content remains, keep it
+ * and repair the seams — orphaned commas, doubled spaces, capitalization.
+ */
+function stripCannedTransitions(text, firstName) {
+  const finder = new RegExp(CANNED_TRANSITIONS.source, 'gi');
+  const ranges = [];
+  let m;
+  while ((m = finder.exec(text)) !== null) {
+    const a = sentenceStartIndex(text, m.index);
+    const b = sentenceEndIndex(text, finder.lastIndex);
+    const last = ranges[ranges.length - 1];
+    if (last && a <= last.b) last.b = Math.max(last.b, b);
+    else ranges.push({ a, b });
+  }
+  if (ranges.length === 0) return { text, changed: false };
+
+  let out = text;
+  for (let i = ranges.length - 1; i >= 0; i--) {
+    const { a, b } = ranges[i];
+    const sentence = out.slice(a, b);
+    const remainder = sentence.replace(new RegExp(CANNED_TRANSITIONS.source, 'gi'), '');
+    let replacement = '';
+    if (remainderHasContent(remainder, firstName)) {
+      replacement = repairStrippedHead(
+        remainder
+          .replace(/\s*,(\s*,)+/g, ',')
+          .replace(/\s+([,.!?;:])/g, '$1')
+          .replace(/ {2,}/g, ' ')
+      );
+    }
+    let tail = out.slice(b);
+    if (!replacement) {
+      tail = tail.replace(/^[ \t]+/, '');
+      if (/\n\s*$/.test(out.slice(0, a))) tail = tail.replace(/^\s+/, '');
+      // The dropped sentence may have introduced the one that follows
+      // ("…break this down: first, …") — re-capitalize its head.
+      if (/^[a-z][a-z]/.test(tail)) tail = tail.charAt(0).toUpperCase() + tail.slice(1);
+    }
+    out = out.slice(0, a) + replacement + tail;
+  }
+  return { text: out, changed: out !== text };
+}
+
 /**
  * Run all verification checks on the AI response.
  *
@@ -530,7 +648,8 @@ async function verify(responseText, context = {}) {
     if (noAnswerActions.includes(context.action) || noAnswerTypes.includes(context.messageType)) {
       const falseAffirmation = /^(that'?s\s+right[.!]*|correct[.!]*|exactly[.!]*|great\s+job[.!]*|perfect[.!]*|well\s+done[.!]*|yes[.!]*|you\s+got\s+it[.!]*|right\s+on[.!]*|bingo[.!]*)\s*/i;
       if (falseAffirmation.test(text.trim())) {
-        text = text.trim().replace(falseAffirmation, '').trim();
+        // repairStrippedHead: "Exactly, Jason! …" must not become ", Jason! …"
+        text = repairStrippedHead(text.trim().replace(falseAffirmation, ''));
         flags.push('false_affirmation_stripped');
         console.log(`[Verify] Stripped false affirmation (action: ${context.action}, messageType: ${context.messageType})`);
 
@@ -916,25 +1035,17 @@ async function verify(responseText, context = {}) {
   }
 
   // ── 2f. Canned phrase scrub ──
-  // The system prompt bans these, but GPT-4o-mini slips them in regularly.
-  // Strip the worst offenders instead of regenerating (cheaper, faster).
-  const CANNED_OPENERS = /^(great\s+question[.!]*\s*|that'?s\s+a\s+great\s+question[.!]*\s*|let'?s\s+dive\s+(right\s+)?in[.!]*\s*|i(?:'?d|\s+would)\s+(?:be\s+)?(?:happy|love)\s+to\s+help(?:\s+(?:you\s+)?with\s+that)?[.!]*\s*|i\s+can\s+(?:definitely|certainly)\s+help\s+(?:you\s+)?with\s+that[.!]*\s*|absolutely[.!]*\s+(?=\w)|certainly[.!]*\s+(?=\w)|of\s+course[.!]*\s+(?=\w)|no\s+problem[.!]*\s+(?=\w))/i;
-  const CANNED_TRANSITIONS = /\b((?:now,?\s+)?let'?s\s+(?:break\s+this\s+down|tackle\s+this|work\s+through\s+this|dive\s+(?:right\s+)?in(?:to)?)|moving\s+on\s+to|with\s+that\s+said|having\s+said\s+that)/gi;
-
+  // Patterns and helpers live at module scope (see stripCannedTransitions).
+  // Removal is sentence-aware: naive phrase deletion shipped mangled heads
+  // like ", Jason! You're suggesting…" to production (2026-07-26).
   if (CANNED_OPENERS.test(text.trim())) {
-    text = text.trim().replace(CANNED_OPENERS, '').trim();
-    // Capitalize the new first character
-    if (text.length > 0) {
-      text = text.charAt(0).toUpperCase() + text.slice(1);
-    }
+    text = repairStrippedHead(text.trim().replace(CANNED_OPENERS, ''));
     flags.push('canned_opener_stripped');
   }
 
-  const transitionCount = (text.match(CANNED_TRANSITIONS) || []).length;
-  if (transitionCount > 0) {
-    text = text.replace(CANNED_TRANSITIONS, '');
-    // Clean up double spaces left behind
-    text = text.replace(/  +/g, ' ').replace(/\n +/g, '\n').trim();
+  const transitionScrub = stripCannedTransitions(text, context.firstName);
+  if (transitionScrub.changed) {
+    text = transitionScrub.text.replace(/\n +/g, '\n').trim();
     flags.push('canned_transitions_stripped');
   }
 
@@ -1083,6 +1194,17 @@ async function verify(responseText, context = {}) {
   // with a comma across all student-facing prose. Runs after math has been
   // normalized into LaTeX, where minus is '-', so real math is untouched.
   text = replaceDashes(text);
+
+  // ── 8e. Orphaned sentence-head punctuation (production, 2026-07-26) ──
+  // Any strip above that eats the head of a sentence can leave its comma
+  // behind (", Jason! You're suggesting…"). The individual strips repair
+  // their own seams; this is the belt-and-braces pass so no path ships a
+  // sentence that opens with bare punctuation.
+  if (/^\s*[,;]/.test(text)) {
+    text = repairStrippedHead(text);
+    flags.push('orphaned_head_repaired');
+  }
+  text = text.replace(/([.!?])(\s+)[,;]+\s+(?=[A-Za-z])/g, '$1$2');
 
   // ── 9. Validate non-empty (after all stripping) ──
   if (!text || text.trim() === '') {
@@ -1418,4 +1540,6 @@ module.exports = {
   extractSystemTags,
   normalizeLatex,
   leadsWithDoubtOnCorrect,
+  stripCannedTransitions,
+  repairStrippedHead,
 };
