@@ -1771,6 +1771,9 @@ async function runStudentTurn(req, res) {
             drawingSequence: pipelineResult.drawingSequence,
             visualCommands: pipelineResult.visualCommands,
             boardCommands: pipelineResult.boardCommands || [],
+            // Fix B: signals the client to open an in-chat challenge card so the
+            // student can prove out of the skill they're working on.
+            launchChallenge: pipelineResult.launchChallenge || null,
             // Uploads that arrived on THIS turn, in servable form. The Living
             // Workspace docks them as Source Cards (spec §5.1: files live on
             // the board, not in a buried attachment tray). The full source list

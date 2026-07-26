@@ -43,6 +43,7 @@ const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDiff
 
 // Backbone: Tutor Plan + Skill Familiarity
 const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase, recentPracticeSkillId } = require('../tutorPlanManager');
+const { detectTestOutIntent } = require('../testOutIntent');
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
 const { reassessFamiliarity } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
@@ -308,6 +309,22 @@ async function runPipeline(message, ctx) {
     // TutorPlan is optional — pipeline continues without it
   }
 
+  // ── Test-out (Fix B): launch an in-chat challenge run ──
+  // When the student asks to prove they already know this, hand the client the
+  // skill to challenge on. The challenge (5 problems, no hints) proves the skill
+  // via the challenge rung — the one proof path with no 3-context requirement,
+  // so ambient practice and a test-out both have a real road to 100%.
+  let launchChallenge = null;
+  if (detectTestOutIntent(message)) {
+    const challengeSkillId = ctx.activeSkill?.skillId
+      || tutorPlan?.currentTarget?.skillId
+      || recentPracticeSkillId(tutorPlan);
+    if (challengeSkillId) {
+      launchChallenge = { skillId: challengeSkillId };
+      console.log(`[Pipeline] Test-out intent → launching challenge for ${challengeSkillId}`);
+    }
+  }
+
   // ── Evidence Assembly (NEW: data-driven intelligence layer) ──
   // Gathers signals from BKT, FSRS, cognitive load, consistency scoring,
   // and misconception history into a unified evidence object for decide.js
@@ -413,6 +430,14 @@ async function runPipeline(message, ctx) {
     hasRecentUpload: ctx.hasRecentUpload || false,
     user: ctx.user || null,
   });
+
+  // Test-out: the challenge card is about to render below the tutor's reply, so
+  // the reply should tee it up — not teach or pose a problem of its own.
+  if (launchChallenge) {
+    decision.directives.push(
+      'TEST-OUT: The student wants to prove they already know this skill, and a 5-problem challenge is being launched right in the chat immediately after your message. In ONE or two upbeat sentences, set it up: 5 problems, no hints, one shot — miss it and we just find the gap, nothing lost. Do NOT pose a problem yourself and do NOT start teaching; the challenge card handles the problems.'
+    );
+  }
 
   // Inject mode transition directives into the decision
   if (modeTransition?.shouldTransition && modeTransition.suggestedDirectives) {
@@ -1670,6 +1695,8 @@ async function runPipeline(message, ctx) {
     reviewNext: verified.extracted?.reviewNext || false,
     visualCommands: verified.visualCommands,
     boardCommands: verified.boardCommands || [],
+    // Fix B: when set, the client opens an in-chat challenge card for this skill.
+    launchChallenge: launchChallenge || null,
     xpCommands: verified.xpCommands || [],
     visualTabCommands: verified.visualTabCommands || [],
     drawingSequence: verified.drawingSequence,
