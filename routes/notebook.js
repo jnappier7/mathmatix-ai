@@ -19,10 +19,25 @@ const logger = require('../utils/logger').child({ route: 'notebook' });
 
 const TYPES = ['aha', 'reminder', 'idea', 'strategy', 'reflection'];
 
+// Text search over a student's own cards (spec §15: "Show me where I learned
+// slope", "find a problem where I lost a negative sign"). Plain escaped-regex
+// matching for now — semantic search can swap in behind the same param.
+function escapeRegex(s) {
+  return String(s == null ? '' : s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function buildSearchClause(q) {
+  const term = String(q == null ? '' : q).trim().slice(0, 120);
+  if (!term) return null;
+  const rx = new RegExp(escapeRegex(term), 'i');
+  return { $or: [{ title: rx }, { body: rx }, { quote: rx }, { skillId: rx }, { problemTex: rx }] };
+}
+
 router.get('/', isAuthenticated, async (req, res) => {
   try {
     const query = { userId: req.user._id, archived: false };
     if (req.query.type && TYPES.includes(req.query.type)) query.type = req.query.type;
+    const search = buildSearchClause(req.query.q);
+    if (search) Object.assign(query, search);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 50));
 
     const cards = await LearningCard.find(query)
@@ -52,5 +67,8 @@ router.patch('/:id/archive', isAuthenticated, async (req, res) => {
     res.status(500).json({ message: 'Failed to archive card' });
   }
 });
+
+// Pure helpers reachable from unit tests (same pattern as practicePack).
+router.__helpers = { escapeRegex, buildSearchClause };
 
 module.exports = router;
