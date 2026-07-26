@@ -1728,6 +1728,9 @@ async function runStudentTurn(req, res) {
             // ledger the pipeline just updated — the client paints the "from my
             // worksheet" chip from this. Null when the problem isn't linked.
             boardSource: activeConversation.boardLedger?.current?.sourceRef || null,
+            // Notebook cards minted this turn (AHA moments, activated
+            // reminders) — the client celebrates them (spec §7).
+            learningCards: pipelineResult.learningCards || [],
             xpCommands: pipelineResult.xpCommands || [],
             visualTabCommands: pipelineResult.visualTabCommands || [],
             boardContext: pipelineResult.boardContext,

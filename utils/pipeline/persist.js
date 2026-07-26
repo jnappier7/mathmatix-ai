@@ -28,6 +28,8 @@ const { canonicalSkillId } = require('../skillCanonicalizer');
 const { updateSkillMastery: engineUpdateSkillMastery, initializeSkillMastery } = require('../masteryEngine');
 const { problemAssistance } = require('./boardLedger');
 const { isIndependent } = require('./assistanceLadder');
+const LearningCard = require('../../models/learningCard');
+const { detectAha, reminderKey, shapeReminder, shapeAha, toClientCard, REMINDER_ACTIVATION_COUNT } = require('./learningCards');
 const { advanceRung, currentRung, clearsPrerequisites } = require('../skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../masteryGuard');
 
@@ -341,6 +343,19 @@ async function persist(params) {
   // Mark scaffold advance point
   if (extracted.scaffoldAdvance && conversation.messages.length > 0) {
     conversation.messages[conversation.messages.length - 1].scaffoldAdvanced = true;
+  }
+
+  // ── 7a-cards. Learning-card capture (Live Workspace spec §7.2–7.3) ──
+  // MUST run before 7b: conversation.lastProblemState still holds the PRIOR
+  // turn's state here, and "was struggling, now correct" is the AHA signal.
+  // Cross-session notebook writes; never allowed to cost the student a turn.
+  results.learningCards = [];
+  try {
+    results.learningCards = await captureLearningCards({
+      user, conversation, diagnosis, originalMessage, results, masteryAttempt,
+    });
+  } catch (cardErr) {
+    console.error('[Persist] learning-card capture failed (non-fatal):', cardErr.message);
   }
 
   // ── 7b. Persist last problem state for session continuity ──
@@ -875,6 +890,69 @@ function updateBadgeProgress(user, wasCorrect) {
       totalBadges: user.badges.length,
     },
   };
+}
+
+/**
+ * Learning-card capture (Live Workspace spec §7.2–7.3) — the notebook fills
+ * itself from the turn's verified signals; no extra LLM call.
+ *
+ * Reminder: a diagnosed misconception on a wrong answer upserts ONE card per
+ * misconception per student; the card only surfaces to the client once the
+ * mistake has recurred (REMINDER_ACTIVATION_COUNT) — first time is learning,
+ * second is a pattern. AHA: verified-correct after struggle, with realization
+ * language in the student's own message; their words become the card.
+ * Detection is pure (utils/pipeline/learningCards.js); this owns the writes.
+ */
+async function captureLearningCards({ user, conversation, diagnosis, originalMessage, results, masteryAttempt }) {
+  const out = [];
+  const skillId = masteryAttempt?.skillId || null;
+  const problemTex = conversation.boardLedger?.current?.problemTex
+    || (diagnosis?.problemInfo?.content ? String(diagnosis.problemInfo.content).slice(0, 500) : null);
+
+  if (diagnosis?.misconception?.name && diagnosis.isCorrect === false) {
+    const key = reminderKey(diagnosis.misconception.name);
+    if (key) {
+      const shaped = shapeReminder(diagnosis.misconception);
+      const card = await LearningCard.findOneAndUpdate(
+        { userId: user._id, type: 'reminder', misconceptionKey: key },
+        {
+          $setOnInsert: {
+            title: shaped.title, body: shaped.body, skillId,
+            conversationId: conversation._id, problemTex,
+          },
+          $inc: { seenCount: 1 },
+          $set: { lastSeenAt: new Date(), archived: false },
+        },
+        { upsert: true, new: true }
+      );
+      if (card.seenCount >= REMINDER_ACTIVATION_COUNT) out.push(toClientCard(card));
+    }
+  }
+
+  const aha = detectAha({
+    message: originalMessage,
+    wasCorrect: results.wasCorrect,
+    priorProblemState: conversation.lastProblemState,
+  });
+  if (aha.isAha) {
+    // One AHA per conversation per 10 minutes — a hot streak is one moment,
+    // not a card-printing machine (rewards must not track message volume).
+    const recent = await LearningCard.findOne({
+      userId: user._id, type: 'aha', conversationId: conversation._id,
+      createdAt: { $gte: new Date(Date.now() - 10 * 60 * 1000) },
+    }).select('_id').lean();
+    if (!recent) {
+      const shaped = shapeAha(aha.quote, skillId);
+      const card = await LearningCard.create({
+        userId: user._id, type: 'aha',
+        title: shaped.title, body: shaped.body, quote: aha.quote,
+        skillId, conversationId: conversation._id, problemTex,
+      });
+      out.push(toClientCard(card));
+    }
+  }
+
+  return out;
 }
 
 module.exports = {

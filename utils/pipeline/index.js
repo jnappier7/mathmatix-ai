@@ -33,6 +33,7 @@ const { generateSuggestions } = require('./suggestions');
 const { assembleEvidence } = require('./evidenceAccumulator');
 const { applyTurnToLedger } = require('./boardLedger');
 const { assistanceLevelForTurn } = require('./assistanceLadder');
+const { buildBoardStateBlock } = require('./boardStateBlock');
 
 // New data-driven engines
 const { updateBKT, initializeBKT } = require('../knowledgeTracer');
@@ -491,6 +492,17 @@ async function runPipeline(message, ctx) {
     if (planLayer) {
       enrichedSystemPrompt += '\n\n' + planLayer;
     }
+  }
+
+  // Board awareness: describe what the student's board displays RIGHT NOW
+  // (from the ledger the previous turns built), so the tutor references the
+  // shared surface instead of re-deriving lines already on it. Rebuilt every
+  // turn — it can't go stale and survives conversation summarization.
+  try {
+    const boardBlock = buildBoardStateBlock(ctx.conversation?.boardLedger);
+    if (boardBlock) enrichedSystemPrompt += '\n\n' + boardBlock;
+  } catch (boardBlockErr) {
+    console.error('[Pipeline] board-state block failed (non-fatal):', boardBlockErr.message);
   }
 
   const assembled = assemblePrompt(decision, {
@@ -1284,6 +1296,7 @@ async function runPipeline(message, ctx) {
       masterySuccess: false,
       badgeAwarded: null,
       iepGoalUpdates: [],
+      learningCards: [],
       courseProgressUpdate: null,
       aiTimeUsed: 0,
       freeWeeklySecondsRemaining: null,
@@ -1345,6 +1358,7 @@ async function runPipeline(message, ctx) {
         masterySuccess: false,
         badgeAwarded: null,
         iepGoalUpdates: [],
+      learningCards: [],
         courseProgressUpdate: null,
         aiTimeUsed: 0,
         freeWeeklySecondsRemaining: null,
@@ -1671,6 +1685,9 @@ async function runPipeline(message, ctx) {
     masterySuccess: persistResults.masterySuccess || false,
     badgeAwarded: persistResults.badgeAwarded || null,
     iepGoalUpdates: persistResults.iepGoalUpdates,
+    // Notebook cards minted this turn (AHA / activated reminders) — the
+    // client celebrates them (Live Workspace spec §7).
+    learningCards: persistResults.learningCards || [],
     courseProgressUpdate: persistResults.courseProgressUpdate,
     aiTimeUsed: persistResults.aiTimeUsed,
     freeWeeklySecondsRemaining: persistResults.freeWeeklySecondsRemaining,
