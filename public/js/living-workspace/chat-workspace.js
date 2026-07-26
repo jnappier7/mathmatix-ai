@@ -75,12 +75,12 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260725e';
+  var ASSET_V = '?v=20260725f';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js', 'core/ledgerReplay.js',
-    'core/sourceList.js', 'dom/sourceDock.js',
+    'core/sourceList.js', 'dom/sourceDock.js', 'dom/notebookPanel.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
     'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
     'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
@@ -361,6 +361,9 @@
       dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers(), onOpenSource: openLinkedSource });
       if (window.LWS.SourceDock) {
         try { dock = new window.LWS.SourceDock(mount, { onAskRegion: askAboutRegion }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
+      }
+      if (window.LWS.NotebookPanel) {
+        try { new window.LWS.NotebookPanel(mount); } catch (e) { console.error('[LWS_CHAT] notebook mount failed', e); }
       }
       ready = true;
       if (pendingSources !== undefined) { var ps = pendingSources; pendingSources = undefined; api.setSourcesFromMessages(ps); }
