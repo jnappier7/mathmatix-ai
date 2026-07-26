@@ -81,8 +81,8 @@ describe('ledgerMeta', () => {
     // 2 replayable completed entries → 2 meta rows (junk skipped identically),
     // and current is NOT in meta (it never lands on the rail).
     expect(meta).toEqual([
-      { assistance: 3, solved: true, completedAt: 'T1' },
-      { assistance: 9, solved: false, completedAt: null },
+      { assistance: 3, solved: true, completedAt: 'T1', sourceRef: null },
+      { assistance: 9, solved: false, completedAt: null, sourceRef: null },
     ]);
     // The invariant the rail zip depends on: meta rows == archived replays.
     const clears = ledgerToTurns(ledger).filter(t => t[0].action === 'clear').length;

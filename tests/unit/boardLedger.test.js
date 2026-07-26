@@ -6,7 +6,7 @@
  * completed rail; a re-pose of the same math is a redraw, not a new problem;
  * a problem posed but never worked is dropped, not archived.
  */
-const { applyTurnToLedger, problemAssistance, MAX_COMPLETED, MAX_STEPS } = require('../../utils/pipeline/boardLedger');
+const { applyTurnToLedger, problemAssistance, sanitizeSourceRef, MAX_COMPLETED, MAX_STEPS } = require('../../utils/pipeline/boardLedger');
 
 const NOW = new Date('2026-07-25T12:00:00Z');
 
@@ -138,6 +138,36 @@ describe('applyTurnToLedger', () => {
     expect(l.current.assistance).toBeNull();
     expect(problemAssistance(l)).toBeNull();
     expect(problemAssistance(null)).toBeNull();
+  });
+
+  test('a sourceRef attaches only to a problem POSED that turn, and rides into the archive', () => {
+    const ref = { uploadId: 'abc123', region: { x: 0.1, y: 0.2, w: 0.5, h: 0.25 } };
+    // Ref on a non-pose turn: must NOT stamp the ongoing problem.
+    let l = applyTurnToLedger(null, [{ action: 'pose', tex: 'a=1' }], NOW);
+    l = applyTurnToLedger(l, [{ action: 'resolve', tex: 'a' }], NOW, { sourceRef: ref });
+    expect(l.current.sourceRef).toBeNull();
+    // Ref on the pose turn: stamps the new problem and survives archiving.
+    l = applyTurnToLedger(l, [{ action: 'pose', tex: 'b=2' }], NOW, { sourceRef: ref });
+    expect(l.current.sourceRef).toEqual(ref);
+    l = applyTurnToLedger(l, [{ action: 'verify', tex: 'b=2' }], NOW, 3);   // legacy numeric opts still work
+    l = applyTurnToLedger(l, [{ action: 'clear' }], NOW);
+    expect(l.completed[0].sourceRef).toBeNull();          // problem a, never linked
+    expect(l.completed[1].sourceRef).toEqual(ref);        // problem b keeps its link
+    expect(l.completed[1].assistance).toBe(3);
+  });
+
+  test('sanitizeSourceRef: valid refs normalize, junk dies before the ledger', () => {
+    expect(sanitizeSourceRef({ uploadId: 'abc-123', region: { x: 0.1, y: 0.2, w: 0.5, h: 0.25 } }))
+      .toEqual({ uploadId: 'abc-123', region: { x: 0.1, y: 0.2, w: 0.5, h: 0.25 } });
+    // Coordinates clamp into [0,1]; degenerate regions drop to null.
+    expect(sanitizeSourceRef({ uploadId: 'a', region: { x: -2, y: 5, w: 3, h: 0.5 } }).region)
+      .toEqual({ x: 0, y: 1, w: 1, h: 0.5 });
+    expect(sanitizeSourceRef({ uploadId: 'a', region: { x: 0, y: 0, w: 0, h: 0.5 } }).region).toBeNull();
+    // Bad ids are rejected outright (injection-shaped, oversized, missing).
+    expect(sanitizeSourceRef({ uploadId: 'a b$', region: null })).toBeNull();
+    expect(sanitizeSourceRef({ uploadId: 'x'.repeat(65) })).toBeNull();
+    expect(sanitizeSourceRef(null)).toBeNull();
+    expect(sanitizeSourceRef('junk')).toBeNull();
   });
 
   test('tolerates malformed input: null commands, junk entries, malformed prev', () => {

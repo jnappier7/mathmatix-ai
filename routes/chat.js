@@ -43,6 +43,7 @@ const { checkReadingLevel, buildSimplificationPrompt } = require('../utils/reada
 
 // Tutoring pipeline (observe → diagnose → decide → generate → verify → persist)
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
+const { sanitizeSourceRef } = require('../utils/pipeline/boardLedger');
 const { observe: preClassifyMessage, MESSAGE_TYPES: OBSERVE_MSG_TYPES } = require('../utils/pipeline/observe');
 const { initializeLessonPhase, transitionPhase, PHASES } = require('../utils/lessonPhaseManager');
 const { evaluatePhaseAdvancement, updatePhaseTracker } = require('../utils/phaseEvidenceEvaluator');
@@ -534,6 +535,16 @@ async function runStudentTurn(req, res) {
         // so all chat goes through one pipeline with one set of guards.
         const uploadedFiles = req.files || [];
         const hasUploadedFiles = uploadedFiles.length > 0;
+        // Problem-region selection (spec §5.3–5.4): when the student selects a
+        // region of a docked source, the crop arrives as this turn's file and
+        // `sourceRef` names where it came from ({uploadId, region} normalized
+        // 0–1). Only meaningful alongside an upload; sanitized before use and
+        // stamped onto the problem the ledger poses this turn.
+        let regionSourceRef = null;
+        if (hasUploadedFiles && req.body.sourceRef) {
+            try { regionSourceRef = sanitizeSourceRef(JSON.parse(req.body.sourceRef)); }
+            catch (_) { regionSourceRef = null; }
+        }
         let uploadImageContents = [];
         let uploadPdfTexts = [];
         let combinedMessage = effectiveMessage.trim();
@@ -1429,6 +1440,7 @@ async function runStudentTurn(req, res) {
                 stream: useStreaming,
                 res: useStreaming ? res : null,
                 aiProcessingStartTime: aiStartTime,
+                sourceRef: regionSourceRef,
             });
         } catch (pipelineError) {
             // Pipeline failed — fall back to direct LLM call so student always gets a response
@@ -1712,6 +1724,10 @@ async function runStudentTurn(req, res) {
             sourceUploads: attachmentMeta.length > 0
                 ? attachmentMeta.map(a => ({ uploadId: String(a.uploadId), fileType: a.fileType, mimeType: a.mimeType }))
                 : [],
+            // The in-focus problem's source link (spec §5.4), straight from the
+            // ledger the pipeline just updated — the client paints the "from my
+            // worksheet" chip from this. Null when the problem isn't linked.
+            boardSource: activeConversation.boardLedger?.current?.sourceRef || null,
             xpCommands: pipelineResult.xpCommands || [],
             visualTabCommands: pipelineResult.visualTabCommands || [],
             boardContext: pipelineResult.boardContext,

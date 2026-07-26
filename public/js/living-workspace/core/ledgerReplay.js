@@ -72,6 +72,7 @@
         assistance: entry.assistance || null,
         solved: !!entry.solved,
         completedAt: entry.completedAt || null,
+        sourceRef: entry.sourceRef || null,
       };
     });
   }

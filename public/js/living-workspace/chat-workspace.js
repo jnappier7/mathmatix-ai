@@ -64,6 +64,9 @@
     // (history load) or append this turn's uploads (live delta).
     setSourcesFromMessages: function () {},
     addSources: function () {},
+    // Source↔problem link (spec §5.4): paint/clear the in-focus problem's
+    // "from my worksheet" chip. Fed by the response's boardSource field.
+    setProblemSource: function () {},
   };
   window.LWS_CHAT = api;
   if (!ON) return;
@@ -72,7 +75,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260725d';
+  var ASSET_V = '?v=20260725e';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -288,6 +291,37 @@
     paintSources();
   };
 
+  api.setProblemSource = function (ref) {
+    if (!ready || !dv) return;
+    try { dv.setProblemSource(ref || null); } catch (e) { console.error('[LWS_CHAT] problem source failed', e); }
+  };
+
+  // The problem header's chip → reopen the docked source with the problem's
+  // region highlighted. Falls back to a bare open when the source has scrolled
+  // off the dock (older than the cap) — the ref still names it servably.
+  function openLinkedSource(ref) {
+    if (!dock || !ref || !ref.uploadId) return;
+    var src = null;
+    for (var i = 0; i < sources.length; i++) {
+      if (sources[i] && sources[i].uploadId === ref.uploadId) { src = sources[i]; break; }
+    }
+    if (!src) src = { uploadId: ref.uploadId, fileType: 'image', mimeType: null };
+    try { dock.openSource(src, 'My worksheet', ref.region || null); }
+    catch (e) { console.error('[LWS_CHAT] open linked source failed', e); }
+  }
+
+  // A confirmed region selection: the crop goes to the tutor as a normal chat
+  // photo turn (OCR, diagnose, the works) tagged with the source ref so the
+  // posed problem links back to the worksheet (spec §5.3–5.4).
+  function askAboutRegion(file, region, src) {
+    if (typeof window.mmAskAboutRegion !== 'function') { console.error('[LWS_CHAT] mmAskAboutRegion unavailable'); return; }
+    window.mmAskAboutRegion(
+      file,
+      "Here's a problem from my worksheet — can we work on this one?",
+      { uploadId: src.uploadId, region: region }
+    );
+  }
+
   // Rebuild the board from a persisted conversation.boardLedger: each finished
   // problem replays and is parked on the rail, the in-progress one lands in
   // focus. Replays run through the SAME adapter/render path as live turns, so
@@ -306,6 +340,11 @@
       try { dv.annotateArchive(window.LWS.ledgerMeta(ledger)); }
       catch (e) { console.error('[LWS_CHAT] archive annotate failed', e); }
     }
+    // The in-focus problem's source link survives the reload too.
+    if (ledger.current && ledger.current.sourceRef) {
+      try { dv.setProblemSource(ledger.current.sourceRef); }
+      catch (e) { console.error('[LWS_CHAT] hydrate problem source failed', e); }
+    }
   }
 
   api.hydrate = function (ledger) {
@@ -319,9 +358,9 @@
     loadNext(0, function () {
       if (!window.LWS || !window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
       var mount = buildPanel();
-      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers() });
+      dv = new window.LWS.DerivationView(mount, { renderers: makeRenderers(), onOpenSource: openLinkedSource });
       if (window.LWS.SourceDock) {
-        try { dock = new window.LWS.SourceDock(mount); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
+        try { dock = new window.LWS.SourceDock(mount, { onAskRegion: askAboutRegion }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
       }
       ready = true;
       if (pendingSources !== undefined) { var ps = pendingSources; pendingSources = undefined; api.setSourcesFromMessages(ps); }

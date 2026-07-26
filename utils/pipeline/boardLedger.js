@@ -76,9 +76,28 @@ function archiveCurrent(ledger, now) {
     // what the collapsed-card summary and teacher view read. Null when the
     // ladder never reported (e.g. entries written before this field existed).
     assistance: cur.assistance || null,
+    // Where the problem came from (spec §5.4): {uploadId, region} when it was
+    // selected off a docked source; the card keeps its link forever.
+    sourceRef: cur.sourceRef || null,
     completedAt: now,
   });
   while (ledger.completed.length > MAX_COMPLETED) ledger.completed.shift();
+}
+
+// Validate/normalize a client-supplied source reference: an uploadId plus a
+// normalized region ({x,y,w,h} in [0,1]) inside that source. Returns null for
+// anything malformed — a bad ref must never poison the ledger.
+function sanitizeSourceRef(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const id = String(raw.uploadId || '').trim();
+  if (!id || id.length > 64 || !/^[a-zA-Z0-9_-]+$/.test(id)) return null;
+  const r = raw.region;
+  if (!r || typeof r !== 'object') return { uploadId: id, region: null };
+  const clamp = v => Math.max(0, Math.min(1, Number(v)));
+  const x = clamp(r.x); const y = clamp(r.y);
+  const w = clamp(r.w); const h = clamp(r.h);
+  if (!(w > 0) || !(h > 0)) return { uploadId: id, region: null };
+  return { uploadId: id, region: { x, y, w, h } };
 }
 
 /**
@@ -87,11 +106,14 @@ function archiveCurrent(ledger, now) {
  * @param {object|null} prev - conversation.boardLedger (may be null/malformed)
  * @param {Array} commands - the turn's verified board commands, in order
  * @param {Date} [now] - injectable clock for tests
- * @param {number|null} [turnAssistance] - this turn's assistance level
- *   (utils/pipeline/assistanceLadder.js); max-folded onto the problem in focus
+ * @param {number|object|null} [turnOpts] - this turn's context: a bare number
+ *   is the assistance level (back-compat); an object may carry
+ *   { assistance, sourceRef } — sourceRef links a problem POSED this turn to
+ *   the docked source it was selected from (spec §5.4)
  * @returns {object} a new ledger object
  */
-function applyTurnToLedger(prev, commands, now = new Date(), turnAssistance = null) {
+function applyTurnToLedger(prev, commands, now = new Date(), turnOpts = null) {
+  const opts = (turnOpts && typeof turnOpts === 'object') ? turnOpts : { assistance: turnOpts };
   const ledger = {
     current: prev && prev.current && prev.current.problemTex
       ? {
@@ -99,12 +121,15 @@ function applyTurnToLedger(prev, commands, now = new Date(), turnAssistance = nu
           posedAt: prev.current.posedAt || now,
           steps: Array.isArray(prev.current.steps) ? prev.current.steps.slice() : [],
           assistance: prev.current.assistance || null,
+          sourceRef: prev.current.sourceRef || null,
         }
       : null,
     completed: prev && Array.isArray(prev.completed) ? prev.completed.slice() : [],
   };
   if (!Array.isArray(commands)) return ledger;
-  const assist = Number(turnAssistance) > 0 ? Number(turnAssistance) : null;
+  const assist = Number(opts.assistance) > 0 ? Number(opts.assistance) : null;
+  const sourceRef = sanitizeSourceRef(opts.sourceRef);
+  let posedThisTurn = false;
 
   for (const raw of commands) {
     if (!raw || typeof raw !== 'object' || !raw.action) continue;
@@ -116,7 +141,8 @@ function applyTurnToLedger(prev, commands, now = new Date(), turnAssistance = nu
         continue; // same problem re-drawn (board-reference backstop etc.)
       }
       archiveCurrent(ledger, now);
-      ledger.current = { problemTex: cmd.tex, posedAt: now, steps: [], assistance: null };
+      ledger.current = { problemTex: cmd.tex, posedAt: now, steps: [], assistance: null, sourceRef: null };
+      posedThisTurn = true;
       continue;
     }
 
@@ -140,6 +166,13 @@ function applyTurnToLedger(prev, commands, now = new Date(), turnAssistance = nu
     ledger.current.assistance = Math.max(ledger.current.assistance || 0, assist) || null;
   }
 
+  // A source link only attaches to a problem POSED this turn — the turn the
+  // student selected the region and asked. Stamping an ongoing problem would
+  // mislink whatever happened to be in focus when a stray ref arrived.
+  if (ledger.current && sourceRef && posedThisTurn && !ledger.current.sourceRef) {
+    ledger.current.sourceRef = sourceRef;
+  }
+
   return ledger;
 }
 
@@ -161,6 +194,7 @@ function problemAssistance(ledger) {
 module.exports = {
   applyTurnToLedger,
   problemAssistance,
+  sanitizeSourceRef,
   emptyLedger,
   MAX_COMPLETED,
   MAX_STEPS,

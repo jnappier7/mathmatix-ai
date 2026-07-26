@@ -1203,7 +1203,8 @@ async function runPipeline(message, ctx) {
         boardCommands: verified.boardCommands,
       });
       ctx.conversation.boardLedger = applyTurnToLedger(
-        ctx.conversation.boardLedger, verified.boardCommands, new Date(), turnAssistance
+        ctx.conversation.boardLedger, verified.boardCommands, new Date(),
+        { assistance: turnAssistance, sourceRef: ctx.sourceRef || null }
       );
       ctx.conversation.markModified?.('boardLedger');
     } catch (ledgerErr) {
