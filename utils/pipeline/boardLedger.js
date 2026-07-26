@@ -235,8 +235,49 @@ function summarizeLedger(ledger) {
   return { current: cur, completed, independentSolves, supportedSolves };
 }
 
+/**
+ * Voice-turn preamble (Live Workspace): voice speaks only derivation lines —
+ * it has no pose concept. With no problem in focus the ledger drops every
+ * line as a stray, so a voice-FIRST session would persist nothing. When the
+ * board is empty, the first math line IS the problem being worked: promote
+ * it to a pose. No-op when a problem is already in focus (chat posed it, or
+ * an earlier voice turn did). Pure; returns a new array.
+ */
+function promoteLeadingResolveToPose(ledger, commands) {
+  const cmds = Array.isArray(commands) ? commands : [];
+  if (!cmds.length || !cmds[0] || cmds[0].action !== 'resolve' || !cmds[0].tex) return cmds;
+  if (ledger && ledger.current && ledger.current.problemTex) return cmds;
+  return [{ action: 'pose', tex: cmds[0].tex }].concat(cmds.slice(1));
+}
+
+/**
+ * Voice re-sends its board CUMULATIVELY every turn (its protocol: the full
+ * step list, typically one new line at the end). Folding that raw into the
+ * ledger would re-append the problem and every prior step each turn. Drop
+ * resolves that match the problem in focus or a step already ledgered;
+ * everything genuinely new passes through. Pure; returns a new array.
+ */
+function dedupeCumulativeResolves(ledger, commands) {
+  const cmds = Array.isArray(commands) ? commands : [];
+  const cur = ledger && ledger.current;
+  if (!cur || !cur.problemTex) return cmds;
+  const seen = new Set([normTex(cur.problemTex)]);
+  for (const st of Array.isArray(cur.steps) ? cur.steps : []) {
+    if (st && st.action === 'resolve' && st.tex) seen.add(normTex(st.tex));
+  }
+  return cmds.filter(c => {
+    if (!c || c.action !== 'resolve' || !c.tex) return true;
+    const k = normTex(c.tex);
+    if (seen.has(k)) return false;
+    seen.add(k);           // also collapses dupes within one turn
+    return true;
+  });
+}
+
 module.exports = {
   applyTurnToLedger,
+  promoteLeadingResolveToPose,
+  dedupeCumulativeResolves,
   problemAssistance,
   sanitizeSourceRef,
   summarizeLedger,
