@@ -91,4 +91,27 @@ function _reset() {
   unifiedIds = null;
 }
 
-module.exports = { canonicalSkillId, isUnifiedSkillId, _reset };
+/**
+ * Every id the CATALOG might key a skill under, for a given input id — the
+ * canonical unified id, the raw id as given, and any legacy ids that map to
+ * the same canonical node. The Skill collection predates unification and is
+ * keyed by bank/legacy ids, so `Skill.findOne({ skillId: canonicalSkillId(x) })`
+ * misses whenever a crosswalk entry exists — the "Skill not found" challenge
+ * bug. Query with { skillId: { $in: skillLookupCandidates(x) } } instead.
+ */
+function skillLookupCandidates(skillId) {
+  if (!skillId) return [];
+  if (!legacyToUnified) build();
+  const raw = String(skillId);
+  const canon = canonicalSkillId(raw);
+  const out = [];
+  const push = (id) => { if (id && !out.includes(id)) out.push(id); };
+  push(canon);
+  push(raw);
+  for (const [legacy, unified] of legacyToUnified.entries()) {
+    if (unified === canon) push(legacy);
+  }
+  return out;
+}
+
+module.exports = { canonicalSkillId, isUnifiedSkillId, skillLookupCandidates, _reset };

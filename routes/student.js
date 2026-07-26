@@ -400,7 +400,12 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
                     // into 4000 → clamped to a fake "100% mastered". Normalize.
                     const raw = Number(data.masteryScore) || 0;
                     const progress = Math.round(raw <= 1 ? raw * 100 : raw);
-                    learning.push({ skillId, displayName, progress });
+                    learning.push({
+                        skillId, displayName, progress,
+                        // For picking the CURRENT skill below — the one the
+                        // student is actually working, not map-order-first.
+                        lastTouched: data.lastPracticed || data.learningStarted || null,
+                    });
                 } else if (data.status === 'ready') {
                     ready.push({ skillId, displayName });
                 }
@@ -412,8 +417,13 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
                 recentMastery = mastered[0];
             }
 
-            // Current learning (first one)
+            // Current learning: the skill the student most recently WORKED,
+            // not whichever entry happens to iterate first. Map-order-first
+            // could pin an untouched placement seed on the card forever while
+            // live work updated a different entry (owner-hit: the What's Next
+            // bar "was at 78% the entire time" through five clean answers).
             if (learning.length > 0) {
+                learning.sort((a, b) => new Date(b.lastTouched || 0) - new Date(a.lastTouched || 0));
                 currentLearning = learning[0];
             }
 
