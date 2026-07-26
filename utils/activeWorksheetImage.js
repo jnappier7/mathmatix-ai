@@ -134,11 +134,41 @@ function findWorksheetInMessages(messages, nowMs = Date.now(), ttlMinutes = ACTI
     return out;
 }
 
+// Does the CURRENT message actually talk about the uploaded sheet/image?
+// The re-thread used to be unconditional for the whole TTL window, which let a
+// one-off screenshot hijack every following turn: each "yep" / "11" was
+// rewritten into a vision message instructing the tutor to "read the image
+// and respond to what's actually there", so the tutor kept narrating the
+// screenshot instead of processing the student's answers (production,
+// 2026-07-26 — four consecutive derailed turns). Vision continuity is for
+// turns ABOUT the sheet; everything else gets text-only continuity.
+// Pure — no IO — so it's cheap to unit test.
+const WORKSHEET_REFERENCE = new RegExp(
+    [
+        '#\\s*\\d+',                                              // "#7"
+        '\\b(?:problem|question|number|exercise)\\s*\\d+\\b',     // "problem 3"
+        '\\b(?:the\\s+)?(?:next|last|first)\\s+(?:one|problem|question)\\b',
+        '\\b(?:worksheet|sheet|page|paper|picture|photo|image|screenshot|scan|upload(?:ed)?)\\b',
+        '\\bwhat\\s+i\\s+(?:sent|showed|shared|wrote|uploaded)\\b',
+        '\\b(?:check|grade|look\\s+at|see)\\s+(?:my|the|this|that|it)\\b',
+        '\\bmy\\s+(?:work|answer|answers|solution)s?\\b',
+        '\\bon\\s+there\\b',
+        '\\bam\\s+i\\s+on\\s+track\\b',
+    ].join('|'),
+    'i'
+);
+
+function referencesWorksheet(message) {
+    if (!message || typeof message !== 'string') return false;
+    return WORKSHEET_REFERENCE.test(message);
+}
+
 module.exports = {
     isImageStillActive,
     buildImageDataUrl,
     downscaleToDataUrl,
     findWorksheetInMessages,
+    referencesWorksheet,
     ACTIVE_IMAGE_TTL_MINUTES,
     MAX_IMAGE_BYTES,
 };
