@@ -20,7 +20,7 @@ class PracticePackManager {
     document.querySelectorAll('[data-action="print-practice-pack"]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const skillId = e.target.dataset.skillId || null;
-        const count = parseInt(e.target.dataset.count) || 8;
+        const count = parseInt(e.target.dataset.count) || 16;
         this.generatePack({ skillId, count });
       });
     });
@@ -52,10 +52,10 @@ class PracticePackManager {
           </select>
           <div class="practice-pack-row">
             <select id="practice-pack-count" class="practice-pack-select practice-pack-count-select">
-              <option value="5">5 problems</option>
-              <option value="8" selected>8 problems</option>
+              <option value="8">8 problems</option>
               <option value="12">12 problems</option>
-              <option value="15">15 problems</option>
+              <option value="16" selected>16 problems</option>
+              <option value="20">20 problems</option>
             </select>
             <label class="practice-pack-checkbox-label">
               <input type="checkbox" id="practice-pack-answer-key" />
@@ -71,7 +71,7 @@ class PracticePackManager {
     `;
 
     document.getElementById('practice-pack-generate-btn')?.addEventListener('click', () => {
-      const count = parseInt(document.getElementById('practice-pack-count')?.value) || 8;
+      const count = parseInt(document.getElementById('practice-pack-count')?.value) || 16;
       const skillId = document.getElementById('practice-pack-skill')?.value || null;
       const answerKey = document.getElementById('practice-pack-answer-key')?.checked || false;
       this.generatePack({ count, skillId, answerKey });
@@ -91,7 +91,7 @@ class PracticePackManager {
   }
 
   async generatePack(options = {}) {
-    const { skillId = null, count = 8, answerKey = false } = options;
+    const { skillId = null, count = 16, answerKey = false } = options;
     const statusEl = document.getElementById('practice-pack-status');
     const btn = document.getElementById('practice-pack-generate-btn');
 

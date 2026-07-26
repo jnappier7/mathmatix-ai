@@ -3490,7 +3490,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             paperPrompt.remove();
                             // Navigate to dashboard or trigger download directly
                             const currentSkillId = data.currentSkillId || null;
-                            const params = new URLSearchParams({ count: 5 });
+                            const params = new URLSearchParams({ count: 16 });
                             if (currentSkillId) params.set('skillId', currentSkillId);
                             fetch(`/api/practice-pack/generate?${params}`, { credentials: 'include' })
                                 .then(resp => {
