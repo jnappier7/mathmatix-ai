@@ -22,7 +22,7 @@
   // not load the shared constants module).
   const ELEMENT_TYPES = {
     EQUATION: 'equation', ALGEBRA_TILES: 'algebra_tiles', NUMBER_LINE: 'number_line',
-    GRAPH: 'graph', GEOMETRY: 'geometry', IMAGE: 'image',
+    GRAPH: 'graph', GEOMETRY: 'geometry', IMAGE: 'image', MODEL: 'model',
   };
 
   const COL_X = 60, START_Y = 40, STEP_Y = 120;
@@ -47,6 +47,9 @@
       case 'graph':    return cmd.fn  ? { type: ELEMENT_TYPES.GRAPH, semantic: Object.assign({ fn: cmd.fn }, cmd.caption ? { caption: cmd.caption } : null) } : null;
       case 'image':    return cmd.query ? { type: ELEMENT_TYPES.IMAGE, semantic: Object.assign({ query: cmd.query }, cmd.caption ? { caption: cmd.caption } : null) } : null;
       case 'diagram':  return (cmd.diagram_type || cmd.diagram_params) ? { type: ELEMENT_TYPES.GEOMETRY, semantic: { diagramType: cmd.diagram_type || null, params: cmd.diagram_params || null } } : null;
+      // Interactive concept model (CONCEPT_MODELS): a curated name OR a full
+      // spec (JSON string, validated client-side before it can render).
+      case 'model':    return (cmd.model || cmd.spec) ? { type: ELEMENT_TYPES.MODEL, semantic: { model: cmd.model || null, spec: cmd.spec || null, prompt: cmd.prompt || cmd.caption || null } } : null;
       default:         return null;
     }
   }
@@ -65,7 +68,7 @@
       if (!mapped) {
         result.unmapped.push({
           action: cmd.action,
-          reason: (cmd.action === 'model' || cmd.action === 'spec') ? 'no-workspace-element-yet' : 'empty-or-unsupported',
+          reason: 'empty-or-unsupported',
         });
         continue;
       }

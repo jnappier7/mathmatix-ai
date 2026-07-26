@@ -62,10 +62,12 @@ describe('adaptBoardCommands — directives & coverage gaps', () => {
     expect(elements).toHaveLength(0);
   });
 
-  test('concept model has no workspace element yet → reported in unmapped (not dropped)', () => {
+  test('concept model maps to a workspace element (§6.8 — was unmapped before dom/modelElement.js)', () => {
     const { elements, unmapped } = adaptBoardCommands([{ action: 'model', model: 'slope_intercept_line' }]);
-    expect(elements).toHaveLength(0);
-    expect(unmapped).toEqual([{ action: 'model', reason: 'no-workspace-element-yet' }]);
+    expect(unmapped).toHaveLength(0);
+    expect(elements).toHaveLength(1);
+    expect(elements[0].type).toBe('model');
+    expect(elements[0].semantic.model).toBe('slope_intercept_line');
   });
 
   test('a command missing its required payload is skipped and reported', () => {

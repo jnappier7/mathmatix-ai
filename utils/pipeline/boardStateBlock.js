@@ -36,10 +36,12 @@ function describeStep(cmd) {
     case 'verify': return 'SOLUTION shown: ' + trunc(cmd.tex);
     case 'scaffold': return 'scaffold with blanks for the student: ' + trunc(cmd.tex);
     case 'example': return 'worked example (different problem): ' + trunc(cmd.tex);
-    case 'graph': return 'graph: ' + trunc(cmd.expression || cmd.tex || 'plotted');
-    case 'image': return 'picture: ' + trunc(cmd.imageQuery || cmd.caption || '');
-    case 'diagram':
-    case 'model': return cmd.action + ': ' + trunc(cmd.tex || cmd.caption || 'shown');
+    case 'graph': return 'graph: ' + trunc(cmd.fn || cmd.tex || 'plotted');
+    case 'image': return 'picture: ' + trunc(cmd.query || cmd.caption || '');
+    case 'diagram': return 'diagram: ' + trunc(cmd.diagram_type || cmd.caption || 'shown');
+    case 'model': return 'INTERACTIVE model the student can manipulate: '
+      + trunc(cmd.model || 'custom')
+      + (cmd.prompt ? ' — “' + trunc(cmd.prompt) + '”' : '');
     default: return null;
   }
 }
