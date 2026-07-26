@@ -183,15 +183,15 @@ async function diagnoseTransformation(observation, context) {
   // never "how did you do it?"). correctAnswer stays null so nothing is revealed.
   const chain = verifyDerivation(rawText, context.pinnedProblemTex);
   if (chain.verifiable) {
-    console.log(`[Diagnose] Derivation ${chain.valid ? 'valid' : `broke at "${chain.firstBadStep}"`}`);
+    console.log(`[Diagnose] Derivation ${chain.valid ? 'valid' : `${chain.answerCorrect ? 'answer correct, work' : ''} broke at "${chain.firstBadStep}"`}`);
     return {
-      type: chain.valid ? 'correct' : 'incorrect',
-      isCorrect: chain.valid,
+      type: chain.answerCorrect ? 'correct' : 'incorrect',
+      isCorrect: chain.answerCorrect,
       answer: chain.finalAnswer,
       correctAnswer: null,
       misconception: null,
       evidence: {
-        isCorrect: chain.valid,
+        isCorrect: chain.answerCorrect,
         independenceLevel: estimateIndependence(observation, context),
         misconceptionHit: null,
         responseTimeCategory: null,
@@ -482,7 +482,9 @@ async function diagnose(observation, context = {}) {
     // multi-step practice both grade correctly and get taught precisely.
     const chain = verifyDerivation(rawText, context.pinnedProblemTex, problemInfo.correctAnswer);
     if (chain.verifiable) {
-      isCorrect = chain.valid;
+      // The final line is the answer; `valid` (whole chain) feeds
+      // demonstratedReasoning below, never correctness.
+      isCorrect = chain.answerCorrect;
       correctAnswer = problemInfo.correctAnswer;
       verificationSource = 'derivation';
       derivation = chain;
@@ -507,6 +509,23 @@ async function diagnose(observation, context = {}) {
     isCorrect = true;
     correctAnswer = studentAnswer;
     verificationSource = 'arithmetic_override';
+  }
+
+  // ── Step 2a.4: Multi-line shown work with NO solvable posed problem ──
+  // The chain can still verify itself (each line resolves to the same value,
+  // ending on the stated answer). Before multi-line messages carried an
+  // extractable answer, these turns took the transformation path and got
+  // exactly this internal-consistency check — keep that coverage here so a
+  // chat-only session with an unparseable/absent pin doesn't regress to
+  // unverifiable (or worse, a guess).
+  if (isCorrect === null && multiRoot === null && /\n/.test(rawText)) {
+    const chain = verifyDerivation(rawText, context.pinnedProblemTex);
+    if (chain.verifiable) {
+      isCorrect = chain.answerCorrect;
+      verificationSource = 'derivation';
+      derivation = chain;
+      console.log(`[Diagnose] Internal chain: ${chain.valid ? 'consistent' : `broke at "${chain.firstBadStep}"`}`);
+    }
   }
 
   // ── Step 2a.5: SYMBOLIC verification (deterministic, before the LLM) ──

@@ -30,6 +30,9 @@ module.exports = {
     '<rootDir>/tests/unit/irt.test.js',
     '<rootDir>/tests/unit/knowledgeTracer.test.js',
     '<rootDir>/tests/unit/diagnoseArithmeticGuard.test.js',
+    '<rootDir>/tests/unit/diagnoseMultiLineAnswer.test.js',
+    '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
+    '<rootDir>/tests/unit/derivationVerifier.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
     '<rootDir>/tests/golden/goldenTranscripts.test.js',
   ],
@@ -48,13 +51,13 @@ module.exports = {
   // Floors sit a few points below measured coverage to absorb cross-Node-version
   // branch-counting drift. Tighten as coverage improves.
   coverageThreshold: {
-    './utils/mathSolver.js': { statements: 73, branches: 63, functions: 84, lines: 76 },
+    './utils/mathSolver.js': { statements: 78, branches: 68, functions: 88, lines: 81 },
     './utils/irt.js': { statements: 90, branches: 82, functions: 95, lines: 90 },
     './utils/knowledgeTracer.js': { statements: 83, branches: 78, functions: 95, lines: 83 },
     './utils/verifyMetrics.js': { statements: 96, branches: 80, functions: 100, lines: 96 },
     './utils/pipeline/llmVerifier.js': { statements: 88, branches: 75, functions: 100, lines: 88 },
-    './utils/pipeline/observe.js': { statements: 70, branches: 66, functions: 90, lines: 74 },
+    './utils/pipeline/observe.js': { statements: 75, branches: 72, functions: 95, lines: 81 },
     './utils/pipeline/decide.js': { statements: 44, branches: 42, functions: 62, lines: 45 },
-    './utils/pipeline/diagnose.js': { statements: 44, branches: 43, functions: 42, lines: 46 },
+    './utils/pipeline/diagnose.js': { statements: 58, branches: 55, functions: 60, lines: 58 },
   },
 };
