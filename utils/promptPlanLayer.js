@@ -137,10 +137,30 @@ function buildModeDirective(target, skillResolution) {
 
   const parts = [];
 
+  // Concrete prior-progress facts from the resolver, when it saw a mastery
+  // entry with real attempts. These are the counterweight to any mode text:
+  // the model must never be told a skill is brand-new when the record says
+  // otherwise ("why we starting over?" — production, 2026-07-26).
+  const evidence = skillResolution?.priorEvidence;
+  const hasPriorWork = (evidence?.totalAttempts || 0) > 0;
+  const priorProgressLine = hasPriorWork
+    ? `PRIOR PROGRESS ON THIS SKILL: ${evidence.totalAttempts} recorded attempt${evidence.totalAttempts === 1 ? '' : 's'}`
+      + (evidence.scorePct !== null && evidence.scorePct !== undefined ? `, ~${evidence.scorePct}% mastery score` : '')
+      + '. Pick up where they left off — do NOT re-introduce vocabulary or restart the concept from scratch, and NEVER tell them you are starting over.'
+    : null;
+
   switch (mode) {
     case 'instruct':
       parts.push(`🔑 INSTRUCTIONAL MODE: DIRECT INSTRUCTION for "${skillName}"`);
-      parts.push('This skill is NOVEL to the student. They have NEVER seen it before.');
+      if (!hasPriorWork && (!skillResolution?.familiarity || skillResolution.familiarity === 'never-seen')) {
+        parts.push('This skill is NOVEL to the student. They have NEVER seen it before.');
+      } else {
+        // Defensive: instruct mode should only arise for never-seen skills,
+        // but if it ever fires with prior work on record, do not assert a
+        // false history to the model.
+        parts.push('The student has SOME prior exposure to this skill. Refresh briefly and verify what they remember — do NOT restart from zero as if it were brand new.');
+        if (priorProgressLine) parts.push(priorProgressLine);
+      }
       parts.push('CRITICAL OVERRIDE: The standard "never give answers / always use Socratic questioning"');
       parts.push('rule is MODIFIED for this interaction. During modeling (I Do), you SHOW worked');
       parts.push('examples with full solutions and think-aloud CONCEPTUAL reasoning. The student');
@@ -201,7 +221,9 @@ function buildModeDirective(target, skillResolution) {
       parts.push(`INSTRUCTIONAL MODE: GUIDED for "${skillName}"`);
       parts.push('Student has seen this before but it is not solid. Socratic questioning is appropriate.');
       parts.push('Activate prior knowledge: "Remember when we..." or "You have seen this before..."');
+      parts.push('Start from where they left off — a quick warm-up problem beats re-explaining the concept.');
       parts.push('If they are more stuck than expected, you may need to reteach (drop to direct instruction).');
+      if (priorProgressLine) parts.push(priorProgressLine);
       break;
 
     case 'strengthen':

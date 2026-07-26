@@ -890,24 +890,37 @@ Assessment pending. For regular tutoring requests, just help them. Do NOT sugges
 HOWEVER: If the student demonstrates SIGNIFICANT struggle with skills well below their grade level (e.g., a 5th grader can't multiply single digits, multiple "idk" responses, expressed frustration like "math sucks"), THEN gently re-mention the Starting Point button: "Hey, remember that Starting Point button on the left? It's not a test you can fail — it just helps me figure out the best way to help you. Want to give it a try?" Keep it casual and low-pressure. Only suggest this ONCE per session after observing clear struggle.`;
   }
 
-  const mastered = [], learning = [], ready = [];
+  // Every non-locked status must land in a bucket. 'practicing',
+  // 'needs-review' and 're-fragile' used to fall through silently, so a
+  // student mid-way through a skill appeared NOWHERE in this block — and the
+  // model, seeing no history, re-taught the skill from scratch.
+  const mastered = [], learning = [], ready = [], practicing = [], review = [];
 
   for (const [skillId, data] of userProfile.skillMastery) {
     if (filterToSkill && skillId !== filterToSkill) continue;
     const display = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     if (data.status === 'mastered') mastered.push({ display, date: data.masteredDate });
     else if (data.status === 'learning') learning.push({ display, notes: data.notes });
+    else if (data.status === 'practicing') practicing.push({ display, attempts: data.totalAttempts || 0 });
+    else if (data.status === 'needs-review' || data.status === 're-fragile') review.push({ display });
     else if (data.status === 'ready') ready.push({ display });
   }
 
   mastered.sort((a, b) => new Date(b.date) - new Date(a.date));
+  practicing.sort((a, b) => b.attempts - a.attempts);
 
   let ctx = '--- SKILL PROGRESSION ---\n';
   if (mastered.length) {
     ctx += `Mastered (${mastered.length}): ${mastered.slice(0, 5).map(s => s.display).join(', ')}${mastered.length > 5 ? ` +${mastered.length - 5} more` : ''}\n`;
   }
+  if (practicing.length) {
+    ctx += `In progress (has real prior work — RESUME, never restart from scratch): ${practicing.slice(0, 5).map(s => s.attempts ? `${s.display} (${s.attempts} attempts)` : s.display).join(', ')}${practicing.length > 5 ? ` +${practicing.length - 5} more` : ''}\n`;
+  }
   if (learning.length) {
     ctx += `Learning: ${learning.map(s => s.display).join(', ')}\n`;
+  }
+  if (review.length) {
+    ctx += `Previously learned, now fragile (quick refresh, not full re-teach): ${review.slice(0, 5).map(s => s.display).join(', ')}${review.length > 5 ? ` +${review.length - 5} more` : ''}\n`;
   }
   if (ready.length) {
     ctx += `Ready: ${ready.slice(0, 5).map(s => s.display).join(', ')}${ready.length > 5 ? ` +${ready.length - 5} more` : ''}\n`;
@@ -1042,4 +1055,4 @@ Guidelines:
 }
 
 
-module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, buildStaticRules, RULE_1_SOCRATIC, RULE_1_TEACHING, detectManipulativeContext };
+module.exports = { generateSystemPrompt, buildIepAccommodationsPrompt, STATIC_RULES, buildStaticRules, RULE_1_SOCRATIC, RULE_1_TEACHING, detectManipulativeContext, buildSkillMasteryContext };
