@@ -5,6 +5,7 @@
 // ============================================
 
 const { parseAIDrawingCommands } = require('./aiDrawingTools');
+const { tokenRegex } = require('../public/js/visualTokenParser');
 
 /**
  * Parse all visual teaching commands from AI response
@@ -341,17 +342,20 @@ function parseVisualTeaching(aiResponseText) {
 
     // --- COUNTER COMMANDS ---
     // [COUNTERS:...] - Handled inline by inlineChatVisuals.js (key=value format).
-    // Strip any COUNTERS tags so they don't appear as raw text.
-    const countersRegex = /\[COUNTERS:[^\]]+\]/g;
-    cleanedText = cleanedText.replace(countersRegex, '');
+    // Strip any COUNTERS tags so they don't appear as raw text. Params can nest
+    // one level of brackets (points=[...], jumps=[(...)]) — tokenRegex captures
+    // the whole token; a bare [^\]]+ stops at the first inner "]" and leaves the
+    // tail (',label="..."]') in the student-visible text.
+    cleanedText = cleanedText.replace(tokenRegex('COUNTERS'), '');
 
     // --- MANIPULATIVE COMMANDS ---
     // [NUMBER_LINE:...] is rendered INLINE by the client (inlineChatVisuals'
     // draggable number line) — the tag must SURVIVE to the browser. This used
-    // to strip it server-side "so it doesn't appear as raw text", which (a)
-    // deleted the visual for every student — the tutor narrated number lines
-    // nobody could see — and (b) leaked mangled tails into chat when the
-    // first-']' regex met nested params (prod: ',label="−3 and 3…"]').
+    // to strip it server-side "so it doesn't appear as raw text" (latterly via
+    // tokenRegex, same as COUNTERS above), which (a) deleted the visual for
+    // every student — the tutor narrated number lines nobody could see — and
+    // (b) leaked mangled tails into chat when the first-']' regex met nested
+    // params (prod: ',label="−3 and 3…"]').
     // Unrendered leftovers are the client safety net's job (stripVisualTags,
     // whitelist + nested-bracket-aware).
 

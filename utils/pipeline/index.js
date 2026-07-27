@@ -43,7 +43,7 @@ const { recordAttempt: recordConsistencyAttempt, initializeScore, categorizeDiff
 
 // Backbone: Tutor Plan + Skill Familiarity
 const { loadOrCreatePlan, resolveCurrentTarget, updatePlanAfterInteraction, advanceInstructionPhase, recentPracticeSkillId } = require('../tutorPlanManager');
-const { detectTestOutIntent } = require('../testOutIntent');
+const { detectTestOutIntent, resolveTestOutSkillId } = require('../testOutIntent');
 const { buildPlanLayer, shouldSuppressSocratic } = require('../promptPlanLayer');
 const { reassessFamiliarity } = require('../phaseEvidenceEvaluator');
 const { detectModeTransition } = require('../modeTransitionDetector');
@@ -113,9 +113,19 @@ async function runPipeline(message, ctx) {
     .filter(msg => msg.role === 'assistant')
     .slice(-6);
 
+  // Streak evidence must survive probing turns: assistant messages with no
+  // problemResult stamp (explanation requests, encouragement) would otherwise
+  // push real wins out of the 6-message window. Hand observe the last 6
+  // STAMPED outcomes from the full conversation instead.
+  const recentProblemResults = ctx.conversation.messages
+    .filter(msg => msg.role === 'assistant' && msg.problemResult)
+    .slice(-6)
+    .map(msg => msg.problemResult);
+
   const observation = observe(message, {
     recentUserMessages,
     recentAssistantMessages,
+    recentProblemResults,
     hasRecentUpload: ctx.hasRecentUpload || false,
   });
 
@@ -315,13 +325,23 @@ async function runPipeline(message, ctx) {
   // via the challenge rung — the one proof path with no 3-context requirement,
   // so ambient practice and a test-out both have a real road to 100%.
   let launchChallenge = null;
+  let testOutIntentDetected = false;
   if (detectTestOutIntent(message)) {
-    const challengeSkillId = ctx.activeSkill?.skillId
-      || tutorPlan?.currentTarget?.skillId
-      || recentPracticeSkillId(tutorPlan);
+    testOutIntentDetected = true;
+    const challengeSkillId = resolveTestOutSkillId({
+      message,
+      activeSkillId: ctx.activeSkill?.skillId || null,
+      tutorPlan,
+      recentPracticeSkillId,
+    });
     if (challengeSkillId) {
       launchChallenge = { skillId: challengeSkillId };
       console.log(`[Pipeline] Test-out intent → launching challenge for ${challengeSkillId}`);
+    } else {
+      // MUST NOT be silent: with no directive the LLM accepts the request and
+      // improvises an ungraded quiz in prose (production, 2026-07-26). The
+      // no-improv directive is pushed below, next to the launch directive.
+      console.warn('[Pipeline] Test-out intent but no skill resolved — challenge NOT launched, no-improv directive pushed');
     }
   }
 
@@ -363,7 +383,14 @@ async function runPipeline(message, ctx) {
       const canon = canonicalSkillId(id);
       return get(canon) ?? (canon !== id ? get(id) : null) ?? null;
     };
-    const activeSkillId = ctx.activeSkill ? ctx.activeSkill.skillId : null;
+    // Fall back to the plan's current target, mirroring the persist-side
+    // attribution (updateLearningEngines). Without the fallback, free chat —
+    // where ctx.activeSkill is always null — WRITES BKT/FSRS evidence under
+    // the plan target every turn but can never read it back, so the evidence
+    // layer runs blind on exactly the sessions that need it.
+    const activeSkillId = ctx.activeSkill?.skillId
+      || tutorPlan?.currentTarget?.skillId
+      || null;
 
     // Get BKT state for active skill (from user's learningEngines data)
     const bktState = readEngine(ctx.user.learningEngines?.bkt, activeSkillId);
@@ -439,6 +466,10 @@ async function runPipeline(message, ctx) {
   if (launchChallenge) {
     decision.directives.push(
       'TEST-OUT: The student wants to prove they already know this skill, and a 5-problem challenge is being launched right in the chat immediately after your message. In ONE or two upbeat sentences, set it up: 5 problems, no hints, one shot — miss it and we just find the gap, nothing lost. Do NOT pose a problem yourself and do NOT start teaching; the challenge card handles the problems.'
+    );
+  } else if (testOutIntentDetected) {
+    decision.directives.push(
+      'TEST-OUT REQUEST, NO SKILL RESOLVED: The student asked to test out, but no target skill could be identified, so the real graded challenge could NOT be launched. Do NOT improvise a quiz in the chat — you cannot grade one, it will not be recorded, and it will not count toward the skill. Instead, in one or two sentences: confirm which skill they want to test out of (name the topic you have been working on if it is obvious), and ask them to say "test out of [that skill]" so the real 5-problem challenge can start.'
     );
   }
 

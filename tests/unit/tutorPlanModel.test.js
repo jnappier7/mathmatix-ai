@@ -68,7 +68,10 @@ describe('TutorPlan.methods.getCurrentNotes', () => {
 describe('TutorPlan.statics.familiarityToMode', () => {
   test.each([
     ['never-seen', 'instruct'],
-    ['introduced', 'instruct'],
+    // 'introduced' means totalAttempts >= 1 — the student has seen this skill.
+    // It must NOT map to instruct: that restarted the gradual-release sequence
+    // at 'vocabulary' for returning students ("why we starting over?").
+    ['introduced', 'guide'],
     ['developing', 'guide'],
     ['proficient', 'strengthen'],
     ['mastered', 'leverage'],

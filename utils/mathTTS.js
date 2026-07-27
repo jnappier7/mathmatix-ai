@@ -171,7 +171,10 @@ function cleanTextForTTS(text) {
   let cleaned = text;
 
   // Remove visual commands: [DIAGRAM:...], [FUNCTION_GRAPH:...], etc.
-  cleaned = cleaned.replace(/\[(DIAGRAM|FUNCTION_GRAPH|SLIDER_GRAPH|POINTS|DERIVATIVE_GRAPH|VELOCITY_GRAPH|RATIONAL_GRAPH|NUMBER_LINE|FRACTION|PIE_CHART|BAR_CHART|UNIT_CIRCLE|AREA_MODEL|SEARCH_IMAGE|WHITEBOARD_WRITE|EQUATION_SOLVE|STEPS|\/STEPS|OLD|NEW|FOCUS|TRIANGLE_PROBLEM)[^\]]*\]/g, '');
+  // Params can nest one level of brackets (points=[-3,3]) — match whole
+  // "[...]" groups too, or the strip stops at the first inner "]" and TTS
+  // reads the leftover tail (',label="..."]') aloud.
+  cleaned = cleaned.replace(/\[(DIAGRAM|FUNCTION_GRAPH|SLIDER_GRAPH|POINTS|DERIVATIVE_GRAPH|VELOCITY_GRAPH|RATIONAL_GRAPH|NUMBER_LINE|FRACTION|PIE_CHART|BAR_CHART|UNIT_CIRCLE|AREA_MODEL|SEARCH_IMAGE|WHITEBOARD_WRITE|EQUATION_SOLVE|STEPS|\/STEPS|OLD|NEW|FOCUS|TRIANGLE_PROBLEM)(?:[^\[\]]|\[[^\]]*\])*\]/g, '');
 
   // Remove markdown headers (### Title → Title)
   cleaned = cleaned.replace(/^#{1,6}\s+/gm, '');
