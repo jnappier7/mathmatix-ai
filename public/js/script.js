@@ -3468,8 +3468,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // "Practice on paper?" suggestion after 2+ consecutive incorrect answers
-            if (data.problemResult === 'incorrect') {
+            // "Practice on paper?" suggestion after 2+ consecutive incorrect answers.
+            // Suppressed inside a course lesson — the module is driving; a print
+            // nudge mid-lesson reads as random (owner report, 2026-07-28). Course
+            // students can still print from the dashboard, and the server builds
+            // those packs from the CURRENT module's skills.
+            const inCourseLesson = !!(window.courseManager && window.courseManager.activeCourseSessionId);
+            if (data.problemResult === 'incorrect' && !inCourseLesson) {
                 window._consecutiveIncorrect = (window._consecutiveIncorrect || 0) + 1;
                 if (window._consecutiveIncorrect >= 2 && !window._paperSuggestionShown) {
                     window._paperSuggestionShown = true;
