@@ -189,9 +189,12 @@ function applyStudentsLeadGuard(decision, observation, context) {
   decision.directives.push(
     "STUDENT'S LEAD — NO TOPIC CHOSEN YET: this is open tutoring and the student has not "
     + 'named a subject. Do NOT launch a lesson, unit, or topic of your choosing, and do NOT '
-    + 'start teaching the plan\'s target. In ONE short message: reference what you worked on '
-    + 'recently, offer two or three directions (continue that, the suggested next skill, or '
-    + 'anything they bring), and ask what they want today.'
+    + 'start teaching the plan\'s target. Instead, in ONE short message IN YOUR OWN VOICE, '
+    + 'talk like a tutor who remembers this student: mention what you two were into last '
+    + 'time the way a person would ("we were right in the middle of volume when we stopped"), '
+    + 'maybe float where that could go next, and ask what they feel like today. NEVER a menu: '
+    + 'no bullet lists, no "Option A/B/C", no canned "Would you like to: 1) ... 2) ..." — '
+    + 'one warm conversational beat that ends with the choice in their hands.'
   );
 }
 
