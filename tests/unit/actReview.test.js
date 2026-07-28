@@ -3,7 +3,7 @@
  * Pure logic, so it's covered without a DB or LLM.
  */
 
-const { buildReviewQueue, reviewPromptSection, reassessPromptSection, advanceReview, currentMiss } = require('../../utils/actReview');
+const { buildReviewQueue, reviewPromptSection, reassessPromptSection, advanceReview, jumpToReview, currentMiss } = require('../../utils/actReview');
 
 const session = {
   items: [
@@ -29,9 +29,31 @@ describe('buildReviewQueue', () => {
     expect(queue.map((m) => m.problemId).sort()).toEqual(['q1', 'q3']);
   });
 
-  test('ranks by category leverage (algebra 8 before statistics 7)', () => {
+  test('orders by question number — the student reviews in test order (owner, 2026-07-28)', () => {
     expect(queue[0].problemId).toBe('q1');
     expect(queue[1].problemId).toBe('q3');
+    expect(queue.map((m) => m.position)).toEqual([1, 3]);
+  });
+
+  test('question numbers survive onto the queue for the on-screen rail', () => {
+    expect(queue.every((m) => Number.isFinite(m.position))).toBe(true);
+  });
+
+  test('position-less entries (legacy queues) sink to the end by leverage, never dropped', () => {
+    const legacy = {
+      items: [
+        { problemId: 'a', category: 'number-quantity', content: 'x', options: [] },     // weight 5
+        { problemId: 'b', category: 'algebra', content: 'y', options: [] },             // weight 8
+        { position: 40, problemId: 'c', category: 'geometry', content: 'z', options: [] },
+      ],
+      responses: [
+        { problemId: 'a', answer: 'A', correct: false },
+        { problemId: 'b', answer: 'A', correct: false },
+        { position: 40, problemId: 'c', answer: 'A', correct: false },
+      ],
+    };
+    const q = buildReviewQueue(legacy, {});
+    expect(q.map((m) => m.problemId)).toEqual(['c', 'b', 'a']); // numbered first, then leverage
   });
 
   test('carries what the tutor needs: their answer, correct answer, explanation', () => {
@@ -77,12 +99,43 @@ describe('reassessPromptSection (loop close)', () => {
 });
 
 describe('advanceReview / currentMiss', () => {
+  // The advance contract mirrors routes/chat.js: the caller marks the current
+  // miss 'reviewed' BEFORE advancing; advance finds the next pending item.
   test('advances until done', () => {
     const bc = { queue: buildReviewQueue(session, problemsById), index: 0 };
     expect(currentMiss(bc).problemId).toBe('q1');
+    bc.queue[0].status = 'reviewed';
     let a = advanceReview(bc); expect(a).toMatchObject({ index: 1, done: false });
     bc.index = a.index;
     expect(currentMiss(bc).problemId).toBe('q3');
+    bc.queue[1].status = 'reviewed';
     a = advanceReview(bc); expect(a).toMatchObject({ index: 2, done: true });
+  });
+
+  test('after a jump, advancing wraps back to the pending items that were skipped over', () => {
+    const bc = { queue: buildReviewQueue(session, problemsById), index: 0 };
+    // Student clicks ahead to the last miss and finishes it…
+    const j = jumpToReview(bc, 1);
+    expect(j.ok).toBe(true);
+    bc.index = j.index;
+    bc.queue[1].status = 'reviewed';
+    // …advance must come back for q1, not declare the queue done.
+    const a = advanceReview(bc);
+    expect(a).toMatchObject({ index: 0, done: false });
+    bc.index = a.index;
+    bc.queue[0].status = 'reviewed';
+    expect(advanceReview(bc).done).toBe(true);
+  });
+
+  test('jump rejects out-of-range and non-integer targets', () => {
+    const bc = { queue: buildReviewQueue(session, problemsById), index: 0 };
+    for (const bad of [-1, 2, 1.5, 'x', null, undefined]) {
+      expect(jumpToReview(bc, bad).ok).toBe(false);
+    }
+  });
+
+  test('the coaching prompt names the question number for the tutor', () => {
+    const queue = buildReviewQueue(session, problemsById);
+    expect(reviewPromptSection(queue[1], 1, queue.length)).toMatch(/#3 from their test/);
   });
 });

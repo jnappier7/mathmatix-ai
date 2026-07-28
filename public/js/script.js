@@ -3752,6 +3752,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.lessonTracker.update(data.progressUpdate);
             }
 
+            // ACT bootcamp missed-number rail: repaint on the turn the review
+            // advances (<REVIEW_NEXT>) instead of waiting for a page reload.
+            if (data.actBootcamp && window.lessonTracker && window.lessonTracker.updateBootcamp) {
+                window.lessonTracker.updateBootcamp(data.actBootcamp);
+            }
+
             // Smart suggestion chips: prefer server-provided, fall back to client-side detection
             if (data.suggestions && data.suggestions.length > 0 && window.showSuggestions) {
                 window._serverSuggestionsProvided = true;

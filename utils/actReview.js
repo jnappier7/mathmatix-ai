@@ -43,6 +43,9 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
       const category = it.category || r.category || 'unknown';
       const options = it.options || p.options || [];
       return {
+        // The question number on THEIR test ("you missed #12") — drives the
+        // on-screen number rail and the default review order.
+        position: Number.isFinite(r.position) ? r.position : (Number.isFinite(it.position) ? it.position : null),
         problemId: r.problemId,
         skillId: it.skillId || r.skillId || null,
         category,
@@ -60,10 +63,20 @@ function buildReviewQueue(session, problemsById = {}, weights = DEFAULT_CATEGORY
     })
     .filter((m) => m.problemId);
 
-  // Highest-leverage misses first; stable within a leverage tier.
+  // Test order — "we go in order unless a student clicks on a number"
+  // (owner, 2026-07-28). The missed numbers render as a rail on screen, so the
+  // queue must march through them the way the student saw them: #2, #4, #5…
+  // Entries without a position (queues built before positions were stamped)
+  // sink to the end in their leverage order, so old data still reviews fully.
   return queue
     .map((m, i) => ({ m, i }))
-    .sort((a, b) => (b.m.leverage - a.m.leverage) || (a.i - b.i))
+    .sort((a, b) => {
+      const ap = a.m.position, bp = b.m.position;
+      if (ap != null && bp != null) return ap - bp;
+      if (ap != null) return -1;
+      if (bp != null) return 1;
+      return (b.m.leverage - a.m.leverage) || (a.i - b.i);
+    })
     .map((x) => x.m);
 }
 
@@ -86,7 +99,7 @@ function reviewPromptSection(miss, index, total) {
   return `
 
 ====================================================================
-REVIEWING A MISSED QUESTION — ${index + 1} of ${total}  ·  ${cat}
+REVIEWING A MISSED QUESTION — ${miss.position != null ? `#${miss.position} from their test  ·  ` : ''}${index + 1} of ${total}  ·  ${cat}
 ====================================================================
 The student is going over a question they got wrong on their practice ACT. Work
 THIS one question with them, then advance. Do not move to a different topic.
@@ -131,12 +144,38 @@ their last practice ACT. Close the loop: it's time to measure whether it stuck.
 }
 
 /**
- * Advance the review pointer. Returns the new index and whether the queue is done.
+ * Advance the review pointer to the next PENDING miss. Jump-aware: a student
+ * who clicked ahead to #35 and finished it still owes #2 and #4, so advancing
+ * scans forward from the current spot and wraps once — done only when nothing
+ * in the queue is pending anymore. (Pre-jump behavior is unchanged: with no
+ * jumps, the next pending item IS index+1.)
  */
 function advanceReview(bootcamp) {
-  const total = (bootcamp && Array.isArray(bootcamp.queue)) ? bootcamp.queue.length : 0;
-  const next = ((bootcamp && bootcamp.index) || 0) + 1;
-  return { index: Math.min(next, total), done: next >= total, total };
+  const queue = (bootcamp && Array.isArray(bootcamp.queue)) ? bootcamp.queue : [];
+  const total = queue.length;
+  const from = ((bootcamp && bootcamp.index) || 0) + 1;
+  for (let step = 0; step < total; step++) {
+    const i = (from + step) % total;
+    if (queue[i] && queue[i].status !== 'reviewed') {
+      return { index: i, done: false, total };
+    }
+  }
+  return { index: total, done: true, total };
+}
+
+/**
+ * Point the review at a specific queue slot (the student clicked a number on
+ * the rail). Pure bounds-check — the caller mutates and saves. Clicking an
+ * already-reviewed number is allowed (revisiting a miss is legitimate); its
+ * status flips back to pending so the queue doesn't instantly skip past it.
+ */
+function jumpToReview(bootcamp, target) {
+  const queue = (bootcamp && Array.isArray(bootcamp.queue)) ? bootcamp.queue : [];
+  // Number(null) and Number('') are 0 — reject anything that isn't an actual
+  // integer (or its string form) before the bounds check.
+  const i = (typeof target === 'number' || (typeof target === 'string' && target.trim() !== '')) ? Number(target) : NaN;
+  if (!Number.isInteger(i) || i < 0 || i >= queue.length) return { ok: false, index: (bootcamp && bootcamp.index) || 0 };
+  return { ok: true, index: i };
 }
 
 function currentMiss(bootcamp) {
@@ -149,6 +188,7 @@ module.exports = {
   reviewPromptSection,
   reassessPromptSection,
   advanceReview,
+  jumpToReview,
   currentMiss,
   DEFAULT_CATEGORY_WEIGHTS,
 };

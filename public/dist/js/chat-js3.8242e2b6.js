@@ -4399,6 +4399,7 @@ class LessonTracker {
      */
     async rehydrate(sessionId) {
         if (!sessionId) return;
+        this._sessionId = sessionId; // needed by the missed-number rail's jump call
         try {
             const res = await csrfFetch(`/api/course-sessions/${sessionId}/lesson-progress`, {
                 method: 'GET',
@@ -4549,8 +4550,9 @@ class LessonTracker {
             <div style="background:rgba(255,255,255,.14);border-radius:12px;padding:12px 14px">
               <div style="display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:14px;font-weight:600;margin-bottom:8px"><span>Going over what you missed</span><span style="font-weight:500;font-size:12.5px;opacity:.85">${reviewed} of ${total} done</span></div>
               <div style="height:7px;background:rgba(255,255,255,.22);border-radius:5px;overflow:hidden;margin-bottom:10px"><div style="width:${pct}%;height:100%;background:#fff;border-radius:5px"></div></div>
+              ${this._numberRailHtml(bc)}
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                <span style="color:rgba(255,255,255,.9);font-size:12.5px">Up next: <strong>${cur ? label(cur.category) : '—'}</strong></span>
+                <span style="color:rgba(255,255,255,.9);font-size:12.5px">Up next: <strong>${cur && cur.position != null ? `#${cur.position} · ` : ''}${cur ? label(cur.category) : '—'}</strong></span>
                 <button id="lt-bc-continue" style="background:#fff;color:#5b3ea8;border:0;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer">Continue in chat</button>
               </div>
             </div>` : `
@@ -4578,7 +4580,70 @@ class LessonTracker {
           </div>`;
     }
 
+    /**
+     * The missed-number rail: every question they missed, as a clickable
+     * number in test order ("maybe they missed 2, 4, 5, 12, 19, 23, 35…").
+     * Review runs in order unless the student clicks a number to jump.
+     * Renders nothing for queues that predate position-stamping — wrong
+     * numbers would be worse than none.
+     */
+    _numberRailHtml(bc) {
+        const queue = Array.isArray(bc.queue) ? bc.queue : [];
+        if (!queue.length || !queue.some((q) => q && q.position != null)) return '';
+        const idx = bc.index || 0;
+        const chip = (q, i) => {
+            if (q.position == null) return '';
+            const isCur = i === idx;
+            const done = q.status === 'reviewed';
+            const style = isCur
+                ? 'background:#fff;color:#5b3ea8;font-weight:700'
+                : done
+                    ? 'background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);text-decoration:line-through'
+                    : 'background:rgba(255,255,255,.2);color:#fff;cursor:pointer';
+            const title = done ? 'Reviewed — click to revisit' : (isCur ? 'Up next' : 'Click to work this one next');
+            return `<button data-bc-jump="${i}" title="${title}" style="border:0;border-radius:8px;min-width:30px;padding:4px 7px;font-size:12px;cursor:pointer;${style}">${q.position}</button>`;
+        };
+        return `<div style="margin-bottom:10px">
+            <div style="color:rgba(255,255,255,.8);font-size:11.5px;margin-bottom:5px">Questions you missed — tap one to jump, or just keep going in order:</div>
+            <div id="lt-bc-numbers" style="display:flex;flex-wrap:wrap;gap:5px">${queue.map(chip).join('')}</div>
+          </div>`;
+    }
+
+    /** Repaint the bootcamp panel from a chat-turn payload (data.actBootcamp). */
+    updateBootcamp(bc) {
+        if (!bc || !this._lastUpdate) return;
+        this._lastUpdate.bootcamp = bc;
+        this._renderBootcamp(this._lastUpdate);
+    }
+
+    async _jumpTo(i) {
+        if (!this._sessionId) return;
+        try {
+            const fetcher = window.csrfFetch || window.fetch;
+            const res = await fetcher(`/api/course-sessions/${this._sessionId}/bootcamp/jump`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ index: i })
+            });
+            const data = await res.json();
+            if (!data.success) return;
+            this.updateBootcamp(data.bootcamp);
+            const q = (data.bootcamp.queue || [])[i];
+            // Pull the question into the conversation so the tutor presents it
+            // this turn instead of waiting for the student to say something.
+            if (q && q.position != null && typeof window.mmSendChatMessage === 'function') {
+                window.mmSendChatMessage(`Let's go over question ${q.position}.`);
+            }
+        } catch (e) { console.warn('[LessonTracker] Jump failed:', e); }
+    }
+
     _wireBootcamp() {
+        const rail = document.getElementById('lt-bc-numbers');
+        if (rail) rail.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-bc-jump]');
+            if (btn) this._jumpTo(Number(btn.getAttribute('data-bc-jump')));
+        });
         const cont = document.getElementById('lt-bc-continue');
         if (cont) cont.addEventListener('click', () => {
             const input = document.getElementById('user-input') || document.getElementById('chat-input');
