@@ -5706,19 +5706,24 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 100);
-        } else {
-            // No messages yet — show a static welcome placeholder.
-            // Course greetings are handled by the caller (activateCourse / enrollInCourse)
-            // so we do NOT send one here to avoid duplicate greetings.
-            if (conversation.conversationType === 'topic') {
-                appendMessage(
-                    `Welcome to your ${conversation.topic || 'topic'} session! 📚\n\n` +
-                    `I'm here to help you learn and practice. What would you like to work on?`,
-                    'ai'
-                );
-            }
-            // For course and general conversations, the caller handles the greeting
         }
+        // No messages yet: render NOTHING. The caller owns the greeting.
+        //
+        // This block used to append a static "Welcome to your <topic> session!"
+        // bubble for an empty 'topic' conversation — directly contradicting its
+        // own comment about not duplicating the caller's greeting. And
+        // `conversationType: 'topic'` has exactly one writer in the whole
+        // codebase (utils/courseConversation.js), so "topic" means "course",
+        // always: the placeholder fired only in the one case where
+        // activateCourse / enrollInCourse were about to call
+        // sendCourseGreeting() anyway. Every entry into an empty course sitting
+        // painted a fake greeting and then the real one underneath it — one of
+        // the duplicate assistant bubbles in the owner's report. Empty course
+        // sittings became MORE common once the login-scoped roll landed, so
+        // this had to go rather than be worked around.
+        //
+        // The gradient session header above still renders — that is a course
+        // banner, not a greeting.
 
         // Rebuild the workspace board to match this conversation: finished
         // problems return to the rail, the in-progress one lands back in focus.

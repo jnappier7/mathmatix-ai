@@ -3931,6 +3931,35 @@ class CourseManager {
         this.sendCourseGreeting();
     }
 
+    // What to do with the transcript already on screen before rendering a
+    // course greeting. Pure, static and exported so the policy can be tested
+    // without a DOM (see tests/unit/courseGreetingTarget.test.js).
+    //
+    //   'clear'  the server started a NEW sitting (rule 3). The conversation it
+    //            wrote to is empty, so blank the view and render the greeting.
+    //   'switch' same sitting, but the view is showing some OTHER conversation
+    //            (e.g. the general chat, or a course entered without going
+    //            through activate). Re-fetch it so its messages and board come
+    //            back — never blank a continuing thread.
+    //   'none'   the view already matches. Just append the greeting.
+    //
+    // `sessionRolled` is checked FIRST and on its own. A rolled sitting is
+    // authoritative even when the ids happen to compare equal, and — more
+    // importantly — a NON-rolled mismatch must never take the 'clear' path.
+    static reconcileGreetingTarget(data, currentConversationId) {
+        const id = data && data.conversationId;
+        if (!id) return { action: 'none', conversationId: null };
+        if (data.sessionRolled) return { action: 'clear', conversationId: id };
+        if (String(id) !== String(currentConversationId)) {
+            // Only worth a round-trip if the sidebar can actually perform it;
+            // otherwise leave the view alone rather than blanking it.
+            const canSwitch = typeof window !== 'undefined'
+                && window.sidebar && typeof window.sidebar.switchSession === 'function';
+            return { action: canSwitch ? 'switch' : 'none', conversationId: id };
+        }
+        return { action: 'none', conversationId: id };
+    }
+
     // --------------------------------------------------
     // Silent Course Greeting
     // Calls /api/course-chat with isGreeting flag so the AI
@@ -3978,19 +4007,37 @@ class CourseManager {
                 return;
             }
 
-            // The server may have started a fresh course sitting (a new login,
-            // or an idle gap). The transcript on screen was painted by the
-            // switchSession that ran before this request, so it can still be
-            // showing the sitting we just left — appending the new greeting
-            // under it is exactly the stacked-transcript view we're fixing.
-            // Clear to the conversation the server actually wrote to.
-            if (data.conversationId
-                && (data.sessionRolled || String(data.conversationId) !== String(window.currentConversationId))
-                && typeof window.updateChatForSession === 'function') {
-                window.updateChatForSession({ _id: data.conversationId, conversationType: 'general' }, []);
+            // Reconcile which conversation the transcript is showing BEFORE
+            // rendering the greeting. The transcript was painted by a
+            // switchSession that ran before this request, so it can be showing
+            // a sitting the server has since moved on from — appending the new
+            // greeting under it is the stacked-transcript view we're fixing.
+            const target = CourseManager.reconcileGreetingTarget(data, window.currentConversationId);
+
+            if (target.action === 'clear' && typeof window.updateChatForSession === 'function') {
+                // A fresh sitting. It is empty by construction, so blank the
+                // view and let the greeting below be its first bubble. The
+                // course shape (topic + emoji) is passed honestly so the course
+                // banner still renders — updateChatForSession no longer
+                // fabricates a placeholder greeting for an empty 'topic'
+                // conversation, which is what made that unsafe before.
+                window.updateChatForSession({
+                    _id: data.conversationId,
+                    conversationType: 'topic',
+                    topic: data.courseContext?.courseName || null,
+                    topicEmoji: '📚',
+                }, []);
+            } else if (target.action === 'switch') {
+                // Same sitting, but the view belongs to a different
+                // conversation. Do a REAL switch so the existing messages and
+                // board come back. Blanking here would hide a live thread, and
+                // hydrate the board to empty — the opposite failure from the
+                // one we set out to fix. The switch replays the greeting the
+                // server already persisted, so it is not appended again below.
+                await window.sidebar.switchSession(data.conversationId);
             }
 
-            if (data.text && window.appendMessage) {
+            if (target.action !== 'switch' && data.text && window.appendMessage) {
                 window.appendMessage(data.text, 'ai');
             }
             // Feed the lesson tracker from greeting response
