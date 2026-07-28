@@ -538,6 +538,47 @@ router.get('/:id/lesson-progress', async (req, res) => {
 });
 
 /* ============================================================
+   POST /api/course-sessions/:id/bootcamp/jump
+   The student clicked a question number on the missed-problem
+   rail. Points bootcamp.index at that queue slot; the next chat
+   turn's review section then presents THAT question. Clicking a
+   reviewed number re-opens it (status back to pending) so the
+   advance scan doesn't immediately skip past it.
+   ============================================================ */
+router.post('/:id/bootcamp/jump', async (req, res) => {
+  try {
+    const session = await CourseSession.findOne({
+      _id: req.params.id,
+      userId: req.user._id
+    });
+    if (!session) {
+      return res.status(404).json({ success: false, message: 'Course session not found' });
+    }
+    const bc = session.bootcamp;
+    if (!bc || !Array.isArray(bc.queue) || !bc.queue.length) {
+      return res.status(400).json({ success: false, message: 'No review queue for this session' });
+    }
+    const { jumpToReview } = require('../utils/actReview');
+    const { ok, index } = jumpToReview(bc, req.body && req.body.index);
+    if (!ok) {
+      return res.status(400).json({ success: false, message: 'Index out of range' });
+    }
+    bc.index = index;
+    if (bc.queue[index].status === 'reviewed') bc.queue[index].status = 'pending';
+    // Jumping re-enters review even if the student had reached the re-test
+    // offer — revisiting a miss is always allowed before the fresh test.
+    if (bc.phase === 'reassess') bc.phase = 'review';
+    session.bootcamp = bc;
+    session.markModified('bootcamp');
+    await session.save();
+    res.json({ success: true, bootcamp: bc });
+  } catch (err) {
+    console.error('[CourseSession] Error jumping review queue:', err);
+    res.status(500).json({ success: false, message: 'Failed to jump review queue' });
+  }
+});
+
+/* ============================================================
    POST /api/course-sessions/:id/complete-module
    Mark a module as completed, unlock next, award XP
    ============================================================ */

@@ -1647,6 +1647,16 @@ async function runStudentTurn(req, res) {
         // Course scaffold progression (complex, stays in chat.js for now)
         let courseProgressUpdate = pipelineResult.courseProgressUpdate;
 
+        // Compact rail payload — lets the missed-number rail repaint on the very
+        // turn <REVIEW_NEXT> fires instead of waiting for a page-load rehydrate.
+        let actBootcampState = null;
+        const compactBootcamp = (bc) => (bc && bc.phase ? {
+            phase: bc.phase,
+            index: bc.index || 0,
+            round: bc.round || 1,
+            queue: (bc.queue || []).map((q) => ({ position: q.position != null ? q.position : null, status: q.status || 'pending', category: q.category || null })),
+        } : null);
+
         // ── ACT bootcamp: advance the missed-items review ──
         // The tutor emits <REVIEW_NEXT> when the student has the current miss.
         // Advance the queue pointer here, on /api/chat (the path that teaches) —
@@ -1674,11 +1684,15 @@ async function runStudentTurn(req, res) {
                     csDoc.bootcamp = bc;
                     csDoc.markModified('bootcamp');
                     await csDoc.save();
+                    actBootcampState = compactBootcamp(bc);
                     logger.info('ACT review advanced', { userId, index: bc.index, done, total });
                 }
             } catch (advErr) {
                 logger.warn('ACT review advance error (non-fatal)', { error: advErr.message });
             }
+        }
+        if (!actBootcampState) {
+            actBootcampState = compactBootcamp(conversationContextForPrompt?.courseSession?.bootcamp);
         }
 
         if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
@@ -1832,6 +1846,7 @@ async function runStudentTurn(req, res) {
             aiTimeUsed: pipelineResult.aiTimeUsed,
             freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
             courseProgress: courseProgressUpdate || null,
+            actBootcamp: actBootcampState,
             suggestions: pipelineResult.suggestions || null,
             gamification: pipelineResult.gamification || null,
             nextActions: pipelineResult.nextActions || [],
