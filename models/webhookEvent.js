@@ -6,9 +6,16 @@
 
 const mongoose = require('mongoose');
 
+// `status` makes the marker two-phase. It used to be written BEFORE the event was
+// applied, so a handler that threw left a marker behind claiming the event was
+// handled: the 500 told Stripe to retry, and the retry hit the duplicate-key
+// branch and skipped. A customer could pay and never be provisioned, with Stripe
+// reporting the webhook as delivered. 'processing' is written on receipt and
+// promoted to 'done' only after the handler succeeds.
 const webhookEventSchema = new mongoose.Schema({
   stripeEventId: { type: String, required: true, unique: true, index: true },
   eventType: { type: String },
+  status: { type: String, enum: ['processing', 'done'], default: 'processing', index: true },
   processedAt: { type: Date, default: Date.now }
 });
 
