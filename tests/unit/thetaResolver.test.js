@@ -70,6 +70,9 @@ describe('the seam stays closed at its call sites', () => {
     expect(src).not.toContain("learningProfile?.currentTheta || 0");
     expect(src).toContain('previousTheta: resolveTheta(student)');
     expect(src).toContain('thetaWritePatch(results.theta');
+    // Pin the IMPORT, not just the call — the original theta PR shipped these
+    // calls with no require, so every growth-check route 500'd at request time.
+    expect(src).toContain("require('../utils/theta')");
   });
   test('screener completion syncs all paths; practicePack uses the shared resolver', () => {
     const screener = fs.readFileSync(require.resolve('../../routes/screener.js'), 'utf8');
