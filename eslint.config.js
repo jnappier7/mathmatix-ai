@@ -10,6 +10,7 @@ module.exports = [
       'coverage/',
       'public/vendor/',
       'public/pdfjs-viewer/',
+      'public/dist/',   // generated bundles — lint the sources, not the build
       '**/*.min.js',
     ],
   },
@@ -26,6 +27,13 @@ module.exports = [
       },
     },
     rules: {
+      // MERGE the recommended rules — a bare `rules: {...}` after spreading
+      // js.configs.recommended REPLACES its rules object entirely, which is
+      // how this config silently ran with no-undef (and every other
+      // recommended rule) OFF for all server code. That gap let PR #1343
+      // ship a route calling resolveTheta() with no require — lint green,
+      // every growth-check endpoint 500ing in production (hotfixed in #1347).
+      ...js.configs.recommended.rules,
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-console': 'off',
       'no-empty': ['error', { allowEmptyCatch: true }],
@@ -35,6 +43,14 @@ module.exports = [
       'no-prototype-builtins': 'warn',
       'no-misleading-character-class': 'warn',
       'no-control-regex': 'warn',
+      // New-in-v10 recommended rules, downgraded to warn while the existing
+      // ~40 hits get triaged — they flag smells, not crashes. no-undef and
+      // the rest of recommended stay at error: those find real bugs (they
+      // caught two live ReferenceErrors the day this merge was fixed).
+      'no-useless-assignment': 'warn',
+      'preserve-caught-error': 'warn',
+      'no-constant-binary-expression': 'warn',
+      'no-irregular-whitespace': 'warn',
     },
   },
 

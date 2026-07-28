@@ -15,6 +15,7 @@ const {
   PHASES,
   transitionPhase,
   getPhasePrompt,
+  initializeLessonPhase,
 } = require('../lessonPhaseManager');
 const {
   evaluatePhaseAdvancement,
