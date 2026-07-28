@@ -32,6 +32,7 @@ const { calculateProgress } = require('../utils/catConvergence');
 const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { resolveTheta } = require('../utils/theta');
+const { classifyGrowth, growthMessage } = require('../utils/growthStatus');
 const { assessedLevel } = require('../utils/gradeLevel');
 const { setSkillMasteryEntry } = require('../utils/masteryGuard');
 
@@ -720,6 +721,13 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       };
     }
 
+    // A growth check is the same CAT run against a tighter prior, but it must
+    // NOT be bookkept as a placement: it re-estimates ability, it does not
+    // re-place the student. Capture the pre-run theta BEFORE any of the writes
+    // below overwrite it — that's what thetaChange is measured against.
+    const isGrowthCheck = session.sessionType === 'growth-check';
+    const previousTheta = resolveTheta(user);
+
     // Generate final report
     const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
@@ -776,13 +784,20 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Mark assessment as completed (top-level fields persisted by Mongoose)
     const now = new Date();
     user.assessmentCompleted = true;
-    user.assessmentDate = now;
-    user.initialPlacement = gradeLevelResult.gradeLevel;
+
+    // initialPlacement / assessmentDate describe the STARTING POINT run and are
+    // what "since your placement" comparisons are measured from. A growth check
+    // must leave them alone, or every later growth report compares the student
+    // against themselves and always reads "no change".
+    if (!isGrowthCheck) {
+      user.assessmentDate = now;
+      user.initialPlacement = gradeLevelResult.gradeLevel;
+      user.learningProfile.assessmentDate = now;
+      user.learningProfile.initialPlacement = gradeLevelResult.gradeLevel;
+    }
 
     // Mirror into learningProfile for routes that read from nested path
     user.learningProfile.assessmentCompleted = true;
-    user.learningProfile.assessmentDate = now;
-    user.learningProfile.initialPlacement = gradeLevelResult.gradeLevel;
 
     // Update mathCourse to match assessed level so the tutor loads the right pathway
     // (Without this, mathCourse stays at whatever was set at signup/enrollment,
@@ -806,7 +821,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Store assessment in history for tracking growth over time
     if (!user.assessmentHistory) user.assessmentHistory = [];
     user.assessmentHistory.push({
-      type: 'starting-point',
+      type: isGrowthCheck ? 'growth-check' : 'starting-point',
       date: now,
       theta: report.theta,
       standardError: report.standardError,
@@ -818,15 +833,56 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       sessionId: session.sessionId
     });
 
-    // Set assessment expiration (1 year from now)
-    const oneYearLater = new Date(now);
-    oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
-    user.assessmentExpiresAt = oneYearLater;
+    // Set assessment expiration (1 year from now). A growth check does not
+    // renew the annual placement — otherwise a student who keeps taking growth
+    // checks never gets re-placed.
+    if (!isGrowthCheck) {
+      const oneYearLater = new Date(now);
+      oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+      user.assessmentExpiresAt = oneYearLater;
+    }
 
     // Set next growth check due date (3 months from now)
     const threeMonthsLater = new Date(now);
     threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
     user.nextGrowthCheckDue = threeMonthsLater;
+
+    // Growth-check bookkeeping. This used to live in routes/growthCheck.js,
+    // which ran its own duplicate CAT off an in-memory session Map and graded
+    // every answer wrong (it read problem.correctAnswer, a field the Problem
+    // schema has never had). That stack is gone; growth checks are now the
+    // screener with sessionType 'growth-check', and this is the single writer
+    // of learningProfile.growthCheckHistory / lastGrowthCheck — read by the
+    // parent, teacher and admin growth panels and by scripts/weeklyDigest.js.
+    if (isGrowthCheck) {
+      const thetaChange = Math.round((report.theta - previousTheta) * 100) / 100;
+      const growthStatus = classifyGrowth(thetaChange);
+
+      user.learningProfile.lastGrowthCheck = now;
+      if (!user.learningProfile.growthCheckHistory) {
+        user.learningProfile.growthCheckHistory = [];
+      }
+      user.learningProfile.growthCheckHistory.push({
+        sessionId: session.sessionId,
+        date: now,
+        previousTheta,
+        newTheta: report.theta,
+        thetaChange,
+        growthStatus,
+        questionsAnswered: report.questionsAnswered,
+        accuracy: report.accuracy,
+      });
+      // Match the old $slice: -20 cap so the user doc can't grow without bound.
+      if (user.learningProfile.growthCheckHistory.length > 20) {
+        user.learningProfile.growthCheckHistory =
+          user.learningProfile.growthCheckHistory.slice(-20);
+      }
+
+      report.previousTheta = previousTheta;
+      report.thetaChange = thetaChange;
+      report.growthStatus = growthStatus;
+      report.growthMessage = growthMessage(growthStatus);
+    }
 
     await user.save();
 

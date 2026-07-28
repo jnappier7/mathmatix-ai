@@ -65,14 +65,22 @@ describe('thetaWritePatch — every writer syncs every read path', () => {
 
 describe('the seam stays closed at its call sites', () => {
   const fs = require('fs');
-  test('growthCheck anchors on the resolver, never a raw field || 0', () => {
-    const src = fs.readFileSync(require.resolve('../../routes/growthCheck.js'), 'utf8');
-    expect(src).not.toContain("learningProfile?.currentTheta || 0");
-    expect(src).toContain('previousTheta: resolveTheta(student)');
-    expect(src).toContain('thetaWritePatch(results.theta');
+  // Was pinned against routes/growthCheck.js, now retired. The growth check is
+  // the screener's completion path, and the seam it has to keep closed is the
+  // same one: the theta a growth report compares against must come from the
+  // resolver, not a raw field that defaults to 0 (which read as "5th grade").
+  test('the growth check anchors previousTheta on the resolver, never a raw field || 0', () => {
+    const src = fs.readFileSync(require.resolve('../../routes/screener.js'), 'utf8');
+    expect(src).not.toContain('learningProfile?.currentTheta || 0');
+    expect(src).toContain('const previousTheta = resolveTheta(user);');
+    expect(src).toContain('previousTheta,');
     // Pin the IMPORT, not just the call — the original theta PR shipped these
     // calls with no require, so every growth-check route 500'd at request time.
     expect(src).toContain("require('../utils/theta')");
+    // previousTheta must be captured BEFORE the completion writes overwrite
+    // theta, or thetaChange is always exactly 0.
+    expect(src.indexOf('const previousTheta = resolveTheta(user);'))
+      .toBeLessThan(src.indexOf('user.currentTheta = report.theta;'));
   });
   test('screener completion syncs all paths; practicePack uses the shared resolver', () => {
     const screener = fs.readFileSync(require.resolve('../../routes/screener.js'), 'utf8');

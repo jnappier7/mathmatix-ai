@@ -112,10 +112,20 @@ describe('the seam stays closed at its call sites', () => {
     expect(src).toContain('gradeLevelToBand(resolveGradeLevel(user))');
   });
 
-  test('growthCheck imports what it calls (PR #1343 shipped resolveTheta/thetaWritePatch with no require) and syncs the level string', () => {
-    const src = read('../../routes/growthCheck.js');
+  // routes/growthCheck.js used to own this and was pinned here. It is retired:
+  // growth checks are the screener with sessionType 'growth-check', so the
+  // level-sync guarantee now has to hold on the screener's completion path —
+  // which reaches the same two homes by direct assignment.
+  test('a growth check re-syncs the assessed level without rewriting the placement', () => {
+    const src = read('../../routes/screener.js');
     expect(src).toContain("require('../utils/theta')");
-    expect(src).toContain('assessedLevelWritePatch(thetaToGradeLevel(results.theta).gradeLevel)');
+    expect(src).toContain("session.sessionType === 'growth-check'");
+    // mathCourse + abilityEstimate.gradeLevel (what assessedLevelWritePatch
+    // wrote) are set unconditionally, so a growth check still moves them...
+    expect(src).toContain('user.mathCourse = gradeLevelResult.gradeLevel;');
+    expect(src).toContain('gradeLevel: gradeLevelResult.gradeLevel');
+    // ...while initialPlacement stays behind the !isGrowthCheck guard.
+    expect(src).toMatch(/if \(!isGrowthCheck\) \{[\s\S]*?user\.initialPlacement = gradeLevelResult\.gradeLevel;/);
   });
 
   test('screener completion still writes every home of every dual field', () => {
