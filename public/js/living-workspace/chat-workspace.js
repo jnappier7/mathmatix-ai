@@ -77,7 +77,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260726b';
+  var ASSET_V = '?v=20260727a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -220,7 +220,11 @@
     if (window.LWS.NoteElement) r.geometry = window.LWS.NoteElement.makeRenderer();
     // Interactive concept models (§6.8) — bridges to the page's
     // ConceptModelRenderer engine (JSXGraph/tokens, linked representations).
-    if (window.LWS.ModelElement) r.model = window.LWS.ModelElement.makeRenderer();
+    // §6.9: settled manipulations become exploration StudentMoves — verified
+    // server-side (meaningful vs noise), no tutor turn, no answer path.
+    if (window.LWS.ModelElement) {
+      r.model = window.LWS.ModelElement.makeRenderer({ onInteraction: sendModelExploration });
+    }
     return r;
   }
 
@@ -318,6 +322,35 @@
     if (!src) src = { uploadId: ref.uploadId, fileType: 'image', mimeType: null };
     try { dock.openSource(src, 'My worksheet', ref.region || null); }
     catch (e) { console.error('[LWS_CHAT] open linked source failed', e); }
+  }
+
+  // A settled concept-model manipulation (§6.9): one exploration StudentMove
+  // per changed param. withTutor:false — exploration never runs a tutor turn;
+  // the server judges meaningful-vs-noise and records transfer evidence.
+  function sendModelExploration(payload) {
+    if (!window.LWS || !window.LWS.StudentMoveClient || !payload || !Array.isArray(payload.changes)) return;
+    payload.changes.forEach(function (ch) {
+      try {
+        window.LWS.StudentMoveClient.sendMove({
+          conversationId: String(ctx.conversationId || ''),
+          workspaceId: String(ctx.workspaceId || 'chat'),
+          elementId: payload.elementId || 'model',
+          elementType: 'model',
+          source: 'gesture',
+          mode: 'exploration',
+          operation: {
+            type: 'set_param',
+            parameters: {
+              modelName: payload.model, param: ch.param,
+              from: ch.from, to: ch.to,
+              min: ch.min, max: ch.max,
+            },
+          },
+          previousState: { params: (function () { var o = {}; o[ch.param] = ch.from; return o; })() },
+          proposedState: { params: (function () { var o = {}; o[ch.param] = ch.to; return o; })() },
+        }, { withTutor: false, fetch: window.csrfFetch || undefined });
+      } catch (e) { console.error('[LWS_CHAT] model move send failed', e); }
+    });
   }
 
   // A confirmed region selection: the crop goes to the tutor as a normal chat

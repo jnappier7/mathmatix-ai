@@ -42,6 +42,11 @@ const MATH_CLASSIFICATIONS = Object.freeze([
   'create_zero_pair',      // valid
   'no_op',                 // nothing mathematically happened (e.g. reposition)
   'invalid_interaction',   // physics-invalid (dropped into empty space) → snap back
+  // Concept-model exploration (spec §6.9): the server's judgment of whether a
+  // manipulation MEANT something mathematically. Neither is a correctness
+  // claim — exploration never carries one.
+  'meaningful_exploration', // settled, directional param change — evidence-worthy
+  'noise',                  // jitter / no-change scrubbing — recorded, never credited
 ]);
 
 module.exports = {

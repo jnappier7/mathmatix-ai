@@ -28,7 +28,8 @@
     try { return JSON.parse(raw); } catch (_) { return null; }
   }
 
-  function makeRenderer() {
+  function makeRenderer(hostOpts) {
+    hostOpts = hostOpts || {};
     return function (element, ctx) {
       var host = ctx && ctx.host;
       var d = (host && host.ownerDocument) || document;
@@ -49,7 +50,15 @@
       } else {
         // renderModel validates the spec itself and paints its own error
         // states; it lazy-loads JSXGraph only when a model actually draws.
-        try { CMR.renderModel(node, subject, { prompt: sem.prompt || null }); }
+        // onParamSettle (§6.9): settled manipulations flow to the host as
+        // StudentMoves, stamped with this element's board id.
+        var renderOpts = { prompt: sem.prompt || null };
+        if (typeof hostOpts.onInteraction === 'function') {
+          renderOpts.onParamSettle = function (payload) {
+            hostOpts.onInteraction(Object.assign({ elementId: (element && element.id) || 'model' }, payload));
+          };
+        }
+        try { CMR.renderModel(node, subject, renderOpts); }
         catch (e) { console.error('[LWS] concept model render failed', e); node.textContent = 'Interactive model error.'; }
       }
 

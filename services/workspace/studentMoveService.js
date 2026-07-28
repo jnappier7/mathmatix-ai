@@ -18,6 +18,7 @@
 
 const { validateInbound, VerifiedMove, ELEMENT_TYPES } = require('../../shared/workspace');
 const { verifyAlgebraTileMove } = require('../../utils/workspace/algebraTileVerifier');
+const { verifyConceptModelMove } = require('../../utils/workspace/conceptModelMoveVerifier');
 const { normalizeTileMove } = require('./moveNormalizer');
 const { applyMove: applyMoveWithState, hasTileState } = require('./workspaceStateService');
 
@@ -47,6 +48,26 @@ function processStudentMove(rawPayload) {
   // (backward-compatible with the P1 contract). See workspaceStateService.js.
   if (hasTileState(move)) {
     return applyMoveWithState(move);
+  }
+
+  // Concept-model exploration (spec §6.9): still no mathematical claim and
+  // still NO pipeline entry (anti-leak stays structurally closed) — but the
+  // server judges whether the manipulation MEANT something. Meaningful ones
+  // surface an evidenceContext the route records against the transfer pillar.
+  if (move.mode === 'exploration' && move.elementType === ELEMENT_TYPES.MODEL) {
+    const verdict = verifyConceptModelMove(move);
+    const vm = buildVerifiedMove(move, {
+      accepted: verdict.interactionValid,
+      interactionValid: verdict.interactionValid,
+      mathematicallyValid: null,
+      committed: false,
+      classification: verdict.classification,
+      canonicalMove: verdict.canonicalMove,
+    });
+    return {
+      ok: true, status: 200, verifiedMove: vm, normalized: null,
+      modelEvidence: verdict.evidenceContext ? { context: verdict.evidenceContext } : null,
+    };
   }
 
   // reposition / undo carry no mathematical claim — accept without a math verdict
