@@ -39,6 +39,18 @@ function buildPlanLayer(tutorPlan, options = {}) {
   // ── Header ──
   parts.push('--- TUTOR PLAN (Your mental model of this student) ---');
 
+  // Owner policy (2026-07-28): in OPEN tutoring the student picks the
+  // subject — the plan is the tutor's memory and suggestion box, never
+  // today's agenda. Course lessons (their own prompt builder) still drive.
+  if (interactionType === 'chat') {
+    parts.push(
+      'THIS PLAN IS YOUR MEMORY, NOT TODAY\'S AGENDA. In open tutoring the student '
+      + 'picks the subject. Reference recent work for continuity, OFFER the current '
+      + 'target as one option among others — never announce or kick off a topic, '
+      + 'unit, or lesson they did not choose.'
+    );
+  }
+
   // ── Instructional Mode Override ──
   // This is the most important part: it tells the AI HOW to teach
   const target = tutorPlan.currentTarget;

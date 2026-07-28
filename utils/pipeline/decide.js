@@ -149,6 +149,12 @@ function decide(observation, diagnosis, context = {}) {
   // including a BKT "possible guessing" nudge that would re-inject probing.
   applyBackOffModifiers(decision, observation);
 
+  // Student's lead (owner policy, 2026-07-28): in OPEN tutoring, a bare
+  // affirmative/greeting with NO topic established must not launch the plan's
+  // agenda — the production failure was "ok" answering a greeting and getting
+  // "today we're kicking off sequences." Runs before other post-passes.
+  applyStudentsLeadGuard(decision, observation, context);
+
   // Demonstrated competence runs across ALL branches (owner: "the system
   // doesn't need students to walk through EVERY problem — especially once
   // it is clear that this kid knows what he is talking about"). Per-branch
@@ -165,6 +171,28 @@ function decide(observation, diagnosis, context = {}) {
   applyOneAskGuard(decision, context);
 
   return decision;
+}
+
+// A topicless session start in FREE chat: nothing on the board, no problem
+// in play, no course phase driving, and the student's message is a bare
+// affirmative or greeting. The tutor may reference and offer — never launch.
+const OPENER_TYPES = new Set([
+  MESSAGE_TYPES.AFFIRMATIVE, MESSAGE_TYPES.EVASIVE_AFFIRMATIVE, MESSAGE_TYPES.GREETING,
+]);
+
+function applyStudentsLeadGuard(decision, observation, context) {
+  if (context.phaseState) return;                                   // course lesson drives
+  if (!OPENER_TYPES.has(observation?.messageType)) return;          // student said something substantive
+  const conv = context.conversation;
+  if (conv?.boardLedger?.current?.problemTex) return;               // a problem is in play
+  if (conv?.lastProblemState) return;                               // mid-problem continuity
+  decision.directives.push(
+    "STUDENT'S LEAD — NO TOPIC CHOSEN YET: this is open tutoring and the student has not "
+    + 'named a subject. Do NOT launch a lesson, unit, or topic of your choosing, and do NOT '
+    + 'start teaching the plan\'s target. In ONE short message: reference what you worked on '
+    + 'recently, offer two or three directions (continue that, the suggested next skill, or '
+    + 'anything they bring), and ask what they want today.'
+  );
 }
 
 // Three verified-correct in the recent window with zero misses = competence
