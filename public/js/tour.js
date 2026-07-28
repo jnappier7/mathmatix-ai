@@ -15,22 +15,23 @@
       title: 'Ask Anything',
       icon: 'fa-comments',
       content: `
-        <p>Type a math question below and your tutor will walk you through it step by step.</p>
+        <p>Type a math question below and your tutor will walk you through it step by step &mdash; the problem and every step you earn stay pinned right in the chat.</p>
         <div class="tour-highlight">
           <strong>Try it:</strong> "How do I solve 2x + 5 = 15?"
         </div>
-        <p>You can also <strong>upload a photo</strong> of a worksheet or use <strong>voice chat</strong>.</p>
+        <p>You can also <strong>upload a photo</strong> of a worksheet or switch to <strong>voice mode</strong> and talk it out.</p>
       `
     },
     {
       title: 'Your Toolkit',
       icon: 'fa-calculator',
       content: `
-        <p>Open the <strong>sidebar</strong> on the left for:</p>
+        <p>Everything you need is one tap away:</p>
         <ul>
-          <li><i class="fas fa-calculator"></i> <strong>Calculator</strong> &mdash; scientific + graphing</li>
-          <li><i class="fas fa-camera-retro"></i> <strong>Upload</strong> &mdash; snap homework, worksheets, or notes</li>
-          <li><i class="fas fa-graduation-cap"></i> <strong>Courses</strong> &mdash; enroll in a self-paced course</li>
+          <li><i class="fas fa-calculator"></i> <strong>Calculator</strong> &mdash; right in the toolbar under the message box</li>
+          <li><i class="fas fa-camera-retro"></i> <strong>Show Your Work</strong> &mdash; snap your homework or notes for feedback</li>
+          <li><i class="fas fa-print"></i> <strong>Practice Pack</strong> &mdash; print problems, work on paper, scan the QR code to get checked</li>
+          <li><i class="fas fa-project-diagram"></i> <strong>Skill Map</strong> &mdash; see what you've mastered and what's next</li>
         </ul>
       `
     },
@@ -38,7 +39,7 @@
       title: 'Level Up!',
       icon: 'fa-bolt',
       content: `
-        <p>Every problem you solve earns <strong>XP</strong>. Level up, earn badges, and climb the leaderboard.</p>
+        <p>Every problem you solve earns <strong>XP</strong> and <strong>coins</strong>. Level up, earn mastery badges, climb the leaderboard &mdash; and spend your coins in the Shop.</p>
         <div class="tour-highlight">
           <strong>Tip:</strong> Show your work and explain your reasoning &mdash; you'll earn bonus XP for great math thinking!
         </div>
