@@ -96,7 +96,10 @@ services:
     dockerfilePath: ./Dockerfile
     region: oregon
     schedule: "0 13 * * *"
-    dockerCommand: node scripts/weeklyDigest.js
+    # --require ./instrument.js initializes Sentry; without it cron failures are
+    # invisible. NOTE: the live cron is configured manually in the Render dashboard
+    # — this line is documentation and changing it does not change prod.
+    dockerCommand: node --require ./instrument.js scripts/weeklyDigest.js
     envVars:
       - key: MONGO_URI
         sync: false
@@ -130,7 +133,9 @@ services:
     dockerfilePath: ./Dockerfile
     region: oregon
     schedule: "30 4 * * *"
-    dockerCommand: node scripts/archiveOldConversations.js
+    # See the note on the weekly-digest cron above: --require ./instrument.js is
+    # required for Sentry, and the live schedule/command live in the dashboard.
+    dockerCommand: node --require ./instrument.js scripts/archiveOldConversations.js
     envVars:
       - key: MONGO_URI
         sync: false
