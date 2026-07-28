@@ -89,6 +89,17 @@ const conversationSchema = new Schema({
         type: Boolean,
         default: true
     },
+    // Which sign-in opened this conversation (utils/loginSession.js). The idle
+    // window alone can't tell "same student, 20 minutes later, same sitting"
+    // from "same student, logged out and back in" — and the owner's continuity
+    // policy is stated in logins, not minutes. Null on conversations written
+    // before this shipped (and by paths with no HTTP session): those are ADOPTED
+    // by the next request rather than rolled, so a deploy never discards a live
+    // session. See the header of utils/loginSession.js.
+    loginSessionId: {
+        type: String,
+        default: null
+    },
     isAssessment: {
         type: Boolean,
         default: false

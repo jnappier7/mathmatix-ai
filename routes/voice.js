@@ -12,6 +12,7 @@ const { openai } = require('../utils/openaiClient');
 const { processAIResponse } = require('../utils/chatBoardParser');
 const { cleanTextForTTS } = require('../utils/mathTTS');
 const { loadActiveHistory, appendToActiveConversation } = require('../utils/activeConversation');
+const { getLoginSessionId, peekLoginSessionId } = require('../utils/loginSession');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for voice responses
 
@@ -315,7 +316,7 @@ router.post('/process', isAuthenticated, async (req, res) => {
             appendToActiveConversation(user, [
                 { role: 'user', content: userMessage },
                 { role: 'assistant', content: aiResponseText },
-            ])
+            ], { loginSessionId: getLoginSessionId(req) })
         ]);
 
         const totalTime = Date.now() - startTime;
@@ -452,7 +453,9 @@ function attachStreamWebSocket(server, app) {
         const userDoc = await User.findById(request.user._id).lean();
         if (!userDoc) { ws.close(1008, 'user not found'); return; }
         try {
-            await createVoiceSession({ ws, user: userDoc, mode: 'board-actions' });
+            // peek, never mint — see routes/voiceTutor.js.
+            const loginSessionId = peekLoginSessionId(request);
+            await createVoiceSession({ ws, user: userDoc, mode: 'board-actions', loginSessionId });
             logger.info('voice ws session opened (board-actions mode)', { userId: String(userDoc._id) });
         } catch (err) {
             logger.error('voice ws session init failed', { error: err.message });

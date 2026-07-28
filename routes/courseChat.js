@@ -11,6 +11,8 @@ const path = require('path');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { assistantSpokeWithin } = require('../utils/activeConversation');
+const { getLoginSessionId } = require('../utils/loginSession');
+const { resolveCourseConversation } = require('../utils/courseConversation');
 const CourseSession = require('../models/courseSession');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction } = require('../utils/coursePrompt');
 const { callLLM } = require('../utils/llmGateway');
@@ -100,29 +102,21 @@ router.post('/', async (req, res) => {
             console.warn(`[CourseChat] ⚠️ No moduleFile defined for module ${currentPathwayModule.moduleId} — scaffold will be empty`);
         }
 
-        // ── Load or create course conversation ──────────────
-        let conversation;
-        if (courseSession.conversationId) {
-            conversation = await Conversation.findById(courseSession.conversationId);
-        }
-        if (!conversation) {
-            // Create a fresh conversation for this course
-            // Name it after the current module so sessions are distinguishable
-            const moduleName = currentPathwayModule.title || courseSession.courseName;
-            conversation = new Conversation({
-                userId: user._id,
-                conversationName: moduleName,
-                topic: courseSession.courseName,
-                topicEmoji: '📚',
-                conversationType: 'topic'
-            });
-            await conversation.save();
-            courseSession.conversationId = conversation._id;
-            await courseSession.save();
-        }
-        // Always ensure it's active
-        if (!conversation.isActive) {
-            conversation.isActive = true;
+        // ── Load or roll the course conversation ────────────
+        // Rule 3: a course chat continues only within the same login sitting.
+        // This used to reuse courseSession.conversationId unconditionally, so
+        // one document accumulated every sitting the student ever had — the
+        // client then painted its last 50 messages on entry and appended a new
+        // lesson start underneath. Mid-sitting turns take the continue branch,
+        // so nothing is lost between messages.
+        const { conversation, rolled } = await resolveCourseConversation({
+            user,
+            courseSession,
+            loginSessionId: getLoginSessionId(req),
+            conversationName: currentPathwayModule.title || courseSession.courseName,
+        });
+        if (rolled) {
+            console.log(`📚 [CourseChat] ${user.firstName} → started a fresh course sitting`);
         }
 
         // ── Save user message ───────────────────────────────
@@ -279,6 +273,8 @@ router.post('/', async (req, res) => {
                 text: aiResponseText,
                 voiceId: currentTutor.cartesiaVoiceId,
                 aiTimeUsed: aiProcessingSeconds,
+                conversationId: conversation._id,
+                sessionRolled: rolled,
                 courseContext: courseResult.courseContext,
                 courseProgress: courseProgressUpdate,
                 progressUpdate
@@ -300,6 +296,10 @@ router.post('/', async (req, res) => {
 
             responseData = {
                 text: aiResponseText,
+                // Same contract as the greeting: if this turn opened a new
+                // sitting, the transcript on screen belongs to the old one.
+                conversationId: conversation._id,
+                sessionRolled: rolled,
                 userXp: xpInLevel,
                 userLevel: user.level,
                 xpNeeded: BRAND_CONFIG.xpRequiredForLevel(user.level),
@@ -452,26 +452,16 @@ async function handleCourseGreeting(req, res, userId) {
             }
         }
 
-        // Load or create conversation
-        let conversation;
-        if (courseSession.conversationId) {
-            conversation = await Conversation.findById(courseSession.conversationId);
-        }
-        if (!conversation) {
-            conversation = new Conversation({
-                userId: user._id,
-                conversationName: courseSession.courseName,
-                topic: courseSession.courseName,
-                topicEmoji: '📚',
-                conversationType: 'topic'
-            });
-            await conversation.save();
-            courseSession.conversationId = conversation._id;
-            await courseSession.save();
-        }
-        if (!conversation.isActive) {
-            conversation.isActive = true;
-        }
+        // Load or roll the course conversation (rule 3 — see the turn handler).
+        // Entering a course is exactly where the stacked-transcript failure was
+        // visible, so this is the roll that matters most: a new login lands here
+        // with an empty conversation and the greeting below opens it cleanly.
+        const { conversation, rolled: sessionRolled } = await resolveCourseConversation({
+            user,
+            courseSession,
+            loginSessionId: getLoginSessionId(req),
+            conversationName: currentPathwayModule?.title || courseSession.courseName,
+        });
 
         // Idempotency: if conversation already has a greeting, return it instead of generating a new one
         // This prevents duplicate welcome messages when a user re-enters a course session
@@ -489,6 +479,8 @@ async function handleCourseGreeting(req, res, userId) {
                     text: lastMsg.content,
                     voiceId: currentTutor.cartesiaVoiceId,
                     isGreeting: true,
+                    conversationId: conversation._id,
+                    sessionRolled,
                     courseContext: {
                         courseId: courseSession.courseId,
                         courseName: courseSession.courseName,
@@ -657,6 +649,14 @@ async function handleCourseGreeting(req, res, userId) {
             text: isCheckpointModule ? null : greetingText,
             voiceId: currentTutor.cartesiaVoiceId,
             isGreeting: true,
+            // The client paints the course transcript from a `switchSession`
+            // that ran BEFORE this request, so it may still be showing the
+            // sitting we just rolled away from. Tell it which conversation this
+            // greeting belongs to and whether the thread restarted — without
+            // this the fresh greeting is appended under the old bubbles, which
+            // is the duplicate-transcript view the owner reported.
+            conversationId: conversation._id,
+            sessionRolled,
             isCheckpoint: isCheckpointModule || false,
             checkpointTitle: isCheckpointModule ? (moduleData?.title || 'Checkpoint') : undefined,
             courseContext: {
