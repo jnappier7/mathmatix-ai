@@ -343,7 +343,7 @@ function detectRetentionDecay(skillMastery, recent, patterns, notes, planUpdates
       };
       const mastery = read(canonId) ?? (canonId !== skillId ? read(skillId) : null);
 
-      if (mastery && (mastery.status === 'mastered' || mastery.masteryScore >= 70)) {
+      if (mastery && (mastery.status === 'mastered' || require('./masteryScore').normalizedMasteryScore(mastery.masteryScore) >= 70)) {
         decayingSkills.push(skillId);
       }
     }

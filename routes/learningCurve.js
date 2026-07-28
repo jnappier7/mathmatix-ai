@@ -46,7 +46,7 @@ router.get('/learning-curve/:skillId', isAuthenticated, async (req, res) => {
       stats,
       currentTheta: skillData.theta || 0,
       currentSE: skillData.standardError || 1.0,
-      masteryScore: skillData.masteryScore || 0,
+      masteryScore: require('../utils/masteryScore').normalizedMasteryScore(skillData.masteryScore),
       status: skillData.status || 'learning'
     });
   } catch (error) {
@@ -80,7 +80,7 @@ router.get('/learning-curve/overview', isAuthenticated, async (req, res) => {
           currentTheta: currentTheta,
           growth: growth,
           practiceCount: practiceCount,
-          masteryScore: skillData.masteryScore || 0,
+          masteryScore: require('../utils/masteryScore').normalizedMasteryScore(skillData.masteryScore),
           status: skillData.status,
           lastPracticed: skillData.lastPracticed
         });

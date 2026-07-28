@@ -398,8 +398,7 @@ router.get('/progress/summary', isAuthenticated, isStudent, async (req, res) => 
                     // masteryScore is dual-scale: placement seeds it 0-1, the
                     // pillar engine writes it 0-100. Blindly *100 turned a 40
                     // into 4000 → clamped to a fake "100% mastered". Normalize.
-                    const raw = Number(data.masteryScore) || 0;
-                    const progress = Math.round(raw <= 1 ? raw * 100 : raw);
+                    const progress = require('../utils/masteryScore').normalizedMasteryScore(data.masteryScore);
                     learning.push({
                         skillId, displayName, progress,
                         // For picking the CURRENT skill below — the one the

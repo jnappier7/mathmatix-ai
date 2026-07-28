@@ -108,7 +108,8 @@ function selectGrowthCheckSkills(learningProfile, currentTheta) {
     }
 
     // Previously struggled - check improvement
-    if (masteryScore < 0.5 && masteryScore > 0) {
+    const scorePct = require('./masteryScore').normalizedMasteryScore(masteryScore);
+    if (scorePct < 50 && scorePct > 0) {
       priority += 4;
     }
 
