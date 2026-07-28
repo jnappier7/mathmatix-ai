@@ -59,11 +59,34 @@ const COMMAND_FIELDS = [
   'diagram_type', 'diagram_params',  // diagram
   'model', 'spec', 'prompt',         // interactive concept model
 ];
+/**
+ * Heal board tex before it is stored. Board tex is BARE math — KaTeX renders
+ * it directly, and with throwOnError:false a single invalid token makes the
+ * ENTIRE expression fall back to red source text (production, 2026-07-28:
+ * the problem card showed literally "1 \div (-0.1)\." because the model glued
+ * its sentence period onto a backslash, and "\." is not a KaTeX command).
+ *  - inline/display delimiters have no place in bare tex → stripped
+ *  - "\." is always a mangled period (KaTeX has no such command; the LaTeX
+ *    accent form is "\.{x}", which is preserved) → "."
+ *  - a trailing lone backslash or trailing punctuation-period is dropped
+ */
+function healBoardTex(tex) {
+  if (typeof tex !== 'string') return tex;
+  let t = tex.trim();
+  t = t.replace(/\\[()[\]]/g, '');            // \( \) \[ \] delimiter fragments
+  t = t.replace(/\$\$?/g, '');                // $ / $$ delimiters
+  t = t.replace(/\\\.(?!\{)/g, '.');          // mangled "\." (not the accent "\.{x}")
+  t = t.replace(/\\+$/, '');                  // dangling backslash at end
+  t = t.replace(/\s*\.\s*$/, '');             // sentence period is prose, not math
+  return t.trim();
+}
+
 function sanitizeCommand(cmd) {
   const out = {};
   for (const k of COMMAND_FIELDS) {
     if (cmd[k] !== undefined) out[k] = cmd[k];
   }
+  if (typeof out.tex === 'string') out.tex = healBoardTex(out.tex);
   return out;
 }
 
@@ -282,6 +305,7 @@ module.exports = {
   sanitizeSourceRef,
   summarizeLedger,
   emptyLedger,
+  healBoardTex,
   MAX_COMPLETED,
   MAX_STEPS,
 };

@@ -56,6 +56,11 @@
     // Tolerate the tutor model's split \dfrac ("\d\frac{5}{7}") in tex that
     // was ledgered before the server-side normalization existed.
     t = t.replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2').replace(/\\displaystyle\s*/g, '');
+    // "\." is a mangled sentence period (KaTeX has no such command, and with
+    // throwOnError:false ONE bad token makes the whole card render as red raw
+    // source — production 2026-07-28: "1 \div (-0.1)\."). Accent "\.{x}" kept.
+    t = t.replace(/\\\.(?!\{)/g, '.');
+    t = t.replace(/\\+$/, '');               // dangling backslash at end
     return t.trim();
   }
 
