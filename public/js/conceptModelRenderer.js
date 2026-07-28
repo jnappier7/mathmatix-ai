@@ -160,6 +160,52 @@
     var P = {};
     Object.keys(spec.params).forEach(function (k) { P[k] = spec.params[k]; });
 
+    // ── settle-watcher (Live Workspace §6.9) ──
+    // Report a manipulation once it SETTLES (600ms after the last change),
+    // as baseline→current param diffs — never the raw drag stream. The host
+    // turns these into StudentMoves; without a hook this is inert.
+    var settleRanges = {};
+    (spec.controls || []).forEach(function (c) {
+      if (c.type === 'slider' && c.range) settleRanges[c.param] = c.range;
+    });
+    var settleBaseline = null;
+    var settleTimer = null;
+    function noteParamActivity() {
+      if (typeof (opts && opts.onParamSettle) !== 'function') return;
+      if (!settleBaseline) {
+        settleBaseline = {};
+        Object.keys(P).forEach(function (k) { settleBaseline[k] = P[k]; });
+        // Baseline snapshots BEFORE this change lands — callers invoke us
+        // after mutating P, so re-copy from the pre-change values we tracked.
+      }
+      if (settleTimer) clearTimeout(settleTimer);
+      settleTimer = setTimeout(function () {
+        var base = settleBaseline; settleBaseline = null; settleTimer = null;
+        if (!base) return;
+        var changes = [];
+        Object.keys(P).forEach(function (k) {
+          if (typeof P[k] === 'number' && typeof base[k] === 'number' && P[k] !== base[k]) {
+            var ch = { param: k, from: base[k], to: P[k] };
+            if (settleRanges[k]) { ch.min = settleRanges[k][0]; ch.max = settleRanges[k][1]; }
+            changes.push(ch);
+          }
+        });
+        if (changes.length) {
+          try { opts.onParamSettle({ model: spec.model || 'custom', changes: changes }); }
+          catch (e) { if (window.console) console.error('[ConceptModel] onParamSettle failed', e); }
+        }
+      }, 600);
+    }
+    // Snapshot the TRUE pre-gesture baseline on pointer-down anywhere in the
+    // model, before any handler mutates P.
+    container.addEventListener('pointerdown', function () {
+      if (typeof (opts && opts.onParamSettle) !== 'function') return;
+      if (!settleBaseline) {
+        settleBaseline = {};
+        Object.keys(P).forEach(function (k) { settleBaseline[k] = P[k]; });
+      }
+    }, true);
+
     // Compile the function curves and the derived (measured) quantities.
     var compiledFns = {};   // elementId -> {eval}
     spec.elements.forEach(function (e) {
@@ -342,6 +388,7 @@
             if (m.yParam) P[m.yParam] = snapParam(m.yParam, pt.Y());
             pushParamsToControls();
             pushParamsToPoints();   // land on the snapped grid value
+            noteParamActivity();
           }
           redraw();
         });
@@ -441,6 +488,7 @@
           pushParamsToPoints();
           pushParamsToControls();
           redraw();
+          noteParamActivity();
         });
 
         wrap.appendChild(label);

@@ -26,6 +26,7 @@ const router = express.Router();
 
 const { processStudentMove } = require('../services/workspace/studentMoveService');
 const { runStudentTurn } = require('./chat');
+const { recordInteractiveEvidence } = require('../utils/workspace/interactiveEvidence');
 
 // POST /api/student-moves
 router.post('/', async (req, res) => {
@@ -34,6 +35,13 @@ router.post('/', async (req, res) => {
 
     if (!result.ok) {
       return res.status(result.status).json({ error: 'invalid_student_move', details: result.errors });
+    }
+
+    // Verified-meaningful model exploration → transfer-pillar evidence
+    // (spec §6.9). Fire-and-forget: evidence must never block or fail a move.
+    if (result.modelEvidence && req.user) {
+      recordInteractiveEvidence(req.user._id, result.modelEvidence.context)
+        .catch((err) => console.error('[StudentMoves] interactive evidence failed (non-fatal):', err.message));
     }
 
     // Opt-in tutor reaction: delegate into the SHARED chat turn.

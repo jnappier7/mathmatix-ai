@@ -75,10 +75,13 @@
       elementType: p.elementType || 'algebra_tiles',
       source: p.source || 'gesture',
       intent: op.type,
-      mode: isReposition ? 'reposition' : 'attempt',
-      previousState: { tiles: cloneTiles(prev) },
-      proposedState: { tiles: p.proposedTiles || applyOptimistic(prev, op) },
-      operation: { type: op.type, tileRefs: op.tileRefs || [] },
+      // Explicit mode wins (model exploration); tile moves keep the old rule.
+      mode: p.mode || (isReposition ? 'reposition' : 'attempt'),
+      previousState: p.previousState || { tiles: cloneTiles(prev) },
+      proposedState: p.proposedState || { tiles: p.proposedTiles || applyOptimistic(prev, op) },
+      operation: p.operation && p.operation.parameters
+        ? { type: op.type, parameters: op.parameters }
+        : { type: op.type, tileRefs: op.tileRefs || [] },
       interaction: {
         gestureType: p.gestureType || (p.source === 'keyboard' ? 'tap' : 'drop'),
         pointerType: p.pointerType || (p.source === 'keyboard' ? 'keyboard' : 'mouse'),
