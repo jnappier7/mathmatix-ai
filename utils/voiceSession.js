@@ -133,10 +133,17 @@ not on the board is lost the moment you finish saying it.
 `;
 
 class VoiceSession {
-    constructor({ ws, user, sessionId, mode }) {
+    constructor({ ws, user, sessionId, mode, loginSessionId }) {
         this.ws = ws;
         this.user = user;                       // populated user doc (lean)
         this.userId = String(user._id);
+        // The sign-in this socket was opened under, read off the upgrade
+        // request's express session. Carried so voice turns land in a
+        // conversation stamped with the CURRENT login — a voice session opened
+        // straight after a re-login must not append to the previous login's
+        // transcript. Null when unavailable, which simply skips the check:
+        // voice must never be the path that ends a session (rule 1).
+        this.loginSessionId = loginSessionId || null;
         this.sessionId = sessionId || `${this.userId}-${Date.now()}`;
         // Three modes:
         //   'math-steps'   — immersive voice-tutor.html, <math>JSON</math> trailer
@@ -1195,7 +1202,10 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         await appendToActiveConversation(this.user, [
             { role: 'user', content: userMessage },
             { role: 'assistant', content: aiContent },
-        ], this.boardLedger ? { boardLedger: this.boardLedger } : {});
+        ], {
+            ...(this.boardLedger ? { boardLedger: this.boardLedger } : {}),
+            loginSessionId: this.loginSessionId,
+        });
     }
 
     // The board ghost for prompt assembly — one guarded call site for the
@@ -1275,8 +1285,8 @@ function hash32(str) {
  *        - 'board-actions': chat-page orb. AI emits inline tags like
  *          [WRITE:x,y,text], [CIRCLE:id], etc. Client executes against whiteboard.
  */
-async function createVoiceSession({ ws, user, sessionId, mode }) {
-    const session = new VoiceSession({ ws, user, sessionId, mode });
+async function createVoiceSession({ ws, user, sessionId, mode, loginSessionId }) {
+    const session = new VoiceSession({ ws, user, sessionId, mode, loginSessionId });
     await session.init();
     return session;
 }

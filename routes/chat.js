@@ -11,11 +11,14 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const { isSessionStale, touchSession } = require('../utils/sessionWindow');
+const { getLoginSessionId, isForeignLoginSession, claimLoginSession } = require('../utils/loginSession');
+const { resolveCourseConversation } = require('../utils/courseConversation');
 const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
 const { generateSystemPrompt } = require('../utils/prompt');
-const { callLLM, callLLMStream } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
+const { callLLM, callLLMStream } = require("../utils/llmGateway");
+const { createPerUserLock } = require("../utils/perUserLock");
 const { createKeepalive } = require('../utils/sseKeepalive');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
@@ -149,34 +152,16 @@ const MAX_HISTORY_LENGTH_FOR_AI = 100; // Increased from 40 — GPT-4o-mini has 
 // Per-user request lock to prevent concurrent chat processing (race condition fix).
 // If user A sends message 1 and message 2 before message 1 finishes saving,
 // message 2 waits until message 1 completes to prevent data loss.
-const userChatLocks = new Map();
-const userChatLockTimestamps = new Map();
+// Behavior is unchanged from the inline implementation this replaces: acquire
+// chains onto the user's previous turn, and the periodic sweep evicts only
+// entries idle for 10+ minutes rather than clearing the map (which would drop
+// locks for in-flight requests). It now lives in utils/perUserLock.js so
+// routes/courseChat.js shares it instead of keeping a copy that can drift — the
+// copy there still had the unfixed `.clear()`.
+const userChatLock = createPerUserLock();
 function acquireUserLock(userId) {
-    const key = userId.toString();
-    if (!userChatLocks.has(key)) {
-        userChatLocks.set(key, Promise.resolve());
-    }
-    userChatLockTimestamps.set(key, Date.now());
-    let release;
-    const newLock = new Promise(resolve => { release = resolve; });
-    const previousLock = userChatLocks.get(key);
-    userChatLocks.set(key, newLock);
-    return previousLock.then(() => release);
+    return userChatLock.acquire(userId);
 }
-// Cleanup stale locks periodically (prevent memory leak for inactive users).
-// Only evict users idle for 10+ minutes — never clear the entire map, which
-// could drop locks for in-flight requests and allow concurrent processing.
-setInterval(() => {
-    if (userChatLocks.size > 500) {
-        const cutoff = Date.now() - 10 * 60 * 1000;
-        for (const [key, ts] of userChatLockTimestamps) {
-            if (ts < cutoff) {
-                userChatLocks.delete(key);
-                userChatLockTimestamps.delete(key);
-            }
-        }
-    }
-}, 10 * 60 * 1000);
 
 /**
  * Extract a student's answer from their chat message.
@@ -362,6 +347,12 @@ async function runStudentTurn(req, res) {
         // Mastery mode (badge-earning) uses a separate conversation so regular
         // chat history stays clean. The `mastery` flag comes from the frontend.
         const isMasteryMode = mastery && !!user.masteryProgress?.activeBadge;
+        // Which sign-in is asking. Minted on first use and stable for the life
+        // of the login (passport regenerates the express session on every
+        // req.logIn), so it distinguishes "same student, back after a break"
+        // from "same student, logged out and back in" — which the idle window
+        // alone cannot do. See utils/loginSession.js.
+        const loginSessionId = getLoginSessionId(req);
         let activeConversation;
         // True when this turn abandoned an existing conversation and started a
         // fresh one (idle past the session window, or it was closed out). The
@@ -376,7 +367,8 @@ async function runStudentTurn(req, res) {
                 activeConversation = await Conversation.findById(user.activeMasteryConversationId);
             }
             if (!activeConversation || !activeConversation.isActive || !activeConversation.isMastery
-                || isSessionStale(activeConversation)) {
+                || isSessionStale(activeConversation)
+                || isForeignLoginSession(activeConversation, loginSessionId)) {
                 if (activeConversation) sessionRolled = true;
                 const activeBadge = user.masteryProgress.activeBadge;
                 activeConversation = new Conversation({
@@ -386,6 +378,7 @@ async function runStudentTurn(req, res) {
                     masteryBadgeId: activeBadge.badgeId,
                     masterySkillId: activeBadge.skillId,
                     conversationName: `${activeBadge.badgeName} - ${activeBadge.tier}`,
+                    loginSessionId,
                 });
                 user.activeMasteryConversationId = activeConversation._id;
                 await user.save();
@@ -396,9 +389,12 @@ async function runStudentTurn(req, res) {
                 activeConversation = await Conversation.findById(user.activeConversationId);
             }
             // Create new conversation if: no conversation, inactive, a mastery
-            // conversation, OR the last one went idle past the session window.
+            // conversation, the last one went idle past the session window, OR
+            // it belongs to a previous login (rule 2 — a new sign-in must not
+            // resume the old transcript, however recently it was active).
             if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery
-                || isSessionStale(activeConversation)) {
+                || isSessionStale(activeConversation)
+                || isForeignLoginSession(activeConversation, loginSessionId)) {
                 if (activeConversation) sessionRolled = true;
                 // IMPROVED: End the old session properly before creating a new one
                 if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
@@ -422,11 +418,17 @@ async function runStudentTurn(req, res) {
                         await activeConversation.save();
                     }
                 }
-                activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+                activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false, loginSessionId });
                 user.activeConversationId = activeConversation._id;
                 await user.save();
             }
         }
+
+        // Adopt a conversation that predates the login marker (or was opened by
+        // a path with no HTTP session, e.g. a voice socket). Claiming rather
+        // than rolling means deploy day doesn't discard anyone's live session;
+        // the NEXT login sees a marker that doesn't match and rolls properly.
+        claimLoginSession(activeConversation, loginSessionId);
 
         // Mark the session as live NOW. Nothing on the main chat path was writing
         // this field — it only defaulted at creation — so it read as "last active
@@ -2231,6 +2233,12 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         let userUpdate;
         if (needsWeeklyReset) {
             logger.info('Weekly time tracking reset', { userId, weeklyActiveMin: user.weeklyActiveTutoringMinutes || 0, weeklyAIMin: Math.floor((user.weeklyAISeconds || 0) / 60) });
+            // NOTE: weeklyAISeconds is deliberately NOT reset here. The free-AI
+            // quota is MONTHLY (anchored on lastAIQuotaReset, owned by
+            // middleware/usageGate.js); this 7-day reset only covers the weekly
+            // engagement counters. Zeroing weeklyAISeconds here (the old weekly-
+            // quota behavior) silently refilled a student's 30 free minutes every
+            // week — tutor responses kept firing after "No AI time left".
             const newTotalSeconds = baseTotalSeconds + activeSeconds;
             userUpdate = {
                 $set: {
@@ -2238,7 +2246,6 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
                     totalActiveTutoringMinutes: Math.floor(newTotalSeconds / 60),
                     weeklyActiveSeconds: activeSeconds,
                     weeklyActiveTutoringMinutes: Math.floor(activeSeconds / 60),
-                    weeklyAISeconds: 0,
                     lastWeeklyReset: now
                 }
             };
@@ -2596,6 +2603,7 @@ async function handleGreetingRequest(req, res, userId) {
         // Demo clones always start fresh — their pre-seeded conversations are
         // for teacher/parent dashboard views, not the student's own chat.
         let activeConversation = null;
+        const loginSessionId = getLoginSessionId(req);
 
         if (user.activeConversationId && !user.isDemoClone) {
             const existing = await Conversation.findById(user.activeConversationId);
@@ -2608,7 +2616,12 @@ async function handleGreetingRequest(req, res, userId) {
                 // a second, hand-rolled 30-minute constant; two copies of the
                 // session window can drift apart, and then the greeting and the
                 // first message disagree about which conversation this is.
-                !isSessionStale(existing)
+                !isSessionStale(existing) &&
+                // Rule 2: a new login gets a clean slate. This is also the check
+                // that keeps rule 1 intact — returning from voice reaches this
+                // greeting on the SAME login, so the marker matches and the
+                // transcript below is replayed instead of being started over.
+                !isForeignLoginSession(existing, loginSessionId)
             ) {
                 // Recent, non-course, non-mastery conversation — reuse it
                 activeConversation = existing;
@@ -2616,9 +2629,17 @@ async function handleGreetingRequest(req, res, userId) {
         }
 
         if (!activeConversation) {
-            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+            activeConversation = new Conversation({ userId: user._id, messages: [], isMastery: false, loginSessionId });
             user.activeConversationId = activeConversation._id;
             await user.save();
+        }
+        // Adopt an unmarked conversation. Persisted immediately because the
+        // branches below return early via findByIdAndUpdate — an in-memory
+        // claim alone would be dropped, and the conversation would keep being
+        // re-adopted by every login instead of ever rolling.
+        if (loginSessionId && !activeConversation.loginSessionId) {
+            claimLoginSession(activeConversation, loginSessionId);
+            await Conversation.updateOne({ _id: activeConversation._id }, { $set: { loginSessionId } });
         }
 
         // ── Continuation: returning to chat from the voice tutor ──
@@ -2933,15 +2954,23 @@ async function handleGreetingRequest(req, res, userId) {
                         courseContext = { courseSession, ...ctx };
                         isCourseGreeting = true;
 
-                        // Switch to the course's conversation so the greeting lands there
-                        if (courseSession.conversationId) {
-                            const courseConv = await Conversation.findById(courseSession.conversationId);
-                            if (courseConv) {
-                                activeConversation = courseConv;
-                                if (user.activeConversationId?.toString() !== courseConv._id.toString()) {
-                                    user.activeConversationId = courseConv._id;
-                                    await user.save();
-                                }
+                        // Switch to the course's conversation so the greeting
+                        // lands there. Goes through the shared resolver so this
+                        // entry point obeys rule 3 exactly like /api/course-chat
+                        // does — it used to load courseSession.conversationId
+                        // raw, which is how a course view ended up holding
+                        // several sittings at once.
+                        const { conversation: courseConv } = await resolveCourseConversation({
+                            user,
+                            courseSession,
+                            loginSessionId,
+                            conversationName: ctx?.currentModule?.title || courseSession.courseName,
+                        });
+                        if (courseConv) {
+                            activeConversation = courseConv;
+                            if (user.activeConversationId?.toString() !== courseConv._id.toString()) {
+                                user.activeConversationId = courseConv._id;
+                                await user.save();
                             }
                         }
                     }

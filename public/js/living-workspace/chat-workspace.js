@@ -69,6 +69,12 @@
     setProblemSource: function () {},
     // Tutor pointing (spec §8): highlight the board line the tutor named.
     pointAt: function () {},
+    // The student keeping a chat message: open the notebook with its composer
+    // prefilled. Chat's per-message 📓 chip calls this on click (the same chip
+    // dragged onto the pill reaches the panel's own drop handler instead).
+    // Returns false when there's no notebook to capture into, so chat can
+    // leave the chip out rather than render a dead control.
+    captureToNotebook: function () { return false; },
   };
   window.LWS_CHAT = api;
   if (!ON) return;
@@ -77,7 +83,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260727a';
+  var ASSET_V = '?v=20260728a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -411,7 +417,13 @@
         try { dock = new window.LWS.SourceDock(widgetHost, { onAskRegion: askAboutRegion }); } catch (e) { console.error('[LWS_CHAT] dock mount failed', e); }
       }
       if (window.LWS.NotebookPanel) {
-        try { new window.LWS.NotebookPanel(widgetHost); } catch (e) { console.error('[LWS_CHAT] notebook mount failed', e); }
+        try {
+          var notebook = new window.LWS.NotebookPanel(widgetHost);
+          api.captureToNotebook = function (text) {
+            try { notebook.captureText(text); return true; }
+            catch (e) { console.error('[LWS_CHAT] notebook capture failed', e); return false; }
+          };
+        } catch (e) { console.error('[LWS_CHAT] notebook mount failed', e); }
       }
       ready = true;
       if (pendingSources !== undefined) { var ps = pendingSources; pendingSources = undefined; api.setSourcesFromMessages(ps); }

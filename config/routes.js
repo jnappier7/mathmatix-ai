@@ -38,7 +38,7 @@ const {
 } = require('../middleware/auth');
 
 const { errorMetricsHandler } = require('../middleware/errorTracking');
-const { usageGate, premiumFeatureGate } = require('../middleware/usageGate');
+const { usageGate, usageGateAllMethods, premiumFeatureGate } = require('../middleware/usageGate');
 const { uploadRateLimiter, scheduleCleanup, getRetentionDays } = require('../middleware/uploadSecurity');
 const { scheduleDemoCleanup } = require('../utils/demoClone');
 
@@ -214,8 +214,11 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/upload/classify', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, uploadClassifyRoutes);
   app.use('/api/upload', isAuthenticated, uploadRateLimiter, aiEndpointLimiter, premiumFeatureGate('File uploads'), uploadRoutes);
   // chatWithFile route REMOVED — file uploads consolidated into /api/chat
-  app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, welcomeRoutes);
-  app.use('/api/rapport', isAuthenticated, aiEndpointLimiter, rapportBuildingRoutes);
+  // welcome-message generates an LLM greeting on GET, so it needs the
+  // all-methods gate (plain usageGate only inspects POSTs). rapport's
+  // /respond is a chat-style AI turn — meter it like /api/chat.
+  app.use('/api/welcome-message', isAuthenticated, aiEndpointLimiter, usageGateAllMethods, welcomeRoutes);
+  app.use('/api/rapport', isAuthenticated, aiEndpointLimiter, usageGate, rapportBuildingRoutes);
   app.use('/api/memory', isAuthenticated, memoryRouter);
   app.use('/api/summary', isAuthenticated, summaryGeneratorRouter);
   app.use('/api/avatars', isAuthenticated, avatarRoutes);

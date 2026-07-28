@@ -863,22 +863,23 @@ if (document.readyState === 'loading') {
       title: 'Ask Anything',
       icon: 'fa-comments',
       content: `
-        <p>Type a math question below and your tutor will walk you through it step by step.</p>
+        <p>Type a math question below and your tutor will walk you through it step by step &mdash; the problem and every step you earn stay pinned right in the chat.</p>
         <div class="tour-highlight">
           <strong>Try it:</strong> "How do I solve 2x + 5 = 15?"
         </div>
-        <p>You can also <strong>upload a photo</strong> of a worksheet or use <strong>voice chat</strong>.</p>
+        <p>You can also <strong>upload a photo</strong> of a worksheet or switch to <strong>voice mode</strong> and talk it out.</p>
       `
     },
     {
       title: 'Your Toolkit',
       icon: 'fa-calculator',
       content: `
-        <p>Open the <strong>sidebar</strong> on the left for:</p>
+        <p>Everything you need is one tap away:</p>
         <ul>
-          <li><i class="fas fa-calculator"></i> <strong>Calculator</strong> &mdash; scientific + graphing</li>
-          <li><i class="fas fa-camera-retro"></i> <strong>Upload</strong> &mdash; snap homework, worksheets, or notes</li>
-          <li><i class="fas fa-graduation-cap"></i> <strong>Courses</strong> &mdash; enroll in a self-paced course</li>
+          <li><i class="fas fa-calculator"></i> <strong>Calculator</strong> &mdash; right in the toolbar under the message box</li>
+          <li><i class="fas fa-camera-retro"></i> <strong>Show Your Work</strong> &mdash; snap your homework or notes for feedback</li>
+          <li><i class="fas fa-print"></i> <strong>Practice Pack</strong> &mdash; print problems, work on paper, scan the QR code to get checked</li>
+          <li><i class="fas fa-project-diagram"></i> <strong>Skill Map</strong> &mdash; see what you've mastered and what's next</li>
         </ul>
       `
     },
@@ -886,7 +887,7 @@ if (document.readyState === 'loading') {
       title: 'Level Up!',
       icon: 'fa-bolt',
       content: `
-        <p>Every problem you solve earns <strong>XP</strong>. Level up, earn badges, and climb the leaderboard.</p>
+        <p>Every problem you solve earns <strong>XP</strong> and <strong>coins</strong>. Level up, earn mastery badges, climb the leaderboard &mdash; and spend your coins in the Shop.</p>
         <div class="tour-highlight">
           <strong>Tip:</strong> Show your work and explain your reasoning &mdash; you'll earn bonus XP for great math thinking!
         </div>
@@ -2663,7 +2664,7 @@ window.teacherDashboardTour = [
     {
         element: '[data-tab="announcements"]',
         title: 'Send Announcements',
-        content: 'NEW! Send instant messages to your entire class or individual students. They\'ll see them right in their dashboard.',
+        content: 'Send instant messages to your entire class or individual students. They\'ll see them right in their dashboard.',
         position: 'bottom'
     },
     {
@@ -2713,12 +2714,6 @@ window.parentDashboardTour = [
         position: 'right'
     },
     {
-        element: '[data-tab="messages"]',
-        title: 'Teacher Communication',
-        content: 'Send and receive messages from your child\'s teacher. Stay informed about their progress.',
-        position: 'bottom'
-    },
-    {
         element: '#send-weekly-report-btn',
         title: 'Email Reports',
         content: 'Get detailed progress reports sent directly to your email.',
@@ -2741,19 +2736,19 @@ window.studentDashboardTour = [
         position: 'top'
     },
     {
-        element: '#daily-quests-container',
+        element: '#drawer-daily-quests-container',
         title: 'Daily Quests',
         content: 'Complete quests every day to earn XP and build your streak! Consistency is key to mastering math.',
         position: 'right'
     },
     {
-        element: '.sidebar-progress',
+        element: '#cr-xp-meter',
         title: 'Your Progress',
         content: 'Track your XP and level here. The more you practice, the higher you\'ll climb!',
-        position: 'right'
+        position: 'bottom'
     },
     {
-        element: '#sidebar-leaderboard',
+        element: '#drawer-leaderboard-table',
         title: 'Leaderboard',
         content: 'See how you stack up against your classmates! Earn XP to climb the ranks.',
         position: 'right'
@@ -2767,7 +2762,7 @@ window.studentDashboardTour = [
     {
         element: '#camera-button',
         title: 'Show Your Work',
-        content: 'Snap a photo or upload a PDF of your handwritten work and get instant feedback and grading. Available for Unlimited users!',
+        content: 'Snap a photo or upload a PDF of your handwritten work and get instant feedback and grading. Unlimited with Mathmatix+!',
         position: 'top'
     }
 ];
@@ -2775,39 +2770,33 @@ window.studentDashboardTour = [
 // Admin Dashboard Tour
 window.adminDashboardTour = [
     {
-        element: '.admin-stats-grid',
-        title: 'System Overview',
-        content: 'Monitor key metrics: total users, active sessions, and system health at a glance.',
-        position: 'bottom'
+        element: '.left-sidebar',
+        title: 'System Status',
+        content: 'Database health, AI service status, and the top-students leaderboard at a glance.',
+        position: 'right'
     },
     {
-        element: '[data-tab="users"]',
+        element: '#userStatCards',
         title: 'User Management',
-        content: 'Create, edit, and manage all user accounts. Assign teachers, link parents, and more.',
+        content: 'User counts by role, with the full searchable user list below. Edit accounts, assign teachers, and link parents.',
         position: 'bottom'
     },
     {
-        element: '[data-tab="teachers"]',
-        title: 'Teacher Management',
-        content: 'View all teachers, their class sizes, and student progress statistics.',
-        position: 'bottom'
-    },
-    {
-        element: '[data-tab="email"]',
-        title: 'Bulk Email',
-        content: 'NEW! Send emails to all students, parents, teachers, or specific classes. Great for announcements and newsletters.',
-        position: 'bottom'
-    },
-    {
-        element: '.create-teacher-btn',
+        element: '#openTeacherSetupBtn',
         title: 'Add Teachers',
-        content: 'Quickly create new teacher accounts and generate enrollment codes for their classes.',
-        position: 'left'
+        content: 'Create teacher accounts and generate enrollment codes for their classes.',
+        position: 'bottom'
     },
     {
-        element: '[data-tab="feedback"]',
-        title: 'User Feedback',
-        content: 'Review bug reports and feature requests from users.',
+        element: '#openRosterImportBtn',
+        title: 'Import Rosters',
+        content: 'Bulk-import students from a CSV roster and assign them to teachers in one pass.',
+        position: 'bottom'
+    },
+    {
+        element: '#openBulkEmailBtn',
+        title: 'Bulk Email',
+        content: 'Send emails to all students, parents, or teachers. Great for announcements and newsletters.',
         position: 'bottom'
     }
 ];

@@ -24,6 +24,7 @@ const User = require('../models/user');
 const Affiliate = require('../models/affiliate');
 const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
+const { hasUnmeteredAiAccess } = require('../middleware/usageGate');
 const { sendCancellationConfirmation, sendTrialEndingReminder } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'billing' });
 
@@ -234,17 +235,51 @@ router.post('/webhook', async (req, res) => {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Idempotency check — prevent duplicate processing on Stripe retries
+  // Idempotency — two-phase, because the marker must not claim success before
+  // the handler has actually succeeded. See models/webhookEvent.js.
+  //
+  // A 'processing' marker that is still fresh means another delivery of the same
+  // event is in flight right now; we answer 500 so Stripe retries later rather
+  // than either double-applying it (affiliate commissions and conversion rows are
+  // additive, not idempotent) or silently dropping it. A 'processing' marker
+  // older than STALE_MS is the residue of an attempt that died before it could
+  // clean up, so we take it over.
+  const STALE_MS = 15 * 60 * 1000;
   try {
-    await WebhookEvent.create({ stripeEventId: event.id, eventType: event.type });
+    await WebhookEvent.create({ stripeEventId: event.id, eventType: event.type, status: 'processing' });
   } catch (err) {
     if (err.code === 11000) {
-      // Duplicate key — already processed this event
-      logger.info('Duplicate webhook event — skipping', { eventId: event.id, eventType: event.type });
-      return res.json({ received: true });
+      const existing = await WebhookEvent.findOne({ stripeEventId: event.id }).catch(() => null);
+
+      if (existing && existing.status === 'done') {
+        logger.info('Duplicate webhook event — already processed, skipping', {
+          eventId: event.id, eventType: event.type
+        });
+        return res.json({ received: true });
+      }
+
+      const age = existing?.processedAt ? Date.now() - new Date(existing.processedAt).getTime() : 0;
+      if (existing && age < STALE_MS) {
+        logger.warn('Webhook event already in flight — asking Stripe to retry', {
+          eventId: event.id, eventType: event.type, ageMs: age
+        });
+        return res.status(500).json({ error: 'Event already in flight; retry' });
+      }
+
+      logger.warn('Reclaiming stale in-flight webhook event', {
+        eventId: event.id, eventType: event.type, ageMs: age
+      });
+      await WebhookEvent.updateOne(
+        { stripeEventId: event.id },
+        { $set: { status: 'processing', processedAt: new Date() } }
+      ).catch(() => null);
+    } else {
+      // Non-duplicate DB error — log but continue processing. Preferring
+      // availability here means a dedup-store outage can let an event through
+      // twice; that is the deliberate trade-off, and it is why the failure is
+      // logged at error level.
+      logger.error('Webhook dedup check error', { error: err.message, eventId: event.id });
     }
-    // Non-duplicate DB error — log but continue processing
-    logger.error('Webhook dedup check error', { error: err.message, eventId: event.id });
   }
 
   try {
@@ -436,10 +471,31 @@ router.post('/webhook', async (req, res) => {
         break;
     }
 
+    // Processing succeeded — only now is it safe to record the event as handled.
+    // A failure here is not fatal: the worst case is that a later retry of the
+    // same event reprocesses it, which is strictly better than provisioning
+    // nothing at all.
+    await WebhookEvent.updateOne(
+      { stripeEventId: event.id },
+      { $set: { status: 'done', processedAt: new Date() } }
+    ).catch((markErr) => {
+      logger.error('Failed to mark webhook event done', { error: markErr.message, eventId: event.id });
+    });
+
     // Return 200 only after successful processing
     return res.json({ received: true });
   } catch (error) {
     logger.error('Webhook processing error', { error: error.message, eventType: event?.type });
+
+    // Drop the marker so Stripe's retry starts clean instead of colliding with a
+    // marker for work that never completed. Without this the retry would hit the
+    // duplicate-key branch and the event would never be applied.
+    await WebhookEvent.deleteOne({ stripeEventId: event.id }).catch((delErr) => {
+      logger.error('Failed to clear webhook marker after processing error', {
+        error: delErr.message, eventId: event.id
+      });
+    });
+
     // Return 500 so Stripe retries the webhook
     return res.status(500).json({ error: 'Webhook processing failed' });
   }
@@ -800,6 +856,23 @@ router.get('/status', isAuthenticated, async (req, res) => {
         billingEnabled: true,
         tier: 'free',
         hasAccess: true,
+        usage: { secondsRemaining: Infinity, limitReached: false }
+      });
+    }
+
+    // School-licensed students (and any other unmetered case usageGate honors):
+    // unlimited while the license is valid and in capacity. Without this branch
+    // the status endpoint fell through to the free-quota math below, so a
+    // licensed student who logged >30 AI-min showed a "No AI time left" wall —
+    // while usageGate (correctly) kept letting tutor turns through. Same check
+    // as the gate, so display and enforcement can never disagree.
+    if (await hasUnmeteredAiAccess(user)) {
+      return res.json({
+        success: true,
+        billingEnabled: true,
+        tier: 'free',
+        hasAccess: true,
+        unmetered: true,
         usage: { secondsRemaining: Infinity, limitReached: false }
       });
     }

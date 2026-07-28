@@ -47,7 +47,10 @@ describe('NOTEBOOK_IDEA extraction', () => {
 describe('sanitizeCardInput (POST /api/notebook)', () => {
   test('valid idea passes through with caps applied', () => {
     const input = sanitizeCardInput({ type: 'idea', title: 'Balance rule', body: 'Do it to both sides.', skillId: 'two-step-equations' });
-    expect(input).toEqual({ type: 'idea', title: 'Balance rule', body: 'Do it to both sides.', skillId: 'two-step-equations' });
+    // `source` marks whose words these are — 'tutor' for an offered idea, so it
+    // stays read-only. Student-authored `note` cards are the editable ones; see
+    // tests/unit/notebookStudentNotes.test.js.
+    expect(input).toEqual({ type: 'idea', source: 'tutor', title: 'Balance rule', body: 'Do it to both sides.', skillId: 'two-step-equations' });
   });
 
   test('pipeline-only kinds are coerced to idea — clients cannot mint AHA/reminder evidence', () => {

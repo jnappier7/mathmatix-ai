@@ -61,7 +61,14 @@ function buildSidecar(observation, diagnosis, decision, context = {}) {
   };
 
   // ── 1. Problem result from diagnosis ──
-  if (diagnosis && diagnosis.type !== 'no_answer' && diagnosis.type !== 'unverifiable') {
+  // Only an explicit boolean verdict may stamp a result. The old test was on
+  // diagnosis.type, so anything that wasn't no_answer/unverifiable fell to the
+  // ternary — and a `correct_partial` (isCorrect === null: a right-but-incomplete
+  // answer) was stamped INCORRECT. That stamp is not cosmetic: it feeds the mood
+  // engine, the badge counters, checkpoint scoring, and the client's
+  // practice-on-paper nudge, so a null verdict reading as a miss follows the
+  // student around for the rest of the session.
+  if (diagnosis && (diagnosis.isCorrect === true || diagnosis.isCorrect === false)) {
     sidecar.problemResult = diagnosis.isCorrect ? 'correct' : 'incorrect';
     sidecar.source.pipelineDerived.push('problemResult');
   }

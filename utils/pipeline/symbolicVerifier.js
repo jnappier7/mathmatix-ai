@@ -231,10 +231,22 @@ function detectPosedArithmetic(text) {
     .replace(/\\left|\\right/g, '')
     .replace(/\\[()[\]]/g, ' ')   // strip \( \) \[ \] delimiters
     .replace(/×/g, '*').replace(/·/g, '*').replace(/÷/g, '/').replace(/[−–—]/g, '-');
+  // An EXPONENT is not arithmetic. In "f(x) = \frac{x^2 - 9}{x - 3}" the scan
+  // reads straight past the caret and pulls "2 - 9" — a number that appears
+  // nowhere in the tutor's question — then grades the student's answer against
+  // -7. That is how "what value of x would make x - 3 equal zero?" answered "3"
+  // came back INCORRECT in production (AP Calculus AB, 2026-07-28). A candidate
+  // whose first number is the exponent of a variable is a fragment of algebra,
+  // not a posed computation, so drop it and keep looking at earlier candidates.
   const re = /(?<![\w.$])-?\d+(?:\.\d+)?(?:\s*[*+/-]\s*-?\d+(?:\.\d+)?)+(?![\w.])/g;
-  const m = s.match(re);
-  if (!m || !m.length) return null;
-  const raw = m[m.length - 1];
+  const candidates = [];
+  for (const match of s.matchAll(re)) {
+    const before = s.slice(0, match.index).replace(/\s+$/, '');
+    if (/[\^_]$/.test(before)) continue;   // x^2 - 9  /  a_1 + 2
+    candidates.push(match[0]);
+  }
+  if (!candidates.length) return null;
+  const raw = candidates[candidates.length - 1];
   const expr = raw.replace(/\s+/g, '');
   if (!/\d[*+/]-?\d|\d-\d/.test(expr)) return null;   // needs a real binary operator
 

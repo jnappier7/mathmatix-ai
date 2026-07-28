@@ -1,7 +1,7 @@
 {
   "css": [
     {
-      "href": "/dist/css/chat-css0.d0c11d6e.css",
+      "href": "/dist/css/chat-css0.e20dfa5a.css",
       "files": [
         "/css/file-upload.css",
         "/css/calculator.css",
@@ -69,7 +69,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js3.25088029.js",
+      "src": "/dist/js/chat-js3.98261304.js",
       "files": [
         "/js/chat-board-integration.js",
         "/js/floating-screener.js",
@@ -132,7 +132,7 @@
       ]
     },
     {
-      "src": "/dist/js/chat-js9.bc0be9a3.js",
+      "src": "/dist/js/chat-js9.1431ddea.js",
       "files": [
         "/js/sessionManager.js",
         "/js/feedback.js",

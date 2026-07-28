@@ -17,6 +17,7 @@
 
 const Conversation = require('../models/conversation');
 const User = require('../models/user');
+const { isForeignLoginSession } = require('./loginSession');
 
 // How many trailing messages voice loads for LLM context by default.
 const VOICE_HISTORY_DEPTH = 12;
@@ -27,24 +28,48 @@ const VOICE_HISTORY_DEPTH = 12;
  * session. Mirrors the creation logic in chat.js / welcome.js so all modes
  * converge on the same document.
  *
+ * DELIBERATELY NO IDLE CHECK. Rule 1 of the continuity policy: returning from
+ * voice mode continues the chat exactly where it left off. Voice is the only
+ * caller here, and a voice turn must never be the thing that decides a session
+ * ended — chat owns that boundary (routes/chat.js). If this rolled on
+ * `isSessionStale`, a student who sat quietly on a problem for half an hour and
+ * then SPOKE would have their thread cut mid-problem, silently, with no client
+ * event to explain it.
+ *
+ * It DOES honour the login marker. That isn't a mid-session rollover: a
+ * conversation stamped by a previous sign-in is not this student's current
+ * sitting at all, and appending to it would orphan the voice turns into a
+ * transcript chat is about to abandon anyway (rule 2). Within one login the
+ * marker never changes, so voice never rolls.
+ *
  * @param {Object} user - lean user object or mongoose doc (needs _id, activeConversationId)
+ * @param {Object} [opts]
+ * @param {string|null} [opts.loginSessionId] - current login marker; omit to skip the check
  * @returns {Promise<{ conversationId: import('mongoose').Types.ObjectId, created: boolean }>}
  */
-async function resolveActiveConversationId(user) {
+async function resolveActiveConversationId(user, opts = {}) {
     const userId = user._id;
     const currentId = user.activeConversationId || null;
+    const loginSessionId = opts.loginSessionId || null;
 
     if (currentId) {
         const existing = await Conversation.findById(currentId)
-            .select('isActive isMastery')
+            .select('isActive isMastery loginSessionId')
             .lean();
-        if (existing && existing.isActive && !existing.isMastery) {
+        if (existing && existing.isActive && !existing.isMastery
+            && !isForeignLoginSession(existing, loginSessionId)) {
+            // Adopt an unmarked conversation for this login (see loginSession.js).
+            if (loginSessionId && !existing.loginSessionId) {
+                await Conversation.updateOne({ _id: currentId }, { $set: { loginSessionId } });
+            }
             return { conversationId: currentId, created: false };
         }
     }
 
     // No usable active conversation — create one and point the user at it.
-    const conv = await Conversation.create({ userId, messages: [], isMastery: false });
+    const conv = await Conversation.create({
+        userId, messages: [], isMastery: false, loginSessionId,
+    });
     await User.updateOne({ _id: userId }, { $set: { activeConversationId: conv._id } });
     // Keep the in-memory user in sync for the rest of this request / session
     // (matters for long-lived voice WebSocket sessions that reuse `this.user`).
@@ -97,7 +122,9 @@ async function appendToActiveConversation(user, turns, opts = {}) {
         }));
     if (!clean.length) return null;
 
-    const { conversationId } = await resolveActiveConversationId(user);
+    const { conversationId } = await resolveActiveConversationId(user, {
+        loginSessionId: opts.loginSessionId || null,
+    });
     const set = { lastActivity: new Date() };
     // Voice turns fold their board output into the same ledger chat writes
     // (Live Workspace): pass the updated ledger with the turn so a voice

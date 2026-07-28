@@ -298,7 +298,74 @@ async function diagnoseTransformation(observation, context) {
   return { ...noVerdict, answer: studentExpr, isTransformation: true };
 }
 
+/**
+ * Diagnose a CONCEPTUAL reply — the student answered a question whose answer is
+ * an idea rather than a value ("what distinguishes an asymptote from a hole?").
+ *
+ * Nothing in the numeric stack can grade this, and everything in it will grade
+ * it WRONG if allowed to try: the words carry no answer to match, so the
+ * comparison fails and the student is told a correct idea is incorrect. The
+ * conceptual verifier judges the idea instead.
+ *
+ * Verdicts here are asymmetric for the same reason they are everywhere else in
+ * this file: `correct` is affirmed, `partially_correct` is affirmed-and-extended
+ * (never the wrong-answer ladder), and anything the judge could not settle stays
+ * unverifiable rather than becoming a rejection.
+ */
+async function diagnoseConceptual(observation, context) {
+  const verdict = await context.conceptualVerificationPromise;
+  if (!verdict) return null;
+
+  const base = {
+    answer: null,
+    correctAnswer: null,   // an unsaid idea is not ours to reveal (#1 anti-cheat rule)
+    misconception: null,
+    verificationSource: 'llm:conceptual',
+    conceptual: {
+      verdict: verdict.verdict || null,
+      partial: verdict.partial === true,
+      keyIdea: verdict.keyIdea || null,
+      confidence: verdict.confidence || 0,
+    },
+  };
+  const evidenceFor = (isCorrect) => ({
+    isCorrect,
+    independenceLevel: estimateIndependence(observation, context),
+    misconceptionHit: null,
+    responseTimeCategory: null,
+    problemContext: observation.problemContext,
+    timestamp: new Date(),
+  });
+
+  if (verdict.isCorrect === true) {
+    console.log(`[Diagnose] Conceptual: correct (confidence: ${(verdict.confidence || 0).toFixed(2)})`);
+    return { ...base, type: 'correct', isCorrect: true, evidence: evidenceFor(true), demonstratedReasoning: true };
+  }
+  if (verdict.isCorrect === false) {
+    console.log(`[Diagnose] Conceptual: incorrect (confidence: ${(verdict.confidence || 0).toFixed(2)})`);
+    return { ...base, type: 'incorrect', isCorrect: false, evidence: evidenceFor(false) };
+  }
+  if (verdict.partial === true) {
+    console.log('[Diagnose] Conceptual: partially correct');
+    return { ...base, type: 'correct_partial', isCorrect: null, evidence: null };
+  }
+  console.log(`[Diagnose] Conceptual: unverifiable (${verdict.verdict || verdict.error || 'no verdict'})`);
+  return { ...base, type: 'unverifiable', isCorrect: null, evidence: null };
+}
+
 async function diagnose(observation, context = {}) {
+  // A conceptual reply is graded on its IDEA, not on any number in it, and it
+  // is routed here BEFORE the numeric stack — which would otherwise match the
+  // student's words against a computed answer and reject them.
+  if (context.conceptualVerificationPromise) {
+    try {
+      const conceptual = await diagnoseConceptual(observation, context);
+      if (conceptual) return conceptual;
+    } catch (err) {
+      console.error('[Diagnose] Conceptual verification failed:', err.message);
+    }
+  }
+
   // No extractable answer does NOT mean nothing to verify. A student rewriting
   // the problem ("24-3+3") is doing verifiable work; bailing out here is what
   // left the tutor guessing. Route it through transformation diagnosis instead.
@@ -345,9 +412,30 @@ async function diagnose(observation, context = {}) {
   // This avoids fragile regex matching against the AI's natural language text —
   // the LLM can phrase problems in infinite ways that regex can't anticipate.
   // Fall back to re-parsing only for legacy messages that lack stored metadata.
+  // ── The newest question wins ──
+  // The scan below walks back until something parses, so a tutor who breaks a
+  // problem into sub-questions keeps grading against the ORIGINAL problem.
+  // Production, AP Calculus AB, 2026-07-28: the tutor had posed "simplify
+  // (x^2-9)/(x-3)" (answer x+3, stored as problemInfo), then asked "what value
+  // of x would make x - 3 equal zero?". The student answered "3", it was checked
+  // against x+3, and a correct answer was called wrong.
+  //
+  // So when the LATEST tutor turn asks a question of its own, only that turn may
+  // supply the grading target; anything older is stale. Emitting no verdict is
+  // the safe direction — the symbolic tier and the LLM verifier both see the
+  // actual question, and an undecided turn leaves the tutor asking, not accusing.
+  const latestTurn = recentAI[recentAI.length - 1];
+  const latestTurnAsksSomething = typeof latestTurn?.content === 'string'
+    && latestTurn.content.includes('?');
+
   let problemInfo = null;
   for (let i = recentAI.length - 1; i >= 0; i--) {
     const msg = recentAI[i];
+
+    if (latestTurnAsksSomething && i < recentAI.length - 1) {
+      console.log('[Diagnose] Newer tutor question supersedes the older posed problem — deferring');
+      break;
+    }
 
     // Fast path: read pre-computed metadata stored at persist time
     if (msg.problemInfo && msg.problemInfo.correctAnswer != null) {
@@ -794,6 +882,7 @@ module.exports = {
   hasLibraryMisconceptions,
   arithmeticMatchesAnswer,
   // Exported for testing
+  diagnoseConceptual,
   diagnoseTransformation,
   extractBareExpression,
   resolveProblemExpression,

@@ -65,6 +65,64 @@ async function isLicenseValid(licenseId) {
 }
 
 /**
+ * True when the user's AI usage is NOT metered against the free monthly
+ * quota: role bypass (teacher/parent/admin), unlimited subscriber, valid
+ * in-capacity school license, or a linked parent with Mathmatix+.
+ *
+ * This is the single source of truth for "does the free-minute quota apply
+ * to this user" — usageGate uses it to decide whether to enforce, and the
+ * display surfaces (GET /api/billing/status, the pipeline's
+ * freeWeeklySecondsRemaining) MUST use it too. They previously tested
+ * `subscriptionTier === 'free'` alone, which is true for school-licensed
+ * and parent-covered students, so those students saw a "No AI time left"
+ * wall while the gate (correctly) kept letting tutor turns through.
+ *
+ * @param {Object} user - req.user / hydrated user doc (mongoose or lean)
+ * @returns {Promise<boolean>}
+ */
+async function hasUnmeteredAiAccess(user) {
+  if (!BILLING_ENABLED) return true;
+  if (!user) return false;
+
+  // Teachers, parents, and admins are always free unlimited
+  if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') return true;
+
+  // Students covered by a school license get unlimited access
+  if (user.schoolLicenseId) {
+    const license = await getCachedLicense(user.schoolLicenseId);
+    if (license) {
+      const valid = (license.status === 'active' || license.status === 'trial') &&
+        (!license.expiresAt || new Date() <= license.expiresAt);
+      if (valid) {
+        // Capacity check: verify school hasn't exceeded student limit
+        if (license.currentStudentCount > license.maxStudents) {
+          console.warn(`[UsageGate] School "${license.schoolName}" over capacity (${license.currentStudentCount}/${license.maxStudents})`);
+          // Over capacity — fall through to free tier instead of blocking entirely
+        } else {
+          return true;
+        }
+      }
+    }
+    // License expired/invalid/over-capacity — fall through to free tier
+  }
+
+  // Unlimited individual subscribers pass unconditionally
+  if (user.subscriptionTier === 'unlimited') return true;
+
+  // Check if a linked parent has an active Mathmatix+ subscription
+  // (parent pays → child gets unlimited access)
+  if (user.parentIds && user.parentIds.length > 0) {
+    const subscribedParent = await User.findOne({
+      _id: { $in: user.parentIds },
+      subscriptionTier: 'unlimited'
+    }).lean();
+    if (subscribedParent) return true;
+  }
+
+  return false;
+}
+
+/**
  * Middleware that gates AI-powered endpoints behind subscription limits.
  * - If BILLING_ENABLED is false: everyone passes (pre-launch mode)
  * - Teachers, parents, admins: always pass (free unlimited)
@@ -73,51 +131,19 @@ async function isLicenseValid(licenseId) {
  * - Any student with free monthly minutes remaining: pass (free minutes first)
  * - Otherwise: 402 Payment Required
  */
-async function usageGate(req, res, next) {
+async function runUsageGate(req, res, next, { allMethods = false } = {}) {
   // Master switch — when billing is off, everyone gets unlimited access
   if (!BILLING_ENABLED) return next();
 
   try {
-    // Only gate POST requests (actual AI usage), not GETs
-    if (req.method !== 'POST') return next();
+    // Only gate POST requests (actual AI usage), not GETs — unless the
+    // mount opts into allMethods because its GETs spend AI (usageGateAllMethods).
+    if (!allMethods && req.method !== 'POST') return next();
 
     const user = req.user;
     if (!user) return next(); // Let auth middleware handle this
 
-    // Teachers, parents, and admins are always free unlimited
-    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') return next();
-
-    // Students covered by a school license get unlimited access
-    if (user.schoolLicenseId) {
-      const license = await getCachedLicense(user.schoolLicenseId);
-      if (license) {
-        const valid = (license.status === 'active' || license.status === 'trial') &&
-          (!license.expiresAt || new Date() <= license.expiresAt);
-        if (valid) {
-          // Capacity check: verify school hasn't exceeded student limit
-          if (license.currentStudentCount > license.maxStudents) {
-            console.warn(`[UsageGate] School "${license.schoolName}" over capacity (${license.currentStudentCount}/${license.maxStudents})`);
-            // Over capacity — fall through to free tier instead of blocking entirely
-          } else {
-            return next();
-          }
-        }
-      }
-      // License expired/invalid/over-capacity — fall through to free tier
-    }
-
-    // Unlimited individual subscribers pass unconditionally
-    if (user.subscriptionTier === 'unlimited') return next();
-
-    // Check if a linked parent has an active Mathmatix+ subscription
-    // (parent pays → child gets unlimited access)
-    if (user.parentIds && user.parentIds.length > 0) {
-      const subscribedParent = await User.findOne({
-        _id: { $in: user.parentIds },
-        subscriptionTier: 'unlimited'
-      }).lean();
-      if (subscribedParent) return next();
-    }
+    if (await hasUnmeteredAiAccess(user)) return next();
 
     const now = new Date();
 
@@ -200,6 +226,20 @@ async function usageGate(req, res, next) {
     // Don't block the user on gate errors — let them through
     next();
   }
+}
+
+function usageGate(req, res, next) {
+  return runUsageGate(req, res, next);
+}
+
+/**
+ * Variant for mounts whose GET endpoints spend AI (e.g. /api/welcome-message
+ * generates an LLM greeting on GET). The default usageGate skips non-POSTs,
+ * which lets those endpoints keep firing tutor responses after the free
+ * quota is exhausted.
+ */
+function usageGateAllMethods(req, res, next) {
+  return runUsageGate(req, res, next, { allMethods: true });
 }
 
 /**
@@ -366,4 +406,4 @@ function paidFeatureGate(featureName) {
   };
 }
 
-module.exports = { usageGate, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, FREE_WEEKLY_SECONDS, isLicenseValid };
+module.exports = { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasPremiumAccess, hasUnmeteredAiAccess, FREE_WEEKLY_SECONDS, isLicenseValid };
