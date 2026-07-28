@@ -148,3 +148,54 @@ describe('pack size (owner: "a more substantial sheet, 15-20 problems")', () => 
     expect(src).toContain('const DEFAULT_PROBLEM_COUNT = 16;');
   });
 });
+
+describe('packFileName (owner ask: a naming convention for Practice Packs)', () => {
+  // Skill lookup is mocked out — findOne throwing exercises the raw-id fallback,
+  // resolving exercises the display-name path.
+  const Skill = require('../../models/skill');
+  const { packFileName } = router.__helpers;
+
+  afterEach(() => jest.restoreAllMocks());
+
+  test('MATHMATIX-Practice_<Topic>_<Name>_<date>.pdf from the skill display name', async () => {
+    jest.spyOn(Skill, 'findOne').mockReturnValue({
+      select: () => ({ lean: async () => ({ displayName: 'Rational Functions' }) }),
+    });
+    const name = await packFileName('Jason', [{ skillId: 'rational-functions' }]);
+    expect(name).toMatch(/^MATHMATIX-Practice_Rational-Functions_Jason_\d{4}-\d{2}-\d{2}\.pdf$/);
+  });
+
+  test('multi-skill packs read as "<first>-and-more"; no-skill packs are Mixed-Review', async () => {
+    jest.spyOn(Skill, 'findOne').mockReturnValue({
+      select: () => ({ lean: async () => ({ displayName: 'Absolute Value' }) }),
+    });
+    const multi = await packFileName('Kandy', [{ skillId: 'a' }, { skillId: 'b' }]);
+    expect(multi).toContain('Absolute-Value-and-more');
+    const none = await packFileName('Kandy', []);
+    expect(none).toContain('Mixed-Review');
+  });
+
+  test('survives a dead skill lookup and hostile names — never the old timestamp shape', async () => {
+    jest.spyOn(Skill, 'findOne').mockImplementation(() => { throw new Error('no db'); });
+    const name = await packFileName('Ana/María 🎉', [{ skillId: 'linear-equations' }]);
+    expect(name).toContain('linear-equations'.replace(/[^a-zA-Z0-9]+/g, '-'));
+    expect(name).toMatch(/Ana-Mar/);
+    expect(name).not.toMatch(/\d{13}/); // no epoch-millis blob
+  });
+});
+
+describe('activeCourseModuleSkills (packs match TODAY\'S module, not stale mastery)', () => {
+  const { activeCourseModuleSkills } = router.__helpers;
+
+  test('no active course session → [] (falls back to the frontier selector)', async () => {
+    expect(await activeCourseModuleSkills({})).toEqual([]);
+    expect(await activeCourseModuleSkills(null)).toEqual([]);
+  });
+
+  test('a dead session lookup returns [] instead of throwing', async () => {
+    const CourseSession = require('../../models/courseSession');
+    jest.spyOn(CourseSession, 'findById').mockImplementation(() => { throw new Error('no db'); });
+    expect(await activeCourseModuleSkills({ activeCourseSessionId: 'x' })).toEqual([]);
+    jest.restoreAllMocks();
+  });
+});

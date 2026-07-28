@@ -120,6 +120,62 @@ function gradeLevelToBand(gradeLevel) {
   return null;
 }
 
+/**
+ * Skills for the student's CURRENT course module, if they're in one.
+ * Any failure (no session, missing pathway file, malformed module) returns []
+ * so pack generation falls back to the frontier selector — never throws.
+ */
+async function activeCourseModuleSkills(user) {
+  try {
+    if (!user?.activeCourseSessionId) return [];
+    const fs = require('fs');
+    const path = require('path');
+    const CourseSession = require('../models/courseSession');
+    const cs = await CourseSession.findById(user.activeCourseSessionId).lean();
+    if (!cs || cs.status !== 'active' || !cs.currentModuleId) return [];
+    const pathwayFile = path.join(__dirname, '../public/resources', `${cs.courseId}-pathway.json`);
+    if (!fs.existsSync(pathwayFile)) return [];
+    const pathway = JSON.parse(fs.readFileSync(pathwayFile, 'utf8'));
+    const mod = (pathway.modules || []).find((m) => m.moduleId === cs.currentModuleId);
+    if (!mod) return [];
+    let skills = mod.skills || [];
+    if (mod.moduleFile) {
+      const mf = path.join(__dirname, '../public', mod.moduleFile);
+      if (fs.existsSync(mf)) {
+        const md = JSON.parse(fs.readFileSync(mf, 'utf8'));
+        if (Array.isArray(md.skills) && md.skills.length) skills = md.skills;
+      }
+    }
+    return skills.map((s) => (typeof s === 'string' ? s : s?.skillId)).filter(Boolean);
+  } catch (e) {
+    logger.warn('[PracticePack] course module skill lookup failed', { error: e.message });
+    return [];
+  }
+}
+
+/**
+ * Human filename for a generated pack (owner ask, 2026-07-28: "need a naming
+ * convention for the Practice Packs"). Shape:
+ *   MATHMATIX-Practice_<Topic>_<FirstName>_<YYYY-MM-DD>.pdf
+ * Topic is the pack's (first) skill display name, "Mixed-Review" for a
+ * frontier grab-bag. Sanitized to filename-safe ASCII.
+ */
+async function packFileName(firstName, problems) {
+  const clean = (s) => String(s).replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'Practice';
+  const date = new Date().toISOString().slice(0, 10);
+  const ids = [...new Set((problems || []).map((p) => p.skillId).filter(Boolean))];
+  let topic = 'Mixed-Review';
+  if (ids.length >= 1) {
+    let name = ids[0];
+    try {
+      const doc = await Skill.findOne({ skillId: ids[0] }).select('displayName').lean();
+      if (doc?.displayName) name = doc.displayName;
+    } catch (_) { /* fall back to the raw id */ }
+    topic = ids.length === 1 ? name : `${name}-and-more`;
+  }
+  return `MATHMATIX-Practice_${clean(topic)}_${clean(firstName || 'Student')}_${date}.pdf`;
+}
+
 async function selectProblemsForPack(user, options = {}) {
   const { count = DEFAULT_PROBLEM_COUNT, skillId = null } = options;
   const problems = [];
@@ -136,6 +192,18 @@ async function selectProblemsForPack(user, options = {}) {
     // Specific skill requested
     targetSkills = [skillId];
   } else {
+    // A student in an active course gets a pack that matches TODAY'S module —
+    // not their historical skillMastery frontier. Production failure: an AP
+    // Calc student mid-lesson on rational functions was handed shaded-circle
+    // fractions and place-value drills, because stale elementary mastery
+    // records were the only thing this selector ever looked at.
+    const courseSkills = await activeCourseModuleSkills(user);
+    if (courseSkills.length > 0) {
+      targetSkills = courseSkills.slice(0, 4);
+    }
+  }
+
+  if (targetSkills.length === 0) {
     // Auto-select from student's learning frontier
     const skillMastery = user.skillMastery || new Map();
     const learningSkills = [];
@@ -350,8 +418,10 @@ async function generateWorksheetHTML(user, problems, options = {}) {
     for (const p of probs) {
       const hasSVG = p.svg ? `<div class="problem-svg">${p.svg}</div>` : '';
       const hasOptions = (p.answerType === 'multiple-choice' && p.options?.length > 0)
-        ? `<div class="problem-options">${p.options.map(o =>
-            `<span class="option-item"><span class="option-letter">${o.label}</span> ${o.text}</span>`
+        ? `<div class="problem-options">${p.options.map((o, oi) =>
+            // Some banks store options without a label — fall back to A/B/C/D
+            // by position instead of printing the literal string "undefined".
+            `<span class="option-item"><span class="option-letter">${o.label || String.fromCharCode(65 + oi)}</span> ${o.text != null ? o.text : o}</span>`
           ).join('')}</div>`
         : '';
 
@@ -723,7 +793,7 @@ router.get('/generate', isAuthenticated, async (req, res) => {
     browser = null;
 
     // Set response headers for PDF download
-    const fileName = `practice-pack-${user.firstName || 'student'}-${Date.now()}.pdf`;
+    const fileName = await packFileName(user.firstName, problems);
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.setHeader('Content-Length', pdfBuffer.length);
@@ -894,7 +964,7 @@ router.get('/generate-for-child', isAuthenticated, async (req, res) => {
     await browser.close();
     browser = null;
 
-    const fileName = `practice-pack-${child.firstName || 'student'}-${Date.now()}.pdf`;
+    const fileName = await packFileName(child.firstName, problems);
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.setHeader('Content-Length', pdfBuffer.length);
@@ -1000,7 +1070,9 @@ router.__helpers = {
   resolveTheta,
   gradeLevelToBand,
   thetaToGradeBand,
-  toPdfBuffer
+  toPdfBuffer,
+  packFileName,
+  activeCourseModuleSkills
 };
 
 module.exports = router;
