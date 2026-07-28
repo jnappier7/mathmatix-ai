@@ -34,6 +34,12 @@ const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { resolveTheta } = require('../utils/theta');
 const { assessedLevel } = require('../utils/gradeLevel');
 const { setSkillMasteryEntry } = require('../utils/masteryGuard');
+// The Growth Check's completion moment (previous vs new level, skills
+// confirmed / needing review / newly reachable, ONE suggested next step).
+// Shared with routes/growthCheck.js so both flows close the same way.
+const { buildGrowthCheckSummary, deriveSkillHighlights } = require('../utils/growthSummary');
+// A 5-8 item check must not cost a student their level on a bad day.
+const { dampGrowthCheckDrop } = require('../utils/growthGuard');
 
 // Warm up cache on module load
 warmupCache().catch(err => console.error('[Screener] Cache warmup failed:', err));
@@ -77,6 +83,53 @@ function calculateAdaptiveProgress(session) {
   // Use centralized progress calculation from catConvergence
   return calculateProgress(session);
 }
+
+/**
+ * Build the student-readable Growth Check summary for a finished session.
+ *
+ * `previousTheta` MUST be read off the user doc before this completion writes
+ * the new estimate — otherwise "previous vs new" compares the new value to
+ * itself and every check reports "holding steady".
+ *
+ * @param {Object} session - completed ScreenerSession (plain or Mongoose doc)
+ * @param {Object} report  - generateReport() output for that session
+ * @param {Object} user    - the student, BEFORE theta is updated
+ */
+async function buildGrowthSummaryForSession(session, report, user, guard = null) {
+  const previousTheta = resolveTheta(user);
+  const masteredSkillIds = [];
+  if (user.skillMastery && typeof user.skillMastery.entries === 'function') {
+    for (const [skillId, data] of user.skillMastery.entries()) {
+      if (data && data.status === 'mastered') masteredSkillIds.push(skillId);
+    }
+  }
+
+  // The APPLIED ability — the guard may have held back part of a drop.
+  const appliedTheta = guard ? guard.theta : report.theta;
+
+  const highlights = await deriveSkillHighlights({
+    responses: session.responses || [],
+    previousTheta,
+    newTheta: appliedTheta,
+    masteredSkillIds,
+  });
+
+  return buildGrowthCheckSummary({
+    previousTheta,
+    newTheta: appliedTheta,
+    rawNewTheta: guard ? guard.rawTheta : null,
+    levelHeld: guard ? guard.levelHeld : false,
+    accuracy: report.accuracy,
+    questionsAnswered: report.questionsAnswered,
+    durationMs: report.duration,
+    sessionId: session.sessionId,
+    confirmedSkills: highlights.confirmedSkills,
+    needsReviewSkills: highlights.needsReviewSkills,
+    newlyReachableSkills: highlights.newlyReachableSkills,
+  });
+}
+
+const isGrowthCheckSession = (session) => session?.sessionType === 'growth-check';
 
 /**
  * POST /api/screener/start
@@ -608,10 +661,25 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
       // CTO REVIEW FIX: Persist session state
       await session.save();
 
+      // A Growth Check needs a RESULT, not a placement: where the student was
+      // vs where they are now, what they confirmed, and one next step. Built
+      // here (before /complete writes the new theta) so the results screen has
+      // the comparison the moment the last question lands.
+      let growthSummary = null;
+      if (isGrowthCheckSession(session)) {
+        try {
+          const student = await User.findById(req.user._id);
+          if (student) growthSummary = await buildGrowthSummaryForSession(session, report, student);
+        } catch (summaryErr) {
+          console.warn('[Screener] Growth summary build failed:', summaryErr.message);
+        }
+      }
+
       res.json({
         nextAction: 'complete',
         reason: result.reason,
         message: result.message || 'Assessment complete!',
+        sessionType: session.sessionType || 'starting-point',
         report: {
           // Students see: grade level, accuracy, time
           gradeLevel: report.gradeLevel,
@@ -620,7 +688,8 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
           questionsAnswered: report.questionsAnswered,
           duration: report.duration
           // Teachers/admin see full report via /admin/student-detail endpoint
-        }
+        },
+        ...(growthSummary ? { growthSummary } : {})
       });
 
     } else {
@@ -637,6 +706,7 @@ router.post('/submit-answer', isAuthenticated, async (req, res) => {
 
       res.json({
         nextAction: 'complete',
+        sessionType: session.sessionType || 'starting-point',
         report: {
           // Students see: grade level, accuracy, time
           gradeLevel: report.gradeLevel,
@@ -723,10 +793,46 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Generate final report
     const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
+    // A Growth Check is a RE-measurement, not a placement.
+    const isGrowth = isGrowthCheckSession(session);
+
+    // A 5-8 item check must not cost a student their level on a bad day: it
+    // drives user.mathCourse (what the tutor teaches from) and then locks them
+    // out for three months. The guard trusts growth in full and throttles
+    // drops — see utils/growthGuard.js. The Starting Point is unguarded; it's
+    // the full assessment and stays authoritative.
+    const guard = isGrowth
+      ? dampGrowthCheckDrop({
+        previousTheta: resolveTheta(user),   // read BEFORE any write below
+        measuredTheta: report.theta,
+        measuredSE: report.standardError,
+      })
+      : null;
+
+    // Everything the student is placed at from here on uses the APPLIED
+    // ability. report.theta stays raw — it describes the session, not the kid.
+    const appliedTheta = guard ? guard.theta : report.theta;
+
+    if (guard?.damped) {
+      console.log(`[Screener] Growth check drop damped for user ${userId}: raw θ=${guard.rawTheta} (${guard.rawLevel}) → applied θ=${guard.theta} (${guard.appliedLevel}), reason=${guard.reason}`);
+    }
+
     // Convert theta to human-readable grade level (like STAR testing)
-    const gradeLevelResult = thetaToGradeLevel(report.theta);
+    const gradeLevelResult = thetaToGradeLevel(appliedTheta);
     report.gradeLevel = gradeLevelResult.gradeLevel;
     report.gradeLevelDescription = gradeLevelResult.description;
+
+    // Build the summary NOW, while resolveTheta(user) still returns the
+    // pre-check estimate — the whole point is the comparison, and the writes
+    // below overwrite it.
+    let growthSummary = null;
+    if (isGrowth) {
+      try {
+        growthSummary = await buildGrowthSummaryForSession(session, report, user, guard);
+      } catch (summaryErr) {
+        console.warn('[Screener] Growth summary build failed:', summaryErr.message);
+      }
+    }
 
     // Update user's skill mastery based on screener results (keyed on the
     // canonical unified skill id so placement shares the tutor's mastery keys)
@@ -777,12 +883,19 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     const now = new Date();
     user.assessmentCompleted = true;
     user.assessmentDate = now;
-    user.initialPlacement = gradeLevelResult.gradeLevel;
 
     // Mirror into learningProfile for routes that read from nested path
     user.learningProfile.assessmentCompleted = true;
     user.learningProfile.assessmentDate = now;
-    user.learningProfile.initialPlacement = gradeLevelResult.gradeLevel;
+
+    // initialPlacement is the INITIAL placement — a historical record of where
+    // the student started (utils/gradeLevel.js). A growth check re-measures the
+    // CURRENT level and must leave that record alone, or the "previous vs new"
+    // comparison loses its origin and every check reads as a fresh placement.
+    if (!isGrowth) {
+      user.initialPlacement = gradeLevelResult.gradeLevel;
+      user.learningProfile.initialPlacement = gradeLevelResult.gradeLevel;
+    }
 
     // Update mathCourse to match assessed level so the tutor loads the right pathway
     // (Without this, mathCourse stays at whatever was set at signup/enrollment,
@@ -791,7 +904,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
 
     // Store theta in the format expected by badge system
     user.learningProfile.abilityEstimate = {
-      theta: report.theta,
+      theta: appliedTheta,
       standardError: report.standardError,
       percentile: report.percentile,
       gradeLevel: gradeLevelResult.gradeLevel
@@ -799,16 +912,16 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Sync ALL theta read paths (utils/theta.js): the canonical top-level
     // field was written by nobody (default 0 forever), and the growth check
     // read a third field — the split-brain behind the "5th grade" report.
-    user.currentTheta = report.theta;
-    user.learningProfile.currentTheta = report.theta;
+    user.currentTheta = appliedTheta;
+    user.learningProfile.currentTheta = appliedTheta;
     user.learningProfile.standardError = report.standardError;
 
     // Store assessment in history for tracking growth over time
     if (!user.assessmentHistory) user.assessmentHistory = [];
     user.assessmentHistory.push({
-      type: 'starting-point',
+      type: isGrowth ? 'growth-check' : 'starting-point',
       date: now,
-      theta: report.theta,
+      theta: appliedTheta,
       standardError: report.standardError,
       gradeLevel: gradeLevelResult.gradeLevel,
       questionsAnswered: report.questionsAnswered,
@@ -818,15 +931,54 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       sessionId: session.sessionId
     });
 
-    // Set assessment expiration (1 year from now)
-    const oneYearLater = new Date(now);
-    oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
-    user.assessmentExpiresAt = oneYearLater;
+    // Set assessment expiration (1 year from now). The annual clock belongs to
+    // the Starting Point — a growth check must not silently renew it, or a
+    // student who keeps doing growth checks never gets re-placed.
+    if (!isGrowth) {
+      const oneYearLater = new Date(now);
+      oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
+      user.assessmentExpiresAt = oneYearLater;
+    }
 
     // Set next growth check due date (3 months from now)
     const threeMonthsLater = new Date(now);
     threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
     user.nextGrowthCheckDue = threeMonthsLater;
+
+    if (isGrowth) {
+      user.lastGrowthCheck = now;
+      user.learningProfile.lastGrowthCheck = now;
+      if (!user.learningProfile.growthCheckHistory) user.learningProfile.growthCheckHistory = [];
+      user.learningProfile.growthCheckHistory.push({
+        sessionId: session.sessionId,
+        date: now,
+        previousTheta: growthSummary?.previousTheta,
+        newTheta: appliedTheta,
+        thetaChange: growthSummary?.thetaChange,
+        growthStatus: growthSummary?.growthStatus,
+        questionsAnswered: report.questionsAnswered,
+        accuracy: report.accuracy,
+        // What the check actually measured, before the guard throttled the
+        // drop. We damp what we ACT on, never what we record — a teacher
+        // looking at a run of damped checks is seeing a real decline.
+        rawTheta: guard ? guard.rawTheta : report.theta,
+        damped: !!guard?.damped,
+        dampReason: guard?.damped ? guard.reason : undefined
+      });
+      if (user.learningProfile.growthCheckHistory.length > 20) {
+        user.learningProfile.growthCheckHistory =
+          user.learningProfile.growthCheckHistory.slice(-20);
+      }
+
+      // Hand the closure moment to the tutor. The check ends inside the
+      // FloatingScreener, so without this the student gets a stats card and
+      // silence — routes/chat.js reads this on the next turn and delivers the
+      // debrief in the tutor's voice, then clears it.
+      if (growthSummary) {
+        user.learningProfile.pendingGrowthCheckDebrief = { summary: growthSummary, createdAt: now };
+        user.markModified('learningProfile.pendingGrowthCheckDebrief');
+      }
+    }
 
     await user.save();
 
@@ -838,9 +990,13 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     res.json({
       success: true,
       report,
-      message: earnedBadges.length > 0
-        ? `Assessment complete! You tested out and earned ${earnedBadges.length} badge${earnedBadges.length > 1 ? 's' : ''}!`
-        : 'Assessment complete! Your learning path has been customized.'
+      sessionType: session.sessionType || 'starting-point',
+      ...(growthSummary ? { growthSummary } : {}),
+      message: isGrowth
+        ? 'Growth Check complete! Here’s how you’ve grown.'
+        : earnedBadges.length > 0
+          ? `Assessment complete! You tested out and earned ${earnedBadges.length} badge${earnedBadges.length > 1 ? 's' : ''}!`
+          : 'Assessment complete! Your learning path has been customized.'
     });
 
   } catch (error) {
@@ -1269,7 +1425,12 @@ router.get('/status', isAuthenticated, async (req, res) => {
       nextGrowthCheckDue: user.nextGrowthCheckDue || null,
       assessmentExpiresAt: user.assessmentExpiresAt || null,
       currentGradeLevel: lastAssessment?.gradeLevel || assessedLevel(user),
-      assessmentCount: user.assessmentHistory?.length || 0
+      assessmentCount: user.assessmentHistory?.length || 0,
+      // A finished check the tutor still owes a wrap-up for. The client polls
+      // this on every chat load, which is what makes the debrief survive the
+      // student closing the tab or finishing on growth-check.html — the
+      // greeting path alone would miss a live in-progress session.
+      growthCheckDebriefPending: !!user.learningProfile?.pendingGrowthCheckDebrief?.summary
     });
   } catch (error) {
     console.error('[Screener] Error checking assessment status:', error);

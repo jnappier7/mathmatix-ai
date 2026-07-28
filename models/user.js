@@ -540,8 +540,33 @@ const learningProfileSchema = new Schema({
     thetaChange: { type: Number },
     growthStatus: { type: String, enum: ['significant-growth', 'some-growth', 'stable', 'review-needed'] },
     questionsAnswered: { type: Number },
-    accuracy: { type: Number, min: 0, max: 100 }
-  }]
+    accuracy: { type: Number, min: 0, max: 100 },
+
+    // What the check MEASURED, before utils/growthGuard.js throttled a drop.
+    // A 5-8 item check can't be allowed to cost a student their level on a bad
+    // day (it drives mathCourse, then locks them out for 3 months), so newTheta
+    // above is the damped value we act on — this is the honest reading. A run
+    // of `damped: true` rows is a real decline the guard is slowing down, and
+    // that's exactly what a teacher needs to see.
+    rawTheta: { type: Number },
+    damped: { type: Boolean, default: false },
+    dampReason: { type: String }
+  }],
+
+  // A finished Growth Check the tutor hasn't debriefed yet.
+  //
+  // The check ends in the FloatingScreener (or on growth-check.html), NOT in
+  // the chat transcript — so without this the student got a stats card and
+  // silence, even though the chat intercept promised "come back here when
+  // you're done." Completion stashes the utils/growthSummary payload here;
+  // routes/chat.js delivers it in the tutor's voice on the next turn (a
+  // dedicated debrief request, or folded into the greeting if they wandered
+  // off) and clears it. Mixed because the summary shape is owned by
+  // growthSummary.js — the schema shouldn't have to chase it.
+  pendingGrowthCheckDebrief: {
+    summary: { type: Schema.Types.Mixed },
+    createdAt: { type: Date }
+  }
 }, { _id: false });
 
 /* ---------- MAIN USER SCHEMA ---------- */

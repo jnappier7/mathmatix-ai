@@ -87,7 +87,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (window.MM_FEATURES.boardPanel === true) window.loadBoardTools();
   </script>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/dist/css/chat-css0.5adee0e6.css" />
+  <link rel="stylesheet" href="/dist/css/chat-css0.e20dfa5a.css" />
 <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
   <link rel="stylesheet" href="/dist/css/chat-css1.dae1c280.css" />
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
@@ -1895,18 +1895,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <div class="instruction-card">
           <h3><i class="fas fa-info-circle"></i> What is this?</h3>
-          <p>This short assessment helps us understand your current math level. It's <strong>not a test you can fail</strong> - we're just finding the best place to start your learning journey.</p>
-          <p>The questions will adapt to your level. Answer each one as best you can - there's no penalty for wrong answers!</p>
-          <p><strong><i class="fas fa-pencil-alt"></i> Grab a pencil and some paper</strong> before you start. Work the problems out - don't try to do them all in your head.</p>
+          <p id="screener-instruction-desc">This short assessment helps us understand your current math level. It's <strong>not a test you can fail</strong> - we're just finding the best place to start your learning journey.</p>
+          <p id="screener-instruction-adapt">The questions will adapt to your level. Answer each one as best you can - there's no penalty for wrong answers!</p>
+          <p id="screener-instruction-materials"><strong><i class="fas fa-pencil-alt"></i> Grab a pencil and some paper</strong> before you start. Work the problems out - don't try to do them all in your head.</p>
 
           <div class="duration">
             <i class="fas fa-clock"></i>
             <span><strong>Time:</strong> Usually 10-30 minutes, depending on your level</span>
           </div>
 
-          <div class="warning-box">
+          <div class="warning-box" id="screener-warning-box">
             <i class="fas fa-exclamation-triangle"></i>
-            <span><strong>Important:</strong> If you leave or close this before finishing, your progress won't be saved. Make sure you have time to complete it in one sitting!</span>
+            <span id="screener-warning-text"><strong>Important:</strong> If you leave or close this before finishing, your progress won't be saved. Make sure you have time to complete it in one sitting!</span>
           </div>
         </div>
 
@@ -1967,13 +1967,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- Results Screen -->
       <div id="screener-results-screen" class="screener-results">
         <div class="results-hero">
-          <div class="trophy-icon"><i class="fas fa-trophy"></i></div>
-          <h2>Assessment Complete!</h2>
-          <p>We've found your starting point</p>
+          <div class="trophy-icon" id="screener-results-icon"><i class="fas fa-trophy"></i></div>
+          <h2 id="screener-results-title">Assessment Complete!</h2>
+          <p id="screener-results-subtitle">We've found your starting point</p>
+        </div>
+
+        <!-- Growth Check closure: where you were → where you are, what you
+             confirmed, and ONE suggested next step. Hidden for Starting Point. -->
+        <div class="growth-result" id="screener-growth-result" style="display: none;">
+          <div class="growth-result-levels">
+            <div class="growth-level growth-level-was">
+              <span class="growth-level-label">Last check</span>
+              <span class="growth-level-value" id="screener-growth-previous-level">--</span>
+            </div>
+            <i class="fas fa-arrow-right growth-level-arrow" aria-hidden="true"></i>
+            <div class="growth-level growth-level-now">
+              <span class="growth-level-label">Now</span>
+              <span class="growth-level-value" id="screener-growth-new-level">--</span>
+            </div>
+          </div>
+          <p class="growth-result-message" id="screener-growth-message"></p>
+          <div class="growth-result-skills" id="screener-growth-skills"></div>
+          <div class="growth-next-step" id="screener-growth-next-step">
+            <span class="growth-next-step-label"><i class="fas fa-lightbulb"></i> Suggested next</span>
+            <span class="growth-next-step-text" id="screener-growth-next-step-text"></span>
+          </div>
         </div>
 
         <!-- Grade Level Result (like STAR testing) -->
-        <div class="grade-level-result">
+        <div class="grade-level-result" id="screener-grade-level-result">
           <div class="grade-level-label">Your Math Level</div>
           <div class="grade-level-value" id="screener-result-grade-level">--</div>
           <div class="grade-level-description" id="screener-result-description">
@@ -2424,7 +2446,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script defer src="/js/voice-subtitles.js?v=20260718b"></script>
   <!-- Whiteboard stack lazy-loaded via loadBoardTools() (see boardPanel block
        below) — only needed when the visual board is enabled (boardPanel:true). -->
-  <script src="/dist/js/chat-js3.da6f6068.js"></script>
+  <script src="/dist/js/chat-js3.98261304.js"></script>
 <!-- returningUserModal.js removed — no longer used -->
   <script src="/dist/js/chat-js4.3576c03f.js"></script>
 <link rel="stylesheet" href="/css/algebra-tiles.css">
@@ -2490,7 +2512,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      window.PlayerStatsCard.init(currentUser) once the user doc is fetched. -->
 <script defer src="/js/modules/playerStatsCard.js?v=20260724b"></script>
 <script src="/js/challengeCard.js?v=20260725f"></script>
-<script src="/js/script.js?v=20260728c" type="module"></script>
+<script src="/js/script.js?v=20260728d" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.1431ddea.js"></script>
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->
