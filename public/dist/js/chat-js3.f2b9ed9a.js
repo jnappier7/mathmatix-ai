@@ -3963,6 +3963,15 @@ class CourseManager {
                 return;
             }
 
+            // Server deferred the greeting: the tutor spoke seconds ago and the
+            // student is mid-exchange — a second lesson start would collide with
+            // the live one. Render nothing; the course resumes naturally on the
+            // student's next turn.
+            if (data.greetingDeferred) {
+                console.log('[CourseManager] Course greeting deferred (active exchange)');
+                return;
+            }
+
             // If the current module is a checkpoint, open the card-based UI instead of chat
             if (data.isCheckpoint && window.floatingCheckpoint) {
                 window.floatingCheckpoint.open({ title: data.checkpointTitle });

@@ -86,3 +86,36 @@ describe('the enroll/activate sequence a student actually hits', () => {
     expect(ctx.sendCourseGreeting).toHaveBeenCalledTimes(1); // now it teaches, adapted
   });
 });
+
+// ── active-exchange guard (pure half) ──────────────────────────────────────
+describe('assistantSpokeWithin — the anti-collision guard', () => {
+  const { assistantSpokeWithin } = require('../../utils/activeConversation');
+  const NOW = Date.parse('2026-07-28T08:00:00Z');
+
+  test('a tutor message 30s ago → mid-exchange, greeting must defer', () => {
+    const msgs = [
+      { role: 'user', content: 'ok', timestamp: new Date(NOW - 40_000) },
+      { role: 'assistant', content: 'kicking off sequences…', timestamp: new Date(NOW - 30_000) },
+    ];
+    expect(assistantSpokeWithin(msgs, 2 * 60 * 1000, NOW)).toBe(true);
+  });
+
+  test('a tutor message 10min ago → clear to greet', () => {
+    const msgs = [{ role: 'assistant', content: 'earlier', timestamp: new Date(NOW - 10 * 60_000) }];
+    expect(assistantSpokeWithin(msgs, 2 * 60 * 1000, NOW)).toBe(false);
+  });
+
+  test('trailing user messages do not mask the newest assistant timestamp', () => {
+    const msgs = [
+      { role: 'assistant', content: 'fresh', timestamp: new Date(NOW - 20_000) },
+      { role: 'user', content: 'ok', timestamp: new Date(NOW - 5_000) },
+    ];
+    expect(assistantSpokeWithin(msgs, 2 * 60 * 1000, NOW)).toBe(true);
+  });
+
+  test('empty / junk history never defers', () => {
+    expect(assistantSpokeWithin([], 120000, NOW)).toBe(false);
+    expect(assistantSpokeWithin(null, 120000, NOW)).toBe(false);
+    expect(assistantSpokeWithin([{ role: 'assistant', content: 'x' }], 120000, NOW)).toBe(false);
+  });
+});

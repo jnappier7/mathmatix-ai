@@ -71,3 +71,17 @@ describe('the prompt no longer teaches the "Sure" opener', () => {
     expect(src).toContain('compliance, not affirmation');
   });
 });
+
+describe('arithmetic dignity (owner transcript: apples explained to a formula-builder)', () => {
+  const fs = require('fs');
+  const src = fs.readFileSync(require.resolve('../../utils/promptCompact.js'), 'utf8');
+
+  test('the prompt forbids object/counting explanations above elementary level', () => {
+    expect(src).toContain('--- ARITHMETIC DIGNITY (MANDATORY) ---');
+    expect(src).toContain('apples, objects, fingers, or counting stories');
+  });
+
+  test('the prompt forbids doubting correct answers to the tutor own sub-questions', () => {
+    expect(src).toContain('it is CORRECT');
+  });
+});
