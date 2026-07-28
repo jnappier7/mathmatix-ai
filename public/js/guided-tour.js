@@ -635,7 +635,7 @@ window.teacherDashboardTour = [
     {
         element: '[data-tab="announcements"]',
         title: 'Send Announcements',
-        content: 'NEW! Send instant messages to your entire class or individual students. They\'ll see them right in their dashboard.',
+        content: 'Send instant messages to your entire class or individual students. They\'ll see them right in their dashboard.',
         position: 'bottom'
     },
     {
@@ -685,12 +685,6 @@ window.parentDashboardTour = [
         position: 'right'
     },
     {
-        element: '[data-tab="messages"]',
-        title: 'Teacher Communication',
-        content: 'Send and receive messages from your child\'s teacher. Stay informed about their progress.',
-        position: 'bottom'
-    },
-    {
         element: '#send-weekly-report-btn',
         title: 'Email Reports',
         content: 'Get detailed progress reports sent directly to your email.',
@@ -713,19 +707,19 @@ window.studentDashboardTour = [
         position: 'top'
     },
     {
-        element: '#daily-quests-container',
+        element: '#drawer-daily-quests-container',
         title: 'Daily Quests',
         content: 'Complete quests every day to earn XP and build your streak! Consistency is key to mastering math.',
         position: 'right'
     },
     {
-        element: '.sidebar-progress',
+        element: '#cr-xp-meter',
         title: 'Your Progress',
         content: 'Track your XP and level here. The more you practice, the higher you\'ll climb!',
-        position: 'right'
+        position: 'bottom'
     },
     {
-        element: '#sidebar-leaderboard',
+        element: '#drawer-leaderboard-table',
         title: 'Leaderboard',
         content: 'See how you stack up against your classmates! Earn XP to climb the ranks.',
         position: 'right'
@@ -739,7 +733,7 @@ window.studentDashboardTour = [
     {
         element: '#camera-button',
         title: 'Show Your Work',
-        content: 'Snap a photo or upload a PDF of your handwritten work and get instant feedback and grading. Available for Unlimited users!',
+        content: 'Snap a photo or upload a PDF of your handwritten work and get instant feedback and grading. Unlimited with Mathmatix+!',
         position: 'top'
     }
 ];
@@ -747,39 +741,33 @@ window.studentDashboardTour = [
 // Admin Dashboard Tour
 window.adminDashboardTour = [
     {
-        element: '.admin-stats-grid',
-        title: 'System Overview',
-        content: 'Monitor key metrics: total users, active sessions, and system health at a glance.',
-        position: 'bottom'
+        element: '.left-sidebar',
+        title: 'System Status',
+        content: 'Database health, AI service status, and the top-students leaderboard at a glance.',
+        position: 'right'
     },
     {
-        element: '[data-tab="users"]',
+        element: '#userStatCards',
         title: 'User Management',
-        content: 'Create, edit, and manage all user accounts. Assign teachers, link parents, and more.',
+        content: 'User counts by role, with the full searchable user list below. Edit accounts, assign teachers, and link parents.',
         position: 'bottom'
     },
     {
-        element: '[data-tab="teachers"]',
-        title: 'Teacher Management',
-        content: 'View all teachers, their class sizes, and student progress statistics.',
-        position: 'bottom'
-    },
-    {
-        element: '[data-tab="email"]',
-        title: 'Bulk Email',
-        content: 'NEW! Send emails to all students, parents, teachers, or specific classes. Great for announcements and newsletters.',
-        position: 'bottom'
-    },
-    {
-        element: '.create-teacher-btn',
+        element: '#openTeacherSetupBtn',
         title: 'Add Teachers',
-        content: 'Quickly create new teacher accounts and generate enrollment codes for their classes.',
-        position: 'left'
+        content: 'Create teacher accounts and generate enrollment codes for their classes.',
+        position: 'bottom'
     },
     {
-        element: '[data-tab="feedback"]',
-        title: 'User Feedback',
-        content: 'Review bug reports and feature requests from users.',
+        element: '#openRosterImportBtn',
+        title: 'Import Rosters',
+        content: 'Bulk-import students from a CSV roster and assign them to teachers in one pass.',
+        position: 'bottom'
+    },
+    {
+        element: '#openBulkEmailBtn',
+        title: 'Bulk Email',
+        content: 'Send emails to all students, parents, or teachers. Great for announcements and newsletters.',
         position: 'bottom'
     }
 ];
