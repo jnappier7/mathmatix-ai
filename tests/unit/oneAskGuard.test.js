@@ -40,6 +40,17 @@ describe('one-ask guard', () => {
     }
   });
 
+  test('fires after teach-back phrasings (AP Calc transcript, 2026-07-28: student gave a solid teach-back and was asked to walk through it AGAIN)', () => {
+    for (const probe of [
+      "pretend I'm a student who's never seen this problem before. How would you explain, in your own words, why we calculated 3.5(4) and 0.1(4)^2 before subtracting from 100?",
+      'How did you decide to handle 4^2 first, and what did you do next?',
+      'Can you teach it back to me like I have never seen it?',
+      'Explain it in your own words for me.',
+    ]) {
+      expect(hasOneAsk(decideAfterAssistant(probe, 'there was a grouping symbol, so you do that first. inside, the exponent is next.'))).toBe(true);
+    }
+  });
+
   test('does not fire when the previous tutor message was not a probe', () => {
     const d = decideAfterAssistant("Nice — that's exactly right. Ready for the next one?", 'yes');
     expect(hasOneAsk(d)).toBe(false);
