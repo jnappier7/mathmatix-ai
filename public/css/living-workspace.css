@@ -853,3 +853,31 @@ html[data-theme="dark"] .lws-root {
 @media (prefers-reduced-motion: reduce) {
   .lws-dv-pointed { animation: none; }
 }
+
+/* ── Interactive scaffold blanks (tap → type → StudentMove) ─────────────── */
+.lws-dv-line .lws-blank {
+  cursor: pointer;
+  border: 1.5px dashed var(--cr-accent, #6d5ef0) !important;
+  border-radius: 6px;
+  padding: 0 6px;
+  min-width: 34px;
+  display: inline-block;
+  vertical-align: middle;
+  background: color-mix(in srgb, var(--cr-accent, #6d5ef0) 8%, transparent);
+}
+.lws-dv-line .lws-blank:hover,
+.lws-dv-line .lws-blank:focus-visible { background: color-mix(in srgb, var(--cr-accent, #6d5ef0) 16%, transparent); outline: none; }
+.lws-blank-input {
+  width: 72px; height: 26px; font: inherit; font-size: 0.95em;
+  border: 1px solid var(--cr-accent, #6d5ef0); border-radius: 5px;
+  padding: 0 5px; background: var(--cr-bg, #fff); color: inherit;
+}
+.lws-blank-chip {
+  margin-left: 8px; font-size: 12px; padding: 2px 10px; cursor: pointer;
+  border: 1px dashed var(--cr-accent, #6d5ef0); border-radius: 12px;
+  background: transparent; color: var(--cr-accent, #6d5ef0);
+}
+.lws-blank-pending { border-style: solid !important; opacity: 0.75; }
+.lws-blank-ok  { border: 1.5px solid #2e9e6b !important; background: rgba(46,158,107,0.12); }
+.lws-blank-bad { border: 1.5px solid #d85a30 !important; background: rgba(216,90,48,0.10); text-decoration: line-through; }
+.lws-blank-open { border-style: solid !important; }

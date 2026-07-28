@@ -47,6 +47,11 @@ const MATH_CLASSIFICATIONS = Object.freeze([
   // claim — exploration never carries one.
   'meaningful_exploration', // settled, directional param change — evidence-worthy
   'noise',                  // jitter / no-change scrubbing — recorded, never credited
+  // Scaffold-blank fills on an equation card (owner call 2026-07-28 —
+  // interactive blanks return, through the StudentMove contract this time).
+  'blank_fill_valid',       // CAS-settled: the filled equation holds
+  'blank_fill_incorrect',   // CAS-settled: it does not
+  'blank_fill_unverified',  // CAS abstained — the delegated tutor turn decides
 ]);
 
 module.exports = {

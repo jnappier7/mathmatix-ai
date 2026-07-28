@@ -19,12 +19,22 @@
 const { validateInbound, VerifiedMove, ELEMENT_TYPES } = require('../../shared/workspace');
 const { verifyAlgebraTileMove } = require('../../utils/workspace/algebraTileVerifier');
 const { verifyConceptModelMove } = require('../../utils/workspace/conceptModelMoveVerifier');
-const { normalizeTileMove } = require('./moveNormalizer');
+const { verifyScaffoldBlankMove } = require('../../utils/workspace/scaffoldBlankVerifier');
+const { normalizeTileMove, normalizeBlankMove } = require('./moveNormalizer');
 const { applyMove: applyMoveWithState, hasTileState } = require('./workspaceStateService');
 
 // element type → its server-authoritative verifier. Extend as elements ship.
 const VERIFIERS = {
   [ELEMENT_TYPES.ALGEBRA_TILES]: (move) => verifyAlgebraTileMove(move.previousState, move.operation),
+  // Scaffold-blank fills live on the equation card (a blank is a gesture on
+  // the equation element, not an element of its own).
+  [ELEMENT_TYPES.EQUATION]: (move) => verifyScaffoldBlankMove(move),
+};
+
+// element type → its pipeline normalizer (tile phrasing vs blank phrasing).
+const NORMALIZERS = {
+  [ELEMENT_TYPES.ALGEBRA_TILES]: normalizeTileMove,
+  [ELEMENT_TYPES.EQUATION]: normalizeBlankMove,
 };
 
 /**
@@ -100,7 +110,8 @@ function processStudentMove(rawPayload) {
   });
 
   // 4. normalize into the pipeline's stated-step string (for the tutor turn)
-  const normalized = normalizeTileMove(move, vm);
+  const normalize = NORMALIZERS[move.elementType] || normalizeTileMove;
+  const normalized = normalize(move, vm);
 
   return { ok: true, status: 200, verifiedMove: vm, normalized };
 }
