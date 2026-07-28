@@ -10,6 +10,11 @@
  *
  * The client-side grammar (public/js/visualTokenParser.js) was already fixed;
  * these tests pin the four server/client strippers that were missed.
+ *
+ * NOTE (merge with PR #1340): NUMBER_LINE deliberately SURVIVES the server-side
+ * parse — the client renders it inline, so stripping it deleted the visual for
+ * every student. The parse tests below pin survival-whole (no half-strip);
+ * stripping whole-tag leftovers is pinned on the client safety net instead.
  */
 
 const { parseVisualTeaching } = require('../../utils/visualTeachingParser');
@@ -21,22 +26,26 @@ const TRANSCRIPT_TOKEN =
   '[NUMBER_LINE:min=-5,max=5,points=[-3,3],label="−3 and 3 are both 3 steps from zero"]';
 const LEAKED_TAIL = ',label=';
 
-describe('visualTeachingParser.parseVisualTeaching — nested-bracket strip', () => {
-  it('strips the exact production NUMBER_LINE token whole', () => {
+describe('visualTeachingParser.parseVisualTeaching — nested-bracket handling', () => {
+  // NUMBER_LINE is NOT stripped server-side (PR #1340): the tag must survive to
+  // the browser, where inlineChatVisuals renders the draggable number line the
+  // student actually sees. Half-stripping (the leaked-tail bug) is prevented by
+  // the tag surviving WHOLE; unrendered leftovers are the client safety net's
+  // job (stripVisualTags, pinned below).
+  it('leaves the exact production NUMBER_LINE token intact — never half-stripped', () => {
     const { cleanedText } = parseVisualTeaching(
       `Distance from zero.\n\n${TRANSCRIPT_TOKEN}\n\nLook at that number line.`
     );
-    expect(cleanedText).not.toContain(LEAKED_TAIL);
-    expect(cleanedText).not.toContain('NUMBER_LINE');
+    expect(cleanedText).toContain(TRANSCRIPT_TOKEN);
+    expect(cleanedText.match(/\[NUMBER_LINE:/g)).toHaveLength(1);
     expect(cleanedText).toContain('Distance from zero.');
     expect(cleanedText).toContain('Look at that number line.');
   });
 
-  it('strips NUMBER_LINE with jumps=[(…)] params whole', () => {
-    const { cleanedText } = parseVisualTeaching(
-      'Add: [NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="Adding"] done'
-    );
-    expect(cleanedText.replace(/\s+/g, ' ')).toBe('Add: done');
+  it('leaves NUMBER_LINE with jumps=[(…)] params intact', () => {
+    const token = '[NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3"),(3,7,"+4")],label="Adding"]';
+    const { cleanedText } = parseVisualTeaching(`Add: ${token} done`);
+    expect(cleanedText).toContain(token);
   });
 
   it('strips COUNTERS with nested list params whole', () => {
@@ -47,8 +56,8 @@ describe('visualTeachingParser.parseVisualTeaching — nested-bracket strip', ()
     expect(cleanedText).not.toContain('COUNTERS');
   });
 
-  it('still strips simple tokens with no nesting', () => {
-    const { cleanedText } = parseVisualTeaching('a [NUMBER_LINE:min=-5,max=5,highlight=3] b');
+  it('still strips simple stripped-family tokens with no nesting', () => {
+    const { cleanedText } = parseVisualTeaching('a [COUNTERS:pos=3,neg=5] b');
     expect(cleanedText.replace(/\s+/g, ' ')).toBe('a b');
   });
 });

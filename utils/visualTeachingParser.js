@@ -349,9 +349,15 @@ function parseVisualTeaching(aiResponseText) {
     cleanedText = cleanedText.replace(tokenRegex('COUNTERS'), '');
 
     // --- MANIPULATIVE COMMANDS ---
-    // [NUMBER_LINE:...] - Handled inline by inlineChatVisuals.js (key=value format).
-    // Strip any NUMBER_LINE tags so they don't appear as raw text.
-    cleanedText = cleanedText.replace(tokenRegex('NUMBER_LINE'), '');
+    // [NUMBER_LINE:...] is rendered INLINE by the client (inlineChatVisuals'
+    // draggable number line) — the tag must SURVIVE to the browser. This used
+    // to strip it server-side "so it doesn't appear as raw text" (latterly via
+    // tokenRegex, same as COUNTERS above), which (a) deleted the visual for
+    // every student — the tutor narrated number lines nobody could see — and
+    // (b) leaked mangled tails into chat when the first-']' regex met nested
+    // params (prod: ',label="−3 and 3…"]').
+    // Unrendered leftovers are the client safety net's job (stripVisualTags,
+    // whitelist + nested-bracket-aware).
 
     // [FRACTION_BARS:numerator,denominator] - Show fraction visualization
     const fractionBarsRegex = /\[FRACTION_BARS:(\d+),(\d+)\]/g;
