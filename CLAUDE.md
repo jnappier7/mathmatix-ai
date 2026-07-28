@@ -157,6 +157,11 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
    **tiered**: `gpt-4o-mini` first, escalating to `gpt-4o` when it can't resolve (low confidence / parse
    fail) instead of silently giving up. Outcomes (incl. the `unverifiableRate`) are tracked in
    `utils/verifyMetrics.js`, surfaced on `GET /api/admin/structured-tutor-metrics`.
+   A **conceptual** question ("what distinguishes an asymptote from a hole?") answered in words has no
+   value to compare, so it routes to `llmVerifyConceptual` instead — the math verifier can only report
+   NO MATCH on prose, which is how correct ideas got rejected. Verdicts are asymmetric throughout: a
+   rejection needs higher confidence than an affirmation, and anything undecided stays `unverifiable`,
+   which never stamps a `problemResult`.
 3. **decide** — pick an instructional action (scaffold, direct-instruction, worked-example,
    prerequisite-bridge, guided/independent practice, verify, redirect, …) using BKT state, lesson phase, mood.
 4. **generate** — build the system prompt + history, call the LLM (streamed via SSE), emit board/visual commands.

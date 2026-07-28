@@ -24,7 +24,15 @@ const { attachVerifiedTwin } = require('../twinGenerator');
 const { verify } = require('./verify');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { persist } = require('./persist');
-const { verifyWithEscalation, pickProblemContext } = require('./llmVerifier');
+const {
+  verifyWithEscalation,
+  pickProblemContext,
+  pickPosedQuestion,
+  llmVerifyConceptual,
+  isConceptualQuestion,
+  isProseAnswer,
+  VERIFIER_MODEL,
+} = require('./llmVerifier');
 const { deriveVerificationState, hasMathematicalContent } = require('./verificationState');
 const verifyMetrics = require('../verifyMetrics');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
@@ -188,10 +196,44 @@ async function runPipeline(message, ctx) {
     || (!observation.isBareProblemDrop ? extractBareExpression(message) : null)
     || disputedSubmission;
 
-  if (verificationCandidate) {
-    const problemText = pickProblemContext(
-      recentAssistantMessages.map(msg => ({ content: msg.content, problemInfo: msg.problemInfo || null }))
-    );
+  // ── Which verifier is the right one for this turn ──
+  // A CONCEPTUAL question ("what distinguishes a vertical asymptote from a
+  // hole?") answered in words has no value to compare, so the math verifier can
+  // only report NO MATCH — a correct idea rejected, and a problemResult of
+  // 'incorrect' minted off it (production, AP Calculus AB, 2026-07-28). Those
+  // turns go to the conceptual judge instead, which grades the idea.
+  const assistantContext = recentAssistantMessages.map(msg => ({
+    content: msg.content,
+    problemInfo: msg.problemInfo || null,
+  }));
+  const posedQuestion = pickPosedQuestion(assistantContext);
+  const isConceptualTurn = observation.conceptualReply === true
+    || (isConceptualQuestion(posedQuestion) && isProseAnswer(message));
+
+  let conceptualVerificationPromise = null;
+  if (isConceptualTurn && posedQuestion) {
+    const conceptualStart = Date.now();
+    conceptualVerificationPromise = llmVerifyConceptual(posedQuestion, message)
+      .then(verdict => {
+        console.log(`[Pipeline] ConceptualVerify: ${verdict.verdict || 'no verdict'}${verdict.error ? ` (${verdict.error})` : ''} (confidence: ${(verdict.confidence || 0).toFixed(2)})`);
+        // Tagged with its own tier so conceptual outcomes stay separable from
+        // the math verifier's on the admin metrics endpoint — a conceptual
+        // judge drifting toward rejection is exactly what we'd need to see.
+        verifyMetrics.recordVerification({
+          verdict,
+          tier: `conceptual:${VERIFIER_MODEL}`,
+          latencyMs: Date.now() - conceptualStart,
+        });
+        return verdict;
+      })
+      .catch(err => {
+        console.error('[Pipeline] ConceptualVerify promise rejected:', err.message);
+        return { isCorrect: null, partial: false, confidence: 0, verdict: null, keyIdea: null, conceptual: true, error: err.message };
+      });
+  }
+
+  if (verificationCandidate && !isConceptualTurn) {
+    const problemText = pickProblemContext(assistantContext);
     if (problemText) {
       const verifyStart = Date.now();
       llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate)
@@ -236,6 +278,7 @@ async function runPipeline(message, ctx) {
     pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
     verificationCandidate,
     llmVerificationPromise,
+    conceptualVerificationPromise,
   });
 
   // ── The tutor's licence to make a correctness claim ──
