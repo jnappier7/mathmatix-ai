@@ -1497,9 +1497,15 @@ class FloatingScreener {
 
     if (title) title.textContent = 'Growth Check Complete!';
     if (subtitle) {
-      subtitle.textContent = summary.levelChanged
-        ? `You've moved from ${summary.previousLevel} to ${summary.newLevel}`
-        : `${summary.questionsAnswered} questions · ${summary.accuracy}% correct`;
+      // levelHeld: the guard kept them where they were despite a dip today,
+      // so the card must not imply a fall that was never applied.
+      if (summary.levelHeld) {
+        subtitle.textContent = `You're staying at ${summary.newLevel} — today looked like an off day`;
+      } else if (summary.levelChanged) {
+        subtitle.textContent = `You've moved from ${summary.previousLevel} to ${summary.newLevel}`;
+      } else {
+        subtitle.textContent = `${summary.questionsAnswered} questions · ${summary.accuracy}% correct`;
+      }
     }
     if (icon) icon.textContent = statusIcon;
 

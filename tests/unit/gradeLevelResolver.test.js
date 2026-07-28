@@ -115,11 +115,16 @@ describe('the seam stays closed at its call sites', () => {
   test('growthCheck imports what it calls (PR #1343 shipped resolveTheta/thetaWritePatch with no require) and syncs the level string', () => {
     const src = read('../../routes/growthCheck.js');
     expect(src).toContain("require('../utils/theta')");
-    expect(src).toContain('assessedLevelWritePatch(thetaToGradeLevel(results.theta).gradeLevel)');
+    // The level string follows the GUARDED ability (utils/growthGuard.js), so
+    // one bad 5-8 item check can't rewrite the pathway the tutor teaches from.
+    expect(src).toContain('assessedLevelWritePatch(thetaToGradeLevel(appliedTheta).gradeLevel)');
   });
 
   test('screener completion still writes every home of every dual field', () => {
     const src = read('../../routes/screener.js');
+    // initialPlacement is the INITIAL placement — a growth check re-measures the
+    // current level and must leave that historical record alone, so these two
+    // are now inside the `if (!isGrowth)` branch rather than unconditional.
     expect(src).toContain('user.initialPlacement = gradeLevelResult.gradeLevel;');
     expect(src).toContain('user.learningProfile.initialPlacement = gradeLevelResult.gradeLevel;');
     expect(src).toContain('user.mathCourse = gradeLevelResult.gradeLevel;');

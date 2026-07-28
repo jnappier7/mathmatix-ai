@@ -69,14 +69,19 @@ describe('the seam stays closed at its call sites', () => {
     const src = fs.readFileSync(require.resolve('../../routes/growthCheck.js'), 'utf8');
     expect(src).not.toContain("learningProfile?.currentTheta || 0");
     expect(src).toContain('previousTheta: resolveTheta(student)');
-    expect(src).toContain('thetaWritePatch(results.theta');
+    // Writes the GUARDED ability, not the raw measurement: a 5-8 item check
+    // can't be allowed to cost a student their level on a bad day (see
+    // utils/growthGuard.js). Writing results.theta here would be the bug.
+    expect(src).toContain('thetaWritePatch(appliedTheta');
     // Pin the IMPORT, not just the call — the original theta PR shipped these
     // calls with no require, so every growth-check route 500'd at request time.
     expect(src).toContain("require('../utils/theta')");
+    expect(src).toContain("require('../utils/growthGuard')");
   });
   test('screener completion syncs all paths; practicePack uses the shared resolver', () => {
     const screener = fs.readFileSync(require.resolve('../../routes/screener.js'), 'utf8');
-    expect(screener).toContain('user.currentTheta = report.theta;');
+    expect(screener).toContain('user.currentTheta = appliedTheta;');
+    expect(screener).toContain('user.learningProfile.currentTheta = appliedTheta;');
     const pack = fs.readFileSync(require.resolve('../../routes/practicePack.js'), 'utf8');
     expect(pack).toContain("require('../utils/theta')");
   });

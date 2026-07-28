@@ -540,7 +540,17 @@ const learningProfileSchema = new Schema({
     thetaChange: { type: Number },
     growthStatus: { type: String, enum: ['significant-growth', 'some-growth', 'stable', 'review-needed'] },
     questionsAnswered: { type: Number },
-    accuracy: { type: Number, min: 0, max: 100 }
+    accuracy: { type: Number, min: 0, max: 100 },
+
+    // What the check MEASURED, before utils/growthGuard.js throttled a drop.
+    // A 5-8 item check can't be allowed to cost a student their level on a bad
+    // day (it drives mathCourse, then locks them out for 3 months), so newTheta
+    // above is the damped value we act on — this is the honest reading. A run
+    // of `damped: true` rows is a real decline the guard is slowing down, and
+    // that's exactly what a teacher needs to see.
+    rawTheta: { type: Number },
+    damped: { type: Boolean, default: false },
+    dampReason: { type: String }
   }],
 
   // A finished Growth Check the tutor hasn't debriefed yet.

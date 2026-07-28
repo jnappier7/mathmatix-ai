@@ -34,6 +34,8 @@ const { assessedLevelWritePatch } = require('../utils/gradeLevel');
 // Shared closure moment — same summary shape the FloatingScreener flow
 // returns (routes/screener.js), so a student gets the same wrap-up either way.
 const { buildGrowthCheckSummary, deriveSkillHighlights } = require('../utils/growthSummary');
+// A 5-8 item check must not cost a student their level on a bad day.
+const { dampGrowthCheckDrop } = require('../utils/growthGuard');
 const logger = require('../utils/catLogger');
 
 // In-memory session store (production would use Redis)
@@ -335,12 +337,23 @@ router.post('/:sessionId/submit', isAuthenticated, async (req, res) => {
     growthCheckSessions.set(sessionId, result.session);
 
     if (result.action === 'complete') {
+      // A short check must not cost a student their level on a bad day —
+      // growth is trusted in full, drops are throttled (utils/growthGuard.js).
+      const guard = dampGrowthCheckDrop({
+        previousTheta: result.results.previousTheta,
+        measuredTheta: result.results.theta,
+        measuredSE: result.results.standardError,
+      });
+      if (guard.damped) {
+        logger.info(`Growth check drop damped: raw θ=${guard.rawTheta} (${guard.rawLevel}) → applied θ=${guard.theta} (${guard.appliedLevel}), reason=${guard.reason}`);
+      }
+
       // The completion moment: previous vs new level, what they confirmed,
       // what needs review, what just came into reach, and ONE next step.
-      const summary = await buildSummaryForCompletedSession(req.user._id, result);
+      const summary = await buildSummaryForCompletedSession(req.user._id, result, guard);
 
       // Save results to student progress (incl. the pending tutor debrief)
-      await saveGrowthCheckResults(session.userId, result, summary);
+      await saveGrowthCheckResults(session.userId, result, summary, guard);
 
       // Clean up session
       growthCheckSessions.delete(sessionId);
@@ -486,7 +499,7 @@ function checkAnswer(problem, answer) {
  * The session carries its own previousTheta (captured at /start, before any
  * writes), so this doesn't need to race the persistence below.
  */
-async function buildSummaryForCompletedSession(userId, result) {
+async function buildSummaryForCompletedSession(userId, result, guard) {
   try {
     const { results, session } = result;
     const student = await User.findById(userId).select('skillMastery').lean();
@@ -502,13 +515,15 @@ async function buildSummaryForCompletedSession(userId, result) {
     const highlights = await deriveSkillHighlights({
       responses: session.responses || [],
       previousTheta: results.previousTheta,
-      newTheta: results.theta,
+      newTheta: guard.theta,
       masteredSkillIds,
     });
 
     return buildGrowthCheckSummary({
       previousTheta: results.previousTheta,
-      newTheta: results.theta,
+      newTheta: guard.theta,
+      rawNewTheta: guard.rawTheta,
+      levelHeld: guard.levelHeld,
       accuracy: results.accuracy,
       questionsAnswered: results.questionsAnswered,
       durationMs: results.durationMs,
@@ -527,9 +542,11 @@ async function buildSummaryForCompletedSession(userId, result) {
 /**
  * Save growth check results to student's learning profile
  */
-async function saveGrowthCheckResults(userId, result, summary = null) {
+async function saveGrowthCheckResults(userId, result, summary = null, guard = null) {
   try {
     const { results, session } = result;
+    // Write the APPLIED ability, not the raw measurement (utils/growthGuard.js).
+    const appliedTheta = guard ? guard.theta : results.theta;
 
     // The next check unlocks in 3 months — the same cadence the Starting
     // Point sets (routes/screener.js). This route never wrote it, so a
@@ -551,12 +568,12 @@ async function saveGrowthCheckResults(userId, result, summary = null) {
           // Every theta writer syncs ALL read paths (utils/theta.js) — the
           // growth-check-only field split-brained against the screener's and
           // anchored every check at θ=0 ("5th grade" for a math teacher).
-          ...thetaWritePatch(results.theta, results.standardError),
+          ...thetaWritePatch(appliedTheta, results.standardError),
           // Keep the assessed-level STRING and the tutor's mathCourse pathway
           // in step with the new theta (utils/gradeLevel.js) — before this,
           // growth checks moved theta but left abilityEstimate.gradeLevel
           // frozen at the initial placement.
-          ...assessedLevelWritePatch(thetaToGradeLevel(results.theta).gradeLevel),
+          ...assessedLevelWritePatch(thetaToGradeLevel(appliedTheta).gradeLevel),
           // Both read paths: eligibility here reads the nested field, the
           // screener flow and dashboards read the top-level one.
           'learningProfile.lastGrowthCheck': new Date(),
@@ -568,11 +585,15 @@ async function saveGrowthCheckResults(userId, result, summary = null) {
               sessionId: session.sessionId,
               date: new Date(),
               previousTheta: results.previousTheta,
-              newTheta: results.theta,
-              thetaChange: results.thetaChange,
+              newTheta: appliedTheta,
+              thetaChange: summary ? summary.thetaChange : results.thetaChange,
               growthStatus: results.growthStatus,
               questionsAnswered: results.questionsAnswered,
               accuracy: results.accuracy,
+              // The honest reading, before the guard throttled a drop.
+              rawTheta: guard ? guard.rawTheta : results.theta,
+              damped: !!guard?.damped,
+              ...(guard?.damped ? { dampReason: guard.reason } : {}),
             }],
             $slice: -20, // Keep last 20 growth checks
           },

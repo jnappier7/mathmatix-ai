@@ -244,6 +244,70 @@ describe('POST /api/screener/complete — growth check', () => {
     expect(pending.createdAt).toBeInstanceOf(Date);
   });
 
+  test('one bad check cannot tank the level — the pathway the tutor teaches from is guarded', async () => {
+    // An Algebra 1 student (θ 1.1) whose check reads 6th Grade. Before the
+    // guard this rewrote mathCourse to 6th Grade and locked them there for
+    // three months, so the tutor spent a quarter teaching four levels low.
+    const user = placedStudent({
+      currentTheta: 1.1,
+      learningProfile: {
+        assessmentCompleted: true,
+        initialPlacement: 'Algebra 1',
+        currentTheta: 1.1,
+        abilityEstimate: { theta: 1.1, standardError: 0.3, gradeLevel: 'Algebra 1' },
+        growthCheckHistory: [],
+      },
+    });
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({
+      theta: 0.15,
+      responses: [
+        { skillId: 'ms-ratios', difficulty: 1.0, discrimination: 1, correct: false },
+        { skillId: 'ms-fractions', difficulty: 0.9, discrimination: 1, correct: false },
+        { skillId: 'ms-ratios', difficulty: 0.6, discrimination: 1, correct: false },
+        { skillId: 'ms-fractions', difficulty: 0.3, discrimination: 1, correct: true },
+        { skillId: 'ms-ratios', difficulty: 0.2, discrimination: 1, correct: true },
+      ],
+    }));
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    // At most ONE band down, not four.
+    expect(res.body.growthSummary.newLevel).toBe('8th Grade');
+    expect(user.mathCourse).toBe('8th Grade');
+    expect(user.learningProfile.abilityEstimate.gradeLevel).toBe('8th Grade');
+    expect(user.currentTheta).toBeGreaterThan(0.6);
+
+    // The student still hears that they struggled — damping the level must not
+    // mute the feedback.
+    expect(res.body.growthSummary.growthStatus).toBe('review-needed');
+    expect(res.body.growthSummary.needsReview.length).toBeGreaterThan(0);
+
+    // ...and the honest reading is preserved for teachers.
+    const entry = user.learningProfile.growthCheckHistory[0];
+    expect(entry.rawTheta).toBeCloseTo(0.15, 2);
+    expect(entry.damped).toBe(true);
+    expect(entry.newTheta).toBeGreaterThan(0.6);
+  });
+
+  test('growth is still applied in full — the guard is one-directional', async () => {
+    const user = placedStudent();  // θ 0.2, 6th Grade
+    ScreenerSession.findBySessionId.mockResolvedValue(growthSession({ theta: 1.45 }));
+
+    const res = await supertest(app)
+      .post('/api/screener/complete')
+      .send({ sessionId: 'screener_growth_1' })
+      .expect(200);
+
+    // Four bands UP in one check, untouched.
+    expect(res.body.growthSummary.newLevel).toBe('Geometry');
+    expect(user.mathCourse).toBe('Geometry');
+    expect(user.currentTheta).toBeCloseTo(1.45, 5);
+    expect(user.learningProfile.growthCheckHistory[0].damped).toBe(false);
+  });
+
   test('a DROP in level is recorded honestly and still ends on a next step', async () => {
     const user = placedStudent();
     ScreenerSession.findBySessionId.mockResolvedValue(growthSession({

@@ -219,6 +219,8 @@ function buildGrowthCheckSummary({
   questionsAnswered,
   durationMs = null,
   sessionId = null,
+  rawNewTheta = null,
+  levelHeld = false,
   confirmedSkills = [],
   needsReviewSkills = [],
   newlyReachableSkills = [],
@@ -226,7 +228,16 @@ function buildGrowthCheckSummary({
   const thetaChange = round2(newTheta - previousTheta);
   const prev = thetaToGradeLevel(previousTheta);
   const next = thetaToGradeLevel(newTheta);
-  const { growthStatus, growthMessage } = summarizeGrowthStatus(thetaChange);
+
+  // `newTheta` is what we ACT on — the guard (utils/growthGuard.js) may have
+  // held back part of a drop. The STATUS, though, comes from what the check
+  // actually measured: if the student struggled we say so and point at the
+  // right skills, even while their level is protected. Damping the level must
+  // not also mute the feedback.
+  const statusChange = Number.isFinite(rawNewTheta)
+    ? round2(rawNewTheta - previousTheta)
+    : thetaChange;
+  const { growthStatus, growthMessage } = summarizeGrowthStatus(statusChange);
 
   return {
     type: 'growth-check',
@@ -238,6 +249,9 @@ function buildGrowthCheckSummary({
     newLevel: next.gradeLevel,
     newLevelDescription: next.description,
     levelChanged: prev.gradeLevel !== next.gradeLevel,
+    // The guard kept them at their level despite a measured drop. Student-
+    // facing copy must not imply a fall that didn't happen.
+    levelHeld: !!levelHeld,
     growthStatus,
     growthMessage,
     accuracy,
@@ -261,6 +275,9 @@ function levelStoryLine(summary) {
   if (summary.levelChanged && summary.thetaChange > 0) {
     return `Last check you were working at the ${summary.previousLevel} level — you've moved up to ${summary.newLevel}.`;
   }
+  if (summary.levelHeld) {
+    return `You're staying at the ${summary.newLevel} level — today looked like an off day more than anything, so we'll shore a couple of things up rather than move you.`;
+  }
   if (summary.levelChanged) {
     return `You're working at the ${summary.newLevel} level right now (down a step from ${summary.previousLevel} — totally normal, it just tells us where to focus).`;
   }
@@ -282,10 +299,17 @@ function buildDebriefInstruction(summary, { viaGreeting = false } = {}) {
     ? 'The student finished a Growth Check since you last spoke and is just arriving in chat. Fold the debrief below into your greeting — it IS the greeting. Skip any warm-up question this time.'
     : 'The student just finished their Growth Check and came straight back to chat. Deliver the debrief below now.';
 
+  // The guard held their level despite a measured dip: the tutor must not
+  // announce a drop that was never applied, and must not turn an off day into
+  // a verdict about the student.
+  const heldNote = summary.levelHeld
+    ? `\n- IMPORTANT: they stayed at ${summary.newLevel}. Today read as an off day, not a real slide. Do NOT say they dropped, went down, or lost a level, and do NOT mention any lower level. Say they're holding steady and you want to shore up a couple of things.`
+    : '';
+
   return `${opening}
 
 GROWTH CHECK RESULTS (facts — use them as-is, do not alter or invent numbers or skills):
-- Where they were: ${summary.previousLevel}. Where they are now: ${summary.newLevel}.${summary.levelChanged ? ' (level changed)' : ' (level unchanged)'}
+- Where they were: ${summary.previousLevel}. Where they are now: ${summary.newLevel}.${summary.levelChanged ? ' (level changed)' : ' (level unchanged)'}${heldNote}
 - Read on progress: ${summary.growthStatus} — "${summary.growthMessage}"
 - ${summary.questionsAnswered} questions, ${summary.accuracy}% correct.
 - Skills they showed they've got: ${summary.skillsConfirmed.map(s => s.name).join(', ') || 'none recorded'}.

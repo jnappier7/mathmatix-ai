@@ -209,33 +209,43 @@ function gradeToTheta(grade, mathCourse = null) {
  * @param {Number} theta - IRT ability estimate
  * @returns {Object} { gradeLevel: string, description: string }
  */
-function thetaToGradeLevel(theta) {
-  // Map theta ranges to grade levels
-  const gradeLevelMap = [
-    { maxTheta: -2.5, gradeLevel: 'Kindergarten', description: 'Working on counting and number recognition' },
-    { maxTheta: -2.0, gradeLevel: '1st Grade', description: 'Building addition and subtraction skills' },
-    { maxTheta: -1.5, gradeLevel: '2nd Grade', description: 'Strengthening basic operations' },
-    { maxTheta: -1.0, gradeLevel: '3rd Grade', description: 'Developing multiplication and division' },
-    { maxTheta: -0.5, gradeLevel: '4th Grade', description: 'Working with fractions and multi-digit operations' },
-    { maxTheta: 0.0, gradeLevel: '5th Grade', description: 'Mastering fractions and decimals' },
-    { maxTheta: 0.3, gradeLevel: '6th Grade', description: 'Learning ratios and introductory algebra' },
-    { maxTheta: 0.6, gradeLevel: '7th Grade', description: 'Building equation-solving skills' },
-    { maxTheta: 0.9, gradeLevel: '8th Grade', description: 'Ready for linear equations and geometry' },
-    { maxTheta: 1.2, gradeLevel: 'Algebra 1', description: 'Working through algebraic foundations' },
-    { maxTheta: 1.5, gradeLevel: 'Geometry', description: 'Developing geometric reasoning' },
-    { maxTheta: 1.8, gradeLevel: 'Algebra 2', description: 'Advancing through higher algebra' },
-    { maxTheta: 2.2, gradeLevel: 'Pre-Calculus', description: 'Preparing for calculus concepts' },
-    { maxTheta: 2.6, gradeLevel: 'Calculus', description: 'Working with limits and derivatives' },
-    { maxTheta: Infinity, gradeLevel: 'Advanced Math', description: 'College-level mathematics' },
-  ];
+// Ascending theta bands. Each entry owns the interval (previous maxTheta,
+// maxTheta]. Module-level and exported because callers need to reason about
+// the bands themselves, not just look one up: utils/growthGuard.js has to know
+// what "one level down" means in theta, and deriving that from repeated
+// thetaToGradeLevel() probes would re-encode these boundaries somewhere else.
+const GRADE_LEVEL_BANDS = [
+  { maxTheta: -2.5, gradeLevel: 'Kindergarten', description: 'Working on counting and number recognition' },
+  { maxTheta: -2.0, gradeLevel: '1st Grade', description: 'Building addition and subtraction skills' },
+  { maxTheta: -1.5, gradeLevel: '2nd Grade', description: 'Strengthening basic operations' },
+  { maxTheta: -1.0, gradeLevel: '3rd Grade', description: 'Developing multiplication and division' },
+  { maxTheta: -0.5, gradeLevel: '4th Grade', description: 'Working with fractions and multi-digit operations' },
+  { maxTheta: 0.0, gradeLevel: '5th Grade', description: 'Mastering fractions and decimals' },
+  { maxTheta: 0.3, gradeLevel: '6th Grade', description: 'Learning ratios and introductory algebra' },
+  { maxTheta: 0.6, gradeLevel: '7th Grade', description: 'Building equation-solving skills' },
+  { maxTheta: 0.9, gradeLevel: '8th Grade', description: 'Ready for linear equations and geometry' },
+  { maxTheta: 1.2, gradeLevel: 'Algebra 1', description: 'Working through algebraic foundations' },
+  { maxTheta: 1.5, gradeLevel: 'Geometry', description: 'Developing geometric reasoning' },
+  { maxTheta: 1.8, gradeLevel: 'Algebra 2', description: 'Advancing through higher algebra' },
+  { maxTheta: 2.2, gradeLevel: 'Pre-Calculus', description: 'Preparing for calculus concepts' },
+  { maxTheta: 2.6, gradeLevel: 'Calculus', description: 'Working with limits and derivatives' },
+  { maxTheta: Infinity, gradeLevel: 'Advanced Math', description: 'College-level mathematics' },
+];
 
-  for (const { maxTheta, gradeLevel, description } of gradeLevelMap) {
+function thetaToGradeLevel(theta) {
+  for (const { maxTheta, gradeLevel, description } of GRADE_LEVEL_BANDS) {
     if (theta <= maxTheta) {
       return { gradeLevel, description };
     }
   }
 
   return { gradeLevel: 'Advanced Math', description: 'College-level mathematics' };
+}
+
+/** Index of the band containing `theta` (0 = Kindergarten). */
+function gradeBandIndex(theta) {
+  const i = GRADE_LEVEL_BANDS.findIndex(b => theta <= b.maxTheta);
+  return i === -1 ? GRADE_LEVEL_BANDS.length - 1 : i;
 }
 
 // ===========================================================================
@@ -589,6 +599,8 @@ module.exports = {
   // Grade mapping
   gradeToTheta,
   thetaToGradeLevel,
+  GRADE_LEVEL_BANDS,
+  gradeBandIndex,
   COURSE_THETA_MAP,
   GRADE_BAND_THETA_MAP,
   GRADE_NUMBER_THETA,

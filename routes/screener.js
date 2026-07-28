@@ -38,6 +38,8 @@ const { setSkillMasteryEntry } = require('../utils/masteryGuard');
 // confirmed / needing review / newly reachable, ONE suggested next step).
 // Shared with routes/growthCheck.js so both flows close the same way.
 const { buildGrowthCheckSummary, deriveSkillHighlights } = require('../utils/growthSummary');
+// A 5-8 item check must not cost a student their level on a bad day.
+const { dampGrowthCheckDrop } = require('../utils/growthGuard');
 
 // Warm up cache on module load
 warmupCache().catch(err => console.error('[Screener] Cache warmup failed:', err));
@@ -93,7 +95,7 @@ function calculateAdaptiveProgress(session) {
  * @param {Object} report  - generateReport() output for that session
  * @param {Object} user    - the student, BEFORE theta is updated
  */
-async function buildGrowthSummaryForSession(session, report, user) {
+async function buildGrowthSummaryForSession(session, report, user, guard = null) {
   const previousTheta = resolveTheta(user);
   const masteredSkillIds = [];
   if (user.skillMastery && typeof user.skillMastery.entries === 'function') {
@@ -102,16 +104,21 @@ async function buildGrowthSummaryForSession(session, report, user) {
     }
   }
 
+  // The APPLIED ability — the guard may have held back part of a drop.
+  const appliedTheta = guard ? guard.theta : report.theta;
+
   const highlights = await deriveSkillHighlights({
     responses: session.responses || [],
     previousTheta,
-    newTheta: report.theta,
+    newTheta: appliedTheta,
     masteredSkillIds,
   });
 
   return buildGrowthCheckSummary({
     previousTheta,
-    newTheta: report.theta,
+    newTheta: appliedTheta,
+    rawNewTheta: guard ? guard.rawTheta : null,
+    levelHeld: guard ? guard.levelHeld : false,
     accuracy: report.accuracy,
     questionsAnswered: report.questionsAnswered,
     durationMs: report.duration,
@@ -786,19 +793,42 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Generate final report
     const report = generateReport(session.toObject()); // Convert Mongoose doc to plain object
 
+    // A Growth Check is a RE-measurement, not a placement.
+    const isGrowth = isGrowthCheckSession(session);
+
+    // A 5-8 item check must not cost a student their level on a bad day: it
+    // drives user.mathCourse (what the tutor teaches from) and then locks them
+    // out for three months. The guard trusts growth in full and throttles
+    // drops — see utils/growthGuard.js. The Starting Point is unguarded; it's
+    // the full assessment and stays authoritative.
+    const guard = isGrowth
+      ? dampGrowthCheckDrop({
+        previousTheta: resolveTheta(user),   // read BEFORE any write below
+        measuredTheta: report.theta,
+        measuredSE: report.standardError,
+      })
+      : null;
+
+    // Everything the student is placed at from here on uses the APPLIED
+    // ability. report.theta stays raw — it describes the session, not the kid.
+    const appliedTheta = guard ? guard.theta : report.theta;
+
+    if (guard?.damped) {
+      console.log(`[Screener] Growth check drop damped for user ${userId}: raw θ=${guard.rawTheta} (${guard.rawLevel}) → applied θ=${guard.theta} (${guard.appliedLevel}), reason=${guard.reason}`);
+    }
+
     // Convert theta to human-readable grade level (like STAR testing)
-    const gradeLevelResult = thetaToGradeLevel(report.theta);
+    const gradeLevelResult = thetaToGradeLevel(appliedTheta);
     report.gradeLevel = gradeLevelResult.gradeLevel;
     report.gradeLevelDescription = gradeLevelResult.description;
 
-    // A Growth Check is a RE-measurement, not a placement. Build its summary
-    // NOW, while resolveTheta(user) still returns the pre-check estimate — the
-    // whole point is the comparison, and the writes below overwrite it.
-    const isGrowth = isGrowthCheckSession(session);
+    // Build the summary NOW, while resolveTheta(user) still returns the
+    // pre-check estimate — the whole point is the comparison, and the writes
+    // below overwrite it.
     let growthSummary = null;
     if (isGrowth) {
       try {
-        growthSummary = await buildGrowthSummaryForSession(session, report, user);
+        growthSummary = await buildGrowthSummaryForSession(session, report, user, guard);
       } catch (summaryErr) {
         console.warn('[Screener] Growth summary build failed:', summaryErr.message);
       }
@@ -874,7 +904,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
 
     // Store theta in the format expected by badge system
     user.learningProfile.abilityEstimate = {
-      theta: report.theta,
+      theta: appliedTheta,
       standardError: report.standardError,
       percentile: report.percentile,
       gradeLevel: gradeLevelResult.gradeLevel
@@ -882,8 +912,8 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     // Sync ALL theta read paths (utils/theta.js): the canonical top-level
     // field was written by nobody (default 0 forever), and the growth check
     // read a third field — the split-brain behind the "5th grade" report.
-    user.currentTheta = report.theta;
-    user.learningProfile.currentTheta = report.theta;
+    user.currentTheta = appliedTheta;
+    user.learningProfile.currentTheta = appliedTheta;
     user.learningProfile.standardError = report.standardError;
 
     // Store assessment in history for tracking growth over time
@@ -891,7 +921,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     user.assessmentHistory.push({
       type: isGrowth ? 'growth-check' : 'starting-point',
       date: now,
-      theta: report.theta,
+      theta: appliedTheta,
       standardError: report.standardError,
       gradeLevel: gradeLevelResult.gradeLevel,
       questionsAnswered: report.questionsAnswered,
@@ -923,11 +953,17 @@ router.post('/complete', isAuthenticated, async (req, res) => {
         sessionId: session.sessionId,
         date: now,
         previousTheta: growthSummary?.previousTheta,
-        newTheta: report.theta,
+        newTheta: appliedTheta,
         thetaChange: growthSummary?.thetaChange,
         growthStatus: growthSummary?.growthStatus,
         questionsAnswered: report.questionsAnswered,
-        accuracy: report.accuracy
+        accuracy: report.accuracy,
+        // What the check actually measured, before the guard throttled the
+        // drop. We damp what we ACT on, never what we record — a teacher
+        // looking at a run of damped checks is seeing a real decline.
+        rawTheta: guard ? guard.rawTheta : report.theta,
+        damped: !!guard?.damped,
+        dampReason: guard?.damped ? guard.reason : undefined
       });
       if (user.learningProfile.growthCheckHistory.length > 20) {
         user.learningProfile.growthCheckHistory =
