@@ -22,24 +22,18 @@ const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 const { buildCoursePipelineContext, postProcessCourseResult } = require('../utils/pipeline/courseAdapter');
 const { FREE_WEEKLY_SECONDS } = require('../middleware/usageGate');
+const { createPerUserLock } = require('../utils/perUserLock');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
 const MAX_HISTORY_LENGTH = 40;
 
-// Per-user lock to prevent concurrent course-chat processing
-const courseChatLocks = new Map();
-function acquireCourseLock(userId) {
-    const key = userId.toString();
-    if (!courseChatLocks.has(key)) {
-        courseChatLocks.set(key, Promise.resolve());
-    }
-    let release;
-    const newLock = new Promise(resolve => { release = resolve; });
-    const prev = courseChatLocks.get(key);
-    courseChatLocks.set(key, newLock);
-    return prev.then(() => release);
-}
-setInterval(() => { if (courseChatLocks.size > 500) courseChatLocks.clear(); }, 10 * 60 * 1000);
+// Per-user lock to prevent concurrent course-chat processing.
+// Shared implementation — this used to be a hand-copied twin of the one in
+// routes/chat.js, and it kept the `locks.clear()` sweep that chat.js had already
+// fixed. Clearing the whole map drops the lock for an in-flight request, letting
+// the user's next message run concurrently with the turn still processing.
+const courseChatLock = createPerUserLock();
+const acquireCourseLock = (userId) => courseChatLock.acquire(userId);
 
 // ============================================================
 //  POST /api/course-chat
