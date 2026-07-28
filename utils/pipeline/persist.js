@@ -595,10 +595,23 @@ async function persist(params) {
     }
 
     results.aiTimeUsed = billedSeconds;
-    results.freeWeeklySecondsRemaining =
-      (!user.subscriptionTier || user.subscriptionTier === 'free')
-        ? Math.max(0, FREE_WEEKLY - updatedWeekly)
-        : null;
+    // Only surface a remaining-free-seconds number for students the quota
+    // actually meters. `subscriptionTier === 'free'` alone is NOT that test —
+    // school-licensed and parent-covered students keep tier 'free' but pass
+    // usageGate unconditionally; reporting 0 here made the client render a
+    // "No AI time left" wall while the tutor kept (correctly) responding.
+    let metered = !user.subscriptionTier || user.subscriptionTier === 'free';
+    if (metered) {
+      try {
+        const { hasUnmeteredAiAccess } = require('../../middleware/usageGate');
+        metered = !(await hasUnmeteredAiAccess(user));
+      } catch (err) {
+        console.error('[Persist] Unmetered-access check error:', err.message);
+      }
+    }
+    results.freeWeeklySecondsRemaining = metered
+      ? Math.max(0, FREE_WEEKLY - updatedWeekly)
+      : null;
   }
 
   // ── Persist cognitive load snapshot ──

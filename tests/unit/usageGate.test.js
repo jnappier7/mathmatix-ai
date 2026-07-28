@@ -13,7 +13,7 @@ const SchoolLicense = require('../../models/schoolLicense');
 
 // Clear module cache so BILLING_ENABLED takes effect
 delete require.cache[require.resolve('../../middleware/usageGate')];
-const { usageGate, premiumFeatureGate, paidFeatureGate, FREE_WEEKLY_SECONDS } = require('../../middleware/usageGate');
+const { usageGate, usageGateAllMethods, premiumFeatureGate, paidFeatureGate, hasUnmeteredAiAccess, FREE_WEEKLY_SECONDS } = require('../../middleware/usageGate');
 
 describe('Feature Gating Middleware', () => {
   let req, res, next;
@@ -270,6 +270,22 @@ describe('Feature Gating Middleware', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
+    // --- usageGateAllMethods: for mounts whose GETs spend AI ---
+    test('usageGateAllMethods should block GET requests when free minutes are exhausted', async () => {
+      req.method = 'GET';
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 100;
+      await usageGateAllMethods(req, res, next);
+      expect(res.status).toHaveBeenCalledWith(402);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    test('usageGateAllMethods should allow GET requests with free minutes remaining', async () => {
+      req.method = 'GET';
+      req.user.weeklyAISeconds = 600;
+      await usageGateAllMethods(req, res, next);
+      expect(next).toHaveBeenCalled();
+    });
+
     // --- Error handling ---
     test('should call next() on internal errors (fail-open)', async () => {
       // Force an error by making user properties throw
@@ -278,6 +294,75 @@ describe('Feature Gating Middleware', () => {
       };
       await usageGate(req, res, next);
       expect(next).toHaveBeenCalled();
+    });
+  });
+
+  // ============================================================
+  // hasUnmeteredAiAccess — display surfaces must agree with the gate
+  // ============================================================
+  describe('hasUnmeteredAiAccess', () => {
+    test('is false for a plain free-tier student (quota applies)', async () => {
+      expect(await hasUnmeteredAiAccess(req.user)).toBe(false);
+    });
+
+    test('is true for school-licensed students even with quota "exhausted"', async () => {
+      req.user.schoolLicenseId = 'licenseUnmetered1';
+      req.user.weeklyAISeconds = FREE_WEEKLY_SECONDS + 1000;
+      SchoolLicense.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          _id: 'licenseUnmetered1',
+          status: 'active',
+          expiresAt: new Date(Date.now() + 86400000),
+          currentStudentCount: 100,
+          maxStudents: 500,
+        })
+      });
+      expect(await hasUnmeteredAiAccess(req.user)).toBe(true);
+    });
+
+    test('is false when the school license is expired', async () => {
+      req.user.schoolLicenseId = 'licenseUnmetered2';
+      SchoolLicense.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          _id: 'licenseUnmetered2',
+          status: 'expired',
+          expiresAt: new Date(Date.now() - 86400000),
+          currentStudentCount: 100,
+          maxStudents: 500,
+        })
+      });
+      expect(await hasUnmeteredAiAccess(req.user)).toBe(false);
+    });
+
+    test('is false when the school is over capacity', async () => {
+      req.user.schoolLicenseId = 'licenseUnmetered3';
+      SchoolLicense.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          _id: 'licenseUnmetered3',
+          status: 'active',
+          expiresAt: new Date(Date.now() + 86400000),
+          currentStudentCount: 600,
+          maxStudents: 500,
+        })
+      });
+      expect(await hasUnmeteredAiAccess(req.user)).toBe(false);
+    });
+
+    test('is true when a linked parent has Mathmatix+', async () => {
+      req.user.parentIds = ['parentU1'];
+      User.findOne.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({ _id: 'parentU1', subscriptionTier: 'unlimited' })
+      });
+      expect(await hasUnmeteredAiAccess(req.user)).toBe(true);
+    });
+
+    test('is true for unlimited subscribers and role bypasses', async () => {
+      expect(await hasUnmeteredAiAccess({ role: 'teacher' })).toBe(true);
+      expect(await hasUnmeteredAiAccess({ role: 'student', subscriptionTier: 'unlimited' })).toBe(true);
+    });
+
+    test('is false for a missing user', async () => {
+      expect(await hasUnmeteredAiAccess(null)).toBe(false);
     });
   });
 

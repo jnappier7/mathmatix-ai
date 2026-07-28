@@ -24,6 +24,7 @@ const User = require('../models/user');
 const Affiliate = require('../models/affiliate');
 const WebhookEvent = require('../models/webhookEvent');
 const { isAuthenticated } = require('../middleware/auth');
+const { hasUnmeteredAiAccess } = require('../middleware/usageGate');
 const { sendCancellationConfirmation, sendTrialEndingReminder } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'billing' });
 
@@ -800,6 +801,23 @@ router.get('/status', isAuthenticated, async (req, res) => {
         billingEnabled: true,
         tier: 'free',
         hasAccess: true,
+        usage: { secondsRemaining: Infinity, limitReached: false }
+      });
+    }
+
+    // School-licensed students (and any other unmetered case usageGate honors):
+    // unlimited while the license is valid and in capacity. Without this branch
+    // the status endpoint fell through to the free-quota math below, so a
+    // licensed student who logged >30 AI-min showed a "No AI time left" wall —
+    // while usageGate (correctly) kept letting tutor turns through. Same check
+    // as the gate, so display and enforcement can never disagree.
+    if (await hasUnmeteredAiAccess(user)) {
+      return res.json({
+        success: true,
+        billingEnabled: true,
+        tier: 'free',
+        hasAccess: true,
+        unmetered: true,
         usage: { secondsRemaining: Infinity, limitReached: false }
       });
     }
