@@ -19,6 +19,7 @@ const { WebSocketServer } = require('ws');
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const { createVoiceSession } = require('../utils/voiceSession');
+const { peekLoginSessionId } = require('../utils/loginSession');
 const voiceMetrics = require('../utils/voiceMetrics');
 const logger = require('../utils/logger').child({ route: 'voice-tutor' });
 
@@ -60,7 +61,11 @@ function attachStreamWebSocket(server, app) {
       if (m === 'orchestrated' || m === 'board-actions') requestedMode = m;
     } catch (_) { /* fall through to default */ }
     try {
-      await createVoiceSession({ ws, user: userDoc, mode: requestedMode });
+      // Read-only: the upgrade ran the real session middleware, so the marker
+      // the chat page already minted is here. peek, never mint — a WS upgrade
+      // has no response to flush a new session through.
+      const loginSessionId = peekLoginSessionId(request);
+      await createVoiceSession({ ws, user: userDoc, mode: requestedMode, loginSessionId });
       logger.info('voice ws session opened', { userId: String(userDoc._id), mode: requestedMode });
     } catch (err) {
       logger.error('voice ws session init failed', { error: err.message });

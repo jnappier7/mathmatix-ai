@@ -3978,6 +3978,18 @@ class CourseManager {
                 return;
             }
 
+            // The server may have started a fresh course sitting (a new login,
+            // or an idle gap). The transcript on screen was painted by the
+            // switchSession that ran before this request, so it can still be
+            // showing the sitting we just left — appending the new greeting
+            // under it is exactly the stacked-transcript view we're fixing.
+            // Clear to the conversation the server actually wrote to.
+            if (data.conversationId
+                && (data.sessionRolled || String(data.conversationId) !== String(window.currentConversationId))
+                && typeof window.updateChatForSession === 'function') {
+                window.updateChatForSession({ _id: data.conversationId, conversationType: 'general' }, []);
+            }
+
             if (data.text && window.appendMessage) {
                 window.appendMessage(data.text, 'ai');
             }

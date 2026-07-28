@@ -333,13 +333,25 @@ router.post('/:id/activate', async (req, res) => {
       activeCourseSessionId: session._id
     });
 
-    // Ensure the course conversation is active (so messages can be saved)
-    // but do NOT set activeConversationId — course chat uses
-    // courseSession.conversationId directly, and we don't want the main
-    // chat greeting to land in a course conversation on next page load.
-    if (session.conversationId) {
-      const Conversation = require('../models/conversation');
-      await Conversation.findByIdAndUpdate(session.conversationId, { isActive: true });
+    // Resolve (and if this is a new login, roll) the course conversation BEFORE
+    // responding. The client switches straight to `session.conversationId` and
+    // paints its transcript, so the roll has to happen here rather than in the
+    // greeting that follows — otherwise the browser renders the previous
+    // sitting first and the new greeting lands underneath it.
+    //
+    // Still does NOT touch activeConversationId: course chat keys off
+    // courseSession.conversationId, and the main chat greeting must not land in
+    // a course conversation on the next page load.
+    const { resolveCourseConversation } = require('../utils/courseConversation');
+    const { getLoginSessionId } = require('../utils/loginSession');
+    try {
+      await resolveCourseConversation({
+        user: req.user,
+        courseSession: session,
+        loginSessionId: getLoginSessionId(req),
+      });
+    } catch (convErr) {
+      console.error('[CourseSession] course conversation resolve failed (non-fatal):', convErr.message);
     }
 
     // Day-one diagnostic nudge for returning students too (e.g. an ACT-prep
