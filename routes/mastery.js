@@ -25,6 +25,7 @@ const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
 const Problem = require('../models/problem');
 const { initializeSkillMastery: initializeSkillMasteryEntry } = require('../utils/masteryEngine');
 const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
+const { resolveGradeNumber } = require('../utils/gradeLevel');
 
 // Read a mastery entry from a Map|object by canonical (unified) skill id, falling
 // back to a legacy key so historical data still resolves during the migration.
@@ -1815,9 +1816,10 @@ router.get('/pattern-badges', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Parse grade level to number (e.g., "9th Grade" → 9)
-    const gradeMatch = user.gradeLevel?.match(/(\d+)/);
-    const gradeLevel = gradeMatch ? parseInt(gradeMatch[1]) : 9;  // Default to 9th
+    // Working level as a number (assessed when present, stated grade
+    // otherwise — utils/gradeLevel.js), so badge-tier visibility tracks the
+    // math the student actually works at, not the signup grade.
+    const gradeLevel = resolveGradeNumber(user) ?? 9;  // Default to 9th
 
     const allPatterns = getAllPatternBadges();
 

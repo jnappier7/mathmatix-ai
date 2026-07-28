@@ -90,6 +90,10 @@ function toPdfBuffer(bytes) {
 // checked user.currentTheta FIRST — a field with schema default 0 that no
 // writer ever set, so every pack was difficulty-anchored at θ=0.
 const { resolveTheta } = require('../utils/theta');
+// Grade-level seam (utils/gradeLevel.js): band on the ASSESSED level when one
+// exists — user.gradeLevel is the SIGNUP grade, which the screener never
+// updates, so a 9th grader placed at 5th-grade math got 8-12-band worksheets.
+const { resolveGradeLevel } = require('../utils/gradeLevel');
 
 /**
  * Map a string grade level ("7th Grade", "Algebra 1", "K", "College") to the
@@ -153,7 +157,7 @@ async function selectProblemsForPack(user, options = {}) {
     // a brand-new K-2 student should not get 5-8 grade-band problems.
     if (targetSkills.length === 0) {
       const usingDefaultTheta = theta === 0 && typeof user?.currentTheta !== 'number';
-      const gradeBand = (usingDefaultTheta && gradeLevelToBand(user.gradeLevel)) || thetaToGradeBand(theta);
+      const gradeBand = (usingDefaultTheta && gradeLevelToBand(resolveGradeLevel(user))) || thetaToGradeBand(theta);
       const fallback = await selectFallbackProblems({ count, gradeBand, targetDifficulty });
       return fallback;
     }
@@ -207,7 +211,7 @@ async function selectProblemsForPack(user, options = {}) {
   // If skill-based selection still returned nothing usable, fall back to
   // grade-band general problems so the user always gets *some* worksheet.
   if (problems.length === 0) {
-    const gradeBand = gradeLevelToBand(user.gradeLevel) || thetaToGradeBand(theta);
+    const gradeBand = gradeLevelToBand(resolveGradeLevel(user)) || thetaToGradeBand(theta);
     return await selectFallbackProblems({ count, gradeBand, targetDifficulty });
   }
 

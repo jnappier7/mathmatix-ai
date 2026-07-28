@@ -336,11 +336,18 @@ async function completeAssessment(user, conversation, aiResponse) {
       });
     }
 
-    // Mark assessment as completed
+    // Mark assessment as completed — BOTH homes of the flag
+    // (utils/gradeLevel.js); nested-only readers (growth check, progress
+    // card) never saw this legacy path's completions.
     user.assessmentCompleted = true;
     user.assessmentDate = new Date();
+    user.learningProfile = user.learningProfile || {};
+    user.learningProfile.assessmentCompleted = true;
+    user.learningProfile.assessmentDate = user.assessmentDate;
 
-    // Determine initial placement (highest mastered skill)
+    // Determine initial placement (highest mastered skill). NOTE: this is a
+    // skill NAME, not a grade-level string — utils/gradeLevel.js deliberately
+    // rejects it during resolution, so don't mirror it into learningProfile.
     if (masteredSkills.length > 0) {
       user.initialPlacement = masteredSkills[masteredSkills.length - 1];
     }
