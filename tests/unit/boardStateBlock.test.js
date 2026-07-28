@@ -72,8 +72,27 @@ describe('buildBoardStateBlock', () => {
 
   test('long tex truncates instead of flooding the prompt', () => {
     const l = applyTurnToLedger(null, [{ action: 'pose', tex: 'x+'.repeat(200) }], NOW);
-    const line = buildBoardStateBlock(l).split('\n').find(s => s.startsWith('Problem in focus'));
+    const line = buildBoardStateBlock(l, NOW).split('\n').find(s => s.startsWith('Problem in focus'));
     expect(line.length).toBeLessThan(130);
     expect(line).toContain('…');
+  });
+});
+
+describe('stale board content (owner transcript: volume scaffold woven into sequences)', () => {
+  test('a problem posed 20h ago is flagged STALE with clear-and-pose guidance', () => {
+    const posed = new Date('2026-07-27T12:00:00Z');
+    const l = applyTurnToLedger(null, [{ action: 'pose', tex: 'V = lwh' }], posed);
+    const block = buildBoardStateBlock(l, new Date('2026-07-28T08:00:00Z'));
+    expect(block).toContain('likely from EARLIER work');
+    expect(block).toContain('STALE CONTENT');
+    expect(block).toContain('NEVER invent a mathematical connection');
+  });
+
+  test('fresh problems carry the no-invented-connections rule but no stale flag', () => {
+    const now = new Date('2026-07-28T08:00:00Z');
+    const l = applyTurnToLedger(null, [{ action: 'pose', tex: '2x=4' }], now);
+    const block = buildBoardStateBlock(l, now);
+    expect(block).not.toContain('STALE CONTENT');
+    expect(block).toContain('NEVER invent a mathematical connection');
   });
 });

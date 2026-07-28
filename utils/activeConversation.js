@@ -122,10 +122,30 @@ async function loadActiveBoardLedger(user) {
     return conv?.boardLedger || null;
 }
 
+/**
+ * Did the tutor speak within the last `ms`? Pure. The anti-collision guard
+ * for lesson starts (owner transcript, 2026-07-28: one "ok" produced a
+ * free-chat lesson kickoff AND a course greeting in the same minute — two
+ * lessons collided in one thread). A greeting path that finds a fresh
+ * assistant message must DEFER, not stack a second lesson start.
+ */
+function assistantSpokeWithin(messages, ms, now = Date.now()) {
+    const list = Array.isArray(messages) ? messages : [];
+    for (let i = list.length - 1; i >= 0; i--) {
+        const m = list[i];
+        if (m && m.role !== 'user' && m.timestamp) {
+            const t = new Date(m.timestamp).getTime();
+            return Number.isFinite(t) && (now - t) < ms;
+        }
+    }
+    return false;
+}
+
 module.exports = {
     VOICE_HISTORY_DEPTH,
     resolveActiveConversationId,
     loadActiveBoardLedger,
+    assistantSpokeWithin,
     loadActiveHistory,
     appendToActiveConversation,
 };

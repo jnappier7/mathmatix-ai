@@ -10,6 +10,7 @@ const path = require('path');
 
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
+const { assistantSpokeWithin } = require('../utils/activeConversation');
 const CourseSession = require('../models/courseSession');
 const { buildCourseSystemPrompt, buildCourseGreetingInstruction } = require('../utils/coursePrompt');
 const { callLLM } = require('../utils/llmGateway');
@@ -374,6 +375,26 @@ async function handleCourseGreeting(req, res, userId) {
         const courseSession = await CourseSession.findById(user.activeCourseSessionId);
         if (!courseSession || courseSession.status !== 'active') {
             return res.status(400).json({ message: 'Course session not found or inactive.' });
+        }
+
+        // ── ACTIVE-EXCHANGE GUARD ───────────────────────────────────────────
+        // (owner transcript, 2026-07-28: one "ok" produced a free-chat lesson
+        // kickoff AND this course greeting in the same minute — two lesson
+        // starts collided in one thread.) If the tutor spoke within the last
+        // two minutes, the student is mid-exchange: defer this greeting rather
+        // than stacking a second lesson start on top of a live one. Server-side
+        // for the same reason as the baseline gate below — clients race.
+        try {
+            if (user.activeConversationId) {
+                const activeConv = await Conversation.findById(user.activeConversationId)
+                    .select({ messages: { $slice: -4 } }).lean();
+                if (activeConv && assistantSpokeWithin(activeConv.messages, 2 * 60 * 1000)) {
+                    console.log(`📚 [CourseGreeting] ${user.firstName} → mid-exchange, deferring course greeting`);
+                    return res.json({ greetingDeferred: true, isGreeting: true, reason: 'active_exchange' });
+                }
+            }
+        } catch (guardErr) {
+            console.error('[CourseGreeting] active-exchange guard failed (non-fatal):', guardErr.message);
         }
 
         // ── BASELINE GATE ───────────────────────────────────────────────────

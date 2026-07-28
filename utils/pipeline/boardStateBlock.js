@@ -50,7 +50,12 @@ function describeStep(cmd) {
  * @param {object|null} ledger - conversation.boardLedger
  * @returns {string} the prompt block, or '' when the board is empty
  */
-function buildBoardStateBlock(ledger) {
+// Board content older than this is "from earlier work" — the tutor must not
+// weave it into a NEW topic (owner transcript: a leftover volume scaffold got
+// narrated into a sequences lesson via an invented — and false — connection).
+const STALE_AFTER_MS = 12 * 60 * 60 * 1000;
+
+function buildBoardStateBlock(ledger, now = new Date()) {
   if (!ledger || typeof ledger !== 'object') return '';
   const cur = ledger.current;
   const railCount = Array.isArray(ledger.completed) ? ledger.completed.length : 0;
@@ -59,8 +64,16 @@ function buildBoardStateBlock(ledger) {
   const lines = ['== THE STUDENT\'S BOARD (visible to them RIGHT NOW) =='];
 
   if (cur && cur.problemTex) {
+    const posedAtMs = cur.posedAt ? Date.parse(cur.posedAt) : NaN;
+    const ageMs = Number.isFinite(posedAtMs) ? (now.getTime() - posedAtMs) : 0;
+    const stale = ageMs > STALE_AFTER_MS;
     lines.push('Problem in focus: ' + trunc(cur.problemTex)
-      + (cur.sourceRef ? ' (selected from their uploaded worksheet)' : ''));
+      + (cur.sourceRef ? ' (selected from their uploaded worksheet)' : '')
+      + (stale ? ' — posed ' + Math.round(ageMs / (60 * 60 * 1000)) + 'h ago, likely from EARLIER work' : ''));
+    if (stale) {
+      lines.push('STALE CONTENT: this problem predates today. If the current lesson is a '
+        + 'DIFFERENT topic, do NOT force it in — emit a `clear` card and pose the new work.');
+    }
     const steps = Array.isArray(cur.steps) ? cur.steps : [];
     const shown = steps.map(describeStep).filter(Boolean);
     const tail = shown.slice(-MAX_STEPS_SHOWN);
@@ -91,7 +104,9 @@ function buildBoardStateBlock(ledger) {
     + 'Never re-derive or re-narrate steps already displayed; refer to them instead '
     + '("look at the last line on your board"). If the problem is SOLVED, do not keep '
     + 'working it — celebrate briefly and move forward. When the student says "what\'s next", '
-    + 'advance from the newest board line, not from the beginning.');
+    + 'advance from the newest board line, not from the beginning. '
+    + 'NEVER invent a mathematical connection between leftover board content and a new topic '
+    + '— if the lesson has moved on, clear and pose fresh instead of weaving it in.');
   if (cur && cur.problemTex) {
     lines.push('POINTING: To make the exact line you are discussing glow on the student\'s '
       + 'board, append <BOARD_POINT step="N"/> (N from the numbering above) or '
