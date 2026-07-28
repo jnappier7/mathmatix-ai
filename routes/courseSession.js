@@ -17,6 +17,7 @@ const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
 const { courseSkills, buildBlueprint, scoreBySkill, recommendedStart } = require('../utils/coursePreAssessment');
 const { gradeOne } = require('../utils/skillChallenge');
+const { resolveGradeNumber } = require('../utils/gradeLevel');
 const { advanceRung } = require('../utils/skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
 const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
@@ -100,17 +101,16 @@ router.get('/catalog', async (req, res) => {
     // Sort by grade progression (sortOrder from CATALOG_META)
     catalog.sort((a, b) => a.sortOrder - b.sortOrder);
 
-    // Personalized recommendation based on user's grade
+    // Personalized recommendation from the student's working level (assessed
+    // when present, stated grade otherwise — utils/gradeLevel.js), keyed by
+    // grade number so assessed levels like "Algebra 1" also resolve.
     const GRADE_COURSE_MAP = {
-      '3rd-grade': 'early-math-foundations', '4th-grade': 'early-math-foundations', '5th-grade': 'early-math-foundations',
-      '6th-grade': '6th-grade-math', '7th-grade': '7th-grade-math', '8th-grade': 'grade-8-math',
-      '9th-grade': 'algebra-1', '10th-grade': 'geometry', '11th-grade': 'algebra-2', '12th-grade': 'precalculus'
+      3: 'early-math-foundations', 4: 'early-math-foundations', 5: 'early-math-foundations',
+      6: '6th-grade-math', 7: '7th-grade-math', 8: 'grade-8-math',
+      9: 'algebra-1', 10: 'geometry', 11: 'algebra-2', 12: 'precalculus'
     };
-    let recommended = null;
-    if (req.user && req.user.gradeLevel) {
-      const grade = req.user.gradeLevel.toLowerCase().replace(/\s+/g, '-');
-      recommended = GRADE_COURSE_MAP[grade] || null;
-    }
+    const gradeNum = resolveGradeNumber(req.user);
+    const recommended = (gradeNum !== null && GRADE_COURSE_MAP[gradeNum]) || null;
 
     res.json({ success: true, catalog, recommended });
   } catch (err) {

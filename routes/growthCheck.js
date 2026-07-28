@@ -27,6 +27,8 @@ const {
 // PR #1343 referenced these without the require — every growth-check route
 // threw ReferenceError at request time. Import what the handlers use.
 const { resolveTheta, thetaWritePatch } = require('../utils/theta');
+const { thetaToGradeLevel } = require('../utils/catConfig');
+const { assessedLevelWritePatch } = require('../utils/gradeLevel');
 const logger = require('../utils/catLogger');
 
 // In-memory session store (production would use Redis)
@@ -453,6 +455,11 @@ async function saveGrowthCheckResults(userId, result) {
           // growth-check-only field split-brained against the screener's and
           // anchored every check at θ=0 ("5th grade" for a math teacher).
           ...thetaWritePatch(results.theta, results.standardError),
+          // Keep the assessed-level STRING and the tutor's mathCourse pathway
+          // in step with the new theta (utils/gradeLevel.js) — before this,
+          // growth checks moved theta but left abilityEstimate.gradeLevel
+          // frozen at the initial placement.
+          ...assessedLevelWritePatch(thetaToGradeLevel(results.theta).gradeLevel),
           'learningProfile.lastGrowthCheck': new Date(),
         },
         $push: {

@@ -442,6 +442,12 @@ async function seedDemoAccounts() {
         ]
       }],
 
+      // Both homes of the assessment flag/placement (utils/gradeLevel.js) —
+      // learningProfile-only copies left top-level readers seeing "never assessed"
+      assessmentCompleted: true,
+      assessmentDate: monthsAgo(3),
+      initialPlacement: '7th Grade',
+
       // Learning profile
       learningProfile: {
         interests: ['basketball', 'video games', 'sneakers'],
@@ -706,6 +712,11 @@ async function seedDemoAccounts() {
         { badgeId: 'integer-operations-bronze', earnedDate: weeksAgo(4) },
         { badgeId: 'fraction-operations-bronze', earnedDate: weeksAgo(2) }
       ],
+
+      // Both homes of the assessment flag/placement (utils/gradeLevel.js)
+      assessmentCompleted: true,
+      assessmentDate: monthsAgo(3),
+      initialPlacement: '6th Grade',
 
       // Learning profile — reflects IEP accommodations influence
       learningProfile: {

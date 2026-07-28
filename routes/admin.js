@@ -2013,10 +2013,18 @@ router.post('/students/:studentId/reset-assessment', isAdmin, async (req, res) =
     }
     student.learningProfile.assessmentHistory.push(previousAssessment);
 
-    // Reset assessment flags
+    // Reset assessment flags — BOTH homes of each dual field
+    // (utils/gradeLevel.js): clearing only the top-level ones left
+    // learningProfile.assessmentCompleted true, so growth checks and the
+    // student progress card still treated the student as assessed.
     student.assessmentCompleted = false;
     student.assessmentDate = null;
     student.initialPlacement = null;
+    if (student.learningProfile) {
+      student.learningProfile.assessmentCompleted = false;
+      student.learningProfile.assessmentDate = null;
+      student.learningProfile.initialPlacement = null;
+    }
 
     // Optional: Clear skill mastery (keeping it for now to preserve learning history)
     // student.skillMastery = new Map();

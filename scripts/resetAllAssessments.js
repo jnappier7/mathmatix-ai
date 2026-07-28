@@ -34,8 +34,14 @@ async function resetAllAssessments() {
       { role: 'student' },
       {
         $set: {
+          // BOTH homes of each dual field (utils/gradeLevel.js) — top-level
+          // only left learningProfile.assessmentCompleted true everywhere.
           assessmentCompleted: false,
+          'learningProfile.assessmentCompleted': false,
           assessmentDate: null,
+          'learningProfile.assessmentDate': null,
+          initialPlacement: null,
+          'learningProfile.initialPlacement': null,
           assessmentExpiresAt: null,
           nextGrowthCheckDue: null,
           startingPointOffered: false,  // Allow AI to offer again

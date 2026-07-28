@@ -32,6 +32,7 @@ const { calculateProgress } = require('../utils/catConvergence');
 const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
 const { resolveTheta } = require('../utils/theta');
+const { assessedLevel } = require('../utils/gradeLevel');
 const { setSkillMasteryEntry } = require('../utils/masteryGuard');
 
 // Warm up cache on module load
@@ -1092,15 +1093,24 @@ router.post('/interview-complete', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Update user profile with refined results
+    // Update user profile with refined results — writing BOTH homes of every
+    // dual field (utils/gradeLevel.js): this path used to set only the
+    // top-level flag and an abilityEstimate with no gradeLevel string.
+    const interviewLevel = thetaToGradeLevel(session.theta).gradeLevel;
     user.learningProfile = user.learningProfile || {};
     user.assessmentCompleted = true;
     user.assessmentDate = new Date();
+    user.learningProfile.assessmentCompleted = true;
+    user.learningProfile.assessmentDate = user.assessmentDate;
+    user.initialPlacement = interviewLevel;
+    user.learningProfile.initialPlacement = interviewLevel;
+    user.mathCourse = interviewLevel;
     user.learningProfile.abilityEstimate = {
       theta: session.theta,
       standardError: session.standardError,
       percentile: thetaToPercentile(session.theta),
-      confidence: session.confidence
+      confidence: session.confidence,
+      gradeLevel: interviewLevel
     };
 
     // Store pattern mastery from interview
@@ -1258,7 +1268,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
       growthCheckDue: growthCheckDue && user.assessmentCompleted,
       nextGrowthCheckDue: user.nextGrowthCheckDue || null,
       assessmentExpiresAt: user.assessmentExpiresAt || null,
-      currentGradeLevel: lastAssessment?.gradeLevel || user.learningProfile?.abilityEstimate?.gradeLevel || null,
+      currentGradeLevel: lastAssessment?.gradeLevel || assessedLevel(user),
       assessmentCount: user.assessmentHistory?.length || 0
     });
   } catch (error) {
@@ -1305,11 +1315,14 @@ router.post('/reset', isAuthenticated, async (req, res) => {
       return res.status(404).json({ error: 'Student not found' });
     }
 
-    // Reset assessment status but preserve history
+    // Reset assessment status but preserve history — clear BOTH homes of each
+    // dual field (utils/gradeLevel.js), or readers of the other one still see
+    // the student as assessed/placed.
     student.assessmentCompleted = false;
     student.assessmentDate = null;
     student.assessmentExpiresAt = null;
     student.nextGrowthCheckDue = null;
+    student.initialPlacement = null;
     // Mirror reset into learningProfile
     if (student.learningProfile) {
       student.learningProfile.assessmentCompleted = false;
