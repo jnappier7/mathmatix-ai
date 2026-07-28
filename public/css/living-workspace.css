@@ -764,6 +764,75 @@ html[data-theme="dark"] .lws-root {
 .lws-nb-card-prob { margin: 6px 0 0; font-size: 12px; opacity: .7; overflow-wrap: anywhere; }
 .lws-nb-card-seen { margin: 6px 0 0; font: 600 11px/1 system-ui, sans-serif; color: #e0a23c; }
 
+/* ── the student's own notes ───────────────────────────────────
+   The notebook is theirs to add to: "+ Add note" writes one, dragging a chat
+   message onto the 📓 pill writes one, and both land here. A student note
+   reads as visibly THEIRS — green rail, tinted, editable — so it's never
+   confused with the tutor's record of what happened. */
+.lws-nb-add {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  margin-left: auto;
+  padding: 6px 12px; border: 1px solid var(--lws-accent); border-radius: 999px;
+  background: color-mix(in srgb, var(--lws-accent) 18%, var(--lws-card-bg));
+  color: var(--lws-card-ink); font: 700 11px/1 system-ui, sans-serif;
+}
+.lws-nb-add:hover { background: color-mix(in srgb, var(--lws-accent) 30%, var(--lws-card-bg)); }
+.lws-nb-add:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+.lws-nb-composer-slot:not(:empty) {
+  flex: 0 0 auto; padding: 12px 12px 0;
+}
+
+.lws-nb-editor { display: flex; flex-direction: column; gap: 8px; }
+.lws-nb-editor-title,
+.lws-nb-editor-body {
+  width: 100%; box-sizing: border-box;
+  padding: 8px 11px; border: 1px solid var(--lws-card-border); border-radius: 10px;
+  background: var(--lws-card-bg); color: var(--lws-card-ink);
+  font: 400 13px/1.45 system-ui, sans-serif;
+}
+.lws-nb-editor-title { font-weight: 700; }
+.lws-nb-editor-body { resize: vertical; min-height: 72px; }
+.lws-nb-editor-title:focus-visible,
+.lws-nb-editor-body:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 1px; }
+.lws-nb-editor-row { display: flex; align-items: center; gap: 8px; }
+.lws-nb-editor-err { flex: 1 1 auto; font: 600 11px/1.2 system-ui, sans-serif; color: #e0736c; }
+.lws-nb-editor-save,
+.lws-nb-editor-cancel {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  padding: 7px 14px; border-radius: 999px;
+  font: 700 11px/1 system-ui, sans-serif;
+}
+.lws-nb-editor-save {
+  border: 1px solid var(--lws-accent);
+  background: var(--lws-accent); color: var(--lws-grid-bg, #0f1422);
+}
+.lws-nb-editor-save[disabled] { opacity: .55; cursor: progress; }
+.lws-nb-editor-cancel {
+  border: 1px solid var(--lws-card-border);
+  background: transparent; color: var(--lws-card-ink);
+}
+.lws-nb-editor-save:focus-visible,
+.lws-nb-editor-cancel:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; }
+
+.lws-nb-card.is-note { border-left-color: #6fc98a; }
+.lws-nb-card.is-mine { background: color-mix(in srgb, #6fc98a 8%, var(--lws-card-bg)); }
+.lws-nb-card-edit {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  border: none; background: transparent; color: var(--lws-card-ink);
+  font: 600 12px/1 system-ui, sans-serif; opacity: .45; padding: 2px 4px;
+}
+.lws-nb-card-edit:hover { opacity: 1; }
+.lws-nb-card-edit:focus-visible { outline: 2px solid var(--lws-accent); outline-offset: 2px; opacity: 1; }
+
+/* Drag a chat message here to keep it. */
+.lws-nb-btn.is-drop {
+  border-color: #6fc98a;
+  background: color-mix(in srgb, #6fc98a 26%, var(--lws-card-bg));
+  transform: scale(1.06);
+}
+.lws-nb-ov.is-drop { outline: 2px dashed #6fc98a; outline-offset: -6px; }
+
 /* ── interactive concept models embedded in the derivation (§6.8) ── */
 .lws-model { width: 100%; max-width: 560px; }
 .lws-model-unavailable {
