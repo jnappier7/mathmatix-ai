@@ -21,7 +21,7 @@ const { buildProgressUpdate } = require('../utils/progressState');
 const { isRequiredBaselinePending } = require('../utils/courseDiagnostic');
 const { runPipeline, verify: pipelineVerify } = require('../utils/pipeline');
 const { buildCoursePipelineContext, postProcessCourseResult } = require('../utils/pipeline/courseAdapter');
-const { FREE_WEEKLY_SECONDS } = require('../middleware/usageGate');
+const { FREE_WEEKLY_SECONDS, hasUnmeteredAiAccess } = require('../middleware/usageGate');
 const { createPerUserLock } = require('../utils/perUserLock');
 
 const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
@@ -259,6 +259,18 @@ router.post('/', async (req, res) => {
         const progressUpdate = courseResult.progressUpdate;
 
         // ── Build response ──────────────────────────────────
+        // Same metering test as usageGate — tier 'free' alone also matches
+        // school-licensed/parent-covered students, and reporting 0 remaining
+        // for them shows a "No AI time left" wall the gate never enforces.
+        let meteredFree = !user.subscriptionTier || user.subscriptionTier === 'free';
+        if (meteredFree) {
+            try {
+                meteredFree = !(await hasUnmeteredAiAccess(user));
+            } catch (err) {
+                console.error('[CourseChat] Unmetered-access check error:', err.message);
+            }
+        }
+
         let responseData;
 
         if (isParentCourse) {
@@ -310,7 +322,7 @@ router.post('/', async (req, res) => {
                     leveledUp
                 },
                 aiTimeUsed: aiProcessingSeconds,
-                freeWeeklySecondsRemaining: (!user.subscriptionTier || user.subscriptionTier === 'free')
+                freeWeeklySecondsRemaining: meteredFree
                     ? Math.max(0, FREE_WEEKLY_SECONDS - (user.weeklyAISeconds || 0))
                     : null,
                 // Interactive tools

@@ -4,6 +4,7 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
+const { usageGate } = require('../middleware/usageGate');
 const { generateSystemPrompt } = require('../utils/prompt');
 const User = require('../models/user');
 const { callLLM, retryWithExponentialBackoff } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
@@ -36,7 +37,10 @@ router.use(isAuthenticated, async (req, res, next) => {
     }
 });
 
-router.post('/generate-interactive-lesson', async (req, res) => {
+// usageGate on the two LLM endpoints only — record-assessment and
+// paper-submitted just persist results of an already-delivered lesson, and
+// 402-ing those would drop student work at the exact moment time runs out.
+router.post('/generate-interactive-lesson', usageGate, async (req, res) => {
     try {
         const { lessonContext } = req.body;
         const { title, goals, miniLessonConcepts, instructionalStrategies, conversationHistory, phaseState, skillId } = lessonContext;
@@ -267,7 +271,7 @@ router.post('/record-assessment', async (req, res) => {
     }
 });
 
-router.post('/get-scaffolded-hint', async (req, res) => {
+router.post('/get-scaffolded-hint', usageGate, async (req, res) => {
     try {
         const { hintContext } = req.body;
         const { problem, userAnswer, correctAnswer, strategies } = hintContext;

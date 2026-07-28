@@ -2199,6 +2199,12 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
         let userUpdate;
         if (needsWeeklyReset) {
             logger.info('Weekly time tracking reset', { userId, weeklyActiveMin: user.weeklyActiveTutoringMinutes || 0, weeklyAIMin: Math.floor((user.weeklyAISeconds || 0) / 60) });
+            // NOTE: weeklyAISeconds is deliberately NOT reset here. The free-AI
+            // quota is MONTHLY (anchored on lastAIQuotaReset, owned by
+            // middleware/usageGate.js); this 7-day reset only covers the weekly
+            // engagement counters. Zeroing weeklyAISeconds here (the old weekly-
+            // quota behavior) silently refilled a student's 30 free minutes every
+            // week — tutor responses kept firing after "No AI time left".
             const newTotalSeconds = baseTotalSeconds + activeSeconds;
             userUpdate = {
                 $set: {
@@ -2206,7 +2212,6 @@ router.post('/track-time', isAuthenticated, async (req, res) => {
                     totalActiveTutoringMinutes: Math.floor(newTotalSeconds / 60),
                     weeklyActiveSeconds: activeSeconds,
                     weeklyActiveTutoringMinutes: Math.floor(activeSeconds / 60),
-                    weeklyAISeconds: 0,
                     lastWeeklyReset: now
                 }
             };

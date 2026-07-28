@@ -2782,6 +2782,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
+
+                    // Rapport turns are metered like regular chat — show the same
+                    // upgrade prompt on 402 instead of a raw error bubble.
+                    if (response.status === 402 && (errorData.usageLimitReached || errorData.premiumFeatureBlocked)) {
+                        showThinkingIndicator(false);
+                        showUpgradePrompt(errorData);
+                        return;
+                    }
+
                     const errorMessage = errorData.message || errorData.error || `Server error: ${response.status}`;
                     throw new Error(errorMessage);
                 }
