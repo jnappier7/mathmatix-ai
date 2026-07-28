@@ -491,11 +491,34 @@ function isProseAnswer(text) {
   return words.filter(w => /^[a-z][a-z']*$/i.test(w)).length >= 2;
 }
 
+// A true/false (or yes/no) question takes a POLARITY answer — a single word
+// that is neither a value nor prose, so both existing conceptual gates miss it
+// (each requires 2+ words) and the turn falls through to the value-matcher,
+// which can only reject what it cannot parse. Production (AP Calculus AB,
+// 2026-07-28, the post-#1360 confirmation run): tutor asked "True or false: a
+// function can take two different inputs and give the same output" → student
+// answered "true" (correct) → "Careful there—" and a re-ask instead of an
+// affirmation. The answer regex is deliberately anchored: the polarity word
+// (with an optional hedge prefix) must BE the whole message — "true story" or
+// "no idea" must not route here.
+const POLARITY_QUESTION_RX = /\btrue\s+or\s+false\b|\byes\s+or\s+no\b/i;
+const POLARITY_ANSWER_RX = /^(?:i\s+(?:think|say|would\s+say)\s+|it'?s\s+|probably\s+|definitely\s+)?(?:true|false|yes|no|nope|yep|yeah|nah)[\s.!?]*$/i;
+
+function isPolarityQuestion(questionText) {
+  return typeof questionText === 'string' && POLARITY_QUESTION_RX.test(questionText);
+}
+
+function isPolarityAnswer(text) {
+  return typeof text === 'string' && POLARITY_ANSWER_RX.test(text.trim());
+}
+
 module.exports = {
   llmVerifyAnswer,
   llmVerifyConceptual,
   isConceptualQuestion,
   isProseAnswer,
+  isPolarityQuestion,
+  isPolarityAnswer,
   verifyWithEscalation,
   pickProblemContext,
   pickPosedQuestion,

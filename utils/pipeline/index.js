@@ -31,6 +31,8 @@ const {
   llmVerifyConceptual,
   isConceptualQuestion,
   isProseAnswer,
+  isPolarityQuestion,
+  isPolarityAnswer,
   VERIFIER_MODEL,
 } = require('./llmVerifier');
 const { deriveVerificationState, hasMathematicalContent } = require('./verificationState');
@@ -208,7 +210,11 @@ async function runPipeline(message, ctx) {
   }));
   const posedQuestion = pickPosedQuestion(assistantContext);
   const isConceptualTurn = observation.conceptualReply === true
-    || (isConceptualQuestion(posedQuestion) && isProseAnswer(message));
+    || (isConceptualQuestion(posedQuestion) && isProseAnswer(message))
+    // "True or false: …?" answered with a bare "true" — one word, so neither
+    // gate above fires, and the value-matcher can only reject it. The judge
+    // grades the claim instead.
+    || (isPolarityQuestion(posedQuestion) && isPolarityAnswer(message));
 
   let conceptualVerificationPromise = null;
   if (isConceptualTurn && posedQuestion) {
