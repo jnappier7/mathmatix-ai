@@ -83,7 +83,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20260728b';
+  var ASSET_V = '?v=20260728c';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -358,6 +358,46 @@
       } catch (e) { console.error('[LWS_CHAT] model move send failed', e); }
     });
   }
+
+  // A filled scaffold blank (owner call, 2026-07-28): ONE StudentMove through
+  // the tile lane — server-authoritative verdict (deterministic for a single-
+  // blank equation) + the tutor's reaction in the same round trip. The board
+  // paints the verdict; the reaction lands in chat via appendMessage.
+  document.addEventListener('lws:blank-submit', function (e) {
+    var d = e && e.detail;
+    if (!d || !window.LWS || !window.LWS.StudentMoveClient) return;
+    try {
+      window.LWS.StudentMoveClient.sendMove({
+        conversationId: String(ctx.conversationId || ''),
+        workspaceId: String(ctx.workspaceId || 'chat'),
+        elementId: (d.row && d.row.getAttribute('data-lws-id')) || 'scaffold',
+        elementType: 'equation',
+        source: 'keyboard',
+        mode: 'attempt',
+        gestureType: 'edit',
+        operation: {
+          type: 'fill_blank',
+          parameters: { stepTex: d.stepTex, blankIndex: d.blankIndex, value: d.value },
+        },
+        previousState: { tex: d.stepTex },
+        proposedState: { filled: d.value },
+      }, { withTutor: true, fetch: window.csrfFetch || undefined }).then(function (result) {
+        var vm = result && result.verifiedMove;
+        var box = d.row && d.row.querySelector('.lws-blank-pending');
+        if (box) {
+          box.classList.remove('lws-blank-pending');
+          if (vm && vm.mathematicallyValid === true) box.classList.add('lws-blank-ok');
+          else if (vm && vm.mathematicallyValid === false) box.classList.add('lws-blank-bad');
+          else box.classList.add('lws-blank-open');   // tutor decides — stay neutral
+        }
+        var resp = result && result.response;
+        var text = resp && (resp.text || resp.message || (resp.response && resp.response.text));
+        if (text && typeof window.appendMessage === 'function') {
+          window.appendMessage(text, 'ai');
+        }
+      }).catch(function (err) { console.error('[LWS_CHAT] blank move failed', err); });
+    } catch (err) { console.error('[LWS_CHAT] blank move failed', err); }
+  });
 
   // A confirmed region selection: the crop goes to the tutor as a normal chat
   // photo turn (OCR, diagnose, the works) tagged with the source ref so the
