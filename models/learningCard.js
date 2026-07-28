@@ -8,9 +8,10 @@
 // conversations archive and roll over.
 //
 // Writers today: utils/pipeline/learningCards.js (deterministic capture in
-// the persist stage — AHA and Reminder). The idea/strategy/reflection types
-// are part of the schema so the API and notebook UI are ready for them, but
-// nothing auto-creates them yet.
+// the persist stage — AHA and Reminder), and the student themselves via
+// POST /api/notebook — either accepting a tutor-offered idea or writing a
+// `note` of their own. The strategy/reflection types are part of the schema
+// so the API and notebook UI are ready for them, but nothing creates them yet.
 
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
@@ -20,8 +21,15 @@ const learningCardSchema = new Schema({
     type: {
         type: String,
         required: true,
-        enum: ['aha', 'reminder', 'idea', 'strategy', 'reflection'],
+        enum: ['aha', 'reminder', 'idea', 'strategy', 'reflection', 'note'],
     },
+    // WHO wrote this card. 'tutor' = captured or worded by the pipeline
+    // (aha/reminder/idea); 'student' = the student typed it themselves, or
+    // dragged a chat message in. Only student-authored cards are editable —
+    // letting a student rewrite an AHA card would falsify the evidence trail
+    // the mastery pillars read. Derived server-side from the type, never
+    // taken from the client (routes/notebook.js).
+    source: { type: String, enum: ['tutor', 'student'], default: 'tutor', index: true },
     // Short student-facing headline ("You figured out two-step equations!",
     // "Watch for This: losing a negative sign").
     title: { type: String, required: true, maxlength: 160 },

@@ -816,6 +816,62 @@ document.addEventListener("DOMContentLoaded", () => {
         latest.appendChild(wrap);
     }
 
+    // ── Keep a chat message in my notebook (Live Workspace §15) ──
+    // The notebook is the student's, so anything said in the conversation —
+    // theirs or the tutor's — can be dragged into it. Each message carries a
+    // small 📓 chip that is BOTH draggable (drop it on the notebook pill) and
+    // clickable (same result, for touch and keyboard). Either way it opens
+    // the notebook's composer prefilled; the student confirms the save.
+    //
+    // Only the chip is draggable, never the bubble: `draggable` on the bubble
+    // itself would hijack text selection inside it, so you couldn't highlight
+    // a line of the tutor's explanation any more.
+
+    // Strip the machine-facing markup the tutor emits so a saved note reads
+    // like the message did on screen, not like the wire format.
+    function notebookTextFor(raw) {
+        let text = String(raw == null ? '' : raw);
+        text = text.replace(/\[\/?STEPS\]/g, '');
+        if (window.StripVisualTags?.stripUnrenderedVisualTags) {
+            text = window.StripVisualTags.stripUnrenderedVisualTags(text);
+        }
+        return text.trim();
+    }
+
+    function attachNotebookChip(bubble, rawText) {
+        // No notebook mounted (workspace flag off) → no chip. A control that
+        // silently does nothing is worse than an absent one.
+        if (!window.LWS_CHAT?.isOn?.()) return;
+        if (!bubble || bubble.querySelector('.notebook-save-chip')) return;
+        const text = notebookTextFor(rawText);
+        if (!text) return;
+
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'notebook-save-chip';
+        chip.textContent = '📓';
+        chip.draggable = true;
+        chip.title = 'Keep this in my notebook — click, or drag it onto the notebook';
+        chip.setAttribute('aria-label', 'Keep this message in my notebook');
+
+        chip.addEventListener('dragstart', (e) => {
+            try {
+                e.dataTransfer.setData('text/plain', text);
+                e.dataTransfer.effectAllowed = 'copy';
+            } catch (_) { /* older browsers: the click path still works */ }
+            bubble.classList.add('is-dragging-to-notebook');
+        });
+        chip.addEventListener('dragend', () => bubble.classList.remove('is-dragging-to-notebook'));
+        chip.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (window.LWS_CHAT?.captureToNotebook?.(text) === false && typeof showToast === 'function') {
+                showToast('Your notebook isn’t open right now.', 3000);
+            }
+        });
+
+        bubble.appendChild(chip);
+    }
+
     // ── Unified Markdown + Math renderer (marked + KaTeX) ──
     // Pipeline: protect LaTeX → marked.parse → restore with katex.renderToString
     // KaTeX renders synchronously — no FOUC, no debounce, no post-processing.
@@ -1856,6 +1912,10 @@ document.addEventListener("DOMContentLoaded", () => {
             bubble.appendChild(recoveryBtn);
         }
 
+        // "Keep this" chip — on both sides of the conversation: a student's own
+        // worked-out reasoning is as worth keeping as the tutor's explanation.
+        attachNotebookChip(bubble, text);
+
         // Add timestamp to message
         const timestamp = document.createElement('span');
         timestamp.className = 'message-timestamp';
@@ -2332,6 +2392,9 @@ document.addEventListener("DOMContentLoaded", () => {
             messageRef.bubble.appendChild(reactionContainer);
         }
 
+        // Streamed replies never pass through appendMessage, so they need
+        // their own chip — attached here, once the full text is known.
+        attachNotebookChip(messageRef.bubble, fullText);
     }
 
     // Helper function to extract text with LaTeX from contenteditable
