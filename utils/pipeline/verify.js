@@ -1352,6 +1352,22 @@ function normalizeLatex(text) {
   result = result.replace(/₈/g, '_8');
   result = result.replace(/₉/g, '_9');
 
+  // ── Pre-pass 2.5: Heal mangled delimiters ──
+  // Production, 2026-07-28: the model wrote "\( 2.9 \div 0.1)" — opened an
+  // inline block, closed it with a bare ")". The client's delimiter scanner
+  // finds no \) and renders the whole run as raw source. Repair ONLY the
+  // unambiguous case: a "\(" whose content contains no parentheses at all,
+  // terminated by a bare ")" (a correct "\( x \)" never matches — its content
+  // ends with the closing backslash, which the pattern excludes). Content
+  // carrying bare English words ("\( \frac{\pi}{6} radians)") is left for the
+  // trailing-word repair further down, which closes BEFORE the word.
+  result = result.replace(/\\\(([^()\n]*[^()\\\n])\)/g, (m, body) =>
+    (/(?<!\\)\b[a-zA-Z]{2,}\b/.test(body) ? m : `\\(${body}\\)`));
+  // "\." is a mangled sentence period, not a command — KaTeX has no "\." and
+  // renders the whole expression as red source when it appears. The LaTeX
+  // accent form "\.{x}" is left alone.
+  result = result.replace(/\\\.(?!\{)/g, '.');
+
   // ── 0. Restore missing backslashes on common LaTeX commands ──
   // gpt-4o-mini frequently drops ALL backslashes, producing:
   //   "frac{3}{2sqrt{7}}" instead of "\frac{3}{2\sqrt{7}}"

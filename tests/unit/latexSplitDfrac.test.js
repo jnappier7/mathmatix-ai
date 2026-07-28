@@ -56,3 +56,52 @@ describe('normalizeLatex root cause: the backslash-restorer must not split \\dfr
     expect(normalizeLatex('\\( 2sqrt{7} \\)')).toContain('2\\sqrt{7}');
   });
 });
+
+describe('mangled delimiters and "\\." (production 2026-07-28: red raw-source board cards)', () => {
+  const { normalizeLatex } = require('../../utils/pipeline/verify');
+  const { healBoardTex, applyTurnToLedger } = require('../../utils/pipeline/boardLedger');
+
+  test('an inline block closed with a bare ")" is re-closed properly', () => {
+    expect(normalizeLatex('size 29 from \\( 2.9 \\div 0.1) and the sign'))
+      .toContain('\\( 2.9 \\div 0.1\\)');
+    expect(normalizeLatex('think \\( 1.9, 1.99, 1.999), f(x) is heading'))
+      .toContain('\\( 1.9, 1.99, 1.999\\)');
+  });
+
+  test('correctly closed inline math is untouched', () => {
+    for (const ok of ['\\( x \\)', '\\(2.9 \\div 0.1\\)', 'so \\( f(2) \\) fails']) {
+      expect(normalizeLatex(ok)).toContain(ok.includes('f(2)') ? '\\( f(2) \\)' : ok);
+    }
+  });
+
+  test('"\\." becomes a period; the accent form "\\.{x}" is preserved', () => {
+    expect(normalizeLatex('so we get \\(29\\.\\)')).not.toContain('\\.');
+    expect(normalizeLatex('accent \\.{o} stays')).toContain('\\.{o}');
+  });
+
+  test('healBoardTex strips delimiters, mangled periods, and dangling tails', () => {
+    expect(healBoardTex('1 \\div (-0.1)\\.')).toBe('1 \\div (-0.1)');
+    expect(healBoardTex('\\(x + 1\\)')).toBe('x + 1');
+    expect(healBoardTex('$$\\frac{1}{2}$$')).toBe('\\frac{1}{2}');
+    expect(healBoardTex('2x + 3 \\')).toBe('2x + 3');
+    expect(healBoardTex('1 \\div \\boxed{} \\.')).toBe('1 \\div \\boxed{}');
+    expect(healBoardTex('x^2 - 9')).toBe('x^2 - 9');
+  });
+
+  test('the ledger stores healed tex on pose and steps', () => {
+    const ledger = applyTurnToLedger(null, [
+      { action: 'pose', tex: '1 \\div (-0.1)\\.' },
+      { action: 'step', tex: '\\(8 \\div (-2) = -4\\)' },
+    ]);
+    expect(ledger.current.problemTex).toBe('1 \\div (-0.1)');
+    expect(ledger.current.steps[0].tex).toBe('8 \\div (-2) = -4');
+  });
+});
+
+describe('client cleanLatex heals already-stored ledger tex', () => {
+  test('the exact production board strings render as math, not red source', () => {
+    expect(cleanLatex('1 \\div (-0.1)\\.')).toBe('1 \\div (-0.1).');
+    expect(cleanLatex('1 \\div \\boxed{} \\.')).toBe('1 \\div \\boxed{} .');
+    expect(cleanLatex('2x + 3 \\')).toBe('2x + 3');
+  });
+});
