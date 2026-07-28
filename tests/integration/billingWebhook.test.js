@@ -34,8 +34,13 @@ jest.mock('../../models/affiliate', () => ({
   findById: jest.fn()
 }));
 
+// The dedup marker is two-phase: create('processing') on receipt, updateOne to
+// 'done' after the handler succeeds, deleteOne if it throws. All four are used.
 jest.mock('../../models/webhookEvent', () => ({
-  create: jest.fn().mockResolvedValue({})
+  create: jest.fn().mockResolvedValue({}),
+  findOne: jest.fn().mockResolvedValue(null),
+  updateOne: jest.fn().mockResolvedValue({}),
+  deleteOne: jest.fn().mockResolvedValue({})
 }));
 
 jest.mock('../../utils/emailService', () => ({
@@ -67,6 +72,9 @@ beforeEach(() => {
   // mockRejectedValue from earlier tests can leak into later ones —
   // explicitly restore default behaviors per test.
   WebhookEvent.create.mockResolvedValue({});
+  WebhookEvent.findOne.mockResolvedValue(null);
+  WebhookEvent.updateOne.mockResolvedValue({});
+  WebhookEvent.deleteOne.mockResolvedValue({});
   User.findById.mockReset();
   User.findOne.mockReset();
   global.__stripeSubRetrieve.mockReset();
@@ -89,13 +97,25 @@ describe('POST /api/billing/webhook — signature verification', () => {
     expect(WebhookEvent.create).not.toHaveBeenCalled();
   });
 
-  test('returns 200 + skips processing on duplicate event (idempotency)', async () => {
+  // ---- two-phase idempotency marker -------------------------------------
+  // The marker used to be written before processing, so a handler that threw
+  // left behind a marker claiming success: the 500 asked Stripe to retry, and
+  // the retry hit the duplicate branch and skipped. Customers could pay and
+  // never be provisioned. These tests pin each state of the replacement.
+
+  const duplicateKey = () => {
+    const e = new Error('duplicate key'); e.code = 11000;
+    WebhookEvent.create.mockRejectedValue(e);
+  };
+
+  test('returns 200 + skips processing when the event is already done', async () => {
     constructEvent.mockReturnValue({
       id: 'evt_dup', type: 'checkout.session.completed', data: { object: {} }
     });
-    // Mongo duplicate key error
-    const dupErr = new Error('duplicate key'); dupErr.code = 11000;
-    WebhookEvent.create.mockRejectedValue(dupErr);
+    duplicateKey();
+    WebhookEvent.findOne.mockResolvedValue({
+      stripeEventId: 'evt_dup', status: 'done', processedAt: new Date()
+    });
 
     const r = await supertest(makeApp())
       .post('/api/billing/webhook').set('stripe-signature', 's').send({});
@@ -103,6 +123,80 @@ describe('POST /api/billing/webhook — signature verification', () => {
     expect(r.status).toBe(200);
     expect(r.body.received).toBe(true);
     expect(User.findById).not.toHaveBeenCalled(); // event-handler skipped
+  });
+
+  test('asks Stripe to retry when the same event is still in flight', async () => {
+    // Concurrent delivery. Reprocessing now would double-apply additive work
+    // (affiliate conversions/commissions), and skipping would drop it entirely.
+    constructEvent.mockReturnValue({
+      id: 'evt_inflight', type: 'checkout.session.completed', data: { object: {} }
+    });
+    duplicateKey();
+    WebhookEvent.findOne.mockResolvedValue({
+      stripeEventId: 'evt_inflight', status: 'processing', processedAt: new Date()
+    });
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(r.status).toBe(500);
+    expect(User.findById).not.toHaveBeenCalled();
+  });
+
+  test('reclaims a stale in-flight marker and processes the event', async () => {
+    // Residue of an attempt that died before it could clean up (process killed
+    // mid-handler). Without reclaim the event would never be applied.
+    constructEvent.mockReturnValue({
+      id: 'evt_stale', type: 'checkout.session.completed',
+      data: { object: { metadata: { userId: 'u1', pack: 'unlimited' }, customer: 'cus_1' } }
+    });
+    duplicateKey();
+    WebhookEvent.findOne.mockResolvedValue({
+      stripeEventId: 'evt_stale',
+      status: 'processing',
+      processedAt: new Date(Date.now() - 60 * 60 * 1000) // an hour old
+    });
+    User.findById.mockResolvedValue({ _id: 'u1', save: jest.fn().mockResolvedValue({}) });
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(r.status).toBe(200);
+    expect(User.findById).toHaveBeenCalled(); // it really did process
+  });
+
+  test('marks the event done only after processing succeeds', async () => {
+    constructEvent.mockReturnValue({
+      id: 'evt_ok', type: 'checkout.session.completed',
+      data: { object: { metadata: { userId: 'u1', pack: 'unlimited' }, customer: 'cus_1' } }
+    });
+    User.findById.mockResolvedValue({ _id: 'u1', save: jest.fn().mockResolvedValue({}) });
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(r.status).toBe(200);
+    expect(WebhookEvent.updateOne).toHaveBeenCalledWith(
+      { stripeEventId: 'evt_ok' },
+      expect.objectContaining({ $set: expect.objectContaining({ status: 'done' }) })
+    );
+  });
+
+  test('clears the marker when processing throws, so the retry can run', async () => {
+    // THE REGRESSION. Previously the marker survived the failure and the retry
+    // was skipped as a duplicate — paid, never provisioned, no alarm.
+    constructEvent.mockReturnValue({
+      id: 'evt_boom', type: 'checkout.session.completed',
+      data: { object: { metadata: { userId: 'u1', pack: 'unlimited' }, customer: 'cus_1' } }
+    });
+    User.findById.mockRejectedValue(new Error('mongo exploded'));
+
+    const r = await supertest(makeApp())
+      .post('/api/billing/webhook').set('stripe-signature', 's').send({});
+
+    expect(r.status).toBe(500); // Stripe will retry
+    expect(WebhookEvent.deleteOne).toHaveBeenCalledWith({ stripeEventId: 'evt_boom' });
+    expect(WebhookEvent.updateOne).not.toHaveBeenCalled(); // never marked done
   });
 
   test('returns 200 on unknown event type without acting', async () => {
