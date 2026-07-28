@@ -3860,6 +3860,18 @@ class InlineChatVisuals {
                     this.resetGraph(graphId);
                 });
             }
+
+            // "Open in workspace" button. This was the one control with no
+            // programmatic binding — it relied solely on its inline onclick, which
+            // the sanitizer now strips along with every other on* attribute.
+            const workspaceBtn = graphContainer.querySelector('.icv-to-workspace');
+            if (workspaceBtn && !workspaceBtn._clickHandlerAttached) {
+                workspaceBtn._clickHandlerAttached = true;
+                workspaceBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.sendGraphToWorkspace(graphId);
+                });
+            }
         });
 
         // Initialize multi-function graphs (derivative, velocity, rational)
