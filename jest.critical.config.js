@@ -25,7 +25,9 @@ module.exports = {
   testMatch: [
     '<rootDir>/tests/unit/pipeline.test.js',
     '<rootDir>/tests/unit/pipelineIntegration.test.js',
+    '<rootDir>/tests/unit/llmVerifier.test.js',
     '<rootDir>/tests/unit/llmVerifierEscalation.test.js',
+    '<rootDir>/tests/unit/conceptualAnswerVerdict.test.js',
     '<rootDir>/tests/unit/verifyMetrics.test.js',
     '<rootDir>/tests/unit/irt.test.js',
     '<rootDir>/tests/unit/knowledgeTracer.test.js',
@@ -55,9 +57,9 @@ module.exports = {
     './utils/irt.js': { statements: 90, branches: 82, functions: 95, lines: 90 },
     './utils/knowledgeTracer.js': { statements: 83, branches: 78, functions: 95, lines: 83 },
     './utils/verifyMetrics.js': { statements: 96, branches: 80, functions: 100, lines: 96 },
-    './utils/pipeline/llmVerifier.js': { statements: 88, branches: 75, functions: 100, lines: 88 },
-    './utils/pipeline/observe.js': { statements: 75, branches: 72, functions: 95, lines: 81 },
-    './utils/pipeline/decide.js': { statements: 44, branches: 42, functions: 62, lines: 45 },
-    './utils/pipeline/diagnose.js': { statements: 58, branches: 55, functions: 60, lines: 58 },
+    './utils/pipeline/llmVerifier.js': { statements: 95, branches: 85, functions: 100, lines: 96 },
+    './utils/pipeline/observe.js': { statements: 80, branches: 76, functions: 95, lines: 87 },
+    './utils/pipeline/decide.js': { statements: 54, branches: 55, functions: 75, lines: 54 },
+    './utils/pipeline/diagnose.js': { statements: 62, branches: 57, functions: 68, lines: 62 },
   },
 };
