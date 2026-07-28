@@ -24,6 +24,9 @@ const {
   getGrowthCheckTargetDifficulty,
   GROWTH_CHECK_CONFIG,
 } = require('../utils/growthCheck');
+// PR #1343 referenced these without the require — every growth-check route
+// threw ReferenceError at request time. Import what the handlers use.
+const { resolveTheta, thetaWritePatch } = require('../utils/theta');
 const logger = require('../utils/catLogger');
 
 // In-memory session store (production would use Redis)
