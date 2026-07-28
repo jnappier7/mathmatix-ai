@@ -322,6 +322,11 @@ async function runStudentTurn(req, res) {
         // First-time user asking about placement - let normal flow handle it (welcome will offer it)
     }
 
+    // Declared OUTSIDE the try so the catch below can reach it — it used to be
+    // `let` inside the try, so any chat error made the catch itself throw
+    // ReferenceError at `if (sseKeepalive)`, skipping the graceful SSE error
+    // event entirely. (Found by no-undef the day the lint gap was closed.)
+    let sseKeepalive = null;
     try {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: "User not found." });
@@ -1310,7 +1315,6 @@ async function runStudentTurn(req, res) {
         let clientDisconnected = false;
 
         // Set up streaming if requested
-        let sseKeepalive = null;
         if (useStreaming) {
             logger.debug('Streaming mode activated', { userId });
             res.setHeader('Content-Type', 'text/event-stream');

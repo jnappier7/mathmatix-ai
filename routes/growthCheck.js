@@ -26,7 +26,9 @@ const {
 } = require('../utils/growthCheck');
 // PR #1343 referenced these without the require — every growth-check route
 // threw ReferenceError at request time. Import what the handlers use.
-const { resolveTheta, thetaWritePatch } = require('../utils/theta');
+// (#1347 patched resolveTheta/thetaWritePatch but missed resolveStandardError,
+// so /growth-check/start STILL crashed — caught when no-undef was restored.)
+const { resolveTheta, resolveStandardError, thetaWritePatch } = require('../utils/theta');
 const { thetaToGradeLevel } = require('../utils/catConfig');
 const { assessedLevelWritePatch } = require('../utils/gradeLevel');
 const logger = require('../utils/catLogger');
