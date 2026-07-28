@@ -296,7 +296,7 @@ class LearningCurveVisualizer {
             <div class="stat-label">Status</div>
             <div class="stat-value">${this.skillInfo.status}</div>
             <div class="stat-subtext">
-              ${Math.round(this.skillInfo.masteryScore * 100)}% mastery
+              ${Math.round(this.skillInfo.masteryScore)}% mastery
             </div>
           </div>
         </div>
@@ -420,7 +420,7 @@ class LearningCurveVisualizer {
           <div class="mini-stat">
             <span class="mini-label">Mastery</span>
             <span class="mini-value">
-              ${Math.round(skill.masteryScore * 100)}%
+              ${Math.round(skill.masteryScore)}%
             </span>
           </div>
         </div>

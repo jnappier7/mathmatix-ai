@@ -20,6 +20,7 @@ const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const logger = require('../utils/logger').child({ route: 'practicePack' });
 const { skillLookupCandidates } = require('../utils/skillCanonicalizer');
+const { normalizedMasteryScore } = require('../utils/masteryScore');
 
 // Puppeteer for HTML → PDF rendering
 let puppeteer;
@@ -139,7 +140,7 @@ async function selectProblemsForPack(user, options = {}) {
     for (const [sid, data] of skillMastery) {
       if (data.status === 'learning' || data.status === 'introduced') {
         learningSkills.push(sid);
-      } else if (data.status === 'mastered' && data.masteryScore < 90) {
+      } else if (data.status === 'mastered' && normalizedMasteryScore(data.masteryScore) < 90) {
         reviewSkills.push(sid); // Not fully solid — good for review
       }
     }

@@ -15,6 +15,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const Skill = require('../models/skill');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 const { summarizeLedger } = require('../utils/pipeline/boardLedger');
+const { normalizedMasteryScore } = require('../utils/masteryScore');
 const LearningCard = require('../models/learningCard');
 const { callLLMStream } = require('../utils/openaiClient');
 const { getStudentIdsForTeacher } = require('../services/userService');
@@ -1537,7 +1538,7 @@ async function buildClassSnapshot(teacherId) {
     const masteredCount = mastery.filter(([, d]) => d.status === 'mastered').length;
     const learningCount = mastery.filter(([, d]) => ['learning', 'practicing', 're-fragile', 'needs-review'].includes(d.status)).length;
     const strugglingSkills = mastery
-      .filter(([, d]) => d.status === 'learning' && d.masteryScore !== undefined && d.masteryScore < 40)
+      .filter(([, d]) => d.status === 'learning' && d.masteryScore !== undefined && normalizedMasteryScore(d.masteryScore) < 40)
       .map(([id]) => allSkillNames[id] || id)
       .slice(0, 3);
 

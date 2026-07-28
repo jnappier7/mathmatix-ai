@@ -736,7 +736,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
         // proved rung (provenBy 'placement') rather than an un-evidenced status.
         rung: 'proved',
         provenBy: 'placement',
-        masteryScore: 1.0,
+        masteryScore: 100,
         masteredDate: new Date(),
         notes: 'Demonstrated in adaptive screener'
       });
@@ -746,7 +746,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       setSkillMasteryEntry(user, rawId, {
         status: 'learning',
         rung: 'learned',
-        masteryScore: 0.5,
+        masteryScore: 50,
         learningStarted: new Date(),
         notes: 'Partial mastery in screener'
       });
