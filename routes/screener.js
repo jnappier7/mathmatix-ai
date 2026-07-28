@@ -31,6 +31,7 @@ const { selectSkill, formatScoringLog } = require('../utils/skillSelector');
 const { calculateProgress } = require('../utils/catConvergence');
 const { getSkillSelectionData, warmupCache } = require('../utils/catCache');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { resolveTheta } = require('../utils/theta');
 const { setSkillMasteryEntry } = require('../utils/masteryGuard');
 
 // Warm up cache on module load
@@ -163,7 +164,7 @@ router.post('/start', isAuthenticated, async (req, res) => {
 
     if (isGrowthCheck) {
       // Growth Check: Start at user's current level (from previous assessment)
-      startingTheta = user.learningProfile?.abilityEstimate?.theta || 0;
+      startingTheta = resolveTheta(user);
 
       // Anchor the Bayesian prior to the saved SE so MAP estimation trusts
       // what we already know. Floor at 0.4 so the prior doesn't completely
@@ -794,6 +795,12 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       percentile: report.percentile,
       gradeLevel: gradeLevelResult.gradeLevel
     };
+    // Sync ALL theta read paths (utils/theta.js): the canonical top-level
+    // field was written by nobody (default 0 forever), and the growth check
+    // read a third field — the split-brain behind the "5th grade" report.
+    user.currentTheta = report.theta;
+    user.learningProfile.currentTheta = report.theta;
+    user.learningProfile.standardError = report.standardError;
 
     // Store assessment in history for tracking growth over time
     if (!user.assessmentHistory) user.assessmentHistory = [];

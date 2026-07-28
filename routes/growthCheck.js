@@ -93,7 +93,7 @@ router.get('/eligible', isAuthenticated, async (req, res) => {
 
     return res.json({
       eligible: true,
-      previousTheta: student.learningProfile?.currentTheta || 0,
+      previousTheta: resolveTheta(student),
       coveredSkillCount,
     });
 
@@ -139,8 +139,8 @@ router.post('/start', isAuthenticated, async (req, res) => {
     // Initialize the growth check session
     const session = initializeGrowthCheck({
       userId: userId.toString(),
-      previousTheta: student.learningProfile?.currentTheta || 0,
-      previousSE: student.learningProfile?.standardError || 1.0,
+      previousTheta: resolveTheta(student),
+      previousSE: resolveStandardError(student),
       coveredSkills,
     });
 
@@ -446,8 +446,10 @@ async function saveGrowthCheckResults(userId, result) {
       userId,
       {
         $set: {
-          'learningProfile.currentTheta': results.theta,
-          'learningProfile.standardError': results.standardError,
+          // Every theta writer syncs ALL read paths (utils/theta.js) — the
+          // growth-check-only field split-brained against the screener's and
+          // anchored every check at θ=0 ("5th grade" for a math teacher).
+          ...thetaWritePatch(results.theta, results.standardError),
           'learningProfile.lastGrowthCheck': new Date(),
         },
         $push: {

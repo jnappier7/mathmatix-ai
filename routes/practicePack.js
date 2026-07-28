@@ -85,12 +85,10 @@ function toPdfBuffer(bytes) {
  * (set by the IRT screener / growth checks). Falls back to a stale path some
  * legacy code wrote to, then to 0.
  */
-function resolveTheta(user) {
-  if (typeof user?.currentTheta === 'number') return user.currentTheta;
-  const legacy = user?.learningProfile?.abilityEstimate?.theta;
-  if (typeof legacy === 'number') return legacy;
-  return 0;
-}
+// Delegates to the shared resolver (utils/theta.js). The old local version
+// checked user.currentTheta FIRST — a field with schema default 0 that no
+// writer ever set, so every pack was difficulty-anchored at θ=0.
+const { resolveTheta } = require('../utils/theta');
 
 /**
  * Map a string grade level ("7th Grade", "Algebra 1", "K", "College") to the
