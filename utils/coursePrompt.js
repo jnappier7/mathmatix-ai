@@ -8,6 +8,15 @@
 const fs = require('fs');
 const path = require('path');
 const { CATEGORY_LABEL } = require('./actBootcampPlan');
+const { SHARED_VOICE_BLOCKS } = require('./promptCompact');
+
+// Course mode's mirror of the open-tutoring "student's lead" rule: here the
+// module sets the direction, and offering to abandon it reads as the tutor
+// losing the thread (owner, 2026-07-28: 'during a course chat the direction is
+// set — no "did you have something else in mind?"'). The student can always
+// exit the lesson themselves; the tutor never floats the detour.
+const COURSE_DIRECTION_BLOCK = `--- COURSE DIRECTION (MANDATORY) ---
+This is a course lesson: the direction is SET by the module. Never ask "did you have something else in mind?", "what do you want to tackle next?", "what do you want to work on?", or any open-ended invitation to change subject — the next move is always the course's next step, and YOU pose it. When a problem wraps, affirm briefly and present the next item yourself. Off-topic student questions get a brief answer, then straight back to the lesson.`;
 
 /**
  * The ACT-prep "use the real practice test" directive.
@@ -626,7 +635,8 @@ TEACHER RESOURCE REFERENCE: "${resourceContext.displayName}"
 ====================================================================
 The student is referencing a teacher-assigned resource called "${resourceContext.displayName}" but its content is not loaded.
 Acknowledge it by name, ask which specific problem they are on, then guide them through it once they share it.
-` : ''}` + practiceActGuidance + provenSkillsGuidance;
+` : ''}` + practiceActGuidance + provenSkillsGuidance
+    + '\n\n' + SHARED_VOICE_BLOCKS + '\n\n' + COURSE_DIRECTION_BLOCK;
 }
 
 /**

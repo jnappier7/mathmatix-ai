@@ -221,7 +221,7 @@ function applyDemonstratedCompetence(decision, observation) {
 // The shapes an explanation-request takes in tutor replies. Deliberately
 // broad: catching an extra affirmation costs nothing (the directive still
 // produces a forward-moving reply); missing a probe chain costs trust.
-const EXPLAIN_PROBE_RX = /walk me through|talk me through|can you (?:show|explain|tell) me|how did you (?:arrive|get|do|handle)|explain (?:how|your|the|it)|show me how you|curious about your (?:thought|thinking|process)|what steps did you take/i;
+const EXPLAIN_PROBE_RX = /walk me through|talk me through|can you (?:show|explain|tell) me|how did you (?:arrive|get|do|handle|decide|calculate|figure)|explain (?:how|your|the|it)|show me how you|curious about your (?:thought|thinking|process)|what steps did you take|how would you explain|in your own words|pretend (?:i'?m|i am) a student|teach (?:it|this|that) back|walk me through your steps/i;
 
 function applyOneAskGuard(decision, context) {
   const msgs = context.conversation?.messages;
