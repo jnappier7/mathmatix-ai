@@ -227,6 +227,86 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       color: #666;
     }
 
+    /* Closure block: level comparison, skill chips, one next step */
+    .level-compare {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .level-caption {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #999;
+    }
+
+    .level-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .level-box-now .level-name {
+      color: #2e7d32;
+    }
+
+    .level-arrow {
+      font-size: 1.4rem;
+      color: #ccc;
+    }
+
+    .skill-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .skill-chip {
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .skill-chip.needs-review {
+      background: #fff4e5;
+      color: #b26500;
+    }
+
+    .skill-chip.reachable {
+      background: #eef1ff;
+      color: #4a54c9;
+    }
+
+    .next-step {
+      text-align: left;
+      background: #f7f9ff;
+      border-left: 4px solid #12B3B3;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .next-step-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #12B3B3;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .next-step-text {
+      color: #333;
+      line-height: 1.5;
+    }
+
     .back-btn {
       background: white;
       color: #12B3B3;
@@ -337,12 +417,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
 
       <div class="growth-card">
-        <h2>Quick Progress Check</h2>
-        <p>This is a short assessment (5-8 questions) to measure your progress since you started learning.</p>
+        <h2 id="framing-title">Quick Progress Check</h2>
+        <p id="framing-what">A handful of questions from topics <strong>you've already worked on</strong> — no new material. It tells us whether your level has moved, so your tutor keeps teaching at the right spot.</p>
         <ul style="margin: 1.5rem 0; padding-left: 1.5rem; color: #666;">
-          <li>Questions from topics you've studied</li>
-          <li>Compares your growth over time</li>
-          <li>Takes just a few minutes</li>
+          <li id="framing-duration">5-8 questions, about 5 minutes</li>
+          <li id="framing-reassurance">Not a test you can fail — wrong answers just show us what to focus on</li>
+          <li>At the end you'll see how you've grown and what to try next</li>
         </ul>
         <button class="submit-btn" onclick="startGrowthCheck()">
           <i class="fas fa-play"></i> Start Growth Check
@@ -390,6 +470,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="growth-status" id="growth-status"></div>
         <div class="growth-message" id="growth-message"></div>
 
+        <!-- Where you were → where you are. Hidden until the server sends a
+             summary (older completions have stats only). -->
+        <div class="level-compare" id="level-compare" style="display: none;">
+          <div class="level-box">
+            <div class="level-caption">Last check</div>
+            <div class="level-name" id="level-previous">--</div>
+          </div>
+          <div class="level-arrow">→</div>
+          <div class="level-box level-box-now">
+            <div class="level-caption">Now</div>
+            <div class="level-name" id="level-new">--</div>
+          </div>
+        </div>
+
+        <div class="skill-chips" id="skill-chips"></div>
+
+        <div class="next-step" id="next-step" style="display: none;">
+          <div class="next-step-label">Suggested next</div>
+          <div class="next-step-text" id="next-step-text"></div>
+        </div>
+
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-value" id="accuracy-stat">-</div>
@@ -433,6 +534,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           return;
         }
 
+        // "Here's what this is and how long it takes" — served by the API so
+        // this page and the in-chat launcher frame the check identically.
+        applyFraming(data.framing);
+
         document.getElementById('start-state').style.display = 'block';
 
       } catch (error) {
@@ -442,6 +547,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           message: 'Failed to check eligibility. Please try again later.'
         });
       }
+    }
+
+    function applyFraming(framing) {
+      if (!framing) return;
+      const set = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && value) el.textContent = value;
+      };
+      set('framing-title', framing.title);
+      set('framing-what', framing.what);
+      set('framing-duration', framing.duration);
+      set('framing-reassurance', framing.reassurance);
+
+      const subtitle = document.querySelector('.growth-header p');
+      if (subtitle && framing.subtitle) subtitle.textContent = framing.subtitle;
     }
 
     function showNotEligible(data) {
@@ -620,7 +740,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         if (data.complete) {
           // Show results after a brief delay
-          setTimeout(() => showResults(data.results), 1500);
+          setTimeout(() => showResults(data.results, data.growthSummary), 1500);
         } else {
           // Show next button
           document.getElementById('submit-btn').style.display = 'none';
@@ -635,9 +755,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       }
     }
 
-    function showResults(results) {
+    function showResults(results, growthSummary) {
       document.getElementById('question-state').style.display = 'none';
       document.getElementById('results-state').style.display = 'block';
+
+      renderClosure(growthSummary);
 
       // Set icon and status based on growth
       const iconMap = {
@@ -667,6 +789,49 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         growthText = '0';
       }
       document.getElementById('growth-stat').textContent = growthText;
+    }
+
+    // The closure: previous vs new level, what the check confirmed / flagged /
+    // opened up, and ONE suggested next step. The tutor delivers the same
+    // summary in chat (the server holds it as a pending debrief), so this card
+    // and the tutor never tell two different stories.
+    function renderClosure(summary) {
+      if (!summary) return;
+
+      const compare = document.getElementById('level-compare');
+      if (compare) {
+        document.getElementById('level-previous').textContent = summary.previousLevel;
+        document.getElementById('level-new').textContent = summary.newLevel;
+        compare.style.display = 'flex';
+      }
+
+      const chips = document.getElementById('skill-chips');
+      if (chips) {
+        chips.textContent = '';
+        const addChip = (name, cls, prefix) => {
+          const span = document.createElement('span');
+          span.className = 'skill-chip ' + cls;
+          span.textContent = prefix + ' ' + name;
+          chips.appendChild(span);
+        };
+        (summary.skillsConfirmed || []).forEach(s => addChip(s.name, 'confirmed', '✓'));
+        (summary.needsReview || []).forEach(s => addChip(s.name, 'needs-review', '↻'));
+        (summary.newlyReachable || []).forEach(s => addChip(s.name, 'reachable', '★'));
+      }
+
+      const nextStep = summary.suggestedNextStep && summary.suggestedNextStep.text;
+      if (nextStep) {
+        document.getElementById('next-step-text').textContent = nextStep;
+        document.getElementById('next-step').style.display = 'block';
+      }
+
+      // The tutor owes them the same wrap-up in their own voice — send them
+      // back to chat for it rather than to a dashboard dead end.
+      const backBtn = document.querySelector('#results-state .back-btn');
+      if (backBtn) {
+        backBtn.textContent = 'Back to my tutor';
+        backBtn.onclick = () => { location.href = '/chat.html'; };
+      }
     }
 
     function formatGrowthStatus(status) {

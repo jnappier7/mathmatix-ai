@@ -13,6 +13,9 @@
 
 const { estimateAbility, probabilityCorrect, thetaToPercentile } = require('./irt');
 const { SESSION_DEFAULTS } = require('./catConfig');
+// Growth-status thresholds live in growthSummary so this CAT and the
+// FloatingScreener's growth check tell the student the same story.
+const { summarizeGrowthStatus } = require('./growthSummary');
 
 // ===========================================================================
 // CONFIGURATION
@@ -231,23 +234,8 @@ function completeGrowthCheck(session, reason) {
   const thetaChange = session.theta - session.previousTheta;
   const percentileChange = thetaToPercentile(session.theta) - thetaToPercentile(session.previousTheta);
 
-  // Determine growth message
-  let growthMessage;
-  let growthStatus;
-
-  if (thetaChange > 0.3) {
-    growthStatus = 'significant-growth';
-    growthMessage = "Great progress! You've clearly been learning.";
-  } else if (thetaChange > 0.1) {
-    growthStatus = 'some-growth';
-    growthMessage = "Nice! You're moving in the right direction.";
-  } else if (thetaChange > -0.1) {
-    growthStatus = 'stable';
-    growthMessage = "Holding steady. Keep practicing!";
-  } else {
-    growthStatus = 'review-needed';
-    growthMessage = "Looks like some topics need a refresher.";
-  }
+  // Determine growth message (shared thresholds — see utils/growthSummary.js)
+  const { growthStatus, growthMessage } = summarizeGrowthStatus(thetaChange);
 
   // Calculate accuracy
   const correctCount = session.responses.filter(r => r.correct).length;

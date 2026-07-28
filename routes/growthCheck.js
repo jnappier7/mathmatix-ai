@@ -31,10 +31,32 @@ const {
 const { resolveTheta, resolveStandardError, thetaWritePatch } = require('../utils/theta');
 const { thetaToGradeLevel } = require('../utils/catConfig');
 const { assessedLevelWritePatch } = require('../utils/gradeLevel');
+// Shared closure moment — same summary shape the FloatingScreener flow
+// returns (routes/screener.js), so a student gets the same wrap-up either way.
+const { buildGrowthCheckSummary, deriveSkillHighlights } = require('../utils/growthSummary');
 const logger = require('../utils/catLogger');
 
 // In-memory session store (production would use Redis)
 const growthCheckSessions = new Map();
+
+/**
+ * The "here's what this is" moment, served before the first question.
+ *
+ * A growth check used to open cold on question 1 with no idea what it was for
+ * or how long it would take — the fastest way to make a 6-question check feel
+ * like a test. Same copy for both entry points.
+ */
+function growthCheckFraming(currentTheta) {
+  const level = thetaToGradeLevel(currentTheta).gradeLevel;
+  return {
+    title: 'Growth Check',
+    subtitle: `Let's see how you've grown since ${level}.`,
+    what: `A few questions from topics you've already worked on — no new material, nothing you haven't seen.`,
+    duration: `${GROWTH_CHECK_CONFIG.minQuestions}-${GROWTH_CHECK_CONFIG.maxQuestions} questions, about 5 minutes.`,
+    reassurance: `It's not a test you can fail. Wrong answers just tell us where to focus next.`,
+    currentLevel: level,
+  };
+}
 
 // ===========================================================================
 // CHECK ELIGIBILITY
@@ -102,6 +124,7 @@ router.get('/eligible', isAuthenticated, async (req, res) => {
       eligible: true,
       previousTheta: resolveTheta(student),
       coveredSkillCount,
+      framing: growthCheckFraming(resolveTheta(student)),
     });
 
   } catch (error) {
@@ -171,6 +194,10 @@ router.post('/start', isAuthenticated, async (req, res) => {
       sessionId: session.sessionId,
       previousTheta: session.previousTheta,
       questionsExpected: `${GROWTH_CHECK_CONFIG.minQuestions}-${GROWTH_CHECK_CONFIG.maxQuestions}`,
+      // The starting point of the experience: what this is, how long it takes,
+      // and where they're starting from. Served by the API (not hardcoded in
+      // the page) so both entry points frame it identically.
+      framing: growthCheckFraming(resolveTheta(student)),
     });
 
   } catch (error) {
@@ -308,8 +335,12 @@ router.post('/:sessionId/submit', isAuthenticated, async (req, res) => {
     growthCheckSessions.set(sessionId, result.session);
 
     if (result.action === 'complete') {
-      // Save results to student progress
-      await saveGrowthCheckResults(session.userId, result);
+      // The completion moment: previous vs new level, what they confirmed,
+      // what needs review, what just came into reach, and ONE next step.
+      const summary = await buildSummaryForCompletedSession(req.user._id, result);
+
+      // Save results to student progress (incl. the pending tutor debrief)
+      await saveGrowthCheckResults(session.userId, result, summary);
 
       // Clean up session
       growthCheckSessions.delete(sessionId);
@@ -318,6 +349,7 @@ router.post('/:sessionId/submit', isAuthenticated, async (req, res) => {
         correct,
         complete: true,
         results: result.results,
+        ...(summary ? { growthSummary: summary } : {}),
       });
     }
 
@@ -359,7 +391,13 @@ router.get('/:sessionId/results', isAuthenticated, async (req, res) => {
       const lastCheck = student?.learningProfile?.growthCheckHistory?.slice(-1)[0];
 
       if (lastCheck && lastCheck.sessionId === sessionId) {
-        return res.json({ results: lastCheck });
+        // The full summary outlives the in-memory session as the pending
+        // debrief — serve it so a refreshed results page keeps its closure.
+        const pending = student?.learningProfile?.pendingGrowthCheckDebrief?.summary;
+        return res.json({
+          results: lastCheck,
+          ...(pending && pending.sessionId === sessionId ? { growthSummary: pending } : {}),
+        });
       }
 
       return res.status(404).json({ error: 'Session not found' });
@@ -443,16 +481,73 @@ function checkAnswer(problem, answer) {
 }
 
 /**
- * Save growth check results to student's learning profile
+ * Build the student-readable summary for a just-completed session.
+ *
+ * The session carries its own previousTheta (captured at /start, before any
+ * writes), so this doesn't need to race the persistence below.
  */
-async function saveGrowthCheckResults(userId, result) {
+async function buildSummaryForCompletedSession(userId, result) {
   try {
     const { results, session } = result;
+    const student = await User.findById(userId).select('skillMastery').lean();
+
+    const masteredSkillIds = [];
+    if (student?.skillMastery) {
+      // .lean() gives a plain object for Map fields
+      for (const [skillId, data] of Object.entries(student.skillMastery)) {
+        if (data && data.status === 'mastered') masteredSkillIds.push(skillId);
+      }
+    }
+
+    const highlights = await deriveSkillHighlights({
+      responses: session.responses || [],
+      previousTheta: results.previousTheta,
+      newTheta: results.theta,
+      masteredSkillIds,
+    });
+
+    return buildGrowthCheckSummary({
+      previousTheta: results.previousTheta,
+      newTheta: results.theta,
+      accuracy: results.accuracy,
+      questionsAnswered: results.questionsAnswered,
+      durationMs: results.durationMs,
+      sessionId: session.sessionId,
+      confirmedSkills: highlights.confirmedSkills,
+      needsReviewSkills: highlights.needsReviewSkills,
+      newlyReachableSkills: highlights.newlyReachableSkills,
+    });
+  } catch (error) {
+    // The check itself succeeded — never fail completion over the wrap-up.
+    logger.error('Growth check summary build failed:', error);
+    return null;
+  }
+}
+
+/**
+ * Save growth check results to student's learning profile
+ */
+async function saveGrowthCheckResults(userId, result, summary = null) {
+  try {
+    const { results, session } = result;
+
+    // The next check unlocks in 3 months — the same cadence the Starting
+    // Point sets (routes/screener.js). This route never wrote it, so a
+    // student who finished here stayed "due" forever and kept being nudged.
+    const nextDue = new Date();
+    nextDue.setMonth(nextDue.getMonth() + 3);
 
     await User.findByIdAndUpdate(
       userId,
       {
         $set: {
+          nextGrowthCheckDue: nextDue,
+          // The tutor owes this student a debrief next time they're in chat
+          // (see routes/chat.js). Without it the check ends on a stats card
+          // and the tutor never mentions it again.
+          ...(summary
+            ? { 'learningProfile.pendingGrowthCheckDebrief': { summary, createdAt: new Date() } }
+            : {}),
           // Every theta writer syncs ALL read paths (utils/theta.js) — the
           // growth-check-only field split-brained against the screener's and
           // anchored every check at θ=0 ("5th grade" for a math teacher).
@@ -462,7 +557,10 @@ async function saveGrowthCheckResults(userId, result) {
           // growth checks moved theta but left abilityEstimate.gradeLevel
           // frozen at the initial placement.
           ...assessedLevelWritePatch(thetaToGradeLevel(results.theta).gradeLevel),
+          // Both read paths: eligibility here reads the nested field, the
+          // screener flow and dashboards read the top-level one.
           'learningProfile.lastGrowthCheck': new Date(),
+          lastGrowthCheck: new Date(),
         },
         $push: {
           'learningProfile.growthCheckHistory': {

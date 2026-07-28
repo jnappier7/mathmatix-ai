@@ -12674,6 +12674,127 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
   }
 }
 
+/* ==========================================================================
+   Growth Check closure (results screen)
+   Where you were → where you are, what you confirmed, one next step.
+   Hidden for Starting Point runs, which show the placement card instead.
+   ========================================================================== */
+
+.growth-result {
+  background: #f7f9ff;
+  border: 1px solid #e2e8f8;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.growth-result-levels {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.growth-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.growth-level-label {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+}
+
+.growth-level-value {
+  font-size: 1.35em;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.growth-level-now .growth-level-value {
+  color: #2e7d32;
+}
+
+.growth-level-arrow {
+  color: #b9c2de;
+  font-size: 1.1em;
+}
+
+.growth-result-message {
+  text-align: center;
+  color: #444;
+  font-size: 1.02em;
+  margin: 0 0 14px;
+}
+
+.growth-result-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.growth-skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.85em;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.growth-skill-chip.needs-review {
+  background: #fff4e5;
+  color: #b26500;
+}
+
+.growth-skill-chip.reachable {
+  background: #eef1ff;
+  color: #4a54c9;
+}
+
+.growth-next-step {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: white;
+  border-left: 4px solid #12b3b3;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.growth-next-step-label {
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #12b3b3;
+  font-weight: 600;
+}
+
+.growth-next-step-text {
+  color: #333;
+  line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+  .growth-result-levels {
+    gap: 10px;
+  }
+
+  .growth-level-value {
+    font-size: 1.15em;
+  }
+}
+
 /* Dark Theme Support (future) */
 @media (prefers-color-scheme: dark) {
   .floating-screener {
