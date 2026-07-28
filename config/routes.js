@@ -165,8 +165,10 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   });
 
   // --- Sentry Test Route (throws intentional error to verify Sentry is capturing) ---
-  app.get('/debug-sentry', (req, res) => {
-    throw new Error('My first Sentry error!');
+  // Admin-gated: unauthenticated this is a free Sentry-quota drain and a reliable
+  // 500 oracle for anyone probing the host.
+  app.get('/debug-sentry', isAuthenticated, isAdmin, (_req, _res) => {
+    throw new Error('Sentry verification error (triggered by admin)');
   });
 
   // --- Auth Routes ---

@@ -129,8 +129,15 @@ if (!isTest) {
   );
 }
 
-// File transports (production only)
-if (!isDevelopment && !isTest) {
+// File transports: opt-in only, via LOG_TO_FILES=true.
+//
+// Production runs in a Render container with an ephemeral filesystem: these files
+// are unreadable while the service is live and are destroyed on every deploy, so
+// they never served their purpose. They were also sized to grow to ~1.2GB
+// (30x20m + 14x20m + 7x50m) on that same ephemeral disk — a real disk-fill risk
+// now that the logger level emits 'http' records. stdout (captured by Render) plus
+// the Logtail transport below are the actual log path.
+if (process.env.LOG_TO_FILES === 'true' && !isTest) {
   // Error logs (only errors)
   transports.push(
     new DailyRotateFile({
@@ -183,8 +190,13 @@ if (process.env.LOGTAIL_SOURCE_TOKEN && !isTest) {
 /**
  * Create Winston logger instance
  */
+// 'http' (3) is LESS severe than 'info' (2), and Winston filters by the logger's
+// level before transports ever see a record. At level 'info' every log.http() call
+// — i.e. the entire request logger, and with it every requestId correlation — was
+// silently dropped in production. Production must sit at 'http' or request
+// telemetry does not exist.
 const logger = winston.createLogger({
-  level: isDevelopment ? 'debug' : 'info',
+  level: isDevelopment ? 'debug' : 'http',
   levels,
   transports,
   exitOnError: false,

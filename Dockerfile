@@ -88,4 +88,8 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD node -e "const http = require('http'); const req = http.get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }); req.on('error', () => process.exit(1)); req.end();"
 
 # 13. Define the command to start your server
-CMD ["node", "server.js"]
+#     --require ./instrument.js is load-bearing: Sentry.init() lives there and must
+#     run before any other module is required. Without it Sentry never initializes
+#     and every captureException in the app is a silent no-op. Keep this in sync
+#     with the "start" script in package.json.
+CMD ["node", "--require", "./instrument.js", "server.js"]
