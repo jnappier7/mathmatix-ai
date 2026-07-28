@@ -85,3 +85,49 @@ describe('arithmetic dignity (owner transcript: apples explained to a formula-bu
     expect(src).toContain('it is CORRECT');
   });
 });
+
+describe("student's lead (owner policy: regular tutoring never forces a direction)", () => {
+  const { observe: obs2 } = require('../../utils/pipeline/observe');
+  const { decide: decide2 } = require('../../utils/pipeline/decide');
+  const noAnswer = { type: 'no_answer', isCorrect: null, answer: null, correctAnswer: null };
+  const hasLead = d => d.directives.some(x => x.startsWith("STUDENT'S LEAD"));
+
+  function decideOpener(message, ctxExtra = {}) {
+    const o = obs2(message, { recentUserMessages: [], recentAssistantMessages: [] });
+    return decide2(o, noAnswer, { phaseState: null, activeSkill: null, ...ctxExtra });
+  }
+
+  test('bare "ok" at a topicless session start → offer, never launch', () => {
+    expect(hasLead(decideOpener('ok'))).toBe(true);
+    expect(hasLead(decideOpener('sure'))).toBe(true);
+  });
+
+  test('a named subject is the student leading — no guard', () => {
+    expect(hasLead(decideOpener("Let's keep working on Absolute Value."))).toBe(false);
+  });
+
+  test('a problem already in play → mid-session affirmative flows normally', () => {
+    const conv = { boardLedger: { current: { problemTex: '2x=4', steps: [] }, completed: [] } };
+    expect(hasLead(decideOpener('ok', { conversation: conv }))).toBe(false);
+  });
+
+  test('course lessons still drive (phaseState present → no guard)', () => {
+    expect(hasLead(decideOpener('ok', { phaseState: { currentPhase: 'we-do' } }))).toBe(false);
+  });
+
+  test('the prompt codifies the policy for open tutoring', () => {
+    const fs = require('fs');
+    const src = fs.readFileSync(require.resolve('../../utils/promptCompact.js'), 'utf8');
+    expect(src).toContain("--- STUDENT'S LEAD (OPEN TUTORING) ---");
+    expect(src).toContain('NOT consent to your agenda');
+  });
+
+  test('the plan layer frames the plan as memory, not agenda, in free chat only', () => {
+    const { buildPlanLayer } = require('../../utils/promptPlanLayer');
+    const plan = { currentTarget: { skillId: 'sequences', instructionalMode: 'direct-instruction' }, skillFocus: [] };
+    const chat = buildPlanLayer(plan, { interactionType: 'chat' });
+    expect(chat).toContain('NOT TODAY');
+    const course = buildPlanLayer(plan, { interactionType: 'course' });
+    expect(course || '').not.toContain('NOT TODAY');
+  });
+});
