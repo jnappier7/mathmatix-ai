@@ -161,6 +161,16 @@ function extractAnswer(message) {
   // only understand digits). `raw` keeps the original text for downstream use.
   const text = normalizeSpokenNumbers(raw);
 
+  // A number-WORD buried in prose is not an answer. "if its zero on top too" is
+  // a correct description of when a rational function has a hole, but the
+  // normalization above turns "zero" into "0" and the answerPhrase cue fires on
+  // "its 0" — minting the numeric answer 0, which is then graded against
+  // whatever problem is in scope and comes back wrong (production, AP Calculus
+  // AB, 2026-07-28). When the student typed no digits at all, only trust the
+  // converted number if it ENDS the message ("negative six", "the answer is
+  // forty two"); prose continuing after it means the word was incidental.
+  if (text !== raw && !/\d/.test(raw) && !/\d\s*[.!?]*$/.test(text)) return null;
+
   // Multi-line shown work: the LAST math-bearing line is the answer candidate;
   // the lines above it are work, which diagnose grades as a chain (and which
   // feeds demonstratedReasoning — never the graded value). Without this branch
@@ -731,6 +741,25 @@ function observe(message, context = {}) {
     text, messageType, !!answer, context.recentAssistantMessages
   );
 
+  // ── Conceptual reply ──
+  // The tutor asked something whose answer is an IDEA, not a value ("what
+  // distinguishes a vertical asymptote from a hole?"), and the student answered
+  // in words. There is no number here for the numeric verification stack to
+  // grade — which is precisely why these turns ended up graded against whatever
+  // computational problem was still in scope, and rejected. Flagged so the
+  // pipeline routes them to conceptual verification instead: a correct idea
+  // gets affirmed, an unreadable one stays unverified, neither is called wrong.
+  const lastAssistant = (context.recentAssistantMessages || []).slice(-1)[0];
+  const tutorAskedAQuestion = typeof lastAssistant?.content === 'string'
+    && lastAssistant.content.includes('?');
+  const conceptualReply = !answer
+    && !isBareProblemDrop
+    && tutorAskedAQuestion
+    && messageType === MESSAGE_TYPES.GENERAL_MATH
+    && text.length <= 400
+    && text.split(/\s+/).filter(Boolean).length >= 2
+    && /[a-z]{3,}/i.test(text);
+
   // ── Durable back-off mode ──
   // Once a student asserts competence / rejects scaffolding, the tutor must not
   // revert to probing on the very next turn (the documented "I hear you!" then
@@ -759,6 +788,7 @@ function observe(message, context = {}) {
     backOffMode,          // durable: student has signaled "I know this" recently — stop probing, raise difficulty
     isWorksheetFollowUp,  // true if student is asking for multiple worksheet problems
     isBareProblemDrop,    // true if student handed over a new problem with no attempt
+    conceptualReply,      // true if the student answered a conceptual question in words
     hasRecentUpload,      // forwarded for decide stage
     raw: text,
   };

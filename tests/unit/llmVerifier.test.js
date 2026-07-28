@@ -306,3 +306,151 @@ describe('LLMVerifier: pickProblemContext', () => {
     expect(pickProblemContext(messages)).toBe('fallback question');
   });
 });
+
+// ── The AP Calculus AB verdict failures (owner QA, 2026-07-28) ──
+// A conceptual question has no computable answer, so the two-step math verifier
+// compares the student's words against whatever step 1 improvised and reports
+// NO MATCH. "if its zero on top too" — a correct description of when a rational
+// function has a hole — came back rejected. These cover the conceptual judge
+// that grades the idea instead, and the higher bar a rejection now has to clear.
+describe('LLMVerifier: llmVerifyConceptual', () => {
+  const { llmVerifyConceptual, isConceptualQuestion, isProseAnswer } =
+    require('../../utils/pipeline/llmVerifier');
+
+  const QUESTION = 'What distinguishes a vertical asymptote from a hole in the graph?';
+
+  beforeEach(() => {
+    callLLM.mockReset();
+  });
+
+  test('grades a correct idea stated informally as CORRECT', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({
+      verdict: 'correct',
+      confidence: 0.93,
+      keyIdea: 'A hole occurs when the factor cancels — the numerator is zero there too.',
+      rationale: 'names the cancelling-factor condition',
+    }));
+
+    const result = await llmVerifyConceptual(QUESTION, 'if its zero on top too');
+
+    expect(result.isCorrect).toBe(true);
+    expect(result.conceptual).toBe(true);
+    expect(result.keyIdea).toMatch(/hole/i);
+    expect(callLLM).toHaveBeenCalledTimes(1);
+  });
+
+  test('partially correct carries no boolean — it is not a wrong answer', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({
+      verdict: 'partially_correct', confidence: 0.9, keyIdea: 'the factor must cancel',
+    }));
+
+    const result = await llmVerifyConceptual(QUESTION, 'it cancels');
+
+    expect(result.isCorrect).toBeNull();
+    expect(result.partial).toBe(true);
+  });
+
+  test('rejects only at the higher negative bar', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 'incorrect', confidence: 0.95 }));
+    const confident = await llmVerifyConceptual(QUESTION, 'they are the same thing');
+    expect(confident.isCorrect).toBe(false);
+
+    callLLM.mockReset();
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 'incorrect', confidence: 0.7 }));
+    const unsure = await llmVerifyConceptual(QUESTION, 'they are the same thing');
+    expect(unsure.isCorrect).toBeNull();  // unsure is not wrong
+  });
+
+  test('an unclear verdict, a parse failure, or a thrown error all stay unverifiable', async () => {
+    callLLM.mockResolvedValueOnce(fakeCompletion({ verdict: 'unclear', confidence: 0.9 }));
+    expect((await llmVerifyConceptual(QUESTION, 'the bottom part')).isCorrect).toBeNull();
+
+    callLLM.mockReset();
+    callLLM.mockResolvedValueOnce({ choices: [{ message: { content: 'not json' } }] });
+    const parseFail = await llmVerifyConceptual(QUESTION, 'the bottom part');
+    expect(parseFail.isCorrect).toBeNull();
+    expect(parseFail.error).toBe('conceptual_parse_failed');
+
+    callLLM.mockReset();
+    callLLM.mockRejectedValueOnce(new Error('rate limited'));
+    const thrown = await llmVerifyConceptual(QUESTION, 'the bottom part');
+    expect(thrown.isCorrect).toBeNull();
+    expect(thrown.error).toBe('rate limited');
+  });
+
+  test('missing input never burns a call', async () => {
+    expect((await llmVerifyConceptual(null, 'answer')).error).toBe('missing_input');
+    expect((await llmVerifyConceptual(QUESTION, '')).error).toBe('missing_input');
+    expect(callLLM).not.toHaveBeenCalled();
+  });
+
+  test('routing helpers separate ideas from values', () => {
+    expect(isConceptualQuestion(QUESTION)).toBe(true);
+    // Thick with LaTeX and still not computable.
+    expect(isConceptualQuestion('Why does \\(\\frac{x^2-9}{x-3}\\) have a hole at \\(x = 3\\)?')).toBe(true);
+    expect(isConceptualQuestion('What is \\(50 \\times 3\\)?')).toBe(false);
+    expect(isConceptualQuestion('Solve for x.')).toBe(false);  // not a question
+
+    expect(isProseAnswer('if its zero on top too')).toBe(true);
+    expect(isProseAnswer('3')).toBe(false);
+    expect(isProseAnswer('x = 3')).toBe(false);
+    expect(isProseAnswer('9x^2 - 5')).toBe(false);
+  });
+});
+
+describe('LLMVerifier: a rejection must clear a higher bar than an affirmation', () => {
+  beforeEach(() => {
+    callLLM.mockReset();
+  });
+
+  test('a mid-confidence NO MATCH is discarded, a mid-confidence match is kept', async () => {
+    callLLM
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
+      .mockResolvedValueOnce(fakeCompletion({ matches: false, confidence: 0.7 }));
+    const rejected = await llmVerifyAnswer('Describe the behavior', 'it is smooth there');
+    expect(rejected.isCorrect).toBeNull();   // was false — a rejection on a coin-flip
+
+    callLLM.mockReset();
+    callLLM
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
+      .mockResolvedValueOnce(fakeCompletion({ matches: true, confidence: 0.7 }));
+    const affirmed = await llmVerifyAnswer('Describe the behavior', 'it is continuous');
+    expect(affirmed.isCorrect).toBe(true);
+  });
+
+  test('a confident NO MATCH still rejects', async () => {
+    callLLM
+      .mockResolvedValueOnce(fakeCompletion({ answer: 'continuous' }))
+      .mockResolvedValueOnce(fakeCompletion({ matches: false, confidence: 0.95 }));
+    const result = await llmVerifyAnswer('Describe the behavior', 'it jumps');
+    expect(result.isCorrect).toBe(false);
+  });
+});
+
+// pickProblemContext must follow the tutor into a sub-question. Sweeping the
+// window for stored problemInfo first is what kept the verifier grading against
+// "simplify (x^2-9)/(x-3)" after the tutor had moved on to "what makes x-3 zero?".
+describe('LLMVerifier: pickProblemContext recency', () => {
+  const { pickPosedQuestion } = require('../../utils/pipeline/llmVerifier');
+
+  const OLD_PROBLEM = {
+    content: 'Simplify \\(\\frac{x^2-9}{x-3}\\).',
+    problemInfo: { correctAnswer: 'x + 3' },
+  };
+  const SUB_QUESTION = { content: 'What value of x would make \\(x - 3\\) equal zero?' };
+  const PLEASANTRY = { content: 'Nice work — take your time.' };
+
+  test('a newer sub-question outranks older stored problemInfo', () => {
+    expect(pickProblemContext([OLD_PROBLEM, SUB_QUESTION])).toBe(SUB_QUESTION.content);
+  });
+
+  test('a pleasantry does not displace the problem behind it', () => {
+    expect(pickProblemContext([OLD_PROBLEM, PLEASANTRY])).toBe(OLD_PROBLEM.content);
+  });
+
+  test('pickPosedQuestion takes the newest question, never an older problem', () => {
+    const CONCEPT = { content: 'What distinguishes an asymptote from a hole?' };
+    expect(pickPosedQuestion([OLD_PROBLEM, CONCEPT])).toBe(CONCEPT.content);
+    expect(pickPosedQuestion([])).toBeNull();
+  });
+});

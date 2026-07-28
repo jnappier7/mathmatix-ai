@@ -458,6 +458,53 @@ function decideCore(observation, diagnosis, context) {
     return decision;
   }
 
+  // ── Conceptual answers — the student replied with an IDEA ──
+  // Handled ahead of (and outside) the ANSWER_ATTEMPT block on purpose: a reply
+  // like "if its zero on top too" carries no extractable answer, so observe
+  // classifies it as general math and the correctness branches below never see
+  // it. That is how a right idea got no affirmation — and, once the numeric
+  // stack graded the stray "0" in it, an outright rejection plus a non-sequitur
+  // follow-up (production, AP Calculus AB, 2026-07-28).
+  if (diagnosis.conceptual) {
+    if (diagnosis.isCorrect === true) {
+      decision.action = ACTIONS.CONFIRM_CORRECT;
+      decision.directives.push(
+        'CONCEPTUALLY CORRECT: the student answered a conceptual question and the idea is right, informal wording and all.',
+        'Confirm it directly and immediately. Do NOT hedge, do NOT open with "let\'s take a closer look", do NOT re-ask the same question.',
+        'Say back what they got right in precise language — that is the teaching move here: their idea, tightened up.',
+        'Then move FORWARD: apply the idea to the case in front of you, or advance to the next step of the lesson. Do NOT change the subject to an unrelated check.'
+      );
+      return decision;
+    }
+    if (diagnosis.type === 'correct_partial') {
+      decision.action = ACTIONS.ACKNOWLEDGE_PROGRESS;
+      decision.directives.push(
+        'PARTIALLY CORRECT IDEA: the student has a real piece of the concept, not a wrong answer.',
+        'Affirm the part they got right and name it specifically. Do NOT run the wrong-answer ladder over it.',
+        'Then ask ONE question that draws out the missing piece. Do NOT state the missing piece yourself.'
+      );
+      return decision;
+    }
+    if (diagnosis.isCorrect === false) {
+      decision.action = ACTIONS.GUIDE_INCORRECT;
+      decision.directives.push(
+        'The student\'s stated idea is mathematically false — verified, not assumed.',
+        'Address the idea itself with a question or a concrete counter-case that lets them see it fail. Do NOT hand them the correct statement.',
+        'Stay on the concept they answered about. Do NOT switch to an unrelated computation.'
+      );
+      return decision;
+    }
+    // No verdict. The one thing that must not happen is treating "we could not
+    // grade this" as "this is wrong" — that is the whole failure being fixed.
+    decision.action = ACTIONS.CONTINUE_CONVERSATION;
+    decision.directives.push(
+      'UNVERIFIED CONCEPTUAL ANSWER: the student answered a conceptual question and we could not confirm the idea either way.',
+      'Do NOT reject it, and do NOT imply it is wrong. You have no verdict to assert.',
+      'Judge it yourself. If it is right, say so and build on it. If you genuinely cannot tell what they mean, ask them to say a little more about it — one question, in plain language.'
+    );
+    return decision;
+  }
+
   // ── Answer attempts — correctness-driven decisions ──
   if (msgType === MESSAGE_TYPES.ANSWER_ATTEMPT && diagnosis.type !== 'no_answer') {
     // ── Correct but incomplete: a multi-root problem with one root still missing ──
