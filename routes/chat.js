@@ -15,7 +15,8 @@ const Curriculum = require('../models/curriculum');
 const StudentUpload = require('../models/studentUpload');
 const Skill = require('../models/skill');
 const { generateSystemPrompt } = require('../utils/prompt');
-const { callLLM, callLLMStream } = require("../utils/llmGateway"); // CTO REVIEW FIX: Use unified LLMGateway
+const { callLLM, callLLMStream } = require("../utils/llmGateway");
+const { createPerUserLock } = require("../utils/perUserLock");
 const { createKeepalive } = require('../utils/sseKeepalive');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const BRAND_CONFIG = require('../utils/brand');
@@ -148,34 +149,16 @@ const MAX_HISTORY_LENGTH_FOR_AI = 100; // Increased from 40 — GPT-4o-mini has 
 // Per-user request lock to prevent concurrent chat processing (race condition fix).
 // If user A sends message 1 and message 2 before message 1 finishes saving,
 // message 2 waits until message 1 completes to prevent data loss.
-const userChatLocks = new Map();
-const userChatLockTimestamps = new Map();
+// Behavior is unchanged from the inline implementation this replaces: acquire
+// chains onto the user's previous turn, and the periodic sweep evicts only
+// entries idle for 10+ minutes rather than clearing the map (which would drop
+// locks for in-flight requests). It now lives in utils/perUserLock.js so
+// routes/courseChat.js shares it instead of keeping a copy that can drift — the
+// copy there still had the unfixed `.clear()`.
+const userChatLock = createPerUserLock();
 function acquireUserLock(userId) {
-    const key = userId.toString();
-    if (!userChatLocks.has(key)) {
-        userChatLocks.set(key, Promise.resolve());
-    }
-    userChatLockTimestamps.set(key, Date.now());
-    let release;
-    const newLock = new Promise(resolve => { release = resolve; });
-    const previousLock = userChatLocks.get(key);
-    userChatLocks.set(key, newLock);
-    return previousLock.then(() => release);
+    return userChatLock.acquire(userId);
 }
-// Cleanup stale locks periodically (prevent memory leak for inactive users).
-// Only evict users idle for 10+ minutes — never clear the entire map, which
-// could drop locks for in-flight requests and allow concurrent processing.
-setInterval(() => {
-    if (userChatLocks.size > 500) {
-        const cutoff = Date.now() - 10 * 60 * 1000;
-        for (const [key, ts] of userChatLockTimestamps) {
-            if (ts < cutoff) {
-                userChatLocks.delete(key);
-                userChatLockTimestamps.delete(key);
-            }
-        }
-    }
-}, 10 * 60 * 1000);
 
 /**
  * Extract a student's answer from their chat message.
