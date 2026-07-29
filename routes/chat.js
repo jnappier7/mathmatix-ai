@@ -36,6 +36,7 @@ const ScreenerSession = require('../models/screenerSession');
 const { needsAssessment } = require('../services/chatService');
 const { computeNudges, NUDGE_TYPES } = require('../utils/userNudges');
 const { detectGrowthCheckAcceptance, detectStartingPointAcceptance } = require('../utils/growthCheckIntent');
+const { buildDebriefInstruction, fallbackDebriefText } = require('../utils/growthSummary');
 const { buildCourseSystemPrompt, buildActPracticeGuidance, buildCourseGreetingInstruction, loadCourseContext, calculateOverallProgress } = require('../utils/coursePrompt');
 // Performance optimizations
 const contextCache = require('../utils/contextCache');
@@ -220,9 +221,14 @@ async function runStudentTurn(req, res) {
     const { message, role, childId, responseTime, isGreeting, mastery } = req.body;
     const userId = req.user?._id;
 
-    // Allow empty message for greeting requests and file uploads (student may upload without typing)
+    // Allow empty message for greeting requests, growth-check debriefs, and
+    // file uploads (student may upload without typing). The debrief is the
+    // tutor talking, not the student — it carries no message by design.
     const hasFiles = req.files && req.files.length > 0;
-    if (!isGreeting && !hasFiles && !message) return res.status(400).json({ message: "Message is required." });
+    const isGrowthDebriefRequest = !!req.body?.growthCheckDebrief;
+    if (!isGreeting && !isGrowthDebriefRequest && !hasFiles && !message) {
+        return res.status(400).json({ message: "Message is required." });
+    }
     if (message && message.length > MAX_MESSAGE_LENGTH) return res.status(400).json({ message: `Message too long.` });
 
     // Log response time if provided (from ghost timer)
@@ -243,6 +249,15 @@ async function runStudentTurn(req, res) {
     // that the user doesn't see, but the AI responds to naturally
     if (isGreeting) {
         return handleGreetingRequest(req, res, userId);
+    }
+
+    // ========== GROWTH CHECK DEBRIEF: the tutor closes the loop ==========
+    // The student just finished a Growth Check in the FloatingScreener and the
+    // client is asking for the wrap-up. Not a student message — no lock, no
+    // pipeline, no XP; just the tutor delivering the result they were promised
+    // ("come back here when you're done").
+    if (isGrowthDebriefRequest) {
+        return handleGrowthCheckDebrief(req, res, userId);
     }
 
     // Acquire per-user lock to prevent concurrent message processing
@@ -2433,6 +2448,150 @@ function isInProgressSession(conversation) {
 // ========== GREETING HANDLER: AI-initiated conversation ==========
 // Builds a context-rich "ghost message" the user doesn't see,
 // but the AI responds to naturally - creating the illusion of AI initiating
+// A debrief older than this is water under the bridge — the student moved on,
+// and "here's how your Growth Check went" three weeks later is noise.
+const GROWTH_DEBRIEF_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Atomically take the pending debrief: return it AND clear it in one write.
+ *
+ * The claim has to be atomic because a chat load can fire more than one
+ * request that would deliver it (the client's debrief request, a retry, a
+ * second tab). Read-then-clear would let two of them read the same summary and
+ * tell the student their results twice. `new: false` hands back the document
+ * as it was BEFORE the unset, so exactly one caller gets the summary and
+ * everyone else gets null.
+ *
+ * @returns {Object|null} the summary, or null if there was nothing to claim
+ */
+async function claimPendingGrowthDebrief(userId) {
+    try {
+        const before = await User.findOneAndUpdate(
+            { _id: userId, 'learningProfile.pendingGrowthCheckDebrief.summary': { $exists: true } },
+            { $unset: { 'learningProfile.pendingGrowthCheckDebrief': 1 } },
+            { new: false, projection: { 'learningProfile.pendingGrowthCheckDebrief': 1 } }
+        ).lean();
+
+        const pending = before?.learningProfile?.pendingGrowthCheckDebrief;
+        if (!pending?.summary) return null;
+
+        const age = Date.now() - new Date(pending.createdAt || 0).getTime();
+        if (Number.isFinite(age) && age > GROWTH_DEBRIEF_MAX_AGE_MS) {
+            logger.info('Discarded stale growth check debrief', { userId, ageDays: Math.round(age / 86400000) });
+            return null;
+        }
+        return pending.summary;
+    } catch (err) {
+        logger.warn('Claiming pending growth debrief failed', { error: err.message });
+        return null;
+    }
+}
+
+/**
+ * THE COMPLETION MOMENT, in the tutor's voice.
+ *
+ * A Growth Check ends inside the FloatingScreener — outside the transcript —
+ * so the student used to get a stats card and silence from a tutor who had
+ * just said "come back here when you're done." routes/screener.js stashes the
+ * summary (utils/growthSummary.js) as learningProfile.pendingGrowthCheckDebrief
+ * on completion; this delivers it and clears it.
+ *
+ * Open chat is the student's lead (see the lesson-state policy), so the
+ * debrief SUGGESTS exactly one next step and starts nothing.
+ */
+async function handleGrowthCheckDebrief(req, res, userId) {
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        // Claim first: whoever wins the claim owes the message. A second
+        // request (retry, second tab) gets null and stays silent.
+        const summary = await claimPendingGrowthDebrief(userId);
+        if (!summary) {
+            // Nothing owed — already delivered, stale, or none was persisted.
+            return res.json({ text: '', debriefDelivered: false });
+        }
+
+        const selectedTutorKey = user.selectedTutorId && TUTOR_CONFIG[user.selectedTutorId]
+            ? user.selectedTutorId
+            : 'default';
+        const currentTutor = TUTOR_CONFIG[selectedTutorKey];
+
+        let debriefText = '';
+        try {
+            const systemPrompt = generateSystemPrompt(user.toObject(), currentTutor, null, 'student', null, null, null, [], null, null);
+            const completion = await callLLM(PRIMARY_CHAT_MODEL, [
+                { role: 'system', content: systemPrompt },
+                { role: 'system', content: buildDebriefInstruction(summary) },
+                { role: 'user', content: '[The student just finished their Growth Check and is back in chat.]' }
+            ], { temperature: 0.6, max_tokens: 300 });
+            debriefText = completion.choices?.[0]?.message?.content?.trim() || '';
+        } catch (llmErr) {
+            logger.warn('Growth check debrief generation failed, using fallback', { error: llmErr.message });
+        }
+
+        if (!debriefText) {
+            debriefText = fallbackDebriefText(summary, user.firstName);
+        }
+
+        // IEP reading level enforcement (same contract as the greeting path)
+        const iepLevel = user.iepPlan?.readingLevel || null;
+        if (iepLevel) {
+            try {
+                const readCheck = checkReadingLevel(debriefText, iepLevel);
+                if (!readCheck.passes) {
+                    const simplified = await callLLM(PRIMARY_CHAT_MODEL, [
+                        { role: 'system', content: buildSimplificationPrompt(debriefText, readCheck.targetGrade, user.firstName || 'the student') }
+                    ], { temperature: 0.3, max_tokens: 300 });
+                    const simplifiedText = simplified.choices?.[0]?.message?.content?.trim();
+                    if (simplifiedText && simplifiedText.length > 20) debriefText = simplifiedText;
+                }
+            } catch (err) {
+                logger.warn('Growth check debrief simplification failed', { error: err.message });
+            }
+        }
+
+        // Land it in the transcript so the wrap-up survives a refresh.
+        try {
+            let conversation = user.activeConversationId
+                ? await Conversation.findById(user.activeConversationId)
+                : null;
+            if (!conversation || !conversation.isActive || conversation.isMastery || isSessionStale(conversation)) {
+                conversation = new Conversation({ userId: user._id, messages: [], isMastery: false });
+                user.activeConversationId = conversation._id;
+                await user.save();
+            }
+            conversation.messages.push({
+                role: 'assistant',
+                content: debriefText,
+                timestamp: new Date(),
+                tutorId: selectedTutorKey
+            });
+            touchSession(conversation);
+            await conversation.save();
+        } catch (convErr) {
+            logger.warn('Growth check debrief conversation save failed', { error: convErr.message });
+        }
+
+        logger.info('Growth check debrief delivered', { userId, growthStatus: summary.growthStatus });
+
+        const xpProgress = BRAND_CONFIG.xpProgress(user.xp);
+        return res.json({
+            text: debriefText,
+            debriefDelivered: true,
+            growthSummary: summary,
+            voiceId: currentTutor.cartesiaVoiceId,
+            userXp: xpProgress.xpForCurrentLevel,
+            userLevel: xpProgress.level,
+            xpNeeded: xpProgress.xpForNextLevel,
+        });
+
+    } catch (error) {
+        logger.error('Growth check debrief handler error', error);
+        return res.status(500).json({ message: 'Failed to deliver growth check debrief.' });
+    }
+}
+
 async function handleGreetingRequest(req, res, userId) {
     try {
         const user = await User.findById(userId);
@@ -2889,6 +3048,14 @@ async function handleGreetingRequest(req, res, userId) {
             // Check if we should offer Starting Point in this greeting (only once, ever)
             const shouldOfferStartingPoint = !user.startingPointOffered && !user.assessmentCompleted;
 
+            // An undelivered Growth Check debrief is NOT folded in here. The
+            // greeting and the client's debrief request both fire on chat load,
+            // so whichever read the pending summary second would deliver it
+            // twice. Delivery lives in exactly one place —
+            // handleGrowthCheckDebrief, which claims the summary atomically.
+            // This greeting only needs to not re-pitch a check just finished.
+            const debriefPending = !!user.learningProfile?.pendingGrowthCheckDebrief?.summary;
+
             // ── Build the warm-up instruction ──
             // Grounded in what the student was just working on (via the session
             // opener's suggestedTopic), with an explicit anti-repeat list pulled
@@ -2980,7 +3147,7 @@ This is the student's first session. A button labeled "${greetingInlineCta.label
                 const growthOverdue = nudges.find(n =>
                     n.type === NUDGE_TYPES.GROWTH_CHECK && n.severity === 'overdue'
                 );
-                if (growthOverdue && !shouldOfferStartingPoint) {
+                if (growthOverdue && !shouldOfferStartingPoint && !debriefPending) {
                     const daysPastDue = growthOverdue.meta?.daysPastDue ?? 0;
                     const timingPhrase = daysPastDue >= 14
                         ? "it's been a while"

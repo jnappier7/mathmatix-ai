@@ -245,3 +245,40 @@ describe('problemResult is only stamped from a real verdict', () => {
     expect(sidecar.problemResult).toBeNull();
   });
 });
+
+describe('"true" answering a true-or-false question (post-#1360 confirmation run, 2026-07-28)', () => {
+  // Tutor: "True or false: A function can take two different inputs and give
+  //         the same output. What do you think?"
+  // Student: "true"        <- correct, one word
+  // Reply:  "Careful there—" + a re-ask. One-word polarity answers passed
+  // neither conceptual gate (both require 2+ words), so the turn fell to the
+  // value-matcher, which cannot parse "true" and can only withhold or reject.
+  const { isPolarityQuestion, isPolarityAnswer } = require('../../utils/pipeline/llmVerifier');
+  const TF_QUESTION = 'True or false: A function can take two different inputs and give the same output. What do you think?';
+
+  test('the question reads as polarity', () => {
+    expect(isPolarityQuestion(TF_QUESTION)).toBe(true);
+    expect(isPolarityQuestion('Is 3/0 defined, yes or no?')).toBe(true);
+    expect(isPolarityQuestion('What value of x makes x-3 zero?')).toBe(false);
+    expect(isPolarityQuestion(null)).toBe(false);
+  });
+
+  test('bare and hedged polarity words read as polarity answers', () => {
+    for (const a of ['true', 'True.', 'false', 'yes', 'no', 'nope', 'yep!', 'I think false', "it's true", 'probably true']) {
+      expect(isPolarityAnswer(a)).toBe(true);
+    }
+  });
+
+  test('anything beyond a polarity word does NOT route here', () => {
+    for (const a of ['true story', 'no idea', 'yes and no', 'the answer is true because inputs differ', '3', 'x = 3', '']) {
+      expect(isPolarityAnswer(a)).toBe(false);
+    }
+  });
+
+  test('the pipeline wires the polarity gate into conceptual routing', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const src = fs.readFileSync(path.join(__dirname, '../../utils/pipeline/index.js'), 'utf8');
+    expect(src).toContain('isPolarityQuestion(posedQuestion) && isPolarityAnswer(message)');
+  });
+});

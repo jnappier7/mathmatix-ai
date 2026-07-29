@@ -56,6 +56,11 @@
     // Tolerate the tutor model's split \dfrac ("\d\frac{5}{7}") in tex that
     // was ledgered before the server-side normalization existed.
     t = t.replace(/\\([dt])\s*\\(frac)\b/g, '\\$1$2').replace(/\\displaystyle\s*/g, '');
+    // "\." is a mangled sentence period (KaTeX has no such command, and with
+    // throwOnError:false ONE bad token makes the whole card render as red raw
+    // source — production 2026-07-28: "1 \div (-0.1)\."). Accent "\.{x}" kept.
+    t = t.replace(/\\\.(?!\{)/g, '.');
+    t = t.replace(/\\+$/, '');               // dangling backslash at end
     return t.trim();
   }
 
@@ -572,15 +577,105 @@
       var tag = d.createElement('span'); tag.className = 'lws-dv-op'; tag.textContent = op;
       row.appendChild(tag);
     } else {
-      // Scaffold blanks (\boxed{}) render as KaTeX's empty box — a visual
-      // "your turn" cue the student answers IN CHAT, where the pipeline can
-      // see it. (Board-side inputs were removed: they submitted through a
-      // side door the tutor had no concept of.)
+      // Scaffold blanks (\boxed{}) are tappable (owner call, 2026-07-28 —
+      // interactive again, but through the StudentMove contract this time:
+      // tap → type → 'lws:blank-submit' event → chat-workspace POSTs it to
+      // /api/student-moves?tutor=true, the SAME pipe as a typed answer. The
+      // 2026-07-25 removal was of inputs that submitted through a side door
+      // chat had no concept of; this lane the tutor fully understands.)
       var tex = d.createElement('div'); tex.className = 'lws-dv-tex';
-      typeset(tex, element.semantic && element.semantic.latex);
+      var latex = element.semantic && element.semantic.latex;
+      typeset(tex, latex);
       row.appendChild(tex);
+      if (latex && /\\boxed/.test(String(latex))) this._wireBlanks(row, tex, String(latex));
     }
     (target || this.el.lines).appendChild(row);
+  };
+
+  // Make each rendered \boxed{} in a scaffold line a real input affordance.
+  // KaTeX renders \boxed as a span.fbox; if that markup ever changes, the
+  // fallback chip below still gives the row a working entry point.
+  DerivationView.prototype._wireBlanks = function (row, texEl, latex) {
+    var d = this.doc;
+    var boxes = toArray(texEl.querySelectorAll('.fbox'));
+    var self = this;
+
+    function submit(blankIndex, value, paint) {
+      value = String(value == null ? '' : value).trim();
+      if (!value) return;
+      paint(value);
+      var ev;
+      try {
+        ev = new CustomEvent('lws:blank-submit', {
+          bubbles: true,
+          detail: { stepTex: latex, blankIndex: blankIndex, value: value, row: row, paint: paint },
+        });
+      } catch (_) { return; }
+      row.dispatchEvent(ev);
+    }
+
+    function arm(box, blankIndex) {
+      box.classList.add('lws-blank');
+      box.setAttribute('role', 'button');
+      box.setAttribute('tabindex', '0');
+      box.setAttribute('aria-label', 'Fill in this blank');
+      function open() {
+        if (box.querySelector('input')) return;
+        var inp = d.createElement('input');
+        inp.className = 'lws-blank-input';
+        inp.setAttribute('aria-label', 'Your value for this blank');
+        inp.maxLength = 30;
+        box.textContent = '';
+        box.appendChild(inp);
+        inp.focus();
+        inp.addEventListener('keydown', function (e) {
+          // Without this, the Enter bubbles to the box's own keydown handler,
+          // which re-opens an empty input over the value just painted.
+          e.stopPropagation();
+          if (e.key === 'Enter') {
+            submit(blankIndex, inp.value, function (v) {
+              box.textContent = v;
+              box.classList.add('lws-blank-pending');
+            });
+          }
+          if (e.key === 'Escape') { box.textContent = ''; box.classList.remove('lws-blank-pending'); }
+        });
+      }
+      box.addEventListener('click', open);
+      box.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    }
+
+    if (boxes.length) {
+      for (var i = 0; i < boxes.length; i++) arm(boxes[i], i);
+      return;
+    }
+    // Fallback: KaTeX markup not found — append a chip that opens an inline
+    // input for the FIRST blank so the affordance never silently dies.
+    var chip = d.createElement('button');
+    chip.className = 'lws-blank-chip';
+    chip.type = 'button';
+    chip.textContent = 'Fill in the blank';
+    chip.addEventListener('click', function () {
+      if (row.querySelector('.lws-blank-input')) return;
+      var inp = d.createElement('input');
+      inp.className = 'lws-blank-input';
+      inp.setAttribute('aria-label', 'Your value for the blank');
+      inp.maxLength = 30;
+      chip.replaceWith(inp);
+      inp.focus();
+      inp.addEventListener('keydown', function (e) {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
+          submit(0, inp.value, function (v) {
+            var done = d.createElement('span');
+            done.className = 'lws-blank lws-blank-pending';
+            done.textContent = v;
+            inp.replaceWith(done);
+          });
+        }
+      });
+    });
+    row.appendChild(chip);
   };
 
   DerivationView.prototype._addBlock = function (element, target, blockSink) {

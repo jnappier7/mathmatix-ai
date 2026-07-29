@@ -112,24 +112,24 @@ describe('the seam stays closed at its call sites', () => {
     expect(src).toContain('gradeLevelToBand(resolveGradeLevel(user))');
   });
 
-  // routes/growthCheck.js used to own this and was pinned here. It is retired:
-  // growth checks are the screener with sessionType 'growth-check', so the
-  // level-sync guarantee now has to hold on the screener's completion path —
-  // which reaches the same two homes by direct assignment.
-  test('a growth check re-syncs the assessed level without rewriting the placement', () => {
+  // Was pinned against routes/growthCheck.js, now retired — the growth check is
+  // the screener with sessionType 'growth-check', so the level-sync guarantee
+  // has to hold on the screener's completion path instead.
+  test('a growth check syncs the level string off the GUARDED ability', () => {
     const src = read('../../routes/screener.js');
     expect(src).toContain("require('../utils/theta')");
-    expect(src).toContain("session.sessionType === 'growth-check'");
-    // mathCourse + abilityEstimate.gradeLevel (what assessedLevelWritePatch
-    // wrote) are set unconditionally, so a growth check still moves them...
+    // The level string follows the GUARDED ability (utils/growthGuard.js), so
+    // one bad 5-8 item check can't rewrite the pathway the tutor teaches from.
+    // Deriving it from report.theta here would be the bug.
+    expect(src).toContain('const gradeLevelResult = thetaToGradeLevel(appliedTheta);');
     expect(src).toContain('user.mathCourse = gradeLevelResult.gradeLevel;');
-    expect(src).toContain('gradeLevel: gradeLevelResult.gradeLevel');
-    // ...while initialPlacement stays behind the !isGrowthCheck guard.
-    expect(src).toMatch(/if \(!isGrowthCheck\) \{[\s\S]*?user\.initialPlacement = gradeLevelResult\.gradeLevel;/);
   });
 
   test('screener completion still writes every home of every dual field', () => {
     const src = read('../../routes/screener.js');
+    // initialPlacement is the INITIAL placement — a growth check re-measures the
+    // current level and must leave that historical record alone, so these two
+    // are now inside the `if (!isGrowth)` branch rather than unconditional.
     expect(src).toContain('user.initialPlacement = gradeLevelResult.gradeLevel;');
     expect(src).toContain('user.learningProfile.initialPlacement = gradeLevelResult.gradeLevel;');
     expect(src).toContain('user.mathCourse = gradeLevelResult.gradeLevel;');

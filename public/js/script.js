@@ -770,6 +770,47 @@ document.addEventListener("DOMContentLoaded", () => {
     // Expose for other modules that append AI messages (e.g. streaming finalizer).
     window.attachInlineCtaToLatestMessage = attachInlineCtaToLatestMessage;
 
+    // ── Growth Check closure ──
+    // The check runs in the FloatingScreener, outside the transcript, so it
+    // used to end on a stats card and silence — from a tutor who had just said
+    // "come back here when you're done." Ask the server for the debrief and
+    // append it as a normal tutor message: the result lands in the student's
+    // own conversation, in their tutor's voice, with ONE suggested next step
+    // (suggested — open chat stays the student's lead).
+    let growthDebriefInFlight = false;
+
+    async function requestGrowthCheckDebrief() {
+        if (growthDebriefInFlight) return;
+        growthDebriefInFlight = true;
+        showThinkingIndicator(true);
+        try {
+            const res = await csrfFetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ growthCheckDebrief: true }),
+            });
+            const data = await res.json();
+            showThinkingIndicator(false);
+
+            // Empty text = nothing owed (already delivered). Stay quiet rather
+            // than appending a blank bubble.
+            if (data.text) appendMessage(data.text, 'ai');
+        } catch (error) {
+            showThinkingIndicator(false);
+            console.error('[GrowthCheck] Debrief request failed', error);
+        } finally {
+            growthDebriefInFlight = false;
+        }
+    }
+
+    // Fired when the student taps "Continue to Learning" on the results screen.
+    document.addEventListener('growth-check-complete', () => { requestGrowthCheckDebrief(); });
+
+    // Fired on load when the server still owes a debrief — the student finished
+    // on /screener.html, or closed the tab before the wrap-up.
+    document.addEventListener('growth-check-debrief-pending', () => { requestGrowthCheckDebrief(); });
+
     // ── Notebook idea offer (Live Workspace §7.6) ──
     // The tutor proposed saving an idea; render a small consent chip under its
     // message. Saving POSTs to the notebook; dismissing just removes the chip.

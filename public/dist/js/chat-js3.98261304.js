@@ -776,6 +776,12 @@ class FloatingScreener {
         this.assessmentExpired = data.assessmentExpired;
         this.growthCheckDue = data.growthCheckDue;
         this.currentGradeLevel = data.currentGradeLevel;
+        // A finished check the tutor never got to debrief (student closed the
+        // tab, or finished on growth-check.html). Chat picks this up on load.
+        this.growthCheckDebriefPending = !!data.growthCheckDebriefPending;
+        if (this.growthCheckDebriefPending) {
+          document.dispatchEvent(new CustomEvent('growth-check-debrief-pending'));
+        }
         this.updateSidebarButton();
       }
     } catch (error) {
@@ -972,17 +978,29 @@ class FloatingScreener {
     const titleEl = document.querySelector('#screener-instruction-screen h2');
     const subtitleEl = document.querySelector('#screener-instruction-screen .subtitle');
     const whatIsEl = document.querySelector('#screener-instruction-screen .instruction-card h3');
-    const descriptionEl = document.querySelector('#screener-instruction-screen .instruction-card p');
+    const descriptionEl = document.getElementById('screener-instruction-desc');
+    const adaptEl = document.getElementById('screener-instruction-adapt');
+    const materialsEl = document.getElementById('screener-instruction-materials');
     const durationEl = document.querySelector('#screener-instruction-screen .duration span');
+    const warningEl = document.getElementById('screener-warning-text');
     const headerTitleEl = document.querySelector('.screener-title');
 
     if (mode === 'growth-check') {
-      // Growth Check mode - shorter, focused assessment
+      // Growth Check mode — a short re-measurement, not a placement.
+      //
+      // The starting point of the experience: what this is, how long it takes,
+      // and what happens at the end. It used to open on a generic "assessment"
+      // card, which is the fastest way to make a 6-question progress check feel
+      // like a test the student could fail.
+      const since = this.currentGradeLevel ? ` since ${this.currentGradeLevel}` : '';
       if (titleEl) titleEl.textContent = 'Growth Check';
-      if (subtitleEl) subtitleEl.textContent = `Let's see how much you've grown since ${this.currentGradeLevel || 'your last assessment'}!`;
+      if (subtitleEl) subtitleEl.textContent = `A quick look at how you've grown${since}.`;
       if (whatIsEl) whatIsEl.innerHTML = '<i class="fas fa-chart-line"></i> What is this?';
-      if (descriptionEl) descriptionEl.innerHTML = `This is a shorter assessment to measure your progress. We'll focus on skills you've been working on recently. <strong>There's no penalty for wrong answers</strong> - we just want to see how you've grown!`;
-      if (durationEl) durationEl.innerHTML = '<strong>Time:</strong> Usually 5-15 minutes';
+      if (descriptionEl) descriptionEl.innerHTML = `A handful of questions from topics <strong>you've already worked on</strong> — no new material. It tells us whether your level has moved so your tutor keeps teaching at the right spot.`;
+      if (adaptEl) adaptEl.innerHTML = `<strong>It's not a test you can fail.</strong> Wrong answers aren't penalized — they just tell us what to focus on next.`;
+      if (materialsEl) materialsEl.innerHTML = `<strong><i class="fas fa-pencil-alt"></i> Grab a pencil and paper.</strong> Work the problems out — don't do them all in your head.`;
+      if (durationEl) durationEl.innerHTML = '<strong>Time:</strong> 5-8 questions, about 5 minutes';
+      if (warningEl) warningEl.innerHTML = `<strong>One sitting:</strong> if you close this before the last question, it won't be saved. At the end you'll get your results and we'll pick up right back in chat.`;
       if (headerTitleEl) headerTitleEl.innerHTML = '<i class="fas fa-chart-line"></i> Growth Check';
     } else {
       // Starting Point mode - full initial assessment
@@ -990,7 +1008,10 @@ class FloatingScreener {
       if (subtitleEl) subtitleEl.textContent = "Let's figure out where you are, so we can help you get where you're going.";
       if (whatIsEl) whatIsEl.innerHTML = '<i class="fas fa-info-circle"></i> What is this?';
       if (descriptionEl) descriptionEl.innerHTML = `This short assessment helps us understand your current math level. It's <strong>not a test you can fail</strong> - we're just finding the best place to start your learning journey.`;
+      if (adaptEl) adaptEl.innerHTML = `The questions will adapt to your level. Answer each one as best you can - there's no penalty for wrong answers!`;
+      if (materialsEl) materialsEl.innerHTML = `<strong><i class="fas fa-pencil-alt"></i> Grab a pencil and some paper</strong> before you start. Work the problems out - don't try to do them all in your head.`;
       if (durationEl) durationEl.innerHTML = '<strong>Time:</strong> Usually 10-30 minutes, depending on your level';
+      if (warningEl) warningEl.innerHTML = `<strong>Important:</strong> If you leave or close this before finishing, your progress won't be saved. Make sure you have time to complete it in one sitting!`;
       if (headerTitleEl) headerTitleEl.innerHTML = '<i class="fas fa-crosshairs"></i> Starting Point';
     }
   }
@@ -1401,6 +1422,13 @@ class FloatingScreener {
   async showResults(data) {
     this.showScreen('results');
 
+    // A Growth Check earns a different ending than a placement: the comparison
+    // to last time, what it confirmed, and one suggested next step. The server
+    // computes it (utils/growthSummary.js) so the tutor's debrief in chat and
+    // this card can never tell two different stories.
+    this.lastGrowthSummary = data.growthSummary || null;
+    this.renderGrowthResult(this.lastGrowthSummary);
+
     // Update grade level display (like STAR testing)
     const gradeLevelEl = document.getElementById('screener-result-grade-level');
     const descriptionEl = document.getElementById('screener-result-description');
@@ -1441,6 +1469,76 @@ class FloatingScreener {
     }
   }
 
+  // Paint (or hide) the Growth Check closure block on the results screen.
+  renderGrowthResult(summary) {
+    const block = document.getElementById('screener-growth-result');
+    const placement = document.getElementById('screener-grade-level-result');
+    const title = document.getElementById('screener-results-title');
+    const subtitle = document.getElementById('screener-results-subtitle');
+    const icon = document.getElementById('screener-results-icon');
+
+    if (!summary) {
+      // Starting Point (or a growth check whose summary failed to build) —
+      // fall back to the placement card rather than showing nothing.
+      if (block) block.style.display = 'none';
+      if (placement) placement.style.display = '';
+      if (title) title.textContent = 'Assessment Complete!';
+      if (subtitle) subtitle.textContent = "We've found your starting point";
+      if (icon) icon.innerHTML = '<i class="fas fa-trophy"></i>';
+      return;
+    }
+
+    const statusIcon = {
+      'significant-growth': '🚀',
+      'some-growth': '📈',
+      'stable': '✨',
+      'review-needed': '📚',
+    }[summary.growthStatus] || '✨';
+
+    if (title) title.textContent = 'Growth Check Complete!';
+    if (subtitle) {
+      // levelHeld: the guard kept them where they were despite a dip today,
+      // so the card must not imply a fall that was never applied.
+      if (summary.levelHeld) {
+        subtitle.textContent = `You're staying at ${summary.newLevel} — today looked like an off day`;
+      } else if (summary.levelChanged) {
+        subtitle.textContent = `You've moved from ${summary.previousLevel} to ${summary.newLevel}`;
+      } else {
+        subtitle.textContent = `${summary.questionsAnswered} questions · ${summary.accuracy}% correct`;
+      }
+    }
+    if (icon) icon.textContent = statusIcon;
+
+    // The growth story replaces the placement card — this student already has
+    // a starting point; what they want now is the delta.
+    if (placement) placement.style.display = 'none';
+    if (block) block.style.display = '';
+
+    const prevEl = document.getElementById('screener-growth-previous-level');
+    const newEl = document.getElementById('screener-growth-new-level');
+    const msgEl = document.getElementById('screener-growth-message');
+    if (prevEl) prevEl.textContent = summary.previousLevel;
+    if (newEl) newEl.textContent = summary.newLevel;
+    if (msgEl) msgEl.textContent = summary.growthMessage;
+
+    const skillsEl = document.getElementById('screener-growth-skills');
+    if (skillsEl) {
+      skillsEl.textContent = '';
+      const chip = (name, cls, prefix) => {
+        const span = document.createElement('span');
+        span.className = `growth-skill-chip ${cls}`;
+        span.textContent = `${prefix} ${name}`;
+        return span;
+      };
+      (summary.skillsConfirmed || []).forEach(s => skillsEl.appendChild(chip(s.name, 'confirmed', '✓')));
+      (summary.needsReview || []).forEach(s => skillsEl.appendChild(chip(s.name, 'needs-review', '↻')));
+      (summary.newlyReachable || []).forEach(s => skillsEl.appendChild(chip(s.name, 'reachable', '★')));
+    }
+
+    const nextEl = document.getElementById('screener-growth-next-step-text');
+    if (nextEl) nextEl.textContent = summary.suggestedNextStep?.text || '';
+  }
+
   async finishAssessment() {
     this.showLoading('Saving results...');
 
@@ -1460,8 +1558,16 @@ class FloatingScreener {
 
       console.log('[FloatingScreener] Assessment completed');
 
+      const wasGrowthCheck = this.isGrowthCheck;
+      // /complete recomputes the summary against the pre-check theta, so
+      // prefer it over the one we rendered from submit-answer.
+      const summary = data.growthSummary || this.lastGrowthSummary || null;
+
       // Update state
       this.assessmentCompleted = true;
+      this.isGrowthCheck = false;
+      this.growthCheckDue = false;
+      this.lastGrowthSummary = null;
       this.updateSidebarButton();
 
       // Close the module
@@ -1469,7 +1575,21 @@ class FloatingScreener {
 
       // Show celebration or notification
       if (window.showNotification) {
-        window.showNotification('Starting Point complete! Your learning path has been personalized.', 'success');
+        window.showNotification(
+          wasGrowthCheck
+            ? 'Growth Check complete! Your tutor has your results.'
+            : 'Starting Point complete! Your learning path has been personalized.',
+          'success'
+        );
+      }
+
+      // Hand the closure back to the tutor. The check ended outside the
+      // transcript, so chat listens for this and asks for the debrief — the
+      // "come back here when you're done" the greeting promised.
+      if (wasGrowthCheck) {
+        document.dispatchEvent(new CustomEvent('growth-check-complete', {
+          detail: { growthSummary: summary }
+        }));
       }
 
       // Trigger confetti if available

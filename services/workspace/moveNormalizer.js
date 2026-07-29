@@ -81,4 +81,28 @@ function normalizeTileMove(studentMove, verifiedMove) {
   return { statedStep, pipelineMessage, claimedResult };
 }
 
-module.exports = { normalizeTileMove };
+/**
+ * Normalize a scaffold-blank fill into the pipeline's stated-step string.
+ *
+ * Same first-person framing rule as tiles (see header): the substituted
+ * equation alone would read to observe as a NEW problem drop and route to
+ * ELICIT_FIRST; "I filled in the blank … so it reads …" classifies as the
+ * student's own ANSWER_ATTEMPT, which is what a blank fill is.
+ */
+function normalizeBlankMove(studentMove, verifiedMove) {
+  // A malformed fill (bad charset, no such blank) never reaches the tutor —
+  // the client snaps back on the invalid verdict; there is no claim to grade.
+  if (verifiedMove && verifiedMove.interactionValid === false) return null;
+  const p = (studentMove.operation && studentMove.operation.parameters) || {};
+  const substituted = (verifiedMove.resultingState && verifiedMove.resultingState.tex) || null;
+  const statedStep = substituted || `${p.value}`;
+  // Phrasing probed against the REAL observe (like the tile phrasing was):
+  // "For the blank … I got X" classifies ANSWER_ATTEMPT with X extracted as
+  // the answer; appending the substituted equation flipped it to a bare
+  // problem drop. The step itself reaches the tutor via the board ghost
+  // (boardStateBlock), so the prose can stay clean.
+  const pipelineMessage = `For the blank in that step on my board, I got ${p.value}`;
+  return { statedStep, pipelineMessage, claimedResult: null };
+}
+
+module.exports = { normalizeTileMove, normalizeBlankMove };

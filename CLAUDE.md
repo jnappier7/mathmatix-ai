@@ -272,7 +272,7 @@ npm run seed:playground / seed:test / seed:skills   # seed data
 | Add/adjust a tutor persona | `utils/tutorConfig.js` (+ voice ids) |
 | Answer grading / correctness | `utils/mathSolver.js` (deterministic) + `pipeline/diagnose.js` / `llmVerifier.js` |
 | Placement screener / IRT | `routes/screener.js`, `utils/{adaptiveScreener,irt,catConfig,skillSelector}.js`; docs: `PLACEMENT_TEST_SYSTEM.md`, `SCREENER_STATE_ANALYSIS.md` |
-| Growth check (quarterly progress check) | Same stack — it's the screener with `sessionType:'growth-check'`. Entry: `/screener.html?mode=growth-check`; bookkeeping in `routes/screener.js` `/complete`, status buckets in `utils/growthStatus.js` |
+| Growth check (quarterly progress check) | Same stack — it's the screener with `sessionType:'growth-check'`. Entry: `/screener.html?mode=growth-check` or the in-chat FloatingScreener; bookkeeping + debrief in `routes/screener.js` `/complete`; `utils/growthSummary.js` (closure moment), `utils/growthGuard.js` (one bad check can't cost a level) |
 | Mastery / badges | `routes/mastery.js`, `utils/{masteryEngine,badgeAwarder,patternBadges}.js`; docs: `MASTER_MODE_BADGE_SYSTEM.md`, `PATTERN_BADGE_GUIDE.md` |
 | Skills/problems data | `models/{skill,problem}.js`, `seeds/`, `scripts/generate*.js` + QA scripts |
 | IEP / accommodations | `models/iepPlan.js`, `routes/iepTemplates.js`, `utils/iepTemplates.js`; docs: `IEP_*` |
@@ -297,13 +297,14 @@ npm run seed:playground / seed:test / seed:skills   # seed data
   `ANSWER_ATTEMPT`, never when the student is *asking* — preserve this or you'll leak answers.
 - **Conversations >100 msgs are summarized** before hitting the LLM — mind token budgets.
 - **IEP is split** (collection + cached copy on user) — update both / sync on read.
-- **`learningProfile.growthCheckHistory` has exactly ONE writer** — the `isGrowthCheck` block in
+- **`learningProfile.growthCheckHistory` has exactly ONE writer** — the `isGrowth` block in
   `routes/screener.js` `/complete`. Nine places read it (parent ×3, teacher ×3, admin ×2,
   `scripts/weeklyDigest.js`). It's a write-once/read-many seam with no schema-level enforcement, so
   breaking the writer empties every growth panel *silently* — no error, just blank cards. Pinned by
-  `tests/integration/growthCheckCompletion.test.js`. A growth check must also **not** touch
+  `tests/integration/growthCheckClosure.test.js`. A growth check must also **not** touch
   `initialPlacement` / `assessmentDate` / `assessmentExpiresAt`: those describe the Starting Point run
-  and are the baseline growth is measured against.
+  and are the baseline growth is measured against. Note the history records the **raw** theta
+  alongside the guarded one — `growthGuard` damps what we *act on*, never what we *record*.
 - **Grade answers with `problem.checkAnswer()` (the schema method), never a hand-rolled compare.**
   `models/problem.js` has no `correctAnswer` field — the real ones are `answer.value`,
   `answer.equivalents[]`, `answerType`, `options[]`, `correctOption`. The retired `routes/growthCheck.js`
