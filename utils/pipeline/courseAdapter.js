@@ -179,6 +179,54 @@ async function postProcessCourseResult(pipelineResult, courseContext, conversati
     pipelineResult.text = pipelineResult.text.replace(/<LAUNCH_PRACTICE_ACT\s*>/gi, '').trim();
   }
 
+  const { courseProgressUpdate: advanced, progressUpdate } = await advanceCourseProgress({
+    courseSession, moduleData, conversation, wasCorrect, isParentCourse, isCheckpoint,
+  });
+  courseProgressUpdate = advanced;
+
+  return {
+    ...pipelineResult,
+    courseProgressUpdate,
+    graphToolConfig,
+    launchPracticeAct,
+    progressUpdate,
+    courseContext: {
+      courseId: courseSession.courseId,
+      courseName: courseSession.courseName,
+      currentModuleId: courseSession.currentModuleId,
+      currentLessonId: courseSession.currentLessonId,
+      overallProgress: courseSession.overallProgress,
+    },
+  };
+}
+
+/**
+ * Evaluate the current scaffold step, advance the course if the evidence
+ * supports it, and build the student-facing progress payload.
+ *
+ * Extracted so BOTH entry points share one progression engine. /api/chat is
+ * where chat.html sends every course turn, and it used to carry its own
+ * inline copy gated on the model emitting a deprecated <SCAFFOLD_ADVANCE>
+ * tag — so teaching turns never moved the lesson forward and the bar sat at
+ * 0% through a whole sitting (owner report, 2026-07-29). Progression is
+ * backend-owned and evidence-gated (stepEvaluator + MIN_CORRECT_FOR_ADVANCE);
+ * the model just teaches.
+ *
+ * @returns {Promise<{courseProgressUpdate: object|null, progressUpdate: object}>}
+ */
+async function advanceCourseProgress({
+  courseSession, moduleData, conversation, wasCorrect,
+  isParentCourse = false, isCheckpoint = false,
+  // Explicit model signals (verify extracts <SCAFFOLD_ADVANCE> /
+  // <MODULE_COMPLETE> and surfaces them on pipelineResult). Treated as a
+  // FAST PATH — good evidence when present, never a requirement: the
+  // evaluator below decides on every turn the model stays silent, which is
+  // most of them. Explicit advances still go through processScaffoldAdvance,
+  // so the practice evidence gate is not bypassed.
+  explicitAdvance = false, explicitModuleComplete = false,
+} = {}) {
+  let courseProgressUpdate = null;
+
   // ── Step evaluation and scaffold advancement ──
   const currentScaffoldIdx = courseSession.currentScaffoldIndex || 0;
   const currentScaffoldStep = (moduleData?.scaffold || [])[currentScaffoldIdx];
@@ -218,6 +266,13 @@ async function postProcessCourseResult(pipelineResult, courseContext, conversati
           mod.checkpointPassed = score >= (moduleData.passThreshold || 70);
         }
       }
+    } else if (explicitModuleComplete || explicitAdvance) {
+      evalResult = {
+        complete: true,
+        mode: 'explicit_tag',
+        confidence: 1.0,
+        evidence: explicitModuleComplete ? 'model emitted MODULE_COMPLETE' : 'model emitted SCAFFOLD_ADVANCE',
+      };
     } else {
       evalResult = await evaluateStepCompletion(currentScaffoldStep, conversation, {
         wasCorrect,
@@ -226,7 +281,7 @@ async function postProcessCourseResult(pipelineResult, courseContext, conversati
     }
 
     if (evalResult.complete) {
-      if (isLastStep) {
+      if (explicitModuleComplete || isLastStep) {
         courseProgressUpdate = processModuleComplete(courseSession);
         await courseSession.save();
       } else {
@@ -258,23 +313,11 @@ async function postProcessCourseResult(pipelineResult, courseContext, conversati
     await courseSession.save();
   }
 
-  return {
-    ...pipelineResult,
-    courseProgressUpdate,
-    graphToolConfig,
-    launchPracticeAct,
-    progressUpdate,
-    courseContext: {
-      courseId: courseSession.courseId,
-      courseName: courseSession.courseName,
-      currentModuleId: courseSession.currentModuleId,
-      currentLessonId: courseSession.currentLessonId,
-      overallProgress: courseSession.overallProgress,
-    },
-  };
+  return { courseProgressUpdate, progressUpdate };
 }
 
 module.exports = {
   buildCoursePipelineContext,
   postProcessCourseResult,
+  advanceCourseProgress,
 };

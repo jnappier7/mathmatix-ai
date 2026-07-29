@@ -1257,7 +1257,13 @@ async function runStudentTurn(req, res) {
                 if (isStudentBringingOwnProblem) {
                     lastMsg.content += `\n\n[The student is asking about their own problem, NOT the course module. PAUSE the course lesson and help with their specific question first. You can return to the lesson afterward.]`;
                 } else {
-                    lastMsg.content += `\n\n[STEP ${courseScaffoldCtx.stepIdx + 1}/${courseScaffoldCtx.totalSteps}: "${courseScaffoldCtx.stepTitle}" — emit <SCAFFOLD_ADVANCE> when complete, before discussing the next topic.]`;
+                    // Position anchor only — do NOT ask for a <SCAFFOLD_ADVANCE>
+                    // tag. The backend step evaluator owns progression (see
+                    // stepEvaluator.js), and sidecar.js already tells the model
+                    // not to emit that tag; asking for it here contradicted that
+                    // and made the lesson's forward motion depend on model
+                    // compliance instead of the student's demonstrated work.
+                    lastMsg.content += `\n\n[STEP ${courseScaffoldCtx.stepIdx + 1}/${courseScaffoldCtx.totalSteps}: "${courseScaffoldCtx.stepTitle}" — teach THIS step. Do not skip ahead to later steps; when the student has it, finish the step cleanly and the system advances you.]`;
                 }
             }
         }
@@ -1691,8 +1697,12 @@ async function runStudentTurn(req, res) {
         // fire-and-forget updateQuestProgress here ran AFTER persist and
         // double-incremented quest progress on every problem-answered turn.
 
-        // Course scaffold progression (complex, stays in chat.js for now)
+        // Course scaffold progression (engine shared with /api/course-chat)
         let courseProgressUpdate = pipelineResult.courseProgressUpdate;
+        // Student-facing lesson progress (step label + the five phase buckets).
+        // Returned on every course turn so LessonTracker repaints live instead
+        // of only on page load.
+        let lessonProgressUpdate = null;
 
         // Compact rail payload — lets the missed-number rail repaint on the very
         // turn <REVIEW_NEXT> fires instead of waiting for a page-load rehydrate.
@@ -1742,68 +1752,60 @@ async function runStudentTurn(req, res) {
             actBootcampState = compactBootcamp(conversationContextForPrompt?.courseSession?.bootcamp);
         }
 
-        if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
+        // ── Course progression (shared engine) ──
+        // Runs on EVERY course turn, not only when the model remembers a tag.
+        // This endpoint is where chat.html sends all course messages, so this is
+        // the path that has to advance the lesson; it used to carry an inline
+        // copy gated on <SCAFFOLD_ADVANCE> and a student could work a whole
+        // sitting with the bar frozen at 0% (owner report, 2026-07-29).
+        // advanceCourseProgress is the same evidence-gated evaluator
+        // /api/course-chat uses (stepEvaluator + MIN_CORRECT_FOR_ADVANCE), and
+        // it also returns the student-facing progressUpdate payload.
+        if (courseModeActive && user.activeCourseSessionId) {
             try {
                 const CourseSessionModel = require('../models/courseSession');
-                // From the pipeline's extracted flags — NEVER the text: verify
-                // strips the tags from the reply, so regex-testing the text
-                // here matched nothing and course progress never advanced.
-                const hasScaffoldAdvance = pipelineResult.scaffoldAdvance === true;
-                const hasModuleComplete = pipelineResult.moduleComplete === true;
+                const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
+                if (csDoc && csDoc.status === 'active') {
+                    const courseCtx = loadCourseContext(csDoc);
+                    if (courseCtx) {
+                        const { advanceCourseProgress } = require('../utils/pipeline/courseAdapter');
+                        const moduleData = courseCtx.scaffoldData;
+                        const wasCorrect = pipelineResult.problemResult === 'correct' ? true
+                            : pipelineResult.problemResult === 'incorrect' ? false
+                            : null;
 
-                if (hasScaffoldAdvance || hasModuleComplete) {
-                    const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
-                    if (csDoc && csDoc.status === 'active') {
-                        const courseCtx = loadCourseContext(csDoc);
-                        const totalSteps = courseCtx?.scaffoldData?.scaffold?.length || 1;
-                        const currentIdx = csDoc.currentScaffoldIndex || 0;
-                        const mod = csDoc.modules.find(m => m.moduleId === csDoc.currentModuleId);
-
-                        if (hasModuleComplete && mod) {
-                            mod.status = 'completed';
-                            mod.scaffoldProgress = 100;
-                            mod.completedAt = new Date();
-                            const modIdx = csDoc.modules.findIndex(m => m.moduleId === csDoc.currentModuleId);
-                            if (modIdx >= 0 && modIdx < csDoc.modules.length - 1) {
-                                const nextMod = csDoc.modules[modIdx + 1];
-                                if (nextMod.status === 'locked') nextMod.status = 'available';
-                                nextMod.startedAt = new Date();
-                                csDoc.currentModuleId = nextMod.moduleId;
-                            }
-                            csDoc.currentScaffoldIndex = 0;
-                            csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
-                            const doneCount = csDoc.modules.filter(m => m.status === 'completed').length;
-                            if (doneCount === csDoc.modules.length) {
-                                csDoc.status = 'completed';
-                                csDoc.completedAt = new Date();
-                            }
+                        // A course turn means the module is underway — flip it out
+                        // of 'available' immediately so the roster stops reading
+                        // "0 of N modules" while the student is mid-lesson.
+                        const activeMod = csDoc.modules.find(m => m.moduleId === csDoc.currentModuleId);
+                        if (activeMod && activeMod.status === 'available') {
+                            activeMod.status = 'in_progress';
+                            activeMod.startedAt = activeMod.startedAt || new Date();
                             csDoc.markModified('modules');
-                            await csDoc.save();
-                            courseProgressUpdate = {
-                                event: 'module_complete',
-                                moduleId: mod.moduleId,
-                                overallProgress: csDoc.overallProgress,
-                                nextModuleId: csDoc.currentModuleId,
-                                courseComplete: csDoc.status === 'completed',
-                            };
-                        } else if (hasScaffoldAdvance && mod) {
-                            const newIdx = Math.min(currentIdx + 1, totalSteps - 1);
-                            csDoc.currentScaffoldIndex = newIdx;
-                            mod.scaffoldProgress = Math.round((newIdx / totalSteps) * 100);
-                            if (mod.status === 'available') { mod.status = 'in_progress'; mod.startedAt = mod.startedAt || new Date(); }
-                            csDoc.overallProgress = calculateOverallProgress(csDoc.modules);
-                            csDoc.markModified('modules');
-                            await csDoc.save();
-                            const nextStep = courseCtx?.scaffoldData?.scaffold?.[newIdx];
-                            courseProgressUpdate = {
-                                event: 'scaffold_advance',
-                                scaffoldIndex: newIdx,
-                                scaffoldTotal: totalSteps,
-                                scaffoldProgress: mod.scaffoldProgress,
-                                overallProgress: csDoc.overallProgress,
-                                stepTitle: nextStep?.title || null,
-                            };
                         }
+
+                        const progression = await advanceCourseProgress({
+                            courseSession: csDoc,
+                            moduleData,
+                            conversation: activeConversation,
+                            wasCorrect,
+                            // Explicit model signals stay honored as a fast path
+                            // (verify extracts them; never regex the stripped
+                            // text) — but they are no longer REQUIRED, which is
+                            // what left progress frozen at 0%.
+                            explicitAdvance: pipelineResult.scaffoldAdvance === true,
+                            explicitModuleComplete: pipelineResult.moduleComplete === true,
+                            isParentCourse: courseCtx.pathway?.audience === 'parent',
+                            isCheckpoint: moduleData?.type === 'assessment'
+                                || !!moduleData?.diagnosticMode
+                                || !!courseCtx.currentModule?.isCheckpoint,
+                        });
+
+                        if (progression.courseProgressUpdate) {
+                            courseProgressUpdate = progression.courseProgressUpdate;
+                        }
+                        lessonProgressUpdate = progression.progressUpdate || null;
+                        if (csDoc.isModified()) await csDoc.save();
                     }
                 }
             } catch (courseErr) {
@@ -1897,6 +1899,7 @@ async function runStudentTurn(req, res) {
             aiTimeUsed: pipelineResult.aiTimeUsed,
             freeWeeklySecondsRemaining: pipelineResult.freeWeeklySecondsRemaining,
             courseProgress: courseProgressUpdate || null,
+            progressUpdate: lessonProgressUpdate || null,
             actBootcamp: actBootcampState,
             suggestions: pipelineResult.suggestions || null,
             gamification: pipelineResult.gamification || null,
