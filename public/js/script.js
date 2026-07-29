@@ -42,6 +42,193 @@ let messageQueue = {
 function triggerXpAnimation(message, isLevelUp, isSpecialXp) {
     _triggerXpAnimation(message, isLevelUp, isSpecialXp, currentUser);
 }
+
+// Server-awarded rewards for ONE turn — XP ladder, level-ups, coins, quest/
+// challenge events, badges, combo/stat tracking. Extracted from the chat
+// response handler so BOARD turns (scaffold blanks and future StudentMove
+// lanes, which get the same responseData from /api/student-moves?tutor=true)
+// celebrate identically to typed turns. Behavior-preserving move: the chat
+// handler now calls this exactly where these blocks lived.
+function applyTurnRewards(data) {
+            if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
+                showTutorUnlockCelebration(data.newlyUnlockedTutors);
+            }
+
+            // Avatar builder unlock celebration (Level 2)
+            if (data.avatarBuilderUnlocked) {
+                setTimeout(() => {
+                    showToast('Avatar Builder unlocked! Customize your look in Settings.', 6000);
+                    triggerConfetti();
+                }, 2000); // Delay so it doesn't overlap with level-up celebration
+            }
+
+            // Reconcile the Tier-3 behavior earned this turn into the local user
+            // so the identity chip's rank title advances live (the /user payload
+            // won't refresh until reload). Mirrors the server increment in
+            // xpEngine.applyXpToUser → xpLadderStats.tier3Behaviors.
+            if (data.xpLadder?.tier3 > 0 && data.xpLadder.tier3Behavior) {
+                if (!currentUser.xpLadderStats) currentUser.xpLadderStats = { tier3Behaviors: [] };
+                if (!Array.isArray(currentUser.xpLadderStats.tier3Behaviors)) currentUser.xpLadderStats.tier3Behaviors = [];
+                const behaviors = currentUser.xpLadderStats.tier3Behaviors;
+                const existing = behaviors.find(b => b.behavior === data.xpLadder.tier3Behavior);
+                if (existing) existing.count = (existing.count || 0) + 1;
+                else behaviors.push({ behavior: data.xpLadder.tier3Behavior, count: 1 });
+            }
+
+            if (data.userXp !== undefined) {
+                currentUser.level = data.userLevel;
+                currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
+                currentUser.xpForNextLevel = data.xpNeeded;
+                updateGamificationDisplay();
+                // Identity chip: refresh level ring + rank title from the fresh XP state.
+                try { updateIdentityChip(currentUser); } catch (e) { console.warn('Identity chip update failed', e); }
+                // Player card band: same fresh XP/level/streak, live after the turn.
+                try { if (window.PlayerStatsCard) window.PlayerStatsCard.refresh(currentUser); } catch (e) { console.warn('Player card refresh failed', e); }
+
+                // Show unlock proximity teaser (after level-up or when close)
+                if (data.xpLadder?.leveledUp) {
+                    setTimeout(() => showUnlockProximityTeaser(currentUser), 5000);
+                }
+            }
+
+            // Coins wallet: reflect the server balance locally so the status
+            // card's Coins slot shows live without a reload.
+            if (data.coins !== undefined) {
+                if (!currentUser.wallet) currentUser.wallet = {};
+                currentUser.wallet.coins = data.coins;
+                // Reflect the balance immediately ONLY when nothing was awarded.
+                // If coins WERE awarded, leave the counter on its old value so the
+                // coinFx count-up below can tick it up to the new total.
+                if (!(data.coinsAwarded > 0)) updateGamificationDisplay();
+            }
+
+            // Coins earned this turn (e.g. a level-up) — make it VISIBLE: coins
+            // fly to the counter, it ticks up, and a cha-ching plays.
+            if (data.coinsAwarded > 0) {
+                try {
+                    const sendBtn = document.getElementById('send-button') || document.getElementById('sendBtn');
+                    let origin;
+                    if (sendBtn) {
+                        const r = sendBtn.getBoundingClientRect();
+                        origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+                    }
+                    // Delay a beat so it lands after the XP/level-up flourish.
+                    setTimeout(() => showCoinReward(data.coinsAwarded, origin, data.coins), 600);
+                } catch (e) { console.warn('Coin reward FX failed', e); }
+            }
+
+            // Combo meter: advance/cool off the verified problem result (D1).
+            // null on neutral turns → the combo holds. No XP is attached (v1).
+            try { comboRegisterTurn(data.problemResult); } catch (e) { console.warn('Combo meter failed', e); }
+
+            // Session stats tracker update
+            if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
+                const isCorrect = data.problemResult === 'correct';
+                window.trackProblemAttempt(isCorrect);
+            }
+            // XP Ladder display
+            if (data.xpLadder) {
+                const xp = data.xpLadder;
+
+                if (xp.leveledUp) {
+                    triggerXpAnimation(`LEVEL UP! Level ${data.userLevel}`, true, false);
+                }
+
+                if (xp.tier3 > 0 && xp.tier3Behavior) {
+                    const behaviorLabels = {
+                        'explained_reasoning': 'Great reasoning!',
+                        'caught_own_error': 'Self-correction!',
+                        'strategy_selection': 'Smart strategy!',
+                        'persistence': 'Perseverance!',
+                        'transfer': 'Knowledge transfer!',
+                        'taught_back': 'Teaching mastery!'
+                    };
+                    const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
+                    triggerXpAnimation(`+${xp.tier3} XP - ${label}`, false, true);
+
+                    if (typeof window.showXpNotification === 'function') {
+                        window.showXpNotification(xp.tier3, label);
+                    }
+                } else if (xp.tier2 > 0) {
+                    const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
+                    if (typeof window.showXpNotification === 'function') {
+                        window.showXpNotification(xp.tier2, tier2Label);
+                    }
+                }
+
+                // Thinking Streak — consecutive turns that earned reasoning (tier-3
+                // behavior) XP. Rewards SUSTAINED REASONING, not correctness: a
+                // tier-2-only (correct, no reasoning credit) turn is neutral, while a
+                // turn that earns no performance/behavior XP breaks the streak. No XP
+                // number is shown here — the streak is a callout only, so the display
+                // never diverges from the server-authoritative XP totals.
+                if (xp.tier3 > 0) {
+                    window.__thinkingStreak = (window.__thinkingStreak || 0) + 1;
+                    if (window.__thinkingStreak >= 2) {
+                        triggerXpAnimation(`🔥 Thinking Streak x${window.__thinkingStreak}`, false, true);
+                    }
+                } else if (xp.tier2 === 0) {
+                    window.__thinkingStreak = 0;
+                }
+
+                // Inline XP attribution chip — show "+N XP — reason" in the chat message
+                if (xp.total > 0) {
+                    const messageElements = document.querySelectorAll('.message.ai');
+                    const latestMessage = messageElements[messageElements.length - 1];
+                    if (latestMessage && !latestMessage.querySelector('.xp-chip')) {
+                        const chip = document.createElement('div');
+                        chip.className = 'xp-chip';
+                        let chipText = `+${xp.total} XP`;
+                        if (xp.tier3 > 0 && xp.tier3Behavior) {
+                            const reasons = {
+                                'explained_reasoning': 'showed reasoning',
+                                'caught_own_error': 'self-corrected',
+                                'strategy_selection': 'smart strategy',
+                                'persistence': 'perseverance',
+                                'transfer': 'knowledge transfer',
+                                'taught_back': 'taught it back',
+                            };
+                            chipText += ` \u2014 ${reasons[xp.tier3Behavior] || 'exceptional'}`;
+                        } else if (xp.tier2 > 0) {
+                            chipText += xp.tier2Type === 'clean' ? ' \u2014 clean solve' : ' \u2014 correct';
+                        }
+                        chip.textContent = chipText;
+                        latestMessage.appendChild(chip);
+                    }
+                }
+
+                if ((xp.tier1 > 0 || xp.tier2 > 0 || xp.tier3 > 0) && window.MathMatixSurvey) {
+                    window.MathMatixSurvey.trackProblemSolved();
+                }
+            } else if (data.specialXpAwarded) {
+                const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
+                triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
+            }
+            // Gamification events (quest/challenge completions from server)
+            if (data.gamification) {
+                processGamificationEvents(data.gamification);
+
+                // Streak freeze notification
+                if (data.gamification.streakFreezeUsed) {
+                    setTimeout(() => {
+                        showToast(`Your streak was saved! Weekly freeze used to protect your streak.`, 'success', 6000);
+                    }, 1500);
+                }
+
+                // Streak lost notification
+                if (data.gamification.streakLost && data.gamification.streakLost >= 3) {
+                    setTimeout(() => {
+                        showToast(`Your ${data.gamification.streakLost}-day streak ended. Start a new one today!`, 'warning', 6000);
+                    }, 1500);
+                }
+            }
+
+            // Badge award celebration (from mastery chat)
+            if (data.badgeAwarded) {
+                processBadgeAward(data.badgeAwarded);
+            }
+}
+window.mmApplyTurnRewards = applyTurnRewards;
 function updateGamificationDisplay() {
     _updateGamificationDisplay(currentUser);
 }
@@ -3471,82 +3658,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.attachInlineCtaToLatestMessage(data.inlineCta);
             }
 
-            if (data.newlyUnlockedTutors && data.newlyUnlockedTutors.length > 0) {
-                showTutorUnlockCelebration(data.newlyUnlockedTutors);
-            }
-
-            // Avatar builder unlock celebration (Level 2)
-            if (data.avatarBuilderUnlocked) {
-                setTimeout(() => {
-                    showToast('Avatar Builder unlocked! Customize your look in Settings.', 6000);
-                    triggerConfetti();
-                }, 2000); // Delay so it doesn't overlap with level-up celebration
-            }
-
-            // Reconcile the Tier-3 behavior earned this turn into the local user
-            // so the identity chip's rank title advances live (the /user payload
-            // won't refresh until reload). Mirrors the server increment in
-            // xpEngine.applyXpToUser → xpLadderStats.tier3Behaviors.
-            if (data.xpLadder?.tier3 > 0 && data.xpLadder.tier3Behavior) {
-                if (!currentUser.xpLadderStats) currentUser.xpLadderStats = { tier3Behaviors: [] };
-                if (!Array.isArray(currentUser.xpLadderStats.tier3Behaviors)) currentUser.xpLadderStats.tier3Behaviors = [];
-                const behaviors = currentUser.xpLadderStats.tier3Behaviors;
-                const existing = behaviors.find(b => b.behavior === data.xpLadder.tier3Behavior);
-                if (existing) existing.count = (existing.count || 0) + 1;
-                else behaviors.push({ behavior: data.xpLadder.tier3Behavior, count: 1 });
-            }
-
-            if (data.userXp !== undefined) {
-                currentUser.level = data.userLevel;
-                currentUser.xpForCurrentLevel = Math.max(0, data.userXp);
-                currentUser.xpForNextLevel = data.xpNeeded;
-                updateGamificationDisplay();
-                // Identity chip: refresh level ring + rank title from the fresh XP state.
-                try { updateIdentityChip(currentUser); } catch (e) { console.warn('Identity chip update failed', e); }
-                // Player card band: same fresh XP/level/streak, live after the turn.
-                try { if (window.PlayerStatsCard) window.PlayerStatsCard.refresh(currentUser); } catch (e) { console.warn('Player card refresh failed', e); }
-
-                // Show unlock proximity teaser (after level-up or when close)
-                if (data.xpLadder?.leveledUp) {
-                    setTimeout(() => showUnlockProximityTeaser(currentUser), 5000);
-                }
-            }
-
-            // Coins wallet: reflect the server balance locally so the status
-            // card's Coins slot shows live without a reload.
-            if (data.coins !== undefined) {
-                if (!currentUser.wallet) currentUser.wallet = {};
-                currentUser.wallet.coins = data.coins;
-                // Reflect the balance immediately ONLY when nothing was awarded.
-                // If coins WERE awarded, leave the counter on its old value so the
-                // coinFx count-up below can tick it up to the new total.
-                if (!(data.coinsAwarded > 0)) updateGamificationDisplay();
-            }
-
-            // Coins earned this turn (e.g. a level-up) — make it VISIBLE: coins
-            // fly to the counter, it ticks up, and a cha-ching plays.
-            if (data.coinsAwarded > 0) {
-                try {
-                    const sendBtn = document.getElementById('send-button') || document.getElementById('sendBtn');
-                    let origin;
-                    if (sendBtn) {
-                        const r = sendBtn.getBoundingClientRect();
-                        origin = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-                    }
-                    // Delay a beat so it lands after the XP/level-up flourish.
-                    setTimeout(() => showCoinReward(data.coinsAwarded, origin, data.coins), 600);
-                } catch (e) { console.warn('Coin reward FX failed', e); }
-            }
-
-            // Combo meter: advance/cool off the verified problem result (D1).
-            // null on neutral turns → the combo holds. No XP is attached (v1).
-            try { comboRegisterTurn(data.problemResult); } catch (e) { console.warn('Combo meter failed', e); }
-
-            // Session stats tracker update
-            if (data.problemResult && typeof window.trackProblemAttempt === 'function') {
-                const isCorrect = data.problemResult === 'correct';
-                window.trackProblemAttempt(isCorrect);
-            }
+            applyTurnRewards(data);
 
             // Parallel worked example badge — show when AI is demonstrating with different numbers
             if (data.isParallelExample) {
@@ -3681,108 +3793,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // XP Ladder display
-            if (data.xpLadder) {
-                const xp = data.xpLadder;
 
-                if (xp.leveledUp) {
-                    triggerXpAnimation(`LEVEL UP! Level ${data.userLevel}`, true, false);
-                }
-
-                if (xp.tier3 > 0 && xp.tier3Behavior) {
-                    const behaviorLabels = {
-                        'explained_reasoning': 'Great reasoning!',
-                        'caught_own_error': 'Self-correction!',
-                        'strategy_selection': 'Smart strategy!',
-                        'persistence': 'Perseverance!',
-                        'transfer': 'Knowledge transfer!',
-                        'taught_back': 'Teaching mastery!'
-                    };
-                    const label = behaviorLabels[xp.tier3Behavior] || 'Exceptional!';
-                    triggerXpAnimation(`+${xp.tier3} XP - ${label}`, false, true);
-
-                    if (typeof window.showXpNotification === 'function') {
-                        window.showXpNotification(xp.tier3, label);
-                    }
-                } else if (xp.tier2 > 0) {
-                    const tier2Label = xp.tier2Type === 'clean' ? 'Clean solution!' : 'Correct!';
-                    if (typeof window.showXpNotification === 'function') {
-                        window.showXpNotification(xp.tier2, tier2Label);
-                    }
-                }
-
-                // Thinking Streak — consecutive turns that earned reasoning (tier-3
-                // behavior) XP. Rewards SUSTAINED REASONING, not correctness: a
-                // tier-2-only (correct, no reasoning credit) turn is neutral, while a
-                // turn that earns no performance/behavior XP breaks the streak. No XP
-                // number is shown here — the streak is a callout only, so the display
-                // never diverges from the server-authoritative XP totals.
-                if (xp.tier3 > 0) {
-                    window.__thinkingStreak = (window.__thinkingStreak || 0) + 1;
-                    if (window.__thinkingStreak >= 2) {
-                        triggerXpAnimation(`🔥 Thinking Streak x${window.__thinkingStreak}`, false, true);
-                    }
-                } else if (xp.tier2 === 0) {
-                    window.__thinkingStreak = 0;
-                }
-
-                // Inline XP attribution chip — show "+N XP — reason" in the chat message
-                if (xp.total > 0) {
-                    const messageElements = document.querySelectorAll('.message.ai');
-                    const latestMessage = messageElements[messageElements.length - 1];
-                    if (latestMessage && !latestMessage.querySelector('.xp-chip')) {
-                        const chip = document.createElement('div');
-                        chip.className = 'xp-chip';
-                        let chipText = `+${xp.total} XP`;
-                        if (xp.tier3 > 0 && xp.tier3Behavior) {
-                            const reasons = {
-                                'explained_reasoning': 'showed reasoning',
-                                'caught_own_error': 'self-corrected',
-                                'strategy_selection': 'smart strategy',
-                                'persistence': 'perseverance',
-                                'transfer': 'knowledge transfer',
-                                'taught_back': 'taught it back',
-                            };
-                            chipText += ` \u2014 ${reasons[xp.tier3Behavior] || 'exceptional'}`;
-                        } else if (xp.tier2 > 0) {
-                            chipText += xp.tier2Type === 'clean' ? ' \u2014 clean solve' : ' \u2014 correct';
-                        }
-                        chip.textContent = chipText;
-                        latestMessage.appendChild(chip);
-                    }
-                }
-
-                if ((xp.tier1 > 0 || xp.tier2 > 0 || xp.tier3 > 0) && window.MathMatixSurvey) {
-                    window.MathMatixSurvey.trackProblemSolved();
-                }
-            } else if (data.specialXpAwarded) {
-                const isLevelUp = data.specialXpAwarded.includes('LEVEL_UP');
-                triggerXpAnimation(data.specialXpAwarded, isLevelUp, !isLevelUp);
-            }
-
-            // Gamification events (quest/challenge completions from server)
-            if (data.gamification) {
-                processGamificationEvents(data.gamification);
-
-                // Streak freeze notification
-                if (data.gamification.streakFreezeUsed) {
-                    setTimeout(() => {
-                        showToast(`Your streak was saved! Weekly freeze used to protect your streak.`, 'success', 6000);
-                    }, 1500);
-                }
-
-                // Streak lost notification
-                if (data.gamification.streakLost && data.gamification.streakLost >= 3) {
-                    setTimeout(() => {
-                        showToast(`Your ${data.gamification.streakLost}-day streak ended. Start a new one today!`, 'warning', 6000);
-                    }, 1500);
-                }
-            }
-
-            // Badge award celebration (from mastery chat)
-            if (data.badgeAwarded) {
-                processBadgeAward(data.badgeAwarded);
-            }
 
             // "What's Next?" suggestion after key moments
             if (data.nextActions && data.nextActions.length > 0) {

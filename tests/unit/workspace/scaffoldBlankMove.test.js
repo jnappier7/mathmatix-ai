@@ -114,3 +114,20 @@ describe('the pipelineMessage classifies as the student\'s OWN step in observe',
     expect(obs.isBareProblemDrop).toBeFalsy();
   });
 });
+
+describe('algebraic blank fills (v1-limit closed, 2026-07-28)', () => {
+  test('"I got x+3" classifies ANSWER_ATTEMPT with the algebraic value intact', () => {
+    const { normalized } = processStudentMove(blankMove({ stepTex: '\\frac{x^2-9}{x-3} = \\boxed{}', value: 'x+3' }));
+    const obs = observe(normalized.pipelineMessage, { recentUserMessages: [], recentAssistantMessages: [] });
+    expect(obs.messageType).toBe(MESSAGE_TYPES.ANSWER_ATTEMPT);
+    expect(obs.answer.value).toBe('x+3');
+  });
+  test('"I got 2x" no longer truncates to "2"', () => {
+    const obs = observe('For the blank in that step on my board, I got 2x', { recentUserMessages: [], recentAssistantMessages: [] });
+    expect(obs.answer.value).toBe('2x');
+  });
+  test('an algebraic mention mid-prose still does NOT mint an answer', () => {
+    const obs = observe('I got x too small so I doubled it', { recentUserMessages: [], recentAssistantMessages: [] });
+    expect(obs.answer).toBeNull();
+  });
+});

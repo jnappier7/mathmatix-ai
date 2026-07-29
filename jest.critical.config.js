@@ -31,6 +31,7 @@ module.exports = {
     '<rootDir>/tests/unit/verifyMetrics.test.js',
     '<rootDir>/tests/unit/irt.test.js',
     '<rootDir>/tests/unit/knowledgeTracer.test.js',
+    '<rootDir>/tests/unit/workspace/scaffoldBlankMove.test.js',
     '<rootDir>/tests/unit/diagnoseArithmeticGuard.test.js',
     '<rootDir>/tests/unit/diagnoseMultiLineAnswer.test.js',
     '<rootDir>/tests/unit/diagnoseMultiStep.test.js',
