@@ -23,8 +23,14 @@
 
 'use strict';
 
-const { callLLMStructured } = require('../llmGateway');
+const { callLLM, callLLMStructured } = require('../llmGateway');
 const { BOARD_COMMAND_SCHEMA, normalizeBoardCommand, BOARD_ACTIONS } = require('../boardResponseSchema');
+const {
+  BOARD_TOOLS,
+  BOARD_TOOL_NAME,
+  isBoardToolModeEnabled,
+  boardCommandsFromToolCalls,
+} = require('../boardTools');
 const log = require('../logger');
 
 const boardLlmLogger = log.child({ service: 'board-llm' });
@@ -121,9 +127,11 @@ const BOARD_LLM_RESPONSE_FORMAT = {
 };
 
 /**
- * Build the two-message payload for the translator call.
+ * Build the two-message payload for the translator call. In tool mode the
+ * final instruction changes from "return board_commands" to "call
+ * update_board" — the card rules are identical either way.
  */
-function buildBoardLlmMessages({ chatText, moveType, pinnedProblem, teachingMode, allowedBoardActions, currentSkill }) {
+function buildBoardLlmMessages({ chatText, moveType, pinnedProblem, teachingMode, allowedBoardActions, currentSkill, toolMode = false }) {
   const payload = {
     chatText: chatText || '',
     moveType: moveType || null,
@@ -132,8 +140,11 @@ function buildBoardLlmMessages({ chatText, moveType, pinnedProblem, teachingMode
     allowedBoardActions,
     currentSkill: currentSkill || null,
   };
+  const system = toolMode
+    ? `${BOARD_TRANSLATOR_SYSTEM}\n\nDeliver the cards by calling the ${BOARD_TOOL_NAME} tool (its commands array uses the shapes above). Call it exactly once; an empty commands array is the correct call when there is nothing to mirror.`
+    : BOARD_TRANSLATOR_SYSTEM;
   return [
-    { role: 'system', content: BOARD_TRANSLATOR_SYSTEM },
+    { role: 'system', content: system },
     { role: 'user', content: JSON.stringify(payload) },
   ];
 }
@@ -167,26 +178,45 @@ async function proposeBoardCommands({ chatText, moveType, pinnedProblem, teachin
     };
   }
 
+  // Same protocol as the main tutor turn: when BOARD_TOOL_CALLS is on, the
+  // translator delivers cards via a forced update_board tool call instead of
+  // a structured-output JSON body. One board vocabulary, one validation path,
+  // on every board-emitting surface.
+  const toolMode = isBoardToolModeEnabled();
   const messages = buildBoardLlmMessages({
-    chatText, moveType, pinnedProblem, teachingMode, allowedBoardActions, currentSkill,
+    chatText, moveType, pinnedProblem, teachingMode, allowedBoardActions, currentSkill, toolMode,
   });
 
-  let parsed;
+  // `proposed` is normalized (compact guard shape) but not yet whitelisted.
+  let proposed;
   try {
-    parsed = await callLLMStructured(BOARD_LLM_MODEL, messages, BOARD_LLM_RESPONSE_FORMAT, {
-      temperature: 0,
-      timeoutMs: BOARD_LLM_TIMEOUT_MS,
-    });
+    if (toolMode) {
+      const completion = await callLLM(BOARD_LLM_MODEL, messages, {
+        temperature: 0,
+        timeoutMs: BOARD_LLM_TIMEOUT_MS,
+        tools: BOARD_TOOLS,
+        // The translator's only job is this one call — force it.
+        tool_choice: { type: 'function', function: { name: BOARD_TOOL_NAME } },
+        parallel_tool_calls: false,
+      });
+      proposed = boardCommandsFromToolCalls(completion?.choices?.[0]?.message?.tool_calls);
+    } else {
+      const parsed = await callLLMStructured(BOARD_LLM_MODEL, messages, BOARD_LLM_RESPONSE_FORMAT, {
+        temperature: 0,
+        timeoutMs: BOARD_LLM_TIMEOUT_MS,
+      });
+      const raw = Array.isArray(parsed && parsed.board_commands) ? parsed.board_commands : [];
+      proposed = raw.map(normalizeBoardCommand).filter(Boolean);
+    }
   } catch (err) {
     boardLlmLogger.warn('Board LLM call failed; deterministic fallback will fill the board', { error: err.message });
     return { commands: [], record: { status: 'error', error: err.message, moveType: moveType || null } };
   }
 
-  // Normalize to the compact guard shape, then enforce the move whitelist —
-  // alignment defense-in-depth before the call ever reaches the guard.
+  // Enforce the move whitelist — alignment defense-in-depth before the
+  // proposal ever reaches the guard.
   const allowed = new Set(allowedBoardActions);
-  const raw = Array.isArray(parsed && parsed.board_commands) ? parsed.board_commands : [];
-  const commands = raw.map(normalizeBoardCommand).filter(Boolean).filter(c => allowed.has(c.action));
+  const commands = proposed.filter(c => allowed.has(c.action));
 
   return {
     commands,
@@ -194,7 +224,7 @@ async function proposeBoardCommands({ chatText, moveType, pinnedProblem, teachin
       status: 'ok',
       moveType: moveType || null,
       allowedBoardActions,
-      proposedRaw: raw.length,
+      proposedRaw: proposed.length,
       proposedKept: commands.length,
     },
   };

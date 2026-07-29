@@ -188,7 +188,11 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
   `update_board` tool call (`utils/boardTools.js`) instead of inline `<BOARD/>` tags. Server-side
   translation only — tool calls map into `structuredBoardCommands`, which Stage 5b feeds through the
   same pedagogy guard/synthesizer/visual gate; the client contract is unchanged. Supersedes
-  `STRUCTURED_TUTOR_RESPONSE` when both are set (tools and response_format can't combine).
+  `STRUCTURED_TUTOR_RESPONSE` when both are set (tools and response_format can't combine). The flag
+  also switches the Stage 5b.0 Board-LLM translator (`pipeline/boardLlm.js`) to a forced
+  `update_board` call, so every text-path board surface shares one protocol. Voice board actions
+  (`[WRITE:]`/`<math>` tags in `voiceSession.js`) are deliberately NOT migrated — different
+  realtime protocol, coupled to TTS timing.
 
 ### Prompts (token-sensitive)
 - `utils/prompt.js` delegates to **`utils/promptCompact.js`** (the live, ~3-4K-token builder). The
