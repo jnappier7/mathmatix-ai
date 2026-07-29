@@ -1261,6 +1261,21 @@ async function runStudentTurn(req, res) {
         // BUT: if the student is clearly asking about something different
         // (homework, a specific problem they brought), relax the lock
         // so the tutor addresses their actual question.
+        // ACT BOOTCAMP OVERRIDES THE SCAFFOLD. When the student is working their
+        // own missed questions, a curriculum step anchor is not just redundant —
+        // it CONTRADICTS the review section above, and it lands in the last user
+        // message (the highest-attention slot) while the missed question sits
+        // back in the system prompt. So the tutor was being told "coach missed
+        // question #12" and "teach STEP 3/11: Ratios" in the same turn, and the
+        // step anchor won: it read as though the tutor had never been shown the
+        // question the student actually missed (owner report, 2026-07-29).
+        // courseSession.bootcamp is documented as REPLACING the gradual-release
+        // scaffold for act-prep; honor that here.
+        const actBootcampActive = !!(conversationContextForPrompt?.courseSession?.bootcamp?.phase);
+        if (actBootcampActive) {
+            courseScaffoldCtx = null;
+        }
+
         if (courseScaffoldCtx?.stepTitle && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {

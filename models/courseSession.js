@@ -33,6 +33,10 @@ const moduleProgressSchema = new Schema({
   checkpointScore: { type: Number },
   checkpointPassed: { type: Boolean, default: false },
   scaffoldProgress: { type: Number, default: 0, min: 0, max: 100 },
+  // Share of the real exam this module represents (ACT reporting-category
+  // percentage). Drives score-weighted progress in test-prep courses; null in
+  // curriculum courses, which weight modules equally.
+  examWeight: { type: Number, default: null },
   lessons: [lessonProgressSchema]
 }, { _id: false });
 

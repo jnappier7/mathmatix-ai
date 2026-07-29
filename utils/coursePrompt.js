@@ -1275,32 +1275,77 @@ function formatParentScaffoldStep(step, index, total) {
 }
 
 /**
- * Calculate blended overall progress, weighted by lesson count.
- * Content modules (with lessons) carry proportionally more weight
- * than checkpoint / exam modules (min weight 1).
- * Completed modules count as 100% of their weight; in-progress
- * modules contribute their scaffoldProgress share.
+ * Parse a pathway's authored exam weight into a number.
+ *
+ * ACT modules carry strings like "7-10%", "40-43%", "~25%" (a range, because
+ * the real exam varies form to form). A range resolves to its midpoint. These
+ * were authored from the start and read by nothing until now.
+ *
+ * @param {string|number|null} raw
+ * @returns {number|null} percentage points, or null when undeclared
+ */
+function parseExamWeight(raw) {
+  if (raw == null) return null;
+  if (typeof raw === 'number') return Number.isFinite(raw) && raw > 0 ? raw : null;
+  const nums = String(raw).match(/\d+(?:\.\d+)?/g);
+  if (!nums || nums.length === 0) return null;
+  const vals = nums.map(Number).filter(n => Number.isFinite(n) && n > 0);
+  if (vals.length === 0) return null;
+  // Range → midpoint; single value → itself.
+  const mid = vals.reduce((a, b) => a + b, 0) / vals.length;
+  return Math.round(mid * 10) / 10;
+}
+
+/**
+ * Calculate blended overall progress.
+ *
+ * Modules count equally, EXCEPT in exam-weighted courses (see the comment
+ * inside), where a module's share is its contribution to the real test score.
+ * Completed modules count fully; in-progress modules contribute their
+ * scaffoldProgress share.
  */
 function calculateOverallProgress(modules) {
   if (!modules || modules.length === 0) return 0;
 
-  // EVERY module counts the same. The old formula weighted a module by
+  // Modules count EQUALLY by default. The old formula weighted a module by
   // max(1, lessons.length), but only 7 of 15 pathways define lessons[] — and
   // in the ones that do, coverage is partial (e.g. algebra-1: 10 of 21). So a
   // module with lessons counted ~5x one without, and "43%" meant something
   // different in Algebra 1 than in ACT Prep. Uniform weighting makes the
   // number comparable across the catalog; within-module granularity comes from
   // scaffoldProgress, which is already step-based (owner review, 2026-07-29).
+  //
+  // EXCEPTION — exam-weighted courses. A test-prep course is not a curriculum:
+  // ACT reporting categories carry wildly different exam weight (Integrating
+  // Essential Skills is 40-43% of the real test, Number & Quantity 7-10%), and
+  // the pathway already authors those percentages. Where a session's modules
+  // carry examWeight, progress tracks SCORE CONTRIBUTION instead of module
+  // count, so finishing the 40% category moves the bar like it moves the score.
+  // Modules with no declared weight (checkpoints, the final practice test) get
+  // the mean of the declared ones, so every module still counts for something.
+  const declared = modules
+    .map(m => Number(m.examWeight))
+    .filter(w => Number.isFinite(w) && w > 0);
+  const meanDeclared = declared.length > 0
+    ? declared.reduce((a, b) => a + b, 0) / declared.length
+    : 0;
+  const weightOf = (mod) => {
+    if (declared.length === 0) return 1;
+    const w = Number(mod.examWeight);
+    return Number.isFinite(w) && w > 0 ? w : meanDeclared;
+  };
+
   let totalWeight = 0;
   let progressWeight = 0;
 
   for (const mod of modules) {
-    totalWeight += 1;
+    const weight = weightOf(mod);
+    totalWeight += weight;
 
     if (mod.status === 'completed') {
-      progressWeight += 1;
+      progressWeight += weight;
     } else if (mod.status === 'in_progress') {
-      progressWeight += (mod.scaffoldProgress || 0) / 100;
+      progressWeight += weight * ((mod.scaffoldProgress || 0) / 100);
     }
   }
 
@@ -1394,5 +1439,6 @@ module.exports = {
   buildParentCourseSystemPrompt,
   buildCourseGreetingInstruction,
   loadCourseContext,
-  calculateOverallProgress
+  calculateOverallProgress,
+  parseExamWeight
 };

@@ -183,6 +183,18 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
     sessionId:         courseSession._id,
     lessonId:          courseSession.currentLessonId || null,
 
+    // ── Course identity + ACT loop state ──
+    // ACT prep is not a gradual-release curriculum: it's a
+    // test → work-your-misses → re-test loop (see courseSession.bootcamp).
+    // The client already renders that loop instead of the Warm-up/Learn/
+    // Practice stepper — but it switches on `courseId` and reads `bootcamp`
+    // and `diagnosticPlan`, and this payload emitted none of them, so ACT
+    // students got the curriculum stepper and the loop view never appeared
+    // (owner: "ACT prep has a different format. It needs to." 2026-07-29).
+    courseId:          courseSession.courseId || null,
+    bootcamp:          courseSession.bootcamp || null,
+    diagnosticPlan:    courseSession.diagnosticPlan || null,
+
     rawPhaseKey,
     phaseLabel,
     phaseGroupKey,
