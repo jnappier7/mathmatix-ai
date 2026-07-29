@@ -178,9 +178,17 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
   transient-error fallback back to `TUTOR_FALLBACK_MODEL` (default `gpt-4o-mini`).
 - **`utils/anthropicClient.js`** is the Claude adapter — message translation (system messages hoisted
   to Claude's top-level `system`; consecutive same-role turns merged; **OpenAI `image_url` blocks
-  converted to Claude `image` sources**), schema sanitizing for structured output, and stop-reason
-  mapping. The image conversion is load-bearing: without it every turn after a photo upload 400s and
-  silently falls back to non-streaming.
+  converted to Claude `image` sources**), schema sanitizing for structured output, stop-reason
+  mapping, and **full tool-call translation** (OpenAI `tools`/`tool_choice` → Claude tools;
+  `tool_use` blocks → `message.tool_calls`; streaming `input_json_delta` → `delta.tool_calls`, so
+  generate.js's accumulator works identically on both providers). The image conversion is
+  load-bearing: without it every turn after a photo upload 400s and silently falls back to
+  non-streaming.
+- **Board tool mode** (`BOARD_TOOL_CALLS=true`, default off): the WorkBoard is driven by an
+  `update_board` tool call (`utils/boardTools.js`) instead of inline `<BOARD/>` tags. Server-side
+  translation only — tool calls map into `structuredBoardCommands`, which Stage 5b feeds through the
+  same pedagogy guard/synthesizer/visual gate; the client contract is unchanged. Supersedes
+  `STRUCTURED_TUTOR_RESPONSE` when both are set (tools and response_format can't combine).
 
 ### Prompts (token-sensitive)
 - `utils/prompt.js` delegates to **`utils/promptCompact.js`** (the live, ~3-4K-token builder). The
