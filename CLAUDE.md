@@ -294,6 +294,7 @@ npm run seed:playground / seed:test / seed:skills   # seed data
 | Billing / plans | `routes/billing.js`, `middleware/usageGate.js` |
 | Teacher/parent/admin dashboards | `routes/{teacher,parent,admin}.js` + matching `public/*-dashboard.html`/`.js` |
 | Chat UI / rendering | `public/js/script.js`, `public/js/inlineChatVisuals.js`, `public/css/chat*.css` |
+| Tutor teaching-quality regression / evals | `tests/eval/` — replayed-bug scenarios + behavioral personas through real observe→diagnose→decide; heuristic + LLM judges; live tier via `RUN_LLM_EVAL=1 npm run test:eval:live` |
 
 ---
 

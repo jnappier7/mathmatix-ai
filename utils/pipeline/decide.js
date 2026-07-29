@@ -384,7 +384,18 @@ function decideCore(observation, diagnosis, context) {
   }
 
   // ── Give-up / IDK streaks — exit ramp logic ──
-  if (msgType === MESSAGE_TYPES.GIVE_UP || streaks.giveUpCount >= 1) {
+  // A VERIFIED attempt this turn outranks a lingering give-up streak: the
+  // student who fished for the answer, got redirected, and then genuinely
+  // tried has re-engaged — grade the attempt (confirm or guide), don't
+  // exit-ramp past it. Before this guard, a verified-CORRECT answer after
+  // any give-up turn still decided exit_ramp (eval-harness finding,
+  // 2026-07-29). Unverifiable attempts keep the streak behavior — with no
+  // verdict, the parallel-problem ramp is still the right support.
+  const gradedAttemptThisTurn =
+    msgType === MESSAGE_TYPES.ANSWER_ATTEMPT &&
+    (diagnosis?.isCorrect === true || diagnosis?.isCorrect === false);
+
+  if (msgType === MESSAGE_TYPES.GIVE_UP || (streaks.giveUpCount >= 1 && !gradedAttemptThisTurn)) {
     // Special case (QA P1-1): the give-up carries its OWN fresh problem
     // ("just give me the answer to 3x + 7 = 22") and there's no problem
     // established yet. EXIT_RAMP tells the tutor to work a parallel problem

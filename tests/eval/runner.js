@@ -11,6 +11,9 @@
 'use strict';
 
 const { observe } = require('../../utils/pipeline/observe');
+const { diagnose } = require('../../utils/pipeline/diagnose');
+const { decide } = require('../../utils/pipeline/decide');
+const { deriveVerificationState, hasMathematicalContent } = require('../../utils/pipeline/verificationState');
 const { judgeReply } = require('./judges');
 
 function classify(studentMsg, history, scenario) {
@@ -19,6 +22,73 @@ function classify(studentMsg, history, scenario) {
     recentAssistantMessages: history.filter((m) => m.role === 'assistant').slice(-6),
     hasRecentUpload: !!scenario.hasRecentUpload,
   });
+}
+
+// Run the REAL diagnose → decide stages, deterministically: the LLM
+// verification promises are omitted, so grading falls to mathSolver /
+// symbolicVerifier exactly as it does for the ~30% solver-covered topics.
+// Mirrors the wiring in utils/pipeline/index.js (observe → verification
+// candidate → diagnose → verificationState stamp → decide).
+async function runDecideLayer(obs, student, history, scenario) {
+  const diagnosis = await diagnose(obs, {
+    recentAssistantMessages: history.filter((m) => m.role === 'assistant').slice(-6),
+    recentUserMessages: history.filter((m) => m.role === 'user').slice(-6),
+    activeSkill: scenario.activeSkill || null,
+    user: null,
+    lastProblemState: null,
+    pinnedProblemTex: scenario.pinnedProblemTex || null,
+    verificationCandidate: (obs.answer && obs.answer.value) || null,
+    llmVerificationPromise: null,
+    conceptualVerificationPromise: null,
+  });
+  // runPipeline stamps this after diagnose; the UNVERIFIED prompt branch
+  // depends on it, so the harness must stamp it too.
+  diagnosis.verificationState = deriveVerificationState(diagnosis, hasMathematicalContent(student));
+
+  const decision = decide(obs, diagnosis, {
+    phaseState: null,
+    activeSkill: scenario.activeSkill || null,
+    sessionMood: null,
+    evidence: null,
+    tutorPlan: null,
+    modeTransition: null,
+    hasRecentUpload: !!scenario.hasRecentUpload,
+    user: null,
+    conversation: { messages: history.map((m) => ({ role: m.role, content: m.content })) },
+  });
+  return { diagnosis, decision };
+}
+
+function checkDecideExpectations(expect, decision, checks) {
+  if (!expect) return;
+  if (Array.isArray(expect.actionOneOf)) {
+    checks.decideActionOneOf = {
+      got: decision.action,
+      want: expect.actionOneOf,
+      ok: expect.actionOneOf.includes(decision.action),
+    };
+  }
+  if (Array.isArray(expect.actionNotIn)) {
+    checks.decideActionNotIn = {
+      got: decision.action,
+      want: `none of ${JSON.stringify(expect.actionNotIn)}`,
+      ok: !expect.actionNotIn.includes(decision.action),
+    };
+  }
+  if (typeof expect.scaffoldLevelAtMost === 'number') {
+    checks.scaffoldLevelAtMost = {
+      got: decision.scaffoldLevel,
+      want: `<= ${expect.scaffoldLevelAtMost}`,
+      ok: decision.scaffoldLevel <= expect.scaffoldLevelAtMost,
+    };
+  }
+  if (typeof expect.diagnosisType === 'string') {
+    checks.diagnosisType = {
+      got: decision.diagnosis && decision.diagnosis.type,
+      want: expect.diagnosisType,
+      ok: (decision.diagnosis && decision.diagnosis.type) === expect.diagnosisType,
+    };
+  }
 }
 
 function checkExpectations(expect, obs) {
@@ -41,46 +111,91 @@ function checkExpectations(expect, obs) {
 }
 
 /**
- * @param {object} scenario  one entry from scenarios.json
+ * @param {object} scenario  one entry from scenarios.json / personas.json
  * @param {object} [opts]
  * @param {(args:{scenario,turnIndex,history,student})=>Promise<string>|string} [opts.generateReply]
  *        Produce the tutor's reply for this turn. Omit to run classification-only.
+ * @param {(args:{scenario,turn,decision,history})=>object} [opts.assemblePrompt]
+ *        Assemble the real prompt for `expectPrompt` checks. Injected (not
+ *        required here) because generate.js pulls in the OpenAI client at
+ *        module load — the caller mocks llmGateway first.
  * @returns {Promise<{name, turns, classificationPassed, judgesPassed, passed}>}
  */
 async function runScenario(scenario, opts = {}) {
-  const { generateReply } = opts;
+  const { generateReply, assemblePrompt } = opts;
   const history = [];
   const turns = [];
 
   for (let i = 0; i < scenario.turns.length; i++) {
     const turn = scenario.turns[i];
 
-    // A pre-seeded tutor line (context the student is responding to).
+    // A pre-seeded tutor line (context the student is responding to). May
+    // carry a problemResult stamp / problemInfo so streak- and grading-
+    // driven branches in observe/diagnose fire exactly as in production.
     if (turn.assistant) {
-      history.push({ role: 'assistant', content: turn.assistant });
+      history.push({
+        role: 'assistant',
+        content: turn.assistant,
+        ...(turn.problemResult ? { problemResult: turn.problemResult } : {}),
+        ...(turn.problemInfo ? { problemInfo: turn.problemInfo } : {}),
+      });
       continue;
     }
 
     const student = turn.student;
     const obs = classify(student, history, scenario);
     const checks = checkExpectations(turn.expect, obs);
+
+    // Decide layer — opt-in per turn. Runs the real diagnose → decide with
+    // the LLM boundary empty (deterministic), then asserts on the chosen
+    // instructional action and, optionally, the assembled prompt.
+    let decision = null;
+    if (turn.expectDecide || turn.expectPrompt) {
+      const layer = await runDecideLayer(obs, student, history, scenario);
+      decision = layer.decision;
+      checkDecideExpectations(turn.expectDecide, decision, checks);
+
+      if (turn.expectPrompt && assemblePrompt) {
+        const assembled = assemblePrompt({ scenario, turn, decision, history: [...history, { role: 'user', content: student }] });
+        const promptText = JSON.stringify(assembled.messages);
+        for (const needle of turn.expectPrompt.mustNotContain || []) {
+          checks[`promptMustNotContain(${needle})`] = {
+            got: promptText.includes(needle) ? 'present' : 'absent',
+            want: 'absent',
+            ok: !promptText.includes(needle),
+          };
+        }
+      }
+    }
+
     history.push({ role: 'user', content: student });
 
     let reply = null;
     let violations = [];
-    if (generateReply && Array.isArray(turn.judge) && turn.judge.length) {
+    const wantsReply = (Array.isArray(turn.judge) && turn.judge.length) || turn.judgeLlm;
+    if (generateReply && wantsReply) {
       reply = await generateReply({ scenario, turn, turnIndex: i, history, student });
-      const ctx = {
-        ...(turn.ctx || {}),
-        answer: turn.ctx?.answer ?? scenario.answer,
-        hasFocus: turn.ctx?.hasFocus ?? !!scenario.focus,
-        focusTerms: scenario.focusTerms || [],
-      };
-      violations = judgeReply(reply, turn.judge, ctx).violations;
+      if (Array.isArray(turn.judge) && turn.judge.length) {
+        const ctx = {
+          ...(turn.ctx || {}),
+          answer: turn.ctx?.answer ?? scenario.answer,
+          hasFocus: turn.ctx?.hasFocus ?? !!scenario.focus,
+          focusTerms: scenario.focusTerms || [],
+        };
+        violations = judgeReply(reply, turn.judge, ctx).violations;
+      }
       history.push({ role: 'assistant', content: reply });
     }
 
-    turns.push({ student, obs: { messageType: obs.messageType, answer: obs.answer, isBareProblemDrop: obs.isBareProblemDrop }, checks, reply, violations });
+    turns.push({
+      student,
+      obs: { messageType: obs.messageType, answer: obs.answer, isBareProblemDrop: obs.isBareProblemDrop },
+      decision: decision ? { action: decision.action, scaffoldLevel: decision.scaffoldLevel } : null,
+      judgeLlm: turn.judgeLlm || null,
+      checks,
+      reply,
+      violations,
+    });
   }
 
   const classificationPassed = turns.every((t) => Object.values(t.checks).every((c) => c.ok));
