@@ -41,6 +41,20 @@ function classifyOutcome(verdict) {
 }
 
 /**
+ * Which tier actually produced a resolved verdict. The LLM verifier runs the
+ * deterministic CAS first and tags those verdicts `symbolic:<method>` in the
+ * rationale, so the split is readable off the verdict without new plumbing.
+ * This is the baseline for any "should we widen the CAS" decision: it says how
+ * much the symbolic tier is already carrying.
+ * @param {Object} verdict
+ * @returns {string|null} 'symbolic' | 'llm' | null (nothing was resolved)
+ */
+function classifyResolver(verdict) {
+  if (!verdict || verdict.isCorrect === null || verdict.isCorrect === undefined) return null;
+  return /^symbolic:/.test(String(verdict.rationale || '')) ? 'symbolic' : 'llm';
+}
+
+/**
  * Record one verification attempt.
  * @param {Object} args
  * @param {Object} args.verdict - the (possibly escalated) verifier verdict
@@ -48,9 +62,23 @@ function classifyOutcome(verdict) {
  * @param {boolean} [args.escalationResolved] - whether escalation produced a verdict
  * @param {string|null} [args.tier] - the model that produced the final verdict
  * @param {number|null} [args.latencyMs] - wall-clock of the verification
+ * @param {string|null} [args.mathType] - mathSolver's parse type for the posed
+ *   problem ('quadratic_equation', 'derivative', … or 'unparsed'). The ranking
+ *   key: without it the ring says how often verification fails but not on what,
+ *   so coverage work is guesswork. Never the problem text itself — a bounded
+ *   taxonomy label carries no student content into the logs.
+ * @param {string|null} [args.skillId] - active skill, when the turn has one
  * @returns {Object} the stored record
  */
-function recordVerification({ verdict, escalated = false, escalationResolved = false, tier = null, latencyMs = null } = {}) {
+function recordVerification({
+  verdict,
+  escalated = false,
+  escalationResolved = false,
+  tier = null,
+  latencyMs = null,
+  mathType = null,
+  skillId = null,
+} = {}) {
   const outcome = classifyOutcome(verdict);
   const rec = {
     t: Date.now(),
@@ -58,6 +86,9 @@ function recordVerification({ verdict, escalated = false, escalationResolved = f
     escalated: !!escalated,
     escalationResolved: !!escalationResolved,
     tier,
+    resolvedBy: classifyResolver(verdict),
+    mathType,
+    skillId,
     confidence: verdict && typeof verdict.confidence === 'number' ? verdict.confidence : null,
     latencyMs,
   };
@@ -90,13 +121,29 @@ function aggregate() {
   const records = snapshot(RING_SIZE);
   const n = records.length;
   const byOutcome = Object.fromEntries(OUTCOMES.map((o) => [o, 0]));
+  const byResolver = { symbolic: 0, llm: 0 };
+  const perType = new Map();
   let escalated = 0;
   let escalationResolved = 0;
   for (const r of records) {
     byOutcome[r.outcome] = (byOutcome[r.outcome] || 0) + 1;
+    if (r.resolvedBy) byResolver[r.resolvedBy] = (byResolver[r.resolvedBy] || 0) + 1;
     if (r.escalated) escalated += 1;
     if (r.escalated && r.escalationResolved) escalationResolved += 1;
+    const key = r.mathType || 'unknown';
+    const bucket = perType.get(key) || { mathType: key, attempts: 0, unresolved: 0 };
+    bucket.attempts += 1;
+    if (r.outcome === 'low_confidence' || r.outcome === 'unverifiable') bucket.unresolved += 1;
+    perType.set(key, bucket);
   }
+  // The actionable output: which problem classes burn the unverifiable budget,
+  // ranked by absolute count so the top of the list is where widening the CAS
+  // (or adding a solver type) buys the most resolved turns — not by rate, which
+  // would float a type seen twice above one seen two hundred times.
+  const unresolvedByMathType = [...perType.values()]
+    .filter((b) => b.unresolved > 0)
+    .map((b) => ({ ...b, unresolvedRate: Number((b.unresolved / b.attempts).toFixed(4)) }))
+    .sort((a, b) => b.unresolved - a.unresolved);
   const resolved = byOutcome.verified_correct + byOutcome.verified_incorrect;
   const unresolved = byOutcome.low_confidence + byOutcome.unverifiable;
   const rate = (x) => (n > 0 ? Number((x / n).toFixed(4)) : 0);
@@ -112,6 +159,8 @@ function aggregate() {
     escalationResolveRate: escalated > 0 ? Number((escalationResolved / escalated).toFixed(4)) : 0,
     escalated,
     escalationResolved,
+    byResolver,
+    unresolvedByMathType,
   };
 }
 
@@ -125,6 +174,7 @@ function reset() {
 module.exports = {
   recordVerification,
   classifyOutcome,
+  classifyResolver,
   snapshot,
   aggregate,
   reset,

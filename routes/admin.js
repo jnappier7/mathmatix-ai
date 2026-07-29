@@ -1451,6 +1451,9 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
     // Answer-verifier health: the unverifiableRate is the headline — the share
     // of answer attempts the engine couldn't give a usable verdict on — plus how
     // often escalation to the stronger judge rescues those cases.
+    // `unresolvedByMathType` ranks WHICH problem classes burn that budget (the
+    // work-list for widening solver/CAS coverage), and `byResolver` splits how
+    // much the deterministic CAS is already carrying versus the LLM judge.
     verify: {
       aggregate: verifyMetrics.aggregate(),
       recent: verifyMetrics.snapshot(50),

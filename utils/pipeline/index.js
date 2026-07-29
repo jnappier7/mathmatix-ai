@@ -36,6 +36,7 @@ const {
   VERIFIER_MODEL,
 } = require('./llmVerifier');
 const { deriveVerificationState, hasMathematicalContent } = require('./verificationState');
+const { mathTypeOf } = require('./verifyTopic');
 const verifyMetrics = require('../verifyMetrics');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
@@ -228,6 +229,11 @@ async function runPipeline(message, ctx) {
         verifyMetrics.recordVerification({
           verdict,
           tier: `conceptual:${VERIFIER_MODEL}`,
+          // 'conceptual' rather than a solver type: the posed question is prose,
+          // so mathSolver's taxonomy doesn't apply and labelling it 'unparsed'
+          // would inflate that bucket with turns no CAS work could ever resolve.
+          mathType: 'conceptual',
+          skillId: ctx.activeSkill?.skillId || null,
           latencyMs: Date.now() - conceptualStart,
         });
         return verdict;
@@ -242,6 +248,10 @@ async function runPipeline(message, ctx) {
     const problemText = pickProblemContext(assistantContext);
     if (problemText) {
       const verifyStart = Date.now();
+      // Computed once, outside the .then/.catch, so both metric paths label the
+      // same turn identically even when the verifier rejects.
+      const mathType = mathTypeOf(problemText);
+      const verifySkillId = ctx.activeSkill?.skillId || null;
       // fullStudentMessage protects multi-part questions: the extracted
       // candidate is the FINAL value, but the reply may also carry the
       // intermediate sub-answers ("0.3 … 300") — the judge must see them
@@ -263,6 +273,8 @@ async function runPipeline(message, ctx) {
             escalated: verdict.escalated,
             escalationResolved: verdict.escalationResolved,
             tier: verdict.tier,
+            mathType,
+            skillId: verifySkillId,
             latencyMs: Date.now() - verifyStart,
           });
           return verdict;
@@ -270,7 +282,12 @@ async function runPipeline(message, ctx) {
         .catch(err => {
           console.error('[Pipeline] LLMVerify promise rejected:', err.message);
           const verdict = { isCorrect: null, confidence: 0, modelAnswer: null, rationale: null, error: err.message };
-          verifyMetrics.recordVerification({ verdict, latencyMs: Date.now() - verifyStart });
+          verifyMetrics.recordVerification({
+            verdict,
+            mathType,
+            skillId: verifySkillId,
+            latencyMs: Date.now() - verifyStart,
+          });
           return verdict;
         });
     }
