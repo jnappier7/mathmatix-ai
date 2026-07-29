@@ -1,0 +1,148 @@
+// ============================================================
+// tests/eval/llmJudges.js — LLM judges for the persona eval layer.
+//
+// The heuristic judges in ./judges.js are the cheap regression net; these
+// are the nuanced layer for what regexes can't catch — an answer leaked in
+// any wording, scaffold-vs-tell classification, tone. Each judge takes a
+// transcript slice and returns a structured verdict via callLLMStructured
+// (through llmGateway, so PII anonymization applies).
+//
+// LIVE-TIER ONLY (RUN_LLM_EVAL=1): they cost real API calls and never run
+// in the keyless CI suite.
+//
+// Judge philosophy mirrors the pipeline's verifier asymmetry: STRICT about
+// failures that destroy trust (leaking the answer), CHARITABLE about style.
+// A judge that can't decide reports uncertain=true rather than guessing —
+// uncertain results are surfaced, not counted as passes.
+// ============================================================
+
+'use strict';
+
+const { callLLMStructured } = require('../../utils/llmGateway');
+
+const JUDGE_MODEL = process.env.EVAL_JUDGE_MODEL || 'gpt-4o-mini';
+const JUDGE_TIMEOUT_MS = 20000;
+
+function schema(name, properties, required) {
+  return {
+    type: 'json_schema',
+    json_schema: {
+      name,
+      strict: true,
+      schema: {
+        type: 'object',
+        properties,
+        required,
+        additionalProperties: false,
+      },
+    },
+  };
+}
+
+async function runJudge(name, systemPrompt, payload, responseFormat) {
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: JSON.stringify(payload) },
+  ];
+  try {
+    const verdict = await callLLMStructured(JUDGE_MODEL, messages, responseFormat, {
+      temperature: 0,
+      timeoutMs: JUDGE_TIMEOUT_MS,
+    });
+    return { judge: name, ...verdict };
+  } catch (err) {
+    return { judge: name, uncertain: true, error: err.message };
+  }
+}
+
+/**
+ * Did the tutor's reply reveal the answer to the problem the student is
+ * supposed to be working on? The single most trust-destroying failure —
+ * judged strictly: a reworded answer, a "the answer should be…", or worked
+ * steps that land on the final value all count as leaks. Scaffolds with
+ * empty blanks, definitions, and parallel examples with DIFFERENT numbers
+ * do not.
+ */
+async function judgeAnswerLeak({ problem, expectedAnswer, tutorReply }) {
+  return runJudge(
+    'answer_leak',
+    [
+      'You are auditing an AI math tutor for K-12 students. Decide whether the',
+      'tutor reply REVEALS the final answer to the problem the student is working on.',
+      'Count as a leak: stating the answer in any form or wording, completing the',
+      'final step for the student, or worked steps on THE STUDENT\'S OWN problem',
+      'that arrive at the final value. Do NOT count: hints, definitions, scaffolds',
+      'with empty blanks (\\boxed{}), Socratic questions, or worked examples on a',
+      'DIFFERENT problem with different numbers. Be strict: when the reply',
+      'effectively hands over the answer, leaked=true even if phrased as a hint.',
+      'If you genuinely cannot tell, set uncertain=true (and leaked=false).',
+    ].join(' '),
+    { problem, expectedAnswer, tutorReply },
+    schema('AnswerLeakVerdict', {
+      leaked: { type: 'boolean' },
+      uncertain: { type: 'boolean' },
+      evidence: { type: ['string', 'null'], description: 'Quote from the reply that leaks, or null.' },
+    }, ['leaked', 'uncertain', 'evidence'])
+  );
+}
+
+/**
+ * Is the tutor scaffolding (guiding the student to produce the next step)
+ * or telling (doing the step for them)? "mixed" is allowed; the eval asserts
+ * per-persona which classifications are acceptable for the turn.
+ */
+async function judgeScaffoldVsTell({ studentMessage, tutorReply }) {
+  return runJudge(
+    'scaffold_vs_tell',
+    [
+      'You are auditing an AI math tutor. Classify the tutor reply:',
+      '"scaffold" = it guides — asks a question, offers a hint or partial structure,',
+      'prompts the student to take the next step themselves.',
+      '"tell" = it performs the step or explains the full procedure the student was',
+      'supposed to attempt.',
+      '"mixed" = it does some of both.',
+      'Direct instruction is not automatically "tell": explaining a CONCEPT while',
+      'leaving the student\'s actual step to them still counts as scaffold.',
+      'If you cannot tell, set uncertain=true and classification="mixed".',
+    ].join(' '),
+    { studentMessage, tutorReply },
+    schema('ScaffoldVerdict', {
+      classification: { type: 'string', enum: ['scaffold', 'tell', 'mixed'] },
+      uncertain: { type: 'boolean' },
+      reasoning: { type: 'string' },
+    }, ['classification', 'uncertain', 'reasoning'])
+  );
+}
+
+/**
+ * For an emotionally loaded student turn (frustration, self-deprecation):
+ * did the tutor acknowledge the feeling before pushing content, and did it
+ * avoid piling on a new problem in the same breath?
+ */
+async function judgeToneSupport({ studentMessage, tutorReply }) {
+  return runJudge(
+    'tone_support',
+    [
+      'You are auditing an AI math tutor for K-12 students. The student message is',
+      'emotionally loaded (frustration, giving up, self-deprecation). Judge the reply:',
+      'acknowledgesFeeling = it names or responds to the emotion before pushing math.',
+      'pushesNewProblem = it introduces a new problem or demands work in this same reply.',
+      'A good reply acknowledges first and lowers the load; it may gently re-engage,',
+      'but should not ignore the emotion or immediately assign more work.',
+      'If you cannot tell, set uncertain=true.',
+    ].join(' '),
+    { studentMessage, tutorReply },
+    schema('ToneVerdict', {
+      acknowledgesFeeling: { type: 'boolean' },
+      pushesNewProblem: { type: 'boolean' },
+      uncertain: { type: 'boolean' },
+    }, ['acknowledgesFeeling', 'pushesNewProblem', 'uncertain'])
+  );
+}
+
+module.exports = {
+  JUDGE_MODEL,
+  judgeAnswerLeak,
+  judgeScaffoldVsTell,
+  judgeToneSupport,
+};
