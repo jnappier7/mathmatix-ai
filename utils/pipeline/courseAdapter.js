@@ -24,6 +24,7 @@ const { buildCourseSystemPrompt, loadCourseContext, calculateOverallProgress } =
 const { processScaffoldAdvance, processModuleComplete, detectGraphTool } = require('./coursePersist');
 const { evaluateStepCompletion } = require('./stepEvaluator');
 const { buildProgressUpdate } = require('../progressState');
+const courseProgressMetrics = require('../courseProgressMetrics');
 const TUTOR_CONFIG = require('../tutorConfig');
 
 /**
@@ -291,8 +292,31 @@ async function advanceCourseProgress({
         }
       }
     }
+
+    // Telemetry at the choke point — this is the number that makes a silent
+    // progression outage visible (see utils/courseProgressMetrics.js).
+    courseProgressMetrics.recordProgression({
+      outcome: courseProgressUpdate?.event === 'module_complete' ? 'module_complete'
+        : courseProgressUpdate?.event === 'scaffold_advance' ? 'advanced'
+        : evalResult.complete ? 'gate_blocked'   // judged done, advance refused
+        : 'held',
+      mode: evalResult.mode,
+      courseId: courseSession.courseId,
+      moduleId: courseSession.currentModuleId,
+      stepIndex: currentScaffoldIdx,
+      stepTotal: (moduleData?.scaffold || []).length || null,
+      stepType: currentScaffoldStep?.type || currentScaffoldStep?.lessonPhase || null,
+      evidence: evalResult.evidence,
+    });
   } catch (evalErr) {
     console.error('[CourseAdapter] Step evaluator error:', evalErr.message);
+    courseProgressMetrics.recordProgression({
+      outcome: 'error',
+      courseId: courseSession.courseId,
+      moduleId: courseSession.currentModuleId,
+      stepIndex: currentScaffoldIdx,
+      evidence: evalErr.message,
+    });
   }
 
   // ── Build progress update ──

@@ -209,10 +209,50 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
 
     masterySignal:     null,
 
+    // Where this lesson sits inside its UNIT. Units exist in every pathway
+    // (modules carry `unit`) but nothing aggregated them, so a student could
+    // see module progress with no sense of the larger arc — and the breadcrumb
+    // read "Unit 1 › <module title>" with no unit-level readout at all
+    // (owner review, 2026-07-29).
+    unitProgress:      computeUnitProgress(courseSession),
+
     uiFlags,
     phaseGroups,
 
     updatedAt:         new Date().toISOString()
+  };
+}
+
+/**
+ * Aggregate the CURRENT module's unit: how many of its modules are done, and
+ * how far through the unit the student is. Partial credit for the in-progress
+ * module comes from scaffoldProgress, so the unit ring moves with the steps.
+ *
+ * @param {Object} courseSession
+ * @returns {{unit:number, label:string, moduleCount:number, modulesCompleted:number,
+ *            moduleIndex:number, pct:number}|null}
+ */
+function computeUnitProgress(courseSession) {
+  const modules = courseSession?.modules || [];
+  const current = modules.find(m => m.moduleId === courseSession.currentModuleId);
+  if (!current || current.unit == null) return null;
+
+  const unitModules = modules.filter(m => m.unit === current.unit);
+  if (unitModules.length === 0) return null;
+
+  let credit = 0;
+  for (const m of unitModules) {
+    if (m.status === 'completed') credit += 1;
+    else if (m.status === 'in_progress') credit += (m.scaffoldProgress || 0) / 100;
+  }
+
+  return {
+    unit: current.unit,
+    label: `Unit ${current.unit}`,
+    moduleCount: unitModules.length,
+    modulesCompleted: unitModules.filter(m => m.status === 'completed').length,
+    moduleIndex: unitModules.findIndex(m => m.moduleId === current.moduleId) + 1,
+    pct: Math.min(100, Math.max(0, Math.round((credit / unitModules.length) * 100))),
   };
 }
 
@@ -223,5 +263,6 @@ module.exports = {
   PHASE_LABELS,
   mapPhaseGroup,
   computePhaseGroupStatuses,
+  computeUnitProgress,
   buildProgressUpdate
 };

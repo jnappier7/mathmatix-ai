@@ -1284,17 +1284,23 @@ function formatParentScaffoldStep(step, index, total) {
 function calculateOverallProgress(modules) {
   if (!modules || modules.length === 0) return 0;
 
+  // EVERY module counts the same. The old formula weighted a module by
+  // max(1, lessons.length), but only 7 of 15 pathways define lessons[] — and
+  // in the ones that do, coverage is partial (e.g. algebra-1: 10 of 21). So a
+  // module with lessons counted ~5x one without, and "43%" meant something
+  // different in Algebra 1 than in ACT Prep. Uniform weighting makes the
+  // number comparable across the catalog; within-module granularity comes from
+  // scaffoldProgress, which is already step-based (owner review, 2026-07-29).
   let totalWeight = 0;
   let progressWeight = 0;
 
   for (const mod of modules) {
-    const weight = Math.max(1, (mod.lessons || []).length);
-    totalWeight += weight;
+    totalWeight += 1;
 
     if (mod.status === 'completed') {
-      progressWeight += weight;
+      progressWeight += 1;
     } else if (mod.status === 'in_progress') {
-      progressWeight += weight * ((mod.scaffoldProgress || 0) / 100);
+      progressWeight += (mod.scaffoldProgress || 0) / 100;
     }
   }
 

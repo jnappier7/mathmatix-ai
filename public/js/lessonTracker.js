@@ -329,6 +329,14 @@ class LessonTracker {
         }
 
         const parts = [];
+        // Unit first, with its own readout — "Unit 1 (2 of 3)" — so the student
+        // can see the larger arc, not just the module they're inside.
+        const up = pu.unitProgress;
+        if (up) {
+            parts.push(up.moduleCount > 1
+                ? `${up.label} (${up.moduleIndex} of ${up.moduleCount})`
+                : up.label);
+        }
         if (currentMod.title) parts.push(currentMod.title);
 
         const currentLesson = session.currentLessonId && currentMod.lessons
