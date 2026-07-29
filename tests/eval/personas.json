@@ -1,10 +1,9 @@
 {
   "_comment": "Behavioral PERSONAS — forward-looking multi-turn trajectories, complementing the replayed-regression scenarios in scenarios.json. Same runner, three assertion layers per student turn: `expect` (observe, deterministic), `expectDecide` (real diagnose→decide with the LLM boundary empty, deterministic), `expectPrompt` (assembled prompt must-not-contain, deterministic), plus `judge` (heuristic reply judges) and `judgeLlm` (LLM judges, live tier only). Expectations pin pedagogical INVARIANTS (action families, never-do actions), not exact single actions, so legitimate decide-stage tuning doesn't flake the suite. Where current behavior looked wrong during calibration it is documented in _knownIssues and deliberately NOT pinned.",
 
-  "_knownIssues": [
-    "observe: 'is it x = 8?' classifies as question (answer lost) — the x= form breaks the self-check answer-attempt pattern; bare 'is it 8?' works.",
-    "observe: 'ugh fine. is it x = 8?' classifies as frustration — an affect prefix swallows an embedded answer attempt.",
-    "decide: after an earlier give_up turn, a verified-CORRECT attempt still decides exit_ramp — the back-off streak outranks verified_correct. The redemption turn below asserts only the grading invariant (diagnosisType correct, never guide_incorrect), not the action."
+  "_knownIssues": [],
+  "_fixedByHarness": [
+    "2026-07-29: three calibration findings fixed and now PINNED below — (1) observe recognizes the x= form in self-checks ('is it x = 8?'); (2) an affect/hedge prefix no longer swallows an embedded attempt ('ugh fine. is it x = 8?' grades, with frustration kept as a context signal); (3) a VERIFIED attempt outranks a lingering give-up streak in decide (redemption confirms/guides instead of exit_ramp; unverifiable attempts keep the ramp)."
   ],
 
   "personas": [
@@ -40,9 +39,9 @@
         },
         { "assistant": "Deal is a hint, not the answer: what's on the same side as the x, and how could you get rid of it? 2x + 4 = 20" },
         {
-          "student": "is it 8?",
+          "student": "ugh fine. is it x = 8?",
           "expect": { "messageType": "answer_attempt", "answerValue": "8" },
-          "expectDecide": { "diagnosisType": "correct", "actionNotIn": ["guide_incorrect", "reteach_misconception"] }
+          "expectDecide": { "diagnosisType": "correct", "actionOneOf": ["confirm_correct", "acknowledge_progress"] }
         }
       ]
     },
@@ -141,6 +140,12 @@
           "student": "idk i guess",
           "expect": { "messageType": "idk" },
           "expectDecide": { "actionOneOf": ["scaffold_down", "hint", "probing_question", "switch_representation", "exit_ramp"] }
+        },
+        { "assistant": "Eighths work: 3/4 is the same as 6/8. So the problem is really 6/8 + 1/8." },
+        {
+          "student": "idk... is it 7/8?",
+          "expect": { "messageType": "answer_attempt", "answerValue": "7/8" },
+          "expectDecide": { "actionNotIn": ["guide_incorrect", "reteach_misconception"] }
         }
       ]
     }

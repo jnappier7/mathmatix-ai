@@ -62,7 +62,12 @@ const PATTERNS = {
   // cue so it doesn't fire on genuine questions ("what is 10/24?"). This is a
   // "check my answer" attempt: the value is theirs, so verifying it (and confirming
   // when correct) is safe and does not leak.
-  proposedAnswer: /\b(?:right|correct|is\s*it|isn'?t\s*it|is\s*that|isn'?t\s*that|equals?|equal\s*to|so\s*it'?s|so\s*is\s*it|would\s*it\s*be|would\s*that\s*be|maybe\s*it'?s)[\s:=?()'"]{0,4}(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[?.!]*$|\b(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[,.]?\s*(?:right|correct)\b\s*[?.!]*$/i,
+  // Either alternative accepts an optional single-letter variable prefix
+  // ("is it x = 8?", "x = 8, right?") — the value captured is still just the
+  // number/fraction, matching what the plain answer-extraction path yields
+  // for "x = 8". Without it, the x= form fell through to QUESTION and the
+  // attempt was lost (eval-harness finding, 2026-07-29).
+  proposedAnswer: /\b(?:right|correct|is\s*it|isn'?t\s*it|is\s*that|isn'?t\s*that|equals?|equal\s*to|so\s*it'?s|so\s*is\s*it|would\s*it\s*be|would\s*that\s*be|maybe\s*it'?s)[\s:=?()'"]{0,4}(?:[a-z]\s*=\s*)?(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[?.!]*$|\b(?:[a-z]\s*=\s*)?(-?\d+\s*\/\s*\d+|-?\d+(?:\.\d+)?)\s*[,.]?\s*(?:right|correct)\b\s*[?.!]*$/i,
   // Algebraic expression answers: 3x^2-3, x+2, -2x+5, 2x^2+3x-1
   algebraicExpr: /^(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*)\s*$/i,
   // "3 times 12 is 36", "36 divided by 2 is 18" — student states a full arithmetic result
@@ -674,13 +679,20 @@ function observe(message, context = {}) {
   // a student demanding the opposite.
   const assertsCompetence = PATTERNS.competenceAssertion.test(lower);
 
+  // An affect or hedge prefix must not swallow an embedded self-check
+  // attempt: "ugh fine. is it x = 8?" and "idk, is it 8?" are ATTEMPTS
+  // (grade them), not pure frustration/IDK (eval-harness finding,
+  // 2026-07-29). The affect is not lost — it is still recorded as a
+  // context signal above, so decide/mood see it either way.
+  const carriesProposedAnswer = PATTERNS.proposedAnswer.test(text);
+
   if (PATTERNS.giveUp.test(lower)) {
     messageType = MESSAGE_TYPES.GIVE_UP;
-  } else if (PATTERNS.idk.test(lower) && text.length < 50) {
+  } else if (PATTERNS.idk.test(lower) && text.length < 50 && !carriesProposedAnswer) {
     messageType = MESSAGE_TYPES.IDK;
   } else if (PATTERNS.skipRequest.test(lower) && text.length < 80) {
     messageType = MESSAGE_TYPES.SKIP_REQUEST;
-  } else if (PATTERNS.frustration.test(lower)) {
+  } else if (PATTERNS.frustration.test(lower) && !carriesProposedAnswer) {
     messageType = MESSAGE_TYPES.FRUSTRATION;
     confidence = 0.8;
   } else if (PATTERNS.helpRequest.test(lower) && !assertsCompetence) {
