@@ -118,6 +118,14 @@ function toAnthropicContent(content) {
 // Claude takes it as a top-level `system` string. Pull all system messages
 // out, concatenate them, and pass the rest through. Merge consecutive
 // same-role turns (Claude is stricter about alternation than OpenAI).
+// Coerce any translated content (string | block[]) to a block array so two
+// same-role turns can always be merged.
+function toBlocks(content) {
+  if (Array.isArray(content)) return content;
+  const text = typeof content === 'string' ? content : String(content ?? '');
+  return [{ type: 'text', text: text || ' ' }];
+}
+
 function splitSystemAndMessages(messages) {
   const systemParts = [];
   const convo = [];
@@ -127,11 +135,42 @@ function splitSystemAndMessages(messages) {
       systemParts.push(typeof m.content === 'string' ? m.content : JSON.stringify(m.content));
       continue;
     }
-    const role = m.role === 'assistant' ? 'assistant' : 'user';
-    const content = toAnthropicContent(m.content);
+
+    let role;
+    let content;
+    if (m.role === 'tool') {
+      // OpenAI tool-result turn → Claude tool_result block in a user turn
+      // (the tool-narration re-prompt sends these back after tool_calls).
+      role = 'user';
+      content = [{
+        type: 'tool_result',
+        tool_use_id: m.tool_call_id,
+        content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content ?? ''),
+      }];
+    } else {
+      role = m.role === 'assistant' ? 'assistant' : 'user';
+      content = toAnthropicContent(m.content);
+      // Assistant turn that carried tool_calls → append Claude tool_use blocks
+      // so the follow-up tool_result turns have ids to reference.
+      if (role === 'assistant' && Array.isArray(m.tool_calls) && m.tool_calls.length > 0) {
+        const blocks = (content == null || (typeof content === 'string' && !content.trim()))
+          ? []
+          : toBlocks(content);
+        for (const call of m.tool_calls) {
+          let input = {};
+          try { input = call.function?.arguments ? JSON.parse(call.function.arguments) : {}; } catch {}
+          blocks.push({ type: 'tool_use', id: call.id, name: call.function?.name, input });
+        }
+        content = blocks;
+      }
+    }
+
     const last = convo[convo.length - 1];
     if (last && last.role === role && typeof last.content === 'string' && typeof content === 'string') {
       last.content += `\n\n${content}`;
+    } else if (last && last.role === role && Array.isArray(last.content) && Array.isArray(content)) {
+      // e.g. consecutive tool_result turns → one user turn with all results
+      last.content.push(...content);
     } else {
       convo.push({ role, content });
     }
@@ -170,6 +209,56 @@ function toClaudeOutputConfig(responseFormat) {
   const schema = responseFormat?.json_schema?.schema;
   if (!schema) return null;
   return { format: { type: 'json_schema', schema: sanitizeSchema(schema) } };
+}
+
+// ── Tool translation ────────────────────────────────────────────────
+// OpenAI tools [{type:'function', function:{name, description, parameters}}]
+// → Claude tools [{name, description, input_schema}]. Schemas share the same
+// unsupported-keyword constraints as structured output, so reuse the
+// sanitizer. Without this translation, options.tools was silently dropped —
+// tool calling was a no-op whenever TUTOR_MODEL pointed at Claude.
+function toClaudeTools(tools) {
+  if (!Array.isArray(tools)) return null;
+  const out = [];
+  for (const t of tools) {
+    const fn = t?.type === 'function' ? t.function : null;
+    if (!fn || !fn.name) continue;
+    out.push({
+      name: fn.name,
+      description: fn.description || '',
+      input_schema: sanitizeSchema(fn.parameters || { type: 'object', properties: {} }),
+    });
+  }
+  return out.length ? out : null;
+}
+
+// OpenAI tool_choice → Claude tool_choice. parallel_tool_calls:false becomes
+// disable_parallel_tool_use on the choice object (Claude's location for it).
+function toClaudeToolChoice(toolChoice, parallelToolCalls) {
+  let choice;
+  if (toolChoice == null || toolChoice === 'auto') choice = { type: 'auto' };
+  else if (toolChoice === 'required') choice = { type: 'any' };
+  else if (toolChoice === 'none') choice = { type: 'none' };
+  else if (toolChoice?.type === 'function' && toolChoice.function?.name) {
+    choice = { type: 'tool', name: toolChoice.function.name };
+  } else choice = { type: 'auto' };
+  if (parallelToolCalls === false && choice.type !== 'none') {
+    choice.disable_parallel_tool_use = true;
+  }
+  return choice;
+}
+
+// Claude tool_use content blocks → OpenAI message.tool_calls shape
+// (arguments as a JSON string, which generate.js re-parses).
+function extractToolCalls(contentBlocks) {
+  const calls = (contentBlocks || [])
+    .filter((b) => b && b.type === 'tool_use')
+    .map((b) => ({
+      id: b.id,
+      type: 'function',
+      function: { name: b.name, arguments: JSON.stringify(b.input ?? {}) },
+    }));
+  return calls.length ? calls : null;
 }
 
 function mapStopReason(claudeStop) {
@@ -217,6 +306,11 @@ function buildBody(model, messages, options) {
     const oc = toClaudeOutputConfig(options.response_format);
     if (oc) body.output_config = oc;
   }
+  const claudeTools = toClaudeTools(options.tools);
+  if (claudeTools) {
+    body.tools = claudeTools;
+    body.tool_choice = toClaudeToolChoice(options.tool_choice, options.parallel_tool_calls);
+  }
   return body;
 }
 
@@ -232,13 +326,16 @@ async function callLLM(model, messages, options = {}) {
   console.log(`LOG: Calling Anthropic model (${model})`);
   const body = buildBody(model, messages, options);
   const msg = await client().messages.create(body, requestOptions(options));
+  const toolCalls = extractToolCalls(msg.content);
+  const message = { role: 'assistant', content: extractText(msg.content) };
+  if (toolCalls) message.tool_calls = toolCalls;
   return {
     id: msg.id,
     model: msg.model,
     choices: [
       {
         index: 0,
-        message: { role: 'assistant', content: extractText(msg.content) },
+        message,
         finish_reason: mapStopReason(msg.stop_reason),
       },
     ],
@@ -272,27 +369,65 @@ async function callLLMStructured(model, messages, responseFormat, options = {}) 
 }
 
 // ── callLLMStream — async-iterable of OpenAI-shaped chunks ──────────
-// Downstream code reads chunk.choices[0].delta.content (a string) and the
-// final chunk's finish_reason. We map Claude text deltas to that shape.
+// Downstream code reads chunk.choices[0].delta.content (a string), accumulates
+// delta.tool_calls keyed by index, and checks the final chunk's finish_reason.
+// We map Claude text deltas and tool_use/input_json_delta blocks to that shape.
+//
+// Exported as a pure generator over any Claude event iterable so the mapping
+// is unit-testable without the SDK.
+async function* openAiChunksFromClaudeEvents(claudeEvents) {
+  let finish = 'stop';
+  // Claude indexes content blocks per message; OpenAI indexes tool calls
+  // 0..n-1 across the response. Map block index → ordinal tool index.
+  const toolOrdinalByBlockIndex = new Map();
+  let nextToolOrdinal = 0;
+
+  for await (const event of claudeEvents) {
+    if (event.type === 'content_block_start' && event.content_block?.type === 'tool_use') {
+      const ordinal = nextToolOrdinal++;
+      toolOrdinalByBlockIndex.set(event.index, ordinal);
+      yield {
+        choices: [{
+          index: 0,
+          delta: {
+            tool_calls: [{
+              index: ordinal,
+              id: event.content_block.id,
+              type: 'function',
+              function: { name: event.content_block.name, arguments: '' },
+            }],
+          },
+          finish_reason: null,
+        }],
+      };
+    } else if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+      yield { choices: [{ index: 0, delta: { content: event.delta.text }, finish_reason: null }] };
+    } else if (event.type === 'content_block_delta' && event.delta?.type === 'input_json_delta') {
+      const ordinal = toolOrdinalByBlockIndex.get(event.index);
+      if (ordinal != null && event.delta.partial_json) {
+        yield {
+          choices: [{
+            index: 0,
+            delta: {
+              tool_calls: [{ index: ordinal, function: { arguments: event.delta.partial_json } }],
+            },
+            finish_reason: null,
+          }],
+        };
+      }
+    } else if (event.type === 'message_delta' && event.delta?.stop_reason) {
+      finish = mapStopReason(event.delta.stop_reason);
+    }
+  }
+  // Terminal chunk carrying finish_reason (mirrors OpenAI's last chunk).
+  yield { choices: [{ index: 0, delta: {}, finish_reason: finish }] };
+}
+
 async function callLLMStream(model, messages, options = {}) {
   console.log(`LOG: Calling Anthropic streaming (${model})`);
   const body = buildBody(model, messages, options);
   const claudeStream = client().messages.stream(body, requestOptions(options));
-
-  async function* openAiShapedChunks() {
-    let finish = 'stop';
-    for await (const event of claudeStream) {
-      if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
-        yield { choices: [{ index: 0, delta: { content: event.delta.text }, finish_reason: null }] };
-      } else if (event.type === 'message_delta' && event.delta?.stop_reason) {
-        finish = mapStopReason(event.delta.stop_reason);
-      }
-    }
-    // Terminal chunk carrying finish_reason (mirrors OpenAI's last chunk).
-    yield { choices: [{ index: 0, delta: {}, finish_reason: finish }] };
-  }
-
-  return openAiShapedChunks();
+  return openAiChunksFromClaudeEvents(claudeStream);
 }
 
 module.exports = {
@@ -306,4 +441,8 @@ module.exports = {
   sanitizeSchema,
   toClaudeOutputConfig,
   mapStopReason,
+  toClaudeTools,
+  toClaudeToolChoice,
+  extractToolCalls,
+  openAiChunksFromClaudeEvents,
 };

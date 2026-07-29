@@ -4,6 +4,10 @@
 
 const logger = require('../utils/logger').child({ service: 'assessment-service' });
 const Conversation = require('../models/conversation');
+const { valuesMatch, textAnswerMatch, expressionMatch } = require('../utils/answerComparison');
+
+// 1.5% relative tolerance on numeric answers (absolute 0.01 when the key is 0)
+const NUMBER_TOLERANCE = { relative: 0.015, zeroAbsolute: 0.01 };
 
 // Assessment question bank organized by grade level and difficulty
 const ASSESSMENT_BANK = {
@@ -279,32 +283,32 @@ function estimateCurrentDifficulty(conversation) {
  * @returns {boolean} True if correct
  */
 function checkAnswer(userAnswer, question) {
-  const cleanAnswer = userAnswer.trim().toLowerCase();
+  const cleanAnswer = String(userAnswer).trim().toLowerCase();
   const correctAnswer = String(question.correctAnswer).toLowerCase();
 
-  // Number answers — use relative tolerance to accept reasonable rounding
+  // Number answers — relative tolerance accepts reasonable rounding
   if (question.type === 'number') {
     const userNum = parseFloat(cleanAnswer.replace(/[^\d.-]/g, ''));
     const correctNum = parseFloat(correctAnswer);
     if (isNaN(userNum) || isNaN(correctNum)) return false;
-    if (correctNum === 0) return Math.abs(userNum) < 0.01;
-    return Math.abs(userNum - correctNum) / Math.abs(correctNum) < 0.015;
+    return valuesMatch(String(userNum), String(correctNum), NUMBER_TOLERANCE);
   }
 
-  // Fraction answers
+  // Fraction answers — mathematical equivalence, so "6/8" matches "3/4"
   if (question.type === 'fraction') {
-    return cleanAnswer.replace(/\s/g, '') === correctAnswer.replace(/\s/g, '');
+    return valuesMatch(cleanAnswer, correctAnswer);
   }
 
-  // Expression answers (simplified matching)
+  // Expression answers — normalized equality or boundary-checked containment
+  // ("f(x)=(x+3)(x-3)" matches "(x+3)(x-3)"; "12x" no longer matches "2x")
   if (question.type === 'expression') {
-    const userExpr = cleanAnswer.replace(/\s/g, '').replace(/\*\*/g, '^');
-    const correctExpr = correctAnswer.replace(/\s/g, '');
-    return userExpr === correctExpr || userExpr.includes(correctExpr);
+    return expressionMatch(cleanAnswer, correctAnswer);
   }
 
-  // Text answers
-  return cleanAnswer.includes(correctAnswer) || correctAnswer.includes(cleanAnswer);
+  // Text answers — token-boundary match in either direction, so "it is 42"
+  // matches key "42" and user "42" matches key "the answer is 42", but
+  // "it is 425" and a bare "4" no longer false-positive
+  return textAnswerMatch(cleanAnswer, correctAnswer, NUMBER_TOLERANCE);
 }
 
 /**

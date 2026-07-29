@@ -35,6 +35,13 @@ const {
   isConceptModelsGenerativeEnabled,
   buildConceptModelInstructions,
 } = require('../conceptModelPrompt');
+const {
+  BOARD_TOOLS,
+  isBoardToolCall,
+  isBoardToolModeEnabled,
+  boardCommandsFromToolCalls,
+  buildBoardToolInstructions,
+} = require('../boardTools');
 
 // Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
 // replacement / narration paths). Streaming chunks use the stateful
@@ -517,6 +524,18 @@ function assemblePrompt(decision, promptContext) {
       'validated and reliable — tags can be malformed.';
   }
 
+  // Board tool mode: the WorkBoard is driven by the update_board tool
+  // instead of inline <BOARD/> tags. Wiring tools here disables structured
+  // mode for the turn (generate() skips response_format whenever tools are
+  // present), so BOARD_TOOL_CALLS effectively supersedes
+  // STRUCTURED_TUTOR_RESPONSE when both are set.
+  if (isBoardToolModeEnabled()) {
+    options.tools = [...(options.tools || []), ...BOARD_TOOLS];
+    options.tool_choice = options.tool_choice || 'auto';
+    options.parallel_tool_calls = true;
+    fullSystemPrompt += '\n\n' + buildBoardToolInstructions();
+  }
+
   return {
     messages: [{ role: 'system', content: fullSystemPrompt }, ...messages],
     model: PRIMARY_CHAT_MODEL,
@@ -602,17 +621,26 @@ async function generate(assembled, options = {}) {
 
   // Tool-calling path: append dummy tool results and re-prompt for narration.
   if (Array.isArray(message.tool_calls) && message.tool_calls.length > 0) {
-    const resolved = resolveToolCalls(message.tool_calls);
-    const narrationText = await generateToolNarration(
-      model,
-      messages,
-      message,
-      llmOptions
-    );
+    // Board tool calls become structuredBoardCommands (Stage 5b input) and
+    // are kept out of the visual-tool resolution below; the narration
+    // re-prompt still sees ALL calls so the tool transcript stays paired.
+    const boardCommands = boardCommandsFromToolCalls(message.tool_calls);
+    const visualCalls = message.tool_calls.filter((c) => !isBoardToolCall(c.function?.name));
+    const resolved = visualCalls.length > 0 ? resolveToolCalls(visualCalls) : null;
+
+    // Claude routinely returns chat text AND tool_use in one response. When
+    // the turn already has its prose and only the board tool fired, the
+    // narration re-prompt would be a wasted second LLM call — skip it.
+    const priorText = (message.content || '').trim();
+    const needsNarration = !priorText || visualCalls.length > 0;
+    const narrationText = needsNarration
+      ? await generateToolNarration(model, messages, message, llmOptions)
+      : '';
     return {
-      text: narrationText || '',
-      toolCalls: message.tool_calls,
+      text: [priorText, narrationText].filter(Boolean).join('\n\n'),
+      toolCalls: visualCalls,
       resolvedTools: resolved,
+      ...(boardCommands.length > 0 ? { structuredBoardCommands: boardCommands } : {}),
     };
   }
 
@@ -772,9 +800,17 @@ async function generateStreaming(model, messages, llmOptions, res) {
     // then re-prompt for the narrative text.
     if (finishReason === 'tool_calls' && toolCallAccumulator.size > 0) {
       const toolCalls = Array.from(toolCallAccumulator.values());
-      const resolved = resolveToolCalls(toolCalls);
 
-      for (const call of toolCalls) {
+      // Board tool calls become structuredBoardCommands and take Stage 5b's
+      // guarded server-side path — they are NOT emitted as tool_use SSE
+      // events (the client renders the board from the `complete` payload,
+      // exactly as with tags/structured mode). Visual tools keep their
+      // existing live tool_use events.
+      const boardCommands = boardCommandsFromToolCalls(toolCalls);
+      const visualCalls = toolCalls.filter((c) => !isBoardToolCall(c.function?.name));
+      const resolved = visualCalls.length > 0 ? resolveToolCalls(visualCalls) : null;
+
+      for (const call of visualCalls) {
         let parsedInput = {};
         try {
           parsedInput = call.function.arguments ? JSON.parse(call.function.arguments) : {};
@@ -788,12 +824,17 @@ async function generateStreaming(model, messages, llmOptions, res) {
         }
       }
 
-      const narration = await generateToolNarration(
-        model,
-        messages,
-        { content: fullResponse || null, tool_calls: toolCalls },
-        llmOptions
-      );
+      // Same narration-skip as the non-streaming path: text already streamed
+      // plus a board-only tool call needs no second LLM round trip.
+      const needsNarration = !fullResponse.trim() || visualCalls.length > 0;
+      const narration = needsNarration
+        ? await generateToolNarration(
+            model,
+            messages,
+            { content: fullResponse || null, tool_calls: toolCalls },
+            llmOptions
+          )
+        : '';
 
       if (narration && !clientDisconnected) {
         const safeNarration = stripBoardTagsForStream(narration);
@@ -802,8 +843,9 @@ async function generateStreaming(model, messages, llmOptions, res) {
 
       return {
         text: (fullResponse + (narration ? (fullResponse ? '\n\n' : '') + narration : '')).trim() || '',
-        toolCalls,
+        toolCalls: visualCalls,
         resolvedTools: resolved,
+        ...(boardCommands.length > 0 ? { structuredBoardCommands: boardCommands } : {}),
       };
     }
 
