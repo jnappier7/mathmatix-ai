@@ -91,7 +91,10 @@
     if (!tex || typeof tex !== 'string') return tex || '';
     return tex.replace(
       /\\boxed\s*\{\s*(?:\\(?:[;,:! ]|quad|qquad)\s*)*\}/g,
-      '\\boxed{\\phantom{00}}'
+      // \vphantom{X^2_0} forces full ascender+descender height and
+      // \phantom{000} three digits of width, so the blank reads as a real
+      // slot to fill, not a hairline box (owner report, 2026-07-29).
+      '\\boxed{\\;\\vphantom{X^2_0}\\phantom{000}\\;}'
     );
   }
 
@@ -164,6 +167,9 @@
         blank.setAttribute('aria-label', 'fill in the blank ' + (i + 1));
         blank.setAttribute('inputmode', 'text');
         blank.autocomplete = 'off';
+        // A visible "?" until the student types — pairs with the CSS pulse
+        // on :placeholder-shown so an empty blank is unmissable.
+        blank.placeholder = '?';
         blank.addEventListener('keydown', function (e) {
           if (e.key === 'Enter') { e.preventDefault(); check(); }
         });
