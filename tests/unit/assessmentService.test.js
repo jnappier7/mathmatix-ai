@@ -60,15 +60,36 @@ describe('checkAnswer', () => {
     expect(checkAnswer('1/2', { type: 'fraction', correctAnswer: '3/4' })).toBe(false);
   });
 
+  test('fraction: accepts mathematically equivalent forms', () => {
+    expect(checkAnswer('6/8', { type: 'fraction', correctAnswer: '3/4' })).toBe(true);
+    expect(checkAnswer('0.75', { type: 'fraction', correctAnswer: '3/4' })).toBe(true);
+  });
+
   test('matches expression answers (treats ** as ^)', () => {
     expect(checkAnswer('8x^2+x', { type: 'expression', correctAnswer: '8x^2+x' })).toBe(true);
     expect(checkAnswer('8x**2+x', { type: 'expression', correctAnswer: '8x^2+x' })).toBe(true);
     expect(checkAnswer('(x+3)(x-3)', { type: 'expression', correctAnswer: '(x+3)(x-3)' })).toBe(true);
   });
 
-  test('text answers use bidirectional substring match', () => {
+  test('expression: containment requires a token boundary', () => {
+    // "f(x)=" prefix is fine — the key appears as a bounded unit
+    expect(checkAnswer('f(x)=(x+3)(x-3)', { type: 'expression', correctAnswer: '(x+3)(x-3)' })).toBe(true);
+    // "12x" must NOT match key "2x" (raw substring used to grade this correct)
+    expect(checkAnswer('12x', { type: 'expression', correctAnswer: '2x' })).toBe(false);
+  });
+
+  test('text answers match on whole tokens in either direction', () => {
     expect(checkAnswer('it is 42', { type: 'text', correctAnswer: '42' })).toBe(true);
     expect(checkAnswer('42', { type: 'text', correctAnswer: 'the answer is 42' })).toBe(true);
+  });
+
+  test('text: no substring false positives', () => {
+    // "425" contains "42" but is not the answer
+    expect(checkAnswer('it is 425', { type: 'text', correctAnswer: '42' })).toBe(false);
+    // a bare "4" appears inside "42" in the key phrase — must not pass
+    expect(checkAnswer('4', { type: 'text', correctAnswer: 'the answer is 42' })).toBe(false);
+    // an English-word fragment of the key must not pass
+    expect(checkAnswer('a', { type: 'text', correctAnswer: 'the answer is 42' })).toBe(false);
   });
 });
 

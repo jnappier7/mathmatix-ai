@@ -306,6 +306,8 @@ npm run seed:playground / seed:test / seed:skills   # seed data
   and are the baseline growth is measured against. Note the history records the **raw** theta
   alongside the guarded one — `growthGuard` damps what we *act on*, never what we *record*.
 - **Grade answers with `problem.checkAnswer()` (the schema method), never a hand-rolled compare.**
+  The comparison engine itself lives in `utils/answerComparison.js` — `problem.checkAnswer()` and
+  `assessmentService.checkAnswer()` are thin wrappers over it. Extend the engine, don't fork it.
   `models/problem.js` has no `correctAnswer` field — the real ones are `answer.value`,
   `answer.equivalents[]`, `answerType`, `options[]`, `correctOption`. The retired `routes/growthCheck.js`
   compared against `problem.correctAnswer`, i.e. `undefined`, and scored every student 0%.
