@@ -242,7 +242,13 @@ async function runPipeline(message, ctx) {
     const problemText = pickProblemContext(assistantContext);
     if (problemText) {
       const verifyStart = Date.now();
-      llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate)
+      // fullStudentMessage protects multi-part questions: the extracted
+      // candidate is the FINAL value, but the reply may also carry the
+      // intermediate sub-answers ("0.3 … 300") — the judge must see them
+      // as shown work, not competing answers.
+      llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate, {
+        fullStudentMessage: message,
+      })
         .then(verdict => {
           const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;
           if (verdict.isCorrect !== null) {
