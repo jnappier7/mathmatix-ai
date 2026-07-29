@@ -1861,6 +1861,16 @@ async function runPipeline(message, ctx) {
     // Tutor finished coaching the current missed question → advance the ACT
     // bootcamp review queue (handled in routes/chat.js after the pipeline).
     reviewNext: verified.extracted?.reviewNext || false,
+    // Course lesson progression (handled in routes/chat.js). These were
+    // extracted-and-dropped for months: verify stripped the tags from the
+    // text, chat.js then regex-tested the ALREADY-STRIPPED text, and the
+    // "backend evaluator" the strip comment deferred to only runs on
+    // /api/course-chat — not here, the live path. Net effect: no student
+    // ever advanced a scaffold step from chat.html (owner report,
+    // 2026-07-29: "a student never really progresses, restarting every
+    // session"). Same failure class LAUNCH_PRACTICE_ACT already solved.
+    scaffoldAdvance: verified.extracted?.scaffoldAdvance || false,
+    moduleComplete: verified.extracted?.moduleComplete || false,
     visualCommands: verified.visualCommands,
     boardCommands: verified.boardCommands || [],
     // Fix B: when set, the client opens an in-chat challenge card for this skill.
