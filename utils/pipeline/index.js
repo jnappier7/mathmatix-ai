@@ -508,6 +508,11 @@ async function runPipeline(message, ctx) {
     // For the one-ask guard: decide reads the LAST assistant message to know
     // whether the tutor already asked this student to explain this work.
     conversation: ctx.conversation || null,
+    // Course lessons don't use lessonPhaseManager phaseState — their state
+    // rides in the course prompt + _course metadata — so decide needs this
+    // flag to know the topic is already chosen (the student's-lead guard
+    // must launch the module, never offer a topic menu).
+    isCourseMode: !!ctx._course,
   });
 
   // Test-out: the challenge card is about to render below the tutor's reply, so
@@ -592,7 +597,13 @@ async function runPipeline(message, ctx) {
     ? false
     : (tutorPlan ? shouldSuppressSocratic(tutorPlan) : false);
 
-  if (tutorPlan) {
+  // The plan layer is the FREE-tutoring mental model ("we were into volume
+  // last time", current skill focuses). In a course lesson the pathway has
+  // already chosen the topic — injecting the plan layer there makes the
+  // tutor pitch last week's open-chat topics over the module content
+  // (production report, 2026-07-29: geometry topic menu inside ACT Math
+  // Prep). Course turns run on the course prompt alone.
+  if (tutorPlan && !ctx._course) {
     const planLayer = buildPlanLayer(tutorPlan, {
       skillResolution,
       interactionType: ctx.conversation?.conversationType || 'chat',
