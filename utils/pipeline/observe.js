@@ -50,6 +50,12 @@ const PATTERNS = {
   // (the value lands on the left because that's the side they computed).
   valueAssignment: /^(-?\d+\.?\d*(?:\s*\/\s*\d+)?)\s*=\s*[a-z]\s*[.!?]*$/i,
   answerPhrase: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s*(-?\d+\.?\d*(?:\s*\/\s*\d+)?)/i,
+  // The same cues followed by an ALGEBRAIC value at the END of the message —
+  // "for the blank I got x+3", "the answer is 2x". End-anchored so it never
+  // fires mid-prose ("I got x too small so I doubled it"), and tried BEFORE
+  // the numeric answerPhrase, whose digit-only capture used to truncate
+  // "I got 2x" to the answer "2" (board-blank lane, 2026-07-28).
+  answerPhraseAlgebraic: /(?:answer\s+is|i\s+got|it'?s|equals?|i\s+think\s+it'?s?|that'?s|so\s+it'?s)\s+(-?\d*[a-z](?:\^\{?-?\d+\}?)?(?:\s*[+\-]\s*\d*[a-z]?\d*(?:\^\{?-?\d+\}?)?)*)\s*[.!?]*$/i,
   // Proposed / self-check answer: a number or fraction the student offers for
   // confirmation — "…right? 10/24", "isn't that equal to 10/24?", "is it 5/12?",
   // "10/24, right?", "so it's 5". Anchored to the END and gated by a confirmation
@@ -195,6 +201,7 @@ function extractAnswer(message) {
     if ((match = text.match(PATTERNS.fraction))) return { value: match[1].replace(/\s/g, ''), raw };
     if ((match = text.match(PATTERNS.mixedNumber))) return { value: `${match[1]} ${match[2].replace(/\s/g, '')}`, raw };
     if ((match = text.match(PATTERNS.algebraicExpr))) return { value: match[1].replace(/\s/g, ''), raw };
+    if ((match = text.match(PATTERNS.answerPhraseAlgebraic))) return { value: match[1].replace(/\s/g, ''), raw };
     if ((match = text.match(PATTERNS.answerPhrase))) return { value: match[1].replace(/\s/g, ''), raw };
     if ((match = text.match(PATTERNS.arithmeticStatement))) return { value: match[1].replace(/\s/g, ''), raw };
   }

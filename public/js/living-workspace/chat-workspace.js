@@ -395,6 +395,12 @@
         if (text && typeof window.appendMessage === 'function') {
           window.appendMessage(text, 'ai');
         }
+        // Full celebration, same as a typed turn: XP ladder, level-ups, coins,
+        // quest events, badges (script.js applyTurnRewards — shared renderer).
+        // AFTER appendMessage so the inline XP chip lands on the reaction bubble.
+        if (resp && typeof window.mmApplyTurnRewards === 'function') {
+          try { window.mmApplyTurnRewards(resp); } catch (err) { console.error('[LWS_CHAT] turn rewards failed', err); }
+        }
       }).catch(function (err) { console.error('[LWS_CHAT] blank move failed', err); });
     } catch (err) { console.error('[LWS_CHAT] blank move failed', err); }
   });
