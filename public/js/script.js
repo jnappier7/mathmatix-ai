@@ -171,8 +171,12 @@ function applyTurnRewards(data) {
                     window.__thinkingStreak = 0;
                 }
 
-                // Inline XP attribution chip — show "+N XP — reason" in the chat message
-                if (xp.total > 0) {
+                // Inline XP attribution chip — show "+N XP — reason" in the chat message.
+                // EARNED moments only (owner, 2026-07-29): tier-1 participation
+                // XP still accrues server-side, but announcing "+3 XP" on every
+                // breath made real rewards invisible. A chip appears only when
+                // the turn earned performance (tier 2) or behavior (tier 3) XP.
+                if (xp.tier2 > 0 || xp.tier3 > 0) {
                     const messageElements = document.querySelectorAll('.message.ai');
                     const latestMessage = messageElements[messageElements.length - 1];
                     if (latestMessage && !latestMessage.querySelector('.xp-chip')) {
@@ -2861,6 +2865,25 @@ document.addEventListener("DOMContentLoaded", () => {
     
     function showThinkingIndicator(show) {
         if (thinkingIndicator) thinkingIndicator.style.display = show ? "flex" : "none";
+        // Every new wait starts from the generic label; stage statuses from
+        // the pipeline (type:'status' SSE events) refine it as they arrive.
+        if (show) setThinkingStatus(null);
+    }
+
+    // Honest pipeline-stage status under the thinking dots ("checking" fires
+    // while the math verifier runs, "writing" as the reply starts to stream).
+    // Persona-aware: uses the selected tutor's name when available.
+    function setThinkingStatus(stage) {
+        if (!thinkingIndicator) return;
+        const textEl = thinkingIndicator.querySelector('.thinking-indicator-text');
+        if (!textEl) return;
+        const name = (window.TUTOR_CONFIG && currentUser?.selectedTutorId
+            && window.TUTOR_CONFIG[currentUser.selectedTutorId]?.name) || 'Your tutor';
+        const labels = {
+            checking: `${name} is checking your work…`,
+            writing: `${name} is writing back…`,
+        };
+        textEl.textContent = labels[stage] || `${name} is thinking...`;
     }
 
     /**
@@ -3285,12 +3308,17 @@ document.addEventListener("DOMContentLoaded", () => {
                                 }
                                 fullText += event.content;
                                 appendStreamingChunk(streamRef, event.content);
+                            } else if (event.type === 'status' && event.stage) {
+                                // Pipeline stage marker — refine the thinking
+                                // label while the student waits (real stages,
+                                // never fake progress).
+                                setThinkingStatus(event.stage);
                             } else if (event.type === 'session_rolled') {
                                 // The idle gap outlived the session window: the
                                 // server started a new conversation. Drop the
                                 // previous one's transcript and board before the
                                 // reply lands on top of them.
-                                applySessionRollover(event.data && event.data.conversationId);
+                                applySessionRollover(event.data && event.data.conversationId, event.data && event.data.recap);
                             } else if (event.type === 'replacement' && event.content) {
                                 // Server sent a replacement (e.g., after streaming fallback)
                                 if (!streamRef) {
@@ -3385,7 +3413,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Non-streaming turns learn about a session rollover here; streaming
             // ones already got the `session_rolled` event before the first chunk.
             if (!wasStreamed && data.sessionRolled) {
-                applySessionRollover(data.conversationId);
+                applySessionRollover(data.conversationId, data.sessionRecap);
             }
             let graphData = null;
             const graphRegex = /\[GRAPH:(\{[^}]*\})\]/;
@@ -5661,7 +5689,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * Everything before the message the student just sent is removed, so their
      * own turn survives and the reply lands on a clean surface.
      */
-    function applySessionRollover(conversationId) {
+    function applySessionRollover(conversationId, recap) {
         if (conversationId) window.currentConversationId = conversationId;
 
         if (chatBox) {
@@ -5676,6 +5704,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 while (boundary.previousSibling) chatBox.removeChild(boundary.previousSibling);
             } else {
                 chatBox.innerHTML = '';
+            }
+            // Closure beat: the last session's work doesn't just vanish — a
+            // small recap card marks what they accomplished before the fresh
+            // start. Server-built from the conversation that rolled.
+            if (recap && (recap.solved > 0 || recap.minutes > 0)) {
+                const card = document.createElement('div');
+                card.className = 'session-recap-card';
+                card.setAttribute('role', 'note');
+                card.style.cssText = 'margin:10px auto 14px;max-width:420px;padding:10px 16px;border-radius:12px;background:rgba(109,94,240,0.08);border:1px solid rgba(109,94,240,0.25);font-size:13px;text-align:center;color:inherit;';
+                const bits = [];
+                if (recap.solved > 0) bits.push(`<strong>${recap.solved}</strong> solved`);
+                if (recap.minutes > 0) bits.push(`${recap.minutes} min`);
+                card.innerHTML = `📋 Last session${recap.topic ? ` — <strong>${String(recap.topic).replace(/[<>&]/g, '')}</strong>` : ''}: ${bits.join(' · ')}. Nice work — fresh page today.`;
+                chatBox.insertBefore(card, chatBox.firstChild);
             }
             try { updateChatWatermark(); } catch { /* non-blocking */ }
         }

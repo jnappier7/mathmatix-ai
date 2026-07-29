@@ -190,6 +190,15 @@ async function runPipeline(message, ctx) {
   // and the assertion invariant then stops the tutor repeating a rejection it
   // can no longer support. Note what this deliberately is NOT: pushback alone
   // never earns a concession. The tutor concedes only if verification says so.
+  // Honest stage status for the streaming client (owner, 2026-07-29): the
+  // wait before the first token is the most-felt latency in the app, and the
+  // pipeline genuinely knows what it is doing during it. These are REAL stage
+  // markers, never fake progress — emitted only on the streaming path.
+  const emitStatus = (stage) => {
+    if (!ctx.stream || !ctx.res) return;
+    try { ctx.res.write(`data: ${JSON.stringify({ type: 'status', stage })}\n\n`); } catch (_) { /* stream gone */ }
+  };
+
   let llmVerificationPromise = null;
   const disputedSubmission = observation.isDispute
     ? lastStudentMathSubmission(recentUserMessages)
@@ -197,6 +206,7 @@ async function runPipeline(message, ctx) {
   const verificationCandidate = observation.answer?.value
     || (!observation.isBareProblemDrop ? extractBareExpression(message) : null)
     || disputedSubmission;
+  if (verificationCandidate) emitStatus('checking');
 
   // ── Which verifier is the right one for this turn ──
   // A CONCEPTUAL question ("what distinguishes a vertical asymptote from a
@@ -639,6 +649,7 @@ async function runPipeline(message, ctx) {
 
   let generatedResult;
   if (ctx.stream && ctx.res) {
+    emitStatus('writing');
     generatedResult = await generate(assembled, { stream: true, res: ctx.res });
   } else {
     generatedResult = await generate(assembled);

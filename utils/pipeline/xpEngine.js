@@ -109,17 +109,29 @@ function applyXpToUser(user, breakdown) {
     levelsGained += 1;
   }
 
-  // Coins for leveling up (earned soft currency; server-authoritative, capped).
+  // Coins (earned soft currency; server-authoritative, daily-capped in
+  // coinEngine so no path can mint unbounded currency).
   let coinsAwarded = 0;
-  if (levelsGained > 0) {
-    try {
-      const { awardCoins } = require('../coinEngine');
-      const perLevel = (BRAND_CONFIG.coinRewards && BRAND_CONFIG.coinRewards.levelUp) || 0;
-      coinsAwarded = awardCoins(user, perLevel * levelsGained, 'level_up').awarded;
-    } catch (err) {
-      // Non-blocking: coin failures must never break XP/leveling.
-      console.error('[xpEngine] coin award failed:', err.message);
+  try {
+    const { awardCoins } = require('../coinEngine');
+    const rewards = BRAND_CONFIG.coinRewards || {};
+    // Per verified-correct solve (owner ask, 2026-07-29): tier2 XP is only
+    // ever minted off a VERIFIED correct answer, so it is the safe hook —
+    // anti-gaming, the answer-injection gate, and the math verifier all sit
+    // upstream of it. A clean solve earns the clean rate INSTEAD of stacking.
+    if (breakdown.tier2 > 0) {
+      const per = breakdown.tier2Type === 'clean'
+        ? (rewards.cleanSolve || 0)
+        : (rewards.correctAnswer || 0);
+      coinsAwarded += awardCoins(user, per, breakdown.tier2Type === 'clean' ? 'clean_solve' : 'correct_answer').awarded;
     }
+    // Coins for leveling up (pre-existing).
+    if (levelsGained > 0) {
+      coinsAwarded += awardCoins(user, (rewards.levelUp || 0) * levelsGained, 'level_up').awarded;
+    }
+  } catch (err) {
+    // Non-blocking: coin failures must never break XP/leveling.
+    console.error('[xpEngine] coin award failed:', err.message);
   }
 
   // Tutor unlocks (variable ratio with behavior triggers)
