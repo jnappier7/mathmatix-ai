@@ -555,7 +555,7 @@ const learningProfileSchema = new Schema({
 
   // A finished Growth Check the tutor hasn't debriefed yet.
   //
-  // The check ends in the FloatingScreener (or on growth-check.html), NOT in
+  // The check ends in the FloatingScreener (or on /screener.html), NOT in
   // the chat transcript — so without this the student got a stats card and
   // silence, even though the chat intercept promised "come back here when
   // you're done." Completion stashes the utils/growthSummary payload here;

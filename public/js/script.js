@@ -808,7 +808,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('growth-check-complete', () => { requestGrowthCheckDebrief(); });
 
     // Fired on load when the server still owes a debrief — the student finished
-    // on growth-check.html, or closed the tab before the wrap-up.
+    // on /screener.html, or closed the tab before the wrap-up.
     document.addEventListener('growth-check-debrief-pending', () => { requestGrowthCheckDebrief(); });
 
     // ── Notebook idea offer (Live Workspace §7.6) ──

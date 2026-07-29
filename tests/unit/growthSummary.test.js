@@ -4,8 +4,7 @@
  * Before this, a check ended on a stats card: no comparison to last time, no
  * named skills, no next step — and the tutor, who had just said "come back
  * here when you're done", never mentioned it again. These tests pin the shape
- * of the summary both flows (routes/screener.js and routes/growthCheck.js)
- * hand to the results screen AND to the tutor's debrief, so the card and the
+ * of the summary routes/screener.js hands to the results screen AND to the tutor's debrief, so the card and the
  * tutor can never tell two different stories.
  */
 

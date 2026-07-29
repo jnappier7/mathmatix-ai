@@ -36,7 +36,9 @@ const { assessedLevel } = require('../utils/gradeLevel');
 const { setSkillMasteryEntry } = require('../utils/masteryGuard');
 // The Growth Check's completion moment (previous vs new level, skills
 // confirmed / needing review / newly reachable, ONE suggested next step).
-// Shared with routes/growthCheck.js so both flows close the same way.
+// This is now the ONLY growth-check flow — routes/growthCheck.js was a second,
+// diverged CAT that graded every answer against problem.correctAnswer (a field
+// the Problem schema has never had) and has been retired.
 const { buildGrowthCheckSummary, deriveSkillHighlights } = require('../utils/growthSummary');
 // A 5-8 item check must not cost a student their level on a bad day.
 const { dampGrowthCheckDrop } = require('../utils/growthGuard');
@@ -1428,7 +1430,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
       assessmentCount: user.assessmentHistory?.length || 0,
       // A finished check the tutor still owes a wrap-up for. The client polls
       // this on every chat load, which is what makes the debrief survive the
-      // student closing the tab or finishing on growth-check.html — the
+      // student closing the tab or finishing on /screener.html — the
       // greeting path alone would miss a live in-progress session.
       growthCheckDebriefPending: !!user.learningProfile?.pendingGrowthCheckDebrief?.summary
     });

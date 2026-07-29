@@ -112,12 +112,17 @@ describe('the seam stays closed at its call sites', () => {
     expect(src).toContain('gradeLevelToBand(resolveGradeLevel(user))');
   });
 
-  test('growthCheck imports what it calls (PR #1343 shipped resolveTheta/thetaWritePatch with no require) and syncs the level string', () => {
-    const src = read('../../routes/growthCheck.js');
+  // Was pinned against routes/growthCheck.js, now retired — the growth check is
+  // the screener with sessionType 'growth-check', so the level-sync guarantee
+  // has to hold on the screener's completion path instead.
+  test('a growth check syncs the level string off the GUARDED ability', () => {
+    const src = read('../../routes/screener.js');
     expect(src).toContain("require('../utils/theta')");
     // The level string follows the GUARDED ability (utils/growthGuard.js), so
     // one bad 5-8 item check can't rewrite the pathway the tutor teaches from.
-    expect(src).toContain('assessedLevelWritePatch(thetaToGradeLevel(appliedTheta).gradeLevel)');
+    // Deriving it from report.theta here would be the bug.
+    expect(src).toContain('const gradeLevelResult = thetaToGradeLevel(appliedTheta);');
+    expect(src).toContain('user.mathCourse = gradeLevelResult.gradeLevel;');
   });
 
   test('screener completion still writes every home of every dual field', () => {

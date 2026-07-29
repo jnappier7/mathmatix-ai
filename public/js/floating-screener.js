@@ -156,7 +156,7 @@ class FloatingScreener {
         this.growthCheckDue = data.growthCheckDue;
         this.currentGradeLevel = data.currentGradeLevel;
         // A finished check the tutor never got to debrief (student closed the
-        // tab, or finished on growth-check.html). Chat picks this up on load.
+        // tab, or finished on /screener.html). Chat picks this up on load.
         this.growthCheckDebriefPending = !!data.growthCheckDebriefPending;
         if (this.growthCheckDebriefPending) {
           document.dispatchEvent(new CustomEvent('growth-check-debrief-pending'));

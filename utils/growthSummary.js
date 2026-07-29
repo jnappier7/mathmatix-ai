@@ -3,9 +3,10 @@
    growthSummary.js — ONE student-readable answer to "what did my
    Growth Check just tell me, and what should I do next?"
 
-   Two flows finish a growth check (the FloatingScreener via
-   routes/screener.js, and the standalone page via routes/growthCheck.js)
-   and BOTH used to end on a generic results card with no comparison to
+   A growth check finishes in the FloatingScreener or on
+   /screener.html?mode=growth-check — both via routes/screener.js. (A third
+   path, the standalone routes/growthCheck.js, has been retired.) It used to
+   end on a generic results card with no comparison to
    the previous level, no named skills, and no next step — while the chat
    intercept promised "come back here and we'll pick up where we left
    off." This module is the shared closure: both routes build the same

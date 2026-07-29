@@ -75,7 +75,6 @@ const curriculumRoutes = require('../routes/curriculum');
 const assessmentRoutes = require('../routes/assessment');
 const screenerRoutes = require('../routes/screener');
 const checkpointRoutes = require('../routes/checkpoint');
-const growthCheckRoutes = require('../routes/growthCheck');
 const actTestRoutes = require('../routes/actTest');
 const calcBootcampRoutes = require('../routes/calcBootcamp');
 const masteryRoutes = require('../routes/mastery');
@@ -248,7 +247,8 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/assessment', isAuthenticated, assessmentRoutes);
   app.use('/api/screener', isAuthenticated, screenerRoutes);
   app.use('/api/checkpoint', isAuthenticated, checkpointRoutes);
-  app.use('/api/growth-check', isAuthenticated, growthCheckRoutes);
+  // NOTE: /api/growth-check is retired. Growth checks run on the screener
+  // (POST /api/screener/start {isGrowthCheck:true} → sessionType 'growth-check').
   // ACT Math practice test — free (boot-camp on-ramp), fixed-form, no AI at request time.
   app.use('/api/act-test', isAuthenticated, actTestRoutes);
   app.use('/api/calc-bootcamp', isAuthenticated, calcBootcampRoutes);

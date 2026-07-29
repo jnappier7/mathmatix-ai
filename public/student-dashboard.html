@@ -656,7 +656,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // Assessment completed - update button for Growth Check
         const placementBtn = document.getElementById('placement-test-btn');
         document.getElementById('placement-btn-text').textContent = 'Growth Check';
-        placementBtn.href = '/growth-check.html';
+        // The standalone /growth-check.html stack is retired — growth checks
+        // run on the screener now (same target utils/userNudges.js links to).
+        placementBtn.href = '/screener.html?mode=growth-check';
         placementBtn.querySelector('i').className = 'fas fa-chart-line';
 
         // Show hero section: Continue Where You Left Off

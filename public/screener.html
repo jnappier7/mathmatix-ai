@@ -31,12 +31,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Welcome Screen -->
     <div class="screen active" id="welcome-screen">
       <div class="welcome-content">
-        <h1>🎯 Adaptive Placement Test</h1>
-        <p class="subtitle">We'll find your exact level in just a few minutes</p>
+        <h1 id="welcome-title">🎯 Adaptive Placement Test</h1>
+        <p class="subtitle" id="welcome-subtitle">We'll find your exact level in just a few minutes</p>
 
         <div class="info-box">
           <h3>How it works:</h3>
-          <ul>
+          <ul id="welcome-bullets">
             <li><i class="fas fa-bolt"></i> <strong>Adaptive Length:</strong> As few as 5 or as many as 30 questions (based on confidence)</li>
             <li><i class="fas fa-brain"></i> <strong>Smart:</strong> Stops when confident in your level</li>
             <li><i class="fas fa-heart"></i> <strong>Respectful:</strong> Advanced students finish quickly (5-8 questions)</li>
@@ -45,10 +45,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <button class="btn btn-primary btn-large" id="start-btn">
-          <i class="fas fa-play"></i> Start Assessment
+          <i class="fas fa-play"></i> <span id="start-btn-text">Start Assessment</span>
         </button>
 
-        <p class="note">This is NOT a test you can fail. We're just finding where you are.</p>
+        <p class="note" id="welcome-note">This is NOT a test you can fail. We're just finding where you are.</p>
       </div>
     </div>
 
@@ -257,6 +257,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="/js/storage-utils.js"></script>
   <script src="/js/auto-logout.js"></script>
   <script src="/js/csrf.js"></script>
-  <script src="/js/adaptiveScreener.js?v=20260713"></script>
+  <script src="/js/adaptiveScreener.js?v=20260728"></script>
 </body>
 </html>

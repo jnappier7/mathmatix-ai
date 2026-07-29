@@ -8,6 +8,16 @@
 // STATE MANAGEMENT
 // ============================================================================
 
+// `?mode=growth-check` runs the same CAT as a short progress check instead of a
+// placement: the server starts it at the student's current theta with a tight
+// prior and a 5/6/10 question budget, and bookkeeps it as a growth check rather
+// than re-placing them. utils/userNudges.js has always linked here with this
+// query param, and the student dashboard's "Growth Check" button now does too —
+// but until this flag existed the page sent no body to /start, so every one of
+// those entry points silently ran a full Starting Point instead.
+const IS_GROWTH_CHECK =
+  new URLSearchParams(window.location.search).get('mode') === 'growth-check';
+
 const state = {
   sessionId: null,
   currentProblem: null,
@@ -16,6 +26,7 @@ const state = {
   theta: 0,
   confidence: 0,
   responses: [],
+  isGrowthCheck: IS_GROWTH_CHECK,
 
   // Interview phase state
   interviewQuestions: [],
@@ -89,7 +100,38 @@ document.addEventListener('DOMContentLoaded', () => {
   if (interviewSubmitBtn) {
     interviewSubmitBtn.addEventListener('click', submitInterviewAnswer);
   }
+
+  applyGrowthCheckCopy();
 });
+
+/**
+ * Re-label the welcome screen for growth-check mode. A growth check is short
+ * and measures progress; calling it an "Adaptive Placement Test" tells a
+ * student who already has a placement that they're starting over.
+ */
+function applyGrowthCheckCopy() {
+  if (!state.isGrowthCheck) return;
+
+  const setText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+
+  document.title = 'Growth Check | MATHMATIX.AI';
+  setText('welcome-title', '📈 Growth Check');
+  setText('welcome-subtitle', "Let's see how much you've grown since your last check");
+  setText('start-btn-text', 'Start Growth Check');
+  setText('welcome-note', "This is NOT a test you can fail. We're just measuring your progress.");
+
+  const bullets = document.getElementById('welcome-bullets');
+  if (bullets) {
+    bullets.innerHTML = `
+      <li><i class="fas fa-bolt"></i> <strong>Short:</strong> Usually 5-10 questions</li>
+      <li><i class="fas fa-crosshairs"></i> <strong>Targeted:</strong> Starts right at your current level</li>
+      <li><i class="fas fa-chart-line"></i> <strong>Progress:</strong> Compares against your last result</li>
+    `;
+  }
+}
 
 // ============================================================================
 // CORE FUNCTIONS
@@ -106,7 +148,8 @@ async function startScreener() {
     const response = await csrfFetch('/api/screener/start', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include'
+      credentials: 'include',
+      body: JSON.stringify({ isGrowthCheck: state.isGrowthCheck })
     });
 
     if (!response.ok) {
