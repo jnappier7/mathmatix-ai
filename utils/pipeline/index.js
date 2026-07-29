@@ -115,6 +115,14 @@ function isTeachingMove(decision) {
 async function runPipeline(message, ctx) {
   const startTime = Date.now();
 
+  // Is this turn inside a structured course lesson? Both entry points must
+  // answer YES: /api/course-chat sets ctx._course, and /api/chat (which is
+  // where chat.html actually sends course turns — "all chat goes through
+  // /api/chat") sets ctx.isCourseMode when it built the course prompt.
+  // Keying only on _course is why the 2026-07-29 course-menu fix never fired
+  // in production.
+  const inCourseLesson = !!(ctx._course || ctx.isCourseMode);
+
   // ── Stage 1: OBSERVE ──
   const recentUserMessages = ctx.conversation.messages
     .filter(msg => msg.role === 'user')
@@ -528,7 +536,7 @@ async function runPipeline(message, ctx) {
     // rides in the course prompt + _course metadata — so decide needs this
     // flag to know the topic is already chosen (the student's-lead guard
     // must launch the module, never offer a topic menu).
-    isCourseMode: !!ctx._course,
+    isCourseMode: inCourseLesson,
   });
 
   // Test-out: the challenge card is about to render below the tutor's reply, so
@@ -619,7 +627,7 @@ async function runPipeline(message, ctx) {
   // tutor pitch last week's open-chat topics over the module content
   // (production report, 2026-07-29: geometry topic menu inside ACT Math
   // Prep). Course turns run on the course prompt alone.
-  if (tutorPlan && !ctx._course) {
+  if (tutorPlan && !inCourseLesson) {
     const planLayer = buildPlanLayer(tutorPlan, {
       skillResolution,
       interactionType: ctx.conversation?.conversationType || 'chat',

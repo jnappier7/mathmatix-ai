@@ -1171,12 +1171,17 @@ async function runStudentTurn(req, res) {
         // Use dedicated course prompt when in course mode, generic prompt otherwise
         let systemPrompt;
         let courseScaffoldCtx = null; // Captured for step-context reminder below
+        // True once the course prompt is actually in play. chat.html sends
+        // course turns HERE (not /api/course-chat), so this is what tells the
+        // pipeline the lesson — not the student — is choosing the topic.
+        let courseModeActive = false;
 
         if (!systemPrompt && conversationContextForPrompt?.courseSession && !masteryContext) {
             // COURSE MODE: Use the dedicated instructor-led prompt
             const courseSessionDoc = await require('../models/courseSession').findById(user.activeCourseSessionId);
             const courseCtx = courseSessionDoc ? loadCourseContext(courseSessionDoc) : null;
             if (courseCtx) {
+                courseModeActive = true;
                 systemPrompt = buildCourseSystemPrompt({
                     userProfile: studentProfileForPrompt,
                     tutorProfile: currentTutor,
@@ -1388,23 +1393,32 @@ async function runStudentTurn(req, res) {
                 if (lastTimestamp) {
                     const gapMs = Date.now() - new Date(lastTimestamp).getTime();
                     if (gapMs > 10 * 60 * 1000) {
-                        try {
-                            if (preloadedTutorPlan) {
-                                const reentry = generateReentryPrompt({
-                                    tutorPlan: preloadedTutorPlan,
-                                    conversation: activeConversation,
-                                });
-                                reentryDirective = reentry.directives.join('\n');
+                        if (courseModeActive) {
+                            // A course lesson has a direction. "Welcome back —
+                            // what would you like to work on?" is the wrong
+                            // question here: the module already answers it, and
+                            // asking stalls the lesson at 0% (owner report,
+                            // 2026-07-29). Re-entry re-orients, then resumes.
+                            reentryDirective = `RETURNING STUDENT, MID-COURSE: they've been away for ${Math.round(gapMs / 60000)} minutes and are inside a structured lesson. Welcome them back in ONE short clause, name where the lesson left off, and then CONTINUE THE MODULE — pose the next step yourself. Do NOT ask what they want to work on, do NOT offer a topic menu, and do NOT invite them to change subject.`;
+                        } else {
+                            try {
+                                if (preloadedTutorPlan) {
+                                    const reentry = generateReentryPrompt({
+                                        tutorPlan: preloadedTutorPlan,
+                                        conversation: activeConversation,
+                                    });
+                                    reentryDirective = reentry.directives.join('\n');
+                                }
+                            } catch (reentryErr) {
+                                // generateReentryPrompt failed — use fallback below
                             }
-                        } catch (reentryErr) {
-                            // generateReentryPrompt failed — use fallback below
-                        }
-                        // Fallback when tutorPlan is missing or generateReentryPrompt failed
-                        if (!reentryDirective) {
-                            const lastTopic = activeConversation.currentTopic || activeConversation.conversationName;
-                            reentryDirective = lastTopic && lastTopic !== 'Math Session'
-                                ? `RETURNING STUDENT: They've been away for ${Math.round(gapMs / 60000)} minutes. Last session topic: "${lastTopic}". Greet them warmly, briefly reference what you worked on before, and ask if they want to continue that topic or start something new. Do NOT jump straight into the old problem.`
-                                : `RETURNING STUDENT: They've been away for ${Math.round(gapMs / 60000)} minutes. Greet them warmly and ask what they'd like to work on today. Do NOT assume they want to continue the previous conversation.`;
+                            // Fallback when tutorPlan is missing or generateReentryPrompt failed
+                            if (!reentryDirective) {
+                                const lastTopic = activeConversation.currentTopic || activeConversation.conversationName;
+                                reentryDirective = lastTopic && lastTopic !== 'Math Session'
+                                    ? `RETURNING STUDENT: They've been away for ${Math.round(gapMs / 60000)} minutes. Last session topic: "${lastTopic}". Greet them warmly, briefly reference what you worked on before, and ask if they want to continue that topic or start something new. Do NOT jump straight into the old problem.`
+                                    : `RETURNING STUDENT: They've been away for ${Math.round(gapMs / 60000)} minutes. Greet them warmly and ask what they'd like to work on today. Do NOT assume they want to continue the previous conversation.`;
+                            }
                         }
                         logger.info('Re-entry detected', { userId: user._id, gapMinutes: Math.round(gapMs / 60000) });
                     }
@@ -1507,6 +1521,10 @@ async function runStudentTurn(req, res) {
                 res: useStreaming ? res : null,
                 aiProcessingStartTime: aiStartTime,
                 sourceRef: regionSourceRef,
+                // The course outline owns the topic on these turns: suppresses
+                // the free-tutoring plan layer and flips the student's-lead
+                // guard from "ask what they want" to "launch the module step".
+                isCourseMode: courseModeActive,
             });
         } catch (pipelineError) {
             // Pipeline failed — fall back to direct LLM call so student always gets a response
