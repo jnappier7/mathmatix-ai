@@ -60,13 +60,13 @@ const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
-const { stripInternalTags, hasInternalTags } = require('../internalTagSanitizer');
+const { stripInternalTags, hasInternalTags, stripOrphanMathDelims } = require('../internalTagSanitizer');
 const { parseBoardJsonCommands } = require('../boardJsonParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeTilesTab, synthesizeAutoClear, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
@@ -976,7 +976,18 @@ async function runPipeline(message, ctx) {
   // the visual gate below so the backfilled image is gated like any other.
   // Conservative: fires only when no graph/image already survived AND a concept
   // is derivable — otherwise the board is left as-is (no garbage search).
-  if (!verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+  // A tiles promise is satisfied by the TILES tab command (backfilled at the
+  // visual-tab stage below), not by an image search — detect it once here so
+  // the image backfill doesn't answer "let me get those tiles on your screen"
+  // with a random diagram.
+  const tilesTabBackfill = synthesizeTilesTab({
+    tutorResponse: verified.text,
+    pinnedProblemTex: (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex
+      || ctx.conversation?.boardProblem?.tex || null,
+  });
+
+  if (!tilesTabBackfill
+      && !verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
     const fallbackImage = synthesizeFallbackImage({
       tutorResponse: verified.text,
       activeSkill: ctx.activeSkill || null,
@@ -1285,6 +1296,24 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // ── Stage 5c.2: AUTO-CLEAR ON NEW PROBLEM ──
+  // All pose sources are final now. If this turn poses a genuinely NEW
+  // problem while an older one is pinned, prepend the `clear` the model
+  // should have emitted — otherwise the previous problem's cards (including
+  // interactive tools) stay stacked above the new work.
+  {
+    const beforeLen = verified.boardCommands.length;
+    verified.boardCommands = synthesizeAutoClear({
+      commands: verified.boardCommands,
+      previousProblemTex: ctx.conversation?.boardProblem?.tex || null,
+    });
+    if (verified.boardCommands.length > beforeLen) {
+      boardLogger.info('Auto-clear prepended for new problem pose', {
+        previous: ctx.conversation?.boardProblem?.tex || null,
+      });
+    }
+  }
+
   // Read-only `example` cards are teaching aids, not moves in the student's
   // solve cycle — they must not advance lastBoardAction (which gates clear-after-
   // verify and the synthesizer's cycle-closed logic) or touch the pin. Track
@@ -1363,6 +1392,14 @@ async function runPipeline(message, ctx) {
   if (visualTabParsed.visualTabCommands.length > 0) {
     verified.text = visualTabParsed.cleanedText;
     verified.visualTabCommands = visualTabParsed.visualTabCommands.slice(0, 2);
+  } else if (tilesTabBackfill) {
+    // The tutor promised tiles in prose but emitted no <TILES/> tag — the
+    // board would silently contradict the chat ("Take a look now…" over the
+    // previous topic's tool). Backfill the tab command it should have sent.
+    verified.visualTabCommands = [tilesTabBackfill];
+    boardLogger.info('Tiles-promise backfill added TILES tab command', {
+      expression: tilesTabBackfill.expression,
+    });
   } else {
     verified.visualTabCommands = [];
   }
@@ -1383,6 +1420,9 @@ async function runPipeline(message, ctx) {
     });
     verified.text = stripInternalTags(verified.text);
   }
+  // Unbalanced \( / \[ delimiters render as raw source in the bubble —
+  // drop the orphans (balanced math is untouched). Cheap, so unconditional.
+  verified.text = stripOrphanMathDelims(verified.text);
 
   // ── Merge LLM signals into sidecar ──
   mergeLlmSignals(sidecar, verified.extracted);

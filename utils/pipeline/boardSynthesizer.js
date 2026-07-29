@@ -937,6 +937,70 @@ function synthesizeFallbackImage({ tutorResponse, activeSkill } = {}) {
   return { action: 'image', query, caption: concept };
 }
 
+// The tiles analogue of the visual-promise backfill: the tutor narrates
+// algebra tiles it never rendered ("Let me get those on your screen for you.
+// Take a look now, one big square tile…") while the board still shows the
+// previous topic's tool — the chat and the board contradict each other
+// (production report, 2026-07-29). When the promise names tiles and the
+// active problem is a tileable polynomial, emit the TILES tab command the
+// model should have sent.
+const TILES_NOUN_RE = /\b(?:algebra\s+)?tiles?\b/i;
+const TILES_PROMISE_RE = new RegExp(
+  VISUAL_PROMISE_RE.source + '|\\bon your screen\\b|\\blet me get\\b', 'i'
+);
+
+/**
+ * @param {object} params
+ * @param {string} params.tutorResponse
+ * @param {string|null} [params.pinnedProblemTex] - active problem (pin or this turn's pose)
+ * @returns {{tab:'tiles', expression:string}|null}
+ */
+function synthesizeTilesTab({ tutorResponse, pinnedProblemTex } = {}) {
+  if (!tutorResponse || !TILES_NOUN_RE.test(tutorResponse)) return null;
+  if (!TILES_PROMISE_RE.test(tutorResponse)) return null;
+
+  // Tiles model an EXPRESSION; take the problem's LHS and require a simple
+  // polynomial in x (digits, x, ^2, +/-). Anything else doesn't tile —
+  // return null rather than render garbage.
+  let expr = String(pinnedProblemTex || '')
+    .replace(/\\[a-zA-Z]+/g, '')
+    .replace(/[{}\s$]/g, '');
+  expr = expr.split('=')[0];
+  if (!expr || !/x/i.test(expr)) return null;
+  if (!/^[-+]?(?:\d+|\d*x(?:\^2)?)(?:[-+](?:\d+|\d*x(?:\^2)?))*$/i.test(expr)) return null;
+  return { tab: 'tiles', expression: expr };
+}
+
+// Loose tex identity for "is this pose a NEW problem?" — formatting drift
+// (\left, braces, spacing) must not read as a different problem.
+function normalizeTexLoose(t) {
+  return String(t || '').toLowerCase().replace(/\\[a-zA-Z]+/g, '').replace(/[{}\s$]/g, '');
+}
+
+/**
+ * Prepend a `clear` when this turn poses a genuinely NEW problem while an
+ * older one is pinned. The board design says clear-on-new-problem is the
+ * norm, but the model often omits it — leaving the previous problem's cards
+ * (including interactive tools) stacked above the new work (production
+ * report, 2026-07-29: an |x| transformation model stayed on the board into
+ * an algebra-tiles factoring problem). dropRedundantPoses runs upstream, so
+ * any surviving pose here is a real re-pose, not a redraw of the pin.
+ *
+ * @param {Array}  params.commands           final board commands for the turn
+ * @param {string} [params.previousProblemTex] pin from BEFORE this turn
+ * @returns {Array} commands, possibly with a leading {action:'clear'}
+ */
+function synthesizeAutoClear({ commands, previousProblemTex } = {}) {
+  if (!Array.isArray(commands) || commands.length === 0 || !previousProblemTex) return commands || [];
+  if (commands.some(c => c && c.action === 'clear')) return commands;
+  const pose = commands.find(c => c && c.action === 'pose' && c.tex);
+  if (!pose) return commands;
+  const prev = normalizeTexLoose(previousProblemTex);
+  const next = normalizeTexLoose(pose.tex);
+  if (!prev || !next || prev === next) return commands;
+  return [{ action: 'clear' }, ...commands];
+}
+
 // ---------------------------------------------------------------------------
 // Worked-example step extraction (hybrid backfill)
 //
@@ -994,6 +1058,8 @@ module.exports = {
   dropRedundantPoses,
   synthesizeFallbackPose,
   synthesizeFallbackImage,
+  synthesizeTilesTab,
+  synthesizeAutoClear,
   synthesizeWorkedExampleSteps,
   detectBoardReference,
   // Exposed for tests
