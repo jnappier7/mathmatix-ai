@@ -865,6 +865,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
+            // A course lesson owns its own opening line — courseCatalog fires
+            // the course greeting through /api/course-chat, which introduces the
+            // MODULE. Firing this generic greeting too produced a second,
+            // contradictory hello that pitched old free-chat topics ("since
+            // we've been focusing on geometry lately, how about…") inside an ACT
+            // lesson (owner report, 2026-07-29). One lesson, one greeting.
+            if (window.courseManager && window.courseManager.activeCourseSessionId) {
+                console.log('[Chat] Course lesson active — course greeting owns the opener');
+                return;
+            }
+
             // AI-initiated greeting via chat endpoint
             // The AI "initiates" the conversation using context about the student
             showThinkingIndicator(true);
