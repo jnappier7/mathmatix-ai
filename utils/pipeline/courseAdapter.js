@@ -94,12 +94,11 @@ async function buildCoursePipelineContext(params) {
   });
 
   // ── Determine active skill from course module ──
-  const moduleSkills = moduleData.skills || currentPathwayModule.skills || [];
-  const activeSkill = moduleSkills[0] ? {
-    skillId: typeof moduleSkills[0] === 'string' ? moduleSkills[0] : moduleSkills[0].skillId,
-    displayName: typeof moduleSkills[0] === 'string' ? moduleSkills[0] : moduleSkills[0].displayName,
-    teachingGuidance: null,
-  } : null;
+  const activeSkill = deriveCourseActiveSkill({
+    moduleData,
+    currentPathwayModule,
+    scaffoldIndex: courseSession.currentScaffoldIndex || 0,
+  });
 
   // ── Step-context anchor (prevents AI drift in long conversations) ──
   const scaffold = moduleData?.scaffold || [];
@@ -132,6 +131,48 @@ async function buildCoursePipelineContext(params) {
       isParentCourse: pathway.audience === 'parent',
       isCheckpoint: moduleData?.type === 'assessment' || moduleData?.diagnosticMode || currentPathwayModule?.isCheckpoint,
     },
+  };
+}
+
+/**
+ * Which skill is this course turn actually about?
+ *
+ * Shared by BOTH entry points, because getting it wrong corrupts the mastery
+ * model rather than just the UI. The pipeline attributes BKT/FSRS evidence to
+ * `ctx.activeSkill?.skillId || tutorPlan.currentTarget.skillId` — that
+ * fallback exists for FREE chat, but /api/chat never set activeSkill on course
+ * turns, so course practice read AND wrote mastery evidence under whatever the
+ * free-tutoring plan happened to be targeting (owner review, 2026-07-29). A
+ * student grinding ACT exponents inside the course was crediting, say, angle
+ * relationships.
+ *
+ * Prefers the CURRENT SCAFFOLD STEP's skill — module JSON tags each step
+ * (`skill: 'act-exponents-roots'`) — so attribution follows the lesson step by
+ * step instead of dumping a whole 4-skill module onto skills[0].
+ *
+ * @param {Object} params
+ * @param {Object} [params.moduleData]           module JSON (scaffold + skills)
+ * @param {Object} [params.currentPathwayModule] pathway entry (skills fallback)
+ * @param {number} [params.scaffoldIndex]        step the student is on
+ * @returns {{skillId:string, displayName:string, teachingGuidance:null}|null}
+ */
+function deriveCourseActiveSkill({ moduleData, currentPathwayModule, scaffoldIndex = 0 } = {}) {
+  const moduleSkills = moduleData?.skills || currentPathwayModule?.skills || [];
+  const idOf = (s) => (typeof s === 'string' ? s : s?.skillId || null);
+  const nameOf = (s) => (typeof s === 'string' ? s : s?.displayName || s?.skillId || null);
+
+  const step = (moduleData?.scaffold || [])[scaffoldIndex];
+  const stepSkillId = typeof step?.skill === 'string' && step.skill.trim() ? step.skill.trim() : null;
+
+  const skillId = stepSkillId || idOf(moduleSkills[0]);
+  if (!skillId) return null;
+
+  // Prefer a display name from the module's own skill list when it names this id.
+  const match = moduleSkills.find((s) => idOf(s) === skillId);
+  return {
+    skillId,
+    displayName: (match ? nameOf(match) : null) || skillId,
+    teachingGuidance: null,
   };
 }
 
@@ -344,4 +385,5 @@ module.exports = {
   buildCoursePipelineContext,
   postProcessCourseResult,
   advanceCourseProgress,
+  deriveCourseActiveSkill,
 };
