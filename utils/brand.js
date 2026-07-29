@@ -178,7 +178,9 @@ const BRAND_CONFIG = {
         levelUp: 30,              // per level gained
         questComplete: 25,        // per daily quest completed
         challengeComplete: 100,   // per weekly challenge completed
-        masteryBadge: 100         // per mastery badge earned (wiring TBD)
+        masteryBadge: 100,        // per mastery badge earned (wiring TBD)
+        correctAnswer: 2,         // per verified-correct solve (owner ask, 2026-07-29)
+        cleanSolve: 3             // verified-correct with clean work (replaces, not stacks)
     },
 
     digestEmailSchedule: "Sunday 7 AM ET", //

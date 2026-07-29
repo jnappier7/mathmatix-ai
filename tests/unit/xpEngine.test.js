@@ -287,3 +287,49 @@ describe('XP Engine: applyXpToUser', () => {
     expect(user.markModified).toHaveBeenCalledWith('xpLadderStats');
   });
 });
+
+// ============================================================================
+// Coins for correct answers (owner ask, 2026-07-29)
+// ============================================================================
+
+describe('XP Engine: coins for verified-correct solves', () => {
+  const freshUser = () => ({ xp: 0, level: 1, unlockedItems: [], wallet: null, markModified: () => {} });
+
+  test('a verified-correct solve (tier2) earns the correctAnswer rate', () => {
+    const user = freshUser();
+    const r = applyXpToUser(user, { tier1: 2, tier2: 10, tier2Type: 'standard', tier3: 0, tier3Behavior: null, total: 12 });
+    expect(r.coinsAwarded).toBe(2);
+    expect(user.wallet.coins).toBe(2);
+  });
+
+  test('a clean solve earns the clean rate INSTEAD of stacking', () => {
+    const user = freshUser();
+    const r = applyXpToUser(user, { tier1: 2, tier2: 15, tier2Type: 'clean', tier3: 0, tier3Behavior: null, total: 17 });
+    expect(r.coinsAwarded).toBe(3);
+  });
+
+  test('no tier2 (probing/encouragement turns) mints no coins', () => {
+    const user = freshUser();
+    const r = applyXpToUser(user, { tier1: 2, tier2: 0, tier3: 0, tier3Behavior: null, total: 2 });
+    expect(r.coinsAwarded).toBe(0);
+    expect(user.wallet).toBeNull();
+  });
+
+  test('the daily cap still binds — no path mints unbounded currency', () => {
+    const user = freshUser();
+    user.wallet = { coins: 500, lifetimeEarned: 500, dailyEarned: 500, lastCoinReset: new Date() };
+    const r = applyXpToUser(user, { tier1: 2, tier2: 10, tier2Type: 'standard', tier3: 0, tier3Behavior: null, total: 12 });
+    expect(r.coinsAwarded).toBe(0);
+    expect(user.wallet.coins).toBe(500);
+  });
+
+  test('solve coins and level-up coins accumulate in one turn', () => {
+    const BRAND_CONFIG = require('../../utils/brand');
+    const user = freshUser();
+    user.xp = BRAND_CONFIG.cumulativeXpForLevel(2) - 5; // 5 XP short of level 2
+    const r = applyXpToUser(user, { tier1: 2, tier2: 10, tier2Type: 'standard', tier3: 0, tier3Behavior: null, total: 10 });
+    expect(user.level).toBe(2);
+    expect(r.coinsAwarded).toBe(2 + BRAND_CONFIG.coinRewards.levelUp); // solve + level-up
+    expect(user.wallet.coins).toBe(r.coinsAwarded);
+  });
+});

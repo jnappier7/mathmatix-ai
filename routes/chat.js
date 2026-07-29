@@ -360,6 +360,10 @@ async function runStudentTurn(req, res) {
         // shows the old transcript and the old board, and would silently paint
         // this turn on top of work that belongs to a session that has ended.
         let sessionRolled = false;
+        // The closure beat (owner, 2026-07-29): when a session rolls, the
+        // student gets a small "last time" recap card instead of their work
+        // silently vanishing. Built from the conversation being closed out.
+        let sessionRecap = null;
 
         if (isMasteryMode) {
             // Load existing mastery conversation
@@ -395,7 +399,11 @@ async function runStudentTurn(req, res) {
             if (!activeConversation || !activeConversation.isActive || activeConversation.isMastery
                 || isSessionStale(activeConversation)
                 || isForeignLoginSession(activeConversation, loginSessionId)) {
-                if (activeConversation) sessionRolled = true;
+                if (activeConversation) {
+                    sessionRolled = true;
+                    const { sessionRecapOf } = require('../utils/activeConversation');
+                    sessionRecap = sessionRecapOf(activeConversation);
+                }
                 // IMPROVED: End the old session properly before creating a new one
                 if (activeConversation && activeConversation.isActive && activeConversation.messages.length > 0) {
                     try {
@@ -1353,7 +1361,7 @@ async function runStudentTurn(req, res) {
             // finished painting on top of it. Same fact also rides `complete`
             // (responseData.sessionRolled) for the non-streaming path.
             if (sessionRolled) {
-                res.write(`data: ${JSON.stringify({ type: 'session_rolled', data: { conversationId: String(activeConversation._id) } })}\n\n`);
+                res.write(`data: ${JSON.stringify({ type: 'session_rolled', data: { conversationId: String(activeConversation._id), recap: sessionRecap } })}\n\n`);
             }
             req.on('close', () => {
                 clientDisconnected = true;
@@ -1813,6 +1821,7 @@ async function runStudentTurn(req, res) {
             // Tells the browser this turn belongs to a NEW session, so it can
             // drop the previous one's transcript and board before painting.
             sessionRolled,
+            sessionRecap,
             conversationId: String(activeConversation._id),
             userXp: userXpInCurrentLevel,
             userLevel: user.level,

@@ -168,6 +168,23 @@ function assistantSpokeWithin(messages, ms, now = Date.now()) {
     return false;
 }
 
+/**
+ * Student-facing recap of a conversation being closed out (the session-roll
+ * "closure beat", owner 2026-07-29). Pure: reads only what the conversation
+ * already persisted — verified-correct count, active minutes, topic. Returns
+ * null when there is nothing worth recapping (empty or workless session), so
+ * callers can pass it straight through to the client.
+ */
+function sessionRecapOf(conversation) {
+    if (!conversation || !Array.isArray(conversation.messages) || conversation.messages.length === 0) return null;
+    const solved = conversation.messages.filter(
+        (m) => m && m.role === 'assistant' && m.problemResult === 'correct'
+    ).length;
+    const minutes = conversation.activeMinutes || 0;
+    if (solved === 0 && minutes === 0) return null;
+    return { topic: conversation.currentTopic || null, solved, minutes };
+}
+
 module.exports = {
     VOICE_HISTORY_DEPTH,
     resolveActiveConversationId,
@@ -175,4 +192,5 @@ module.exports = {
     assistantSpokeWithin,
     loadActiveHistory,
     appendToActiveConversation,
+    sessionRecapOf,
 };
