@@ -804,6 +804,9 @@ async function runPipeline(message, ctx) {
       // the graded problem instead of a parallel one).
       pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
       pinnedAnswer: diagnosis.correctAnswer || null,
+      // Lets the scaffold guard tell a legit missing-factor card (result
+      // stated in this very reply) from a backwards one that leaks it.
+      tutorReplyText: verified.text || null,
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
@@ -889,6 +892,7 @@ async function runPipeline(message, ctx) {
       userMessage: message,
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      tutorReplyText: verified.text || null,
     });
     guardedSynth = synthGuard.allowed;
     if (synthGuard.dropped.length > 0) {

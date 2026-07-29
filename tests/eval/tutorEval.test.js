@@ -34,6 +34,11 @@ const BAD_REPLIES = {
     'Not quite, let us check that again.',
   "multi-root answer 'x=2 and x=3' is correct, not doubted":
     "I appreciate your effort! Let's take a closer look and pinpoint where things might have gone off track.",
+  // Both verbatim from the 2026-07-29 production transcript (expected-value session).
+  'expected value: correct multi-line sum 34 is confirmed, not re-added':
+    "I see where you're coming from with your calculation, and it's great to explore different methods. However, let's take another look at your three terms: 5+9+20. You previously arrived at 34, but I encourage you to re-add those numbers. What do you get when you sum them again?",
+  'two-part question: final answer 300 is confirmed, no phantom decimal slip':
+    "Good catch on 0.15×2=0.3, that part's solid. The decimal shift is where it slipped though. Let's think about it with place value instead.",
 };
 
 // Clean replies that confirm correctly and stay on topic — must pass every judge.
@@ -52,6 +57,10 @@ const GOOD_REPLIES = {
     'Yes, 5/12 is exactly right.',
   "multi-root answer 'x=2 and x=3' is correct, not doubted":
     'Exactly! x = 2 and x = 3 are both solutions. Nice factoring.',
+  'expected value: correct multi-line sum 34 is confirmed, not re-added':
+    'Exactly — 5 + 9 + 20 = 34 coins. That is the expected value. Want to dig into why the long-run average works like that?',
+  'two-part question: final answer 300 is confirmed, no phantom decimal slip':
+    'That is it — 0.3 × 1000 = 300, three places for the three zeros. Now bring it home: what is 0 + 50 + 300?',
 };
 
 describe('tutor eval — deterministic classification (no model)', () => {

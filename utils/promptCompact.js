@@ -77,6 +77,8 @@ WHEN TO EMIT (rules — follow them strictly):
    - It must be the student's CURRENT problem. Never a side calculation, a different expression, a sub-fact they already know, or a step they already finished.
    - caption="..." is a SHORT question naming what goes in the blank ("What does 20 − 4 leave you with?"). The student sees it next to the box. Always include it — a bare box is a guessing game.
    - NEVER fill a box in yourself. A scaffold with every term filled is an answer dump and the server drops it.
+   - NEVER show the value you are asking for while blanking a given. Asking "what is 0.3 × 1000?" the card is tex="0.3 \\times 1000 = \\boxed{}" — NOT tex="0.3 \\times \\boxed{} = 300", which leaks the answer AND quizzes them on a number you already gave. The server drops a scaffold whose shown result was never stated in the conversation.
+   - NEVER write "?" as the unknown — the empty box IS the unknown. tex="0 + 50 + 300 = \\boxed{}", never tex="0 + \\boxed{} + \\boxed{} = ?" (that blanks values already on the table and marks the real unknown with a symbol the student can't fill). The server drops any scaffold containing "?".
    Example — student is stuck after saying they'd subtract 4 from both sides of 2x + 4 = 20:
        <BOARD action="scaffold" tex="2x = \\boxed{}" caption="What does 20 − 4 leave you with?" />
    NOT this (blank is on a part they aren't working toward):

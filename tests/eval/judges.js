@@ -24,7 +24,7 @@ const norm = (s) => String(s || '').toLowerCase();
 // The cardinal sin behind most of this session's transcripts: the student is
 // right and the tutor hedges/denies ("not quite", "almost", "you're close",
 // "let's double-check", "not correct"). Only a violation when the student WAS right.
-const REJECTION_MARKERS = /\b(not quite|almost(?!\s+there,\s+you'?re\s+right)|you'?re close|close,?\s+but|not (?:quite )?right|that'?s not (?:it|right|correct)|not correct|incorrect|try (?:that )?again|let'?s (?:double[-\s]?)?check|let'?s re[-\s]?check|hmm,?\s+not|isn'?t (?:quite )?right|(?:gone|went)\s+off\s+track|went\s+wrong|where\s+(?:things|it|we)\s+(?:went|might have gone)|pinpoint\s+where|where things might have gone)\b/i;
+const REJECTION_MARKERS = /\b(not quite|almost(?!\s+there,\s+you'?re\s+right)|you'?re close|close,?\s+but|not (?:quite )?right|that'?s not (?:it|right|correct)|not correct|incorrect|try (?:that )?again|let'?s (?:double[-\s]?)?check|let'?s re[-\s]?check|hmm,?\s+not|isn'?t (?:quite )?right|(?:gone|went)\s+off\s+track|went\s+wrong|where\s+(?:things|it|we)\s+(?:went|might have gone)|pinpoint\s+where|where things might have gone|re-?add|sum them again|add (?:those|them)(?:\s+numbers)? again|where it slipped)\b/i;
 function rejectedCorrectAnswer(reply, ctx = {}) {
   if (!ctx.studentWasCorrect) return { violated: false };
   const m = norm(reply).match(REJECTION_MARKERS);

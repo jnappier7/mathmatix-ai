@@ -40,6 +40,36 @@
     },
 
     {
+      "name": "expected value: correct multi-line sum 34 is confirmed, not re-added",
+      "focus": "(0.5 x 10)+(0.3 x 30)+(0.2 x 100)",
+      "answer": "34",
+      "turns": [
+        { "assistant": "So for our loot box: (0.5 \\times 10)+(0.3 \\times 30)+(0.2 \\times 100). Go ahead and work that out, what do you get?" },
+        {
+          "student": "5+9+20\n34",
+          "expect": { "messageType": "answer_attempt", "answerValue": "34" },
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer"]
+        }
+      ]
+    },
+
+    {
+      "name": "two-part question: final answer 300 is confirmed, no phantom decimal slip",
+      "focus": "0.15 x 2000",
+      "answer": "300",
+      "turns": [
+        { "assistant": "So walk it through for me: what's 0.15 × 2, and then where does the decimal land once you account for the 2000?" },
+        {
+          "student": "0.3\n\n300",
+          "expect": { "messageType": "answer_attempt", "answerValue": "300" },
+          "ctx": { "studentWasCorrect": true, "hasFocus": true },
+          "judge": ["rejectedCorrectAnswer"]
+        }
+      ]
+    },
+
+    {
       "name": "bare mixed-number drop is elicited, not solved",
       "focus": null,
       "answer": "8 5/12",
