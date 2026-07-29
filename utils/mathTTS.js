@@ -256,9 +256,100 @@ function cleanTextForTTS(text) {
   return cleaned;
 }
 
+// ── Spoken-prose math normalization (voice channel) ─────────────────────────
+//
+// The voice tutor's spoken stream is prose with light math leakage — the
+// model is told to keep notation in the <math> tag, but simple equations
+// still slip through and the TTS engine reads them awkwardly: "=" becomes
+// "equal sign" mid-equation, and a variable product like "ax" or "Ax" is
+// pronounced as the word "axe" (owner report, 2026-07-29).
+
+/**
+ * Normalize light math notation inside spoken prose. Deliberately narrower
+ * than cleanTextForTTS: it must be safe on ordinary sentences, so every rule
+ * is gated on adjacent math context.
+ */
+function speakMathInProse(text) {
+  if (!text) return text;
+  let s = text;
+
+  // Variable products: a letter pair ending in x/y/z adjacent to a math
+  // operator (or glued to a leading digit) is algebra, not a word —
+  // "ax + b" → "a x plus b", "Ax = b" → "A x equals b", "2ax" → "2 a x".
+  // Ordinary words are untouched: "wax on", "by 2", "my answer" have no
+  // operator adjacency ("divided by 2" has a digit, but with a space).
+  s = s.replace(/\b([a-zA-Z])([xyz])\b(?=\s*[+\-=*/^×÷])/g, '$1 $2');
+  s = s.replace(/(?<=[+\-=*/^×÷]\s*)\b([a-zA-Z])([xyz])\b/g, '$1 $2');
+  s = s.replace(/(?<=\d)([a-zA-Z])([xyz])\b/g, ' $1 $2');
+
+  // Unicode operators the engine reads oddly or skips.
+  s = s.replace(/\s*×\s*/g, ' times ');
+  s = s.replace(/\s*÷\s*/g, ' divided by ');
+  s = s.replace(/\s*≤\s*/g, ' less than or equal to ');
+  s = s.replace(/\s*≥\s*/g, ' greater than or equal to ');
+  s = s.replace(/\s*≠\s*/g, ' is not equal to ');
+
+  // Caret exponents that leaked into speech.
+  s = s.replace(/\^2(?!\d)/g, ' squared');
+  s = s.replace(/\^3(?!\d)/g, ' cubed');
+  s = s.replace(/\^(\d+)/g, (_, n) => ` to the ${speakOrdinal(parseInt(n, 10))} power`);
+
+  // "=" reads as "equal sign" — say "equals". Guard comparison pairs.
+  s = s.replace(/\s*(?<![<>=!])=(?!=)\s*/g, ' equals ');
+
+  // Collapse doubled spaces the insertions may create (leave newlines alone).
+  s = s.replace(/ {2,}/g, ' ');
+  return s;
+}
+
+/**
+ * Streaming wrapper for speakMathInProse. The voice session forwards
+ * token-level fragments to Cartesia, and the prose rules need one token of
+ * lookahead ("ax" is only algebra once the "+" after it arrives) — so the
+ * filter holds back the trailing unfinished token and normalizes everything
+ * before it. Same push/flush contract as the board-tag stream filters.
+ */
+function createMathSpeechStreamFilter() {
+  let buffer = '';
+  let endedWithSpace = false;
+
+  // Normalization can add a leading space ("= 20" → " equals 20"); when the
+  // previous emission already ended in one, collapse the seam.
+  function emitNormalized(raw) {
+    if (!raw) return '';
+    let out = speakMathInProse(raw);
+    if (endedWithSpace) out = out.replace(/^ +/, '');
+    if (out) endedWithSpace = / $/.test(out);
+    return out;
+  }
+
+  return {
+    /** Append a fragment; returns normalized text that is safe to emit now. */
+    push(fragment) {
+      if (fragment) buffer += fragment;
+      // Hold back the final \S+ run (a token possibly still being streamed)
+      // plus any trailing operator cluster whose right operand hasn't arrived.
+      const m = buffer.match(/(?:[\s]|^)(?:[+\-=*/^×÷≤≥≠]\s*)?\S*$/);
+      const holdFrom = m ? m.index + (m[0].startsWith(' ') || m[0].startsWith('\n') ? 1 : 0) : buffer.length;
+      if (holdFrom <= 0) return '';
+      const emit = buffer.slice(0, holdFrom);
+      buffer = buffer.slice(holdFrom);
+      return emitNormalized(emit);
+    },
+    /** Drain whatever is held back (end of turn). */
+    flush() {
+      const tail = buffer;
+      buffer = '';
+      return emitNormalized(tail);
+    },
+  };
+}
+
 module.exports = {
   cleanTextForTTS,
   convertLatexToSpeech,
+  speakMathInProse,
+  createMathSpeechStreamFilter,
   speakNumber,
   speakOrdinal,
 };

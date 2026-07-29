@@ -623,7 +623,12 @@
 .cr-ws-board-card--scaffold .cr-ws-board-card-math .katex .boxpad {
   border-color: rgba(224, 150, 43, 0.85) !important;
   border-style: dashed !important;
+  border-width: 2px !important;
+  border-radius: 6px;
   background: rgba(255, 184, 77, 0.10);
+  /* Taller, roomier slot — a blank should look like a place to put an
+     answer, not a hairline box (owner report, 2026-07-29). */
+  padding: 0.28em 0.34em !important;
 }
 
 /* Interactive fill-in: math segments flow on one line beside editable blanks. */
@@ -639,17 +644,34 @@
 .cr-ws-scaffold-seg { white-space: nowrap; }
 .cr-ws-scaffold-seg .katex { font-size: 1em; }
 .cr-ws-scaffold-input {
-  width: 3.2em;
-  min-width: 3.2em;
+  width: 4em;
+  min-width: 4em;
+  min-height: 2em;
   text-align: center;
-  font-size: 0.95em;
+  font-size: 1.1em;
   font-family: 'KaTeX_Main', 'Times New Roman', serif;
-  padding: 3px 4px;
+  padding: 8px 6px;
   color: var(--cr-text);
-  background: rgba(255, 184, 77, 0.10);
-  border: 2px dashed rgba(224, 150, 43, 0.85);
-  border-radius: 6px;
+  background: rgba(255, 184, 77, 0.12);
+  border: 2px dashed rgba(224, 150, 43, 0.9);
+  border-radius: 8px;
   outline: none;
+}
+.cr-ws-scaffold-input::placeholder {
+  color: rgba(224, 150, 43, 0.75);
+  font-weight: 600;
+}
+/* An empty blank breathes gently so the eye lands on it. Stops the moment
+   the student types or focuses; disabled entirely under reduced motion. */
+.cr-ws-scaffold-input:placeholder-shown:not(:focus) {
+  animation: cr-ws-blank-pulse 2s ease-in-out infinite;
+}
+@keyframes cr-ws-blank-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(224, 150, 43, 0); }
+  50%      { box-shadow: 0 0 0 4px rgba(224, 150, 43, 0.22); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cr-ws-scaffold-input:placeholder-shown:not(:focus) { animation: none; }
 }
 .cr-ws-scaffold-input:focus {
   border-style: solid;

@@ -23,6 +23,7 @@ const { loadActiveBoardLedger } = require('./activeConversation');
 const sttStream = require('./sttStream');
 const ttsStream = require('./ttsStream');
 const ttsProvider = require('./ttsProvider');
+const { speakMathInProse, createMathSpeechStreamFilter } = require('./mathTTS');
 const metrics = require('./voiceMetrics');
 const orchestrator = require('./orchestrator');
 const { Dispatcher } = require('./orchestrator/dispatcher');
@@ -393,6 +394,9 @@ class VoiceSession {
             boardActions: [],        // accumulated [WRITE:...] etc. (board-actions mode)
             tts: null,
             spokenSent: '',          // already-sent-to-TTS spoken text
+            // Math-speech normalization for the TTS stream only (the visual
+            // transcript keeps the written form): "=" → "equals", "ax" → "a x".
+            speechFilter: createMathSpeechStreamFilter(),
             tokensEmitted: 0,
             metric: metrics.newTurn(this.sessionId, this.userId, this.tutorProfile.id || 'default'),
         };
@@ -524,7 +528,12 @@ class VoiceSession {
             this._forwardSpoken(turn, turn.tagBuffer);
             turn.tagBuffer = '';
         }
-        if (turn.tts) turn.tts.finalize();
+        if (turn.tts) {
+            // Drain the math-speech filter's held-back tail before closing.
+            const tail = turn.speechFilter ? turn.speechFilter.flush() : '';
+            if (tail) turn.tts.appendText(tail);
+            turn.tts.finalize();
+        }
 
         // ── Pipeline verify on assembled spoken text in parallel with TTS draining ──
         let verifiedText = turn.spokenAcc;
@@ -817,7 +826,7 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
                     resolve();
                 },
             });
-            ts.appendText(segment.spoken);
+            ts.appendText(speakMathInProse(segment.spoken));
             ts.finalize();
             // If the segment is aborted mid-stream, the synthesizer's
             // signal listener will close the Cartesia context and onDone
@@ -1057,8 +1066,13 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
             turnId: turn.metric.turnId,
             text,
         });
-        // Push to TTS
-        if (turn.tts) turn.tts.appendText(text);
+        // Push to TTS through the math-speech filter — the transcript above
+        // keeps "2x + 4 = 20"; the audio says "2x plus 4 equals 20" instead
+        // of "equal sign", and "ax + b" stops being pronounced "axe".
+        if (turn.tts) {
+            const ttsText = turn.speechFilter ? turn.speechFilter.push(text) : text;
+            if (ttsText) turn.tts.appendText(ttsText);
+        }
     }
 
     _stripVisualDirectives(text) {
@@ -1120,7 +1134,7 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
                 onDone: () => resolve(),
                 onError: () => resolve(),
             });
-            ts.appendText(text);
+            ts.appendText(speakMathInProse(text));
             ts.finalize();
         });
     }

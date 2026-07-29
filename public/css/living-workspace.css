@@ -854,23 +854,45 @@ html[data-theme="dark"] .lws-root {
   .lws-dv-pointed { animation: none; }
 }
 
-/* ── Interactive scaffold blanks (tap → type → StudentMove) ─────────────── */
+/* ── Interactive scaffold blanks (tap → type → StudentMove) ───────────────
+   Tall, unmissable slots (owner report, 2026-07-29: "fill-ins should be
+   taller and more obvious"). An empty blank breathes gently until touched;
+   reduced-motion users get the static form. */
 .lws-dv-line .lws-blank {
   cursor: pointer;
-  border: 1.5px dashed var(--cr-accent, #6d5ef0) !important;
-  border-radius: 6px;
-  padding: 0 6px;
-  min-width: 34px;
-  display: inline-block;
+  border: 2px dashed var(--cr-accent, #6d5ef0) !important;
+  border-radius: 8px;
+  padding: 0.22em 10px;
+  min-width: 52px;
+  min-height: 1.7em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   vertical-align: middle;
-  background: color-mix(in srgb, var(--cr-accent, #6d5ef0) 8%, transparent);
+  background: color-mix(in srgb, var(--cr-accent, #6d5ef0) 10%, transparent);
+  animation: lws-blank-pulse 2s ease-in-out infinite;
 }
+@keyframes lws-blank-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cr-accent, #6d5ef0) 0%, transparent); }
+  50%      { box-shadow: 0 0 0 4px color-mix(in srgb, var(--cr-accent, #6d5ef0) 22%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lws-dv-line .lws-blank { animation: none; }
+}
+/* Once the student engages (typing, submitted, judged) the pulse stops. */
+.lws-dv-line .lws-blank:hover,
+.lws-dv-line .lws-blank:focus-visible,
+.lws-dv-line .lws-blank-pending,
+.lws-dv-line .lws-blank-ok,
+.lws-dv-line .lws-blank-bad,
+.lws-dv-line .lws-blank-open,
+.lws-dv-line .lws-blank:has(.lws-blank-input) { animation: none; }
 .lws-dv-line .lws-blank:hover,
 .lws-dv-line .lws-blank:focus-visible { background: color-mix(in srgb, var(--cr-accent, #6d5ef0) 16%, transparent); outline: none; }
 .lws-blank-input {
-  width: 72px; height: 26px; font: inherit; font-size: 0.95em;
-  border: 1px solid var(--cr-accent, #6d5ef0); border-radius: 5px;
-  padding: 0 5px; background: var(--cr-bg, #fff); color: inherit;
+  width: 84px; height: 34px; font: inherit; font-size: 1.05em; text-align: center;
+  border: 2px solid var(--cr-accent, #6d5ef0); border-radius: 7px;
+  padding: 0 6px; background: var(--cr-bg, #fff); color: inherit;
 }
 .lws-blank-chip {
   margin-left: 8px; font-size: 12px; padding: 2px 10px; cursor: pointer;

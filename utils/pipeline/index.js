@@ -60,13 +60,13 @@ const { detectModeTransition } = require('../modeTransitionDetector');
 const { gradeTurn, summarizeSession, createScorecard } = require('../sessionGrader');
 const { detectPatterns, summarizeSession: summarizeForPatterns } = require('../sessionPatternDetector');
 const { parseBoardTags } = require('../boardTagParser');
-const { stripInternalTags, hasInternalTags } = require('../internalTagSanitizer');
+const { stripInternalTags, hasInternalTags, stripOrphanMathDelims } = require('../internalTagSanitizer');
 const { parseBoardJsonCommands } = require('../boardJsonParser');
 const { enforcePedagogyRule } = require('../boardCommandGuard');
 const { resolveModelCommands } = require('../conceptModelCommand');
 const { parseXpTags } = require('../xpTagParser');
 const { parseVisualTabTags } = require('../visualTabTagParser');
-const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
+const { synthesizeBoardCommands, mergeWithLlmCommands, dropRedundantPoses, synthesizeFallbackPose, synthesizeFallbackImage, synthesizeTilesTab, synthesizeAutoClear, synthesizeWorkedExampleSteps, detectBoardReference } = require('./boardSynthesizer');
 const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
@@ -242,7 +242,13 @@ async function runPipeline(message, ctx) {
     const problemText = pickProblemContext(assistantContext);
     if (problemText) {
       const verifyStart = Date.now();
-      llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate)
+      // fullStudentMessage protects multi-part questions: the extracted
+      // candidate is the FINAL value, but the reply may also carry the
+      // intermediate sub-answers ("0.3 … 300") — the judge must see them
+      // as shown work, not competing answers.
+      llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate, {
+        fullStudentMessage: message,
+      })
         .then(verdict => {
           const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;
           if (verdict.isCorrect !== null) {
@@ -508,6 +514,11 @@ async function runPipeline(message, ctx) {
     // For the one-ask guard: decide reads the LAST assistant message to know
     // whether the tutor already asked this student to explain this work.
     conversation: ctx.conversation || null,
+    // Course lessons don't use lessonPhaseManager phaseState — their state
+    // rides in the course prompt + _course metadata — so decide needs this
+    // flag to know the topic is already chosen (the student's-lead guard
+    // must launch the module, never offer a topic menu).
+    isCourseMode: !!ctx._course,
   });
 
   // Test-out: the challenge card is about to render below the tutor's reply, so
@@ -592,7 +603,13 @@ async function runPipeline(message, ctx) {
     ? false
     : (tutorPlan ? shouldSuppressSocratic(tutorPlan) : false);
 
-  if (tutorPlan) {
+  // The plan layer is the FREE-tutoring mental model ("we were into volume
+  // last time", current skill focuses). In a course lesson the pathway has
+  // already chosen the topic — injecting the plan layer there makes the
+  // tutor pitch last week's open-chat topics over the module content
+  // (production report, 2026-07-29: geometry topic menu inside ACT Math
+  // Prep). Course turns run on the course prompt alone.
+  if (tutorPlan && !ctx._course) {
     const planLayer = buildPlanLayer(tutorPlan, {
       skillResolution,
       interactionType: ctx.conversation?.conversationType || 'chat',
@@ -804,6 +821,9 @@ async function runPipeline(message, ctx) {
       // the graded problem instead of a parallel one).
       pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
       pinnedAnswer: diagnosis.correctAnswer || null,
+      // Lets the scaffold guard tell a legit missing-factor card (result
+      // stated in this very reply) from a backwards one that leaks it.
+      tutorReplyText: verified.text || null,
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
@@ -889,6 +909,7 @@ async function runPipeline(message, ctx) {
       userMessage: message,
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+      tutorReplyText: verified.text || null,
     });
     guardedSynth = synthGuard.allowed;
     if (synthGuard.dropped.length > 0) {
@@ -972,7 +993,18 @@ async function runPipeline(message, ctx) {
   // the visual gate below so the backfilled image is gated like any other.
   // Conservative: fires only when no graph/image already survived AND a concept
   // is derivable — otherwise the board is left as-is (no garbage search).
-  if (!verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
+  // A tiles promise is satisfied by the TILES tab command (backfilled at the
+  // visual-tab stage below), not by an image search — detect it once here so
+  // the image backfill doesn't answer "let me get those tiles on your screen"
+  // with a random diagram.
+  const tilesTabBackfill = synthesizeTilesTab({
+    tutorResponse: verified.text,
+    pinnedProblemTex: (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex
+      || ctx.conversation?.boardProblem?.tex || null,
+  });
+
+  if (!tilesTabBackfill
+      && !verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
     const fallbackImage = synthesizeFallbackImage({
       tutorResponse: verified.text,
       activeSkill: ctx.activeSkill || null,
@@ -1281,6 +1313,24 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // ── Stage 5c.2: AUTO-CLEAR ON NEW PROBLEM ──
+  // All pose sources are final now. If this turn poses a genuinely NEW
+  // problem while an older one is pinned, prepend the `clear` the model
+  // should have emitted — otherwise the previous problem's cards (including
+  // interactive tools) stay stacked above the new work.
+  {
+    const beforeLen = verified.boardCommands.length;
+    verified.boardCommands = synthesizeAutoClear({
+      commands: verified.boardCommands,
+      previousProblemTex: ctx.conversation?.boardProblem?.tex || null,
+    });
+    if (verified.boardCommands.length > beforeLen) {
+      boardLogger.info('Auto-clear prepended for new problem pose', {
+        previous: ctx.conversation?.boardProblem?.tex || null,
+      });
+    }
+  }
+
   // Read-only `example` cards are teaching aids, not moves in the student's
   // solve cycle — they must not advance lastBoardAction (which gates clear-after-
   // verify and the synthesizer's cycle-closed logic) or touch the pin. Track
@@ -1359,6 +1409,14 @@ async function runPipeline(message, ctx) {
   if (visualTabParsed.visualTabCommands.length > 0) {
     verified.text = visualTabParsed.cleanedText;
     verified.visualTabCommands = visualTabParsed.visualTabCommands.slice(0, 2);
+  } else if (tilesTabBackfill) {
+    // The tutor promised tiles in prose but emitted no <TILES/> tag — the
+    // board would silently contradict the chat ("Take a look now…" over the
+    // previous topic's tool). Backfill the tab command it should have sent.
+    verified.visualTabCommands = [tilesTabBackfill];
+    boardLogger.info('Tiles-promise backfill added TILES tab command', {
+      expression: tilesTabBackfill.expression,
+    });
   } else {
     verified.visualTabCommands = [];
   }
@@ -1379,6 +1437,9 @@ async function runPipeline(message, ctx) {
     });
     verified.text = stripInternalTags(verified.text);
   }
+  // Unbalanced \( / \[ delimiters render as raw source in the bubble —
+  // drop the orphans (balanced math is untouched). Cheap, so unconditional.
+  verified.text = stripOrphanMathDelims(verified.text);
 
   // ── Merge LLM signals into sidecar ──
   mergeLlmSignals(sidecar, verified.extracted);

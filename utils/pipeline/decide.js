@@ -184,6 +184,24 @@ const OPENER_TYPES = new Set([
 function applyStudentsLeadGuard(decision, observation, context) {
   if (context.phaseState) return;                                   // course lesson drives
   if (!OPENER_TYPES.has(observation?.messageType)) return;          // student said something substantive
+
+  // COURSE MODE: the opposite directive. The module has already chosen the
+  // topic — a bare "yep"/greeting means "start the lesson", and the open-
+  // tutoring version below ("ask what they feel like today") is exactly the
+  // production failure: inside ACT Math Prep, "yep" to "Ready?" got a
+  // geometry topic menu (owner report, 2026-07-29).
+  if (context.isCourseMode) {
+    decision.directives.push(
+      'COURSE LESSON DRIVES: this is a structured course lesson and the student '
+      + 'just said they are ready (or greeted you). Launch the CURRENT module step '
+      + 'NOW — a one-sentence lead-in in your voice, then the first piece of content '
+      + 'or the first question of this step. Do NOT offer a topic menu, do NOT ask '
+      + 'what they want to work on today, and do NOT steer toward topics from earlier '
+      + 'free-tutoring sessions — the course outline has already chosen the topic.'
+    );
+    return;
+  }
+
   const conv = context.conversation;
   if (conv?.boardLedger?.current?.problemTex) return;               // a problem is in play
   if (conv?.lastProblemState) return;                               // mid-problem continuity

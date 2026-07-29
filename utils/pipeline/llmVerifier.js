@@ -104,6 +104,10 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
           'You are a precise math answer engine. Given a math problem, return ONLY the final simplified answer as a short string. ' +
           'Do not show work, do not add commentary, do not repeat the problem. ' +
           'If multiple equivalent forms are acceptable (e.g. factored vs expanded), return the simplest standard form. ' +
+          'If the problem text asks MORE THAN ONE thing (a warm-up sub-step and then the real result — ' +
+          'e.g. "what\'s 0.15 × 2, and then where does the decimal land once you account for the 2000?"), ' +
+          'return the answer to the LAST thing asked: that is the question the student is completing. ' +
+          'Never anchor on an intermediate sub-step when a final result is also requested. ' +
           'Respond with JSON: {"answer": "<answer>", "form": "<e.g. simplified|factored|decimal>"}.',
       },
       {
@@ -147,6 +151,16 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
 
     // ── Step 2: Ask equivalence judge ──
     // Independent call, still no persona. Just: do these two mean the same thing?
+    // The student's full reply, when the caller provides it, protects the
+    // multi-part-question case: a student answering "what's 0.15×2, and then
+    // where does the decimal land?" with "0.3 … 300" answered BOTH parts —
+    // the intermediate 0.3 must not read as a wrong final answer.
+    const fullReply = typeof options.fullStudentMessage === 'string'
+      && options.fullStudentMessage.trim()
+      && options.fullStudentMessage.trim() !== answer
+      ? String(options.fullStudentMessage).slice(0, MAX_ANSWER_CHARS * 4)
+      : null;
+
     const step2Messages = [
       {
         role: 'system',
@@ -155,6 +169,8 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
           'Accept all valid equivalent forms: 0.5 ≡ 1/2, (x+2)(x-3) ≡ x^2-x-6, 2 ≡ 2.0, sin^2(x) ≡ 1-cos^2(x) when the problem allows. ' +
           'A different form of the same number/expression counts as a MATCH. ' +
           'A different value, wrong sign, wrong coefficient, or an incomplete simplification counts as NO MATCH. ' +
+          'If the student\'s full reply is provided, judge their FINAL answer against the expected answer — ' +
+          'intermediate values they computed along the way are shown work, not wrong answers. ' +
           'Respond with JSON ONLY: {"matches": true|false, "confidence": <0.0-1.0>, "rationale": "<brief reason>"}.',
       },
       {
@@ -162,8 +178,9 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
         content:
           `Problem:\n${problem}\n\n` +
           `Expected answer: ${modelAnswer}\n` +
-          `Student answer: ${answer}\n\n` +
-          `Are these mathematically equivalent?`,
+          `Student answer: ${answer}\n` +
+          (fullReply ? `Student's full reply (for context):\n${fullReply}\n` : '') +
+          `\nAre these mathematically equivalent?`,
       },
     ];
 

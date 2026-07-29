@@ -90,7 +90,42 @@ function hasInternalTags(text) {
         || new RegExp(BOARD_JSON_SRC, 'i').test(text);
 }
 
+// ── Orphan inline-math delimiters ───────────────────────────────────
+// The model sometimes opens a math span and never closes it — "your \( x
+// terms)" rendered the raw "\(" in the bubble (production report,
+// 2026-07-29). A balanced pair renders fine; only the ORPHANS are removed
+// (their content stays as plain text). Handles \(…\) and \[…\].
+
+function stripOrphanPair(text, open, close) {
+    const events = [];
+    for (let i = 0; i < text.length - 1; i++) {
+        if (text[i] !== '\\') continue;
+        if (text[i + 1] === open) { events.push({ i, type: 'open' }); i++; }
+        else if (text[i + 1] === close) { events.push({ i, type: 'close' }); i++; }
+    }
+    const orphans = [];
+    const stack = [];
+    for (const e of events) {
+        if (e.type === 'open') stack.push(e);
+        else if (stack.length) stack.pop();
+        else orphans.push(e);          // close with no open
+    }
+    orphans.push(...stack);            // opens never closed
+    if (!orphans.length) return text;
+    orphans.sort((a, b) => b.i - a.i);
+    let out = text;
+    for (const e of orphans) out = out.slice(0, e.i) + out.slice(e.i + 2);
+    return out;
+}
+
+function stripOrphanMathDelims(text) {
+    if (!text || typeof text !== 'string') return text || '';
+    if (!/\\[()[\]]/.test(text)) return text;
+    return stripOrphanPair(stripOrphanPair(text, '(', ')'), '[', ']');
+}
+
 module.exports = {
     stripInternalTags,
     hasInternalTags,
+    stripOrphanMathDelims,
 };

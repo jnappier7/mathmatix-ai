@@ -236,6 +236,31 @@ function sanitizeCommand(command) {
     return out;
 }
 
+// Detect the backwards evaluation scaffold: exactly one "=", blanks confined
+// to one side, and the blank-free side a bare numeric literal that nobody has
+// stated yet (neither the student's recent text nor the tutor's current
+// reply). Abstains (returns false) on anything more structured — multi-step
+// algebra scaffolds like "x^2 + 4x + \boxed{} = 12 + \boxed{}" have blanks on
+// both sides or a non-numeric far side and are untouched.
+function scaffoldShowsUnstatedResult(tex, ctx) {
+    const parts = String(tex).split('=');
+    if (parts.length !== 2) return false;
+    const [left, right] = parts.map(s => s.trim());
+    const leftHasBlank = /\\boxed/.test(left);
+    const rightHasBlank = /\\boxed/.test(right);
+    if (leftHasBlank === rightHasBlank) return false;    // both or neither → not this shape
+    const shownSide = leftHasBlank ? right : left;
+    // Bare numeric literal (allow $ %, spacing macros, commas in thousands)?
+    const literal = shownSide.replace(/\\[,;!\s]|[\s$]/g, '').replace(/\\%/g, '');
+    if (!/^-?\d[\d,]*(?:\.\d+)?$/.test(literal)) return false;
+    const num = literal.replace(/,/g, '');
+    const haystack = `${ctx.combinedText || ''}\n${ctx.tutorReplyText || ''}`;
+    // The number counts as "stated" only as a standalone value, not as a
+    // digit-run inside a longer number (300 inside 3000 doesn't count).
+    const stated = new RegExp(`(?<![\\d.])${num.replace(/\./g, '\\.')}(?![\\d.])`).test(haystack.replace(/,/g, ''));
+    return !stated;
+}
+
 function enforcePedagogyRule({
     commands,
     userMessage,
@@ -244,6 +269,7 @@ function enforcePedagogyRule({
     workedExample = false,
     pinnedProblemTex = null,
     pinnedAnswer = null,
+    tutorReplyText = null,
 } = {}) {
     const allowed = [];
     const dropped = [];
@@ -291,6 +317,7 @@ function enforcePedagogyRule({
             workedExample,
             pinnedProblemTex,
             pinnedAnswer,
+            tutorReplyText,
         });
 
         if (decision.allowed) {
@@ -420,6 +447,25 @@ function evaluate(command, ctx) {
         }
         if (!texHasBlank(command.tex)) {
             return { allowed: false, reason: 'scaffold_has_no_blank' };
+        }
+        // A raw "?" as the unknown marker means the blanks are on the wrong
+        // things: the model wrote the value it wants ("0 + \boxed{} +
+        // \boxed{} = ?") with boxes over ALREADY-KNOWN terms and the actual
+        // unknown as a question mark. The empty box IS the unknown — a card
+        // that needs "?" has its blanks backwards. Drop it; a missing card
+        // beats a nonsensical one (production transcript, 2026-07-29).
+        if (/\?/.test(command.tex)) {
+            return { allowed: false, reason: 'scaffold_question_mark_unknown' };
+        }
+        // Backwards evaluation scaffold: "<expr with blanks> = <bare number>"
+        // displays the RESULT while hiding givens ("0.3 \times \boxed{} = 300"
+        // emitted while the chat asks "what's 0.3 × 1000?" — it leaks the
+        // very answer being asked for AND quizzes the student on a given).
+        // A shown result is only legitimate when that number is already on
+        // the table — stated by the student or by the tutor's own reply
+        // (missing-factor problems: "what times 0.3 gives 300?").
+        if (scaffoldShowsUnstatedResult(command.tex, ctx)) {
+            return { allowed: false, reason: 'scaffold_reveals_unstated_result' };
         }
         return { allowed: true };
     }

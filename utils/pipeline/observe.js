@@ -79,7 +79,13 @@ const PATTERNS = {
   // These indicate the student is stating their final answer.
   // NOTE: algebraic alternation MUST come before numeric, so "5x^4-1" matches
   // before the numeric branch can grab just "5".
-  embeddedAnswerConclusive: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?|the\s+\w+\s+is)\s+)(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)/gi,
+  // The trailing boundary lookahead matches embeddedAnswerIntermediate's: the
+  // algebraic branch's single-letter capture must not grab the first letter of
+  // an ordinary word — "so its just the sum" extracted answer "j" and "the
+  // answer is definitely q" extracted "d" (production transcript, 2026-07-29).
+  // "it\s+is" joins the cue list so "so it is x+2" captures x+2, not the "i"
+  // of "is".
+  embeddedAnswerConclusive: /(?:(?:the\s+)?(?:limit|answer|result|derivative|solution|value)\s+(?:is|equals?|=|would\s+be|comes?\s+(?:out\s+)?to)\s+|(?:so|which\s+means|meaning|therefore|thus)\s+(?:it'?s?\s+|it\s+is\s+|the\s+\w+\s+is\s+))(-?\d*[a-z](?:\^[\d{}]+)?(?:\s*[+\-]\s*\d*[a-z]?(?:\^[\d{}]+)?)*|-?\d+\.?\d*(?:\s*\/\s*\d+)?)(?=[\s,.:;!?)}\]]|$)/gi,
 
   // "Intermediate" patterns (lower priority): "you get x+2", "gives 3x"
   // These may be intermediate steps, not the final answer.
