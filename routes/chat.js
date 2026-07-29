@@ -1745,8 +1745,11 @@ async function runStudentTurn(req, res) {
         if (user.activeCourseSessionId && conversationContextForPrompt?.courseSession) {
             try {
                 const CourseSessionModel = require('../models/courseSession');
-                const hasScaffoldAdvance = /<\s*SCAFFOLD_ADVANCE\s*>/i.test(pipelineResult.text);
-                const hasModuleComplete = /<\s*MODULE_COMPLETE\s*>/i.test(pipelineResult.text);
+                // From the pipeline's extracted flags — NEVER the text: verify
+                // strips the tags from the reply, so regex-testing the text
+                // here matched nothing and course progress never advanced.
+                const hasScaffoldAdvance = pipelineResult.scaffoldAdvance === true;
+                const hasModuleComplete = pipelineResult.moduleComplete === true;
 
                 if (hasScaffoldAdvance || hasModuleComplete) {
                     const csDoc = await CourseSessionModel.findById(user.activeCourseSessionId);
