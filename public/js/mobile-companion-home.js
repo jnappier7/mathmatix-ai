@@ -71,9 +71,13 @@
           '<button class="mch-action mch-type" id="mch-type"><span class="mch-ico">⌨️</span><b>Type Instead</b><span>Keyboard</span></button>' +
         '</div>' +
       '</div>' +
-      '<nav class="mch-nav">' +
+      // Courses belongs in this nav: .cr-courses-card is display:none below
+      // 900px, so without an entry here a phone has NO path to a course at
+      // all (owner report, 2026-07-29).
+      '<nav class="mch-nav" aria-label="Main">' +
         '<button class="on"><span class="mch-ni">🏠</span>Home</button>' +
         '<button id="mch-notebook"><span class="mch-ni">📝</span>Notebook</button>' +
+        '<button id="mch-courses"><span class="mch-ni" aria-hidden="true">📚</span>Courses</button>' +
         '<button id="mch-progress"><span class="mch-ni">📈</span>Progress</button>' +
         '<button id="mch-me"><span class="mch-me"> </span>Me</button>' +
       '</nav>';
@@ -106,6 +110,17 @@
       trigger(document.getElementById('mpc-menu-btn') ? 'mpc-menu-btn' : 'right-drawer-toggle');
     });
     document.getElementById('mch-progress').addEventListener('click', function () { trigger('right-drawer-toggle'); });
+    // Courses: leave the home overlay and open the real catalog UI that
+    // courseCatalog.js owns on every viewport. Falls back to the sidebar button
+    // if the manager has not booted yet.
+    document.getElementById('mch-courses').addEventListener('click', function () {
+      leaveHome();
+      if (window.courseManager && typeof window.courseManager.openCatalog === 'function') {
+        window.courseManager.openCatalog();
+      } else {
+        trigger('browse-courses-btn');
+      }
+    });
     document.getElementById('mch-notebook').addEventListener('click', function () { leaveHome(); });
     document.getElementById('mch-me').addEventListener('click', function () {
       trigger(document.getElementById('mpc-menu-btn') ? 'mpc-menu-btn' : 'right-drawer-toggle');
