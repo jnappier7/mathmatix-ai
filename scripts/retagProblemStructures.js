@@ -95,6 +95,20 @@ function promptOperation(prompt) {
   const subWords = /\b(difference|subtract(ed|ing)?|fewer|less than|left|remain|take away|gave away)\b/i.test(s);
   if (addWords && !subWords) return 'addition';
   if (subWords && !addWords) return 'subtraction';
+
+  // CGI change-unknown word problems carry no operator and no cue word:
+  // "Tim had 8 toys. Now he has 10 toys. How many did he get?" is 8 + __ = 10.
+  // The direction of the change decides the operation, so compare the two
+  // quantities rather than skipping 198 perfectly determinable items.
+  const change = /\bhad\s+(\d+)\b[\s\S]*?\bnow\b[\s\S]*?\bhas\s+(\d+)\b/i.exec(s);
+  if (change) {
+    const before = Number(change[1]);
+    const after = Number(change[2]);
+    if (after > before) return 'addition';
+    if (after < before) return 'subtraction';
+    return null; // no change at all — nothing to infer
+  }
+
   return null;
 }
 
