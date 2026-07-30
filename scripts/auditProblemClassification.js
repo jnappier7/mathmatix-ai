@@ -28,7 +28,8 @@
  * Read-only. Never writes to the bank; emits a report and optional JSON.
  *
  * Run (Render shell, or local with Atlas access):
- *   node scripts/auditProblemClassification.js                  # tiers 1-2, whole bank
+ *   node scripts/auditProblemClassification.js                  # tiers 1-2, active items
+ *   node scripts/auditProblemClassification.js --include-inactive
  *   node scripts/auditProblemClassification.js --skill slope    # focus one skill
  *   node scripts/auditProblemClassification.js --llm            # + tier 3
  *   node scripts/auditProblemClassification.js --llm --sample 300
@@ -52,6 +53,7 @@ const USE_LLM = has('llm');
 const SAMPLE_SIZE = Number(flag('sample', 200));
 const LIMIT = flag('limit') ? Number(flag('limit')) : null;
 const ONLY_SKILL = flag('skill');
+const INCLUDE_INACTIVE = has('include-inactive');
 const JSON_OUT = flag('json');
 const LLM_MODEL = flag('model', 'gpt-4o-mini');
 const MAX_LLM = Number(flag('max-llm', 1200)); // cost guard
@@ -273,7 +275,12 @@ async function llmVerify(item, skillName, candidateNames) {
 async function main() {
   await mongoose.connect(process.env.MONGO_URI);
 
-  const query = ONLY_SKILL ? { skillId: ONLY_SKILL } : {};
+  // Audit what is actually SERVED. Deactivated items — including copies retired
+  // by fixOperatorMisfiledProblems.js — reach no student, so counting them
+  // would keep reporting findings that have already been fixed.
+  // --include-inactive restores the whole-collection view.
+  const query = INCLUDE_INACTIVE ? {} : { isActive: { $ne: false } };
+  if (ONLY_SKILL) query.skillId = ONLY_SKILL;
   let cursor = Problem.find(query)
     .select('problemId skillId prompt answer answerType difficulty gradeBand isActive options correctOption')
     .lean();
@@ -338,7 +345,8 @@ async function main() {
   for (const f of findings) byKind[f.kind] = (byKind[f.kind] || 0) + 1;
 
   console.log('\n═══ Problem classification audit ═══');
-  console.log(`problems scanned        ${problems.length}`);
+  console.log(`problems scanned        ${problems.length}`
+    + `${INCLUDE_INACTIVE ? ' (incl. inactive)' : ' (active only — --include-inactive for all)'}`);
   console.log(`distinct skillIds       ${new Set(problems.map((p) => p.skillId)).size}`);
   console.log(`catalog skills known    ${skills.size}`);
   console.log(`tier-2 assertable items ${asserted.length}`
