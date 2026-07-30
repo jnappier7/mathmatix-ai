@@ -130,7 +130,10 @@ async function main() {
     process.exit(0);
   }
 
-  const all = await Problem.find({})
+  // Deactivated copies are not served, so they are not duplicates any more.
+  // Excluding them makes a re-run after --apply an honest verification: it
+  // should report zero contradictions, not replay the same 21 groups.
+  const all = await Problem.find({ isActive: { $ne: false } })
     .select('problemId skillId prompt isActive tags')
     .lean();
 
