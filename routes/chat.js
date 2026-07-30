@@ -1175,6 +1175,10 @@ async function runStudentTurn(req, res) {
         // course turns HERE (not /api/course-chat), so this is what tells the
         // pipeline the lesson — not the student — is choosing the topic.
         let courseModeActive = false;
+        // The course module's skill for THIS step. Without it the pipeline
+        // attributes BKT/FSRS evidence to tutorPlan.currentTarget — i.e. course
+        // practice credited whatever free chat was last focused on.
+        let courseActiveSkill = null;
 
         if (!systemPrompt && conversationContextForPrompt?.courseSession && !masteryContext) {
             // COURSE MODE: Use the dedicated instructor-led prompt
@@ -1200,6 +1204,15 @@ async function runStudentTurn(req, res) {
                         stepTitle: scaffold[courseSessionDoc.currentScaffoldIndex || 0]?.title
                     };
                 }
+                // Same derivation /api/course-chat uses, so mastery evidence
+                // lands on the module's skill for the current step instead of
+                // the free-tutoring plan's target.
+                const { deriveCourseActiveSkill } = require('../utils/pipeline/courseAdapter');
+                courseActiveSkill = deriveCourseActiveSkill({
+                    moduleData: courseCtx.scaffoldData,
+                    currentPathwayModule: courseCtx.currentModule,
+                    scaffoldIndex: courseSessionDoc.currentScaffoldIndex || 0,
+                });
             } else {
                 systemPrompt = generateSystemPrompt(studentProfileForPrompt, currentTutor, null, 'student', curriculumContext, uploadContext, masteryContext, likedMessages, fluencyContext, conversationContextForPrompt, teacherAISettings, gradingContext, errorPatterns, resourceContext, message, formattedMessagesForLLM, activeWorksheet);
             }
@@ -1248,6 +1261,21 @@ async function runStudentTurn(req, res) {
         // BUT: if the student is clearly asking about something different
         // (homework, a specific problem they brought), relax the lock
         // so the tutor addresses their actual question.
+        // ACT BOOTCAMP OVERRIDES THE SCAFFOLD. When the student is working their
+        // own missed questions, a curriculum step anchor is not just redundant —
+        // it CONTRADICTS the review section above, and it lands in the last user
+        // message (the highest-attention slot) while the missed question sits
+        // back in the system prompt. So the tutor was being told "coach missed
+        // question #12" and "teach STEP 3/11: Ratios" in the same turn, and the
+        // step anchor won: it read as though the tutor had never been shown the
+        // question the student actually missed (owner report, 2026-07-29).
+        // courseSession.bootcamp is documented as REPLACING the gradual-release
+        // scaffold for act-prep; honor that here.
+        const actBootcampActive = !!(conversationContextForPrompt?.courseSession?.bootcamp?.phase);
+        if (actBootcampActive) {
+            courseScaffoldCtx = null;
+        }
+
         if (courseScaffoldCtx?.stepTitle && formattedMessagesForLLM.length > 0) {
             const lastMsg = formattedMessagesForLLM[formattedMessagesForLLM.length - 1];
             if (lastMsg?.role === 'user') {
@@ -1507,12 +1535,15 @@ async function runStudentTurn(req, res) {
         // Run the 6-stage pipeline with direct-LLM fallback
         let pipelineResult;
         try {
-            // Map mastery badge to pipeline's activeSkill format
+            // Map mastery badge to pipeline's activeSkill format. A badge
+            // session is explicitly about one skill, so it wins; otherwise a
+            // course turn carries its module step's skill (null in free chat,
+            // where the plan target is the correct attribution).
             const activeSkill = masteryContext ? {
                 skillId: masteryContext.skillId,
                 displayName: masteryContext.badgeName || masteryContext.skillId,
                 teachingGuidance: null, // Pulled from skill library by decide stage if needed
-            } : null;
+            } : (courseActiveSkill || null);
 
             pipelineResult = await runPipeline(combinedMessage, {
                 user,

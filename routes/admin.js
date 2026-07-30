@@ -1458,6 +1458,16 @@ router.get('/structured-tutor-metrics', isAdmin, (req, res) => {
       aggregate: verifyMetrics.aggregate(),
       recent: verifyMetrics.snapshot(50),
     },
+    // Course progression health. `advanceRate` is the headline: of the turns
+    // where progression was evaluated, what share actually moved the lesson.
+    // `stalled: true` (evaluations piling up, nothing advancing) is the exact
+    // condition that let students sit at "0/11 modules · 0%" unnoticed — treat
+    // it as an outage. `byOutcome.gate_blocked` is the healthy brake (a step
+    // judged done but held for more practice evidence), NOT a failure.
+    courseProgress: {
+      aggregate: require('../utils/courseProgressMetrics').aggregate(),
+      recent: require('../utils/courseProgressMetrics').snapshot(50),
+    },
   });
 });
 

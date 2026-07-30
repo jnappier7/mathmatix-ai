@@ -77,9 +77,20 @@
     background: var(--mlt-surface, #fff); border-top: 1px solid var(--mlt-line, rgba(35,39,65,.10));
   }
   .mch-nav button {
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 3px;
     font-size: 11px; color: var(--mlt-ink-dim, #6C7386); font-weight: 600;
     background: none; border: none; cursor: pointer;
+    /* WCAG 2.5.5 target size. These were ~35px tall, and adding a fifth
+       destination (Courses) narrows each one — so pin a real touch target
+       instead of letting content height decide. 5 x 48px + padding fits a
+       320px screen. */
+    min-width: 48px; min-height: 44px;
+    border-radius: 10px;
+  }
+  /* Keyboard users need to see where they are; these are real buttons in a nav. */
+  .mch-nav button:focus-visible {
+    outline: 2px solid #7C6BFF; outline-offset: 2px;
   }
   .mch-nav button .mch-ni { font-size: 19px; }
   .mch-nav button.on { color: #7C6BFF; }

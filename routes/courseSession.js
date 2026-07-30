@@ -10,7 +10,7 @@ const CourseSession = require('../models/courseSession');
 const Conversation = require('../models/conversation');
 const User = require('../models/user');
 const ActTestSession = require('../models/actTestSession');
-const { calculateOverallProgress } = require('../utils/coursePrompt');
+const { calculateOverallProgress, parseExamWeight } = require('../utils/coursePrompt');
 const { isAuthenticated } = require('../middleware/auth');
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
@@ -247,6 +247,11 @@ router.post('/enroll', async (req, res) => {
       title: m.title,
       status: i === 0 ? 'available' : 'locked',
       scaffoldProgress: 0,
+      // Exam-weighted courses (ACT: actPercentage per reporting category)
+      // measure progress by score contribution rather than module count —
+      // Integrating Essential Skills is 40-43% of the real test. Null for
+      // ordinary curriculum courses, which stay uniformly weighted.
+      examWeight: parseExamWeight(m.actPercentage ?? m.examWeight),
       lessons: (m.lessons || []).map((l, li) => ({
         lessonId: l.lessonId,
         title: l.title,
