@@ -26,38 +26,52 @@ async function main() {
       process.exit(0);
     }
 
-    // Check difficulty distribution
+    // Check difficulty distribution.
+    // NOTE: the bank uses the flat 1-5 `difficulty` field (models/problem.js);
+    // the old nested `irtParameters.difficulty` theta scale is gone. Querying
+    // the dead field reported 0.0% across every bucket and looked like missing
+    // data — it was a missing FIELD. Map theta via Problem.thetaToDifficulty().
     console.log('\n📈 Difficulty Distribution:');
-    const difficultyRanges = [
-      { label: 'Very Easy (-3 to -2)', min: -3, max: -2 },
-      { label: 'Easy (-2 to -1)', min: -2, max: -1 },
-      { label: 'Below Average (-1 to 0)', min: -1, max: 0 },
-      { label: 'Average (0 to 1)', min: 0, max: 1 },
-      { label: 'Above Average (1 to 2)', min: 1, max: 2 },
-      { label: 'Hard (2 to 3)', min: 2, max: 3 }
-    ];
+    const difficultyLabels = {
+      1: 'Very Easy', 2: 'Easy', 3: 'Average', 4: 'Hard', 5: 'Very Hard'
+    };
 
-    for (const range of difficultyRanges) {
-      const count = await Problem.countDocuments({
-        'irtParameters.difficulty': { $gte: range.min, $lt: range.max }
-      });
+    for (const level of [1, 2, 3, 4, 5]) {
+      const count = await Problem.countDocuments({ difficulty: level });
       const percent = ((count / totalCount) * 100).toFixed(1);
-      console.log(`   ${range.label}: ${count} (${percent}%)`);
+      console.log(`   ${level} — ${difficultyLabels[level]}: ${count} (${percent}%)`);
+    }
+
+    const unrated = await Problem.countDocuments({
+      difficulty: { $in: [null, undefined] }
+    });
+    if (unrated > 0) {
+      const percent = ((unrated / totalCount) * 100).toFixed(1);
+      console.log(`   ⚠️  no difficulty set: ${unrated} (${percent}%)`);
     }
 
     // Check for one-step-equations-addition skill
     console.log('\n🔍 Checking "one-step-equations-addition" skill:');
     const oneStepProblems = await Problem.find({
       skillId: 'one-step-equations-addition'
-    }).select('problemId irtParameters.difficulty').lean();
+    }).select('problemId difficulty').lean();
 
     if (oneStepProblems.length === 0) {
       console.log('   ⚠️  No problems found for this skill!');
     } else {
       console.log(`   Total: ${oneStepProblems.length} problems`);
-      const difficulties = oneStepProblems.map(p => p.irtParameters.difficulty);
-      console.log(`   Difficulty range: ${Math.min(...difficulties).toFixed(2)} to ${Math.max(...difficulties).toFixed(2)}`);
-      console.log(`   Average: ${(difficulties.reduce((a,b) => a+b, 0) / difficulties.length).toFixed(2)}`);
+      const difficulties = oneStepProblems
+        .map(p => p.difficulty)
+        .filter(d => typeof d === 'number');
+      if (difficulties.length === 0) {
+        console.log('   ⚠️  None of them carry a difficulty rating');
+      } else {
+        console.log(`   Difficulty range: ${Math.min(...difficulties)} to ${Math.max(...difficulties)}`);
+        console.log(`   Average: ${(difficulties.reduce((a, b) => a + b, 0) / difficulties.length).toFixed(2)}`);
+        if (difficulties.length < oneStepProblems.length) {
+          console.log(`   (${oneStepProblems.length - difficulties.length} unrated, excluded)`);
+        }
+      }
     }
 
     // Show sample skills
@@ -66,7 +80,7 @@ async function main() {
       { $group: {
           _id: '$skillId',
           count: { $sum: 1 },
-          avgDifficulty: { $avg: '$irtParameters.difficulty' }
+          avgDifficulty: { $avg: '$difficulty' }
         }
       },
       { $sort: { count: -1 } },
@@ -74,7 +88,10 @@ async function main() {
     ]);
 
     skillGroups.forEach(skill => {
-      console.log(`   ${skill._id}: ${skill.count} problems (avg difficulty: ${skill.avgDifficulty.toFixed(2)})`);
+      const avg = typeof skill.avgDifficulty === 'number'
+        ? skill.avgDifficulty.toFixed(2)
+        : 'unrated';
+      console.log(`   ${skill._id}: ${skill.count} problems (avg difficulty: ${avg})`);
     });
 
     await mongoose.connection.close();
