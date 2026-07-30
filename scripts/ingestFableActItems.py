@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """
-Ingest Fable-authored ACT Math tests (seeds/fable-act/test*.json) into our
-Problem schema, rendering each matplotlib `figure_code` to inline SVG.
+Ingest Fable-authored ACT Math tests (seeds/fable-act/test*.json) and any
+top-up batches (seeds/fable-act/topup*.json) into our Problem schema,
+rendering each matplotlib `figure_code` to inline SVG.
+
+Top-up batches use the same question schema as the numbered tests but are not
+45-question blueprinted forms -- they exist to raise per-skill item volume for
+the adaptive engine. Their problemIds are namespaced by filename
+("act-fable-topup1q7"), so the numbered tests keep the problemIds they have
+always had and a re-ingest is a clean upsert.
 
 Current-spec ACT items (2025+): 45 questions, 4 choices, the six ACT reporting
 categories, worked explanations, machine `verify` snippets, and a per-item
@@ -21,6 +28,7 @@ import json
 import io
 import os
 import re
+import glob
 import hashlib
 from collections import defaultdict
 
@@ -86,8 +94,13 @@ def main():
     names = {}
     by_cat = defaultdict(set)
     figs = 0
-    for t in range(1, 6):
-        data = json.load(open(os.path.join(SRC, "test%d.json" % t)))
+    # Numbered practice tests first, then any top-up batches, so that a batch
+    # added later never renumbers an existing item.
+    sources = [("t%d" % t, os.path.join(SRC, "test%d.json" % t)) for t in range(1, 6)]
+    sources += [(os.path.splitext(os.path.basename(p))[0], p)
+                for p in sorted(glob.glob(os.path.join(SRC, "topup*.json")))]
+    for tag, path in sources:
+        data = json.load(open(path))
         for q in data["questions"]:
             category = CAT.get(q["category"], "unknown")
             skill_name = q.get("skill") or category
@@ -97,7 +110,7 @@ def main():
 
             choices = q["choices"]
             ai = q["answer"]
-            pid = "act-fable-t%dq%d" % (t, q["n"])
+            pid = "act-fable-%sq%d" % (tag, q["n"])
             svg = render_svg(q.get("figure_code"))
             if svg:
                 figs += 1
@@ -127,7 +140,8 @@ def main():
     json.dump(names, open(NAMES_OUT, "w"), indent=2, ensure_ascii=False)
     json.dump({c: sorted(v) for c, v in by_cat.items()}, open(CATS_OUT, "w"), indent=2, ensure_ascii=False)
 
-    print("Ingested %d items -> %s" % (len(items), os.path.relpath(OUT, os.getcwd())))
+    print("Ingested %d items from %d source files -> %s"
+          % (len(items), len(sources), os.path.relpath(OUT, os.getcwd())))
     print("  figures (SVG): %d | explanations: %d" % (figs, sum(1 for i in items if i["explanation"])))
     print("  distinct skills: %d across %d categories" % (len(names), len(by_cat)))
     print("  wrote %s and %s" % (os.path.basename(NAMES_OUT), os.path.basename(CATS_OUT)))
