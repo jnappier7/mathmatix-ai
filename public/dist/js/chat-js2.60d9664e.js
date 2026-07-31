@@ -1557,6 +1557,21 @@ class VoiceController {
                         window.appendMessage(responseText, 'ai');
                     }
 
+                    // Visual tools (images, manipulatives). appendMessage already
+                    // renders the INLINE tags, but images arrive only on this
+                    // channel — [SEARCH_IMAGE:] has no inline renderer and is
+                    // stripped as unrendered. Without this the voice tutor
+                    // describes a diagram no one ever sees, which is how it ended
+                    // up saying "here it is, you can see its 12 pentagonal faces"
+                    // over an empty board. Same call the text path makes.
+                    if (phase.visualCommands && window.visualTeachingHandler) {
+                        try {
+                            window.visualTeachingHandler.executeCommands(phase.visualCommands);
+                        } catch (error) {
+                            console.error('[Voice] Failed to execute visual commands:', error);
+                        }
+                    }
+
                     // Apply board context
                     if (boardContextData && window.chatBoardController) {
                         const messageElements = document.querySelectorAll('.message.ai');
@@ -1599,6 +1614,16 @@ class VoiceController {
             }
             if (window.appendMessage) {
                 window.appendMessage(data.response, 'ai', null, data.isMasteryQuiz);
+            }
+            // Mirrors the phased path above — this non-streaming branch is the
+            // one that actually runs whenever the streaming handshake fails, so
+            // leaving it out would mean visuals work only while streaming does.
+            if (data.visualCommands && window.visualTeachingHandler) {
+                try {
+                    window.visualTeachingHandler.executeCommands(data.visualCommands);
+                } catch (error) {
+                    console.error('[Voice] Failed to execute visual commands:', error);
+                }
             }
             if (data.audioUrl) {
                 await this.playAIResponse(data.audioUrl);
