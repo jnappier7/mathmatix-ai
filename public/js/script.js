@@ -5,7 +5,9 @@ console.log("LOG: Mâˆ†THMâˆ†TIÎ§ AI Initialized");
 // --- ES Module Imports ---
 import { sleep, getGraphColor, generateSpeakableText, showToast, escapeHtml as escapeHtmlHelper, triggerConfetti } from './modules/helpers.js';
 import { sessionTracker, initSessionTracking, getActiveSeconds, sendTimeHeartbeat } from './modules/session.js';
-import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js';
+// Versioned specifier — see the note on the billing.js import below. Bump on
+// every edit or returning students keep the old celebration routing for a week.
+import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, updateGamificationDisplay as _updateGamificationDisplay, fetchAndDisplayLeaderboard, loadQuestsAndChallenges, showTutorUnlockCelebration, showUnlockProximityTeaser, processGamificationEvents, processBadgeAward, showNextActionSuggestion } from './modules/gamification.js?v=20260731b';
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
 import './modules/statusCard.js'; // registers window.openStatusCard (Progress button)

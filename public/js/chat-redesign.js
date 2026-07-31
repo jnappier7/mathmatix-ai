@@ -202,61 +202,99 @@
   });
 
   // --- Mobile cam ⇄ pill presence -----------------------------------------
-  // Phones dock the tutor as a small cam card above the thread. The moment
-  // the kid starts typing (composer focus / keyboard up), presence steps
-  // back: body.mm-tutor-pill collapses the cam to a "watching your work"
-  // pill and pauses the idle video. Blur/keyboard-close expands it again.
+  // Phones dock the tutor as a small cam card above the thread — but only for
+  // the WELCOME. The cam plus its offset eats roughly 315px, about 40% of a
+  // typical phone viewport, before the first message; that is a fair price for
+  // the greeting (meeting your tutor is the moment) and a bad one for every
+  // turn after it, when the student is reading a worked explanation.
+  //
+  // So the collapse is now ONE-WAY on phones: the first sign the student has
+  // started working latches body.mm-tutor-pill on for the rest of the session,
+  // and nothing expands it again. It used to bounce back open on every blur and
+  // keyboard-close, which meant the cam reclaimed a third of the screen between
+  // every single message.
+  //
+  // Desktop is untouched — there the hero has room it isn't taking from anyone.
   function wireMobileCamPill() {
     if (!PHONE_MQ) return;
 
     let pill = false;
-    let blurTimer = null;
+    let latched = false; // once true, the cam never expands again this session
 
     const setPill = function (on) {
+      if (latched && !on) return; // the welcome is over; stay collapsed
       if (on === pill) return;
       pill = on;
       document.body.classList.toggle('mm-tutor-pill', on);
       setIdlePaused(on);
     };
 
+    // The welcome is over the moment the student does anything that is not
+    // reading it.
+    const latch = function () {
+      if (latched) return;
+      latched = true;
+      setPill(true);
+    };
+
     const isComposer = function (el) {
       return !!(el && el.closest && el.closest('#input-container'));
     };
 
+    // Tapping the composer, sending, or picking a starter chip all mean the
+    // same thing. The chips matter on their own: they send programmatically
+    // without ever focusing the composer, so focus alone would miss them.
     document.addEventListener('focusin', function (e) {
       if (!PHONE_MQ.matches) return;
-      if (isComposer(e.target)) {
-        if (blurTimer) { clearTimeout(blurTimer); blurTimer = null; }
-        setPill(true);
-      }
+      if (isComposer(e.target)) latch();
     });
-    document.addEventListener('focusout', function (e) {
-      if (!pill) return;
-      // Grace period: toolbar taps blur the input for a beat — don't
-      // bounce the cam open/closed mid-interaction.
-      if (blurTimer) clearTimeout(blurTimer);
-      blurTimer = setTimeout(function () {
-        blurTimer = null;
-        const active = document.activeElement;
-        if (!isComposer(active)) setPill(false);
-      }, 350);
-    });
+    document.addEventListener('click', function (e) {
+      if (!PHONE_MQ.matches) return;
+      const t = e.target;
+      if (!t || !t.closest) return;
+      if (t.closest('#send-button, #input-container, [data-rc-prompt], .rc-chip')) latch();
+    }, true);
 
-    // iOS: focus events can lag the keyboard — the visual viewport
-    // shrinking is the ground truth.
+    // iOS: focus events can lag the keyboard — the visual viewport shrinking is
+    // the ground truth. Only ever latches; it can no longer expand the cam.
     if (window.visualViewport) {
       const baseH = window.visualViewport.height;
       window.visualViewport.addEventListener('resize', function () {
         if (!PHONE_MQ.matches) return;
-        const shrunk = window.visualViewport.height < baseH - 140;
-        if (shrunk) setPill(true);
-        else if (!isComposer(document.activeElement)) setPill(false);
+        if (window.visualViewport.height < baseH - 140) latch();
       });
     }
 
-    // Leaving phone width always restores the full presence.
+    // Returning to a conversation the student has already spoken in: the
+    // welcome happened in an earlier session, so there is nothing to hold the
+    // cam open for. A lone assistant greeting must NOT latch — that IS the
+    // welcome. Selector matches browser-lock.js, which resolves "a message the
+    // student wrote" the same three ways.
+    const STUDENT_MSG = '.user-message, .message.user, [data-role="user"]';
+    const thread = document.getElementById('chat-messages-container');
+    if (thread) {
+      const checkRestored = function () {
+        if (!PHONE_MQ.matches || !thread.querySelector(STUDENT_MSG)) return false;
+        latch();
+        return true;
+      };
+      // The thread is populated asynchronously, so watch until it resolves
+      // rather than reading an empty container once at init.
+      if (!checkRestored()) {
+        const obs = new MutationObserver(function () {
+          if (checkRestored() || latched) obs.disconnect();
+        });
+        obs.observe(thread, { childList: true, subtree: true });
+      }
+    }
+
+    // Leaving phone width restores the full presence — desktop has the room,
+    // and the latch is a phone-space decision, not a session-wide verdict.
     PHONE_MQ.addEventListener && PHONE_MQ.addEventListener('change', function (e) {
-      if (!e.matches) setPill(false);
+      if (e.matches) return;
+      pill = false;
+      document.body.classList.remove('mm-tutor-pill');
+      setIdlePaused(false);
     });
   }
 
