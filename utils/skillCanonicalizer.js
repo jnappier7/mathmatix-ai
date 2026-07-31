@@ -69,6 +69,29 @@ function build() {
   // legitimate row instead of degrading to identity as documented above.
   const canValidateTargets = unifiedIds.size > 0;
 
+  // `approved` and `confidence` are REVIEW ANNOTATIONS, not gates. Do not filter
+  // on them — it reads like an obvious hardening and is a regression.
+  //
+  // In alg1-crosswalk.json `approved: true` is exactly the 21 high-confidence
+  // rows, so gating on it drops 43 of 64 mappings, among them plainly correct
+  // ones: slope-from-two-points -> ALG1.PRP.2, solving-two-step-equations ->
+  // ALG1.EQV.1. Each dropped id then stops collapsing onto its unified node and
+  // becomes a SEPARATE mastery record — the split-record bug that shows up as a
+  // student's mastery bar frozen while they keep answering correctly.
+  //
+  // Nor is many-to-one a symptom of low confidence: the unified taxonomy is
+  // deliberately coarser than the bank's fine skills, and two HIGH-confidence
+  // approved rows (factoring-gcf, factoring-by-grouping) collapse onto
+  // ALG1.EQV.11 on purpose. Collapsing synonyms is the entire job.
+  //
+  // The real limit is narrower and lives in the DATA, not here: a handful of
+  // rows noted "PRE-ALG HOLDOUT" map genuinely distinct pre-algebra skills onto
+  // one middle-school node because ALG1 has no home for them (order-of-operations,
+  // integer-operations and fraction-operations all land on MS.QNT.8). Fixing that
+  // means adding the missing taxonomy nodes, not filtering here — filtering would
+  // split the 40-odd correct mappings to spare three wrong ones.
+  // Pinned by tests/unit/skillCanonicalizerScope.test.js.
+
   for (const f of files.sort()) {
     let cw;
     try {
