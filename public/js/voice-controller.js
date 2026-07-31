@@ -213,6 +213,16 @@ class VoiceController {
                         this.executeBoardActions(ev.boardActions);
                     }
                 }
+                // Visual tools — same call the text path and the legacy voice
+                // branch make. appendMessage renders the INLINE tags in ev.text;
+                // images arrive only here.
+                if (ev.visualCommands && window.visualTeachingHandler) {
+                    try {
+                        window.visualTeachingHandler.executeCommands(ev.visualCommands);
+                    } catch (error) {
+                        console.error('[Voice] Failed to execute visual commands:', error);
+                    }
+                }
                 this._pendingResponseText = '';
                 break;
 

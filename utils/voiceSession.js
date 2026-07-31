@@ -12,6 +12,11 @@ const { verify: pipelineVerify } = require('./pipeline');
 const { checkReadingLevel } = require('./readability');
 const { replaceDashes } = require('./dashNormalizer');
 const { ensureBoardCarriesSpokenMath } = require('./voiceBoardGuard');
+// Same visual tools and same streaming reassembly the text path uses
+// (pipeline/generate.js) and the legacy voice route uses — one definition set,
+// so a student gets the same diagrams whether they type or speak.
+const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('./visualTools');
+const { createToolCallAccumulator } = require('./toolCallStream');
 // Voice board work joins the Live Workspace loop: the same translator the
 // client renders with (UMD, requireable in node), folded into the same
 // ledger chat writes, described to the model by the same board ghost.
@@ -32,6 +37,10 @@ const { loadActiveHistory, appendToActiveConversation } = require('./activeConve
 const logger = require('./logger').child({ module: 'voiceSession' });
 
 const VOICE_MODEL = process.env.VOICE_LLM_MODEL || 'gpt-4o-mini';
+
+// Same gate as the text path and the legacy voice route, so visuals are on for
+// the whole product or off for it — never diagrams by typing and none by speaking.
+const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
 const HISTORY_DEPTH = 12;
 
 // Active-session registry for multi-tab collision handling.
@@ -449,6 +458,15 @@ class VoiceSession {
 
         let systemContent = this.systemPrompt + modeInstructions;
 
+        // Visual tools are structured function calls, not tags. Without this the
+        // model knows only the [WRITE:]/[CIRCLE:] vocabulary — all text and
+        // annotation — and will DESCRIBE a diagram it has no way to draw.
+        if (VISUAL_TOOLS_ENABLED) {
+            systemContent += `\n\n${describeTools()}\n`
+                + '- When a concept is easier seen than said (a solid, a graph, a number line), CALL THE TOOL.\n'
+                + '- Never claim to have shown something you did not.\n';
+        }
+
         // Board awareness (same ghost chat uses): what the student's board
         // shows RIGHT NOW, so the voice tutor references lines instead of
         // re-deriving them. Empty board contributes zero tokens.
@@ -499,27 +517,91 @@ class VoiceSession {
         }
 
         // ── Stream LLM ──
+        const streamOptions = {
+            temperature: 0.45,
+            max_tokens: 600,
+            signal: turn.ac.signal,
+        };
+        if (VISUAL_TOOLS_ENABLED) {
+            streamOptions.tools = VISUAL_TOOLS;
+            streamOptions.parallel_tool_calls = true;
+        }
+
         let stream;
         try {
-            stream = await callLLMStream(VOICE_MODEL, messages, {
-                temperature: 0.45,
-                max_tokens: 600,
-                signal: turn.ac.signal,
-            });
+            stream = await callLLMStream(VOICE_MODEL, messages, streamOptions);
         } catch (err) {
             if (turn.ac.signal.aborted) return;
             throw err;
         }
 
+        // Tool calls arrive as fragments interleaved with the spoken text, and
+        // carry no content of their own — so they are accumulated here and
+        // resolved once the stream closes. Nothing about the TTS feed changes:
+        // a tool-call delta simply has no text to forward, exactly like any
+        // other contentless delta the loop already skips.
+        const toolCallAccumulator = createToolCallAccumulator();
+
         for await (const chunk of stream) {
             if (turn.ac.signal.aborted) return;
-            const delta = chunk?.choices?.[0]?.delta?.content || '';
+            const deltaObj = chunk?.choices?.[0]?.delta || {};
+            toolCallAccumulator.push(deltaObj);
+            const delta = deltaObj.content || '';
             if (!delta) continue;
             if (!turn.metric.t_first_llm_token) {
                 turn.metric.t_first_llm_token = Date.now();
             }
             turn.tokensEmitted++;
             this._processToken(turn, delta);
+        }
+
+        // ── Visual tool calls ──────────────────────────────────────────────
+        // Resolved before TTS is finalized, because a turn that called a tool
+        // and said nothing would otherwise close the synthesizer on an empty
+        // buffer — the student watches a diagram appear in total silence. The
+        // narration is pushed through _processToken so it runs the same math-
+        // speech and tag filters as streamed text.
+        let visualTags = [];
+        let visualCommands = null;
+        const toolCalls = VISUAL_TOOLS_ENABLED ? toolCallAccumulator.toolCalls() : [];
+        if (toolCalls.length) {
+            try {
+                const resolved = resolveToolCalls(toolCalls);
+                visualTags = resolved?.tags || [];
+                visualCommands = resolved?.visualCommands || null;
+                if (resolved?.unknown?.length) {
+                    logger.warn('voice: unknown visual tools requested', {
+                        userId: this.userId, unknown: resolved.unknown,
+                    });
+                }
+            } catch (err) {
+                // A bad tool payload must never cost the student their turn.
+                logger.warn('voice: visual tool resolution failed', {
+                    userId: this.userId, error: err.message,
+                });
+            }
+
+            if (!turn.spokenAcc.trim() && !turn.ac.signal.aborted) {
+                try {
+                    const narration = await callLLM(VOICE_MODEL, [
+                        ...messages,
+                        { role: 'assistant', content: null, tool_calls: toolCalls },
+                        ...toolCalls.map((call) => ({
+                            role: 'tool',
+                            tool_call_id: call.id,
+                            content: 'displayed',
+                        })),
+                    ], { temperature: 0.45, max_tokens: 300, signal: turn.ac.signal });
+                    const narrationText = (narration.choices?.[0]?.message?.content || '').trim();
+                    if (narrationText) this._processToken(turn, narrationText);
+                } catch (err) {
+                    if (!turn.ac.signal.aborted) {
+                        logger.warn('voice: tool narration failed', {
+                            userId: this.userId, error: err.message,
+                        });
+                    }
+                }
+            }
         }
 
         // ── Finalize: flush remaining spoken (might be a partial-but-not-tag) ──
@@ -563,6 +645,10 @@ class VoiceSession {
                 verifiedText = verified.text;
                 mathStepsForBoard = []; // drop board content alongside redirect
                 boardActionsForFinal = []; // drop board actions alongside redirect
+                // Visuals leak an answer exactly as board content does — a graph
+                // of the solved equation gives it away as surely as writing it.
+                visualTags = [];
+                visualCommands = null;
                 await this._synthesizeOneShot(turn, verifiedText);
                 turn.metric.abortReason = 'verify_redirect';
             } else if (verified.text) {
@@ -612,9 +698,18 @@ class VoiceSession {
         this._send({
             type: 'response_final',
             turnId: turn.metric.turnId,
-            text: verifiedText,
+            // Inline renderers read the tags out of the text, so they ride along
+            // with it. They are appended AFTER verify (which reasons about prose)
+            // and after the spoken text was already synthesized, so nothing here
+            // can reach TTS.
+            text: visualTags.length
+                ? [verifiedText, ...visualTags].filter(Boolean).join('\n\n')
+                : verifiedText,
             mathSteps: mathStepsForBoard,
             boardActions: boardActionsForFinal,
+            // Images render ONLY through this channel — [SEARCH_IMAGE:] has no
+            // inline renderer and stripVisualTags.js exists to delete it.
+            visualCommands: visualCommands,
         });
 
         // Update local state for next turn's pedagogy (math-steps mode only)
@@ -701,6 +796,11 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         ];
 
         // ── 1. JSON-mode LLM call (non-streaming) ──
+        // No visual tools here, and not by oversight: tools and response_format
+        // are mutually exclusive, and this mode's entire protocol is the JSON
+        // envelope parsed below. Giving it visuals means moving it off JSON mode
+        // onto tool calls wholesale — a protocol change, not a flag. The other
+        // three paths (text, streaming voice, legacy voice) all share VISUAL_TOOLS.
         let parsed;
         try {
             const completion = await callLLM(VOICE_MODEL, messages, {

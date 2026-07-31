@@ -42,6 +42,7 @@ const {
   boardCommandsFromToolCalls,
   buildBoardToolInstructions,
 } = require('../boardTools');
+const { createToolCallAccumulator } = require('../toolCallStream');
 
 // Strip <BOARD …/> tags from a one-shot text chunk (deterministic /
 // replacement / narration paths). Streaming chunks use the stateful
@@ -724,8 +725,9 @@ async function generateStreaming(model, messages, llmOptions, res) {
   const { callLLMStream } = require('../llmGateway');
 
   let fullResponse = '';
-  // Index → { id, name, arguments: string } — accumulated from delta.tool_calls
-  const toolCallAccumulator = new Map();
+  // Shared with the voice paths (utils/toolCallStream.js) so every streaming
+  // caller reassembles fragmented tool calls the same way.
+  const toolCallAccumulator = createToolCallAccumulator();
   let finishReason = null;
 
   // Stateful filters that hold back any partial / unclosed tag so raw
@@ -760,23 +762,7 @@ async function generateStreaming(model, messages, llmOptions, res) {
         }
       }
 
-      if (Array.isArray(delta.tool_calls)) {
-        for (const tc of delta.tool_calls) {
-          const idx = tc.index;
-          if (idx == null) continue;
-          const existing = toolCallAccumulator.get(idx) || {
-            id: null,
-            type: 'function',
-            function: { name: '', arguments: '' },
-          };
-          if (tc.id) existing.id = tc.id;
-          if (tc.function?.name) existing.function.name = tc.function.name;
-          if (tc.function?.arguments) {
-            existing.function.arguments += tc.function.arguments;
-          }
-          toolCallAccumulator.set(idx, existing);
-        }
-      }
+      toolCallAccumulator.push(delta);
     }
 
     // Drain any text the stream filters were still holding back. Same
@@ -798,8 +784,8 @@ async function generateStreaming(model, messages, llmOptions, res) {
 
     // If the model emitted tool_calls, resolve them and emit SSE events,
     // then re-prompt for the narrative text.
-    if (finishReason === 'tool_calls' && toolCallAccumulator.size > 0) {
-      const toolCalls = Array.from(toolCallAccumulator.values());
+    if (finishReason === 'tool_calls' && toolCallAccumulator.size() > 0) {
+      const toolCalls = toolCallAccumulator.toolCalls();
 
       // Board tool calls become structuredBoardCommands and take Stage 5b's
       // guarded server-side path — they are NOT emitted as tool_use SSE
