@@ -777,7 +777,7 @@ class FloatingScreener {
         this.growthCheckDue = data.growthCheckDue;
         this.currentGradeLevel = data.currentGradeLevel;
         // A finished check the tutor never got to debrief (student closed the
-        // tab, or finished on growth-check.html). Chat picks this up on load.
+        // tab, or finished on /screener.html). Chat picks this up on load.
         this.growthCheckDebriefPending = !!data.growthCheckDebriefPending;
         if (this.growthCheckDebriefPending) {
           document.dispatchEvent(new CustomEvent('growth-check-debrief-pending'));
@@ -4874,6 +4874,14 @@ class LessonTracker {
         }
 
         const parts = [];
+        // Unit first, with its own readout — "Unit 1 (2 of 3)" — so the student
+        // can see the larger arc, not just the module they're inside.
+        const up = pu.unitProgress;
+        if (up) {
+            parts.push(up.moduleCount > 1
+                ? `${up.label} (${up.moduleIndex} of ${up.moduleCount})`
+                : up.label);
+        }
         if (currentMod.title) parts.push(currentMod.title);
 
         const currentLesson = session.currentLessonId && currentMod.lessons

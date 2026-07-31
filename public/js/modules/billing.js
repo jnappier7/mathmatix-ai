@@ -92,19 +92,83 @@ export function updateTrialBanner(data) {
  * Shows AI processing time remaining (not wall-clock time).
  * Time only counts while the AI is generating a response — reading/thinking is free.
  */
+/**
+ * Styles for the free-time pill.
+ *
+ * These live in a stylesheet rather than the element's `style` attribute so a
+ * media query can move the pill on small screens. As an inline `cssText` the
+ * desktop coordinates below (bottom:160px) applied to phones too, where 160px
+ * from the bottom is the middle of the conversation — the pill sat on top of
+ * the tutor's reply on every phone, covering the text a student was mid-way
+ * through reading. Inline styles outrank stylesheets, so no CSS file could
+ * correct it.
+ *
+ * Injected by the module itself, so any page importing billing.js gets the
+ * positioning without having to remember a <link>.
+ */
+const TIME_PILL_STYLE_ID = 'mm-time-pill-styles';
+function ensureTimePillStyles() {
+    if (document.getElementById(TIME_PILL_STYLE_ID)) return;
+    const style = document.createElement('style');
+    style.id = TIME_PILL_STYLE_ID;
+    style.textContent = `
+      #free-time-indicator {
+        position: fixed;
+        z-index: 1750;
+        max-width: 280px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        background: #1a1a2e;
+        color: #fff;
+        font-size: 13px;
+        border: 1px solid #333;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      /* Desktop: stacked above the voice orb (bottom:30/right:30, ~150px tall
+         with its status label) so the two read as one corner stack, and the
+         "Resets in…" sub-line clears the orb's drop shadow. */
+      @media (min-width: 769px) {
+        #free-time-indicator { bottom: 160px; right: 30px; }
+      }
+      /* Phones: dock it to the TOP, under the #mpc-topbar row. The message
+         stream owns the bottom two-thirds of a phone screen, so anything fixed
+         down there covers what the student is reading. Up here it overlaps only
+         the decorative tutor poster. (PR2 folds this into the stat strip.) */
+      @media (max-width: 768px) {
+        #free-time-indicator {
+          top: calc(env(safe-area-inset-top, 0px) + 56px);
+          right: 12px;
+          max-width: calc(100vw - 24px);
+          font-size: 12px;
+          padding: 6px 11px;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+}
+
+/**
+ * Show/hide the pill, and mirror that onto <body> so layout can react.
+ *
+ * On phones the pill is docked to the top (see ensureTimePillStyles), where it
+ * would otherwise sit on top of the first card in the message list. Rather than
+ * hand the pill a magic z-index and let it cover content — the bug this whole
+ * change is undoing — the body class lets the message list reserve the space,
+ * so the pill overlaps nothing. Desktop ignores the class entirely.
+ */
+function setPillVisible(indicator, visible) {
+    indicator.style.display = visible ? '' : 'none';
+    document.body.classList.toggle('mm-has-time-pill', visible);
+}
+
 export function updateFreeTimeIndicator(usage) {
     let indicator = document.getElementById('free-time-indicator');
     if (!indicator) {
+        ensureTimePillStyles();
         indicator = document.createElement('div');
         indicator.id = 'free-time-indicator';
-        // Stacked ABOVE the voice orb container (which sits at
-        // bottom:30/right:30 and is ~150px tall with the status
-        // label). Previously this pill was at bottom:12 and lived
-        // inside the orb's vertical range, so the "Resets soon"
-        // sub-line was clipped by the orb's drop shadow. Right-
-        // aligned with the orb (right:30) so they read as one
-        // cohesive corner stack.
-        indicator.style.cssText = 'position:fixed;bottom:160px;right:30px;background:#1a1a2e;color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;z-index:1750;cursor:pointer;border:1px solid #333;transition:all 0.3s;box-shadow:0 6px 18px rgba(0,0,0,0.35);max-width:280px;';
         indicator.title = 'AI processing time only — reading and thinking time is free';
         indicator.addEventListener('click', () => showUpgradePrompt({}));
         document.body.appendChild(indicator);
@@ -123,10 +187,10 @@ export function updateFreeTimeIndicator(usage) {
     if (isCritical) {
         try { sessionStorage.removeItem(DISMISS_KEY); } catch { /* private mode */ }
     } else if (readFlag()) {
-        indicator.style.display = 'none';
+        setPillVisible(indicator, false);
         return;
     }
-    indicator.style.display = '';
+    setPillVisible(indicator, true);
 
     // Calculate human-readable reset time. "Resets soon" was the
     // previous fallback for the last hour, which my UI review flagged
@@ -170,7 +234,10 @@ export function updateFreeTimeIndicator(usage) {
         if (x) x.addEventListener('click', (e) => {
             e.stopPropagation();
             try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch { /* private mode */ }
-            indicator.style.display = 'none';
+            // Via the helper so the reserved space is released too — hiding the
+            // pill while <body> still claims it leaves a dead gap at the top of
+            // the conversation.
+            setPillVisible(indicator, false);
         });
     }
 }

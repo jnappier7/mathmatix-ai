@@ -13,7 +13,11 @@ import './modules/shop.js'; // registers window.openShop (cosmetics shop)
 import { showCoinReward } from './modules/coinFx.js'; // coin fly-in + count-up + chime
 import { resolveAvatarUrl } from './modules/avatarResolver.js';
 import { applyCosmetics } from './modules/cosmeticsApply.js';
-import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js';
+// Versioned specifier: /js/** is served with max-age=604800, and bumping
+// script.js's own ?v= does NOT reach its imports — the import URL is what the
+// browser caches. Without this, a returning student keeps the old billing.js
+// (and the old free-time pill position) for up to a week. Bump on every edit.
+import { checkBillingStatus, updateFreeTimeIndicator, showUpgradePrompt, initiateUpgrade, showManageSubscription } from './modules/billing.js?v=20260731a';
 import { audioState, audioQueue, playAudio, processAudioQueue, pauseAudio, resumeAudio, restartAudio, stopAudio, changePlaybackSpeed, resetAudioState, updateAudioControls } from './modules/audio.js';
 import { createIepSystem } from './modules/iep.js';
 import { applyAgeTier, getTierPlaybackRate, getTierSpeechAutoStop, getTierAutoReadAloud, getVoiceDefaults } from './modules/age-tier.js';
