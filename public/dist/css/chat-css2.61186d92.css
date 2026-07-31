@@ -1,3 +1,4 @@
+/* --- /css/cosmetics.css --- */
 /* cosmetics.css — equipped-cosmetic skins, keyed off body attributes set by
  * modules/cosmeticsApply.js. Purely visual and opt-in per user (nothing applies
  * until a cosmetic is equipped).
@@ -595,4 +596,163 @@ body[data-skin-avatarframe="frame.rainbow"] .cr-player-card .cr-player-avatar::a
 body[data-skin-avatarframe] .psc-avatar-col .fba-stage,
 body[data-skin-avatarframe] .cr-player-card .cr-player-avatar > * {
   position: relative; z-index: 1;
+}
+
+/* --- /css/shop.css --- */
+/* shop.css — cosmetics shop modal. Brand: teal #12B3B3, hot pink #FF3B7F,
+ * gold #FFC24B. Opened from the status card's Shop button. */
+
+.shop-modal { position: fixed; inset: 0; z-index: 3100; }
+.shop-modal[hidden] { display: none; }
+
+.shop-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(15, 26, 36, 0.55);
+  opacity: 0; transition: opacity 200ms ease;
+}
+.shop-modal.shop-open .shop-backdrop { opacity: 1; }
+
+.shop-card {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -48%) scale(0.96); opacity: 0;
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px); overflow-y: auto;
+  background: #fff; border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  font-family: Inter, sans-serif;
+  transition: transform 220ms cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 200ms ease;
+}
+.shop-modal.shop-open .shop-card { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
+.shop-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 18px 20px; border-bottom: 1px solid #eef2f4;
+  position: sticky; top: 0; background: #fff; z-index: 1;
+  border-radius: 20px 20px 0 0;
+}
+.shop-title { font-size: 1.3rem; font-weight: 800; color: #18202b; margin: 0; flex: 1; }
+.shop-coins { font-size: 1rem; font-weight: 800; color: #b8860b; background: #fff8e6; padding: 5px 12px; border-radius: 999px; }
+.shop-close { border: none; background: transparent; font-size: 1.6rem; line-height: 1; color: #5b6876; cursor: pointer; }
+.shop-close:hover { color: #18202b; }
+
+.shop-body { padding: 16px 20px 22px; }
+.shop-empty { text-align: center; color: #5b6876; padding: 30px; font-size: 0.9rem; }
+
+.shop-section { margin-bottom: 18px; }
+.shop-section-head { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #5b6876; margin: 0 0 10px; }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+
+.shop-item {
+  border: 1px solid #eef2f4; border-radius: 14px; padding: 14px;
+  display: flex; flex-direction: column; gap: 6px; align-items: flex-start;
+  border-top: 3px solid #cbd5db;
+}
+.shop-rarity-common    { border-top-color: #9aa7b2; }
+.shop-rarity-uncommon  { border-top-color: #16c86d; }
+.shop-rarity-rare      { border-top-color: #12b3b3; }
+.shop-rarity-epic      { border-top-color: #7c4dff; }
+.shop-rarity-legendary { border-top-color: #ffc24b; }
+
+.shop-swatch {
+  width: 100%; height: 46px; border-radius: 9px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-size: 12px 12px;
+}
+.shop-swatch-legendary {
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 0 1px #ffc24b, 0 0 10px rgba(255, 194, 75, 0.5);
+}
+.shop-swatch-legendary::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.75) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: shop-shine 2.6s ease-in-out infinite;
+}
+@keyframes shop-shine { to { transform: translateX(100%); } }
+
+.shop-item-name { font-size: 0.95rem; font-weight: 800; color: #18202b; }
+.shop-item-rarity { font-size: 0.7rem; text-transform: capitalize; color: #5b6876; }
+
+.shop-btn {
+  margin-top: 4px; width: 100%; padding: 8px 10px;
+  border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; transition: filter 150ms ease;
+}
+.shop-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.shop-btn:hover:not(:disabled) { filter: brightness(1.05); }
+.shop-btn-buy { background: #fff8e6; color: #b8860b; }
+.shop-btn-equip { background: #12b3b3; color: #fff; }
+.shop-btn-equipped { background: rgba(18, 179, 179, 0.14); color: #0f8a8a; }
+.shop-btn-locked { background: #f1f3f5; color: #8a97a3; }
+.shop-btn-preview { background: transparent; color: #5b6876; border: 1px solid #e3e8ec; padding: 6px 10px; }
+.shop-btn-preview:hover:not(:disabled) { background: #f6f8f9; color: #18202b; }
+.shop-item.is-previewing { outline: 2px solid #12b3b3; outline-offset: 1px; }
+
+/* ---- Live try-on: collapse the shop so the real screen shows through ---- */
+.shop-modal.shop-previewing { pointer-events: none; }            /* let clicks reach the page */
+.shop-modal.shop-previewing .shop-card,
+.shop-modal.shop-previewing .shop-backdrop { display: none; }
+.shop-preview-bar { display: none; }
+.shop-modal.shop-previewing .shop-preview-bar {
+  display: flex;
+  pointer-events: auto;                                          /* …except the bar itself */
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: min(520px, calc(100vw - 32px));
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+  font-family: Inter, sans-serif;
+  animation: shop-preview-rise 200ms ease;
+}
+@keyframes shop-preview-rise { from { transform: translate(-50%, 12px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+.shop-preview-label { flex: 1; font-weight: 800; color: #18202b; font-size: 0.95rem; }
+.shop-preview-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.shop-preview-action { width: auto; margin-top: 0; white-space: nowrap; }
+.shop-preview-done { width: auto; margin-top: 0; background: #eef2f4; color: #5b6876; }
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-modal.shop-previewing .shop-preview-bar { animation: none; }
+}
+
+/* "Are you sure?" armed state — the second tap confirms a spend. */
+.shop-btn-confirm { background: #ff3b7f !important; color: #fff !important; }
+
+/* Post-purchase Undo bar (refund the most recent buy). Toast-style, bottom-center. */
+.shop-undo-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 3200;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(440px, calc(100vw - 32px));
+  padding: 12px 16px;
+  background: #18202b;
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.38);
+  font-family: Inter, sans-serif;
+  animation: shop-preview-rise 200ms ease;
+}
+.shop-undo-bar[hidden] { display: none; }
+.shop-undo-label { flex: 1; font-weight: 700; font-size: 0.9rem; }
+.shop-undo-btn { width: auto; margin-top: 0; background: #12b3b3; color: #fff; white-space: nowrap; }
+.shop-undo-btn:hover:not(:disabled) { filter: brightness(1.05); }
+
+@media (prefers-reduced-motion: reduce) {
+  .shop-backdrop, .shop-card { transition: none; }
+  .shop-swatch-legendary::after { animation: none; }
+  .shop-undo-bar { animation: none; }
+}
+@media (max-width: 480px) {
+  .shop-card { border-radius: 16px; }
+  .shop-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
 }

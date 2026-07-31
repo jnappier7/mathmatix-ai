@@ -19,6 +19,35 @@ const SLOT_ORDER = ['theme', 'bubble', 'avatarFrame', 'board', 'calculator', 'he
 let state = { catalog: {}, coins: 0, owned: [], equipped: {} };
 let preview = null; // { slot, id } while a "try-on" is active, else null
 let undoTimer = null; // auto-hide timer for the post-purchase Undo bar
+let revealUndo = null; // undoes a surface we opened for the preview, else null
+
+// Most slots repaint something already on screen (theme, bubbles, header,
+// avatar frame), so stamping the attribute is the whole preview. The calculator
+// and the board are different: both are closed by default, so "Try it on"
+// stamped a skin onto a hidden element and the student watched nothing happen —
+// which reads as "this cosmetic is broken", not "open the calculator to see it".
+// Reveal the surface a skin actually paints, and put it back on Done/Escape.
+const SLOT_SURFACE = {
+    calculator: () => {
+        const calc = document.getElementById('floating-calculator');
+        if (!calc || !window.floatingCalc?.showCalculator) return null;
+        if (calc.style.display !== 'none') return null; // already open — leave it
+        window.floatingCalc.showCalculator();
+        return () => window.floatingCalc.hideCalculator();
+    },
+    board: () => {
+        const ws = window.MathWorkspace;
+        if (!ws?.showTool) return null;
+        const wasOpen = document.querySelector('.cr-ws-panel.is-open, .cr-ws.is-open');
+        const prior = document.querySelector('.cr-ws-tab.is-active')?.getAttribute('data-tool');
+        if (prior === 'board' && wasOpen) return null;
+        ws.showTool('board');
+        return () => {
+            if (prior && prior !== 'board') ws.showTool(prior);
+            if (!wasOpen && ws.close) ws.close();
+        };
+    },
+};
 
 function esc(s) {
     const el = document.createElement('span');
@@ -294,6 +323,8 @@ function startPreview(id) {
     preview = { slot: item.slot, id };
     // Overlay the previewed item on top of the real equipped loadout.
     applyLoadout({ ...state.equipped, [item.slot]: id });
+    try { revealUndo = SLOT_SURFACE[item.slot]?.() || null; }
+    catch { revealUndo = null; } // a surface that isn't on this page is fine
 
     const modal = buildModal();
     modal.classList.add('shop-previewing');
@@ -324,6 +355,8 @@ function startPreview(id) {
 function stopPreview() {
     if (!preview) return;
     preview = null;
+    if (revealUndo) { try { revealUndo(); } catch { /* surface already gone */ } }
+    revealUndo = null;
     applyLoadout(state.equipped); // revert to what they actually own/equip
     const modal = document.getElementById(MODAL_ID);
     if (!modal) return;
@@ -377,7 +410,11 @@ async function onPreviewAction() {
         state.equipped = data.equipped || { ...state.equipped, [slot]: id };
         if (window.currentUser) window.currentUser.equippedCosmetics = state.equipped;
         // It's now really equipped — keep it on screen and close the preview.
+        // Any surface we opened to show the try-on stays open too: they just
+        // bought this, so seeing it is the point. Drop the undo so a later
+        // preview can't close a surface this one revealed.
         preview = null;
+        revealUndo = null;
         applyCosmetics(window.currentUser);
         const modal = document.getElementById(MODAL_ID);
         modal.classList.remove('shop-previewing');
