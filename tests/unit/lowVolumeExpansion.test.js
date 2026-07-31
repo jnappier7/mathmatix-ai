@@ -58,4 +58,33 @@ describe('low-volume problem-bank expansion', () => {
     expect(items.every((item) => item.source === 'low-volume-expansion-2026-07')).toBe(true);
     expect(items.every((item) => /^[a-f0-9]{64}$/.test(item.contentHash))).toBe(true);
   });
+
+  // Regression guard. The seeder previously listed '*.generated.json' while the
+  // repo tracks '*.generated.json.gz', so it threw "Missing ..." on every run
+  // and this suite still reported green -- the test and the seeder disagreed
+  // about which files constitute the bank. Assert they agree.
+  test('the seeder reads exactly the files this suite validates', () => {
+    const seeder = fs.readFileSync(
+      path.join(__dirname, '..', '..', 'scripts', 'seedLowVolumeExpansion.js'),
+      'utf8',
+    );
+    const referenced = [...seeder.matchAll(/'([\w-]+\.generated\.json(?:\.gz)?)'/g)].map((m) => m[1]);
+    expect(referenced.sort()).toEqual([
+      'act-items.generated.json.gz',
+      'calc3-items.generated.json.gz',
+      'general-items.generated.json.gz',
+    ]);
+    for (const name of referenced) {
+      expect(fs.existsSync(path.join(dir, name))).toBe(true);
+    }
+  });
+
+  test('every payload the seeder loads is a non-empty array of this source', () => {
+    for (const name of ['act-items.generated.json.gz', 'calc3-items.generated.json.gz', 'general-items.generated.json.gz']) {
+      const loaded = load(name);
+      expect(Array.isArray(loaded)).toBe(true);
+      expect(loaded.length).toBeGreaterThan(0);
+      expect(loaded.every((item) => item.source === 'low-volume-expansion-2026-07')).toBe(true);
+    }
+  });
 });
