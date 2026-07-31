@@ -1,0 +1,889 @@
+{
+  "source": "scripts/proposePathwayCrosswalk.js",
+  "note": "pathway skill ids -> bank skill ids. Loaded by utils/skillCanonicalizer.js.",
+  "rowCount": 89,
+  "rows": [
+    {
+      "legacyId": "g6-place-value-decimals",
+      "unifiedId": "decimals-place-value",
+      "course": "6th-grade-math",
+      "score": 0.95,
+      "bankProblems": 15,
+      "alternatives": [
+        "place-value"
+      ]
+    },
+    {
+      "legacyId": "g6-unit-rates",
+      "unifiedId": "unit-rates",
+      "course": "6th-grade-math",
+      "score": 0.867,
+      "bankProblems": 10,
+      "alternatives": [
+        "act-rates-unit-conversion"
+      ]
+    },
+    {
+      "legacyId": "g6-evaluate-expressions",
+      "unifiedId": "evaluate-expressions",
+      "course": "6th-grade-math",
+      "score": 0.867,
+      "bankProblems": 123,
+      "alternatives": []
+    },
+    {
+      "legacyId": "g6-variables-both-sides",
+      "unifiedId": "equations-with-variables-both-sides",
+      "course": "6th-grade-math",
+      "score": 0.95,
+      "bankProblems": 150,
+      "alternatives": []
+    },
+    {
+      "legacyId": "g6-volume-rectangular-prisms",
+      "unifiedId": "volume-rectangular-prisms",
+      "course": "6th-grade-math",
+      "score": 0.95,
+      "bankProblems": 15,
+      "alternatives": []
+    },
+    {
+      "legacyId": "g6-data-displays",
+      "unifiedId": "data-displays",
+      "course": "6th-grade-math",
+      "score": 0.867,
+      "bankProblems": 15,
+      "alternatives": []
+    },
+    {
+      "legacyId": "g6-coordinate-plane-graphing",
+      "unifiedId": "coordinate-plane",
+      "course": "6th-grade-math",
+      "score": 0.7,
+      "bankProblems": 124,
+      "uncoveredTopics": [
+        "graphing"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "g7-simplify-expressions-basics",
+      "unifiedId": "simplify-expressions",
+      "course": "7th-grade-math",
+      "score": 0.867,
+      "bankProblems": 47,
+      "alternatives": [
+        "simplify-rational-expressions"
+      ]
+    },
+    {
+      "legacyId": "g7-coordinate-plane-basics",
+      "unifiedId": "coordinate-plane",
+      "course": "7th-grade-math",
+      "score": 0.867,
+      "bankProblems": 124,
+      "alternatives": [
+        "plotting-points",
+        "quadrants"
+      ]
+    },
+    {
+      "legacyId": "g7-simplify-expressions",
+      "unifiedId": "simplify-expressions",
+      "course": "7th-grade-math",
+      "score": 0.867,
+      "bankProblems": 47,
+      "alternatives": [
+        "simplify-rational-expressions"
+      ]
+    },
+    {
+      "legacyId": "g7-multi-step-equations",
+      "unifiedId": "multi-step-equations",
+      "course": "7th-grade-math",
+      "score": 0.95,
+      "bankProblems": 152,
+      "alternatives": [
+        "one-step-equations",
+        "multi-step-inequalities",
+        "two-step-equations"
+      ]
+    },
+    {
+      "legacyId": "g7-unit-rates",
+      "unifiedId": "unit-rates",
+      "course": "7th-grade-math",
+      "score": 0.867,
+      "bankProblems": 10,
+      "alternatives": [
+        "act-rates-unit-conversion"
+      ]
+    },
+    {
+      "legacyId": "g7-percent-change",
+      "unifiedId": "percent-change",
+      "course": "7th-grade-math",
+      "score": 0.867,
+      "bankProblems": 15,
+      "alternatives": []
+    },
+    {
+      "legacyId": "g7-simple-probability",
+      "unifiedId": "simple-probability",
+      "course": "7th-grade-math",
+      "score": 0.867,
+      "bankProblems": 15,
+      "alternatives": [
+        "act-probability",
+        "probability-basics"
+      ]
+    },
+    {
+      "legacyId": "g7-evaluate-expressions",
+      "unifiedId": "evaluate-expressions",
+      "course": "7th-grade-math",
+      "score": 0.867,
+      "bankProblems": 123,
+      "alternatives": []
+    },
+    {
+      "legacyId": "act-linear-equations",
+      "unifiedId": "linear-equations",
+      "course": "act-prep",
+      "score": 0.867,
+      "bankProblems": 25,
+      "alternatives": [
+        "act-linear-inequalities",
+        "solving-linear-equations",
+        "act-systems-of-equations"
+      ]
+    },
+    {
+      "legacyId": "act-function-notation-evaluation",
+      "unifiedId": "act-function-evaluation-notation",
+      "course": "act-prep",
+      "score": 1.2,
+      "bankProblems": 26,
+      "alternatives": [
+        "act-scientific-notation",
+        "function-composition",
+        "act-function-composition"
+      ]
+    },
+    {
+      "legacyId": "act-linear-functions",
+      "unifiedId": "act-linear-functions-models",
+      "course": "act-prep",
+      "score": 0.95,
+      "bankProblems": 23,
+      "alternatives": [
+        "act-linear-equations",
+        "act-linear-inequalities",
+        "act-trigonometric-functions"
+      ]
+    },
+    {
+      "legacyId": "act-function-transformations",
+      "unifiedId": "function-transformations",
+      "course": "act-prep",
+      "score": 0.867,
+      "bankProblems": 21,
+      "alternatives": [
+        "act-graph-transformations",
+        "act-function-composition",
+        "act-function-evaluation-notation"
+      ]
+    },
+    {
+      "legacyId": "act-area-volume-surface-area",
+      "unifiedId": "act-volume-surface-area",
+      "course": "act-prep",
+      "score": 1.2,
+      "bankProblems": 21,
+      "alternatives": [
+        "act-area-perimeter"
+      ]
+    },
+    {
+      "legacyId": "act-probability",
+      "unifiedId": "act-conditional-probability",
+      "course": "act-prep",
+      "score": 0.867,
+      "bankProblems": 21,
+      "alternatives": [
+        "probability-basics"
+      ]
+    },
+    {
+      "legacyId": "solving-one-step-equations",
+      "unifiedId": "one-step-equations",
+      "course": "algebra-1",
+      "score": 0.95,
+      "bankProblems": 424,
+      "uncoveredTopics": [
+        "solving"
+      ],
+      "alternatives": [
+        "solving-equations",
+        "one-step-inequalities",
+        "one-step-equations-addition"
+      ]
+    },
+    {
+      "legacyId": "solving-two-step-equations",
+      "unifiedId": "two-step-equations",
+      "course": "algebra-1",
+      "score": 0.95,
+      "bankProblems": 421,
+      "uncoveredTopics": [
+        "solving"
+      ],
+      "alternatives": [
+        "solving-equations",
+        "two-step-inequalities",
+        "one-step-equations"
+      ]
+    },
+    {
+      "legacyId": "solving-multi-step-equations",
+      "unifiedId": "multi-step-equations",
+      "course": "algebra-1",
+      "score": 0.95,
+      "bankProblems": 152,
+      "uncoveredTopics": [
+        "solving"
+      ],
+      "alternatives": [
+        "solving-equations",
+        "one-step-equations",
+        "solving-linear-equations"
+      ]
+    },
+    {
+      "legacyId": "solving-equations-with-variables-both-sides",
+      "unifiedId": "equations-with-variables-both-sides",
+      "course": "algebra-1",
+      "score": 1,
+      "bankProblems": 150,
+      "uncoveredTopics": [
+        "solving"
+      ],
+      "alternatives": [
+        "solving-equations"
+      ]
+    },
+    {
+      "legacyId": "understanding-functions",
+      "unifiedId": "exponential-functions",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 12,
+      "alternatives": []
+    },
+    {
+      "legacyId": "slope-from-points",
+      "unifiedId": "slope-from-two-points",
+      "course": "algebra-1",
+      "score": 0.95,
+      "bankProblems": 73,
+      "alternatives": [
+        "slope"
+      ]
+    },
+    {
+      "legacyId": "systems-of-inequalities",
+      "unifiedId": "graphing-systems-inequalities",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 21,
+      "alternatives": []
+    },
+    {
+      "legacyId": "exponent-rules",
+      "unifiedId": "act-exponent-rules",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 27,
+      "alternatives": []
+    },
+    {
+      "legacyId": "factoring-difference-of-squares",
+      "unifiedId": "factoring-difference-squares",
+      "course": "algebra-1",
+      "score": 1.2,
+      "bankProblems": 15,
+      "alternatives": []
+    },
+    {
+      "legacyId": "quadratic-equations-graphing",
+      "unifiedId": "act-quadratic-equations",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 28,
+      "uncoveredTopics": [
+        "graphing"
+      ],
+      "alternatives": [
+        "graph-quadratic-functions",
+        "graph-linear-equations"
+      ]
+    },
+    {
+      "legacyId": "solving-quadratics-factoring",
+      "unifiedId": "factoring-quadratics",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "solving"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "exponential-functions-basics",
+      "unifiedId": "exponential-functions",
+      "course": "algebra-1",
+      "score": 1.2,
+      "bankProblems": 12,
+      "alternatives": []
+    },
+    {
+      "legacyId": "simplifying-rational-expressions",
+      "unifiedId": "simplify-rational-expressions",
+      "course": "algebra-1",
+      "score": 1.2,
+      "bankProblems": 21,
+      "alternatives": [
+        "simplify-expressions",
+        "divide-rational-expressions",
+        "multiply-rational-expressions"
+      ]
+    },
+    {
+      "legacyId": "pythagorean-theorem",
+      "unifiedId": "act-triangles-pythagorean-theorem",
+      "course": "algebra-1",
+      "score": 0.7,
+      "bankProblems": 23,
+      "alternatives": []
+    },
+    {
+      "legacyId": "factoring-review",
+      "unifiedId": "factoring-quadratics",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 15,
+      "alternatives": [
+        "factoring-difference-squares"
+      ]
+    },
+    {
+      "legacyId": "complex-numbers",
+      "unifiedId": "act-complex-numbers",
+      "course": "algebra-2",
+      "score": 0.867,
+      "bankProblems": 25,
+      "alternatives": []
+    },
+    {
+      "legacyId": "polynomial-operations",
+      "unifiedId": "act-polynomial-expressions",
+      "course": "algebra-2",
+      "score": 0.867,
+      "bankProblems": 25,
+      "alternatives": [
+        "operations"
+      ]
+    },
+    {
+      "legacyId": "rational-equations",
+      "unifiedId": "act-radical-rational-equations",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 24,
+      "alternatives": []
+    },
+    {
+      "legacyId": "radical-equations",
+      "unifiedId": "act-radical-rational-equations",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 24,
+      "alternatives": []
+    },
+    {
+      "legacyId": "arithmetic-sequences-series",
+      "unifiedId": "arithmetic-sequences",
+      "course": "algebra-2",
+      "score": 1.2,
+      "bankProblems": 109,
+      "alternatives": [
+        "arithmetic-series",
+        "geometric-sequences"
+      ]
+    },
+    {
+      "legacyId": "geometric-sequences-series",
+      "unifiedId": "geometric-sequences",
+      "course": "algebra-2",
+      "score": 1.2,
+      "bankProblems": 36,
+      "alternatives": [
+        "geometric-series",
+        "arithmetic-sequences"
+      ]
+    },
+    {
+      "legacyId": "unit-circle-values",
+      "unifiedId": "trig-unit-circle-evaluation",
+      "course": "algebra-2",
+      "score": 0.95,
+      "bankProblems": 15,
+      "alternatives": [
+        "trig-tan-unit-circle"
+      ]
+    },
+    {
+      "legacyId": "right-triangle-trig",
+      "unifiedId": "trig-right-triangle-ratios",
+      "course": "algebra-2",
+      "score": 0.95,
+      "bankProblems": 12,
+      "alternatives": [
+        "act-right-triangle-trigonometry",
+        "trig-solve-right-triangles"
+      ]
+    },
+    {
+      "legacyId": "trig-equations-basic",
+      "unifiedId": "trig-solve-equations-special",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 15,
+      "alternatives": []
+    },
+    {
+      "legacyId": "counting-principles",
+      "unifiedId": "counting",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 40,
+      "uncoveredTopics": [
+        "principles"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "conditional-probability",
+      "unifiedId": "act-conditional-probability",
+      "course": "algebra-2",
+      "score": 0.867,
+      "bankProblems": 21,
+      "alternatives": [
+        "act-probability",
+        "probability-basics"
+      ]
+    },
+    {
+      "legacyId": "trig-identities-fluency",
+      "unifiedId": "trig-identities-basic",
+      "course": "ap-calculus-ab",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "fluency"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "limits-algebraic-techniques",
+      "unifiedId": "limits",
+      "course": "ap-calculus-ab",
+      "score": 0.867,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "techniques"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "limits-algebraic",
+      "unifiedId": "limits",
+      "course": "calculus-bc",
+      "score": 1.2,
+      "bankProblems": 50,
+      "alternatives": []
+    },
+    {
+      "legacyId": "derivative-definition",
+      "unifiedId": "derivatives",
+      "course": "calculus-bc",
+      "score": 0.867,
+      "bankProblems": 21,
+      "alternatives": []
+    },
+    {
+      "legacyId": "u-substitution",
+      "unifiedId": "systems-substitution",
+      "course": "calculus-bc",
+      "score": 0.7,
+      "bankProblems": 147,
+      "alternatives": []
+    },
+    {
+      "legacyId": "exponential-models",
+      "unifiedId": "act-exponential-models",
+      "course": "calculus-bc",
+      "score": 0.867,
+      "bankProblems": 23,
+      "alternatives": []
+    },
+    {
+      "legacyId": "series-geometric-p",
+      "unifiedId": "geometric-series",
+      "course": "calculus-bc",
+      "score": 1.2,
+      "bankProblems": 15,
+      "alternatives": [
+        "geometric-sequences"
+      ]
+    },
+    {
+      "legacyId": "cm-percent-of-number",
+      "unifiedId": "percent-of-a-number",
+      "course": "consumer-math",
+      "score": 0.867,
+      "bankProblems": 355,
+      "alternatives": []
+    },
+    {
+      "legacyId": "emf-place-value",
+      "unifiedId": "place-value",
+      "course": "early-math-foundations",
+      "score": 0.867,
+      "bankProblems": 601,
+      "alternatives": [
+        "decimals-place-value"
+      ]
+    },
+    {
+      "legacyId": "emf-multi-digit-addition",
+      "unifiedId": "multi-digit-addition",
+      "course": "early-math-foundations",
+      "score": 0.95,
+      "bankProblems": 77,
+      "alternatives": [
+        "addition"
+      ]
+    },
+    {
+      "legacyId": "emf-fraction-concepts",
+      "unifiedId": "fraction-concepts",
+      "course": "early-math-foundations",
+      "score": 0.867,
+      "bankProblems": 17,
+      "alternatives": []
+    },
+    {
+      "legacyId": "emf-equivalent-fractions",
+      "unifiedId": "equivalent-fractions",
+      "course": "early-math-foundations",
+      "score": 0.867,
+      "bankProblems": 27,
+      "alternatives": [
+        "fractions-basics"
+      ]
+    },
+    {
+      "legacyId": "emf-multiply-fractions",
+      "unifiedId": "multiply-fractions",
+      "course": "early-math-foundations",
+      "score": 0.867,
+      "bankProblems": 189,
+      "alternatives": [
+        "fractions-basics"
+      ]
+    },
+    {
+      "legacyId": "emf-decimal-place-value",
+      "unifiedId": "decimals-place-value",
+      "course": "early-math-foundations",
+      "score": 0.95,
+      "bankProblems": 15,
+      "alternatives": [
+        "place-value"
+      ]
+    },
+    {
+      "legacyId": "emf-add-subtract-decimals",
+      "unifiedId": "decimals-add-subtract",
+      "course": "early-math-foundations",
+      "score": 0.95,
+      "bankProblems": 15,
+      "alternatives": []
+    },
+    {
+      "legacyId": "emf-perimeter",
+      "unifiedId": "perimeter",
+      "course": "early-math-foundations",
+      "score": 0.7,
+      "bankProblems": 105,
+      "alternatives": []
+    },
+    {
+      "legacyId": "emf-area-rectangles",
+      "unifiedId": "area-rectangles",
+      "course": "early-math-foundations",
+      "score": 0.867,
+      "bankProblems": 220,
+      "alternatives": []
+    },
+    {
+      "legacyId": "triangle-congruence-sss-sas-asa",
+      "unifiedId": "congruence",
+      "course": "geometry",
+      "score": 1.2,
+      "bankProblems": 14,
+      "alternatives": []
+    },
+    {
+      "legacyId": "coordinate-plane-basics",
+      "unifiedId": "coordinate-plane",
+      "course": "grade-8-math",
+      "score": 1.2,
+      "bankProblems": 124,
+      "alternatives": [
+        "plotting-points",
+        "quadrants"
+      ]
+    },
+    {
+      "legacyId": "scientific-notation",
+      "unifiedId": "act-scientific-notation",
+      "course": "grade-8-math",
+      "score": 0.867,
+      "bankProblems": 22,
+      "alternatives": []
+    },
+    {
+      "legacyId": "variables-both-sides",
+      "unifiedId": "equations-with-variables-both-sides",
+      "course": "grade-8-math",
+      "score": 1.2,
+      "bankProblems": 150,
+      "alternatives": []
+    },
+    {
+      "legacyId": "special-cases",
+      "unifiedId": "systems-special-cases",
+      "course": "grade-8-math",
+      "score": 0.867,
+      "bankProblems": 21,
+      "alternatives": []
+    },
+    {
+      "legacyId": "write-linear-equations",
+      "unifiedId": "linear-equations",
+      "course": "grade-8-math",
+      "score": 0.867,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "write"
+      ],
+      "alternatives": [
+        "act-linear-equations",
+        "solving-linear-equations",
+        "graph-linear-equations"
+      ]
+    },
+    {
+      "legacyId": "systems-graphing",
+      "unifiedId": "graphing-systems-inequalities",
+      "course": "grade-8-math",
+      "score": 0.867,
+      "bankProblems": 21,
+      "alternatives": []
+    },
+    {
+      "legacyId": "transformations",
+      "unifiedId": "function-transformations",
+      "course": "grade-8-math",
+      "score": 0.7,
+      "bankProblems": 21,
+      "alternatives": [
+        "act-graph-transformations"
+      ]
+    },
+    {
+      "legacyId": "angle-relationships",
+      "unifiedId": "act-triangles-angle-relationships",
+      "course": "grade-8-math",
+      "score": 0.7,
+      "bankProblems": 24,
+      "alternatives": []
+    },
+    {
+      "legacyId": "spiral-number-system",
+      "unifiedId": "number-system",
+      "course": "grade-8-math",
+      "score": 0.867,
+      "bankProblems": 10,
+      "uncoveredTopics": [
+        "spiral"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "spiral-statistics",
+      "unifiedId": "statistics",
+      "course": "grade-8-math",
+      "score": 0.7,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "spiral"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "visual-fractions",
+      "unifiedId": "fractions-basics",
+      "course": "parent-math-35",
+      "score": 0.7,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "visual"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "unit-rates",
+      "unifiedId": "act-rates-unit-conversion",
+      "course": "parent-math-68",
+      "score": 0.7,
+      "bankProblems": 11,
+      "alternatives": []
+    },
+    {
+      "legacyId": "counting-on",
+      "unifiedId": "counting",
+      "course": "parent-math-k2",
+      "score": 1.2,
+      "bankProblems": 40,
+      "alternatives": [
+        "skip-counting",
+        "counting-methods",
+        "counting-up"
+      ]
+    },
+    {
+      "legacyId": "counting-back",
+      "unifiedId": "counting",
+      "course": "parent-math-k2",
+      "score": 0.7,
+      "bankProblems": 40,
+      "uncoveredTopics": [
+        "back"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "part-whole-diagrams",
+      "unifiedId": "part-part-whole",
+      "course": "parent-math-k2",
+      "score": 0.7,
+      "bankProblems": 52,
+      "uncoveredTopics": [
+        "diagrams"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "solving-equations-review",
+      "unifiedId": "solving-equations",
+      "course": "precalculus",
+      "score": 1.2,
+      "bankProblems": 15,
+      "alternatives": [
+        "solving-linear-equations"
+      ]
+    },
+    {
+      "legacyId": "function-families-overview",
+      "unifiedId": "function-families",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "overview"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "function-composition",
+      "unifiedId": "act-function-composition",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 25,
+      "alternatives": []
+    },
+    {
+      "legacyId": "law-of-sines",
+      "unifiedId": "trig-law-of-sines",
+      "course": "precalculus",
+      "score": 1.2,
+      "bankProblems": 25,
+      "alternatives": [
+        "act-law-of-sines-cosines"
+      ]
+    },
+    {
+      "legacyId": "law-of-cosines",
+      "unifiedId": "trig-law-of-cosines",
+      "course": "precalculus",
+      "score": 1.2,
+      "bankProblems": 25,
+      "alternatives": [
+        "act-law-of-sines-cosines"
+      ]
+    },
+    {
+      "legacyId": "sequences-arithmetic",
+      "unifiedId": "arithmetic-sequences",
+      "course": "precalculus",
+      "score": 1.2,
+      "bankProblems": 109,
+      "alternatives": []
+    },
+    {
+      "legacyId": "sequences-geometric",
+      "unifiedId": "geometric-sequences",
+      "course": "precalculus",
+      "score": 1.2,
+      "bankProblems": 36,
+      "alternatives": []
+    },
+    {
+      "legacyId": "limits-intuitive",
+      "unifiedId": "limits",
+      "course": "precalculus",
+      "score": 0.7,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "intuitive"
+      ],
+      "alternatives": []
+    },
+    {
+      "legacyId": "comprehensive-trig-review",
+      "unifiedId": "trig-identities-basic",
+      "course": "precalculus",
+      "score": 0.7,
+      "bankProblems": 15,
+      "alternatives": [
+        "trig-elevation-depression",
+        "trig-law-of-sines",
+        "trig-law-of-cosines"
+      ]
+    }
+  ]
+}

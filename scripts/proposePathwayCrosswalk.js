@@ -71,7 +71,7 @@ const REVIEW_FLOOR = 0.34;
  * Decide a pathway id's fate from its ranked candidates.
  * Returns { tier, target, score, alternatives, reason }.
  */
-function classifyMatch(candidates) {
+function classifyMatch(candidates, pathwayId) {
   if (!candidates.length) {
     return { tier: 'none', reason: 'no bank skill scored above the floor — content gap' };
   }
@@ -80,6 +80,22 @@ function classifyMatch(candidates) {
   const alternatives = candidates.slice(1).map((c) => c.id);
 
   if (best.score >= HIGH_SCORE && lead >= HIGH_LEAD) {
+    // The target drops a word that names a SUBJECT, not a method. The lead check
+    // cannot catch this: `slope-fields -> slope` has no rival precisely because
+    // the bank holds no slope-fields content, so absence of a competitor is what
+    // let a 451-problem mismatch score 0.87 clean. Demote, never discard —
+    // the row survives in the review file for a human to accept or correct.
+    const drops = pathwayId ? topicDrops(pathwayId, best) : [];
+    if (drops.length) {
+      return {
+        tier: 'review',
+        target: best.id,
+        score: best.score,
+        alternatives,
+        uncoveredTopics: drops,
+        reason: `"${best.id}" does not cover ${drops.join(', ')} — a different subject, not a rewording`,
+      };
+    }
     // A strong name match onto an almost-empty skill unstrands nothing, but
     // would report as covered — false coverage is worse than a known gap.
     // (count === null means offline, where counts are unknown and --write is
@@ -112,25 +128,50 @@ function classifyMatch(candidates) {
 }
 
 // Course prefixes carry no topic meaning — `g6` in `g6-place-value-decimals`
-// says which course, not which math.
-const COURSE_PREFIXES = new Set(['act', 'sat', 'alg1', 'alg2', 'geo', 'prec', 'calc', 'calc3']);
+// says which course, not which math. `emf` = early-math-foundations,
+// `cm` = consumer-math; both appear as id prefixes across the pathways.
+const COURSE_PREFIXES = new Set([
+  'act', 'sat', 'alg1', 'alg2', 'geo', 'prec', 'calc', 'calc3', 'emf', 'cm', 'pm',
+]);
 const isPrefix = (t) => COURSE_PREFIXES.has(t) || /^[gk]\d+$/.test(t);
+
+// Words that describe HOW a skill is worked rather than WHAT it is about.
+// Dropping one of these narrows nothing: `solving-one-step-equations ->
+// one-step-equations` loses only a verb.
+//
+// This list is deliberately short and closed. Anything not on it is treated as
+// a topic word, because the two errors are not symmetric: a false demotion
+// costs one review row, while a false approval points a course skill at content
+// about a different subject. `slope-fields -> slope` scored 0.87 with no rival
+// and would have served 451 problems about computing slope to a student
+// studying differential equations.
+const STRUCTURAL_WORDS = new Set([
+  'solving', 'solve', 'graphing', 'graph', 'writing', 'write', 'using', 'use',
+  'understanding', 'identifying', 'identify', 'visual', 'diagrams', 'overview',
+  'spiral', 'techniques', 'fluency', 'principles', 'intuitive', 'back', 'applications',
+]);
 
 /**
  * Topic words the pathway skill has that its target does not cover.
  *
- * Advisory, not a gate. `act-polygons-circles -> act-circles` scores 0.87 with
- * no rival, so the ambiguity check clears it — but the target silently drops
- * polygons. Absence of a competing skill is not evidence of a good match, and
- * token overlap alone cannot tell "one topic with a qualifier"
- * (`g6-place-value-decimals -> place-value`, fine) from "two topics, one
- * matched" (this case, not fine). So it is surfaced for a human rather than
- * guessed at in either direction.
+ * The wide set, used for reporting. `topicDrops` narrows it to subject words
+ * and that is what gates: `act-polygons-circles -> act-circles` scores 0.87
+ * with no rival, so the ambiguity check clears it while the target silently
+ * drops polygons. Absence of a competing skill is not evidence of a good match.
  */
 function uncoveredTopics(pathwayId, target) {
   if (!target) return [];
   const covered = new Set([...target.idTokens || [], ...target.nameTokens || []]);
   return [...tokens(pathwayId)].filter((t) => !covered.has(t) && !isPrefix(t));
+}
+
+/**
+ * Uncovered words that name a SUBJECT rather than a method — the ones that make
+ * a match wrong rather than merely terser. This is the gate; `uncoveredTopics`
+ * remains the wider advisory used for reporting.
+ */
+function topicDrops(pathwayId, target) {
+  return uncoveredTopics(pathwayId, target).filter((t) => !STRUCTURAL_WORDS.has(t));
 }
 
 /**
@@ -208,7 +249,7 @@ async function main() {
     for (const pathwayId of ids) {
       if (seen.has(pathwayId)) continue;
       seen.add(pathwayId);
-      const verdict = classifyMatch(rankCandidates(pathwayId, bankIndex));
+      const verdict = classifyMatch(rankCandidates(pathwayId, bankIndex), pathwayId);
       const bank = bankIndex.find((b) => b.id === verdict.target);
       const uncovered = uncoveredTopics(pathwayId, bank);
       const entry = {
@@ -302,4 +343,7 @@ if (require.main === module) {
   main().catch((e) => { console.error(e); process.exit(1); });
 }
 
-module.exports = { classifyMatch, rankCandidates, HIGH_SCORE, HIGH_LEAD, REVIEW_FLOOR };
+module.exports = {
+  classifyMatch, rankCandidates, uncoveredTopics, topicDrops,
+  HIGH_SCORE, HIGH_LEAD, REVIEW_FLOOR, STRUCTURAL_WORDS,
+};

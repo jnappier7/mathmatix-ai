@@ -112,3 +112,48 @@ describe('rankCandidates', () => {
     expect(rankCandidates('slope', many).length).toBeLessThanOrEqual(4);
   });
 });
+
+describe('topic-drop gate', () => {
+  const { topicDrops } = require('../../scripts/proposePathwayCrosswalk');
+  const { tokens } = require('../../scripts/auditCourseProblemCoverage');
+  const target = (id, name = '') => ({ id, idTokens: tokens(id), nameTokens: tokens(name), count: 500 });
+  // Candidates from rankCandidates always carry tokens; a fixture without them
+  // reads as "covers nothing" and gates everything — fail-closed, deliberately.
+  const target2 = (id, score, count) => ({ ...target(id), score, count });
+
+  it('gates a match that drops a subject word', () => {
+    // The 451-problem miss: slope fields are differential equations. No rival
+    // existed precisely BECAUSE the bank has no slope-fields content, so the
+    // lead check cleared it at 0.87.
+    expect(topicDrops('slope-fields', target('slope'))).toContain('fields');
+    expect(topicDrops('geometric-mean', target('mean'))).toContain('geometric');
+    expect(topicDrops('polynomial-multiplication', target('multiplication-basics')))
+      .toContain('polynomial');
+    expect(topicDrops('partial-fractions', target('fractions-basics'))).toContain('partial');
+  });
+
+  it('allows a match that drops only a verb', () => {
+    expect(topicDrops('solving-one-step-equations', target('one-step-equations'))).toEqual([]);
+    expect(topicDrops('graphing-inequalities', target('graphing-inequalities'))).toEqual([]);
+  });
+
+  it('allows a match that drops only a course prefix', () => {
+    // emf = early-math-foundations, cm = consumer-math. These are the best rows
+    // in the file (emf-place-value -> place-value, 601 problems) and must not gate.
+    expect(topicDrops('emf-place-value', target('place-value'))).toEqual([]);
+    expect(topicDrops('cm-percent-of-number', target('percent-of-a-number'))).toEqual([]);
+    expect(topicDrops('g6-unit-rates', target('unit-rates'))).toEqual([]);
+  });
+
+  it('classifyMatch demotes a subject-dropping match to review, never discards it', () => {
+    const v = classifyMatch([target2('slope', 0.87, 451)], 'slope-fields');
+    expect(v.tier).toBe('review');
+    expect(v.target).toBe('slope');           // still recorded for a human
+    expect(v.reason).toMatch(/different subject/);
+  });
+
+  it('classifyMatch still approves a clean match with a pathwayId supplied', () => {
+    const v = classifyMatch([target2('place-value', 0.95, 601)], 'emf-place-value');
+    expect(v.tier).toBe('high');
+  });
+});
