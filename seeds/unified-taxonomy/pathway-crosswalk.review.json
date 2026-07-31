@@ -1,0 +1,3650 @@
+{
+  "note": "NOT loaded — the filename lacks the -crosswalk.json suffix the resolver globs for.",
+  "HOW_TO_APPROVE": [
+    "1. Edit rows[]: fix each unifiedId (pick from alternatives, or type any bank skill id).",
+    "2. Delete rows you do not want. Anything left WILL go live.",
+    "3. Save as seeds/unified-taxonomy/00-manual-crosswalk.json",
+    "The 00- prefix sorts first, and the resolver takes the first file that maps an id —",
+    "so your manual rows override every generated one, including alg1-crosswalk.json.",
+    "contentGaps below have no candidate at all; add rows for them by hand if the bank",
+    "really does hold something under a name the matcher missed."
+  ],
+  "rows": [
+    {
+      "legacyId": "g6-multi-digit-division",
+      "unifiedId": "multi-digit-addition",
+      "course": "6th-grade-math",
+      "score": 0.4,
+      "bankProblems": 77,
+      "uncoveredTopics": [
+        "division"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g6-fraction-add-subtract",
+      "unifiedId": "decimals-add-subtract",
+      "course": "6th-grade-math",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "fraction"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g6-equivalent-ratios",
+      "unifiedId": "ratios",
+      "course": "6th-grade-math",
+      "score": 0.533,
+      "bankProblems": 140,
+      "uncoveredTopics": [
+        "equivalent"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "g6-combine-like-terms",
+      "unifiedId": "combining-like-terms",
+      "course": "6th-grade-math",
+      "score": 0.4,
+      "bankProblems": 81,
+      "uncoveredTopics": [
+        "combine"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g6-one-two-step-equations",
+      "unifiedId": "one-step-equations",
+      "course": "6th-grade-math",
+      "score": 0.8,
+      "bankProblems": 424,
+      "uncoveredTopics": [
+        "two"
+      ],
+      "alternatives": [
+        "two-step-equations",
+        "one-step-equations-addition",
+        "one-step-subtraction"
+      ],
+      "reason": "only 0.00 ahead of two-step-equations — ambiguous"
+    },
+    {
+      "legacyId": "g6-area-triangles-parallelograms",
+      "unifiedId": "area-triangles",
+      "course": "6th-grade-math",
+      "score": 0.7,
+      "bankProblems": 14,
+      "uncoveredTopics": [
+        "parallelograms"
+      ],
+      "alternatives": [],
+      "reason": "\"area-triangles\" does not cover parallelograms — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "g6-measures-center-variability",
+      "unifiedId": "measures-of-center",
+      "course": "6th-grade-math",
+      "score": 0.7,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "variability"
+      ],
+      "alternatives": [
+        "act-center-spread"
+      ],
+      "reason": "\"measures-of-center\" does not cover variability — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "g6-absolute-value-opposites",
+      "unifiedId": "absolute-value-inequalities",
+      "course": "6th-grade-math",
+      "score": 0.4,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "opposites"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g6-distance-coordinate-plane",
+      "unifiedId": "coordinate-plane",
+      "course": "6th-grade-math",
+      "score": 0.7,
+      "bankProblems": 124,
+      "uncoveredTopics": [
+        "distance"
+      ],
+      "alternatives": [],
+      "reason": "\"coordinate-plane\" does not cover distance — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "g6-multi-step-reasoning",
+      "unifiedId": "multi-step-inequalities",
+      "course": "6th-grade-math",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "reasoning"
+      ],
+      "alternatives": [
+        "multi-step-equations"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g7-integer-operations",
+      "unifiedId": "operations",
+      "course": "7th-grade-math",
+      "score": 0.533,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "integer"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "g7-one-two-step-equations",
+      "unifiedId": "one-step-equations",
+      "course": "7th-grade-math",
+      "score": 0.8,
+      "bankProblems": 424,
+      "uncoveredTopics": [
+        "two"
+      ],
+      "alternatives": [
+        "two-step-equations",
+        "one-step-equations-addition",
+        "one-step-subtraction"
+      ],
+      "reason": "only 0.00 ahead of two-step-equations — ambiguous"
+    },
+    {
+      "legacyId": "g7-add-subtract-rationals",
+      "unifiedId": "decimals-add-subtract",
+      "course": "7th-grade-math",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "rationals"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g7-rational-word-problems",
+      "unifiedId": "difference-word-problems",
+      "course": "7th-grade-math",
+      "score": 0.4,
+      "bankProblems": 48,
+      "uncoveredTopics": [
+        "rational"
+      ],
+      "alternatives": [
+        "linear-word-problems"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g7-absolute-value",
+      "unifiedId": "absolute-value-inequalities",
+      "course": "7th-grade-math",
+      "score": 0.5,
+      "bankProblems": 21,
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "g7-area-circumference",
+      "unifiedId": "circles-circumference-area",
+      "course": "7th-grade-math",
+      "score": 0.5,
+      "bankProblems": 26,
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "g7-surface-area",
+      "unifiedId": "act-volume-surface-area",
+      "course": "7th-grade-math",
+      "score": 0.4,
+      "bankProblems": 21,
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "g7-probability-simulations",
+      "unifiedId": "act-probability",
+      "course": "7th-grade-math",
+      "score": 0.533,
+      "bankProblems": 29,
+      "uncoveredTopics": [
+        "simulations"
+      ],
+      "alternatives": [
+        "probability-basics"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "g7-equation-word-problems",
+      "unifiedId": "difference-word-problems",
+      "course": "7th-grade-math",
+      "score": 0.4,
+      "bankProblems": 48,
+      "uncoveredTopics": [
+        "equation"
+      ],
+      "alternatives": [
+        "linear-word-problems"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "act-real-complex-numbers",
+      "unifiedId": "act-complex-numbers",
+      "course": "act-prep",
+      "score": 0.95,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "real"
+      ],
+      "alternatives": [],
+      "reason": "\"act-complex-numbers\" does not cover real — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "act-exponents-roots",
+      "unifiedId": "act-radicals-roots",
+      "course": "act-prep",
+      "score": 0.5,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "exponents"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "act-ratios-proportions-percents",
+      "unifiedId": "act-ratios-proportions",
+      "course": "act-prep",
+      "score": 0.95,
+      "bankProblems": 24,
+      "uncoveredTopics": [
+        "percents"
+      ],
+      "alternatives": [
+        "ratios"
+      ],
+      "reason": "\"act-ratios-proportions\" does not cover percents — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "act-systems-of-equations",
+      "unifiedId": "act-linear-equations",
+      "course": "act-prep",
+      "score": 0.5,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "systems"
+      ],
+      "alternatives": [
+        "act-quadratic-equations",
+        "act-radical-rational-equations"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "act-quadratic-equations",
+      "unifiedId": "act-linear-equations",
+      "course": "act-prep",
+      "score": 0.5,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "quadratic"
+      ],
+      "alternatives": [
+        "act-systems-of-equations",
+        "act-radical-rational-equations",
+        "act-quadratic-functions-parabolas"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "act-radical-rational-expressions",
+      "unifiedId": "act-radical-rational-equations",
+      "course": "act-prep",
+      "score": 0.6,
+      "bankProblems": 24,
+      "uncoveredTopics": [
+        "expressions"
+      ],
+      "alternatives": [
+        "divide-rational-expressions",
+        "act-polynomial-expressions",
+        "multiply-rational-expressions"
+      ],
+      "reason": "top score 0.60 below 0.62"
+    },
+    {
+      "legacyId": "act-quadratic-functions",
+      "unifiedId": "act-quadratic-functions-parabolas",
+      "course": "act-prep",
+      "score": 0.95,
+      "bankProblems": 23,
+      "alternatives": [
+        "quadratic-functions",
+        "act-trigonometric-functions",
+        "graph-quadratic-functions"
+      ],
+      "reason": "only 0.08 ahead of quadratic-functions — ambiguous"
+    },
+    {
+      "legacyId": "act-polynomial-exponential-log",
+      "unifiedId": "act-polynomial-expressions",
+      "course": "act-prep",
+      "score": 0.4,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "exponential",
+        "log"
+      ],
+      "alternatives": [
+        "act-exponential-models"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "act-trig-functions",
+      "unifiedId": "act-trigonometric-functions",
+      "course": "act-prep",
+      "score": 0.5,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "trig"
+      ],
+      "alternatives": [
+        "act-quadratic-functions-parabolas",
+        "act-linear-functions-models"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "act-angles-lines-triangles",
+      "unifiedId": "act-angles-parallel-lines",
+      "course": "act-prep",
+      "score": 0.6,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "triangles"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.60 below 0.62"
+    },
+    {
+      "legacyId": "act-polygons-circles",
+      "unifiedId": "act-circles",
+      "course": "act-prep",
+      "score": 0.867,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "polygons"
+      ],
+      "alternatives": [],
+      "reason": "\"act-circles\" does not cover polygons — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "act-coordinate-geometry",
+      "unifiedId": "act-basic-geometry-measures",
+      "course": "act-prep",
+      "score": 0.5,
+      "bankProblems": 22,
+      "uncoveredTopics": [
+        "coordinate"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "act-right-triangle-trig",
+      "unifiedId": "act-right-triangle-trigonometry",
+      "course": "act-prep",
+      "score": 0.6,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "trig"
+      ],
+      "alternatives": [
+        "trig-right-triangle-ratios"
+      ],
+      "reason": "top score 0.60 below 0.62"
+    },
+    {
+      "legacyId": "act-congruence-similarity",
+      "unifiedId": "congruence",
+      "course": "act-prep",
+      "score": 0.533,
+      "bankProblems": 14,
+      "uncoveredTopics": [
+        "similarity"
+      ],
+      "alternatives": [
+        "similarity"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "act-counting-techniques",
+      "unifiedId": "counting",
+      "course": "act-prep",
+      "score": 0.533,
+      "bankProblems": 40,
+      "uncoveredTopics": [
+        "techniques"
+      ],
+      "alternatives": [
+        "act-counting-arrangements"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "act-multi-step-rate-proportion",
+      "unifiedId": "act-multi-step-arithmetic",
+      "course": "act-prep",
+      "score": 0.5,
+      "bankProblems": 12,
+      "uncoveredTopics": [
+        "rate",
+        "proportion"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "act-area-perimeter-composite",
+      "unifiedId": "act-area-perimeter",
+      "course": "act-prep",
+      "score": 0.95,
+      "bankProblems": 24,
+      "uncoveredTopics": [
+        "composite"
+      ],
+      "alternatives": [
+        "perimeter"
+      ],
+      "reason": "\"act-area-perimeter\" does not cover composite — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "act-measurement-unit-conversion",
+      "unifiedId": "act-rates-unit-conversion",
+      "course": "act-prep",
+      "score": 0.6,
+      "bankProblems": 11,
+      "uncoveredTopics": [
+        "measurement"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.60 below 0.62"
+    },
+    {
+      "legacyId": "act-picking-numbers",
+      "unifiedId": "act-complex-numbers",
+      "course": "act-prep",
+      "score": 0.5,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "picking"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "act-estimation-elimination",
+      "unifiedId": "estimation",
+      "course": "act-prep",
+      "score": 0.533,
+      "bankProblems": 147,
+      "uncoveredTopics": [
+        "elimination"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "order-of-operations",
+      "unifiedId": "operations",
+      "course": "algebra-1",
+      "score": 0.7,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "order"
+      ],
+      "alternatives": [],
+      "reason": "\"operations\" does not cover order — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "solving-literal-equations",
+      "unifiedId": "solving-equations",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "literal"
+      ],
+      "alternatives": [
+        "solving-linear-equations"
+      ],
+      "reason": "\"solving-equations\" does not cover literal — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "solving-inequalities",
+      "unifiedId": "one-step-inequalities",
+      "course": "algebra-1",
+      "score": 0.7,
+      "bankProblems": 292,
+      "alternatives": [
+        "two-step-inequalities"
+      ],
+      "reason": "only 0.00 ahead of two-step-inequalities — ambiguous"
+    },
+    {
+      "legacyId": "graphing-linear-equations-slope-intercept",
+      "unifiedId": "graph-linear-equations",
+      "course": "algebra-1",
+      "score": 0.8,
+      "bankProblems": 114,
+      "uncoveredTopics": [
+        "slope",
+        "intercept"
+      ],
+      "alternatives": [
+        "linear-equations",
+        "slope"
+      ],
+      "reason": "\"graph-linear-equations\" does not cover slope, intercept — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "writing-linear-equations-point-slope",
+      "unifiedId": "linear-equations",
+      "course": "algebra-1",
+      "score": 0.6,
+      "bankProblems": 25,
+      "uncoveredTopics": [
+        "writing",
+        "point",
+        "slope"
+      ],
+      "alternatives": [
+        "slope"
+      ],
+      "reason": "top score 0.60 below 0.62"
+    },
+    {
+      "legacyId": "parallel-perpendicular-lines",
+      "unifiedId": "act-angles-parallel-lines",
+      "course": "algebra-1",
+      "score": 0.4,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "perpendicular"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "graphing-linear-inequalities",
+      "unifiedId": "graphing-inequalities",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "linear"
+      ],
+      "alternatives": [
+        "act-linear-equations",
+        "act-linear-inequalities",
+        "graphing-systems-inequalities"
+      ],
+      "reason": "\"graphing-inequalities\" does not cover linear — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "systems-of-equations-graphing",
+      "unifiedId": "systems-graphing",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 89,
+      "uncoveredTopics": [
+        "equations"
+      ],
+      "alternatives": [
+        "act-systems-of-equations",
+        "graphing-systems-inequalities",
+        "graph-linear-equations"
+      ],
+      "reason": "only 0.00 ahead of act-systems-of-equations — ambiguous"
+    },
+    {
+      "legacyId": "systems-of-equations-substitution",
+      "unifiedId": "systems-substitution",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 147,
+      "uncoveredTopics": [
+        "equations"
+      ],
+      "alternatives": [
+        "act-systems-of-equations"
+      ],
+      "reason": "only 0.00 ahead of act-systems-of-equations — ambiguous"
+    },
+    {
+      "legacyId": "systems-of-equations-elimination",
+      "unifiedId": "act-systems-of-equations",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "elimination"
+      ],
+      "alternatives": [
+        "systems-elimination"
+      ],
+      "reason": "only 0.00 ahead of systems-elimination — ambiguous"
+    },
+    {
+      "legacyId": "systems-word-problems",
+      "unifiedId": "difference-word-problems",
+      "course": "algebra-1",
+      "score": 0.5,
+      "bankProblems": 48,
+      "uncoveredTopics": [
+        "systems"
+      ],
+      "alternatives": [
+        "linear-word-problems",
+        "area-perimeter-word-problems",
+        "addition-subtraction-word-problems"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "polynomial-addition-subtraction",
+      "unifiedId": "subtraction",
+      "course": "algebra-1",
+      "score": 0.533,
+      "bankProblems": 510,
+      "uncoveredTopics": [
+        "polynomial",
+        "addition"
+      ],
+      "alternatives": [
+        "addition",
+        "addition-subtraction-word-problems"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "polynomial-multiplication",
+      "unifiedId": "multiplication-basics",
+      "course": "algebra-1",
+      "score": 0.7,
+      "bankProblems": 117,
+      "uncoveredTopics": [
+        "polynomial"
+      ],
+      "alternatives": [],
+      "reason": "\"multiplication-basics\" does not cover polynomial — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "solving-quadratics-square-roots",
+      "unifiedId": "square-cube-roots",
+      "course": "algebra-1",
+      "score": 0.4,
+      "bankProblems": 13,
+      "uncoveredTopics": [
+        "solving",
+        "quadratics"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "intro-probability",
+      "unifiedId": "act-probability",
+      "course": "algebra-1",
+      "score": 1.2,
+      "bankProblems": 29,
+      "alternatives": [
+        "probability-basics",
+        "statistics-probability",
+        "conditional-probability"
+      ],
+      "reason": "only 0.00 ahead of probability-basics — ambiguous"
+    },
+    {
+      "legacyId": "exponential-growth-decay",
+      "unifiedId": "exponential-growth",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "decay"
+      ],
+      "alternatives": [
+        "exponential-decay"
+      ],
+      "reason": "only 0.00 ahead of exponential-decay — ambiguous"
+    },
+    {
+      "legacyId": "multiplying-dividing-rationals",
+      "unifiedId": "multiplying-dividing-integers",
+      "course": "algebra-1",
+      "score": 0.5,
+      "bankProblems": 13,
+      "uncoveredTopics": [
+        "rationals"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "solving-rational-equations",
+      "unifiedId": "solving-equations",
+      "course": "algebra-1",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "rational"
+      ],
+      "alternatives": [
+        "solving-linear-equations",
+        "act-radical-rational-equations"
+      ],
+      "reason": "\"solving-equations\" does not cover rational — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "operations-with-radicals",
+      "unifiedId": "operations",
+      "course": "algebra-1",
+      "score": 0.7,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "radicals"
+      ],
+      "alternatives": [],
+      "reason": "\"operations\" does not cover radicals — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "solving-linear-equations",
+      "unifiedId": "solving-equations",
+      "course": "algebra-2",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "linear"
+      ],
+      "alternatives": [
+        "linear-equations",
+        "act-linear-equations",
+        "graph-linear-equations"
+      ],
+      "reason": "only 0.00 ahead of linear-equations — ambiguous"
+    },
+    {
+      "legacyId": "function-basics",
+      "unifiedId": "function-transformations",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 21,
+      "alternatives": [
+        "function-families",
+        "function-composition",
+        "act-function-composition"
+      ],
+      "reason": "only 0.00 ahead of function-families — ambiguous"
+    },
+    {
+      "legacyId": "exponent-rules-radicals",
+      "unifiedId": "act-exponent-rules",
+      "course": "algebra-2",
+      "score": 0.5,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "radicals"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "systems-substitution-elimination",
+      "unifiedId": "systems-substitution",
+      "course": "algebra-2",
+      "score": 0.867,
+      "bankProblems": 147,
+      "uncoveredTopics": [
+        "elimination"
+      ],
+      "alternatives": [
+        "systems-elimination"
+      ],
+      "reason": "only 0.00 ahead of systems-elimination — ambiguous"
+    },
+    {
+      "legacyId": "systems-linear-inequalities",
+      "unifiedId": "systems-of-inequalities",
+      "course": "algebra-2",
+      "score": 0.867,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "linear"
+      ],
+      "alternatives": [
+        "act-linear-equations",
+        "act-linear-inequalities",
+        "graphing-systems-inequalities"
+      ],
+      "reason": "\"systems-of-inequalities\" does not cover linear — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "matrices-operations",
+      "unifiedId": "operations",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "matrices"
+      ],
+      "alternatives": [],
+      "reason": "\"operations\" does not cover matrices — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "simplify-rational-expressions",
+      "unifiedId": "simplify-expressions",
+      "course": "algebra-2",
+      "score": 0.867,
+      "bankProblems": 47,
+      "uncoveredTopics": [
+        "rational"
+      ],
+      "alternatives": [
+        "divide-rational-expressions",
+        "multiply-rational-expressions",
+        "add-subtract-rational-expressions"
+      ],
+      "reason": "\"simplify-expressions\" does not cover rational — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "multiply-divide-rational-expressions",
+      "unifiedId": "divide-rational-expressions",
+      "course": "algebra-2",
+      "score": 0.95,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "multiply"
+      ],
+      "alternatives": [
+        "multiply-rational-expressions",
+        "simplify-rational-expressions"
+      ],
+      "reason": "only 0.00 ahead of multiply-rational-expressions — ambiguous"
+    },
+    {
+      "legacyId": "add-subtract-rational-expressions",
+      "unifiedId": "divide-rational-expressions",
+      "course": "algebra-2",
+      "score": 0.4,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "add",
+        "subtract"
+      ],
+      "alternatives": [
+        "multiply-rational-expressions",
+        "decimals-add-subtract",
+        "simplify-rational-expressions"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "complex-fractions",
+      "unifiedId": "fractions-basics",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "complex"
+      ],
+      "alternatives": [],
+      "reason": "\"fractions-basics\" does not cover complex — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "permutations-combinations",
+      "unifiedId": "combinations",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "permutations"
+      ],
+      "alternatives": [
+        "permutations"
+      ],
+      "reason": "only 0.00 ahead of permutations — ambiguous"
+    },
+    {
+      "legacyId": "probability-rules",
+      "unifiedId": "act-probability",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 29,
+      "uncoveredTopics": [
+        "rules"
+      ],
+      "alternatives": [
+        "probability-basics"
+      ],
+      "reason": "only 0.00 ahead of probability-basics — ambiguous"
+    },
+    {
+      "legacyId": "binomial-probability",
+      "unifiedId": "act-probability",
+      "course": "algebra-2",
+      "score": 0.7,
+      "bankProblems": 29,
+      "uncoveredTopics": [
+        "binomial"
+      ],
+      "alternatives": [
+        "probability-basics"
+      ],
+      "reason": "only 0.00 ahead of probability-basics — ambiguous"
+    },
+    {
+      "legacyId": "exponent-log-rules-review",
+      "unifiedId": "act-exponent-rules",
+      "course": "ap-calculus-ab",
+      "score": 0.5,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "log"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "radian-measure-conversion",
+      "unifiedId": "trig-degree-radian-conversion",
+      "course": "ap-calculus-ab",
+      "score": 0.5,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "measure"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "unit-circle-derivation",
+      "unifiedId": "trig-unit-circle-evaluation",
+      "course": "ap-calculus-ab",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "derivation"
+      ],
+      "alternatives": [
+        "trig-tan-unit-circle"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "reference-angles-quadrants",
+      "unifiedId": "quadrants",
+      "course": "ap-calculus-ab",
+      "score": 0.533,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "reference",
+        "angles"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "limits-graphical-numerical",
+      "unifiedId": "limits",
+      "course": "ap-calculus-ab",
+      "score": 0.533,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "graphical",
+        "numerical"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "one-sided-infinite-limits",
+      "unifiedId": "limits",
+      "course": "ap-calculus-ab",
+      "score": 0.45,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "one",
+        "sided",
+        "infinite"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "limits-at-infinity-asymptotes",
+      "unifiedId": "limits",
+      "course": "ap-calculus-ab",
+      "score": 0.45,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "at",
+        "infinity",
+        "asymptotes"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "derivative-definition-difference-quotient",
+      "unifiedId": "derivatives",
+      "course": "ap-calculus-ab",
+      "score": 0.4,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "difference",
+        "quotient"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "derivative-as-rate-of-change",
+      "unifiedId": "average-rate-of-change",
+      "course": "ap-calculus-ab",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "derivative",
+        "as"
+      ],
+      "alternatives": [
+        "rate-of-change-problems"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "common-derivatives",
+      "unifiedId": "derivatives",
+      "course": "ap-calculus-ab",
+      "score": 0.7,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "common"
+      ],
+      "alternatives": [],
+      "reason": "\"derivatives\" does not cover common — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "derivatives-from-graphs-tables",
+      "unifiedId": "derivatives",
+      "course": "ap-calculus-ab",
+      "score": 0.45,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "graphs",
+        "tables"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "inverse-function-derivatives",
+      "unifiedId": "derivatives",
+      "course": "ap-calculus-ab",
+      "score": 0.533,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "inverse",
+        "function"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "inverse-trig-derivatives",
+      "unifiedId": "derivatives",
+      "course": "ap-calculus-ab",
+      "score": 0.533,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "inverse",
+        "trig"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "higher-order-derivatives",
+      "unifiedId": "derivatives",
+      "course": "ap-calculus-ab",
+      "score": 0.533,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "higher",
+        "order"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "curve-sketching-from-derivatives",
+      "unifiedId": "derivatives",
+      "course": "ap-calculus-ab",
+      "score": 0.45,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "curve",
+        "sketching"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "ftc-part-1",
+      "unifiedId": "definite-integrals",
+      "course": "ap-calculus-ab",
+      "score": 0.533,
+      "bankProblems": 15,
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "ftc-part-2",
+      "unifiedId": "definite-integrals",
+      "course": "ap-calculus-ab",
+      "score": 0.533,
+      "bankProblems": 15,
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "slope-fields-solution-curves",
+      "unifiedId": "slope",
+      "course": "ap-calculus-ab",
+      "score": 0.45,
+      "bankProblems": 451,
+      "uncoveredTopics": [
+        "fields",
+        "solution",
+        "curves"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "exponential-growth-decay-models",
+      "unifiedId": "exponential-growth",
+      "course": "ap-calculus-ab",
+      "score": 0.7,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "decay",
+        "models"
+      ],
+      "alternatives": [
+        "exponential-decay",
+        "act-exponential-models"
+      ],
+      "reason": "only 0.00 ahead of exponential-decay — ambiguous"
+    },
+    {
+      "legacyId": "limits-at-infinity",
+      "unifiedId": "limits",
+      "course": "calculus-bc",
+      "score": 0.533,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "at",
+        "infinity"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "partial-fractions",
+      "unifiedId": "fractions-basics",
+      "course": "calculus-bc",
+      "score": 0.7,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "partial"
+      ],
+      "alternatives": [],
+      "reason": "\"fractions-basics\" does not cover partial — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "slope-fields",
+      "unifiedId": "slope",
+      "course": "calculus-bc",
+      "score": 0.7,
+      "bankProblems": 451,
+      "uncoveredTopics": [
+        "fields"
+      ],
+      "alternatives": [],
+      "reason": "\"slope\" does not cover fields — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "parametric-derivatives",
+      "unifiedId": "derivatives",
+      "course": "calculus-bc",
+      "score": 0.7,
+      "bankProblems": 21,
+      "uncoveredTopics": [
+        "parametric"
+      ],
+      "alternatives": [],
+      "reason": "\"derivatives\" does not cover parametric — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "emf-rounding-estimation",
+      "unifiedId": "estimation",
+      "course": "early-math-foundations",
+      "score": 0.533,
+      "bankProblems": 147,
+      "uncoveredTopics": [
+        "rounding"
+      ],
+      "alternatives": [
+        "rounding"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "emf-multi-digit-subtraction",
+      "unifiedId": "subtraction",
+      "course": "early-math-foundations",
+      "score": 0.45,
+      "bankProblems": 510,
+      "uncoveredTopics": [
+        "multi",
+        "digit"
+      ],
+      "alternatives": [
+        "multi-digit-addition"
+      ],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "emf-multiplication-facts",
+      "unifiedId": "multiplication-basics",
+      "course": "early-math-foundations",
+      "score": 0.533,
+      "bankProblems": 117,
+      "uncoveredTopics": [
+        "facts"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "emf-multiplication-properties",
+      "unifiedId": "multiplication-basics",
+      "course": "early-math-foundations",
+      "score": 0.533,
+      "bankProblems": 117,
+      "uncoveredTopics": [
+        "properties"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "emf-multi-digit-multiplication",
+      "unifiedId": "multiplication-basics",
+      "course": "early-math-foundations",
+      "score": 0.45,
+      "bankProblems": 117,
+      "uncoveredTopics": [
+        "multi",
+        "digit"
+      ],
+      "alternatives": [
+        "multi-digit-addition"
+      ],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "emf-multiply-word-problems",
+      "unifiedId": "difference-word-problems",
+      "course": "early-math-foundations",
+      "score": 0.4,
+      "bankProblems": 48,
+      "uncoveredTopics": [
+        "multiply"
+      ],
+      "alternatives": [
+        "linear-word-problems"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "emf-divide-word-problems",
+      "unifiedId": "difference-word-problems",
+      "course": "early-math-foundations",
+      "score": 0.4,
+      "bankProblems": 48,
+      "uncoveredTopics": [
+        "divide"
+      ],
+      "alternatives": [
+        "linear-word-problems"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "emf-compare-order-fractions",
+      "unifiedId": "fractions-basics",
+      "course": "early-math-foundations",
+      "score": 0.45,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "compare",
+        "order"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "emf-fractions-of-whole",
+      "unifiedId": "fractions-basics",
+      "course": "early-math-foundations",
+      "score": 0.533,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "whole"
+      ],
+      "alternatives": [
+        "part-part-whole"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "emf-add-fractions-like",
+      "unifiedId": "add-fractions",
+      "course": "early-math-foundations",
+      "score": 0.7,
+      "bankProblems": 165,
+      "uncoveredTopics": [
+        "like"
+      ],
+      "alternatives": [
+        "fractions-basics"
+      ],
+      "reason": "\"add-fractions\" does not cover like — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "emf-subtract-fractions-like",
+      "unifiedId": "subtract-fractions",
+      "course": "early-math-foundations",
+      "score": 0.7,
+      "bankProblems": 157,
+      "uncoveredTopics": [
+        "like"
+      ],
+      "alternatives": [
+        "fractions-basics"
+      ],
+      "reason": "\"subtract-fractions\" does not cover like — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "emf-add-subtract-unlike",
+      "unifiedId": "decimals-add-subtract",
+      "course": "early-math-foundations",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "unlike"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "emf-decimals-fractions-connection",
+      "unifiedId": "fractions-basics",
+      "course": "early-math-foundations",
+      "score": 0.45,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "decimals",
+        "connection"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "emf-shapes-properties",
+      "unifiedId": "classify-shapes",
+      "course": "early-math-foundations",
+      "score": 0.4,
+      "bankProblems": 15,
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "angle-pair-relationships",
+      "unifiedId": "act-triangles-angle-relationships",
+      "course": "geometry",
+      "score": 0.4,
+      "bankProblems": 24,
+      "uncoveredTopics": [
+        "pair"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "parallel-lines-transversals",
+      "unifiedId": "act-angles-parallel-lines",
+      "course": "geometry",
+      "score": 0.4,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "transversals"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "triangle-congruence-aas-hl",
+      "unifiedId": "congruence",
+      "course": "geometry",
+      "score": 0.45,
+      "bankProblems": 14,
+      "uncoveredTopics": [
+        "aas",
+        "hl"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "congruence-proofs",
+      "unifiedId": "congruence",
+      "course": "geometry",
+      "score": 0.7,
+      "bankProblems": 14,
+      "uncoveredTopics": [
+        "proofs"
+      ],
+      "alternatives": [],
+      "reason": "\"congruence\" does not cover proofs — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "special-right-triangles",
+      "unifiedId": "trig-solve-right-triangles",
+      "course": "geometry",
+      "score": 0.5,
+      "bankProblems": 12,
+      "uncoveredTopics": [
+        "special"
+      ],
+      "alternatives": [
+        "trig-right-triangle-ratios"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "trigonometric-ratios-intro",
+      "unifiedId": "ratios",
+      "course": "geometry",
+      "score": 0.7,
+      "bankProblems": 140,
+      "uncoveredTopics": [
+        "trigonometric"
+      ],
+      "alternatives": [],
+      "reason": "\"ratios\" does not cover trigonometric — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "circle-basics",
+      "unifiedId": "trig-unit-circle-evaluation",
+      "course": "geometry",
+      "score": 0.45,
+      "bankProblems": 15,
+      "alternatives": [
+        "trig-tan-unit-circle"
+      ],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "similarity-ratios",
+      "unifiedId": "ratios",
+      "course": "geometry",
+      "score": 0.7,
+      "bankProblems": 140,
+      "uncoveredTopics": [
+        "similarity"
+      ],
+      "alternatives": [
+        "similarity"
+      ],
+      "reason": "only 0.00 ahead of similarity — ambiguous"
+    },
+    {
+      "legacyId": "similarity-proofs",
+      "unifiedId": "similarity",
+      "course": "geometry",
+      "score": 0.7,
+      "bankProblems": 14,
+      "uncoveredTopics": [
+        "proofs"
+      ],
+      "alternatives": [],
+      "reason": "\"similarity\" does not cover proofs — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "geometric-mean",
+      "unifiedId": "mean",
+      "course": "geometry",
+      "score": 0.7,
+      "bankProblems": 306,
+      "uncoveredTopics": [
+        "geometric"
+      ],
+      "alternatives": [],
+      "reason": "\"mean\" does not cover geometric — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "volume-prisms-cylinders",
+      "unifiedId": "volume-rectangular-prisms",
+      "course": "geometry",
+      "score": 0.5,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "cylinders"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "coordinate-geometry-distance-midpoint",
+      "unifiedId": "act-coordinate-geometry",
+      "course": "geometry",
+      "score": 0.7,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "distance",
+        "midpoint"
+      ],
+      "alternatives": [],
+      "reason": "\"act-coordinate-geometry\" does not cover distance, midpoint — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "integer-operations",
+      "unifiedId": "operations",
+      "course": "grade-8-math",
+      "score": 0.7,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "integer"
+      ],
+      "alternatives": [],
+      "reason": "\"operations\" does not cover integer — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "basic-equations",
+      "unifiedId": "equations-with-distribution",
+      "course": "grade-8-math",
+      "score": 0.7,
+      "bankProblems": 150,
+      "alternatives": [
+        "act-systems-of-equations",
+        "solving-equations",
+        "act-quadratic-equations"
+      ],
+      "reason": "only 0.00 ahead of act-systems-of-equations — ambiguous"
+    },
+    {
+      "legacyId": "multi-step-equations",
+      "unifiedId": "one-step-equations",
+      "course": "grade-8-math",
+      "score": 0.5,
+      "bankProblems": 424,
+      "uncoveredTopics": [
+        "multi"
+      ],
+      "alternatives": [
+        "multi-step-inequalities",
+        "two-step-equations",
+        "one-step-equations-addition"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "linear-inequalities",
+      "unifiedId": "act-linear-equations",
+      "course": "grade-8-math",
+      "score": 0.867,
+      "bankProblems": 25,
+      "alternatives": [
+        "act-linear-inequalities"
+      ],
+      "reason": "only 0.00 ahead of act-linear-inequalities — ambiguous"
+    },
+    {
+      "legacyId": "equation-word-problems",
+      "unifiedId": "difference-word-problems",
+      "course": "grade-8-math",
+      "score": 0.5,
+      "bankProblems": 48,
+      "uncoveredTopics": [
+        "equation"
+      ],
+      "alternatives": [
+        "linear-word-problems",
+        "area-perimeter-word-problems",
+        "addition-subtraction-word-problems"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "slope-rate-of-change",
+      "unifiedId": "slope",
+      "course": "grade-8-math",
+      "score": 0.533,
+      "bankProblems": 451,
+      "uncoveredTopics": [
+        "rate",
+        "change"
+      ],
+      "alternatives": [
+        "average-rate-of-change",
+        "rate-of-change-problems"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "slope-from-representations",
+      "unifiedId": "slope",
+      "course": "grade-8-math",
+      "score": 0.533,
+      "bankProblems": 451,
+      "uncoveredTopics": [
+        "from",
+        "representations"
+      ],
+      "alternatives": [
+        "slope-from-two-points"
+      ],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "compare-linear-models",
+      "unifiedId": "act-linear-functions-models",
+      "course": "grade-8-math",
+      "score": 0.4,
+      "bankProblems": 23,
+      "uncoveredTopics": [
+        "compare"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "congruence-similarity",
+      "unifiedId": "congruence",
+      "course": "grade-8-math",
+      "score": 0.7,
+      "bankProblems": 14,
+      "uncoveredTopics": [
+        "similarity"
+      ],
+      "alternatives": [
+        "similarity"
+      ],
+      "reason": "only 0.00 ahead of similarity — ambiguous"
+    },
+    {
+      "legacyId": "volume-word-problems",
+      "unifiedId": "difference-word-problems",
+      "course": "grade-8-math",
+      "score": 0.5,
+      "bankProblems": 48,
+      "uncoveredTopics": [
+        "volume"
+      ],
+      "alternatives": [
+        "linear-word-problems",
+        "area-perimeter-word-problems",
+        "addition-subtraction-word-problems"
+      ],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "interpret-slope-intercept",
+      "unifiedId": "slope",
+      "course": "grade-8-math",
+      "score": 0.533,
+      "bankProblems": 451,
+      "uncoveredTopics": [
+        "interpret",
+        "intercept"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "area-model-multiplication",
+      "unifiedId": "multiplication-basics",
+      "course": "parent-math-35",
+      "score": 0.533,
+      "bankProblems": 117,
+      "uncoveredTopics": [
+        "area",
+        "model"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "fraction-operations-visual",
+      "unifiedId": "operations",
+      "course": "parent-math-35",
+      "score": 0.533,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "fraction",
+        "visual"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "multi-step-word-problems",
+      "unifiedId": "multi-step-inequalities",
+      "course": "parent-math-35",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "word",
+        "problems"
+      ],
+      "alternatives": [
+        "multi-step-equations",
+        "difference-word-problems",
+        "linear-word-problems"
+      ],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "number-line-integers",
+      "unifiedId": "graphing-inequalities",
+      "course": "parent-math-68",
+      "score": 0.4,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "integers"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.40 below 0.62"
+    },
+    {
+      "legacyId": "coordinate-plane-geometry",
+      "unifiedId": "act-coordinate-geometry",
+      "course": "parent-math-68",
+      "score": 0.867,
+      "bankProblems": 26,
+      "uncoveredTopics": [
+        "plane"
+      ],
+      "alternatives": [
+        "coordinate-plane",
+        "plotting-points",
+        "quadrants"
+      ],
+      "reason": "only 0.00 ahead of coordinate-plane — ambiguous"
+    },
+    {
+      "legacyId": "making-ten-strategy",
+      "unifiedId": "make-ten",
+      "course": "parent-math-k2",
+      "score": 0.5,
+      "bankProblems": 29,
+      "uncoveredTopics": [
+        "making"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.50 below 0.62"
+    },
+    {
+      "legacyId": "function-notation-domain-range",
+      "unifiedId": "range",
+      "course": "precalculus",
+      "score": 0.45,
+      "bankProblems": 77,
+      "uncoveredTopics": [
+        "function",
+        "notation",
+        "domain"
+      ],
+      "alternatives": [
+        "function-composition"
+      ],
+      "reason": "top score 0.45 below 0.62"
+    },
+    {
+      "legacyId": "domain-range-analysis",
+      "unifiedId": "range",
+      "course": "precalculus",
+      "score": 0.533,
+      "bankProblems": 77,
+      "uncoveredTopics": [
+        "domain",
+        "analysis"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "exponential-functions-properties",
+      "unifiedId": "exponential-functions",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 12,
+      "uncoveredTopics": [
+        "properties"
+      ],
+      "alternatives": [],
+      "reason": "\"exponential-functions\" does not cover properties — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "solving-exponential-equations",
+      "unifiedId": "solving-equations",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "exponential"
+      ],
+      "alternatives": [
+        "solving-linear-equations"
+      ],
+      "reason": "\"solving-equations\" does not cover exponential — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "solving-logarithmic-equations",
+      "unifiedId": "solving-equations",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "logarithmic"
+      ],
+      "alternatives": [
+        "solving-linear-equations"
+      ],
+      "reason": "\"solving-equations\" does not cover logarithmic — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "unit-circle-trig-values",
+      "unifiedId": "trig-unit-circle-evaluation",
+      "course": "precalculus",
+      "score": 0.6,
+      "bankProblems": 15,
+      "alternatives": [
+        "trig-tan-unit-circle"
+      ],
+      "reason": "top score 0.60 below 0.62"
+    },
+    {
+      "legacyId": "fundamental-trig-identities",
+      "unifiedId": "trig-identities-basic",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "fundamental"
+      ],
+      "alternatives": [],
+      "reason": "\"trig-identities-basic\" does not cover fundamental — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "solving-trig-equations",
+      "unifiedId": "solving-equations",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 15,
+      "uncoveredTopics": [
+        "trig"
+      ],
+      "alternatives": [
+        "solving-linear-equations",
+        "trig-solve-equations-special"
+      ],
+      "reason": "\"solving-equations\" does not cover trig — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "vector-operations",
+      "unifiedId": "operations",
+      "course": "precalculus",
+      "score": 0.7,
+      "bankProblems": 27,
+      "uncoveredTopics": [
+        "vector"
+      ],
+      "alternatives": [],
+      "reason": "\"operations\" does not cover vector — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "series-sigma-notation",
+      "unifiedId": "sigma-notation",
+      "course": "precalculus",
+      "score": 0.867,
+      "bankProblems": 14,
+      "uncoveredTopics": [
+        "series"
+      ],
+      "alternatives": [],
+      "reason": "\"sigma-notation\" does not cover series — a different subject, not a rewording"
+    },
+    {
+      "legacyId": "limits-continuity-infinity",
+      "unifiedId": "limits",
+      "course": "precalculus",
+      "score": 0.533,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "continuity",
+        "infinity"
+      ],
+      "alternatives": [],
+      "reason": "top score 0.53 below 0.62"
+    },
+    {
+      "legacyId": "comprehensive-function-review",
+      "unifiedId": "function-transformations",
+      "course": "precalculus",
+      "score": 0.7,
+      "bankProblems": 21,
+      "alternatives": [
+        "function-families",
+        "function-composition",
+        "act-function-composition"
+      ],
+      "reason": "only 0.00 ahead of function-families — ambiguous"
+    },
+    {
+      "legacyId": "comprehensive-limits-series-review",
+      "unifiedId": "limits",
+      "course": "precalculus",
+      "score": 0.7,
+      "bankProblems": 50,
+      "uncoveredTopics": [
+        "series"
+      ],
+      "alternatives": [],
+      "reason": "\"limits\" does not cover series — a different subject, not a rewording"
+    }
+  ],
+  "contentGaps": [
+    {
+      "legacyId": "g6-fraction-ops-review",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-integer-basics",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-mult-div-fluency",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-expression-writing-intro",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-decimal-division",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-fraction-multiply-divide",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-gcf-lcm",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-ratio-language",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-ratio-problem-solving",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-measurement-conversions",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-write-expressions",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-parts-of-expressions",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-formulas-area-volume",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-inequalities",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-word-problem-equations",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-area-composite-figures",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-nets-surface-area",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-geometry-applications",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-statistical-questions",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-compare-distributions",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-positive-negative-context",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-compare-order-rationals",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-mixed-problem-solving",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-percent-intro",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g6-unit-conversions",
+      "course": "6th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-fraction-decimal-fluency",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-multiply-divide-rationals",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-verbal-to-algebraic",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-inequalities",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-proportions",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-scale-drawings",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-percent-applications",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-identify-proportional",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-constant-of-proportionality",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-proportional-equations",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-graph-proportional",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-composite-figures",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-volume",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-cross-sections",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-populations-samples",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-random-sampling",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-compare-data-sets",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-informal-inferences",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-experimental-theoretical",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-compound-events",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-function-input-output",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "g7-patterns-sequences",
+      "course": "7th-grade-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-matrices-vectors",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-polynomial-expressions",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-center-spread",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-data-representations",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-two-way-tables",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-algebraic-reasoning-context",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-percent-applications",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-backsolving",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-pacing-strategy",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "act-model-interpretation",
+      "course": "act-prep",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "variable-expressions",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "algebraic-properties",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "combining-like-terms",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "distributive-property",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "standard-form-equations",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "systems-special-cases",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polynomial-classification",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "special-products",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "factoring-gcf",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "factoring-trinomials",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "quadratic-formula",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "discriminant",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "measures-of-central-tendency",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "scatter-plots-correlation",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "data-displays",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "comparing-linear-exponential",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "simplifying-radicals",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "distance-formula",
+      "course": "algebra-1",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "compound-inequalities",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "graphing-lines",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "mathematical-modeling-systems",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "matrices-solving-systems",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "quadratic-forms-converting",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "quadratic-solving-all-methods",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "discriminant-analysis",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "parabola-transformations",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "factoring-advanced",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polynomial-division",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "remainder-factor-theorems",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "graphing-polynomials",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "extraneous-solutions",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "vertical-horizontal-asymptotes",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "holes-in-rational-functions",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "rational-function-graphing",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "compound-interest-modeling",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "logarithm-evaluation-conversion",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "logarithm-properties",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "exponential-logarithmic-equations",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "domain-analysis-logarithms",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "rational-exponents-radicals",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "simplifying-radicals-variables",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "radical-applications",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "recursive-explicit-formulas",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "sigma-notation",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "financial-applications",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "angle-measure-radians",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "inverse-trig-functions",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "graphing-sinusoidal",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "data-analysis-normal-distribution",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "multi-domain-modeling",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "function-analysis-comparison",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "real-world-problem-solving",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "course-synthesis",
+      "course": "algebra-2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "function-behavior-review",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "rational-functions-review",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "trig-fluency-review",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "graph-reading-modeling",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "continuity-types",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ivt-squeeze-theorem",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "differentiability-vs-continuity",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "basic-differentiation-rules",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "chain-rule-composite",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "implicit-differentiation",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "related-rates-setup-solve",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "motion-position-velocity-acceleration",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "local-linearization-differentials",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "lhopitals-rule",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "mvt-evt-theorems",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "increasing-decreasing-extrema",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "concavity-inflection-points",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "first-second-derivative-tests",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "optimization-problems",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "definite-integral-as-accumulation",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "riemann-sums-approximation",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "antiderivatives-indefinite-integrals",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "integral-properties-techniques",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "separable-differential-equations",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "average-value-function",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "motion-via-integrals-net-change",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "area-between-curves",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "volume-cross-sections",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "volume-disk-washer",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cumulative-mcq-practice",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cumulative-frq-practice",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "error-analysis-correction",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "calculator-active-fluency",
+      "course": "ap-calculus-ab",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "function-fluency",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "algebra-cleanup",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "trig-essentials",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "graph-literacy",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "continuity-ivt",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "squeeze-theorem",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "derivative-interpretation",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "product-quotient-rules",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "chain-rule",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "related-rates",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "motion-problems",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "linearization-differentials",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "concavity-inflection",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "curve-sketching",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "evt-mvt",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "optimization",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "riemann-sums",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "definite-integral-properties",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ftc-part1",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ftc-part2",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "antiderivatives",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "integration-by-parts",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "improper-integrals",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "accumulation-functions",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "separation-of-variables",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "particular-solutions",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "euler-method",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "logistic-growth",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "average-value",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "motion-accumulation",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "parametric-arc-length",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polar-graphing-area",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "vector-valued-functions",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "sequences-convergence",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "convergence-tests",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "alternating-series-error",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "taylor-maclaurin-polynomials",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "taylor-series-known",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "power-series-interval",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "lagrange-error-bound",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ap-mc-no-calculator",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ap-mc-calculator",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ap-frq-calculator",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ap-frq-no-calculator",
+      "course": "calculus-bc",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-income-vocabulary",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-reading-pay-stubs",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-banking-basics",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-wants-vs-needs",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-budget-categories",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-cash-flow-tables",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-irregular-expenses",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-budget-tradeoffs",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-discounts-coupons",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-tax-tip-markup",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-unit-price-comparisons",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-simple-interest",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-compound-interest",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-emergency-fund",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-opportunity-cost",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-credit-scores",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-credit-card-math",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-loan-basics",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-amortization",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-predatory-lending",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-pay-structures",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-overtime-timesheets",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-tax-basics",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-benefits-comparison",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-why-investing",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-investment-types",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-retirement-accounts",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-compound-growth",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cm-scam-detection",
+      "course": "consumer-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-compare-order",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-add-sub-facts",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-number-patterns",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-add-sub-word-problems",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-mental-math-strategies",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-factors-multiples",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-division-facts",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-long-division",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-interpreting-remainders",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-mixed-numbers-improper",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-compare-order-decimals",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-angles-basics",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-measurement-units",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-data-graphs",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-data-interpretation",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-patterns-rules",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "emf-unknowns-intro",
+      "course": "early-math-foundations",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "points-lines-planes",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "angle-measurement",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "triangle-classification",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "triangle-angle-sum",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "exterior-angle-theorem",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "triangle-inequalities",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "cpctc",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "pythagorean-converse",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polygon-angle-sum",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "quadrilateral-properties",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "parallelogram-proofs",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "trapezoid-properties",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "circle-area",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "arc-length",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "sector-area",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "inscribed-angles",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "circle-theorems",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "similar-triangle-theorems",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "volume-pyramids-cones-spheres",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "surface-area-prisms-cylinders",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "surface-area-pyramids-cones-spheres",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "3d-geometry-mixed",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "coordinate-proofs",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "equation-of-circle",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "parallel-perpendicular-slopes",
+      "course": "geometry",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "fraction-decimal-fluency",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "rational-irrational",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "real-number-ordering",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "y-intercept-context",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "function-definition",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "identify-functions",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "compare-functions",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "function-modeling",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "systems-substitution",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "systems-interpretation",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "distance-coordinate",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "volume-cylinders",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "volume-cones",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "volume-spheres",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "volume-scaling",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "scatter-plots",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "line-of-best-fit",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "two-way-tables",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "correlation-causation",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "spiral-equations-functions",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "spiral-geometry",
+      "course": "grade-8-math",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "partial-products",
+      "course": "parent-math-35",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "partial-quotients-division",
+      "course": "parent-math-35",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "division-strategies",
+      "course": "parent-math-35",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "tape-diagrams",
+      "course": "parent-math-35",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ratio-tables",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "double-number-lines",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "proportional-relationships",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "algebra-tiles",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "visual-equation-solving",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "balance-model",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "chip-model",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "statistical-thinking",
+      "course": "parent-math-68",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "number-bonds",
+      "course": "parent-math-k2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "decomposing-numbers",
+      "course": "parent-math-k2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ten-frames",
+      "course": "parent-math-k2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "mental-math-strategies",
+      "course": "parent-math-k2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "bar-models",
+      "course": "parent-math-k2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "number-lines",
+      "course": "parent-math-k2",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "factoring-simplification-fluency",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "graphing-transformations-review",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "transformations-toolkit",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "combining-functions",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "inverse-functions",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polynomial-end-behavior",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polynomial-zeros-multiplicity",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "synthetic-division-remainder",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "rational-function-analysis",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "asymptote-analysis",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polynomial-rational-inequalities",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "logarithmic-functions-properties",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "logarithm-rules-expansion",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "exponential-logarithmic-modeling",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "radian-measure-arc-length",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "trig-function-graphs",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "sinusoidal-modeling",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "sum-difference-identities",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "double-half-angle-formulas",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "triangle-area-applications",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "parabola-analysis",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "ellipse-analysis",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "hyperbola-analysis",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "parametric-equations",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polar-coordinates",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "polar-curves",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "vector-representation",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "dot-product",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "vector-projections",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "vector-applications",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "complex-polar-form",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    },
+    {
+      "legacyId": "comprehensive-analytic-review",
+      "course": "precalculus",
+      "reason": "no bank skill scored above the floor — content gap"
+    }
+  ]
+}
