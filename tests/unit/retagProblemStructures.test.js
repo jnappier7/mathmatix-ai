@@ -45,6 +45,19 @@ describe('promptOperation', () => {
     expect(promptOperation('Sam had 8 apples and gave away 3. How many are left?')).toBe('subtraction');
   });
 
+  it('infers a change-unknown word problem from the direction of the change', () => {
+    // The real shape of 198 skipped bank items: no operator, no cue word.
+    // "Tim had 8 toys. Now he has 10 toys." is 8 + __ = 10.
+    expect(promptOperation('Tim had 8 toys. Now he has 10 toys. How many did he get?'))
+      .toBe('addition');
+    expect(promptOperation('Tim had 10 toys. Now he has 8 toys. How many did he lose?'))
+      .toBe('subtraction');
+  });
+
+  it('infers nothing when the quantity did not change', () => {
+    expect(promptOperation('Tim had 8 toys. Now he has 8 toys.')).toBeNull();
+  });
+
   it('refuses to judge mixed or contradictory prompts', () => {
     expect(promptOperation('5 + 3 - 2 = ?')).toBeNull();
     expect(promptOperation('Find the sum, then the difference.')).toBeNull();

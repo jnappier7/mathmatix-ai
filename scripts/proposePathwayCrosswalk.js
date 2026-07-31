@@ -48,7 +48,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { tokens, similarity } = require('./auditCourseProblemCoverage');
+const { tokens, similarity, MIN_BANK } = require('./auditCourseProblemCoverage');
 const { pathwaySkillIds } = require('./dumpBankVocabulary');
 
 const OFFLINE = process.argv.includes('--offline');
@@ -77,13 +77,27 @@ function classifyMatch(candidates) {
   }
   const [best, second] = candidates;
   const lead = second ? best.score - second.score : 1;
+  const alternatives = candidates.slice(1).map((c) => c.id);
 
   if (best.score >= HIGH_SCORE && lead >= HIGH_LEAD) {
+    // A strong name match onto an almost-empty skill unstrands nothing, but
+    // would report as covered — false coverage is worse than a known gap.
+    // (count === null means offline, where counts are unknown and --write is
+    // refused anyway.)
+    if (best.count !== null && best.count !== undefined && best.count < MIN_BANK) {
+      return {
+        tier: 'review',
+        target: best.id,
+        score: best.score,
+        alternatives,
+        reason: `target "${best.id}" holds only ${best.count} problem(s) — below the ${MIN_BANK} needed for a practice set`,
+      };
+    }
     return {
       tier: 'high',
       target: best.id,
       score: best.score,
-      alternatives: candidates.slice(1).map((c) => c.id),
+      alternatives,
     };
   }
   return {
@@ -95,6 +109,28 @@ function classifyMatch(candidates) {
       ? `top score ${best.score.toFixed(2)} below ${HIGH_SCORE}`
       : `only ${lead.toFixed(2)} ahead of ${second.id} — ambiguous`,
   };
+}
+
+// Course prefixes carry no topic meaning — `g6` in `g6-place-value-decimals`
+// says which course, not which math.
+const COURSE_PREFIXES = new Set(['act', 'sat', 'alg1', 'alg2', 'geo', 'prec', 'calc', 'calc3']);
+const isPrefix = (t) => COURSE_PREFIXES.has(t) || /^[gk]\d+$/.test(t);
+
+/**
+ * Topic words the pathway skill has that its target does not cover.
+ *
+ * Advisory, not a gate. `act-polygons-circles -> act-circles` scores 0.87 with
+ * no rival, so the ambiguity check clears it — but the target silently drops
+ * polygons. Absence of a competing skill is not evidence of a good match, and
+ * token overlap alone cannot tell "one topic with a qualifier"
+ * (`g6-place-value-decimals -> place-value`, fine) from "two topics, one
+ * matched" (this case, not fine). So it is surfaced for a human rather than
+ * guessed at in either direction.
+ */
+function uncoveredTopics(pathwayId, target) {
+  if (!target) return [];
+  const covered = new Set([...target.idTokens || [], ...target.nameTokens || []]);
+  return [...tokens(pathwayId)].filter((t) => !covered.has(t) && !isPrefix(t));
 }
 
 /**
@@ -174,12 +210,14 @@ async function main() {
       seen.add(pathwayId);
       const verdict = classifyMatch(rankCandidates(pathwayId, bankIndex));
       const bank = bankIndex.find((b) => b.id === verdict.target);
+      const uncovered = uncoveredTopics(pathwayId, bank);
       const entry = {
         legacyId: pathwayId,
         unifiedId: verdict.target,
         course,
         score: verdict.score ? Number(verdict.score.toFixed(3)) : undefined,
         bankProblems: bank ? bank.count : undefined,
+        uncoveredTopics: uncovered.length ? uncovered : undefined,
         alternatives: verdict.alternatives,
         reason: verdict.reason,
       };
@@ -204,10 +242,20 @@ async function main() {
   console.log(`bank skills reachable   ${reachable.size}/${bankIndex.length}`);
   if (!OFFLINE) console.log(`problems unstranded     ${unstranded}`);
 
+  const narrowing = rows.filter((r) => r.uncoveredTopics);
   console.log('\n─── sample high-confidence rows ───');
   for (const r of rows.slice(0, 25)) {
     console.log(`  ${r.legacyId.padEnd(40)} → ${String(r.unifiedId).padEnd(28)}`
-      + `${r.score}  ${r.bankProblems ?? '?'} problems`);
+      + `${r.score}  ${r.bankProblems ?? '?'} problems`
+      + (r.uncoveredTopics ? `   ⚠ drops: ${r.uncoveredTopics.join(', ')}` : ''));
+  }
+
+  if (narrowing.length) {
+    console.log(`\n─── ⚠ ${narrowing.length} high-confidence row(s) drop a topic — skim these ───`);
+    for (const r of narrowing.slice(0, 20)) {
+      console.log(`  ${r.legacyId.padEnd(40)} → ${String(r.unifiedId).padEnd(28)}`
+        + `drops: ${r.uncoveredTopics.join(', ')}`);
+    }
   }
 
   console.log('\n─── sample needing review ───');
@@ -226,9 +274,20 @@ async function main() {
       rowCount: rows.length,
       rows,
     }, null, 2));
+    // Shaped as a crosswalk on purpose: `rows` is exactly what the resolver
+    // reads. Approving these is edit-then-rename, not retype. See HOW_TO_APPROVE.
     fs.writeFileSync(OUT_REVIEW, JSON.stringify({
-      note: 'NOT loaded by the resolver — filename intentionally lacks the -crosswalk.json suffix.',
-      needsReview: review,
+      note: 'NOT loaded — the filename lacks the -crosswalk.json suffix the resolver globs for.',
+      HOW_TO_APPROVE: [
+        '1. Edit rows[]: fix each unifiedId (pick from alternatives, or type any bank skill id).',
+        '2. Delete rows you do not want. Anything left WILL go live.',
+        '3. Save as seeds/unified-taxonomy/00-manual-crosswalk.json',
+        'The 00- prefix sorts first, and the resolver takes the first file that maps an id —',
+        'so your manual rows override every generated one, including alg1-crosswalk.json.',
+        'contentGaps below have no candidate at all; add rows for them by hand if the bank',
+        'really does hold something under a name the matcher missed.',
+      ],
+      rows: review,
       contentGaps: gaps,
     }, null, 2));
     console.log(`\nwrote ${rows.length} rows → ${OUT_CROSSWALK}`);
