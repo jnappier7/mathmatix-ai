@@ -84,13 +84,11 @@ function build() {
   // approved rows (factoring-gcf, factoring-by-grouping) collapse onto
   // ALG1.EQV.11 on purpose. Collapsing synonyms is the entire job.
   //
-  // The real limit is narrower and lives in the DATA, not here: a handful of
-  // rows noted "PRE-ALG HOLDOUT" map genuinely distinct pre-algebra skills onto
-  // one middle-school node because ALG1 has no home for them (order-of-operations,
-  // integer-operations and fraction-operations all land on MS.QNT.8). Fixing that
-  // means adding the missing taxonomy nodes, not filtering here — filtering would
-  // split the 40-odd correct mappings to spare three wrong ones.
-  // Pinned by tests/unit/skillCanonicalizerScope.test.js.
+  // Where a row IS wrong, fix the row or the taxonomy — never filter here.
+  // order-of-operations used to land on MS.QNT.8 (rational number operations),
+  // merging operation precedence with signed-rational arithmetic; it now has its
+  // own node, MS.EQV.10. Filtering would have split the 40-odd correct mappings
+  // to spare that one. Pinned by tests/unit/skillCanonicalizerScope.test.js.
 
   for (const f of files.sort()) {
     let cw;

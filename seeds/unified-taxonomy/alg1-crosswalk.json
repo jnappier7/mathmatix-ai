@@ -13,9 +13,9 @@
     {
       "legacyId": "order-of-operations",
       "legacyName": "Order of operations",
-      "unifiedId": "MS.QNT.8",
-      "unifiedName": "Rational number operations",
-      "confidence": "low",
+      "unifiedId": "MS.EQV.10",
+      "unifiedName": "Order of operations with exponents",
+      "confidence": "high",
       "itemCount": 39,
       "alternatives": [
         {
@@ -23,8 +23,8 @@
           "name": "Algebraic expressions"
         }
       ],
-      "note": "PRE-ALG HOLDOUT: no ALG1 order-of-operations node; nearest is MS rational-number operations",
-      "approved": false
+      "note": "retargeted: was MS.QNT.8 (rational number operations), which is signed-rational arithmetic, not operation precedence. All 39 items are numerical with no variables and 26 use exponents, so they need a numerical-with-exponents node; MS.EQV.10 was added for them.",
+      "approved": true
     },
     {
       "legacyId": "evaluating-expressions",

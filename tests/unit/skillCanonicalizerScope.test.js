@@ -141,6 +141,22 @@ describe('skillCanonicalizer — `approved` is an annotation, not a gate', () =>
     expect(canonicalSkillId(legacyId)).toBe(unifiedId);
   });
 
+  test('order-of-operations has its own node, not the rational-number one', () => {
+    // The one row that was genuinely wrong. MS.QNT.8 is "four operations on
+    // positive and negative rational numbers" — signed arithmetic, not operation
+    // precedence — so evidence on fractions accrued to order of operations and
+    // vice versa. All 39 bank items are numerical (zero contain a variable) and
+    // 26 use exponents, which fits neither ELEM.EQV.5 (grade 5, no exponents) nor
+    // MS.EQV.1 (requires variables), so MS.EQV.10 was added for them.
+    expect(canonicalSkillId('order-of-operations')).toBe('MS.EQV.10');
+
+    // The merge it was part of must not re-form.
+    expect(canonicalSkillId('order-of-operations'))
+      .not.toBe(canonicalSkillId('integer-operations'));
+    expect(canonicalSkillId('order-of-operations'))
+      .not.toBe(canonicalSkillId('fraction-operations'));
+  });
+
   test('many-to-one is intentional: HIGH-confidence rows collapse together too', () => {
     // Proof that a shared target is the taxonomy being coarser by design, not a
     // symptom of weak matches — so "many legacy ids share a target" is never on

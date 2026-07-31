@@ -799,7 +799,8 @@
     "provisional": false,
     "enables": [
       "ELEM.EQV.6",
-      "MS.EQV.1"
+      "MS.EQV.1",
+      "MS.EQV.10"
     ],
     "standardsAlignment": [
       "5.OA.A.1"
@@ -2034,7 +2035,6 @@
       "MS.EQV.3"
     ],
     "standardsAlignment": [
-      "6.EE.A.1",
       "6.EE.A.2"
     ],
     "difficultyLevel": 3,
@@ -2293,6 +2293,34 @@
     ],
     "standardsAlignment": [
       "8.EE.C.8"
+    ],
+    "difficultyLevel": 3,
+    "fluencyMetadata": {
+      "baseFluencyTime": 30,
+      "fluencyType": "process",
+      "toleranceFactor": 2.5
+    },
+    "source": "unified-taxonomy"
+  },
+  {
+    "skillId": "MS.EQV.10",
+    "displayName": "Order of operations with exponents",
+    "studentLabel": "Order of operations",
+    "description": "Evaluate numerical expressions involving whole-number exponents, grouping symbols, and the four operations.",
+    "category": "expressions-equations",
+    "strand": "EQV",
+    "courseLevel": "MS",
+    "course": "Middle School Math",
+    "unit": "Equivalence & Structure",
+    "gradeBand": "5-8",
+    "prerequisites": [],
+    "crossPrereqs": [
+      "ELEM.EQV.5"
+    ],
+    "provisional": false,
+    "enables": [],
+    "standardsAlignment": [
+      "6.EE.A.1"
     ],
     "difficultyLevel": 3,
     "fluencyMetadata": {
