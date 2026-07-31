@@ -106,3 +106,46 @@ describe('skillCanonicalizer — real bank crosswalks still resolve', () => {
     expect(mapped.length).toBeGreaterThan(alg1.length * 0.9);
   });
 });
+
+describe('skillCanonicalizer — `approved` is an annotation, not a gate', () => {
+  /*
+   * Filtering the merge on `approved` (or on `confidence`) reads like obvious
+   * hardening and is a regression. These tests exist so that change fails here
+   * with an explanation instead of silently splitting students' mastery.
+   *
+   * In alg1-crosswalk.json `approved: true` is exactly the high-confidence rows.
+   * Gating on it drops ~2/3 of the mappings, and every dropped legacy id stops
+   * collapsing onto its unified node — it becomes a SEPARATE mastery record.
+   * That is the split-record bug that surfaces as a mastery bar frozen while the
+   * student keeps answering correctly.
+   */
+
+  test('unapproved rows still resolve — dropping them would split mastery', () => {
+    const unapproved = rowsOf('alg1-crosswalk.json')
+      .filter((r) => r && r.legacyId && r.unifiedId && r.approved === false);
+
+    // If the data is ever fully approved this guard is moot, not broken.
+    if (!unapproved.length) return;
+
+    const resolving = unapproved.filter((r) => canonicalSkillId(r.legacyId) === r.unifiedId);
+    expect(resolving.length).toBeGreaterThan(unapproved.length * 0.9);
+  });
+
+  test.each([
+    // Unapproved, med-confidence, and plainly correct — just coarser than the
+    // bank's fine skill. Exactly what a confidence gate would throw away.
+    ['slope-from-two-points', 'ALG1.PRP.2'],
+    ['solving-two-step-equations', 'ALG1.EQV.1'],
+    ['solving-equations-with-variables-both-sides', 'ALG1.EQV.1'],
+  ])('%s still collapses onto %s', (legacyId, unifiedId) => {
+    expect(canonicalSkillId(legacyId)).toBe(unifiedId);
+  });
+
+  test('many-to-one is intentional: HIGH-confidence rows collapse together too', () => {
+    // Proof that a shared target is the taxonomy being coarser by design, not a
+    // symptom of weak matches — so "many legacy ids share a target" is never on
+    // its own grounds to start filtering.
+    expect(canonicalSkillId('factoring-gcf')).toBe('ALG1.EQV.11');
+    expect(canonicalSkillId('factoring-by-grouping')).toBe('ALG1.EQV.11');
+  });
+});
