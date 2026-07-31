@@ -13,8 +13,33 @@ const { processAIResponse } = require('../utils/chatBoardParser');
 const { cleanTextForTTS } = require('../utils/mathTTS');
 const { loadActiveHistory, appendToActiveConversation } = require('../utils/activeConversation');
 const { getLoginSessionId, peekLoginSessionId } = require('../utils/loginSession');
+const { VISUAL_TOOLS, resolveToolCalls, describeTools } = require('../utils/visualTools');
 
 const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective model for voice responses
+
+// Same gate the text path uses (utils/pipeline/generate.js), so visuals are
+// either on for the whole product or off for the whole product — a student
+// should never get diagrams by typing and none by speaking.
+const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
+
+/**
+ * Remove the exact visual tags we appended, so TTS never speaks them.
+ *
+ * The tags resolveToolCalls() produces ([SEARCH_IMAGE:...], [FUNCTION_GRAPH:...])
+ * are rendering instructions for the client, not words, and cleanTextForTTS does
+ * not strip bracket tags — without this the tutor reads "open bracket search
+ * image query equals dodecahedron" aloud.
+ *
+ * Removing the literal strings we added rather than pattern-matching a prefix
+ * list: the list of visual tools is free to grow in utils/visualTools.js, and a
+ * regex here would silently fall behind it.
+ */
+function stripVisualTags(text, tags) {
+    if (!text || !tags || !tags.length) return text;
+    let out = text;
+    for (const tag of tags) out = out.split(tag).join(' ');
+    return out.replace(/[ \t]{2,}/g, ' ').trim();
+}
 
 // Map client MIME types to file extensions for Whisper API
 const MIME_TO_EXT = {
@@ -216,7 +241,13 @@ router.post('/process', isAuthenticated, async (req, res) => {
   - [CLEAR] - Clear the board
 - Natural, spoken responses work best
 - Reference board objects using [BOARD_REF:objectId]
-`;
+`
+        // Visual tools are structured function calls, not tags. Without this the
+        // model only knows the [WRITE:]/[CIRCLE:] vocabulary above — all text and
+        // annotation — and will DESCRIBE a diagram it cannot draw.
+        + (VISUAL_TOOLS_ENABLED
+            ? `\n${describeTools()}\n- When a concept is easier seen than said (a solid, a graph, a number line), CALL THE TOOL. Never claim to have shown something you did not.\n`
+            : '');
 
         const messages = [
             { role: 'system', content: systemPrompt + boardContextPrompt + voiceInstructions },
@@ -226,14 +257,86 @@ router.post('/process', isAuthenticated, async (req, res) => {
 
         const step2Start = Date.now();
 
-        const completion = await callLLM(PRIMARY_CHAT_MODEL, messages, {
-            temperature: 0.5,
-            max_tokens: 500
-        });
+        const llmOptions = { temperature: 0.5, max_tokens: 500 };
+        if (VISUAL_TOOLS_ENABLED) {
+            llmOptions.tools = VISUAL_TOOLS;
+            llmOptions.parallel_tool_calls = true;
+        }
 
-        let aiResponseText = completion.choices[0].message.content.trim();
+        const completion = await callLLM(PRIMARY_CHAT_MODEL, messages, llmOptions);
+
+        const message = completion.choices[0]?.message || {};
+
+        // `.content` is null whenever the model answers with tool_calls alone,
+        // so this must not assume a string.
+        let aiResponseText = (message.content || '').trim();
+
+        // ── Visual tool calls ──────────────────────────────────────────────
+        // Voice previously had NO way to show anything: its whole vocabulary was
+        // [WRITE:]/[CIRCLE:]/[ARROW:]/[HIGHLIGHT:], which are text and annotation.
+        // Asked for a dodecahedron the tutor would say "here it is, you can see
+        // its 12 pentagonal faces" and render nothing — narrating a picture it
+        // had no tool to produce. The renderers existed the whole time; only the
+        // text path (pipeline/generate.js) was wired to them.
+        //
+        // Two delivery channels, and BOTH are needed — this is not redundancy:
+        //   tags            → inline renderers (inlineChatVisuals), e.g. FUNCTION_GRAPH
+        //   visualCommands  → window.visualTeachingHandler, the ONLY path that
+        //                     renders images. [SEARCH_IMAGE:...] has no inline
+        //                     renderer; stripVisualTags.js lists it purely to
+        //                     DELETE it. Ship tags alone and the dodecahedron
+        //                     silently disappears again — the original bug.
+        let visualTags = [];
+        let visualCommands = null;
+        if (VISUAL_TOOLS_ENABLED && Array.isArray(message.tool_calls) && message.tool_calls.length) {
+            try {
+                const resolved = resolveToolCalls(message.tool_calls);
+                visualTags = resolved?.tags || [];
+                visualCommands = resolved?.visualCommands || null;
+                if (resolved?.unknown?.length) {
+                    logger.warn('[Voice] unknown visual tools requested', { unknown: resolved.unknown });
+                }
+            } catch (err) {
+                // A bad tool payload must never cost the student their turn —
+                // fall through and answer with words alone.
+                logger.warn('[Voice] visual tool resolution failed', { error: err.message });
+            }
+
+            // Tool calls halt generation, so a turn that only called a tool has
+            // no spoken words yet. Re-prompt for the narration that goes with
+            // the visual — silence while a diagram appears is worse than no
+            // diagram. Tool results are stubs: the client does the rendering,
+            // there is nothing to feed back.
+            if (!aiResponseText) {
+                try {
+                    const narration = await callLLM(PRIMARY_CHAT_MODEL, [
+                        ...messages,
+                        { role: 'assistant', content: null, tool_calls: message.tool_calls },
+                        ...message.tool_calls.map((call) => ({
+                            role: 'tool',
+                            tool_call_id: call.id,
+                            content: 'displayed',
+                        })),
+                    ], { temperature: 0.5, max_tokens: 300 });
+                    aiResponseText = (narration.choices[0]?.message?.content || '').trim();
+                } catch (err) {
+                    logger.warn('[Voice] tool narration failed', { error: err.message });
+                }
+            }
+
+            // Appended so the client renders them through the SAME inline-visual
+            // path the text chat already uses — no second client contract.
+            if (visualTags.length) {
+                aiResponseText = [aiResponseText, ...visualTags].filter(Boolean).join('\n\n');
+            }
+        }
+
+        if (!aiResponseText) aiResponseText = "I didn't catch that. Could you try again?";
+
         const step2Time = Date.now() - step2Start;
-        logger.info(`[Voice] AI response (${step2Time}ms)`);
+        logger.info(`[Voice] AI response (${step2Time}ms)`, {
+            visualTools: visualTags.length,
+        });
 
         // ============================================
         // STEP 3: PARSE BOARD ACTIONS + SEND RESPONSE
@@ -270,6 +373,13 @@ router.post('/process', isAuthenticated, async (req, res) => {
                 logger.warn('[Voice] response redirected by verify', { userId, flags: verified.flags });
                 boardActions.length = 0;
                 boardContextData = null;
+                // Visuals leak an answer exactly as board actions do — a graph of
+                // the solved equation gives it away as surely as writing it out.
+                // verified.text replaces aiResponseText below, which drops the
+                // appended tags with it; clearing the list keeps the TTS strip
+                // and the log honest about what was sent.
+                visualTags = [];
+                visualCommands = null;
             }
             aiResponseText = verified.text || aiResponseText;
         } catch (err) {
@@ -281,14 +391,19 @@ router.post('/process', isAuthenticated, async (req, res) => {
             phase: 'response',
             response: aiResponseText,
             boardActions: boardActions,
-            boardContext: boardContextData
+            boardContext: boardContextData,
+            // Same field name the text path uses (routes/chat.js), so the client
+            // hands it to the same window.visualTeachingHandler.executeCommands.
+            visualCommands: visualCommands
         });
 
         // ============================================
         // STEP 4: TTS + history save in parallel
         // ============================================
 
-        const ttsText = cleanTextForTTS(aiResponseText);
+        // Strip the visual tags BEFORE cleanTextForTTS — they are instructions
+        // for the renderer, and spoken aloud they are gibberish.
+        const ttsText = cleanTextForTTS(stripVisualTags(aiResponseText, visualTags));
         const tutorVoiceId = ttsProvider.getVoiceId(tutorProfile);
 
         const [audioUrl] = await Promise.all([
@@ -468,3 +583,6 @@ function attachStreamWebSocket(server, app) {
 
 module.exports = router;
 module.exports.attachStreamWebSocket = attachStreamWebSocket;
+// Exported for tests: the TTS boundary is the one place a rendering
+// instruction becomes something the tutor says out loud.
+module.exports._stripVisualTags = stripVisualTags;
