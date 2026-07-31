@@ -105,45 +105,59 @@ class FloatingCalculator {
 
     // ==================== TEACHER ACCESS CONTROL ====================
 
+    // The calculator is available by default; only an explicit teacher rule
+    // takes it away. So this FAILS OPEN: a 404, a 500, an offline blip or a
+    // malformed body all leave `calculatorAccess` at 'always' and still apply
+    // restrictions, rather than leaving the student with no calculator and no
+    // retry. Restricting a class is a deliberate act by a teacher — it should
+    // never be something a dropped request does by accident.
     async checkCalculatorAccess() {
         try {
             const response = await fetch('/api/calculator/access');
             const data = await response.json();
-            if (data.success) {
+            if (data && data.success && data.calculatorAccess) {
                 this.calculatorAccess = data.calculatorAccess;
                 this.calculatorNote = data.calculatorNote || '';
-                this.accessChecked = true;
-                this.applyAccessRestrictions();
             }
         } catch (error) {
-            console.warn('Could not check calculator access:', error);
-            this.calculatorAccess = 'skill-based';
+            console.warn('Could not check calculator access — leaving it available:', error);
+        } finally {
             this.accessChecked = true;
+            this.applyAccessRestrictions();
         }
     }
 
     applyAccessRestrictions() {
-        const toolbarCalcBtn = document.getElementById('calculator-toolbar-btn');
-        if (this.calculatorAccess === 'never') {
-            if (this.sidebarCalcBtn) this.sidebarCalcBtn.style.display = 'none';
-            if (this.toggleBtn) this.toggleBtn.style.display = 'none';
-            if (toolbarCalcBtn) toolbarCalcBtn.style.display = 'none';
-            this.hideCalculator();
-        } else if (this.calculatorAccess === 'skill-based' || this.calculatorAccess === 'teacher-discretion') {
-            if (this.sidebarCalcBtn) {
-                this.sidebarCalcBtn.style.display = '';
-                this.sidebarCalcBtn.title = this.calculatorAccess === 'skill-based'
-                    ? 'Calculator (use for complex calculations only)'
-                    : 'Calculator (teacher discretion)';
-            }
-            if (toolbarCalcBtn) toolbarCalcBtn.style.display = '';
-        } else {
-            if (this.sidebarCalcBtn) {
-                this.sidebarCalcBtn.style.display = '';
-                this.sidebarCalcBtn.title = 'Calculator';
-            }
-            if (toolbarCalcBtn) toolbarCalcBtn.style.display = '';
+        const allowed = this.calculatorAccess !== 'never';
+        const titles = {
+            'skill-based': 'Calculator (use for complex calculations only)',
+            'teacher-discretion': 'Calculator (teacher discretion)',
+        };
+        const title = titles[this.calculatorAccess] || 'Calculator';
+
+        for (const el of [this.sidebarCalcBtn, this.toggleBtn,
+            document.getElementById('calculator-toolbar-btn')]) {
+            if (!el) continue;
+            el.style.display = allowed ? '' : 'none';
+            if (allowed && el !== this.toggleBtn) el.title = title;
         }
+
+        // The Workspace's Calc tab (public/js/workspace.js) is a third entry
+        // point, and it used to survive a 'never' policy: the tab stayed in the
+        // rail and its "Open calculator" button silently did nothing, because
+        // toggleCalculator() bails on 'never'. A rule that removes the
+        // calculator has to remove every way in, not just the two on the
+        // compose bar — otherwise the restriction reads as a broken button.
+        const calcTab = document.querySelector('.cr-ws-tab[data-tool="calc"]');
+        if (calcTab) {
+            calcTab.hidden = !allowed;
+            if (!allowed && calcTab.classList.contains('is-active') &&
+                window.MathWorkspace?.showTool) {
+                window.MathWorkspace.showTool('board');
+            }
+        }
+
+        if (!allowed) this.hideCalculator();
     }
 
     toggleCalculator() {
@@ -171,6 +185,10 @@ class FloatingCalculator {
     }
 
     hideCalculator() {
+        // Nothing to close, and closing anyway is not free: a display:none
+        // element fires no animationend, so the 'calc-exiting' class below
+        // would be added and never removed.
+        if (!this.floatingCalc || this.floatingCalc.style.display === 'none') return;
         if (!this._isMobile()) {
             this.floatingCalc.classList.remove('calc-entering');
             this.floatingCalc.classList.add('calc-exiting');
@@ -1691,7 +1709,22 @@ class FloatingCalculator {
     }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize once the DOM exists.
+//
+// This file is injected dynamically (chat.html), and a dynamically inserted
+// script can easily finish loading AFTER DOMContentLoaded has already fired —
+// at which point a bare DOMContentLoaded listener never runs, window.floatingCalc
+// is never created, and every entry point becomes a button that does nothing.
+// That is not hypothetical: it used to be appended behind seven other scripts,
+// one of them a CDN fetch, so losing the race was the normal case rather than
+// the edge case. Check readyState instead of assuming we got here first.
+function initFloatingCalculator() {
+    if (window.floatingCalc) return;
     window.floatingCalc = new FloatingCalculator();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFloatingCalculator, { once: true });
+} else {
+    initFloatingCalculator();
+}
