@@ -44,6 +44,31 @@ function build() {
   } catch {
     files = [];
   }
+
+  // A row only counts if its TARGET is a real unified taxonomy id.
+  //
+  // This function's contract is "normalize to the canonical UNIFIED id", and its
+  // output is used as the mastery storage key. A row pointing anywhere else is
+  // not a canonicalization, and honouring it silently re-keys where mastery is
+  // written and read.
+  //
+  // That is not hypothetical: seeds/unified-taxonomy/pathway-crosswalk.json maps
+  // "pathway skill ids -> BANK skill ids" (its own note says so) while reusing
+  // the legacyId/unifiedId field names. The `*-crosswalk.json` glob swept it in,
+  // so canonicalSkillId('act-linear-equations') started returning the bank id
+  // 'linear-equations'. coursePreAssessment.creditFromTallies() canonicalizes
+  // before crediting, so ACT baseline mastery was written under an id the ACT
+  // course never teaches by — a student could ace a skill on the baseline and be
+  // taught it from scratch anyway. Five other ACT ids moved with it, including
+  // act-probability -> act-conditional-probability (a change of MEANING, not id)
+  // and act-function-notation-evaluation, which seeds/act-crosswalk.json maps in
+  // the opposite direction. Pinned by tests/unit/skillCanonicalizerScope.test.js.
+  //
+  // Gated on having actually loaded a taxonomy: if math_taxonomy.json is missing
+  // (minimal test env) unifiedIds is empty, and filtering on it would drop every
+  // legitimate row instead of degrading to identity as documented above.
+  const canValidateTargets = unifiedIds.size > 0;
+
   for (const f of files.sort()) {
     let cw;
     try {
@@ -53,6 +78,7 @@ function build() {
     }
     for (const row of cw.rows || []) {
       if (!row || !row.legacyId || !row.unifiedId) continue;
+      if (canValidateTargets && !unifiedIds.has(row.unifiedId)) continue;
       // First crosswalk wins on collision (deterministic via sorted filenames);
       // never let a legacy id shadow a real unified id.
       if (!legacyToUnified.has(row.legacyId) && !unifiedIds.has(row.legacyId)) {
