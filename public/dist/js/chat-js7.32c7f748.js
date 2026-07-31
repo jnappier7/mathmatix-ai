@@ -222,12 +222,22 @@
   }
 
   /* ---- idle <-> conversation state ----------------------------------- */
+  // The greeting is a FIXED overlay, so anything rendered into the message
+  // container paints underneath it. "Idle" therefore has to mean the container
+  // is genuinely empty — not "has no .message".
+  //
+  // It used to test for `.message-container, .message`, which silently excluded
+  // every non-message surface that injects here: the resume card, the status
+  // card, the challenge/test-out card. Those render, the greeting never fades,
+  // and the two headings paint on top of each other ("Good evening, Jason!"
+  // under "Hey Jason 👋"). The container ships empty in chat.html and is
+  // populated entirely by JS, so any element child is real content — a signal
+  // that stays correct when the next card type is added.
   function watchMessages() {
     var box = document.getElementById('chat-messages-container');
     if (!box) return;
     var apply = function () {
-      var has = !!box.querySelector('.message-container, .message');
-      document.body.classList.toggle('mpc-has-messages', has);
+      document.body.classList.toggle('mpc-has-messages', box.childElementCount > 0);
     };
     apply();
     new MutationObserver(apply).observe(box, { childList: true });

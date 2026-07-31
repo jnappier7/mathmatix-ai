@@ -144,11 +144,27 @@
     background: transparent !important;
     /* Top padding must clear the full top chrome, including the device's
        safe-area inset. The topbar = safe-area-top + ~48px (pill + its own
-       padding); 64px gives a ~16px buffer below the pill on every device. */
-    padding: calc(env(safe-area-inset-top, 0px) + 64px) 14px 14px !important;
+       padding); 64px gives a ~16px buffer below the pill on every device.
+
+       Bottom padding clears the floating chrome that hovers over the BOTTOM of
+       this scroll box — the Workspace pill and the voice/send FABs. They are
+       fixed overlays, not flex siblings, so the list scrolls underneath them
+       and the tutor's last line is unreadable behind the pill. Padding lets the
+       final message scroll up clear of them instead. (PR2 replaces that
+       floating chrome with a real bottom bar and this can drop back to 14px.) */
+    padding: calc(env(safe-area-inset-top, 0px) + 64px) 14px 62px !important;
     display: flex;
     flex-direction: column;
     gap: 14px;
+  }
+
+  /* The free-time pill docks to the top on phones (see billing.js). Reserve its
+     height so it sits ABOVE the conversation instead of on the first card —
+     otherwise correcting its old bottom position merely relocates the same
+     overlap. billing.js toggles this class in step with the pill's visibility,
+     so the space is released the moment a student dismisses it. */
+  body.cr-mode.mm-has-time-pill #chat-messages-container {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 110px) !important;
   }
 
   /* ---- 3. HIDE mobile clutter (desktop keeps these) ------------------ */
