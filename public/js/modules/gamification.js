@@ -14,21 +14,36 @@ const TUTORS_WITH_CELEBRATION_VIDEO = new Set([
 ]);
 
 /**
- * Show level-up celebration. Prefers the in-place hero overlay (the tutor
- * "comes to life" in their portrait spot, owned by chat-redesign.js).
- * Falls back to the fullscreen modal on surfaces without the hero panel.
+ * Show level-up celebration.
+ *
+ * Desktop prefers the in-place hero overlay — the tutor "comes to life" in
+ * their portrait spot (owned by chat-redesign.js), which reads well because
+ * the hero is large and permanently on screen there.
+ *
+ * Phones take the fullscreen modal instead. The mobile hero is a small docked
+ * cam that now collapses to a pill for everything after the welcome, so an
+ * "in-place" celebration would play inside a ~40px pill — or inside a hidden
+ * element — which is worse than no celebration at all. Levelling up is the
+ * payoff moment; on a phone it gets the whole screen.
  */
+const PHONE_CELEBRATION_MQ = typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(max-width: 768px)')
+    : null;
+
 export function showLevelUpCelebration(currentUser) {
     if (!currentUser || !currentUser.selectedTutorId) return;
     const tutorId = currentUser.selectedTutorId;
     if (!TUTORS_WITH_CELEBRATION_VIDEO.has(tutorId)) return;
 
-    if (typeof window.playInPlaceCelebration === 'function' &&
+    const isPhone = !!(PHONE_CELEBRATION_MQ && PHONE_CELEBRATION_MQ.matches);
+
+    if (!isPhone &&
+        typeof window.playInPlaceCelebration === 'function' &&
         window.playInPlaceCelebration(tutorId)) {
         return;
     }
 
-    // Fallback: legacy fullscreen modal (non-chat surfaces).
+    // Fullscreen modal: phones always, and any surface without the hero panel.
     const modal = document.getElementById('levelup-celebration-modal');
     const video = document.getElementById('celebration-tutor-video');
     const titleEl = document.getElementById('celebration-title');
@@ -97,7 +112,11 @@ export function triggerXpAnimation(message, isLevelUp = false, isSpecialXp = fal
             const duration = 3 * 1000;
             const animationEnd = Date.now() + duration;
             const brandColors = ['#12B3B3', '#FF3B7F', '#FFFFFF'];
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+            // Above the celebration overlay (--mm-celebration-z: 100010), so
+            // the confetti falls in FRONT of the video instead of behind an
+            // opaque backdrop. 9999 predated the overlay having any z-index at
+            // all, because it had no styles at all.
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100011 };
             function randomInRange(min, max) { return Math.random() * (max - min) + min; }
             const interval = setInterval(function() {
                 const timeLeft = animationEnd - Date.now();

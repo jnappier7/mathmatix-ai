@@ -241,3 +241,106 @@
   .title-card-inner { transition: none; }
   .title-card-inner { transform: none; }
 }
+
+/* ============================================================
+   Level-up celebration — fullscreen
+   ============================================================
+   #levelup-celebration-modal has been in chat.html for a long time with NO
+   CSS anywhere: had anything ever fallen back to it, it would have rendered
+   as an unstyled div in the document flow. Nothing did, because
+   showLevelUpCelebration() always took the in-place hero path first.
+
+   Phones now route here deliberately. The mobile tutor is a small docked cam
+   that collapses to a pill for everything after the welcome, so an "in-place"
+   celebration would play inside a ~40px pill. Levelling up is the payoff
+   moment — on a phone it takes the whole screen.
+
+   z-index: this sits ABOVE the previous ceiling (100000, the badge-upgrade
+   ceremony in ux-enhancements.css). Nothing should ever cover a celebration;
+   that is the entire point of it. */
+:root { --mm-celebration-z: 100010; }
+
+.levelup-celebration-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--mm-celebration-z);
+  display: flex;               /* JS flips display:none -> flex */
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  padding: max(16px, env(safe-area-inset-top)) 16px
+           max(16px, env(safe-area-inset-bottom));
+  background: radial-gradient(circle at 50% 40%,
+      rgba(18, 179, 179, 0.28), rgba(6, 10, 24, 0.94) 62%),
+    rgba(6, 10, 24, 0.96);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  animation: mm-cele-in 260ms ease forwards;
+}
+
+.levelup-celebration-overlay.fade-out {
+  animation: mm-cele-out 400ms ease forwards; /* JS removes after 400ms */
+}
+
+@keyframes mm-cele-in  { to { opacity: 1; } }
+@keyframes mm-cele-out { from { opacity: 1; } to { opacity: 0; } }
+
+.levelup-celebration-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: min(560px, 100%);
+  text-align: center;
+}
+
+/* The clip is a portrait render of the tutor. `contain` keeps the whole
+   character in frame at any aspect ratio — `cover` crops their head off on a
+   tall phone, which is the one thing this moment cannot afford. */
+.celebration-video-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.celebration-video {
+  width: min(86vw, 420px);
+  max-height: 54dvh;
+  object-fit: contain;
+  border-radius: 22px;
+  background: transparent;
+}
+
+.celebration-message { color: #fff; }
+
+.celebration-title {
+  margin: 0;
+  font-size: clamp(2rem, 11vw, 3.25rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #fff, #9ff5f5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 34px rgba(18, 179, 179, 0.45);
+}
+
+.celebration-subtitle {
+  margin: 8px 0 0;
+  font-size: clamp(0.95rem, 4vw, 1.15rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* The overlay auto-dismisses on `ended` and on a 4s timer, and any tap closes
+   it — but a kid who taps immediately should still know that was the gesture. */
+.levelup-celebration-overlay { cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce) {
+  .levelup-celebration-overlay,
+  .levelup-celebration-overlay.fade-out { animation: none; opacity: 1; }
+  .levelup-celebration-overlay.fade-out { opacity: 0; }
+}
