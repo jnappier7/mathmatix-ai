@@ -1251,6 +1251,24 @@
       "cross_prereq_ids": []
     },
     {
+      "skill_id": "MS.EQV.10",
+      "course": "MS",
+      "strand": "EQV",
+      "name": "Order of operations with exponents",
+      "desc": "Evaluate numerical expressions involving whole-number exponents, grouping symbols, and the four operations.",
+      "grade": "6",
+      "prereq_ids": [],
+      "prereq_desc": [
+        "order of operations without exponents (ELEM)"
+      ],
+      "next_desc": [
+        "evaluating algebraic expressions with variables (MS)"
+      ],
+      "cross_prereq_ids": [
+        "ELEM.EQV.5"
+      ]
+    },
+    {
       "skill_id": "MS.FNC.1",
       "course": "MS",
       "strand": "FNC",
