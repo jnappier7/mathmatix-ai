@@ -64,7 +64,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         '/js/whiteboard-handwriting.js',
         '/js/whiteboard-phase2.js',
         '/js/whiteboard-math-procedures.js',
-        '/js/floating-calculator.js',
         '/js/graphTool.js',
         '/js/graphTitleSync.js'
       ];
@@ -85,9 +84,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       };
     })();
     if (window.MM_FEATURES.boardPanel === true) window.loadBoardTools();
+
+    // The calculator is NOT a board tool. It rode in on loadBoardTools() purely
+    // by being in that list, which quietly made it a dependant of the boardPanel
+    // flag: with the flag off, floating-calculator.js never loaded, so
+    // window.floatingCalc was undefined and every entry point — the compose-bar
+    // button, the Workspace Calc tab — was a button that did nothing. It is a
+    // self-contained tool that must be available in tutor chat and course chat
+    // by default, so it loads on its own.
+    (function () {
+      var s = document.createElement('script');
+      s.src = '/js/floating-calculator.js';
+      s.defer = true;
+      document.head.appendChild(s);
+    })();
   </script>
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="/dist/css/chat-css0.e20dfa5a.css" />
+  <link rel="stylesheet" href="/dist/css/chat-css0.91456125.css" />
 <!-- returning-user-modal removed — returning users now get an AI welcome directly -->
   <link rel="stylesheet" href="/dist/css/chat-css1.dae1c280.css" />
 <!-- Design tokens (single source of truth) — must precede chat-redesign.css -->
@@ -99,7 +112,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <!-- Personal status card modal (Progress button) -->
   <link rel="stylesheet" href="/css/status-card.css" />
   <!-- Cosmetics: equipped skins + shop modal -->
-  <link rel="stylesheet" href="/dist/css/chat-css2.29a6798a.css" />
+  <link rel="stylesheet" href="/dist/css/chat-css2.61186d92.css" />
   <!-- Coin surfacing: sidebar counter + fly-in reward animation -->
   <link rel="stylesheet" href="/css/coin-fx.css" />
   <!-- Full-body student character render -->
@@ -1074,8 +1087,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button id="mic-button" data-tip="Voice input" aria-label="Voice input" class="imessage-tool-btn">
           <i class="fas fa-microphone"></i>
         </button>
-        <!-- Calculator and Break hidden — not production ready -->
-        <button id="calculator-toolbar-btn" title="Calculator" aria-label="Calculator" class="imessage-tool-btn" style="display: none;">
+        <!-- Calculator is available by default in both tutor chat and course
+             chat; only a teacher's classroom rule (calculatorAccess: 'never')
+             takes it away, which floating-calculator.js applies once it has the
+             policy. Shipping it hidden made the fetch fail-closed: any error
+             left every entry point invisible with no retry. Break stays hidden
+             — not production ready. -->
+        <button id="calculator-toolbar-btn" title="Calculator" aria-label="Calculator" class="imessage-tool-btn">
           <i class="fas fa-calculator"></i>
         </button>
         <button id="break-toolbar-btn" title="Take a Break" aria-label="Take a break" class="imessage-tool-btn imessage-tool-btn-right" style="display: none;">
@@ -2507,12 +2525,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       updateUI();
     })();
   </script>
-  <script src="/dist/js/chat-js8.105c8817.js"></script>
+  <script src="/dist/js/chat-js8.274c9444.js"></script>
 <!-- Player stats card: window-global, loaded before script.js which calls
      window.PlayerStatsCard.init(currentUser) once the user doc is fetched. -->
 <script defer src="/js/modules/playerStatsCard.js?v=20260724b"></script>
 <script src="/js/challengeCard.js?v=20260725f"></script>
-<script src="/js/script.js?v=20260731a" type="module"></script>
+<script src="/js/script.js?v=20260731c" type="module"></script>
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.1431ddea.js"></script>
   <!-- Companion HOME screen (phones only; flag-gated OFF by default) -->

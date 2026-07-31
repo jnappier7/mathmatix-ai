@@ -9,7 +9,11 @@ import { showLevelUpCelebration, triggerXpAnimation as _triggerXpAnimation, upda
 import { registerTurn as comboRegisterTurn, resetCombo } from './modules/comboMeter.js';
 import { initIdentityChip, updateIdentityChip } from './modules/identityChip.js';
 import './modules/statusCard.js'; // registers window.openStatusCard (Progress button)
-import './modules/shop.js'; // registers window.openShop (cosmetics shop)
+// Versioned specifier — see the note on the billing.js import below. Without
+// it the try-on preview fix below would not reach a returning student for a
+// week: /js/** is served max-age=604800, and bumping script.js's own ?v= does
+// not change this import's URL, which is what the browser caches.
+import './modules/shop.js?v=20260731a'; // registers window.openShop (cosmetics shop)
 import { showCoinReward } from './modules/coinFx.js'; // coin fly-in + count-up + chime
 import { resolveAvatarUrl } from './modules/avatarResolver.js';
 import { applyCosmetics } from './modules/cosmeticsApply.js';

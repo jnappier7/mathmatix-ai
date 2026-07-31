@@ -423,6 +423,84 @@ body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-enter:hover {
   color: #fff;
 }
 
+/* The ACT practice-test runner (public/js/act-test.js) builds its OWN
+ * calculator — `.actt-calc`, scientific-only, always available because the real
+ * ACT permits one on every question. It is a sibling implementation of
+ * #floating-calculator with entirely different class names, so every rule above
+ * missed it: a student who bought a calculator skin saw the default purple
+ * calculator during a practice test and concluded the cosmetic did nothing.
+ *
+ * act-test.js injects its CSS into <style id="actt-style"> at construction —
+ * i.e. after this stylesheet's <link> — so these rules win on specificity
+ * (attribute + class beats class) rather than on order. That also holds inside
+ * its prefers-color-scheme block, since @media adds no specificity. */
+body[data-skin-calculator="calc.hotpink"] .actt-calc {
+  background: #fff0f7;
+  color: #5c0a33;
+  box-shadow: 0 24px 70px rgba(255, 46, 147, 0.4);
+}
+body[data-skin-calculator="calc.hotpink"] .actt-calc-head {
+  background: linear-gradient(135deg, #ff5db1, #ff2e93);
+  color: #fff;
+}
+body[data-skin-calculator="calc.hotpink"] .actt-calc-disp {
+  background: #ffe4f1;
+  border-color: #ffc2de;
+}
+body[data-skin-calculator="calc.hotpink"] .actt-calc-res { color: #5c0a33; }
+body[data-skin-calculator="calc.hotpink"] .actt-calc-expr { color: #a85980; }
+body[data-skin-calculator="calc.hotpink"] .actt-k {
+  background: linear-gradient(145deg, #ff9dcb, #ff5db1);
+  color: #5c0a33;
+}
+body[data-skin-calculator="calc.hotpink"] .actt-k.fn,
+body[data-skin-calculator="calc.hotpink"] .actt-k.op {
+  background: linear-gradient(145deg, #ff77b9, #e94f9c);
+  color: #fff;
+}
+body[data-skin-calculator="calc.hotpink"] .actt-k.eq {
+  background: linear-gradient(145deg, #ff2e93, #d81b7a);
+  color: #fff;
+}
+body[data-skin-calculator="calc.hotpink"] .actt-k.clr {
+  background: linear-gradient(145deg, #8f0f4e, #6e0a3b);
+  color: #fff;
+}
+
+body[data-skin-calculator="calc.carbon"] .actt-calc {
+  background: repeating-linear-gradient(45deg, #23262c 0 5px, #1e2126 5px 10px);
+  color: #e5e7eb;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px #d90429;
+}
+body[data-skin-calculator="calc.carbon"] .actt-calc-head {
+  background: #16181c;
+  color: #e5e7eb;
+  border-bottom: 2px solid #d90429;
+}
+body[data-skin-calculator="calc.carbon"] .actt-calc-disp {
+  background: #1a1d22;
+  border-color: #0e1013;
+}
+body[data-skin-calculator="calc.carbon"] .actt-calc-res { color: #f3f4f6; }
+body[data-skin-calculator="calc.carbon"] .actt-calc-expr { color: #9ca3af; }
+body[data-skin-calculator="calc.carbon"] .actt-k {
+  background: linear-gradient(145deg, #31353c, #1c1f24);
+  color: #e5e7eb;
+}
+body[data-skin-calculator="calc.carbon"] .actt-k.fn,
+body[data-skin-calculator="calc.carbon"] .actt-k.op {
+  background: linear-gradient(145deg, #24272d, #17191d);
+  color: #ff4d5e;
+}
+body[data-skin-calculator="calc.carbon"] .actt-k.eq {
+  background: linear-gradient(145deg, #d90429, #a4031f);
+  color: #fff;
+}
+body[data-skin-calculator="calc.carbon"] .actt-k.clr {
+  background: linear-gradient(145deg, #3a1c1c, #24100f);
+  color: #ff8a8a;
+}
+
 /* ---- Header (data-skin-header) — patterns the top bar strip ---- */
 body[data-skin-header="header.camo"] .landing-header {
   background-image:

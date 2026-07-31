@@ -15,21 +15,6 @@
     return 'Good evening';
   }
 
-  // Relative time formatting
-  function timeAgo(dateStr) {
-    if (!dateStr) return '';
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    if (days === 1) return 'yesterday';
-    if (days < 7) return `${days}d ago`;
-    return new Date(dateStr).toLocaleDateString();
-  }
-
   // Fetch endpoints in parallel
   async function fetchResumeData() {
     const [returningRes, summaryRes, mapRes] = await Promise.all([
@@ -118,7 +103,6 @@
     if (!summary) return '';
     const learning = summary.currentLearning;
     const stats = summary.weeklyStats || {};
-    const reviewDue = summary.reviewDue || 0;
 
     // FIRST SESSION — an invitation, never a wall of zeros.
     if (summary.cardState === 'first_session') {
@@ -164,6 +148,11 @@
     const weekBlock = practiced > 0
       ? `<div class="rc-hero-week"><strong>${wins} first-try win${wins === 1 ? '' : 's'}</strong> · ${practiced} practiced this week</div>`
       : '';
+    // ONE recommendation. The review CTA and the skill-map link used to live
+    // here too, which left the hero stacking three competing calls to action
+    // above a resume list — four different next steps before the student had
+    // said anything. Both moved into the chip row below, so the hero recommends
+    // and the chips offer; see startHereHTML.
     const parts = [];
     if (learning) {
       parts.push(masteryBar(learning.displayName, learning.progress, 'Working toward mastery'));
@@ -173,56 +162,77 @@
       parts.push(weekBlock);
       parts.push(ctaButton('Keep practicing', "Let's practice."));
     }
-    if (reviewDue > 0) {
-      parts.push(ctaButton(`${reviewDue} skill${reviewDue === 1 ? '' : 's'} ready to review`, "Let's review what I've learned.", 'alt'));
-    }
-    // The card is also an entry point to the ladder — a native link (not a chat
-    // prompt), so it navigates to the skill map rather than messaging the tutor.
-    parts.push('<a class="rc-hero-alt" href="/skill-map.html">See your skill map<span class="rc-hero-arrow">→</span></a>');
     return `<div class="rc-hero">${parts.join('')}</div>`;
   }
 
-  // Build recent session buttons
-  function sessionsHTML(returning) {
-    if (!returning?.isReturningUser) return '';
+  // "What do you want to do?" — the card's second half.
+  //
+  // This used to be a "Pick up where you left off" list: the course, plus the
+  // last three conversations by title and message count. Re-entering an old
+  // thread is a rare intent, and offering four of them made the student choose
+  // between things they had already finished before they could say what they
+  // actually came to do. It also spent the most valuable space on the screen
+  // saying nothing about what this place is for.
+  //
+  // A short question with a few concrete answers does more work: it tells a
+  // student who doesn't know what to ask that homework, a skill, and their
+  // course are all fair game. The course keeps its slot — a course genuinely is
+  // a "keep going" thing — but as one option among several, not the header.
+  function startHereHTML(returning, summary) {
+    const chips = [];
+    const reviewDue = summary?.reviewDue || 0;
+    const course = returning?.courses?.[0];
 
-    const items = [];
+    chips.push(chip('📓', 'Help with my homework',
+      "I need help with my homework."));
 
-    // Course in progress
-    if (returning.courses?.length > 0) {
-      const c = returning.courses[0];
-      items.push(`
-        <button class="rc-session-btn rc-session-course" data-course-id="${c.courseSessionId}">
-          <span class="rc-session-emoji">📚</span>
-          <div class="rc-session-info">
-            <span class="rc-session-name">${c.courseName}</span>
-            <span class="rc-session-meta">${c.currentModuleLabel} · ${c.overallProgress}%</span>
-          </div>
-          <span class="rc-session-arrow">→</span>
+    // The hero already offers "Continue <skill>", so naming a skill again here
+    // would be the same button twice. Only offer the ladder when the hero has
+    // nothing specific to continue.
+    if (!summary?.currentLearning) {
+      chips.push(chip('🪜', 'Work on my next skill',
+        "What skill should I work on next?"));
+    }
+
+    if (reviewDue > 0) {
+      chips.push(chip('🔁', `Review ${reviewDue} skill${reviewDue === 1 ? '' : 's'}`,
+        "Let's review what I've learned."));
+    }
+
+    if (course) {
+      chips.push(`
+        <button class="rc-chip" data-course-id="${esc(course.courseSessionId)}">
+          <span class="rc-chip-emoji">📚</span>
+          <span class="rc-chip-label">Keep going in ${esc(course.courseName)}</span>
         </button>`);
     }
 
-    // Recent sessions (top 3)
-    const sessions = (returning.recentSessions || []).slice(0, 3);
-    for (const s of sessions) {
-      items.push(`
-        <button class="rc-session-btn" data-session-id="${s._id}">
-          <span class="rc-session-emoji">${s.topicEmoji}</span>
-          <div class="rc-session-info">
-            <span class="rc-session-name">${s.name}</span>
-            <span class="rc-session-meta">${timeAgo(s.lastActivity)} · ${s.messageCount} messages</span>
-          </div>
-          <span class="rc-session-arrow">→</span>
-        </button>`);
-    }
+    // A native link, not a chat prompt — it navigates to the map rather than
+    // messaging the tutor. This is the hero's old tail link, relocated so every
+    // "where do I go" option sits in one row.
+    chips.push(`
+      <a class="rc-chip" href="/skill-map.html">
+        <span class="rc-chip-emoji">🗺️</span>
+        <span class="rc-chip-label">See my skill map</span>
+      </a>`);
 
-    if (items.length === 0) return '';
+    chips.push(chip('💭', 'Something else',
+      "There's something else I want to work on."));
 
     return `
-      <div class="rc-sessions">
-        <div class="rc-sessions-label">Pick up where you left off</div>
-        ${items.join('')}
+      <div class="rc-start">
+        <div class="rc-start-label">What do you want to work on today?</div>
+        <div class="rc-chips">${chips.join('')}</div>
       </div>`;
+  }
+
+  // A chip that types its prompt to the tutor (wired in wireCtaClicks).
+  function chip(emoji, label, prompt) {
+    return `
+      <button class="rc-chip" data-rc-prompt="${esc(prompt)}">
+        <span class="rc-chip-emoji">${emoji}</span>
+        <span class="rc-chip-label">${esc(label)}</span>
+      </button>`;
   }
 
   // Build the full card
@@ -233,7 +243,9 @@
 
     // Show the card whenever we have a lifecycle hero to render (any assessed
     // student — including the brand-new, no-activity first-session state), or
-    // when there are sessions to resume.
+    // when the student has been here before. The gate is deliberately unchanged
+    // from when the second half was a resume list: the chips replace what that
+    // list occupied, they don't earn the card a new reason to appear.
     const hasHero = !!summary?.cardState;
     const hasSessions = returning?.isReturningUser && (returning.courses?.length > 0 || returning.recentSessions?.length > 0);
 
@@ -247,11 +259,11 @@
         </div>
         <div class="rc-body">
           ${heroHTML(summary)}
+          ${startHereHTML(returning, summary)}
           <div class="rc-top-row">
             ${streakHTML(summary?.streak)}
             ${xpBarHTML(user)}
           </div>
-          ${sessionsHTML(returning)}
         </div>
       </div>`;
 
@@ -266,23 +278,13 @@
     setTimeout(() => card.remove(), 300);
   }
 
-  // Wire up session resume clicks
+  // Wire up the course chip. Old conversations are no longer offered here —
+  // the sidebar's session list is the place to reopen one.
   function wireSessionClicks() {
     const card = document.getElementById(CARD_ID);
     if (!card) return;
 
-    card.querySelectorAll('.rc-session-btn[data-session-id]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const sessionId = btn.dataset.sessionId;
-        dismissCard();
-        // Use sidebar's switchSession to load conversation properly
-        if (window.sidebar?.switchSession) {
-          window.sidebar.switchSession(sessionId);
-        }
-      });
-    });
-
-    card.querySelectorAll('.rc-session-btn[data-course-id]').forEach((btn) => {
+    card.querySelectorAll('[data-course-id]').forEach((btn) => {
       btn.addEventListener('click', () => {
         dismissCard();
         // Resume course via course manager
@@ -350,6 +352,6 @@
 
   // Testable surface (no-op in the browser)
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { heroHTML };
+    module.exports = { heroHTML, startHereHTML };
   }
 })();

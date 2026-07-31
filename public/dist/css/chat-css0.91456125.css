@@ -12937,12 +12937,15 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Top row: streak + XP */
+/* Streak + XP. Named "top-row" from when it sat directly under the greeting;
+   it now sits LAST. The card scrolls at 55vh, so whatever is last is the first
+   thing to fall below the fold — and that has to be the decoration, not the
+   "what do you want to work on today?" options the student came for. */
 .rc-top-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-top: 14px;
 }
 
 /* Streak */
@@ -13113,95 +13116,85 @@ body:not(.iep-reduced-distraction) .iep-mult-chart-btn {
   font-size: 1.1rem;
 }
 
-/* Sessions list */
-.rc-sessions {
+/* "What do you want to work on today?" — replaces the old resume list.
+   The label is a real question the student can answer, so it is set as
+   readable copy rather than the small uppercase eyebrow the list used. */
+.rc-start {
   margin-top: 2px;
 }
 
-.rc-sessions-label {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
+.rc-start-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 10px;
   padding-left: 2px;
 }
 
-.rc-session-btn {
+/* Chips wrap rather than scroll: every option stays visible without a
+   horizontal gesture, which is the whole point of offering them. */
+.rc-chips {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rc-chip {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px;
+  gap: 7px;
+  padding: 9px 13px;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
   color: #fff;
-  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.2;
   text-align: left;
-  margin-bottom: 6px;
-  transition: background 0.15s, border-color 0.15s;
+  cursor: pointer;
+  /* One chip is an <a> (the skill map navigates rather than prompting the
+     tutor). It has to read as the same control as its neighbours, so drop the
+     underline and the inherited link colour. */
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
 }
 
-.rc-session-btn:last-child {
-  margin-bottom: 0;
+.rc-chip:hover,
+.rc-chip:focus-visible {
+  background: rgba(18, 179, 179, 0.16);
+  border-color: rgba(18, 179, 179, 0.45);
 }
 
-.rc-session-btn:hover,
-.rc-session-btn:active {
-  background: rgba(18, 179, 179, 0.12);
-  border-color: rgba(18, 179, 179, 0.3);
+.rc-chip:active {
+  transform: translateY(1px);
 }
 
-.rc-session-course {
-  border-color: rgba(102, 126, 234, 0.3);
-  background: rgba(102, 126, 234, 0.08);
+/* The course chip is the one that resumes something, so it carries the same
+   indigo the course surfaces use elsewhere. */
+.rc-chip[data-course-id] {
+  background: rgba(102, 126, 234, 0.14);
+  border-color: rgba(102, 126, 234, 0.4);
 }
 
-.rc-session-course:hover,
-.rc-session-course:active {
-  background: rgba(102, 126, 234, 0.15);
+.rc-chip[data-course-id]:hover,
+.rc-chip[data-course-id]:focus-visible {
+  background: rgba(102, 126, 234, 0.24);
+  border-color: rgba(102, 126, 234, 0.6);
 }
 
-.rc-session-emoji {
-  font-size: 1.3rem;
+.rc-chip-emoji {
+  font-size: 1rem;
   flex-shrink: 0;
-  width: 32px;
-  text-align: center;
 }
 
-.rc-session-info {
-  flex: 1;
+.rc-chip-label {
   min-width: 0;
 }
 
-.rc-session-name {
-  display: block;
-  font-weight: 600;
-  font-size: 0.85rem;
-  line-height: 1.3;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rc-session-meta {
-  display: block;
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.4);
-  line-height: 1.3;
-}
-
-.rc-session-arrow {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 1rem;
-  flex-shrink: 0;
-  transition: transform 0.15s;
-}
-
-.rc-session-btn:hover .rc-session-arrow {
-  transform: translateX(2px);
-  color: #12B3B3;
+@media (prefers-reduced-motion: reduce) {
+  .rc-chip { transition: none; }
+  .rc-chip:active { transform: none; }
 }
 
 /* Dark mode adjustments (card is already dark, so just tweak borders) */
