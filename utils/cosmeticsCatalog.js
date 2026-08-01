@@ -53,8 +53,15 @@ const CATALOG = {
     'board.cheetah':  { slot: 'board',      name: 'Cheetah Print Board', price: 250, rarity: 'rare',   skinClass: 'skin-board-cheetah' },
 
     // ---- Calculator skins (data-skin-calculator) ----
-    'calc.hotpink':   { slot: 'calculator', name: 'Hot Pink Calculator', price: 150, rarity: 'common', skinClass: 'skin-calc-hotpink' },
-    'calc.carbon':    { slot: 'calculator', name: 'Carbon Fiber',         price: 250, rarity: 'rare',   skinClass: 'skin-calc-carbon' },
+    // Since the three calculators were consolidated onto one component, a skin
+    // here paints chat, the ACT practice test AND /calculator.html at once —
+    // so these are worth more to a student than they used to be, and the
+    // ladder now runs common -> legendary rather than stopping at rare.
+    'calc.hotpink':   { slot: 'calculator', name: 'Hot Pink Calculator', price: 150, rarity: 'common',    skinClass: 'skin-calc-hotpink' },
+    'calc.carbon':    { slot: 'calculator', name: 'Carbon Fiber',        price: 250, rarity: 'rare',      skinClass: 'skin-calc-carbon' },
+    'calc.sunset':    { slot: 'calculator', name: 'Sunset Fade',         price: 350, rarity: 'rare',      skinClass: 'skin-calc-sunset' },
+    'calc.arcade':    { slot: 'calculator', name: 'Arcade Cabinet',      price: 500, rarity: 'epic',      skinClass: 'skin-calc-arcade' },
+    'calc.aurora':    { slot: 'calculator', name: 'Aurora',              price: 850, rarity: 'legendary', skinClass: 'skin-calc-aurora', unlockLevel: 12 },
 
     // ---- Header skins (data-skin-header) ----
     'header.camo':    { slot: 'header',      name: 'Camo Header',         price: 200, rarity: 'common', skinClass: 'skin-header-camo' },

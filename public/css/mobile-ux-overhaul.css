@@ -163,14 +163,18 @@
   }
 }
 
-/* --- DECLUTTER TOOLBAR: Hide calculator on mobile --- */
-
-@media (max-width: 768px) {
-  /* Calculator: kids have their phone calculator */
-  #calculator-toolbar-btn {
-    display: none !important;
-  }
-}
+/* The calculator button used to be hidden here under 768px, on the reasoning
+ * that "kids have their phone calculator". Two things changed:
+ *
+ *  - Leaving the app mid-problem to open iOS Calculator breaks the session,
+ *    and during a locked assessment it isn't available at all.
+ *  - The calculator is now a real bottom sheet with 48px thumb targets
+ *    (mm-calculator.css, .mmc-float under 768px) rather than a shrunken
+ *    desktop panel, so it is worth reaching for on a phone.
+ *
+ * The button is the only entry point on a phone that doesn't cost a tap in the
+ * Workspace drawer, so it stays. `never` from a teacher still removes it —
+ * chatCalculator.js owns that, not this file. */
 
 /* --- AI MESSAGE BUBBLE CONTRAST FIX --- */
 

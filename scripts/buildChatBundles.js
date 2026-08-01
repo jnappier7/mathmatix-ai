@@ -114,6 +114,22 @@ function rebuild() {
   const manifest = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'));
   let html = fs.readFileSync(HTML, 'utf8');
   let changed = 0;
+
+  // Drop sources that no longer exist. Deleting a bundled file is a normal
+  // thing to do (retiring a stylesheet, consolidating two scripts into one),
+  // but the manifest still listed it and writeBundle's read() threw a raw
+  // ENOENT stack with no clue that the fix is "it's gone, forget it". Prune
+  // and say so, so the next person deleting a bundled asset just sees a line
+  // in the build log instead of a crash.
+  for (const kind of ['css', 'js']) {
+    for (const b of manifest[kind]) {
+      const gone = b.files.filter((f) => !onDisk(f));
+      if (!gone.length) continue;
+      b.files = b.files.filter((f) => onDisk(f));
+      console.log(`pruned from ${b.href || b.src}: ${gone.join(', ')} (deleted)`);
+    }
+  }
+
   for (const b of manifest.css) {
     const href = writeBundle(b.href.match(/chat-css\d+/)[0], 'css', b.files, '\n');
     if (href !== b.href) { html = html.split(b.href).join(href); b.href = href; changed++; }

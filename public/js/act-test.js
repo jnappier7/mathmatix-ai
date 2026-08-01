@@ -70,35 +70,7 @@
     .actt-cmpname{color:#b7b3cc}.actt-cmpval{color:#d7d3ea}
     .actt-up{background:#183a27;color:#63d391}.actt-down{background:#3a1c1c;color:#ff8a8a}.actt-same{background:#2d2a40;color:#9a96b2}
   }
-  /* ── Scientific calculator (ACT permits one on the whole Math section) ── */
-  .actt-calc{width:296px;max-width:100%;background:#fff;color:#1b1b2b;border-radius:16px;box-shadow:0 24px 70px rgba(30,20,70,.35);display:none;flex-direction:column;overflow:hidden;font-variant-numeric:tabular-nums;-webkit-user-select:none;user-select:none}
-  .actt-calc.show{display:flex}
-  .actt-calc-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-  .actt-calc-title{font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px}
-  .actt-calc-tools{display:flex;align-items:center;gap:8px}
-  .actt-deg{cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.04em;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:7px;padding:3px 9px}
-  .actt-deg.rad{background:rgba(255,255,255,.32)}
-  .actt-calc-disp{padding:12px 14px;text-align:right;background:#faf9ff;border-bottom:1px solid #efedf8}
-  .actt-calc-expr{min-height:15px;font-size:13px;color:#8a86a0;word-break:break-all;line-height:1.35;letter-spacing:.01em}
-  .actt-calc-res{font-size:27px;font-weight:700;color:#1b1b2b;min-height:32px;word-break:break-all;line-height:1.15}
-  .actt-calc-keys{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px}
-  .actt-k{appearance:none;border:0;border-radius:11px;padding:0;height:44px;font-size:15px;font-weight:600;cursor:pointer;background:#f1f0f7;color:#26233a;transition:filter .1s,transform .04s;touch-action:manipulation}
-  .actt-k:active{filter:brightness(.9);transform:translateY(1px)}
-  .actt-k.fn{background:#efeafb;color:#6b54b0;font-size:13px;font-weight:700}
-  .actt-k.op{background:#e5dcfb;color:#5b3ea8;font-size:18px}
-  .actt-k.eq{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:19px}
-  .actt-k.clr{background:#fbe4e4;color:#c0392b}
-  .actt-k.zero{grid-column:span 3}
-  @media (prefers-color-scheme:dark){
-    .actt-calc{background:#1c1a2b;color:#ece9f7}
-    .actt-calc-disp{background:#211e32;border-color:#302c45}
-    .actt-calc-res{color:#f2f0fb}.actt-calc-expr{color:#9a96b2}
-    .actt-k{background:#26233a;color:#e7e4f4}
-    .actt-k.fn{background:#2b2547;color:#c3b4ff}
-    .actt-k.op{background:#332a52;color:#c3b4ff}
-    .actt-k.clr{background:#3a1c1c;color:#ff8a8a}
-  }
-  @media (max-width:700px){ .actt-calc{width:100%;order:2} .actt-card{order:1} }`;
+  @media (max-width:700px){ .actt-card{order:1} }`;
 
   const CATEGORY_LABELS = {
     'integrating-essential-skills': 'Essential skills',
@@ -159,128 +131,32 @@
             <button class="actt-btn actt-next" id="actt-next" disabled>Next</button>
           </div>
         </div>
-        <div class="actt-calc" id="actt-calc-panel" role="group" aria-label="Calculator">
-          <div class="actt-calc-head">
-            <span class="actt-calc-title">🧮 Calculator</span>
-            <span class="actt-calc-tools">
-              <button class="actt-deg" id="actt-deg" title="Switch between degrees and radians">DEG</button>
-              <button class="actt-x" id="actt-calc-close" aria-label="Close calculator" style="font-size:18px">×</button>
-            </span>
-          </div>
-          <div class="actt-calc-disp">
-            <div class="actt-calc-expr" id="actt-calc-expr"></div>
-            <div class="actt-calc-res" id="actt-calc-res">0</div>
-          </div>
-          <div class="actt-calc-keys" id="actt-calc-keys"></div>
-        </div>`;
+        `;
       document.body.appendChild(this.overlay);
       this.overlay.querySelector('#actt-close').addEventListener('click', () => this.close());
       this.overlay.querySelector('#actt-skip').addEventListener('click', () => this.submit(true));
       this.overlay.querySelector('#actt-next').addEventListener('click', () => this.submit(false));
       this.overlay.querySelector('#actt-calc').addEventListener('click', () => this._toggleCalc());
       this.el = (id) => this.overlay.querySelector('#' + id);
-      this.overlay.querySelector('#actt-calc-close').addEventListener('click', () => this._hideCalc());
-      this.overlay.querySelector('#actt-deg').addEventListener('click', () => this._calcToggleDeg());
-      this._calcExpr = '';
-      this._calcDeg = true;
-      this._calcAns = '';
-      this._buildCalc();
+
+      // The calculator is the shared component (js/mmCalculator.js) — the same
+      // one chat and /calculator.html use. It used to be built inline here,
+      // markup, keypad, evaluator and CSS, and that copy is what the other two
+      // surfaces were consolidated ONTO; this is now just another host.
+      // Mounted as a sibling of the card inside the centred overlay so it docks
+      // beside it with no fixed-position clipping.
+      this.calc = window.MMCalculator.create({ variant: 'dock' });
+      this.calc.mount(this.overlay);
     }
 
-    // On-screen scientific calculator, built into the runner. The real ACT Math
-    // section permits a calculator on EVERY question, so the baseline offers one
-    // or it understates the score and mis-targets the bootcamp. It's a sibling of
-    // the card inside the runner's centered overlay (so it docks beside it with
-    // no fixed-position clipping), scientific-only (no graphing/CAS — ACT-
-    // appropriate), and ALWAYS available here regardless of the teacher/IEP
-    // tutoring-time restriction, because that restriction is a practice choice,
-    // not a test condition. Dismissed on close()/complete() so it never strands.
-    _toggleCalc() {
-      const panel = this.el && this.el('actt-calc-panel');
-      if (panel) panel.classList.toggle('show');
-    }
-    _hideCalc() {
-      const panel = this.el && this.el('actt-calc-panel');
-      if (panel) panel.classList.remove('show');
-    }
-    _calcToggleDeg() {
-      this._calcDeg = !this._calcDeg;
-      const b = this.el('actt-deg');
-      if (b) { b.textContent = this._calcDeg ? 'DEG' : 'RAD'; b.classList.toggle('rad', !this._calcDeg); }
-      this._calcRender();   // trig preview reflects the new mode immediately
-    }
-
-    // Keypad: [label, insert-token, css-class]. Tokens carry display glyphs; the
-    // evaluator normalizes them. Function keys auto-open a paren.
-    _buildCalc() {
-      const K = [
-        ['AC', 'ac', 'clr'], ['⌫', 'del', 'clr'], ['(', '(', 'fn'], [')', ')', 'fn'], ['÷', '÷', 'op'],
-        ['sin', 'sin(', 'fn'], ['cos', 'cos(', 'fn'], ['tan', 'tan(', 'fn'], ['xʸ', '^', 'op'], ['×', '×', 'op'],
-        ['ln', 'ln(', 'fn'], ['log', 'log(', 'fn'], ['√', 'sqrt(', 'fn'], ['π', 'π', 'fn'], ['−', '−', 'op'],
-        ['7', '7', ''], ['8', '8', ''], ['9', '9', ''], ['e', 'E', 'fn'], ['+', '+', 'op'],
-        ['4', '4', ''], ['5', '5', ''], ['6', '6', ''], ['x²', '^2', 'op'], ['(-)', '-', 'fn'],
-        ['1', '1', ''], ['2', '2', ''], ['3', '3', ''], ['%', '/100', 'fn'], ['=', 'eq', 'eq'],
-        ['0', '0', 'zero'], ['.', '.', ''], ['ANS', 'ans', 'fn'],
-      ];
-      const keys = this.el('actt-calc-keys');
-      if (!keys) return;
-      keys.innerHTML = K.map(([lab, tok, cls]) =>
-        `<button class="actt-k ${cls}" data-tok="${tok}">${lab}</button>`).join('');
-      keys.querySelectorAll('.actt-k').forEach((btn) =>
-        btn.addEventListener('click', () => this._calcKey(btn.getAttribute('data-tok'))));
-      this._calcRender();
-    }
-
-    _calcKey(tok) {
-      if (tok === 'ac') { this._calcExpr = ''; return this._calcRender(); }
-      if (tok === 'del') { this._calcExpr = this._calcExpr.slice(0, -1); return this._calcRender(); }
-      if (tok === 'ans') { this._calcExpr += (this._calcAns || ''); return this._calcRender(); }
-      if (tok === 'eq') {
-        try {
-          const out = String(this._calcEval(this._calcExpr));
-          this._calcAns = out;
-          this.el('actt-calc-expr').textContent = this._calcExpr;
-          this.el('actt-calc-res').textContent = out;
-          this._calcExpr = out;   // chain from the result
-        } catch (e) {
-          this.el('actt-calc-res').textContent = 'Error';
-        }
-        return;
-      }
-      this._calcExpr += tok;
-      this._calcRender();
-    }
-
-    _calcRender() {
-      const expr = this.el('actt-calc-expr'), res = this.el('actt-calc-res');
-      if (!expr || !res) return;
-      expr.textContent = this._calcExpr;
-      if (!this._calcExpr) { res.textContent = '0'; return; }
-      try { res.textContent = String(this._calcEval(this._calcExpr)); }
-      catch (e) { res.textContent = ''; }   // mid-expression → blank preview, not "Error"
-    }
-
-    // Normalize glyphs, insert implicit multiplication, evaluate against a FIXED
-    // scope of math helpers (trig honors DEG/RAD). No page globals; the only
-    // input is button-driven tokens.
-    _calcEval(raw) {
-      let js = String(raw)
-        .replace(/π/g, '(pi)').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
-        .replace(/\^/g, '**');
-      js = js.replace(/(\d|\)|pi|E)\s*\(/g, '$1*(')
-             .replace(/\)\s*(\d|pi|E)/g, ')*$1')
-             .replace(/(\d)\s*(pi|E)\b/g, '$1*$2');
-      const D = this._calcDeg ? Math.PI / 180 : 1;
-      const scope = {
-        pi: Math.PI, E: Math.E,
-        sin: (x) => Math.sin(x * D), cos: (x) => Math.cos(x * D), tan: (x) => Math.tan(x * D),
-        ln: (x) => Math.log(x), log: (x) => Math.log10(x), sqrt: (x) => Math.sqrt(x),
-      };
-      const fn = new Function(...Object.keys(scope), 'return (' + js + ');');
-      const v = fn(...Object.values(scope));
-      if (typeof v !== 'number' || !isFinite(v)) throw new Error('bad');
-      return parseFloat(v.toPrecision(12));   // trim float noise (0.1+0.2 → 0.3)
-    }
+    // The ACT permits a calculator on EVERY Math question, so the baseline
+    // offers one or it understates the score and mis-targets the whole
+    // bootcamp. It is ALWAYS available here regardless of the teacher/IEP
+    // tutoring-time restriction, because that restriction is a practice
+    // choice, not a test condition. Dismissed on close()/complete() so it
+    // never strands over the results screen.
+    _toggleCalc() { if (this.calc) this.calc.toggle(); }
+    _hideCalc() { if (this.calc) this.calc.hide(); }
 
     // Intro / "Begin" screen. The timer starts only when the student clicks
     // Begin — never on open() — so a baseline can be presented (or auto-opened as

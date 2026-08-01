@@ -343,162 +343,250 @@ body[data-skin-board="board.cheetah"] #cr-workspace {
   background-size: 64px 64px;
 }
 
-/* ---- Calculator (data-skin-calculator) — skins the floating calculator (shows
- * when the student opens it). Real markup: #floating-calculator >
- * .calculator-header-bar + .calculator-body. ---- */
-body[data-skin-calculator="calc.hotpink"] #floating-calculator {
-  border: 2px solid #ff2e93 !important;
-  box-shadow: 0 8px 30px rgba(255, 46, 147, 0.4) !important;
-}
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-header-bar {
-  background: linear-gradient(135deg, #ff5db1, #ff2e93) !important;
-  color: #fff !important;
-}
-/* .calculator-title carries its own color, so inheritance alone doesn't flip it. */
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-title {
-  color: #fff;
-}
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .calculator-body {
-  background: #fff0f7 !important;
-}
-/* The keypad is most of the calculator's face — leaving the buttons in the
- * default navy-slate made the skin read as "just a border". The #id in these
- * selectors outspecifies calculator.css's class rules (incl. its :hover
- * variants), so no !important is needed on the button overrides. */
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-number,
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-operator,
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-function {
-  background: linear-gradient(145deg, #ff9dcb, #ff5db1);
-  color: #5c0a33;
-}
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .calc-btn .primary {
-  color: #5c0a33;
-}
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .calc-btn .secondary {
-  color: #9c0f56;
-}
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-arrow {
-  background: linear-gradient(145deg, #ff77b9, #e94f9c);
-  color: #fff;
-  border-color: #c2367e;
-}
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-clear,
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-clear:hover {
-  background: linear-gradient(145deg, #8f0f4e, #6e0a3b);
-}
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-enter,
-body[data-skin-calculator="calc.hotpink"] #floating-calculator .btn-enter:hover {
-  background: linear-gradient(145deg, #ff2e93, #d81b7a);
-  color: #fff;
-}
-
-/* Carbon fiber: gunmetal weave + racing-red trim. The old version was a dark
- * border on an already-dark calculator — invisible from two feet away. */
-body[data-skin-calculator="calc.carbon"] #floating-calculator {
-  border: 2px solid #14161a !important;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px #d90429 !important;
-}
-body[data-skin-calculator="calc.carbon"] #floating-calculator .calculator-header-bar {
-  background: #16181c !important;
-  color: #e5e7eb !important;
-  border-bottom: 2px solid #d90429 !important;
-}
-body[data-skin-calculator="calc.carbon"] #floating-calculator .calculator-body {
-  background: repeating-linear-gradient(45deg, #23262c 0 5px, #1e2126 5px 10px) !important;
-}
-body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-number,
-body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-operator,
-body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-function {
-  background: linear-gradient(145deg, #31353c, #1c1f24);
-  color: #e5e7eb;
-}
-body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-arrow {
-  background: linear-gradient(145deg, #24272d, #17191d);
-  color: #ff4d5e;
-  border-color: #0e1013;
-}
-body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-enter,
-body[data-skin-calculator="calc.carbon"] #floating-calculator .btn-enter:hover {
-  background: linear-gradient(145deg, #d90429, #a4031f);
-  color: #fff;
-}
-
-/* The ACT practice-test runner (public/js/act-test.js) builds its OWN
- * calculator — `.actt-calc`, scientific-only, always available because the real
- * ACT permits one on every question. It is a sibling implementation of
- * #floating-calculator with entirely different class names, so every rule above
- * missed it: a student who bought a calculator skin saw the default purple
- * calculator during a practice test and concluded the cosmetic did nothing.
+/* ---- Calculator (data-skin-calculator) ----------------------------------
+ * ONE rule set, because there is now one calculator. This block used to be
+ * written twice — once against `#floating-calculator` (chat) and once against
+ * `.actt-calc` (the ACT practice test's own copy) — and a third calculator on
+ * /calculator.html was never skinned at all. A student who bought Hot Pink saw
+ * it in chat, then opened a practice test and got the default purple.
  *
- * act-test.js injects its CSS into <style id="actt-style"> at construction —
- * i.e. after this stylesheet's <link> — so these rules win on specificity
- * (attribute + class beats class) rather than on order. That also holds inside
- * its prefers-color-scheme block, since @media adds no specificity. */
-body[data-skin-calculator="calc.hotpink"] .actt-calc {
+ * mmCalculator collapsed all three onto `.mmc`, so every surface that shows a
+ * calculator now inherits the skin for free, including the ACT test.
+ *
+ * Specificity note: act-test.js injects its own stylesheet at construction,
+ * i.e. after this file, so `body[attr] .mmc-*` has to out-specify plain
+ * `.mmc-*` rather than rely on order. Attribute + class does that, and it
+ * holds inside its prefers-color-scheme block too, since @media adds no
+ * specificity of its own. ---- */
+
+body[data-skin-calculator="calc.hotpink"] .mmc {
   background: #fff0f7;
   color: #5c0a33;
   box-shadow: 0 24px 70px rgba(255, 46, 147, 0.4);
 }
-body[data-skin-calculator="calc.hotpink"] .actt-calc-head {
+body[data-skin-calculator="calc.hotpink"] .mmc-head {
   background: linear-gradient(135deg, #ff5db1, #ff2e93);
   color: #fff;
 }
-body[data-skin-calculator="calc.hotpink"] .actt-calc-disp {
+body[data-skin-calculator="calc.hotpink"] .mmc-disp {
   background: #ffe4f1;
   border-color: #ffc2de;
 }
-body[data-skin-calculator="calc.hotpink"] .actt-calc-res { color: #5c0a33; }
-body[data-skin-calculator="calc.hotpink"] .actt-calc-expr { color: #a85980; }
-body[data-skin-calculator="calc.hotpink"] .actt-k {
+body[data-skin-calculator="calc.hotpink"] .mmc-res { color: #5c0a33; }
+body[data-skin-calculator="calc.hotpink"] .mmc-expr { color: #a85980; }
+body[data-skin-calculator="calc.hotpink"] .mmc-k {
   background: linear-gradient(145deg, #ff9dcb, #ff5db1);
   color: #5c0a33;
 }
-body[data-skin-calculator="calc.hotpink"] .actt-k.fn,
-body[data-skin-calculator="calc.hotpink"] .actt-k.op {
+body[data-skin-calculator="calc.hotpink"] .mmc-k.fn,
+body[data-skin-calculator="calc.hotpink"] .mmc-k.op {
   background: linear-gradient(145deg, #ff77b9, #e94f9c);
   color: #fff;
 }
-body[data-skin-calculator="calc.hotpink"] .actt-k.eq {
+body[data-skin-calculator="calc.hotpink"] .mmc-k.eq {
   background: linear-gradient(145deg, #ff2e93, #d81b7a);
   color: #fff;
 }
-body[data-skin-calculator="calc.hotpink"] .actt-k.clr {
+body[data-skin-calculator="calc.hotpink"] .mmc-k.clr {
   background: linear-gradient(145deg, #8f0f4e, #6e0a3b);
   color: #fff;
 }
+body[data-skin-calculator="calc.hotpink"] .mmc-send {
+  background: #ffd9ec;
+  color: #8f0f4e;
+}
 
-body[data-skin-calculator="calc.carbon"] .actt-calc {
+/* Carbon fiber: gunmetal weave + racing-red trim. */
+body[data-skin-calculator="calc.carbon"] .mmc {
   background: repeating-linear-gradient(45deg, #23262c 0 5px, #1e2126 5px 10px);
   color: #e5e7eb;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px #d90429;
 }
-body[data-skin-calculator="calc.carbon"] .actt-calc-head {
+body[data-skin-calculator="calc.carbon"] .mmc-head {
   background: #16181c;
   color: #e5e7eb;
   border-bottom: 2px solid #d90429;
 }
-body[data-skin-calculator="calc.carbon"] .actt-calc-disp {
+body[data-skin-calculator="calc.carbon"] .mmc-disp {
   background: #1a1d22;
   border-color: #0e1013;
 }
-body[data-skin-calculator="calc.carbon"] .actt-calc-res { color: #f3f4f6; }
-body[data-skin-calculator="calc.carbon"] .actt-calc-expr { color: #9ca3af; }
-body[data-skin-calculator="calc.carbon"] .actt-k {
+body[data-skin-calculator="calc.carbon"] .mmc-res { color: #f3f4f6; }
+body[data-skin-calculator="calc.carbon"] .mmc-expr { color: #9ca3af; }
+body[data-skin-calculator="calc.carbon"] .mmc-k {
   background: linear-gradient(145deg, #31353c, #1c1f24);
   color: #e5e7eb;
 }
-body[data-skin-calculator="calc.carbon"] .actt-k.fn,
-body[data-skin-calculator="calc.carbon"] .actt-k.op {
+body[data-skin-calculator="calc.carbon"] .mmc-k.fn,
+body[data-skin-calculator="calc.carbon"] .mmc-k.op {
   background: linear-gradient(145deg, #24272d, #17191d);
   color: #ff4d5e;
 }
-body[data-skin-calculator="calc.carbon"] .actt-k.eq {
+body[data-skin-calculator="calc.carbon"] .mmc-k.eq {
   background: linear-gradient(145deg, #d90429, #a4031f);
   color: #fff;
 }
-body[data-skin-calculator="calc.carbon"] .actt-k.clr {
+body[data-skin-calculator="calc.carbon"] .mmc-k.clr {
   background: linear-gradient(145deg, #3a1c1c, #24100f);
   color: #ff8a8a;
+}
+body[data-skin-calculator="calc.carbon"] .mmc-send {
+  background: #24272d;
+  color: #ff4d5e;
+}
+
+
+/* Sunset Fade: warm dusk gradient, the one that reads well in a bright room.
+ * Deliberately light-on-dark at the top and warm below so the display stays
+ * the highest-contrast thing on the card — a calculator you can't read at a
+ * glance is a worse calculator, however good it looks. */
+body[data-skin-calculator="calc.sunset"] .mmc {
+  background: linear-gradient(170deg, #fff1e6 0%, #ffe0ec 55%, #f6ddff 100%);
+  color: #4a1f3d;
+  box-shadow: 0 24px 70px rgba(233, 106, 90, 0.4);
+}
+body[data-skin-calculator="calc.sunset"] .mmc-head {
+  background: linear-gradient(135deg, #ff8a5b, #d94f9c 55%, #7a4dd6);
+  color: #fff;
+}
+body[data-skin-calculator="calc.sunset"] .mmc-disp {
+  background: #fff6ef;
+  border-color: #ffd2c4;
+}
+body[data-skin-calculator="calc.sunset"] .mmc-res { color: #4a1f3d; }
+body[data-skin-calculator="calc.sunset"] .mmc-expr { color: #a8697f; }
+body[data-skin-calculator="calc.sunset"] .mmc-k {
+  background: linear-gradient(145deg, #ffd0b0, #ffb08c);
+  color: #6b2f33;
+}
+body[data-skin-calculator="calc.sunset"] .mmc-k.fn,
+body[data-skin-calculator="calc.sunset"] .mmc-k.op {
+  background: linear-gradient(145deg, #f7a3c4, #e07aa8);
+  color: #45182f;
+}
+body[data-skin-calculator="calc.sunset"] .mmc-k.eq {
+  background: linear-gradient(145deg, #ff8a5b, #d94f9c);
+  color: #fff;
+}
+body[data-skin-calculator="calc.sunset"] .mmc-k.clr {
+  background: linear-gradient(145deg, #b4436b, #8c2f52);
+  color: #fff;
+}
+body[data-skin-calculator="calc.sunset"] .mmc-send { background: #ffe0ec; color: #8c2f52; }
+
+/* Arcade Cabinet: black cabinet, neon glow, chunky candy buttons. The display
+ * is the CRT — phosphor green on near-black, with a glow on the result only.
+ * Keys get a hard bottom edge so they read as physical arcade buttons. */
+body[data-skin-calculator="calc.arcade"] .mmc {
+  background: #0d0b1a;
+  color: #e9e6ff;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75),
+              0 0 0 2px #1b1740,
+              0 0 26px rgba(0, 255, 194, 0.35);
+}
+body[data-skin-calculator="calc.arcade"] .mmc-head {
+  background: linear-gradient(90deg, #ff2e6b, #ffb400 35%, #00ffc2 70%, #2e7bff);
+  color: #0d0b1a;
+  text-shadow: none;
+}
+body[data-skin-calculator="calc.arcade"] .mmc-title { color: #0d0b1a; }
+body[data-skin-calculator="calc.arcade"] .mmc-deg {
+  background: rgba(13, 11, 26, 0.35);
+  border-color: rgba(13, 11, 26, 0.5);
+  color: #0d0b1a;
+}
+body[data-skin-calculator="calc.arcade"] .mmc-x { color: #0d0b1a; }
+body[data-skin-calculator="calc.arcade"] .mmc-disp {
+  background: #050f0c;
+  border-color: #123;
+}
+body[data-skin-calculator="calc.arcade"] .mmc-res {
+  color: #3dffc0;
+  text-shadow: 0 0 12px rgba(61, 255, 192, 0.7);
+  font-family: "Courier New", ui-monospace, monospace;
+}
+body[data-skin-calculator="calc.arcade"] .mmc-expr {
+  color: #1f9c7a;
+  font-family: "Courier New", ui-monospace, monospace;
+}
+body[data-skin-calculator="calc.arcade"] .mmc-k {
+  background: #2b2550;
+  color: #ffe9a8;
+  box-shadow: 0 3px 0 #17133a;
+}
+body[data-skin-calculator="calc.arcade"] .mmc-k.fn { background: #2e7bff; color: #04122e; box-shadow: 0 3px 0 #14448f; }
+body[data-skin-calculator="calc.arcade"] .mmc-k.op { background: #ffb400; color: #2b1a00; box-shadow: 0 3px 0 #a37200; }
+body[data-skin-calculator="calc.arcade"] .mmc-k.eq { background: #00ffc2; color: #00251b; box-shadow: 0 3px 0 #00a37c; }
+body[data-skin-calculator="calc.arcade"] .mmc-k.clr { background: #ff2e6b; color: #fff; box-shadow: 0 3px 0 #a30d3f; }
+body[data-skin-calculator="calc.arcade"] .mmc-k:active { transform: translateY(2px); box-shadow: 0 1px 0 #17133a; }
+body[data-skin-calculator="calc.arcade"] .mmc-send { background: #2b2550; color: #3dffc0; }
+
+/* Aurora (legendary, level 12): a slow northern-lights wash over deep night
+ * sky. The animation is the reason this one is legendary — it's the only skin
+ * that moves. Held to a 14s cycle so it reads as ambient rather than
+ * distracting while a kid is mid-problem, and killed outright under
+ * prefers-reduced-motion (see the block at the end of this file). */
+body[data-skin-calculator="calc.aurora"] .mmc {
+  background:
+    radial-gradient(120% 90% at 20% 0%, rgba(0, 255, 179, 0.30), transparent 60%),
+    radial-gradient(120% 90% at 85% 15%, rgba(157, 90, 255, 0.34), transparent 62%),
+    radial-gradient(140% 100% at 50% 110%, rgba(38, 129, 255, 0.28), transparent 65%),
+    #070a1c;
+  background-size: 200% 200%, 200% 200%, 200% 200%, auto;
+  animation: mmc-aurora 14s ease-in-out infinite alternate;
+  color: #e6f7ff;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7),
+              0 0 0 1px rgba(140, 255, 226, 0.45),
+              0 0 30px rgba(96, 226, 255, 0.28);
+}
+@keyframes mmc-aurora {
+  0%   { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; }
+  100% { background-position: 60% 40%, 30% 60%, 20% 40%, 0 0; }
+}
+body[data-skin-calculator="calc.aurora"] .mmc-head {
+  background: linear-gradient(120deg, rgba(0, 255, 179, 0.22), rgba(157, 90, 255, 0.30));
+  color: #eafcff;
+  border-bottom: 1px solid rgba(140, 255, 226, 0.35);
+}
+body[data-skin-calculator="calc.aurora"] .mmc-disp {
+  background: rgba(4, 8, 24, 0.62);
+  border-color: rgba(140, 255, 226, 0.25);
+}
+body[data-skin-calculator="calc.aurora"] .mmc-res {
+  color: #c9fff2;
+  text-shadow: 0 0 16px rgba(120, 255, 224, 0.55);
+}
+body[data-skin-calculator="calc.aurora"] .mmc-expr { color: #7fb6cf; }
+body[data-skin-calculator="calc.aurora"] .mmc-k {
+  background: rgba(255, 255, 255, 0.09);
+  color: #e6f7ff;
+  border: 1px solid rgba(160, 240, 255, 0.16);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+body[data-skin-calculator="calc.aurora"] .mmc-k.fn,
+body[data-skin-calculator="calc.aurora"] .mmc-k.op {
+  background: rgba(157, 90, 255, 0.28);
+  color: #f0e6ff;
+}
+body[data-skin-calculator="calc.aurora"] .mmc-k.eq {
+  background: linear-gradient(145deg, #00ffb3, #2681ff);
+  color: #04231c;
+  border-color: transparent;
+}
+body[data-skin-calculator="calc.aurora"] .mmc-k.clr {
+  background: rgba(255, 90, 130, 0.30);
+  color: #ffd9e2;
+}
+body[data-skin-calculator="calc.aurora"] .mmc-send {
+  background: rgba(255, 255, 255, 0.10);
+  color: #c9fff2;
+}
+
+/* Aurora is the only animated skin; nobody should get motion they opted out
+ * of just because they bought the expensive one. */
+@media (prefers-reduced-motion: reduce) {
+  body[data-skin-calculator="calc.aurora"] .mmc { animation: none; }
 }
 
 /* ---- Header (data-skin-header) — patterns the top bar strip ---- */
