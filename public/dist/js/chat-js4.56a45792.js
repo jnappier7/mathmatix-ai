@@ -742,11 +742,23 @@ class InlineChatVisuals {
         if (graphEl && graphEl.dataset.config) {
             const modalGraphId = containerId + '-modal-graph';
             graphEl.id = modalGraphId;
-            // Clear cloned canvases — MathGraph will rebuild them
+            // Clear cloned canvases — the engine will rebuild them
             graphEl.innerHTML = '';
             graphEl._mathGraph = null;
             graphEl._functionPlot = null;
-            setTimeout(() => this.renderGraph(modalGraphId), 100);
+            graphEl._graph3d = null;
+
+            // Re-render with the SAME engine the inline version used. Sending a
+            // system or a 3D config through renderGraph would quietly plot the
+            // x^2 fallback (neither config has an `fn`), so the expanded view
+            // would disagree with the graph the student just tapped.
+            const is3dModal = graphEl.classList.contains('icv-graph-3d');
+            const isMultiModal = graphEl.classList.contains('icv-multi-graph');
+            setTimeout(() => {
+                if (is3dModal) this.renderGraph3D(modalGraphId);
+                else if (isMultiModal) this.renderMultiGraph(modalGraphId);
+                else this.renderGraph(modalGraphId);
+            }, 100);
 
             // Rebind zoom/reset buttons to the modal graph ID
             const zoomInBtn = clone.querySelector('.icv-zoom-in');
@@ -777,7 +789,16 @@ class InlineChatVisuals {
                 const newReset = clone.querySelector('.icv-reset');
                 newReset.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    this.resetGraph(modalGraphId);
+                    if (is3dModal) this.resetGraph3D(modalGraphId); else this.resetGraph(modalGraphId);
+                });
+            }
+            const spinBtn = clone.querySelector('.icv-spin-3d');
+            if (spinBtn) {
+                spinBtn.removeAttribute('onclick');
+                spinBtn.replaceWith(spinBtn.cloneNode(true));
+                clone.querySelector('.icv-spin-3d').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleGraph3DSpin(modalGraphId);
                 });
             }
         }
@@ -854,6 +875,10 @@ class InlineChatVisuals {
             { regex: tok('DERIVATIVE_GRAPH'), handler: this.createDerivativeGraph.bind(this) },
             // Rational function graph (HA, VA, holes auto-detected)
             { regex: tok('RATIONAL_GRAPH'), handler: this.createRationalGraph.bind(this) },
+            // Systems of equations: several curves on ONE coordinate plane
+            { regex: tok('SYSTEM_GRAPH'), handler: this.createSystemGraph.bind(this) },
+            // 3D space curves (helix/spiral) and surfaces z = f(x, y)
+            { regex: tok('GRAPH_3D'), handler: this.createGraph3D.bind(this) },
             // Physics: Position/Velocity/Acceleration overlay
             { regex: tok('VELOCITY_GRAPH'), handler: this.createVelocityGraph.bind(this) },
             // Circle geometry: chords, secants, tangents, inscribed/central angles
@@ -1092,8 +1117,12 @@ class InlineChatVisuals {
         // from OCR like "1783") collapses to the x^2 fallback here — that way
         // the caption reflects what actually gets plotted.
         const fn = this.normalizeFunctionString(rawFn);
-        const xMin = params.xMin ?? params.xmin ?? -10;
-        const xMax = params.xMax ?? params.xmax ?? 10;
+        // Trig lives on a π scale, not a decimal one. Defaulting sin/cos/tan to
+        // the usual [-10, 10] shows ~3.2 periods ending mid-wave; [-2π, 2π]
+        // shows exactly two, with the zeros landing on labelled ticks.
+        const trigDefault = window.MathEval && window.MathEval.hasTrig(fn);
+        const xMin = params.xMin ?? params.xmin ?? (trigDefault ? -2 * Math.PI : -10);
+        const xMax = params.xMax ?? params.xmax ?? (trigDefault ? 2 * Math.PI : 10);
         const yMin = params.yMin ?? params.ymin ?? null;
         const yMax = params.yMax ?? params.ymax ?? null;
         // Regenerate the default title from the normalized fn. Also distrust
@@ -1147,6 +1176,12 @@ class InlineChatVisuals {
 
         let normalized = fn.trim().toLowerCase().replace(/\s+/g, '');
 
+        const trimmed = fn.trim();
+        // A usable graph must be a function of x. A string with no variable at
+        // all ("1783" scraped off a worksheet as a problem number) would plot
+        // as a meaningless flat line, so it never counts as a real expression.
+        const hasVariable = /x/i.test(trimmed) || /\b(sin|cos|tan|log|ln|exp|sqrt|abs|asin|acos|atan|sinh|cosh|tanh)\s*\(/i.test(trimmed);
+
         // Map common text descriptions to actual functions
         const functionMappings = {
             'tangent': 'tan(x)',
@@ -1180,7 +1215,23 @@ class InlineChatVisuals {
             return functionMappings[normalized];
         }
 
-        // Check if the string contains keywords that suggest a function type
+        // Ask the ACTUAL plotter whether this compiles. If it does, it IS the
+        // function — plot exactly what was asked for.
+        //
+        // This has to come before the keyword fallbacks below, because those
+        // match on substrings: "sin(2x)" contains "sin", so it was rewritten to
+        // a bare "sin(x)" and the student saw the wrong curve. Every named
+        // function was hit — 3cos(x)+1, tan(x/2), sqrt(x+3), log(x)+2 all
+        // collapsed to their parent function. Only bare polynomials, matching
+        // no keyword, came through intact.
+        const strippedLhs = trimmed.replace(/^\s*(?:y|[a-z]\s*\(\s*x\s*\))\s*=\s*/i, '');
+        if (hasVariable && window.MathEval && window.MathEval.isPlottable(strippedLhs)) {
+            return strippedLhs;
+        }
+
+        // Prose fallbacks. Reached ONLY when the string didn't compile, so a
+        // substring match here can no longer hijack a real expression — this
+        // is for input like "bounce" or "the sine function", not "sin(2x)".
         const keywordPatterns = [
             { pattern: /bounce|parabola|quadratic|squared/, fn: 'x^2' },
             { pattern: /cubic|cubed/, fn: 'x^3' },
@@ -1201,11 +1252,6 @@ class InlineChatVisuals {
             }
         }
 
-        // A usable graph must be a function of x — reject pure-numeric
-        // strings (e.g. "1783" scraped from a problem number) that would
-        // otherwise render a flat constant line with no meaning.
-        const trimmed = fn.trim();
-        const hasVariable = /x/i.test(trimmed) || /\b(sin|cos|tan|log|ln|exp|sqrt|abs|asin|acos|atan|sinh|cosh|tanh)\s*\(/i.test(trimmed);
         if (!hasVariable) {
             console.warn(`[InlineChatVisuals] Function "${fn}" has no variable, defaulting to x^2`);
             return 'x^2';
@@ -3830,6 +3876,18 @@ class InlineChatVisuals {
             if (!graphEl || !graphEl.id) return;
 
             const graphId = graphEl.id;
+            // A 3D graph shares the container chrome but not the 2D engine, so
+            // its controls have to route to MathGraph3D instead.
+            const is3d = graphEl.classList.contains('icv-graph-3d');
+
+            const spinBtn = graphContainer.querySelector('.icv-spin-3d');
+            if (spinBtn && !spinBtn._clickHandlerAttached) {
+                spinBtn._clickHandlerAttached = true;
+                spinBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleGraph3DSpin(graphId);
+                });
+            }
 
             // Zoom in button
             const zoomInBtn = graphContainer.querySelector('.icv-zoom-in');
@@ -3857,7 +3915,7 @@ class InlineChatVisuals {
                 resetBtn._clickHandlerAttached = true;
                 resetBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    this.resetGraph(graphId);
+                    if (is3d) this.resetGraph3D(graphId); else this.resetGraph(graphId);
                 });
             }
 
@@ -3881,8 +3939,15 @@ class InlineChatVisuals {
             }
         });
 
-        // Initialize standard function graphs (skip multi-graphs already handled above)
-        container.querySelectorAll('.icv-graph:not(.icv-multi-graph)').forEach(graphEl => {
+        // Initialize 3D graphs (own engine — must not fall through to the 2D one)
+        container.querySelectorAll('.icv-graph-3d').forEach(graphEl => {
+            if (graphEl.id && !graphEl._graph3d) {
+                setTimeout(() => this.renderGraph3D(graphEl.id), 50);
+            }
+        });
+
+        // Initialize standard function graphs (skip multi- and 3D graphs, handled above)
+        container.querySelectorAll('.icv-graph:not(.icv-multi-graph):not(.icv-graph-3d)').forEach(graphEl => {
             if (graphEl.id && !graphEl._mathGraph) {
                 setTimeout(() => this.renderGraph(graphEl.id), 50);
             }
@@ -5147,6 +5212,152 @@ class InlineChatVisuals {
     }
 
     // ==========================================
+    // SYSTEM GRAPH — two or more equations on ONE coordinate plane
+    // [SYSTEM_GRAPH:eqs="y=2x+1;y=-x+4",title="Solve by graphing"]
+    // [SYSTEM_GRAPH:eq1=2x+3y=12,eq2=x-y=1]
+    //
+    // Accepts each equation in whatever form the student was given it —
+    // slope-intercept, standard form, a vertical line, even a circle — and
+    // marks where the curves cross, because that intersection is the solution.
+    // ==========================================
+    createSystemGraph(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('system-graph');
+
+        // Equations arrive either as one delimited list or as eq1/eq2/eq3.
+        // Semicolons are the documented separator: commas already separate
+        // tag params, so they can't also separate equations.
+        let raw = params.eqs || params.equations || params.eq || '';
+        let equations = String(raw).split(/[;|]/);
+        for (const key of ['eq1', 'eq2', 'eq3', 'eq4']) {
+            if (params[key]) equations.push(String(params[key]));
+        }
+        equations = equations.map(e => e.trim()).filter(Boolean);
+
+        if (equations.length === 0) {
+            return `<div class="icv-error">⚠️ No equations given to graph</div>`;
+        }
+
+        const xMin = params.xMin ?? params.xmin ?? -10;
+        const xMax = params.xMax ?? params.xmax ?? 10;
+        const yMin = params.yMin ?? params.ymin ?? null;
+        const yMax = params.yMax ?? params.ymax ?? null;
+        const title = params.title || (equations.length > 1
+            ? 'System of equations'
+            : `Graph of ${equations[0]}`);
+
+        const graphConfig = JSON.stringify({
+            type: 'system', equations, xMin, xMax, yMin, yMax
+        }).replace(/"/g, '&quot;');
+
+        const hint = equations.length > 1
+            ? 'Where the lines cross is the solution to the system'
+            : 'Hover to trace the curve';
+
+        return `
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive graph of a system of equations: ${this.escapeHtml(title)}">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-graph icv-multi-graph" id="${id}" data-config="${graphConfig}"></div>
+            <div class="icv-system-info" id="${id}-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">${hint}</div>
+            <div class="icv-controls" role="toolbar" aria-label="Graph controls">
+                <button class="icv-btn icv-zoom-in" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 0.8)" title="Zoom In" aria-label="Zoom in">➕</button>
+                <button class="icv-btn icv-zoom-out" onclick="event.stopPropagation(); window.inlineChatVisuals.zoomGraph('${id}', 1.25)" title="Zoom Out" aria-label="Zoom out">➖</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph('${id}')" title="Reset" aria-label="Reset graph view">↺</button>
+            </div>
+        </div>
+        `;
+    }
+
+    // ==========================================
+    // 3D GRAPH — space curves and surfaces
+    // [GRAPH_3D:preset=helix]
+    // [GRAPH_3D:x=cos(t),y=sin(t),z=t/3,tMin=0,tMax=18.85,title="Helix"]
+    // [GRAPH_3D:mode=surface,z=(x^2-y^2)/4,title="Saddle"]
+    // ==========================================
+    createGraph3D(paramStr) {
+        const params = this.parseParams(paramStr);
+        const id = this.getUniqueId('graph3d');
+
+        const cfg = {};
+        const copy = (key, cast) => {
+            const v = params[key] ?? params[key.toLowerCase()];
+            if (v === undefined || v === '') return;
+            cfg[key] = cast ? cast(v) : String(v);
+        };
+        copy('preset');
+        copy('mode');
+        copy('x'); copy('y'); copy('z');
+        copy('tMin', parseFloat); copy('tMax', parseFloat);
+        copy('xMin', parseFloat); copy('xMax', parseFloat);
+        copy('yMin', parseFloat); copy('yMax', parseFloat);
+        copy('samples', (v) => parseInt(v, 10));
+        copy('color');
+        if (params.spin !== undefined) cfg.spin = String(params.spin) !== 'false';
+
+        // "3d spiral" with no other detail is a helix — the default that makes
+        // the bare request produce the right picture instead of an error.
+        if (!cfg.preset && !cfg.x && !cfg.z) cfg.preset = 'helix';
+
+        const presets = window.MathGraph3DPresets || {};
+        const presetCfg = cfg.preset ? presets[String(cfg.preset).toLowerCase()] : null;
+        const title = params.title || cfg.title || (presetCfg && presetCfg.title) || '3D graph';
+        cfg.title = title;
+
+        const graphConfig = JSON.stringify(cfg).replace(/"/g, '&quot;');
+
+        return `
+        <div class="icv-container icv-graph-container icv-collapsed" id="${id}-wrapper" onclick="window.inlineChatVisuals.expandVisual('${id}-wrapper')" role="region" aria-label="Interactive 3D graph: ${this.escapeHtml(title)}">
+            <div class="icv-expand-hint">
+                <span class="icv-expand-icon">⤢</span>
+                <span>Tap to interact</span>
+            </div>
+            <div class="icv-title">${this.escapeHtml(title)}</div>
+            <div class="icv-graph icv-graph-3d" id="${id}" data-config="${graphConfig}"></div>
+            <div class="icv-3d-info" style="font-size:12px;padding:4px 8px;color:#888;text-align:center;" aria-live="polite">Drag to rotate • scroll to zoom</div>
+            <div class="icv-controls" role="toolbar" aria-label="3D graph controls">
+                <button class="icv-btn icv-spin-3d" onclick="event.stopPropagation(); window.inlineChatVisuals.toggleGraph3DSpin('${id}')" title="Play/pause rotation" aria-label="Play or pause the rotation">⏯</button>
+                <button class="icv-btn icv-reset" onclick="event.stopPropagation(); window.inlineChatVisuals.resetGraph3D('${id}')" title="Reset view" aria-label="Reset the 3D view">↺</button>
+            </div>
+        </div>
+        `;
+    }
+
+    /**
+     * Instantiate a 3D graph after its container is in the DOM.
+     */
+    renderGraph3D(id) {
+        const container = document.getElementById(id);
+        if (!container) return;
+        if (!window.MathGraph3D) {
+            container.innerHTML = `<div class="icv-error">3D graph engine not loaded</div>`;
+            return;
+        }
+        try {
+            if (container._graph3d) { container._graph3d.destroy(); container._graph3d = null; }
+            container.innerHTML = '';
+            const config = JSON.parse((container.dataset.config || '{}').replace(/&quot;/g, '"'));
+            container._graph3d = new window.MathGraph3D(container, config);
+        } catch (error) {
+            console.error(`[InlineChatVisuals] Error rendering 3D graph ${id}:`, error);
+            container.innerHTML = `<div class="icv-error">Could not render: ${error.message}</div>`;
+        }
+    }
+
+    toggleGraph3DSpin(id) {
+        const container = document.getElementById(id);
+        if (container && container._graph3d) container._graph3d.toggleSpin();
+    }
+
+    resetGraph3D(id) {
+        const container = document.getElementById(id);
+        if (container && container._graph3d) container._graph3d.reset();
+    }
+
+    // ==========================================
     // VELOCITY GRAPH — position, velocity, acceleration overlaid
     // [VELOCITY_GRAPH:fn=4*x^3-6*x^2+2*x,xMin=0,xMax=3,title="Position, Velocity & Acceleration"]
     // ==========================================
@@ -5203,9 +5414,43 @@ class InlineChatVisuals {
             }
             container.innerHTML = '';
 
-            const fn = this.normalizeFunctionString(config.fn);
             const xMin = config.xMin ?? -10;
             const xMax = config.xMax ?? 10;
+
+            // A system carries equations, not a single fn — handle it before
+            // normalizeFunctionString, which would coerce an absent fn to x^2.
+            if (config.type === 'system') {
+                const graph = new MathGraph(container, {
+                    xMin, xMax,
+                    yMin: config.yMin ?? null,
+                    yMax: config.yMax ?? null,
+                    interactive: true,
+                    showKeyPoints: true,
+                    showIntersections: true,
+                    equations: config.equations,
+                    animate: false,     // add every curve, then trace them together
+                });
+                const unparsed = config.equations.length - graph.functions.length;
+                graph._autoFitY();
+                graph._detectKeyPoints();
+                graph._detectIntersections();
+                if (graph.config.showInfoBar) graph._buildInfoBar();
+                graph._startAnimation();
+                container._mathGraph = graph;
+                container._originalConfig = { ...config };
+
+                if (unparsed > 0) {
+                    // Silently dropping an equation would leave the student
+                    // reading a system that is missing a line.
+                    const info = document.getElementById(`${id}-info`);
+                    if (info) {
+                        info.textContent = `Couldn't graph ${unparsed} of the ${config.equations.length} equations — check how they're written.`;
+                    }
+                }
+                return;
+            }
+
+            const fn = this.normalizeFunctionString(config.fn);
 
             if (config.type === 'derivative') {
                 // Plot f(x) and numerically compute f'(x)

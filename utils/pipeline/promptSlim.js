@@ -90,6 +90,8 @@ Available for geometry, graphs, inequalities, shapes, and spatial concepts:
 [DIAGRAM:parabola|triangle|number_line|coordinate_plane|angle]
 [REGULAR_POLYGON:sides=N,label="name"]
 [FUNCTION_GRAPH:fn=EXPR,xMin=V,xMax=V]
+[SYSTEM_GRAPH:eqs="y=2x+1;y=-x+4"] — 2+ equations on ONE plane, crossing point marked (semicolon-separated; standard form like 2x+3y=12 is fine)
+[GRAPH_3D:preset=helix] — rotating 3D spiral; also mode=surface,z=EXPR
 [NUMBER_LINE:min=V,max=V,points=[...]]
 [FRACTION:numerator=V,denominator=V,type=circle|bar]
 [AREA_MODEL:a=V,b=V]
