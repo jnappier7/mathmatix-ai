@@ -22,10 +22,18 @@
 
 const { applyVisualGate, defaultValueJudge } = require('../visualGate');
 
-// The function-plotting tag family. These take fn= (a function of x) and are the
+// The function-plotting tag family. These plot a function of x and are the
 // only inline visuals that can leak roots or graph an off-topic function. The
 // geometry/fraction/tile tags don't plot a function and are out of scope here.
-const GRAPH_TAG_NAMES = ['FUNCTION_GRAPH', 'SLIDER_GRAPH', 'DERIVATIVE_GRAPH', 'RATIONAL_GRAPH', 'VELOCITY_GRAPH'];
+//
+// SYSTEM_GRAPH belongs here for the same reason the rest do — graphing the
+// student's own system displays its solution as the crossing point. It carries
+// eqs= rather than fn=, which parseTagParams normalises below.
+//
+// GRAPH_3D is deliberately NOT gated: a space curve in t has no root to give
+// away on the x-axis, and it's an illustration, never the answer to a
+// two-variable problem.
+const GRAPH_TAG_NAMES = ['FUNCTION_GRAPH', 'SLIDER_GRAPH', 'DERIVATIVE_GRAPH', 'RATIONAL_GRAPH', 'VELOCITY_GRAPH', 'SYSTEM_GRAPH'];
 
 // Mirror the frontend's tolerant matcher (inlineChatVisuals.js): tag name,
 // optional whitespace, colon, then params up to the closing bracket.
@@ -72,6 +80,10 @@ function parseTagParams(paramStr) {
         if (val.startsWith('"') && val.endsWith('"') && val.length >= 2) val = val.slice(1, -1);
         if (key === 'fn' && fn === null) fn = val;
         else if (key === 'title' && title === null) title = val;
+        // SYSTEM_GRAPH names its curves eqs="y=2x+1;y=-x+4" (or eq1=/eq2=).
+        // The gate reasons about "what function is being plotted", so give it
+        // the equations in that slot rather than a null it would wave through.
+        else if (fn === null && (key === 'eqs' || key === 'equations' || /^eq\d?$/.test(key))) fn = val;
     }
     return { fn, title };
 }
@@ -136,8 +148,16 @@ async function gateInlineGraphTags({ text, activeProblem, learningState = null, 
             replacements.set(match.raw, '');
         } else if (rendered !== command && rendered.action === 'graph' && rendered.fn) {
             // Transformed (live_experimental) → swap in the safe parallel graph.
-            const cap = rendered.caption ? `,title="${rendered.caption}"` : '';
-            replacements.set(match.raw, `[FUNCTION_GRAPH:fn=${rendered.fn}${cap}]`);
+            // Only single-function tags can be rewritten this way: the gate's
+            // replacement is one fn, and emitting it as a SYSTEM_GRAPH's worth
+            // of equations would silently drop the rest of the system. For a
+            // system, treat "transform" as "remove".
+            if (match.name === 'SYSTEM_GRAPH') {
+                replacements.set(match.raw, '');
+            } else {
+                const cap = rendered.caption ? `,title="${rendered.caption}"` : '';
+                replacements.set(match.raw, `[FUNCTION_GRAPH:fn=${rendered.fn}${cap}]`);
+            }
         }
         // else: allowed (or shadow/off) → no text change.
     }

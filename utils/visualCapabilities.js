@@ -97,6 +97,25 @@ INTERACTIVE GRAPHS (live, explorable graphs):
   IMPORTANT: Always QUOTE the params value with double quotes when using multiple sliders.
 [POINTS:points=(x1,y1),(x2,y2),connect=bool,title="T"] — REQUIRED: include at least one (x,y) pair. Emitting [POINTS] without real coordinates renders nothing.
 
+SYSTEMS OF EQUATIONS — two or more graphs on ONE coordinate plane:
+[SYSTEM_GRAPH:eqs="EQ1;EQ2",title="T"] — plots every equation together, colour-coded with a legend, and marks where they cross.
+  Separate equations with a SEMICOLON (commas already separate tag params).
+  Example: [SYSTEM_GRAPH:eqs="y=2x+1;y=-x+4",title="Solve by graphing"]
+  Write each equation the way the student's problem writes it — no need to solve for y first:
+    - slope-intercept: y=2x+1        - standard form: 2x+3y=12
+    - vertical line:   x=4           - circle:        x^2+y^2=25
+  Use this for ANY system, for comparing two functions (parent vs transformed:
+  eqs="y=x^2;y=(x-3)^2+2"), and for solving-by-graphing. Do NOT emit two separate
+  [FUNCTION_GRAPH] tags for a system — the whole point is one shared plane.
+
+3D GRAPHS (rotating; drag to spin):
+[GRAPH_3D:preset=NAME] — presets: helix, spiral, conical_spiral, flat_spiral, toroidal_spiral, saddle, paraboloid, ripple
+  Example: [GRAPH_3D:preset=helix] — a 3D spiral: a circle in the x-y plane that climbs in z. The dashed shadow on the floor shows the circle it traces from above.
+[GRAPH_3D:x=EXPR,y=EXPR,z=EXPR,tMin=V,tMax=V,title="T"] — any space curve, written in the parameter t
+  Example: [GRAPH_3D:x=cos(t),y=sin(t),z=t/3,tMin=0,tMax=18.85,title="Helix"]
+[GRAPH_3D:mode=surface,z=EXPR,xMin=V,xMax=V,yMin=V,yMax=V,title="T"] — a surface z = f(x,y), in x AND y
+  Example: [GRAPH_3D:mode=surface,z=(x^2-y^2)/4,title="Saddle"]
+
 CALCULUS & ADVANCED GRAPHS (interactive, auto-detect key features):
 [DERIVATIVE_GRAPH:fn=EXPR,xMin=V,xMax=V,title="T"] — overlays f(x) and f′(x) on the same graph with interactive tangent line. Student can hover to see slope at any point. Use when teaching derivatives, power rule, rates of change.
   Example: [DERIVATIVE_GRAPH:fn=x^3-3*x^2+2*x,xMin=-2,xMax=4,title="f(x) and f′(x)"]
@@ -130,6 +149,8 @@ VISUAL MODELS:
 - For derivatives, use [DERIVATIVE_GRAPH] — NOT a generic [FUNCTION_GRAPH] or [SLIDER_GRAPH]. It overlays f(x) and f′(x) with an interactive tangent.
 - For velocity/acceleration problems, use [VELOCITY_GRAPH] — it shows all three functions (position, velocity, acceleration) color-coded.
 - For rational functions with asymptotes/holes, use [RATIONAL_GRAPH] — it auto-detects and labels VA, HA, and holes.
+- For a SYSTEM (two or more equations considered together), use ONE [SYSTEM_GRAPH] — never two [FUNCTION_GRAPH] tags. Two separate graphs put the equations on two separate planes, which hides the intersection that is the whole answer.
+- Write trig functions out in full — [FUNCTION_GRAPH:fn=3*sin(2*x)+1] plots exactly that. The x-axis is automatically labelled in multiples of π and defaults to −2π…2π, so don't "simplify" to a bare sin(x).
 
 INTERACTIVE WHITEBOARD & STEP TOOLS:
 [WHITEBOARD_WRITE:content] — write on the shared whiteboard (student can draw back!)
