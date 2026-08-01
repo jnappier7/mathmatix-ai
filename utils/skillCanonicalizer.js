@@ -21,8 +21,48 @@ const path = require('path');
 const TAX_DIR = path.join(__dirname, '..', 'seeds', 'unified-taxonomy');
 const TAXONOMY_FILE = path.join(TAX_DIR, 'math_taxonomy.json');
 
+const PATHWAY_FILE = 'pathway-crosswalk.json';
+
 let legacyToUnified = null; // Map<legacyId, unifiedId>
 let unifiedIds = null; // Set<unifiedId>
+let pathwayToBank = null; // Map<pathwaySkillId, bankSkillId[]> — LOOKUP ONLY
+
+/**
+ * Load the pathway→bank content map.
+ *
+ * Course modules name their skills in their own vocabulary (`g6-unit-rates`,
+ * `solving-one-step-equations`) while the problem bank is keyed by its own
+ * (`unit-rates`, `one-step-equations`). The reviewed crosswalk records which
+ * bank skill actually holds the content — 424 one-step-equation problems that
+ * a course skill could not otherwise see (coverage audit, 2026-08-01: eight
+ * courses reading 0% while the content existed under a different name).
+ *
+ * Deliberately NOT part of canonicalSkillId: these targets are bank ids, and
+ * routing mastery through them re-keys where mastery is written and read (the
+ * ACT baseline bug pinned by tests/unit/skillCanonicalizerScope.test.js). Extra
+ * CONTENT-lookup candidates are safe — they only ever widen an $in over
+ * problems/skills.
+ */
+function buildPathway() {
+  pathwayToBank = new Map();
+  let cw;
+  try {
+    cw = JSON.parse(fs.readFileSync(path.join(TAX_DIR, PATHWAY_FILE), 'utf8'));
+  } catch {
+    return; // absent (minimal test env) — lookups degrade to today's behaviour
+  }
+  for (const row of cw.rows || []) {
+    if (!row || !row.legacyId || !row.unifiedId) continue;
+    // PRIMARY target only. `alternatives` are the matcher's runner-up guesses,
+    // and they cross topic boundaries — `act-linear-equations` lists
+    // `act-linear-inequalities`, `two-step-equations` lists
+    // `two-step-inequalities`. Honouring them would serve a student practising
+    // equations a page of inequalities, which is worse than serving nothing.
+    const existing = pathwayToBank.get(row.legacyId) || [];
+    if (!existing.includes(row.unifiedId)) existing.push(row.unifiedId);
+    pathwayToBank.set(row.legacyId, existing);
+  }
+}
 
 function build() {
   legacyToUnified = new Map();
@@ -38,9 +78,18 @@ function build() {
   }
 
   // Merge every reviewed crosswalk. Filenames look like `alg1-crosswalk.json`.
+  //
+  // pathway-crosswalk.json is EXCLUDED here by name, not just by the
+  // unified-target guard below. It answers a different question — "which BANK
+  // skill holds content for this pathway skill" — and its targets are bank ids,
+  // so it is a content-lookup table, never a canonicalization. It feeds
+  // skillLookupCandidates() instead (see PATHWAY_FILE below). Excluding it by
+  // name means a bank id that later becomes a real taxonomy id still cannot
+  // sneak into the mastery-keying path.
   let files = [];
   try {
-    files = fs.readdirSync(TAX_DIR).filter((f) => f.endsWith('-crosswalk.json'));
+    files = fs.readdirSync(TAX_DIR)
+      .filter((f) => f.endsWith('-crosswalk.json') && f !== PATHWAY_FILE);
   } catch {
     files = [];
   }
@@ -136,6 +185,7 @@ function isUnifiedSkillId(skillId) {
 function _reset() {
   legacyToUnified = null;
   unifiedIds = null;
+  pathwayToBank = null;
 }
 
 /**
@@ -149,6 +199,7 @@ function _reset() {
 function skillLookupCandidates(skillId) {
   if (!skillId) return [];
   if (!legacyToUnified) build();
+  if (!pathwayToBank) buildPathway();
   const raw = String(skillId);
   const canon = canonicalSkillId(raw);
   const out = [];
@@ -157,6 +208,11 @@ function skillLookupCandidates(skillId) {
   push(raw);
   for (const [legacy, unified] of legacyToUnified.entries()) {
     if (unified === canon) push(legacy);
+  }
+  // Bank skills that hold this pathway skill's content. Appended LAST so the
+  // canonical/legacy forms keep priority; these only widen the content query.
+  for (const id of [raw, canon]) {
+    for (const bankId of pathwayToBank.get(id) || []) push(bankId);
   }
   return out;
 }

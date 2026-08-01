@@ -83,3 +83,45 @@ describe('expandSkillIds / matchSkillDoc (the sweep helpers)', () => {
     expect(expandSkillIds([unified])).toContain(legacy);
   });
 });
+
+// ── Pathway→bank content lookup (coverage audit, 2026-08-01) ──────────────
+//
+// Course modules name skills in their own vocabulary ("g6-unit-rates",
+// "solving-one-step-equations"); the problem bank uses its own ("unit-rates",
+// "one-step-equations"). seeds/unified-taxonomy/pathway-crosswalk.json records
+// which bank skill holds the content — 89 reviewed rows that were inert,
+// because the file is (correctly) barred from the mastery-keying path and
+// nothing else read it. Eight courses audited at 0% coverage while the content
+// sat there under a different name; feeding these rows to CONTENT LOOKUP ONLY
+// took algebra-1 from 16% to 39% with nothing generated.
+describe('pathway→bank targets widen content lookup', () => {
+  const { skillLookupCandidates, canonicalSkillId } = require('../../utils/skillCanonicalizer');
+
+  test('a course skill can see the bank skill that holds its problems', () => {
+    expect(skillLookupCandidates('g6-variables-both-sides'))
+      .toContain('equations-with-variables-both-sides');
+    expect(skillLookupCandidates('solving-one-step-equations')).toContain('one-step-equations');
+  });
+
+  test('canonical/legacy forms keep priority — bank ids are appended last', () => {
+    const c = skillLookupCandidates('g6-variables-both-sides');
+    expect(c[0]).toBe('g6-variables-both-sides');
+    expect(c.indexOf('equations-with-variables-both-sides')).toBeGreaterThan(0);
+  });
+
+  test('ONLY the reviewed primary target — runner-up "alternatives" stay out', () => {
+    // act-linear-equations lists act-linear-inequalities among its alternatives;
+    // honouring those would serve equations practice a page of inequalities.
+    const c = skillLookupCandidates('act-linear-equations');
+    expect(c).toContain('linear-equations');
+    expect(c).not.toContain('act-linear-inequalities');
+  });
+
+  test('THE BOUNDARY: mastery keying is untouched — canonicalSkillId ignores pathway rows', () => {
+    // The ACT baseline bug: canonicalSkillId('act-linear-equations') returning
+    // the bank id re-keyed where mastery was written vs read, so a student could
+    // ace a skill on the baseline and be taught it from scratch anyway.
+    expect(canonicalSkillId('act-linear-equations')).toBe('act-linear-equations');
+    expect(canonicalSkillId('g6-variables-both-sides')).toBe('g6-variables-both-sides');
+  });
+});
