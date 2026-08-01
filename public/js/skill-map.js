@@ -285,21 +285,156 @@
       + (skill.formalName && skill.formalName !== skill.label ? ' · ' + skill.formalName : '');
     $('d-state').textContent = stateSentence(skill);
 
-    var proofs = $('d-proofs');
-    proofs.innerHTML = '';
-    M.rungOptions(skill).forEach(function (opt) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'proof';
-      b.innerHTML = '<h3>' + escapeHtml(opt.label) + '</h3><p>' + escapeHtml(opt.hint) + '</p>';
-      b.addEventListener('click', function () { chooseRung(opt.key, skill); });
-      proofs.appendChild(b);
-    });
+    renderLadder(skill);
 
     hide('runner'); hide('teach');
     $('drawer').classList.add('open');
     $('drawer').setAttribute('aria-hidden', 'false');
+    focusCamera(skillId);
   }
+
+  /**
+   * Push the board toward the skill you opened, so the drawer reads as a closer
+   * LOOK at a place on the map rather than a separate screen you were taken to.
+   *
+   * This is the one idea worth borrowing from Prezi, and it earns its keep here
+   * in a way it never did there: Prezi's camera moved through arbitrary space,
+   * so the motion said nothing. These coordinates mean something — the column is
+   * a strand, the row is a course level, and the vertical thread through a
+   * column IS the pattern the product is about. Moving the camera along it is
+   * the argument, not decoration.
+   *
+   * Implemented as ONE transform on the board container. Animating 348 cells
+   * individually would drop frames on the school Chromebooks this has to run on;
+   * a single composited transform costs the same whether the board has 6 nodes
+   * or 600.
+   */
+  var CAMERA_ZOOM = 1.35;
+  function focusCamera(skillId) {
+    var board = $('board');
+    var cellEl = document.querySelector('.cell[data-skill-id="' + cssEscape(skillId) + '"]');
+    if (!board || !cellEl || prefersReducedMotion()) return;
+
+    var view = board.getBoundingClientRect();
+    var target = cellEl.getBoundingClientRect();
+
+    // Where the cell sits inside the board, in untransformed board coordinates.
+    var cx = (target.left + target.width / 2) - view.left;
+    var cy = (target.top + target.height / 2) - view.top;
+
+    // Keep the focused cell where it already is on screen while scaling around
+    // it, so the board grows *from* the skill rather than sliding under it.
+    board.style.transformOrigin = cx + 'px ' + cy + 'px';
+    board.classList.add('is-focused');
+    board.style.transform = 'scale(' + CAMERA_ZOOM + ')';
+
+    cellEl.classList.add('is-camera-target');
+  }
+
+  function releaseCamera() {
+    var board = $('board');
+    if (!board) return;
+    board.style.transform = '';
+    board.classList.remove('is-focused');
+    Array.prototype.forEach.call(document.querySelectorAll('.cell.is-camera-target'), function (c) {
+      c.classList.remove('is-camera-target');
+    });
+  }
+
+  function prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /**
+   * The ladder — three rungs, bottom to top, with the student standing on one.
+   *
+   * Rendered top-down in the DOM (teach → prove → learn) so it READS as a climb:
+   * what is left is above you, what you earned is below. Reversing it in markup
+   * rather than with flex-direction keeps tab order matching visual order.
+   */
+  function renderLadder(skill) {
+    var host = $('d-proofs');
+    host.innerHTML = '';
+
+    var rungs = M.ladderRungs(skill);
+    var ladder = el('ol', 'ladder');
+    ladder.setAttribute('aria-label', 'Your progress on this skill');
+
+    rungs.slice().reverse().forEach(function (rung) {
+      var li = el('li', 'rung is-' + rung.status);
+
+      var mark = el('span', 'rung-mark');
+      mark.setAttribute('aria-hidden', 'true');
+      // done gets a check; granted gets a hollow ring it must not share with
+      // done, because the whole point is that nothing was demonstrated.
+      mark.textContent = rung.status === 'done' ? '✓' : String(rung.ordinal);
+
+      var body = el('div', 'rung-body');
+      body.innerHTML =
+        '<span class="rung-label">' + escapeHtml(rung.label) + '</span>'
+        + '<span class="rung-hint">' + escapeHtml(rung.hint) + '</span>';
+
+      if (rung.action) {
+        var go = document.createElement('button');
+        go.type = 'button';
+        go.className = 'rung-go';
+        go.textContent = rung.status === 'granted' ? 'Prove it' : 'Start';
+        go.setAttribute('aria-label', rung.label + ' — ' + rung.hint);
+        go.addEventListener('click', function () { chooseRung(rung.action, skill); });
+        body.appendChild(go);
+      }
+
+      li.appendChild(mark);
+      li.appendChild(body);
+      // Screen readers get the status in words; sighted users get it from form.
+      li.setAttribute('aria-label', rung.label + ' — ' + LADDER_STATUS_WORD[rung.status]);
+      ladder.appendChild(li);
+    });
+
+    host.appendChild(ladder);
+  }
+
+  /**
+   * Advance the rung on screen, then let the reload confirm it.
+   *
+   * The server has already said yes by the time this runs, so this is not a
+   * guess — it is the UI catching up without waiting for a refetch. Doing it
+   * optimistically is what makes the moment feel like a consequence of the
+   * student's work rather than a page update that happened to follow it.
+   *
+   * @param {string} rungKey  which rung was earned
+   * @param {number} cleared  skills closed beneath it by the cascade
+   */
+  function celebrateRung(rungKey, cleared) {
+    var li = document.querySelector('.ladder .rung.is-current, .ladder .rung.is-granted');
+    var ladder = document.querySelector('.ladder');
+    if (!li) return;
+
+    li.classList.remove('is-current', 'is-granted');
+    li.classList.add('is-done', 'just-earned');
+    var mark = li.querySelector('.rung-mark');
+    if (mark) mark.textContent = '✓';
+    var go = li.querySelector('.rung-go');
+    if (go) go.remove();
+
+    // Unlock the rung above, so the student SEES what their work opened rather
+    // than being told about it.
+    var next = li.previousElementSibling; // rendered top-down: previous = higher
+    if (next && next.classList.contains('is-locked')) {
+      next.classList.remove('is-locked');
+      next.classList.add('is-current', 'just-unlocked');
+    }
+
+    if (ladder && cleared > 0) ladder.classList.add('cascaded');
+    if (rungKey === 'teach' && ladder) ladder.classList.add('topped-out');
+  }
+
+  var LADDER_STATUS_WORD = {
+    done: 'completed',
+    granted: 'cleared from above, not yet demonstrated',
+    current: 'available now',
+    locked: 'locked'
+  };
 
   function stateSentence(skill) {
     switch (skill.state) {
@@ -314,6 +449,7 @@
   function closeDrawer() {
     $('drawer').classList.remove('open');
     $('drawer').setAttribute('aria-hidden', 'true');
+    releaseCamera();
     state.current = null;
     state.teach = null;
   }
@@ -414,8 +550,12 @@
       out.className = 'runner-result ' + (res.passed ? 'good' : 'miss');
       if (res.passed) {
         var cleared = (res.clearedFromAbove || []).length;
+        // The one moment that gets the full treatment. Ambient juice turns into
+        // noise and costs the struggling student most; a rung actually earned is
+        // the rare thing worth making loud.
+        celebrateRung('challenge', cleared);
         toast(cleared ? '+' + cleared : 'Proved', cleared ? 'cleared from above' : 'rung 2 of 3');
-        setTimeout(function () { closeDrawer(); load(); }, 1400);
+        setTimeout(function () { closeDrawer(); load(); }, 1900);
       }
     }).catch(function () {
       var out = $('runner-result');

@@ -119,6 +119,75 @@
   }
 
   /**
+   * The three rungs, as a ladder you can see yourself standing on.
+   *
+   * rungOptions() answers "which buttons do I show". This answers the question
+   * the student actually has — "where am I, and what is left" — which the flat
+   * pair of buttons never did. The page is called *learn it, prove it, teach
+   * it*; until now that progression existed only in the subtitle.
+   *
+   * Rung status vocabulary:
+   *   done     earned, behind you
+   *   granted  filled WITHOUT demonstration (state 'above' — prerequisite
+   *            closure gave it to you). Deliberately its own status, never
+   *            'done': the board must not imply evidence that does not exist.
+   *   current  the rung you are on and can act on now
+   *   locked   ahead of you, with a reason
+   *
+   * @returns {Array<{key,label,ordinal,status,hint,action}>} always length 3
+   */
+  function ladderRungs(skill) {
+    const state = skill && skill.state;
+
+    // [learnStatus, proveStatus, teachStatus] per board state.
+    const SHAPE = {
+      locked:  ['locked',  'locked',  'locked'],
+      open:    ['current', 'current', 'locked'],
+      learned: ['done',    'current', 'locked'],
+      above:   ['locked',  'granted', 'locked'],
+      proved:  ['done',    'done',    'current'],
+      taught:  ['done',    'done',    'done']
+    };
+    const shape = SHAPE[state] || SHAPE.locked;
+
+    const LEARN_LABEL = state === 'learned' ? 'Keep working' : 'Learn it';
+    const PROVE_LABEL = state === 'above' ? 'Prove it directly' : 'Prove it';
+
+    return [
+      {
+        key: 'learn', ordinal: 1, label: LEARN_LABEL, status: shape[0],
+        hint: shape[0] === 'done'
+          ? 'You worked through this one.'
+          : 'Work through it with your tutor.',
+        action: shape[0] === 'current' ? 'learn' : null
+      },
+      {
+        key: 'challenge', ordinal: 2, label: PROVE_LABEL, status: shape[1],
+        hint: shape[1] === 'granted'
+          // Say plainly that the system granted it. A student who reads "proved"
+          // over work they never did learns the board lies.
+          ? 'Cleared from above — you have not shown this one yet. Prove it directly to unlock teaching.'
+          : shape[1] === 'done'
+            ? 'Proved with a clean challenge run.'
+            : 'Five problems, no hints, one shot.',
+        // 'granted' is still actionable: proving directly is the whole point.
+        action: (shape[1] === 'current' || shape[1] === 'granted') ? 'challenge' : null
+      },
+      {
+        key: 'teach', ordinal: 3, label: 'Teach it back', status: shape[2],
+        hint: shape[2] === 'done'
+          ? 'You taught it. Top of the ladder.'
+          : state === 'above'
+            ? 'Prove this one directly first — teaching needs demonstrated work.'
+            : shape[2] === 'current'
+              ? 'Explain it to a confused student. The rarest rung.'
+              : 'Prove it first.',
+        action: shape[2] === 'current' ? 'teach' : null
+      }
+    ];
+  }
+
+  /**
    * The proximity line: "2 skills from closing Proportional Reasoning at ALG1."
    *
    * Returns null when there is nothing honest to say. A band is only a hook when
@@ -226,6 +295,7 @@
     isOwned: isOwned,
     isActionable: isActionable,
     rungOptions: rungOptions,
+    ladderRungs: ladderRungs,
     hookText: hookText,
     strandName: strandName,
     summarize: summarize,

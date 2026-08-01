@@ -27,6 +27,15 @@
     --dta: #D46BA6;
 }
 
+
+/* `hidden` must actually hide. Any class rule that sets `display` outranks the
+   UA sheet's `[hidden] { display: none }`, so .runner (display:flex) left BOTH
+   the challenge form and the teach-back box permanently visible in the drawer —
+   an empty "Prove it" form and an empty textarea sitting under a ladder saying
+   teaching is locked. .path/.ladder/.board set display too; this covers the
+   whole file rather than the one element that happened to show the symptom. */
+[hidden] { display: none !important; }
+
 @media (prefers-color-scheme: light) {
     :root {
         --sm-bg: #EDF0F4; --sm-board: #F7F9FB; --sm-panel: #FFFFFF;
@@ -195,15 +204,149 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
 .dhead .meta { font-size: 11px; letter-spacing: .06em; color: var(--sm-faint); }
 .d-state { font-size: 14px; color: var(--sm-muted); }
 
-.proofs { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
-.proof {
-    background: var(--sm-board); border: 1px solid var(--sm-line); border-radius: 4px;
-    padding: 15px; text-align: left; cursor: pointer; color: var(--sm-ink);
-    transition: border-color .2s, transform .2s;
+/* ── THE LADDER ─────────────────────────────────────────────────────────
+   learn it -> prove it -> teach it, as something you can see yourself
+   standing on. Rendered top-down (teach at the top) so what is left is
+   ABOVE you and what you earned is below — the page is called "your
+   climb", and until now that progression lived only in the subtitle.
+
+   Four statuses, each with its own form so they never have to be read:
+     done     solid disc + check   earned, behind you
+     granted  dashed ring          the SYSTEM filled this, you did not
+     current  accent ring + glow   where you stand, and can act
+     locked   hollow, dimmed       ahead of you
+   `granted` must never look like `done`. A student who sees "proved"
+   over work they never did learns that the board lies. */
+
+.ladder {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
-.proof:hover { border-color: var(--sm-muted); transform: translateY(-2px); }
-.proof h3 { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
-.proof p { font-size: 12.5px; color: var(--sm-muted); line-height: 1.45; }
+
+/* The spine, threaded behind the marks. Inset by half a mark so it starts
+   and ends at the centre of the first and last rung rather than floating
+   past them. */
+.ladder::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 22px;
+    bottom: 22px;
+    width: 2px;
+    background: var(--sm-line);
+    border-radius: 2px;
+}
+
+.rung {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 0;
+}
+
+.rung-mark {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    background: var(--sm-panel);
+    border: 2px solid var(--sm-line);
+    color: var(--sm-faint);
+    transition: border-color .25s ease, background-color .25s ease, color .25s ease;
+}
+
+.rung-body { display: flex; flex-direction: column; gap: 3px; padding-top: 4px; min-width: 0; }
+.rung-label { font-size: 15px; font-weight: 600; color: var(--sm-ink); }
+.rung-hint { font-size: 12.5px; line-height: 1.45; color: var(--sm-muted); }
+
+/* done — filled, quiet, unmistakably behind you */
+.rung.is-done .rung-mark {
+    background: var(--sm-good);
+    border-color: var(--sm-good);
+    color: var(--sm-bg);
+}
+.rung.is-done .rung-label { color: var(--sm-muted); }
+
+/* granted — the system's doing, not the student's. Dashed, uncoloured,
+   and it keeps its NUMBER rather than a check: nothing was completed. */
+.rung.is-granted .rung-mark {
+    border-style: dashed;
+    border-color: var(--sm-warn);
+    color: var(--sm-warn);
+    background: transparent;
+}
+.rung.is-granted .rung-hint { color: var(--sm-warn); }
+
+/* current — where you stand. The only rung with a halo. */
+.rung.is-current .rung-mark {
+    border-color: var(--sm-ink);
+    color: var(--sm-ink);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--sm-ink) 12%, transparent);
+}
+
+/* locked — present, so the shape of what is left is visible, but recessive */
+.rung.is-locked { opacity: .5; }
+.rung.is-locked .rung-label { font-weight: 500; }
+
+/* Fill the spine up to the highest earned rung. The ladder renders
+   top-down, so "everything after the last earned rung" is everything
+   BELOW it — which is exactly the segment that should read as climbed. */
+.rung.is-done ~ .rung .rung-mark { border-color: var(--sm-line); }
+
+.rung-go {
+    align-self: flex-start;
+    margin-top: 7px;
+    background: var(--sm-ink);
+    color: var(--sm-bg);
+    border: 0;
+    border-radius: 4px;
+    padding: 9px 18px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .16s ease, opacity .16s ease;
+}
+.rung-go:hover { opacity: .88; }
+.rung-go:active { transform: translateY(1px); }
+.rung.is-granted .rung-go { background: var(--sm-warn); color: #1B1206; }
+
+/* Climb-in: rungs settle from below, bottom one first, so opening the
+   drawer reads as arriving at your place on the ladder. Purely additive —
+   the ladder is fully usable before it finishes. */
+@keyframes rung-settle {
+    from { opacity: 0; transform: translateY(7px); }
+    to   { opacity: 1; transform: none; }
+}
+.drawer.open .rung { animation: rung-settle .34s cubic-bezier(.22,1,.36,1) backwards; }
+.drawer.open .rung:nth-child(1) { animation-delay: .10s; }
+.drawer.open .rung:nth-child(2) { animation-delay: .05s; }
+.drawer.open .rung:nth-child(3) { animation-delay: 0s; }
+/* keep locked rungs recessive after the animation resolves */
+.drawer.open .rung.is-locked { animation-name: rung-settle-dim; }
+@keyframes rung-settle-dim {
+    from { opacity: 0; transform: translateY(7px); }
+    to   { opacity: .5; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .drawer.open .rung { animation: none; }
+    .rung-go { transition: none; }
+}
 
 /* ── proof runners ──────────────────────────────────────── */
 .runner {
@@ -364,4 +507,63 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
         border-left: 0; border-top: 1px solid var(--sm-line);
         padding: 12px 14px;
     }
+}
+
+/* ── CAMERA ─────────────────────────────────────────────────────────────
+   Opening a skill pushes the board toward it, so the drawer reads as a
+   closer look at a place on the map rather than a different screen. One
+   composited transform on the container: the cost is the same whether the
+   board holds 6 cells or 600, which matters on school hardware. */
+.board {
+    transition: transform .52s cubic-bezier(.22, 1, .36, 1), filter .52s ease;
+    will-change: transform;
+}
+.board.is-focused {
+    /* Pull the surroundings back so the eye lands on the target without the
+       rest of the map disappearing — the context IS the point. */
+    filter: saturate(.45) brightness(.82);
+}
+.board.is-focused .cell.is-camera-target {
+    filter: none;
+    box-shadow: 0 0 0 2px var(--sm-ink), 0 0 0 6px color-mix(in srgb, var(--sm-ink) 22%, transparent);
+    border-radius: 2px;
+}
+
+/* ── EARNING A RUNG ─────────────────────────────────────────────────────
+   The single loud moment. Everything else on this page stays calm: ambient
+   celebration becomes wallpaper, and it reads worst to the student who is
+   struggling. A rung actually earned is rare enough to be worth it. */
+@keyframes rung-earned {
+    0%   { transform: scale(1); }
+    38%  { transform: scale(1.22); }
+    100% { transform: scale(1); }
+}
+@keyframes rung-ring {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--sm-good) 55%, transparent); }
+    100% { box-shadow: 0 0 0 18px color-mix(in srgb, var(--sm-good) 0%, transparent); }
+}
+.rung.just-earned .rung-mark {
+    animation: rung-earned .5s cubic-bezier(.22, 1, .36, 1), rung-ring .85s ease-out;
+}
+/* The rung above lights up as a consequence — the student sees what their
+   work opened instead of being told about it. */
+@keyframes rung-unlocked {
+    from { opacity: .5; transform: translateY(4px); }
+    to   { opacity: 1;  transform: none; }
+}
+.rung.just-unlocked { animation: rung-unlocked .45s .22s cubic-bezier(.22, 1, .36, 1) backwards; }
+
+/* Cascade: proving this one closed skills beneath it. The spine runs down
+   to say so — the payoff is that the ladder got shorter everywhere. */
+@keyframes spine-cascade {
+    from { background: var(--sm-good); }
+    to   { background: var(--sm-line); }
+}
+.ladder.cascaded::before { animation: spine-cascade 1.5s .2s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+    .board { transition: none; }
+    .rung.just-earned .rung-mark,
+    .rung.just-unlocked,
+    .ladder.cascaded::before { animation: none; }
 }

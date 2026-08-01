@@ -229,3 +229,60 @@ describe('pieSlices — area, not radius', () => {
     expect(all.find((s) => s.key === 'QNT').fillRadius).toBe(1);
   });
 });
+
+describe('ladderRungs', () => {
+  const ladder = (state) => M.ladderRungs({ state });
+  const statuses = (state) => ladder(state).map((r) => r.status);
+
+  test('always three rungs, learn -> prove -> teach', () => {
+    expect(ladder('open').map((r) => r.key)).toEqual(['learn', 'challenge', 'teach']);
+    expect(ladder('taught')).toHaveLength(3);
+    expect(ladder(undefined)).toHaveLength(3);
+  });
+
+  test('walks the climb as the student earns it', () => {
+    expect(statuses('open')).toEqual(['current', 'current', 'locked']);
+    expect(statuses('learned')).toEqual(['done', 'current', 'locked']);
+    expect(statuses('proved')).toEqual(['done', 'done', 'current']);
+    expect(statuses('taught')).toEqual(['done', 'done', 'done']);
+  });
+
+  test('cleared-from-above is GRANTED, never done', () => {
+    // The board must not imply evidence that does not exist: closure filled
+    // this rung, the student did not demonstrate it.
+    const [, prove] = ladder('above');
+    expect(prove.status).toBe('granted');
+    expect(prove.status).not.toBe('done');
+    expect(prove.hint).toMatch(/not shown this one yet/i);
+  });
+
+  test('granted is still actionable — proving directly is the point', () => {
+    expect(ladder('above')[1].action).toBe('challenge');
+  });
+
+  test('teaching stays locked on a granted rung, with the reason', () => {
+    const teach = ladder('above')[2];
+    expect(teach.status).toBe('locked');
+    expect(teach.action).toBeNull();
+    expect(teach.hint).toMatch(/prove this one directly first/i);
+  });
+
+  test('only actionable rungs carry an action', () => {
+    ['locked', 'open', 'learned', 'above', 'proved', 'taught'].forEach((state) => {
+      ladder(state).forEach((r) => {
+        if (r.action) expect(['current', 'granted']).toContain(r.status);
+        else expect(['done', 'locked']).toContain(r.status);
+      });
+    });
+  });
+
+  test('a locked skill offers nothing', () => {
+    expect(statuses('locked')).toEqual(['locked', 'locked', 'locked']);
+    expect(ladder('locked').every((r) => r.action === null)).toBe(true);
+  });
+
+  test('the first rung reads as continuing once work has started', () => {
+    expect(ladder('open')[0].label).toBe('Learn it');
+    expect(ladder('learned')[0].label).toBe('Keep working');
+  });
+});
