@@ -261,8 +261,25 @@ npm test               # jest --coverage  (unit + integration)
 npm run test:unit | test:integration
 npm run lint           # eslint
 npm run loadtest:chat  # k6 (also :screener :auth :stress :chat:peak)
-npm run seed:playground / seed:test / seed:skills   # seed data
+npm run seed:playground / seed:test / seed:skills   # seed accounts / test data
+npm run seed:all       # ⭐ every skill catalog + item bank, in dependency order
+npm run seed:all:dry   # preflight + plan, no writes
 ```
+
+- **Seeding skills and items → `npm run seed:all`** (`scripts/seedAll.js`). It runs the nine
+  seeders in the one order that works and then the `answer.equivalents` backfill, verifies row
+  counts against the payloads, and exits non-zero if the DB came up short. Idempotent — every step
+  is a source-scoped upsert, so re-running is safe. `--fresh` makes each bank clear **its own**
+  prior rows first; `--only=`/`--skip=` narrow the run; `--list` names the steps.
+  Two orderings are load-bearing, not stylistic: **skills before items** (`seedBankTopupItems`
+  aborts on a `skillId` that isn't in the Skill collection) and **the backfill last** (each Fable
+  bank re-upserts `answer.value` from JSON, dropping the typography equivalents — backfill before
+  them and students get marked wrong for correct answers again). Both are pinned by
+  `tests/unit/seedAllPlan.test.js`.
+  **`scripts/seed-skills.js` is NOT in the plan and must never be** — it runs `Skill.deleteMany({})`,
+  wiping the whole catalog down to ~40 Ready-for-Algebra skills. Empty-DB bootstrap only.
+  The pathway crosswalk (`seeds/unified-taxonomy/pathway-crosswalk*.json`) needs no seeding —
+  `utils/skillCanonicalizer.js` reads it from disk at runtime, so it ships with the code.
 
 - **CI** (`.github/workflows/ci.yml`): test + lint + build on PRs to `main`. Coverage thresholds are
   low (~25%) — raise for new critical code (auth, IRT, mastery, billing).
