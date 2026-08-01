@@ -139,6 +139,71 @@
     return found ? found.name : key;
   }
 
+  /**
+   * Pie slices — one per strand, sized equally, filled by ownership.
+   *
+   * ALEKS's pie, and the reason it beats a "0 / 17,500 mastery points" readout:
+   * it shows what you OWN filling up, not a deficit counting down. Same numbers,
+   * opposite message, and the difference matters most to the student who is
+   * behind. Equal-width slices (not weighted by skill count) so a strand with
+   * few skills still reads as a real part of the subject.
+   */
+  function pieSlices(skills) {
+    const totals = strandTotals(skills);
+    const share = 360 / STRANDS.length;
+    let cursor = 0;
+    return STRANDS.map(function (strand) {
+      const t = totals[strand.key] || { total: 0, owned: 0 };
+      const pct = t.total ? t.owned / t.total : 0;
+      const slice = {
+        key: strand.key,
+        name: strand.name,
+        owned: t.owned,
+        total: t.total,
+        pct: Math.round(pct * 100),
+        startAngle: cursor,
+        endAngle: cursor + share,
+        // How far out from the centre this wedge is filled, as a fraction of
+        // the full radius. sqrt, NOT pct: a wedge's area grows with the SQUARE
+        // of its radius, so filling to r = pct draws 45% ownership as roughly
+        // 20% of the visible wedge. That reads as "you have barely started"
+        // when the student is nearly halfway — the exact deficit framing this
+        // pie exists to avoid. sqrt makes filled AREA equal the fraction owned.
+        fillRadius: Math.sqrt(pct)
+      };
+      cursor += share;
+      return slice;
+    });
+  }
+
+  /**
+   * The next few skills the student can actually start, nearest first.
+   *
+   * Deliberately NOT the whole map. Showing all 348 nodes is the thing that
+   * makes a skill graph unusable on a phone and paralysing anywhere: the
+   * question a student has is "what do I do next", not "what exists". `open`
+   * means every prerequisite is already done, so each of these is genuinely
+   * startable right now — nothing here is aspirational.
+   *
+   * @param {Array} skills      map payload skills[]
+   * @param {string} nearestId  nearest.nextSkillId — the one to lead with
+   * @param {number} limit      how many to surface (default 5)
+   */
+  function availableNow(skills, nearestId, limit) {
+    const max = typeof limit === 'number' ? limit : 5;
+    const open = (skills || []).filter(function (s) { return s && s.state === 'open'; });
+
+    // The closure engine's recommendation goes first; the rest keep catalog
+    // order, which already runs foundational -> advanced within a strand.
+    const lead = [];
+    const rest = [];
+    open.forEach(function (s) {
+      if (nearestId && s.skillId === nearestId) lead.push(s);
+      else rest.push(s);
+    });
+    return lead.concat(rest).slice(0, max);
+  }
+
   /** Headline counts. `open` is what they can start right now, which is the ask. */
   function summarize(payload) {
     const c = (payload && payload.counts) || {};
@@ -163,6 +228,8 @@
     rungOptions: rungOptions,
     hookText: hookText,
     strandName: strandName,
-    summarize: summarize
+    summarize: summarize,
+    pieSlices: pieSlices,
+    availableNow: availableNow
   };
 }));

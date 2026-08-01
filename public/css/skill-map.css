@@ -243,8 +243,125 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
     * { animation: none !important; transition: none !important; }
 }
 
+
+/* ── PATH: the pie + what you can start now ─────────────────────────────
+   Placed above the full board because it answers the two questions a
+   student actually arrives with — "how am I doing" and "what do I do
+   next". The board answers "what exists", which can wait. */
+.path {
+    display: grid;
+    grid-template-columns: minmax(200px, 260px) 1fr;
+    gap: 28px;
+    align-items: start;
+    background: var(--sm-board);
+    border: 1px solid var(--sm-line);
+    border-radius: 6px;
+    padding: 22px;
+    margin: 0 0 18px;
+}
+
+.pie-wrap { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.pie-wrap svg { width: 100%; max-width: 220px; height: auto; display: block; }
+
+/* Track = the ground still to cover. Kept faint: it is context, not a
+   scoreboard of what the student is missing. */
+.pie-track { fill: var(--hue); opacity: .13; }
+.pie-fill  { fill: var(--hue); opacity: .92; }
+.pie-spoke { stroke: var(--sm-board); stroke-width: 2; }
+
+.pie-legend {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 5px 12px;
+    font-size: 11px;
+    color: var(--sm-muted);
+}
+.pie-key { display: flex; align-items: center; gap: 5px; }
+.pie-key i { width: 8px; height: 8px; border-radius: 2px; background: var(--hue); flex: 0 0 auto; }
+.pie-key b { color: var(--sm-ink); font-weight: 600; letter-spacing: .04em; }
+
+.avail h2 { margin: 0; font-size: 15px; letter-spacing: .01em; }
+.avail-sub { margin: 3px 0 14px; font-size: 12px; color: var(--sm-faint); }
+.avail-empty { margin: 0; font-size: 13px; color: var(--sm-muted); }
+
+.avail-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+.avail-item {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    background: var(--sm-panel);
+    border: 1px solid var(--sm-line);
+    border-radius: 5px;
+    overflow: hidden;
+}
+.avail-item.is-next { border-color: var(--sm-good); }
+
+.avail-main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 14px;
+    background: transparent;
+    border: 0;
+    color: var(--sm-ink);
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    min-width: 0;
+}
+.avail-main:hover { background: rgba(127, 160, 190, .07); }
+.up-next {
+    align-self: flex-start;
+    font-size: 9px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--sm-good); margin-bottom: 2px;
+}
+.avail-label { font-size: 14px; font-weight: 600; }
+.avail-meta { font-size: 11px; color: var(--sm-faint); }
+
+/* The test-out. Sized as a real target, not a footnote: reaching it is the
+   entire point of this surface. */
+.avail-quiz {
+    flex: 0 0 auto;
+    display: flex; flex-direction: column; justify-content: center; gap: 1px;
+    padding: 10px 16px;
+    min-height: 48px;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid var(--sm-line);
+    color: var(--sm-ink);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+.avail-quiz:hover { background: rgba(79, 192, 138, .12); }
+.avail-quiz b { font-size: 13px; font-weight: 600; color: var(--sm-good); }
+.avail-quiz span { font-size: 10px; color: var(--sm-faint); }
+
+.fullmap { margin: 0 0 10px; }
+.fullmap > summary {
+    cursor: pointer; font-size: 13px; color: var(--sm-muted);
+    padding: 8px 0; list-style: revert;
+}
+.fullmap > summary:hover { color: var(--sm-ink); }
+
 @media (max-width: 768px) {
     .top { flex-direction: column; align-items: flex-start; }
     .cell { width: 13px; height: 13px; }
     .colhead .nm { display: none; }
+
+    /* Pie over list, both full width — the phone layout this page never had. */
+    .path { grid-template-columns: 1fr; gap: 18px; padding: 16px; }
+    .pie-wrap svg { max-width: 180px; }
+
+    /* The quiz button stacks UNDER the label rather than shrinking to a sliver
+       beside it; on a narrow screen a side-by-side split leaves both targets
+       too small to hit confidently. */
+    .avail-item { flex-direction: column; align-items: stretch; gap: 0; }
+    .avail-quiz {
+        flex-direction: row; align-items: baseline; gap: 6px;
+        border-left: 0; border-top: 1px solid var(--sm-line);
+        padding: 12px 14px;
+    }
 }

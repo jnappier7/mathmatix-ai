@@ -73,10 +73,136 @@
     $('t-taught').textContent = counts.taught;
     $('t-open').textContent = counts.open;
 
+    renderPie();
+    renderAvailable();
     renderTowers();
     renderHook();
+    $('path').hidden = false;
+    $('fullmap').hidden = false;
     $('board').hidden = false;
     $('legend').hidden = false;
+  }
+
+  // ── the pie ─────────────────────────────────────────────────────────
+  // Shows what the student OWNS, filling outward. Deliberately not a
+  // "0 / 17,500 points" readout: same data, but a big zero against a huge
+  // number frames learning as debt before they have done anything, and it
+  // lands hardest on the student who is furthest behind.
+  var PIE = { cx: 110, cy: 110, r: 92 };
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function polar(cx, cy, r, deg) {
+    // -90 so the first wedge starts at 12 o'clock rather than 3 o'clock.
+    var rad = (deg - 90) * Math.PI / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+
+  function wedgePath(r, startAngle, endAngle) {
+    if (r <= 0) return '';
+    var a = polar(PIE.cx, PIE.cy, r, startAngle);
+    var b = polar(PIE.cx, PIE.cy, r, endAngle);
+    var large = (endAngle - startAngle) > 180 ? 1 : 0;
+    return 'M ' + PIE.cx + ' ' + PIE.cy
+      + ' L ' + a.x.toFixed(2) + ' ' + a.y.toFixed(2)
+      + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + b.x.toFixed(2) + ' ' + b.y.toFixed(2)
+      + ' Z';
+  }
+
+  function svgEl(tag, attrs) {
+    var n = document.createElementNS(SVG_NS, tag);
+    Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+
+  function renderPie() {
+    var slices = M.pieSlices(state.skills);
+    var svg = $('pie');
+    var legend = $('pie-legend');
+
+    // Keep the <title> — it is the accessible name for the whole figure.
+    Array.prototype.slice.call(svg.querySelectorAll('g,path,circle,text')).forEach(function (n) {
+      n.parentNode.removeChild(n);
+    });
+    legend.innerHTML = '';
+
+    slices.forEach(function (s) {
+      var cls = 'strand-' + s.key.toLowerCase();
+      // Track: the whole wedge, faint — this is the ground still to cover.
+      svg.appendChild(svgEl('path', {
+        d: wedgePath(PIE.r, s.startAngle, s.endAngle),
+        class: 'pie-track ' + cls
+      }));
+      // Fill: how far out this strand is owned.
+      if (s.fillRadius > 0) {
+        svg.appendChild(svgEl('path', {
+          d: wedgePath(PIE.r * s.fillRadius, s.startAngle, s.endAngle),
+          class: 'pie-fill ' + cls
+        }));
+      }
+      var item = el('span', 'pie-key ' + cls);
+      item.innerHTML = '<i aria-hidden="true"></i>'
+        + '<b>' + escapeHtml(s.key) + '</b>'
+        + '<span>' + s.owned + '/' + s.total + '</span>';
+      item.title = s.name + ' — ' + s.pct + '%';
+      legend.appendChild(item);
+    });
+
+    // Hairlines between wedges, drawn last so they sit on top.
+    slices.forEach(function (s) {
+      var p = polar(PIE.cx, PIE.cy, PIE.r, s.startAngle);
+      svg.appendChild(svgEl('line', {
+        x1: PIE.cx, y1: PIE.cy, x2: p.x.toFixed(2), y2: p.y.toFixed(2),
+        class: 'pie-spoke'
+      }));
+    });
+  }
+
+  // ── available now ───────────────────────────────────────────────────
+  function renderAvailable() {
+    var nearestId = state.nearest && state.nearest.nextSkillId;
+    var items = M.availableNow(state.skills, nearestId);
+    var list = $('avail-list');
+    list.innerHTML = '';
+
+    $('avail-empty').hidden = items.length > 0;
+
+    items.forEach(function (skill, i) {
+      var li = document.createElement('li');
+      li.className = 'avail-item' + (i === 0 && nearestId === skill.skillId ? ' is-next' : '');
+
+      var main = document.createElement('button');
+      main.type = 'button';
+      main.className = 'avail-main';
+      main.innerHTML =
+        (i === 0 && nearestId === skill.skillId ? '<span class="up-next">Up next</span>' : '')
+        + '<span class="avail-label">' + escapeHtml(skill.label) + '</span>'
+        + '<span class="avail-meta">' + escapeHtml(skill.courseLevel) + ' · '
+        + escapeHtml(M.strandName(skill.strand)) + '</span>';
+      // Tapping the row is the LEARN path — straight to the tutor on this skill.
+      main.addEventListener('click', function () {
+        window.location.href = '/chat.html?skill=' + encodeURIComponent(skill.skillId);
+      });
+
+      // The whole reason this surface exists. Test-out was previously reachable
+      // only by SAYING so in chat (detectTestOutIntent), which means a student
+      // had to already know the feature existed. Walking someone through a
+      // lesson they have already mastered is the thing this prevents, so the
+      // button is one tap from landing on the page — no drawer, no menu.
+      var quiz = document.createElement('button');
+      quiz.type = 'button';
+      quiz.className = 'avail-quiz';
+      quiz.innerHTML = '<b>I know this</b><span>Take the quiz</span>';
+      quiz.setAttribute('aria-label', 'I already know ' + skill.label + ' — take the quiz to prove it');
+      quiz.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openSkill(skill.skillId);
+        startChallenge(skill);
+      });
+
+      li.appendChild(main);
+      li.appendChild(quiz);
+      list.appendChild(li);
+    });
   }
 
   function renderTowers() {
