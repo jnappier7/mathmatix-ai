@@ -2691,6 +2691,11 @@ router.get('/map', isAuthenticated, async (req, res) => {
         formalName: s.displayName,
         strand: s.strand,
         courseLevel: s.courseLevel,
+        // Per-skill grade ("4", "6–7"). courseLevel and gradeBand both lump
+        // grades 3-5 into one bucket, so without this the board cannot say
+        // "you finished 4th grade, you're onto 5th" — a student would watch
+        // an entire year of work move nothing.
+        grade: s.grade || null,
         state,
         // Only surface a proof route for work the student can actually attempt.
         canAttempt: state === 'open' || state === 'learned',

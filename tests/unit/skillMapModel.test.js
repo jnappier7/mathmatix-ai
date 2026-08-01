@@ -132,36 +132,74 @@ describe('summarize', () => {
   });
 });
 
-describe('pieSlices', () => {
-  const skills = [
-    { skillId: 'a', strand: 'QNT', state: 'proved' },
-    { skillId: 'b', strand: 'QNT', state: 'taught' },
-    { skillId: 'c', strand: 'QNT', state: 'open' },
-    { skillId: 'd', strand: 'QNT', state: 'locked' },
-    { skillId: 'e', strand: 'PRP', state: 'open' },
-  ];
+describe('strandProgress — the climb, in grades', () => {
+  // Grades 3 and 4 fully owned in QNT, grade 5 untouched. This is exactly the
+  // sentence the columns have to be able to say: "I finished all of the 4th
+  // grade skills, now I am moving up to 5th."
+  const skills = [];
+  [[3, 3], [4, 3], [5, 0]].forEach(([g, owned]) => {
+    for (let i = 0; i < 3; i++) {
+      skills.push({
+        skillId: `q${g}${i}`, strand: 'QNT', courseLevel: 'ELEM',
+        grade: String(g), state: i < owned ? 'proved' : 'open',
+      });
+    }
+  });
+  for (let i = 0; i < 3; i++) {
+    skills.push({ skillId: `p${i}`, strand: 'PRP', courseLevel: 'ELEM', grade: '3', state: 'open' });
+  }
 
-  test('fills each slice by what the student OWNS', () => {
-    const byKey = Object.fromEntries(M.pieSlices(skills).map((s) => [s.key, s]));
-    // proved + taught count as owned; open and locked do not.
-    expect(byKey.QNT).toMatchObject({ owned: 2, total: 4, pct: 50 });
-    expect(byKey.PRP).toMatchObject({ owned: 0, total: 1, pct: 0 });
+  test('finishing a grade moves you to the next one', () => {
+    const qnt = M.strandProgress(skills).find((c) => c.key === 'QNT');
+    expect(qnt.reachedGrade).toBe(4);
+    expect(qnt.clearedReached).toBe(true);
+    expect(qnt.workingGrade).toBe(5);
+    expect(qnt.workingLabel).toBe('5th');
   });
 
-  test('gives every strand an equal wedge covering the full circle', () => {
-    // Equal width, not weighted by skill count: a small strand is still a real
-    // part of the subject, and a student should never see one hair-thin.
-    const slices = M.pieSlices(skills);
-    expect(slices).toHaveLength(M.STRANDS.length);
-    const widths = slices.map((s) => s.endAngle - s.startAngle);
-    expect(new Set(widths).size).toBe(1);
-    expect(slices[0].startAngle).toBe(0);
-    expect(slices[slices.length - 1].endAngle).toBeCloseTo(360);
+  test('a partly-done grade keeps you IN it', () => {
+    const partial = skills.map((s) => (s.skillId === 'q41' ? { ...s, state: 'open' } : s));
+    const qnt = M.strandProgress(partial).find((c) => c.key === 'QNT');
+    expect(qnt.clearedReached).toBe(false);
+    expect(qnt.workingGrade).toBe(4);
   });
 
-  test('an empty strand is 0%, never NaN', () => {
-    const byKey = Object.fromEntries(M.pieSlices([]).map((s) => [s.key, s]));
-    expect(byKey.DTA).toMatchObject({ owned: 0, total: 0, pct: 0, fillRadius: 0 });
+  test('nothing owned is 0 fill, never negative', () => {
+    // reachedIndex is -1 with nothing owned, and (-1 + 0)/n is NEGATIVE — a
+    // below-zero column for the student who has done the least.
+    const prp = M.strandProgress(skills).find((c) => c.key === 'PRP');
+    expect(prp.reachedGrade).toBeNull();
+    expect(prp.workingLabel).toBeNull();
+    expect(prp.fill).toBe(0);
+  });
+
+  test('fill never exceeds a full column', () => {
+    const all = skills.map((s) => ({ ...s, state: 'proved' }));
+    M.strandProgress(all).forEach((c) => {
+      expect(c.fill).toBeGreaterThanOrEqual(0);
+      expect(c.fill).toBeLessThanOrEqual(1);
+    });
+  });
+
+  test('every strand gets a column, in board order', () => {
+    const cols = M.strandProgress(skills);
+    expect(cols).toHaveLength(M.STRANDS.length);
+    expect(cols.map((c) => c.key)).toEqual(M.STRANDS.map((s) => s.key));
+  });
+
+  test('grade ranges parse, both dash characters', () => {
+    const ranged = [
+      { skillId: 'a', strand: 'QNT', grade: '6–7', state: 'proved' },
+      { skillId: 'b', strand: 'QNT', grade: '10-11', state: 'open' },
+    ];
+    const qnt = M.strandProgress(ranged).find((c) => c.key === 'QNT');
+    expect(qnt.reachedGrade).toBe(6); // low end
+  });
+
+  test('skills with no grade are skipped, not crashed on', () => {
+    const messy = [{ skillId: 'x', strand: 'QNT', state: 'proved' }, { skillId: 'y', strand: 'QNT', grade: 'K', state: 'proved' }];
+    expect(() => M.strandProgress(messy)).not.toThrow();
+    expect(M.strandProgress(messy).find((c) => c.key === 'QNT').fill).toBe(0);
   });
 });
 
@@ -203,30 +241,6 @@ describe('availableNow', () => {
     // non-open skill into a list whose entire promise is "startable now".
     expect(M.availableNow(skills, 'proved-1').map((s) => s.skillId))
       .toEqual(['open-1', 'open-2', 'open-3']);
-  });
-});
-
-describe('pieSlices — area, not radius', () => {
-  test('filled AREA matches the fraction owned', () => {
-    // A wedge's area grows with the square of its radius. Filling to r = pct
-    // would draw a half-finished strand as ~a quarter full, which reads as
-    // "you have barely started" — the deficit framing the pie exists to avoid.
-    const half = [
-      { skillId: '1', strand: 'QNT', state: 'proved' },
-      { skillId: '2', strand: 'QNT', state: 'open' },
-    ];
-    const qnt = M.pieSlices(half).find((s) => s.key === 'QNT');
-    expect(qnt.pct).toBe(50);
-    // area fraction = fillRadius^2, and that is what should equal 0.5
-    expect(qnt.fillRadius ** 2).toBeCloseTo(0.5, 6);
-  });
-
-  test('the extremes still pin to empty and full', () => {
-    const none = M.pieSlices([{ skillId: '1', strand: 'QNT', state: 'open' }]);
-    expect(none.find((s) => s.key === 'QNT').fillRadius).toBe(0);
-
-    const all = M.pieSlices([{ skillId: '1', strand: 'QNT', state: 'proved' }]);
-    expect(all.find((s) => s.key === 'QNT').fillRadius).toBe(1);
   });
 });
 

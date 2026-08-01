@@ -11,7 +11,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Climb | MATHMATIX AI</title>
-    <link rel="stylesheet" href="/css/skill-map.css?v=20260801b">
+    <link rel="stylesheet" href="/css/skill-map.css?v=20260801c">
     <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
 </head>
 <body>
@@ -46,16 +46,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <div id="status" class="status" role="status"></div>
 
-        <!-- What you own, and what you can start right now. The pie answers
+        <!-- Shown only when arriving straight from the Starting Point. -->
+        <div class="placement-note" id="placement-note" hidden>
+            <p><b>This is a starting guess, not a verdict.</b>
+            A test can miss what you know — a bad day, a careless slip, a topic
+            you learned under a different name. Anything below that you already
+            know, prove it and skip straight past it.</p>
+        </div>
+
+        <!-- What you own, and what you can start right now. The columns answer
              "how am I doing" and the list answers "what do I do next"; the
              full board below answers "what exists", which is a different and
              much less urgent question. -->
         <section class="path" id="path" hidden>
-            <figure class="pie-wrap">
-                <svg id="pie" viewBox="0 0 220 220" role="img" aria-labelledby="pie-title">
-                    <title id="pie-title">Your progress across the six strands</title>
-                </svg>
-                <figcaption class="pie-legend" id="pie-legend"></figcaption>
+            <figure class="climb-wrap">
+                <div class="climb" id="climb" aria-label="Progress by strand"></div>
+                <figcaption>Six strands. The columns fill as you own them.</figcaption>
             </figure>
 
             <div class="avail">
@@ -133,7 +139,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="js/storage-utils.js"></script>
     <script src="js/csrf.js"></script>
     <script src="js/logout.js"></script>
-    <script src="js/skillMapModel.js?v=20260801b"></script>
-    <script src="js/skill-map.js?v=20260801b"></script>
+    <script src="js/skillMapModel.js?v=20260801c"></script>
+    <script src="js/skill-map.js?v=20260801c"></script>
 </body>
 </html>

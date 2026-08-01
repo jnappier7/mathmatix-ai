@@ -387,7 +387,7 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
 }
 
 
-/* ── PATH: the pie + what you can start now ─────────────────────────────
+/* ── PATH: strand columns + what you can start now ──────────────────────
    Placed above the full board because it answers the two questions a
    student actually arrives with — "how am I doing" and "what do I do
    next". The board answers "what exists", which can wait. */
@@ -403,25 +403,54 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
     margin: 0 0 18px;
 }
 
-.pie-wrap { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.pie-wrap svg { width: 100%; max-width: 220px; height: auto; display: block; }
+.climb-wrap { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.climb-wrap figcaption { font-size: 11px; color: var(--sm-faint); text-align: center; }
 
-/* Track = the ground still to cover. Kept faint: it is context, not a
-   scoreboard of what the student is missing. */
-.pie-track { fill: var(--hue); opacity: .13; }
-.pie-fill  { fill: var(--hue); opacity: .92; }
-.pie-spoke { stroke: var(--sm-board); stroke-width: 2; }
-
-.pie-legend {
+/* Six columns filling bottom-up — the same vertical thread as the strand
+   towers below, which is the relationship the product is built on. Shows
+   what the student OWNS filling up, never a deficit counting down. */
+.climb {
     display: grid;
-    grid-template-columns: repeat(3, auto);
-    gap: 5px 12px;
-    font-size: 11px;
-    color: var(--sm-muted);
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    align-items: end;
 }
-.pie-key { display: flex; align-items: center; gap: 5px; }
-.pie-key i { width: 8px; height: 8px; border-radius: 2px; background: var(--hue); flex: 0 0 auto; }
-.pie-key b { color: var(--sm-ink); font-weight: 600; letter-spacing: .04em; }
+.climb-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+.climb-track {
+    position: relative;
+    height: 132px;
+    background: var(--sm-locked);
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+}
+.climb-fill {
+    width: 100%;
+    background: var(--hue);
+    border-radius: 3px 3px 0 0;
+    /* Fills up from the floor on load — the climb, in miniature. */
+    transition: height .75s cubic-bezier(.22, 1, .36, 1);
+}
+.climb-key { display: flex; justify-content: center; line-height: 1.2; }
+.climb-key b { font-size: 10.5px; font-weight: 700; letter-spacing: .05em; color: var(--hue); }
+
+/* The grade readout. Sits ABOVE the column because it is the headline, not a
+   footnote — it is the thing a student and a parent both look for. */
+.climb-level {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--sm-muted);
+    letter-spacing: .01em;
+}
+.climb-level.is-cleared { color: var(--hue); }
+
+@media (prefers-reduced-motion: reduce) {
+    .climb-fill { transition: none; }
+}
 
 .avail h2 { margin: 0; font-size: 15px; letter-spacing: .01em; }
 .avail-sub { margin: 3px 0 14px; font-size: 12px; color: var(--sm-faint); }
@@ -496,7 +525,8 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
 
     /* Pie over list, both full width — the phone layout this page never had. */
     .path { grid-template-columns: 1fr; gap: 18px; padding: 16px; }
-    .pie-wrap svg { max-width: 180px; }
+    .climb-track { height: 104px; }
+    .climb-level { font-size: 10px; }
 
     /* The quiz button stacks UNDER the label rather than shrinking to a sliver
        beside it; on a narrow screen a side-by-side split leaves both targets
@@ -567,3 +597,19 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
     .rung.just-unlocked,
     .ladder.cascaded::before { animation: none; }
 }
+
+/* Placement framing — shown only on arrival from the Starting Point.
+   A screener is an ESTIMATE with error bars, and a student who had a bad day
+   gets placed under work they can already do. Test-out is the correction for
+   that, so the one moment it must be obvious is the moment right after
+   placement, when the "ready for you now" list is full of things they find
+   insulting. */
+.placement-note {
+    background: color-mix(in srgb, var(--sm-good) 9%, var(--sm-board));
+    border: 1px solid color-mix(in srgb, var(--sm-good) 34%, transparent);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 0 0 16px;
+}
+.placement-note p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--sm-ink); }
+.placement-note b { font-weight: 700; }

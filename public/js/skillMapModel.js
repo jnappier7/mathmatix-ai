@@ -209,39 +209,108 @@
   }
 
   /**
-   * Pie slices — one per strand, sized equally, filled by ownership.
+   * Per-strand progress for the summary columns.
    *
-   * ALEKS's pie, and the reason it beats a "0 / 17,500 mastery points" readout:
-   * it shows what you OWN filling up, not a deficit counting down. Same numbers,
-   * opposite message, and the difference matters most to the student who is
-   * behind. Equal-width slices (not weighted by skill count) so a strand with
-   * few skills still reads as a real part of the subject.
+   * Six columns filling bottom-up, echoing the strand towers on the board
+   * below — the same vertical thread the product's whole "see the patterns"
+   * argument rests on. Shows what the student OWNS, filling up.
+   *
+   * Deliberately NOT a "0 / 17,500 points" readout: same data, but a big zero
+   * against a huge number frames learning as debt before the student has done
+   * anything, and it lands hardest on whoever is furthest behind.
+   *
+   * `fill` is linear here, and can be: a column's filled AREA is proportional
+   * to its height, so height = fraction owned is already honest. (A radial
+   * fill would need sqrt, because area grows with the square of the radius —
+   * the reason this is not drawn as wedges.)
    */
-  function pieSlices(skills) {
+  // Grade strings from the taxonomy are not always a single number: "4",
+  // "6–7", "3-5", and BOTH dash characters appear in the data. Low end on
+  // purpose — owning a "3–4" skill means grade-3 work for certain and grade-4
+  // maybe, and claiming the higher one overstates what the student has shown.
+  // Mirrors utils/gradeBanding.lowGrade for the server side.
+  function lowGrade(grade) {
+    if (grade == null) return null;
+    const first = String(grade).trim().split(/[\u2013-]/)[0].trim();
+    return /^\d+$/.test(first) ? parseInt(first, 10) : null;
+  }
+
+  function gradeLabel(n) {
+    if (n == null || isNaN(n)) return null;
+    const suffix = (n % 100 >= 11 && n % 100 <= 13) ? 'th'
+      : (['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+    return n + suffix;
+  }
+
+  function strandProgress(skills) {
     const totals = strandTotals(skills);
-    const share = 360 / STRANDS.length;
-    let cursor = 0;
+
+    // Band by GRADE, not course level. courseLevel "ELEM" and gradeBand "K-5"
+    // both cover grades 3-5, so a student finishing an entire grade of work
+    // would see their column sit exactly where it was.
+    const allGrades = [];
+    (skills || []).forEach(function (s) {
+      const g = lowGrade(s && s.grade);
+      if (g != null && allGrades.indexOf(g) === -1) allGrades.push(g);
+    });
+    allGrades.sort(function (a, b) { return a - b; });
+
+    // owned/total per (strand, grade)
+    const cell = new Map();
+    (skills || []).forEach(function (s) {
+      if (!s || !s.strand) return;
+      const g = lowGrade(s.grade);
+      if (g == null) return;
+      const k = s.strand + '|' + g;
+      const c = cell.get(k) || { owned: 0, total: 0 };
+      c.total += 1;
+      if (isOwned(s.state)) c.owned += 1;
+      cell.set(k, c);
+    });
+
     return STRANDS.map(function (strand) {
       const t = totals[strand.key] || { total: 0, owned: 0 };
-      const pct = t.total ? t.owned / t.total : 0;
-      const slice = {
+
+      // The highest grade with anything owned, and how far through it. A grade
+      // is only "cleared" when every skill in it is owned — that is what makes
+      // "finished 4th, moving up to 5th" a true statement rather than a nudge.
+      let reachedIndex = -1;
+      let withinReached = 0;
+      allGrades.forEach(function (g, i) {
+        const c = cell.get(strand.key + '|' + g);
+        if (c && c.owned > 0) {
+          reachedIndex = i;
+          withinReached = c.total ? c.owned / c.total : 0;
+        }
+      });
+
+      const reachedGrade = reachedIndex >= 0 ? allGrades[reachedIndex] : null;
+      const clearedReached = withinReached >= 1;
+      // Once a grade is finished, the student is working at the NEXT one.
+      const workingGrade = clearedReached && reachedIndex + 1 < allGrades.length
+        ? allGrades[reachedIndex + 1]
+        : reachedGrade;
+
+      // Linear: a column's filled area is proportional to its height, so this
+      // is already honest. Clamped low too — with nothing owned reachedIndex is
+      // -1, and (-1 + 0) / n is negative.
+      const fill = allGrades.length
+        ? Math.max(0, Math.min(1, (reachedIndex + withinReached) / allGrades.length))
+        : 0;
+
+      return {
         key: strand.key,
         name: strand.name,
         owned: t.owned,
         total: t.total,
-        pct: Math.round(pct * 100),
-        startAngle: cursor,
-        endAngle: cursor + share,
-        // How far out from the centre this wedge is filled, as a fraction of
-        // the full radius. sqrt, NOT pct: a wedge's area grows with the SQUARE
-        // of its radius, so filling to r = pct draws 45% ownership as roughly
-        // 20% of the visible wedge. That reads as "you have barely started"
-        // when the student is nearly halfway — the exact deficit framing this
-        // pie exists to avoid. sqrt makes filled AREA equal the fraction owned.
-        fillRadius: Math.sqrt(pct)
+        pct: t.total ? Math.round((t.owned / t.total) * 100) : 0,
+        grades: allGrades,
+        reachedGrade: reachedGrade,
+        clearedReached: clearedReached,
+        workingGrade: workingGrade,
+        workingLabel: gradeLabel(workingGrade),
+        fill: fill
       };
-      cursor += share;
-      return slice;
     });
   }
 
@@ -299,7 +368,7 @@
     hookText: hookText,
     strandName: strandName,
     summarize: summarize,
-    pieSlices: pieSlices,
+    strandProgress: strandProgress,
     availableNow: availableNow
   };
 }));

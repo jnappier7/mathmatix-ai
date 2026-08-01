@@ -73,87 +73,69 @@
     $('t-taught').textContent = counts.taught;
     $('t-open').textContent = counts.open;
 
-    renderPie();
+    renderClimb();
     renderAvailable();
     renderTowers();
     renderHook();
+    // Only after the Starting Point: a screener is an estimate, and the kid who
+    // had a bad day is exactly the one who needs to know they can prove out.
+    if (/[?&]from=placement\b/.test(window.location.search)) {
+      $('placement-note').hidden = false;
+    }
     $('path').hidden = false;
     $('fullmap').hidden = false;
     $('board').hidden = false;
     $('legend').hidden = false;
   }
 
-  // ── the pie ─────────────────────────────────────────────────────────
-  // Shows what the student OWNS, filling outward. Deliberately not a
-  // "0 / 17,500 points" readout: same data, but a big zero against a huge
-  // number frames learning as debt before they have done anything, and it
-  // lands hardest on the student who is furthest behind.
-  var PIE = { cx: 110, cy: 110, r: 92 };
-  var SVG_NS = 'http://www.w3.org/2000/svg';
+  // ── strand progress columns ──────────────────────────────────────────
+  // Six columns filling bottom-up, echoing the strand towers on the board.
+  // Shows what the student OWNS, filling up — deliberately not a
+  // "0 / 17,500 points" readout, which frames learning as debt before they
+  // have done anything and reads worst to whoever is furthest behind.
+  //
+  // Height is linear: a column's filled area is proportional to its height,
+  // so height = fraction owned is already honest.
+  function renderClimb() {
+    var cols = M.strandProgress(state.skills);
+    var host = $('climb');
+    host.innerHTML = '';
 
-  function polar(cx, cy, r, deg) {
-    // -90 so the first wedge starts at 12 o'clock rather than 3 o'clock.
-    var rad = (deg - 90) * Math.PI / 180;
-    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-  }
+    cols.forEach(function (c) {
+      var col = el('div', 'climb-col strand-' + c.key.toLowerCase());
 
-  function wedgePath(r, startAngle, endAngle) {
-    if (r <= 0) return '';
-    var a = polar(PIE.cx, PIE.cy, r, startAngle);
-    var b = polar(PIE.cx, PIE.cy, r, endAngle);
-    var large = (endAngle - startAngle) > 180 ? 1 : 0;
-    return 'M ' + PIE.cx + ' ' + PIE.cy
-      + ' L ' + a.x.toFixed(2) + ' ' + a.y.toFixed(2)
-      + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + b.x.toFixed(2) + ' ' + b.y.toFixed(2)
-      + ' Z';
-  }
+      // The grade readout, above the column, because it is the answer to the
+      // question the student actually asks. "8 of 20" cannot tell you whether
+      // those eight were third grade or twelfth.
+      var level = el('div', 'climb-level');
+      level.textContent = c.workingLabel || '—';
+      if (c.clearedReached) level.classList.add('is-cleared');
 
-  function svgEl(tag, attrs) {
-    var n = document.createElementNS(SVG_NS, tag);
-    Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
-    return n;
-  }
+      var track = el('div', 'climb-track');
+      var fill = el('div', 'climb-fill');
+      fill.style.height = '0%';
+      track.appendChild(fill);
 
-  function renderPie() {
-    var slices = M.pieSlices(state.skills);
-    var svg = $('pie');
-    var legend = $('pie-legend');
+      var key = el('div', 'climb-key');
+      key.innerHTML = '<b>' + escapeHtml(c.key) + '</b>';
 
-    // Keep the <title> — it is the accessible name for the whole figure.
-    Array.prototype.slice.call(svg.querySelectorAll('g,path,circle,text')).forEach(function (n) {
-      n.parentNode.removeChild(n);
-    });
-    legend.innerHTML = '';
+      col.appendChild(level);
+      col.appendChild(track);
+      col.appendChild(key);
 
-    slices.forEach(function (s) {
-      var cls = 'strand-' + s.key.toLowerCase();
-      // Track: the whole wedge, faint — this is the ground still to cover.
-      svg.appendChild(svgEl('path', {
-        d: wedgePath(PIE.r, s.startAngle, s.endAngle),
-        class: 'pie-track ' + cls
-      }));
-      // Fill: how far out this strand is owned.
-      if (s.fillRadius > 0) {
-        svg.appendChild(svgEl('path', {
-          d: wedgePath(PIE.r * s.fillRadius, s.startAngle, s.endAngle),
-          class: 'pie-fill ' + cls
-        }));
-      }
-      var item = el('span', 'pie-key ' + cls);
-      item.innerHTML = '<i aria-hidden="true"></i>'
-        + '<b>' + escapeHtml(s.key) + '</b>'
-        + '<span>' + s.owned + '/' + s.total + '</span>';
-      item.title = s.name + ' — ' + s.pct + '%';
-      legend.appendChild(item);
-    });
+      var say = c.reachedGrade == null
+        ? c.name + ': not started'
+        : c.clearedReached
+          ? c.name + ': finished grade ' + c.reachedGrade + ', working at grade ' + c.workingGrade
+          : c.name + ': working at grade ' + c.reachedGrade;
+      col.title = say + ' — ' + c.owned + ' of ' + c.total + ' skills';
+      col.setAttribute('role', 'img');
+      col.setAttribute('aria-label', say);
 
-    // Hairlines between wedges, drawn last so they sit on top.
-    slices.forEach(function (s) {
-      var p = polar(PIE.cx, PIE.cy, PIE.r, s.startAngle);
-      svg.appendChild(svgEl('line', {
-        x1: PIE.cx, y1: PIE.cy, x2: p.x.toFixed(2), y2: p.y.toFixed(2),
-        class: 'pie-spoke'
-      }));
+      host.appendChild(col);
+      requestAnimationFrame(function () {
+        fill.style.height = Math.round(c.fill * 100) + '%';
+      });
     });
   }
 
