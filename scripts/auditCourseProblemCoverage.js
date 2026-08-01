@@ -24,9 +24,29 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const dns = require('dns');
 const mongoose = require('mongoose');
 const Problem = require('../models/problem');
 const { skillLookupCandidates } = require('../utils/skillCanonicalizer');
+
+/**
+ * mongodb+srv:// needs an SRV DNS lookup, and Node's resolver (c-ares) returns
+ * EBADRESP against some local resolvers even when `dig` on the SAME machine
+ * resolves the record fine (reproduced on macOS, 2026-08-01 — it blocked every
+ * local run of this script). Probe once and fall back to public resolvers so
+ * the audit runs locally instead of requiring a deploy + Render shell.
+ * No-op for non-SRV URIs and when the default resolver works.
+ */
+async function ensureSrvResolvable(uri) {
+  if (!/^mongodb\+srv:\/\//.test(uri || '')) return;
+  const host = uri.split('@').pop().split('/')[0].split('?')[0];
+  const srv = `_mongodb._tcp.${host}`;
+  const probe = () => new Promise((res) => dns.resolveSrv(srv, (err) => res(!err)));
+  if (await probe()) return;
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+  console.log(`[dns] local resolver failed the SRV lookup for ${host} — using public resolvers`);
+  if (!(await probe())) console.warn('[dns] public resolvers failed too; the connection will likely fail');
+}
 
 const MIN_BANK = 5;
 const DETAIL = process.argv.includes('--detail');
@@ -108,6 +128,7 @@ async function bankCount(skillId) {
 }
 
 async function main() {
+  await ensureSrvResolvable(process.env.MONGO_URI);
   await mongoose.connect(process.env.MONGO_URI);
   const resourcesDir = path.join(__dirname, '../public/resources');
   const pathways = fs.readdirSync(resourcesDir).filter((f) => f.endsWith('-pathway.json'));
