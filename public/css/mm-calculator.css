@@ -1,0 +1,209 @@
+/* ============================================================
+   mm-calculator.css
+   The app's ONE calculator. Visual language lifted from the ACT practice-test
+   runner's built-in calculator, which was the version students could actually
+   read and use — the two it replaces were TI-84 emulations with modal 2nd/MODE
+   layers that nobody discovered.
+
+   Position-agnostic on purpose: this file styles the CARD only. Each host
+   decides where it lives — `.mmc-dock` beside the ACT test card, `.mmc-float`
+   over the chat, plain flow on /calculator.html. That separation is what let
+   one component serve three surfaces.
+   ============================================================ */
+
+.mmc {
+  width: 296px;
+  max-width: 100%;
+  background: #fff;
+  color: #1b1b2b;
+  border-radius: 16px;
+  box-shadow: 0 24px 70px rgba(30, 20, 70, 0.35);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.mmc.is-open { display: flex; }
+
+.mmc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+}
+
+.mmc-title {
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.mmc-tools { display: flex; align-items: center; gap: 8px; }
+
+.mmc-deg {
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #fff;
+  border-radius: 7px;
+  padding: 3px 9px;
+}
+.mmc-deg.is-rad { background: rgba(255, 255, 255, 0.32); }
+
+.mmc-x {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.mmc-disp {
+  padding: 12px 14px;
+  text-align: right;
+  background: #faf9ff;
+  border-bottom: 1px solid #efedf8;
+}
+
+.mmc-expr {
+  min-height: 15px;
+  font-size: 13px;
+  color: #8a86a0;
+  word-break: break-all;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+}
+
+.mmc-res {
+  font-size: 27px;
+  font-weight: 700;
+  color: #1b1b2b;
+  min-height: 32px;
+  word-break: break-all;
+  line-height: 1.15;
+}
+
+.mmc-keys {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: 10px;
+}
+
+.mmc-k {
+  appearance: none;
+  border: 0;
+  border-radius: 11px;
+  padding: 0;
+  height: 44px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #f1f0f7;
+  color: #26233a;
+  transition: filter 0.1s, transform 0.04s;
+  touch-action: manipulation;
+}
+.mmc-k:active { filter: brightness(0.9); transform: translateY(1px); }
+.mmc-k.fn { background: #efeafb; color: #6b54b0; font-size: 13px; font-weight: 700; }
+.mmc-k.op { background: #e5dcfb; color: #5b3ea8; font-size: 18px; }
+.mmc-k.eq { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 19px; }
+.mmc-k.clr { background: #fbe4e4; color: #c0392b; }
+.mmc-k.zero { grid-column: span 3; }
+
+/* Send-to-chat: only the chat host passes a handler, so the row is absent
+   everywhere else rather than present-and-dead. */
+.mmc-send {
+  margin: 0 10px 10px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #eef2ff;
+  color: #4338ca;
+}
+.mmc-send:active { filter: brightness(0.94); }
+
+@media (prefers-color-scheme: dark) {
+  .mmc { background: #1c1a2b; color: #ece9f7; }
+  .mmc-disp { background: #211e32; border-color: #302c45; }
+  .mmc-res { color: #f2f0fb; }
+  .mmc-expr { color: #9a96b2; }
+  .mmc-k { background: #26233a; color: #e7e4f4; }
+  .mmc-k.fn { background: #2b2547; color: #c3b4ff; }
+  .mmc-k.op { background: #332a52; color: #c3b4ff; }
+  .mmc-k.clr { background: #3a1c1c; color: #ff8a8a; }
+  .mmc-send { background: #2b2547; color: #c3b4ff; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mmc-k { transition: none; }
+  .mmc-k:active { transform: none; }
+}
+
+/* ---- Host: docked (ACT practice test) ------------------------------------
+   A sibling of the test card inside the runner's centred overlay, so it sits
+   beside the card with no fixed-position clipping. */
+@media (max-width: 700px) {
+  .mmc-dock { width: 100%; order: 2; }
+}
+
+/* ---- Host: floating (chat) -----------------------------------------------
+   Pinned to the right on desktop, a bottom sheet on phones (thumbs are at the
+   bottom of the screen, and a centred dialog fights the keyboard). */
+.mmc-float {
+  position: fixed;
+  top: 50%;
+  right: 24px;
+  transform: translateY(-50%);
+  z-index: 10000;
+}
+
+.mmc-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 24, 0.35);
+  z-index: 9999;
+}
+
+@media (max-width: 768px) {
+  .mmc-float {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 18px 18px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mmc-float .mmc-k { height: 48px; } /* thumb targets */
+}
+
+/* ---- Host: standalone page (/calculator.html) ---------------------------- */
+.mmc-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f4f2fb;
+}
+@media (prefers-color-scheme: dark) {
+  .mmc-page { background: #14121f; }
+}

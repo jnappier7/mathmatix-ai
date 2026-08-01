@@ -29,11 +29,15 @@ let revealUndo = null; // undoes a surface we opened for the preview, else null
 // Reveal the surface a skin actually paints, and put it back on Done/Escape.
 const SLOT_SURFACE = {
     calculator: () => {
-        const calc = document.getElementById('floating-calculator');
-        if (!calc || !window.floatingCalc?.showCalculator) return null;
-        if (calc.style.display !== 'none') return null; // already open — leave it
-        window.floatingCalc.showCalculator();
-        return () => window.floatingCalc.hideCalculator();
+        // Ask the calculator whether it's open rather than reading an element's
+        // inline style: the shared component (js/mmCalculator.js) is created on
+        // first use and toggles a class, so there is no element to inspect until
+        // it exists, and no inline display once it does.
+        const fc = window.floatingCalc;
+        if (!fc?.showCalculator) return null;
+        if (fc.isOpen && fc.isOpen()) return null; // already open — leave it
+        fc.showCalculator();
+        return () => fc.hideCalculator();
     },
     board: () => {
         const ws = window.MathWorkspace;

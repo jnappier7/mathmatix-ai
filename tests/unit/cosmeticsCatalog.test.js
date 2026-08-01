@@ -89,3 +89,84 @@ describe('applyRefund', () => {
         expect(u.ownedCosmetics).toContain('frame.gold');
     });
 });
+
+// ---------------------------------------------------------------------------
+// Every purchasable skin must actually paint something.
+//
+// This is the bug the shop shipped with: `calc.hotpink` and `calc.carbon` were
+// buyable and equippable, and the CSS that painted them only ever targeted the
+// chat calculator — so a student paid 150 coins, opened a practice test, and
+// got the default purple. A catalog entry with no matching rule is a cosmetic
+// you can buy and never see, and nothing in the suite could tell the difference.
+//
+// Reading the stylesheet is crude, but it is the seam: the catalog is the
+// server's list of what you may buy, cosmetics.css is the client's list of what
+// exists, and the two have no other connection.
+const fs = require('fs');
+const path = require('path');
+const { CATALOG } = require('../../utils/cosmeticsCatalog');
+
+const COSMETICS_CSS = fs.readFileSync(
+    path.join(__dirname, '..', '..', 'public', 'css', 'cosmetics.css'), 'utf8');
+
+const SLOT_ATTR = {
+    theme: 'data-theme-skin',
+    bubble: 'data-skin-bubble',
+    avatarFrame: 'data-skin-avatarframe',
+    board: 'data-skin-board',
+    calculator: 'data-skin-calculator',
+    header: 'data-skin-header',
+};
+
+describe('every catalog skin has CSS that paints it', () => {
+    const ids = Object.keys(CATALOG);
+
+    test('the catalog is not empty (guards a silently broken require)', () => {
+        expect(ids.length).toBeGreaterThan(10);
+    });
+
+    test.each(ids)('%s is styled', (id) => {
+        const attr = SLOT_ATTR[CATALOG[id].slot];
+        expect(attr).toBeTruthy(); // an unknown slot can never be applied
+        expect(COSMETICS_CSS).toContain(`[${attr}="${id}"]`);
+    });
+});
+
+describe('calculator skins reach the ONE calculator', () => {
+    const calcIds = Object.keys(CATALOG).filter((id) => CATALOG[id].slot === 'calculator');
+
+    test('there are several to choose from', () => {
+        expect(calcIds.length).toBeGreaterThanOrEqual(5);
+    });
+
+    test.each(calcIds)('%s targets the shared component, not a retired one', (id) => {
+        const rules = COSMETICS_CSS
+            .split('\n')
+            .filter((l) => l.includes(`[data-skin-calculator="${id}"]`));
+        expect(rules.length).toBeGreaterThan(0);
+        // Every rule must key off .mmc. The two implementations these replaced
+        // (#floating-calculator and .actt-calc) are gone; a rule naming either
+        // paints nothing at all.
+        for (const rule of rules) {
+            expect(rule).toMatch(/\.mmc/);
+            expect(rule).not.toMatch(/#floating-calculator|\.actt-calc/);
+        }
+    });
+
+    test('the skin ladder spans common to legendary', () => {
+        const rarities = new Set(calcIds.map((id) => CATALOG[id].rarity));
+        expect(rarities.has('common')).toBe(true);
+        expect(rarities.has('rare')).toBe(true);
+        expect(rarities.has('epic')).toBe(true);
+        expect(rarities.has('legendary')).toBe(true);
+    });
+
+    test('prices rise with rarity', () => {
+        const order = { common: 0, rare: 1, epic: 2, legendary: 3 };
+        const sorted = [...calcIds].sort((a, b) => CATALOG[a].price - CATALOG[b].price);
+        const ranks = sorted.map((id) => order[CATALOG[id].rarity]);
+        for (let i = 1; i < ranks.length; i++) {
+            expect(ranks[i]).toBeGreaterThanOrEqual(ranks[i - 1]);
+        }
+    });
+});
