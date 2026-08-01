@@ -3928,7 +3928,10 @@ function showTourCompletionMessage() {
     overlay: null,
     violationCount: 0,
     tabSwitchStart: null,
-    consecutivePollFailures: 0
+    consecutivePollFailures: 0,
+    // Set once the endpoint answers with a permanent refusal (401/403), so the
+    // poll loop stops rescheduling itself for the rest of the session.
+    pollDisabled: false
   };
 
   // ─── INITIALIZATION ─────────────────────────────────────────────────────────
@@ -3937,7 +3940,21 @@ function showTourCompletionMessage() {
     try {
       const res = await fetch('/api/browser-lock/check', { credentials: 'include' });
       if (!res.ok) {
-        if (res.status === 429) lockState.consecutivePollFailures++;
+        // 401/403 are STRUCTURAL, not transient. /api/browser-lock/check is
+        // gated on isStudent, so a teacher, parent or admin sitting on
+        // chat.html can never get a 200 from it — no amount of retrying will
+        // change the answer. Only 429 fed the backoff counter, so those roles
+        // polled a permanently-forbidden endpoint every 30s for the entire
+        // session, filling the console and spending requests to learn nothing.
+        // Stop for good instead.
+        if (res.status === 401 || res.status === 403) {
+          lockState.pollDisabled = true;
+          if (lockState.pollTimer) clearTimeout(lockState.pollTimer);
+          lockState.pollTimer = null;
+          return;
+        }
+        // Everything else may recover, so let the existing backoff handle it.
+        lockState.consecutivePollFailures++;
         return;
       }
 
@@ -4315,6 +4332,12 @@ function showTourCompletionMessage() {
 
   function schedulePoll() {
     if (lockState.pollTimer) clearTimeout(lockState.pollTimer);
+    // A permanent refusal ends the loop — rescheduling would just re-ask a
+    // question whose answer cannot change.
+    if (lockState.pollDisabled) {
+      lockState.pollTimer = null;
+      return;
+    }
     const interval = Math.min(
       BASE_POLL_INTERVAL * Math.pow(2, lockState.consecutivePollFailures),
       MAX_POLL_INTERVAL
