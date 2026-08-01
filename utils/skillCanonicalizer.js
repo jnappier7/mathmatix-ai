@@ -22,6 +22,7 @@ const TAX_DIR = path.join(__dirname, '..', 'seeds', 'unified-taxonomy');
 const TAXONOMY_FILE = path.join(TAX_DIR, 'math_taxonomy.json');
 
 const PATHWAY_FILE = 'pathway-crosswalk.json';
+const PATHWAY_MANUAL_FILE = 'pathway-crosswalk.manual.json';
 
 let legacyToUnified = null; // Map<legacyId, unifiedId>
 let unifiedIds = null; // Set<unifiedId>
@@ -45,13 +46,21 @@ let pathwayToBank = null; // Map<pathwaySkillId, bankSkillId[]> — LOOKUP ONLY
  */
 function buildPathway() {
   pathwayToBank = new Map();
-  let cw;
-  try {
-    cw = JSON.parse(fs.readFileSync(path.join(TAX_DIR, PATHWAY_FILE), 'utf8'));
-  } catch {
-    return; // absent (minimal test env) — lookups degrade to today's behaviour
+  // Manual rows load FIRST so they win on collision — the generated file is
+  // rewritten wholesale by scripts/proposePathwayCrosswalk.js, and its fuzzy
+  // matcher is unreliable in some domains (it proposed geometric-mean -> mean,
+  // the arithmetic average). Neither filename ends in '-crosswalk.json', so
+  // the canonicalization glob cannot sweep either into mastery keying.
+  const rows = [];
+  for (const f of [PATHWAY_MANUAL_FILE, PATHWAY_FILE]) {
+    try {
+      const cw = JSON.parse(fs.readFileSync(path.join(TAX_DIR, f), 'utf8'));
+      if (Array.isArray(cw.rows)) rows.push(...cw.rows);
+    } catch {
+      // absent (minimal test env) — lookups degrade to today's behaviour
+    }
   }
-  for (const row of cw.rows || []) {
+  for (const row of rows) {
     if (!row || !row.legacyId || !row.unifiedId) continue;
     // PRIMARY target only. `alternatives` are the matcher's runner-up guesses,
     // and they cross topic boundaries — `act-linear-equations` lists
