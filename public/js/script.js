@@ -3916,6 +3916,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (cp.lessonTransition) {
                         window.courseManager.showLessonTransition(cp.lessonTransition);
                     }
+                    // Make the advance VISIBLE. Until now a completed step moved
+                    // a bar by a few pixels and said nothing — students had no
+                    // moment of "I finished that." The chip marks the step they
+                    // just earned, on the message that earned it.
+                    if (cp.scaffoldIndex != null && cp.scaffoldTotal) {
+                        const aiMsgs = document.querySelectorAll('.message.ai');
+                        const latest = aiMsgs[aiMsgs.length - 1];
+                        if (latest && !latest.querySelector('.step-chip')) {
+                            const chip = document.createElement('div');
+                            chip.className = 'step-chip';
+                            chip.setAttribute('role', 'note');
+                            chip.style.cssText = 'display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:3px 11px;border-radius:12px;font-size:12px;font-weight:500;background:rgba(46,158,107,0.12);color:#1f7a52;border:1px solid rgba(46,158,107,0.3);';
+                            // cp.scaffoldIndex is the NEW index, so the step just
+                            // finished is that number in 1-based terms.
+                            chip.textContent = `✓ Step ${cp.scaffoldIndex} of ${cp.scaffoldTotal} complete`;
+                            latest.appendChild(chip);
+                        }
+                    }
                     console.log(`[Course] Scaffold advanced → step ${cp.scaffoldIndex + 1}/${cp.scaffoldTotal} (overall: ${cp.overallProgress}%)`);
                 } else if (cp.event === 'module_complete') {
                     // Refresh the full progress display and trigger celebration
