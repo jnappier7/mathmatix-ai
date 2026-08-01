@@ -36,6 +36,7 @@ const {
   VERIFIER_MODEL,
 } = require('./llmVerifier');
 const { deriveVerificationState, hasMathematicalContent } = require('./verificationState');
+const { gateAdvance } = require('./stepEvaluator');
 const { mathTypeOf } = require('./verifyTopic');
 const verifyMetrics = require('../verifyMetrics');
 const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
@@ -1476,6 +1477,29 @@ async function runPipeline(message, ctx) {
   // Unbalanced \( / \[ delimiters render as raw source in the bubble —
   // drop the orphans (balanced math is untouched). Cheap, so unconditional.
   verified.text = stripOrphanMathDelims(verified.text);
+
+  // ── Evidence gate on a course scaffold advance ──
+  //
+  // The teaching model emits <SCAFFOLD_ADVANCE> when it thinks a step is done.
+  // On PRACTICE steps that judgment must be backed by evidence: "you-do" means
+  // the student demonstrates it, and advancing someone who has solved nothing
+  // turns the progress bar into a participation trophy. Explanation/model steps
+  // pass through — there is nothing countable to require there.
+  //
+  // MUST run before persist: persist stamps `scaffoldAdvanced` on the message
+  // from this same flag, and that stamp is the boundary the evidence counter
+  // scans back to. Gating later (in the route) would let a blocked advance
+  // still move the boundary and silently reset the evidence window.
+  if (verified.extracted?.scaffoldAdvance && ctx.courseStep) {
+    const gate = gateAdvance(ctx.courseStep, ctx.conversation, {
+      wasCorrect: diagnosis?.isCorrect === true,
+      isParentCourse: ctx.isParentCourse === true,
+    });
+    if (!gate.allow) {
+      verified.extracted.scaffoldAdvance = false;
+      console.log(`[Pipeline] Scaffold advance BLOCKED (${gate.reason}): ${gate.evidence || ''}`);
+    }
+  }
 
   // ── Merge LLM signals into sidecar ──
   mergeLlmSignals(sidecar, verified.extracted);

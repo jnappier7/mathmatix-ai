@@ -339,8 +339,44 @@ function parseEvalResponse(raw) {
   }
 }
 
+/**
+ * EVIDENCE GATE on a model-emitted <SCAFFOLD_ADVANCE>.
+ *
+ * The teaching model decides when to advance. On PRACTICE steps that judgment
+ * should not stand alone: "you-do" means the student demonstrates it, and a
+ * model that advances a student who has solved nothing turns the progress bar
+ * into a participation trophy. So for practice steps only, require the
+ * evidence the deterministic evaluator already knows how to count — verified
+ * correct answers since the last advance.
+ *
+ * Deliberately narrow:
+ *   - practice steps → gated on evidence (no LLM call; the data is local)
+ *   - explanation / model / check-in steps → PASS THROUGH. There is no
+ *     countable evidence for "did they understand the explanation", and the
+ *     model watching the conversation is the best judge available. Blocking
+ *     those would strand students mid-lesson, which is worse than advancing
+ *     one turn early.
+ *   - no step / unknown shape → pass through (never block on missing data).
+ *
+ * @returns {{ allow: boolean, reason: string, evidence?: string }}
+ */
+function gateAdvance(step, conversation, options = {}) {
+  if (!step) return { allow: true, reason: 'no_step' };
+  const stepType = step.type || step.lessonPhase || '';
+  const mode = (step.completion && step.completion.mode) || inferCompletionMode(stepType);
+  if (mode !== 'deterministic') return { allow: true, reason: `ungated:${mode}` };
+
+  const verdict = evaluateDeterministic(step, conversation, options);
+  return {
+    allow: verdict.complete === true,
+    reason: verdict.complete ? 'evidence_met' : 'insufficient_evidence',
+    evidence: verdict.evidence,
+  };
+}
+
 module.exports = {
   evaluateStepCompletion,
+  gateAdvance,
   // Exported for testing
   evaluateDeterministic,
   evaluateLlmSidecar,

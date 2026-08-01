@@ -1198,10 +1198,15 @@ async function runStudentTurn(req, res) {
                 // Capture scaffold info for recency-boosted reminder
                 const scaffold = courseCtx.scaffoldData?.scaffold || [];
                 if (scaffold.length > 1) {
+                    const stepIdx = courseSessionDoc.currentScaffoldIndex || 0;
                     courseScaffoldCtx = {
-                        stepIdx: courseSessionDoc.currentScaffoldIndex || 0,
+                        stepIdx,
                         totalSteps: scaffold.length,
-                        stepTitle: scaffold[courseSessionDoc.currentScaffoldIndex || 0]?.title
+                        stepTitle: scaffold[stepIdx]?.title,
+                        // The step itself — the pipeline's evidence gate needs its
+                        // type to know whether an advance must be earned.
+                        step: scaffold[stepIdx] || null,
+                        isParentCourse: courseCtx.pathway?.audience === 'parent',
                     };
                 }
                 // Same derivation /api/course-chat uses, so mastery evidence
@@ -1562,6 +1567,10 @@ async function runStudentTurn(req, res) {
                 // the free-tutoring plan layer and flips the student's-lead
                 // guard from "ask what they want" to "launch the module step".
                 isCourseMode: courseModeActive,
+                // Evidence gate: a practice step may only advance on demonstrated
+                // work, not on the model's say-so alone (utils/pipeline/stepEvaluator).
+                courseStep: courseScaffoldCtx?.step || null,
+                isParentCourse: courseScaffoldCtx?.isParentCourse === true,
             });
         } catch (pipelineError) {
             // Pipeline failed — fall back to direct LLM call so student always gets a response
