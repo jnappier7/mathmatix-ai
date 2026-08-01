@@ -76,3 +76,46 @@ describe('file contract', () => {
     }
   });
 });
+
+// ── algebra-2 + precalculus (2026-08-01) ─────────────────────────────────
+// Prioritised by real enrollment: algebra-2 had 5 active students at 28%
+// coverage and precalculus 3 at 18%, while consumer-math (the numerically
+// worst course) had exactly ONE. The bank turned out to be rich in both
+// subjects — 236 quadratic-functions, 152 systems-elimination, 147
+// systems-substitution — just under other names.
+describe('algebra-2 and precalculus rows', () => {
+  test.each([
+    ['systems-substitution-elimination', 'systems-substitution'],
+    ['graphing-lines', 'graph-linear-equations'],
+    ['quadratic-solving-all-methods', 'choosing-quadratic-method'],
+    ['logarithm-properties', 'act-logarithms'],
+    ['recursive-explicit-formulas', 'arithmetic-sequences'],
+    ['unit-circle-trig-values', 'trig-unit-circle-evaluation'],
+    ['fundamental-trig-identities', 'trig-identities-basic'],
+    ['limits-continuity-infinity', 'limits'],
+  ])('%s → %s', (course, bank) => {
+    expect(skillLookupCandidates(course)).toContain(bank);
+  });
+
+  test('genuinely missing precalculus topics stay unmapped', () => {
+    // The bank has no conics, parametrics, polar or vector content at all.
+    // Mapping these to something adjacent would hide a real gap behind a
+    // good-looking percentage.
+    for (const id of ['ellipse-analysis', 'hyperbola-analysis', 'parametric-equations',
+      'polar-coordinates', 'vector-operations', 'dot-product', 'complex-polar-form']) {
+      expect(skillLookupCandidates(id)).toEqual([id]);
+    }
+  });
+
+  test('algebra-2 synthesis placeholders are not mapped to filler', () => {
+    for (const id of ['course-synthesis', 'real-world-problem-solving', 'multi-domain-modeling']) {
+      expect(skillLookupCandidates(id)).toEqual([id]);
+    }
+  });
+
+  test('mastery keying is still untouched for the new rows', () => {
+    for (const id of ['graphing-lines', 'logarithm-properties', 'unit-circle-trig-values']) {
+      expect(canonicalSkillId(id)).toBe(id);
+    }
+  });
+});
