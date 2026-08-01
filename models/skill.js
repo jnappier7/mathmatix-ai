@@ -273,6 +273,17 @@ const skillSchema = new mongoose.Schema({
     index: true
   },
 
+  // Nominal grade for this ONE skill, from the unified taxonomy — "4", "5",
+  // "6–7". gradeBand is far too coarse to answer the question a student
+  // actually asks: "K-5" and courseLevel "ELEM" both cover grades 3, 4 and 5,
+  // so a fourth-grader finishing fourth-grade work sees no movement at all for
+  // three years. Ranges are kept verbatim rather than flattened; the reader
+  // decides which end it needs (see utils/gradeBanding.lowGrade).
+  grade: {
+    type: String,
+    index: true
+  },
+
   // Ohio Learning Standards domain
   ohioDomain: {
     type: String

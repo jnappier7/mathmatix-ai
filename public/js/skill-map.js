@@ -73,87 +73,69 @@
     $('t-taught').textContent = counts.taught;
     $('t-open').textContent = counts.open;
 
-    renderPie();
+    renderClimb();
     renderAvailable();
     renderTowers();
     renderHook();
+    // Only after the Starting Point: a screener is an estimate, and the kid who
+    // had a bad day is exactly the one who needs to know they can prove out.
+    if (/[?&]from=placement\b/.test(window.location.search)) {
+      $('placement-note').hidden = false;
+    }
     $('path').hidden = false;
     $('fullmap').hidden = false;
     $('board').hidden = false;
     $('legend').hidden = false;
   }
 
-  // ── the pie ─────────────────────────────────────────────────────────
-  // Shows what the student OWNS, filling outward. Deliberately not a
-  // "0 / 17,500 points" readout: same data, but a big zero against a huge
-  // number frames learning as debt before they have done anything, and it
-  // lands hardest on the student who is furthest behind.
-  var PIE = { cx: 110, cy: 110, r: 92 };
-  var SVG_NS = 'http://www.w3.org/2000/svg';
+  // ── strand progress columns ──────────────────────────────────────────
+  // Six columns filling bottom-up, echoing the strand towers on the board.
+  // Shows what the student OWNS, filling up — deliberately not a
+  // "0 / 17,500 points" readout, which frames learning as debt before they
+  // have done anything and reads worst to whoever is furthest behind.
+  //
+  // Height is linear: a column's filled area is proportional to its height,
+  // so height = fraction owned is already honest.
+  function renderClimb() {
+    var cols = M.strandProgress(state.skills);
+    var host = $('climb');
+    host.innerHTML = '';
 
-  function polar(cx, cy, r, deg) {
-    // -90 so the first wedge starts at 12 o'clock rather than 3 o'clock.
-    var rad = (deg - 90) * Math.PI / 180;
-    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-  }
+    cols.forEach(function (c) {
+      var col = el('div', 'climb-col strand-' + c.key.toLowerCase());
 
-  function wedgePath(r, startAngle, endAngle) {
-    if (r <= 0) return '';
-    var a = polar(PIE.cx, PIE.cy, r, startAngle);
-    var b = polar(PIE.cx, PIE.cy, r, endAngle);
-    var large = (endAngle - startAngle) > 180 ? 1 : 0;
-    return 'M ' + PIE.cx + ' ' + PIE.cy
-      + ' L ' + a.x.toFixed(2) + ' ' + a.y.toFixed(2)
-      + ' A ' + r + ' ' + r + ' 0 ' + large + ' 1 ' + b.x.toFixed(2) + ' ' + b.y.toFixed(2)
-      + ' Z';
-  }
+      // The grade readout, above the column, because it is the answer to the
+      // question the student actually asks. "8 of 20" cannot tell you whether
+      // those eight were third grade or twelfth.
+      var level = el('div', 'climb-level');
+      level.textContent = c.workingLabel || '—';
+      if (c.clearedReached) level.classList.add('is-cleared');
 
-  function svgEl(tag, attrs) {
-    var n = document.createElementNS(SVG_NS, tag);
-    Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
-    return n;
-  }
+      var track = el('div', 'climb-track');
+      var fill = el('div', 'climb-fill');
+      fill.style.height = '0%';
+      track.appendChild(fill);
 
-  function renderPie() {
-    var slices = M.pieSlices(state.skills);
-    var svg = $('pie');
-    var legend = $('pie-legend');
+      var key = el('div', 'climb-key');
+      key.innerHTML = '<b>' + escapeHtml(c.key) + '</b>';
 
-    // Keep the <title> — it is the accessible name for the whole figure.
-    Array.prototype.slice.call(svg.querySelectorAll('g,path,circle,text')).forEach(function (n) {
-      n.parentNode.removeChild(n);
-    });
-    legend.innerHTML = '';
+      col.appendChild(level);
+      col.appendChild(track);
+      col.appendChild(key);
 
-    slices.forEach(function (s) {
-      var cls = 'strand-' + s.key.toLowerCase();
-      // Track: the whole wedge, faint — this is the ground still to cover.
-      svg.appendChild(svgEl('path', {
-        d: wedgePath(PIE.r, s.startAngle, s.endAngle),
-        class: 'pie-track ' + cls
-      }));
-      // Fill: how far out this strand is owned.
-      if (s.fillRadius > 0) {
-        svg.appendChild(svgEl('path', {
-          d: wedgePath(PIE.r * s.fillRadius, s.startAngle, s.endAngle),
-          class: 'pie-fill ' + cls
-        }));
-      }
-      var item = el('span', 'pie-key ' + cls);
-      item.innerHTML = '<i aria-hidden="true"></i>'
-        + '<b>' + escapeHtml(s.key) + '</b>'
-        + '<span>' + s.owned + '/' + s.total + '</span>';
-      item.title = s.name + ' — ' + s.pct + '%';
-      legend.appendChild(item);
-    });
+      var say = c.reachedGrade == null
+        ? c.name + ': not started'
+        : c.clearedReached
+          ? c.name + ': finished grade ' + c.reachedGrade + ', working at grade ' + c.workingGrade
+          : c.name + ': working at grade ' + c.reachedGrade;
+      col.title = say + ' — ' + c.owned + ' of ' + c.total + ' skills';
+      col.setAttribute('role', 'img');
+      col.setAttribute('aria-label', say);
 
-    // Hairlines between wedges, drawn last so they sit on top.
-    slices.forEach(function (s) {
-      var p = polar(PIE.cx, PIE.cy, PIE.r, s.startAngle);
-      svg.appendChild(svgEl('line', {
-        x1: PIE.cx, y1: PIE.cy, x2: p.x.toFixed(2), y2: p.y.toFixed(2),
-        class: 'pie-spoke'
-      }));
+      host.appendChild(col);
+      requestAnimationFrame(function () {
+        fill.style.height = Math.round(c.fill * 100) + '%';
+      });
     });
   }
 
@@ -285,21 +267,156 @@
       + (skill.formalName && skill.formalName !== skill.label ? ' · ' + skill.formalName : '');
     $('d-state').textContent = stateSentence(skill);
 
-    var proofs = $('d-proofs');
-    proofs.innerHTML = '';
-    M.rungOptions(skill).forEach(function (opt) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'proof';
-      b.innerHTML = '<h3>' + escapeHtml(opt.label) + '</h3><p>' + escapeHtml(opt.hint) + '</p>';
-      b.addEventListener('click', function () { chooseRung(opt.key, skill); });
-      proofs.appendChild(b);
-    });
+    renderLadder(skill);
 
     hide('runner'); hide('teach');
     $('drawer').classList.add('open');
     $('drawer').setAttribute('aria-hidden', 'false');
+    focusCamera(skillId);
   }
+
+  /**
+   * Push the board toward the skill you opened, so the drawer reads as a closer
+   * LOOK at a place on the map rather than a separate screen you were taken to.
+   *
+   * This is the one idea worth borrowing from Prezi, and it earns its keep here
+   * in a way it never did there: Prezi's camera moved through arbitrary space,
+   * so the motion said nothing. These coordinates mean something — the column is
+   * a strand, the row is a course level, and the vertical thread through a
+   * column IS the pattern the product is about. Moving the camera along it is
+   * the argument, not decoration.
+   *
+   * Implemented as ONE transform on the board container. Animating 348 cells
+   * individually would drop frames on the school Chromebooks this has to run on;
+   * a single composited transform costs the same whether the board has 6 nodes
+   * or 600.
+   */
+  var CAMERA_ZOOM = 1.35;
+  function focusCamera(skillId) {
+    var board = $('board');
+    var cellEl = document.querySelector('.cell[data-skill-id="' + cssEscape(skillId) + '"]');
+    if (!board || !cellEl || prefersReducedMotion()) return;
+
+    var view = board.getBoundingClientRect();
+    var target = cellEl.getBoundingClientRect();
+
+    // Where the cell sits inside the board, in untransformed board coordinates.
+    var cx = (target.left + target.width / 2) - view.left;
+    var cy = (target.top + target.height / 2) - view.top;
+
+    // Keep the focused cell where it already is on screen while scaling around
+    // it, so the board grows *from* the skill rather than sliding under it.
+    board.style.transformOrigin = cx + 'px ' + cy + 'px';
+    board.classList.add('is-focused');
+    board.style.transform = 'scale(' + CAMERA_ZOOM + ')';
+
+    cellEl.classList.add('is-camera-target');
+  }
+
+  function releaseCamera() {
+    var board = $('board');
+    if (!board) return;
+    board.style.transform = '';
+    board.classList.remove('is-focused');
+    Array.prototype.forEach.call(document.querySelectorAll('.cell.is-camera-target'), function (c) {
+      c.classList.remove('is-camera-target');
+    });
+  }
+
+  function prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /**
+   * The ladder — three rungs, bottom to top, with the student standing on one.
+   *
+   * Rendered top-down in the DOM (teach → prove → learn) so it READS as a climb:
+   * what is left is above you, what you earned is below. Reversing it in markup
+   * rather than with flex-direction keeps tab order matching visual order.
+   */
+  function renderLadder(skill) {
+    var host = $('d-proofs');
+    host.innerHTML = '';
+
+    var rungs = M.ladderRungs(skill);
+    var ladder = el('ol', 'ladder');
+    ladder.setAttribute('aria-label', 'Your progress on this skill');
+
+    rungs.slice().reverse().forEach(function (rung) {
+      var li = el('li', 'rung is-' + rung.status);
+
+      var mark = el('span', 'rung-mark');
+      mark.setAttribute('aria-hidden', 'true');
+      // done gets a check; granted gets a hollow ring it must not share with
+      // done, because the whole point is that nothing was demonstrated.
+      mark.textContent = rung.status === 'done' ? '✓' : String(rung.ordinal);
+
+      var body = el('div', 'rung-body');
+      body.innerHTML =
+        '<span class="rung-label">' + escapeHtml(rung.label) + '</span>'
+        + '<span class="rung-hint">' + escapeHtml(rung.hint) + '</span>';
+
+      if (rung.action) {
+        var go = document.createElement('button');
+        go.type = 'button';
+        go.className = 'rung-go';
+        go.textContent = rung.status === 'granted' ? 'Prove it' : 'Start';
+        go.setAttribute('aria-label', rung.label + ' — ' + rung.hint);
+        go.addEventListener('click', function () { chooseRung(rung.action, skill); });
+        body.appendChild(go);
+      }
+
+      li.appendChild(mark);
+      li.appendChild(body);
+      // Screen readers get the status in words; sighted users get it from form.
+      li.setAttribute('aria-label', rung.label + ' — ' + LADDER_STATUS_WORD[rung.status]);
+      ladder.appendChild(li);
+    });
+
+    host.appendChild(ladder);
+  }
+
+  /**
+   * Advance the rung on screen, then let the reload confirm it.
+   *
+   * The server has already said yes by the time this runs, so this is not a
+   * guess — it is the UI catching up without waiting for a refetch. Doing it
+   * optimistically is what makes the moment feel like a consequence of the
+   * student's work rather than a page update that happened to follow it.
+   *
+   * @param {string} rungKey  which rung was earned
+   * @param {number} cleared  skills closed beneath it by the cascade
+   */
+  function celebrateRung(rungKey, cleared) {
+    var li = document.querySelector('.ladder .rung.is-current, .ladder .rung.is-granted');
+    var ladder = document.querySelector('.ladder');
+    if (!li) return;
+
+    li.classList.remove('is-current', 'is-granted');
+    li.classList.add('is-done', 'just-earned');
+    var mark = li.querySelector('.rung-mark');
+    if (mark) mark.textContent = '✓';
+    var go = li.querySelector('.rung-go');
+    if (go) go.remove();
+
+    // Unlock the rung above, so the student SEES what their work opened rather
+    // than being told about it.
+    var next = li.previousElementSibling; // rendered top-down: previous = higher
+    if (next && next.classList.contains('is-locked')) {
+      next.classList.remove('is-locked');
+      next.classList.add('is-current', 'just-unlocked');
+    }
+
+    if (ladder && cleared > 0) ladder.classList.add('cascaded');
+    if (rungKey === 'teach' && ladder) ladder.classList.add('topped-out');
+  }
+
+  var LADDER_STATUS_WORD = {
+    done: 'completed',
+    granted: 'cleared from above, not yet demonstrated',
+    current: 'available now',
+    locked: 'locked'
+  };
 
   function stateSentence(skill) {
     switch (skill.state) {
@@ -314,6 +431,7 @@
   function closeDrawer() {
     $('drawer').classList.remove('open');
     $('drawer').setAttribute('aria-hidden', 'true');
+    releaseCamera();
     state.current = null;
     state.teach = null;
   }
@@ -414,8 +532,12 @@
       out.className = 'runner-result ' + (res.passed ? 'good' : 'miss');
       if (res.passed) {
         var cleared = (res.clearedFromAbove || []).length;
+        // The one moment that gets the full treatment. Ambient juice turns into
+        // noise and costs the struggling student most; a rung actually earned is
+        // the rare thing worth making loud.
+        celebrateRung('challenge', cleared);
         toast(cleared ? '+' + cleared : 'Proved', cleared ? 'cleared from above' : 'rung 2 of 3');
-        setTimeout(function () { closeDrawer(); load(); }, 1400);
+        setTimeout(function () { closeDrawer(); load(); }, 1900);
       }
     }).catch(function () {
       var out = $('runner-result');

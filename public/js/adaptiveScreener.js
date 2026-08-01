@@ -173,7 +173,7 @@ async function startScreener() {
       // Handle "already completed" case (403 Forbidden)
       if (error.alreadyCompleted) {
         alert(error.message || 'You have already completed the placement assessment.');
-        window.location.href = '/skill-map.html';
+        window.location.href = '/skill-map.html?from=placement';
         return;
       }
 
@@ -547,7 +547,7 @@ async function completeInterview() {
     console.log('[Interview] Complete! Earned badges:', data.earnedBadges.length);
 
     // Redirect to badge map
-    window.location.href = '/skill-map.html';
+    window.location.href = '/skill-map.html?from=placement';
 
   } catch (error) {
     console.error('[Interview] Error completing interview:', error);
