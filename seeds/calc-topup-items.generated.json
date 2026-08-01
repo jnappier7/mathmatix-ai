@@ -1,0 +1,1376 @@
+[
+ {
+  "problemId": "calc-ab-top-001",
+  "skillId": "one-sided-infinite-limits",
+  "prompt": "lim(x→3⁺) 1/(x − 3) is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "+∞",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "−∞"
+   },
+   {
+    "label": "B",
+    "text": "0"
+   },
+   {
+    "label": "C",
+    "text": "+∞"
+   },
+   {
+    "label": "D",
+    "text": "1"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "As x approaches 3 from the RIGHT, x − 3 is a small POSITIVE number, so 1/(x − 3) grows without bound: the limit is +∞. Choice A is the left-hand limit — approaching from below makes x − 3 negative.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:one-sided-infinite-limits"
+  ],
+  "source": "calc-topup",
+  "contentHash": "d23f7441a145f8a02c8cc2625b306cd3329196241eb82e1255c665bc03fbae22",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-002",
+  "skillId": "one-sided-infinite-limits",
+  "prompt": "lim(x→2⁻) (x + 1)/(x − 2) is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−∞",
+   "equivalents": [
+    "-∞"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "+∞"
+   },
+   {
+    "label": "B",
+    "text": "−∞"
+   },
+   {
+    "label": "C",
+    "text": "0"
+   },
+   {
+    "label": "D",
+    "text": "3"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "Approaching 2 from the LEFT makes x − 2 a small NEGATIVE number while the numerator approaches 3, a positive value. Positive over a small negative is a large negative, so the limit is −∞. Choice D substitutes into the numerator only.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:one-sided-infinite-limits"
+  ],
+  "source": "calc-topup",
+  "contentHash": "80b0643b983c937d80c1772239952ca9769c56b470ad4ec321bd6e1ed69b80e5",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-003",
+  "skillId": "one-sided-infinite-limits",
+  "prompt": "For f(x) = (x + 4)/(x² − 16), lim(x→4⁺) f(x) is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "+∞",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "+∞"
+   },
+   {
+    "label": "B",
+    "text": "−∞"
+   },
+   {
+    "label": "C",
+    "text": "1/8"
+   },
+   {
+    "label": "D",
+    "text": "0"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "Factor the denominator: x² − 16 = (x − 4)(x + 4), so for x ≠ −4 the function is 1/(x − 4). Approaching 4 from the right makes x − 4 a small positive number, so the limit is +∞. Choice C is the value at the HOLE (x = −4), a different feature of this same function.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:one-sided-infinite-limits"
+  ],
+  "source": "calc-topup",
+  "contentHash": "6b1d58a019cf5ff768351e4179cfe1c069105c00c13d2bc9ec4363f432d3405b",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-004",
+  "skillId": "one-sided-infinite-limits",
+  "prompt": "lim(x→0⁻) (1/x − 1/x²) is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−∞",
+   "equivalents": [
+    "-∞"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "+∞"
+   },
+   {
+    "label": "B",
+    "text": "−∞"
+   },
+   {
+    "label": "C",
+    "text": "0"
+   },
+   {
+    "label": "D",
+    "text": "1"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "Combine over a common denominator first: 1/x − 1/x² = (x − 1)/x². As x→0⁻ the numerator approaches −1 and x² approaches 0 through POSITIVE values (a square is never negative), so the quotient is a large negative: −∞. Choice C comes from treating the two terms separately, hitting the indeterminate ∞ − ∞ and guessing 0.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:one-sided-infinite-limits"
+  ],
+  "source": "calc-topup",
+  "contentHash": "3a6cc5a654b10be3a3314a10a171e875f63ac7a3a36de0f64c0e7b848fc71c29",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-005",
+  "skillId": "continuity-types",
+  "prompt": "The function f(x) = (x² − 9)/(x − 3) has what kind of discontinuity at x = 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Removable (a hole)",
+   "equivalents": [
+    "Removable(ahole)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "Removable (a hole)"
+   },
+   {
+    "label": "B",
+    "text": "Jump"
+   },
+   {
+    "label": "C",
+    "text": "Infinite (vertical asymptote)"
+   },
+   {
+    "label": "D",
+    "text": "None — it is continuous"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "Factoring gives (x − 3)(x + 3)/(x − 3) = x + 3 for x ≠ 3, so the limit exists and equals 6 — the graph has a single missing point. A discontinuity whose two-sided limit EXISTS is removable. Choice C is tempting because the denominator hits zero, but nothing blows up here: the (x − 3) cancels.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:continuity-types"
+  ],
+  "source": "calc-topup",
+  "contentHash": "d31640f4e0fbb6cf990d02bd36e7aa2f763bb7a04f737c441215d9013618479d",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-006",
+  "skillId": "continuity-types",
+  "prompt": "Let f(x) = x + 1 for x < 2 and f(x) = 5 for x ≥ 2. At x = 2, f has",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "a jump discontinuity",
+   "equivalents": [
+    "ajumpdiscontinuity"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "a removable discontinuity"
+   },
+   {
+    "label": "B",
+    "text": "a jump discontinuity"
+   },
+   {
+    "label": "C",
+    "text": "an infinite discontinuity"
+   },
+   {
+    "label": "D",
+    "text": "no discontinuity"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "The left-hand limit is 2 + 1 = 3 and the right-hand value is 5. Both one-sided limits exist but DISAGREE, which is exactly a jump. Choice A would require the two one-sided limits to MATCH, which they do not.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:continuity-types"
+  ],
+  "source": "calc-topup",
+  "contentHash": "8df030c7b2cbbdf153c0973dd067b87f8584f1ff7c5d3bb0a38fbb9bb15585a7",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-007",
+  "skillId": "continuity-types",
+  "prompt": "The function f(x) = 1/(x − 5)² has what kind of discontinuity at x = 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Infinite",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "Removable"
+   },
+   {
+    "label": "B",
+    "text": "Jump"
+   },
+   {
+    "label": "C",
+    "text": "Infinite"
+   },
+   {
+    "label": "D",
+    "text": "None"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "Nothing cancels, and as x→5 from either side the denominator approaches 0 through positive values, so f grows without bound: an infinite discontinuity (vertical asymptote at x = 5). Choice A is wrong because a removable discontinuity needs a finite limit, and this one has none.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:continuity-types"
+  ],
+  "source": "calc-topup",
+  "contentHash": "5a607c7af6b0fd1502851f25f07e715573494e73b22e76fbdeb7b7985397db4b",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-008",
+  "skillId": "continuity-types",
+  "prompt": "Let f(x) = (x² − 4)/(x − 2) for x ≠ 2 and f(2) = k. What value of k makes f continuous at x = 2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "4"
+   },
+   {
+    "label": "D",
+    "text": "No value of k works"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "Continuity at 2 requires f(2) to equal lim(x→2) f(x). Factoring gives (x − 2)(x + 2)/(x − 2) = x + 2, whose limit at 2 is 4, so k = 4. Choice D is the trap of assuming the original 0/0 form makes the discontinuity permanent — it is removable precisely because the limit exists.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U1",
+   "topup",
+   "no-calc",
+   "subskill:continuity-types"
+  ],
+  "source": "calc-topup",
+  "contentHash": "fa133ae122e2d664eb176c871e5e1c6d212bd7d46f3ca619ae8ddf99200b31d8",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-009",
+  "skillId": "common-derivatives",
+  "prompt": "If f(x) = cos x, then f′(x) =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−sin x",
+   "equivalents": [
+    "-sin x",
+    "−sinx"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "sin x"
+   },
+   {
+    "label": "B",
+    "text": "−sin x"
+   },
+   {
+    "label": "C",
+    "text": "−cos x"
+   },
+   {
+    "label": "D",
+    "text": "sec² x"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "The derivative of cos x is −sin x. Choice A drops the negative sign, which is the single most common slip in this pair (sin differentiates to +cos, cos to −sin).",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U2",
+   "topup",
+   "no-calc",
+   "subskill:common-derivatives"
+  ],
+  "source": "calc-topup",
+  "contentHash": "27b8651874dd04a9e37e208406d6881a950f5b8696ecfaabb684924f213a9059",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-010",
+  "skillId": "common-derivatives",
+  "prompt": "d/dx [e^x + ln x] =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "e^x + 1/x",
+   "equivalents": [
+    "e^x+1/x"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "e^x + 1/x"
+   },
+   {
+    "label": "B",
+    "text": "e^x + ln x"
+   },
+   {
+    "label": "C",
+    "text": "x·e^(x−1) + 1/x"
+   },
+   {
+    "label": "D",
+    "text": "e^x − 1/x²"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "e^x is its own derivative and the derivative of ln x is 1/x. Choice C applies the power rule to e^x, but the exponent is the variable there, not the base. Choice D differentiates 1/x instead of ln x.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U2",
+   "topup",
+   "no-calc",
+   "subskill:common-derivatives"
+  ],
+  "source": "calc-topup",
+  "contentHash": "fe2c44196bc7d2241de4d97648b2cb8ff52bfebacb702c9fbff43073a372afbe",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-011",
+  "skillId": "common-derivatives",
+  "prompt": "d/dx [tan x] =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sec² x",
+   "equivalents": [
+    "sec²x"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "sec x tan x"
+   },
+   {
+    "label": "B",
+    "text": "sec² x"
+   },
+   {
+    "label": "C",
+    "text": "−csc² x"
+   },
+   {
+    "label": "D",
+    "text": "cot x"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "The derivative of tan x is sec² x. Choice A is the derivative of sec x and choice C is the derivative of cot x — the three are easy to swap under time pressure.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U2",
+   "topup",
+   "no-calc",
+   "subskill:common-derivatives"
+  ],
+  "source": "calc-topup",
+  "contentHash": "44c8a8cac5a643e2f48ccaacdac8967235ea8a4ac54a88365da83f87f2dcfe54",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-012",
+  "skillId": "common-derivatives",
+  "prompt": "If f(x) = √x, then f′(4) =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/4"
+   },
+   {
+    "label": "B",
+    "text": "1/2"
+   },
+   {
+    "label": "C",
+    "text": "2"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "Write √x as x^(1/2); the power rule gives f′(x) = (1/2)x^(−1/2) = 1/(2√x). At x = 4 that is 1/(2·2) = 1/4. Choice C is √4 itself — the FUNCTION value, not the derivative.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U2",
+   "topup",
+   "no-calc",
+   "subskill:common-derivatives"
+  ],
+  "source": "calc-topup",
+  "contentHash": "b8d00fc7b8493c0fc399a1af1ca028c093de55694c33093cdcc836299b41f1d8",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-013",
+  "skillId": "lhopitals-rule",
+  "prompt": "lim(x→1) (x² − 1)/(x − 1) is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "1"
+   },
+   {
+    "label": "C",
+    "text": "2"
+   },
+   {
+    "label": "D",
+    "text": "undefined"
+   }
+  ],
+  "correctOption": "C",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "Direct substitution gives 0/0, so L'Hospital's Rule applies: the limit equals lim(x→1) 2x/1 = 2. (Factoring to x + 1 gives the same answer.) Choice D mistakes an indeterminate FORM for a nonexistent limit.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U4",
+   "topup",
+   "no-calc",
+   "subskill:lhopitals-rule"
+  ],
+  "source": "calc-topup",
+  "contentHash": "dec7d9d538e4bf0b3562327ee193382f4acd563424a4bf61e6d1077173b19fa9",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-014",
+  "skillId": "lhopitals-rule",
+  "prompt": "lim(x→0) (1 − cos x)/x² is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "1/2"
+   },
+   {
+    "label": "C",
+    "text": "1"
+   },
+   {
+    "label": "D",
+    "text": "∞"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "Substitution gives 0/0. One application of L'Hospital gives sin x/(2x), still 0/0; a second gives cos x/2 → 1/2. Stopping after ONE application and substituting yields 0, which is choice A.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U4",
+   "topup",
+   "no-calc",
+   "subskill:lhopitals-rule"
+  ],
+  "source": "calc-topup",
+  "contentHash": "93086fa05b17bf0ed8d1690b78ea98332e8baf93e8b939ddab875b4c4a6b5fdd",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-015",
+  "skillId": "lhopitals-rule",
+  "prompt": "lim(x→∞) (ln x)/x is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "1"
+   },
+   {
+    "label": "C",
+    "text": "∞"
+   },
+   {
+    "label": "D",
+    "text": "e"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "This is the ∞/∞ indeterminate form, so L'Hospital applies: the limit equals lim(x→∞) (1/x)/1 = 0. The point is that x grows far faster than ln x. Choice C assumes the numerator wins because it also grows without bound.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U4",
+   "topup",
+   "no-calc",
+   "subskill:lhopitals-rule"
+  ],
+  "source": "calc-topup",
+  "contentHash": "7a90425d88f71521ec2d0e5005ee9d6d7a65b8b8026cfd8e1ae6b80425a3fe29",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-016",
+  "skillId": "area-between-curves",
+  "prompt": "The area of the region bounded by y = x and y = x² from x = 0 to x = 1 is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/6",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/6"
+   },
+   {
+    "label": "B",
+    "text": "1/3"
+   },
+   {
+    "label": "C",
+    "text": "1/2"
+   },
+   {
+    "label": "D",
+    "text": "5/6"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "On (0, 1) the line is above the parabola, so the area is ∫₀¹ (x − x²) dx = 1/2 − 1/3 = 1/6. Subtracting in the wrong order gives −1/6; choices B and C are the two individual integrals, not their difference.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U6",
+   "topup",
+   "no-calc",
+   "subskill:area-between-curves"
+  ],
+  "source": "calc-topup",
+  "contentHash": "b30c228049a9b77d428ec379947c05a69867b9f2f9bef287f2001bee9720ca9d",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-017",
+  "skillId": "area-between-curves",
+  "prompt": "The area of the region enclosed by y = x² and y = 4 is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32/3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "32/3"
+   },
+   {
+    "label": "B",
+    "text": "16/3"
+   },
+   {
+    "label": "C",
+    "text": "8"
+   },
+   {
+    "label": "D",
+    "text": "64/3"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "The curves meet where x² = 4, at x = ±2, and the horizontal line is on top: ∫₋₂² (4 − x²) dx = [4x − x³/3]₋₂² = 16/3 + 16/3 = 32/3. Choice B integrates over only half the region (0 to 2) and forgets to double it.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U6",
+   "topup",
+   "no-calc",
+   "subskill:area-between-curves"
+  ],
+  "source": "calc-topup",
+  "contentHash": "efa2c254ba94f166f92b0246e43f8fe4f05002fb28f160938ecfd40e04846bb7",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-018",
+  "skillId": "area-between-curves",
+  "prompt": "The area of the region bounded by y = √x and y = x² is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/3"
+   },
+   {
+    "label": "B",
+    "text": "1/6"
+   },
+   {
+    "label": "C",
+    "text": "2/3"
+   },
+   {
+    "label": "D",
+    "text": "1/2"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "The curves intersect at x = 0 and x = 1, with √x above x² between them: ∫₀¹ (√x − x²) dx = 2/3 − 1/3 = 1/3. Choice C is just the first integral, ∫√x, without subtracting the region under the parabola.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U6",
+   "topup",
+   "no-calc",
+   "subskill:area-between-curves"
+  ],
+  "source": "calc-topup",
+  "contentHash": "7730ffbf50886d68d4c3547bee080622f58b3cc5b8b9a581641b8dd1c6b0678a",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-019",
+  "skillId": "volume-disk-washer",
+  "prompt": "The region under y = √x from x = 0 to x = 4 is revolved about the x-axis. The volume of the solid is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8π",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "8π"
+   },
+   {
+    "label": "B",
+    "text": "16π"
+   },
+   {
+    "label": "C",
+    "text": "4π"
+   },
+   {
+    "label": "D",
+    "text": "32π/3"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "Disks perpendicular to the axis have radius √x, so V = π∫₀⁴ (√x)² dx = π∫₀⁴ x dx = π·8 = 8π. Choice D comes from forgetting to square the radius and integrating √x itself.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U8",
+   "topup",
+   "no-calc",
+   "subskill:volume-disk-washer"
+  ],
+  "source": "calc-topup",
+  "contentHash": "fc26d639e1ea534f65bba6d73384b29f75a5519cf75205a5f3ed5139d8c95c74",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-020",
+  "skillId": "volume-disk-washer",
+  "prompt": "The region bounded by y = x², y = 0 and x = 2 is revolved about the x-axis. The volume is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32π/5",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "32π/5"
+   },
+   {
+    "label": "B",
+    "text": "8π/3"
+   },
+   {
+    "label": "C",
+    "text": "32π/3"
+   },
+   {
+    "label": "D",
+    "text": "16π/5"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "V = π∫₀² (x²)² dx = π∫₀² x⁴ dx = π·(32/5) = 32π/5. Choice C squares only after integrating; choice B is the AREA-style integral ∫x² dx scaled by π, which skips the squaring entirely.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U8",
+   "topup",
+   "no-calc",
+   "subskill:volume-disk-washer"
+  ],
+  "source": "calc-topup",
+  "contentHash": "1207217dfcca3c4c2991e7230424c12a9bfbeec001efdbd683535dd2ae47e5d1",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-021",
+  "skillId": "volume-disk-washer",
+  "prompt": "The region between y = x and y = x² is revolved about the x-axis. The volume of the resulting solid is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2π/15",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2π/15"
+   },
+   {
+    "label": "B",
+    "text": "π/15"
+   },
+   {
+    "label": "C",
+    "text": "8π/15"
+   },
+   {
+    "label": "D",
+    "text": "π/6"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "This needs WASHERS: the outer radius is the line x and the inner radius is the parabola x², so V = π∫₀¹ (x² − x⁴) dx = π(1/3 − 1/5) = 2π/15. Squaring the DIFFERENCE (x − x²)² instead of taking the difference of squares gives π/30 — the classic washer error, and the reason choice B looks plausible.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U8",
+   "topup",
+   "no-calc",
+   "subskill:volume-disk-washer"
+  ],
+  "source": "calc-topup",
+  "contentHash": "815c191deb414480079a76035aa1cee8af243356089ad111fca6ae8f113092bc",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-022",
+  "skillId": "volume-cross-sections",
+  "prompt": "The base of a solid is the region bounded by y = √x, y = 0 and x = 4. Cross-sections perpendicular to the x-axis are squares. The volume is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "4"
+   },
+   {
+    "label": "B",
+    "text": "8"
+   },
+   {
+    "label": "C",
+    "text": "16"
+   },
+   {
+    "label": "D",
+    "text": "32/3"
+   }
+  ],
+  "correctOption": "B",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "Each square has side √x, so its area is (√x)² = x, and V = ∫₀⁴ x dx = 8. No π appears — the solid is built from squares, not circles, which is what choice D's disk-style value assumes.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U8",
+   "topup",
+   "no-calc",
+   "subskill:volume-cross-sections"
+  ],
+  "source": "calc-topup",
+  "contentHash": "c866516c889eb085573148bd83b8a1f2c4dd39290a6708447a214638e2c981f4",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-023",
+  "skillId": "volume-cross-sections",
+  "prompt": "The base of a solid is the region bounded by y = 1 − x² and the x-axis. Cross-sections perpendicular to the x-axis are squares. The volume is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16/15",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "16/15"
+   },
+   {
+    "label": "B",
+    "text": "8/15"
+   },
+   {
+    "label": "C",
+    "text": "4/3"
+   },
+   {
+    "label": "D",
+    "text": "2"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "The side length is 1 − x², so V = ∫₋₁¹ (1 − x²)² dx = ∫₋₁¹ (1 − 2x² + x⁴) dx = 16/15. Choice B integrates over only 0 to 1 and forgets that the base is symmetric about the y-axis.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U8",
+   "topup",
+   "no-calc",
+   "subskill:volume-cross-sections"
+  ],
+  "source": "calc-topup",
+  "contentHash": "ba6f8a797bc76f8e0b91324fadad9ed91cc83a2833363c42735197ec0eb6f987",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-024",
+  "skillId": "volume-cross-sections",
+  "prompt": "The base of a solid is the region bounded by y = x and y = x². Cross-sections perpendicular to the x-axis are squares. The volume is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/30",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/30"
+   },
+   {
+    "label": "B",
+    "text": "1/6"
+   },
+   {
+    "label": "C",
+    "text": "1/12"
+   },
+   {
+    "label": "D",
+    "text": "1/5"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "The side of each square is the vertical gap x − x², so V = ∫₀¹ (x − x²)² dx = ∫₀¹ (x² − 2x³ + x⁴) dx = 1/3 − 1/2 + 1/5 = 1/30. Choice B is the AREA of the base region, not the volume — a sign the squaring step was skipped.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U8",
+   "topup",
+   "no-calc",
+   "subskill:volume-cross-sections"
+  ],
+  "source": "calc-topup",
+  "contentHash": "425ee4d7fc52843bff67ada72470bacb4190fbbae48b5582eeb1682666020b74",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-025",
+  "skillId": "volume-cross-sections",
+  "prompt": "The base of a solid is the region bounded by y = 2 − x, x = 0 and y = 0. Cross-sections perpendicular to the x-axis are equilateral triangles. The volume is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2√3/3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "2√3/3"
+   },
+   {
+    "label": "B",
+    "text": "8/3"
+   },
+   {
+    "label": "C",
+    "text": "√3/3"
+   },
+   {
+    "label": "D",
+    "text": "4√3/3"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "An equilateral triangle of side s has area (√3/4)s², and here s = 2 − x, so V = (√3/4)∫₀² (2 − x)² dx = (√3/4)(8/3) = 2√3/3. Choice B drops the (√3/4) factor and treats the cross-sections as squares.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U8",
+   "topup",
+   "no-calc",
+   "subskill:volume-cross-sections"
+  ],
+  "source": "calc-topup",
+  "contentHash": "d4e1304b67206f27d06df7f21297e8d844b97e9d5bfe17fe52b76dab1036793d",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-026",
+  "skillId": "implicit-differentiation",
+  "prompt": "If x² + y² = 25, then dy/dx =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−x/y",
+   "equivalents": [
+    "-x/y"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "−x/y"
+   },
+   {
+    "label": "B",
+    "text": "x/y"
+   },
+   {
+    "label": "C",
+    "text": "−y/x"
+   },
+   {
+    "label": "D",
+    "text": "−2x"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "Differentiating both sides with respect to x gives 2x + 2y·(dy/dx) = 0, so dy/dx = −x/y. Choice B loses the sign when isolating; choice D forgets that y is a function of x and so never produces the dy/dx term at all.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U3",
+   "topup",
+   "no-calc",
+   "subskill:implicit-differentiation"
+  ],
+  "source": "calc-topup",
+  "contentHash": "71f8ed6c7b254d172740420d932bd0ce7ddf37374b15d91fd6f661099985be41",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-027",
+  "skillId": "implicit-differentiation",
+  "prompt": "If x² + xy + y² = 7, then dy/dx at the point (1, 2) is",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−4/5",
+   "equivalents": [
+    "-4/5"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "−4/5"
+   },
+   {
+    "label": "B",
+    "text": "−5/4"
+   },
+   {
+    "label": "C",
+    "text": "4/5"
+   },
+   {
+    "label": "D",
+    "text": "−1/2"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "The middle term needs the PRODUCT rule: 2x + (y + x·y′) + 2y·y′ = 0, so y′(x + 2y) = −(2x + y) and y′ = −(2x + y)/(x + 2y). At (1, 2) that is −(2 + 2)/(1 + 4) = −4/5. Choice B inverts the fraction — a sign the two grouped factors were swapped.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U3",
+   "topup",
+   "no-calc",
+   "subskill:implicit-differentiation"
+  ],
+  "source": "calc-topup",
+  "contentHash": "1c9c31912e2a1d144afb50932ec13454ca14a39b1c786ce7b75caee3d5cbc8a8",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-028",
+  "skillId": "inverse-function-derivatives",
+  "prompt": "d/dx [arctan x] =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/(1 + x²)",
+   "equivalents": [
+    "1/(1+x²)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/(1 + x²)"
+   },
+   {
+    "label": "B",
+    "text": "1/√(1 − x²)"
+   },
+   {
+    "label": "C",
+    "text": "−1/(1 + x²)"
+   },
+   {
+    "label": "D",
+    "text": "sec² x"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 3,
+  "gradeBand": "Calculus",
+  "explanation": "The derivative of arctan x is 1/(1 + x²). Choice B is the derivative of arcsin x and choice C is the derivative of arccot x — the inverse trig derivatives differ only by which sign and which radical, so they are easy to confuse.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U3",
+   "topup",
+   "no-calc",
+   "subskill:inverse-function-derivatives"
+  ],
+  "source": "calc-topup",
+  "contentHash": "9d43284d2badf084d2a8ca31176225e52c9da783396a061069737f52417ede3d",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-029",
+  "skillId": "inverse-function-derivatives",
+  "prompt": "Let f(x) = x³ + x + 1 and let g be the inverse of f. Then g′(3) =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "1/4"
+   },
+   {
+    "label": "B",
+    "text": "4"
+   },
+   {
+    "label": "C",
+    "text": "1/3"
+   },
+   {
+    "label": "D",
+    "text": "1/13"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 4,
+  "gradeBand": "Calculus",
+  "explanation": "Use g′(a) = 1/f′(g(a)). Since f(1) = 3, g(3) = 1. With f′(x) = 3x² + 1, f′(1) = 4, so g′(3) = 1/4. Choice B forgets to take the reciprocal; choice D evaluates f′ at 3 instead of at g(3) = 1.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U3",
+   "topup",
+   "no-calc",
+   "subskill:inverse-function-derivatives"
+  ],
+  "source": "calc-topup",
+  "contentHash": "2511e243880167b14eb908e3c65d11fe212106f7fa0ab31c37a784b49094f218",
+  "isActive": true
+ },
+ {
+  "problemId": "calc-ab-top-030",
+  "skillId": "basic-differentiation-rules",
+  "prompt": "d/dx [3x⁴ − 5x + 7] =",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12x³ − 5",
+   "equivalents": [
+    "12x³ - 5",
+    "12x³−5"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "options": [
+   {
+    "label": "A",
+    "text": "12x³ − 5"
+   },
+   {
+    "label": "B",
+    "text": "12x³ − 5x"
+   },
+   {
+    "label": "C",
+    "text": "3x³ − 5"
+   },
+   {
+    "label": "D",
+    "text": "12x³ + 7"
+   }
+  ],
+  "correctOption": "A",
+  "difficulty": 2,
+  "gradeBand": "Calculus",
+  "explanation": "Apply the power rule term by term: 3x⁴ → 12x³, −5x → −5, and the constant 7 → 0. Choice D keeps the constant, which always differentiates to zero; choice B fails to reduce the exponent on the linear term.",
+  "tags": [
+   "calc-ab",
+   "ap-calc-ab",
+   "U2",
+   "topup",
+   "no-calc",
+   "subskill:basic-differentiation-rules"
+  ],
+  "source": "calc-topup",
+  "contentHash": "fed16adb78ba011cfa8bf9d7187499d1d3645887fb344e2222a69e2325ad8c27",
+  "isActive": true
+ }
+]
