@@ -37,10 +37,31 @@ async function main() {
 
   let up = 0;
   for (const s of skills) {
-    await Skill.updateOne({ skillId: s.skillId }, { $set: s }, { upsert: true });
+    await Skill.updateOne(
+      { skillId: s.skillId },
+      {
+        $set: s,
+        // GET /api/mastery/map queries { isActive: true, source: 'unified-taxonomy' }
+        // and returns `seeded: false` when that finds nothing — the whole skill
+        // map goes dark. skills-unified.json does not carry isActive, so on
+        // insert it depends entirely on setDefaultsOnInsert; pinning it here
+        // means the map cannot hinge on that behaviour staying default-on.
+        //
+        // $setOnInsert, not $set: re-running this must never re-activate a
+        // skill somebody deliberately turned off.
+        $setOnInsert: { isActive: true },
+      },
+      { upsert: true }
+    );
     up += 1;
   }
   console.log(`Upserted ${up} unified taxonomy skills into MongoDB (source: unified-taxonomy).`);
+
+  // Say plainly whether the map will actually render, since "Upserted 349" and
+  // "the map works" are not the same claim.
+  const live = await Skill.countDocuments({ isActive: true, source: 'unified-taxonomy' });
+  console.log(`Visible to GET /api/mastery/map: ${live} skills.`);
+  if (!live) console.warn('WARNING: map will still report seeded:false.');
 
   await mongoose.disconnect();
   process.exit(0);
