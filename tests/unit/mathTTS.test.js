@@ -50,3 +50,36 @@ describe('convertLatexToSpeech — delimited math', () => {
     expect(convertLatexToSpeech('3x^2 + 2x - 5')).toBe('3x squared plus 2x minus 5');
   });
 });
+
+describe('cleanTextForTTS — numbered lists get a beat between items', () => {
+  test('markdown list: each item is closed and its number labeled', () => {
+    expect(cleanTextForTTS('Try these:\n1. 2x-4=3\n2. 8x-9=43\n3. x^2=4'))
+      .toBe('Try these: Number one. 2x-4 equals 3. Number two. 8x-9 equals 43. Number three. x squared equals 4');
+  });
+
+  test('list written inline on one line', () => {
+    expect(cleanTextForTTS('Try these: 1. First, 2. Second'))
+      .toBe('Try these: Number one. First, Number two. Second');
+  });
+
+  test('items that already end in a period are not double-punctuated', () => {
+    expect(cleanTextForTTS('Steps:\n1. Distribute the 2.\n2. Combine like terms.'))
+      .toBe('Steps: Number one. Distribute the 2. Number two. Combine like terms.');
+  });
+
+  test('")" markers work too', () => {
+    expect(cleanTextForTTS('1) First one\n2) Second one'))
+      .toBe('Number one. First one. Number two. Second one');
+  });
+
+  // Regression guard: ordinary prose that merely contains "<digit>. " must not
+  // be rewritten — only an ascending run of two or more markers is a list.
+  test.each([
+    ['Look at problem 3. It uses the same idea.', 'Look at problem 3. It uses the same idea.'],
+    ['The answer is 7. That matches.', 'The answer is 7. That matches.'],
+    ['Great work! 2. is the tricky one.', 'Great work! 2. is the tricky one.'],
+    ['Do 4. Then do 4. again.', 'Do 4. Then do 4. again.'],
+  ])('prose left alone: %s', (input, expected) => {
+    expect(cleanTextForTTS(input)).toBe(expected);
+  });
+});

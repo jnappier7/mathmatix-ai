@@ -163,6 +163,50 @@ function speakOrdinal(n) {
   return `${num}${suffix}`;
 }
 
+// A numbered-list marker: at the start of a line (markdown list) or inline
+// after a sentence break ("1. 2x-4=3, 2. 8x-9=43" on one line).
+const LIST_MARKER_RE = /(?:^[ \t]*|(?<=[,;:.!?]\s))(\d{1,2})[.)][ \t]+/gm;
+
+/**
+ * Give numbered list items a beat between them.
+ *
+ * The final `\s+ → ' '` collapse in cleanTextForTTS flattens a list into one
+ * unbroken run, so the engine reads "1. 2x-4=3  2. 8x-9=43" as
+ * "one two x minus four equals three two eight x minus nine..." — the item
+ * number blurs into the math that follows it. Ending the previous item with a
+ * period and speaking the marker as "Number two." gives the engine a sentence
+ * boundary to pause on and separates the label from the expression.
+ *
+ * Only applied when the markers form an ascending consecutive run of two or
+ * more, so a lone "2. " in ordinary prose is left alone.
+ */
+function pauseNumberedListItems(text) {
+  LIST_MARKER_RE.lastIndex = 0;
+  const markers = [];
+  let m;
+  while ((m = LIST_MARKER_RE.exec(text)) !== null) {
+    markers.push({ index: m.index, length: m[0].length, n: parseInt(m[1], 10) });
+  }
+  if (markers.length < 2) return text;
+  for (let i = 1; i < markers.length; i++) {
+    if (markers[i].n !== markers[i - 1].n + 1) return text;
+  }
+
+  let out = '';
+  let cursor = 0;
+  for (const marker of markers) {
+    let before = text.slice(cursor, marker.index);
+    // Close the previous item so the engine hears a full stop before the next.
+    if (/[^\s]/.test(before) && !/[.!?:;,]\s*$/.test(before)) {
+      before = `${before.replace(/\s+$/, '')}. `;
+    }
+    out += before;
+    out += `Number ${speakNumber(String(marker.n))}. `;
+    cursor = marker.index + marker.length;
+  }
+  return out + text.slice(cursor);
+}
+
 /**
  * Full TTS preprocessing pipeline.
  * Strips markdown, converts LaTeX to speech, cleans visual commands.
@@ -196,6 +240,10 @@ function cleanTextForTTS(text) {
 
   // Remove horizontal rules
   cleaned = cleaned.replace(/^[-*]{3,}$/gm, '');
+
+  // Numbered lists: insert a beat between items while the line breaks that
+  // mark them still exist (the whitespace collapse below erases them).
+  cleaned = pauseNumberedListItems(cleaned);
 
   // Convert LaTeX expressions to speech
   cleaned = cleaned.replace(/\\\[([^\]]+)\\\]/g, (_, latex) => convertLatexToSpeech(latex));
@@ -348,6 +396,7 @@ function createMathSpeechStreamFilter() {
 module.exports = {
   cleanTextForTTS,
   convertLatexToSpeech,
+  pauseNumberedListItems,
   speakMathInProse,
   createMathSpeechStreamFilter,
   speakNumber,
