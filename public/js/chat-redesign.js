@@ -23,14 +23,14 @@
 
   // Cache-buster for /videos/* — prod caches static assets 7 days with no
   // hashing, so bump this whenever a clip is re-exported under the same name.
-  const VIDEO_VERSION = '?v=20260715';
+  const VIDEO_VERSION = '?v=20260802';
 
   // How many idle clips each tutor has on disk ({id}_idle.mp4, {id}_idle2.mp4).
   // Tutors not listed here (and reduced-motion users) keep the static
   // portrait + PNG micro-animation instead.
   const IDLE_VIDEO_COUNTS = {
     'bob': 2,
-    'maya': 1,           // no maya_idle2 yet — single clip loops
+    'maya': 2,
     'mr-nappier': 2,
     'ms-maria': 2
   };
