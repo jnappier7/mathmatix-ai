@@ -13,6 +13,8 @@
 
 const TutorPlan = require('../models/tutorPlan');
 const { canonicalSkillId, encodeMasteryKey, decodeMasteryKey } = require('./skillCanonicalizer');
+// skillRung is dependency-free, so this cannot cycle back through here.
+const { RUNGS: RUNG_ORDER, currentRung } = require('./skillRung');
 
 // The storage-key codec now lives in skillCanonicalizer — it is skill-id
 // normalization, and it has to be reachable from modules that must not pull in
@@ -64,17 +66,49 @@ function hasSkillMasteryEntry(user, skillId) {
   return getSkillMasteryEntry(user, skillId) != null;
 }
 
-// A plain, decoded (dotted-key) view of a user's skillMastery, for the closure /
-// board / cascade code that reasons over the graph in logical ids. Mutating an
+// A plain, decoded, CANONICAL-key view of a user's skillMastery, for the closure
+// / board / cascade code that reasons over the graph in logical ids. Mutating an
 // entry object mutates the stored subdocument (same reference); NEW keys or rung
 // changes produced by a cascade must be written back with setSkillMasteryEntry.
+//
+// Canonicalizing is load-bearing, not tidiness. Every consumer builds its graph
+// from `source: 'unified-taxonomy'` skills, so its node ids are unified
+// ("MS.QNT.8"). This map used to decode "_" -> "." and stop there, leaving a
+// legacy-keyed entry ("order-of-operations") under a key no graph node can ever
+// equal — skillClosure.readEntry is a plain `.get(id)`. The student's work was
+// present in the document and invisible to the board: "Your climb" reported
+// 0 proved / 0 taught for an account with real history, and the only skills it
+// offered were the prereq-free roots you get from an EMPTY mastery map.
+// getSkillMasteryEntry has always canonicalized on read; the decoded view is the
+// one reader that skipped the step.
 function decodedMasteryMap(user) {
   const out = new Map();
   const sm = user && user.skillMastery;
   if (!sm) return out;
   const iter = typeof sm.entries === 'function' ? sm.entries() : Object.entries(sm || {});
-  for (const [k, v] of iter) out.set(decodeMasteryKey(k), v);
+  for (const [k, v] of iter) {
+    const id = canonicalSkillId(decodeMasteryKey(k));
+    const existing = out.get(id);
+    // Two stored keys can collapse onto one canonical id (a legacy entry and its
+    // unified one, mid-migration). Keep the stronger claim rather than letting
+    // iteration order decide — silently dropping a proved rung would take
+    // demonstrated work off the board.
+    out.set(id, existing ? strongerEntry(existing, v) : v);
+  }
   return out;
+}
+
+// Which of two entries for the same skill represents more progress? Higher rung
+// wins; on a tie a demonstrated rung beats one granted by closure, since
+// `inference` is the cheapest claim we hold. Returns one of the two ARGUMENTS —
+// never a copy — so the shared-reference contract above still holds.
+function strongerEntry(a, b) {
+  const rank = (e) => RUNG_ORDER.indexOf(currentRung(e));
+  const ra = rank(a), rb = rank(b);
+  if (ra !== rb) return ra > rb ? a : b;
+  const inferred = (e) => e && e.provenBy === 'inference';
+  if (inferred(a) !== inferred(b)) return inferred(a) ? b : a;
+  return a;
 }
 
 // Resolve the skillMastery KEY to use for a read-modify-write on `skillId`.
