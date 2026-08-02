@@ -320,8 +320,17 @@ describe('Pipeline Integration: runPipeline', () => {
 
       mockLLMResponse('Nice! 12 is correct. <PROBLEM_RESULT:correct>');
 
-      // aiProcessingStartTime = now → raw elapsed rounds to ~0s, so the floor governs.
-      const result = await runPipeline('12', buildCtx(user, conversation));
+      // A QUARTER SECOND of elapsed time, stated explicitly rather than left to
+      // however fast the mocked pipeline happens to run. persist.js computes
+      // `Math.ceil((now - start) / 1000)` and then only bills when that is > 0,
+      // so a fully-mocked turn that completes inside a single millisecond
+      // produces 0 and skips billing entirely — aiTimeUsed comes back undefined
+      // and this test fails perhaps half the time. 250ms still ceils to 1s, far
+      // below the 30s floor, so the assertion means exactly what it did before:
+      // real latency is negligible, therefore the floor governs.
+      const result = await runPipeline('12', buildCtx(user, conversation, {
+        aiProcessingStartTime: Date.now() - 250,
+      }));
 
       expect(result.aiTimeUsed).toBe(FLOOR);
     });
