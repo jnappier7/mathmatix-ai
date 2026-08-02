@@ -1,0 +1,6621 @@
+[
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-001",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  8x = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y/8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x is multiplied by 8, so divide BOTH sides by 8: x = y/8. The variable you are solving for must end up alone on one side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e61ca729e49aa255d9af11aeb82faebe559c04b4a67c66e815a06a2c22ffc049",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-002",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  9x = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y/9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x is multiplied by 9, so divide BOTH sides by 9: x = y/9. The variable you are solving for must end up alone on one side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "406204c044af10bc64555af5f88019e943a584c6b7b85c3f4eb309fab032a619",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-003",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  6x = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x is multiplied by 6, so divide BOTH sides by 6: x = y/6. The variable you are solving for must end up alone on one side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1b40784fae488e1681aaa0680c05cc2b2299a91b5738e358abb6facc6f6b4112",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-004",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  3x = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x is multiplied by 3, so divide BOTH sides by 3: x = y/3. The variable you are solving for must end up alone on one side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b07b8b59e346b4dad31845388950316b297a80aa08ced90970140b7ede47b7b2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-005",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  5x + 5 = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(y − 5)/5",
+   "equivalents": [
+    "(y - 5)/5",
+    "(y−5)/5",
+    "(y-5)/5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Undo in reverse order: subtract 5 from both sides to get 5x = y − 5, then divide by 5: x = (y − 5)/5. The whole numerator is divided by 5, which is why the parentheses matter.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "13c032f3c5b07d9da97a4763b6812184722992bc39bfe6d0de6413b0c4a78f5b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-006",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  2x + 8 = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(y − 8)/2",
+   "equivalents": [
+    "(y - 8)/2",
+    "(y−8)/2",
+    "(y-8)/2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Undo in reverse order: subtract 8 from both sides to get 2x = y − 8, then divide by 2: x = (y − 8)/2. The whole numerator is divided by 2, which is why the parentheses matter.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "297640b2738cee75ebbd3460a341b4d755c878a0856d14ceae8088ed0dde59ac",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-007",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  3x + 12 = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(y − 12)/3",
+   "equivalents": [
+    "(y - 12)/3",
+    "(y−12)/3",
+    "(y-12)/3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Undo in reverse order: subtract 12 from both sides to get 3x = y − 12, then divide by 3: x = (y − 12)/3. The whole numerator is divided by 3, which is why the parentheses matter.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c10e70064cf25c730fdfd35b014cdd006170ea43beccf035f6e97f8d2fbd0684",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-008",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for x:  6x + 9 = y",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(y − 9)/6",
+   "equivalents": [
+    "(y - 9)/6",
+    "(y−9)/6",
+    "(y-9)/6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Undo in reverse order: subtract 9 from both sides to get 6x = y − 9, then divide by 6: x = (y − 9)/6. The whole numerator is divided by 6, which is why the parentheses matter.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c04d35e7f48d89deb4b719fc490031abc91ce15357037394bd2c01be50dae00f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-009",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for h:  A = (1/2)b·h",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2A/b",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by 2 to clear the fraction: 2A = b·h. Then divide by b: h = 2A/b. (The drawn value 6 is not needed — this is the general formula.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ad59f26d22e0d678fa85271348675d3b4c48f51c8b97bdf11cd41525955c4a2c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-010",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for y:  7x + 3y = c",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(c − 7x)/3",
+   "equivalents": [
+    "(c - 7x)/3",
+    "(c−7x)/3",
+    "(c-7x)/3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Isolate the y-term first: 3y = c − 7x. Then divide every part of that side by 3: y = (c − 7x)/3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5bb888a117f0446ac40ddd2968f74b98e765a63aa5508a23a2c5556ff4f0eff3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-011",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for y:  8x + 6y = c",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(c − 8x)/6",
+   "equivalents": [
+    "(c - 8x)/6",
+    "(c−8x)/6",
+    "(c-8x)/6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Isolate the y-term first: 6y = c − 8x. Then divide every part of that side by 6: y = (c − 8x)/6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "35411be70cc9f07a4a49685c5a23a2ebfef33f0be2f7fbc051e842fef65e59a7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-012",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for y:  3x + 8y = c",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(c − 3x)/8",
+   "equivalents": [
+    "(c - 3x)/8",
+    "(c−3x)/8",
+    "(c-3x)/8"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Isolate the y-term first: 8y = c − 3x. Then divide every part of that side by 8: y = (c − 3x)/8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fbd830312b49a60dd1dbcda4ec0eab2550e5c9aecc3679fa5770ad1bd4857eed",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-literal-equations-013",
+  "skillId": "solving-literal-equations",
+  "prompt": "Solve for y:  8x + 7y = c",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(c − 8x)/7",
+   "equivalents": [
+    "(c - 8x)/7",
+    "(c−8x)/7",
+    "(c-8x)/7"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Isolate the y-term first: 7y = c − 8x. Then divide every part of that side by 7: y = (c − 8x)/7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-literal-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9172e038ba7d02b75a7e08e33e8599d3307d1ceba6d7d62d5ba49b5ed15a6bd1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-001",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (7, 6) with slope 4. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 6 = 4(x − 7)",
+   "equivalents": [
+    "y - 6 = 4(x - 7)",
+    "y−6=4(x−7)",
+    "y-6=4(x-7)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope form is y − y₁ = m(x − x₁). With m = 4 and (x₁, y₁) = (7, 6) that is y − 6 = 4(x − 7).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "89d82f95c4cf7b5ba1e8290af07969045acf3a932af2c3c1a10c38376a5fc359",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-002",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (1, 6) with slope 5. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 6 = 5(x − 1)",
+   "equivalents": [
+    "y - 6 = 5(x - 1)",
+    "y−6=5(x−1)",
+    "y-6=5(x-1)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope form is y − y₁ = m(x − x₁). With m = 5 and (x₁, y₁) = (1, 6) that is y − 6 = 5(x − 1).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "27cee0077f4186b96a913a004aa25168ca54e7978acd81e14de75966e53327d7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-003",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (4, 7) with slope 3. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 7 = 3(x − 4)",
+   "equivalents": [
+    "y - 7 = 3(x - 4)",
+    "y−7=3(x−4)",
+    "y-7=3(x-4)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope form is y − y₁ = m(x − x₁). With m = 3 and (x₁, y₁) = (4, 7) that is y − 7 = 3(x − 4).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5f3442abfdabb6bc7b13a72e0ea3811d87dc66bee187090dfee577bf4e74c75a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-004",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (2, 2) with slope 3. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 2 = 3(x − 2)",
+   "equivalents": [
+    "y - 2 = 3(x - 2)",
+    "y−2=3(x−2)",
+    "y-2=3(x-2)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope form is y − y₁ = m(x − x₁). With m = 3 and (x₁, y₁) = (2, 2) that is y − 2 = 3(x − 2).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "96f38783cffecc6a9ef78119258aad7ddf16d2317d8fd63f3b3c5d03f451c243",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-005",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (-7, 5) with slope -6. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 5 = -6(x + 7)",
+   "equivalents": [
+    "y - 5 = -6(x + 7)",
+    "y−5=-6(x+7)",
+    "y-5=-6(x+7)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope is y − y₁ = m(x − x₁). Here x₁ = -7, and subtracting a negative becomes addition: x − (-7) = x + 7. So y − 5 = -6(x + 7).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c39eb6f2aaa7eae2e1f0ff3f199d0e13edc25d3aa06ef07069083237ef9f9f21",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-006",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (-6, 7) with slope -4. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 7 = -4(x + 6)",
+   "equivalents": [
+    "y - 7 = -4(x + 6)",
+    "y−7=-4(x+6)",
+    "y-7=-4(x+6)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope is y − y₁ = m(x − x₁). Here x₁ = -6, and subtracting a negative becomes addition: x − (-6) = x + 6. So y − 7 = -4(x + 6).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ba380ad5a90f350fd5f30a8d7b4bfbfbbc7ee3092cc045cf5f0b64b1939d904c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-007",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (-6, 3) with slope -4. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 3 = -4(x + 6)",
+   "equivalents": [
+    "y - 3 = -4(x + 6)",
+    "y−3=-4(x+6)",
+    "y-3=-4(x+6)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope is y − y₁ = m(x − x₁). Here x₁ = -6, and subtracting a negative becomes addition: x − (-6) = x + 6. So y − 3 = -4(x + 6).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6d075e1842ac637a5419e57caf6f90f6252347ac9725dfeaa0619dfb6e98bc89",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-008",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (-5, 5) with slope -2. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 5 = -2(x + 5)",
+   "equivalents": [
+    "y - 5 = -2(x + 5)",
+    "y−5=-2(x+5)",
+    "y-5=-2(x+5)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Point-slope is y − y₁ = m(x − x₁). Here x₁ = -5, and subtracting a negative becomes addition: x − (-5) = x + 5. So y − 5 = -2(x + 5).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "59bd2ad791b9453de0b56ccf869d5ae72e7eba04597edd09f780407f435c7665",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-009",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (3, 5) and (7, 4). Use the first point. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 5 = -1/4(x − 3)",
+   "equivalents": [
+    "y - 5 = -1/4(x - 3)",
+    "y−5=-1/4(x−3)",
+    "y-5=-1/4(x-3)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First find the slope: m = (4 − 5)/(7 − 3) = -1/4 = -1/4. Then substitute that slope and the point (3, 5) into y − y₁ = m(x − x₁).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "15aabc8cbd4526b60e1396ddc7d02693f210d178ed3bb4a3a03807a4f819e9d4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-010",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (4, 2) and (6, -3). Use the first point. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 2 = -5/2(x − 4)",
+   "equivalents": [
+    "y - 2 = -5/2(x - 4)",
+    "y−2=-5/2(x−4)",
+    "y-2=-5/2(x-4)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First find the slope: m = (-3 − 2)/(6 − 4) = -5/2 = -5/2. Then substitute that slope and the point (4, 2) into y − y₁ = m(x − x₁).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4231b1be9153a854f58363c0e06c1228974d515c755c728003f399716d20b878",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-011",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (2, 4) and (6, -2). Use the first point. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 4 = -3/2(x − 2)",
+   "equivalents": [
+    "y - 4 = -3/2(x - 2)",
+    "y−4=-3/2(x−2)",
+    "y-4=-3/2(x-2)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First find the slope: m = (-2 − 4)/(6 − 2) = -6/4 = -3/2. Then substitute that slope and the point (2, 4) into y − y₁ = m(x − x₁).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3bf1b5288e68fc3c58caec63a0d752fcbc754fc47c4a08b997c8f713bfb8b0c1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-writing-linear-equations-point-slope-012",
+  "skillId": "writing-linear-equations-point-slope",
+  "prompt": "Write an equation in point-slope form for the line through (3, 2) and (5, 1). Use the first point. Do not simplify.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y − 2 = -1/2(x − 3)",
+   "equivalents": [
+    "y - 2 = -1/2(x - 3)",
+    "y−2=-1/2(x−3)",
+    "y-2=-1/2(x-3)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First find the slope: m = (1 − 2)/(5 − 3) = -1/2 = -1/2. Then substitute that slope and the point (3, 2) into y − y₁ = m(x − x₁).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:writing-linear-equations-point-slope"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "de41b94f27fbfb7cd3ebbb610c9874998410361203f61064a164a6bb71970bc0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-001",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "When graphing y ≥ 2x + 7, is the boundary line solid or dashed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Solid",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The symbol is ≥, which includes equality, so points ON the line ARE solutions — that is shown with a solid line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "351681d3c49d93a4eb0576b9750d94df7a240f4372fd95c3c540437535d36045",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Solid"
+   },
+   {
+    "label": "B",
+    "text": "Dashed"
+   },
+   {
+    "label": "C",
+    "text": "Either one"
+   },
+   {
+    "label": "D",
+    "text": "No boundary line"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-002",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "When graphing y ≥ 2x + 9, is the boundary line solid or dashed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Solid",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The symbol is ≥, which includes equality, so points ON the line ARE solutions — that is shown with a solid line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fcfbb86b068029bb6a357673aae7648ba9902b69f956d0b3099d3ebee65c5c12",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Solid"
+   },
+   {
+    "label": "B",
+    "text": "Dashed"
+   },
+   {
+    "label": "C",
+    "text": "Either one"
+   },
+   {
+    "label": "D",
+    "text": "No boundary line"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-003",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "When graphing y ≥ 3x + 3, is the boundary line solid or dashed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Solid",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The symbol is ≥, which includes equality, so points ON the line ARE solutions — that is shown with a solid line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "68e552df6b04272f887b7f8bcc210196b0adf6b1793785d20718ea6c7a81a6c3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Solid"
+   },
+   {
+    "label": "B",
+    "text": "Dashed"
+   },
+   {
+    "label": "C",
+    "text": "Either one"
+   },
+   {
+    "label": "D",
+    "text": "No boundary line"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-004",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "When graphing y > x + 7, is the boundary line solid or dashed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Dashed",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The symbol is > with no \"or equal to\", so points ON the line are NOT solutions — that is shown with a dashed line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "561cb7a3858e8434e18b3c0785247d2633d382e4f4c621a45b1967e2596edd72",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Solid"
+   },
+   {
+    "label": "B",
+    "text": "Dashed"
+   },
+   {
+    "label": "C",
+    "text": "Either one"
+   },
+   {
+    "label": "D",
+    "text": "No boundary line"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-005",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "Is the point (4, 15) a solution of y > 2x + 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute: is 15 > 2(4) + 3 = 11? Yes, 15 > 11, so the point is a solution and lies in the shaded region.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b540f3f05f7d2cfae9dd9ab099037c1a2eb1caabaa8e7d9804a0a88154cd9303",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if the line is solid"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-006",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "Is the point (5, 8) a solution of y > 3x + 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute: is 8 > 3(5) + 5 = 20? No — 8 is not greater than 20, so the point lies outside the shaded region.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "959379bb0693fc0756ea562adeb56744691566b7ba9879c6f228bf0ffea83bb6",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if the line is solid"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-007",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "Is the point (2, 17) a solution of y > x + 7?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute: is 17 > 1(2) + 7 = 9? Yes, 17 > 9, so the point is a solution and lies in the shaded region.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8b6b618125638883f4f34c6204b3584450647637a7fb115e9ec61c4233d6ea3d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if the line is solid"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-008",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "Is the point (1, 20) a solution of y > 2x + 2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Substitute: is 20 > 2(1) + 2 = 4? Yes, 20 > 4, so the point is a solution and lies in the shaded region.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4274f473f3c3fb85e42d84e142d2fec20700bf290a15c2abd2bd8e2e9d3e54e0",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if the line is solid"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-009",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "For y > x + 4, do you shade above or below the boundary line?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Above",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The inequality is solved for y and reads \"y is GREATER than\", so the solutions sit above the line. Testing (0, 0) confirms it whenever the origin is not on the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "83f0f18d1e4f1539df87f1cc5bef2fb76e832be9d835bbb0e5711e0dfe28a713",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Above"
+   },
+   {
+    "label": "B",
+    "text": "Below"
+   },
+   {
+    "label": "C",
+    "text": "To the right"
+   },
+   {
+    "label": "D",
+    "text": "To the left"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-010",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "For y > 3x + 5, do you shade above or below the boundary line?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Above",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The inequality is solved for y and reads \"y is GREATER than\", so the solutions sit above the line. Testing (0, 0) confirms it whenever the origin is not on the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a65eeb36fe1acd119fd4fc8cfab46e390dd20aa3b4801af148203a81530b8c5f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Above"
+   },
+   {
+    "label": "B",
+    "text": "Below"
+   },
+   {
+    "label": "C",
+    "text": "To the right"
+   },
+   {
+    "label": "D",
+    "text": "To the left"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-011",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "For y ≥ 2x + 2, do you shade above or below the boundary line?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Above",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The inequality is solved for y and reads \"y is GREATER than\", so the solutions sit above the line. Testing (0, 0) confirms it whenever the origin is not on the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a703d12dcc9176b9f2c866856f86e3b5d50c9c36f8a4eb23a18743877737f1d8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Above"
+   },
+   {
+    "label": "B",
+    "text": "Below"
+   },
+   {
+    "label": "C",
+    "text": "To the right"
+   },
+   {
+    "label": "D",
+    "text": "To the left"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-graphing-linear-inequalities-012",
+  "skillId": "graphing-linear-inequalities",
+  "prompt": "For y ≤ 2x + 4, do you shade above or below the boundary line?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Below",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The inequality is solved for y and reads \"y is LESS than\", so the solutions sit below the line. Testing (0, 0) confirms it whenever the origin is not on the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:graphing-linear-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7f145a6641658825c30623c94b14e25a812476e3251eecd0f9a811bd28bfe739",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Above"
+   },
+   {
+    "label": "B",
+    "text": "Below"
+   },
+   {
+    "label": "C",
+    "text": "To the right"
+   },
+   {
+    "label": "D",
+    "text": "To the left"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-001",
+  "skillId": "systems-word-problems",
+  "prompt": "Adult tickets cost $10 and child tickets cost $4. A group bought 13 tickets for $88. How many ADULT tickets did they buy?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Let a = adult and c = child tickets. Then a + c = 13 and 10a + 4c = 88. Substituting c = 13 − a gives 10a + 4(13 − a) = 88, so 6a = 36 and a = 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "399da5d9c41ee5c0f8c98736e249d268e3c02c4daa4cf3305f53bf7968f8a82b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-002",
+  "skillId": "systems-word-problems",
+  "prompt": "Adult tickets cost $10 and child tickets cost $4. A group bought 9 tickets for $72. How many ADULT tickets did they buy?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Let a = adult and c = child tickets. Then a + c = 9 and 10a + 4c = 72. Substituting c = 9 − a gives 10a + 4(9 − a) = 72, so 6a = 36 and a = 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f8bdaa4f066a1bd6bb25468223139e2ac3c040f22402c7069415de926b900751",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-003",
+  "skillId": "systems-word-problems",
+  "prompt": "Adult tickets cost $12 and child tickets cost $3. A group bought 8 tickets for $51. How many ADULT tickets did they buy?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Let a = adult and c = child tickets. Then a + c = 8 and 12a + 3c = 51. Substituting c = 8 − a gives 12a + 3(8 − a) = 51, so 9a = 27 and a = 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6963c005425e671598ac57e3aba6baff06028c4fb712ef68a050a473d95ce3c5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-004",
+  "skillId": "systems-word-problems",
+  "prompt": "Adult tickets cost $9 and child tickets cost $3. A group bought 8 tickets for $48. How many ADULT tickets did they buy?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Let a = adult and c = child tickets. Then a + c = 8 and 9a + 3c = 48. Substituting c = 8 − a gives 9a + 3(8 − a) = 48, so 6a = 24 and a = 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0292fbce1956cf623c0587cc599f498dd3793050b5ea90209ae7dcb73193a1f1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-005",
+  "skillId": "systems-word-problems",
+  "prompt": "The sum of two numbers is 16 and their difference is 6. What is the LARGER number?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Let the numbers be x and y with x + y = 16 and x − y = 6. Adding the two equations eliminates y: 2x = 22, so x = 11. (Then y = 5, and 11 is indeed the larger.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3196fe1f28c86ae1764598a235937900fe8d8fa9d2446804ee95b5935b8388d2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-006",
+  "skillId": "systems-word-problems",
+  "prompt": "The sum of two numbers is 12 and their difference is 6. What is the LARGER number?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Let the numbers be x and y with x + y = 12 and x − y = 6. Adding the two equations eliminates y: 2x = 18, so x = 9. (Then y = 3, and 9 is indeed the larger.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "472db353acf93e4d69890aa2f3af0c51bf8fbdbd5d5dae94b9b21a1e16198e44",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-007",
+  "skillId": "systems-word-problems",
+  "prompt": "The sum of two numbers is 28 and their difference is 4. What is the LARGER number?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Let the numbers be x and y with x + y = 28 and x − y = 4. Adding the two equations eliminates y: 2x = 32, so x = 16. (Then y = 12, and 16 is indeed the larger.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "401e23bf5a8f8f81a6dccffb335983d753653ec3d9835401aa3e173e4d32a814",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-008",
+  "skillId": "systems-word-problems",
+  "prompt": "The sum of two numbers is 23 and their difference is 7. What is the LARGER number?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Let the numbers be x and y with x + y = 23 and x − y = 7. Adding the two equations eliminates y: 2x = 30, so x = 15. (Then y = 8, and 15 is indeed the larger.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1f2e211f81592a3d7c774eda7f642c8228f0c69eecc08b583806a16115f550b0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-009",
+  "skillId": "systems-word-problems",
+  "prompt": "A shop pays $24 in fixed costs plus $3 per item, and sells each item for $11. How many items must it sell to break even?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Break-even means revenue = cost: 11n = 24 + 3n. Subtracting 3n gives 8n = 24, so n = 3. The per-item PROFIT is $8, which is what pays down the fixed cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "06e42d313bd705d78774e3386cfc530e447680149936a118736486f41dec9515",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-010",
+  "skillId": "systems-word-problems",
+  "prompt": "A shop pays $40 in fixed costs plus $4 per item, and sells each item for $14. How many items must it sell to break even?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Break-even means revenue = cost: 14n = 40 + 4n. Subtracting 4n gives 10n = 40, so n = 4. The per-item PROFIT is $10, which is what pays down the fixed cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c89d13da760ccb9ac259a5e890190ee9af10eca4b90dc3c5902904a5f5a69f18",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-011",
+  "skillId": "systems-word-problems",
+  "prompt": "A shop pays $48 in fixed costs plus $4 per item, and sells each item for $12. How many items must it sell to break even?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Break-even means revenue = cost: 12n = 48 + 4n. Subtracting 4n gives 8n = 48, so n = 6. The per-item PROFIT is $8, which is what pays down the fixed cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1be66801d646167aad20b7ac45b7cb81ecaa552dcc2720f3540cbca1de3f5ea7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-systems-word-problems-012",
+  "skillId": "systems-word-problems",
+  "prompt": "A shop pays $40 in fixed costs plus $3 per item, and sells each item for $13. How many items must it sell to break even?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Break-even means revenue = cost: 13n = 40 + 3n. Subtracting 3n gives 10n = 40, so n = 4. The per-item PROFIT is $10, which is what pays down the fixed cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:systems-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3d91395c35b175d3dbd3a7d6cf7233b1da1a0a210f1204e90806e3be109512e3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-001",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify by number of terms: 9x + 4x + 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Trinomial",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Count the parts separated by + or −: 9x + 4x + 5 has 3 terms, which makes it a trinomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6c2ade3ff7cd75e4394d950e73d915e6e1f518e738a5ebaa77c5a87cd2e826e2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Monomial"
+   },
+   {
+    "label": "B",
+    "text": "Binomial"
+   },
+   {
+    "label": "C",
+    "text": "Trinomial"
+   },
+   {
+    "label": "D",
+    "text": "Polynomial with 4 terms"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-002",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify by number of terms: 4x²",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Monomial",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Count the parts separated by + or −: 4x² has 1 term, which makes it a monomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cf206354adb071a988324b1d8e36f59654c7691af707e8f16fa509056cc62dad",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Monomial"
+   },
+   {
+    "label": "B",
+    "text": "Binomial"
+   },
+   {
+    "label": "C",
+    "text": "Trinomial"
+   },
+   {
+    "label": "D",
+    "text": "Polynomial with 4 terms"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-003",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify by number of terms: 3x³ + 2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Binomial",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Count the parts separated by + or −: 3x³ + 2 has 2 terms, which makes it a binomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b88f907339ca65557b465a7630724966100245840208beea6b9f6ac7111a2ad8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Monomial"
+   },
+   {
+    "label": "B",
+    "text": "Binomial"
+   },
+   {
+    "label": "C",
+    "text": "Trinomial"
+   },
+   {
+    "label": "D",
+    "text": "Polynomial with 4 terms"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-004",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify by number of terms: 6x + 7",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Binomial",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Count the parts separated by + or −: 6x + 7 has 2 terms, which makes it a binomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2d91735e843614c888563105d636e55afe6137951dd4449e4593260c6f648c79",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Monomial"
+   },
+   {
+    "label": "B",
+    "text": "Binomial"
+   },
+   {
+    "label": "C",
+    "text": "Trinomial"
+   },
+   {
+    "label": "D",
+    "text": "Polynomial with 4 terms"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-005",
+  "skillId": "polynomial-classification",
+  "prompt": "What is the DEGREE of 6x³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The degree is the LARGEST exponent on the variable. In 6x³ that is 3. Adding the exponents together instead is the usual mistake.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "443ee272dbfd9e01a7cca6b091770889c7afa0591452d73217211f70a5c84a73",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-006",
+  "skillId": "polynomial-classification",
+  "prompt": "What is the DEGREE of 5x⁴ + 7x + 7?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The degree is the LARGEST exponent on the variable. In 5x⁴ + 7x + 7 that is 4. Adding the exponents together instead is the usual mistake.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8b27f3627b3bb64d7927c6ad0cd0fdd9998373f8ca97dbe3df0e015b37853dbe",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-007",
+  "skillId": "polynomial-classification",
+  "prompt": "What is the DEGREE of 8x³ + 7x + 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The degree is the LARGEST exponent on the variable. In 8x³ + 7x + 5 that is 3. Adding the exponents together instead is the usual mistake.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7ddded1e6923a84613318053e77c89ed42872c7b90fa90cf940fa7bee9835270",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-008",
+  "skillId": "polynomial-classification",
+  "prompt": "What is the DEGREE of 8x² + 7x + 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The degree is the LARGEST exponent on the variable. In 8x² + 7x + 1 that is 2. Adding the exponents together instead is the usual mistake.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "685a107093dcf8ac961001159f16eaf564e60e575990d6f2e12a092c0b670bed",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "1"
+   },
+   {
+    "label": "B",
+    "text": "2"
+   },
+   {
+    "label": "C",
+    "text": "3"
+   },
+   {
+    "label": "D",
+    "text": "4"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-009",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify 6x + 3 by degree AND number of terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Linear binomial",
+   "equivalents": [
+    "Linearbinomial"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The highest exponent is 1, so it is linear; it has 2 terms, so it is a binomial. Together: a linear binomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "54a47620402e1fc571f38396851881e42550a0407b97d0d1ead0517d1a44215d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Linear binomial"
+   },
+   {
+    "label": "B",
+    "text": "Quadratic binomial"
+   },
+   {
+    "label": "C",
+    "text": "Linear trinomial"
+   },
+   {
+    "label": "D",
+    "text": "Quadratic trinomial"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-010",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify 4x³ + 9 by degree AND number of terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Cubic binomial",
+   "equivalents": [
+    "Cubicbinomial"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The highest exponent is 3, so it is cubic; it has 2 terms, so it is a binomial. Together: a cubic binomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "30e9a1405206facc24251b927cb5a5ed5a85f00da1c2f7190681be5f19803a95",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Cubic binomial"
+   },
+   {
+    "label": "B",
+    "text": "Quadratic binomial"
+   },
+   {
+    "label": "C",
+    "text": "Cubic trinomial"
+   },
+   {
+    "label": "D",
+    "text": "Quartic trinomial"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-011",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify 2x⁴ by degree AND number of terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Quartic monomial",
+   "equivalents": [
+    "Quarticmonomial"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The highest exponent is 4, so it is quartic; it has 1 term, so it is a monomial. Together: a quartic monomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dc65cbc045fe5fb2c8af73e6615e6771bb9b3acb13c0559c02a36c869cb5b49e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Quartic monomial"
+   },
+   {
+    "label": "B",
+    "text": "Cubic monomial"
+   },
+   {
+    "label": "C",
+    "text": "Quartic binomial"
+   },
+   {
+    "label": "D",
+    "text": "Linear binomial"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-classification-012",
+  "skillId": "polynomial-classification",
+  "prompt": "Classify 3x⁴ + 7 by degree AND number of terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Quartic binomial",
+   "equivalents": [
+    "Quarticbinomial"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The highest exponent is 4, so it is quartic; it has 2 terms, so it is a binomial. Together: a quartic binomial.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-classification"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "40b6ebf7dc8baf7d9a24390b2dfe32a5de6986d53f77d365ed78601badfe1e16",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Quartic binomial"
+   },
+   {
+    "label": "B",
+    "text": "Cubic binomial"
+   },
+   {
+    "label": "C",
+    "text": "Quartic trinomial"
+   },
+   {
+    "label": "D",
+    "text": "Linear trinomial"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-001",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: 6x(7x + 4)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "42x^2 + 24x",
+   "equivalents": [
+    "42x^2+24x"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Distribute 6x to each term: 6x·7x = 42x², and 6x·4 = 24x. Exponents ADD when like bases multiply, which is why x·x becomes x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "16da01b46c7b4adfba2f3e1b538b257a1dc0660e7495b19ab95e0ef722331c39",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-002",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: 6x(4x + 3)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24x^2 + 18x",
+   "equivalents": [
+    "24x^2+18x"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Distribute 6x to each term: 6x·4x = 24x², and 6x·3 = 18x. Exponents ADD when like bases multiply, which is why x·x becomes x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "820ab29defcaa967db203018964395b3a3a09faad00ceb0aa00d041181dfa73c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-003",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: 5x(8x + 4)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40x^2 + 20x",
+   "equivalents": [
+    "40x^2+20x"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Distribute 5x to each term: 5x·8x = 40x², and 5x·4 = 20x. Exponents ADD when like bases multiply, which is why x·x becomes x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "71425082567610f1b15bc1a21b30b1f0edcbd31aefc654247bf68b3e16251037",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-004",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: 2x(4x + 7)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8x^2 + 14x",
+   "equivalents": [
+    "8x^2+14x"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Distribute 2x to each term: 2x·4x = 8x², and 2x·7 = 14x. Exponents ADD when like bases multiply, which is why x·x becomes x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "564d1d52a6ec506b31e89b195483809947e432e56b5b63ee001adc4aed67536e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-005",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 6)(x + 1)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 7x + 6",
+   "equivalents": [
+    "x^2+7x+6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x·x = x², the outer and inner terms give 1x + 6x = 7x, and 6·1 = 6. So the product is x² + 7x + 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d13c2f868522f5d5eb91e94026e666d0b9837ae0f23305a44dfb36ec49851395",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-006",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 6)(x + 5)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 11x + 30",
+   "equivalents": [
+    "x^2+11x+30"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x·x = x², the outer and inner terms give 5x + 6x = 11x, and 6·5 = 30. So the product is x² + 11x + 30.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10f679a30434215be538519c445e0346595fcd8986c22d88fa12e7f8baac7e9d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-007",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 5)(x + 1)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 6x + 5",
+   "equivalents": [
+    "x^2+6x+5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x·x = x², the outer and inner terms give 1x + 5x = 6x, and 5·1 = 5. So the product is x² + 6x + 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e4290221bf3322e6bc286f34a14b09231e611b6a981a082e5fdcb7fbc7004bc0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-008",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 8)(x + 1)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 9x + 8",
+   "equivalents": [
+    "x^2+9x+8"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x·x = x², the outer and inner terms give 1x + 8x = 9x, and 8·1 = 8. So the product is x² + 9x + 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "49c182cdcc25ffff2da864d24977c1e4821ec47e287fc0f9fdc4f7f2cd7b6bee",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-009",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x − 2)(x + 4)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 2x − 8",
+   "equivalents": [
+    "x^2 + 2x - 8",
+    "x^2+2x−8",
+    "x^2+2x-8"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x² + 4x − 2x − 8. Combining the middle terms gives 2x, so the product is x² + 2x − 8. The last term is negative because a negative times a positive is negative.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b88788177a1f4ef9dc51dc70f1035c6c43b3d830c39c4be647375e811bfcc09f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-010",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x − 3)(x + 3)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 − 9",
+   "equivalents": [
+    "x^2 - 9",
+    "x^2−9",
+    "x^2-9"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x² + 3x − 3x − 9. The middle terms cancel exactly (3x − 3x = 0), leaving x² − 9 — the difference of squares pattern.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e98dd09640dc0bf89abe9096b7a09ad05733bc2fad47fcbe5d841b3fa436f286",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-011",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x − 4)(x + 3)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 − x − 12",
+   "equivalents": [
+    "x^2 - x - 12",
+    "x^2−x−12",
+    "x^2-x-12"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x² + 3x − 4x − 12. Combining the middle terms gives −x, so the product is x² − x − 12. The last term is negative because a negative times a positive is negative.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3dda5877b93c4a6f684e21e62afb8dbddc9841009f78c46d3e71e43a6545e9cf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-012",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x − 7)(x + 5)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 − 2x − 35",
+   "equivalents": [
+    "x^2 - 2x - 35",
+    "x^2−2x−35",
+    "x^2-2x-35"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "FOIL: x² + 5x − 7x − 35. Combining the middle terms gives -2x, so the product is x² − 2x − 35. The last term is negative because a negative times a positive is negative.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d9fab62ef9739a23b2d9b74b1630452def25550ff54df3c33847ca4e84ae57ed",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-013",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 2)²",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 4x + 4",
+   "equivalents": [
+    "x^2+4x+4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Squaring means (x + 2)(x + 2), so FOIL gives x² + 2x + 2x + 4 = x² + 4x + 4. It is NOT x² + 4 — the middle term is what squaring a binomial adds.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d1f7d022ceda61863c279bc1339312770124848a642aadc53895995acd4447ca",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-014",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 4)²",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 8x + 16",
+   "equivalents": [
+    "x^2+8x+16"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Squaring means (x + 4)(x + 4), so FOIL gives x² + 4x + 4x + 16 = x² + 8x + 16. It is NOT x² + 16 — the middle term is what squaring a binomial adds.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "be53843c3188c7aea5a555854c025fcf29bb5bf9e38b3befd9917b7a939a2f5f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-015",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 3)²",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 6x + 9",
+   "equivalents": [
+    "x^2+6x+9"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Squaring means (x + 3)(x + 3), so FOIL gives x² + 3x + 3x + 9 = x² + 6x + 9. It is NOT x² + 9 — the middle term is what squaring a binomial adds.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a55e5c931db3ba49c7c448f3180b6a01aedbfc8771868f21afdd8a76195859ce",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-multiplication-016",
+  "skillId": "polynomial-multiplication",
+  "prompt": "Multiply: (x + 6)²",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x^2 + 12x + 36",
+   "equivalents": [
+    "x^2+12x+36"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Squaring means (x + 6)(x + 6), so FOIL gives x² + 6x + 6x + 36 = x² + 12x + 36. It is NOT x² + 36 — the middle term is what squaring a binomial adds.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5f58c1a9db6b1616421edc23cb296d1b4ee2433487e0c8e772f26997596a97c8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-001",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of x² + 4x + 2 = 0.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is b² − 4ac with a = 1, b = 4, c = 2: 4² − 4(1)(2) = 16 − 8 = 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5e5c117ef728dee06e945af5d82ef4f75227917cab10bb517ec60b1e108c11a9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-002",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of x² + 4x + 1 = 0.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is b² − 4ac with a = 1, b = 4, c = 1: 4² − 4(1)(1) = 16 − 4 = 12.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f46103d984f1c6de635bc450afabf8fb6aeed0f289cd2874481385e09b1a5613",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-003",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of x² + 5x + 9 = 0.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is b² − 4ac with a = 1, b = 5, c = 9: 5² − 4(1)(9) = 25 − 36 = -11.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "427ccc00ec2bc1d65089f4350162305e6d7cd75fdf4c36ea9276c286e548a00d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-004",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of x² + 4x + 4 = 0.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is b² − 4ac with a = 1, b = 4, c = 4: 4² − 4(1)(4) = 16 − 16 = 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8bbc3a7444e3466743ae827156cb7e3ecd0a2cc17c6bafd47d4b3beb613de34d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-005",
+  "skillId": "discriminant",
+  "prompt": "How many REAL solutions does 2x² + 5x + 2 = 0 have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Two real solutions",
+   "equivalents": [
+    "Tworealsolutions"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is 5² − 4(2)(2) = 9. A positive discriminant means the parabola crosses the x-axis twice, so there are two real solutions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0598e1fbc247acef5f3958f2dc8bf7c35b54d034de908717d1570f16f84e44e5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Two real solutions"
+   },
+   {
+    "label": "B",
+    "text": "One real solution"
+   },
+   {
+    "label": "C",
+    "text": "No real solutions"
+   },
+   {
+    "label": "D",
+    "text": "Infinitely many"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-006",
+  "skillId": "discriminant",
+  "prompt": "How many REAL solutions does 2x² + 5x + 1 = 0 have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Two real solutions",
+   "equivalents": [
+    "Tworealsolutions"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is 5² − 4(2)(1) = 17. A positive discriminant means the parabola crosses the x-axis twice, so there are two real solutions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fcbea12d188f7de839bb3dd50072669988884af97e5b81f99b1f39cc25a9b1f5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Two real solutions"
+   },
+   {
+    "label": "B",
+    "text": "One real solution"
+   },
+   {
+    "label": "C",
+    "text": "No real solutions"
+   },
+   {
+    "label": "D",
+    "text": "Infinitely many"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-007",
+  "skillId": "discriminant",
+  "prompt": "How many REAL solutions does 3x² + 7x + 4 = 0 have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Two real solutions",
+   "equivalents": [
+    "Tworealsolutions"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is 7² − 4(3)(4) = 1. A positive discriminant means the parabola crosses the x-axis twice, so there are two real solutions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d51cf2b9511b3028954b8558ad79d83a697336f84e654c32df973d7d090031e3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Two real solutions"
+   },
+   {
+    "label": "B",
+    "text": "One real solution"
+   },
+   {
+    "label": "C",
+    "text": "No real solutions"
+   },
+   {
+    "label": "D",
+    "text": "Infinitely many"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-008",
+  "skillId": "discriminant",
+  "prompt": "How many REAL solutions does 3x² + 2x + 1 = 0 have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No real solutions",
+   "equivalents": [
+    "Norealsolutions"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The discriminant is 2² − 4(3)(1) = -8. A negative discriminant means the parabola never reaches the x-axis, so there are no real solutions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "962d68974b85f7817584baa48c4bdfd0959fdb2b088049b5efcf18425f025afa",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Two real solutions"
+   },
+   {
+    "label": "B",
+    "text": "One real solution"
+   },
+   {
+    "label": "C",
+    "text": "No real solutions"
+   },
+   {
+    "label": "D",
+    "text": "Infinitely many"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-009",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of x² + 6x + 9 = 0, then state what it tells you.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0, one real solution",
+   "equivalents": [
+    "0,onerealsolution"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "b² − 4ac = 6² − 4(1)(9) = 36 − 36 = 0. A discriminant of 0 means the quadratic is a perfect square with exactly one (repeated) real solution.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e52a972940cb31fb0a7146245633fc41ddce10d2f1d2cf8ecc65f1993475106c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-010",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of 3x² + 9x + 2 = 0, then state what it tells you.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "57, two real solutions",
+   "equivalents": [
+    "57,tworealsolutions"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "b² − 4ac = 9² − 4(3)(2) = 81 − 24 = 57. A positive discriminant means the parabola crosses the x-axis twice.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2de0a275708df4abc93a5e873e8d806cd2bc2c6724ef76b6f86d45aacd71f6e9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-011",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of x² + 4x + 5 = 0, then state what it tells you.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-4, no real solutions",
+   "equivalents": [
+    "-4,norealsolutions"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "b² − 4ac = 4² − 4(1)(5) = 16 − 20 = -4. A negative discriminant means the parabola never reaches the x-axis, so there are no real solutions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a240bc6f14d252d66636318261521513755151a52d53abd72da30ab21ad8fa6d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-discriminant-012",
+  "skillId": "discriminant",
+  "prompt": "Find the discriminant of x² + 6x + 3 = 0, then state what it tells you.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24, two real solutions",
+   "equivalents": [
+    "24,tworealsolutions"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "b² − 4ac = 6² − 4(1)(3) = 36 − 12 = 24. A positive discriminant means the parabola crosses the x-axis twice.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:discriminant"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b6d027231b69dc1a02c13564cca2530deaea810448f69997249eb19b295b3750",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-001",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "As hours of practice increases, free throws made also increases. What type of correlation is this?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Positive",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Both quantities move in the SAME direction, so the correlation is positive — the points trend upward from left to right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a0d4a4877f9a6408fb33c1d96a14a60f603f29c9b3ed992e134ed4359852372c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-002",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "As months of training increases, race speed also increases. What type of correlation is this?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Positive",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Both quantities move in the SAME direction, so the correlation is positive — the points trend upward from left to right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "57af248049c72590012068d79dd1e3e68500e91f200a4c5079bd295291adb633",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-003",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "As hours of TV watched increases, test score decreases. What type of correlation is this?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "The quantities move in OPPOSITE directions, so the correlation is negative — the points trend downward from left to right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "686ab1aa30b366421a5f0bb5b352091d113c3a90d76220dda2716eb10c7cbcdd",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-004",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "A scatter plot of house number versus height shows points scattered with no pattern. What does this indicate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No correlation",
+   "equivalents": [
+    "Nocorrelation"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "No visible trend means no correlation — knowing one value tells you nothing useful about the other.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "acd3be985eae49120dfae493b3b6d8937c188b0ddcea291d898e072fbfcf5db4",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-005",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "A scatter plot of shoe size versus math test score shows points scattered with no pattern. What does this indicate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No correlation",
+   "equivalents": [
+    "Nocorrelation"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "No visible trend means no correlation — knowing one value tells you nothing useful about the other.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ce44b8459bba229ae3fe8e0d412767c3accd3c3af6142c56144f65aa9db6e791",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-006",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "A scatter plot of birth month versus running speed shows points scattered with no pattern. What does this indicate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No correlation",
+   "equivalents": [
+    "Nocorrelation"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "No visible trend means no correlation — knowing one value tells you nothing useful about the other.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cd9a13aab64dbfcda0e2e32bd75cefaefc79ecd5d2d0e7aee507e48a2613e3ac",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-007",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "As the age of a car increases, its resale value decreases. What type of correlation is this?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The quantities move in OPPOSITE directions, so the correlation is negative — the points trend downward from left to right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a6aaba6853e984739fe4acd57619140b381c57b1a0a1bab7d328907bacbc2d90",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-008",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "As number of absences increases, final grade decreases. What type of correlation is this?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The quantities move in OPPOSITE directions, so the correlation is negative — the points trend downward from left to right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a544fb7e83401bd8e881267671ab82fd9811198b1e3e5cb9d50911d9b7a9f68b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-009",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "As hours studied increases, test score also increases. What type of correlation is this?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Positive",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Both quantities move in the SAME direction, so the correlation is positive — the points trend upward from left to right.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5650e631d24acdc402ba5a25f8f6378fd4fe69cb6fc615173d2caf7b4de6e919",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Positive"
+   },
+   {
+    "label": "B",
+    "text": "Negative"
+   },
+   {
+    "label": "C",
+    "text": "No correlation"
+   },
+   {
+    "label": "D",
+    "text": "Causation"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-scatter-plots-correlation-010",
+  "skillId": "scatter-plots-correlation",
+  "prompt": "Ice cream sales and drowning incidents both rise in the same months. Does this prove ice cream causes drownings?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No — correlation does not imply causation",
+   "equivalents": [
+    "No—correlationdoesnotimplycausation"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Both rise because of a third factor — hot weather. A correlation shows two things move together; it never establishes that one CAUSES the other.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:scatter-plots-correlation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "efce94f0cbe73a57b23ee60cb5669ccf9c9a74456481a752508280d6f96b2cc5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes, the correlation proves it"
+   },
+   {
+    "label": "B",
+    "text": "No — correlation does not imply causation"
+   },
+   {
+    "label": "C",
+    "text": "Yes, if the correlation is strong enough"
+   },
+   {
+    "label": "D",
+    "text": "Only if the data set is large"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-001",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 11 marbles, 3 of which are red. What is the probability of drawing a red marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Probability = favorable outcomes / total outcomes = 3/11.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0d27ce300952d09d7da8fcf4dbb5dc5f5a2c7fe4cb4537df74576ce5b42c9015",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-002",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 9 marbles, 2 of which are red. What is the probability of drawing a red marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Probability = favorable outcomes / total outcomes = 2/9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7836d0c5eb770a5a1060c221df8f66abaf3cf3f4013cf54ab7a82974fc8a5b22",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-003",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 7 marbles, 3 of which are red. What is the probability of drawing a red marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Probability = favorable outcomes / total outcomes = 3/7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b78240e5730bfc5245bb031c4475a9d6b6253b81af3e1781d0f6d1717f384974",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-004",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 6 marbles, 3 of which are red. What is the probability of drawing a red marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Probability = favorable outcomes / total outcomes = 3/6, which reduces to 1/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bbb658e30c36e5f1106b5323a547398630712986d2cd313834b03235dfdb0c8c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-005",
+  "skillId": "intro-probability",
+  "prompt": "A fair six-sided die is rolled. What is the probability of rolling a number greater than 3? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The outcomes greater than 3 are 4, 5, 6 — that is 3 of 6 equally likely outcomes, so the probability is 1/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eb4ff8405c6ea453ae01dbfb4f4901ba8eda90ea5d4df94a3063f20d708e58f2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-006",
+  "skillId": "intro-probability",
+  "prompt": "A fair six-sided die is rolled. What is the probability of rolling a number greater than 5? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The outcomes greater than 5 are 6 — that is 1 of 6 equally likely outcomes, so the probability is 1/6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f000e6f235043702044e350e0b7df2a9aa5d456a7aabb9f0a5e8c18db56bba57",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-007",
+  "skillId": "intro-probability",
+  "prompt": "A fair six-sided die is rolled. What is the probability of rolling a number greater than 2? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The outcomes greater than 2 are 3, 4, 5, 6 — that is 4 of 6 equally likely outcomes, so the probability is 2/3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f97896ea9e8b0fc40a18fd50184cc596094c6b775e17f28dffe03b9cf356db57",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-008",
+  "skillId": "intro-probability",
+  "prompt": "A fair six-sided die is rolled. What is the probability of rolling a number greater than 4? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The outcomes greater than 4 are 5, 6 — that is 2 of 6 equally likely outcomes, so the probability is 1/3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c6cab472ab83d32500c65504d62677ab3f3345178b08f3bb9757be40a7b4184e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-009",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 14 marbles, 6 of which are blue. What is the probability of NOT drawing a blue marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The complement rule: P(not blue) = 1 − P(blue) = 1 − 6/14 = 8/14 = 4/7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ca7596116ced569218c8a6e0e5170fb280190dbbc4f7a4847ecb49463ae613c6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-010",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 10 marbles, 6 of which are blue. What is the probability of NOT drawing a blue marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The complement rule: P(not blue) = 1 − P(blue) = 1 − 6/10 = 4/10 = 2/5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7c9579a6fd31087d4d4766c725ff473afe6710d6a75b0010d266ce7fb752810f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-011",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 9 marbles, 3 of which are blue. What is the probability of NOT drawing a blue marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The complement rule: P(not blue) = 1 − P(blue) = 1 − 3/9 = 6/9 = 2/3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9937bcbb2b97db13169c061719c7bd0dd0be96aacf6e7e6515804802fc5e89b0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-intro-probability-012",
+  "skillId": "intro-probability",
+  "prompt": "A bag holds 11 marbles, 2 of which are blue. What is the probability of NOT drawing a blue marble? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9/11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The complement rule: P(not blue) = 1 − P(blue) = 1 − 2/11 = 9/11.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:intro-probability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e4e101d3048178ba628940a723b89187e372b27ad6788374495bd7d2a3701c04",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-001",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "Function A grows by multiplying by 3 each step. Function B grows by adding 11 each step. Which is exponential?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Function A",
+   "equivalents": [
+    "FunctionA"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Adding the same amount each step is a CONSTANT RATE of change — that is linear. Multiplying by the same factor each step is a constant RATIO, which is exponential. Here function a multiplies, so it is the exponential one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aab245a0d4b47e13835f4cc1388332d872f784aa1bdddbdb1ee6f72e2db67c00",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Function A"
+   },
+   {
+    "label": "B",
+    "text": "Function B"
+   },
+   {
+    "label": "C",
+    "text": "Both"
+   },
+   {
+    "label": "D",
+    "text": "Neither"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-002",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "Function A grows by adding 18 each step. Function B grows by multiplying by 4 each step. Which is exponential?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Function B",
+   "equivalents": [
+    "FunctionB"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Adding the same amount each step is a CONSTANT RATE of change — that is linear. Multiplying by the same factor each step is a constant RATIO, which is exponential. Here function b multiplies, so it is the exponential one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5c665936eb7384e91c4a32174c248b91e6bde66afb44d5946868e1703cf2cb6",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Function A"
+   },
+   {
+    "label": "B",
+    "text": "Function B"
+   },
+   {
+    "label": "C",
+    "text": "Both"
+   },
+   {
+    "label": "D",
+    "text": "Neither"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-003",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "Function A grows by multiplying by 2 each step. Function B grows by adding 20 each step. Which is exponential?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Function A",
+   "equivalents": [
+    "FunctionA"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Adding the same amount each step is a CONSTANT RATE of change — that is linear. Multiplying by the same factor each step is a constant RATIO, which is exponential. Here function a multiplies, so it is the exponential one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8a042137b636840730d7546e6bea1e6d300321622bfdc1277c512ce31ddc846a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Function A"
+   },
+   {
+    "label": "B",
+    "text": "Function B"
+   },
+   {
+    "label": "C",
+    "text": "Both"
+   },
+   {
+    "label": "D",
+    "text": "Neither"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-004",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "Function A grows by adding 13 each step. Function B grows by multiplying by 3 each step. Which is exponential?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Function B",
+   "equivalents": [
+    "FunctionB"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Adding the same amount each step is a CONSTANT RATE of change — that is linear. Multiplying by the same factor each step is a constant RATIO, which is exponential. Here function b multiplies, so it is the exponential one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b0971faa184de258ddfa744f80df0402951509f0e3dd978a869102762eab95b6",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Function A"
+   },
+   {
+    "label": "B",
+    "text": "Function B"
+   },
+   {
+    "label": "C",
+    "text": "Both"
+   },
+   {
+    "label": "D",
+    "text": "Neither"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-005",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "A sequence begins 4, 8, 16, 32. What is the next term?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "64",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Each term is 2 times the one before (4·2 = 8, 8·2 = 16), so this is exponential with ratio 2. The next term is 32·2 = 64.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "88ae8d7045fe0df057f4dcab227c862659506e19b99aa60c44bceeaeef532344",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-006",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "A sequence begins 5, 10, 20, 40. What is the next term?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "80",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Each term is 2 times the one before (5·2 = 10, 10·2 = 20), so this is exponential with ratio 2. The next term is 40·2 = 80.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "024953d15b870a56acbbd2ae577ec0378b5ddf49a2f3ada9879ff380872553dd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-007",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "A sequence begins 5, 15, 45, 135. What is the next term?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "405",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Each term is 3 times the one before (5·3 = 15, 15·3 = 45), so this is exponential with ratio 3. The next term is 135·3 = 405.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9f35b21ed4f22427184a718efe2f5b25f5aff10061bf278513e8eb905adaef0b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-008",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "A sequence begins 3, 6, 12, 24. What is the next term?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Each term is 2 times the one before (3·2 = 6, 6·2 = 12), so this is exponential with ratio 2. The next term is 24·2 = 48.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "212e392945dff4d6d623d9649cce5d24d8a05d7d10370a4b04a027e2d80a92f9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-comparing-linear-exponential-009",
+  "skillId": "comparing-linear-exponential",
+  "prompt": "A linear function increases by 100 per year. An exponential function doubles each year, starting at 1. Over a long enough time, which grows larger?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "The exponential function",
+   "equivalents": [
+    "Theexponentialfunction"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "An exponential function eventually outgrows ANY linear function, no matter how small it starts or how steep the line is. Early on the line can be far ahead, which is what makes this counter-intuitive.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:comparing-linear-exponential"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a008c5159619e21ea75c38783db366fffb11ab5a047c890a83f72d0c239017ce",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "The linear function"
+   },
+   {
+    "label": "B",
+    "text": "The exponential function"
+   },
+   {
+    "label": "C",
+    "text": "They stay equal"
+   },
+   {
+    "label": "D",
+    "text": "It depends on the starting values"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-001",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (x/3) · (2/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply numerators and denominators: (x·2)/(3·x). The x cancels, leaving 2/3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7209a366a26dcaed705d65db429c895d8f5ab5fd80760ff35e8c5db3a4498c88",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-002",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (x/2) · (4/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply numerators and denominators: (x·4)/(2·x). The x cancels, leaving 4/2 = 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "32fee067ca06b01071f611a9a92128933ce4c8aabe71cef2fa35be4bd36015e5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-003",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (x/3) · (6/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply numerators and denominators: (x·6)/(3·x). The x cancels, leaving 6/3 = 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c7f7b191bd7fed106d72cee0807b2912abf58ee62fbc402758fee4434a38ef52",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-004",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (x/4) · (6/x)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply numerators and denominators: (x·6)/(4·x). The x cancels, leaving 6/4 = 3/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "79fa4f395d5289ad7288ba6b43793f219163726eb64fd18aa2650d6ae358b76a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-005",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (5x/2) · (2/x²)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/x",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply straight across: (5x·2)/(2·x²). The 2s cancel and one x cancels from x², leaving 5/x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "079175a6d85acc3fab0abf226a132e6f55976ed4f297c15fe1ada05ea11fcfd8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-006",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (2x/3) · (3/x²)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/x",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply straight across: (2x·3)/(3·x²). The 3s cancel and one x cancels from x², leaving 2/x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a8c4188c503e515abc3661cfc6e131374890d490501aec258ff886cab57a45a3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-007",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (3x/4) · (4/x²)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/x",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply straight across: (3x·4)/(4·x²). The 4s cancel and one x cancels from x², leaving 3/x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "46d2f1ed540c316ea565a5aeca946b34b5e6bd3fb357d4644159b637a871c6f5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-008",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Multiply and simplify:  (4x/3) · (3/x²)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/x",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply straight across: (4x·3)/(3·x²). The 3s cancel and one x cancels from x², leaving 4/x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c86df228cd888136fb5a1ad4ea74e87b20f3c82f5688730cddb958da30f1a4a0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-009",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Divide and simplify:  (x/3) ÷ (x/4)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (x/3)·(4/x). The x's cancel, leaving 4/3. Flipping the WRONG fraction is the usual error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1cb606c7eba29564f694068da9e5aa1a514608f374115dd9a1521e87ad8acbfd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-010",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Divide and simplify:  (x/5) ÷ (x/4)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (x/5)·(4/x). The x's cancel, leaving 4/5. Flipping the WRONG fraction is the usual error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ea1d0a18813d3c6f577e27577d734b38115da597280cde171314b17a986fbca0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-011",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Divide and simplify:  (x/4) ÷ (x/6)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (x/4)·(6/x). The x's cancel, leaving 6/4 = 3/2. Flipping the WRONG fraction is the usual error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "77a8b9c6d6e69ed9230d8ef71ce8f3826dd176820a61de0c492d236897f691d3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multiplying-dividing-rationals-012",
+  "skillId": "multiplying-dividing-rationals",
+  "prompt": "Divide and simplify:  (x/6) ÷ (x/5)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: (x/6)·(5/x). The x's cancel, leaving 5/6. Flipping the WRONG fraction is the usual error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multiplying-dividing-rationals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e45d0844c4d2786b546d58cae7addc34f112fe7ca7c0a2c40089c39b6fff4d81",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-001",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  9/x = 9",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by x: 9 = 9x. Then divide by 9: x = 9/9 = 1. Check x ≠ 0, which it is not.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "018724fd028399331d515a3af52f7a75c465ad040497034a2cec2a643e4fb463",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-002",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  2/x = 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by x: 2 = 4x. Then divide by 4: x = 2/4 = 1/2. Check x ≠ 0, which it is not.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4a3ab027e2a459f344e785c7c102aa264c6437496e1e3c5a9509c4ed339e74a8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-003",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  5/x = 2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by x: 5 = 2x. Then divide by 2: x = 5/2. Check x ≠ 0, which it is not.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10ed816ad61ce8f463678774420bccbf27085d25a88778dd6aa4cec1d0daabda",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-004",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  7/x = 7",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by x: 7 = 7x. Then divide by 7: x = 7/7 = 1. Check x ≠ 0, which it is not.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "20f5a8a2b563ea21b93a53dd997c439c09c65ae158827de8b078de1b3f80d708",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-005",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  x/4 = 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by 4: x = 4·4 = 16.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "875c1ceb4a0270041d2a42bd3be59104ec20fe0d818443e00d13115fb29f35b0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-006",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  x/4 = 2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by 4: x = 4·2 = 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "75e45a08165471d4bd9c3227d2b7461f08c4da0930cf347cdeb221605a665c16",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-007",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  x/5 = 3",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by 5: x = 5·3 = 15.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "256c32ab0ae0efc6f1a72acb398f04f7a413cad2285522c433b9f67b5f60aec5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-008",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  x/3 = 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Multiply both sides by 3: x = 3·4 = 12.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ca9080d198da99f3135799791ea412570d2cdca2dc4ed38dc4c60a84542f327e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-009",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  9/x = 7/3",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9/7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Cross-multiply: 9·3 = 7·x, so 27 = 7x and x = 27/7. Check that x ≠ 0 so no denominator vanishes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2d536009ae9cf8506aa6124d8cd1c423d0b0ad7eb897c4bbeaff94e61762cfd4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-010",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  16/x = 7/4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16/7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Cross-multiply: 16·4 = 7·x, so 64 = 7x and x = 64/7. Check that x ≠ 0 so no denominator vanishes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f66b32d5b79cebdf984d3f30b2312d72fa9c0b0a8df8b196d89fd34c5cae235b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-011",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  10/x = 7/5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10/7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Cross-multiply: 10·5 = 7·x, so 50 = 7x and x = 50/7. Check that x ≠ 0 so no denominator vanishes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d6bd8de0a94fcab22d19fffa3b77ee4ae3619b96a89908fa8e3698f008412e70",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-solving-rational-equations-012",
+  "skillId": "solving-rational-equations",
+  "prompt": "Solve for x:  6/x = 7/2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6/7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Cross-multiply: 6·2 = 7·x, so 12 = 7x and x = 12/7. Check that x ≠ 0 so no denominator vanishes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:solving-rational-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3f2096c58c30ca7ce27823f22fbcfbba5695a2c4220d011bd78f69737fecb218",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-001",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "4 is a perfect square: 2² = 4, so √4 = 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2ef90c7cfe63e1bd25e6866cca9fd3da4a8846857a43668cad5311c474e48bc5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-002",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √25",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "25 is a perfect square: 5² = 25, so √25 = 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e432e4ca60837c524cfaa245062212de114f9eba1e6fd3a7a87d0c76ec4a8b9e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-003",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √64",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "64 is a perfect square: 8² = 64, so √64 = 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "36beb867f11410670bb3a90e07349063372d16ab7268a667c3bb5690c40181e8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-004",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √36",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "36 is a perfect square: 6² = 36, so √36 = 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "41c180ac835578108655cb00fbac3cd0042a9b96d5f21a7cccf341ef721b5dc9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-005",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √96",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4√6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Factor out the largest perfect square: 96 = 16·6, so √96 = √16·√6 = 4√6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7687c26eedca48814d3ce7aa0a8bce6f2d0506592bb899b67ef23cf6e581306d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-006",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √48",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4√3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Factor out the largest perfect square: 48 = 16·3, so √48 = √16·√3 = 4√3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5859013d43f2d67212aeec0669e357ccde1d3f7c904bca7c6fcfc6f7727720a2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-007",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √80",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4√5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Factor out the largest perfect square: 80 = 16·5, so √80 = √16·√5 = 4√5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f32eea0dc9edd087da08a3b879f62d0575ed37e9c0d1c0f02b2b54d728e05bfc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-008",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: √75",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5√3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Factor out the largest perfect square: 75 = 25·3, so √75 = √25·√3 = 5√3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "32af605f815a0467d8ef9669f0d449f24b400b5fae834f91bece9ced6b9e2ebf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-009",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: 2√8",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4√2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First simplify √8 = √4·√2 = 2√2. Then multiply by the 2 already outside: 2·2 = 4, giving 4√2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "25cad16b862a2b799f3cf6cbb33a4a99861a17ad6885057d24ac7b5ce025d9b4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-010",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: 5√32",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20√2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First simplify √32 = √16·√2 = 4√2. Then multiply by the 5 already outside: 5·4 = 20, giving 20√2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2af86636e0ef6d5b839cb54b54171a3dd7a4255ce416dd79609ac454204b474e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-011",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: 2√20",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4√5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First simplify √20 = √4·√5 = 2√5. Then multiply by the 2 already outside: 2·2 = 4, giving 4√5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "18e8ea2eb5931f721c02382d5adc03a677df4ac23ea417510b2dc206a2b9f307",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-simplifying-radicals-012",
+  "skillId": "simplifying-radicals",
+  "prompt": "Simplify: 2√80",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8√5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "First simplify √80 = √16·√5 = 4√5. Then multiply by the 2 already outside: 2·4 = 8, giving 8√5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:simplifying-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "61a5e8ad16de1120423a78aaf62a4c9c6a9e685b9c84eb34899c9535ff9389bb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-001",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 4√2 + 8√2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12√2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The radical parts match, so add the coefficients exactly as you would with like terms: 4 + 8 = 12, giving 12√2. The radicand never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6f41424923b77b8c622486660b5b5db24a91dde38ed75aefd97350b4b002aa96",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-002",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 7√5 + 2√5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9√5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The radical parts match, so add the coefficients exactly as you would with like terms: 7 + 2 = 9, giving 9√5. The radicand never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "26e28f3869ccaf33d5fa69d669b7222c31bd0ade642893509f9a4a7061c3c75e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-003",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 3√5 + 2√5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5√5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The radical parts match, so add the coefficients exactly as you would with like terms: 3 + 2 = 5, giving 5√5. The radicand never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4badc3e57485fae1def10fb48efc5182e92f35716d158ed4785997544bf40555",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-004",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 4√5 + 4√5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8√5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The radical parts match, so add the coefficients exactly as you would with like terms: 4 + 4 = 8, giving 8√5. The radicand never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "319d80e7c16e9a686cdcdeedfc1543a905c08c23806adf40594a33353e1e1496",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-005",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 3√5 − 1√5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2√5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Like radicals subtract like terms: 3 − 1 = 2, so the result is 2√5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9a78e5df9a304be532873a794177aebb323c9060bec35ddb5dd41c92a0258efa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-006",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 7√2 − 1√2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6√2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Like radicals subtract like terms: 7 − 1 = 6, so the result is 6√2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8df9b15efe662d15c514f79b5dfb33b6be8c7d2691268820a2a6bb51714271c3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-007",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 5√3 − 2√3",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3√3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Like radicals subtract like terms: 5 − 2 = 3, so the result is 3√3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7248139e08b1121fcc1e466561e8a2f555a831466486b6f3342107ee4fb88fc1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-008",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: 4√3 − 2√3",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2√3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Like radicals subtract like terms: 4 − 2 = 2, so the result is 2√3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4b6dfa1f1f1961223b2d0dcbd945653308c205eb0e6713f8a2437b5f183919ed",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-009",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: √3 · √7",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "√21",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiply under one radical: √3·√7 = √21. It has no perfect-square factor, so it is already simplified.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "092c7bde54c92f5ce7339f11bd2ec2ab1406e899e98b5d44b0917ee4d77cabc0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-010",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: √2 · √3",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "√6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiply under one radical: √2·√3 = √6. It has no perfect-square factor, so it is already simplified.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d21c065ee4620954bdd6e3b34ab2817dca60d8ba01b19cf3112a083ac399e060",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-011",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: √5 · √3",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "√15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiply under one radical: √5·√3 = √15. It has no perfect-square factor, so it is already simplified.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ca2e30539058cf4e1a615a4558a1a9b45bec0edf4eaf3b4224e84e8f39b005f9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-operations-with-radicals-012",
+  "skillId": "operations-with-radicals",
+  "prompt": "Simplify: √2 · √2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2√1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Multiply under one radical: √2·√2 = √4. Then 4 = 4·1, so √4 = 2√1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:operations-with-radicals"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fe3737b1f53a7f9fb0fd49f5bc93ca8921bb353a80f04f70d9e73d785fc0d607",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-001",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the sum: −13 + 10",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Start at −13 and move 10 to the right on a number line, landing on -3. The negative is larger in size, so the result stays negative.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5dc9c6c6b6eedba245e463d2132d748e5ddbdd42c5dcba1b17b6a09b7e733f89",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-002",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the sum: −8 + 6",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Start at −8 and move 6 to the right on a number line, landing on -2. The negative is larger in size, so the result stays negative.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "561f7ac8f9ed40d484b4b498b487c8683c86dbf8ec1479d289c9c0dfc7d72685",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-003",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the sum: −6 + 2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Start at −6 and move 2 to the right on a number line, landing on -4. The negative is larger in size, so the result stays negative.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "549237fa6b23ffa63e4977065856928e0a77e41620398ed10019cc4c341664c3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-004",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the sum: −5 + 10",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Start at −5 and move 10 to the right on a number line, landing on 5. You moved past zero, so the result is positive.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7e8165a64b246e22135812842ec074d99c0f14eb0457d5a8703ba99efc8c4e6d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-005",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the difference: 7 − (−11)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Subtracting a negative is the same as adding: 7 − (−11) = 7 + 11 = 18. Two minus signs in a row turn into a plus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "66776d1e81b8729e378500cccc1c001cf1d5ece735127626e1d689196ef01318",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-006",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the difference: 13 − (−6)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Subtracting a negative is the same as adding: 13 − (−6) = 13 + 6 = 19. Two minus signs in a row turn into a plus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "82ff567a15fba126922fe856ee53c895aace7c7a78025c836e1bbb59d208d83a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-007",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the difference: 17 − (−18)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "35",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Subtracting a negative is the same as adding: 17 − (−18) = 17 + 18 = 35. Two minus signs in a row turn into a plus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d3c046df39e89d34a8200d37ada0703ec9a6641ba8c232fdbac1f1920131b7c3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-008",
+  "skillId": "g6-integer-basics",
+  "prompt": "Find the difference: 15 − (−11)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "26",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Subtracting a negative is the same as adding: 15 − (−11) = 15 + 11 = 26. Two minus signs in a row turn into a plus.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b45a685d489e3bd9937ac3c6935aed00f60e75353c36eaaae1e7e4c076ae01a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-009",
+  "skillId": "g6-integer-basics",
+  "prompt": "Multiply: (−7) · (−5)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "35",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A negative times a negative is POSITIVE, so (−7)(−5) = 35.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b1186b63b1d2e4f690ad7560736a123f4ede273edaa31ff5f6a2e38cd99183f0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-010",
+  "skillId": "g6-integer-basics",
+  "prompt": "Multiply: (−7) · (−9)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "63",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A negative times a negative is POSITIVE, so (−7)(−9) = 63.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "828f1d24117fd7f43dc3020bf642963ae9aa04186c6b1b4dee173bd40bf7010c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-011",
+  "skillId": "g6-integer-basics",
+  "prompt": "Multiply: (−8) · (−7)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A negative times a negative is POSITIVE, so (−8)(−7) = 56.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "44d802cce00b0b4a7e61cc9c1d7b622cd4d0d64c34562ce6f117b4029ea534d8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-012",
+  "skillId": "g6-integer-basics",
+  "prompt": "Multiply: (−8) · (−3)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A negative times a negative is POSITIVE, so (−8)(−3) = 24.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6a281dec7f79e9f9327a54cbe63f1c602659c5915d222378e2ef2e8c04b13791",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-013",
+  "skillId": "g6-integer-basics",
+  "prompt": "Divide: (−25) ÷ 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "25 ÷ 5 = 5, and a negative divided by a positive is negative, so the answer is −5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4677b11199cf1818279eb72b6c063abbc9997021fe4ad0fb7078e84497454379",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-014",
+  "skillId": "g6-integer-basics",
+  "prompt": "Divide: (−54) ÷ 6",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "54 ÷ 6 = 9, and a negative divided by a positive is negative, so the answer is −9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b0adb92dcfc64522a59a482ae8aacf7636a3e9e513b47ee673223a1219d683af",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-015",
+  "skillId": "g6-integer-basics",
+  "prompt": "Divide: (−42) ÷ 6",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "42 ÷ 6 = 7, and a negative divided by a positive is negative, so the answer is −7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "80015b03374ba974acc8a6487aefe2d4ae9a75396625e8266c23d175c88c375d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-integer-basics-016",
+  "skillId": "g6-integer-basics",
+  "prompt": "Divide: (−18) ÷ 6",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "18 ÷ 6 = 3, and a negative divided by a positive is negative, so the answer is −3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-integer-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b83880eda583ddbf4908a0f39c2b22f12236b3a37b9052347b27d69ab9181b99",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-001",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the GCF of 10 and 6.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "List what divides both: 10 = 2·5 and 6 = 2·3. Since 5 and 3 share no factor, the greatest common factor is 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e63d9fa3987b71db767667b12f969a1f15f2927aa094fbf32b86857605721953",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-002",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the GCF of 10 and 18.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "List what divides both: 10 = 2·5 and 18 = 2·9. Since 5 and 9 share no factor, the greatest common factor is 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d9d739ecc4249638a0e0bdc61d66d5d59cc04c6cf4064fc2641adf388bf692d9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-003",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the GCF of 28 and 32.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "List what divides both: 28 = 4·7 and 32 = 4·8. Since 7 and 8 share no factor, the greatest common factor is 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "501f8106034c689e4637a4192e5e5b36fa6bf6fd2f096a0bed7357bf149f2eda",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-004",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the GCF of 72 and 16.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "List what divides both: 72 = 8·9 and 16 = 8·2. Since 9 and 2 share no factor, the greatest common factor is 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a54aff7bf2388956000d93d3d073ca820e7d03ca1bd8a256a5dcf9b1bbac4438",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-005",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the LCM of 3 and 8.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The least common multiple is the smallest number both divide into. Using LCM = (3·8)/GCF = 24/1 = 24.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f1d7a3044dae6f26205168e4a92330329fd31cb49c75f0ac08557fac3acbad98",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-006",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the LCM of 12 and 12.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The least common multiple is the smallest number both divide into. Using LCM = (12·12)/GCF = 144/12 = 12.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "829b345e127e98090ebc061c9935f5cc90d4b42331c66cfb8c72a28cf70b98d2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-007",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the LCM of 7 and 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "21",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The least common multiple is the smallest number both divide into. Using LCM = (7·3)/GCF = 21/1 = 21.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eaefbb461702915d374aa121d98c148917e109e3d6e89ddcb7d3982d0d4110ff",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-008",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "Find the LCM of 12 and 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The least common multiple is the smallest number both divide into. Using LCM = (12·3)/GCF = 36/3 = 12.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ee97bcf429620417be29164f32e4d36a989016fc5a461a6078fa485df23fce3c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-009",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "A florist has 28 roses and 24 tulips and wants identical bouquets with no flowers left over. What is the GREATEST number of bouquets possible?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Identical bouquets with nothing left over means the bouquet count must divide BOTH numbers, and \"greatest\" means the GCF: GCF(28, 24) = 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c3c910c276b3fa32faa5a51a1f7375c0540f37e2aa4861164377fc0a91506547",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-010",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "A florist has 28 roses and 20 tulips and wants identical bouquets with no flowers left over. What is the GREATEST number of bouquets possible?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Identical bouquets with nothing left over means the bouquet count must divide BOTH numbers, and \"greatest\" means the GCF: GCF(28, 20) = 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cd287fcabed09f7de2fc5b713c7c599653b0a3edb7b8eff995945a460556aa1a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-011",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "A florist has 12 roses and 21 tulips and wants identical bouquets with no flowers left over. What is the GREATEST number of bouquets possible?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Identical bouquets with nothing left over means the bouquet count must divide BOTH numbers, and \"greatest\" means the GCF: GCF(12, 21) = 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a0d3f85db92124d9ec6a16e4e83c07958d079dc2d329458826a82abcc85b5dd7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-gcf-lcm-012",
+  "skillId": "g6-gcf-lcm",
+  "prompt": "A florist has 9 roses and 6 tulips and wants identical bouquets with no flowers left over. What is the GREATEST number of bouquets possible?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Identical bouquets with nothing left over means the bouquet count must divide BOTH numbers, and \"greatest\" means the GCF: GCF(9, 6) = 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-gcf-lcm"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1afc9e3a2c7348d1276718ec83224d0a3742ef9d93a081a328f5a387864c0e2c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-001",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Find the value: |−16|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Absolute value is DISTANCE from zero, and distance is never negative: |−16| = 16.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ebcdf2b5d4b77116fe92b1a2d0103d5e9bc26963e5f82e0c9c4980074c2614bc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-002",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Find the value: |−18|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Absolute value is DISTANCE from zero, and distance is never negative: |−18| = 18.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bded48b37a764dbe628fe0c790d62acf40866c9cb1c17909fe78df34d3a102ad",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-003",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Find the value: |−3|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Absolute value is DISTANCE from zero, and distance is never negative: |−3| = 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b97ead8fb2ac4079772cc9e00b87196a5fa13cd39cb8df91f8c80fc177bb7811",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-004",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Find the value: |−19|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Absolute value is DISTANCE from zero, and distance is never negative: |−19| = 19.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6168617dc7df26c095f4b89bc1172b70fe8ef9a5bf06be064228171288941813",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-005",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "What is the opposite of −7?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Opposites sit the same distance from zero on the other side, so the opposite of −7 is 7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d904817ced85e7c28b011c4ecfef1d95a029773c8ca809480f33e5141003baf5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-006",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "What is the opposite of −11?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Opposites sit the same distance from zero on the other side, so the opposite of −11 is 11.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c49bda08e80a6389c44a329667636e6ad9c73c7f076da8e65bc7d3d06e989fca",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-007",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "What is the opposite of −4?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Opposites sit the same distance from zero on the other side, so the opposite of −4 is 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9e60e4ed947d7adc96aa3250c1159b44bf63f263404efe301782512a6657a188",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-008",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "What is the opposite of −16?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Opposites sit the same distance from zero on the other side, so the opposite of −16 is 16.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "256e966e2ee1eb81d8ed41c4f8f65ec903b8684fe3fff35b0c0818d466672e97",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-009",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Evaluate: |−9| − |12|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Take each absolute value first: |−9| = 9 and |12| = 12. Then 9 − 12 = -3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "09ea88bac8e2fc32e58dcecb15459ea530a716f09758c6742fa2da43d9c5de00",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-010",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Evaluate: |−15| − |11|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Take each absolute value first: |−15| = 15 and |11| = 11. Then 15 − 11 = 4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3ab20e1c9a7bd321a9983cfd77e8af08020e4eb3fd19a7849733e868a43b7edc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-011",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Evaluate: |−13| − |2|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Take each absolute value first: |−13| = 13 and |2| = 2. Then 13 − 2 = 11.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "15a4cba1787cc3ec88343dc78284d57d7be2c7b10deaadee7b7451e0d3b77515",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-absolute-value-opposites-012",
+  "skillId": "g6-absolute-value-opposites",
+  "prompt": "Evaluate: |−4| − |3|",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Take each absolute value first: |−4| = 4 and |3| = 3. Then 4 − 3 = 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-absolute-value-opposites"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e6c98437ae9361b0a71b83bea872cf13cd5b6867892ead648b975d6407ce99e1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-001",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 1 ÷ 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "1 ÷ 5 = 0.2. Dividing by a whole number keeps the decimal point lined up with the dividend.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e0beddf9ce3a96065432668e3040e93d99c02f4203b85d9cd5546ffa35d73c07",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-002",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 3.6 ÷ 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "3.6 ÷ 4 = 0.9. Dividing by a whole number keeps the decimal point lined up with the dividend.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ba9d80ae79ea1dd197b334c8827ea083c85286eb6bebd20a3ee60319e76f6dfc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-003",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 0.4 ÷ 2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "0.4 ÷ 2 = 0.2. Dividing by a whole number keeps the decimal point lined up with the dividend.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f09b32ddf3a3ea481d9256d806001551bbf4a245be5bd0df9de62a72038af38d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-004",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 1.2 ÷ 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "1.2 ÷ 4 = 0.3. Dividing by a whole number keeps the decimal point lined up with the dividend.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8a7359bcce6e14a918d43727e9b6917605631ef38e5a6e356f44b0811ab91cdd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-005",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 2.2 ÷ 0.2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply both numbers by 100 to clear the decimal: 2.2 ÷ 0.2 = 220 ÷ 20 = 11. Dividing by a number less than 1 makes the result LARGER.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8b18730af07e180b5707e600ba5f6d2939335c2436491890e22cb68a406df1ea",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-006",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 3.5 ÷ 0.5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply both numbers by 10 to clear the decimal: 3.5 ÷ 0.5 = 35 ÷ 5 = 7. Dividing by a number less than 1 makes the result LARGER.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6ff64441e39670c9a20f2f9e1e46fba1d37a8cc5e12f7c8a86ab027e6602398b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-007",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 5.5 ÷ 0.5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply both numbers by 10 to clear the decimal: 5.5 ÷ 0.5 = 55 ÷ 5 = 11. Dividing by a number less than 1 makes the result LARGER.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d2707e8da1d54ad90451eb8defe023019d2c4102987b4208704c446844f28416",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-decimal-division-008",
+  "skillId": "g6-decimal-division",
+  "prompt": "Divide: 0.4 ÷ 0.2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply both numbers by 100 to clear the decimal: 0.4 ÷ 0.2 = 40 ÷ 20 = 2. Dividing by a number less than 1 makes the result LARGER.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-decimal-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "15aba452286d12d9b851cf0bd54c5a99ce07868259442613a0d590a9d107f83b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-001",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a triangle with base 18 cm and height 2 cm.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Area = (1/2)·base·height = (1/2)(18)(2) = 18 cm². Forgetting the 1/2 gives 36, the area of the surrounding rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "70348cf8746ece660763a922f27a398894a3cf6a0d6ddc7b4f3239026b4e09db",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-002",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a triangle with base 17 cm and height 8 cm.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "68",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Area = (1/2)·base·height = (1/2)(17)(8) = 68 cm². Forgetting the 1/2 gives 136, the area of the surrounding rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8aacaf634dfa503b377fd8c433fe698ee47fb13be3321d2d6d0aa0ee40b58835",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-003",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a triangle with base 17 cm and height 10 cm.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "85",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Area = (1/2)·base·height = (1/2)(17)(10) = 85 cm². Forgetting the 1/2 gives 170, the area of the surrounding rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bd2c2fbda775b5e52523bf6c5384ef9e9bfc3531c789eaa254c77cef6ba6f839",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-004",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a triangle with base 8 cm and height 8 cm.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "Area = (1/2)·base·height = (1/2)(8)(8) = 32 cm². Forgetting the 1/2 gives 64, the area of the surrounding rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "82ecf4d52b32f3ba425e08845bf25957298d96d136d57e26fb023a8e6d6e5f8a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-005",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a parallelogram with base 12 in and height 6 in.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "72",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Area = base · height = 12 · 6 = 72 in². Use the perpendicular HEIGHT, not the slanted side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "730a4544aff522cc628f4e34ce74d08831931a1bd6ed97fc00e1026e92df9bb5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-006",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a parallelogram with base 7 in and height 14 in.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "98",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Area = base · height = 7 · 14 = 98 in². Use the perpendicular HEIGHT, not the slanted side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "886d2b2a0ef4eb1e3d93ef37658c683bf915d9e83be3655c5c55f654c6d9cf4b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-007",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a parallelogram with base 3 in and height 13 in.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "39",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Area = base · height = 3 · 13 = 39 in². Use the perpendicular HEIGHT, not the slanted side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "93bae8aa1f5dd97cc0e425de9fcd8e92b0ae8c97a443af5e77a5d0b35694a0a3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-008",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "Find the area of a parallelogram with base 17 in and height 8 in.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "136",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Area = base · height = 17 · 8 = 136 in². Use the perpendicular HEIGHT, not the slanted side.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "71288a5a12aa9d3c767330beaea1048cedc848cb05c4eeb4051399bed23446a4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-009",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "A triangle has area 60 cm² and base 4 cm. What is its height?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "From A = (1/2)bh, multiply both sides by 2: 2A = bh, so h = 2(60)/4 = 30 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "53c4cf2cf648cc3ece5b70a4077a7e3fa9485000048a5064e3098f550556d2d9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-010",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "A triangle has area 48 cm² and base 8 cm. What is its height?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "From A = (1/2)bh, multiply both sides by 2: 2A = bh, so h = 2(48)/8 = 12 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2cd6cecf439f022f4b2ccb25d1a0ba5436a5d5ddb555cc4410b8447b002c5ec5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-011",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "A triangle has area 48 cm² and base 4 cm. What is its height?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "From A = (1/2)bh, multiply both sides by 2: 2A = bh, so h = 2(48)/4 = 24 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "642bd6e9007d252908913048609e1d520d1d7b3399dc9e9e36c294a70c83da48",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-triangles-parallelograms-012",
+  "skillId": "g6-area-triangles-parallelograms",
+  "prompt": "A triangle has area 24 cm² and base 6 cm. What is its height?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "From A = (1/2)bh, multiply both sides by 2: 2A = bh, so h = 2(24)/6 = 8 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-triangles-parallelograms"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "12935322145f2efb34399bac47e2d169478c7bdd0fb6d57ee9c1c0a84d8929ec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-001",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the mean of: 8, 6, 5, 12, 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7.2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Add them: 36. Divide by the count (5): 36/5 = 7.2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1979168b266c8d8a7e6af4a85bb3f11bf997fd4ebaeaddb674429e5dbab3ccef",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-002",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the mean of: 5, 17, 4, 17, 11",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10.8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Add them: 54. Divide by the count (5): 54/5 = 10.8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "39534216dfa821881e48665d02c4b25540c8d58985ac7b09d080de25a0d76e0f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-003",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the mean of: 19, 9, 18, 11, 14",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14.2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Add them: 71. Divide by the count (5): 71/5 = 14.2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fac3224046d072ad4de69da4132515cd0903a365ad3888799d6964f217ee34ec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-004",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the mean of: 16, 15, 20, 10, 20",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16.2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Add them: 81. Divide by the count (5): 81/5 = 16.2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "888dc5212108dbb82bae80cf191d9bf7bb6c27e62715b304599243227449e950",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-005",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the RANGE of: 10, 23, 17, 23, 4, 17",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Range = largest − smallest = 23 − 4 = 19. It measures spread, not center.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1d3908d16d02f7b381625875197abfb0b46d6e7c858b19ce97a1bf81607826ed",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-006",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the RANGE of: 24, 13, 24, 11, 10, 15",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Range = largest − smallest = 24 − 10 = 14. It measures spread, not center.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5aadd1e20b6520696314e0bf938245b7690ebe34bc74643957be9416e8ed83ca",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-007",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the RANGE of: 21, 8, 14, 9, 5, 12",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Range = largest − smallest = 21 − 5 = 16. It measures spread, not center.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e87c083aa0e3b2260c50c5c1cbff3b2164d89ebeb4ed4790841fa7104470ae66",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-measures-center-variability-008",
+  "skillId": "g6-measures-center-variability",
+  "prompt": "Find the RANGE of: 19, 25, 23, 21, 22, 15",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Range = largest − smallest = 25 − 15 = 10. It measures spread, not center.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-measures-center-variability"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1fc0fe5de7e05a64f5a459eaeaf9d3e12975178efb950fbf51d173bc3fd7aa76",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-001",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 9 feet = ___ inches",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "108",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "There are 12 inches in a foot, so 9 · 12 = 108 inches. Converting to a SMALLER unit gives a bigger number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "99d1fb0c3e197918992dd8ab776515b195736497a6354166c1132be2e202da0a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-002",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 3 feet = ___ inches",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "There are 12 inches in a foot, so 3 · 12 = 36 inches. Converting to a SMALLER unit gives a bigger number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bda55fc52c0eb29c3576816235ddae0ec07a0407e3bcca4ee3a6100209f6ff42",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-003",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 10 feet = ___ inches",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "120",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "There are 12 inches in a foot, so 10 · 12 = 120 inches. Converting to a SMALLER unit gives a bigger number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "493ad50ad8d4575badd9083326a846fd3deada2351ad6b513d5c7bf0135d1d2f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-004",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 7 feet = ___ inches",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "84",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "There are 12 inches in a foot, so 7 · 12 = 84 inches. Converting to a SMALLER unit gives a bigger number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "034106481cbb28c24a934a611e070409b20af2498cbe6ada47266a938e2ddd68",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-005",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 10 meters = ___ centimeters",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "There are 100 centimeters in a meter, so 10 · 100 = 1000 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "19838b2e353ab666b6b9965582cfff974874b9fb3d191e63cef9325779c8be9d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-006",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 3 meters = ___ centimeters",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "300",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "There are 100 centimeters in a meter, so 3 · 100 = 300 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9edc786fefbfe99f7fa28cae9064a6b7c24c4bf6ec8e8b45e09a04d0d4b3f936",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-007",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 14 meters = ___ centimeters",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1400",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "There are 100 centimeters in a meter, so 14 · 100 = 1400 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "58a47823639f9524d9993bb9696ca0f5aa4124040eb1915b7088144956385e88",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-008",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 7 meters = ___ centimeters",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "700",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "There are 100 centimeters in a meter, so 7 · 100 = 700 cm.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ae1b5d813e2570091744f6d6513a5fdd42ba915e0ac954a4ecd6e29b00d49613",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-009",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 28 cups = ___ quarts (4 cups = 1 quart)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Divide by 4 because you are converting to a LARGER unit: 28 ÷ 4 = 7 quarts.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "421db03d05fa3b99cfd8674c1d458cc3f93b3c3dd056ad580d60862ab066771c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-010",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 10 cups = ___ quarts (4 cups = 1 quart)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Divide by 4 because you are converting to a LARGER unit: 10 ÷ 4 = 2.5 quarts.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dde988ad773ac721f84b14a0c3a6173665f3e96c96b09a241f41536a04969e61",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-011",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 30 cups = ___ quarts (4 cups = 1 quart)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Divide by 4 because you are converting to a LARGER unit: 30 ÷ 4 = 7.5 quarts.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0375f2e382f59e49d34e6ccf3055c0325edaf9c2326389ff8ecdd5fbd16bdf6a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-unit-conversions-012",
+  "skillId": "g6-unit-conversions",
+  "prompt": "Convert: 12 cups = ___ quarts (4 cups = 1 quart)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Divide by 4 because you are converting to a LARGER unit: 12 ÷ 4 = 3 quarts.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-unit-conversions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2454da68640a9a91ad4f372cfe4e5563ee0019b92a4f2e8b147a3f4cecf74cd0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-001",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide: 232 ÷ 8",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "29",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "8 · 29 = 232, so 232 ÷ 8 = 29.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0e78d45d4cbd00c54c8d3dc9bd18bf86fe0f20f9f6f056f9f7aff0878d99cf65",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-002",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide: 160 ÷ 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "5 · 32 = 160, so 160 ÷ 5 = 32.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eb73240ffa45a6932b5b7402920cb196e79e231736649219d01862543b308089",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-003",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide: 168 ÷ 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "42",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "4 · 42 = 168, so 168 ÷ 4 = 42.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "280d0cf6ad3e046928f9726d5a9396f8cef95aa77fc4df2ad5f27de3365db81d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-004",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide: 696 ÷ 12",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "58",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "12 · 58 = 696, so 696 ÷ 12 = 58.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "28d124321b7dca61693e42690924363935908d7df7c2e3055b7ad97c20119d6f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-005",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide and give the remainder: 145 ÷ 7",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20 R5",
+   "equivalents": [
+    "20R5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "7 goes into 145 exactly 20 times (7·20 = 140), leaving 145 − 140 = 5 left over. So the answer is 20 remainder 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0b8f3eda388c73a79b88fe54509ffd044fab5d79f20cabe6dd737bcd4f53ef67",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-006",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide and give the remainder: 466 ÷ 9",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "51 R7",
+   "equivalents": [
+    "51R7"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "9 goes into 466 exactly 51 times (9·51 = 459), leaving 466 − 459 = 7 left over. So the answer is 51 remainder 7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3fe3dbd232484865091e157b1da0e4b430da5c01d52d5d3b9f21b693f703a41e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-007",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide and give the remainder: 503 ÷ 14",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "35 R13",
+   "equivalents": [
+    "35R13"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "14 goes into 503 exactly 35 times (14·35 = 490), leaving 503 − 490 = 13 left over. So the answer is 35 remainder 13.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "51f453bcd51f0e00859813968fa5c07a54de4559c98da86c76f29c3758fb2e92",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-digit-division-008",
+  "skillId": "g6-multi-digit-division",
+  "prompt": "Divide and give the remainder: 282 ÷ 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56 R2",
+   "equivalents": [
+    "56R2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "5 goes into 282 exactly 56 times (5·56 = 280), leaving 282 − 280 = 2 left over. So the answer is 56 remainder 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-digit-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cc7913aeaaf2c3fb4cb221a99ced6d11270fd1fa31d3849ea23f46ca55b4d733",
+  "isActive": true
+ }
+]

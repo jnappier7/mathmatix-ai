@@ -1,7 +1,7 @@
 {
   "source": "hand-authored (domain judgment), 2026-08-01",
-  "note": "pathway skill ids -> BANK skill ids, same contract as pathway-crosswalk.json. Read by utils/skillCanonicalizer.js buildPathway() for CONTENT LOOKUP ONLY — never by canonicalSkillId (mastery keying). Kept in a SEPARATE file because scripts/proposePathwayCrosswalk.js overwrites pathway-crosswalk.json wholesale; manual rows here win on collision. Filename deliberately does NOT end in '-crosswalk.json' so the canonicalization glob cannot sweep it up. Covers geometry, algebra-2, precalculus and act-prep.",
-  "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such.",
+  "note": "pathway skill ids -> BANK skill ids, same contract as pathway-crosswalk.json. Read by utils/skillCanonicalizer.js buildPathway() for CONTENT LOOKUP ONLY — never by canonicalSkillId (mastery keying). Kept in a SEPARATE file because scripts/proposePathwayCrosswalk.js overwrites pathway-crosswalk.json wholesale; manual rows here win on collision. Filename deliberately does NOT end in '-crosswalk.json' so the canonicalization glob cannot sweep it up. Covers geometry, algebra-2, precalculus, act-prep, algebra-1 and 6th-grade-math.",
+  "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such. 2026-08-02: 28 rows added after comparing a full DB export against the generated bank — 21 of 35 skills that the audit reported EMPTY already had content under another name. The audit measures REACHABILITY, not existence: an unmapped skill reads empty whether or not problems exist for it. Always diff against the bank before generating.",
   "rows": [
     {
       "legacyId": "angle-measurement",
@@ -512,6 +512,146 @@
       "legacyId": "act-model-interpretation",
       "unifiedId": "act-linear-functions-models",
       "course": "act-prep"
+    },
+    {
+      "legacyId": "g6-one-two-step-equations",
+      "unifiedId": "one-step-equations",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-percent-intro",
+      "unifiedId": "percent-of-a-number",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-combine-like-terms",
+      "unifiedId": "combining-like-terms",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-equivalent-ratios",
+      "unifiedId": "ratios",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-ratio-language",
+      "unifiedId": "ratios",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-measures-center-variability",
+      "unifiedId": "measures-of-center",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-integer-basics",
+      "unifiedId": "adding-subtracting-integers",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-fraction-add-subtract",
+      "unifiedId": "add-fractions",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-fraction-multiply-divide",
+      "unifiedId": "multiply-fractions",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-decimal-division",
+      "unifiedId": "decimals-divide",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-write-expressions",
+      "unifiedId": "writing-algebraic-expressions",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-compare-order-rationals",
+      "unifiedId": "ordering-numbers",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-distance-coordinate-plane",
+      "unifiedId": "coordinate-plane",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-area-triangles-parallelograms",
+      "unifiedId": "area-triangles",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-unit-conversions",
+      "unifiedId": "act-rates-unit-conversion",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "discriminant",
+      "unifiedId": "discriminant-number-of-solutions",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "solving-literal-equations",
+      "unifiedId": "literal-equations",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "writing-linear-equations-point-slope",
+      "unifiedId": "point-slope-form",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "intro-probability",
+      "unifiedId": "probability-basics",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "measures-of-central-tendency",
+      "unifiedId": "mean",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "variable-expressions",
+      "unifiedId": "evaluate-expressions",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "polynomial-multiplication",
+      "unifiedId": "polynomial-multiplication-monomial",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "multiplying-dividing-rationals",
+      "unifiedId": "multiply-rational-expressions",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "solving-rational-equations",
+      "unifiedId": "act-radical-rational-equations",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "simplifying-radicals",
+      "unifiedId": "act-radicals-roots",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "operations-with-radicals",
+      "unifiedId": "act-radicals-roots",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "systems-word-problems",
+      "unifiedId": "systems-application-modeling",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "algebraic-properties",
+      "unifiedId": "distributive-property",
+      "course": "algebra-1"
     }
   ]
 }
