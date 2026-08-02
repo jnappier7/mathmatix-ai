@@ -23,6 +23,7 @@ const { isTeacher, isStudent } = require('../middleware/auth');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const logger = require('../utils/logger');
 
+const { anyRole } = require('../utils/roleQuery');
 // ─── TEACHER ENDPOINTS ───────────────────────────────────────────────────────
 
 /**
@@ -210,7 +211,7 @@ router.get('/monitor/stream', isTeacher, async (req, res) => {
       // Get all enrolled students for the class
       const studentIds = enrollmentCode.enrolledStudents.map(e => e.studentId);
       const students = await User.find(
-        { _id: { $in: studentIds }, role: 'student' },
+        { _id: { $in: studentIds }, ...anyRole('student') },
         'firstName lastName username lastLogin'
       ).lean();
 

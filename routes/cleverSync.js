@@ -14,6 +14,7 @@ const SchoolLicense  = require('../models/schoolLicense');
 const User           = require('../models/user');
 const { syncSchoolRosters } = require('../services/cleverSync');
 
+const { anyRole } = require('../utils/roleQuery');
 /* ------------------------------------------------------------------ */
 /*  GET /sections — list sections with optional filters               */
 /* ------------------------------------------------------------------ */
@@ -132,8 +133,8 @@ router.get('/stats', async (req, res) => {
       licensesWithClever
     ] = await Promise.all([
       Section.countDocuments(),
-      User.countDocuments({ cleverId: { $exists: true, $ne: null }, role: 'student' }),
-      User.countDocuments({ cleverId: { $exists: true, $ne: null }, role: 'teacher' }),
+      User.countDocuments({ cleverId: { $exists: true, $ne: null }, ...anyRole('student') }),
+      User.countDocuments({ cleverId: { $exists: true, $ne: null }, ...anyRole('teacher') }),
       SchoolLicense.countDocuments({ schoolId: { $exists: true, $ne: null } })
     ]);
 

@@ -17,6 +17,7 @@ const { deriveProgressCardState } = require('../utils/progressCardState');
 const { getReviewSummary } = require('../utils/smartReviewQueue');
 const { resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry } = require('../utils/masteryGuard');
 
+const { anyRole } = require('../utils/roleQuery');
 // Helper function to generate a unique short code for student-to-parent linking
 async function generateUniqueStudentLinkCode() {
     let code;
@@ -123,7 +124,7 @@ router.post('/link-to-parent', isAuthenticated, isStudent, async (req, res) => {
             'parentToChildInviteCode.code': parentInviteCode.trim().toUpperCase(),
             'parentToChildInviteCode.childLinked': false,
             'parentToChildInviteCode.expiresAt': { $gt: new Date() },
-            role: 'parent'
+            ...anyRole('parent')
         });
 
         if (!parent) {
@@ -182,7 +183,7 @@ router.post('/invite-parent', isAuthenticated, isStudent, async (req, res) => {
             return res.status(404).json({ success: false, message: 'Student not found.' });
         }
         // No-op if a parent with this email is already linked to this student.
-        const existingParent = await User.findOne({ email, role: 'parent' });
+        const existingParent = await User.findOne({ email, ...anyRole('parent') });
         if (existingParent && (student.parentIds || []).some(pid => pid.equals(existingParent._id))) {
             return res.status(400).json({ success: false, message: 'That parent is already linked to your account.' });
         }

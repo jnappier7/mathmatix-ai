@@ -24,6 +24,7 @@ const TranscriptFlag = require('../models/transcriptFlag');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { checkConsent } = require('../utils/consentManager');
 
+const { anyRole } = require('../utils/roleQuery');
 function roleOf(user) {
     if (!user) return null;
     if (user.role === 'admin') return 'admin';
@@ -77,7 +78,7 @@ router.post('/', async (req, res) => {
         }
 
         const student = await User.findOne(
-            { _id: studentId, role: 'student' },
+            { _id: studentId, ...anyRole('student') },
             '_id privacyConsent hasParentalConsent'
         ).lean();
         if (!student) {

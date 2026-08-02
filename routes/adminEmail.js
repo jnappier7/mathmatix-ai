@@ -19,6 +19,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 const { sendBulkEmail } = require('../utils/emailService');
 
+const { anyRole } = require('../utils/roleQuery');
 // ============================================
 // AUDIENCE ENDPOINTS
 // ============================================
@@ -31,9 +32,9 @@ router.get('/audiences', isAuthenticated, isAdmin, async (req, res) => {
     try {
         // Count each audience type
         const [studentCount, parentCount, teacherCount, waitlistCount] = await Promise.all([
-            User.countDocuments({ role: 'student', email: { $exists: true, $ne: '' } }),
-            User.countDocuments({ role: 'parent', email: { $exists: true, $ne: '' } }),
-            User.countDocuments({ role: 'teacher', email: { $exists: true, $ne: '' } }),
+            User.countDocuments({ ...anyRole('student'), email: { $exists: true, $ne: '' } }),
+            User.countDocuments({ ...anyRole('parent'), email: { $exists: true, $ne: '' } }),
+            User.countDocuments({ ...anyRole('teacher'), email: { $exists: true, $ne: '' } }),
             Waitlist.countDocuments({ email: { $exists: true, $ne: '' } })
         ]);
 

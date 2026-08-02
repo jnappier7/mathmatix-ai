@@ -14,6 +14,7 @@ const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { calculateRetrievability } = require('../utils/fsrsScheduler');
 const { resolveSkillDisplayNames } = require('../utils/skillDisplayNames');
 
+const { userHasRole, anyRole } = require('../utils/roleQuery');
 // Helper: verify parent has access to child
 async function verifyParentChildAccess(parentId, childId) {
     const parent = await User.findById(parentId);
@@ -86,7 +87,7 @@ router.post('/link-to-student', isAuthenticated, isParent, async (req, res) => {
         if (student.studentToParentLinkCode.parentLinked) {
             return res.status(400).json({ message: "This student account is already linked to a parent." });
         }
-        if (student.role !== 'student') {
+        if (!userHasRole(student, 'student')) {
             return res.status(400).json({ message: "This code is not from a student account." });
         }
 
@@ -128,7 +129,7 @@ router.post('/accept-invite', isAuthenticated, isParent, async (req, res) => {
         if (!parent) {
             return res.status(404).json({ success: false, message: "Parent not found." });
         }
-        const student = await User.findOne({ 'parentInvite.token': token, role: 'student' });
+        const student = await User.findOne({ 'parentInvite.token': token, ...anyRole('student') });
         if (!student) {
             return res.status(400).json({ success: false, message: "This invite link is invalid or has already been used." });
         }

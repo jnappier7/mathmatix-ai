@@ -23,6 +23,7 @@ const { logRecordAccess } = require('../middleware/ferpaAccessLog');
 const { checkConsent } = require('../utils/consentManager');
 const { requireActiveConsent } = require('../middleware/consentGate');
 
+const { anyRole } = require('../utils/roleQuery');
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
 router.get('/students', isTeacher, async (req, res) => {
   try {
@@ -38,7 +39,7 @@ router.get('/students', isTeacher, async (req, res) => {
 
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { _id: { $in: studentIds }, role: 'student' },
+      { _id: { $in: studentIds }, ...anyRole('student') },
       projection
     ).lean();
     res.json(students);
@@ -62,7 +63,7 @@ router.get('/students/:studentId/iep', isTeacher, requireActiveConsent(), logRec
 
     const student = await User.findOne({
       _id: studentId,
-      role: 'student'
+      ...anyRole('student')
     }, 'firstName lastName username iepPlan').lean();
 
     if (!student) {
@@ -90,7 +91,7 @@ router.put('/students/:studentId/iep', isTeacher, async (req, res) => {
     }
 
     const result = await User.findOneAndUpdate(
-      { _id: studentId, role: 'student' },
+      { _id: studentId, ...anyRole('student') },
       { $set: { iepPlan: updatedIepPlan } },
       { new: true, runValidators: true }
     );
@@ -120,7 +121,7 @@ router.get('/students/:studentId/iep/goal-history', isTeacher, requireActiveCons
 
     const student = await User.findOne({
       _id: studentId,
-      role: 'student'
+      ...anyRole('student')
     }, 'firstName lastName iepPlan').lean();
 
     if (!student) {
@@ -284,7 +285,7 @@ router.get('/live-feed', isTeacher, async (req, res) => {
     // Get all students assigned to this teacher (via teacherId or enrollment codes)
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { _id: { $in: studentIds }, role: 'student' },
+      { _id: { $in: studentIds }, ...anyRole('student') },
       '_id firstName lastName username'
     ).lean();
 
@@ -379,7 +380,7 @@ router.get('/activity-feed', isTeacher, async (req, res) => {
     // Get all students assigned to this teacher (via teacherId or enrollment codes)
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { _id: { $in: studentIds }, role: 'student' },
+      { _id: { $in: studentIds }, ...anyRole('student') },
       '_id firstName lastName username'
     ).lean();
 
@@ -1215,7 +1216,7 @@ router.put('/classes/:codeId/assign-student', isTeacher, async (req, res) => {
     }
 
     // Verify the student belongs to this teacher
-    const student = await User.findOne({ _id: studentId, role: 'student', teacherId });
+    const student = await User.findOne({ _id: studentId, ...anyRole('student'), teacherId });
     if (!student) {
       return res.status(404).json({ message: 'Student not found or not assigned to you.' });
     }
@@ -1281,7 +1282,7 @@ router.get('/course-progress', isTeacher, async (req, res) => {
 
     // Get all students with their skill mastery
     const students = await User.find(
-      { role: 'student', teacherId },
+      { ...anyRole('student'), teacherId },
       'firstName lastName username skillMastery mathCourse gradeLevel'
     ).lean();
 
@@ -1400,7 +1401,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
 
     // Get all students with their skill mastery data
     const students = await User.find(
-      { role: 'student', teacherId },
+      { ...anyRole('student'), teacherId },
       'firstName lastName username skillMastery gradeLevel mathCourse'
     ).lean();
 
@@ -1523,7 +1524,7 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
 async function buildClassSnapshot(teacherId) {
   const studentIds = await getStudentIdsForTeacher(teacherId);
   const students = await User.find(
-    { _id: { $in: studentIds }, role: 'student' },
+    { _id: { $in: studentIds }, ...anyRole('student') },
     'firstName lastName gradeLevel mathCourse iepPlan skillMastery learningProfile lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes weeklyActiveSeconds currentStreak level xp'
   ).lean();
 
@@ -1862,7 +1863,7 @@ router.get('/intervention-alerts', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { _id: { $in: studentIds }, role: 'student' },
+      { _id: { $in: studentIds }, ...anyRole('student') },
       'firstName lastName learningEngines lastInterventionAlert gradeLevel mathCourse'
     ).lean();
 

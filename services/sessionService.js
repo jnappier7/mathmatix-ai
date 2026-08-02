@@ -7,6 +7,7 @@ const User = require('../models/user');
 const Conversation = require('../models/conversation');
 const CourseSession = require('../models/courseSession');
 const Notification = require('../models/notification');
+const { userHasRole } = require('../utils/roleQuery');
 const {
   generateSessionSummary: generateAISummary,
   detectTopic,
@@ -140,7 +141,7 @@ async function notifyDashboards(summary) {
     const notifications = [];
 
     // Notify parents if student
-    if (user.role === 'student' && user.parentIds && user.parentIds.length > 0) {
+    if (userHasRole(user, 'student') && user.parentIds && user.parentIds.length > 0) {
       for (const parentId of user.parentIds) {
         notifications.push({
           type: 'session_summary',

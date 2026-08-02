@@ -17,6 +17,7 @@ const User = require('../models/user');
 const EnrollmentCode = require('../models/enrollmentCode');
 const { isAuthenticated, isTeacher, isStudent } = require('../middleware/auth');
 
+const { anyRole } = require('../utils/roleQuery');
 // ============================================
 // TEACHER ROUTES
 // ============================================
@@ -68,7 +69,7 @@ router.get('/teacher/classes', isAuthenticated, isTeacher, async (req, res) => {
         // Also count all students assigned to this teacher
         const allStudentsCount = await User.countDocuments({
             teacherId: req.user._id,
-            role: 'student'
+            ...anyRole('student')
         });
 
         res.json({
@@ -98,7 +99,7 @@ router.get('/teacher/students', isAuthenticated, isTeacher, async (req, res) => 
     try {
         const students = await User.find({
             teacherId: req.user._id,
-            role: 'student'
+            ...anyRole('student')
         }).select('_id firstName lastName username gradeLevel').lean();
 
         res.json({
@@ -161,7 +162,7 @@ router.post('/teacher/send', isAuthenticated, isTeacher, async (req, res) => {
             const validStudents = await User.find({
                 _id: { $in: recipientIds },
                 teacherId: req.user._id,
-                role: 'student'
+                ...anyRole('student')
             }).select('_id');
 
             if (validStudents.length !== recipientIds.length) {
@@ -196,7 +197,7 @@ router.post('/teacher/send', isAuthenticated, isTeacher, async (req, res) => {
             // All students of this teacher
             const allStudents = await User.find({
                 teacherId: req.user._id,
-                role: 'student'
+                ...anyRole('student')
             }).select('_id');
             finalRecipientIds = allStudents.map(s => s._id);
         }

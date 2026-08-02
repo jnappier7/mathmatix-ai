@@ -17,6 +17,7 @@ const User = require('../models/user');
 const { isAuthenticated } = require('../middleware/auth');
 const { sendMessageNotification } = require('../utils/emailService');
 
+const { anyRole, userHasRole } = require('../utils/roleQuery');
 /**
  * Middleware to check if user can message
  * Only teachers and parents can use messaging
@@ -265,18 +266,19 @@ router.post('/send', isAuthenticated, canMessage, async (req, res) => {
         // Parents can message teachers of their children
         let hasPermission = false;
 
-        if (req.user.role === 'teacher') {
+        if (userHasRole(req.user, 'teacher')) {
             // Check if recipient is a parent of one of this teacher's students
-            if (recipient.role === 'parent') {
+            if (userHasRole(recipient, 'parent')) {
                 const parentChildren = await User.find({
                     parentIds: recipient._id,
                     teacherId: req.user._id
                 });
                 hasPermission = parentChildren.length > 0;
             }
-        } else if (req.user.role === 'parent') {
+        }
+        if (!hasPermission && userHasRole(req.user, 'parent')) {
             // Check if recipient is a teacher of one of this parent's children
-            if (recipient.role === 'teacher') {
+            if (userHasRole(recipient, 'teacher')) {
                 const parent = await User.findById(req.user._id);
                 if (parent.children && parent.children.length > 0) {
                     const childrenWithTeacher = await User.find({
@@ -480,7 +482,7 @@ router.get('/contacts', isAuthenticated, canMessage, async (req, res) => {
         if (req.user.role === 'teacher') {
             // Get all parents of students assigned to this teacher
             const students = await User.find(
-                { teacherId: req.user._id, role: 'student' },
+                { teacherId: req.user._id, ...anyRole('student') },
                 'firstName lastName parentIds'
             ).populate('parentIds', 'firstName lastName email');
 

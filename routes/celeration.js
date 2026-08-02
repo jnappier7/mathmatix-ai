@@ -5,6 +5,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
+const { anyRole, userHasRole } = require('../utils/roleQuery');
 // Morningside fluency aims by grade level
 const FLUENCY_AIMS = {
   elementary: 40,  // K-5: 40 digits/min
@@ -239,13 +240,13 @@ router.get('/celeration/class-summary', isAuthenticated, async (req, res) => {
   try {
     const teacher = await User.findById(req.user._id);
 
-    if (!teacher || teacher.role !== 'teacher') {
+    if (!teacher || !userHasRole(teacher, 'teacher')) {
       return res.status(403).json({ success: false, error: 'Not authorized' });
     }
 
     // Find all students assigned to this teacher
     const students = await User.find({
-      role: 'student',
+      ...anyRole('student'),
       teacherId: teacher._id
     }).select('firstName lastName gradeLevel factFluencyProgress');
 

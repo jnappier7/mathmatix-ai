@@ -22,6 +22,7 @@ const logger = require('../utils/logger').child({ route: 'practicePack' });
 const { skillLookupCandidates } = require('../utils/skillCanonicalizer');
 const { normalizedMasteryScore } = require('../utils/masteryScore');
 
+const { anyRole, userHasRole } = require('../utils/roleQuery');
 // Puppeteer for HTML → PDF rendering
 let puppeteer;
 try {
@@ -817,7 +818,7 @@ router.get('/generate', isAuthenticated, async (req, res) => {
 router.post('/class-generate', isAuthenticated, async (req, res) => {
   try {
     const teacher = await User.findById(req.user._id);
-    if (!teacher || teacher.role !== 'teacher') {
+    if (!teacher || !userHasRole(teacher, 'teacher')) {
       return res.status(403).json({ error: 'Teacher access required' });
     }
 
@@ -827,7 +828,7 @@ router.post('/class-generate', isAuthenticated, async (req, res) => {
     }
 
     // Get all students for this teacher
-    const students = await User.find({ teacherId: teacher._id, role: 'student' })
+    const students = await User.find({ teacherId: teacher._id, ...anyRole('student') })
       .select('firstName lastName currentTheta gradeLevel learningProfile skillMastery');
 
     if (students.length === 0) {
@@ -922,7 +923,7 @@ router.get('/generate-for-child', isAuthenticated, async (req, res) => {
   let browser;
   try {
     const parent = await User.findById(req.user._id);
-    if (!parent || parent.role !== 'parent') {
+    if (!parent || !userHasRole(parent, 'parent')) {
       return res.status(403).json({ error: 'Parent access required' });
     }
 
@@ -993,7 +994,7 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
   let browser;
   try {
     const teacher = await User.findById(req.user._id);
-    if (!teacher || teacher.role !== 'teacher') {
+    if (!teacher || !userHasRole(teacher, 'teacher')) {
       return res.status(403).json({ error: 'Teacher access required' });
     }
 
@@ -1004,7 +1005,7 @@ router.get('/class-generate-pdf', isAuthenticated, async (req, res) => {
     const count = Math.min(parseInt(req.query.count) || DEFAULT_PROBLEM_COUNT, MAX_PROBLEMS);
 
     // Get students for this teacher in the specified tier
-    const students = await User.find({ teacherId: teacher._id, role: 'student' })
+    const students = await User.find({ teacherId: teacher._id, ...anyRole('student') })
       .select('firstName lastName currentTheta gradeLevel learningProfile skillMastery');
 
     const tierRanges = { below: [-Infinity, -0.5], onLevel: [-0.5, 0.5], above: [0.5, Infinity] };

@@ -7,6 +7,7 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const BRAND_CONFIG = require('../utils/brand');
 
+const { anyRole } = require('../utils/roleQuery');
 /**
  * Get user by ID with error handling
  * @param {string} userId - User ID
@@ -344,7 +345,7 @@ async function getStudentIdsForTeacher(teacherId) {
 
   // 1. Direct teacherId assignment
   const directStudents = await User.find(
-    { role: 'student', teacherId },
+    { ...anyRole('student'), teacherId },
     '_id'
   ).lean();
   const idSet = new Set(directStudents.map(s => s._id.toString()));

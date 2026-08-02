@@ -28,6 +28,7 @@ const { hasUnmeteredAiAccess } = require('../middleware/usageGate');
 const { sendCancellationConfirmation, sendTrialEndingReminder } = require('../utils/emailService');
 const logger = require('../utils/logger').child({ route: 'billing' });
 
+const { userHasRole } = require('../utils/roleQuery');
 // ---- Configuration ----
 const BILLING_ENABLED = process.env.BILLING_ENABLED === 'true';
 const FREE_WEEKLY_SECONDS = 30 * 60; // 30 free AI minutes per reset period (now monthly) for all students
@@ -850,7 +851,7 @@ router.get('/status', isAuthenticated, async (req, res) => {
 
     // Free users — calculate remaining free monthly AI minutes
     // Teachers, parents, admins get unlimited; students get 30 free AI minutes/month
-    if (user.role === 'teacher' || user.role === 'parent' || user.role === 'admin') {
+    if (['teacher', 'parent', 'admin'].some(r => userHasRole(user, r))) {
       return res.json({
         success: true,
         billingEnabled: true,
