@@ -5,9 +5,10 @@ const User = require('../models/user');
 const { isAuthorizedForLeaderboard } = require('../middleware/auth');
 const { hasOptedOutOfDirectoryInfo } = require('../utils/ferpaCompliance');
 
+const { anyRole } = require('../utils/roleQuery');
 router.get('/', isAuthorizedForLeaderboard, async (req, res) => {
     try {
-        let query = { role: 'student', isDemo: { $ne: true }, isDemoClone: { $ne: true } };
+        let query = { ...anyRole('student'), isDemo: { $ne: true }, isDemoClone: { $ne: true } };
 
         // Determine filtering based on user role (this logic is preserved)
         if (req.user.role === 'teacher') {

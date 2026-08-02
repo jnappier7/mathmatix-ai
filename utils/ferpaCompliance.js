@@ -23,6 +23,7 @@
 const logger = require('./logger');
 const User = require('../models/user');
 
+const { anyRole } = require('./roleQuery');
 // ============================================================================
 // DIRECTORY INFORMATION CONFIGURATION
 // ============================================================================
@@ -235,7 +236,7 @@ async function sendAnnualNotifications(sendEmailFn) {
     try {
         // Find all parents who have linked children
         const parents = await User.find({
-            role: 'parent',
+            ...anyRole('parent'),
             children: { $exists: true, $not: { $size: 0 } }
         }).populate('children', 'firstName').lean();
 

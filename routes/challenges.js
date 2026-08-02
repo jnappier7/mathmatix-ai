@@ -26,6 +26,7 @@ const Skill = require('../models/skill');
 const User = require('../models/user');
 const logger = require('../utils/catLogger');
 
+const { anyRole } = require('../utils/roleQuery');
 // Number of problems per challenge
 const PROBLEMS_PER_CHALLENGE = 5;
 
@@ -61,7 +62,7 @@ router.get('/available', isAuthenticated, async (req, res) => {
     if (user?.teacherId) {
       const classmateIds = await User.find({
         teacherId: user.teacherId,
-        role: 'student',
+        ...anyRole('student'),
         _id: { $ne: userId }
       }).distinct('_id');
       query.challengerId = { $in: classmateIds };
@@ -585,7 +586,7 @@ router.get('/classmates', isAuthenticated, async (req, res) => {
 
     const classmates = await User.find({
       teacherId: user.teacherId,
-      role: 'student',
+      ...anyRole('student'),
       _id: { $ne: req.user._id }
     })
       .select('firstName lastName level')

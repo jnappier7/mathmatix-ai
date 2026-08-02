@@ -20,6 +20,7 @@ const { isTeacher, isParent, isAdmin } = require('../middleware/auth');
 const { getStudentIdsForTeacher } = require('../services/userService');
 const { calculateRetrievability } = require('../utils/fsrsScheduler');
 
+const { anyRole } = require('../utils/roleQuery');
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -325,7 +326,7 @@ router.get('/class/knowledge-heatmap', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { _id: { $in: studentIds }, role: 'student' },
+      { _id: { $in: studentIds }, ...anyRole('student') },
       'firstName lastName learningEngines.bkt'
     ).lean();
 
@@ -368,7 +369,7 @@ router.get('/class/risk-radar', isTeacher, async (req, res) => {
     const teacherId = req.user._id;
     const studentIds = await getStudentIdsForTeacher(teacherId);
     const students = await User.find(
-      { _id: { $in: studentIds }, role: 'student' },
+      { _id: { $in: studentIds }, ...anyRole('student') },
       'firstName lastName learningEngines'
     ).lean();
 
@@ -628,7 +629,7 @@ router.get('/platform/engine-health', isAdmin, async (req, res) => {
 
     // Sample up to 100 recent active students
     const students = await User.find(
-      { role: 'student', lastLogin: { $gte: thirtyDaysAgo } },
+      { ...anyRole('student'), lastLogin: { $gte: thirtyDaysAgo } },
       'learningEngines'
     ).limit(100).lean();
 
@@ -713,7 +714,7 @@ router.get('/platform/learning-outcomes', isAdmin, async (req, res) => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000);
 
     const students = await User.find(
-      { role: 'student', lastLogin: { $gte: thirtyDaysAgo } },
+      { ...anyRole('student'), lastLogin: { $gte: thirtyDaysAgo } },
       'learningEngines'
     ).limit(100).lean();
 

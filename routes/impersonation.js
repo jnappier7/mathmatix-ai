@@ -5,6 +5,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const ImpersonationLog = require('../models/impersonationLog');
+const { anyRole, withoutRoles } = require('../utils/roleQuery');
 const {
   startImpersonation,
   endImpersonation,
@@ -140,20 +141,20 @@ router.get('/targets', async (req, res) => {
     if (actor.role === 'admin') {
       // Admins can see all non-admin users
       targets = await User.find(
-        { role: { $ne: 'admin' } },
+        withoutRoles('admin'),
         'firstName lastName email username role gradeLevel mathCourse teacherId'
       ).lean();
     } else if (actor.role === 'teacher') {
       // Teachers can only see their assigned students
       targets = await User.find(
-        { role: 'student', teacherId: actor._id },
+        { ...anyRole('student'), teacherId: actor._id },
         'firstName lastName email username role gradeLevel mathCourse'
       ).lean();
     } else if (actor.role === 'parent') {
       // Parents can only see their linked children
       const childIds = actor.children || [];
       targets = await User.find(
-        { _id: { $in: childIds }, role: 'student' },
+        { _id: { $in: childIds }, ...anyRole('student') },
         'firstName lastName email username role gradeLevel mathCourse'
       ).lean();
     }

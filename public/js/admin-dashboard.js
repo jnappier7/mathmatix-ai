@@ -172,11 +172,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (e.target === teacherDetailModal) closeTeacherModal();
     });
 
-    function isTeacherUser(user) {
+    // `user.role` is only the role the account is CURRENTLY viewing; `user.roles[]`
+    // is every role it holds. Filtering on `role` alone hides multi-role accounts
+    // (e.g. an admin who is also a parent never appears in the parent lists).
+    function userHasRole(user, roleName) {
         if (!user) return false;
-        if (user.role === 'teacher') return true;
-        if (Array.isArray(user.roles) && user.roles.includes('teacher')) return true;
-        return false;
+        if (Array.isArray(user.roles) && user.roles.length > 0) {
+            return user.roles.includes(roleName);
+        }
+        return user.role === roleName;
+    }
+
+    function isTeacherUser(user) {
+        return userHasRole(user, 'teacher');
     }
 
     function getInitials(firstName, lastName) {
@@ -552,7 +560,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
         if (roleFilter) {
-            filteredStudents = filteredStudents.filter(s => s.role === roleFilter || (s.roles && s.roles.includes(roleFilter)));
+            filteredStudents = filteredStudents.filter(s => userHasRole(s, roleFilter));
         }
 
         filteredStudents = sortStudents(filteredStudents, sortBy);
@@ -1515,7 +1523,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         let filteredUsers = users;
 
         if (roleFilter) {
-            filteredUsers = filteredUsers.filter(u => u.role === roleFilter);
+            filteredUsers = filteredUsers.filter(u => userHasRole(u, roleFilter));
         }
 
         if (searchQuery) {
@@ -1916,9 +1924,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) return;
             const users = await response.json();
 
-            const students = users.filter(u => u.role === 'student');
-            const parents = users.filter(u => u.role === 'parent');
-            const teachers = users.filter(u => u.role === 'teacher');
+            const students = users.filter(u => userHasRole(u, 'student'));
+            const parents = users.filter(u => userHasRole(u, 'parent'));
+            const teachers = users.filter(u => userHasRole(u, 'teacher'));
 
             const studentOptions = students.map(s =>
                 `<option value="${s._id}">${s.firstName} ${s.lastName} (${s.email})</option>`

@@ -13,6 +13,7 @@ const { signupValidation, handleValidationErrors } = require('../middleware/vali
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const { generateUniqueUsername } = require('../auth/passport-config');
 
+const { anyRole } = require('../utils/roleQuery');
 // Roles that can be self-assigned during public signup.
 // 'admin' and 'teacher' are intentionally excluded — these accounts must be created by existing admins.
 const SELF_REGISTERABLE_ROLES = ['student', 'parent'];
@@ -239,7 +240,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
             const studentUser = await User.findOne({
                 'studentToParentLinkCode.code': inviteCode.trim(),
                 'studentToParentLinkCode.parentLinked': false,
-                role: 'student'
+                ...anyRole('student')
             });
 
             if (studentUser) {
@@ -276,7 +277,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
                 'parentToChildInviteCode.code': parentInviteCode.trim().toUpperCase(),
                 'parentToChildInviteCode.childLinked': false,
                 'parentToChildInviteCode.expiresAt': { $gt: new Date() },
-                role: 'parent'
+                ...anyRole('parent')
             });
 
             if (parentUser) {
@@ -311,7 +312,7 @@ router.post('/', ensureNotAuthenticated, signupValidation, handleValidationError
         if (role === 'parent' && parentInviteToken) {
             const invitedStudent = await User.findOne({
                 'parentInvite.token': parentInviteToken,
-                role: 'student'
+                ...anyRole('student')
             });
             if (invitedStudent) {
                 newUser.children = newUser.children || [];

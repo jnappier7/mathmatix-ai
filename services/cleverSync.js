@@ -19,6 +19,7 @@ const EnrollmentCode = require('../models/enrollmentCode');
 const cleverApi      = require('./cleverApi');
 const { generateUniqueStudentLinkCode } = require('../routes/student');
 
+const { anyRole } = require('../utils/roleQuery');
 /* ------------------------------------------------------------------ */
 /*  Helper: map Clever grade string → Mathmatix gradeLevel            */
 /* ------------------------------------------------------------------ */
@@ -414,7 +415,7 @@ async function syncSchoolRosters(schoolLicense, accessToken) {
 
         // Set primary teacher (first one found in our DB)
         for (const tCleverId of teacherCleverIds) {
-          const localTeacher = await User.findOne({ cleverId: tCleverId, role: 'teacher' });
+          const localTeacher = await User.findOne({ cleverId: tCleverId, ...anyRole('teacher') });
           if (localTeacher) {
             section.teacherId = localTeacher._id;
             // Add teacher to license
@@ -500,7 +501,7 @@ async function syncSchoolRosters(schoolLicense, accessToken) {
     // Update student count on license
     const activeStudentCount = await User.countDocuments({
       schoolLicenseId: schoolLicense._id,
-      role: 'student'
+      ...anyRole('student')
     });
     schoolLicense.currentStudentCount = activeStudentCount;
     await schoolLicense.save();

@@ -14,6 +14,7 @@ const router = express.Router();
 const User = require('../models/user');
 const { isTeacher } = require('../middleware/auth');
 const { getStudentIdsForTeacher } = require('../services/userService');
+const { anyRole } = require('../utils/roleQuery');
 const {
     getAccommodationTemplates,
     getAccommodationTemplate,
@@ -185,7 +186,7 @@ router.post('/apply/accommodations/:studentId', isTeacher, async (req, res) => {
 
         const student = await User.findOne({
             _id: studentId,
-            role: 'student'
+            ...anyRole('student')
         });
 
         if (!student) {
@@ -280,7 +281,7 @@ router.post('/apply/goals/:studentId', isTeacher, async (req, res) => {
 
         const student = await User.findOne({
             _id: studentId,
-            role: 'student'
+            ...anyRole('student')
         });
 
         if (!student) {
@@ -344,7 +345,7 @@ router.get('/recommended/:studentId', isTeacher, async (req, res) => {
 
         const student = await User.findOne({
             _id: studentId,
-            role: 'student'
+            ...anyRole('student')
         }, 'firstName lastName gradeLevel learningProfile iepPlan');
 
         if (!student) {

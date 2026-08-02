@@ -406,8 +406,10 @@ describe('Admin transcript endpoint student-only gate', () => {
     const res = await request(app).get(`/api/admin/students/${TEACHER_ID}/conversations`);
 
     expect(res.status).toBe(404);
+    // Scoped by the roles the target HOLDS, not the one it is currently viewing
+    // — otherwise a multi-role account is unreachable here (see utils/roleQuery).
     expect(User.findOne).toHaveBeenCalledWith(
-      { _id: TEACHER_ID, role: 'student' },
+      { _id: TEACHER_ID, $or: [{ roles: 'student' }, { role: 'student' }] },
       '_id privacyConsent hasParentalConsent'
     );
     expect(Conversation.find).not.toHaveBeenCalled();

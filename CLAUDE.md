@@ -317,7 +317,18 @@ npm run seed:all:dry   # preflight + plan, no writes
 
 ## 12. Gotchas & sharp edges
 
-- **`role` vs `roles`** — dual fields exist; always read via the `hasRole()` helper (`roles[]` first).
+- **`role` vs `roles`** — `role` is the **active** role (which dashboard the user is currently in;
+  multi-role users flip it via `/api/role-switch`), `roles[]` is every role they **hold**. Authorization
+  reads `roles[]` via `hasRole()` in `middleware/auth.js` — but that is only the gate. **Every DB query
+  and every role assertion on some *other* user must also match on roles held**, via
+  `utils/roleQuery.js` (`anyRole()` / `withRole()` / `withoutRoles()` / `userHasRole()` / `rolesOf()`).
+  A bare `{ role: 'parent' }` filter matches only whoever is *viewing* the parent dashboard right now,
+  so a multi-role account (admin who is also a parent) silently vanishes from parent directories and
+  every link lookup returns null — no error, just "not found". This ate ~65 sites before it was fixed;
+  `withoutRoles()` also closed an impersonation escalation where `role: { $ne: 'admin' }` offered up an
+  admin-holding account the moment it switched views. Keep `role` **only** for acting-user dashboard
+  routing (`onboarding.js`, `login.js`, `roleSwitch.js`) and audit-trail role labels. Pinned by
+  `tests/unit/roleQuery.test.js` and `tests/integration/multiRoleVisibility.test.js`.
 - **Use `promptCompact`, not the legacy `prompt.js` body** — the latter is rollback-only and huge.
 - **Use `llmGateway`, never `openaiClient` directly** from routes — you'd bypass PII anonymization.
 - **`config/middleware.js` order matters** — Stripe raw-body must precede `express.json`; CSP nonce

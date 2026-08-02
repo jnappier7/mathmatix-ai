@@ -16,6 +16,7 @@ const router = express.Router();
 const SchoolLicense = require('../models/schoolLicense');
 const User = require('../models/user');
 
+const { anyRole } = require('../utils/roleQuery');
 // =====================================================
 // GET / — List all school licenses
 // =====================================================
@@ -152,7 +153,7 @@ router.post('/:id/teachers', async (req, res) => {
     if (req.body.teacherIds) {
       teacherIdsToAdd = Array.isArray(req.body.teacherIds) ? req.body.teacherIds : [req.body.teacherIds];
     } else if (req.body.teacherEmail) {
-      const teacher = await User.findOne({ email: req.body.teacherEmail, role: 'teacher' });
+      const teacher = await User.findOne({ email: req.body.teacherEmail, ...anyRole('teacher') });
       if (!teacher) return res.status(404).json({ message: `No teacher found with email: ${req.body.teacherEmail}` });
       teacherIdsToAdd = [teacher._id];
     } else {
@@ -232,14 +233,14 @@ router.post('/:id/propagate', async (req, res) => {
     const result = await User.updateMany(
       {
         teacherId: { $in: license.teacherIds },
-        role: 'student',
+        ...anyRole('student'),
         schoolLicenseId: { $ne: license._id }  // Only update those not already set
       },
       { $set: { schoolLicenseId: license._id } }
     );
 
     // Update student count
-    const totalStudents = await User.countDocuments({ schoolLicenseId: license._id, role: 'student' });
+    const totalStudents = await User.countDocuments({ schoolLicenseId: license._id, ...anyRole('student') });
     license.currentStudentCount = totalStudents;
     await license.save();
 

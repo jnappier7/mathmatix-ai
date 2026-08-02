@@ -28,6 +28,7 @@ const { sendWelcomeEmail } = require('../utils/emailService');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 
+const { anyRole, withoutRoles, rolesOf } = require('../utils/roleQuery');
 // Configure multer for CSV uploads (in-memory)
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -43,7 +44,7 @@ const upload = multer({
 
 // --- Constants for Database Projections ---
 // Using constants improves readability and makes queries easier to manage.
-const USER_LIST_FIELDS = 'firstName lastName email username role gradeLevel teacherId mathCourse tonePreference learningStyle interests totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastLogin createdAt xp level';
+const USER_LIST_FIELDS = 'firstName lastName email username role roles gradeLevel teacherId mathCourse tonePreference learningStyle interests totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastLogin createdAt xp level';
 const TEACHER_LIST_FIELDS = 'firstName lastName _id';
 
 // -----------------------------------------------------------------------------
@@ -148,7 +149,7 @@ router.get('/students/:studentId/growth-history', isAdmin, requireActiveConsent(
  */
 router.get('/teachers', isAdmin, async (req, res) => {
   try {
-    const teachers = await User.find({ role: 'teacher' }, TEACHER_LIST_FIELDS).lean();
+    const teachers = await User.find(anyRole('teacher'), TEACHER_LIST_FIELDS).lean();
     res.json(teachers);
   } catch (err) {
     console.error('Error fetching teachers for admin:', err);
@@ -487,8 +488,8 @@ router.post('/link-parent-student', isAdmin, async (req, res) => {
     }
 
     const [parent, student] = await Promise.all([
-      User.findOne({ _id: parentId, role: 'parent' }),
-      User.findOne({ _id: studentId, role: 'student' })
+      User.findOne({ _id: parentId, ...anyRole('parent') }),
+      User.findOne({ _id: studentId, ...anyRole('student') })
     ]);
 
     if (!parent) {
@@ -538,8 +539,8 @@ router.post('/assign-teacher', isAdmin, async (req, res) => {
     }
 
     const [teacher, student] = await Promise.all([
-      User.findOne({ _id: teacherId, role: 'teacher' }),
-      User.findOne({ _id: studentId, role: 'student' })
+      User.findOne({ _id: teacherId, ...anyRole('teacher') }),
+      User.findOne({ _id: studentId, ...anyRole('student') })
     ]);
 
     if (!teacher) {
@@ -608,7 +609,7 @@ router.post('/enrollment-codes', isAdmin, async (req, res) => {
       return res.status(400).json({ message: 'Teacher ID is required.' });
     }
 
-    const teacher = await User.findOne({ _id: teacherId, role: 'teacher' });
+    const teacher = await User.findOne({ _id: teacherId, ...anyRole('teacher') });
     if (!teacher) {
       return res.status(404).json({ message: 'Teacher not found.' });
     }
@@ -754,7 +755,7 @@ router.post('/enrollment-codes/:codeId/students', isAdmin, async (req, res) => {
     // Verify all students exist and are actually students
     const students = await User.find({
       _id: { $in: studentIds },
-      role: 'student'
+      ...anyRole('student')
     });
 
     if (students.length === 0) {
@@ -911,7 +912,7 @@ router.post('/roster-import', isAdmin, upload.single('file'), async (req, res) =
     // Validate teacher if provided
     let teacher = null;
     if (teacherId) {
-      teacher = await User.findOne({ _id: teacherId, role: 'teacher' });
+      teacher = await User.findOne({ _id: teacherId, ...anyRole('teacher') });
       if (!teacher) {
         return res.status(404).json({ message: 'Teacher not found.' });
       }
@@ -1191,7 +1192,7 @@ router.patch('/students/:studentId/profile', isAdmin, async (req, res) => {
     }
 
     const result = await User.findOneAndUpdate(
-      { _id: studentId, role: 'student' },
+      { _id: studentId, ...anyRole('student') },
       { $set: validUpdates },
       { new: true, runValidators: true }
     );
@@ -1243,7 +1244,7 @@ router.put('/students/:studentId/iep', isAdmin, async (req, res) => {
     };
 
     const result = await User.findOneAndUpdate(
-      { _id: req.params.studentId, role: 'student' },
+      { _id: req.params.studentId, ...anyRole('student') },
       { $set: { iepPlan: sanitizedIepPlan } },
       { new: true, runValidators: true, lean: true }
     );
@@ -1276,7 +1277,7 @@ router.get(
       const { studentId } = req.params;
 
       const student = await User.findOne(
-        { _id: studentId, role: 'student' },
+        { _id: studentId, ...anyRole('student') },
         '_id privacyConsent hasParentalConsent'
       ).lean();
       if (!student) {
@@ -1321,7 +1322,7 @@ router.get(
       const { studentId, conversationId } = req.params;
 
       const student = await User.findOne(
-        { _id: studentId, role: 'student' },
+        { _id: studentId, ...anyRole('student') },
         '_id firstName lastName username privacyConsent hasParentalConsent'
       ).lean();
       if (!student) {
@@ -1385,14 +1386,14 @@ router.patch('/assign-teacher', isAdmin, async (req, res) => {
     }
     
     if (teacherId) {
-      const teacher = await User.findOne({ _id: teacherId, role: 'teacher' });
+      const teacher = await User.findOne({ _id: teacherId, ...anyRole('teacher') });
       if (!teacher) {
         return res.status(404).json({ message: 'Teacher not found.' });
       }
     }
     
     const updateResult = await User.updateMany(
-      { _id: { $in: studentIds }, role: 'student' },
+      { _id: { $in: studentIds }, ...anyRole('student') },
       { $set: { teacherId: teacherId || null } }
     );
 
@@ -1626,7 +1627,7 @@ router.get('/reports/usage', isAdmin, async (req, res) => {
 
     // Fetch all users with activity data
     const users = await User.find(filter)
-      .select('firstName lastName username email role lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastWeeklyReset createdAt xp level teacherId')
+      .select('firstName lastName username email role roles lastLogin totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastWeeklyReset createdAt xp level teacherId')
       .populate('teacherId', 'firstName lastName')
       .sort(sortField)
       .lean();
@@ -1693,6 +1694,7 @@ router.get('/reports/usage', isAdmin, async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        roles: rolesOf(user),
         lastLogin: user.lastLogin,
         totalMinutes: user.totalActiveTutoringMinutes || 0,
         weeklyMinutes: user.weeklyActiveTutoringMinutes || 0,
@@ -1786,8 +1788,8 @@ router.get('/reports/live-activity', isAdmin, async (req, res) => {
 router.get('/reports/summaries', isAdmin, async (req, res) => {
   try {
     // Get all users (excluding admins for cleaner view)
-    const users = await User.find({ role: { $ne: 'admin' } })
-      .select('firstName lastName email role username totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastWeeklyReset level xp lastLogin createdAt teacherId')
+    const users = await User.find(withoutRoles('admin'))
+      .select('firstName lastName email role roles username totalActiveTutoringMinutes weeklyActiveTutoringMinutes lastWeeklyReset level xp lastLogin createdAt teacherId')
       .populate('teacherId', 'firstName lastName')
       .sort({ lastName: 1, firstName: 1 })
       .lean();
@@ -1845,6 +1847,7 @@ router.get('/reports/summaries', isAdmin, async (req, res) => {
       email: user.email,
       username: user.username,
       role: user.role,
+      roles: rolesOf(user),
       level: user.level || 1,
       xp: user.xp || 0,
       totalMinutes: user.totalActiveTutoringMinutes || 0,
@@ -2005,7 +2008,7 @@ router.post('/students/:studentId/reset-assessment', isAdmin, async (req, res) =
     const { reason } = req.body; // Optional reason for audit trail
 
     // Find the student
-    const student = await User.findOne({ _id: studentId, role: 'student' });
+    const student = await User.findOne({ _id: studentId, ...anyRole('student') });
     if (!student) {
       return res.status(404).json({ message: 'Student not found.' });
     }

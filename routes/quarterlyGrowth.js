@@ -9,6 +9,7 @@ const Skill = require('../models/skill');
 const Conversation = require('../models/conversation');
 const { calculateRetentionMetrics } = require('../utils/retentionProbe');
 
+const { anyRole, userHasRole } = require('../utils/roleQuery');
 // Default lookback window when there's no previous checkpoint to bound by.
 const DEFAULT_LOOKBACK_DAYS = 90;
 
@@ -76,7 +77,7 @@ router.post('/checkpoint/:studentId', isTeacherOrAdmin, async (req, res) => {
     const { quarter, schoolYear, notes } = req.body;
 
     const student = await User.findById(studentId);
-    if (!student || student.role !== 'student') {
+    if (!student || !userHasRole(student, 'student')) {
       return res.status(404).json({ message: 'Student not found' });
     }
 
@@ -253,7 +254,7 @@ router.get('/report/:studentId', isTeacherOrAdmin, async (req, res) => {
     const { studentId } = req.params;
 
     const student = await User.findById(studentId);
-    if (!student || student.role !== 'student') {
+    if (!student || !userHasRole(student, 'student')) {
       return res.status(404).json({ message: 'Student not found' });
     }
 
@@ -326,7 +327,7 @@ router.get('/class-analytics', isTeacherOrAdmin, async (req, res) => {
 
     // Get all students for this teacher
     const students = await User.find({
-      role: 'student',
+      ...anyRole('student'),
       teacherId: teacherId
     });
 
@@ -409,7 +410,7 @@ router.get('/retention/:studentId', isTeacherOrAdmin, async (req, res) => {
     const { studentId } = req.params;
 
     const student = await User.findById(studentId);
-    if (!student || student.role !== 'student') {
+    if (!student || !userHasRole(student, 'student')) {
       return res.status(404).json({ message: 'Student not found' });
     }
 

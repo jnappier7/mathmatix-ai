@@ -8,6 +8,7 @@ const { sendTestEmail, sendParentWeeklyReport, getEmailConfig } = require('../ut
 const User = require('../models/user');
 const Conversation = require('../models/conversation');
 
+const { userHasRole } = require('../utils/roleQuery');
 /**
  * POST /api/email/test
  * Send a test email to verify configuration
@@ -53,7 +54,7 @@ router.post('/weekly-report', isAuthenticated, async (req, res) => {
     const parent = req.user;
 
     // Verify user is a parent
-    if (parent.role !== 'parent') {
+    if (!userHasRole(parent, 'parent')) {
       return res.status(403).json({
         success: false,
         message: 'Only parents can request weekly reports'
