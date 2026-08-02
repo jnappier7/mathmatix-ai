@@ -12,6 +12,10 @@
 //   2. Dynamic context (student-specific) → appended per request
 
 const { buildIepAccommodationsPrompt } = require('./promptHelpers');
+// Sync + model-free by design: this module builds the prompt on every turn and
+// must not reach the database. See utils/studentLabels.js.
+const { studentLabel } = require('./studentLabels');
+const { canonicalSkillId, decodeMasteryKey } = require('./skillCanonicalizer');
 const {
   CAPABILITY_IDENTITY,
   VISUAL_TOOLS_SECTION,
@@ -918,9 +922,19 @@ HOWEVER: If the student demonstrates SIGNIFICANT struggle with skills well below
   // model, seeing no history, re-taught the skill from scratch.
   const mastered = [], learning = [], ready = [], practicing = [], review = [];
 
+  // The Map is keyed by ENCODED storage keys ("MS_QNT_8") while callers pass a
+  // logical id ("MS.QNT.8"), so a raw !== comparison never matched for a unified
+  // skill and filtered the entire block away — a badge session got NO skill
+  // context at all. Compare canonical logical forms.
+  const filterCanon = filterToSkill ? canonicalSkillId(decodeMasteryKey(filterToSkill)) : null;
+
   for (const [skillId, data] of userProfile.skillMastery) {
-    if (filterToSkill && skillId !== filterToSkill) continue;
-    const display = skillId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    if (filterCanon && canonicalSkillId(decodeMasteryKey(skillId)) !== filterCanon) continue;
+    // Resolve through the label catalog. Deriving the name from the Map key
+    // handled hyphens only, so every dot-encoded unified key ("MS_QNT_8") went
+    // into the prompt verbatim and the tutor repeated it to the student as if
+    // it were the skill's name.
+    const display = studentLabel(skillId);
     if (data.status === 'mastered') mastered.push({ display, date: data.masteredDate });
     else if (data.status === 'learning') learning.push({ display, notes: data.notes });
     else if (data.status === 'practicing') practicing.push({ display, attempts: data.totalAttempts || 0 });
@@ -948,7 +962,11 @@ HOWEVER: If the student demonstrates SIGNIFICANT struggle with skills well below
     ctx += `Ready: ${ready.slice(0, 5).map(s => s.display).join(', ')}${ready.length > 5 ? ` +${ready.length - 5} more` : ''}\n`;
   }
 
-  ctx += `Use <SKILL_MASTERED:skill-id> and <SKILL_STARTED:skill-id> to track progress.`;
+  // Deliberately NO "<SKILL_MASTERED:skill-id>" instruction here. That tag path
+  // is disabled — mastery is driven by the verified answer in persist.js, and
+  // the sidecar explicitly tells the model never to emit it. Keeping the
+  // instruction only invited the model to print a skill id, which is exactly the
+  // string a student must never see.
   return ctx;
 }
 
