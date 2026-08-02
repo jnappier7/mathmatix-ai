@@ -92,3 +92,75 @@ describe('cleanTextForTTS — numbered lists get a beat between items', () => {
     expect(cleanTextForTTS(input)).toBe(expected);
   });
 });
+
+describe('formulas — spoken in word order, not symbol order', () => {
+  // The reference case: the fraction bar has to be heard, which is what
+  // "all over" does. Nested braces inside the numerator used to defeat the
+  // \frac match entirely, running the numerator into the denominator.
+  test('quadratic formula', () => {
+    expect(cleanTextForTTS('$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$'))
+      .toBe('x equals negative b, plus or minus the square root of b squared minus 4ac, all over 2a');
+  });
+
+  test('quadratic formula written without math delimiters', () => {
+    expect(cleanTextForTTS('Use x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a} to solve.'))
+      .toBe('Use x equals negative b, plus or minus the square root of b squared minus 4ac, all over 2a to solve.');
+  });
+
+  test('slope formula keeps its subscripts', () => {
+    expect(cleanTextForTTS('$m = \\frac{y_2 - y_1}{x_2 - x_1}$'))
+      .toBe('m equals y sub 2 minus y sub 1, all over x sub 2 minus x sub 1');
+  });
+
+  test('distance formula', () => {
+    expect(cleanTextForTTS('$d = \\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$'))
+      .toBe('d equals the square root of (x sub 2 minus x sub 1) squared plus (y sub 2 minus y sub 1) squared');
+  });
+
+  test('a lone term keeps "over"; only a built-up numerator gets "all over"', () => {
+    expect(cleanTextForTTS('$\\frac{r}{n}$')).toBe('r over n');
+    expect(cleanTextForTTS('$\\frac{a+b}{2}$')).toBe('a plus b, all over 2');
+  });
+
+  test('numeric fractions are named the way a teacher says them', () => {
+    expect(cleanTextForTTS('$\\frac{1}{2}$')).toBe('one half');
+    expect(cleanTextForTTS('$\\frac{3}{4}$ of the pie')).toBe('three fourths of the pie');
+    expect(cleanTextForTTS('$A = \\frac{1}{2}bh$')).toBe('A equals one half bh');
+    expect(cleanTextForTTS('$\\frac{-1}{2}$')).toBe('negative one half');
+    // Past a tenth the name stops helping.
+    expect(cleanTextForTTS('$\\frac{4}{13}$')).toBe('four over 13');
+  });
+
+  test('nested fractions resolve innermost first', () => {
+    expect(cleanTextForTTS('$\\frac{\\frac{1}{2}}{3}$')).toBe('one half, all over 3');
+  });
+
+  test('roots: square, cube, nth', () => {
+    expect(cleanTextForTTS('$\\sqrt{16}$')).toBe('the square root of 16');
+    expect(cleanTextForTTS('$\\sqrt[3]{27} = 3$')).toBe('the cube root of 27 equals 3');
+    expect(cleanTextForTTS('$\\sqrt[5]{32}$')).toBe('the fifth root of 32');
+  });
+
+  test('\\frac{d}{dx} is an operator, not a fraction', () => {
+    expect(cleanTextForTTS('$\\frac{d}{dx}(x^2) = 2x$'))
+      .toBe('the derivative with respect to x of (x squared) equals 2x');
+  });
+
+  // Regression: "{}" used to be stripped before the command strip, so an
+  // unhandled command swallowed its own argument and the variable vanished.
+  test('an unhandled command keeps its argument', () => {
+    expect(cleanTextForTTS('$\\bar{x} = 5$')).toBe('x equals 5');
+    expect(cleanTextForTTS('$\\text{slope} = 3$')).toBe('slope equals 3');
+  });
+
+  // Regression: markdown italics used to span two subscripts.
+  test('underscore emphasis still works, and does not eat subscripts', () => {
+    expect(cleanTextForTTS('That is _really_ close')).toBe('That is really close');
+    expect(cleanTextForTTS('That is __very__ close')).toBe('That is very close');
+    expect(cleanTextForTTS('Check user_id_field now')).toBe('Check user_id_field now');
+  });
+
+  test('a digit and a Greek letter do not run together', () => {
+    expect(cleanTextForTTS('$C = 2\\pi r$')).toBe('C equals 2 pi r');
+  });
+});

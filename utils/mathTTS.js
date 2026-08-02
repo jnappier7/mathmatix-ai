@@ -12,13 +12,152 @@
 const { replaceDashes } = require('./dashNormalizer');
 
 /**
+ * Read a balanced `{...}` group starting at the "{" at index `open`.
+ * Returns null if it never closes. Needed because a formula's arguments
+ * nest — `\frac{-b \pm \sqrt{b^2-4ac}}{2a}` has braces inside the numerator,
+ * and a `[^}]+` match stops at the inner "}" and swallows the fraction bar.
+ */
+function readBraceGroup(str, open) {
+  if (str[open] !== '{') return null;
+  let depth = 0;
+  for (let i = open; i < str.length; i++) {
+    if (str[i] === '{') depth++;
+    else if (str[i] === '}') {
+      depth--;
+      if (depth === 0) return { content: str.slice(open + 1, i), end: i + 1 };
+    }
+  }
+  return null;
+}
+
+/**
+ * Resolve "-" inside a fraction argument or a radicand. Those spans are
+ * unambiguously math, so the prose-safety hedging doesn't apply — and the
+ * bare (undelimited) path has no catch-all rule, which left "\sqrt{b^2-4ac}"
+ * saying "b squared dash 4ac".
+ */
+function speakSigns(mathText) {
+  return mathText
+    .replace(/(^|[^\w).\s])\s*-\s*(?=[\d.]|[A-Za-z])/g, '$1negative ')
+    .replace(/\s*-\s*/g, ' minus ');
+}
+
+/** Is this fraction side a built-up expression rather than a lone term? */
+function isCompoundTerm(s) {
+  return /[\s+\-−±]|\\(?:pm|mp|sqrt|cdot|times|div)\b|, all over /.test(s.trim());
+}
+
+/**
+ * Speak one fraction. A compound numerator gets "all over" — that is the
+ * phrase that tells a listener where the numerator ended, which is the whole
+ * job of the fraction bar: "negative b plus or minus the square root of
+ * b squared minus 4ac, ALL OVER 2a".
+ */
+function speakFraction(num, den) {
+  const n = speakSigns(num.trim()).trim();
+  const d = speakSigns(den.trim()).trim();
+
+  // Leibniz notation: \frac{d}{dx} is an operator, not a fraction.
+  const derivative = /^d$/.test(n) && /^d\s*([a-zA-Z])$/.exec(d);
+  if (derivative) return ` the derivative with respect to ${derivative[1]} of `;
+
+  if (/^\d+$/.test(n) && /^\d+$/.test(d)) return ` ${speakSimpleFraction(n, d)} `;
+  // A signed numeric fraction is still a named one: "negative one half".
+  const signed = /^negative (\d+)$/.exec(n);
+  if (signed && /^\d+$/.test(d)) return ` negative ${speakSimpleFraction(signed[1], d)} `;
+  if (isCompoundTerm(n)) return ` ${n}, all over ${d} `;
+  return ` ${n} over ${d} `;
+}
+
+const DENOMINATOR_NAMES = {
+  2: 'half', 3: 'third', 4: 'fourth', 5: 'fifth',
+  6: 'sixth', 7: 'seventh', 8: 'eighth', 9: 'ninth', 10: 'tenth',
+};
+
+/**
+ * A number-over-number fraction, said the way a teacher says it:
+ * "one half", "three fourths". Past a tenth the name stops helping
+ * ("seventeen fifty-thirds"), so those fall back to "over".
+ */
+function speakSimpleFraction(num, den) {
+  const name = DENOMINATOR_NAMES[parseInt(den, 10)];
+  if (!name) return `${speakNumber(num)} over ${speakNumber(den)}`;
+  return `${speakNumber(num)} ${name}${parseInt(num, 10) === 1 ? '' : 's'}`;
+}
+
+/** Restructure every \frac (innermost first) into spoken word order. */
+function restructureFractions(latex) {
+  const FRAC = /\\(?:d|t)?frac\s*(?=\{)/;
+  let out = '';
+  let rest = latex;
+
+  for (;;) {
+    const m = FRAC.exec(rest);
+    if (!m) return out + rest;
+
+    const numOpen = m.index + m[0].length;
+    const numerator = readBraceGroup(rest, numOpen);
+    if (!numerator) return out + rest;
+
+    const denOpen = numerator.end + (rest.slice(numerator.end).match(/^\s*/) || [''])[0].length;
+    const denominator = readBraceGroup(rest, denOpen);
+    if (!denominator) return out + rest;
+
+    out += rest.slice(0, m.index) + speakFraction(
+      restructureFractions(numerator.content),
+      restructureFractions(denominator.content)
+    );
+    rest = rest.slice(denominator.end);
+  }
+}
+
+/** Replace \sqrt (optionally \sqrt[n]) with balanced-brace radicand handling. */
+function restructureRoots(latex) {
+  const SQRT = /\\sqrt\s*(?:\[\s*([^\]]*?)\s*\]\s*)?(?=\{)/;
+  let out = '';
+  let rest = latex;
+
+  for (;;) {
+    const m = SQRT.exec(rest);
+    if (!m) return out + rest;
+
+    const radicand = readBraceGroup(rest, m.index + m[0].length);
+    if (!radicand) return out + rest;
+
+    const index = m[1];
+    const name = !index ? 'the square root of'
+      : index === '2' ? 'the square root of'
+        : index === '3' ? 'the cube root of'
+          : `the ${speakOrdinal(index)} root of`;
+
+    out += `${rest.slice(0, m.index)} ${name} ${speakSigns(restructureRoots(radicand.content))} `;
+    rest = rest.slice(radicand.end);
+  }
+}
+
+/**
+ * Word-order pass for the structural notation — fractions, radicals, ±.
+ * These are the parts of a formula whose *shape* carries meaning, so they
+ * have to be reordered before the symbol-by-symbol rules run over the rest.
+ */
+function speakStructuralLatex(latex) {
+  let s = restructureRoots(restructureFractions(latex));
+  // The comma is the beat a teacher leaves after the first branch:
+  // "negative b, plus or minus ...". Not at the very start, where there is
+  // nothing to pause after.
+  s = s.replace(/\s*\\pm\s*/g, (_, offset) => (offset === 0 ? 'plus or minus ' : ', plus or minus '));
+  s = s.replace(/\s*\\mp\s*/g, (_, offset) => (offset === 0 ? 'minus or plus ' : ', minus or plus '));
+  return s;
+}
+
+/**
  * Convert LaTeX math notation to natural speech.
  *
  * Examples:
- *   \frac{3}{4}      → "three fourths"
+ *   \frac{3}{4}      → "three over four"
  *   x^2              → "x squared"
- *   \sqrt{16}        → "square root of 16"
- *   3x^2 + 2x - 5    → "3 x squared plus 2 x minus 5"
+ *   \sqrt{16}        → "the square root of 16"
+ *   3x^2 + 2x - 5    → "3x squared plus 2x minus 5"
  */
 function convertLatexToSpeech(latex) {
   let speech = latex;
@@ -30,15 +169,12 @@ function convertLatexToSpeech(latex) {
   speech = speech.replace(/°/g, ' degrees');
   speech = speech.replace(/\\degrees?\b/gi, ' degrees');
 
-  // Fractions: \frac{a}{b} → spoken fraction
-  speech = speech.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, (_, num, den) => {
-    return `${speakNumber(num)} over ${speakNumber(den)}`;
-  });
+  // Fractions, radicals and ± — reordered as a group, before the
+  // symbol-by-symbol rules below flatten the braces that delimit them.
+  speech = speakStructuralLatex(speech);
 
   // Common simple fractions (without \frac): 1/2, 3/4, etc.
-  speech = speech.replace(/(\d+)\s*\/\s*(\d+)/g, (_, num, den) => {
-    return `${speakNumber(num)} over ${speakNumber(den)}`;
-  });
+  speech = speech.replace(/(\d+)\s*\/\s*(\d+)/g, (_, num, den) => speakSimpleFraction(num, den));
 
   // Superscripts: x^2, x^3, x^{n+1}
   speech = speech.replace(/\^2(?!\d)/g, ' squared');
@@ -47,13 +183,12 @@ function convertLatexToSpeech(latex) {
   speech = speech.replace(/\^\{([^}]+)\}/g, ' to the $1 power');
   speech = speech.replace(/\^([a-zA-Z])/g, ' to the $1');
 
+  // Summation: the index bounds are noise in speech — the phrase carries it.
+  speech = speech.replace(/\\sum(?:_(?:\{[^}]*\}|\S))?(?:\^(?:\{[^}]*\}|\S))?/g, ' the sum of ');
+
   // Subscripts: x_1 → "x sub 1"
   speech = speech.replace(/_\{([^}]+)\}/g, ' sub $1');
   speech = speech.replace(/_([a-zA-Z0-9])/g, ' sub $1');
-
-  // Square root: \sqrt{x} → "square root of x"
-  speech = speech.replace(/\\sqrt\[(\d+)\]\{([^}]+)\}/g, '$1th root of $2');
-  speech = speech.replace(/\\sqrt\{([^}]+)\}/g, 'square root of $1');
 
   // Absolute value: |x| or \left|x\right|
   speech = speech.replace(/\\left\|([^|]+?)\\right\|/g, 'the absolute value of $1');
@@ -78,8 +213,7 @@ function convertLatexToSpeech(latex) {
   speech = speech.replace(/\\lim_\{([^}]+)\}/g, 'the limit as $1 of');
   speech = speech.replace(/\\infty/g, 'infinity');
   speech = speech.replace(/\\to\b/g, ' approaches ');
-  speech = speech.replace(/\\frac\{d\}\{dx\}/g, 'the derivative with respect to x of');
-  speech = speech.replace(/\\frac\{d\}\{dt\}/g, 'the derivative with respect to t of');
+  // (\frac{d}{dx} is handled as an operator by speakFraction, above.)
 
   // Greek letters
   const greeks = {
@@ -89,14 +223,12 @@ function convertLatexToSpeech(latex) {
     Delta: 'delta', Sigma: 'sigma', Pi: 'pi', Omega: 'omega',
   };
   for (const [cmd, word] of Object.entries(greeks)) {
-    speech = speech.replace(new RegExp(`\\\\${cmd}\\b`, 'g'), word);
+    speech = speech.replace(new RegExp(`\\\\${cmd}\\b`, 'g'), ` ${word} `);
   }
 
   // Mathematical operators
   speech = speech.replace(/\\times/g, ' times ');
   speech = speech.replace(/\\div/g, ' divided by ');
-  speech = speech.replace(/\\pm/g, ' plus or minus ');
-  speech = speech.replace(/\\mp/g, ' minus or plus ');
   speech = speech.replace(/\\cdot/g, ' times ');
   speech = speech.replace(/\\leq/g, ' less than or equal to ');
   speech = speech.replace(/\\geq/g, ' greater than or equal to ');
@@ -120,15 +252,19 @@ function convertLatexToSpeech(latex) {
   speech = speech.replace(/\\left\(/g, '(');
   speech = speech.replace(/\\right\)/g, ')');
 
-  // Remove curly braces
-  speech = speech.replace(/[{}]/g, '');
-
-  // Remove remaining backslashes and LaTeX commands
+  // Remove remaining LaTeX commands — BEFORE the braces, not after. Stripping
+  // "{}" first glues an unhandled command to its argument ("\bar{x}" → "\barx"),
+  // and the command strip then eats the argument too: the variable is silently
+  // dropped from the sentence. Commands first, then the braces they wrapped.
   speech = speech.replace(/\\[a-zA-Z]+/g, '');
   speech = speech.replace(/\\/g, '');
 
-  // Clean up multiple spaces
-  speech = speech.replace(/\s+/g, ' ').trim();
+  // Remove curly braces
+  speech = speech.replace(/[{}]/g, '');
+
+  // Clean up multiple spaces, and the space a reordering can leave before
+  // the "all over" comma.
+  speech = speech.replace(/\s+/g, ' ').replace(/\s+([,;.])/g, '$1').trim();
 
   return speech;
 }
@@ -226,8 +362,11 @@ function cleanTextForTTS(text) {
   // Remove markdown bold/italic
   cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '$1');
   cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1');
-  cleaned = cleaned.replace(/__([^_]+)__/g, '$1');
-  cleaned = cleaned.replace(/_([^_]+)_/g, '$1');
+  // Underscore emphasis only counts at word edges. Without that guard the
+  // rule spans two subscripts — "y_2 - y_1" reads as italics and comes out
+  // "y2 minus y1", so the sub is silently lost from every indexed formula.
+  cleaned = cleaned.replace(/(^|[^\w\\])__([^_\n]+)__(?!\w)/g, '$1$2');
+  cleaned = cleaned.replace(/(^|[^\w\\])_([^_\n]+)_(?!\w)/g, '$1$2');
 
   // Remove markdown links
   cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
@@ -258,6 +397,13 @@ function cleanTextForTTS(text) {
   cleaned = cleaned.replace(/(\d)\s*\\circ\b/g, '$1 degrees');
   cleaned = cleaned.replace(/°/g, ' degrees');
   cleaned = cleaned.replace(/\\degrees?\b/gi, ' degrees');
+
+  // A formula the model wrote without delimiters never reached
+  // convertLatexToSpeech, and the strip below would flatten "\frac{a}{b}" to
+  // "ab". Reorder the structural notation first so it is at least spoken.
+  if (/\\(?:d|t)?frac|\\sqrt|\\pm|\\mp/.test(cleaned)) {
+    cleaned = speakStructuralLatex(cleaned);
+  }
 
   // Remove any remaining LaTeX commands
   cleaned = cleaned.replace(/\\[a-zA-Z]+/g, '');
@@ -303,8 +449,8 @@ function cleanTextForTTS(text) {
   // Strip emoji — TTS engines read them as names ("party popper", "sparkles", etc.)
   cleaned = cleaned.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu, '');
 
-  // Clean up extra whitespace
-  cleaned = cleaned.replace(/\s+/g, ' ').trim();
+  // Clean up extra whitespace, and any space a reordering left before a comma
+  cleaned = cleaned.replace(/\s+/g, ' ').replace(/\s+([,;.])/g, '$1').trim();
 
   return cleaned;
 }
