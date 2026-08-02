@@ -23,6 +23,12 @@ describe('cleanTextForTTS — undelimited (bare) math', () => {
     expect(cleanTextForTTS('Compute A - B now')).toBe('Compute A minus B now');
   });
 
+  test('a coefficient does not hide the subtraction: 2x-4', () => {
+    expect(cleanTextForTTS('Solve 2x-4=3')).toBe('Solve 2x minus 4 equals 3');
+    expect(cleanTextForTTS('Simplify 3y-7 and 2x-y')).toBe('Simplify 3y minus 7 and 2x minus y');
+    expect(cleanTextForTTS('Factor 4a-(2b-1)')).toBe('Factor 4a minus (2b minus 1)');
+  });
+
   test('a leading "-" is a negative sign', () => {
     expect(cleanTextForTTS('The value is -7 today')).toBe('The value is negative 7 today');
     expect(cleanTextForTTS('x = -5 works')).toBe('x equals negative 5 works');
@@ -34,6 +40,9 @@ describe('cleanTextForTTS — undelimited (bare) math', () => {
     ['Try the x-ray problem', 'Try the x-ray problem'],
     ['Send an e-mail later', 'Send an e-mail later'],
     ['twenty-one apples', 'twenty-one apples'],
+    ['Use a 3D-printed model', 'Use a 3D-printed model'],
+    ['She got 1st-place today', 'She got 1st-place today'],
+    ['The 5k-run is Saturday', 'The 5k-run is Saturday'],
   ])('word hyphen preserved: %s', (input, expected) => {
     expect(cleanTextForTTS(input)).toBe(expected);
   });
@@ -54,7 +63,7 @@ describe('convertLatexToSpeech — delimited math', () => {
 describe('cleanTextForTTS — numbered lists get a beat between items', () => {
   test('markdown list: each item is closed and its number labeled', () => {
     expect(cleanTextForTTS('Try these:\n1. 2x-4=3\n2. 8x-9=43\n3. x^2=4'))
-      .toBe('Try these: Number one. 2x-4 equals 3. Number two. 8x-9 equals 43. Number three. x squared equals 4');
+      .toBe('Try these: Number one. 2x minus 4 equals 3. Number two. 8x minus 9 equals 43. Number three. x squared equals 4');
   });
 
   test('list written inline on one line', () => {

@@ -287,6 +287,11 @@ function cleanTextForTTS(text) {
   // variable), so word hyphens like "well-done" or "x-ray" stay intact.
   cleaned = cleaned.replace(/(\d|\))\s*-\s*(?=\d|\(|[A-Za-z]\b)/g, '$1 minus ');
   cleaned = cleaned.replace(/\b([A-Za-z])\s*-\s*(?=\d|\(|[A-Za-z]\b)/g, '$1 minus ');
+  // A coefficient glues the digit to the variable ("2x-4"), which leaves no
+  // word boundary for the rule above to anchor on — the hyphen survived and
+  // was read as a dash. Digit + single letter + "-" + operand is always
+  // algebra; "3D-printed" / "1st-place" don't match (multi-letter right side).
+  cleaned = cleaned.replace(/(?<=\d)([A-Za-z])\s*-\s*(?=\d|\(|[A-Za-z]\b)/g, '$1 minus ');
   // Whatever "-" is left in front of a number/variable (after "(", "=", an
   // operator, or at the start) is a negative sign, not a pause.
   cleaned = cleaned.replace(/(^|[\s(=+*/,:])-\s*(?=[\d.]|[A-Za-z]\b)/g, '$1negative ');
