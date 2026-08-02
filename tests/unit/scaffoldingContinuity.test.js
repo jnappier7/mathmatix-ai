@@ -137,7 +137,11 @@ describe('promptCompact.buildSkillMasteryContext — no silent status drops', ()
     const out = buildSkillMasteryContext(userProfile);
     expect(out).toContain('Absolute Value (9 attempts)');
     expect(out).toContain('RESUME, never restart from scratch');
-    expect(out).toContain('Integer Operations');
+    // Names now come from the label catalog rather than from the Map key, so a
+    // legacy id that crosswalks to a unified skill reads as its student-facing
+    // label: 'integer-operations' -> MS.QNT.8 -> 'Math with negatives and
+    // fractions'. An id with no catalog entry still prettifies from the key.
+    expect(out).toContain('Math with negatives and fractions');
     expect(out).toContain('Order Of Operations');
     expect(out).toContain('now fragile');
     expect(out).toContain('Fractions');

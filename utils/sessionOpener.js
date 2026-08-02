@@ -10,6 +10,23 @@
  * @module utils/sessionOpener
  */
 
+const { studentLabel } = require('./studentLabels');
+
+/**
+ * Name a skill for text the TUTOR WILL SAY OUT LOUD.
+ *
+ * Every directive below used to fall back to `displayName || skillId`. When a
+ * plan entry carried no displayName — which is the norm for anything written
+ * before the display name was persisted — the raw id went straight into the
+ * prompt and the tutor read it to the student verbatim: "we could dive into
+ * MS_QNT_8 from your learning plan". Fall back to the label catalog instead, so
+ * the worst case is a prettified name, never an internal id.
+ */
+function skillName(entry) {
+  if (!entry) return 'a skill';
+  return entry.displayName || studentLabel(entry.skillId) || 'a skill';
+}
+
 // ── Opening strategies ──
 const STRATEGIES = {
   CONTINUITY: 'continuity',                // Pick up where we left off
@@ -205,7 +222,7 @@ function buildOpener(strategy, ctx) {
         directives: [
           `Student is working through ${courseName} — they're ${progress}% of the way through.`,
           targetSkill?.skillId
-            ? `Today's target: ${targetSkill.displayName || targetSkill.skillId}. ${targetSkill.instructionalMode === 'instruct' ? 'This is new for them.' : 'They\'ve seen this before — build on it.'}`
+            ? `Today's target: ${skillName(targetSkill)}. ${targetSkill.instructionalMode === 'instruct' ? 'This is new for them.' : 'They\'ve seen this before — build on it.'}`
             : 'They\'re ready for the next thing.',
           targetSkill?.instructionalMode === 'instruct'
             ? `Since this is new, start with something that makes them curious — a surprising fact, a "what if" question, a real-world hook. Don't just announce the topic.`
@@ -226,10 +243,10 @@ function buildOpener(strategy, ctx) {
       const targetSkill = tutorPlan?.currentTarget;
       return {
         greeting: null,
-        suggestedTopic: gap.displayName || gap.skillId,
+        suggestedTopic: skillName(gap),
         suggestedMode: 'instruct',
         directives: [
-          `Before jumping into ${targetSkill?.displayName || 'the new stuff'}, the student needs a stronger foundation in: ${gap.displayName || gap.skillId}.`,
+          `Before jumping into ${targetSkill?.displayName || 'the new stuff'}, the student needs a stronger foundation in: ${skillName(gap)}.`,
           `Frame this positively — not as a gap or deficiency, but as making sure the foundation is strong before building on it. Connect it to where they're headed.`,
           `If they say they already know it, great — quiz them. If they nail it, skip ahead immediately. Don't waste their time proving what they know.`,
           `Connect the prerequisite to where you're headed so it doesn't feel random.`,
@@ -287,13 +304,13 @@ function buildOpener(strategy, ctx) {
 
     case STRATEGIES.REVIEW_DUE: {
       const { skills } = strategy.data;
-      const skillName = skills[0]?.displayName || skills[0]?.skillId || 'a skill';
+      const reviewSkill = skills[0] ? skillName(skills[0]) : 'a skill';
       return {
         greeting: null,
-        suggestedTopic: skillName,
+        suggestedTopic: reviewSkill,
         suggestedMode: 'guide',
         directives: [
-          `It's been a few days since the student worked on ${skillName} — time for a quick check-in.`,
+          `It's been a few days since the student worked on ${reviewSkill} — time for a quick check-in.`,
           `Frame it casually, like a warm-up — not a test, not a review, just a quick check-in.`,
           `If they nail it, move on immediately. Don't belabor the review.`,
           `If they've forgotten some of it, normalize it — forgetting is part of how learning works. Then help them rebuild it quickly.`,
@@ -332,13 +349,13 @@ function buildOpener(strategy, ctx) {
       const targetSkill = tutorPlan?.currentTarget;
       return {
         greeting: null,
-        suggestedTopic: targetSkill?.displayName || null,
+        suggestedTopic: targetSkill?.skillId ? skillName(targetSkill) : null,
         suggestedMode: targetSkill?.instructionalMode || null,
         directives: [
           `No specific context from last time — let the student set the direction.`,
           `Greet them like a tutor who's genuinely glad to see them. Keep it brief and real. Ask what they want to work on.`,
           targetSkill?.skillId
-            ? `If they don't have a preference, you can suggest ${targetSkill.displayName || targetSkill.skillId} from their learning plan — casually, as an option.`
+            ? `If they don't have a preference, you can suggest ${skillName(targetSkill)} from their learning plan — casually, as an option.`
             : '',
           `This is the start of a conversation. Be warm, be brief, let them talk.`,
         ].filter(Boolean),
