@@ -119,3 +119,35 @@ describe('algebra-2 and precalculus rows', () => {
     }
   });
 });
+
+// ── act-prep (2026-08-01) ────────────────────────────────────────────────
+// 625 ACT items in the bank, the ACT course at 33%. Pure vocabulary drift:
+// the course says act-polygons-circles, the bank says act-circles.
+describe('act-prep rows', () => {
+  test.each([
+    ['act-trig-functions', 'act-trigonometric-functions'],
+    ['act-right-triangle-trig', 'act-right-triangle-trigonometry'],
+    ['act-polygons-circles', 'act-circles'],
+    ['act-congruence-similarity', 'act-similar-congruent-figures'],
+    ['act-counting-techniques', 'act-counting-arrangements'],
+    ['act-percent-applications', 'act-percentages'],
+    ['act-two-way-tables', 'act-conditional-probability'],
+  ])('%s → %s', (course, bank) => {
+    expect(skillLookupCandidates(course)).toContain(bank);
+  });
+
+  test('pure test-taking STRATEGY skills stay unmapped — they are taught, not drilled', () => {
+    // Backsolving, picking numbers, estimation and pacing are techniques the
+    // tutor coaches; no problem bank can stand in for them, and mapping them
+    // to a content skill would be a lie about what the student practised.
+    for (const id of ['act-backsolving', 'act-picking-numbers',
+      'act-estimation-elimination', 'act-pacing-strategy']) {
+      expect(skillLookupCandidates(id)).toEqual([id]);
+    }
+  });
+
+  test('mastery keying untouched for ACT ids (the original re-keying bug)', () => {
+    expect(canonicalSkillId('act-polygons-circles')).toBe('act-polygons-circles');
+    expect(canonicalSkillId('act-trig-functions')).toBe('act-trig-functions');
+  });
+});
