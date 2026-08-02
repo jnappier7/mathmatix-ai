@@ -21,7 +21,7 @@
   var M = window.SkillMapModel;
   var $ = function (id) { return document.getElementById(id); };
 
-  var state = { skills: [], byId: {}, nearest: null, current: null, teach: null };
+  var state = { skills: [], byId: {}, nearest: null, current: null, teach: null, showAllAvailable: false };
 
   // ── data ────────────────────────────────────────────────────────────
   function withCsrf(options) {
@@ -142,7 +142,11 @@
   // ── available now ───────────────────────────────────────────────────
   function renderAvailable() {
     var nearestId = state.nearest && state.nearest.nextSkillId;
-    var items = M.availableNow(state.skills, nearestId);
+    // The header counts every open skill; this list showed a hard-capped five
+    // with nothing to say so. "7 OPEN NOW" above five rows reads as a bug, and
+    // the two skills you could start right now were simply unreachable.
+    var openTotal = state.skills.filter(function (s) { return s && s.state === 'open'; }).length;
+    var items = M.availableNow(state.skills, nearestId, state.showAllAvailable ? openTotal : undefined);
     var list = $('avail-list');
     list.innerHTML = '';
 
@@ -185,6 +189,23 @@
       li.appendChild(quiz);
       list.appendChild(li);
     });
+
+    if (openTotal > items.length || state.showAllAvailable) {
+      var more = document.createElement('li');
+      more.className = 'avail-more';
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'avail-more-btn';
+      toggle.textContent = state.showAllAvailable
+        ? 'Show fewer'
+        : 'Show all ' + openTotal + ' ready for you';
+      toggle.addEventListener('click', function () {
+        state.showAllAvailable = !state.showAllAvailable;
+        renderAvailable();
+      });
+      more.appendChild(toggle);
+      list.appendChild(more);
+    }
   }
 
   function renderTowers() {

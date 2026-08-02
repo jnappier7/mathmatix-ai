@@ -469,6 +469,22 @@ button:focus-visible { outline: 2px solid var(--sm-ink); outline-offset: 2px; }
 }
 .avail-item.is-next { border-color: var(--sm-good); }
 
+/* Reveals the open skills past the first five, so the header count and the
+   list can never disagree without an explanation. */
+.avail-more { display: flex; justify-content: center; }
+.avail-more-btn {
+    background: transparent;
+    border: 0;
+    padding: 6px 4px;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--sm-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.avail-more-btn:hover { color: var(--sm-ink); }
+
 .avail-main {
     flex: 1 1 auto;
     display: flex;
