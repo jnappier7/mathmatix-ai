@@ -1,10 +1,13 @@
 /**
- * Template-generated items for the empty Algebra 1 and 6th-grade skills.
+ * Template-generated items for skills with NO bank content anywhere — across
+ * Algebra 1, Algebra 2, and grades 6, 7 and 8.
  *
- * These 400 items were produced by scripts/buildLowVolumeItems.js, where the
- * ANSWER IS COMPUTED from the numbers each template draws — a wrong answer is
- * a code bug, not a typo. scripts/verifyGeneratedItems.js then re-derives 257
- * of them by parsing the prompt and doing the maths a second way.
+ * Produced by scripts/buildLowVolumeItems.js, where the ANSWER IS COMPUTED from
+ * the numbers each template draws, so a wrong answer is a code bug rather than
+ * a typo. scripts/verifyGeneratedItems.js then re-derives a majority of them by
+ * PARSING THE PROMPT and doing the maths a second way — deliberately not by
+ * reusing the generator's logic, which is how the first round's verifier passed
+ * five genuinely wrong items.
  *
  * These tests guard the CONTRACT: structure the grader and tutor rely on, the
  * targeting (do they actually fill audited gaps), and the determinism that
@@ -86,10 +89,13 @@ describe('shape and coverage', () => {
 });
 
 describe('the grading contract', () => {
+  // "undefined" is legitimate mathematical prose in an explanation ("the
+  // function is undefined at that point"), so it is only a rendering hole in a
+  // prompt or an ANSWER. NaN and [object are always bugs, wherever they land.
   test('no rendering holes reached the output', () => {
     for (const i of items) {
-      const blob = `${i.prompt}|${i.answer.value}|${i.explanation}`;
-      expect(blob).not.toMatch(/undefined|NaN|\[object/);
+      expect(`${i.prompt}|${i.answer.value}`).not.toMatch(/undefined|NaN|\[object/);
+      expect(String(i.explanation)).not.toMatch(/NaN|\[object/);
     }
   });
 

@@ -962,6 +962,91 @@
       "legacyId": "g7-patterns-sequences",
       "unifiedId": "sequence-patterns",
       "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "advanced-factoring",
+      "unifiedId": "factoring-trinomials",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "exponent-rules-review",
+      "unifiedId": "exponent-properties",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "function-notation-review",
+      "unifiedId": "function-notation-evaluation",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "graphing-lines-review",
+      "unifiedId": "graph-linear-equations",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "linear-equations-review",
+      "unifiedId": "linear-equations",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "matrix-operations",
+      "unifiedId": "act-matrices-vectors",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "inverse-matrices",
+      "unifiedId": "act-matrices-vectors",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "quadratic-discriminant",
+      "unifiedId": "discriminant-number-of-solutions",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "quadratic-forms",
+      "unifiedId": "quadratic-functions",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "quadratic-transformations",
+      "unifiedId": "act-quadratic-functions-parabolas",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "rational-exponents",
+      "unifiedId": "act-radicals-roots",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "rational-operations",
+      "unifiedId": "multiply-rational-expressions",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "simplifying-rational",
+      "unifiedId": "simplify-rational-expressions",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "solving-quadratics-all-methods",
+      "unifiedId": "choosing-quadratic-method",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "systems-inequalities",
+      "unifiedId": "systems-of-inequalities",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "systems-modeling",
+      "unifiedId": "systems-application-modeling",
+      "course": "algebra-2"
+    },
+    {
+      "legacyId": "infinite-geometric-series",
+      "unifiedId": "geometric-series",
+      "course": "algebra-2"
     }
   ]
 }
