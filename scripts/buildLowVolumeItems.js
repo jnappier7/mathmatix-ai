@@ -24,6 +24,7 @@ const BANKS = [
   require('./lib/templatesAlgebra1'),
   require('./lib/templatesGrade6'),
   require('./lib/templatesGrade8'),
+  require('./lib/templatesGrade67'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');
@@ -147,6 +148,12 @@ function validate(items) {
     if (String(it.answer.value).trim() === '') problems.push(`${it.problemId}: empty answer`);
     if (/undefined|NaN|\[object/.test(`${it.prompt}${it.answer.value}${it.explanation}`)) {
       problems.push(`${it.problemId}: rendering hole (undefined/NaN) — ${it.prompt}`);
+    }
+    // A float with a long tail means the numbers were drawn without checking the
+    // division comes out clean — "10.666666666666666 pieces of ribbon" is not an
+    // answer a student can type, or should be asked for.
+    if (/^-?\d+\.\d{5,}$/.test(String(it.answer.value))) {
+      problems.push(`${it.problemId}: non-terminating answer ${it.answer.value} — pick numbers that divide evenly`);
     }
     if (it.answerType === 'multiple-choice') {
       const chosen = (it.options || []).find((o) => o.label === it.correctOption);
