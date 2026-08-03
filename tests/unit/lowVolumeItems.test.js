@@ -42,11 +42,26 @@ describe('shape and coverage', () => {
     const generated = new Set(items.map((i) => i.skillId));
     for (const crosswalked of [
       'g6-one-two-step-equations', 'g6-percent-intro', 'g6-combine-like-terms',
-      'g6-equivalent-ratios', 'g6-fraction-add-subtract', 'g6-fraction-multiply-divide',
-      'measures-of-central-tendency', 'variable-expressions', 'algebraic-properties',
+      'g6-equivalent-ratios', 'g6-ratio-language', 'g6-fraction-add-subtract',
+      'g6-fraction-multiply-divide', 'g6-write-expressions', 'g6-compare-order-rationals',
+      'g6-distance-coordinate-plane', 'measures-of-central-tendency', 'variable-expressions',
     ]) {
       expect(generated.has(crosswalked)).toBe(false);
     }
+  });
+
+  // The rule is "the bank covers it FULLY", not merely "the bank has something".
+  // algebraic-properties maps only to distributive-property, so the commutative,
+  // associative and identity cases have no bank content at all — dropping these
+  // items would have left two thirds of the skill unpractised. Partial coverage
+  // is a reason to KEEP generating, and this pins that distinction.
+  test('a skill the bank covers only PARTIALLY is still generated for', () => {
+    const generated = new Set(items.map((i) => i.skillId));
+    expect(generated.has('algebraic-properties')).toBe(true);
+    const answers = new Set(items.filter((i) => i.skillId === 'algebraic-properties')
+      .map((i) => i.answer.value));
+    expect(answers.size).toBeGreaterThan(1);
+    expect([...answers].some((a) => !/Distributive/.test(a))).toBe(true);
   });
 
   test('no generated prompt duplicates another item in this bank', () => {

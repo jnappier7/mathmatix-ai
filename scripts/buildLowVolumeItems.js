@@ -42,12 +42,35 @@ const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json
  * Skills where the bank is genuinely THIN (<30) keep their generated items —
  * there the templates add real depth and a difficulty spread the bank lacks.
  */
+/**
+ * Skills the BANK already covers — generating for these was a mistake.
+ *
+ * The coverage audit reports REACHABILITY, not existence: a skill reads
+ * "empty" both when no content exists and when it exists under a name the
+ * crosswalk doesn't map. Reading empty as "needs content" put generated items
+ * on top of 845 existing one-step/two-step equation problems, 383 ordering
+ * problems, 355 percent problems, 300+ each of mean/median/mode. The fix is a
+ * crosswalk row (seeds/unified-taxonomy/pathway-crosswalk.manual.json), never
+ * new items.
+ *
+ * Threshold for landing here: the bank holds 30+ problems AND covers the skill
+ * FULLY. `algebraic-properties` deliberately does NOT qualify — it maps only
+ * to distributive-property (60), so the commutative, associative and identity
+ * items are the only coverage those cases have.
+ */
 const CROSSWALKED_SKIP = new Set([
-  'g6-one-two-step-equations', 'g6-percent-intro', 'g6-combine-like-terms',
-  'g6-equivalent-ratios', 'g6-ratio-language', 'g6-fraction-add-subtract',
-  'g6-fraction-multiply-divide', 'g6-write-expressions', 'g6-compare-order-rationals',
-  'g6-distance-coordinate-plane', 'measures-of-central-tendency',
-  'variable-expressions', 'algebraic-properties',
+  'g6-one-two-step-equations',    // one-step-equations (424) + two-step (421)
+  'g6-compare-order-rationals',   // ordering-numbers (383)
+  'g6-percent-intro',             // percent-of-a-number (355)
+  'measures-of-central-tendency', // mean (306) / median (307) / mode (292)
+  'g6-fraction-multiply-divide',  // multiply-fractions (195) + divide (177)
+  'g6-fraction-add-subtract',     // add-fractions (165) + subtract (157)
+  'g6-equivalent-ratios',         // ratios (140)
+  'g6-ratio-language',            // ratios (140)
+  'g6-distance-coordinate-plane', // coordinate-plane (124)
+  'variable-expressions',         // evaluate-expressions (123)
+  'g6-combine-like-terms',        // combining-like-terms (81)
+  'g6-write-expressions',         // writing-algebraic-expressions (30)
 ]);
 
 function expand(template) {

@@ -652,6 +652,216 @@
       "legacyId": "algebraic-properties",
       "unifiedId": "distributive-property",
       "course": "algebra-1"
+    },
+    {
+      "legacyId": "exponent-rules-multiplication",
+      "unifiedId": "exponent-properties",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "exponent-rules-division",
+      "unifiedId": "exponent-properties",
+      "course": "algebra-1"
+    },
+    {
+      "legacyId": "g6-ratio-problem-solving",
+      "unifiedId": "solve-proportions",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-fraction-ops-review",
+      "unifiedId": "multiply-fractions",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-expression-writing-intro",
+      "unifiedId": "writing-algebraic-expressions",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-inequalities",
+      "unifiedId": "one-step-inequalities",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-mult-div-fluency",
+      "unifiedId": "multiplication-basics",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-formulas-area-volume",
+      "unifiedId": "area-rectangles",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g7-one-two-step-equations",
+      "unifiedId": "one-step-equations",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-inequalities",
+      "unifiedId": "one-step-inequalities",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-proportions",
+      "unifiedId": "solve-proportions",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-identify-proportional",
+      "unifiedId": "solve-proportions",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-proportional-equations",
+      "unifiedId": "solve-proportions",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-percent-applications",
+      "unifiedId": "percent-of-a-number",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-add-subtract-rationals",
+      "unifiedId": "add-fractions",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-multiply-divide-rationals",
+      "unifiedId": "multiply-fractions",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-verbal-to-algebraic",
+      "unifiedId": "writing-algebraic-expressions",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-area-circumference",
+      "unifiedId": "circles-circumference-area",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-scale-drawings",
+      "unifiedId": "scale-factor",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-fraction-decimal-fluency",
+      "unifiedId": "equivalent-fractions",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-integer-operations",
+      "unifiedId": "integer-operations",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "basic-equations",
+      "unifiedId": "one-step-equations",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "linear-inequalities",
+      "unifiedId": "solving-inequalities",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "slope-rate-of-change",
+      "unifiedId": "slope",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "slope-from-representations",
+      "unifiedId": "slope-from-two-points",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "interpret-slope-intercept",
+      "unifiedId": "writing-linear-equations-slope-intercept",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "y-intercept-context",
+      "unifiedId": "writing-linear-equations-slope-intercept",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "compare-linear-models",
+      "unifiedId": "act-linear-functions-models",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "function-definition",
+      "unifiedId": "identifying-functions",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "identify-functions",
+      "unifiedId": "identifying-functions",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "compare-functions",
+      "unifiedId": "function-families",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "function-modeling",
+      "unifiedId": "act-linear-functions-models",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "distance-coordinate",
+      "unifiedId": "coordinate-plane",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "fraction-decimal-fluency",
+      "unifiedId": "equivalent-fractions",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "rational-irrational",
+      "unifiedId": "irrational-numbers",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "real-number-ordering",
+      "unifiedId": "ordering-numbers",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "congruence-similarity",
+      "unifiedId": "act-similar-congruent-figures",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "systems-interpretation",
+      "unifiedId": "act-systems-of-equations",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "volume-cylinders",
+      "unifiedId": "act-volume-surface-area",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "volume-cones",
+      "unifiedId": "act-volume-surface-area",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "volume-spheres",
+      "unifiedId": "act-volume-surface-area",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "volume-word-problems",
+      "unifiedId": "act-volume-surface-area",
+      "course": "grade-8-math"
     }
   ]
 }

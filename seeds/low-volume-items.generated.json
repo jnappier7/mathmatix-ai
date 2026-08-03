@@ -1,5 +1,521 @@
 [
  {
+  "problemId": "low-volume-2026-08-algebraic-properties-001",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 2 + 0 = 2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Identity Property",
+   "equivalents": [
+    "IdentityProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Adding 0 leaves the number unchanged — 0 is the additive identity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b735fb87cd8b0ebc2284cb8acc0143a766289b0038ce40fb2467eaa79e6364ed",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-002",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 8 + 0 = 8",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Identity Property",
+   "equivalents": [
+    "IdentityProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Adding 0 leaves the number unchanged — 0 is the additive identity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "be238ab8cb8f8ba4cc9aeceebad049c3c69cebc68e9e98ed307dc3daae5f581d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-003",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 5 + 8 = 8 + 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Commutative Property",
+   "equivalents": [
+    "CommutativeProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "The ORDER of the addends changed and nothing else did — that is commutative. Associative would regroup with parentheses instead.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "947e8fb6c6a5f210521639a6e3b47dfa9ced18cf66f7eb0808ac8e55b12429e8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-004",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 9 + 4 = 4 + 9",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Commutative Property",
+   "equivalents": [
+    "CommutativeProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "The ORDER of the addends changed and nothing else did — that is commutative. Associative would regroup with parentheses instead.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5dffae4eb380a3a4a9fb1e0bc7efa2dd1e4d1c98a3fa1e60c63ed9c040346c9",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-005",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 14 + 0 = 14",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Identity Property",
+   "equivalents": [
+    "IdentityProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Adding 0 leaves the number unchanged — 0 is the additive identity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "06e55878ea037ced0e39f4f077ec65d789d2f1842a14dcc71990488d6ff451b3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-006",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? (3 · 5) · 7 = 3 · (5 · 7)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Associative Property",
+   "equivalents": [
+    "AssociativeProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The factors stayed in the same order; only the GROUPING moved. Regrouping is associative — commutative would swap their order.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "63a9344bebc910a7257136ac112c2e4b778d4ac8c0d9d914fd5aaa232174b01f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-007",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 7 + 0 = 7",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Identity Property",
+   "equivalents": [
+    "IdentityProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Adding 0 leaves the number unchanged — 0 is the additive identity.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "326bd51d72f4b9ec1ddcd3480a960b3f3982e52f9c746bce7b8150c267570f6e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-008",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? (6 · 6) · 2 = 6 · (6 · 2)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Associative Property",
+   "equivalents": [
+    "AssociativeProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The factors stayed in the same order; only the GROUPING moved. Regrouping is associative — commutative would swap their order.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "039e63cd860ed92c3e2999538fc7bb4e336836a5e584951302fdfe94c8f3da80",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-009",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? (4 · 4) · 5 = 4 · (4 · 5)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Associative Property",
+   "equivalents": [
+    "AssociativeProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The factors stayed in the same order; only the GROUPING moved. Regrouping is associative — commutative would swap their order.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8fc57200f1f1aaa4b8ea4a8d3b43134063c4592efd3667a6569980e9681f9736",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-010",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 8 + 5 = 5 + 8",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Commutative Property",
+   "equivalents": [
+    "CommutativeProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The ORDER of the addends changed and nothing else did — that is commutative. Associative would regroup with parentheses instead.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fab4ac80719d48a7bf79d94c8459fd32fa888e83956047bfd4c364b2cc243b73",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-011",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 5(5 + 4) = 5·5 + 5·4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Distributive Property",
+   "equivalents": [
+    "DistributiveProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A factor outside a sum was multiplied across each term inside. Notice it changes the NUMBER of multiplications, which regrouping and reordering never do.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "911e8f7374340fe532afc4d639510395c541b6eccd5ce7a9d3b98eef040d5260",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-algebraic-properties-012",
+  "skillId": "algebraic-properties",
+  "prompt": "Which property is shown? 3(3 + 2) = 3·3 + 3·2",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Distributive Property",
+   "equivalents": [
+    "DistributiveProperty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A factor outside a sum was multiplied across each term inside. Notice it changes the NUMBER of multiplications, which regrouping and reordering never do.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebraic-properties"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6e4de6ed0dbd04591e93b4e9d23d896098c14726fe28f83571e6d0b89da07eb9",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commutative Property"
+   },
+   {
+    "label": "B",
+    "text": "Associative Property"
+   },
+   {
+    "label": "C",
+    "text": "Distributive Property"
+   },
+   {
+    "label": "D",
+    "text": "Identity Property"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
   "problemId": "low-volume-2026-08-solving-literal-equations-001",
   "skillId": "solving-literal-equations",
   "prompt": "Solve for x:  8x = y",
