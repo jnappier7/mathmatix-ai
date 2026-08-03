@@ -862,6 +862,21 @@
       "legacyId": "volume-word-problems",
       "unifiedId": "act-volume-surface-area",
       "course": "grade-8-math"
+    },
+    {
+      "legacyId": "equation-word-problems",
+      "unifiedId": "linear-word-problems",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "scatter-plots",
+      "unifiedId": "scatter-plots-correlation",
+      "course": "grade-8-math"
+    },
+    {
+      "legacyId": "correlation-causation",
+      "unifiedId": "scatter-plots-correlation",
+      "course": "grade-8-math"
     }
   ]
 }

@@ -328,6 +328,81 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Grade 8 ──────────────────────────────────────────────────────────────
+  if ((m = p.match(/cube has edges of (\d+) cm\. If every edge is multiplied by (\d+)/))) {
+    const s0 = Number(m[1]), k = Number(m[2]);
+    const e = Math.pow(s0 * k, 3);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/radius and height are both multiplied by (\d+)\. By what factor/))) {
+    const k = Number(m[1]);
+    checked++; if (!eq(it.answer.value, k * k * k)) fail(it, k * k * k); continue;
+  }
+  if ((m = p.match(/edge lengths in the ratio (\d+):(\d+)\. What is the ratio of their volumes/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    const e = `${a * a * a}:${b * b * b}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/sphere has volume (\d+) in³.*radius (\d+) times as large/))) {
+    const v = Number(m[1]), k = Number(m[2]);
+    const e = v * k * k * k;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A line of best fit is y = (\d+)x \+ (\d+)\. Use it to predict y when x = (\d+)\.$/))) {
+    const [a, b, x] = m.slice(1).map(Number);
+    const e = a * x + b;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/y = (\d+)x \+ (\d+)\. A real data point at x = (\d+) has y = (\d+)/))) {
+    const [a, b, x, y] = m.slice(1).map(Number);
+    const e = y - (a * x + b);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A survey recorded: (\d+) students walk and play a sport, \d+ students walk and do not play a sport, (\d+) students ride the bus and play a sport/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+) like pizza and are in Grade 8, (\d+) like pizza and are in Grade 7, (\d+) like tacos and are in Grade 8, (\d+) like tacos and are in Grade 7/))) {
+    const e = m.slice(1).map(Number).reduce((a, b) => a + b, 0);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Two angles of a triangle measure (\d+)° and (\d+)°/))) {
+    const e = 180 - Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Two angles are supplementary\. One measures (\d+)°/))) {
+    const e = 180 - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/right triangle has legs of (\d+) and (\d+)/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    const e = Math.sqrt(a * a + b * b);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/hypotenuse of (\d+) and one leg of (\d+)/))) {
+    const c = Number(m[1]), a = Number(m[2]);
+    const e = Math.sqrt(c * c - a * a);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/prism measures (\d+) by (\d+) by (\d+) cm/))) {
+    const [l, w, h] = m.slice(1).map(Number);
+    checked++; if (!eq(it.answer.value, l * w * h)) fail(it, l * w * h); continue;
+  }
+  if ((m = p.match(/cylinder has radius (\d+) cm and height (\d+) cm/))) {
+    const r0 = Number(m[1]), h = Number(m[2]);
+    const e = `${r0 * r0 * h}π`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^If f\(x\) = (\d+)x \+ (\d+), what is f\((\d+)\)\?$/))) {
+    const [a, b, t] = m.slice(1).map(Number);
+    checked++; if (!eq(it.answer.value, a * t + b)) fail(it, a * t + b); continue;
+  }
+  if ((m = p.match(/^Solve for x: {2}(\d+)x \+ (\d+) = (\d+)$/))) {
+    const [a, b, rhs] = m.slice(1).map(Number);
+    const e = (rhs - b) / a;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 

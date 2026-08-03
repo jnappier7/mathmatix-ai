@@ -23,6 +23,7 @@ const MAX_ATTEMPTS = 40;     // draws attempted per variant before giving up
 const BANKS = [
   require('./lib/templatesAlgebra1'),
   require('./lib/templatesGrade6'),
+  require('./lib/templatesGrade8'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');
