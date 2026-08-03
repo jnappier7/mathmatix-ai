@@ -7133,5 +7133,1879 @@
   "source": "low-volume-2026-08",
   "contentHash": "cc7913aeaaf2c3fb4cb221a99ced6d11270fd1fa31d3849ea23f46ca55b4d733",
   "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-001",
+  "skillId": "volume-scaling",
+  "prompt": "A cube has edges of 2 cm. If every edge is multiplied by 2, what is the volume of the new cube, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "64",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The original volume is 2³ = 8 cm³. Each edge becomes 4 cm, so the new volume is 4³ = 64 cm³. Notice that is 8 × 2³ = 8 × 8: scaling every length by 2 scales VOLUME by 2³, not by 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9a3aca0917ac776573ac88ee714ac607c8d485000ecf42e85e5c93add8266ec6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-002",
+  "skillId": "volume-scaling",
+  "prompt": "A cube has edges of 4 cm. If every edge is multiplied by 2, what is the volume of the new cube, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "512",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The original volume is 4³ = 64 cm³. Each edge becomes 8 cm, so the new volume is 8³ = 512 cm³. Notice that is 64 × 2³ = 64 × 8: scaling every length by 2 scales VOLUME by 2³, not by 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "be385de1b8b73a70fac36821c541e898e138fd210075f88b32ddf4cf22267b2c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-003",
+  "skillId": "volume-scaling",
+  "prompt": "A cube has edges of 2 cm. If every edge is multiplied by 3, what is the volume of the new cube, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "216",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The original volume is 2³ = 8 cm³. Each edge becomes 6 cm, so the new volume is 6³ = 216 cm³. Notice that is 8 × 3³ = 8 × 27: scaling every length by 3 scales VOLUME by 3³, not by 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cf2daf68bd7dc7e8bfbef7cc174d99a6480714f4f1b3f4114a895a0b2ba4f013",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-004",
+  "skillId": "volume-scaling",
+  "prompt": "A cube has edges of 3 cm. If every edge is multiplied by 3, what is the volume of the new cube, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "729",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The original volume is 3³ = 27 cm³. Each edge becomes 9 cm, so the new volume is 9³ = 729 cm³. Notice that is 27 × 3³ = 27 × 27: scaling every length by 3 scales VOLUME by 3³, not by 3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "113e19ac0bb421a768221f1410aaf975b1dfb17208042872c17343e110543d61",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-005",
+  "skillId": "volume-scaling",
+  "prompt": "A cylinder's radius and height are both multiplied by 4. By what factor is its volume multiplied?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "64",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Volume depends on three lengths (V = πr²h — two radii and a height). Multiplying every one of them by 4 multiplies the volume by 4 × 4 × 4 = 64. A common wrong answer is 4, which scales only a single dimension.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f765fa2daf539c92175588b3ea6fd1e47c0981877675aa68711bec3c0c30bc13",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-006",
+  "skillId": "volume-scaling",
+  "prompt": "A cylinder's radius and height are both multiplied by 3. By what factor is its volume multiplied?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "27",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Volume depends on three lengths (V = πr²h — two radii and a height). Multiplying every one of them by 3 multiplies the volume by 3 × 3 × 3 = 27. A common wrong answer is 3, which scales only a single dimension.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f2d49b4174d778bb8bde517719f4fab5d0b905beb7f2ccc74348e661ab458ef2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-007",
+  "skillId": "volume-scaling",
+  "prompt": "A cylinder's radius and height are both multiplied by 2. By what factor is its volume multiplied?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Volume depends on three lengths (V = πr²h — two radii and a height). Multiplying every one of them by 2 multiplies the volume by 2 × 2 × 2 = 8. A common wrong answer is 2, which scales only a single dimension.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "83be58edd784b073e28bf4c08a946cf20dbd7528858d5dc2737952b124b930bc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-008",
+  "skillId": "volume-scaling",
+  "prompt": "A cylinder's radius and height are both multiplied by 5. By what factor is its volume multiplied?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "125",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Volume depends on three lengths (V = πr²h — two radii and a height). Multiplying every one of them by 5 multiplies the volume by 5 × 5 × 5 = 125. A common wrong answer is 5, which scales only a single dimension.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d3749766cf43a08a5710aba750bbdbe772897b0b9c7c01d43d1be6d39922ac32",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-009",
+  "skillId": "volume-scaling",
+  "prompt": "Two similar rectangular prisms have edge lengths in the ratio 2:3. What is the ratio of their volumes?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8:27",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Volumes of similar solids scale as the CUBE of the length ratio: (2:3)³ = 2³:3³ = 8:27. Answering 2:3 confuses the length ratio with the volume ratio; 4:9 would be the ratio of surface areas.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "83486d47e6b383fae8ace9ec8a1074ca74a5b3f92cb966d9b877ee68f91e1384",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-010",
+  "skillId": "volume-scaling",
+  "prompt": "Two similar rectangular prisms have edge lengths in the ratio 3:4. What is the ratio of their volumes?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "27:64",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Volumes of similar solids scale as the CUBE of the length ratio: (3:4)³ = 3³:4³ = 27:64. Answering 3:4 confuses the length ratio with the volume ratio; 9:16 would be the ratio of surface areas.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5a513e37ad1983e104d99ef53a29f602ec1cf61f438590328aee24f586e188df",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-011",
+  "skillId": "volume-scaling",
+  "prompt": "Two similar rectangular prisms have edge lengths in the ratio 2:5. What is the ratio of their volumes?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8:125",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Volumes of similar solids scale as the CUBE of the length ratio: (2:5)³ = 2³:5³ = 8:125. Answering 2:5 confuses the length ratio with the volume ratio; 4:25 would be the ratio of surface areas.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5b9f16ee3b11e2d00f17581837ba45ec21cdaa49a193387eebbe908347973add",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-012",
+  "skillId": "volume-scaling",
+  "prompt": "Two similar rectangular prisms have edge lengths in the ratio 4:5. What is the ratio of their volumes?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "64:125",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Volumes of similar solids scale as the CUBE of the length ratio: (4:5)³ = 4³:5³ = 64:125. Answering 4:5 confuses the length ratio with the volume ratio; 16:25 would be the ratio of surface areas.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "588662c032be85313fc005bb8e860374a3d71bd4a5f95031396d7a773e7ebf0e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-013",
+  "skillId": "volume-scaling",
+  "prompt": "A sphere has volume 40 in³. A second sphere has a radius 2 times as large. What is its volume, in in³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "320",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Radius is a length, so volume scales by 2³ = 8. The new volume is 40 × 8 = 320 in³. You never need the formula itself — only that volume grows with the cube of any length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "133348d4f89ec5f9269e739e94c77fea1a7f7cec02a395d6304a2041e8b2aaa2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-014",
+  "skillId": "volume-scaling",
+  "prompt": "A sphere has volume 30 in³. A second sphere has a radius 3 times as large. What is its volume, in in³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "810",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Radius is a length, so volume scales by 3³ = 27. The new volume is 30 × 27 = 810 in³. You never need the formula itself — only that volume grows with the cube of any length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6344dc57db199a5ec0c959988007979e3f061c12091eb5c6e39213f30ba0875f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-015",
+  "skillId": "volume-scaling",
+  "prompt": "A sphere has volume 50 in³. A second sphere has a radius 2 times as large. What is its volume, in in³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "400",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Radius is a length, so volume scales by 2³ = 8. The new volume is 50 × 8 = 400 in³. You never need the formula itself — only that volume grows with the cube of any length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c03babad6186eea27daa62087e6173a576d26046bcf0814d89b0af67d6912f50",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-volume-scaling-016",
+  "skillId": "volume-scaling",
+  "prompt": "A sphere has volume 20 in³. A second sphere has a radius 3 times as large. What is its volume, in in³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "540",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Radius is a length, so volume scales by 3³ = 27. The new volume is 20 × 27 = 540 in³. You never need the formula itself — only that volume grows with the cube of any length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:volume-scaling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f0763a7ed461b09fb147e23b207f5fdd42b3e634cc467f6288a82bff47477671",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-001",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit for study hours (x) and test score (y) is y = 5x + 21. What does the SLOPE 5 mean in context?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Each additional hour of study is associated with about 5 more points",
+   "equivalents": [
+    "Eachadditionalhourofstudyisassociatedwithabout5morepoints"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Slope is the change in y per one-unit change in x, so 5 means about 5 more points for each extra hour of study. 21 is the intercept — the predicted score at 0 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "86921d98862d81915f13c896d6a58033b03c74ffbfeece35fdc8bab4cedbe5e3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Each additional hour of study is associated with about 5 more points"
+   },
+   {
+    "label": "B",
+    "text": "A student who studies 0 hours is predicted to score about 21"
+   },
+   {
+    "label": "C",
+    "text": "The highest possible score is 5"
+   },
+   {
+    "label": "D",
+    "text": "5 students were surveyed"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-002",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit for study hours (x) and test score (y) is y = 5x + 13. What does the Y-INTERCEPT 13 mean in context?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A student who studies 0 hours is predicted to score about 13",
+   "equivalents": [
+    "Astudentwhostudies0hoursispredictedtoscoreabout13"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The y-intercept is the predicted score when x = 0, i.e. a student who studies 0 hours: about 13 points. 5 is the slope, the gain per extra hour.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aea98dda8f2162169656727acbca94ce5ad2366c0c3615276860854bfb8e8935",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Each additional hour of study is associated with about 5 more points"
+   },
+   {
+    "label": "B",
+    "text": "A student who studies 0 hours is predicted to score about 13"
+   },
+   {
+    "label": "C",
+    "text": "The highest possible score is 5"
+   },
+   {
+    "label": "D",
+    "text": "5 students were surveyed"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-003",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit for study hours (x) and test score (y) is y = 5x + 32. What does the SLOPE 5 mean in context?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Each additional hour of study is associated with about 5 more points",
+   "equivalents": [
+    "Eachadditionalhourofstudyisassociatedwithabout5morepoints"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Slope is the change in y per one-unit change in x, so 5 means about 5 more points for each extra hour of study. 32 is the intercept — the predicted score at 0 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e7a01ca7635802304e9c3b85dc04275fdc89eb578c4eea43faa7193b14824159",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Each additional hour of study is associated with about 5 more points"
+   },
+   {
+    "label": "B",
+    "text": "A student who studies 0 hours is predicted to score about 32"
+   },
+   {
+    "label": "C",
+    "text": "The highest possible score is 5"
+   },
+   {
+    "label": "D",
+    "text": "5 students were surveyed"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-004",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit for study hours (x) and test score (y) is y = 4x + 9. What does the Y-INTERCEPT 9 mean in context?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A student who studies 0 hours is predicted to score about 9",
+   "equivalents": [
+    "Astudentwhostudies0hoursispredictedtoscoreabout9"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The y-intercept is the predicted score when x = 0, i.e. a student who studies 0 hours: about 9 points. 4 is the slope, the gain per extra hour.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e81eb8a4ae8b00d5757a5348d26fb36f855cd2437c3dc8caa83798c429b693b0",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Each additional hour of study is associated with about 4 more points"
+   },
+   {
+    "label": "B",
+    "text": "A student who studies 0 hours is predicted to score about 9"
+   },
+   {
+    "label": "C",
+    "text": "The highest possible score is 4"
+   },
+   {
+    "label": "D",
+    "text": "4 students were surveyed"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-005",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 8x + 11. Use it to predict y when x = 5.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "51",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Substitute x = 5: y = 8(5) + 11 = 40 + 11 = 51. A line of best fit gives a PREDICTION, not a guarantee — real data points scatter around it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2084f25b86717a42286060a93c6a02febcdcae4a68a21c71b6e556bb68ed93e0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-006",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 3x + 38. Use it to predict y when x = 3.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "47",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Substitute x = 3: y = 3(3) + 38 = 9 + 38 = 47. A line of best fit gives a PREDICTION, not a guarantee — real data points scatter around it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "257c1457dac9cd8435ab36db8514dffb65caeb224dd53304fda4e193bc41ec32",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-007",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 7x + 37. Use it to predict y when x = 6.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "79",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Substitute x = 6: y = 7(6) + 37 = 42 + 37 = 79. A line of best fit gives a PREDICTION, not a guarantee — real data points scatter around it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c36ee484bdeddf39c2bf65be4d76abfe49c91584995a1073d9b70b51de0abb93",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-008",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 6x + 30. Use it to predict y when x = 6.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "66",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Substitute x = 6: y = 6(6) + 30 = 36 + 30 = 66. A line of best fit gives a PREDICTION, not a guarantee — real data points scatter around it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c74e82f63d0a1f5b53bc9348815bca39ea385080032c1941759f9c8b578e3a53",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-009",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 6x + 6. A real data point at x = 4 has y = 26. What is the residual (actual − predicted)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Predicted: 6(4) + 6 = 30. Residual = actual − predicted = 26 − 30 = -4. A negative residual means the real point sits BELOW the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c9e9766acd8eea347495eb6940841de92b3becd47b7ca95cf81bcf0075451a4d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-010",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 6x + 7. A real data point at x = 7 has y = 53. What is the residual (actual − predicted)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Predicted: 6(7) + 7 = 49. Residual = actual − predicted = 53 − 49 = 4. A positive residual means the real point sits ABOVE the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9bb8a59ed55b7d9457a22b211edeee7c5c8269fd2bb020407d0890ff0340f824",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-011",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 4x + 17. A real data point at x = 6 has y = 44. What is the residual (actual − predicted)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Predicted: 4(6) + 17 = 41. Residual = actual − predicted = 44 − 41 = 3. A positive residual means the real point sits ABOVE the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e612335f7a3586cc6552ebe2b86040dcb9303179674acd1e575ae8fd78d1df38",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-012",
+  "skillId": "line-of-best-fit",
+  "prompt": "A line of best fit is y = 2x + 15. A real data point at x = 5 has y = 22. What is the residual (actual − predicted)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Predicted: 2(5) + 15 = 25. Residual = actual − predicted = 22 − 25 = -3. A negative residual means the real point sits BELOW the line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9ec1d078686cb3192dfdf1d012f92e3a2c079dd787ffdd3ad09e41651e151aee",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-013",
+  "skillId": "line-of-best-fit",
+  "prompt": "For the line of best fit y = −2x + 46 modelling phone battery (y) against hours of use (x), what does the y-intercept 46 represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "The battery percentage at 0 hours of use",
+   "equivalents": [
+    "Thebatterypercentageat0hoursofuse"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The y-intercept is the predicted y when x = 0 — here the starting battery percentage, 46%. The −2 is the slope, a RATE of change.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1e0f3d7508ae3ca6f49ab42256198a0d9f652c47ed6578eeee54c20aa4efaa3d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "The battery percentage at 0 hours of use"
+   },
+   {
+    "label": "B",
+    "text": "About 2% of battery lost per hour of use"
+   },
+   {
+    "label": "C",
+    "text": "The number of hours until the battery dies"
+   },
+   {
+    "label": "D",
+    "text": "The average battery percentage"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-014",
+  "skillId": "line-of-best-fit",
+  "prompt": "For the line of best fit y = −7x + 22 modelling phone battery (y) against hours of use (x), what does the slope −7 represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "About 7% of battery lost per hour of use",
+   "equivalents": [
+    "About7%ofbatterylostperhourofuse"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Slope is the change in y per one extra hour. It is negative, so the battery FALLS by about 7% each hour. The 22 is the starting percentage at 0 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "45459af211524888edf8fc981a4be691f9fce1857d4645768889da282bcd2e8f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "The battery percentage at 0 hours of use"
+   },
+   {
+    "label": "B",
+    "text": "About 7% of battery lost per hour of use"
+   },
+   {
+    "label": "C",
+    "text": "The number of hours until the battery dies"
+   },
+   {
+    "label": "D",
+    "text": "The average battery percentage"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-015",
+  "skillId": "line-of-best-fit",
+  "prompt": "For the line of best fit y = −3x + 48 modelling phone battery (y) against hours of use (x), what does the y-intercept 48 represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "The battery percentage at 0 hours of use",
+   "equivalents": [
+    "Thebatterypercentageat0hoursofuse"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The y-intercept is the predicted y when x = 0 — here the starting battery percentage, 48%. The −3 is the slope, a RATE of change.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7371a716759965633f09e62179fee296a32e7b8cbf782023cd427ad61096d740",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "The battery percentage at 0 hours of use"
+   },
+   {
+    "label": "B",
+    "text": "About 3% of battery lost per hour of use"
+   },
+   {
+    "label": "C",
+    "text": "The number of hours until the battery dies"
+   },
+   {
+    "label": "D",
+    "text": "The average battery percentage"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-line-of-best-fit-016",
+  "skillId": "line-of-best-fit",
+  "prompt": "For the line of best fit y = −3x + 58 modelling phone battery (y) against hours of use (x), what does the slope −3 represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "About 3% of battery lost per hour of use",
+   "equivalents": [
+    "About3%ofbatterylostperhourofuse"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Slope is the change in y per one extra hour. It is negative, so the battery FALLS by about 3% each hour. The 58 is the starting percentage at 0 hours.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:line-of-best-fit"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5aa617134a0c5af26ffa76c95395ff372275690c83c53cc7d75a8b7edf10a8b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "The battery percentage at 0 hours of use"
+   },
+   {
+    "label": "B",
+    "text": "About 3% of battery lost per hour of use"
+   },
+   {
+    "label": "C",
+    "text": "The number of hours until the battery dies"
+   },
+   {
+    "label": "D",
+    "text": "The average battery percentage"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-001",
+  "skillId": "two-way-tables",
+  "prompt": "A survey recorded: 23 students walk and play a sport, 38 students walk and do not play a sport, 33 students ride the bus and play a sport, 31 students ride the bus and do not play a sport. How many students play a sport?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "\"Plays a sport\" spans both travel methods, so add down that column: 23 + 33 = 56. This is a MARGINAL total — a row or column sum, as opposed to a single cell (a joint frequency).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "38c2efdc964f32920b6a02e88897a008f95b6a1c440dddb74d0b138dc1b03e73",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-002",
+  "skillId": "two-way-tables",
+  "prompt": "A survey recorded: 22 students walk and play a sport, 35 students walk and do not play a sport, 25 students ride the bus and play a sport, 22 students ride the bus and do not play a sport. How many students play a sport?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "47",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "\"Plays a sport\" spans both travel methods, so add down that column: 22 + 25 = 47. This is a MARGINAL total — a row or column sum, as opposed to a single cell (a joint frequency).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9694454b0f4670bd1eb392b306c3a9752d031c870e154b1b0861958b565d2b47",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-003",
+  "skillId": "two-way-tables",
+  "prompt": "A survey recorded: 20 students walk and play a sport, 20 students walk and do not play a sport, 36 students ride the bus and play a sport, 15 students ride the bus and do not play a sport. How many students play a sport?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "\"Plays a sport\" spans both travel methods, so add down that column: 20 + 36 = 56. This is a MARGINAL total — a row or column sum, as opposed to a single cell (a joint frequency).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ba6739a3b1d595f98a950767e6403677e116e59e8d6a31375f23805449e213be",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-004",
+  "skillId": "two-way-tables",
+  "prompt": "A survey recorded: 23 students walk and play a sport, 30 students walk and do not play a sport, 28 students ride the bus and play a sport, 16 students ride the bus and do not play a sport. How many students play a sport?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "51",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "\"Plays a sport\" spans both travel methods, so add down that column: 23 + 28 = 51. This is a MARGINAL total — a row or column sum, as opposed to a single cell (a joint frequency).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "16fe7356077630d92a4a3022178c8d7c5367d46a189ea0a45939ecd8524d714b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-005",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows: 30 like pizza and are in Grade 8, 24 like pizza and are in Grade 7, 25 like tacos and are in Grade 8, 12 like tacos and are in Grade 7. How many students were surveyed in total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "91",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Every student appears in exactly one cell, so the total is the sum of all four: 30 + 24 + 25 + 12 = 91.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7637712fee407776470f7685d42d0206f490fb8147b18e8b7fd42e64f4c0cb34",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-006",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows: 23 like pizza and are in Grade 8, 14 like pizza and are in Grade 7, 14 like tacos and are in Grade 8, 20 like tacos and are in Grade 7. How many students were surveyed in total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "71",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Every student appears in exactly one cell, so the total is the sum of all four: 23 + 14 + 14 + 20 = 71.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "82bcdeff59320cac4442d8142356c0cffec3301e3f7f92327b5eef734d221e0b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-007",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows: 13 like pizza and are in Grade 8, 16 like pizza and are in Grade 7, 21 like tacos and are in Grade 8, 13 like tacos and are in Grade 7. How many students were surveyed in total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "63",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Every student appears in exactly one cell, so the total is the sum of all four: 13 + 16 + 21 + 13 = 63.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9cd3ced035b250ebc0ea73da51c92a1490c074c03e046b657bcdbe7826232966",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-008",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows: 29 like pizza and are in Grade 8, 22 like pizza and are in Grade 7, 16 like tacos and are in Grade 8, 13 like tacos and are in Grade 7. How many students were surveyed in total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "80",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Every student appears in exactly one cell, so the total is the sum of all four: 29 + 22 + 16 + 13 = 80.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4212a2b3805a1d53ccc8b45b2956e685420d85b66e79b6b404c7e05cba5d914c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-009",
+  "skillId": "two-way-tables",
+  "prompt": "Of 55 students who own a pet, 38 also have a sibling. What fraction of pet owners have a sibling? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "38/55",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "This is a CONDITIONAL relative frequency: out of the 55 pet owners, 38 have a sibling, so the fraction is 38/55 = 38/55. The denominator is the pet-owner total, not the whole survey — that is what makes it conditional.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f1823e2a108e18edef57eb739c87dda8870ac6cba17cbdd776a940a0ec000a22",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-010",
+  "skillId": "two-way-tables",
+  "prompt": "Of 39 students who own a pet, 12 also have a sibling. What fraction of pet owners have a sibling? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "This is a CONDITIONAL relative frequency: out of the 39 pet owners, 12 have a sibling, so the fraction is 12/39 = 4/13. The denominator is the pet-owner total, not the whole survey — that is what makes it conditional.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a1c19eb1116c5c399c9354be28ee33e845968a8539265c08665a9a12eee745e4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-011",
+  "skillId": "two-way-tables",
+  "prompt": "Of 34 students who own a pet, 10 also have a sibling. What fraction of pet owners have a sibling? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/17",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "This is a CONDITIONAL relative frequency: out of the 34 pet owners, 10 have a sibling, so the fraction is 10/34 = 5/17. The denominator is the pet-owner total, not the whole survey — that is what makes it conditional.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "55a9afcfbca8a09221f887a2ec5f814abe91f18c382da65c9e47e7172de0677a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-012",
+  "skillId": "two-way-tables",
+  "prompt": "Of 68 students who own a pet, 34 also have a sibling. What fraction of pet owners have a sibling? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "This is a CONDITIONAL relative frequency: out of the 68 pet owners, 34 have a sibling, so the fraction is 34/68 = 1/2. The denominator is the pet-owner total, not the whole survey — that is what makes it conditional.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "99922888ed2b04a6ab5a46b1b8004c792efcd6662bba729d91270184b0dbccc5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-013",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows 49 students who study daily passed, 7 who study daily failed, 5 who do not study daily passed, and 41 who do not study daily failed. Does the table suggest an association between studying daily and passing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes — daily studiers passed at a much higher rate",
+   "equivalents": [
+    "Yes—dailystudierspassedatamuchhigherrate"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Compare RATES, not counts: 49 of 56 daily studiers passed (88%) versus 5 of 46 non-daily (11%). Very different rates suggest an association — though, as always, that is not proof of causation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b1e728b0aa385a05578f74ab07a42069344cadb8a36a65860fc356f2245defda",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — daily studiers passed at a much higher rate"
+   },
+   {
+    "label": "B",
+    "text": "No — the totals are equal"
+   },
+   {
+    "label": "C",
+    "text": "No — a table can never show association"
+   },
+   {
+    "label": "D",
+    "text": "Yes — but only because more students were surveyed"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-014",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows 30 students who study daily passed, 10 who study daily failed, 13 who do not study daily passed, and 46 who do not study daily failed. Does the table suggest an association between studying daily and passing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes — daily studiers passed at a much higher rate",
+   "equivalents": [
+    "Yes—dailystudierspassedatamuchhigherrate"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Compare RATES, not counts: 30 of 40 daily studiers passed (75%) versus 13 of 59 non-daily (22%). Very different rates suggest an association — though, as always, that is not proof of causation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "70e533a12a2571adcce29352a06e08d8696b20e2499e852c8617c011cca02f05",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — daily studiers passed at a much higher rate"
+   },
+   {
+    "label": "B",
+    "text": "No — the totals are equal"
+   },
+   {
+    "label": "C",
+    "text": "No — a table can never show association"
+   },
+   {
+    "label": "D",
+    "text": "Yes — but only because more students were surveyed"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-015",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows 45 students who study daily passed, 10 who study daily failed, 10 who do not study daily passed, and 31 who do not study daily failed. Does the table suggest an association between studying daily and passing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes — daily studiers passed at a much higher rate",
+   "equivalents": [
+    "Yes—dailystudierspassedatamuchhigherrate"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Compare RATES, not counts: 45 of 55 daily studiers passed (82%) versus 10 of 41 non-daily (24%). Very different rates suggest an association — though, as always, that is not proof of causation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e7b034a40ac35473a309519a30c1105a7863dc8ecf6a65554700dd768df6d8a1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — daily studiers passed at a much higher rate"
+   },
+   {
+    "label": "B",
+    "text": "No — the totals are equal"
+   },
+   {
+    "label": "C",
+    "text": "No — a table can never show association"
+   },
+   {
+    "label": "D",
+    "text": "Yes — but only because more students were surveyed"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-two-way-tables-016",
+  "skillId": "two-way-tables",
+  "prompt": "A two-way table shows 45 students who study daily passed, 14 who study daily failed, 11 who do not study daily passed, and 39 who do not study daily failed. Does the table suggest an association between studying daily and passing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes — daily studiers passed at a much higher rate",
+   "equivalents": [
+    "Yes—dailystudierspassedatamuchhigherrate"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Compare RATES, not counts: 45 of 59 daily studiers passed (76%) versus 11 of 50 non-daily (22%). Very different rates suggest an association — though, as always, that is not proof of causation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:two-way-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1502302137513cb47edb8f9f6c154a8a6028c4936184772e71454ab4b7c10e78",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — daily studiers passed at a much higher rate"
+   },
+   {
+    "label": "B",
+    "text": "No — the totals are equal"
+   },
+   {
+    "label": "C",
+    "text": "No — a table can never show association"
+   },
+   {
+    "label": "D",
+    "text": "Yes — but only because more students were surveyed"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-001",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Solve for x:  3x + 8 = 29",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Subtract 8 from both sides: 3x = 21. Divide by 3: x = 7.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c3372395a6c6efd74e765cd2066c9b1392d4d7f02614f54211acec0a6b814bc3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-002",
+  "skillId": "spiral-equations-functions",
+  "prompt": "If f(x) = 2x + 3, what is f(5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "f(5) means substitute 5 for x: 2(5) + 3 = 10 + 3 = 13.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f2d14800a557abd32d07d9080cc64ba8a0d81e6ed87583c5c3c8a2f259687511",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-003",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Solve for x:  2x + 1 = 17",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Subtract 1 from both sides: 2x = 16. Divide by 2: x = 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d5f737ebf7c27443dad5792a27b00a76d2cb8861ffbb35a1c883945e2c8061b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-004",
+  "skillId": "spiral-equations-functions",
+  "prompt": "If f(x) = 3x + 4, what is f(5)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "19",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "f(5) means substitute 5 for x: 3(5) + 4 = 15 + 4 = 19.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "01cd8de44735a36f4fb11933eaa91119ef7dc1bb9b42f841fa4b18f76823e9f0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-005",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Find the slope of the line through (2, 1) and (4, 3).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Slope = rise/run = (3 − 1)/(4 − 2) = 2/2 = 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "62515deb239e2d2635920cda177f5ba70b2eb8975396c44c5529e0ec9a8c79a6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-006",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Solve for x:  3(x + 7) = 39",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Divide both sides by 3: x + 7 = 13. Then subtract 7: x = 6. (Distributing first also works and gives the same answer.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9947bd1f1b2d1c64b51e5164d32488ba9c6bb7f42ad0ff49baca8f5a009368cf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-007",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Find the slope of the line through (4, 6) and (6, 9).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Slope = rise/run = (9 − 6)/(6 − 4) = 3/2 = 3/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "68b463872e97a2ed0ed5e930d6a623d10e182cb2875175ab060173643ed41039",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-008",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Solve for x:  5(x + 8) = 65",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Divide both sides by 5: x + 8 = 13. Then subtract 8: x = 5. (Distributing first also works and gives the same answer.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4334863888d0aaa63f143a62c580342f40bf44c6522656bfe3d7ae479b810cc5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-009",
+  "skillId": "spiral-equations-functions",
+  "prompt": "For f(x) = 3x + 2, find x when f(x) = 44.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Set 3x + 2 = 44. Subtract 2: 3x = 42. Divide by 3: x = 14. This runs the function BACKWARDS — you are given the output and want the input.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cfb8507d5d40b5cfb2f46f1199988204673597fd07066510f1f48c2f19860876",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-010",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Is x = 4 a solution of 2x + 6 = 14?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Substitute x = 4: the left side is 2(4) + 6 = 14, and the right side is 14. They match, so it IS a solution.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c87029a8782300121c3654f6b36787af3b4fa1d5aec2fbf7835667dd81b37ef3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is positive"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-011",
+  "skillId": "spiral-equations-functions",
+  "prompt": "For f(x) = 4x + 3, find x when f(x) = 43.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Set 4x + 3 = 43. Subtract 3: 4x = 40. Divide by 4: x = 10. This runs the function BACKWARDS — you are given the output and want the input.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d05423ddf911c4678790480323ed65c579e83faa46a6b5b24f3a023d5a3601bf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-equations-functions-012",
+  "skillId": "spiral-equations-functions",
+  "prompt": "Is x = 3 a solution of 2x + 6 = 12?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Substitute x = 3: the left side is 2(3) + 6 = 12, and the right side is 12. They match, so it IS a solution.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-equations-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dc9aa22b086ea8e3438f17db1f7e0bbdd4c89a986c6249d49dd8043cc9dd377d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is positive"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-001",
+  "skillId": "spiral-geometry",
+  "prompt": "Two angles of a triangle measure 47° and 34°. What is the third angle, in degrees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "99",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The three angles of a triangle always sum to 180°: 180 − 47 − 34 = 99°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2755654ca7009eded72e90a4c7d4f30dc7a51aa352889c46adb922904552cbf5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-002",
+  "skillId": "spiral-geometry",
+  "prompt": "Two angles are supplementary. One measures 36°. What is the other, in degrees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "144",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Supplementary angles sum to 180°, so the other is 180 − 36 = 144°. (Complementary would sum to 90°.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "edcde42ad19195e49af04b14fb7a26c2ff968d43a7820d41c6c3ecbcefe7294b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-003",
+  "skillId": "spiral-geometry",
+  "prompt": "Two angles of a triangle measure 67° and 71°. What is the third angle, in degrees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "42",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The three angles of a triangle always sum to 180°: 180 − 67 − 71 = 42°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c50147b0bf229965fb0c97e55e51841b0e2a694402977080d6924a0794a104eb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-004",
+  "skillId": "spiral-geometry",
+  "prompt": "Two angles are supplementary. One measures 33°. What is the other, in degrees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "147",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Supplementary angles sum to 180°, so the other is 180 − 33 = 147°. (Complementary would sum to 90°.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "28bae6f2fba51dbbd6ce520bd69eafc82c7725ed9cb443ef9b4247b68655fcd4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-005",
+  "skillId": "spiral-geometry",
+  "prompt": "A right triangle has legs of 3 and 4. What is the length of the hypotenuse?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "a² + b² = c²: 3² + 4² = 9 + 16 = 25, and √25 = 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ba37d2b05cfbaae0683600cf0dbdb924b7b22df8a217d8900204577b6dda06cc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-006",
+  "skillId": "spiral-geometry",
+  "prompt": "A rectangular prism measures 5 by 4 by 9 cm. What is its volume, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "180",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Volume of a prism is length × width × height: 5 × 4 × 9 = 180 cm³.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5e81321bbe1f5b9e1dfae16450254efb52b205b7ec80639666f28e0dabce2179",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-007",
+  "skillId": "spiral-geometry",
+  "prompt": "A right triangle has legs of 5 and 12. What is the length of the hypotenuse?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "a² + b² = c²: 5² + 12² = 25 + 144 = 169, and √169 = 13.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ffa9b14f515281899cfe67fcc883e9ea409246455c6616033aa2841c481bdd43",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-008",
+  "skillId": "spiral-geometry",
+  "prompt": "A rectangular prism measures 6 by 8 by 8 cm. What is its volume, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "384",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Volume of a prism is length × width × height: 6 × 8 × 8 = 384 cm³.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "041ce7f5e7b98592eedcced786173f13a3cec10592600f1002718efd6b447c8f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-009",
+  "skillId": "spiral-geometry",
+  "prompt": "A right triangle has a hypotenuse of 5 and one leg of 3. What is the other leg?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Rearrange a² + b² = c²: b² = 5² − 3² = 25 − 9 = 16, so b = 4. Subtracting comes first here because the hypotenuse is known.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "82d8cd2dec74155549bbf2aa6e880508772887290c6d48af2d10fbd4afece13d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-010",
+  "skillId": "spiral-geometry",
+  "prompt": "A cylinder has radius 3 cm and height 5 cm. What is its volume in terms of π, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "45π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "V = πr²h = π(3)²(5) = π(9)(5) = 45π cm³. Square the radius BEFORE multiplying by the height.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7d7a1fdfc708757207ff8dfa49486867845282adab8e193eadd76568604c7ad7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-011",
+  "skillId": "spiral-geometry",
+  "prompt": "A right triangle has a hypotenuse of 13 and one leg of 5. What is the other leg?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Rearrange a² + b² = c²: b² = 13² − 5² = 169 − 25 = 144, so b = 12. Subtracting comes first here because the hypotenuse is known.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ba9527aa2e315c514b36fc23a43fc971b64b3d9b37d055bbab35b235a00ff245",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-spiral-geometry-012",
+  "skillId": "spiral-geometry",
+  "prompt": "A cylinder has radius 4 cm and height 8 cm. What is its volume in terms of π, in cm³?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "128π",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "V = πr²h = π(4)²(8) = π(16)(8) = 128π cm³. Square the radius BEFORE multiplying by the height.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:spiral-geometry"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e75584a58264e04a65c02caf9f762810b772bb554476be7b48eb30963f4295c2",
+  "isActive": true
  }
 ]
