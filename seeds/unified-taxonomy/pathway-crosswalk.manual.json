@@ -877,6 +877,91 @@
       "legacyId": "correlation-causation",
       "unifiedId": "scatter-plots-correlation",
       "course": "grade-8-math"
+    },
+    {
+      "legacyId": "g6-measurement-conversions",
+      "unifiedId": "g6-unit-conversions",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-word-problem-equations",
+      "unifiedId": "writing-solving-equations-context",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-nets-surface-area",
+      "unifiedId": "act-volume-surface-area",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-geometry-applications",
+      "unifiedId": "area-perimeter-word-problems",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-statistical-questions",
+      "unifiedId": "statistics",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-compare-distributions",
+      "unifiedId": "act-center-spread",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g6-positive-negative-context",
+      "unifiedId": "g6-integer-basics",
+      "course": "6th-grade-math"
+    },
+    {
+      "legacyId": "g7-absolute-value",
+      "unifiedId": "g6-absolute-value-opposites",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-constant-of-proportionality",
+      "unifiedId": "proportional-relationships",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-graph-proportional",
+      "unifiedId": "proportional-relationships",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-surface-area",
+      "unifiedId": "act-volume-surface-area",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-volume",
+      "unifiedId": "volume-rectangular-prisms",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-compare-data-sets",
+      "unifiedId": "act-center-spread",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-compound-events",
+      "unifiedId": "compound-probability",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-equation-word-problems",
+      "unifiedId": "writing-solving-equations-context",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-function-input-output",
+      "unifiedId": "function-notation-evaluation",
+      "course": "7th-grade-math"
+    },
+    {
+      "legacyId": "g7-patterns-sequences",
+      "unifiedId": "sequence-patterns",
+      "course": "7th-grade-math"
     }
   ]
 }

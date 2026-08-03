@@ -17,6 +17,14 @@
 const fs = require('fs');
 
 const file = process.argv[2] || 'seeds/low-volume-items.generated.json';
+/** Reduce n/d to a lowest-terms string, independently of templateKit. */
+function reduceStr(n, d) {
+  const g = (a, b) => (b ? g(b, a % b) : Math.abs(a));
+  const k = g(n, d) || 1;
+  const num = n / k, den = d / k;
+  return den === 1 ? String(num) : `${num}/${den}`;
+}
+
 const items = JSON.parse(fs.readFileSync(file, 'utf8'));
 
 const norm = (s) => String(s).replace(/[−–]/g, '-').replace(/\s+/g, '').replace(/\^/g, '');
@@ -400,6 +408,125 @@ for (const it of items) {
   if ((m = p.match(/^Solve for x: {2}(\d+)x \+ (\d+) = (\d+)$/))) {
     const [a, b, rhs] = m.slice(1).map(Number);
     const e = (rhs - b) / a;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
+  // ── Grades 6 & 7 ─────────────────────────────────────────────────────────
+  if ((m = p.match(/two rectangles that do not overlap: one is (\d+) cm by (\d+) cm, the other is (\d+) cm by (\d+) cm/))) {
+    const [a, b, c, d] = m.slice(1).map(Number);
+    const e = a * b + c * d;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+) cm by (\d+) cm rectangle with a triangle on top\. The triangle has base (\d+) cm and height (\d+) cm/))) {
+    const [a, b, base, h] = m.slice(1).map(Number);
+    const e = a * b + (base * h) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+) cm by (\d+) cm rectangle has a (\d+) cm by \d+ cm square cut out/))) {
+    const [a, b, sq] = m.slice(1).map(Number);
+    const e = a * b - sq * sq;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+) m by (\d+) m rectangle with a triangle of base (\d+) m and height (\d+) m/))) {
+    const [a, b, base, h] = m.slice(1).map(Number);
+    const e = a * b + (base * h) / 2;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+) ft by (\d+) ft rectangle with a (\d+) ft by (\d+) ft corner removed/))) {
+    const [a, b, c, d] = m.slice(1).map(Number);
+    const e = a * b - c * d;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/square of side (\d+) cm sits beside a (\d+) cm by (\d+) cm rectangle/))) {
+    const [sq, a, b] = m.slice(1).map(Number);
+    const e = sq * sq + a * b;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/recipe needs (\d+)\/(\d+) cup of sugar per batch.*for (\d+) batches/))) {
+    const [n0, d0, b] = m.slice(1).map(Number);
+    const e = reduceStr(n0 * b, d0);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+)-metre ribbon is cut into pieces (\d+)\/(\d+) of a metre/))) {
+    const [t, n0, d0] = m.slice(1).map(Number);
+    const e = (t * d0) / n0;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/temperature is (\d+)°C and falls by (\d+)°C/))) {
+    const [a, b] = m.slice(1).map(Number);
+    checked++; if (!eq(it.answer.value, a - b)) fail(it, a - b); continue;
+  }
+  if ((m = p.match(/One notebook costs \$([\d.]+)\. What is the cost of (\d+) notebooks/))) {
+    const a = parseFloat(m[1]), b = Number(m[2]);
+    const e = (a * b).toFixed(2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/pack of (\d+) notebooks costs \$(\d+)/))) {
+    const q = Number(m[1]), pr = Number(m[2]);
+    const e = reduceStr(pr, q);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/\$(\d+) jacket is (\d+)% off/))) {
+    const pr = Number(m[1]), pc = Number(m[2]);
+    const e = pr - (pr * pc) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/tank holds (\d+) litres and (\d+) litres are used/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    const e = Math.round((100 * (a - b)) / a);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/Each of (\d+) friends pays \$(\d+), and one of them also pays a \$(\d+) fee/))) {
+    const [n0, each, extra] = m.slice(1).map(Number);
+    const e = n0 * each + extra;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/garden is (\d+) m long and (\d+) m wide/))) {
+    const l = Number(m[1]), w = Number(m[2]);
+    const e = 2 * (l + w);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/has \$(\d+), spends \$(\d+), then earns \$(\d+)/))) {
+    const [a, b, c] = m.slice(1).map(Number);
+    const e = a - b + c;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+) boxes with (\d+) pencils each\. If (\d+) pencils are taken/))) {
+    const [bx, per, taken] = m.slice(1).map(Number);
+    const e = bx * per - taken;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/pays \$(\d+) per hour plus a \$(\d+) bonus.*for (\d+) hours/))) {
+    const [rate, bonus, hrs] = m.slice(1).map(Number);
+    const e = rate * hrs + bonus;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/sample of (\d+) people, (\d+) preferred option A.*of (\d+) people/))) {
+    const [n0, yes, pop] = m.slice(1).map(Number);
+    const e = Math.round((yes / n0) * pop);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/sample of (\d+) students, (\d+) said they walk.*of the (\d+) students/))) {
+    const [n0, yes, pop] = m.slice(1).map(Number);
+    const e = Math.round((yes / n0) * pop);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/Of (\d+) club members, (\d+) are asked/))) {
+    checked++; if (!eq(it.answer.value, Number(m[2]))) fail(it, Number(m[2])); continue;
+  }
+  if ((m = p.match(/In (\d+) coin flips, heads came up (\d+) times/))) {
+    const t = Number(m[1]), h = Number(m[2]);
+    const e = reduceStr(h, t);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/simulation of (\d+) trials produced (\d+) successes/))) {
+    const t = Number(m[1]), h = Number(m[2]);
+    const e = reduceStr(h, t);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/run (\d+) times to model an event with probability (\d+)%/))) {
+    const t = Number(m[1]), pc = Number(m[2]);
+    const e = (t * pc) / 100;
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 

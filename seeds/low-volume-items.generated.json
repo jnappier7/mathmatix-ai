@@ -9007,5 +9007,3815 @@
   "source": "low-volume-2026-08",
   "contentHash": "e75584a58264e04a65c02caf9f762810b772bb554476be7b48eb30963f4295c2",
   "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-001",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 2x + 4, what is the coefficient of x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "The coefficient is the number MULTIPLYING the variable, so it is 2. The 4 stands alone, which makes it the constant.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c026faac521281597dd00c9a5b3d615a32aaeb3a41b3706e542b7a48cffa8568",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-002",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 8x + 11, what is the constant term?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "The constant is the term with no variable attached — here 11. The 8 is the coefficient of x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "827192abe39a37c2fb6c54ae1c03c005f5871434977e9a452931715c6b8cd674",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-003",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 5x + 14, what is the coefficient of x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "The coefficient is the number MULTIPLYING the variable, so it is 5. The 14 stands alone, which makes it the constant.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e496c86f417c108a53585feb5e7cc85efeb6cf81940ec3b8fc9d33c8b55e8453",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-004",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 9x + 4, what is the constant term?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "6-8",
+  "explanation": "The constant is the term with no variable attached — here 4. The 9 is the coefficient of x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "19d099ba580f8e3c8794fc9a9e024b122f57bf6e159478d98e16077c3c09610c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-005",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "How many terms are in the expression 6x + 8?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Terms are the parts separated by + or −: 6x and 8. That is 2 terms. Counting variables instead of terms is the usual slip.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "09c4f23d33ef50d204315504854f7995c33ef7ae192822e446ba46b842ba1ed5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-006",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "How many terms are in the expression 3x + 8y − 6?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Terms are the parts separated by + or −: 3x, 8y and 6. That is 3 terms. Counting variables instead of terms is the usual slip.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e118e46995699172b0d0e0a055bc3b115cfc8a0896588c02e83019af49bb04ff",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-007",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "How many terms are in the expression 3x + 5y + 1 + 7z?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Terms are the parts separated by + or −: 3x, 5y, 1 and 7z. That is 4 terms. Counting variables instead of terms is the usual slip.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "396583c1238aba2cdcede6a02169c22ef65329c6e53e393a846f9207fb87d979",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-008",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "How many terms are in the expression 5x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Terms are the parts separated by + or −: just 5x. That is 1 term. Counting variables instead of terms is the usual slip.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "980db98568a0b452670509edf112b002a4ef21740f54a040346e1fec8fd22a0c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-009",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 6(x + 6), what is the factor outside the parentheses?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "6 multiplies the whole quantity (x + 6), so 6 is the factor outside. Inside, x and 6 are the two terms.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2e31db384c4a98842be6abdf1b8d6679a9426858b298d92607928f5438e28dfc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-010",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 4x + 5x + 4, how many LIKE terms are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "4x and 5x both have the same variable to the same power, so they are like terms — 2 of them. 4 has no variable, so it cannot combine with them.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "24dd8b62367d1d95aecf95a17c2e948bd06b4714ac088f93cf3eb78c70ce88e1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-011",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 2(x + 5), what is the factor outside the parentheses?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "2 multiplies the whole quantity (x + 5), so 2 is the factor outside. Inside, x and 5 are the two terms.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8bed37070e7e203ddc6e5c8bdc763213a4087caa55489484abf291cd47e259bb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-012",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 8x + 5x + 6, how many LIKE terms are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "8x and 5x both have the same variable to the same power, so they are like terms — 2 of them. 6 has no variable, so it cannot combine with them.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1fdec6182276b7d7cb737edee1e564e73dfae688b1a5edcf4155de206d363665",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-013",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 4x + 4y + 5, what is the coefficient of y?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The number multiplying y is 4. For reference the three terms are 4x, 4y and 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8f04de006a0f66839c52ef0104e85c1082d6c161da626fd5ae19d66d115012bb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-014",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 7x + 6y + 6, what is the constant term?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "6 has no variable attached, so it is the constant. For reference the three terms are 7x, 6y and 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cf8aa741508f4772a27a96b6dd06b737eec2803899dc203272dadb1bf9d6ab0e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-015",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 7x + 7y + 6, what is the coefficient of x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The number multiplying x is 7. For reference the three terms are 7x, 7y and 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9c12a5394f7438b217ddba7f0b89ef5d9c50cf813195f51df141b2668311ac0e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-parts-of-expressions-016",
+  "skillId": "g6-parts-of-expressions",
+  "prompt": "In the expression 6x + 6y + 9, what is the coefficient of y?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The number multiplying y is 6. For reference the three terms are 6x, 6y and 9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-parts-of-expressions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f05f9b44bc4092c2922916f4f4205e4055a561411d15a50c5472b540b6132bb8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-001",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is made of two rectangles that do not overlap: one is 4 cm by 4 cm, the other is 6 cm by 4 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Find each area, then add: 4 × 4 = 16 and 6 × 4 = 24, so the total is 16 + 24 = 40 cm². Composite figures are just pieces you can handle one at a time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "450204b068943d48cfc00a775157fcb1ec7bfa2a969878512722453a1cd5e47e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-002",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is made of two rectangles that do not overlap: one is 9 cm by 2 cm, the other is 3 cm by 2 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Find each area, then add: 9 × 2 = 18 and 3 × 2 = 6, so the total is 18 + 6 = 24 cm². Composite figures are just pieces you can handle one at a time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b0e9bf498a26108a830f72cce25c410fef5da6a6f91cd4d1c1ddfec22cdcebaa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-003",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is made of two rectangles that do not overlap: one is 9 cm by 6 cm, the other is 6 cm by 4 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "78",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Find each area, then add: 9 × 6 = 54 and 6 × 4 = 24, so the total is 54 + 24 = 78 cm². Composite figures are just pieces you can handle one at a time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7d7d98ede009270f1ecc6248c4d673cca1af973572d594e59c5a2c94470e6b47",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-004",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is made of two rectangles that do not overlap: one is 4 cm by 7 cm, the other is 3 cm by 5 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "43",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Find each area, then add: 4 × 7 = 28 and 3 × 5 = 15, so the total is 28 + 15 = 43 cm². Composite figures are just pieces you can handle one at a time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "730f61910698dd726f3d38715ce6dbf857aa0cc60fbb3ed96b00fb20d8026b1b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-005",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is a 5 cm by 8 cm rectangle with a triangle on top. The triangle has base 2 cm and height 3 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "43",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 5 × 8 = 40 cm². Triangle: ½ × 2 × 3 = 3 cm². Total: 40 + 3 = 43 cm². Forgetting the ½ is the most common error here.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6177a43d3d2480b9921a9c7cf80c4cb0f8d3ac9c6bae3d4d50560a75edb0bc94",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-006",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is a 9 cm by 6 cm rectangle with a triangle on top. The triangle has base 7 cm and height 8 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "82",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 9 × 6 = 54 cm². Triangle: ½ × 7 × 8 = 28 cm². Total: 54 + 28 = 82 cm². Forgetting the ½ is the most common error here.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f86c3a43dd6f3f1298166483981ebb8f08fc120e62c5a09dffc8cf91c1484f1e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-007",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is a 6 cm by 3 cm rectangle with a triangle on top. The triangle has base 5 cm and height 3 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 6 × 3 = 18 cm². Triangle: ½ × 5 × 3 = 7.5 cm². Total: 18 + 7.5 = 25.5 cm². Forgetting the ½ is the most common error here.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d8ac85317f11ea1984f0505d3a2d72d38bb55e5e119bee8a77f7b9992a50d12",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-008",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A figure is a 10 cm by 6 cm rectangle with a triangle on top. The triangle has base 6 cm and height 2 cm. What is the total area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "66",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 10 × 6 = 60 cm². Triangle: ½ × 6 × 2 = 6 cm². Total: 60 + 6 = 66 cm². Forgetting the ½ is the most common error here.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8b2797765432d5afb7ae448464eb19eb26d7b4d692ef74d56573a367e82d38d3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-009",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A 11 cm by 5 cm rectangle has a 4 cm by 4 cm square cut out of it. What is the remaining area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "39",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Whole rectangle: 11 × 5 = 55 cm². Removed square: 4 × 4 = 16 cm². Remaining: 55 − 16 = 39 cm². Here you SUBTRACT rather than add, because the piece was taken away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f8d5aba02ec40cb22a938b2edc0ebee6f4bada2c734810dbfa45ae7cb0e8ce4f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-010",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A 8 cm by 5 cm rectangle has a 2 cm by 2 cm square cut out of it. What is the remaining area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Whole rectangle: 8 × 5 = 40 cm². Removed square: 2 × 2 = 4 cm². Remaining: 40 − 4 = 36 cm². Here you SUBTRACT rather than add, because the piece was taken away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b5ccd9528aea8eaad6a0139981b22732c3be0ff273d37ab88f23715d117ebcf3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-011",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A 7 cm by 9 cm rectangle has a 4 cm by 4 cm square cut out of it. What is the remaining area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "47",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Whole rectangle: 7 × 9 = 63 cm². Removed square: 4 × 4 = 16 cm². Remaining: 63 − 16 = 47 cm². Here you SUBTRACT rather than add, because the piece was taken away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a3464399865dabb11ae85061996c57d606b3291eef4737331926dd14e32f9d2b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-area-composite-figures-012",
+  "skillId": "g6-area-composite-figures",
+  "prompt": "A 9 cm by 9 cm rectangle has a 4 cm by 4 cm square cut out of it. What is the remaining area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Whole rectangle: 9 × 9 = 81 cm². Removed square: 4 × 4 = 16 cm². Remaining: 81 − 16 = 65 cm². Here you SUBTRACT rather than add, because the piece was taken away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-area-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ef2e460ce339657dcf363e462ed4d52b235da3d0763d6dc32b8163d89d5f5b42",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-001",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A pack of 2 notebooks costs $35. What is the cost per notebook, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "35/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Cost per item is total ÷ count: 35 ÷ 2 = 35/2. This is a unit rate — the cost for exactly one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f7970985e4abea26faa2585d5375adee98dbfe7775355e25c9ad4755c5a5d6ee",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-002",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A tank holds 52 litres and 30 litres are used. What percent of the tank remains? Round to the nearest whole percent.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "42",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Remaining: 52 − 30 = 22 litres. As a percent of the original: 22/52 = 42%.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "98a914341343a1cd28ddcbeb6397516edae89f0d091a671988c7f6ad3dae37fb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-003",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A pack of 6 notebooks costs $10. What is the cost per notebook, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Cost per item is total ÷ count: 10 ÷ 6 = 5/3. This is a unit rate — the cost for exactly one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "34faabfc0eac5f62ba391b5cd9df04b48675e6f2add7ff3dda0ab7101999e538",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-004",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A tank holds 28 litres and 30 litres are used. What percent of the tank remains? Round to the nearest whole percent.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Remaining: 28 − 30 = -2 litres. As a percent of the original: -2/28 = -7%.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1a4eb2b1c97f367f988f2d17be10608974c61459c7c69a4e5d3a09a8559fc859",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-005",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "Each of 6 friends pays $6, and one of them also pays a $21 fee. What is the total paid, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "57",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The shared part is 6 × 6 = 36. Add the single fee: 36 + 21 = 57 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5ab9aab85446937bdb3396f1be3e495564c40e1fd21229a297397cbb642e139f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-006",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A rectangular garden is 11 m long and 4 m wide. How much fencing is needed to go all the way around, in metres?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Fencing follows the PERIMETER: 2(11 + 4) = 2(15) = 30 m. Area (44 m²) would be the amount of ground covered, a different question.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "22dd43101bf399c6e4316a73c52774bd32c9168ae99fc88393347d16c2ad5714",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-007",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "Each of 4 friends pays $2, and one of them also pays a $15 fee. What is the total paid, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "23",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The shared part is 4 × 2 = 8. Add the single fee: 8 + 15 = 23 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e2a49a187a2814f4d2411bcd0b9edc6c3c41906a26b6411546b16b8f21108077",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-008",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A rectangular garden is 12 m long and 6 m wide. How much fencing is needed to go all the way around, in metres?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Fencing follows the PERIMETER: 2(12 + 6) = 2(18) = 36 m. Area (72 m²) would be the amount of ground covered, a different question.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "40242a45dadc98ab48144cbba9ac99a0030134f2f2503afa772af67b2f7ad151",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-009",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A $39 jacket is 20% off. What is the sale price, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "31.2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The discount is 20% of 39 = 7.8. The sale price is 39 − 7.8 = 31.2 dollars. Answering 7.8 gives the amount SAVED, not the price paid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9586d838a44f66e777d127c2bdd185478a7529737063cbb9f778bf153d46028a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-010",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A $38 jacket is 25% off. What is the sale price, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "28.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The discount is 25% of 38 = 9.5. The sale price is 38 − 9.5 = 28.5 dollars. Answering 9.5 gives the amount SAVED, not the price paid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0bbad3554d1b7cad37626f99252bc7fed2509cbfdf8537e64dd12923243696df",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-011",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A $56 jacket is 25% off. What is the sale price, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "42",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The discount is 25% of 56 = 14. The sale price is 56 − 14 = 42 dollars. Answering 14 gives the amount SAVED, not the price paid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bfab260672bee08a3aa55b4cfcb9fdbe786e09e352dade5ee69105ed22706418",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-mixed-problem-solving-012",
+  "skillId": "g6-mixed-problem-solving",
+  "prompt": "A $32 jacket is 25% off. What is the sale price, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The discount is 25% of 32 = 8. The sale price is 32 − 8 = 24 dollars. Answering 8 gives the amount SAVED, not the price paid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-mixed-problem-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4633ba9426255a8271b4ad170b8f095fbf5cd54bfc8e7dd48a2d0418657cfad4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-001",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "Maya has $75, spends $7, then earns $20. How much does she have now, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "88",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Work in order: 75 − 7 = 68, then 68 + 20 = 88 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9250a2d054a87dc1b8e6bf674eeb73100fdf0c158619da1dfa6e262e2dc00e58",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-002",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "There are 4 boxes with 4 pencils each. If 9 pencils are taken out, how many remain?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Total first: 4 × 4 = 16. Then subtract: 16 − 9 = 7. Multiplication comes before the subtraction because the boxes must be counted first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c3402640d46a1591cc617373d4a239962509a5ad8d8c807820bc3082cbea94bc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-003",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "Maya has $36, spends $14, then earns $22. How much does she have now, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "44",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Work in order: 36 − 14 = 22, then 22 + 22 = 44 dollars.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a2c299140cda9d15594303864818a6c5b48a8299fb402e1888cdb070d88d384e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-004",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "There are 4 boxes with 6 pencils each. If 10 pencils are taken out, how many remain?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Total first: 4 × 6 = 24. Then subtract: 24 − 10 = 14. Multiplication comes before the subtraction because the boxes must be counted first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "38070e329ee979360d94e739c7406b27428e57d0f1f0b92ab67379cf1febbfe4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-005",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "One-fifth of a 85-page book has been read. How many pages are LEFT?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "68",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Pages read: 85 ÷ 5 = 17. Pages left: 85 − 17 = 68. The question asks what REMAINS, not what was read.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "98dce14117dee2d3bcf5f2c1f417baca886cf46fd84f03082a8b3c3ffbf22daa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-006",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "A job pays $4 per hour plus a $20 bonus. How much is earned for 4 hours, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Hourly pay: 4 × 4 = 16. Add the one-off bonus: 16 + 20 = 36 dollars. The bonus is added once, not per hour.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0f5ebd68c574c49b158a4ca8d303c0b5de710d17666b5f0fe58c9cb5ac448042",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-007",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "One-fifth of a 80-page book has been read. How many pages are LEFT?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "64",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Pages read: 80 ÷ 5 = 16. Pages left: 80 − 16 = 64. The question asks what REMAINS, not what was read.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2e962b49f9752d8dd350019d60275483ceb1f7b4199207ab580e556924289ff3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g6-multi-step-reasoning-008",
+  "skillId": "g6-multi-step-reasoning",
+  "prompt": "A job pays $6 per hour plus a $11 bonus. How much is earned for 4 hours, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "35",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Hourly pay: 6 × 4 = 24. Add the one-off bonus: 24 + 11 = 35 dollars. The bonus is added once, not per hour.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g6-multi-step-reasoning"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d1f78c85fffc9bdb0712ada4b973ebbc442f76a83f3200fa54562c027b038c5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-001",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A recipe needs 3/4 cup of sugar per batch. How much sugar is needed for 4 batches? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Multiply the amount per batch by the number of batches: 3/4 × 4 = 12/4 = 3 cups.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4e77b2adec15f0a66bc97b860cad6745ec65e3c08fe1d8a40a7f4577b234ae36",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-002",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A recipe needs 1/2 cup of sugar per batch. How much sugar is needed for 4 batches? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Multiply the amount per batch by the number of batches: 1/2 × 4 = 4/2 = 2 cups.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "91b0e504e364ec8e316ba14295fa6d07635ea40946a7c0bd62f4d5e4c90d41a8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-003",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A recipe needs 3/4 cup of sugar per batch. How much sugar is needed for 7 batches? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "21/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Multiply the amount per batch by the number of batches: 3/4 × 7 = 21/4 = 21/4 cups.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b760c989af3854eb53875a3b5c082bdc37c4f32ceafd02992d082a1461a41e9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-004",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A recipe needs 2/5 cup of sugar per batch. How much sugar is needed for 2 batches? Give your answer in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Multiply the amount per batch by the number of batches: 2/5 × 2 = 4/5 = 4/5 cups.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "60a33588e59d3012b37b5d09b2301e7e7d24cb3430ba7c358741048477133fde",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-005",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "One notebook costs $4.50. What is the cost of 4 notebooks, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18.00",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply: 4.50 × 4 = 18.00 dollars. Line up the decimal point in the product — the answer has the same number of decimal places as the price.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "272fc8d6895f4239bb8fdd02b0d26add74caff9d407cac8d0bb15caf661f176a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-006",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "One notebook costs $2.50. What is the cost of 2 notebooks, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5.00",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply: 2.50 × 2 = 5.00 dollars. Line up the decimal point in the product — the answer has the same number of decimal places as the price.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "914b3d299a85dcd7b7ec191fa919a9cfa7aab5d8474bd6c1f018ce0525750abb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-007",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "One notebook costs $5.50. What is the cost of 4 notebooks, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "22.00",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply: 5.50 × 4 = 22.00 dollars. Line up the decimal point in the product — the answer has the same number of decimal places as the price.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fda18451f4e608c1dfc2006c387cbd5a71a2f1f7c266a1f7ed7e88d81c742d04",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-008",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "One notebook costs $8.50. What is the cost of 3 notebooks, in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25.50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Multiply: 8.50 × 3 = 25.50 dollars. Line up the decimal point in the product — the answer has the same number of decimal places as the price.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0423e77f4941decadebecf2d9c13b67d88d05aead1dfea68d55889bade4eac88",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-009",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "The temperature is 6°C and falls by 5°C. What is the new temperature, in °C?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Falling means subtract: 6 − 5 = 1°C. The result is still above zero — dropping past 0 keeps going into the negatives.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a31bab8c28f130f56f7d7fd8535ba37b2d9f308510a2206f3c9b8c3659f3bd61",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-010",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "The temperature is 8°C and falls by 20°C. What is the new temperature, in °C?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Falling means subtract: 8 − 20 = -12°C. The result is negative, which is below zero — dropping past 0 keeps going into the negatives.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "622c28b8f99efa6fee070f850fccaad431b44852de60dd5c5dd8f3030b00143b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-011",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "The temperature is 4°C and falls by 19°C. What is the new temperature, in °C?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Falling means subtract: 4 − 19 = -15°C. The result is negative, which is below zero — dropping past 0 keeps going into the negatives.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5fdec8ad90f0908234c89cfe90c5d7c6d86fb9fdbfcf8c7d4f1094dd04e76efd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-012",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "The temperature is 6°C and falls by 8°C. What is the new temperature, in °C?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Falling means subtract: 6 − 8 = -2°C. The result is negative, which is below zero — dropping past 0 keeps going into the negatives.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0f25ddc1ed06af1bc05eaf44fee9c5f45d43bf67f59331f8f941b109d79e2fe4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-013",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A 6-metre ribbon is cut into pieces 3/4 of a metre long. How many pieces are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: 6 ÷ 3/4 = 6 × 4/3 = 8 pieces. Dividing by a number smaller than 1 gives MORE pieces, not fewer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "317fed4bd8bce07b06ab76831c52454027a2db354a2617d66f6d5930cb5c7242",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-014",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A 5-metre ribbon is cut into pieces 1/3 of a metre long. How many pieces are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: 5 ÷ 1/3 = 5 × 3/1 = 15 pieces. Dividing by a number smaller than 1 gives MORE pieces, not fewer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dfcfab21ae2d3375f5248ec539d02ffc027489d7f15338600d8581491ecb1fa3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-015",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A 5-metre ribbon is cut into pieces 1/4 of a metre long. How many pieces are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: 5 ÷ 1/4 = 5 × 4/1 = 20 pieces. Dividing by a number smaller than 1 gives MORE pieces, not fewer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4cb7907e1810b94e8643f86bde28fae03da15177c516e4350b4213e8a346c4d4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-rational-word-problems-016",
+  "skillId": "g7-rational-word-problems",
+  "prompt": "A 2-metre ribbon is cut into pieces 1/4 of a metre long. How many pieces are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Dividing by a fraction means multiplying by its reciprocal: 2 ÷ 1/4 = 2 × 4/1 = 8 pieces. Dividing by a number smaller than 1 gives MORE pieces, not fewer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-rational-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b1cc99ba2c0af0ac422c3abc9046afb5cbfb2cf1ea507c21371e598d0bf4b3d9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-001",
+  "skillId": "g7-composite-figures",
+  "prompt": "A figure is a 8 m by 5 m rectangle with a triangle of base 9 m and height 5 m attached. What is the total area, in m²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "62.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 8 × 5 = 40 m². Triangle: ½ × 9 × 5 = 22.5 m². Total: 62.5 m².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7762f92b82ad224e4df1bf3a56fa8a842a69d54ac920d80b98d990a35f21ea8c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-002",
+  "skillId": "g7-composite-figures",
+  "prompt": "A figure is a 5 m by 7 m rectangle with a triangle of base 3 m and height 3 m attached. What is the total area, in m²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "39.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 5 × 7 = 35 m². Triangle: ½ × 3 × 3 = 4.5 m². Total: 39.5 m².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0cb339e73fce86585849a90697d53821f404dd3913f631abc79591835c71bdbf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-003",
+  "skillId": "g7-composite-figures",
+  "prompt": "A figure is a 12 m by 7 m rectangle with a triangle of base 9 m and height 3 m attached. What is the total area, in m²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "97.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 12 × 7 = 84 m². Triangle: ½ × 9 × 3 = 13.5 m². Total: 97.5 m².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2eb9d5be04da2c1007b0b10359d83d7106c9bce844d065d235f48aa4ce00691b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-004",
+  "skillId": "g7-composite-figures",
+  "prompt": "A figure is a 10 m by 6 m rectangle with a triangle of base 5 m and height 2 m attached. What is the total area, in m²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Rectangle: 10 × 6 = 60 m². Triangle: ½ × 5 × 2 = 5 m². Total: 65 m².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d28b01134f1defaddacfcbaf088db1350d70d2456c9301d2276a3b230143879d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-005",
+  "skillId": "g7-composite-figures",
+  "prompt": "An L-shaped room is a 11 ft by 8 ft rectangle with a 3 ft by 2 ft corner removed. What is the floor area, in ft²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "82",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Start with the full rectangle: 11 × 8 = 88 ft². Remove the corner: 3 × 2 = 6 ft². Floor area: 88 − 6 = 82 ft².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0a7aa5cb4d5ddb0c161e42fd0c02ec6dbb9df590a739595dc174d6381260ea8e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-006",
+  "skillId": "g7-composite-figures",
+  "prompt": "An L-shaped room is a 8 ft by 6 ft rectangle with a 3 ft by 3 ft corner removed. What is the floor area, in ft²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "39",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Start with the full rectangle: 8 × 6 = 48 ft². Remove the corner: 3 × 3 = 9 ft². Floor area: 48 − 9 = 39 ft².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "26955fa3671d72db0a8509ea51c8d341cb922d8ab7f19d369688253ba42fe37f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-007",
+  "skillId": "g7-composite-figures",
+  "prompt": "An L-shaped room is a 14 ft by 8 ft rectangle with a 2 ft by 2 ft corner removed. What is the floor area, in ft²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "108",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Start with the full rectangle: 14 × 8 = 112 ft². Remove the corner: 2 × 2 = 4 ft². Floor area: 112 − 4 = 108 ft².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "46751306fdd163673bc5c5e766ae2e2cc96c2b5d0daa0daf387a31e366ae3a4c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-008",
+  "skillId": "g7-composite-figures",
+  "prompt": "An L-shaped room is a 11 ft by 6 ft rectangle with a 2 ft by 3 ft corner removed. What is the floor area, in ft²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "60",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Start with the full rectangle: 11 × 6 = 66 ft². Remove the corner: 2 × 3 = 6 ft². Floor area: 66 − 6 = 60 ft².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "db46405a573e62099dbc1ae40cbca6e4f9c53b4e6b0cc7115482ec3158ac243b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-009",
+  "skillId": "g7-composite-figures",
+  "prompt": "A square of side 6 cm sits beside a 4 cm by 3 cm rectangle. What is their combined area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "48",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Square: 6² = 36 cm². Rectangle: 4 × 3 = 12 cm². Combined: 36 + 12 = 48 cm².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "be475b9c9422894b14f3da20ddd89fb4c0a22ab5e54794281067e2c23f17c797",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-010",
+  "skillId": "g7-composite-figures",
+  "prompt": "A square of side 4 cm sits beside a 2 cm by 2 cm rectangle. What is their combined area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Square: 4² = 16 cm². Rectangle: 2 × 2 = 4 cm². Combined: 16 + 4 = 20 cm².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3f9f8707d851f40ba2dea27ef2850a150e010d35440717b955470b07db49761b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-011",
+  "skillId": "g7-composite-figures",
+  "prompt": "A square of side 5 cm sits beside a 3 cm by 6 cm rectangle. What is their combined area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "43",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Square: 5² = 25 cm². Rectangle: 3 × 6 = 18 cm². Combined: 25 + 18 = 43 cm².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f7ce53b1c169ce7d4b019bf8e7e07a26c860b0050ef19b958848980de4c04709",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-composite-figures-012",
+  "skillId": "g7-composite-figures",
+  "prompt": "A square of side 5 cm sits beside a 3 cm by 2 cm rectangle. What is their combined area, in cm²?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "31",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Square: 5² = 25 cm². Rectangle: 3 × 2 = 6 cm². Combined: 25 + 6 = 31 cm².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-composite-figures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "33346ece6065ca37e19432daebae62684d6e3cb466b6d153e4cde2753bb06a99",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-001",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a cylinder is sliced parallel to its base?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Circle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Slicing straight across a cylinder gives the same shape as its base — a circle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a64526719f1c9ce1d0238596e6c64bb1fa05e8d9d70ecda8696aaab1beeea397",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-002",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a cube is sliced parallel to one face?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Square",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "A cut parallel to a face of a cube matches that face exactly — a square.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c0b8cf3264917888c4ef269ce192e0c9a56010e34345ca6a6dfcf8f83b621121",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-003",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a square pyramid is sliced perpendicular to its base, through the apex?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Triangle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "A vertical cut through the apex of a pyramid exposes a triangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d8f66680d99b57d71237b09ad7b008475934ef9e93e9547a38a61f0beea61bd8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-004",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a rectangular prism is sliced parallel to its base?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Rectangle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "A cut parallel to the base of a rectangular prism matches the base — a rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5f4ec872b0835d1feb4f88ada49c39bb627048131c00059ae809b155659ea5f6",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-005",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a cylinder is sliced perpendicular to its base, through the centre?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Rectangle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A vertical cut through a cylinder exposes a face as tall as the cylinder and as wide as its diameter — a rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4d201afc818eb3500dccd990055d9ab84f6ab00613ae48fac880b406205fef82",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-006",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a sphere is sliced through its centre?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Circle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Every flat slice of a sphere is a circle; through the centre it is the largest one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ad8abf32df44ac2643c81815362430a5fa82b6bd163610fd30acbd8709d0fcc8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-007",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a square pyramid is sliced parallel to its base?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Square",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Slicing a square pyramid parallel to the base gives a smaller square — the same shape as the base.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "df7f9bb14deaf9c548e01eb799a1d49e6e915066295869daa1424cb16200646c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-008",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a triangular prism is sliced parallel to its triangular base?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Triangle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A cut parallel to the base of a triangular prism matches that base — a triangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3861c564a7415b7356c3694d277bf6ae8b373a5ff35c5764982af073bf81da6d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-009",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a cone is sliced parallel to its base?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Circle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A cut parallel to the base of a cone gives a smaller circle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8e3e9f0f097de94593ca4ee666a0524d07638f9bb77f1c8bb68f9c8507afe4f9",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-010",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a cone is sliced perpendicular to its base, through the apex?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Triangle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Cutting straight down through the tip of a cone exposes a triangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "56c1333798dcd479b5c7756ed3b072208c129af9e7fb122e7a50a11c53af97d9",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-011",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a cube is sliced perpendicular to one face, straight down?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Square",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A straight vertical cut through a cube gives another square face.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "14e4126906aaefe7c83a5ba592a6a477707a4a5da02ead36fe7743068328bde3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-cross-sections-012",
+  "skillId": "g7-cross-sections",
+  "prompt": "What shape is the cross-section when a rectangular prism is sliced perpendicular to its base, straight down the length?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Rectangle",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A vertical cut along a rectangular prism exposes a rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-cross-sections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d76a41d9e93a0a26f9f029d6122ca75502165e56b942b7c80e98fb9fcae74d50",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Circle"
+   },
+   {
+    "label": "B",
+    "text": "Square"
+   },
+   {
+    "label": "C",
+    "text": "Rectangle"
+   },
+   {
+    "label": "D",
+    "text": "Triangle"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-001",
+  "skillId": "g7-populations-samples",
+  "prompt": "A school has 519 students. 23 of them are surveyed about lunch. What is the POPULATION?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "All 519 students in the school",
+   "equivalents": [
+    "All519studentsintheschool"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The population is the ENTIRE group you want to know about — all 519 students. The 23 surveyed are the sample drawn from it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2c7bf43ce008f098055f692e25a964202c09d1628da7b20eb9e0e7d7039f3046",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "All 519 students in the school"
+   },
+   {
+    "label": "B",
+    "text": "The 23 students surveyed"
+   },
+   {
+    "label": "C",
+    "text": "The school principal"
+   },
+   {
+    "label": "D",
+    "text": "The survey questions"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-002",
+  "skillId": "g7-populations-samples",
+  "prompt": "A school has 785 students. 54 of them are surveyed about lunch. What is the SAMPLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "The 54 students surveyed",
+   "equivalents": [
+    "The54studentssurveyed"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The sample is the part actually surveyed — those 54 students. All 785 students form the population.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bf8e7f55b675ed0af2612428a9a781466598813a8c95f488a7b8bba51584ad50",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "All 785 students in the school"
+   },
+   {
+    "label": "B",
+    "text": "The 54 students surveyed"
+   },
+   {
+    "label": "C",
+    "text": "The school principal"
+   },
+   {
+    "label": "D",
+    "text": "The survey questions"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-003",
+  "skillId": "g7-populations-samples",
+  "prompt": "A school has 536 students. 48 of them are surveyed about lunch. What is the POPULATION?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "All 536 students in the school",
+   "equivalents": [
+    "All536studentsintheschool"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The population is the ENTIRE group you want to know about — all 536 students. The 48 surveyed are the sample drawn from it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "21e32d262301971b6e55c29e6f882343eb044b4e5595c9372b07c00cf2b3b297",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "All 536 students in the school"
+   },
+   {
+    "label": "B",
+    "text": "The 48 students surveyed"
+   },
+   {
+    "label": "C",
+    "text": "The school principal"
+   },
+   {
+    "label": "D",
+    "text": "The survey questions"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-004",
+  "skillId": "g7-populations-samples",
+  "prompt": "A school has 498 students. 55 of them are surveyed about lunch. What is the SAMPLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "The 55 students surveyed",
+   "equivalents": [
+    "The55studentssurveyed"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "The sample is the part actually surveyed — those 55 students. All 498 students form the population.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a6ec5b250441f1bc13bfce96171480fd333e374c0b2e20b6aa2e824b12175ae2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "All 498 students in the school"
+   },
+   {
+    "label": "B",
+    "text": "The 55 students surveyed"
+   },
+   {
+    "label": "C",
+    "text": "The school principal"
+   },
+   {
+    "label": "D",
+    "text": "The survey questions"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-005",
+  "skillId": "g7-populations-samples",
+  "prompt": "Of 597 club members, 25 are asked their favourite sport. How many members are in the SAMPLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The sample is the group actually asked: 25 members. 597 is the population — everyone the conclusion is meant to describe.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "40f4c0b0524cf500891bb2b67f9153ed16d666c8c6c558d16048b485a60eccec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-006",
+  "skillId": "g7-populations-samples",
+  "prompt": "Of 590 club members, 44 are asked their favourite sport. How many members are in the SAMPLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "44",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The sample is the group actually asked: 44 members. 590 is the population — everyone the conclusion is meant to describe.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "293d1bc7a0d51851398758339e59e9cb941712ca48b154f34a31c4afbc51e6af",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-007",
+  "skillId": "g7-populations-samples",
+  "prompt": "Of 391 club members, 37 are asked their favourite sport. How many members are in the SAMPLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "37",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The sample is the group actually asked: 37 members. 391 is the population — everyone the conclusion is meant to describe.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3795f19f993cd85b0da1f24c2cb4cb4e88181d0e46d2abee941ecdae598f9a51",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-008",
+  "skillId": "g7-populations-samples",
+  "prompt": "Of 416 club members, 24 are asked their favourite sport. How many members are in the SAMPLE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "The sample is the group actually asked: 24 members. 416 is the population — everyone the conclusion is meant to describe.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "47784e226732aa284435857e345abe7d04659f39a64d5183b6b1517eac91a99d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-009",
+  "skillId": "g7-populations-samples",
+  "prompt": "In a sample of 73 students, 22 said they walk to school. Estimate how many of the 697 students in the school walk.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "210",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The sample proportion is 22/73. Apply it to the whole population: 22/73 × 697 ≈ 210 students. This is the point of sampling — measure a part, estimate the whole.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "758681238a91678f245e0342064b1eb67f170eff9f0622a5c2a57dcdd4e69614",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-010",
+  "skillId": "g7-populations-samples",
+  "prompt": "In a sample of 67 students, 25 said they walk to school. Estimate how many of the 808 students in the school walk.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "301",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The sample proportion is 25/67. Apply it to the whole population: 25/67 × 808 ≈ 301 students. This is the point of sampling — measure a part, estimate the whole.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fb5e4c3c37541098c7522e3db5a80466078684c07916400f47a12c2ea93733d2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-011",
+  "skillId": "g7-populations-samples",
+  "prompt": "In a sample of 55 students, 24 said they walk to school. Estimate how many of the 635 students in the school walk.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "277",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The sample proportion is 24/55. Apply it to the whole population: 24/55 × 635 ≈ 277 students. This is the point of sampling — measure a part, estimate the whole.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a568e671bbd1b5bc1893b372a60cadbd22c394767968598c187cbd96821e08af",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-populations-samples-012",
+  "skillId": "g7-populations-samples",
+  "prompt": "In a sample of 74 students, 23 said they walk to school. Estimate how many of the 648 students in the school walk.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "201",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "The sample proportion is 23/74. Apply it to the whole population: 23/74 × 648 ≈ 201 students. This is the point of sampling — measure a part, estimate the whole.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-populations-samples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9dea56141aad711e3067088abe6639abc04c2c2cfeaa51941183408c085b37b4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-001",
+  "skillId": "g7-random-sampling",
+  "prompt": "A school wants to know how much students like sport. Which sampling method is most REPRESENTATIVE?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Randomly selecting students from the full school roster",
+   "equivalents": [
+    "Randomlyselectingstudentsfromthefullschoolroster"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "A random draw from the full roster gives every student an equal chance, so the sample is not tilted. Surveying the basketball team over-represents students who already like sport — that is a biased sample.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5f1a52b3c539058aaf9c5d5f5f1f4cba668e2d442954a84191f9a8df8a670fb5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Randomly selecting students from the full school roster"
+   },
+   {
+    "label": "B",
+    "text": "Surveying only students on the basketball team"
+   },
+   {
+    "label": "C",
+    "text": "Surveying only students in the library after school"
+   },
+   {
+    "label": "D",
+    "text": "Surveying only the survey-writer's friends"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-002",
+  "skillId": "g7-random-sampling",
+  "prompt": "A survey is run this way: shoppers outside a sports shop are surveyed about exercise habits. Is the sample representative or biased?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Biased — one group is over-represented",
+   "equivalents": [
+    "Biased—onegroupisover-represented"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "People at a sports shop already exercise more than average, so the sample leans active.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9fafd4efe47b56c4d82f576cd811f7b7e4402f42893f93e17e2dfae9e8ecce2c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Representative — the sample is fair"
+   },
+   {
+    "label": "B",
+    "text": "Biased — one group is over-represented"
+   },
+   {
+    "label": "C",
+    "text": "Biased — the sample is too small"
+   },
+   {
+    "label": "D",
+    "text": "Representative — because everyone volunteered"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-003",
+  "skillId": "g7-random-sampling",
+  "prompt": "A survey is run this way: names are drawn at random from the full school roster to survey about lunch. Is the sample representative or biased?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Representative — the sample is fair",
+   "equivalents": [
+    "Representative—thesampleisfair"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Every student has an equal chance of selection, so nothing tilts the sample.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "63d2b6cbfa054e7a7bca302e4edb788ff03b8651b7bee0187adeb2f779da4541",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Representative — the sample is fair"
+   },
+   {
+    "label": "B",
+    "text": "Biased — one group is over-represented"
+   },
+   {
+    "label": "C",
+    "text": "Biased — the sample is too small"
+   },
+   {
+    "label": "D",
+    "text": "Representative — because everyone volunteered"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-004",
+  "skillId": "g7-random-sampling",
+  "prompt": "A survey is run this way: only students who arrive early are asked about school start times. Is the sample representative or biased?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Biased — one group is over-represented",
+   "equivalents": [
+    "Biased—onegroupisover-represented"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Early arrivers are precisely the people least bothered by an early start.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bf91f32f8fe5ff08742b1d8285c2577371ec1e051d239c1978c769297658645d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Representative — the sample is fair"
+   },
+   {
+    "label": "B",
+    "text": "Biased — one group is over-represented"
+   },
+   {
+    "label": "C",
+    "text": "Biased — the sample is too small"
+   },
+   {
+    "label": "D",
+    "text": "Representative — because everyone volunteered"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-005",
+  "skillId": "g7-random-sampling",
+  "prompt": "A survey is run this way: every 10th person on an alphabetical list of all members is surveyed. Is the sample representative or biased?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Representative — the sample is fair",
+   "equivalents": [
+    "Representative—thesampleisfair"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A fixed interval through a complete list gives a spread across the whole population, with no group favoured.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aa03263a20d036d9762e8368a52b3af249a341169649c677d45ed5751eb2d93c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Representative — the sample is fair"
+   },
+   {
+    "label": "B",
+    "text": "Biased — one group is over-represented"
+   },
+   {
+    "label": "C",
+    "text": "Biased — the sample is too small"
+   },
+   {
+    "label": "D",
+    "text": "Representative — because everyone volunteered"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-006",
+  "skillId": "g7-random-sampling",
+  "prompt": "What makes a sample of 70 people RANDOM?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Every member of the population has an equal chance of being chosen",
+   "equivalents": [
+    "Everymemberofthepopulationhasanequalchanceofbeingchosen"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Randomness is about equal chance of selection, not size. Volunteers self-select, so option B stays biased no matter how large 70 gets.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10f18513e86c2b14179d82284a1114eb929918131f41aa515e9f35be7178f2ef",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Every member of the population has an equal chance of being chosen"
+   },
+   {
+    "label": "B",
+    "text": "The first 70 people to volunteer are used"
+   },
+   {
+    "label": "C",
+    "text": "Only people the researcher knows are used"
+   },
+   {
+    "label": "D",
+    "text": "The largest group is always chosen"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-007",
+  "skillId": "g7-random-sampling",
+  "prompt": "A random sample of 50 gave a rough estimate. What is the best way to improve its RELIABILITY?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Increase the sample size and keep selecting at random",
+   "equivalents": [
+    "Increasethesamplesizeandkeepselectingatrandom"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A larger random sample narrows the variation around the true value. Re-asking the same people adds no new information, and the other options introduce bias.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8cc532928340dce5ec2a2aa4d53fffc30610c0b49a4952883322d3dd0fe4cff4",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Increase the sample size and keep selecting at random"
+   },
+   {
+    "label": "B",
+    "text": "Survey the same 50 people again"
+   },
+   {
+    "label": "C",
+    "text": "Drop the results you disagree with"
+   },
+   {
+    "label": "D",
+    "text": "Ask only people who feel strongly"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-008",
+  "skillId": "g7-random-sampling",
+  "prompt": "What makes a sample of 60 people RANDOM?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Every member of the population has an equal chance of being chosen",
+   "equivalents": [
+    "Everymemberofthepopulationhasanequalchanceofbeingchosen"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Randomness is about equal chance of selection, not size. Volunteers self-select, so option B stays biased no matter how large 60 gets.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "82d8ade4e6aa6967a65245f388f92d695844340b9007cf808215494d4587aac2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Every member of the population has an equal chance of being chosen"
+   },
+   {
+    "label": "B",
+    "text": "The first 60 people to volunteer are used"
+   },
+   {
+    "label": "C",
+    "text": "Only people the researcher knows are used"
+   },
+   {
+    "label": "D",
+    "text": "The largest group is always chosen"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-random-sampling-009",
+  "skillId": "g7-random-sampling",
+  "prompt": "A random sample of 60 gave a rough estimate. What is the best way to improve its RELIABILITY?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Increase the sample size and keep selecting at random",
+   "equivalents": [
+    "Increasethesamplesizeandkeepselectingatrandom"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A larger random sample narrows the variation around the true value. Re-asking the same people adds no new information, and the other options introduce bias.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-random-sampling"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "41f6d9a5d39f0f94d532d477fdd90d8339ae62986a9d417ca37864d15d03954e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Increase the sample size and keep selecting at random"
+   },
+   {
+    "label": "B",
+    "text": "Survey the same 60 people again"
+   },
+   {
+    "label": "C",
+    "text": "Drop the results you disagree with"
+   },
+   {
+    "label": "D",
+    "text": "Ask only people who feel strongly"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-001",
+  "skillId": "g7-informal-inferences",
+  "prompt": "In a random sample of 85 people, 28 preferred option A. Estimate how many of 356 people prefer option A.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "117",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Scale the sample proportion up: 28/85 × 356 ≈ 117. An inference from a random sample is an ESTIMATE — a different sample would give a slightly different number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f237ca72003074e46ffb9a1cdbb9ff234f8516e84cbebba0541466380de29c1e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-002",
+  "skillId": "g7-informal-inferences",
+  "prompt": "In a random sample of 89 people, 30 preferred option A. Estimate how many of 611 people prefer option A.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "206",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Scale the sample proportion up: 30/89 × 611 ≈ 206. An inference from a random sample is an ESTIMATE — a different sample would give a slightly different number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "78e6606ffb66f764fe91c475c2c339ea39293c7574c7bf1681107ddb061f1d49",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-003",
+  "skillId": "g7-informal-inferences",
+  "prompt": "In a random sample of 52 people, 20 preferred option A. Estimate how many of 452 people prefer option A.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "174",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Scale the sample proportion up: 20/52 × 452 ≈ 174. An inference from a random sample is an ESTIMATE — a different sample would give a slightly different number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7721d461385e4e86a92e2c3f830b6c40df9045cc9f15a7c1894cee3a7d4c6d54",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-004",
+  "skillId": "g7-informal-inferences",
+  "prompt": "In a random sample of 48 people, 25 preferred option A. Estimate how many of 844 people prefer option A.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "440",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Scale the sample proportion up: 25/48 × 844 ≈ 440. An inference from a random sample is an ESTIMATE — a different sample would give a slightly different number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "68291c8416991f3a57ec7c2f742c5618f860f13165d1508602f965f2a834b299",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-005",
+  "skillId": "g7-informal-inferences",
+  "prompt": "In a random sample, 74% chose A and 20% chose B. What is a reasonable inference?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Option A is likely more popular in the whole population",
+   "equivalents": [
+    "OptionAislikelymorepopularinthewholepopulation"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A gap of 54 percentage points in a RANDOM sample is large enough to suggest A really is more popular overall. It suggests, it does not prove — samples vary.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "962cf762a5c515a9923752013f9b8f5d88e03555c0c593461a0b41b17432f01f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Option A is likely more popular in the whole population"
+   },
+   {
+    "label": "B",
+    "text": "Option B is more popular"
+   },
+   {
+    "label": "C",
+    "text": "The two options are equally popular"
+   },
+   {
+    "label": "D",
+    "text": "No inference is possible from a sample"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-006",
+  "skillId": "g7-informal-inferences",
+  "prompt": "A random sample estimates 56% support. Does that mean exactly 56% of the population supports it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No — a sample gives an estimate, not certainty",
+   "equivalents": [
+    "No—asamplegivesanestimate,notcertainty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A sample estimates the population value with some uncertainty. A different random sample would likely give a slightly different percentage — which is why we say \"about 56%\".",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "76b85f3488a2258c2f9e9f499458e940a6ef6e24c42946453c2635db1164da23",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "No — a sample gives an estimate, not certainty"
+   },
+   {
+    "label": "B",
+    "text": "Yes — the sample is always exact"
+   },
+   {
+    "label": "C",
+    "text": "Yes — if the sample is over 30 people"
+   },
+   {
+    "label": "D",
+    "text": "No — samples tell you nothing"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-007",
+  "skillId": "g7-informal-inferences",
+  "prompt": "In a random sample, 65% chose A and 29% chose B. What is a reasonable inference?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Option A is likely more popular in the whole population",
+   "equivalents": [
+    "OptionAislikelymorepopularinthewholepopulation"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A gap of 36 percentage points in a RANDOM sample is large enough to suggest A really is more popular overall. It suggests, it does not prove — samples vary.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6ad485a19ff24419adc753a6b241119cbfe50bfac6719e1c8362bb68d7071098",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Option A is likely more popular in the whole population"
+   },
+   {
+    "label": "B",
+    "text": "Option B is more popular"
+   },
+   {
+    "label": "C",
+    "text": "The two options are equally popular"
+   },
+   {
+    "label": "D",
+    "text": "No inference is possible from a sample"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-informal-inferences-008",
+  "skillId": "g7-informal-inferences",
+  "prompt": "A random sample estimates 63% support. Does that mean exactly 63% of the population supports it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No — a sample gives an estimate, not certainty",
+   "equivalents": [
+    "No—asamplegivesanestimate,notcertainty"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "A sample estimates the population value with some uncertainty. A different random sample would likely give a slightly different percentage — which is why we say \"about 63%\".",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-informal-inferences"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6e6cf57fcc47e1811a3348b4a2fb8df3609657459980316ae7ccfe319a7bd8ac",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "No — a sample gives an estimate, not certainty"
+   },
+   {
+    "label": "B",
+    "text": "Yes — the sample is always exact"
+   },
+   {
+    "label": "C",
+    "text": "Yes — if the sample is over 30 people"
+   },
+   {
+    "label": "D",
+    "text": "No — samples tell you nothing"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-001",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "A fair six-sided die is rolled. What is the THEORETICAL probability of rolling a 5? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Exactly one face shows 5, out of 6 equally likely faces: 1/6 = 1/6. Theoretical probability comes from the design of the experiment, never from trials.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "063b3ba10cf8fdb9a8df3400e1bf008f285e54359c2fab3fe674088d7815965b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-002",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "A fair six-sided die is rolled. What is the THEORETICAL probability of rolling an even number? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Three faces are even (2, 4, 6), out of 6 equally likely faces: 3/6 = 1/2. Theoretical probability comes from the design of the experiment, never from trials.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f3036398095a583b5198583d5f7781e983332123213a427b1482322b99290afa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-003",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "A fair six-sided die is rolled. What is the THEORETICAL probability of rolling a number greater than 4? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Two faces beat 4 (5 and 6), out of 6 equally likely faces: 2/6 = 1/3. Theoretical probability comes from the design of the experiment, never from trials.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9beb2f0383e7d42c98586e01672be01ce189e8679183e572796d9e655489ea65",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-004",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "A fair six-sided die is rolled. What is the THEORETICAL probability of rolling a number less than 6? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "6-8",
+  "explanation": "Five faces are below 6 (1–5), out of 6 equally likely faces: 5/6 = 5/6. Theoretical probability comes from the design of the experiment, never from trials.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "28bd405b8d865ee67b64f822a2ec7e503de1baf0e48642d550b488bffff5ff6b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-005",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "In 40 coin flips, heads came up 12 times. What is the EXPERIMENTAL probability of heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Experimental probability is what actually happened: 12 successes out of 40 trials = 3/10. The theoretical value is 1/2; results drift from it in small samples.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0b167120c4cc01000119dfe38cdae37fbd6b387bedb047623370c5a1bdb842e0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-006",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "In 40 coin flips, heads came up 14 times. What is the EXPERIMENTAL probability of heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7/20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Experimental probability is what actually happened: 14 successes out of 40 trials = 7/20. The theoretical value is 1/2; results drift from it in small samples.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3e5f833cd9b52ac104f7009bbc0e34a34fb356a56d65103ab3b956de61799a8d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-007",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "In 25 coin flips, heads came up 15 times. What is the EXPERIMENTAL probability of heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Experimental probability is what actually happened: 15 successes out of 25 trials = 3/5. The theoretical value is 1/2; results drift from it in small samples.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c56125df5dc7316d0883fb89585fb3a53a041f9377b3ff84355339e67d65bde6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-008",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "In 50 coin flips, heads came up 9 times. What is the EXPERIMENTAL probability of heads? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9/50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Experimental probability is what actually happened: 9 successes out of 50 trials = 9/50. The theoretical value is 1/2; results drift from it in small samples.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b96988c6ab67941e3f73ea3501a67d79748cd9cb25731da852cf05a89af6e64c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-009",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "As the number of trials increases past 50, what usually happens to the experimental and theoretical probabilities?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "They get closer to each other",
+   "equivalents": [
+    "Theygetclosertoeachother"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "More trials smooth out short-run luck, so the experimental probability tends toward the theoretical one. This is the law of large numbers.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "05e40bf31ede78bdb193d9121b68c7348c3b812804058c918c86a101b53e9eeb",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "They get closer to each other"
+   },
+   {
+    "label": "B",
+    "text": "They grow further apart"
+   },
+   {
+    "label": "C",
+    "text": "They stay exactly the same"
+   },
+   {
+    "label": "D",
+    "text": "They become unrelated"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-010",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "A coin flipped 100 times landed heads 55 times. Is the experimental probability HIGHER or LOWER than the theoretical 1/2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Higher",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Experimental: 55/100. Theoretical: 1/2 = 50/100. Since 55 is more than 50, the experimental probability is higher.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3487dda9e614b0171b0ead2b67878e58375c2b642e561e9476bc291749f48bf1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Higher"
+   },
+   {
+    "label": "B",
+    "text": "Lower"
+   },
+   {
+    "label": "C",
+    "text": "Exactly equal"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be compared"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-011",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "As the number of trials increases past 100, what usually happens to the experimental and theoretical probabilities?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "They get closer to each other",
+   "equivalents": [
+    "Theygetclosertoeachother"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "More trials smooth out short-run luck, so the experimental probability tends toward the theoretical one. This is the law of large numbers.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "41cdd008730262f7cead16ad146b31f20e3ada8b9db6a5622a30530316dc2592",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "They get closer to each other"
+   },
+   {
+    "label": "B",
+    "text": "They grow further apart"
+   },
+   {
+    "label": "C",
+    "text": "They stay exactly the same"
+   },
+   {
+    "label": "D",
+    "text": "They become unrelated"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-experimental-theoretical-012",
+  "skillId": "g7-experimental-theoretical",
+  "prompt": "A coin flipped 50 times landed heads 28 times. Is the experimental probability HIGHER or LOWER than the theoretical 1/2?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Higher",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Experimental: 28/50. Theoretical: 1/2 = 25/50. Since 28 is more than 25, the experimental probability is higher.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-experimental-theoretical"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "37d77dcb223d45a8efc884b3afa97cf7bd33b9c6b563931dc90144f6ef257088",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Higher"
+   },
+   {
+    "label": "B",
+    "text": "Lower"
+   },
+   {
+    "label": "C",
+    "text": "Exactly equal"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be compared"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-001",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation of 50 trials produced 25 successes. Based on the simulation, what is the estimated probability of success? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A simulation estimates probability the same way an experiment does: successes ÷ trials = 25/50 = 1/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6aad42be1da94995b1e9a5d38b13f5dcad7426ad8f212a033ea3d4a6874a8310",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-002",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation of 50 trials produced 19 successes. Based on the simulation, what is the estimated probability of success? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "19/50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A simulation estimates probability the same way an experiment does: successes ÷ trials = 19/50 = 19/50.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "618c16db5742a63b8e7dc04bb162494a4a82e1055da5b2c7d1b9cf3fd8d28375",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-003",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation of 200 trials produced 24 successes. Based on the simulation, what is the estimated probability of success? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A simulation estimates probability the same way an experiment does: successes ÷ trials = 24/200 = 3/25.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0224e66f28376beb7b275be8a3443d886f224b635608b718b8c02474a978f2bf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-004",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation of 100 trials produced 39 successes. Based on the simulation, what is the estimated probability of success? Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "39/100",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "A simulation estimates probability the same way an experiment does: successes ÷ trials = 39/100 = 39/100.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "015378f5ec6d98670c5cf8f42dbcf5dac7814facf46b8aa35113aee76f08edd0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-005",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation is run 100 times to model an event with probability 20%. About how many successes are expected?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Expected successes = probability × trials = 20% × 100 = 20. The actual count will vary around this — that variation is what a simulation is designed to show.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a1c81a385bac803dd87fea42617c7a1b1ac78f5aa718798f6b722726a20af7ce",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-006",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation is run 200 times to model an event with probability 20%. About how many successes are expected?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Expected successes = probability × trials = 20% × 200 = 40. The actual count will vary around this — that variation is what a simulation is designed to show.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8e545d912ef4cfc4ea283d8a8cfca9f3c0d9f081c3cdcd74c4a9367b1b1fffa7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-007",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation is run 100 times to model an event with probability 50%. About how many successes are expected?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Expected successes = probability × trials = 50% × 100 = 50. The actual count will vary around this — that variation is what a simulation is designed to show.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "29dd7daf2292c90221d45704f36b1565e632b24043c5b09e92a501da960eeacd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-008",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation is run 200 times to model an event with probability 50%. About how many successes are expected?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "100",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "6-8",
+  "explanation": "Expected successes = probability × trials = 50% × 200 = 100. The actual count will vary around this — that variation is what a simulation is designed to show.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1b0a278b46ad78ed7af7c9880663cbbddaf063b4e02174a454659e863a1a8d89",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-009",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation of only 20 trials gave a surprising result. What is the best way to get a more reliable estimate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Run many more trials",
+   "equivalents": [
+    "Runmanymoretrials"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Small simulations swing widely by chance. Running many more trials narrows the variation and gives an estimate closer to the true probability.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a04a8c3ddf5bacc82c8badb2c714c34c4de68c5b7960c443774a8f5f6fb27009",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Run many more trials"
+   },
+   {
+    "label": "B",
+    "text": "Run fewer trials"
+   },
+   {
+    "label": "C",
+    "text": "Change the rules mid-simulation"
+   },
+   {
+    "label": "D",
+    "text": "Only count the successes"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-010",
+  "skillId": "g7-probability-simulations",
+  "prompt": "You want to simulate a 50% chance of rain using random digits 0–9. Which assignment models this correctly?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Assign digits 0–4 to rain and 5–9 to no rain",
+   "equivalents": [
+    "Assign digits 0-4 to rain and 5-9 to no rain",
+    "Assigndigits0–4torainand5–9tonorain",
+    "Assigndigits0-4torainand5-9tonorain"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Five of the ten digits (0–4) represent rain, which is exactly 50%. A correct simulation matches the probabilities of the real situation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b14549c4584fc71cbf053b01394b11ce5b15684a284306a9e543d0bf3843a0cf",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Assign digits 0–4 to rain and 5–9 to no rain"
+   },
+   {
+    "label": "B",
+    "text": "Assign every digit to rain"
+   },
+   {
+    "label": "C",
+    "text": "Use only the digit 7"
+   },
+   {
+    "label": "D",
+    "text": "Flip a coin three times"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-g7-probability-simulations-011",
+  "skillId": "g7-probability-simulations",
+  "prompt": "A simulation of only 10 trials gave a surprising result. What is the best way to get a more reliable estimate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Run many more trials",
+   "equivalents": [
+    "Runmanymoretrials"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "6-8",
+  "explanation": "Small simulations swing widely by chance. Running many more trials narrows the variation and gives an estimate closer to the true probability.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:g7-probability-simulations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "67050cdcbd9e4cb3ebddbc19330d97e7af4243abbabe7f99ac8f573bd7c97757",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Run many more trials"
+   },
+   {
+    "label": "B",
+    "text": "Run fewer trials"
+   },
+   {
+    "label": "C",
+    "text": "Change the rules mid-simulation"
+   },
+   {
+    "label": "D",
+    "text": "Only count the successes"
+   }
+  ],
+  "correctOption": "A"
  }
 ]
