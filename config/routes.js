@@ -25,6 +25,18 @@ const trialChatLimiter = rateLimit({
   },
 });
 
+// Anonymous pop-quiz (Facebook ad funnel) — votes + tally reads are cheap,
+// but keep an abuse ceiling per IP.
+const quizLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: 'Slow down a little — try again in a bit.' });
+  },
+});
+
 const {
   isAuthenticated,
   ensureNotAuthenticated,
@@ -113,6 +125,7 @@ const { router: dataPrivacyRoutes } = require('../routes/dataPrivacy');
 const consentRoutes = require('../routes/consent');
 const demoRoutes = require('../routes/demo');
 const trialChatRoutes = require('../routes/trialChat');
+const quizRoutes = require('../routes/quiz');
 const publicStatsRoutes = require('../routes/publicStats');
 const supportRoutes = require('../routes/support');
 const imageSearchRoutes = require('../routes/imageSearch');
@@ -228,6 +241,7 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/waitlist', waitlistRoutes);
   app.use('/api/demo', demoRoutes);
   app.use('/api/trial-chat', trialChatLimiter, trialChatRoutes);
+  app.use('/api/quiz', quizLimiter, quizRoutes);
   app.use('/api/stats', publicStatsRoutes);
   // Anonymous phone image upload (authorized by capability token + PIN,
   // CSRF-exempt, rate-limited). MUST be registered before the bare
@@ -703,6 +717,10 @@ function registerHtmlRoutes(app) {
   app.get('/terms.html', sendHtml('terms.html'));
   app.get('/onboarding.html', sendHtml('onboarding.html'));
   app.get('/demo.html', sendHtml('demo.html'));
+  // Pop-quiz landing (Facebook ad funnel) — clean URL for the ad's answer
+  // buttons: /quiz?a=14 · /quiz?a=2 · /quiz?a=other. Public, works whether
+  // or not the visitor is signed in.
+  app.get('/quiz', sendHtml('quiz.html'));
   app.get('/pricing.html', sendHtml('pricing.html'));
   // Phone upload landing page — public; the page itself is inert until a valid
   // token + PIN are supplied, and all enforcement is server-side.

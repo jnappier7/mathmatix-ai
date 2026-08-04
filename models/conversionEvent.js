@@ -16,6 +16,7 @@ const mongoose = require('mongoose');
 const CONVERSION_EVENTS = [
   'trial_exhausted',       // anonymous trial reached MAX_TURNS
   'free_quota_exhausted',  // signed-in free student hit the 30-min/month cap (402)
+  'quiz_vote',             // anonymous pop-quiz vote (context: quizId, answer, correct)
 ];
 
 const conversionEventSchema = new mongoose.Schema({

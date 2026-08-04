@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pop Quiz: 24 ÷ 3(2) − 2 | MATHMATIX AI</title>
+  <meta name="description" content="Did you get 14? Or did you get 2? Answer, see what everyone else picked, and learn the pattern behind the trap." />
+  <meta property="og:title" content="Pop Quiz: 24 ÷ 3(2) − 2" />
+  <meta property="og:description" content="Did you get 14? Or did you get 2? See what everyone else answered — then learn why the trap works." />
+  <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta property="og:url" content="https://www.mathmatix.ai/quiz" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="/images/icon-192x192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --teal: #12B3B3;
+      --teal-dark: #0E8F8F;
+      --ink: #16302D;
+      --muted: #5B7370;
+      --bg: #F3F8F7;
+      --card: #FFFFFF;
+      --chalkboard: #22403B;
+      --chalk: #F7F3E7;
+      --correct: #2FA84F;
+      --trap: #E8833A;
+      --other: #9AA9A7;
+      --radius: 16px;
+      --shadow: 0 6px 24px rgba(22, 48, 45, 0.10);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 0 16px 64px; }
+
+    header.site {
+      display: flex; align-items: center; justify-content: center;
+      padding: 18px 16px 6px;
+    }
+    header.site img { height: 40px; width: auto; }
+
+    .kicker {
+      text-align: center; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; font-size: 0.78rem; color: var(--teal-dark);
+      margin: 14px 0 4px;
+    }
+    h1.headline { text-align: center; font-size: 1.45rem; margin-bottom: 18px; }
+
+    .round { margin-top: 26px; }
+    .round-label {
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px; text-align: center;
+    }
+
+    .chalkboard {
+      background: radial-gradient(ellipse at 30% 20%, #2A4A44 0%, var(--chalkboard) 60%);
+      border: 10px solid #B98A5A;
+      border-radius: 12px;
+      box-shadow: var(--shadow), inset 0 0 40px rgba(0,0,0,0.35);
+      padding: 26px 16px 22px;
+      text-align: center;
+    }
+    .chalk-title {
+      font-family: 'Caveat', cursive; font-weight: 600;
+      color: #F7E9A8; font-size: 1.35rem; letter-spacing: 0.06em;
+    }
+    .chalk-expr {
+      font-family: 'Caveat', cursive; font-weight: 700;
+      color: var(--chalk); font-size: 3rem; line-height: 1.15;
+      text-shadow: 0 0 6px rgba(247, 243, 231, 0.25);
+      margin: 6px 0 2px; word-break: keep-all;
+    }
+    .chalk-sub { font-family: 'Caveat', cursive; color: #CBDCD4; font-size: 1.3rem; }
+
+    .choices { display: flex; gap: 10px; margin-top: 14px; }
+    .choices button {
+      flex: 1; padding: 16px 8px; font-size: 1.35rem; font-weight: 800;
+      font-family: inherit; color: var(--ink);
+      background: var(--card); border: 2px solid #D5E3E1; border-radius: var(--radius);
+      box-shadow: var(--shadow); cursor: pointer;
+      transition: transform 0.08s ease, border-color 0.15s ease;
+    }
+    .choices button.other-btn { font-size: 0.95rem; font-weight: 700; color: var(--muted); }
+    .choices button:active { transform: scale(0.97); }
+    .choices button:hover { border-color: var(--teal); }
+    .choices button:disabled { opacity: 0.55; cursor: default; }
+
+    .reveal { display: none; }
+    .reveal.open { display: block; animation: rise 0.35s ease; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+    .verdict {
+      margin-top: 14px; padding: 14px 16px; border-radius: var(--radius);
+      font-weight: 700; font-size: 1.02rem; box-shadow: var(--shadow);
+    }
+    .verdict.correct { background: #E8F7EC; color: #1C6B33; border: 1.5px solid #BFE6CA; }
+    .verdict.wrong   { background: #FDF1E6; color: #9A5217; border: 1.5px solid #F3D7BC; }
+    .verdict.other   { background: #EEF4F3; color: #33534F; border: 1.5px solid #D5E3E1; }
+    .verdict .sub { display: block; font-weight: 500; font-size: 0.92rem; margin-top: 4px; }
+
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 18px 18px 16px; margin-top: 14px;
+    }
+    .card h3 { font-size: 1.02rem; margin-bottom: 12px; }
+    .card h3 .count { color: var(--muted); font-weight: 600; font-size: 0.88rem; }
+
+    .bar-row { display: grid; grid-template-columns: 92px 1fr 48px; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .bar-row .lbl { font-weight: 800; font-size: 1rem; text-align: right; }
+    .bar-row .lbl small { display: block; font-weight: 600; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.04em; }
+    .bar-track { background: #EAF1F0; border-radius: 99px; height: 22px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0; border-radius: 99px; transition: width 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+    .bar-fill.correct { background: var(--correct); }
+    .bar-fill.trap { background: var(--trap); }
+    .bar-fill.other { background: var(--other); }
+    .bar-row .pct { font-weight: 700; font-size: 0.9rem; color: var(--muted); }
+    .poll-note { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+
+    .steps { list-style: none; }
+    .steps li { display: flex; gap: 12px; align-items: baseline; padding: 8px 0; border-bottom: 1px dashed #E2ECEA; }
+    .steps li:last-child { border-bottom: none; }
+    .steps .math { font-weight: 800; font-size: 1.05rem; white-space: nowrap; color: var(--teal-dark); min-width: 86px; }
+    .steps .note { font-size: 0.92rem; color: var(--ink); }
+    .trap-note {
+      margin-top: 12px; padding: 12px 14px; border-left: 4px solid var(--trap);
+      background: #FDF6EF; border-radius: 8px; font-size: 0.92rem;
+    }
+    .trap-note strong { color: #9A5217; }
+
+    .gems { display: grid; gap: 8px; }
+    .gems .g-row { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; }
+    .gems .g-letter {
+      width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1.3rem; color: #fff; background: var(--teal);
+    }
+    .gems .g-text strong { display: block; font-size: 0.95rem; }
+    .gems .g-text span { font-size: 0.85rem; color: var(--muted); }
+    .gems-vs { margin-top: 12px; font-size: 0.9rem; color: var(--ink); background: #EEF7F6; border-radius: 8px; padding: 12px 14px; }
+
+    .next-btn, .cta-btn {
+      display: block; width: 100%; margin-top: 16px; padding: 15px;
+      font-size: 1.05rem; font-weight: 800; font-family: inherit;
+      border: none; border-radius: var(--radius); cursor: pointer;
+      text-align: center; text-decoration: none;
+    }
+    .next-btn { background: var(--ink); color: #fff; }
+    .cta-btn { background: var(--teal); color: #fff; box-shadow: 0 6px 18px rgba(18, 179, 179, 0.35); }
+    .cta-btn.secondary { background: #fff; color: var(--teal-dark); border: 2px solid var(--teal); box-shadow: none; margin-top: 10px; }
+    .share-btn { background: #fff; color: var(--ink); border: 2px solid #D5E3E1; box-shadow: none; }
+
+    .cta-card { text-align: center; margin-top: 30px; }
+    .cta-card .big { font-size: 1.15rem; font-weight: 800; }
+    .cta-card p { font-size: 0.92rem; color: var(--muted); margin-top: 6px; }
+
+    footer { text-align: center; margin-top: 40px; font-size: 0.8rem; color: var(--muted); }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <a href="/?src=quiz"><img src="/images/mathmatix-ai-logo.png" alt="MATHMATIX AI" /></a>
+  </header>
+
+  <div class="wrap">
+    <div class="kicker">Pop Quiz</div>
+    <h1 class="headline">Let’s settle it — and see what everyone else got.</h1>
+
+    <main id="quiz-flow" aria-live="polite"></main>
+
+    <!-- GEMS teaching card — revealed after the first answer -->
+    <section class="card reveal" id="gems-card">
+      <h3>The fix: think GEMS, not PEMDAS</h3>
+      <div class="gems">
+        <div class="g-row"><div class="g-letter">G</div><div class="g-text"><strong>Groups</strong><span>Whatever is inside parentheses, brackets, fraction bars.</span></div></div>
+        <div class="g-row"><div class="g-letter">E</div><div class="g-text"><strong>Exponents</strong><span>Powers and roots.</span></div></div>
+        <div class="g-row"><div class="g-letter">M</div><div class="g-text"><strong>Multiply &amp; Divide</strong><span>One team, same rank — left to right.</span></div></div>
+        <div class="g-row"><div class="g-letter">S</div><div class="g-text"><strong>Subtract &amp; Add</strong><span>Also one team, same rank — left to right.</span></div></div>
+      </div>
+      <div class="gems-vs">
+        <strong>Why PEMDAS traps people:</strong> six letters make it look like six separate steps, so M seems to beat D and A seems to beat S. They don’t — they’re ties, broken left to right. GEMS bakes that in.
+      </div>
+    </section>
+
+    <!-- CTA — grows after the last round, present after first answer -->
+    <section class="cta-card reveal" id="cta-card">
+      <div class="big">Traps like this cost real points on real tests.</div>
+      <p>MATHMATIX is an AI math tutor that catches them before they cost you. Try it right now — free, no signup.</p>
+      <a class="cta-btn" href="/?src=quiz">Chat with a tutor now</a>
+      <a class="cta-btn secondary" href="/signup.html?src=quiz">Create a free account</a>
+      <button class="cta-btn share-btn" id="share-btn">Send this to someone who got it wrong</button>
+    </section>
+
+    <footer>
+      <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · © MATHMATIX AI
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+      var OTHER = 'other';
+      var flow = document.getElementById('quiz-flow');
+      var quizzes = [];        // ad order, from the server
+      var roundIndex = 0;      // how many rounds are on screen
+      var ROUND_TITLES = ['The one from the ad', 'Round 2', 'Round 3', 'Boss round'];
+
+      function el(tag, cls, text) {
+        var n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        return n;
+      }
+
+      function apiGet(path) {
+        return fetch(path, { credentials: 'same-origin' }).then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        });
+      }
+      function apiPost(path, body) {
+        return fetch(path, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        }).then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        });
+      }
+
+      /* ── Render one quiz round ────────────────────────────── */
+      function renderRound(quiz, autoAnswer) {
+        var round = el('section', 'round');
+        round.appendChild(el('div', 'round-label', ROUND_TITLES[roundIndex] || 'Round ' + (roundIndex + 1)));
+
+        var board = el('div', 'chalkboard');
+        board.appendChild(el('div', 'chalk-title', 'POP QUIZ:'));
+        board.appendChild(el('div', 'chalk-expr', quiz.expression));
+        board.appendChild(el('div', 'chalk-sub', quiz.prompt || ''));
+        round.appendChild(board);
+
+        var choices = el('div', 'choices');
+        var buttons = [];
+        quiz.options.concat([OTHER]).forEach(function (opt) {
+          var b = el('button', opt === OTHER ? 'other-btn' : '', opt === OTHER ? 'Something else' : opt);
+          b.addEventListener('click', function () { castVote(quiz, opt, round, buttons); });
+          choices.appendChild(b);
+          buttons.push(b);
+        });
+        round.appendChild(choices);
+
+        var reveal = el('div', 'reveal');
+        round.appendChild(reveal);
+        flow.appendChild(round);
+        roundIndex++;
+
+        if (autoAnswer) castVote(quiz, autoAnswer, round, buttons);
+      }
+
+      function castVote(quiz, answer, round, buttons) {
+        buttons.forEach(function (b) { b.disabled = true; });
+        apiPost('/api/quiz/' + encodeURIComponent(quiz.id) + '/vote', { answer: answer })
+          .then(function (result) { renderReveal(quiz, result, round); })
+          .catch(function () {
+            buttons.forEach(function (b) { b.disabled = false; });
+            var err = round.querySelector('.reveal');
+            err.textContent = 'Hmm, that didn’t go through — tap your answer again.';
+            err.classList.add('open');
+          });
+      }
+
+      /* ── Reveal: verdict + poll + walkthrough ─────────────── */
+      function renderReveal(quiz, result, round) {
+        var reveal = round.querySelector('.reveal');
+        reveal.textContent = '';
+
+        // Hide the choice buttons — your answer is echoed in the verdict.
+        var choiceRow = round.querySelector('.choices');
+        if (choiceRow) choiceRow.style.display = 'none';
+
+        var verdict, vClass;
+        if (result.yourAnswer === OTHER) {
+          vClass = 'other';
+          verdict = 'It’s ' + result.correctAnswer + ' — and the path there is sneakier than it looks.';
+        } else if (result.correct) {
+          vClass = 'correct';
+          verdict = 'You said ' + result.yourAnswer + ' — correct! 🎉';
+        } else {
+          vClass = 'wrong';
+          verdict = 'You said ' + result.yourAnswer + ' — the trap got you. It’s ' + result.correctAnswer + '.';
+        }
+        var vEl = el('div', 'verdict ' + vClass, verdict);
+        var sub = el('span', 'sub');
+        if (result.alreadyVoted) {
+          sub.textContent = 'You already answered this one — here’s where the crowd stands now.';
+        } else if (result.correct) {
+          sub.textContent = 'Most people don’t get this one. Check the poll.';
+        } else {
+          sub.textContent = 'You’re in good company — check the poll. Then steal the pattern below.';
+        }
+        vEl.appendChild(sub);
+        reveal.appendChild(vEl);
+
+        // Poll card
+        var poll = el('div', 'card');
+        var h = el('h3', null, 'What everyone answered ');
+        h.appendChild(el('span', 'count', '· ' + result.tally.total + (result.tally.total === 1 ? ' vote' : ' votes')));
+        poll.appendChild(h);
+
+        var rows = quiz.options.concat([OTHER]);
+        rows.forEach(function (opt) {
+          var count = result.tally.counts[opt] || 0;
+          var pct = result.tally.total ? Math.round((count / result.tally.total) * 100) : 0;
+          var row = el('div', 'bar-row');
+          var lbl = el('div', 'lbl', opt === OTHER ? '?' : opt);
+          var tag = '';
+          if (opt === result.correctAnswer) tag = 'correct';
+          else if (opt === result.trapAnswer) tag = 'the trap';
+          else if (opt === OTHER) tag = 'something else';
+          if (tag) lbl.appendChild(el('small', null, tag));
+          row.appendChild(lbl);
+          var track = el('div', 'bar-track');
+          var fill = el('div', 'bar-fill ' + (opt === result.correctAnswer ? 'correct' : (opt === result.trapAnswer ? 'trap' : 'other')));
+          track.appendChild(fill);
+          row.appendChild(track);
+          row.appendChild(el('div', 'pct', pct + '%'));
+          poll.appendChild(row);
+          requestAnimationFrame(function () { setTimeout(function () { fill.style.width = Math.max(pct, count ? 4 : 0) + '%'; }, 60); });
+        });
+        if (!result.tally.total) poll.appendChild(el('div', 'poll-note', 'You’re the very first to answer — set the tone.'));
+        reveal.appendChild(poll);
+
+        // Walkthrough card
+        if (result.teach) {
+          var teach = el('div', 'card');
+          teach.appendChild(el('h3', null, 'Why it’s ' + result.correctAnswer + ' — step by step'));
+          var ol = el('ol', 'steps');
+          result.teach.steps.forEach(function (s) {
+            var li = el('li');
+            li.appendChild(el('span', 'math', s.math));
+            li.appendChild(el('span', 'note', s.note));
+            ol.appendChild(li);
+          });
+          teach.appendChild(ol);
+          if (result.teach.trapNote) {
+            var tn = el('div', 'trap-note');
+            tn.appendChild(el('strong', null, 'The trap: '));
+            tn.appendChild(document.createTextNode(result.teach.trapNote));
+            teach.appendChild(tn);
+          }
+          reveal.appendChild(teach);
+        }
+
+        // Next-round button (or nothing — the CTA below closes the page)
+        var next = quizzes[roundIndex];
+        if (next) {
+          var btn = el('button', 'next-btn', roundIndex === quizzes.length - 1 ? 'Boss round — one more →' : 'Think you’ve got it now? Round ' + (roundIndex + 1) + ' →');
+          btn.addEventListener('click', function () {
+            btn.style.display = 'none';
+            renderRound(next, null);
+            flow.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+          reveal.appendChild(btn);
+        }
+
+        reveal.classList.add('open');
+        document.getElementById('gems-card').classList.add('open');
+        document.getElementById('cta-card').classList.add('open');
+      }
+
+      /* ── Share ────────────────────────────────────────────── */
+      document.getElementById('share-btn').addEventListener('click', function () {
+        var shareUrl = 'https://www.mathmatix.ai/quiz';
+        var btn = this;
+        if (navigator.share) {
+          navigator.share({ title: 'Pop Quiz: 24 ÷ 3(2) − 2', text: 'Did you get 14? Or did you get 2?', url: shareUrl }).catch(function () {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareUrl).then(function () {
+            btn.textContent = 'Link copied — go get ’em';
+          });
+        }
+      });
+
+      /* ── Boot ─────────────────────────────────────────────── */
+      apiGet('/api/quiz').then(function (data) {
+        quizzes = data.quizzes || [];
+        if (!quizzes.length) return;
+        var first = quizzes[0];
+        // Ad deep link: /quiz?a=14 · /quiz?a=2 · /quiz?a=other pre-casts the vote.
+        var a = new URLSearchParams(window.location.search).get('a');
+        var auto = (a && (first.options.indexOf(a) !== -1 || a === OTHER)) ? a : null;
+        renderRound(first, auto);
+      }).catch(function () {
+        flow.appendChild(el('p', null, 'Couldn’t load the quiz — refresh to try again.'));
+      });
+    })();
+  </script>
+</body>
+</html>
