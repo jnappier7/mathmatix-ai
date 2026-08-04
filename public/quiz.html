@@ -207,6 +207,25 @@
     footer { text-align: center; margin-top: 40px; font-size: 0.8rem; color: var(--muted); }
     footer a { color: var(--muted); }
   </style>
+  <!-- Meta Pixel — this marketing page ONLY. Never add the pixel to any
+       authenticated/student-facing page (COPPA/FERPA: no minors' usage data
+       to ad networks). Conversion events fire from the quiz script below. -->
+  <script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '3405275036302921');
+fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=3405275036302921&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 </head>
 <body>
   <header class="site">
@@ -255,6 +274,12 @@
       var quizzes = [];        // ad order, from the server
       var roundIndex = 0;      // how many rounds are on screen
       var ROUND_TITLES = ['The one from the ad', 'Round 2', 'Round 3', 'Boss round'];
+      var leadFired = false;   // Meta 'Lead' fires once per visit, on the first answer
+
+      // Meta Pixel wrapper — quiz must keep working when the pixel is blocked.
+      function pixelTrack(kind, name, params) {
+        if (typeof window.fbq === 'function') window.fbq(kind, name, params || {});
+      }
 
       function el(tag, cls, text) {
         var n = document.createElement(tag);
@@ -441,12 +466,30 @@
         reveal.classList.add('open');
         document.getElementById('gems-card').classList.add('open');
         document.getElementById('cta-card').classList.add('open');
+
+        // Ad-optimization signals: 'Lead' once per visit (what the campaign
+        // optimizes toward), plus round depth for engagement audiences.
+        pixelTrack('trackCustom', 'QuizRoundAnswered', { round: roundIndex });
+        if (!leadFired) {
+          leadFired = true;
+          pixelTrack('track', 'Lead');
+        }
       }
+
+      /* ── CTA + share tracking ─────────────────────────────── */
+      Array.prototype.forEach.call(document.querySelectorAll('#cta-card a.cta-btn'), function (a) {
+        a.addEventListener('click', function () {
+          pixelTrack('trackCustom', 'QuizCtaClick', {
+            target: a.href.indexOf('signup') !== -1 ? 'signup' : 'tutor'
+          });
+        });
+      });
 
       /* ── Share ────────────────────────────────────────────── */
       document.getElementById('share-btn').addEventListener('click', function () {
         var shareUrl = 'https://www.mathmatix.ai/quiz';
         var btn = this;
+        pixelTrack('trackCustom', 'QuizShare');
         if (navigator.share) {
           navigator.share({ title: 'Pop Quiz: 24 ÷ 3(2) − 2', text: 'Did you get 14? Or did you get 2?', url: shareUrl }).catch(function () {});
         } else if (navigator.clipboard) {
