@@ -38027,5 +38027,5482 @@
   "source": "low-volume-2026-08",
   "contentHash": "8fc6961d35b31636a682b6c192a24bd1fa4db50556655caf787ef7cc1c77722d",
   "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-001",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "Your pay BEFORE any deductions are taken out is called your ___ pay.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Gross",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Gross pay is the full amount you earned. Net pay — the \"take-home\" — is what remains after taxes and other deductions. Gross is always the bigger number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f1020ea2aaf91aa499beb1919a4e20bdcf63695121f70836a897e685f48747a7",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Gross"
+   },
+   {
+    "label": "B",
+    "text": "Net"
+   },
+   {
+    "label": "C",
+    "text": "Taxable"
+   },
+   {
+    "label": "D",
+    "text": "Overtime"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-002",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "The pay you actually take home after deductions is your ___ pay.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Net",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Net pay = gross pay − deductions. It is the number that actually lands in your bank account, and the one a realistic budget must be built on.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7299e46ff9087eb73ad05f687c210b48947249e95578c8c5c7fa2213da438fc2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Net"
+   },
+   {
+    "label": "B",
+    "text": "Gross"
+   },
+   {
+    "label": "C",
+    "text": "Base"
+   },
+   {
+    "label": "D",
+    "text": "Bonus"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-003",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "A fixed annual amount of pay, regardless of hours worked, is called a ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Salary",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A salary is quoted per year and does not change with hours. A wage is paid per hour, so a wage-earner's paycheck varies with time worked.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "02c82d73325f8c488240a83c4607469eb517fa511236eb1ae6190e74aa69bc45",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Salary"
+   },
+   {
+    "label": "B",
+    "text": "Wage"
+   },
+   {
+    "label": "C",
+    "text": "Commission"
+   },
+   {
+    "label": "D",
+    "text": "Stipend"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-004",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "Pay earned as a percentage of the sales you make is called ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Commission",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Commission ties pay to sales — common in retail and real estate. It can supplement a base wage or replace it entirely, which makes income less predictable.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cecd8bd14a494c780be57560030b445d46d4f1f87b35d3a738a1176cc4cc177a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Commission"
+   },
+   {
+    "label": "B",
+    "text": "Salary"
+   },
+   {
+    "label": "C",
+    "text": "Overtime"
+   },
+   {
+    "label": "D",
+    "text": "A deduction"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-005",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "Your monthly gross pay is $3000 and total deductions are $300. What is your net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2700",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Net = gross − deductions: 3000 − 300 = $2700. Budgets built on the gross number overspend by exactly the deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9ae110aeb89ece2c5008d7832fd6694c89444488da15122ea4388b036ee1c951",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-006",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "Your monthly gross pay is $2900 and total deductions are $800. What is your net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2100",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Net = gross − deductions: 2900 − 800 = $2100. Budgets built on the gross number overspend by exactly the deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0eacbc639934d56b2e759ad6db755ba812331344c9955c33b3636bd8e2da5312",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-007",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "Your monthly gross pay is $2900 and total deductions are $500. What is your net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2400",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Net = gross − deductions: 2900 − 500 = $2400. Budgets built on the gross number overspend by exactly the deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "56c868bb4da381c912e4a88324941e735d9cf1c8f689988abc3f087c1aac2c7d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-income-vocabulary-008",
+  "skillId": "cm-income-vocabulary",
+  "prompt": "Your monthly gross pay is $1500 and total deductions are $600. What is your net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "900",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Net = gross − deductions: 1500 − 600 = $900. Budgets built on the gross number overspend by exactly the deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-income-vocabulary"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3808529f57b0d9457d56ee0731bc0d1a4dd0c4e6f0141c6987544080039c7f4d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-001",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub shows 40 hours worked at $12/hour. What is the gross pay for the period?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "480",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Gross pay = rate × hours: 12 × 40 = $480. On a stub this line appears before any deductions — always check it against your own hours record.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1ee5afb9c12e80be4ac00783bfdc6f1f081de0012282da69a4ab77a95cad18b6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-002",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub shows 40 hours worked at $13/hour. What is the gross pay for the period?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "520",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Gross pay = rate × hours: 13 × 40 = $520. On a stub this line appears before any deductions — always check it against your own hours record.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "73d8395da83eeb974b8914fa555dd1462c88b95a323a9bcd2cdf138de157c38a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-003",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub shows 25 hours worked at $23/hour. What is the gross pay for the period?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "575",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Gross pay = rate × hours: 23 × 25 = $575. On a stub this line appears before any deductions — always check it against your own hours record.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "787c114225df6c0f13bc01e00526fec3b849a8ec0daaaebde79ee2163aba6c2f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-004",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub shows 25 hours worked at $15/hour. What is the gross pay for the period?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "375",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Gross pay = rate × hours: 15 × 25 = $375. On a stub this line appears before any deductions — always check it against your own hours record.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1f7e9ea1c007cd691bf4e49c66bd06b5d0f68589934be1d5a1e7b90616c9304f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-005",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub lists gross pay $1900, federal tax $190, FICA $152, and state tax $30. What is the net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1528",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract every deduction from gross: 1900 − 190 − 152 − 30 = $1528. Reading a stub is one subtraction — the skill is knowing which lines are deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bf7e21dcb2f6023818b9f9e8e81156e97c5c891d51c56572d579cec3b1c7366b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-006",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub lists gross pay $1000, federal tax $100, FICA $80, and state tax $60. What is the net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "760",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract every deduction from gross: 1000 − 100 − 80 − 60 = $760. Reading a stub is one subtraction — the skill is knowing which lines are deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3112a79d8dc0d27b379a06bc12986d25ec375937427cf13a8bfa022c7ca2ccdd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-007",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub lists gross pay $2000, federal tax $200, FICA $160, and state tax $30. What is the net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1610",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract every deduction from gross: 2000 − 200 − 160 − 30 = $1610. Reading a stub is one subtraction — the skill is knowing which lines are deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f755283a64c4f76d88bd8a54424a22b74debddfef75d77bb42e3ebba54b61888",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-reading-pay-stubs-008",
+  "skillId": "cm-reading-pay-stubs",
+  "prompt": "A pay stub lists gross pay $1500, federal tax $150, FICA $120, and state tax $50. What is the net pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1180",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract every deduction from gross: 1500 − 150 − 120 − 50 = $1180. Reading a stub is one subtraction — the skill is knowing which lines are deductions.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-reading-pay-stubs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "26a2777bf523c9e1828212514b6fab00426ee37336fe0ff40321a465069a7d42",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-001",
+  "skillId": "cm-banking-basics",
+  "prompt": "Your account balance is $480. You deposit $200 and later withdraw $110. What is the new balance?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "570",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Deposits add, withdrawals subtract: 480 + 200 − 110 = $570. Tracking the running balance is how overdrafts are avoided.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b6b7a4de240e54f7ac450ca361f6ab0848947431512b3407e267ecaa21eca7a9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-002",
+  "skillId": "cm-banking-basics",
+  "prompt": "Which account is designed for everyday spending, with a debit card and frequent transactions?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Checking",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Checking accounts are built for daily in-and-out money. Savings accounts pay more interest but limit or discourage frequent withdrawals.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "92fdc93a4f9e7cf1452c38e882e5899262cec3003e3a128ac1978ecb2bfc6a12",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Checking"
+   },
+   {
+    "label": "B",
+    "text": "Savings"
+   },
+   {
+    "label": "C",
+    "text": "Certificate of deposit"
+   },
+   {
+    "label": "D",
+    "text": "Retirement"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-003",
+  "skillId": "cm-banking-basics",
+  "prompt": "Your account balance is $280. You deposit $120 and later withdraw $90. What is the new balance?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "310",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Deposits add, withdrawals subtract: 280 + 120 − 90 = $310. Tracking the running balance is how overdrafts are avoided.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "851c8d812c1960eaa2c91ea8e44a5f62957f9054c8f9678e7da852ffa69d8ec5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-004",
+  "skillId": "cm-banking-basics",
+  "prompt": "Spending more than your account holds, triggering a bank fee, is called an ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Overdraft",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "An overdraft happens when a payment exceeds your balance; banks often charge $30+ per occurrence. One mistimed bill can cascade into several fees.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "01751160fcc1d825b66814486b68cc3e63fc98a4dc3db350b5600bd5bed68d06",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Overdraft"
+   },
+   {
+    "label": "B",
+    "text": "Audit"
+   },
+   {
+    "label": "C",
+    "text": "Interest charge"
+   },
+   {
+    "label": "D",
+    "text": "Endorsement"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-005",
+  "skillId": "cm-banking-basics",
+  "prompt": "A savings account holds $700 at 3% simple annual interest. How much interest does it earn in one year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "21",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest = balance × rate: 700 × 3% = $21. Savings interest is the bank paying YOU — the same percent machinery as every other finance calculation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8665da3e58d95e9756df45fa7e8cb30603a82ab3c791aa95c8ec65b51effeeab",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-006",
+  "skillId": "cm-banking-basics",
+  "prompt": "A savings account holds $200 at 2% simple annual interest. How much interest does it earn in one year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest = balance × rate: 200 × 2% = $4. Savings interest is the bank paying YOU — the same percent machinery as every other finance calculation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e3a87fd5fafba5de51c2664098b5b8beea181ae2a0db71eaa78186d74744634d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-007",
+  "skillId": "cm-banking-basics",
+  "prompt": "A savings account holds $400 at 3% simple annual interest. How much interest does it earn in one year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest = balance × rate: 400 × 3% = $12. Savings interest is the bank paying YOU — the same percent machinery as every other finance calculation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "75122a5ee75ba2adcfee65e12260a23cacbfc98ba777b0a93749e8c86f513b4d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-banking-basics-008",
+  "skillId": "cm-banking-basics",
+  "prompt": "A savings account holds $600 at 5% simple annual interest. How much interest does it earn in one year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest = balance × rate: 600 × 5% = $30. Savings interest is the bank paying YOU — the same percent machinery as every other finance calculation.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-banking-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "81a0439125e5f8804cd6ed6031c52d5a3ccf10aa98bf54a42b120f49a0710647",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-001",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "Classify this expense: Rent for your apartment.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Need",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Housing is a need — you must pay it to live safely. Needs get budgeted first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d2dc9e939f705d7d5babcc5c74681a083ab0db5dd1365ed7ee22e71810c40606",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Need"
+   },
+   {
+    "label": "B",
+    "text": "Want"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-002",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "Classify this expense: A streaming service subscription.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Want",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Entertainment subscriptions are wants — life continues without them. Wants are where a tight budget cuts first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "02166021234fc81e3c2c80719b1aef230bef71866c2056f28fda8d2f38e04bd5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Need"
+   },
+   {
+    "label": "B",
+    "text": "Want"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-003",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "Classify this expense: Groceries for the week.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Need",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Basic food is a need. (Restaurant meals, though — those slide toward wants.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c9f79f4ea0df9b832a35aba71e5c59c1c660d572de40abdbe2ffa6fd24c3cde2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Need"
+   },
+   {
+    "label": "B",
+    "text": "Want"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-004",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "Classify this expense: Concert tickets.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Want",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 1,
+  "gradeBand": "9-12",
+  "explanation": "Fun, but optional — a want. The point is not \"never buy wants\"; it is knowing which is which when money is short.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0fb6583d8a0f0cda98280f5c439f71fb5b0ab2e0c48831e58bb9c6847d8f2758",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Need"
+   },
+   {
+    "label": "B",
+    "text": "Want"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-005",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "A monthly budget lists $1200 of needs and $400 of wants. If income drops and $200 must be cut, which category absorbs the cut, and what is the new wants total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Wants; $200",
+   "equivalents": [
+    "Wants;$200"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Cuts come from wants first — needs keep you housed, fed and working. 400 − 200 = $200 of wants remain. Borrowing to protect wants is how debt spirals start.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8336a54d40dc1f6378a649df474f68d9297775cf8370bd57e8df69884122a64c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Wants; $200"
+   },
+   {
+    "label": "B",
+    "text": "Needs; $1000"
+   },
+   {
+    "label": "C",
+    "text": "Both equally"
+   },
+   {
+    "label": "D",
+    "text": "Neither — borrow instead"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-006",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "A monthly budget lists $1100 of needs and $300 of wants. If income drops and $150 must be cut, which category absorbs the cut, and what is the new wants total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Wants; $150",
+   "equivalents": [
+    "Wants;$150"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Cuts come from wants first — needs keep you housed, fed and working. 300 − 150 = $150 of wants remain. Borrowing to protect wants is how debt spirals start.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8786a849aa43c38c240c7d1d739a4b810a6accfef6393f23029840e63d711e9f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Wants; $150"
+   },
+   {
+    "label": "B",
+    "text": "Needs; $950"
+   },
+   {
+    "label": "C",
+    "text": "Both equally"
+   },
+   {
+    "label": "D",
+    "text": "Neither — borrow instead"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-007",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "A monthly budget lists $1000 of needs and $200 of wants. If income drops and $100 must be cut, which category absorbs the cut, and what is the new wants total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Wants; $100",
+   "equivalents": [
+    "Wants;$100"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Cuts come from wants first — needs keep you housed, fed and working. 200 − 100 = $100 of wants remain. Borrowing to protect wants is how debt spirals start.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2aad3a262f62b5d7d1fabf74cbcee2e156cc80ea98a3619c444ffd110b83002b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Wants; $100"
+   },
+   {
+    "label": "B",
+    "text": "Needs; $900"
+   },
+   {
+    "label": "C",
+    "text": "Both equally"
+   },
+   {
+    "label": "D",
+    "text": "Neither — borrow instead"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-wants-vs-needs-008",
+  "skillId": "cm-wants-vs-needs",
+  "prompt": "A monthly budget lists $1100 of needs and $200 of wants. If income drops and $100 must be cut, which category absorbs the cut, and what is the new wants total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Wants; $100",
+   "equivalents": [
+    "Wants;$100"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Cuts come from wants first — needs keep you housed, fed and working. 200 − 100 = $100 of wants remain. Borrowing to protect wants is how debt spirals start.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-wants-vs-needs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ac1be3f4d4444ec848b7796a1748200b390bb8c45eb1d4120ba9194c6b4ae60f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Wants; $100"
+   },
+   {
+    "label": "B",
+    "text": "Needs; $1000"
+   },
+   {
+    "label": "C",
+    "text": "Both equally"
+   },
+   {
+    "label": "D",
+    "text": "Neither — borrow instead"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-001",
+  "skillId": "cm-budget-categories",
+  "prompt": "Using the 50/30/20 rule on a $3800 monthly income, how much goes to SAVINGS (the 20%)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "760",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "50/30/20 splits income into needs/wants/savings. Savings = 20% of 3800 = $760. (Needs get $1900, wants $1140.) The rule is a starting point, not a law — but pay-yourself-first only works if savings has a number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c0f8da568fba2d9a1375f0b473338c4a64faf84d9e8a89557076083399a2e499",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-002",
+  "skillId": "cm-budget-categories",
+  "prompt": "Using the 50/30/20 rule on a $3500 monthly income, how much goes to SAVINGS (the 20%)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "700",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "50/30/20 splits income into needs/wants/savings. Savings = 20% of 3500 = $700. (Needs get $1750, wants $1050.) The rule is a starting point, not a law — but pay-yourself-first only works if savings has a number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "465b568e8633bb02fb832c50d7042bf358b53b8fcf85d3a9f371c5259d395ada",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-003",
+  "skillId": "cm-budget-categories",
+  "prompt": "Using the 50/30/20 rule on a $2700 monthly income, how much goes to SAVINGS (the 20%)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "540",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "50/30/20 splits income into needs/wants/savings. Savings = 20% of 2700 = $540. (Needs get $1350, wants $810.) The rule is a starting point, not a law — but pay-yourself-first only works if savings has a number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bf81166e6c3162f7e48ae69ea1172205199e5e038259699de247baeadf36fecb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-004",
+  "skillId": "cm-budget-categories",
+  "prompt": "Using the 50/30/20 rule on a $3300 monthly income, how much goes to SAVINGS (the 20%)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "660",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "50/30/20 splits income into needs/wants/savings. Savings = 20% of 3300 = $660. (Needs get $1650, wants $990.) The rule is a starting point, not a law — but pay-yourself-first only works if savings has a number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3f87dafc36c5b89e7b1a19804a5e8430e436e7f26d86ba0aa9916b6a9b189126",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-005",
+  "skillId": "cm-budget-categories",
+  "prompt": "Monthly income is $2900. The budget assigns housing $725, food $290, and transportation $145. How much income remains for everything else?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1740",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract the assigned categories: 2900 − 725 − 290 − 145 = $1740. A budget is finished only when every dollar has a category — the leftover here still needs jobs (savings, utilities, fun).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "535a18fb61e52944f569f72b47484142eab749d26e1a7621240aa818b6e73728",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-006",
+  "skillId": "cm-budget-categories",
+  "prompt": "Monthly income is $2600. The budget assigns housing $650, food $260, and transportation $130. How much income remains for everything else?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1560",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract the assigned categories: 2600 − 650 − 260 − 130 = $1560. A budget is finished only when every dollar has a category — the leftover here still needs jobs (savings, utilities, fun).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a79c7cf96ca4ed65062cc230a2283a035b58235ec8bd0fd8747d472d8ffb61fa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-007",
+  "skillId": "cm-budget-categories",
+  "prompt": "Monthly income is $2800. The budget assigns housing $700, food $280, and transportation $140. How much income remains for everything else?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1680",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract the assigned categories: 2800 − 700 − 280 − 140 = $1680. A budget is finished only when every dollar has a category — the leftover here still needs jobs (savings, utilities, fun).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "005d8f789efd19215a7500a4399814c0f13b62b0e97d0c2fc60451581765acb7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-categories-008",
+  "skillId": "cm-budget-categories",
+  "prompt": "Monthly income is $3000. The budget assigns housing $750, food $300, and transportation $150. How much income remains for everything else?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1800",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Subtract the assigned categories: 3000 − 750 − 300 − 150 = $1800. A budget is finished only when every dollar has a category — the leftover here still needs jobs (savings, utilities, fun).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-categories"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8aa0ba801cb8ddf38641f3bf1ba9fb8b58f9bbce3f1fb2c33437e11ea12a1b10",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-001",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A month's cash-flow table shows total income $2700 and total expenses $1500. What is the net cash flow?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1200",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Net cash flow = income − expenses = 2700 − 1500 = $1200. Positive means money left over to save; the table exists to make that one number visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0486e9493dab994038e5dbcd2efaf2bf2b89f27c7dc329805a142de28dc4128c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-002",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A month's cash-flow table shows total income $3100 and total expenses $1600. What is the net cash flow?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1500",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Net cash flow = income − expenses = 3100 − 1600 = $1500. Positive means money left over to save; the table exists to make that one number visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "59329ac538bce9533444cbceb19de3ac2a028776bfec0ec3e0753aee420c92ec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-003",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A month's cash-flow table shows total income $2000 and total expenses $1700. What is the net cash flow?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "300",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Net cash flow = income − expenses = 2000 − 1700 = $300. Positive means money left over to save; the table exists to make that one number visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bb1f5aa68548f7ef1cc7490743bdc40946bc704e9c063702a708dfa8595192b4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-004",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A month's cash-flow table shows total income $2600 and total expenses $1300. What is the net cash flow?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1300",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Net cash flow = income − expenses = 2600 − 1300 = $1300. Positive means money left over to save; the table exists to make that one number visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5c12030d86c5870dbb696c4cbe4216fcd55cc11e605ad346329b76d069479225",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-005",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A cash-flow table shows income $2300 and expenses $2600. Is the cash flow positive or negative, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative by $300",
+   "equivalents": [
+    "Negativeby$300"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Expenses exceed income by 2600 − 2300 = $300 — negative cash flow. A month like this is funded by savings or debt; the table shows the leak before the overdraft does.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "674d3bb75ec8ea049ca0012be962ac12205897b21211639456724bba5a8768c7",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Negative by $300"
+   },
+   {
+    "label": "B",
+    "text": "Positive by $300"
+   },
+   {
+    "label": "C",
+    "text": "Exactly zero"
+   },
+   {
+    "label": "D",
+    "text": "Negative by $2600"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-006",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A cash-flow table shows income $2200 and expenses $2400. Is the cash flow positive or negative, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative by $200",
+   "equivalents": [
+    "Negativeby$200"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Expenses exceed income by 2400 − 2200 = $200 — negative cash flow. A month like this is funded by savings or debt; the table shows the leak before the overdraft does.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c184f70a87ad0cf687da934358b860adc4b0f24737da43df8698d32cc44c2a34",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Negative by $200"
+   },
+   {
+    "label": "B",
+    "text": "Positive by $200"
+   },
+   {
+    "label": "C",
+    "text": "Exactly zero"
+   },
+   {
+    "label": "D",
+    "text": "Negative by $2400"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-007",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A cash-flow table shows income $2100 and expenses $2400. Is the cash flow positive or negative, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative by $300",
+   "equivalents": [
+    "Negativeby$300"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Expenses exceed income by 2400 − 2100 = $300 — negative cash flow. A month like this is funded by savings or debt; the table shows the leak before the overdraft does.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c6ad6940ab867faa8425bef6533055736e1cc64c3910a770321482efae23438b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Negative by $300"
+   },
+   {
+    "label": "B",
+    "text": "Positive by $300"
+   },
+   {
+    "label": "C",
+    "text": "Exactly zero"
+   },
+   {
+    "label": "D",
+    "text": "Negative by $2400"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-cash-flow-tables-008",
+  "skillId": "cm-cash-flow-tables",
+  "prompt": "A cash-flow table shows income $2100 and expenses $2500. Is the cash flow positive or negative, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Negative by $400",
+   "equivalents": [
+    "Negativeby$400"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Expenses exceed income by 2500 − 2100 = $400 — negative cash flow. A month like this is funded by savings or debt; the table shows the leak before the overdraft does.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-cash-flow-tables"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "20904e536d0627f44b065422a9dd5472213aae1e3ed0ee631b19068a046ae174",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Negative by $400"
+   },
+   {
+    "label": "B",
+    "text": "Positive by $400"
+   },
+   {
+    "label": "C",
+    "text": "Exactly zero"
+   },
+   {
+    "label": "D",
+    "text": "Negative by $2500"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-001",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "Car insurance costs $840 once a year. How much should a monthly budget set aside for it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "70",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Spread the annual bill across 12 months: 840 ÷ 12 = $70 per month. Irregular expenses feel like emergencies only when they have no monthly line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c4bd4cf8ed1c0158eb56d9397af28cf83ae89b868436cfbb8e89bc0bca768142",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-002",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "Car insurance costs $720 once a year. How much should a monthly budget set aside for it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "60",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Spread the annual bill across 12 months: 720 ÷ 12 = $60 per month. Irregular expenses feel like emergencies only when they have no monthly line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "73f4186f1a925e2cf998e86d983b87f510053829bc0f8ff700f02a9dbdb375ce",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-003",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "Car insurance costs $480 once a year. How much should a monthly budget set aside for it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Spread the annual bill across 12 months: 480 ÷ 12 = $40 per month. Irregular expenses feel like emergencies only when they have no monthly line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0ebb4da65c8ff86bf6755fd9d3d7c1e16e843ca93a57eabc22e809ebf1d22d88",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-004",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "Car insurance costs $960 once a year. How much should a monthly budget set aside for it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "80",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Spread the annual bill across 12 months: 960 ÷ 12 = $80 per month. Irregular expenses feel like emergencies only when they have no monthly line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "96c6ae07727f721251ba4afb71e49527f49c8166dd2acb849aabc91529eacc86",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-005",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "A $120 insurance premium is due every 6 months, and a $240 registration fee is due once a year. What total monthly set-aside covers both?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Monthly shares: 120 ÷ 6 = $20 and 240 ÷ 12 = $20. Together: $40 per month. Every irregular bill converts to a monthly rate — then the budget holds no surprises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3a68214591e18b584f465257f7a2ef329729dbbfda4104b7d30facbb942cf03f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-006",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "A $180 insurance premium is due every 6 months, and a $360 registration fee is due once a year. What total monthly set-aside covers both?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "60",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Monthly shares: 180 ÷ 6 = $30 and 360 ÷ 12 = $30. Together: $60 per month. Every irregular bill converts to a monthly rate — then the budget holds no surprises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "47abdd49815b028a7c97719b515a2b4e918bc0accdaf7bc529511ecc8100fb1e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-007",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "A $420 insurance premium is due every 6 months, and a $840 registration fee is due once a year. What total monthly set-aside covers both?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "140",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Monthly shares: 420 ÷ 6 = $70 and 840 ÷ 12 = $70. Together: $140 per month. Every irregular bill converts to a monthly rate — then the budget holds no surprises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ed1cc2541719e5e6775c2ed3ae83b2a9f755a5ff1622de7d8c42895c332ba1d6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-irregular-expenses-008",
+  "skillId": "cm-irregular-expenses",
+  "prompt": "A $360 insurance premium is due every 6 months, and a $720 registration fee is due once a year. What total monthly set-aside covers both?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "120",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Monthly shares: 360 ÷ 6 = $60 and 720 ÷ 12 = $60. Together: $120 per month. Every irregular bill converts to a monthly rate — then the budget holds no surprises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-irregular-expenses"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5625472e1380db4b33b8d64fab44b068ba0ac5ed59f01a488814f83afbcf103",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-001",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "Skipping a $8-per-week takeout habit saves how much over a full year (52 weeks)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "416",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "8 × 52 = $416 per year. Small recurring costs compound into large annual numbers — the ×52 (or ×12) reflex is the fastest budgeting skill there is.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "749e2e8c7ac76caa0d50c0d2336d8446bf542bb61b8b892ea1143bb4c10e810a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-002",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "Skipping a $14-per-week takeout habit saves how much over a full year (52 weeks)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "728",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "14 × 52 = $728 per year. Small recurring costs compound into large annual numbers — the ×52 (or ×12) reflex is the fastest budgeting skill there is.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a37b3a7b1d1b1727396d29a0c94ec29eb3f3be637de236fe59b85c72fcd5ae2a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-003",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "Skipping a $13-per-week takeout habit saves how much over a full year (52 weeks)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "676",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "13 × 52 = $676 per year. Small recurring costs compound into large annual numbers — the ×52 (or ×12) reflex is the fastest budgeting skill there is.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6867dbedc844277c0f21c9a29878aaa36108bb1e70fceb96324ba56cd6ffbd5e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-004",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "Skipping a $10-per-week takeout habit saves how much over a full year (52 weeks)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "520",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "10 × 52 = $520 per year. Small recurring costs compound into large annual numbers — the ×52 (or ×12) reflex is the fastest budgeting skill there is.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "03ba3593b31d0ae826295d59321097ae7a282eeb9a734253979659489102141c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-005",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "You want a $400 bike. By cutting $50/month of spending, how many months until you can buy it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "400 ÷ 50 = 8 months. A trade-off has a timeline: naming the number of months makes \"cut spending\" a plan instead of a wish.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f6f69eb8f026a889147645cab510aab945994710865cd172bf22fa02489f05ad",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-006",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "You want a $300 bike. By cutting $50/month of spending, how many months until you can buy it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "300 ÷ 50 = 6 months. A trade-off has a timeline: naming the number of months makes \"cut spending\" a plan instead of a wish.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2fd8e93becf2362a84fe4fce455480b7e50816e7caf77ddf342b060278329859",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-007",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "You want a $540 bike. By cutting $90/month of spending, how many months until you can buy it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "540 ÷ 90 = 6 months. A trade-off has a timeline: naming the number of months makes \"cut spending\" a plan instead of a wish.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b4993bc2a030ea9de5c200b612b066630853254421cb8cb26cbf3e406fb44af1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-budget-tradeoffs-008",
+  "skillId": "cm-budget-tradeoffs",
+  "prompt": "You want a $400 bike. By cutting $40/month of spending, how many months until you can buy it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "400 ÷ 40 = 10 months. A trade-off has a timeline: naming the number of months makes \"cut spending\" a plan instead of a wish.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-budget-tradeoffs"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9c2e587389877b43b215c3e6d96c02a099f5747dd41e507854a706b1c232eb79",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-001",
+  "skillId": "cm-simple-interest",
+  "prompt": "Find the simple interest on $600 at 5% per year for 3 years.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "90",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "I = P × r × t = 600 × 5% × 3 = $90. Simple interest charges on the original principal only — the same amount every year.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fcd43c7ce1319e64fd193ac3747089d45027a8999f93baf758e356a39a535319",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-002",
+  "skillId": "cm-simple-interest",
+  "prompt": "Find the simple interest on $300 at 8% per year for 3 years.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "72",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "I = P × r × t = 300 × 8% × 3 = $72. Simple interest charges on the original principal only — the same amount every year.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "87130fbb177ed373848c02e3994a1e4a82ffee0175653c86294420018a9c8dcf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-003",
+  "skillId": "cm-simple-interest",
+  "prompt": "Find the simple interest on $500 at 3% per year for 4 years.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "60",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "I = P × r × t = 500 × 3% × 4 = $60. Simple interest charges on the original principal only — the same amount every year.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "14a893162363078538d694b9bbf60e7e0289d567acd362b859240daa9fc06ea0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-004",
+  "skillId": "cm-simple-interest",
+  "prompt": "Find the simple interest on $200 at 5% per year for 2 years.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "I = P × r × t = 200 × 5% × 2 = $20. Simple interest charges on the original principal only — the same amount every year.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9f8d73bc67fe9f73dd5f5dfe8b6c39f48936abfc6794caa8ef273af5182a39a5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-005",
+  "skillId": "cm-simple-interest",
+  "prompt": "You borrow $3500 at 3% simple interest for 2 years. What TOTAL amount do you repay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3710",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest: 3500 × 3% × 2 = $210. Total repayment = principal + interest = 3500 + 210 = $3710. The sticker price of a loan is never just the amount borrowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "761d957425b9e18c9794f52001b251dbea77745e3f655c4c6ec1a26ec03ebdea",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-006",
+  "skillId": "cm-simple-interest",
+  "prompt": "You borrow $3000 at 6% simple interest for 3 years. What TOTAL amount do you repay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3540",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest: 3000 × 6% × 3 = $540. Total repayment = principal + interest = 3000 + 540 = $3540. The sticker price of a loan is never just the amount borrowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b2a48eb785e8f8cb799c43afb004da654a54419cf63bfa77875845aa836f41df",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-007",
+  "skillId": "cm-simple-interest",
+  "prompt": "You borrow $2000 at 4% simple interest for 3 years. What TOTAL amount do you repay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2240",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest: 2000 × 4% × 3 = $240. Total repayment = principal + interest = 2000 + 240 = $2240. The sticker price of a loan is never just the amount borrowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a8699839f15cdc1b1d38021512c3d7cbdef57819721465f0e4d9c4f6110b9bbd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-simple-interest-008",
+  "skillId": "cm-simple-interest",
+  "prompt": "You borrow $1500 at 3% simple interest for 3 years. What TOTAL amount do you repay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1635",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest: 1500 × 3% × 3 = $135. Total repayment = principal + interest = 1500 + 135 = $1635. The sticker price of a loan is never just the amount borrowed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-simple-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b57a27dbf27c7902fd826d7e9470260a441e242e57f0babc30f3e98ad3e45cda",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-001",
+  "skillId": "cm-compound-interest",
+  "prompt": "$1000 is invested at 10% compounded annually. What is the balance after 2 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1210",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Year 1: 1000 × 1.10 = $1100. Year 2: 1100 × 1.10 = $1210. The second year earns interest on the first year's interest — that extra $10 is compounding at work, and it snowballs with time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "da18a39c81e554d6d250534929335031dd8111bb9caabb4cf9de4cff72171789",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-002",
+  "skillId": "cm-compound-interest",
+  "prompt": "$5000 is invested at 10% compounded annually. What is the balance after 2 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6050",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Year 1: 5000 × 1.10 = $5500. Year 2: 5500 × 1.10 = $6050. The second year earns interest on the first year's interest — that extra $50 is compounding at work, and it snowballs with time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "51a31dfab95f9942767928a1bc4a7afce73fc71245550a51b8bffee65cd7f0da",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-003",
+  "skillId": "cm-compound-interest",
+  "prompt": "$3000 is invested at 10% compounded annually. What is the balance after 2 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3630",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Year 1: 3000 × 1.10 = $3300.0000000000005. Year 2: 3300.0000000000005 × 1.10 = $3630. The second year earns interest on the first year's interest — that extra $30 is compounding at work, and it snowballs with time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c4648f4c16e14efe42880e8175a5d98b63445f0b7e3293c9d5c56e3be468d306",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-004",
+  "skillId": "cm-compound-interest",
+  "prompt": "$4000 is invested at 10% compounded annually. What is the balance after 2 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4840",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Year 1: 4000 × 1.10 = $4400. Year 2: 4400 × 1.10 = $4840. The second year earns interest on the first year's interest — that extra $40 is compounding at work, and it snowballs with time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "15234fcf8ebd781d3f5cf2fcda5492b125e0f281830d5f88a951b04a1d7b2b4c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-005",
+  "skillId": "cm-compound-interest",
+  "prompt": "Using the Rule of 72, about how many years does money take to DOUBLE at 8% annual growth?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Rule of 72: doubling time ≈ 72 ÷ rate = 72 ÷ 8 = 9 years. It is an estimate, but a startlingly good one — and it makes the case for starting early better than any lecture.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "385035efd2e599ef2258e51a41906c360212ca4f284a10534a30a9445d2b5063",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-006",
+  "skillId": "cm-compound-interest",
+  "prompt": "Compare: $1000 at 10% SIMPLE interest for 2 years vs 10% COMPOUND. How much MORE does compounding earn?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Simple: 1000 + 2 × 100 = $1200. Compound: 1000 × 1.21 = $1210. Difference: $10 — interest earned on year one's interest. Small at 2 years; enormous at 30.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e4410eb73a954c2e2c0d42e849fdbe61cf63a1d4e80481aa3dcc05eddad22acc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-007",
+  "skillId": "cm-compound-interest",
+  "prompt": "Using the Rule of 72, about how many years does money take to DOUBLE at 12% annual growth?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Rule of 72: doubling time ≈ 72 ÷ rate = 72 ÷ 12 = 6 years. It is an estimate, but a startlingly good one — and it makes the case for starting early better than any lecture.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "75bb8c743f97c5fa282e34e0f816eedc62033350152e032eb871945a21056832",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-interest-008",
+  "skillId": "cm-compound-interest",
+  "prompt": "Compare: $4000 at 10% SIMPLE interest for 2 years vs 10% COMPOUND. How much MORE does compounding earn?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Simple: 4000 + 2 × 400 = $4800. Compound: 4000 × 1.21 = $4840. Difference: $40 — interest earned on year one's interest. Small at 2 years; enormous at 30.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-interest"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b5e4f03a746c2852b526093cd42c8604e79af45fcea5d4fb269d9ddf671a54f1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-001",
+  "skillId": "cm-emergency-fund",
+  "prompt": "Your essential expenses are $1500/month. How large is a 6-month emergency fund?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "6 × 1500 = $9000. An emergency fund is measured in months of ESSENTIAL expenses (not income) — it buys time after a job loss or big repair without touching debt.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "43d86fd0b1528d60c64acae8c2927b3b43bdc1e8d74adf7f07d10e46d7bdb99b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-002",
+  "skillId": "cm-emergency-fund",
+  "prompt": "Your essential expenses are $2000/month. How large is a 6-month emergency fund?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "6 × 2000 = $12000. An emergency fund is measured in months of ESSENTIAL expenses (not income) — it buys time after a job loss or big repair without touching debt.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5ff8a67e9780b69deba609c550f5a04161b2e979e066d9b6101f45b8fd3f774c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-003",
+  "skillId": "cm-emergency-fund",
+  "prompt": "Your essential expenses are $1700/month. How large is a 6-month emergency fund?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10200",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "6 × 1700 = $10200. An emergency fund is measured in months of ESSENTIAL expenses (not income) — it buys time after a job loss or big repair without touching debt.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "38f9cbf58936009a01a00e537ece6af96367bf5dc0ffbb72368100f3195e7db2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-004",
+  "skillId": "cm-emergency-fund",
+  "prompt": "Your essential expenses are $1400/month. How large is a 3-month emergency fund?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4200",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "3 × 1400 = $4200. An emergency fund is measured in months of ESSENTIAL expenses (not income) — it buys time after a job loss or big repair without touching debt.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b4c9f776dcb3b265557a41d625a41c3bf7d55d067e8038b162b587e4589ea7a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-005",
+  "skillId": "cm-emergency-fund",
+  "prompt": "You save $200/month toward a $1800 emergency fund. How many months until it is fully funded?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "1800 ÷ 200 = 9 months. Automating that transfer on payday is what turns the plan into the fund.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eabe2634ab62b53e28881a524496b4005bd7d73e3943ebc9f35511f14b225a86",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-006",
+  "skillId": "cm-emergency-fund",
+  "prompt": "You save $150/month toward a $3000 emergency fund. How many months until it is fully funded?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "3000 ÷ 150 = 20 months. Automating that transfer on payday is what turns the plan into the fund.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9205cf2c0f1a01f53100fd3a0278b8720e6bb460685cf29403cc84881144f91e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-007",
+  "skillId": "cm-emergency-fund",
+  "prompt": "You save $300/month toward a $1800 emergency fund. How many months until it is fully funded?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "1800 ÷ 300 = 6 months. Automating that transfer on payday is what turns the plan into the fund.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7806024a713d28947e0d96c57dff9d3abde0779d128f0e6a593e2cafaa15e469",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-emergency-fund-008",
+  "skillId": "cm-emergency-fund",
+  "prompt": "You save $150/month toward a $2400 emergency fund. How many months until it is fully funded?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "2400 ÷ 150 = 16 months. Automating that transfer on payday is what turns the plan into the fund.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-emergency-fund"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6a18125fb6c918e9d97cf8f5692ccd3558fff85f0316f0242208c00b3af91b60",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-opportunity-cost-001",
+  "skillId": "cm-opportunity-cost",
+  "prompt": "The value of the NEXT-BEST alternative you give up when you make a choice is called ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Opportunity cost",
+   "equivalents": [
+    "Opportunitycost"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Every choice spends more than money — it spends the alternative. Choosing the concert means NOT having those dollars (or that evening) for anything else; that forgone best option is the opportunity cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-opportunity-cost"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ae6f75ef9aaf0140e8440a6bf41c2cb589bc9dbf560c267be661d424454e90c5",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Opportunity cost"
+   },
+   {
+    "label": "B",
+    "text": "Sunk cost"
+   },
+   {
+    "label": "C",
+    "text": "Fixed cost"
+   },
+   {
+    "label": "D",
+    "text": "Interest"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-opportunity-cost-002",
+  "skillId": "cm-opportunity-cost",
+  "prompt": "You skip a 6-hour work shift (at $14/hour) to attend a free festival. What is the opportunity cost in dollars?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "84",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The festival is free to enter but not free to attend: the forgone earnings are 6 × 14 = $84. Opportunity cost counts what you DIDN'T earn, not what you paid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-opportunity-cost"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f03143a262327904b1d7131f7416649482022ea4c62f1e86a49a34f4aae6af8b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-opportunity-cost-003",
+  "skillId": "cm-opportunity-cost",
+  "prompt": "You spend $400 of savings that was earning 4% per year. What is the opportunity cost over one year (the interest forgone)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The spent money would have earned 400 × 4% = $16 in a year. Spending savings is never free even without fees — the forgone growth is the quiet cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-opportunity-cost"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c63632c41a208877bfae26cc55cf0ebcbfdbd0cd940e26d35e620e0dc8460157",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-opportunity-cost-004",
+  "skillId": "cm-opportunity-cost",
+  "prompt": "You spend $800 of savings that was earning 5% per year. What is the opportunity cost over one year (the interest forgone)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "40",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The spent money would have earned 800 × 5% = $40 in a year. Spending savings is never free even without fees — the forgone growth is the quiet cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-opportunity-cost"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ad17f149b4067c65cc79969f51d42aa060567ab22e47b0fad30efe40daf100e7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-opportunity-cost-005",
+  "skillId": "cm-opportunity-cost",
+  "prompt": "You spend $900 of savings that was earning 4% per year. What is the opportunity cost over one year (the interest forgone)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The spent money would have earned 900 × 4% = $36 in a year. Spending savings is never free even without fees — the forgone growth is the quiet cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-opportunity-cost"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b25da1b08a3fca6dcc51a8e048f9ee48ba495fff4a3faebb0b82d1e40c19a5c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-opportunity-cost-006",
+  "skillId": "cm-opportunity-cost",
+  "prompt": "You spend $600 of savings that was earning 5% per year. What is the opportunity cost over one year (the interest forgone)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The spent money would have earned 600 × 5% = $30 in a year. Spending savings is never free even without fees — the forgone growth is the quiet cost.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-opportunity-cost"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "820be2fea702fda7f79d5b1a08c2fe3b338d2829b5502cf25c81b1f1fec66c54",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-001",
+  "skillId": "cm-credit-scores",
+  "prompt": "Credit scores in the most common (FICO) system range from ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "300 to 850",
+   "equivalents": [
+    "300to850"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "FICO scores run 300-850. Roughly: 670+ is good, 740+ very good, 800+ exceptional. The number decides what borrowing costs you.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "60899cd3b52d325ef7b18c72d6408c6695bcc63f5b064e3fa77100cb88028bdc",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "300 to 850"
+   },
+   {
+    "label": "B",
+    "text": "0 to 100"
+   },
+   {
+    "label": "C",
+    "text": "1 to 1000"
+   },
+   {
+    "label": "D",
+    "text": "500 to 5000"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-002",
+  "skillId": "cm-credit-scores",
+  "prompt": "Which factor weighs MOST heavily in a credit score?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Payment history",
+   "equivalents": [
+    "Paymenthistory"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Payment history (~35%) dominates — one habit, paying every bill on time, outweighs everything else. Income, notably, is not in the score at all.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a26b3e77df7e538891a5826d25e0aa7a1dd6138e9262995fbea7c5b0277b8b37",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Payment history"
+   },
+   {
+    "label": "B",
+    "text": "Your income"
+   },
+   {
+    "label": "C",
+    "text": "Your age"
+   },
+   {
+    "label": "D",
+    "text": "Number of bank accounts"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-003",
+  "skillId": "cm-credit-scores",
+  "prompt": "A higher credit score generally gets you ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Lower interest rates on loans",
+   "equivalents": [
+    "Lowerinterestratesonloans"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Lenders price risk: a strong score can mean a rate several points lower on a car loan or mortgage — tens of thousands of dollars over a mortgage's life.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1f45cdb341cdb1f7a1db6f88f6dc86d96f56f53015eea01f7eac065d4324216f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Lower interest rates on loans"
+   },
+   {
+    "label": "B",
+    "text": "Higher taxes"
+   },
+   {
+    "label": "C",
+    "text": "A higher salary"
+   },
+   {
+    "label": "D",
+    "text": "Free bank accounts"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-004",
+  "skillId": "cm-credit-scores",
+  "prompt": "Keeping your credit card balance LOW relative to its limit helps the score factor called ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Credit utilization",
+   "equivalents": [
+    "Creditutilization"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Utilization (~30% of the score) is balance ÷ limit. Staying under 30% — ideally under 10% — signals you are not stretched thin.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d417ba321772fee996f39b631fbf7fd647ba20e3ddeb2441932664dcf687de60",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Credit utilization"
+   },
+   {
+    "label": "B",
+    "text": "Payment history"
+   },
+   {
+    "label": "C",
+    "text": "Credit age"
+   },
+   {
+    "label": "D",
+    "text": "Hard inquiries"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-005",
+  "skillId": "cm-credit-scores",
+  "prompt": "A card has a $1000 limit and a $250 balance. What is the credit utilization percentage?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25%",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Utilization = balance ÷ limit = 250/1000 = 25%. Below 30% is the standard guidance; the lower, the better for the score.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2417f0d29031bb7a05df2d1624772d2a74aa71a5331120ff2938adb9a3db6ed6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-006",
+  "skillId": "cm-credit-scores",
+  "prompt": "A card has a $500 limit and a $50 balance. What is the credit utilization percentage?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10%",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Utilization = balance ÷ limit = 50/500 = 10%. Below 30% is the standard guidance; the lower, the better for the score.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ac56c915fac726fdf25d174a004e672d08430c53c3a0520bbc21dc4b5dff02db",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-007",
+  "skillId": "cm-credit-scores",
+  "prompt": "A card has a $1000 limit and a $200 balance. What is the credit utilization percentage?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20%",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Utilization = balance ÷ limit = 200/1000 = 20%. Below 30% is the standard guidance; the lower, the better for the score.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c2c49a0045e6f0faa87373b9d061fd67137f4a466660cbe9924113c226d8a477",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-scores-008",
+  "skillId": "cm-credit-scores",
+  "prompt": "A card has a $500 limit and a $100 balance. What is the credit utilization percentage?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20%",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Utilization = balance ÷ limit = 100/500 = 20%. Below 30% is the standard guidance; the lower, the better for the score.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-scores"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "04d766db3fc2336a82cd371d53e39688e9d5dd0fb71908d91de1ea2023f0bf98",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-001",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A credit card carries a $900 balance at 1% interest per MONTH. How much interest accrues in one month?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "900 × 1% = $9 — every month the balance sits there. A 1% monthly rate is roughly 12% APR; card debt grows fast precisely because the compounding period is short.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5fdb53d5922865ccf90221f6445978f7ee4e827a55c3453584f9769aa878761f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-002",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A credit card carries a $600 balance at 1% interest per MONTH. How much interest accrues in one month?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "600 × 1% = $6 — every month the balance sits there. A 1% monthly rate is roughly 12% APR; card debt grows fast precisely because the compounding period is short.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "90a7b5e96c4496c0cc9d76c20be35c482958b82ca4084ed69711fbdd7e86dbf7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-003",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A credit card carries a $1100 balance at 2% interest per MONTH. How much interest accrues in one month?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "22",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "1100 × 2% = $22 — every month the balance sits there. A 2% monthly rate is roughly 24% APR; card debt grows fast precisely because the compounding period is short.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7b72f3e6b5ccfb7df3c7b461a5295b98736f7acad001374efc90541496e17a89",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-004",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A credit card carries a $700 balance at 2% interest per MONTH. How much interest accrues in one month?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "700 × 2% = $14 — every month the balance sits there. A 2% monthly rate is roughly 24% APR; card debt grows fast precisely because the compounding period is short.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2a750248a5863b60cb6b7ddec0b17b7cc33cf8062f192a6acbf04cc0712c0a5a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-005",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A $900 card balance accrues $18 interest this month, and you pay only $25. By how much does the BALANCE actually drop?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The payment first covers the $18 interest; only 25 − 18 = $7 touches the balance. Minimum payments feel like progress while barely denting the debt — this arithmetic is the trap.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "47427e206e60c261525881d210194ac8dba84127fc2843e83ac7b862b7237c09",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-006",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A $1000 card balance accrues $20 interest this month, and you pay only $25. By how much does the BALANCE actually drop?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The payment first covers the $20 interest; only 25 − 20 = $5 touches the balance. Minimum payments feel like progress while barely denting the debt — this arithmetic is the trap.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "22ed9ff29f8dd78a8e311faf3644c65f5ec92243c82e5605836a9645a2edf01a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-007",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A $600 card balance accrues $12 interest this month, and you pay only $25. By how much does the BALANCE actually drop?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The payment first covers the $12 interest; only 25 − 12 = $13 touches the balance. Minimum payments feel like progress while barely denting the debt — this arithmetic is the trap.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2fafe913c2889823cb82487e50e6fb13ec0c18cda813e7607f856890364f1a08",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-credit-card-math-008",
+  "skillId": "cm-credit-card-math",
+  "prompt": "A $700 card balance accrues $14 interest this month, and you pay only $25. By how much does the BALANCE actually drop?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The payment first covers the $14 interest; only 25 − 14 = $11 touches the balance. Minimum payments feel like progress while barely denting the debt — this arithmetic is the trap.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-credit-card-math"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3be18f4cebc2a824776fe8f910aac26f4d7c0fa9a95fe0d9001196e8c533240c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-001",
+  "skillId": "cm-loan-basics",
+  "prompt": "A car loan requires $260/month for 48 months. What TOTAL amount will you pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12480",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "260 × 48 = $12480. The monthly payment is what fits the budget; the total is what the car actually costs you — always compute both.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f8a4db2a03e6ae84bdb40dee626ce3d6af4d540899a411fe381f74f62ca44f6f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-002",
+  "skillId": "cm-loan-basics",
+  "prompt": "A car loan requires $370/month for 36 months. What TOTAL amount will you pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13320",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "370 × 36 = $13320. The monthly payment is what fits the budget; the total is what the car actually costs you — always compute both.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ae7799f67423ba05dbfaa09acb83ec268ac1840066fce1b59e92ba3afceeebeb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-003",
+  "skillId": "cm-loan-basics",
+  "prompt": "A car loan requires $170/month for 48 months. What TOTAL amount will you pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8160",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "170 × 48 = $8160. The monthly payment is what fits the budget; the total is what the car actually costs you — always compute both.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a0e20d0166ba10a0818d473165ed8a1cae9dbf7cd6255939e5b212114cbfd078",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-004",
+  "skillId": "cm-loan-basics",
+  "prompt": "A car loan requires $210/month for 48 months. What TOTAL amount will you pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10080",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "210 × 48 = $10080. The monthly payment is what fits the budget; the total is what the car actually costs you — always compute both.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0418cc7ad02bb86cc6213d950e2c04dfd3e6cf587570b08990981729cc6be476",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-005",
+  "skillId": "cm-loan-basics",
+  "prompt": "You borrow $18000 at 5% simple interest per year and repay $450/month for 48 months. How much INTEREST do you pay over the life of the loan?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3600",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total repaid: 450 × 48 = $21600. Interest = 21600 − 18000 = $3600 — which checks against I = P·r·t = 18000 × 5% × 4. The interest total is the number to compare across loan offers.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c153f7e128834c518ed78af5f8fde545ea8e0333c23346a7317de906f7ec6df4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-006",
+  "skillId": "cm-loan-basics",
+  "prompt": "You borrow $13200 at 10% simple interest per year and repay $660/month for 24 months. How much INTEREST do you pay over the life of the loan?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2640",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total repaid: 660 × 24 = $15840. Interest = 15840 − 13200 = $2640 — which checks against I = P·r·t = 13200 × 10% × 2. The interest total is the number to compare across loan offers.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "604bc368f1b8ada4ad721e5968af80aa66f8b3316541d8b988db7ed693bff931",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-007",
+  "skillId": "cm-loan-basics",
+  "prompt": "You borrow $16400 at 5% simple interest per year and repay $410/month for 48 months. How much INTEREST do you pay over the life of the loan?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3280",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total repaid: 410 × 48 = $19680. Interest = 19680 − 16400 = $3280 — which checks against I = P·r·t = 16400 × 5% × 4. The interest total is the number to compare across loan offers.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "611d9e1f3d2caa594c0e4fa9b841efc8a9070ce57d6330594b336c01e25b18cb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-loan-basics-008",
+  "skillId": "cm-loan-basics",
+  "prompt": "You borrow $8000 at 10% simple interest per year and repay $400/month for 24 months. How much INTEREST do you pay over the life of the loan?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1600",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total repaid: 400 × 24 = $9600. Interest = 9600 − 8000 = $1600 — which checks against I = P·r·t = 8000 × 10% × 2. The interest total is the number to compare across loan offers.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-loan-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d0d12277956fb49a18a8b21248ded29d9cbebcda4b2c2d905f5650b2d09061bd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-amortization-001",
+  "skillId": "cm-amortization",
+  "prompt": "Early in a mortgage, most of each monthly payment goes toward ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Interest",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Interest is charged on the outstanding balance, which is largest at the start — so early payments are mostly interest, and equity builds slowly. The split flips in the loan's later years. That is amortization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-amortization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "872fc9287f295fa225ea85e59b95cb87621afd2bc08e5206e3d2501c7eb59c33",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Interest"
+   },
+   {
+    "label": "B",
+    "text": "Principal"
+   },
+   {
+    "label": "C",
+    "text": "Property tax"
+   },
+   {
+    "label": "D",
+    "text": "The down payment"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-amortization-002",
+  "skillId": "cm-amortization",
+  "prompt": "This month's loan payment is $245, of which $145 is interest. How much does the loan BALANCE decrease?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "100",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Only the part beyond interest reduces the balance: 245 − 145 = $100. An amortization table is just this subtraction repeated month after month.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-amortization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "86a5877d800bd20e4c8fde7ea24baf4a6dfc3caef23b895879e9d31dc537d986",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-amortization-003",
+  "skillId": "cm-amortization",
+  "prompt": "A loan balance is $7000. This month: payment $170, interest $70. What is the balance AFTER the payment?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6900",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Principal paid: 170 − 70 = $100. New balance: 7000 − 100 = $6900. Next month's interest is computed on this smaller balance — the slow-then-fast melt of amortization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-amortization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4a023a5c479b46e1471c1abc279640386fe7c12ed3a6bac756707d1bd10a5584",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-amortization-004",
+  "skillId": "cm-amortization",
+  "prompt": "A loan balance is $5000. This month: payment $150, interest $50. What is the balance AFTER the payment?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4900",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Principal paid: 150 − 50 = $100. New balance: 5000 − 100 = $4900. Next month's interest is computed on this smaller balance — the slow-then-fast melt of amortization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-amortization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4aaac89fc38727fc894c25c6ef55a6cf334488c9e976cfde061428548b1da7db",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-amortization-005",
+  "skillId": "cm-amortization",
+  "prompt": "A loan balance is $6000. This month: payment $160, interest $60. What is the balance AFTER the payment?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5900",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Principal paid: 160 − 60 = $100. New balance: 6000 − 100 = $5900. Next month's interest is computed on this smaller balance — the slow-then-fast melt of amortization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-amortization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9f1583897b29ed27690e7748fd06f0067150793629b234d3c4c55f0d44207cec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-amortization-006",
+  "skillId": "cm-amortization",
+  "prompt": "A loan balance is $8000. This month: payment $180, interest $80. What is the balance AFTER the payment?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7900",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Principal paid: 180 − 80 = $100. New balance: 8000 − 100 = $7900. Next month's interest is computed on this smaller balance — the slow-then-fast melt of amortization.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-amortization"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c9ed7d98a9836afb140d4e3a6cc74bd5f0615a57c62a91cd1e9877a219f07361",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-001",
+  "skillId": "cm-predatory-lending",
+  "prompt": "A payday loan charges $15 per $100 borrowed for a two-week term. Roughly what APR is that?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "About 390%",
+   "equivalents": [
+    "About390%"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "15% per two weeks × 26 two-week periods ≈ 390% APR. The \"small fee\" framing hides an interest rate more than ten times a bad credit card — the defining move of predatory lending.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cb415d2cf320619f9d4338a20a3587bbf589f04ee1ee2480a260d7242b8c98fc",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "About 390%"
+   },
+   {
+    "label": "B",
+    "text": "About 15%"
+   },
+   {
+    "label": "C",
+    "text": "About 30%"
+   },
+   {
+    "label": "D",
+    "text": "About 3.9%"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-002",
+  "skillId": "cm-predatory-lending",
+  "prompt": "Which is a red flag for a predatory loan?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Pressure to sign today, before reading the terms",
+   "equivalents": [
+    "Pressuretosigntoday,beforereadingtheterms"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Urgency exists to prevent comparison shopping. Legitimate lenders state the APR plainly and survive a day of reflection; predatory ones need you not to do the math.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "657aeef21f018e7bb5b83cc4a5fdad20e42c1f4022465e6524f2aecc7ab2e92f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Pressure to sign today, before reading the terms"
+   },
+   {
+    "label": "B",
+    "text": "A clearly stated APR"
+   },
+   {
+    "label": "C",
+    "text": "A no-penalty early payoff option"
+   },
+   {
+    "label": "D",
+    "text": "A licensed, reviewable lender"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-003",
+  "skillId": "cm-predatory-lending",
+  "prompt": "Rolling over a payday loan you cannot repay typically ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Adds new fees on top of the old ones",
+   "equivalents": [
+    "Addsnewfeesontopoftheoldones"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Each rollover charges the fee again while the principal stays. Borrowers commonly pay more in fees than the original loan — the product is designed for exactly that cycle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10a65e5a98fb939110380b77594e25d7631886d473a19f76c449182af6c2ea40",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Adds new fees on top of the old ones"
+   },
+   {
+    "label": "B",
+    "text": "Reduces the total owed"
+   },
+   {
+    "label": "C",
+    "text": "Improves your credit score"
+   },
+   {
+    "label": "D",
+    "text": "Freezes the interest"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-004",
+  "skillId": "cm-predatory-lending",
+  "prompt": "The single best defense before taking ANY loan is to ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Compare the APR against other options",
+   "equivalents": [
+    "ComparetheAPRagainstotheroptions"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "APR is the one number that makes different loans comparable. A lender is not the person to ask whether their own deal is fair — the APR comparison is.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "79464c699ab03386502ec3926e5b836cbd38155a8a49dcc2fc07f3eee8bda1f3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Compare the APR against other options"
+   },
+   {
+    "label": "B",
+    "text": "Ask the lender if the deal is good"
+   },
+   {
+    "label": "C",
+    "text": "Check the monthly payment only"
+   },
+   {
+    "label": "D",
+    "text": "Sign quickly before rates change"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-005",
+  "skillId": "cm-predatory-lending",
+  "prompt": "A payday lender charges $15 per $100 for two weeks. On a $600 loan, what is the fee — and if rolled over 3 more times, what are the total fees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "$90 fee; $360 total",
+   "equivalents": [
+    "$90fee;$360total"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Fee: 6 × $15 = $90 per period. Four periods (original + 3 rollovers): $360 in fees on a $600 loan — 60% of the principal in just 8 weeks, with the debt still unpaid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "65f9c63b213aca93a775fb87035418ccb556e5c062d9eff49bc794d09ac054c2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "$90 fee; $360 total"
+   },
+   {
+    "label": "B",
+    "text": "$90 fee; $90 total"
+   },
+   {
+    "label": "C",
+    "text": "$15 fee; $60 total"
+   },
+   {
+    "label": "D",
+    "text": "$90 fee; $270 total"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-006",
+  "skillId": "cm-predatory-lending",
+  "prompt": "A payday lender charges $15 per $100 for two weeks. On a $500 loan, what is the fee — and if rolled over 3 more times, what are the total fees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "$75 fee; $300 total",
+   "equivalents": [
+    "$75fee;$300total"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Fee: 5 × $15 = $75 per period. Four periods (original + 3 rollovers): $300 in fees on a $500 loan — 60% of the principal in just 8 weeks, with the debt still unpaid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d419f935b861ef451d670676ce2fe14d79d9614b975e7e57779dc41d72ec5c3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "$75 fee; $300 total"
+   },
+   {
+    "label": "B",
+    "text": "$75 fee; $75 total"
+   },
+   {
+    "label": "C",
+    "text": "$15 fee; $60 total"
+   },
+   {
+    "label": "D",
+    "text": "$75 fee; $225 total"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-007",
+  "skillId": "cm-predatory-lending",
+  "prompt": "A payday lender charges $15 per $100 for two weeks. On a $200 loan, what is the fee — and if rolled over 3 more times, what are the total fees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "$30 fee; $120 total",
+   "equivalents": [
+    "$30fee;$120total"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Fee: 2 × $15 = $30 per period. Four periods (original + 3 rollovers): $120 in fees on a $200 loan — 60% of the principal in just 8 weeks, with the debt still unpaid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e79d7f1ee2a49e9df07cf231d102146bc69146ce3f99817ce5372480c3b06333",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "$30 fee; $120 total"
+   },
+   {
+    "label": "B",
+    "text": "$30 fee; $30 total"
+   },
+   {
+    "label": "C",
+    "text": "$15 fee; $60 total"
+   },
+   {
+    "label": "D",
+    "text": "$30 fee; $90 total"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-predatory-lending-008",
+  "skillId": "cm-predatory-lending",
+  "prompt": "A payday lender charges $15 per $100 for two weeks. On a $300 loan, what is the fee — and if rolled over 3 more times, what are the total fees?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "$45 fee; $180 total",
+   "equivalents": [
+    "$45fee;$180total"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Fee: 3 × $15 = $45 per period. Four periods (original + 3 rollovers): $180 in fees on a $300 loan — 60% of the principal in just 8 weeks, with the debt still unpaid.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-predatory-lending"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b3340addee474ec458166de717d408d755b29224969a2bd359436c3795e49707",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "$45 fee; $180 total"
+   },
+   {
+    "label": "B",
+    "text": "$45 fee; $45 total"
+   },
+   {
+    "label": "C",
+    "text": "$15 fee; $60 total"
+   },
+   {
+    "label": "D",
+    "text": "$45 fee; $135 total"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-001",
+  "skillId": "cm-pay-structures",
+  "prompt": "A $46800 annual salary is paid in 26 biweekly checks. What is the GROSS amount of each check?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1800",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "46800 ÷ 26 = $1800 per check, before deductions. Knowing the per-check number is what lets a salary map onto a monthly budget.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9270d6691f31880ca12f5157466bd7b4f13bbcc21d5ca9a615dcf7d77a0f5395",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-002",
+  "skillId": "cm-pay-structures",
+  "prompt": "An hourly worker earns $12/hour for a 35-hour week. What is the weekly gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "420",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "12 × 35 = $420 per week. Hourly pay scales with time worked — steadier hours mean steadier checks.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "929ee2530fa95f87d8a6dceb0f77864a6e3e4fe539ddfe7c059e6c193d6af0ae",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-003",
+  "skillId": "cm-pay-structures",
+  "prompt": "A $41600 annual salary is paid in 26 biweekly checks. What is the GROSS amount of each check?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1600",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "41600 ÷ 26 = $1600 per check, before deductions. Knowing the per-check number is what lets a salary map onto a monthly budget.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ddc6b110d31d2f076705a20e1eebe99ed2adf93a3a89e7a94f8d475f27794f1a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-004",
+  "skillId": "cm-pay-structures",
+  "prompt": "An hourly worker earns $16/hour for a 40-hour week. What is the weekly gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "640",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "16 × 40 = $640 per week. Hourly pay scales with time worked — steadier hours mean steadier checks.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0c515e1233371dc90fd58d2fb1dea806619cbb33d69f07d5bc0f7c400ce5dec0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-005",
+  "skillId": "cm-pay-structures",
+  "prompt": "A salesperson earns a $500 weekly base plus 5% commission on sales. With $2000 in sales this week, what is the total gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "600",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Commission: 2000 × 5% = $100. Total: 500 + 100 = $600. Base + commission blends stability with upside — but budgets should lean on the base.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "843d6f89d80e4c605d5980e8446d258f23b6b7aec9ca8a0940c5675d8a96b9f5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-006",
+  "skillId": "cm-pay-structures",
+  "prompt": "A salesperson earns a $300 weekly base plus 5% commission on sales. With $3000 in sales this week, what is the total gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "450",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Commission: 3000 × 5% = $150. Total: 300 + 150 = $450. Base + commission blends stability with upside — but budgets should lean on the base.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d19f50d2c2fc9b3a18ad40b757cedc878a024398996bcf20e3cc35cb826a71b4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-007",
+  "skillId": "cm-pay-structures",
+  "prompt": "A salesperson earns a $400 weekly base plus 10% commission on sales. With $4000 in sales this week, what is the total gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "800",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Commission: 4000 × 10% = $400. Total: 400 + 400 = $800. Base + commission blends stability with upside — but budgets should lean on the base.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6dbfa1293f392eb150b91645499689163c636eb2c3ccea2b5d06d4b085d093ea",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-pay-structures-008",
+  "skillId": "cm-pay-structures",
+  "prompt": "A salesperson earns a $300 weekly base plus 5% commission on sales. With $8000 in sales this week, what is the total gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "700",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Commission: 8000 × 5% = $400. Total: 300 + 400 = $700. Base + commission blends stability with upside — but budgets should lean on the base.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-pay-structures"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9a668444a82d5f4ba5a20c94a6531b2a4eb7ea4261c52b692df0e25cdd34ba20",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-001",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "You earn $18/hour, and overtime pays time-and-a-half. What is your overtime HOURLY rate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "27",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Time-and-a-half: 18 × 1.5 = $27/hour. Every overtime hour pays half again the normal rate — which is also why employers watch the 40-hour line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7d1aee85464a78e5fbdf972fc5e6aeebc6cfbdee4cc5fb660f43658e9b1072eb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-002",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "You earn $16/hour, and overtime pays time-and-a-half. What is your overtime HOURLY rate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Time-and-a-half: 16 × 1.5 = $24/hour. Every overtime hour pays half again the normal rate — which is also why employers watch the 40-hour line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "79425370a6555e7eea260a4ce73274551ce1df16a79640ae08f96c75339de3dd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-003",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "You earn $24/hour, and overtime pays time-and-a-half. What is your overtime HOURLY rate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Time-and-a-half: 24 × 1.5 = $36/hour. Every overtime hour pays half again the normal rate — which is also why employers watch the 40-hour line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4e90033e7e280c0882c7da4c66ac4dd0a083d9682dc71b4bb019b141df7b3fa0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-004",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "You earn $14/hour, and overtime pays time-and-a-half. What is your overtime HOURLY rate?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "21",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Time-and-a-half: 14 × 1.5 = $21/hour. Every overtime hour pays half again the normal rate — which is also why employers watch the 40-hour line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1a7c4788aa6523cb00f6faba164d06c8629806aa6cb979fde462ed5b9b1acc2a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-005",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "A timesheet shows 43 hours at $18/hour, with hours past 40 at time-and-a-half. What is the gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "801",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Regular: 40 × 18 = $720. Overtime: 3 × $27 = $81. Total: $801. Split the hours FIRST — applying one rate to all 43 hours is the classic timesheet error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7eb629c6aeaa28b8441139c63c0cd88d4a50601b5b8c10fb1c53e302e28e7112",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-006",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "A timesheet shows 45 hours at $12/hour, with hours past 40 at time-and-a-half. What is the gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "570",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Regular: 40 × 12 = $480. Overtime: 5 × $18 = $90. Total: $570. Split the hours FIRST — applying one rate to all 45 hours is the classic timesheet error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c44ee4945f5d727d5053f8f8eafaa1f33a182fc89a030089cb258df1a6be0ab9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-007",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "A timesheet shows 46 hours at $14/hour, with hours past 40 at time-and-a-half. What is the gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "686",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Regular: 40 × 14 = $560. Overtime: 6 × $21 = $126. Total: $686. Split the hours FIRST — applying one rate to all 46 hours is the classic timesheet error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5061b8c331fd2edcb9f539b2ad75fbbc83b5999ec5db362001b8551d923af9a7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-overtime-timesheets-008",
+  "skillId": "cm-overtime-timesheets",
+  "prompt": "A timesheet shows 45 hours at $14/hour, with hours past 40 at time-and-a-half. What is the gross pay?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "665",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Regular: 40 × 14 = $560. Overtime: 5 × $21 = $105. Total: $665. Split the hours FIRST — applying one rate to all 45 hours is the classic timesheet error.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-overtime-timesheets"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2e42b8ddd01a1460342e818bb717d6f67c39913d1658495ff137b5d25b4e3df5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-tax-basics-001",
+  "skillId": "cm-tax-basics",
+  "prompt": "An item costs $230 and sales tax is 10%. What is the TOTAL at the register?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "253",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Tax: 230 × 10% = $23. Total: 230 + 23 = $253. Or in one step: 230 × 1.1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-tax-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e5593d8f99c423659315b4db4920d5c9b4b255f6b5190e122050038f17ec1d76",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-tax-basics-002",
+  "skillId": "cm-tax-basics",
+  "prompt": "The form an employer sends each year summarizing your pay and the tax already withheld is the ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "W-2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The W-2 reports the year's wages and withholding — it is the document a tax return is built from. (The W-4 is what YOU file to set withholding; a 1099 covers non-employee income.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-tax-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "84db3e010a24168a1f3e4b91af12d3f98fcc606997806c8313a9ebad30e6305d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "W-2"
+   },
+   {
+    "label": "B",
+    "text": "W-4"
+   },
+   {
+    "label": "C",
+    "text": "1099"
+   },
+   {
+    "label": "D",
+    "text": "I-9"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-tax-basics-003",
+  "skillId": "cm-tax-basics",
+  "prompt": "An item costs $120 and sales tax is 5%. What is the TOTAL at the register?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "126",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Tax: 120 × 5% = $6. Total: 120 + 6 = $126. Or in one step: 120 × 1.05.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-tax-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d296410ebd5dacc1912494194a5223bdd8f109752f300b05a4f4b006b4671567",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-tax-basics-004",
+  "skillId": "cm-tax-basics",
+  "prompt": "For a simplified flat tax of 10% on a $44000 income, how much tax is owed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4400",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "44000 × 10% = $4400. (Real income tax uses brackets — only the income INSIDE each bracket is taxed at that bracket's rate — but the percent machinery is exactly this.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-tax-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ceb6e1b70a7c36c95b1445aa7cec2af7dc1ed6e5edf24f2abf1ba14bc7fd3ff6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-tax-basics-005",
+  "skillId": "cm-tax-basics",
+  "prompt": "For a simplified flat tax of 12% on a $33000 income, how much tax is owed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3960",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "33000 × 12% = $3960. (Real income tax uses brackets — only the income INSIDE each bracket is taxed at that bracket's rate — but the percent machinery is exactly this.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-tax-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e2691d761488761173f84ceb4ce5adf37d5c8c82d556126580baf9259389de0e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-tax-basics-006",
+  "skillId": "cm-tax-basics",
+  "prompt": "For a simplified flat tax of 12% on a $29000 income, how much tax is owed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3480",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "29000 × 12% = $3480. (Real income tax uses brackets — only the income INSIDE each bracket is taxed at that bracket's rate — but the percent machinery is exactly this.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-tax-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9a35b29b4fc75a9563d78c5b5a8eca9d6ca7e78d67d32b56aa26f9f0faa505e9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-tax-basics-007",
+  "skillId": "cm-tax-basics",
+  "prompt": "For a simplified flat tax of 12% on a $20000 income, how much tax is owed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2400",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "20000 × 12% = $2400. (Real income tax uses brackets — only the income INSIDE each bracket is taxed at that bracket's rate — but the percent machinery is exactly this.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-tax-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "37148e69f83b3106645f5d8e87d6eacfc6514067b3e21cc4cf6b45175f0fb094",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-001",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A pays a $35000 salary plus benefits worth $6000/year. What is the total annual compensation?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "41000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total compensation = salary + benefits value = 35000 + 6000 = $41000. Health coverage, retirement match and paid leave are real money — comparing salaries alone compares the wrong number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ca6ef4c45f5e925d37198864ee2a50199b72693b4e4995a32b65a2b647b9bd1c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-002",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A pays a $36000 salary plus benefits worth $5000/year. What is the total annual compensation?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "41000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total compensation = salary + benefits value = 36000 + 5000 = $41000. Health coverage, retirement match and paid leave are real money — comparing salaries alone compares the wrong number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6ec77ba8efd6dd898bf4b2fa505f0fbf99a850c5ce933acfc9f02a3c574710ef",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-003",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A pays a $48000 salary plus benefits worth $3000/year. What is the total annual compensation?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "51000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total compensation = salary + benefits value = 48000 + 3000 = $51000. Health coverage, retirement match and paid leave are real money — comparing salaries alone compares the wrong number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "23461fe13a3d4fef913ce5f1d4627a34c4d5ecc1e83b411022304dd60cdc5647",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-004",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A pays a $41000 salary plus benefits worth $8000/year. What is the total annual compensation?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "49000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Total compensation = salary + benefits value = 41000 + 8000 = $49000. Health coverage, retirement match and paid leave are real money — comparing salaries alone compares the wrong number.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "958448d2ff27d78389d6e1faf44963d6bb21605d218e479811afec94690fc25d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-005",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A: $39000 salary + $9000 benefits. Job B: $43000 salary + $3000 benefits. Which job's TOTAL compensation is higher, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Job A, by $2000",
+   "equivalents": [
+    "JobA,by$2000"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Totals: A = 39000 + 9000 = $48000; B = 43000 + 3000 = $46000. Job A leads by $2000. The higher SALARY was not the higher OFFER — benefits moved the answer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b3961000c24a8b88ab36aa921aa4e0837d810ba20e1701d5f70e2d88aac098ce",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Job A, by $2000"
+   },
+   {
+    "label": "B",
+    "text": "Job B, by $2000"
+   },
+   {
+    "label": "C",
+    "text": "They are equal"
+   },
+   {
+    "label": "D",
+    "text": "Job B, by $4000"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-006",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A: $45000 salary + $2000 benefits. Job B: $48000 salary + $7000 benefits. Which job's TOTAL compensation is higher, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Job B, by $8000",
+   "equivalents": [
+    "JobB,by$8000"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Totals: A = 45000 + 2000 = $47000; B = 48000 + 7000 = $55000. Job B leads by $8000. The higher SALARY was the higher OFFER — benefits moved the answer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d3a0e6e3f86284231edc030a895cd48dd91cb1d1087e3b570d687c6732279b82",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Job B, by $8000"
+   },
+   {
+    "label": "B",
+    "text": "Job A, by $8000"
+   },
+   {
+    "label": "C",
+    "text": "They are equal"
+   },
+   {
+    "label": "D",
+    "text": "Job B, by $3000"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-007",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A: $40000 salary + $8000 benefits. Job B: $44000 salary + $2000 benefits. Which job's TOTAL compensation is higher, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Job A, by $2000",
+   "equivalents": [
+    "JobA,by$2000"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Totals: A = 40000 + 8000 = $48000; B = 44000 + 2000 = $46000. Job A leads by $2000. The higher SALARY was not the higher OFFER — benefits moved the answer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2f1d65c0669f4c54d8e4c12ee67a775cda1a9439d1a3a8ecdb5ef964a0c0584d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Job A, by $2000"
+   },
+   {
+    "label": "B",
+    "text": "Job B, by $2000"
+   },
+   {
+    "label": "C",
+    "text": "They are equal"
+   },
+   {
+    "label": "D",
+    "text": "Job B, by $4000"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-benefits-comparison-008",
+  "skillId": "cm-benefits-comparison",
+  "prompt": "Job A: $39000 salary + $1000 benefits. Job B: $41000 salary + $7000 benefits. Which job's TOTAL compensation is higher, and by how much?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Job B, by $8000",
+   "equivalents": [
+    "JobB,by$8000"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Totals: A = 39000 + 1000 = $40000; B = 41000 + 7000 = $48000. Job B leads by $8000. The higher SALARY was the higher OFFER — benefits moved the answer.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-benefits-comparison"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1648209f5bfa09916eb91bb1a08218e7abae826301700432154a1812c15defe8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Job B, by $8000"
+   },
+   {
+    "label": "B",
+    "text": "Job A, by $8000"
+   },
+   {
+    "label": "C",
+    "text": "They are equal"
+   },
+   {
+    "label": "D",
+    "text": "Job B, by $2000"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-001",
+  "skillId": "cm-why-investing",
+  "prompt": "Why does money sitting in cash LOSE value over time?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Inflation raises prices while the cash stays the same",
+   "equivalents": [
+    "Inflationraisespriceswhilethecashstaysthesame"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "At 3% inflation, prices double roughly every 24 years — cash that \"did nothing wrong\" buys half as much. Investing exists to outpace that quiet erosion.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e27adffcaa4bcf7b128695903009be334eea2b655e73a2ea9453eb56478f8590",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Inflation raises prices while the cash stays the same"
+   },
+   {
+    "label": "B",
+    "text": "Banks confiscate idle cash"
+   },
+   {
+    "label": "C",
+    "text": "Cash physically wears out"
+   },
+   {
+    "label": "D",
+    "text": "It does not — cash is risk-free"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-002",
+  "skillId": "cm-why-investing",
+  "prompt": "Historically, which grows savings FASTEST over decades?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Broad stock-market investments",
+   "equivalents": [
+    "Broadstock-marketinvestments"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Diversified stocks have averaged ~7-10% annually over long periods — far above savings rates. The price is short-term ups and downs, which is why the horizon matters.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0c71073cbe8e8c961d072a3694d92076d27b8f19e126546a0be8eafa8df0cb3a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Broad stock-market investments"
+   },
+   {
+    "label": "B",
+    "text": "A checking account"
+   },
+   {
+    "label": "C",
+    "text": "Cash under a mattress"
+   },
+   {
+    "label": "D",
+    "text": "Lottery tickets"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-003",
+  "skillId": "cm-why-investing",
+  "prompt": "The trade-off at the heart of investing is ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Higher potential return comes with higher risk",
+   "equivalents": [
+    "Higherpotentialreturncomeswithhigherrisk"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "No one pays you extra returns for free — the premium compensates for bearing swings and possible losses. Matching risk to your timeline is the actual skill.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9969e6b4a52891064fca6ac49539a742d94f711c718ac89fe79a3ec3b63418ee",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Higher potential return comes with higher risk"
+   },
+   {
+    "label": "B",
+    "text": "Risk and return are unrelated"
+   },
+   {
+    "label": "C",
+    "text": "Safe investments earn the most"
+   },
+   {
+    "label": "D",
+    "text": "Only the wealthy can invest"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-004",
+  "skillId": "cm-why-investing",
+  "prompt": "Why is STARTING EARLY the biggest advantage in investing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Compounding has more years to work",
+   "equivalents": [
+    "Compoundinghasmoreyearstowork"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Ten extra years of compounding can matter more than doubling the contribution. Growth on growth is exponential — time is the input it feeds on.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9371a0b5a00230674050dc52c8b08da7cebba38e3ef3e1bd85f41fa797c6a004",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Compounding has more years to work"
+   },
+   {
+    "label": "B",
+    "text": "Young people get better interest rates"
+   },
+   {
+    "label": "C",
+    "text": "Markets only rise early in life"
+   },
+   {
+    "label": "D",
+    "text": "Fees are waived for beginners"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-005",
+  "skillId": "cm-why-investing",
+  "prompt": "At 3% inflation, prices roughly double in 24 years. About how much will $2000 of today's goods cost in 24 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Doubling means $2000 of goods will run about $4000. Money that has not at least doubled in that span has lost ground — the case for investing in one sentence.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bb320550548cdb9fd9c936897c4047a8cf245bff28527bd25f59ee39fd96a1d9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-006",
+  "skillId": "cm-why-investing",
+  "prompt": "At 3% inflation, prices roughly double in 24 years. About how much will $4000 of today's goods cost in 24 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Doubling means $4000 of goods will run about $8000. Money that has not at least doubled in that span has lost ground — the case for investing in one sentence.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f7dbcf2263f131658e928bc5c24f772fc36ebb3de5ef79b8562a92307199748e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-007",
+  "skillId": "cm-why-investing",
+  "prompt": "At 3% inflation, prices roughly double in 24 years. About how much will $3000 of today's goods cost in 24 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Doubling means $3000 of goods will run about $6000. Money that has not at least doubled in that span has lost ground — the case for investing in one sentence.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5438045765584f9c7bf553d670c05c224f94291aaee6fd5fe3addb1c5a88e212",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-why-investing-008",
+  "skillId": "cm-why-investing",
+  "prompt": "At 3% inflation, prices roughly double in 24 years. About how much will $1000 of today's goods cost in 24 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Doubling means $1000 of goods will run about $2000. Money that has not at least doubled in that span has lost ground — the case for investing in one sentence.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-why-investing"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8810e2972c084a5b257ffcb33e005b303a4832d7cb4c82c9a7e12a7faed0c9eb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-001",
+  "skillId": "cm-investment-types",
+  "prompt": "Buying a share of STOCK means you own ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A small piece of the company",
+   "equivalents": [
+    "Asmallpieceofthecompany"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Stock is ownership: the share's value rises and falls with the company. That is why stocks carry both the growth and the risk.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aed190b87c121386b7407c6ccdc4d0523c9828c1b3bd05b77af9bf18a000f00e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A small piece of the company"
+   },
+   {
+    "label": "B",
+    "text": "A loan the company must repay you"
+   },
+   {
+    "label": "C",
+    "text": "A government bond"
+   },
+   {
+    "label": "D",
+    "text": "Insurance on the company"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-002",
+  "skillId": "cm-investment-types",
+  "prompt": "A BOND is essentially ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A loan you make that pays you interest",
+   "equivalents": [
+    "Aloanyoumakethatpaysyouinterest"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A bond flips the usual roles: you are the lender, and the company or government pays you back with interest. Steadier than stock, with less upside.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a6cb1f110e03e3e626d96740aa6e41df4106609e4347efce9ce3f7c2fdb0da86",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A loan you make that pays you interest"
+   },
+   {
+    "label": "B",
+    "text": "Ownership in a company"
+   },
+   {
+    "label": "C",
+    "text": "A savings account"
+   },
+   {
+    "label": "D",
+    "text": "A type of stock"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-003",
+  "skillId": "cm-investment-types",
+  "prompt": "A MUTUAL FUND or INDEX FUND lets an investor ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Own many investments in a single purchase",
+   "equivalents": [
+    "Ownmanyinvestmentsinasinglepurchase"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A fund pools money and buys dozens to thousands of holdings, so one purchase diversifies instantly. Index funds do this at very low cost by tracking a whole market.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "448a5ad7ae10569a7a862d9bae31a3dcab43dd77efedd899c0dd170028295222",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Own many investments in a single purchase"
+   },
+   {
+    "label": "B",
+    "text": "Avoid all risk"
+   },
+   {
+    "label": "C",
+    "text": "Guarantee a fixed return"
+   },
+   {
+    "label": "D",
+    "text": "Borrow against the market"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-004",
+  "skillId": "cm-investment-types",
+  "prompt": "Spreading money across many different investments is called ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Diversification",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Diversification means no single failure can sink you — the one \"free lunch\" in investing, since it lowers risk without lowering expected return.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "53ad2da123791de7b8b33dfc76699a50d659430a37db374b57696fddb1b5ab6a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Diversification"
+   },
+   {
+    "label": "B",
+    "text": "Speculation"
+   },
+   {
+    "label": "C",
+    "text": "Amortization"
+   },
+   {
+    "label": "D",
+    "text": "Liquidation"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-005",
+  "skillId": "cm-investment-types",
+  "prompt": "You buy 30 shares of a stock at $19 per share. What is the total cost of the investment (ignoring fees)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "570",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "30 × 19 = $570. Position size = shares × price — the arithmetic behind every brokerage screen.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3464c810c30e92d6418a49218daa800831c0ce421b21ab2385512fe1405660e2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-006",
+  "skillId": "cm-investment-types",
+  "prompt": "You buy 40 shares of a stock at $16 per share. What is the total cost of the investment (ignoring fees)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "640",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "40 × 16 = $640. Position size = shares × price — the arithmetic behind every brokerage screen.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8d31d7811ba10f56f91ab1032d7b77a53c32d9a182e2e66426b9e546f45eb463",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-007",
+  "skillId": "cm-investment-types",
+  "prompt": "You buy 30 shares of a stock at $29 per share. What is the total cost of the investment (ignoring fees)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "870",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "30 × 29 = $870. Position size = shares × price — the arithmetic behind every brokerage screen.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f430c6f87712bc5576d1a8fca8a02e35198fa02013c85f9e14259dfcc4f2a876",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-investment-types-008",
+  "skillId": "cm-investment-types",
+  "prompt": "You buy 50 shares of a stock at $16 per share. What is the total cost of the investment (ignoring fees)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "800",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "50 × 16 = $800. Position size = shares × price — the arithmetic behind every brokerage screen.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-investment-types"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ac429def679ba7c04b94e800253f4749634d05639f0ab0a3581a2a3988d98f8d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-retirement-accounts-001",
+  "skillId": "cm-retirement-accounts",
+  "prompt": "An employer \"401(k) match\" means the employer ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Adds money when you contribute — effectively free pay",
+   "equivalents": [
+    "Addsmoneywhenyoucontribute—effectivelyfreepay"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A match (say, 50% of what you put in, up to a limit) is compensation you only receive if you contribute. Skipping the match is declining part of your pay.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-retirement-accounts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "08adbc79254ea162b26c53f1647052a5d28287f8a925d2996dd23d516ec6e2ba",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Adds money when you contribute — effectively free pay"
+   },
+   {
+    "label": "B",
+    "text": "Doubles your salary"
+   },
+   {
+    "label": "C",
+    "text": "Pays your taxes"
+   },
+   {
+    "label": "D",
+    "text": "Guarantees investment returns"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-retirement-accounts-002",
+  "skillId": "cm-retirement-accounts",
+  "prompt": "The key difference between a TRADITIONAL and a ROTH retirement account is ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "When you pay the taxes — later vs now",
+   "equivalents": [
+    "Whenyoupaythetaxes—latervsnow"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Traditional: contribute pre-tax, pay tax on withdrawal. Roth: contribute after-tax, withdraw tax-free. Same engine, different tax timing — the choice hinges on your tax rate now vs in retirement.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-retirement-accounts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "024d4c318d74c5ec064c636bb85931fbd1bad1d5aff6939954a5570953251667",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "When you pay the taxes — later vs now"
+   },
+   {
+    "label": "B",
+    "text": "Roth accounts hold only stocks"
+   },
+   {
+    "label": "C",
+    "text": "Traditional accounts have no limits"
+   },
+   {
+    "label": "D",
+    "text": "Roth accounts are employer-only"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-retirement-accounts-003",
+  "skillId": "cm-retirement-accounts",
+  "prompt": "You contribute 4% of a $30000 salary to a 401(k), and your employer matches 50% of your contribution. What TOTAL lands in the account this year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1800",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Your part: 30000 × 4% = $1200. Match: half of that, $600. Total: $1800 — an instant 50% return before any market growth. This is why \"contribute at least to the match\" is rule one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-retirement-accounts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e2ff8deb9de1954eb60f9c9961b2043187a417ebd9e119e6e5776737cb15ce88",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-retirement-accounts-004",
+  "skillId": "cm-retirement-accounts",
+  "prompt": "You contribute 4% of a $42000 salary to a 401(k), and your employer matches 50% of your contribution. What TOTAL lands in the account this year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2520",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Your part: 42000 × 4% = $1680. Match: half of that, $840. Total: $2520 — an instant 50% return before any market growth. This is why \"contribute at least to the match\" is rule one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-retirement-accounts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cca1cc237a86b5a3a13b239004be589bee69df6c5fc567dd54372667de15ba44",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-retirement-accounts-005",
+  "skillId": "cm-retirement-accounts",
+  "prompt": "You contribute 4% of a $47000 salary to a 401(k), and your employer matches 50% of your contribution. What TOTAL lands in the account this year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2820",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Your part: 47000 × 4% = $1880. Match: half of that, $940. Total: $2820 — an instant 50% return before any market growth. This is why \"contribute at least to the match\" is rule one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-retirement-accounts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7b50dac06548db34ff8501dcabb28801ddd7c8045ef3afbceb637d26c986d085",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-retirement-accounts-006",
+  "skillId": "cm-retirement-accounts",
+  "prompt": "You contribute 6% of a $43000 salary to a 401(k), and your employer matches 50% of your contribution. What TOTAL lands in the account this year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3870",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Your part: 43000 × 6% = $2580. Match: half of that, $1290. Total: $3870 — an instant 50% return before any market growth. This is why \"contribute at least to the match\" is rule one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-retirement-accounts"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d75e816ec720a5f2c5c8fdc9aa49e26bcdd30de233341c51ac4667652609e982",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-001",
+  "skillId": "cm-compound-growth",
+  "prompt": "$2000 grows at 10% per year. What is it worth after 2 years of compounding?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2420",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Two years of ×1.10: 2000 → 2200 → $2420. Growth acts on the GROWN amount — the gap between ×1.21 and the ×1.20 of simple growth is small now and enormous over decades.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "15d17401bc265ad03c6f4053ff81bff85016f3d7e284fabe86d2fddc471a39eb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-002",
+  "skillId": "cm-compound-growth",
+  "prompt": "$3000 grows at 10% per year. What is it worth after 2 years of compounding?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3630",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Two years of ×1.10: 3000 → 3300.0000000000005 → $3630. Growth acts on the GROWN amount — the gap between ×1.21 and the ×1.20 of simple growth is small now and enormous over decades.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "62f82d6024b950c34bd1a0936fbea5532c471df57a4e7744de032cb13b555dba",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-003",
+  "skillId": "cm-compound-growth",
+  "prompt": "$1000 grows at 10% per year. What is it worth after 2 years of compounding?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1210",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Two years of ×1.10: 1000 → 1100 → $1210. Growth acts on the GROWN amount — the gap between ×1.21 and the ×1.20 of simple growth is small now and enormous over decades.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a5156292e6f4f49b8d0f97f00463dd1f9918ca3a198e645ae985ae6f57d76682",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-004",
+  "skillId": "cm-compound-growth",
+  "prompt": "$4000 grows at 10% per year. What is it worth after 2 years of compounding?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4840",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Two years of ×1.10: 4000 → 4400 → $4840. Growth acts on the GROWN amount — the gap between ×1.21 and the ×1.20 of simple growth is small now and enormous over decades.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9fff16093f809ec374c638a1f825476e4f13e068754527f546b5804be56b65e7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-005",
+  "skillId": "cm-compound-growth",
+  "prompt": "At 6% annual growth (Rule of 72), an investment doubles about every 12 years. Starting with $1000, about how much after 24 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "24 years is two doubling periods: 1000 → 2000 → $4000. Doublings STACK — a third period would make $8000. Time in the market compounds multiplicatively, not additively.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "08f3a2355cc8aa2878bf1a208c34967d2d348df1fc62a5f08c0332d66148549f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-006",
+  "skillId": "cm-compound-growth",
+  "prompt": "Saving $200/month, how much is CONTRIBUTED (before any growth) over 30 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "72000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "200 × 12 × 30 = $72000 contributed. With ~8% growth the balance would be several times that — the difference between the two numbers is what compounding adds, and why starting beats waiting.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "24caac6112070680765ea44273d1fbb8459a4c1a532fa7d085bba8a807653f20",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-007",
+  "skillId": "cm-compound-growth",
+  "prompt": "At 12% annual growth (Rule of 72), an investment doubles about every 6 years. Starting with $1000, about how much after 12 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "12 years is two doubling periods: 1000 → 2000 → $4000. Doublings STACK — a third period would make $8000. Time in the market compounds multiplicatively, not additively.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f099d8315543e8f49fbbe13505682ff3e2530d1e7a0b31d62fdc6a98cb3a8bb3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-compound-growth-008",
+  "skillId": "cm-compound-growth",
+  "prompt": "Saving $100/month, how much is CONTRIBUTED (before any growth) over 30 years?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36000",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "100 × 12 × 30 = $36000 contributed. With ~8% growth the balance would be several times that — the difference between the two numbers is what compounding adds, and why starting beats waiting.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-compound-growth"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bb58259b6dbdb214c5cc17ab4c80e96cdf542ea61facf46073611894b173c00e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-001",
+  "skillId": "cm-scam-detection",
+  "prompt": "An investment promises \"guaranteed 20% returns with zero risk.\" What does this tell you?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "It is almost certainly a scam",
+   "equivalents": [
+    "Itisalmostcertainlyascam"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Guaranteed + high return + no risk is a combination that does not exist in real finance — risk and return travel together. The promise itself is the tell.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f115aaaa0dce4bd0fe7049d058b13486996ea4bb8d47660053e97dbc59641414",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "It is almost certainly a scam"
+   },
+   {
+    "label": "B",
+    "text": "It is a great opportunity"
+   },
+   {
+    "label": "C",
+    "text": "It is a normal bank product"
+   },
+   {
+    "label": "D",
+    "text": "Returns that high are standard"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-002",
+  "skillId": "cm-scam-detection",
+  "prompt": "A caller says you owe money and must pay RIGHT NOW with gift cards. What is the red flag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No legitimate organization demands gift-card payment",
+   "equivalents": [
+    "Nolegitimateorganizationdemandsgift-cardpayment"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Gift cards are untraceable and irreversible — exactly why scammers demand them and real institutions never do. Urgency + untraceable payment = scam, every time.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f83efb9815b2d8950b168960d11197d7bd432f0577c55b3343515e04712e8a89",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "No legitimate organization demands gift-card payment"
+   },
+   {
+    "label": "B",
+    "text": "The call came in the evening"
+   },
+   {
+    "label": "C",
+    "text": "They knew your name"
+   },
+   {
+    "label": "D",
+    "text": "Gift cards are hard to buy"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-003",
+  "skillId": "cm-scam-detection",
+  "prompt": "A stranger online offers to multiply any money you send them. This is the classic shape of ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "An advance-fee / Ponzi-style scam",
+   "equivalents": [
+    "Anadvance-fee/Ponzi-stylescam"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Send-money-to-get-money schemes pay early victims with later victims' cash until they vanish. Money you transfer to a stranger's control is money gone.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9b6efeafeb0b302524bcb912afa337167614a264b3a5ac184523da2aa953521d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "An advance-fee / Ponzi-style scam"
+   },
+   {
+    "label": "B",
+    "text": "A normal investment account"
+   },
+   {
+    "label": "C",
+    "text": "Peer-to-peer banking"
+   },
+   {
+    "label": "D",
+    "text": "A referral bonus"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-004",
+  "skillId": "cm-scam-detection",
+  "prompt": "Before acting on ANY urgent money request, the safest move is to ___.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Stop, verify through an independent official channel",
+   "equivalents": [
+    "Stop,verifythroughanindependentofficialchannel"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Contact the organization through a number or site YOU find — never one the message supplies. Scams need speed; verification kills them.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d015b77ab10eec2017c5729969fc18536d91abbadfcb732d01f8acde0cfead8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Stop, verify through an independent official channel"
+   },
+   {
+    "label": "B",
+    "text": "Pay a small amount to test it"
+   },
+   {
+    "label": "C",
+    "text": "Reply asking if it is a scam"
+   },
+   {
+    "label": "D",
+    "text": "Forward it to friends"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-005",
+  "skillId": "cm-scam-detection",
+  "prompt": "A scheme promises to double your $400 in a week. An honest 8%-per-year investment would earn how many DOLLARS on $400 in a whole year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "8% of 400 is $32 — over a full year. The scheme claims $400 of profit in one week. Holding the two numbers side by side is the fastest scam test there is: nothing legitimate is hundreds of times the market.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eb61778c8359694ee27b4b67e413503657135108df5e2515737245783d7ac62a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-006",
+  "skillId": "cm-scam-detection",
+  "prompt": "A \"guaranteed 2% per DAY\" offer compounds to roughly 137,000% per year. What is the honest response to the $400 minimum buy-in?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Walk away — no real investment sustains that rate",
+   "equivalents": [
+    "Walkaway—norealinvestmentsustainsthatrate"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Real markets average ~8% per YEAR; 2% per day is thousands of times that. \"Test it with a little\" is exactly how these schemes harvest — early \"returns\" are paid from new victims until withdrawals freeze. The only winning move is not to send the $400.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "91363666f12eee40966eadeaffc135935d2dcf42e3fee61705b00b4e87b142e1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Walk away — no real investment sustains that rate"
+   },
+   {
+    "label": "B",
+    "text": "Invest the $400 minimum to test it"
+   },
+   {
+    "label": "C",
+    "text": "Negotiate a higher rate"
+   },
+   {
+    "label": "D",
+    "text": "Invest, but withdraw after one week"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-007",
+  "skillId": "cm-scam-detection",
+  "prompt": "A scheme promises to double your $800 in a week. An honest 8%-per-year investment would earn how many DOLLARS on $800 in a whole year?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "64",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "8% of 800 is $64 — over a full year. The scheme claims $800 of profit in one week. Holding the two numbers side by side is the fastest scam test there is: nothing legitimate is hundreds of times the market.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "85bc0142ac13e838b071f2d8704d170e1b081aabc6a9c28fbb311bf3020833e2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-cm-scam-detection-008",
+  "skillId": "cm-scam-detection",
+  "prompt": "A \"guaranteed 2% per DAY\" offer compounds to roughly 137,000% per year. What is the honest response to the $300 minimum buy-in?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Walk away — no real investment sustains that rate",
+   "equivalents": [
+    "Walkaway—norealinvestmentsustainsthatrate"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Real markets average ~8% per YEAR; 2% per day is thousands of times that. \"Test it with a little\" is exactly how these schemes harvest — early \"returns\" are paid from new victims until withdrawals freeze. The only winning move is not to send the $300.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:cm-scam-detection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3e7a574c23c6f8a762347cc37ab4966a32cf07b73b4e4ccb539ffcd65a05a868",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Walk away — no real investment sustains that rate"
+   },
+   {
+    "label": "B",
+    "text": "Invest the $300 minimum to test it"
+   },
+   {
+    "label": "C",
+    "text": "Negotiate a higher rate"
+   },
+   {
+    "label": "D",
+    "text": "Invest, but withdraw after one week"
+   }
+  ],
+  "correctOption": "A"
  }
 ]

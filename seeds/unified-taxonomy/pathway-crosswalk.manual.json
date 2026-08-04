@@ -1927,6 +1927,41 @@
    "legacyId": "number-line-integers",
    "unifiedId": "adding-subtracting-integers",
    "course": "parent-math-68"
+  },
+  {
+   "legacyId": "cm-discounts-coupons",
+   "unifiedId": "percent-of-a-number",
+   "course": "consumer-math"
+  },
+  {
+   "legacyId": "cm-discounts-coupons",
+   "unifiedId": "percent-change",
+   "course": "consumer-math"
+  },
+  {
+   "legacyId": "cm-tax-tip-markup",
+   "unifiedId": "percent-of-a-number",
+   "course": "consumer-math"
+  },
+  {
+   "legacyId": "cm-tax-tip-markup",
+   "unifiedId": "act-percentages",
+   "course": "consumer-math"
+  },
+  {
+   "legacyId": "cm-tax-tip-markup",
+   "unifiedId": "percent-problems",
+   "course": "consumer-math"
+  },
+  {
+   "legacyId": "cm-unit-price-comparisons",
+   "unifiedId": "unit-rates",
+   "course": "consumer-math"
+  },
+  {
+   "legacyId": "cm-unit-price-comparisons",
+   "unifiedId": "act-rates-unit-conversion",
+   "course": "consumer-math"
   }
  ]
 }

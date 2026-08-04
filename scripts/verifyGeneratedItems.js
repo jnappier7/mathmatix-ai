@@ -1572,6 +1572,207 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Consumer math ────────────────────────────────────────────────────────
+  if ((m = p.match(/^Your monthly gross pay is \$(\d+) and total deductions are \$(\d+)\. What is your net pay\?$/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A pay stub shows (\d+) hours worked at \$(\d+)\/hour\. What is the gross pay/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A pay stub lists gross pay \$(\d+), federal tax \$(\d+), FICA \$(\d+), and state tax \$(\d+)\. What is the net pay\?$/))) {
+    const e = Number(m[1]) - Number(m[2]) - Number(m[3]) - Number(m[4]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Your account balance is \$(\d+)\. You deposit \$(\d+) and later withdraw \$(\d+)/))) {
+    const e = Number(m[1]) + Number(m[2]) - Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A savings account holds \$(\d+) at (\d+)% simple annual interest\. How much interest does it earn in one year\?$/))) {
+    const e = (Number(m[1]) * Number(m[2])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A monthly budget lists \$\d+ of needs and \$(\d+) of wants\. If income drops and \$(\d+) must be cut/))) {
+    const e = `Wants; $${Number(m[1]) - Number(m[2])}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Using the 50\/30\/20 rule on a \$(\d+) monthly income, how much goes to SAVINGS/))) {
+    const e = Number(m[1]) / 5;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Monthly income is \$(\d+)\. The budget assigns housing \$(\d+), food \$(\d+), and transportation \$(\d+)/))) {
+    const e = Number(m[1]) - Number(m[2]) - Number(m[3]) - Number(m[4]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A month's cash-flow table shows total income \$(\d+) and total expenses \$(\d+)\. What is the net cash flow\?$/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A cash-flow table shows income \$(\d+) and expenses \$(\d+)\. Is the cash flow positive or negative/))) {
+    const inc = Number(m[1]), exp = Number(m[2]);
+    const e = exp > inc ? `Negative by $${exp - inc}` : `Positive by $${inc - exp}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Car insurance costs \$(\d+) once a year\. How much should a monthly budget set aside/))) {
+    const e = Number(m[1]) / 12;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A \$(\d+) insurance premium is due every 6 months, and a \$(\d+) registration fee is due once a year/))) {
+    const e = Number(m[1]) / 6 + Number(m[2]) / 12;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Skipping a \$(\d+)-per-week takeout habit saves how much over a full year/))) {
+    const e = Number(m[1]) * 52;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You want a \$(\d+) bike\. By cutting \$(\d+)\/month of spending, how many months/))) {
+    if (Number(m[1]) % Number(m[2]) !== 0) { fail(it, 'non-whole months'); continue; }
+    const e = Number(m[1]) / Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find the simple interest on \$(\d+) at (\d+)% per year for (\d+) year/))) {
+    const e = (Number(m[1]) * Number(m[2]) * Number(m[3])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You borrow \$(\d+) at (\d+)% simple interest(?: per year)? for (\d+) years\. What TOTAL amount do you repay\?$/))) {
+    const e = Number(m[1]) + (Number(m[1]) * Number(m[2]) * Number(m[3])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^\$(\d+) is invested at 10% compounded annually\. What is the balance after 2 years\?$/))) {
+    const e = Number(m[1]) * 1.21;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Using the Rule of 72, about how many years does money take to DOUBLE at (\d+)% annual growth\?$/))) {
+    const e = 72 / Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Compare: \$(\d+) at 10% SIMPLE interest for 2 years vs 10% COMPOUND\. How much MORE/))) {
+    const e = Number(m[1]) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Your essential expenses are \$(\d+)\/month\. How large is a (\d+)-month emergency fund\?$/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You save \$(\d+)\/month toward a \$(\d+) emergency fund\. How many months/))) {
+    if (Number(m[2]) % Number(m[1]) !== 0) { fail(it, 'non-whole months'); continue; }
+    const e = Number(m[2]) / Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You skip a (\d+)-hour work shift \(at \$(\d+)\/hour\)/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You spend \$(\d+) of savings that was earning (\d+)% per year/))) {
+    const e = (Number(m[1]) * Number(m[2])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A card has a \$(\d+) limit and a \$(\d+) balance\. What is the credit utilization percentage\?$/))) {
+    const e = `${(Number(m[2]) / Number(m[1])) * 100}%`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A credit card carries a \$(\d+) balance at (\d+)% interest per MONTH/))) {
+    const e = (Number(m[1]) * Number(m[2])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A \$\d+ card balance accrues \$(\d+) interest this month, and you pay only \$(\d+)/))) {
+    const e = Number(m[2]) - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A car loan requires \$(\d+)\/month for (\d+) months\. What TOTAL/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You borrow \$(\d+) at (\d+)% simple interest per year and repay \$(\d+)\/month for (\d+) months\. How much INTEREST/))) {
+    const P = Number(m[1]), monthly = Number(m[3]), months = Number(m[4]);
+    const e = monthly * months - P;
+    const years = months / 12;
+    if ((P * Number(m[2]) * years) / 100 !== e) { fail(it, `stated rate inconsistent with payments`); continue; }
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^This month's loan payment is \$(\d+), of which \$(\d+) is interest\. How much does the loan BALANCE decrease\?$/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A loan balance is \$(\d+)\. This month: payment \$(\d+), interest \$(\d+)\. What is the balance AFTER/))) {
+    const e = Number(m[1]) - (Number(m[2]) - Number(m[3]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A payday lender charges \$15 per \$100 for two weeks\. On a \$(\d+) loan/))) {
+    const fee = (Number(m[1]) * 15) / 100;
+    const e = `$${fee} fee; $${fee * 4} total`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A \$(\d+) annual salary is paid in 26 biweekly checks/))) {
+    if (Number(m[1]) % 26 !== 0) { fail(it, 'salary not divisible by 26'); continue; }
+    const e = Number(m[1]) / 26;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^An hourly worker earns \$(\d+)\/hour for a (\d+)-hour week/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A salesperson earns a \$(\d+) weekly base plus (\d+)% commission on sales\. With \$(\d+) in sales/))) {
+    const e = Number(m[1]) + (Number(m[3]) * Number(m[2])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You earn \$(\d+)\/hour, and overtime pays time-and-a-half\. What is your overtime HOURLY rate\?$/))) {
+    const e = Number(m[1]) * 1.5;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A timesheet shows (\d+) hours at \$(\d+)\/hour, with hours past 40 at time-and-a-half/))) {
+    const h = Number(m[1]), w = Number(m[2]);
+    const e = 40 * w + (h - 40) * w * 1.5;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^An item costs \$(\d+) and sales tax is (\d+)%\. What is the TOTAL at the register\?$/))) {
+    const e = Number(m[1]) + (Number(m[1]) * Number(m[2])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^For a simplified flat tax of (\d+)% on a \$(\d+) income/))) {
+    const e = (Number(m[1]) * Number(m[2])) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Job A pays a \$(\d+) salary plus benefits worth \$(\d+)\/year\. What is the total annual compensation\?$/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Job A: \$(\d+) salary \+ \$(\d+) benefits\. Job B: \$(\d+) salary \+ \$(\d+) benefits\. Which job's TOTAL/))) {
+    const tA = Number(m[1]) + Number(m[2]), tB = Number(m[3]) + Number(m[4]);
+    const e = `Job ${tA >= tB ? 'A' : 'B'}, by $${Math.abs(tA - tB)}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/About how much will \$(\d+) of today's goods cost in 24 years\?$/))) {
+    const e = 2 * Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You buy (\d+) shares of a stock at \$(\d+) per share/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^You contribute (\d+)% of a \$(\d+) salary to a 401\(k\), and your employer matches 50%/))) {
+    const contrib = (Number(m[2]) * Number(m[1])) / 100;
+    const e = contrib * 1.5;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^\$(\d+) grows at 10% per year\. What is it worth after 2 years of compounding\?$/))) {
+    const e = Number(m[1]) * 1.21;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^At (\d+)% annual growth \(Rule of 72\), an investment doubles about every (\d+) years\. Starting with \$1000, about how much after (\d+) years\?$/))) {
+    if (72 / Number(m[1]) !== Number(m[2]) || Number(m[3]) !== 2 * Number(m[2])) { fail(it, 'inconsistent doubling setup'); continue; }
+    checked++; if (!eq(it.answer.value, 4000)) fail(it, 4000); continue;
+  }
+  if ((m = p.match(/^Saving \$(\d+)\/month, how much is CONTRIBUTED \(before any growth\) over 30 years\?$/))) {
+    const e = Number(m[1]) * 360;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A scheme promises to double your \$(\d+) in a week\. An honest 8%-per-year/))) {
+    const e = (Number(m[1]) * 8) / 100;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 
