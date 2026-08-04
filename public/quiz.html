@@ -13,7 +13,7 @@
   <link rel="icon" href="/images/icon-192x192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --teal: #12B3B3;
@@ -22,8 +22,10 @@
       --muted: #5B7370;
       --bg: #F3F8F7;
       --card: #FFFFFF;
-      --chalkboard: #22403B;
+      --chalkboard: #1D1E23;
       --chalk: #F7F3E7;
+      --chalk-yellow: #F7D154;
+      --chalk-green: #8CC97A;
       --correct: #2FA84F;
       --trap: #E8833A;
       --other: #9AA9A7;
@@ -59,27 +61,45 @@
       text-transform: uppercase; color: var(--muted); margin-bottom: 8px; text-align: center;
     }
 
+    /* Matches the ad creative: black chalkboard, oak frame, chalk-print
+       lettering, yellow rule under the title, green rule under the problem. */
     .chalkboard {
       position: relative;
-      background: radial-gradient(ellipse at 30% 20%, #2A4A44 0%, var(--chalkboard) 60%);
-      border: 10px solid #B98A5A;
-      border-radius: 12px;
-      box-shadow: var(--shadow), inset 0 0 40px rgba(0,0,0,0.35);
-      padding: 26px 16px 96px; /* bottom room for the floating answer buttons */
+      background: radial-gradient(ellipse at 30% 15%, #2B2C33 0%, var(--chalkboard) 65%);
+      border: 11px solid #B9854E;
+      border-radius: 10px;
+      box-shadow: var(--shadow), inset 0 0 46px rgba(0,0,0,0.55);
+      padding: 24px 16px 96px; /* bottom room for the floating answer buttons */
       text-align: center;
     }
-    .chalkboard.answered { padding-bottom: 22px; }
+    .chalkboard.answered { padding-bottom: 20px; }
     .chalk-title {
-      font-family: 'Caveat', cursive; font-weight: 600;
-      color: #F7E9A8; font-size: 1.35rem; letter-spacing: 0.06em;
+      font-family: 'Patrick Hand', 'Caveat', cursive;
+      color: var(--chalk); font-size: 2rem; letter-spacing: 0.08em;
+      text-shadow: 0 0 5px rgba(247, 243, 231, 0.3);
     }
+    .chalk-rule {
+      height: 5px; border-radius: 4px; margin: 4px auto 10px;
+      transform: rotate(-0.6deg); opacity: 0.85;
+    }
+    .chalk-rule.yellow { width: 52%; background: var(--chalk-yellow); box-shadow: 0 0 6px rgba(247, 209, 84, 0.45); }
+    .chalk-rule.green { width: 68%; background: var(--chalk-green); box-shadow: 0 0 6px rgba(140, 201, 122, 0.4); margin-top: 8px; }
     .chalk-expr {
-      font-family: 'Caveat', cursive; font-weight: 700;
-      color: var(--chalk); font-size: 3rem; line-height: 1.15;
-      text-shadow: 0 0 6px rgba(247, 243, 231, 0.25);
-      margin: 6px 0 2px; word-break: keep-all;
+      font-family: 'Patrick Hand', 'Caveat', cursive;
+      color: var(--chalk); font-size: 3.1rem; line-height: 1.1;
+      text-shadow: 0 0 7px rgba(247, 243, 231, 0.35);
+      margin: 8px 0 0; word-break: keep-all;
     }
-    .chalk-sub { font-family: 'Caveat', cursive; color: #CBDCD4; font-size: 1.3rem; }
+    .chalk-sub {
+      font-family: 'Patrick Hand', 'Caveat', cursive;
+      color: var(--chalk); font-size: 1.5rem; margin-top: 10px; line-height: 1.3;
+    }
+    .chalk-cta {
+      font-family: 'Patrick Hand', 'Caveat', cursive;
+      color: var(--chalk-yellow); font-size: 1.35rem; margin-top: 12px;
+      transform: rotate(-1deg);
+      text-shadow: 0 0 5px rgba(247, 209, 84, 0.35);
+    }
 
     /* Answer buttons float over the bottom of the picture — mirrors the ad
        creative, so the tap people meant to make in the feed works here. */
@@ -252,8 +272,11 @@
 
         var board = el('div', 'chalkboard');
         board.appendChild(el('div', 'chalk-title', 'POP QUIZ:'));
+        board.appendChild(el('div', 'chalk-rule yellow'));
         board.appendChild(el('div', 'chalk-expr', quiz.expression));
+        board.appendChild(el('div', 'chalk-rule green'));
         board.appendChild(el('div', 'chalk-sub', quiz.prompt || ''));
+        board.appendChild(el('div', 'chalk-cta', 'Tap your answer 👇'));
 
         // Floating answer buttons over the bottom of the board (absolute,
         // anchored to .chalkboard) — same layout as the ad creative.
@@ -299,6 +322,8 @@
         if (choiceRow) choiceRow.style.display = 'none';
         var boardEl = round.querySelector('.chalkboard');
         if (boardEl) boardEl.classList.add('answered');
+        var ctaLine = round.querySelector('.chalk-cta');
+        if (ctaLine) ctaLine.style.display = 'none';
 
         var verdict, vClass;
         if (result.yourAnswer === OTHER) {
