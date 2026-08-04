@@ -31,6 +31,8 @@ const BANKS = [
   require('./lib/templatesActStrategy'),
   require('./lib/templatesCalcAB'),
   require('./lib/templatesCalcBC'),
+  require('./lib/templatesEarlyMath'),
+  require('./lib/templatesParentModels'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');

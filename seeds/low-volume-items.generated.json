@@ -33435,5 +33435,4597 @@
   "source": "low-volume-2026-08",
   "contentHash": "9aecfd2610c1983fda83cf7129745096dd4442767d880f14f61a71c85c1d0334",
   "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-001",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 24 × 6",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "144",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Break 24 into tens and ones: 20 × 6 = 120 and 4 × 6 = 24. Add the partial products: 120 + 24 = 144.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "48bc3dc4e4c296001dd263cabf6f457c79c4f249edc38e61822beca1185e3519",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-002",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 31 × 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "124",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Break 31 into tens and ones: 30 × 4 = 120 and 1 × 4 = 4. Add the partial products: 120 + 4 = 124.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "97b2a096c5b57ef3eaed1108277dd41642270aa70cf61f5d01a9f681ff7c82c3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-003",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 13 × 8",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "104",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Break 13 into tens and ones: 10 × 8 = 80 and 3 × 8 = 24. Add the partial products: 80 + 24 = 104.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d825ae8a249c6566e1ec9ead20084369d5fb6e66c76e9ee61c38f151eb1099d4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-004",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 20 × 7",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "140",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Break 20 into tens and ones: 20 × 7 = 140 and 0 × 7 = 0. Add the partial products: 140 + 0 = 140.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "54fa4e06659af4e6780cb8e6fd546ab4cab2e8a99aaa44889dc08dbf660324c0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-005",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 25 × 19",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "475",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Split both factors: (20 + 5) × (10 + 9) gives four partial products: 200, 180, 50, 45. They sum to 475 — the same four boxes an area model draws.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fbc5ff6f279414b5f385a6cd10a7554c417e7b98f9c51af9805db0bc10b9b9d8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-006",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 13 × 11",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "143",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Split both factors: (10 + 3) × (10 + 1) gives four partial products: 100, 10, 30, 3. They sum to 143 — the same four boxes an area model draws.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "18d7924a6f15c4540000482610177a318ad0ff8525c98414672e26888351d983",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-007",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 27 × 14",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "378",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Split both factors: (20 + 7) × (10 + 4) gives four partial products: 200, 80, 70, 28. They sum to 378 — the same four boxes an area model draws.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8fe720091291e0aa32cfaf89dbeee9dcd49e7628662ff6679868fa0138e6defb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-multi-digit-multiplication-008",
+  "skillId": "emf-multi-digit-multiplication",
+  "prompt": "Multiply: 22 × 15",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "330",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Split both factors: (20 + 2) × (10 + 5) gives four partial products: 200, 100, 20, 10. They sum to 330 — the same four boxes an area model draws.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-multi-digit-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8d4c54602933cde29d08790997e2d481d8addbd36474efc0115f1947f14ae178",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-001",
+  "skillId": "emf-factors-multiples",
+  "prompt": "How many factors does 18 have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "List the factor pairs of 18: 1, 2, 3, 6, 9, 18 — 6 in all. Working in pairs (1·18, 2·9, …) makes sure none are missed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6dc6b078debd50a463f504e7aaa91b9ca6b35e77b1361520b824272bbb500c60",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-002",
+  "skillId": "emf-factors-multiples",
+  "prompt": "What is the 9th multiple of 9?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "81",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "The multiples of 9 are 9, 18, 27, … — skip-counting by 9. The 9th one is 9 × 9 = 81.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2057c7f3f64c65f5a56d17a93557aecb6c310a2f611b663ed4c319e3e5475ad0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-003",
+  "skillId": "emf-factors-multiples",
+  "prompt": "How many factors does 20 have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "List the factor pairs of 20: 1, 2, 4, 5, 10, 20 — 6 in all. Working in pairs (1·20, 2·10, …) makes sure none are missed.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "af1c7c200e60dbfb77e283a89cfee8804efa131c181f03d6305598e7c057c9c0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-004",
+  "skillId": "emf-factors-multiples",
+  "prompt": "What is the 9th multiple of 3?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "27",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "The multiples of 3 are 3, 6, 9, … — skip-counting by 3. The 9th one is 3 × 9 = 27.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dff5f28fb3e6dcf3c6754892c5fea5363f50b958b7af0ff13f6a8d9042589b01",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-005",
+  "skillId": "emf-factors-multiples",
+  "prompt": "Is 7 prime or composite?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Prime",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "7 has exactly two factors: 1 and 7. No smaller number (except 1) divides it evenly — that is the definition of prime. Testing divisors up to its square root is enough.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "25c55c4a0ff2bac58076297a6fabb7ca2bf1cf6a700c288d28288ba1bd0b2f3d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Prime"
+   },
+   {
+    "label": "B",
+    "text": "Composite"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-006",
+  "skillId": "emf-factors-multiples",
+  "prompt": "Is 15 prime or composite?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Composite",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "15 = 3 × 5, so it has factors besides 1 and itself — composite. A number is composite the moment ONE extra factor turns up; no need to find them all.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b62638cc7059c7025625a6b1c719a9047c143d305c29c5247b45034d3a3179b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Prime"
+   },
+   {
+    "label": "B",
+    "text": "Composite"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-007",
+  "skillId": "emf-factors-multiples",
+  "prompt": "Is 11 prime or composite?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Prime",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "11 has exactly two factors: 1 and 11. No smaller number (except 1) divides it evenly — that is the definition of prime. Testing divisors up to its square root is enough.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "32aa4ab43257d7696fab6db6764f57f232a7934f2b3e71e72f66ade4507524d2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Prime"
+   },
+   {
+    "label": "B",
+    "text": "Composite"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-factors-multiples-008",
+  "skillId": "emf-factors-multiples",
+  "prompt": "Is 21 prime or composite?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Composite",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "21 = 3 × 7, so it has factors besides 1 and itself — composite. A number is composite the moment ONE extra factor turns up; no need to find them all.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-factors-multiples"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "885eec26f07a9f6e3fa90e87c60753cc303c904d0c5728cba2b911987c570de1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Prime"
+   },
+   {
+    "label": "B",
+    "text": "Composite"
+   },
+   {
+    "label": "C",
+    "text": "Neither"
+   },
+   {
+    "label": "D",
+    "text": "Both"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-001",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 88 ÷ 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "22",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Long division: 4 goes into 88 exactly 22 times, since 4 × 22 = 88. Check every division with the multiplication that undoes it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "77227d85085c62c6774d6721bd83e63831a0e8c2baa618c0cfc5b0ac48471a16",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-002",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 162 ÷ 9",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Long division: 9 goes into 162 exactly 18 times, since 9 × 18 = 162. Check every division with the multiplication that undoes it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1b0c851be0135c14c131d0ca747de77a6f2c5d5b41a108321220484310fdc5bc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-003",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 85 ÷ 5",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "17",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Long division: 5 goes into 85 exactly 17 times, since 5 × 17 = 85. Check every division with the multiplication that undoes it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "264fd03886e75aa53886385b6da886094176c333735e020e29c1efa0323cdf70",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-004",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 100 ÷ 4",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Long division: 4 goes into 100 exactly 25 times, since 4 × 25 = 100. Check every division with the multiplication that undoes it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "00b78ac87a17a242159f009e4760275f2a3b353dc61793b7f50fd3f8eb7a768a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-005",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 185 ÷ 7. Give the quotient and remainder as \"q R r\".",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "26 R 3",
+   "equivalents": [
+    "26R3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "7 × 26 = 182, which leaves 185 − 182 = 3 over — too small for another group of 7. So 185 ÷ 7 = 26 R 3. The remainder must always be smaller than the divisor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e3edc9895298b50b3fc5e7115374ebedd9e590a4d914026db6feb5572e1aafc1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-006",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 172 ÷ 9. Give the quotient and remainder as \"q R r\".",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "19 R 1",
+   "equivalents": [
+    "19R1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "9 × 19 = 171, which leaves 172 − 171 = 1 over — too small for another group of 9. So 172 ÷ 9 = 19 R 1. The remainder must always be smaller than the divisor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7779af893330eb4ac5dbce4c875025f1bdd55704d90d97e71b7c54a924bfa882",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-007",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 65 ÷ 4. Give the quotient and remainder as \"q R r\".",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16 R 1",
+   "equivalents": [
+    "16R1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "4 × 16 = 64, which leaves 65 − 64 = 1 over — too small for another group of 4. So 65 ÷ 4 = 16 R 1. The remainder must always be smaller than the divisor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9051c5b8675fd01b9ab69913f7f2755b703ada87d3a46c6f16b7f1bdb0e2bc65",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-long-division-008",
+  "skillId": "emf-long-division",
+  "prompt": "Divide: 218 ÷ 9. Give the quotient and remainder as \"q R r\".",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24 R 2",
+   "equivalents": [
+    "24R2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "9 × 24 = 216, which leaves 218 − 216 = 2 over — too small for another group of 9. So 218 ÷ 9 = 24 R 2. The remainder must always be smaller than the divisor.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-long-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4d68afdc88eea733a7018483d865aab129564ceb0c3af54734bd19391d872d7c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-001",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "50 students are going on a trip. Each van holds 8 students. How many vans are needed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "50 ÷ 8 = 6 R 2. The 2 leftover students still need a van, so ROUND UP: 7 vans. When the remainder represents people or things that must be included, the quotient rounds up.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "02f4be1a0d3d70b6cc21509f55a07f1297f30fc886452352b1ccf12eb4fd6c6e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-002",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "50 apples are packed into bags of 6. How many FULL bags can be made?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "50 ÷ 6 = 8 R 2. The question asks for FULL bags only, so the remainder is dropped: 8 bags (with 2 apples left over). Same division, opposite treatment of the remainder — the QUESTION decides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2737f524cef89692069337fe71fa3304c509412571e799bce9437d1912f19072",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-003",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "14 students are going on a trip. Each van holds 4 students. How many vans are needed?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "14 ÷ 4 = 3 R 2. The 2 leftover students still need a van, so ROUND UP: 4 vans. When the remainder represents people or things that must be included, the quotient rounds up.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8f5a5cb7695210a9551676566c23a1cd429c3b54c216148f2553cc37255a5311",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-004",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "27 apples are packed into bags of 4. How many FULL bags can be made?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "27 ÷ 4 = 6 R 3. The question asks for FULL bags only, so the remainder is dropped: 6 bags (with 3 apples left over). Same division, opposite treatment of the remainder — the QUESTION decides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cf1e75f71441f93ca5819b4e1295a541c7fc14f5359e9da1c3aaa3de4e192de8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-005",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "43 dollars are shared equally among 5 friends, whole dollars only. How many dollars are LEFT OVER after sharing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "3-5",
+  "explanation": "43 ÷ 5 = 8 R 3: each friend gets $8, and the remainder itself — $3 — is what is left. Sometimes the remainder IS the answer, the third way a remainder can be read.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "962c6e065afa7fdad38e3b42dd7668bc14904820ade992b55a9db40555610dec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-006",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "30 dollars are shared equally among 4 friends, whole dollars only. How many dollars are LEFT OVER after sharing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "3-5",
+  "explanation": "30 ÷ 4 = 7 R 2: each friend gets $7, and the remainder itself — $2 — is what is left. Sometimes the remainder IS the answer, the third way a remainder can be read.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cc7c299fe1b7ac7d2ac1ce4a380597ca8c4d43f17d72a89fb2d3649f00556937",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-007",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "26 dollars are shared equally among 5 friends, whole dollars only. How many dollars are LEFT OVER after sharing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "3-5",
+  "explanation": "26 ÷ 5 = 5 R 1: each friend gets $5, and the remainder itself — $1 — is what is left. Sometimes the remainder IS the answer, the third way a remainder can be read.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "30e729b4ec26a532bc1bc991ebe0221d3f944187d1a0dcfb10b15e002cee13a3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-interpreting-remainders-008",
+  "skillId": "emf-interpreting-remainders",
+  "prompt": "27 dollars are shared equally among 5 friends, whole dollars only. How many dollars are LEFT OVER after sharing?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "3-5",
+  "explanation": "27 ÷ 5 = 5 R 2: each friend gets $5, and the remainder itself — $2 — is what is left. Sometimes the remainder IS the answer, the third way a remainder can be read.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-interpreting-remainders"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e0b14ae24a7713a9b29da91a8b2b23ac8032bd553035a263ffee0bb8d863e1f0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-001",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 3 2/3 as an improper fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Each whole is 3/3, so 3 wholes make 9 3ths, plus the extra 2: (3 × 3 + 2)/3 = 11/3. Multiply the whole by the denominator, then add the numerator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1463145713ea66639da3df326f003fabaa404b79bff05423f9b219278af635c7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-002",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 3 3/4 as an improper fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Each whole is 4/4, so 3 wholes make 12 4ths, plus the extra 3: (3 × 4 + 3)/4 = 15/4. Multiply the whole by the denominator, then add the numerator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5ab7dad92f5d18fcb8af836885a167ad8e1b4e9dfc1d464577622b9fd4602b86",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-003",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 4 3/4 as an improper fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "19/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Each whole is 4/4, so 4 wholes make 16 4ths, plus the extra 3: (4 × 4 + 3)/4 = 19/4. Multiply the whole by the denominator, then add the numerator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "281fb3f3f20c4a64a0ead4f468c7846b51196e345df0c28d6d4b8adb1e31eb92",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-004",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 4 1/3 as an improper fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13/3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Each whole is 3/3, so 4 wholes make 12 3ths, plus the extra 1: (4 × 3 + 1)/3 = 13/3. Multiply the whole by the denominator, then add the numerator.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "206a24b2ff4debfc1e33579509749b5b402ec39383aa14f411a2707131a89699",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-005",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 7/4 as a mixed number.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1 3/4",
+   "equivalents": [
+    "13/4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Divide: 7 ÷ 4 = 1 R 3. The quotient is the whole-number part and the remainder stays over 4: 1 3/4. Converting to a mixed number IS a division-with-remainder problem.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "85ebbad5dac1aacc01156847ef744613ac8b607ce7b1e99c92270dc7229acfaa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-006",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 17/5 as a mixed number.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3 2/5",
+   "equivalents": [
+    "32/5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Divide: 17 ÷ 5 = 3 R 2. The quotient is the whole-number part and the remainder stays over 5: 3 2/5. Converting to a mixed number IS a division-with-remainder problem.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7d5dae36018059974a021bc5c3fced93fb669787759a605fcaabf35eb58c02ec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-007",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 4/3 as a mixed number.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1 1/3",
+   "equivalents": [
+    "11/3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Divide: 4 ÷ 3 = 1 R 1. The quotient is the whole-number part and the remainder stays over 3: 1 1/3. Converting to a mixed number IS a division-with-remainder problem.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ee862546b1a361f26d44e8aefd3784d7644a79391eb098bd902a2f5fab0d82b1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-mixed-numbers-improper-008",
+  "skillId": "emf-mixed-numbers-improper",
+  "prompt": "Write 9/4 as a mixed number.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2 1/4",
+   "equivalents": [
+    "21/4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Divide: 9 ÷ 4 = 2 R 1. The quotient is the whole-number part and the remainder stays over 4: 2 1/4. Converting to a mixed number IS a division-with-remainder problem.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-mixed-numbers-improper"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "df19a19d72e835618f64bde5ea250351e602523d03b3e44c429f9bd6bb348844",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-001",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 5/10 as a decimal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Tenths live one place right of the decimal point: 5/10 = 0.5. The denominator 10 and the first decimal place are the same idea in two notations.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fb119dd73c1e51ab9894627930dd84c94ad2af1c8015e70ad3871e8a1960f458",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-002",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 44/100 as a decimal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.44",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Hundredths fill two decimal places: 44/100 = 0.44. Money is the everyday model — 44 cents is 44/100 of a dollar, written $0.44.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7e700e5ca332bb9dca8bf0aa861976b536cdc49e6fc5107fbccdbd23fe52d197",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-003",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 7/10 as a decimal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Tenths live one place right of the decimal point: 7/10 = 0.7. The denominator 10 and the first decimal place are the same idea in two notations.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "15f328b00a39b3fbd71e29bb1fe0fd1b43d1e6704f91a67ab98349a8a4ac3b4e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-004",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 52/100 as a decimal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0.52",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Hundredths fill two decimal places: 52/100 = 0.52. Money is the everyday model — 52 cents is 52/100 of a dollar, written $0.52.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f55740544211b2fcee43ca72fe55b9cf5fe327009ca021c80cc70deea3519f23",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-005",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 0.1 as a fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "The digit 1 sits in the tenths place, so 0.1 = 1/10. Read the place value aloud — \"1 tenths\" — and the fraction writes itself.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "66519e271064875e11f7b15ebaccbd92679d6297b706190ed4fb974b3a202677",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-006",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 0.5 as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "0.5 = 5/10, and reducing gives 1/2. The benchmark decimals — 0.5, 0.25, 0.75, 0.2 — are worth knowing on sight in both forms.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "195a1b31dab74e0b01e8abd6ef6bd61b90389f2274b81ec190a7a2df7d5e1062",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-007",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 0.2 as a fraction.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2/10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "The digit 2 sits in the tenths place, so 0.2 = 2/10. Read the place value aloud — \"2 tenths\" — and the fraction writes itself.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e1ffc081fe99811d95b6620ffc47749e297b12799daa4543bf5254eb8ff04cf4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-decimals-fractions-connection-008",
+  "skillId": "emf-decimals-fractions-connection",
+  "prompt": "Write 0.2 as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "0.2 = 2/10, and reducing gives 1/5. The benchmark decimals — 0.5, 0.25, 0.75, 0.2 — are worth knowing on sight in both forms.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-decimals-fractions-connection"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "238dfe89ac7a45c118a48bcc635682ef94041f5c7823db329f74b4bcd21433ed",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-001",
+  "skillId": "emf-angles-basics",
+  "prompt": "An angle measures 90°. What type of angle is it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Right",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Exactly 90° — a perfect square corner, like the corner of a book. The little square symbol marks it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "55253e9b7f7e1a0990b3d340e0780c42063b2429f0e1670328429c7bf4288dee",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Right"
+   },
+   {
+    "label": "B",
+    "text": "Acute"
+   },
+   {
+    "label": "C",
+    "text": "Obtuse"
+   },
+   {
+    "label": "D",
+    "text": "Straight"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-002",
+  "skillId": "emf-angles-basics",
+  "prompt": "An angle measures 45°. What type of angle is it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Acute",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Less than 90° — a sharp, narrow opening. \"Acute\" means sharp; 45° is half a right angle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2d345339c4f904fe4d56a9072d159de954c25fb009e4ff24f13501e7e136db20",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Right"
+   },
+   {
+    "label": "B",
+    "text": "Acute"
+   },
+   {
+    "label": "C",
+    "text": "Obtuse"
+   },
+   {
+    "label": "D",
+    "text": "Straight"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-003",
+  "skillId": "emf-angles-basics",
+  "prompt": "An angle measures 120°. What type of angle is it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Obtuse",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Between 90° and 180° — wider than a square corner but not yet flat. \"Obtuse\" means blunt.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6a29b8ba4dbfb0e09a7779d7b101c65e819d706eaa3a9a7816bc4d5c776d0c75",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Right"
+   },
+   {
+    "label": "B",
+    "text": "Acute"
+   },
+   {
+    "label": "C",
+    "text": "Obtuse"
+   },
+   {
+    "label": "D",
+    "text": "Straight"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-004",
+  "skillId": "emf-angles-basics",
+  "prompt": "An angle measures 180°. What type of angle is it?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Straight",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "3-5",
+  "explanation": "Exactly 180° — the two rays point in opposite directions, forming a straight line.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "715bbcad66f85aa0035ed6117490b5daae938a1c6243af0fa4269c499250e4d9",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Right"
+   },
+   {
+    "label": "B",
+    "text": "Acute"
+   },
+   {
+    "label": "C",
+    "text": "Obtuse"
+   },
+   {
+    "label": "D",
+    "text": "Straight"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-005",
+  "skillId": "emf-angles-basics",
+  "prompt": "Two angles together form a RIGHT angle. One measures 72°. What does the other measure?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Angles that build a right angle add to 90° (complementary): 90 − 72 = 18°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5b05de0a3c0a7e0a943272730ee00c4b1b821204ddbb63623bbcd8504a4a381a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-006",
+  "skillId": "emf-angles-basics",
+  "prompt": "Two angles together form a STRAIGHT line. One measures 48°. What does the other measure?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "132",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Angles along a straight line add to 180° (supplementary): 180 − 48 = 132°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "12f57ea184222f7fd2bc31e57d9189aa3cbd28551bd7b025e51fe9a6966e69a2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-007",
+  "skillId": "emf-angles-basics",
+  "prompt": "Two angles together form a RIGHT angle. One measures 55°. What does the other measure?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "35",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Angles that build a right angle add to 90° (complementary): 90 − 55 = 35°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "87dc15c2015645f491baae09b9ad4a4acedae62beab79adc7978d65d6260b502",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-emf-angles-basics-008",
+  "skillId": "emf-angles-basics",
+  "prompt": "Two angles together form a STRAIGHT line. One measures 110°. What does the other measure?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "70",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "3-5",
+  "explanation": "Angles along a straight line add to 180° (supplementary): 180 − 110 = 70°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:emf-angles-basics"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4f8bba39aeaac41dd1a83ab7cfcb14dcb60195ab5237f2a5c98504178b486f58",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-001",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 10: 10 = 1 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "10 breaks apart into 1 and 9, because 1 + 9 = 10. Number bonds like this are the foundation for addition facts and making ten.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4c80846d95b73f09206dbce7bf2e14d3bae121216bfd9985b7f986d33f1335aa",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-002",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 6: 6 = 4 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "6 breaks apart into 4 and 2, because 4 + 2 = 6. Number bonds like this are the foundation for addition facts and making ten.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "276bbe2053282bdae7da2a9e2c522a0f7f2c3c553ad4bd55908dde6e908f08d7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-003",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 8: 8 = 5 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "8 breaks apart into 5 and 3, because 5 + 3 = 8. Number bonds like this are the foundation for addition facts and making ten.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e311c0f31b559531845b40c04b62e3b69cff02290797d40625843b0b9457568d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-004",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 7: 7 = 1 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "7 breaks apart into 1 and 6, because 1 + 6 = 7. Number bonds like this are the foundation for addition facts and making ten.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "169cca387d6fcb52c7572e96b551f8016229b14402ae562e8fffa4763141830c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-005",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 12 into a ten and ones: 12 = 10 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Teen numbers are a ten and some ones: 12 = 10 + 2. Seeing the ten inside every teen number is the doorway to place value.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "93b18678603e32d2a2d7d15ae4101f1fa37a445eaf2c00ba9a10d731f8f4d1cc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-006",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 19 into a ten and ones: 19 = 10 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Teen numbers are a ten and some ones: 19 = 10 + 9. Seeing the ten inside every teen number is the doorway to place value.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "04910bf7c723444c601f9458f3ea7d3d0af0f9448ef63aa9073b03005fce1aab",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-007",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 17 into a ten and ones: 17 = 10 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Teen numbers are a ten and some ones: 17 = 10 + 7. Seeing the ten inside every teen number is the doorway to place value.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4c578c3dc36ac22cc47f55aa8371d4ae85a42c2dc09fc63b02794740b8fc31e3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-decomposing-numbers-008",
+  "skillId": "decomposing-numbers",
+  "prompt": "Decompose 18 into a ten and ones: 18 = 10 + ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Teen numbers are a ten and some ones: 18 = 10 + 8. Seeing the ten inside every teen number is the doorway to place value.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:decomposing-numbers"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8af70e3096af221e1113f01d66c151192a6115b16a5557ae218ec1453dcc89ed",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-001",
+  "skillId": "ten-frames",
+  "prompt": "A ten frame has 8 counters in it. How many empty boxes are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "A ten frame always holds 10 boxes, so 8 filled leaves 10 − 8 = 2 empty. The frame makes \"how far from ten\" visible at a glance — no counting one by one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "19b6d9cbba9a698cc3aeba99807b26690f7a741382d7cf90adbc2f54c012c79b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-002",
+  "skillId": "ten-frames",
+  "prompt": "A ten frame shows a full top row (5) and 4 more in the bottom row. How many counters in all?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "A full top row is 5, so count on: 5 + 4 = 9. Ten frames build \"5 and some more\" thinking — subitizing instead of one-by-one counting.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0a0d4115863187ac630413e5cb039f1dacb4dd771b06f2a81d6ef6d369fe5494",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-003",
+  "skillId": "ten-frames",
+  "prompt": "A ten frame has 7 counters in it. How many empty boxes are there?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "A ten frame always holds 10 boxes, so 7 filled leaves 10 − 7 = 3 empty. The frame makes \"how far from ten\" visible at a glance — no counting one by one.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0e1731d09906946a21ca1147705efa51c3d283aa196486206c68f6f01300d64b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-004",
+  "skillId": "ten-frames",
+  "prompt": "A ten frame shows a full top row (5) and 1 more in the bottom row. How many counters in all?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "A full top row is 5, so count on: 5 + 1 = 6. Ten frames build \"5 and some more\" thinking — subitizing instead of one-by-one counting.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "722a5b18e7f771cebf76bf2213a4b794b0de63875d0dc46368f678a7a79f1663",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-005",
+  "skillId": "ten-frames",
+  "prompt": "Two ten frames: one shows 6, the other shows 4. To add them by filling the first frame to ten, how many counters move over?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The first frame needs 4 more to reach ten, so move 4 from the second frame. Then the sum reads as 10 + 0 = 10 — the frames make the make-a-ten strategy physical.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "947b79e419ec57ea646b116e9bf636e30c016901de7f4e6ce1161c53f10dc0ae",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-006",
+  "skillId": "ten-frames",
+  "prompt": "Two ten frames: one shows 9, the other shows 4. To add them by filling the first frame to ten, how many counters move over?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The first frame needs 1 more to reach ten, so move 1 from the second frame. Then the sum reads as 10 + 3 = 13 — the frames make the make-a-ten strategy physical.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "128fd3bf4ea00a45263a9fd58044ebd7168c80c650b2a4e776fe29cca0dc9e29",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-007",
+  "skillId": "ten-frames",
+  "prompt": "Two ten frames: one shows 7, the other shows 9. To add them by filling the first frame to ten, how many counters move over?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The first frame needs 3 more to reach ten, so move 3 from the second frame. Then the sum reads as 10 + 6 = 16 — the frames make the make-a-ten strategy physical.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b29b3073e896a902ad073d80602e7204a81306ac3e0ee0b43463bfda16fde00",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ten-frames-008",
+  "skillId": "ten-frames",
+  "prompt": "Two ten frames: one shows 7, the other shows 4. To add them by filling the first frame to ten, how many counters move over?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The first frame needs 3 more to reach ten, so move 3 from the second frame. Then the sum reads as 10 + 1 = 11 — the frames make the make-a-ten strategy physical.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ten-frames"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "44d841c183b3143eed35ca6b7eb8209dbe36e3c946dd8aff75da8f8de070d59d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-001",
+  "skillId": "making-ten-strategy",
+  "prompt": "What number makes ten with 6?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "6 + 4 = 10. The pairs that make ten (9+1, 8+2, 7+3, 6+4, 5+5) are worth knowing instantly — every mental-math strategy builds on them.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eb69e6c3d4918141377d2f20e4a5dcb8126247bac4e6f5b61c3ed0860c7d13bf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-002",
+  "skillId": "making-ten-strategy",
+  "prompt": "What number makes ten with 7?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "7 + 3 = 10. The pairs that make ten (9+1, 8+2, 7+3, 6+4, 5+5) are worth knowing instantly — every mental-math strategy builds on them.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "88313e55c7c340b1b80d69dd05b267e8b84d5e6d6144f436e6cf5026a0fdfafb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-003",
+  "skillId": "making-ten-strategy",
+  "prompt": "What number makes ten with 8?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "8 + 2 = 10. The pairs that make ten (9+1, 8+2, 7+3, 6+4, 5+5) are worth knowing instantly — every mental-math strategy builds on them.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f1713cb8856658a4214f81e222bca00f38dc5477d2bfa9c79b19049d11ca64d7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-004",
+  "skillId": "making-ten-strategy",
+  "prompt": "What number makes ten with 9?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "9 + 1 = 10. The pairs that make ten (9+1, 8+2, 7+3, 6+4, 5+5) are worth knowing instantly — every mental-math strategy builds on them.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8b3dd89450a05ee3b76fc82252bd55980021bb2df45db69a6cd18d1ae5da3ebf",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-005",
+  "skillId": "making-ten-strategy",
+  "prompt": "Compute 8 + 5 by making ten: 8 + 2 + ? = 13. What goes in the blank?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 5 into 2 + 3: the 2 fills 8 up to ten, leaving 3 more. So 8 + 5 = 10 + 3 = 13 — adding through ten instead of counting on.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cfa5acd734714a4a1435d8e769d32c868d63e27a8d20cf5ab2be626436cea3c2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-006",
+  "skillId": "making-ten-strategy",
+  "prompt": "Compute 8 + 7 by making ten: 8 + 2 + ? = 15. What goes in the blank?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 7 into 2 + 5: the 2 fills 8 up to ten, leaving 5 more. So 8 + 7 = 10 + 5 = 15 — adding through ten instead of counting on.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "280f1029785382df81473ff621e627b6c56d5076afd0a3b7751a16319c401e34",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-007",
+  "skillId": "making-ten-strategy",
+  "prompt": "Compute 9 + 7 by making ten: 9 + 1 + ? = 16. What goes in the blank?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 7 into 1 + 6: the 1 fills 9 up to ten, leaving 6 more. So 9 + 7 = 10 + 6 = 16 — adding through ten instead of counting on.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fd48def4cb115f2907a6fdd8b5d96e0b341be3d3c7b613183f6e9e7ad487b44e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-making-ten-strategy-008",
+  "skillId": "making-ten-strategy",
+  "prompt": "Compute 8 + 8 by making ten: 8 + 2 + ? = 16. What goes in the blank?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 8 into 2 + 6: the 2 fills 8 up to ten, leaving 6 more. So 8 + 8 = 10 + 6 = 16 — adding through ten instead of counting on.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:making-ten-strategy"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c9ee308fc0725c722f7ba7011fde524908302984076bbef4a3535e5afb1bb0d0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-001",
+  "skillId": "mental-math-strategies",
+  "prompt": "Use doubles: 7 + 8 = ? (Hint: it is a doubles-plus-one fact.)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Near-doubles lean on a known double: 7 + 7 = 14, and one more makes 15. Anchoring to doubles beats counting on by 8.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "984de170d33e1fe211c8d3db82a83fd06fd920a71569dbc2f669108dc2044a7b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-002",
+  "skillId": "mental-math-strategies",
+  "prompt": "Compute 7 + 9 by compensation: add 10, then adjust. What is the answer?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Adding 9 the easy way: 7 + 10 = 17, then take 1 back: 17 − 1 = 16. Compensation trades a hard fact for an easy one plus a small fix.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "95b1b91b2ad987aaac86eb49659bd7737f4f3d5673d0950989f69f33ce3f15c0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-003",
+  "skillId": "mental-math-strategies",
+  "prompt": "Use doubles: 5 + 6 = ? (Hint: it is a doubles-plus-one fact.)",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Near-doubles lean on a known double: 5 + 5 = 10, and one more makes 11. Anchoring to doubles beats counting on by 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "83e14bb56e506357dc1411ccf7e5023a4edb378663e178550df6639dbdd41800",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-004",
+  "skillId": "mental-math-strategies",
+  "prompt": "Compute 8 + 9 by compensation: add 10, then adjust. What is the answer?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "17",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Adding 9 the easy way: 8 + 10 = 18, then take 1 back: 18 − 1 = 17. Compensation trades a hard fact for an easy one plus a small fix.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "972ef9e034e6351ac23d0cd8876ef8a77fb9638efa038057cd375a2c7913581a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-005",
+  "skillId": "mental-math-strategies",
+  "prompt": "Compute 54 + 19 mentally by adding 20 and adjusting. What is the sum?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "73",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "19 is one less than 20: add 54 + 20 = 74, then subtract the extra 1 to get 73. Rounding to a friendly number, then compensating, is the workhorse of mental addition.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "028917957c2d4a1891adeeaafce5e014e43d8eb87cff097a95a729337ad384cc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-006",
+  "skillId": "mental-math-strategies",
+  "prompt": "Compute 8 × 17 mentally by doubling: double three times. What is the product?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "136",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "×8 is three doublings: 17 → 34 → 68 → 136. Doubling is the multiplication a mind does most easily.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d319b6e16c52d9a1a15e640b1d8f3c9eaafcfeed8ecbbc546f011dce5ebd248a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-007",
+  "skillId": "mental-math-strategies",
+  "prompt": "Compute 42 + 19 mentally by adding 20 and adjusting. What is the sum?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "61",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "19 is one less than 20: add 42 + 20 = 62, then subtract the extra 1 to get 61. Rounding to a friendly number, then compensating, is the workhorse of mental addition.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b07897159fa554a4454262aaa64b3d4452a28b95632c174c1858402e3477ba2f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-mental-math-strategies-008",
+  "skillId": "mental-math-strategies",
+  "prompt": "Compute 8 × 24 mentally by doubling: double three times. What is the product?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "192",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "×8 is three doublings: 24 → 48 → 96 → 192. Doubling is the multiplication a mind does most easily.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:mental-math-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3d12bc197eba88d6a65d3d08463b4e28b1d4b0d2ec4181d674d87c042b33fc10",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-001",
+  "skillId": "bar-models",
+  "prompt": "A bar model shows a whole of 11 split into two parts. One part is 6. What is the other part?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Part + part = whole: ? = 11 − 6 = 5. The bar makes the relationship visible — the unknown is literally the missing piece of the picture.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7757dcc99408c64505d7958bf94d0d292748dcd7f60d4b3c2a13d95fe5ae654c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-002",
+  "skillId": "bar-models",
+  "prompt": "A bar model shows a whole of 15 split into two parts. One part is 12. What is the other part?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Part + part = whole: ? = 15 − 12 = 3. The bar makes the relationship visible — the unknown is literally the missing piece of the picture.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c8278eff5dac960c5bf94b57ac9bf9ea7847aa6fd438fad93a90f6cd9e228c29",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-003",
+  "skillId": "bar-models",
+  "prompt": "A bar model shows a whole of 15 split into two parts. One part is 11. What is the other part?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Part + part = whole: ? = 15 − 11 = 4. The bar makes the relationship visible — the unknown is literally the missing piece of the picture.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "35222d6c8dba1e655e766bf66c2fa042432890cc719b51f3ca1219d8a456299d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-004",
+  "skillId": "bar-models",
+  "prompt": "A bar model shows a whole of 9 split into two parts. One part is 4. What is the other part?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Part + part = whole: ? = 9 − 4 = 5. The bar makes the relationship visible — the unknown is literally the missing piece of the picture.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a73d44fd09129d432162af4cfdcd9940b3ec13a2d15f701f2e0f23d9008eceec",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-005",
+  "skillId": "bar-models",
+  "prompt": "A comparison bar model shows Maya has 3 equal boxes and Sam has 1 box of the same size. Together they have 20. How much does Sam have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The model shows 4 equal boxes making 20, so one box is 20 ÷ 4 = 5. Sam has one box: 5. (Maya has 15.) Bar models turn \"times as many\" words into countable boxes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a17edc1ee6d761280d8c521ab6d131a926f822ad4693402caf25479b4e46e0cb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-006",
+  "skillId": "bar-models",
+  "prompt": "A comparison bar model shows Maya has 4 equal boxes and Sam has 1 box of the same size. Together they have 15. How much does Sam have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The model shows 5 equal boxes making 15, so one box is 15 ÷ 5 = 3. Sam has one box: 3. (Maya has 12.) Bar models turn \"times as many\" words into countable boxes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5b9b67534b8a430e250e69a97d7662b9644956d9f0c2bbe0a47c804ddde77504",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-007",
+  "skillId": "bar-models",
+  "prompt": "A comparison bar model shows Maya has 4 equal boxes and Sam has 1 box of the same size. Together they have 40. How much does Sam have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The model shows 5 equal boxes making 40, so one box is 40 ÷ 5 = 8. Sam has one box: 8. (Maya has 32.) Bar models turn \"times as many\" words into countable boxes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "97c71cf150de5280937f19adb53918bfcf537d345aa3773520acd835836ffbe0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-bar-models-008",
+  "skillId": "bar-models",
+  "prompt": "A comparison bar model shows Maya has 3 equal boxes and Sam has 1 box of the same size. Together they have 32. How much does Sam have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The model shows 4 equal boxes making 32, so one box is 32 ÷ 4 = 8. Sam has one box: 8. (Maya has 24.) Bar models turn \"times as many\" words into countable boxes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:bar-models"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "773e55aad8a1a940ab06c5576dc382b4a6c9aaf9a3c8c821fb4c8e845d9f8ea5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-001",
+  "skillId": "number-lines",
+  "prompt": "Start at 7 on a number line and make 3 hops of 5. Where do you land?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "22",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Each hop adds 5: 7 → 12 → 17 → 22. Hopping a number line is repeated addition made visible — and later, multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "dd00cd31313e32d9820b1e4006fa968cd38af70ffa196c22f50e651411ae6550",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-002",
+  "skillId": "number-lines",
+  "prompt": "Start at 8 on a number line and make 2 hops of 5. Where do you land?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Each hop adds 5: 8 → 13 → 18. Hopping a number line is repeated addition made visible — and later, multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "11d973aa5951ab10451fbad2a69c2201bf3e8704ce952fbc8b7428b9b50d2ec5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-003",
+  "skillId": "number-lines",
+  "prompt": "Start at 3 on a number line and make 4 hops of 5. Where do you land?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "23",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Each hop adds 5: 3 → 8 → 13 → 23. Hopping a number line is repeated addition made visible — and later, multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bba2bf987694571c81d6de2141ead35a958eb8af27c97c907f97f6194629c091",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-004",
+  "skillId": "number-lines",
+  "prompt": "Start at 8 on a number line and make 4 hops of 4. Where do you land?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 1,
+  "gradeBand": "K-8",
+  "explanation": "Each hop adds 4: 8 → 12 → 16 → 24. Hopping a number line is repeated addition made visible — and later, multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4076fd0033e6a20249676687f2276727de5b92c8045c69b99c85bf2d196c075f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-005",
+  "skillId": "number-lines",
+  "prompt": "Find 25 − 20 on a number line by counting UP from 20 to 25. What is the difference?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Count up: 20 → 20 (a friendly ten) → 25. The total distance climbed is 5. Subtraction as \"distance between\" often beats take-away — it is how people count change.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5177ab87279a5870607d333da9d6bb7dbae4e56b2d62ee6b849fb7ef2e35cd32",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-006",
+  "skillId": "number-lines",
+  "prompt": "Find 56 − 11 on a number line by counting UP from 11 to 56. What is the difference?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "45",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Count up: 11 → 20 (a friendly ten) → 56. The total distance climbed is 45. Subtraction as \"distance between\" often beats take-away — it is how people count change.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2f5c4d53bf7d438c3c52b6ff5925c1b1147f3a3a54e9f0a0ee4737d778ac3ab4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-007",
+  "skillId": "number-lines",
+  "prompt": "Find 38 − 16 on a number line by counting UP from 16 to 38. What is the difference?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "22",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Count up: 16 → 20 (a friendly ten) → 38. The total distance climbed is 22. Subtraction as \"distance between\" often beats take-away — it is how people count change.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6ad9cab81b301a1c6963b78eaac713eb01188c63f5bf4bec25d3ea24a484fe2e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-number-lines-008",
+  "skillId": "number-lines",
+  "prompt": "Find 42 − 18 on a number line by counting UP from 18 to 42. What is the difference?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Count up: 18 → 20 (a friendly ten) → 42. The total distance climbed is 24. Subtraction as \"distance between\" often beats take-away — it is how people count change.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9bef0cdfd09ec34bfb4c3dc07ba43a7259042c8aeecffee1c1e54153ee98e454",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-001",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for (30 + 6) × 9 has two boxes. The first box holds 30 × 9. What does the WHOLE model total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "324",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two boxes hold 30 × 9 = 270 and 6 × 9 = 54. Total: 270 + 54 = 324. The area model is the distributive property drawn as a rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7afb483e150ae9fe9904db43c0d93c16619a65741f70a1392252c4852a25fbb6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-002",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for (20 + 7) × 4 has two boxes. The first box holds 20 × 4. What does the WHOLE model total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "108",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two boxes hold 20 × 4 = 80 and 7 × 4 = 28. Total: 80 + 28 = 108. The area model is the distributive property drawn as a rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ccf81562cb33ca54bb6567179e0061ebbaac3b2db820a04bf14a006110c0f7a6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-003",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for (30 + 9) × 9 has two boxes. The first box holds 30 × 9. What does the WHOLE model total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "351",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two boxes hold 30 × 9 = 270 and 9 × 9 = 81. Total: 270 + 81 = 351. The area model is the distributive property drawn as a rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0fd6c9954dac3a25fbcac1bba275c417a926b435176f607a3a1fc04619ceb414",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-004",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for (30 + 2) × 3 has two boxes. The first box holds 30 × 3. What does the WHOLE model total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "96",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two boxes hold 30 × 3 = 90 and 2 × 3 = 6. Total: 90 + 6 = 96. The area model is the distributive property drawn as a rectangle.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a3ed33246346d179c1ba6186e25391dbda59ecefd11fd203704cfc83a0779685",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-005",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for 26 × 13 has four boxes: 20×10, 20×3, 6×10, and 6×3. What is the total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "338",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The boxes hold 200, 60, 60, and 18. Sum: 200 + 60 + 60 + 18 = 338. Every partial product gets its own room — nothing is carried or hidden.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2042a6f2a5d0d76691bf6c0093742918dae81d08a8a086cf3716417d38b1c3a7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-006",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for 28 × 19 has four boxes: 20×10, 20×9, 8×10, and 8×9. What is the total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "532",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The boxes hold 200, 180, 80, and 72. Sum: 200 + 180 + 80 + 72 = 532. Every partial product gets its own room — nothing is carried or hidden.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2f7463facffcd8436470aaad20217181d159a79f6787907399f19ab096cd9f73",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-007",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for 16 × 16 has four boxes: 10×10, 10×6, 6×10, and 6×6. What is the total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "256",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The boxes hold 100, 60, 60, and 36. Sum: 100 + 60 + 60 + 36 = 256. Every partial product gets its own room — nothing is carried or hidden.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bf5a63f17501956310ad71737cd429c68f84ad5ecd365e40c47aa14d0c2e1eef",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-area-model-multiplication-008",
+  "skillId": "area-model-multiplication",
+  "prompt": "An area model for 12 × 14 has four boxes: 10×10, 10×4, 2×10, and 2×4. What is the total?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "168",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The boxes hold 100, 40, 20, and 8. Sum: 100 + 40 + 20 + 8 = 168. Every partial product gets its own room — nothing is carried or hidden.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:area-model-multiplication"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "139a2ecb8fbfe78b33cba2703bf569884ff817273f0e2220ac04f7527a5db0eb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-001",
+  "skillId": "partial-products",
+  "prompt": "Using partial products for 23 × 7: what are the two partial products?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "140 and 21",
+   "equivalents": [
+    "140and21"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 23 by place value: 20 × 7 = 140 and 3 × 7 = 21. (They sum to 161.) Partial products write out what the standard algorithm compresses into carrying.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1066b7cfd44d429e952db07dba0ae5905251c8b7d2ca8d9d2c6a5bc3c24e3df1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-002",
+  "skillId": "partial-products",
+  "prompt": "Using partial products for 32 × 9: what are the two partial products?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "270 and 18",
+   "equivalents": [
+    "270and18"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 32 by place value: 30 × 9 = 270 and 2 × 9 = 18. (They sum to 288.) Partial products write out what the standard algorithm compresses into carrying.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f17dff585e326dbae5e64f79e49841f9f821d6bc519dbe32ba2115a9f452281a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-003",
+  "skillId": "partial-products",
+  "prompt": "Using partial products for 38 × 6: what are the two partial products?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "180 and 48",
+   "equivalents": [
+    "180and48"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 38 by place value: 30 × 6 = 180 and 8 × 6 = 48. (They sum to 228.) Partial products write out what the standard algorithm compresses into carrying.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "33bea3892b9f49d3e69a6ff0f71629704a54b71b83667495db4432509bc39f73",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-004",
+  "skillId": "partial-products",
+  "prompt": "Using partial products for 34 × 7: what are the two partial products?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "210 and 28",
+   "equivalents": [
+    "210and28"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Split 34 by place value: 30 × 7 = 210 and 4 × 7 = 28. (They sum to 238.) Partial products write out what the standard algorithm compresses into carrying.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "59ebc3bacaf96e07c78d59dfdf35b80824928bdaab8c1bccea3c376895f3fdbc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-005",
+  "skillId": "partial-products",
+  "prompt": "36 × 6 by partial products gives 180 + 36. What is the product?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "216",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Add the partial products: 180 + 36 = 216. Because each piece is a clean place-value product, the final addition is the only step where anything combines.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a942ebc70a8bc63ec78acc6c9a1c3b1d721d2c22745d9071d7a5f7dc332419ad",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-006",
+  "skillId": "partial-products",
+  "prompt": "37 × 6 by partial products gives 180 + 42. What is the product?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "222",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Add the partial products: 180 + 42 = 222. Because each piece is a clean place-value product, the final addition is the only step where anything combines.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "06c22a0b92d7f5c7957cf44b05d286d9a0dd650b16c32ade7bc8d289771d70b1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-007",
+  "skillId": "partial-products",
+  "prompt": "44 × 7 by partial products gives 280 + 28. What is the product?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "308",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Add the partial products: 280 + 28 = 308. Because each piece is a clean place-value product, the final addition is the only step where anything combines.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2a3aaf295a5eaf0d09f0fd4ac9aea101e00f61d0667a47876aa2fb5d19a0bd8f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-products-008",
+  "skillId": "partial-products",
+  "prompt": "28 × 5 by partial products gives 100 + 40. What is the product?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "140",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Add the partial products: 100 + 40 = 140. Because each piece is a clean place-value product, the final addition is the only step where anything combines.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-products"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4926e7645eeabe101ff22916e9920cd0c1719e5334b164b570f01545924904e2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-001",
+  "skillId": "partial-quotients-division",
+  "prompt": "Divide 52 ÷ 4 by partial quotients: first take out 10 groups of 4 (40). How many groups of 4 are in the 12 that remain?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "After removing 40, what is left is 12, which holds 12 ÷ 4 = 3 more groups. Total quotient: 10 + 3 = 13. Partial quotients let you chip away in friendly chunks instead of nailing each digit first try.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0678699548440ccb59152a65ff4b28fcdbdae3ca21c88dd661d17fd5ee7039d5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-002",
+  "skillId": "partial-quotients-division",
+  "prompt": "Divide 126 ÷ 7 by partial quotients: first take out 10 groups of 7 (70). How many groups of 7 are in the 56 that remain?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "After removing 70, what is left is 56, which holds 56 ÷ 7 = 8 more groups. Total quotient: 10 + 8 = 18. Partial quotients let you chip away in friendly chunks instead of nailing each digit first try.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e2f7c6cad9b384da7724210ed4a4aa263cf8a3bd0026240bd61fb25a0c808770",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-003",
+  "skillId": "partial-quotients-division",
+  "prompt": "Divide 76 ÷ 4 by partial quotients: first take out 10 groups of 4 (40). How many groups of 4 are in the 36 that remain?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "After removing 40, what is left is 36, which holds 36 ÷ 4 = 9 more groups. Total quotient: 10 + 9 = 19. Partial quotients let you chip away in friendly chunks instead of nailing each digit first try.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b05c0ea02604a40f605054e4825022bf8c9b81b81477833d1c3d1c544dabac76",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-004",
+  "skillId": "partial-quotients-division",
+  "prompt": "Divide 90 ÷ 6 by partial quotients: first take out 10 groups of 6 (60). How many groups of 6 are in the 30 that remain?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "After removing 60, what is left is 30, which holds 30 ÷ 6 = 5 more groups. Total quotient: 10 + 5 = 15. Partial quotients let you chip away in friendly chunks instead of nailing each digit first try.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1de5f4f97a3ddd117c6f2dcbf80fb2bf849cf3a356003d0065d67a7a6f29f392",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-005",
+  "skillId": "partial-quotients-division",
+  "prompt": "232 ÷ 8 by partial quotients: a student removes 20 groups, then 9 groups. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "29",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The partial quotients stack up: 20 + 9 = 29. Check: 8 × 29 = 232 ✓. Any chunking works as long as the pieces sum — that flexibility is the method's point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5e9ea304539d6f6c5f4fb11fbf210d6c7fe5d0f82b3ee58b6319d2cc8f1a2dff",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-006",
+  "skillId": "partial-quotients-division",
+  "prompt": "138 ÷ 6 by partial quotients: a student removes 20 groups, then 3 groups. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "23",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The partial quotients stack up: 20 + 3 = 23. Check: 6 × 23 = 138 ✓. Any chunking works as long as the pieces sum — that flexibility is the method's point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "af3730b61099e0d15e2f8f35065d69cf397f783a3288120ee6b0818b77602d32",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-007",
+  "skillId": "partial-quotients-division",
+  "prompt": "168 ÷ 6 by partial quotients: a student removes 20 groups, then 8 groups. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "28",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The partial quotients stack up: 20 + 8 = 28. Check: 6 × 28 = 168 ✓. Any chunking works as long as the pieces sum — that flexibility is the method's point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f575c6b962105400f21cabc81792d30baae35d0428cfdd013dfe7197774724a2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-partial-quotients-division-008",
+  "skillId": "partial-quotients-division",
+  "prompt": "192 ÷ 8 by partial quotients: a student removes 20 groups, then 4 groups. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The partial quotients stack up: 20 + 4 = 24. Check: 8 × 24 = 192 ✓. Any chunking works as long as the pieces sum — that flexibility is the method's point.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:partial-quotients-division"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c3a82fcb89d5fbe03e64c57371afff576d57fb39574c81799b5f8900177c7109",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-001",
+  "skillId": "division-strategies",
+  "prompt": "Solve 25 ÷ 5 by thinking multiplication: 5 × ? = 25.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Division asks the multiplication question backwards: 5 × 5 = 25, so 25 ÷ 5 = 5. Fact families make every division a known multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4883c3e4a3ade9c97b70f96a28241b3d202252e6e639c4cb46ee74a4ff0bef13",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-002",
+  "skillId": "division-strategies",
+  "prompt": "Solve 52 ÷ 4 by halving twice. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Halve twice: 52 → 26 → 13. Dividing by 4 is two halvings — the mirror of the doubling strategy for multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "30b2e885ab4b21641041e4325fbf9ffbeb8c2329603d6fc7bac599037c30a409",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-003",
+  "skillId": "division-strategies",
+  "prompt": "Solve 42 ÷ 6 by thinking multiplication: 6 × ? = 42.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Division asks the multiplication question backwards: 6 × 7 = 42, so 42 ÷ 6 = 7. Fact families make every division a known multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0ce8389ec65326eb25599fc2fd03949ac8a2dab958b71f62e184910e511a595d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-004",
+  "skillId": "division-strategies",
+  "prompt": "Solve 44 ÷ 4 by halving twice. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Halve twice: 44 → 22 → 11. Dividing by 4 is two halvings — the mirror of the doubling strategy for multiplication.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c276616ad8253f992e5d8eb540e12cafb8be95dd36ac3ccde67a57c06d92b116",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-005",
+  "skillId": "division-strategies",
+  "prompt": "Solve 48 ÷ 4 by splitting: 48 = 40 + 8. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide each friendly piece: 40 ÷ 4 = 10 and 8 ÷ 4 = 2. Together: 10 + 2 = 12. Splitting the dividend along place value is the distributive property working for division.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "52efe6d97c0b84adef8f195364fc52d19e7a402860d4963af7b25218e99d21e8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-006",
+  "skillId": "division-strategies",
+  "prompt": "Solve 48 ÷ 3 by splitting: 48 = 30 + 18. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "16",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide each friendly piece: 30 ÷ 3 = 10 and 18 ÷ 3 = 6. Together: 10 + 6 = 16. Splitting the dividend along place value is the distributive property working for division.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ab427655d2ffcae792a41cae0159c294822cbac3c1de8c07a70cea3c6d1d2592",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-007",
+  "skillId": "division-strategies",
+  "prompt": "Solve 52 ÷ 4 by splitting: 52 = 40 + 12. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide each friendly piece: 40 ÷ 4 = 10 and 12 ÷ 4 = 3. Together: 10 + 3 = 13. Splitting the dividend along place value is the distributive property working for division.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "84a1506a0730d354353f9a8485d928c8d1732616c2b6801a3eb91970ec5db911",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-division-strategies-008",
+  "skillId": "division-strategies",
+  "prompt": "Solve 54 ÷ 3 by splitting: 54 = 30 + 24. What is the quotient?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide each friendly piece: 30 ÷ 3 = 10 and 24 ÷ 3 = 8. Together: 10 + 8 = 18. Splitting the dividend along place value is the distributive property working for division.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:division-strategies"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "766ba5273344eb8e55af3f01f2978ae2c49b2573c4d13f13e54db6db8a996a8a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-001",
+  "skillId": "fraction-operations-visual",
+  "prompt": "A fraction bar is cut into 8 equal pieces. 1 piece is shaded red and 3 more are shaded blue. What fraction is shaded in all?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Same-size pieces just count up: 1 + 3 = 4 of the 8 pieces, so 4/8. The bar shows WHY like denominators add numerators only — the piece size never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "899326ac999d241a2126e1858c82dbe6dd64ee41234e95bd320b142f7c9a73c6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-002",
+  "skillId": "fraction-operations-visual",
+  "prompt": "A fraction bar is cut into 6 equal pieces. 2 pieces are shaded red and 2 more are shaded blue. What fraction is shaded in all?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4/6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Same-size pieces just count up: 2 + 2 = 4 of the 6 pieces, so 4/6. The bar shows WHY like denominators add numerators only — the piece size never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "08dc9836739ab37d63a6a69331dd331d4e36414ad418dc9cc45e90249f11ded4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-003",
+  "skillId": "fraction-operations-visual",
+  "prompt": "A fraction bar is cut into 8 equal pieces. 2 pieces are shaded red and 4 more are shaded blue. What fraction is shaded in all?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6/8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Same-size pieces just count up: 2 + 4 = 6 of the 8 pieces, so 6/8. The bar shows WHY like denominators add numerators only — the piece size never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7b483c76f98ace97c98bb1744c27a63c731cf3d89353fdd5c7b978b942ee589f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-004",
+  "skillId": "fraction-operations-visual",
+  "prompt": "A fraction bar is cut into 4 equal pieces. 1 piece is shaded red and 2 more are shaded blue. What fraction is shaded in all?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Same-size pieces just count up: 1 + 2 = 3 of the 4 pieces, so 3/4. The bar shows WHY like denominators add numerators only — the piece size never changes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d209ae725c2481f4a03e074676a8db7221edb6c3b402d16317d4bd2b3aec1cf6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-005",
+  "skillId": "fraction-operations-visual",
+  "prompt": "An area model shows 20 dots split into 4 equal groups. How many dots is 3/4 of 20?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Each group holds 20 ÷ 4 = 5 dots, and 3/4 takes 3 groups: 3 × 5 = 15. \"Fraction of\" = divide by the denominator, multiply by the numerator — the model shows both steps.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4a2a705d274f157d14583b38be7f253b823781de9184b0f95e58fc5bd665f008",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-006",
+  "skillId": "fraction-operations-visual",
+  "prompt": "An area model shows 24 dots split into 6 equal groups. How many dots is 5/6 of 24?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Each group holds 24 ÷ 6 = 4 dots, and 5/6 takes 5 groups: 5 × 4 = 20. \"Fraction of\" = divide by the denominator, multiply by the numerator — the model shows both steps.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b5837596134ae0cd5310d93d9222c1244302b85e59ce6d56a7dd55754c48ea37",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-007",
+  "skillId": "fraction-operations-visual",
+  "prompt": "An area model shows 24 dots split into 6 equal groups. How many dots is 1/6 of 24?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Each group holds 24 ÷ 6 = 4 dots, and 1/6 takes 1 groups: 1 × 4 = 4. \"Fraction of\" = divide by the denominator, multiply by the numerator — the model shows both steps.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "052256993a5f897486c8672764bf1daca579f32e8ac63c451dfdbe550ea41c56",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-fraction-operations-visual-008",
+  "skillId": "fraction-operations-visual",
+  "prompt": "An area model shows 12 dots split into 4 equal groups. How many dots is 2/4 of 12?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Each group holds 12 ÷ 4 = 3 dots, and 2/4 takes 2 groups: 2 × 3 = 6. \"Fraction of\" = divide by the denominator, multiply by the numerator — the model shows both steps.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:fraction-operations-visual"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ef641e1a188600a03b23ed7881f0f8ebdfdeb0cf2fb7a1e6b4386844263de65e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-001",
+  "skillId": "tape-diagrams",
+  "prompt": "A tape diagram shows the ratio 2:3. Each box represents 9. What is the LARGER quantity?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "27",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The larger tape has 3 boxes of 9 each: 3 × 9 = 27. (The smaller is 18.) Tape diagrams turn ratio language into boxes you can count.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ce6ee22d851f19407fd0cbd8d3bf22edd50077d61e94cc036c24b35d839f8b44",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-002",
+  "skillId": "tape-diagrams",
+  "prompt": "A tape diagram shows the ratio 2:3. Each box represents 7. What is the LARGER quantity?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "21",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The larger tape has 3 boxes of 7 each: 3 × 7 = 21. (The smaller is 14.) Tape diagrams turn ratio language into boxes you can count.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "048f7b386074df6e32e204749cb707598d09f2055ea4af01c9522f7f8f7642e2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-003",
+  "skillId": "tape-diagrams",
+  "prompt": "A tape diagram shows the ratio 3:4. Each box represents 9. What is the LARGER quantity?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "36",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The larger tape has 4 boxes of 9 each: 4 × 9 = 36. (The smaller is 27.) Tape diagrams turn ratio language into boxes you can count.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "32573e763497a9cc248205cf7d7eaf7a89716dd375f7bcfd8853b69cbbdbc68e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-004",
+  "skillId": "tape-diagrams",
+  "prompt": "A tape diagram shows the ratio 2:4. Each box represents 5. What is the LARGER quantity?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The larger tape has 4 boxes of 5 each: 4 × 5 = 20. (The smaller is 10.) Tape diagrams turn ratio language into boxes you can count.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "03827112695acbd6cf50ef72036948a649f2ba40825ad5be302e0cb4d41a21dc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-005",
+  "skillId": "tape-diagrams",
+  "prompt": "Two quantities are in the ratio 2:3 and total 20. Using a tape diagram, find the smaller quantity.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The tapes hold 2 + 3 = 5 equal boxes, so each box is 20 ÷ 5 = 4. The smaller quantity is 2 boxes: 2 × 4 = 8. Find the unit first — every tape-diagram problem reduces to that.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "947e4afdcbc09e74ca6ad374404fa087aba5f7c92e9edbb33f4dd715b8f19887",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-006",
+  "skillId": "tape-diagrams",
+  "prompt": "Two quantities are in the ratio 2:4 and total 18. Using a tape diagram, find the smaller quantity.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The tapes hold 2 + 4 = 6 equal boxes, so each box is 18 ÷ 6 = 3. The smaller quantity is 2 boxes: 2 × 3 = 6. Find the unit first — every tape-diagram problem reduces to that.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "50252c0014d3614fc7d3c8745bb9a09a8a6c5cca597e530392fc9c8396ad1500",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-007",
+  "skillId": "tape-diagrams",
+  "prompt": "Two quantities are in the ratio 3:5 and total 32. Using a tape diagram, find the smaller quantity.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The tapes hold 3 + 5 = 8 equal boxes, so each box is 32 ÷ 8 = 4. The smaller quantity is 3 boxes: 3 × 4 = 12. Find the unit first — every tape-diagram problem reduces to that.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1b1764f4c7e41a7c7b657ba4d7057922fcdd1a6256a13219e3d706b60e7e3730",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-tape-diagrams-008",
+  "skillId": "tape-diagrams",
+  "prompt": "Two quantities are in the ratio 2:4 and total 42. Using a tape diagram, find the smaller quantity.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "The tapes hold 2 + 4 = 6 equal boxes, so each box is 42 ÷ 6 = 7. The smaller quantity is 2 boxes: 2 × 7 = 14. Find the unit first — every tape-diagram problem reduces to that.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:tape-diagrams"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7289c6b1b774c26c3626f495c326444cc17e17b3e3f4aca20fa208d21e3f9c35",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-001",
+  "skillId": "multi-step-word-problems",
+  "prompt": "Ari buys 5 packs of 4 granola bars, then the family eats 6. How many bars are left?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Two steps: first the total, 5 × 4 = 20; then the removal, 20 − 6 = 14. Naming the steps before computing is the whole skill.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7c89aafa72ad1b187983bc6b3abb23a402c41b96a94d3a73ab1d449af0b0df11",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-002",
+  "skillId": "multi-step-word-problems",
+  "prompt": "Ari buys 3 packs of 6 granola bars, then the family eats 9. How many bars are left?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Two steps: first the total, 3 × 6 = 18; then the removal, 18 − 9 = 9. Naming the steps before computing is the whole skill.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aed518aa471c72936358d9f61ec49cf2105761b341e3e7228340093a82755277",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-003",
+  "skillId": "multi-step-word-problems",
+  "prompt": "Ari buys 5 packs of 6 granola bars, then the family eats 4. How many bars are left?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "26",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Two steps: first the total, 5 × 6 = 30; then the removal, 30 − 4 = 26. Naming the steps before computing is the whole skill.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2711d1f4821a351e5cc8814433e412d69b6eab87cc6a6e523af553a172f556c7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-004",
+  "skillId": "multi-step-word-problems",
+  "prompt": "Ari buys 5 packs of 8 granola bars, then the family eats 8. How many bars are left?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "32",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Two steps: first the total, 5 × 8 = 40; then the removal, 40 − 8 = 32. Naming the steps before computing is the whole skill.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1248398233025e66edf8ba50ca7c25871ef4b23f804680b8c71d8f6937103520",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-005",
+  "skillId": "multi-step-word-problems",
+  "prompt": "28 stickers are shared: each of 3 children gets 6, and the rest go to the teacher. How many does the teacher get?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Step 1: the children take 3 × 6 = 18. Step 2: the teacher gets the rest, 28 − 18 = 10. Multiply, then subtract — two operations, one story.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "682f571f44e8acb4bb68c290739962dcef0c3c60d485faf5ab628797602824cd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-006",
+  "skillId": "multi-step-word-problems",
+  "prompt": "25 stickers are shared: each of 6 children gets 3, and the rest go to the teacher. How many does the teacher get?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Step 1: the children take 6 × 3 = 18. Step 2: the teacher gets the rest, 25 − 18 = 7. Multiply, then subtract — two operations, one story.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a53122a0a2c5d1b344e974f6b822e0e19335da807e6cc4a7f6729de35132ce16",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-007",
+  "skillId": "multi-step-word-problems",
+  "prompt": "20 stickers are shared: each of 3 children gets 4, and the rest go to the teacher. How many does the teacher get?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Step 1: the children take 3 × 4 = 12. Step 2: the teacher gets the rest, 20 − 12 = 8. Multiply, then subtract — two operations, one story.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d32a07dc83cf77860e1c25952184ab39a08a4ffbc98a23df5962a297eb64e5e3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-multi-step-word-problems-008",
+  "skillId": "multi-step-word-problems",
+  "prompt": "47 stickers are shared: each of 6 children gets 6, and the rest go to the teacher. How many does the teacher get?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Step 1: the children take 6 × 6 = 36. Step 2: the teacher gets the rest, 47 − 36 = 11. Multiply, then subtract — two operations, one story.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:multi-step-word-problems"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a909a14793da3586b5827f3036c5d2c9b32bc81dd9a487aa7d7a3e895add8cb0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-001",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line shows 1 pound ↔ $2. What does the line show for 5 pounds?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two lines stretch together: 5 pounds sits directly above 5 × 2 = 10 dollars. A double number line keeps equivalent pairs vertically aligned — proportionality made visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0c22e0c4c9b1f45caff6fc6d60db59655888cdadc62be6a32ec2c72b175c0da9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-002",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line shows 1 pound ↔ $6. What does the line show for 5 pounds?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "30",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two lines stretch together: 5 pounds sits directly above 5 × 6 = 30 dollars. A double number line keeps equivalent pairs vertically aligned — proportionality made visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ff02e02a1db72c2b5b71690442fc059e418d82e858d7e523f99f74b08c6c61de",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-003",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line shows 1 pound ↔ $6. What does the line show for 3 pounds?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "18",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two lines stretch together: 3 pounds sits directly above 3 × 6 = 18 dollars. A double number line keeps equivalent pairs vertically aligned — proportionality made visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "126cb4db9d06bb1231ef0a42f066b101e0be23f98d0fdd904cee0bbf95fcbdeb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-004",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line shows 1 pound ↔ $5. What does the line show for 5 pounds?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "The two lines stretch together: 5 pounds sits directly above 5 × 5 = 25 dollars. A double number line keeps equivalent pairs vertically aligned — proportionality made visible.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "453eeb2c94b98ea071d7cb62364406822d887d96e1a406e4dde49dd9910c8fc2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-005",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line pairs 10 cups of flour with 15 cups of water. How much water pairs with 2 cups of flour?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide both lines by 5: 10 ÷ 5 = 2 pairs with 15 ÷ 5 = 3. Finding the smaller equivalent pair is walking LEFT along both lines together.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "53fe00ac5ad14588bee2c4b4b478ab45ee2d3fb708b6ddef2cfc820f08e5007f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-006",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line pairs 8 cups of flour with 14 cups of water. How much water pairs with 4 cups of flour?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide both lines by 2: 8 ÷ 2 = 4 pairs with 14 ÷ 2 = 7. Finding the smaller equivalent pair is walking LEFT along both lines together.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "23053e61ae0ccf3c124ff385dd5d97c1aed87530cb39e0c2c9486f500871e0cb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-007",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line pairs 8 cups of flour with 10 cups of water. How much water pairs with 4 cups of flour?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide both lines by 2: 8 ÷ 2 = 4 pairs with 10 ÷ 2 = 5. Finding the smaller equivalent pair is walking LEFT along both lines together.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fa3728b2342b64d64cf1f45bc4e99a425d96aee7fca99543d5bc203906b1e56f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-number-lines-008",
+  "skillId": "double-number-lines",
+  "prompt": "A double number line pairs 4 cups of flour with 6 cups of water. How much water pairs with 2 cups of flour?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Divide both lines by 2: 4 ÷ 2 = 2 pairs with 6 ÷ 2 = 3. Finding the smaller equivalent pair is walking LEFT along both lines together.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-number-lines"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e8260975fa217f60363d300f94e9874d0810302765d6e713af88d9a3da67cb24",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-001",
+  "skillId": "algebra-tiles",
+  "prompt": "An algebra-tile mat shows 5 x-tiles and 9 unit tiles. What expression does it represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5x + 9",
+   "equivalents": [
+    "5x+9"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Each long tile is one x and each small square is 1: 5 x-tiles and 9 units make 5x + 9. Tiles give \"like terms\" a physical meaning — you can only stack tiles of the same shape.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "905044ba4a729a730076f48f63698b02a94b73880f6e3befc099fe247afaa781",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-002",
+  "skillId": "algebra-tiles",
+  "prompt": "An algebra-tile mat shows 4 x-tiles and 1 unit tile. What expression does it represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4x + 1",
+   "equivalents": [
+    "4x+1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Each long tile is one x and each small square is 1: 4 x-tiles and 1 units make 4x + 1. Tiles give \"like terms\" a physical meaning — you can only stack tiles of the same shape.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "55d5c0742ba9b64f47e7f8fd261e6a736e8cc8c530826a6f5c6031ccbeea8244",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-003",
+  "skillId": "algebra-tiles",
+  "prompt": "An algebra-tile mat shows 5 x-tiles and 6 unit tiles. What expression does it represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5x + 6",
+   "equivalents": [
+    "5x+6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Each long tile is one x and each small square is 1: 5 x-tiles and 6 units make 5x + 6. Tiles give \"like terms\" a physical meaning — you can only stack tiles of the same shape.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d827cf84cedad293a768cef9cdfc615dcbd1b4ddf613ba93f8f52c6053e5cc22",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-004",
+  "skillId": "algebra-tiles",
+  "prompt": "An algebra-tile mat shows 3 x-tiles and 2 unit tiles. What expression does it represent?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3x + 2",
+   "equivalents": [
+    "3x+2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Each long tile is one x and each small square is 1: 3 x-tiles and 2 units make 3x + 2. Tiles give \"like terms\" a physical meaning — you can only stack tiles of the same shape.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d59334d4ad23d2632bb8fa1076e4deb5c61162105d50b358cc7d146306741f34",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-005",
+  "skillId": "algebra-tiles",
+  "prompt": "A mat shows 3x + 3 on the left. A student adds 2 more unit tiles to the left side. What does the left side show now?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3x + 5",
+   "equivalents": [
+    "3x+5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Only the unit tiles change: 3 + 2 = 5 units, so the mat reads 3x + 5. The x-tiles are untouched — tiles enforce that x's and units never merge.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f6c2b80c01f9740b9703f6fed8446fe26b9bf87610d0c1881a0b0fd4537cf570",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-006",
+  "skillId": "algebra-tiles",
+  "prompt": "A mat shows 3x + 6 on the left. A student adds 2 more unit tiles to the left side. What does the left side show now?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3x + 8",
+   "equivalents": [
+    "3x+8"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Only the unit tiles change: 6 + 2 = 8 units, so the mat reads 3x + 8. The x-tiles are untouched — tiles enforce that x's and units never merge.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c6b221d51ec326a1153d615cb7eec9617fbb498565fadc6cd60747aaef0e2202",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-007",
+  "skillId": "algebra-tiles",
+  "prompt": "A mat shows 5x + 4 on the left. A student adds 1 more unit tile to the left side. What does the left side show now?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5x + 5",
+   "equivalents": [
+    "5x+5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Only the unit tiles change: 4 + 1 = 5 units, so the mat reads 5x + 5. The x-tiles are untouched — tiles enforce that x's and units never merge.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d610a4c02a422f83005637d4bb1b7d2b2cb34e436a88843ef94909be7c8c9bf5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-algebra-tiles-008",
+  "skillId": "algebra-tiles",
+  "prompt": "A mat shows 4x + 1 on the left. A student adds 1 more unit tile to the left side. What does the left side show now?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4x + 2",
+   "equivalents": [
+    "4x+2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Only the unit tiles change: 1 + 1 = 2 units, so the mat reads 4x + 2. The x-tiles are untouched — tiles enforce that x's and units never merge.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:algebra-tiles"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8818d30ac803103a2d4eefc57abf4ba9366f67de7dc660803f5850dc4f9a81d0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-001",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows x + 3 = 12. Removing 3 unit tiles from BOTH sides leaves what value for x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Take 3 units off each side and the balance holds: x = 12 − 3 = 9. Removing the same tiles from both sides is the pictures-first version of subtracting from both sides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0c8960c3ef6252078cacfbb9aab2cb0c7eba16ecd82007de4e117728ef25c20b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-002",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows x + 8 = 13. Removing 8 unit tiles from BOTH sides leaves what value for x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Take 8 units off each side and the balance holds: x = 13 − 8 = 5. Removing the same tiles from both sides is the pictures-first version of subtracting from both sides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7db14476d537f12a6e3c4c9d6d878b49bc34cce47d750fefae4d8e3ab7d2502c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-003",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows x + 5 = 10. Removing 5 unit tiles from BOTH sides leaves what value for x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Take 5 units off each side and the balance holds: x = 10 − 5 = 5. Removing the same tiles from both sides is the pictures-first version of subtracting from both sides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "562cefba0ca10b6e512186bb34d30d2e21fe5fb8616c5fd048a7317f4f81b559",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-004",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows x + 5 = 13. Removing 5 unit tiles from BOTH sides leaves what value for x?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Take 5 units off each side and the balance holds: x = 13 − 5 = 8. Removing the same tiles from both sides is the pictures-first version of subtracting from both sides.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a2b568dd39631cc9d3d0d05b26e8503111433af516ac71e56d5a7a2d6a9e7434",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-005",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows 4 x-tiles balancing 28 unit tiles. Splitting both sides into 4 equal groups gives x = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "4 x-tiles ↔ 28 units means each x-tile pairs with 28 ÷ 4 = 7 units. Splitting into equal groups IS division — drawn instead of written.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0f342c1469e7d020953acfe0ac177da6b47a5fe626108309e2faeeb8953618ba",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-006",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows 4 x-tiles balancing 16 unit tiles. Splitting both sides into 4 equal groups gives x = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "4 x-tiles ↔ 16 units means each x-tile pairs with 16 ÷ 4 = 4 units. Splitting into equal groups IS division — drawn instead of written.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f29a4be049c70862be9e4c142ad9e229d5c9259675032edbc23d82865835a2b9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-007",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows 3 x-tiles balancing 24 unit tiles. Splitting both sides into 3 equal groups gives x = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "3 x-tiles ↔ 24 units means each x-tile pairs with 24 ÷ 3 = 8 units. Splitting into equal groups IS division — drawn instead of written.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cae8207d82ad252ca72bf72328a80cdc1027928b819bac3e1e3a021dcfed4622",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-visual-equation-solving-008",
+  "skillId": "visual-equation-solving",
+  "prompt": "A model shows 3 x-tiles balancing 12 unit tiles. Splitting both sides into 3 equal groups gives x = ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "3 x-tiles ↔ 12 units means each x-tile pairs with 12 ÷ 3 = 4 units. Splitting into equal groups IS division — drawn instead of written.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:visual-equation-solving"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "48f16d9a559c2bf494eb1de8ab61c2245cc011e41eced9ee51146b86c6bf52da",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-001",
+  "skillId": "balance-model",
+  "prompt": "A balance scale shows a bag (x) plus 3 blocks on the left, and 12 blocks on the right. How many blocks are in the bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Remove 3 blocks from BOTH pans — the scale stays level — leaving the bag balancing 9 blocks: x = 9. The scale is why \"do the same to both sides\" works: anything else tips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "82ff11cd7ee56d34112a78b69f90dc30e56608f07366605dacbfb2f23b611378",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-002",
+  "skillId": "balance-model",
+  "prompt": "A balance scale shows a bag (x) plus 4 blocks on the left, and 6 blocks on the right. How many blocks are in the bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Remove 4 blocks from BOTH pans — the scale stays level — leaving the bag balancing 2 blocks: x = 2. The scale is why \"do the same to both sides\" works: anything else tips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7c4402894d552061edb0e627b632c4289320b0bf9c7f9f5562f502e0e96d228f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-003",
+  "skillId": "balance-model",
+  "prompt": "A balance scale shows a bag (x) plus 8 blocks on the left, and 17 blocks on the right. How many blocks are in the bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Remove 8 blocks from BOTH pans — the scale stays level — leaving the bag balancing 9 blocks: x = 9. The scale is why \"do the same to both sides\" works: anything else tips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "272b160cb1af6a0b8048d22f4002c45e76daf6f2ded4fafcb6d95e9570f8ff71",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-004",
+  "skillId": "balance-model",
+  "prompt": "A balance scale shows a bag (x) plus 6 blocks on the left, and 8 blocks on the right. How many blocks are in the bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "Remove 6 blocks from BOTH pans — the scale stays level — leaving the bag balancing 2 blocks: x = 2. The scale is why \"do the same to both sides\" works: anything else tips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6984d835f6bbc2f38beaa699901d0d96f727f3b83fa51b71026007342ee39d16",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-005",
+  "skillId": "balance-model",
+  "prompt": "A balance shows 2 identical bags plus 5 blocks on the left, and 9 blocks on the right. How many blocks per bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Remove 5 blocks from both pans: 2 bags ↔ 4 blocks. Share into 2 equal groups: each bag holds 4 ÷ 2 = 2. Two balance moves = the two steps of solving 2x + 5 = 9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d692c8195ff87f9ab073764e0818961dc43dc946cdb2b730ce7569dd96143de1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-006",
+  "skillId": "balance-model",
+  "prompt": "A balance shows 3 identical bags plus 2 blocks on the left, and 17 blocks on the right. How many blocks per bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Remove 2 blocks from both pans: 3 bags ↔ 15 blocks. Share into 3 equal groups: each bag holds 15 ÷ 3 = 5. Two balance moves = the two steps of solving 3x + 2 = 17.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "64bd354f99cddb5d66b62cd49c18fdcd77cb2832a5cf72d291bfd8ae4766f06d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-007",
+  "skillId": "balance-model",
+  "prompt": "A balance shows 3 identical bags plus 8 blocks on the left, and 14 blocks on the right. How many blocks per bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Remove 8 blocks from both pans: 3 bags ↔ 6 blocks. Share into 3 equal groups: each bag holds 6 ÷ 3 = 2. Two balance moves = the two steps of solving 3x + 8 = 14.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "648e36388102e875c399fdd3b8ba2ad53a534cd3c42f42d4d03ce3a30cac8c66",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-balance-model-008",
+  "skillId": "balance-model",
+  "prompt": "A balance shows 3 identical bags plus 1 block on the left, and 13 blocks on the right. How many blocks per bag?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Remove 1 blocks from both pans: 3 bags ↔ 12 blocks. Share into 3 equal groups: each bag holds 12 ÷ 3 = 4. Two balance moves = the two steps of solving 3x + 1 = 13.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:balance-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4ceb9ceeac4c487ad5a7e25b723e7c35e3c3eb572e533bcd76fa6635f3b4f6c3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-001",
+  "skillId": "chip-model",
+  "prompt": "Chip model: you have 8 negative chips and add 7 positive chips. Each +/− pair cancels. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "7 zero pairs form and vanish, leaving 8 − 7 = 1 negative chips: the result is −1. The chip model makes (−8) + 7 a matter of counting what survives the cancelling.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4d084f133c819b1b115390e2bb3be8b13a31c96a66f45a62df5e4a5532891477",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-002",
+  "skillId": "chip-model",
+  "prompt": "Chip model: you have 7 negative chips and add 3 positive chips. Each +/− pair cancels. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "3 zero pairs form and vanish, leaving 7 − 3 = 4 negative chips: the result is −4. The chip model makes (−7) + 3 a matter of counting what survives the cancelling.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3d02a5cd45e316ff3ae343725311a740a1cc6cc351009abb76966742c3715f9b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-003",
+  "skillId": "chip-model",
+  "prompt": "Chip model: you have 3 negative chips and add 1 positive chips. Each +/− pair cancels. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "1 zero pairs form and vanish, leaving 3 − 1 = 2 negative chips: the result is −2. The chip model makes (−3) + 1 a matter of counting what survives the cancelling.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "54eacf3aadb0d18a000101bc2db82ce47a00be0b20a794e80ac569cf09f4c368",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-004",
+  "skillId": "chip-model",
+  "prompt": "Chip model: you have 6 negative chips and add 2 positive chips. Each +/− pair cancels. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "K-8",
+  "explanation": "2 zero pairs form and vanish, leaving 6 − 2 = 4 negative chips: the result is −4. The chip model makes (−6) + 2 a matter of counting what survives the cancelling.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bae5174154286a3d19c34decf326b337386ef0e560c1b9d0adbc5d9c26fe8023",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-005",
+  "skillId": "chip-model",
+  "prompt": "Chip model: start with 3 positive chips. To compute 3 − (−5), you must REMOVE 5 negative chips, so you first add 5 zero pairs. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Adding 5 zero pairs changes nothing (+5 and −5 together are 0); removing the 5 negative chips leaves 3 + 5 = 8 positives. The model shows WHY subtracting a negative adds: you must bring in positives to have negatives to take away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "31b6263770bed9dfeb44319dbeb0011e2f88f001880e167b1e6faaf2f3ddb4a5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-006",
+  "skillId": "chip-model",
+  "prompt": "Chip model: start with 4 positive chips. To compute 4 − (−6), you must REMOVE 6 negative chips, so you first add 6 zero pairs. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Adding 6 zero pairs changes nothing (+6 and −6 together are 0); removing the 6 negative chips leaves 4 + 6 = 10 positives. The model shows WHY subtracting a negative adds: you must bring in positives to have negatives to take away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7e05245ea12f3eb9d75d6503cb5e03ed17d5cac29f839ce1622957f7e76b01b8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-007",
+  "skillId": "chip-model",
+  "prompt": "Chip model: start with 5 positive chips. To compute 5 − (−4), you must REMOVE 4 negative chips, so you first add 4 zero pairs. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Adding 4 zero pairs changes nothing (+4 and −4 together are 0); removing the 4 negative chips leaves 5 + 4 = 9 positives. The model shows WHY subtracting a negative adds: you must bring in positives to have negatives to take away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "05990493a327c4fbd3f2232bc75f4b81113141f56b5d96d185182b80ba373ec7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-chip-model-008",
+  "skillId": "chip-model",
+  "prompt": "Chip model: start with 6 positive chips. To compute 6 − (−7), you must REMOVE 7 negative chips, so you first add 7 zero pairs. What is the result?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "K-8",
+  "explanation": "Adding 7 zero pairs changes nothing (+7 and −7 together are 0); removing the 7 negative chips leaves 6 + 7 = 13 positives. The model shows WHY subtracting a negative adds: you must bring in positives to have negatives to take away.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:chip-model"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8fc6961d35b31636a682b6c192a24bd1fa4db50556655caf787ef7cc1c77722d",
+  "isActive": true
  }
 ]

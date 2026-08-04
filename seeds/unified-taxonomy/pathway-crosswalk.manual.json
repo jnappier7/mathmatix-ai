@@ -1,7 +1,7 @@
 {
  "source": "hand-authored (domain judgment), 2026-08-01",
  "note": "pathway skill ids -> BANK skill ids, same contract as pathway-crosswalk.json. Read by utils/skillCanonicalizer.js buildPathway() for CONTENT LOOKUP ONLY — never by canonicalSkillId (mastery keying). Kept in a SEPARATE file because scripts/proposePathwayCrosswalk.js overwrites pathway-crosswalk.json wholesale; manual rows here win on collision. Filename deliberately does NOT end in '-crosswalk.json' so the canonicalization glob cannot sweep it up. Covers geometry, algebra-2, precalculus, act-prep, algebra-1 and 6th-grade-math.",
- "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such. 2026-08-02: 28 rows added after comparing a full DB export against the generated bank — 21 of 35 skills that the audit reported EMPTY already had content under another name. The audit measures REACHABILITY, not existence: an unmapped skill reads empty whether or not problems exist for it. Always diff against the bank before generating. 2026-08-03 (calculus): AB/BC review skills map to the precalc/trig banks they revise; AB/BC calc skills map to the existing calc bank ids (limits, derivatives, ftc, ...) whose thin families the low-volume templates now top up. The cumulative/AP-practice-mode rows (cumulative-mcq-practice, ap-frq-*, calculator-active-fluency) map MODE to mixed CONTENT — the mode itself is the tutor's job; the rows only give it material to run.",
+ "why": "The fuzzy matcher (auditCourseProblemCoverage.js --suggest) is unreliable in geometry: it proposed geometric-mean -> mean (the arithmetic average), trigonometric-ratios-intro -> ratios, and circle-basics -> trig-unit-circle-evaluation. Those would serve a geometry student the wrong topic entirely. The rows below are matched by mathematical MEANING instead. Skills with no honest bank match (points-lines-planes, polygon-angle-sum, quadrilateral-properties, trapezoid-properties, geometric-mean) are deliberately ABSENT — they are real content gaps and must stay visible as such. 2026-08-02: 28 rows added after comparing a full DB export against the generated bank — 21 of 35 skills that the audit reported EMPTY already had content under another name. The audit measures REACHABILITY, not existence: an unmapped skill reads empty whether or not problems exist for it. Always diff against the bank before generating. 2026-08-03 (calculus): AB/BC review skills map to the precalc/trig banks they revise; AB/BC calc skills map to the existing calc bank ids (limits, derivatives, ftc, ...) whose thin families the low-volume templates now top up. The cumulative/AP-practice-mode rows (cumulative-mcq-practice, ap-frq-*, calculator-active-fluency) map MODE to mixed CONTENT — the mode itself is the tutor's job; the rows only give it material to run. 2026-08-03 (early-math + parents): the emf-* prefix is pure vocabulary seam — 24 of 31 skills map onto the elementary banks (rounding 274, compare-numbers 347, the one-step fact/CGI-unknown families, the fraction-operation banks). The parent-course model skills (ten frames, bar models, algebra tiles, chip model, ...) are authored in templatesParentModels.js under their own ids because the MODELS are the content; emf-mental-math-strategies crosswalks to that shared mental-math-strategies family rather than duplicating it.",
  "rows": [
   {
    "legacyId": "angle-measurement",
@@ -1647,6 +1647,286 @@
    "legacyId": "ap-frq-no-calculator",
    "unifiedId": "ftc",
    "course": "calculus-bc"
+  },
+  {
+   "legacyId": "emf-rounding-estimation",
+   "unifiedId": "rounding",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-rounding-estimation",
+   "unifiedId": "estimation",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-rounding-estimation",
+   "unifiedId": "estimate-sums",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-compare-order",
+   "unifiedId": "compare-numbers",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-compare-order",
+   "unifiedId": "ordering-numbers",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-sub-facts",
+   "unifiedId": "related-facts",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-sub-facts",
+   "unifiedId": "one-step-addition",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-sub-facts",
+   "unifiedId": "one-step-subtraction",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-number-patterns",
+   "unifiedId": "sequence-patterns",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-number-patterns",
+   "unifiedId": "skip-counting",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multi-digit-subtraction",
+   "unifiedId": "subtraction",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-sub-word-problems",
+   "unifiedId": "addition-subtraction-word-problems",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-sub-word-problems",
+   "unifiedId": "difference-word-problems",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-mental-math-strategies",
+   "unifiedId": "mental-math-strategies",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiplication-facts",
+   "unifiedId": "multiplication-basics",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiplication-facts",
+   "unifiedId": "one-step-multiplication",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiplication-facts",
+   "unifiedId": "multiplication-concepts",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiplication-properties",
+   "unifiedId": "multiplication-as-groups",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiplication-properties",
+   "unifiedId": "repeated-addition",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiplication-properties",
+   "unifiedId": "algebraic-properties",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiply-word-problems",
+   "unifiedId": "one-step-multiplication",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-multiply-word-problems",
+   "unifiedId": "multiplication-as-groups",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-division-facts",
+   "unifiedId": "one-step-division",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-division-facts",
+   "unifiedId": "related-facts",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-divide-word-problems",
+   "unifiedId": "one-step-division",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-compare-order-fractions",
+   "unifiedId": "comparing-fractions",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-compare-order-fractions",
+   "unifiedId": "equivalent-fractions",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-fractions-of-whole",
+   "unifiedId": "fractions-as-parts",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-fractions-of-whole",
+   "unifiedId": "fraction-concepts",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-fractions-of-whole",
+   "unifiedId": "fractions-basics",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-fractions-like",
+   "unifiedId": "adding-fractions-same-denominator",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-fractions-like",
+   "unifiedId": "add-fractions",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-subtract-fractions-like",
+   "unifiedId": "subtract-fractions",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-subtract-unlike",
+   "unifiedId": "add-fractions",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-subtract-unlike",
+   "unifiedId": "subtract-fractions",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-add-subtract-unlike",
+   "unifiedId": "adding-fractions-different-denominators",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-compare-order-decimals",
+   "unifiedId": "decimals-place-value",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-compare-order-decimals",
+   "unifiedId": "decimals-rounding",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-shapes-properties",
+   "unifiedId": "classify-shapes",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-shapes-properties",
+   "unifiedId": "identify-shapes",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-shapes-properties",
+   "unifiedId": "3d-shapes",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-shapes-properties",
+   "unifiedId": "symmetry-shapes",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-measurement-units",
+   "unifiedId": "g6-unit-conversions",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-data-graphs",
+   "unifiedId": "data-displays",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-data-interpretation",
+   "unifiedId": "data-displays",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-data-interpretation",
+   "unifiedId": "measures-of-center",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-patterns-rules",
+   "unifiedId": "sequence-patterns",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-unknowns-intro",
+   "unifiedId": "unknown-addend",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-unknowns-intro",
+   "unifiedId": "result-unknown",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "emf-unknowns-intro",
+   "unifiedId": "change-unknown",
+   "course": "early-math-foundations"
+  },
+  {
+   "legacyId": "coordinate-plane-geometry",
+   "unifiedId": "coordinate-plane",
+   "course": "parent-math-68"
+  },
+  {
+   "legacyId": "coordinate-plane-geometry",
+   "unifiedId": "plotting-points",
+   "course": "parent-math-68"
+  },
+  {
+   "legacyId": "statistical-thinking",
+   "unifiedId": "data-displays",
+   "course": "parent-math-68"
+  },
+  {
+   "legacyId": "statistical-thinking",
+   "unifiedId": "measures-of-center",
+   "course": "parent-math-68"
+  },
+  {
+   "legacyId": "statistical-thinking",
+   "unifiedId": "mean",
+   "course": "parent-math-68"
+  },
+  {
+   "legacyId": "number-line-integers",
+   "unifiedId": "adding-subtracting-integers",
+   "course": "parent-math-68"
   }
  ]
 }

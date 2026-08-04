@@ -1331,6 +1331,247 @@ for (const it of items) {
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 
+  // ── Early math + parent models ───────────────────────────────────────────
+  if ((m = p.match(/^Multiply: (\d+) × (\d+)$/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^How many factors does (\d+) have\?$/))) {
+    const n0 = Number(m[1]);
+    let e = 0; for (let d0 = 1; d0 <= n0; d0++) if (n0 % d0 === 0) e++;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^What is the (\d+)th multiple of (\d+)\?$/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Is (\d+) prime or composite\?$/))) {
+    const n0 = Number(m[1]);
+    let prime = n0 > 1; for (let d0 = 2; d0 * d0 <= n0; d0++) if (n0 % d0 === 0) prime = false;
+    const e = prime ? 'Prime' : 'Composite';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Divide: (\d+) ÷ (\d+)$/))) {
+    const n0 = Number(m[1]), d0 = Number(m[2]);
+    if (n0 % d0 !== 0) { fail(it, `non-exact division ${n0}/${d0}`); continue; }
+    checked++; if (!eq(it.answer.value, n0 / d0)) fail(it, n0 / d0); continue;
+  }
+  if ((m = p.match(/^Divide: (\d+) ÷ (\d+)\. Give the quotient and remainder/))) {
+    const n0 = Number(m[1]), d0 = Number(m[2]);
+    const e = `${Math.floor(n0 / d0)} R ${n0 % d0}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^(\d+) students are going on a trip\. Each van holds (\d+) students\. How many vans are needed\?$/))) {
+    const e = Math.ceil(Number(m[1]) / Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^(\d+) apples are packed into bags of (\d+)\. How many FULL bags/))) {
+    const e = Math.floor(Number(m[1]) / Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^(\d+) dollars are shared equally among (\d+) friends, whole dollars only\. How many dollars are LEFT OVER/))) {
+    const e = Number(m[1]) % Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Write (\d+) (\d+)\/(\d+) as an improper fraction\.$/))) {
+    const e = `${Number(m[1]) * Number(m[3]) + Number(m[2])}/${m[3]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Write (\d+)\/(\d+) as a mixed number\.$/))) {
+    const n0 = Number(m[1]), d0 = Number(m[2]);
+    const g0 = (function gg(u, v) { return v ? gg(v, u % v) : u; })(n0 % d0, d0);
+    if (g0 !== 1) { fail(it, `fractional part ${n0 % d0}/${d0} not in lowest terms`); continue; }
+    const e = `${Math.floor(n0 / d0)} ${n0 % d0}/${d0}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Write (\d+)\/(10|100) as a decimal\.$/))) {
+    const e = (Number(m[1]) / Number(m[2])).toString();
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Write 0\.(\d+) as a fraction( in lowest terms)?\.$/))) {
+    const digits = m[1];
+    const num = Number(digits), den = digits.length === 1 ? 10 : 100;
+    const e = m[2] ? reduceStr(num, den) : `${num}/${den}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^An angle measures (\d+)°\. What type of angle is it\?$/))) {
+    const th = Number(m[1]);
+    const e = th === 90 ? 'Right' : th === 180 ? 'Straight' : th < 90 ? 'Acute' : 'Obtuse';
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Two angles together form a (RIGHT angle|STRAIGHT line)\. One measures (\d+)°/))) {
+    const e = (m[1] === 'RIGHT angle' ? 90 : 180) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Decompose (\d+): \d+ = (\d+) \+ \?$/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Decompose (\d+) into a ten and ones/))) {
+    const e = Number(m[1]) - 10;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A ten frame has (\d+) counters in it\. How many empty boxes/))) {
+    const e = 10 - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A ten frame shows a full top row \(5\) and (\d+) more in the bottom row\. How many counters in all\?$/))) {
+    const e = 5 + Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Two ten frames: one shows (\d+), the other shows \d+\. To add them by filling the first frame to ten/))) {
+    const e = 10 - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^What number makes ten with (\d+)\?$/))) {
+    const e = 10 - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Compute (\d+) \+ (\d+) by making ten: \d+ \+ (\d+) \+ \? = (\d+)\./))) {
+    const a = Number(m[1]), b = Number(m[2]), bridge = Number(m[3]), sum = Number(m[4]);
+    if (a + bridge !== 10 || a + b !== sum) { fail(it, 'inconsistent make-ten setup'); continue; }
+    const e = b - bridge;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Use doubles: (\d+) \+ (\d+) = \?/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Compute (\d+) \+ (\d+) (?:by compensation|mentally by adding \d+ and adjusting)[:.].*(?:answer|sum)\?$/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Compute (\d+) × (\d+) mentally by doubling/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A bar model shows a whole of (\d+) split into two parts\. One part is (\d+)/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A comparison bar model shows Maya has (\d+) equal boxes and Sam has 1 box of the same size\. Together they have (\d+)/))) {
+    const boxes = Number(m[1]) + 1, total = Number(m[2]);
+    if (total % boxes !== 0) { fail(it, `${total} not divisible by ${boxes} boxes`); continue; }
+    const e = total / boxes;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Start at (\d+) on a number line and make (\d+) hops of (\d+)\. Where do you land\?$/))) {
+    const e = Number(m[1]) + Number(m[2]) * Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Find (\d+) − (\d+) on a number line by counting UP/))) {
+    const e = Number(m[1]) - Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^An area model for \((\d+) \+ (\d+)\) × (\d+) has two boxes/))) {
+    const e = (Number(m[1]) + Number(m[2])) * Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^An area model for (\d+) × (\d+) has four boxes: (\d+)×(\d+), \d+×\d+, \d+×\d+, and \d+×\d+\. What is the total\?$/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    if (Number(m[3]) !== Math.floor(a / 10) * 10 || Number(m[4]) !== Math.floor(b / 10) * 10) { fail(it, 'boxes do not match factors'); continue; }
+    checked++; if (!eq(it.answer.value, a * b)) fail(it, a * b); continue;
+  }
+  if ((m = p.match(/^Using partial products for (\d+) × (\d+): what are the two partial products\?$/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    const e = `${Math.floor(a / 10) * 10 * b} and ${(a % 10) * b}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^(\d+) × (\d+) by partial products gives (\d+) \+ (\d+)\. What is the product\?$/))) {
+    const a = Number(m[1]), b = Number(m[2]);
+    if (Number(m[3]) + Number(m[4]) !== a * b) { fail(it, `stated partials do not sum to ${a * b}`); continue; }
+    checked++; if (!eq(it.answer.value, a * b)) fail(it, a * b); continue;
+  }
+  if ((m = p.match(/^Divide (\d+) ÷ (\d+) by partial quotients: first take out (\d+) groups of \d+ \((\d+)\)\. How many groups of \d+ are in the (\d+) that remain\?$/))) {
+    const n0 = Number(m[1]), d0 = Number(m[2]), q1 = Number(m[3]), taken = Number(m[4]), rest = Number(m[5]);
+    if (q1 * d0 !== taken || n0 - taken !== rest || rest % d0 !== 0) { fail(it, 'inconsistent partial-quotient setup'); continue; }
+    const e = rest / d0;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^(\d+) ÷ (\d+) by partial quotients: a student removes (\d+) groups, then (\d+) groups\. What is the quotient\?$/))) {
+    const n0 = Number(m[1]), d0 = Number(m[2]), q = Number(m[3]) + Number(m[4]);
+    if (d0 * q !== n0) { fail(it, `${m[3]}+${m[4]} groups of ${d0} ≠ ${n0}`); continue; }
+    checked++; if (!eq(it.answer.value, q)) fail(it, q); continue;
+  }
+  if ((m = p.match(/^Solve (\d+) ÷ (\d+) by (thinking multiplication|halving|splitting)/))) {
+    const n0 = Number(m[1]), d0 = Number(m[2]);
+    if (n0 % d0 !== 0) { fail(it, 'non-exact'); continue; }
+    checked++; if (!eq(it.answer.value, n0 / d0)) fail(it, n0 / d0); continue;
+  }
+  if ((m = p.match(/^A fraction bar is cut into (\d+) equal pieces\. (\d+) piece.* (\d+) more/))) {
+    const e = `${Number(m[2]) + Number(m[3])}/${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^An area model shows (\d+) dots split into (\d+) equal groups\. How many dots is (\d+)\/(\d+) of \d+\?$/))) {
+    const w = Number(m[1]), d0 = Number(m[2]), num = Number(m[3]);
+    if (Number(m[4]) !== d0 || w % d0 !== 0) { fail(it, 'groups do not divide dots'); continue; }
+    const e = (w / d0) * num;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A tape diagram shows the ratio (\d+):(\d+)\. Each box represents (\d+)\. What is the LARGER quantity\?$/))) {
+    const e = Number(m[2]) * Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Two quantities are in the ratio (\d+):(\d+) and total (\d+)\..*find the smaller quantity\.$/))) {
+    const a = Number(m[1]), b = Number(m[2]), total = Number(m[3]);
+    if (total % (a + b) !== 0) { fail(it, `${total} not divisible by ${a + b}`); continue; }
+    const e = a * (total / (a + b));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Ari buys (\d+) packs of (\d+) granola bars, then the family eats (\d+)\./))) {
+    const e = Number(m[1]) * Number(m[2]) - Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^(\d+) stickers are shared: each of (\d+) children gets (\d+)/))) {
+    const e = Number(m[1]) - Number(m[2]) * Number(m[3]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A double number line shows 1 pound ↔ \$(\d+)\. What does the line show for (\d+) pounds\?$/))) {
+    const e = Number(m[1]) * Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A double number line pairs (\d+) cups of flour with (\d+) cups of water\. How much water pairs with (\d+) cup/))) {
+    const a = Number(m[1]), b = Number(m[2]), small = Number(m[3]);
+    if (a % small !== 0 || (b * small) % a !== 0) { fail(it, 'non-integer scaled pair'); continue; }
+    const e = (b * small) / a;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^An algebra-tile mat shows (\d+) x-tiles and (\d+) unit tile/))) {
+    const e = `${m[1]}x + ${m[2]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A mat shows (\d+)x \+ (\d+) on the left\. A student adds (\d+) more unit tile/))) {
+    const e = `${m[1]}x + ${Number(m[2]) + Number(m[3])}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A model shows x \+ (\d+) = (\d+)\. Removing \d+ unit tiles from BOTH sides/))) {
+    const e = Number(m[2]) - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A model shows (\d+) x-tiles balancing (\d+) unit tiles\. Splitting both sides into \d+ equal groups/))) {
+    const a = Number(m[1]), n0 = Number(m[2]);
+    if (n0 % a !== 0) { fail(it, 'not divisible'); continue; }
+    checked++; if (!eq(it.answer.value, n0 / a)) fail(it, n0 / a); continue;
+  }
+  if ((m = p.match(/^A balance scale shows a bag \(x\) plus (\d+) block.* and (\d+) blocks on the right/))) {
+    const e = Number(m[2]) - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^A balance shows (\d+) identical bags plus (\d+) block.* and (\d+) blocks on the right/))) {
+    const a = Number(m[1]), b = Number(m[2]), rhs = Number(m[3]);
+    if ((rhs - b) % a !== 0) { fail(it, 'non-integer bag'); continue; }
+    const e = (rhs - b) / a;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Chip model: you have (\d+) negative chips and add (\d+) positive chips/))) {
+    const e = Number(m[2]) - Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Chip model: start with (\d+) positive chips\. To compute \d+ − \(−(\d+)\)/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
   unchecked[it.skillId] = (unchecked[it.skillId] || 0) + 1;
 }
 
