@@ -7,9 +7,12 @@
   <meta name="description" content="Did you get 14? Or did you get 2? Answer, see what everyone else picked, and learn the pattern behind the trap." />
   <meta property="og:title" content="Pop Quiz: 24 ÷ 3(2) − 2" />
   <meta property="og:description" content="Did you get 14? Or did you get 2? See what everyone else answered — then learn why the trap works." />
-  <meta property="og:image" content="https://www.mathmatix.ai/images/mathmatix-ai-logo.png" />
+  <meta property="og:image" content="https://www.mathmatix.ai/images/quiz-ad-og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://www.mathmatix.ai/quiz" />
-  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://www.mathmatix.ai/images/quiz-ad-og.jpg" />
   <link rel="icon" href="/images/icon-192x192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -100,6 +103,19 @@
       transform: rotate(-1deg);
       text-shadow: 0 0 5px rgba(247, 209, 84, 0.35);
     }
+
+    /* Round 1 hero: the actual ad image, with the answer buttons floating on
+       it and "Tap your answer" written where the creative's comments line was. */
+    .hero-pic {
+      position: relative; border-radius: 14px; overflow: hidden;
+      box-shadow: var(--shadow); line-height: 0;
+    }
+    .hero-pic img { display: block; width: 100%; height: auto; }
+    .hero-pic .chalk-cta {
+      position: absolute; left: 8%; top: 61%; margin: 0; line-height: 1.2;
+      font-size: clamp(1.1rem, 5.4vw, 1.9rem);
+    }
+    .hero-pic .choices { left: 3%; right: 3%; bottom: 3%; }
 
     /* Answer buttons float over the bottom of the picture — mirrors the ad
        creative, so the tap people meant to make in the feed works here. */
@@ -270,13 +286,25 @@
         var round = el('section', 'round');
         round.appendChild(el('div', 'round-label', ROUND_TITLES[roundIndex] || 'Round ' + (roundIndex + 1)));
 
-        var board = el('div', 'chalkboard');
-        board.appendChild(el('div', 'chalk-title', 'POP QUIZ:'));
-        board.appendChild(el('div', 'chalk-rule yellow'));
-        board.appendChild(el('div', 'chalk-expr', quiz.expression));
-        board.appendChild(el('div', 'chalk-rule green'));
-        board.appendChild(el('div', 'chalk-sub', quiz.prompt || ''));
-        board.appendChild(el('div', 'chalk-cta', 'Tap your answer 👇'));
+        // Round 1 gets the real ad picture (teacher, classroom and all);
+        // later rounds use the CSS chalkboard styled to match it.
+        var board;
+        if (quiz.id === 'oops-24') {
+          board = el('div', 'hero-pic');
+          var pic = el('img');
+          pic.src = '/images/quiz-ad-hero.jpg';
+          pic.alt = 'A teacher at a chalkboard: POP QUIZ: 24 ÷ 3(2) − 2. Did you get 14? Or did you get 2?';
+          board.appendChild(pic);
+          board.appendChild(el('div', 'chalk-cta', 'Tap your answer 👇'));
+        } else {
+          board = el('div', 'chalkboard');
+          board.appendChild(el('div', 'chalk-title', 'POP QUIZ:'));
+          board.appendChild(el('div', 'chalk-rule yellow'));
+          board.appendChild(el('div', 'chalk-expr', quiz.expression));
+          board.appendChild(el('div', 'chalk-rule green'));
+          board.appendChild(el('div', 'chalk-sub', quiz.prompt || ''));
+          board.appendChild(el('div', 'chalk-cta', 'Tap your answer 👇'));
+        }
 
         // Floating answer buttons over the bottom of the board (absolute,
         // anchored to .chalkboard) — same layout as the ad creative.
