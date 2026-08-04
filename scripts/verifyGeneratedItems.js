@@ -570,7 +570,7 @@ for (const it of items) {
     const e = Number(m[1]) + Number(m[2]);
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
-  if ((m = p.match(/At what x-value is there a HOLE/)) && (m = p.match(/\(\(x − (\d+)\)/))) {
+  if (/At what x-value is there a HOLE/.test(p) && (m = p.match(/\(\(x − (\d+)\)/))) {
     const e = `x = ${m[1]}`;
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
@@ -657,6 +657,153 @@ for (const it of items) {
   if ((m = p.match(/^Evaluate (\d+)x² − (\d+) when x = (\d+)\.$/))) {
     const [a, b, x] = m.slice(1).map(Number);
     const e = a * x * x - b;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+
+  // ── Precalculus ──────────────────────────────────────────────────────────
+  if ((m = p.match(/^f\(x\) = x \+ (\d+)\. What is f⁻¹\(x\)\?$/))) {
+    const e = `x − ${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f\(x\) = (\d+)x\. What is f⁻¹\(x\)\?$/))) {
+    const e = `x/${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^f\(x\) = (\d+)x \+ (\d+)\. What is f⁻¹\(x\)\?$/))) {
+    const e = `(x − ${m[2]})/${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/point \((\d+), (\d+)\) lies on the graph of f\. What point must lie on the graph of f⁻¹/))) {
+    const e = `(${m[2]}, ${m[1]})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/remainder when x² \+ (\d+)x \+ (\d+) is divided by \(x − (\d+)\)/))) {
+    const [b, c, k] = m.slice(1).map(Number);
+    const e = k * k + b * k + c;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/x² \+ (\d+)x \+ \d+ is divided synthetically by \(x − (\d+)\), the quotient is x \+ q/))) {
+    const e = Number(m[1]) + Number(m[2]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/Synthetic division of x² − (\d+)x \+ (\d+) by \(x − (\d+)\) leaves remainder 0\. What is the OTHER root/))) {
+    const [sum, prod, root] = m.slice(1).map(Number);
+    const other = sum - root;
+    checked++;
+    if (other * root !== prod) { fail(it, `inconsistent polynomial: ${root}·${other} ≠ ${prod}`); continue; }
+    if (!eq(it.answer.value, other)) fail(it, other); continue;
+  }
+  if (/find cos\(A − B\)/.test(p) && (m = p.match(/sin A = (\d+)\/5, cos A = (\d+)\/5, sin B = (\d+)\/13, cos B = (\d+)\/13/))) {
+    const [sa, ca, sb, cb] = m.slice(1).map(Number);
+    const e = reduceStr(ca * cb + sa * sb, 65);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if (/find sin\(A \+ B\)/.test(p) && (m = p.match(/sin A = (\d+)\/5, cos A = (\d+)\/5, sin B = (\d+)\/13, cos B = (\d+)\/13/))) {
+    const [sa, ca, sb, cb] = m.slice(1).map(Number);
+    const e = reduceStr(sa * cb + ca * sb, 65);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/sin θ = (\d+)\/(\d+) and cos θ = (\d+)\/\d+, find sin 2θ/))) {
+    const [s0, h, c0] = m.slice(1).map(Number);
+    const e = reduceStr(2 * s0 * c0, h * h);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/sin θ = (\d+)\/(\d+) and cos θ = (\d+)\/\d+, find cos 2θ/))) {
+    const [s0, h, c0] = m.slice(1).map(Number);
+    const e = reduceStr(c0 * c0 - s0 * s0, h * h);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/ellipse x²\/(\d+) \+ y²\/(\d+) = 1, what is the length of the MAJOR axis/))) {
+    const A = Math.max(Number(m[1]), Number(m[2]));
+    const e = 2 * Math.sqrt(A);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/ellipse x²\/(\d+) \+ y²\/(\d+) = 1, find c/))) {
+    const A = Math.max(Number(m[1]), Number(m[2])), B = Math.min(Number(m[1]), Number(m[2]));
+    const e = Math.sqrt(A - B);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/hyperbola x²\/(\d+) − y²\/(\d+) = 1, find c/))) {
+    const e = Math.sqrt(Number(m[1]) + Number(m[2]));
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/slopes of the asymptotes of x²\/(\d+) − y²\/(\d+) = 1/))) {
+    const e = `±${Math.sqrt(Number(m[2])) / Math.sqrt(Number(m[1]))}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/x = t \+ (\d+), y = (\d+)t\. What point corresponds to t = (\d+)/))) {
+    const [a, b, t] = m.slice(1).map(Number);
+    const e = `(${t + a}, ${b * t})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/Eliminate the parameter: x = t \+ (\d+), y = (\d+)t/))) {
+    const e = `y = ${m[2]}(x − ${m[1]})`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/Find r for the rectangular point \((\d+), (\d+)\)/))) {
+    const e = Math.sqrt(Number(m[1]) ** 2 + Number(m[2]) ** 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/Convert the polar equation r = (\d+) to rectangular form/))) {
+    const e = `x² + y² = ${Number(m[1]) ** 2}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/How many petals does the rose r = \d+cos\((\d+)θ\)/))) {
+    const n0 = Number(m[1]);
+    const e = n0 % 2 === 1 ? n0 : 2 * n0;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/modulus of the complex number (\d+) \+ (\d+)i/))) {
+    const e = Math.sqrt(Number(m[1]) ** 2 + Number(m[2]) ** 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/modulus (\d+) and argument π in rectangular form/))) {
+    const e = `−${m[1]}`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/vector from P\((\d+), (\d+)\) to Q\((\d+), (\d+)\)/))) {
+    const [x1, y1, x2, y2] = m.slice(1).map(Number);
+    const e = `⟨${x2 - x1}, ${y2 - y1}⟩`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/magnitude of the vector ⟨(\d+), (\d+)⟩/))) {
+    const e = Math.sqrt(Number(m[1]) ** 2 + Number(m[2]) ** 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Compute ⟨(\d+), (\d+)⟩ \+ ⟨(\d+), (\d+)⟩\.$/))) {
+    const [a, b, c0, d] = m.slice(1).map(Number);
+    const e = `⟨${a + c0}, ${b + d}⟩`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Compute (\d+)⟨(\d+), (\d+)⟩\.$/))) {
+    const [k, a, b] = m.slice(1).map(Number);
+    const e = `⟨${k * a}, ${k * b}⟩`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/^Compute ⟨(\d+), (\d+)⟩ − (\d+)⟨(\d+), (\d+)⟩\.$/))) {
+    const [a, b, k, c0, d] = m.slice(1).map(Number);
+    const e = `⟨${a - k * c0}, ${b - k * d}⟩`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/dot product ⟨(\d+), (\d+)⟩ · ⟨(\d+), (\d+)⟩/))) {
+    const [a, b, c0, d] = m.slice(1).map(Number);
+    const e = a * c0 + b * d;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/Find k so that ⟨(\d+), 2⟩ and ⟨2, k⟩ are orthogonal/))) {
+    const e = -Number(m[1]);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/walks (\d+) m east, then (\d+) m north/))) {
+    const e = `⟨${m[1]}, ${m[2]}⟩`;
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/travels (\d+) m east and (\d+) m north\. How far/))) {
+    const e = Math.sqrt(Number(m[1]) ** 2 + Number(m[2]) ** 2);
+    checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
+  }
+  if ((m = p.match(/(\d+) N east and (\d+) N west\. What is the magnitude/))) {
+    const e = Math.abs(Number(m[1]) - Number(m[2]));
     checked++; if (!eq(it.answer.value, e)) fail(it, e); continue;
   }
 

@@ -17299,5 +17299,5034 @@
   "source": "low-volume-2026-08",
   "contentHash": "981bd2eb42c80912c35e63b743b70ec730986776237c275a15a90052c1f9a8e5",
   "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-001",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = x + 1. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x − 1",
+   "equivalents": [
+    "x - 1",
+    "x−1",
+    "x-1"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The inverse UNDOES the function. f adds 1, so f⁻¹ subtracts it: f⁻¹(x) = x − 1.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "afc4de92476a6312ff4f7c9eea2d739957c4cf7105ffdd318a7895a28adb8910",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-002",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = 2x. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x/2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "f multiplies by 2, so the inverse divides by 2: f⁻¹(x) = x/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7132f44360dfdcc6a549e1844bac8bbefb474595e48543963ebcc555d62c00a7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-003",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = x + 5. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x − 5",
+   "equivalents": [
+    "x - 5",
+    "x−5",
+    "x-5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The inverse UNDOES the function. f adds 5, so f⁻¹ subtracts it: f⁻¹(x) = x − 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "70ab6cb3cc403261d7f800c1f60010793b7ddc231c1e5ca078559c9bdcd8d449",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-004",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = 4x. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x/4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "f multiplies by 4, so the inverse divides by 4: f⁻¹(x) = x/4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7af50e8e1de7ba37cb658bd15f08bdd16173b9353bdcf81f16f67c53302cb657",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-005",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = 4x + 5. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(x − 5)/4",
+   "equivalents": [
+    "(x - 5)/4",
+    "(x−5)/4",
+    "(x-5)/4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Swap x and y, then solve: x = 4y + 5 → y = (x − 5)/4. Undo the LAST operation first — f adds 5 last, so f⁻¹ subtracts it first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fdbcaf24fef642e79d4784aeafb7e5b4a853e173c1edf460466754794b8f669f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-006",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = 3x + 5. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(x − 5)/3",
+   "equivalents": [
+    "(x - 5)/3",
+    "(x−5)/3",
+    "(x-5)/3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Swap x and y, then solve: x = 3y + 5 → y = (x − 5)/3. Undo the LAST operation first — f adds 5 last, so f⁻¹ subtracts it first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "14f4a1556aa685ee687e0254e7ac2c683a92278a05f875ae768da1789fad81de",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-007",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = 5x + 8. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(x − 8)/5",
+   "equivalents": [
+    "(x - 8)/5",
+    "(x−8)/5",
+    "(x-8)/5"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Swap x and y, then solve: x = 5y + 8 → y = (x − 8)/5. Undo the LAST operation first — f adds 8 last, so f⁻¹ subtracts it first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "33c935aaae9b58768be92a19b7d16f108c6ffeebd816dbfd7dabc20f14cef760",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-008",
+  "skillId": "inverse-functions",
+  "prompt": "f(x) = 2x + 5. What is f⁻¹(x)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(x − 5)/2",
+   "equivalents": [
+    "(x - 5)/2",
+    "(x−5)/2",
+    "(x-5)/2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Swap x and y, then solve: x = 2y + 5 → y = (x − 5)/2. Undo the LAST operation first — f adds 5 last, so f⁻¹ subtracts it first.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e64a72361a38f87d668f16cb579d4ba4b4702ac7a6265bd50b723495a9fbf420",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-009",
+  "skillId": "inverse-functions",
+  "prompt": "The point (5, 9) lies on the graph of f. What point must lie on the graph of f⁻¹?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(9, 5)",
+   "equivalents": [
+    "(9,5)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The inverse swaps inputs and outputs, so (5, 9) on f becomes (9, 5) on f⁻¹ — the graphs reflect across y = x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "83512ef8b37a5373a0a9da9819cbedbb70e5807c588da2ff9a5f5f5b3bade52b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-010",
+  "skillId": "inverse-functions",
+  "prompt": "What must be true of a function's graph for the function to HAVE an inverse function?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "It passes the horizontal line test",
+   "equivalents": [
+    "Itpassesthehorizontallinetest"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "An inverse function exists only when each output comes from ONE input — no horizontal line may hit the graph twice. The vertical line test only checks that it is a function at all.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cfd4e6b3989404b1ccd88e5aa1ded41137f49fb09ffd814a12599f87631dd23a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "It passes the horizontal line test"
+   },
+   {
+    "label": "B",
+    "text": "It passes the vertical line test"
+   },
+   {
+    "label": "C",
+    "text": "It is always increasing"
+   },
+   {
+    "label": "D",
+    "text": "It has a y-intercept"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-inverse-functions-011",
+  "skillId": "inverse-functions",
+  "prompt": "The point (7, 4) lies on the graph of f. What point must lie on the graph of f⁻¹?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(4, 7)",
+   "equivalents": [
+    "(4,7)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The inverse swaps inputs and outputs, so (7, 4) on f becomes (4, 7) on f⁻¹ — the graphs reflect across y = x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:inverse-functions"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a45ed5c0450838d785df4a66381539edd30f7d5335576d5fd7c5c9001ed6b6d3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-001",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Use synthetic division to find the remainder when x² + 8x + 6 is divided by (x − 3).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "39",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Synthetic division with 3: bring down 1; 3·1 = 3, add to 8 → 11; 3·11 = 33, add to 6 → 39. The last number is the remainder — and it equals P(3), as the Remainder Theorem promises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "14b8a6be86c5370ea4abd40727a053e2c4dbdd4a23da5434ee62340775d44fb8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-002",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Use synthetic division to find the remainder when x² + 2x + 5 is divided by (x − 2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Synthetic division with 2: bring down 1; 2·1 = 2, add to 2 → 4; 2·4 = 8, add to 5 → 13. The last number is the remainder — and it equals P(2), as the Remainder Theorem promises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3b390ab36fae93e8d1717f5894297b32ef9db0ead9fc5fea439ccea69ad7328b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-003",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Use synthetic division to find the remainder when x² + 2x + 5 is divided by (x − 1).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Synthetic division with 1: bring down 1; 1·1 = 1, add to 2 → 3; 1·3 = 3, add to 5 → 8. The last number is the remainder — and it equals P(1), as the Remainder Theorem promises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "40f6479f9baad3b4fe35df1a4f2016c28f0a750b2579dd3f5daf2e630b68f871",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-004",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Use synthetic division to find the remainder when x² + 5x + 8 is divided by (x − 4).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "44",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Synthetic division with 4: bring down 1; 4·1 = 4, add to 5 → 9; 4·9 = 36, add to 8 → 44. The last number is the remainder — and it equals P(4), as the Remainder Theorem promises.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "148b215598b3a3dd2b9c6b78fd42bd22f6deaf0eb17d7fff3574234327e21f13",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-005",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "When x² + 5x + 7 is divided synthetically by (x − 4), the quotient is x + q. What is q?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The synthetic row starts: bring down 1, then 4·1 + 5 = 9. The quotient's coefficients are those first numbers, so the quotient is x + 9 and q = 9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2cd49b570f5c74d90ce3df26bd9452d5b9ce70cedc0692c4dbd48c41014e280f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-006",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "When x² + 3x + 2 is divided synthetically by (x − 2), the quotient is x + q. What is q?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The synthetic row starts: bring down 1, then 2·1 + 3 = 5. The quotient's coefficients are those first numbers, so the quotient is x + 5 and q = 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a9366545b4d76d2038bb5ff00176ee9ce08b2c9adc1c990805551c5b16007f3a",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-007",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "When x² + 3x + 8 is divided synthetically by (x − 3), the quotient is x + q. What is q?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The synthetic row starts: bring down 1, then 3·1 + 3 = 6. The quotient's coefficients are those first numbers, so the quotient is x + 6 and q = 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "026430cd35cd336987e08b209428932f5b6bc808c4ff9a6e5e7148275acbb3f9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-008",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "When x² + 6x + 3 is divided synthetically by (x − 3), the quotient is x + q. What is q?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "9",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "The synthetic row starts: bring down 1, then 3·1 + 6 = 9. The quotient's coefficients are those first numbers, so the quotient is x + 9 and q = 9.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "415623cc93aa1a5879d36386d3ced43db73b4bc9ddd94625508f360326d5d78c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-009",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Synthetic division of x² − 7x + 12 by (x − 3) leaves remainder 0. What is the OTHER root of the polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder 0 means (x − 3) is a factor, and the quotient row gives the other factor: x − 4. So the other root is 4. (Check: 3 + 4 = 7 matches the middle coefficient, 3·4 = 12 matches the constant.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9ad0772ccaa53a281d61fddcf33c4d72db3ae1b9404abb237b9d983aff3c49cc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-010",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Synthetic division of x² − 6x + 8 by (x − 2) leaves remainder 0. What is the OTHER root of the polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder 0 means (x − 2) is a factor, and the quotient row gives the other factor: x − 4. So the other root is 4. (Check: 2 + 4 = 6 matches the middle coefficient, 2·4 = 8 matches the constant.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "618315f4ec854a7ebed9e00938eeb1672b7ac1cbcf5254179d774b095aad6780",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-011",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Synthetic division of x² − 6x + 8 by (x − 4) leaves remainder 0. What is the OTHER root of the polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder 0 means (x − 4) is a factor, and the quotient row gives the other factor: x − 2. So the other root is 2. (Check: 4 + 2 = 6 matches the middle coefficient, 4·2 = 8 matches the constant.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "174759bded8ef9c0581a353c927e61cabcb733029753325cd4e6bff0e10097ea",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-synthetic-division-remainder-012",
+  "skillId": "synthetic-division-remainder",
+  "prompt": "Synthetic division of x² − 3x + 2 by (x − 2) leaves remainder 0. What is the OTHER root of the polynomial?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Remainder 0 means (x − 2) is a factor, and the quotient row gives the other factor: x − 1. So the other root is 1. (Check: 2 + 1 = 3 matches the middle coefficient, 2·1 = 2 matches the constant.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:synthetic-division-remainder"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bb0485f536a2fc399d23a57341f0a1761465d1d76b30bfafd0c94639b69650a4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-001",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Solve: (x − 4)(x − 8) > 0",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x < 4 or x > 8",
+   "equivalents": [
+    "x<4orx>8"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The roots 4 and 8 split the number line into three intervals. The parabola opens upward, so it is POSITIVE outside the roots: x < 4 or x > 8. A sign chart or a test point in each interval confirms it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cc8a5b22e62d1f21c63dd9c2bae697f36df1d2053f5ad56e8b3dbeee405344e8",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x < 4 or x > 8"
+   },
+   {
+    "label": "B",
+    "text": "4 < x < 8"
+   },
+   {
+    "label": "C",
+    "text": "x > 8 only"
+   },
+   {
+    "label": "D",
+    "text": "All real numbers"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-002",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Solve: (x − 3)(x − 5) < 0",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3 < x < 5",
+   "equivalents": [
+    "3<x<5"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The roots 3 and 5 split the number line into three intervals. The parabola opens upward, so it is NEGATIVE between the roots: 3 < x < 5. A sign chart or a test point in each interval confirms it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d97bceb93d691c17a063a83f9540daa84613c9c58468bc5de848065a49ec223b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x < 3 or x > 5"
+   },
+   {
+    "label": "B",
+    "text": "3 < x < 5"
+   },
+   {
+    "label": "C",
+    "text": "x > 5 only"
+   },
+   {
+    "label": "D",
+    "text": "All real numbers"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-003",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Solve: (x − 3)(x − 6) > 0",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x < 3 or x > 6",
+   "equivalents": [
+    "x<3orx>6"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The roots 3 and 6 split the number line into three intervals. The parabola opens upward, so it is POSITIVE outside the roots: x < 3 or x > 6. A sign chart or a test point in each interval confirms it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aa773ff886034a82a9a0cc5f3b6b329abc378e08258b4c3bbdc784461a65631e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x < 3 or x > 6"
+   },
+   {
+    "label": "B",
+    "text": "3 < x < 6"
+   },
+   {
+    "label": "C",
+    "text": "x > 6 only"
+   },
+   {
+    "label": "D",
+    "text": "All real numbers"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-004",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Solve: (x − 1)(x − 3) < 0",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1 < x < 3",
+   "equivalents": [
+    "1<x<3"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The roots 1 and 3 split the number line into three intervals. The parabola opens upward, so it is NEGATIVE between the roots: 1 < x < 3. A sign chart or a test point in each interval confirms it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2a1d16512cc4ed354fe68a657d8871a6cfaabc6e7947d1445348a1fd6b6d4f95",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "x < 1 or x > 3"
+   },
+   {
+    "label": "B",
+    "text": "1 < x < 3"
+   },
+   {
+    "label": "C",
+    "text": "x > 3 only"
+   },
+   {
+    "label": "D",
+    "text": "All real numbers"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-005",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Is x = 2 in the solution set of (x − 1)/(x + 1) > 0?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Test it: (2 − 1)/(2 + 1) = 1/3, which is positive — so yes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "44f1005c3ba33a5ad75b66fa0f97de1b40c0c29f8ce28ba4839602eab85bc071",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is an integer"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-006",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Is x = 0 in the solution set of (x − 5)/(x + 5) > 0?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Test it: (0 − 5)/(0 + 5) = -5/5, which is negative — so no. Between the critical points −5 and 5, the numerator and denominator disagree in sign.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8269a455f23d22017b990980ba0dd0b18e84345fc91d25b835dc2c1087d15197",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is an integer"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-007",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Is x = 6 in the solution set of (x − 5)/(x + 5) > 0?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Test it: (6 − 5)/(6 + 5) = 1/11, which is positive — so yes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cdd4f4addb6ee0fcb83a88adff3d1bb3967f51f479faa4fae4f911f09dea3e5b",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is an integer"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-008",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "Is x = 0 in the solution set of (x − 4)/(x + 4) > 0?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Test it: (0 − 4)/(0 + 4) = -4/4, which is negative — so no. Between the critical points −4 and 4, the numerator and denominator disagree in sign.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4ce6910bb5c0b7a1dd6e1f707ff91ed39e5c8616953e7a4f80ed1bc42553089a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only if x is an integer"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-009",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "For (x − 2)/(x + 2) ≥ 0, is x = -2 in the solution set?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No — it makes the denominator zero, so the expression has no value there",
+   "equivalents": [
+    "No—itmakesthedenominatorzero,sotheexpressionhasnovaluethere"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "x = -2 zeroes the DENOMINATOR, so the expression is undefined there — excluded no matter what the inequality sign allows.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "97b95a9ec7442b95713e4a6e4c9b5b3dbd12aff5eccb17c99b2403b7ef3830cc",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — it makes the numerator zero, and equality is allowed"
+   },
+   {
+    "label": "B",
+    "text": "No — it makes the denominator zero, so the expression has no value there"
+   },
+   {
+    "label": "C",
+    "text": "No — boundary points are never included"
+   },
+   {
+    "label": "D",
+    "text": "Yes — every real number is included"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-010",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "For (x − 2)/(x + 1) ≥ 0, is x = 2 in the solution set?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes — it makes the numerator zero, and equality is allowed",
+   "equivalents": [
+    "Yes—itmakesthenumeratorzero,andequalityisallowed"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "x = 2 zeroes the NUMERATOR, making the expression equal 0, and \"≥\" allows equality — so it IS included. Only denominator zeros are barred.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b2d58d19759f127d6108164b507545d43e5393b8959d7508d75497240a6e0428",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — it makes the numerator zero, and equality is allowed"
+   },
+   {
+    "label": "B",
+    "text": "No — it makes the denominator zero, so the expression has no value there"
+   },
+   {
+    "label": "C",
+    "text": "No — boundary points are never included"
+   },
+   {
+    "label": "D",
+    "text": "Yes — every real number is included"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-011",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "For (x − 2)/(x + 5) ≥ 0, is x = -5 in the solution set?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No — it makes the denominator zero, so the expression has no value there",
+   "equivalents": [
+    "No—itmakesthedenominatorzero,sotheexpressionhasnovaluethere"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "x = -5 zeroes the DENOMINATOR, so the expression is undefined there — excluded no matter what the inequality sign allows.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "db96577d640079013311e19b7f0e0b3a969bd2bcf7645099fb066c702da354c3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — it makes the numerator zero, and equality is allowed"
+   },
+   {
+    "label": "B",
+    "text": "No — it makes the denominator zero, so the expression has no value there"
+   },
+   {
+    "label": "C",
+    "text": "No — boundary points are never included"
+   },
+   {
+    "label": "D",
+    "text": "Yes — every real number is included"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polynomial-rational-inequalities-012",
+  "skillId": "polynomial-rational-inequalities",
+  "prompt": "For (x − 2)/(x + 4) ≥ 0, is x = 2 in the solution set?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes — it makes the numerator zero, and equality is allowed",
+   "equivalents": [
+    "Yes—itmakesthenumeratorzero,andequalityisallowed"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "x = 2 zeroes the NUMERATOR, making the expression equal 0, and \"≥\" allows equality — so it IS included. Only denominator zeros are barred.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polynomial-rational-inequalities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "376bd1536e4ae00164e465a525aaa6c657663f4d6af615709de53cab0ea42c65",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes — it makes the numerator zero, and equality is allowed"
+   },
+   {
+    "label": "B",
+    "text": "No — it makes the denominator zero, so the expression has no value there"
+   },
+   {
+    "label": "C",
+    "text": "No — boundary points are never included"
+   },
+   {
+    "label": "D",
+    "text": "Yes — every real number is included"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-001",
+  "skillId": "sum-difference-identities",
+  "prompt": "Which expression equals sin(A + B)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sin A cos B + cos A sin B",
+   "equivalents": [
+    "sinAcosB+cosAsinB"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "sin(A + B) = sin A cos B + cos A sin B. Watch the sign pattern: SINE keeps the sign between the terms matching the angle sign; COSINE flips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "301796189c591e2f0a47457847edbd5f5078b2c668b5ae74d475b5ed81a12644",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "sin A cos B + cos A sin B"
+   },
+   {
+    "label": "B",
+    "text": "cos A cos B − sin A sin B"
+   },
+   {
+    "label": "C",
+    "text": "sin A cos B − cos A sin B"
+   },
+   {
+    "label": "D",
+    "text": "cos A cos B + sin A sin B"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-002",
+  "skillId": "sum-difference-identities",
+  "prompt": "Which expression equals cos(A + B)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "cos A cos B − sin A sin B",
+   "equivalents": [
+    "cos A cos B - sin A sin B",
+    "cosAcosB−sinAsinB",
+    "cosAcosB-sinAsinB"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "cos(A + B) = cos A cos B − sin A sin B. Watch the sign pattern: SINE keeps the sign between the terms matching the angle sign; COSINE flips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "393daeb74f0aa12863a25a9cad835dbc35d3ae9f5cde7a011a172c2979ae5e91",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "sin A cos B + cos A sin B"
+   },
+   {
+    "label": "B",
+    "text": "cos A cos B − sin A sin B"
+   },
+   {
+    "label": "C",
+    "text": "sin A cos B − cos A sin B"
+   },
+   {
+    "label": "D",
+    "text": "cos A cos B + sin A sin B"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-003",
+  "skillId": "sum-difference-identities",
+  "prompt": "Which expression equals sin(A − B)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "sin A cos B − cos A sin B",
+   "equivalents": [
+    "sin A cos B - cos A sin B",
+    "sinAcosB−cosAsinB",
+    "sinAcosB-cosAsinB"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "sin(A − B) = sin A cos B − cos A sin B. Watch the sign pattern: SINE keeps the sign between the terms matching the angle sign; COSINE flips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a473a5d0c9c172f0d5503a371e27ad4a4f1dd714f8195bed44c8d2fe025aff9f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "sin A cos B + cos A sin B"
+   },
+   {
+    "label": "B",
+    "text": "cos A cos B − sin A sin B"
+   },
+   {
+    "label": "C",
+    "text": "sin A cos B − cos A sin B"
+   },
+   {
+    "label": "D",
+    "text": "cos A cos B + sin A sin B"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-004",
+  "skillId": "sum-difference-identities",
+  "prompt": "Which expression equals cos(A − B)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "cos A cos B + sin A sin B",
+   "equivalents": [
+    "cosAcosB+sinAsinB"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "cos(A − B) = cos A cos B + sin A sin B. Watch the sign pattern: SINE keeps the sign between the terms matching the angle sign; COSINE flips it.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2af1e740f7fb53151fd372e525edc2c123cb289d787b8aa9d2eba8438253666a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "sin A cos B + cos A sin B"
+   },
+   {
+    "label": "B",
+    "text": "cos A cos B − sin A sin B"
+   },
+   {
+    "label": "C",
+    "text": "sin A cos B − cos A sin B"
+   },
+   {
+    "label": "D",
+    "text": "cos A cos B + sin A sin B"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-005",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 3/5, cos A = 4/5, sin B = 5/13, cos B = 12/13 (all angles acute), find cos(A − B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "63/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "cos(A − B) = cos A cos B + sin A sin B = (4/5)(12/13) + (3/5)(5/13) = 48/65 + 15/65 = 63/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a6184c6205abdb853c551e08149c3b0f0cf0d7164eb5f5c43b4fd1fd794442c1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-006",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 4/5, cos A = 3/5, sin B = 12/13, cos B = 5/13 (all angles acute), find cos(A − B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "63/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "cos(A − B) = cos A cos B + sin A sin B = (3/5)(5/13) + (4/5)(12/13) = 15/65 + 48/65 = 63/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0ee572a7df63f35a8116cb7a0718d4cc69d54d7c44acd10c5e180f4b3c162637",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-007",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 4/5, cos A = 3/5, sin B = 5/13, cos B = 12/13 (all angles acute), find cos(A − B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "cos(A − B) = cos A cos B + sin A sin B = (3/5)(12/13) + (4/5)(5/13) = 36/65 + 20/65 = 56/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6dd0dc0a2b8f06d17f7d96a0e175c80246da379eb758538da650a308e06155eb",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-008",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 3/5, cos A = 4/5, sin B = 12/13, cos B = 5/13 (all angles acute), find cos(A − B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "cos(A − B) = cos A cos B + sin A sin B = (4/5)(5/13) + (3/5)(12/13) = 20/65 + 36/65 = 56/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e90a7ab8240b6a8b734eac1048f325746ebaa69db36cb9dc00474f52c3475a8c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-009",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 4/5, cos A = 3/5, sin B = 12/13, cos B = 5/13 (all angles acute), find sin(A + B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "sin(A + B) = sin A cos B + cos A sin B = (4/5)(5/13) + (3/5)(12/13) = 20/65 + 36/65 = 56/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "85934a11ccc0d1d782b89f2d0b75bca28d9885d5cfc325544391885ef34b65d9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-010",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 3/5, cos A = 4/5, sin B = 5/13, cos B = 12/13 (all angles acute), find sin(A + B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "56/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "sin(A + B) = sin A cos B + cos A sin B = (3/5)(12/13) + (4/5)(5/13) = 36/65 + 20/65 = 56/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10c6f31169672d5d3b82b8cc675b810a103d38213b1760d92d0ef0998a111317",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-011",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 4/5, cos A = 3/5, sin B = 5/13, cos B = 12/13 (all angles acute), find sin(A + B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "63/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "sin(A + B) = sin A cos B + cos A sin B = (4/5)(12/13) + (3/5)(5/13) = 48/65 + 15/65 = 63/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "538f3169f3cbdd6ca76ef07be96cea25a3e7a91ea47201a7264084f9e349fcf3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-sum-difference-identities-012",
+  "skillId": "sum-difference-identities",
+  "prompt": "Given sin A = 3/5, cos A = 4/5, sin B = 12/13, cos B = 5/13 (all angles acute), find sin(A + B).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "63/65",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "sin(A + B) = sin A cos B + cos A sin B = (3/5)(5/13) + (4/5)(12/13) = 15/65 + 48/65 = 63/65.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:sum-difference-identities"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2124be8d310ad0bc9926cadc598a01055f9902554affebb596a51960f540bf43",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-001",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Which expression equals sin 2θ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2 sin θ cos θ",
+   "equivalents": [
+    "2sinθcosθ"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "sin 2θ = 2 sin θ cos θ. The three cosine forms are interchangeable via sin²θ + cos²θ = 1 — pick whichever fits the information you have.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3839c8a664ad8d4dce0bb49cc7a158e5ac097ac23244e26bfed381afcc40e4e3",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "2 sin θ cos θ"
+   },
+   {
+    "label": "B",
+    "text": "cos²θ − sin²θ"
+   },
+   {
+    "label": "C",
+    "text": "1 − 2sin²θ"
+   },
+   {
+    "label": "D",
+    "text": "2cos²θ − 1"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-002",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Which expression equals cos 2θ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "cos²θ − sin²θ",
+   "equivalents": [
+    "cos²θ - sin²θ",
+    "cos²θ−sin²θ",
+    "cos²θ-sin²θ"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "cos 2θ = cos²θ − sin²θ. The three cosine forms are interchangeable via sin²θ + cos²θ = 1 — pick whichever fits the information you have.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a651bc709a3a84c2794895fd3008b4d546f7ce09cfab7d3a740e4488a5472a7f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "2 sin θ cos θ"
+   },
+   {
+    "label": "B",
+    "text": "cos²θ − sin²θ"
+   },
+   {
+    "label": "C",
+    "text": "1 − 2sin²θ"
+   },
+   {
+    "label": "D",
+    "text": "2cos²θ − 1"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-003",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Which expression equals cos 2θ (in sines only)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "1 − 2sin²θ",
+   "equivalents": [
+    "1 - 2sin²θ",
+    "1−2sin²θ",
+    "1-2sin²θ"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "cos 2θ (in sines only) = 1 − 2sin²θ. The three cosine forms are interchangeable via sin²θ + cos²θ = 1 — pick whichever fits the information you have.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9c18f15eda45369e17e79ec473c21318f185ac06ec00feee44bc0975f032fcfa",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "2 sin θ cos θ"
+   },
+   {
+    "label": "B",
+    "text": "cos²θ − sin²θ"
+   },
+   {
+    "label": "C",
+    "text": "1 − 2sin²θ"
+   },
+   {
+    "label": "D",
+    "text": "2cos²θ − 1"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-004",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Which expression equals cos 2θ (in cosines only)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2cos²θ − 1",
+   "equivalents": [
+    "2cos²θ - 1",
+    "2cos²θ−1",
+    "2cos²θ-1"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "cos 2θ (in cosines only) = 2cos²θ − 1. The three cosine forms are interchangeable via sin²θ + cos²θ = 1 — pick whichever fits the information you have.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4cca36f240d1033a1b39685bc1313176e4ed3a18a87bfb1c9376575cdea86c8d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "2 sin θ cos θ"
+   },
+   {
+    "label": "B",
+    "text": "cos²θ − sin²θ"
+   },
+   {
+    "label": "C",
+    "text": "1 − 2sin²θ"
+   },
+   {
+    "label": "D",
+    "text": "2cos²θ − 1"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-005",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 3/5 and cos θ = 4/5, find sin 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24/25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "sin 2θ = 2 sin θ cos θ = 2 · (3/5) · (4/5) = 24/25 = 24/25.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "571d2087708731a1b835157450e544f545b1c2aac19b566d6b4b52bea8a5a1a2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-006",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 5/13 and cos θ = 12/13, find sin 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "120/169",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "sin 2θ = 2 sin θ cos θ = 2 · (5/13) · (12/13) = 120/169 = 120/169.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7f9f89910410cd74aa902a8cd7074b00f4993080c71751a129aaf45d6acb8883",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-007",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 12/13 and cos θ = 5/13, find sin 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "120/169",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "sin 2θ = 2 sin θ cos θ = 2 · (12/13) · (5/13) = 120/169 = 120/169.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ab0cff71a90b934d416eea7c27b754412276b0fb250b68eb7242efac8bec8677",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-008",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 4/5 and cos θ = 3/5, find sin 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "24/25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "sin 2θ = 2 sin θ cos θ = 2 · (4/5) · (3/5) = 24/25 = 24/25.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "74d654b2442fc66aea9e0c29d1f97e13f06292065fcb2c71d796458ab1ae0209",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-009",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 3/5 and cos θ = 4/5, find cos 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "7/25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "cos 2θ = cos²θ − sin²θ = (4/5)² − (3/5)² = 16/25 − 9/25 = 7/25. A negative result just means 2θ has passed 90°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "681c7addbf9aab655567594da02fd54dfbd8510fd873a091a4477f23580a13e8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-010",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 12/13 and cos θ = 5/13, find cos 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-119/169",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "cos 2θ = cos²θ − sin²θ = (5/13)² − (12/13)² = 25/169 − 144/169 = -119/169. A negative result just means 2θ has passed 90°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0929be31e045670070aa002cf876299d8b4213e0e454ea26498dc2b91d1de221",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-011",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 5/13 and cos θ = 12/13, find cos 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "119/169",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "cos 2θ = cos²θ − sin²θ = (12/13)² − (5/13)² = 144/169 − 25/169 = 119/169. A negative result just means 2θ has passed 90°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "643354bf2ffe1e3eaea253be267048fc1d9dbd6b33946c849d9296ead90ba1b4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-double-half-angle-formulas-012",
+  "skillId": "double-half-angle-formulas",
+  "prompt": "Given sin θ = 4/5 and cos θ = 3/5, find cos 2θ.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-7/25",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "cos 2θ = cos²θ − sin²θ = (3/5)² − (4/5)² = 9/25 − 16/25 = -7/25. A negative result just means 2θ has passed 90°.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:double-half-angle-formulas"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d74c9bf5d66372856b177dff553749376aa41f3685100b3420ffea8677013ea",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-001",
+  "skillId": "ellipse-analysis",
+  "prompt": "For the ellipse x²/169 + y²/25 = 1, what is the length of the MAJOR axis?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "26",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The larger denominator is 169 = 13², under x², so the major axis is horizontal with a = 13. Its full length is 2a = 26.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c2d514487009535447d3c747aba2e5883b001fe71eeaf085d329a6a7eea57f67",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-002",
+  "skillId": "ellipse-analysis",
+  "prompt": "For the ellipse x²/100 + y²/36 = 1, what is the length of the MAJOR axis?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "20",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The larger denominator is 100 = 10², under x², so the major axis is horizontal with a = 10. Its full length is 2a = 20.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a923b2b82f2dbba08a7c2239ada7f77ceb748841237718fd080858373a684a75",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-003",
+  "skillId": "ellipse-analysis",
+  "prompt": "For the ellipse x²/25 + y²/9 = 1, what is the length of the MAJOR axis?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The larger denominator is 25 = 5², under x², so the major axis is horizontal with a = 5. Its full length is 2a = 10.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "43c9640f77a7f04c1f8535c189925e942317645e5ade873eed6d230e1165db91",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-004",
+  "skillId": "ellipse-analysis",
+  "prompt": "For the ellipse x²/169 + y²/25 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For an ellipse, c² = a² − b² = 169 − 25 = 144, so c = 12. The foci sit at (±12, 0), on the major axis. (For ellipses you SUBTRACT; hyperbolas add.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ab04f651f2c99c333d10087e6e5c17a87cd4835dd9c001017dee1b527aade26f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-005",
+  "skillId": "ellipse-analysis",
+  "prompt": "For the ellipse x²/100 + y²/36 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For an ellipse, c² = a² − b² = 100 − 36 = 64, so c = 8. The foci sit at (±8, 0), on the major axis. (For ellipses you SUBTRACT; hyperbolas add.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "41083d19e5af5793c22dd4ec266fb617bc94f0172662d157c363a67d34725c07",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-006",
+  "skillId": "ellipse-analysis",
+  "prompt": "For the ellipse x²/289 + y²/64 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For an ellipse, c² = a² − b² = 289 − 64 = 225, so c = 15. The foci sit at (±15, 0), on the major axis. (For ellipses you SUBTRACT; hyperbolas add.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "382717301bab13d8bbb83f80d2bcf5b76360d2471c18ef1d5c3907189a7ec2da",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-007",
+  "skillId": "ellipse-analysis",
+  "prompt": "For the ellipse x²/25 + y²/9 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For an ellipse, c² = a² − b² = 25 − 9 = 16, so c = 4. The foci sit at (±4, 0), on the major axis. (For ellipses you SUBTRACT; hyperbolas add.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "51b73dd6920528e80eda48c2eac7db628bcaffaab25877be58341cd8b39f17c2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-008",
+  "skillId": "ellipse-analysis",
+  "prompt": "The ellipse x²/36 + y²/100 = 1 has its larger denominator under y². Where are its VERTICES?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(0, ±10)",
+   "equivalents": [
+    "(0,±10)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The major axis follows the larger denominator — here vertical, with a = 10. The vertices are its endpoints: (0, ±10). The points (±6, 0) are the co-vertices on the minor axis.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "63538fdf7aeee815b543cc4d4e0946b0fd9c0f79d2a82da9945e0d598ea3c187",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(0, ±10)"
+   },
+   {
+    "label": "B",
+    "text": "(±10, 0)"
+   },
+   {
+    "label": "C",
+    "text": "(0, ±6)"
+   },
+   {
+    "label": "D",
+    "text": "(±6, ±10)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-009",
+  "skillId": "ellipse-analysis",
+  "prompt": "The ellipse x²/9 + y²/25 = 1 has its larger denominator under y². Where are its VERTICES?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(0, ±5)",
+   "equivalents": [
+    "(0,±5)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The major axis follows the larger denominator — here vertical, with a = 5. The vertices are its endpoints: (0, ±5). The points (±3, 0) are the co-vertices on the minor axis.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8498724e1fb37842ed2b5f8ae40fb3629d93f9195559a87c92cadb0fb1c92066",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(0, ±5)"
+   },
+   {
+    "label": "B",
+    "text": "(±5, 0)"
+   },
+   {
+    "label": "C",
+    "text": "(0, ±3)"
+   },
+   {
+    "label": "D",
+    "text": "(±3, ±5)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-ellipse-analysis-010",
+  "skillId": "ellipse-analysis",
+  "prompt": "The ellipse x²/25 + y²/169 = 1 has its larger denominator under y². Where are its VERTICES?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(0, ±13)",
+   "equivalents": [
+    "(0,±13)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The major axis follows the larger denominator — here vertical, with a = 13. The vertices are its endpoints: (0, ±13). The points (±5, 0) are the co-vertices on the minor axis.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:ellipse-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6882d73001e2a22daf9c0eedbd3aec51f5c24de4dc9ec20b320aee97950ddf3c",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(0, ±13)"
+   },
+   {
+    "label": "B",
+    "text": "(±13, 0)"
+   },
+   {
+    "label": "C",
+    "text": "(0, ±5)"
+   },
+   {
+    "label": "D",
+    "text": "(±5, ±13)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-001",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/25 − y²/9 = 1, where are the VERTICES?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(±5, 0)",
+   "equivalents": [
+    "(±5,0)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The positive term is the x-term, so the hyperbola opens left–right and the vertices sit at (±a, 0) = (±5, 0).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "aba9e0b2909a6f9f5188d574d0c27ea8bd77c987558a659b4dacab26ad01c798",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(±5, 0)"
+   },
+   {
+    "label": "B",
+    "text": "(0, ±5)"
+   },
+   {
+    "label": "C",
+    "text": "(±3, 0)"
+   },
+   {
+    "label": "D",
+    "text": "(0, ±3)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-002",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/25 − y²/36 = 1, where are the VERTICES?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(±5, 0)",
+   "equivalents": [
+    "(±5,0)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The positive term is the x-term, so the hyperbola opens left–right and the vertices sit at (±a, 0) = (±5, 0).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "392dd306409456b9275b834b5e8e3abb22eaf011fa8588abc6770d880c87ab5a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(±5, 0)"
+   },
+   {
+    "label": "B",
+    "text": "(0, ±5)"
+   },
+   {
+    "label": "C",
+    "text": "(±6, 0)"
+   },
+   {
+    "label": "D",
+    "text": "(0, ±6)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-003",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/25 − y²/4 = 1, where are the VERTICES?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(±5, 0)",
+   "equivalents": [
+    "(±5,0)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The positive term is the x-term, so the hyperbola opens left–right and the vertices sit at (±a, 0) = (±5, 0).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a20f491d7222aec040753af558b1d8e6f7049ab0b781d37de4093c58ec14ddf7",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(±5, 0)"
+   },
+   {
+    "label": "B",
+    "text": "(0, ±5)"
+   },
+   {
+    "label": "C",
+    "text": "(±2, 0)"
+   },
+   {
+    "label": "D",
+    "text": "(0, ±2)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-004",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/9 − y²/4 = 1, where are the VERTICES?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(±3, 0)",
+   "equivalents": [
+    "(±3,0)"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "The positive term is the x-term, so the hyperbola opens left–right and the vertices sit at (±a, 0) = (±3, 0).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "497d09f532b75b3a265caecc3588b3ed41f44554290e02244d62e6edc992e394",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "(±3, 0)"
+   },
+   {
+    "label": "B",
+    "text": "(0, ±3)"
+   },
+   {
+    "label": "C",
+    "text": "(±2, 0)"
+   },
+   {
+    "label": "D",
+    "text": "(0, ±2)"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-005",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/64 − y²/225 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "17",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For a hyperbola, c² = a² + b² = 64 + 225 = 289, so c = 17. Hyperbolas ADD (the foci lie beyond the vertices); ellipses subtract.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "2bd9bc5f0287f2b06945e893043764844c09efeea41a17b9bd46fcf0ce3d933e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-006",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/25 − y²/144 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For a hyperbola, c² = a² + b² = 25 + 144 = 169, so c = 13. Hyperbolas ADD (the foci lie beyond the vertices); ellipses subtract.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10df6e256b0c82dc215bbfd1f3a3e027379f13961346fc339e70c2232b8e55d2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-007",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/36 − y²/64 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For a hyperbola, c² = a² + b² = 36 + 64 = 100, so c = 10. Hyperbolas ADD (the foci lie beyond the vertices); ellipses subtract.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "13e90bbed23ba9bb0efe29a50ff2329951f2862e023feb2c20f11f0998211b8b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-008",
+  "skillId": "hyperbola-analysis",
+  "prompt": "For the hyperbola x²/9 − y²/16 = 1, find c, the distance from the centre to each focus.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For a hyperbola, c² = a² + b² = 9 + 16 = 25, so c = 5. Hyperbolas ADD (the foci lie beyond the vertices); ellipses subtract.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "29f75c7786fd1774f6bc1b104c63980f207f97ece8eb679be0404a573b6a1cfd",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-009",
+  "skillId": "hyperbola-analysis",
+  "prompt": "What are the slopes of the asymptotes of x²/4 − y²/16 = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "±2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The asymptotes of this hyperbola are y = ±(b/a)x = ±(4/2)x, so the slopes are ±2. The branches hug these lines as x grows.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b6c81b2de9177c0ece4a9f31b2b296422c719c7a0602cf0defe983e5a7ed995f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-010",
+  "skillId": "hyperbola-analysis",
+  "prompt": "What are the slopes of the asymptotes of x²/9 − y²/36 = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "±2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The asymptotes of this hyperbola are y = ±(b/a)x = ±(6/3)x, so the slopes are ±2. The branches hug these lines as x grows.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c87c642d78780b9d79d6a1cc72f303d064d71354061298c2dd4afbadd06572c7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-011",
+  "skillId": "hyperbola-analysis",
+  "prompt": "What are the slopes of the asymptotes of x²/16 − y²/64 = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "±2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The asymptotes of this hyperbola are y = ±(b/a)x = ±(8/4)x, so the slopes are ±2. The branches hug these lines as x grows.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a86dc1be8cf1c8507e928545e11a6aaba3f249899f65bcbd4725e601bd804526",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-hyperbola-analysis-012",
+  "skillId": "hyperbola-analysis",
+  "prompt": "What are the slopes of the asymptotes of x²/16 − y²/144 = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "±3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The asymptotes of this hyperbola are y = ±(b/a)x = ±(12/4)x, so the slopes are ±3. The branches hug these lines as x grows.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:hyperbola-analysis"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bef582728a15bcc22e1dfaa6b200fcde29ba79df29d940e1ac41e67a27a51020",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-001",
+  "skillId": "parametric-equations",
+  "prompt": "A curve is given by x = t + 2, y = 5t. What point corresponds to t = 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(7, 25)",
+   "equivalents": [
+    "(7,25)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Substitute t = 5 into each equation: x = 5 + 2 = 7 and y = 5(5) = 25. The point is (7, 25).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "222e58b678a7a5354ae7e232c08cccbdd5e786678f4d4add33aff941027c5b91",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-002",
+  "skillId": "parametric-equations",
+  "prompt": "A curve is given by x = t + 1, y = 2t. What point corresponds to t = 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(6, 10)",
+   "equivalents": [
+    "(6,10)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Substitute t = 5 into each equation: x = 5 + 1 = 6 and y = 2(5) = 10. The point is (6, 10).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f6d031e66cb60612faf91ff35d8d2a3c1bcec9eb7b99c927192957f4bf5a3e88",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-003",
+  "skillId": "parametric-equations",
+  "prompt": "A curve is given by x = t + 5, y = 3t. What point corresponds to t = 1?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(6, 3)",
+   "equivalents": [
+    "(6,3)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Substitute t = 1 into each equation: x = 1 + 5 = 6 and y = 3(1) = 3. The point is (6, 3).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0d1184dff1d9d14af0f86e4c7014810c52ca0df66db67700b540d40d391cb04e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-004",
+  "skillId": "parametric-equations",
+  "prompt": "A curve is given by x = t + 1, y = 3t. What point corresponds to t = 5?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(6, 15)",
+   "equivalents": [
+    "(6,15)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Substitute t = 5 into each equation: x = 5 + 1 = 6 and y = 3(5) = 15. The point is (6, 15).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d0708549f776ad3fd2fb5a9f72fdcea054c345a1e39b8cbf4fd3e90e60c74066",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-005",
+  "skillId": "parametric-equations",
+  "prompt": "Eliminate the parameter: x = t + 5, y = 4t. Write y as a function of x.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 4(x − 5)",
+   "equivalents": [
+    "y = 4(x - 5)",
+    "y=4(x−5)",
+    "y=4(x-5)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Solve the x-equation for t: t = x − 5. Substitute into y: y = 4(x − 5). The parametric curve is this line, traced as t runs.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cb5299d6a0fbb5f807c252da8c7f1cfda31f1453e050dd36c8ed2270fe0605d9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-006",
+  "skillId": "parametric-equations",
+  "prompt": "Eliminate the parameter: x = t + 3, y = 3t. Write y as a function of x.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 3(x − 3)",
+   "equivalents": [
+    "y = 3(x - 3)",
+    "y=3(x−3)",
+    "y=3(x-3)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Solve the x-equation for t: t = x − 3. Substitute into y: y = 3(x − 3). The parametric curve is this line, traced as t runs.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e0cf56910e98c04a338da463e0ed9ea9be1e0cd1a8edd4a831092451ee054836",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-007",
+  "skillId": "parametric-equations",
+  "prompt": "Eliminate the parameter: x = t + 6, y = 4t. Write y as a function of x.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 4(x − 6)",
+   "equivalents": [
+    "y = 4(x - 6)",
+    "y=4(x−6)",
+    "y=4(x-6)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Solve the x-equation for t: t = x − 6. Substitute into y: y = 4(x − 6). The parametric curve is this line, traced as t runs.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "bc4eee391b1c1c19ed90ecb831653d1df1299a75ecb60bb813c877b631d01c35",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-008",
+  "skillId": "parametric-equations",
+  "prompt": "Eliminate the parameter: x = t + 1, y = 3t. Write y as a function of x.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "y = 3(x − 1)",
+   "equivalents": [
+    "y = 3(x - 1)",
+    "y=3(x−1)",
+    "y=3(x-1)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Solve the x-equation for t: t = x − 1. Substitute into y: y = 3(x − 1). The parametric curve is this line, traced as t runs.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "099448d6c9b3780ad476046f23429b953aa75e27aef728a15d7c6b5323368298",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-009",
+  "skillId": "parametric-equations",
+  "prompt": "What curve do x = 5cos t, y = 5sin t trace as t runs from 0 to 2π?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A circle",
+   "equivalents": [
+    "Acircle"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "x² + y² = 5²cos²t + 5²sin²t = 5²(cos²t + sin²t) = 25 — a circle of radius 5 centred at the origin.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c7b5241425104974ad6326ecb379ee6a24cf16ea9193fd55353c7c495c83ec77",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A circle"
+   },
+   {
+    "label": "B",
+    "text": "A line"
+   },
+   {
+    "label": "C",
+    "text": "A parabola"
+   },
+   {
+    "label": "D",
+    "text": "An ellipse"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-010",
+  "skillId": "parametric-equations",
+  "prompt": "The curve x = t², y = t traces a parabola. Eliminate the parameter and express x in terms of y.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x = y²",
+   "equivalents": [
+    "x=y²"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Since y = t, substitute t = y into x = t²: x = y². This parabola opens to the RIGHT — the roles of x and y are swapped from the familiar y = x².",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f1fbb1b320da398273bf63a92ccdf0c7ff8c6a0602f4c21a0e0a07895e07608f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-parametric-equations-011",
+  "skillId": "parametric-equations",
+  "prompt": "What curve do x = 6cos t, y = 6sin t trace as t runs from 0 to 2π?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A circle",
+   "equivalents": [
+    "Acircle"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "x² + y² = 6²cos²t + 6²sin²t = 6²(cos²t + sin²t) = 36 — a circle of radius 6 centred at the origin.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:parametric-equations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "957b3348596038c07af6a90fb2bfc154609abd1efbddaff5fa797545619c313e",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A circle"
+   },
+   {
+    "label": "B",
+    "text": "A line"
+   },
+   {
+    "label": "C",
+    "text": "A parabola"
+   },
+   {
+    "label": "D",
+    "text": "An ellipse"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-001",
+  "skillId": "polar-coordinates",
+  "prompt": "Convert the polar point (2, 0) to rectangular coordinates.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(2, 0)",
+   "equivalents": [
+    "(2,0)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x = r cos θ and y = r sin θ. θ = 0 points along the positive x-axis, so the point sits 2 units right: (2, 0).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fe823ad9f24b2081496357f472ea242104569e955c1e73e5f6be51ca52330f91",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-002",
+  "skillId": "polar-coordinates",
+  "prompt": "Convert the polar point (4, π/2) to rectangular coordinates.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(0, 4)",
+   "equivalents": [
+    "(0,4)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x = r cos θ and y = r sin θ. θ = π/2 points straight up, so the point is 4 units up the y-axis: (0, 4).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "73c6372bed7a0cdeef1ac18627c74af14d43b19701ff01796967d89fdd6962c9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-003",
+  "skillId": "polar-coordinates",
+  "prompt": "Convert the polar point (2, π) to rectangular coordinates.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(-2, 0)",
+   "equivalents": [
+    "(-2,0)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x = r cos θ and y = r sin θ. θ = π points along the negative x-axis: (−2, 0).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "04b75f820c8fa772b1976767e5c84f453dc9f17fd7b5f5107bae846ce271df1e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-004",
+  "skillId": "polar-coordinates",
+  "prompt": "Convert the polar point (4, 3π/2) to rectangular coordinates.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "(0, -4)",
+   "equivalents": [
+    "(0,-4)"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "x = r cos θ and y = r sin θ. θ = 3π/2 points straight down: (0, −4).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4352279e0498488a9b70827c16864bc82b7ebfff4e5c81eccb59d3b257d0bd14",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-005",
+  "skillId": "polar-coordinates",
+  "prompt": "Find r for the rectangular point (5, 12) in polar form.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "r = √(x² + y²) = √(5² + 12²) = √(169) = 13. The 5-12-13 right triangle makes it exact.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d6e3e2f9c37a7ee664a8691c66c4f486f56274b50adcfcee1831db31dc15fc44",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-006",
+  "skillId": "polar-coordinates",
+  "prompt": "Find r for the rectangular point (3, 4) in polar form.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "r = √(x² + y²) = √(3² + 4²) = √(25) = 5. The 3-4-5 right triangle makes it exact.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ade05c6ff4137cf308960587b8ff903e5bcccf7877f8578463b833c0e1f966ff",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-007",
+  "skillId": "polar-coordinates",
+  "prompt": "Find r for the rectangular point (9, 12) in polar form.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "r = √(x² + y²) = √(9² + 12²) = √(225) = 15. The 9-12-15 right triangle makes it exact.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6a7db4ce64e7b8ccccb5fb058bb34c4ae2c5fb1fdd2a6607d6c589bec0e4e2f8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-008",
+  "skillId": "polar-coordinates",
+  "prompt": "Find r for the rectangular point (8, 15) in polar form.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "17",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "r = √(x² + y²) = √(8² + 15²) = √(289) = 17. The 8-15-17 right triangle makes it exact.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "41109ad23ea726eea80218decb14d97a36f1569795b23d9dfb3064a4c86a725d",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-009",
+  "skillId": "polar-coordinates",
+  "prompt": "Convert the polar equation r = 2 to rectangular form.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x² + y² = 4",
+   "equivalents": [
+    "x²+y²=4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "r = 2 means every point is 2 from the origin. Since r² = x² + y², squaring gives x² + y² = 4 — a circle of radius 2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d8047458ba640ecaffd7f22b69b84008ed257c43d449a8125969aac60c94a232",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-010",
+  "skillId": "polar-coordinates",
+  "prompt": "What is the graph of the polar equation θ = π/4?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A ray from the origin",
+   "equivalents": [
+    "Arayfromtheorigin"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Fixing θ and letting r vary traces every point at angle π/4 — a ray from the origin at 45°. (With r allowed negative it extends to the full line.)",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5b629c5bc0fbd2ecfbdf9c6c506a3b335c6db169cc434588fd0349f82ddf5df4",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A vertical line"
+   },
+   {
+    "label": "B",
+    "text": "A horizontal line"
+   },
+   {
+    "label": "C",
+    "text": "A circle"
+   },
+   {
+    "label": "D",
+    "text": "A ray from the origin"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-coordinates-011",
+  "skillId": "polar-coordinates",
+  "prompt": "Convert the polar equation r = 6 to rectangular form.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "x² + y² = 36",
+   "equivalents": [
+    "x²+y²=36"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "r = 6 means every point is 6 from the origin. Since r² = x² + y², squaring gives x² + y² = 36 — a circle of radius 6.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-coordinates"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "97aa143b9f6139c177081e38fd586881c4f757548f006bf74e68f6c775bfc83b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-001",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r = 4cos θ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A circle",
+   "equivalents": [
+    "Acircle"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "r = a cos θ is a circle of diameter 4 through the origin, centred at (4/2, 0). Multiply by r and convert: x² + y² = 4x.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "473c6dff261c4411e7af05c28d4f1eead06e35e6fb5fc00e3eda18cb3e3041a2",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A circle"
+   },
+   {
+    "label": "B",
+    "text": "A rose"
+   },
+   {
+    "label": "C",
+    "text": "A cardioid"
+   },
+   {
+    "label": "D",
+    "text": "A spiral"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-002",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r = 2(1 + sin θ)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A cardioid",
+   "equivalents": [
+    "Acardioid"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Equal coefficients on the constant and the sine are the cardioid signature — heart-shaped, cusp at the origin.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4fb03ef04f13cca9e1058944998b722798e7c53688a6c71a17fb65484d4b5225",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A circle"
+   },
+   {
+    "label": "B",
+    "text": "A rose"
+   },
+   {
+    "label": "C",
+    "text": "A cardioid"
+   },
+   {
+    "label": "D",
+    "text": "A spiral"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-003",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r = 2cos(3θ)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A rose",
+   "equivalents": [
+    "Arose"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "A multiple of θ inside the cosine makes petals: with n = 3 (odd), the rose has 3 petals.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "327e776c7d4e1d946dd5e7495e76baf609a2eed83588e90d086ef54c44936196",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A circle"
+   },
+   {
+    "label": "B",
+    "text": "A rose"
+   },
+   {
+    "label": "C",
+    "text": "A cardioid"
+   },
+   {
+    "label": "D",
+    "text": "A spiral"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-004",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r = 6θ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A spiral",
+   "equivalents": [
+    "Aspiral"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "r growing steadily with θ winds outward for ever — the spiral of Archimedes.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6feaf7da8f21ae5cbf9d2a91f4abf2738ba57bb3b18a257d8767e655964feea9",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A circle"
+   },
+   {
+    "label": "B",
+    "text": "A rose"
+   },
+   {
+    "label": "C",
+    "text": "A cardioid"
+   },
+   {
+    "label": "D",
+    "text": "A spiral"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-005",
+  "skillId": "polar-curves",
+  "prompt": "How many petals does the rose r = 4cos(3θ) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For r = a cos(nθ): an ODD n gives n petals, an EVEN n gives 2n. Here n = 3 is odd, so 3 petals.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7deb488ebb80422a16c674df1d5d202f8d44447f93dd891db0d039b6d52d5217",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-006",
+  "skillId": "polar-curves",
+  "prompt": "How many petals does the rose r = 4cos(5θ) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For r = a cos(nθ): an ODD n gives n petals, an EVEN n gives 2n. Here n = 5 is odd, so 5 petals.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4ae072e6d6596e43f518681313aa57d99cb2030295d0fededc9672ef5119d087",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-007",
+  "skillId": "polar-curves",
+  "prompt": "How many petals does the rose r = 4cos(2θ) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For r = a cos(nθ): an ODD n gives n petals, an EVEN n gives 2n. Here n = 2 is even, so 2·2 = 4 petals.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ba322173481325d815a1c6219c3ee036ea930f15ff05cf4a9ec18c5ed72c9423",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-008",
+  "skillId": "polar-curves",
+  "prompt": "How many petals does the rose r = 4cos(4θ) have?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "For r = a cos(nθ): an ODD n gives n petals, an EVEN n gives 2n. Here n = 4 is even, so 2·4 = 8 petals.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "733d2692e192f158057f39ee958c2db490a0b1e1a2b05f27a937edb25eeccd7c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-009",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r = 2(1 + cos θ)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A cardioid",
+   "equivalents": [
+    "Acardioid"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Equal coefficients on the constant and cosine make the cardioid — heart-shaped, cusp at the origin.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c87b9f9744c990e6869da6813acf3637de6c0bff0b5d58a9dde73f6def0dd462",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A cardioid"
+   },
+   {
+    "label": "B",
+    "text": "A circle"
+   },
+   {
+    "label": "C",
+    "text": "A rose with 4 petals"
+   },
+   {
+    "label": "D",
+    "text": "A lemniscate"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-010",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r² = 16cos(2θ)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A lemniscate",
+   "equivalents": [
+    "Alemniscate"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "An r² equation with cos(2θ) traces the figure-eight lemniscate through the origin.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "c642fa36a11ba85bd94e17f6d19235fb633c12deb59205e173d414d5f84aeef1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A cardioid"
+   },
+   {
+    "label": "B",
+    "text": "A circle"
+   },
+   {
+    "label": "C",
+    "text": "A rose with 4 petals"
+   },
+   {
+    "label": "D",
+    "text": "A lemniscate"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-011",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r = 2sin θ?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A circle",
+   "equivalents": [
+    "Acircle"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "r = a sin θ is a circle of diameter 2, sitting on the origin, centred at (0, 2/2).",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7e8b24598bc751156a75dd16f426c80afc508b6732cf23efa9ce630850c51c6a",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A cardioid"
+   },
+   {
+    "label": "B",
+    "text": "A circle"
+   },
+   {
+    "label": "C",
+    "text": "A rose with 4 petals"
+   },
+   {
+    "label": "D",
+    "text": "A lemniscate"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-polar-curves-012",
+  "skillId": "polar-curves",
+  "prompt": "What kind of curve is r = 2cos(2θ)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "A rose with 4 petals",
+   "equivalents": [
+    "Arosewith4petals"
+   ]
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "cos(nθ) with EVEN n = 2 gives 2n = 4 petals.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:polar-curves"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f4ed99c1fce4822dd466f6723aa462b1e2e4533cf002c415545e2213555644a1",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "A cardioid"
+   },
+   {
+    "label": "B",
+    "text": "A circle"
+   },
+   {
+    "label": "C",
+    "text": "A rose with 4 petals"
+   },
+   {
+    "label": "D",
+    "text": "A lemniscate"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-001",
+  "skillId": "complex-polar-form",
+  "prompt": "Find the modulus of the complex number 5 + 12i.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "|z| = √(a² + b²) = √(5² + 12²) = √(169) = 13 — the distance from the origin in the complex plane.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f8d6ba2010de0e5daafa8d1cf28b4a2c7aeb8e4094381ab90f21c09721d62dfc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-002",
+  "skillId": "complex-polar-form",
+  "prompt": "Find the modulus of the complex number 9 + 12i.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "|z| = √(a² + b²) = √(9² + 12²) = √(225) = 15 — the distance from the origin in the complex plane.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b9c5cd2a1493343c1abb662917e9c3be622244304025679362ce66f64a8089d9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-003",
+  "skillId": "complex-polar-form",
+  "prompt": "Find the modulus of the complex number 6 + 8i.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "|z| = √(a² + b²) = √(6² + 8²) = √(100) = 10 — the distance from the origin in the complex plane.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "10db4fbf1d0674be4da9f9a27ee59a1200dc3c821aee79bf80af22f1d714795f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-004",
+  "skillId": "complex-polar-form",
+  "prompt": "Find the modulus of the complex number 3 + 4i.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "|z| = √(a² + b²) = √(3² + 4²) = √(25) = 5 — the distance from the origin in the complex plane.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "761fa6c832bed69622c7c61985d3e57727e0e77fb83e87512e1cb3677fb7b84e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-005",
+  "skillId": "complex-polar-form",
+  "prompt": "What is the argument of 5i?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/2",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "5i sits on the positive imaginary axis, straight up: argument π/2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fdbd757def04b09e9950862715cf0a281e7aa8751dd4dce58a31d7543fa83fad",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/4"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "C"
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-006",
+  "skillId": "complex-polar-form",
+  "prompt": "What is the argument of −8?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "−8 sits on the negative real axis: argument π.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "16a3d23e9ef3a7c6706c146ca17fe904daa34ec80f2f5297329fdeedf3d9df0f",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/4"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "D"
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-007",
+  "skillId": "complex-polar-form",
+  "prompt": "What is the argument of 5 + 5i?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "π/4",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Equal real and imaginary parts put the point on the 45° line: argument π/4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "434ccef94412b783988c8cb00f931370fc449c91db9ad4dbec4b0b05cb6f2310",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/4"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-008",
+  "skillId": "complex-polar-form",
+  "prompt": "What is the argument of 7?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "0",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A positive real number lies on the positive real axis: argument 0.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "19f41d5c52c0a5373b1b9f15f4fe3ebea08932a2ea9374011a353c559b14cb41",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "0"
+   },
+   {
+    "label": "B",
+    "text": "π/4"
+   },
+   {
+    "label": "C",
+    "text": "π/2"
+   },
+   {
+    "label": "D",
+    "text": "π"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-009",
+  "skillId": "complex-polar-form",
+  "prompt": "Write the complex number with modulus 3 and argument π in rectangular form a + bi.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−3",
+   "equivalents": [
+    "-3"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = r(cos θ + i sin θ) = 3(cos π + i sin π) = 3(−1 + 0i) = −3. Argument π points along the negative real axis.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "13de3e64c9ec0765bb2629bfd5387cfd8cd3c2e8f025acf391a405c2fc5c5160",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-010",
+  "skillId": "complex-polar-form",
+  "prompt": "Write the complex number with modulus 2 and argument π in rectangular form a + bi.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−2",
+   "equivalents": [
+    "-2"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = r(cos θ + i sin θ) = 2(cos π + i sin π) = 2(−1 + 0i) = −2. Argument π points along the negative real axis.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3a9390514e31b7833899aad41e16392538a662ac6693a224b42c0b1715fec99b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-011",
+  "skillId": "complex-polar-form",
+  "prompt": "Write the complex number with modulus 6 and argument π in rectangular form a + bi.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−6",
+   "equivalents": [
+    "-6"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = r(cos θ + i sin θ) = 6(cos π + i sin π) = 6(−1 + 0i) = −6. Argument π points along the negative real axis.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "23286fb2548401ebcc6e76e0271185cb36ac8231a47645559879d47151d33a39",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-complex-polar-form-012",
+  "skillId": "complex-polar-form",
+  "prompt": "Write the complex number with modulus 4 and argument π in rectangular form a + bi.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "−4",
+   "equivalents": [
+    "-4"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "z = r(cos θ + i sin θ) = 4(cos π + i sin π) = 4(−1 + 0i) = −4. Argument π points along the negative real axis.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:complex-polar-form"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e2fa21cd6ed82b4e250c192449dad83faea12f5de20eeca80c662af89346d1b6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-001",
+  "skillId": "vector-representation",
+  "prompt": "Find the component form of the vector from P(6, 1) to Q(7, 2).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨1, 1⟩",
+   "equivalents": [
+    "⟨1,1⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Components are terminal minus initial: ⟨7 − 6, 2 − 1⟩ = ⟨1, 1⟩. Subtracting in the other order gives the OPPOSITE vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d7e1d4682c08f4723a590d5703d3d53a2c7c68b4543e203b6a102ad51d3a25f2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-002",
+  "skillId": "vector-representation",
+  "prompt": "Find the component form of the vector from P(3, 3) to Q(8, 8).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨5, 5⟩",
+   "equivalents": [
+    "⟨5,5⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Components are terminal minus initial: ⟨8 − 3, 8 − 3⟩ = ⟨5, 5⟩. Subtracting in the other order gives the OPPOSITE vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0af173f02a83d85b07dcb011d45c7f90c26b149043c6d1097e47a3469426caad",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-003",
+  "skillId": "vector-representation",
+  "prompt": "Find the component form of the vector from P(2, 4) to Q(7, 8).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨5, 4⟩",
+   "equivalents": [
+    "⟨5,4⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Components are terminal minus initial: ⟨7 − 2, 8 − 4⟩ = ⟨5, 4⟩. Subtracting in the other order gives the OPPOSITE vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4500e6461c7cd12c0e4075ea93ba2e9a38259a63a1c0ebaca4dbea3eba9fbe93",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-004",
+  "skillId": "vector-representation",
+  "prompt": "Find the component form of the vector from P(2, 5) to Q(6, 10).",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨4, 5⟩",
+   "equivalents": [
+    "⟨4,5⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Components are terminal minus initial: ⟨6 − 2, 10 − 5⟩ = ⟨4, 5⟩. Subtracting in the other order gives the OPPOSITE vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b08fae2babcb222ceafa235df9ddd2e17ffd37b4ee523f32c86a944033440456",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-005",
+  "skillId": "vector-representation",
+  "prompt": "Find the magnitude of the vector ⟨6, 8⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "|v| = √(6² + 8²) = √(100) = 10.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6a27bec36f91b3d39ae53499ca79caa158ed031164c69049c01ed2e28d5ea456",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-006",
+  "skillId": "vector-representation",
+  "prompt": "Find the magnitude of the vector ⟨9, 12⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "15",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "|v| = √(9² + 12²) = √(225) = 15.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fd0c297a849d4aa863c12a99da5810db6629fe006dd60f0ce25248792d302666",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-007",
+  "skillId": "vector-representation",
+  "prompt": "Find the magnitude of the vector ⟨5, 12⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "|v| = √(5² + 12²) = √(169) = 13.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cd2b164ea590ace8c56c4865015d91da568e4c84b1336e7397b461cbcedc0a6f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-008",
+  "skillId": "vector-representation",
+  "prompt": "Find the magnitude of the vector ⟨3, 4⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "|v| = √(3² + 4²) = √(25) = 5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "138a1c7a2d57a02735af54dc15db2376227b6c4481ae56ab62b7d6e4d3a3c6d7",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-009",
+  "skillId": "vector-representation",
+  "prompt": "Find a UNIT vector in the direction of ⟨6, 8⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨3/5, 4/5⟩",
+   "equivalents": [
+    "⟨3/5,4/5⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Divide the vector by its magnitude 10: ⟨6/10, 8/10⟩ = ⟨3/5, 4/5⟩. Its length is exactly 1, direction unchanged.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "085b3aab9740906a6f880ba8fd09d3963d2647cd1a02ec6ac006e112c74b4499",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-010",
+  "skillId": "vector-representation",
+  "prompt": "The vector ⟨6, 8⟩ is multiplied by −1. What is its new magnitude?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Negating a vector reverses its direction but keeps its length: the magnitude is still √(6² + 8²) = 10.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "44118acd9e0bb98f4e7c04666f3366e8b9f39c0797acd71a66394ec2b42f22b1",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-011",
+  "skillId": "vector-representation",
+  "prompt": "Find a UNIT vector in the direction of ⟨5, 12⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨5/13, 12/13⟩",
+   "equivalents": [
+    "⟨5/13,12/13⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Divide the vector by its magnitude 13: ⟨5/13, 12/13⟩ = ⟨5/13, 12/13⟩. Its length is exactly 1, direction unchanged.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1d7131f234ea169c7776e284170ef4ba38aefbe23a57e741684f2189dc22fab4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-representation-012",
+  "skillId": "vector-representation",
+  "prompt": "The vector ⟨5, 12⟩ is multiplied by −1. What is its new magnitude?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Negating a vector reverses its direction but keeps its length: the magnitude is still √(5² + 12²) = 13.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-representation"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "e1099b98abb9ddac823a2ab17f407611885c8028d17160f004dcf4aa769005b5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-001",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨6, 2⟩ + ⟨1, 2⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨7, 4⟩",
+   "equivalents": [
+    "⟨7,4⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Add component-wise: ⟨6 + 1, 2 + 2⟩ = ⟨7, 4⟩. Tip-to-tail on a diagram gives the same result.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b1161dda0103b07e88bb6ad7bc746bad6d99ddbf28be189be5c8ecdf17a341e5",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-002",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨2, 4⟩ + ⟨6, 1⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨8, 5⟩",
+   "equivalents": [
+    "⟨8,5⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Add component-wise: ⟨2 + 6, 4 + 1⟩ = ⟨8, 5⟩. Tip-to-tail on a diagram gives the same result.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ff0c0e5bab0b54c89e26c40ea725df4cfc6b9ecef4f3a4e17cf2e8521ec89380",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-003",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨3, 3⟩ + ⟨1, 5⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨4, 8⟩",
+   "equivalents": [
+    "⟨4,8⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Add component-wise: ⟨3 + 1, 3 + 5⟩ = ⟨4, 8⟩. Tip-to-tail on a diagram gives the same result.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "ff49f4055bf22f76b467e32da988669813b6275dedfeb9a9a3fd9c889d730a1f",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-004",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨6, 5⟩ + ⟨6, 4⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨12, 9⟩",
+   "equivalents": [
+    "⟨12,9⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Add component-wise: ⟨6 + 6, 5 + 4⟩ = ⟨12, 9⟩. Tip-to-tail on a diagram gives the same result.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1b20aa5cb73ed2791ed54eae21836046c50bde83b6ffedf08737ec29cc154a14",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-005",
+  "skillId": "vector-operations",
+  "prompt": "Compute 3⟨5, 4⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨15, 12⟩",
+   "equivalents": [
+    "⟨15,12⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A scalar multiplies EACH component: ⟨3·5, 3·4⟩ = ⟨15, 12⟩ — same direction, 3 times the length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6991c1f96acc6dc614c808654b2db169c4a6e3d1d3a334386efaa3f312d3a177",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-006",
+  "skillId": "vector-operations",
+  "prompt": "Compute 4⟨1, 3⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨4, 12⟩",
+   "equivalents": [
+    "⟨4,12⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A scalar multiplies EACH component: ⟨4·1, 4·3⟩ = ⟨4, 12⟩ — same direction, 4 times the length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5abd8352d14e764ec4b5544b651b22b07ee4c67232092e89612332373a683920",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-007",
+  "skillId": "vector-operations",
+  "prompt": "Compute 5⟨5, 5⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨25, 25⟩",
+   "equivalents": [
+    "⟨25,25⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A scalar multiplies EACH component: ⟨5·5, 5·5⟩ = ⟨25, 25⟩ — same direction, 5 times the length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "0f42ea62b1da904c772271f29f6903ee8a88bb9563d67f8cca1a6dcc31fc5cc6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-008",
+  "skillId": "vector-operations",
+  "prompt": "Compute 5⟨1, 3⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨5, 15⟩",
+   "equivalents": [
+    "⟨5,15⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "A scalar multiplies EACH component: ⟨5·1, 5·3⟩ = ⟨5, 15⟩ — same direction, 5 times the length.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "db838ccfdde1a5c36bac94261da2831056c45883578e082699ea3d964402ee2e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-009",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨5, 5⟩ − 2⟨5, 4⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨-5, -3⟩",
+   "equivalents": [
+    "⟨-5,-3⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Scale first: 2⟨5, 4⟩ = ⟨10, 8⟩. Then subtract component-wise: ⟨5 − 10, 5 − 8⟩ = ⟨-5, -3⟩.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "eb6d10fbcc3f98013d853cc01e78a79b0dc93753c1c68f90811572e8fec4a1fe",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-010",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨5, 6⟩ − 4⟨5, 1⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨-15, 2⟩",
+   "equivalents": [
+    "⟨-15,2⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Scale first: 4⟨5, 1⟩ = ⟨20, 4⟩. Then subtract component-wise: ⟨5 − 20, 6 − 4⟩ = ⟨-15, 2⟩.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1840a7d7f6fecc470185ab27a01b9658a5827e0d0bc9d09d1218975676372af9",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-011",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨5, 4⟩ − 2⟨5, 1⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨-5, 2⟩",
+   "equivalents": [
+    "⟨-5,2⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Scale first: 2⟨5, 1⟩ = ⟨10, 2⟩. Then subtract component-wise: ⟨5 − 10, 4 − 2⟩ = ⟨-5, 2⟩.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cdb75b108865fb4dbfa315d89628b2b8ef4619f1069c5796a3dad46eebf86fd4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-operations-012",
+  "skillId": "vector-operations",
+  "prompt": "Compute ⟨7, 2⟩ − 4⟨2, 5⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨-1, -18⟩",
+   "equivalents": [
+    "⟨-1,-18⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Scale first: 4⟨2, 5⟩ = ⟨8, 20⟩. Then subtract component-wise: ⟨7 − 8, 2 − 20⟩ = ⟨-1, -18⟩.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-operations"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "91c39a687c6d81258219126aac42570137008d15bda5a6c772426cba0d800b0b",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-001",
+  "skillId": "dot-product",
+  "prompt": "Compute the dot product ⟨3, 6⟩ · ⟨2, 1⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "12",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply matching components and add: 3·2 + 6·1 = 6 + 6 = 12. The result is a SCALAR, not a vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "84a4a369c4fd6249e7f56e7753b5996dfb0f292b6f806d835869bc623a27af10",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-002",
+  "skillId": "dot-product",
+  "prompt": "Compute the dot product ⟨6, 4⟩ · ⟨1, 2⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "14",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply matching components and add: 6·1 + 4·2 = 6 + 8 = 14. The result is a SCALAR, not a vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "3bcceb7617cca826536896fd47feeb9b59a912eeb2d00b2df567f650c429da35",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-003",
+  "skillId": "dot-product",
+  "prompt": "Compute the dot product ⟨1, 6⟩ · ⟨5, 1⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply matching components and add: 1·5 + 6·1 = 5 + 6 = 11. The result is a SCALAR, not a vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "fc3448dc625c884df3bbf2edb40476cd7839b3f735adc33f5c92597e385a70e3",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-004",
+  "skillId": "dot-product",
+  "prompt": "Compute the dot product ⟨4, 1⟩ · ⟨2, 3⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "11",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 2,
+  "gradeBand": "9-12",
+  "explanation": "Multiply matching components and add: 4·2 + 1·3 = 8 + 3 = 11. The result is a SCALAR, not a vector.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "5ceb9f9615b73be61e9d428e6b110fdadd32becc5488d3e9c894eb48831f40dc",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-005",
+  "skillId": "dot-product",
+  "prompt": "Are ⟨4, 3⟩ and ⟨-3, 4⟩ orthogonal (perpendicular)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vectors are orthogonal exactly when their dot product is 0. Here it is 0 = 0, so yes — perpendicular.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "f484e4262302f423562cf3b9ebdcbe08f96bdad7dda1275f6ab0ff760c81fb2d",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only in 3D"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-006",
+  "skillId": "dot-product",
+  "prompt": "Are ⟨5, 4⟩ and ⟨4, 5⟩ orthogonal (perpendicular)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vectors are orthogonal exactly when their dot product is 0. Here it is 40, which is not 0, so no.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "739b1cecf30d25b44de637cb29f2213ecabd32fcd11a1fd4ab498dcece288655",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only in 3D"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-007",
+  "skillId": "dot-product",
+  "prompt": "Are ⟨6, 2⟩ and ⟨-2, 6⟩ orthogonal (perpendicular)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "Yes",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vectors are orthogonal exactly when their dot product is 0. Here it is 0 = 0, so yes — perpendicular.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a6fdcd56c00d3b14e1b8e3e7f69e3a26f0fbfae9e4f58b2a03e6cd334a906689",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only in 3D"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "A"
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-008",
+  "skillId": "dot-product",
+  "prompt": "Are ⟨4, 3⟩ and ⟨3, 4⟩ orthogonal (perpendicular)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "No",
+   "equivalents": []
+  },
+  "answerType": "multiple-choice",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Vectors are orthogonal exactly when their dot product is 0. Here it is 24, which is not 0, so no.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "b9c3032b6e57408571e6d29c503ba1aed022d13bf770f9a97602d28583b25355",
+  "isActive": true,
+  "options": [
+   {
+    "label": "A",
+    "text": "Yes"
+   },
+   {
+    "label": "B",
+    "text": "No"
+   },
+   {
+    "label": "C",
+    "text": "Only in 3D"
+   },
+   {
+    "label": "D",
+    "text": "Cannot be determined"
+   }
+  ],
+  "correctOption": "B"
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-009",
+  "skillId": "dot-product",
+  "prompt": "Find k so that ⟨2, 2⟩ and ⟨2, k⟩ are orthogonal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Set the dot product to zero: 2·2 + 2k = 0, so 2k = −4 and k = −2.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "019f710a411405590aaecc8350593ae3ec3306cffd0fa1179153a821977d6b4e",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-010",
+  "skillId": "dot-product",
+  "prompt": "Find k so that ⟨4, 2⟩ and ⟨2, k⟩ are orthogonal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Set the dot product to zero: 4·2 + 2k = 0, so 2k = −8 and k = −4.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8ec714381d23fff7ee46bef0eeb8a47de83209d04094d5c1fb8cffa37fd935e8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-011",
+  "skillId": "dot-product",
+  "prompt": "Find k so that ⟨3, 2⟩ and ⟨2, k⟩ are orthogonal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Set the dot product to zero: 3·2 + 2k = 0, so 2k = −6 and k = −3.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cbcec61b6754cedf176a4f0f16ca59d638fda0a6a61f8cd1212312bbc14d0829",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-dot-product-012",
+  "skillId": "dot-product",
+  "prompt": "Find k so that ⟨5, 2⟩ and ⟨2, k⟩ are orthogonal.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "-5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Set the dot product to zero: 5·2 + 2k = 0, so 2k = −10 and k = −5.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:dot-product"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6e67d4a51f46e1aaec86550a68e4948e1d81d2bc70917f02e85b4f58092164ac",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-001",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨2, 6⟩ onto the x-axis direction ⟨1, 0⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "2",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Projection onto ⟨1, 0⟩ = (v · ⟨1,0⟩)/|⟨1,0⟩| = 2/1 = 2 — simply the x-component. Projection extracts \"how much of v points that way\".",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9d22eb9bef3d45eda8e1594b91af06cdcd264da6b44dd1f2ea66243b266d74a0",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-002",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨4, 2⟩ onto the x-axis direction ⟨1, 0⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "4",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Projection onto ⟨1, 0⟩ = (v · ⟨1,0⟩)/|⟨1,0⟩| = 4/1 = 4 — simply the x-component. Projection extracts \"how much of v points that way\".",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a4701f68c863a90bf3d9854dbc3856f5d80df70596f804678fa8d002973a4d78",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-003",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨5, 4⟩ onto the x-axis direction ⟨1, 0⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Projection onto ⟨1, 0⟩ = (v · ⟨1,0⟩)/|⟨1,0⟩| = 5/1 = 5 — simply the x-component. Projection extracts \"how much of v points that way\".",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "d13d8f2eb4c51d61769f181f770e11585677674ce81f1d225ca78a2863d03ec4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-004",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨8, 4⟩ onto the x-axis direction ⟨1, 0⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "8",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "Projection onto ⟨1, 0⟩ = (v · ⟨1,0⟩)/|⟨1,0⟩| = 8/1 = 8 — simply the x-component. Projection extracts \"how much of v points that way\".",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "6a30e0d9599a858d1455008f558bc0bf42ec2d58aa979ff0bd359e9a67c3222c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-005",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨5, 0⟩ onto ⟨3, 4⟩.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "3",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "comp = (u · v)/|v| = (5·3 + 0·4)/5 = 15/5 = 3. The magnitude 5 comes from the 3-4-5 triple.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9e8740e9ec8fa1efc717236bd17356c1d526e56265f07e4b96dbb29f58ac8d22",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-006",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨2, 0⟩ onto ⟨6, 8⟩. Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "6/5",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "comp = (u · v)/|v| = (2·6 + 0·8)/10 = 12/10 = 6/5. The magnitude 10 comes from the 6-8-10 triple.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "9516c2d403dcf6359fe5840785ab457817e12b555342ef910ce74de907cd1fa2",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-007",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨2, 0⟩ onto ⟨5, 12⟩. Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10/13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "comp = (u · v)/|v| = (2·5 + 0·12)/13 = 10/13 = 10/13. The magnitude 13 comes from the 5-12-13 triple.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1b1a7d024e3652c5d481e33b80d8c0f53bde106d66c9021e37ea84a6ad4390e4",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-projections-008",
+  "skillId": "vector-projections",
+  "prompt": "Find the scalar projection of ⟨5, 0⟩ onto ⟨5, 12⟩. Give your answer as a fraction in lowest terms.",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "25/13",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "comp = (u · v)/|v| = (5·5 + 0·12)/13 = 25/13 = 25/13. The magnitude 13 comes from the 5-12-13 triple.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-projections"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "a35767660698070fdad2392ece5d359da0d0918193dce1f2870d91aa2c4c3915",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-001",
+  "skillId": "vector-applications",
+  "prompt": "A hiker walks 50 m east, then 70 m north. What is the component form of the resultant displacement (east, north)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨50, 70⟩",
+   "equivalents": [
+    "⟨50,70⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "East is the x-component and north the y-component, so the displacement is ⟨50, 70⟩. Successive displacements ADD as vectors.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "535b7f98c738d679b929dba20c2cf765bdb49006d902d8681d86385bf47dc001",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-002",
+  "skillId": "vector-applications",
+  "prompt": "A hiker walks 50 m east, then 80 m north. What is the component form of the resultant displacement (east, north)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨50, 80⟩",
+   "equivalents": [
+    "⟨50,80⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "East is the x-component and north the y-component, so the displacement is ⟨50, 80⟩. Successive displacements ADD as vectors.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4b2c8bb498363df5277793a1ae14db86755ddba052b9462a381d8b7e4509ef89",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-003",
+  "skillId": "vector-applications",
+  "prompt": "A hiker walks 20 m east, then 30 m north. What is the component form of the resultant displacement (east, north)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨20, 30⟩",
+   "equivalents": [
+    "⟨20,30⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "East is the x-component and north the y-component, so the displacement is ⟨20, 30⟩. Successive displacements ADD as vectors.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "1569c12677e78ebe46c565af661d12f0a19d9f0823d06945e5e9c5ffd602d664",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-004",
+  "skillId": "vector-applications",
+  "prompt": "A hiker walks 20 m east, then 80 m north. What is the component form of the resultant displacement (east, north)?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "⟨20, 80⟩",
+   "equivalents": [
+    "⟨20,80⟩"
+   ]
+  },
+  "answerType": "constructed-response",
+  "difficulty": 3,
+  "gradeBand": "9-12",
+  "explanation": "East is the x-component and north the y-component, so the displacement is ⟨20, 80⟩. Successive displacements ADD as vectors.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "cf26d3582f19aaaa7a7e0e5f554190dc3e48e73b10095153900103399ec4cd3c",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-005",
+  "skillId": "vector-applications",
+  "prompt": "A boat travels 60 m east and 80 m north. How far is it from its starting point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "100",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The straight-line distance is the magnitude: √(60² + 80²) = 100 m — the 6-8-10 triple scaled by 10.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "8c0a247b5b1cd510ead8b509adcc91ea299fff78af5c6f8aeebdd332eebe5441",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-006",
+  "skillId": "vector-applications",
+  "prompt": "Two forces act on an object along the same line: 80 N east and 30 N west. What is the magnitude of the net force?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Opposite directions subtract: |80 − 30| = 50 N, pointing east.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "49f4213fe3e04b5d6c247fe10190bc08d7ae1d35425a0d0d974cdf2ee9e0d3b6",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-007",
+  "skillId": "vector-applications",
+  "prompt": "A boat travels 30 m east and 40 m north. How far is it from its starting point?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "50",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "The straight-line distance is the magnitude: √(30² + 40²) = 50 m — the 3-4-5 triple scaled by 10.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "4fbe491c3bee50a691148afc262694c114ecc54c3538515ca1b52c274a13b0c8",
+  "isActive": true
+ },
+ {
+  "problemId": "low-volume-2026-08-vector-applications-008",
+  "skillId": "vector-applications",
+  "prompt": "Two forces act on an object along the same line: 20 N east and 30 N west. What is the magnitude of the net force?",
+  "svg": null,
+  "answer": {
+   "type": "exact",
+   "value": "10",
+   "equivalents": []
+  },
+  "answerType": "constructed-response",
+  "difficulty": 4,
+  "gradeBand": "9-12",
+  "explanation": "Opposite directions subtract: |20 − 30| = 10 N, pointing west.",
+  "tags": [
+   "low-volume-2026-08",
+   "subskill:vector-applications"
+  ],
+  "source": "low-volume-2026-08",
+  "contentHash": "7881ff8a3a4318ef87e7a7474ac9a193ea08531c2d2f3100e548b0406f434b59",
+  "isActive": true
  }
 ]

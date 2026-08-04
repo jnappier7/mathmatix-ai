@@ -26,6 +26,7 @@ const BANKS = [
   require('./lib/templatesGrade8'),
   require('./lib/templatesGrade67'),
   require('./lib/templatesAlgebra2'),
+  require('./lib/templatesPrecalc'),
 ];
 
 const OUT = path.join(__dirname, '..', 'seeds', 'low-volume-items.generated.json');

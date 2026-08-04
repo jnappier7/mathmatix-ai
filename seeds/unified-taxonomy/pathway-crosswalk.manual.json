@@ -1047,6 +1047,81 @@
       "legacyId": "infinite-geometric-series",
       "unifiedId": "geometric-series",
       "course": "algebra-2"
+    },
+    {
+      "legacyId": "algebraic-fluency-review",
+      "unifiedId": "simplify-expressions",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "exponential-log-review",
+      "unifiedId": "act-logarithms",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "quadratic-mastery-review",
+      "unifiedId": "quadratic-functions",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "trig-readiness-review",
+      "unifiedId": "trig-unit-circle-evaluation",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "function-analysis-review",
+      "unifiedId": "function-families",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "comprehensive-function-review",
+      "unifiedId": "function-notation-evaluation",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "comprehensive-analytic-review",
+      "unifiedId": "act-coordinate-geometry",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "comprehensive-limits-series-review",
+      "unifiedId": "limits",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "polynomial-end-behavior",
+      "unifiedId": "polynomial-graphing",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "polynomial-zeros-multiplicity",
+      "unifiedId": "polynomial-graphing",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "rational-function-analysis",
+      "unifiedId": "rational-function-graphing",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "asymptote-analysis",
+      "unifiedId": "vertical-horizontal-asymptotes",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "sinusoidal-modeling",
+      "unifiedId": "graphing-sinusoidal",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "trig-function-graphs",
+      "unifiedId": "graphing-sinusoidal",
+      "course": "precalculus"
+    },
+    {
+      "legacyId": "triangle-area-applications",
+      "unifiedId": "trig-law-of-sines",
+      "course": "precalculus"
     }
   ]
 }
