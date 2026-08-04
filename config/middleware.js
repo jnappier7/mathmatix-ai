@@ -128,13 +128,12 @@ function configureMiddleware(app) {
     },
   }));
 
-  app.use((req, res, next) => {
-    // Skip HTML files — they need CSP nonce injection via the full middleware pipeline
-    if (req.method === 'GET' && /\.html?$/i.test(req.path)) return next();
-    // Skip API routes
-    if (req.path.startsWith('/api/')) return next();
-    next();
-  }, express.static(publicDir, {
+  // NOTE: the static handler must be invoked from INSIDE the gate. With
+  // app.use(gate, express.static(...)), the gate's next() advances to
+  // express.static in the same stack — so "skipped" HTML requests were still
+  // served statically, bypassing the CSP-nonce/helmet pipeline entirely
+  // (prod pages shipped with no Content-Security-Policy header at all).
+  const publicStatic = express.static(publicDir, {
     index: false, // Don't serve index.html — that goes through auth/CSP nonce pipeline
     setHeaders: (res, filePath) => {
       if (/sw\.js$|pwa-register\.js$/i.test(filePath)) {
@@ -147,7 +146,19 @@ function configureMiddleware(app) {
         res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day default
       }
     },
-  }));
+  });
+
+  app.use((req, res, next) => {
+    // HTML files fall through to the full pipeline — served via sendFile in
+    // config/routes.js (explicit routes + the .html catch-all), where the
+    // CSP-nonce wrapper injects nonces/PWA tags and helmet sets the CSP header.
+    // GET and HEAD both: express.static serves HEAD too, and HEAD is how
+    // header audits (curl -I) observe CSP — they must see the same pipeline.
+    if ((req.method === 'GET' || req.method === 'HEAD') && /\.html?$/i.test(req.path)) return next();
+    // API routes never serve static files
+    if (req.path.startsWith('/api/')) return next();
+    return publicStatic(req, res, next);
+  });
 
   // Request ID for tracing — runs early so all downstream middleware/errors are traceable
   app.use(requestId);
@@ -165,17 +176,18 @@ function configureMiddleware(app) {
 
   // Session middleware — constructed once and shared with the WebSocket
   // upgrade handler (utils/voiceSession) so cookie-auth works for /api/voice-tutor/stream.
+  const sessionStore = MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    collectionName: 'sessions',
+    ttl: 7 * 24 * 60 * 60,
+    touchAfter: 300,
+  });
   const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     rolling: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-      collectionName: 'sessions',
-      ttl: 7 * 24 * 60 * 60,
-      touchAfter: 300,
-    }),
+    store: sessionStore,
     cookie: {
       httpOnly: true,
       secure: isProduction,
@@ -195,6 +207,8 @@ function configureMiddleware(app) {
   app.locals.sessionMiddleware = sessionMiddleware;
   app.locals.passportInit = passportInit;
   app.locals.passportSession = passportSession;
+  // Store handle so tests (and graceful shutdown) can close its Mongo client
+  app.locals.sessionStore = sessionStore;
 
   // Impersonation middleware — must run after passport
   app.use(handleImpersonation);

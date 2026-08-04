@@ -770,7 +770,7 @@ function registerStaticRoutes(app) {
   // Serve HTML via sendFile for CSP nonce injection
   // (Static assets are already served by middleware.js before session/CSRF pipeline)
   app.use((req, res, next) => {
-    if (req.method === 'GET' && req.path.endsWith('.html')) {
+    if ((req.method === 'GET' || req.method === 'HEAD') && req.path.endsWith('.html')) {
       const filePath = path.resolve(publicDir, req.path.replace(/^\/+/, ''));
       if (!filePath.startsWith(publicDir + path.sep)) return next();
       fs.access(filePath, fs.constants.F_OK, (err) => {
