@@ -44,6 +44,11 @@
     if (Array.isArray(problem.options) && problem.options.length) {
       var wrap = el('div', 'mm-ch-options');
       problem.options.forEach(function (opt, i) {
+        // Same fix as skill-map.js: options are { label, text } objects, the
+        // student sees the text, and grading expects the LETTER back.
+        var isObj = opt && typeof opt === 'object';
+        var optLabel = isObj ? opt.label : String.fromCharCode(65 + i);
+        var optText = isObj ? opt.text : String(opt);
         var id = 'mmch-' + problem.problemId + '-' + i;
         var label = el('label', 'mm-ch-option');
         label.htmlFor = id;
@@ -51,10 +56,10 @@
         radio.type = 'radio';
         radio.id = id;
         radio.name = 'mmch-' + problem.problemId;
-        radio.value = opt;
+        radio.value = optLabel;
         radio.dataset.problemId = problem.problemId;
         label.appendChild(radio);
-        label.appendChild(document.createTextNode(' ' + opt));
+        label.appendChild(document.createTextNode(' ' + optLabel + '. ' + optText));
         wrap.appendChild(label);
       });
       return wrap;
